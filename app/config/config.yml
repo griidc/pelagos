@@ -10,6 +10,12 @@ parameters:
     jms_serializer.camel_case_naming_strategy.class: JMS\Serializer\Naming\IdenticalPropertyNamingStrategy
     router.request_context.host: "%hostname%"
     router.request_context.scheme: https
+    # This parameter is undocumented. By default rabbitmq-supervisor-bundle uses old_sound_rabbit_mq -> consumers
+    # from this config file to populate this parameter. As of rabbitmq-supervisor-bundle 1.5, only the array keys
+    # are used so the values can be null.
+    phobetor_rabbitmq_supervisor.consumers:
+        filer: ~
+        create_homedir: ~
 
 framework:
     #esi:             ~
@@ -186,3 +192,8 @@ hwi_oauth:
             client_secret:  "%google_oauth_client_secret%"
             scope:          "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
     use_referer: true
+
+rabbit_mq_supervisor:
+    supervisor_instance_identifier: "%pelagos_name%"
+    commands:
+        rabbitmq_consumer: rabbitmq:consumer -w %%2$s

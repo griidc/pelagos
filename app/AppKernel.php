@@ -35,6 +35,7 @@ class AppKernel extends Kernel
             new \SimpleThings\EntityAudit\SimpleThingsEntityAuditBundle(),
             new \FOS\JsRoutingBundle\FOSJsRoutingBundle(),
             new \OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
+            new \Phobetor\RabbitMqSupervisorBundle\RabbitMqSupervisorBundle(),
             new \HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
             new \Pelagos\Bundle\LegacyBundle\PelagosLegacyBundle(),
             new \Pelagos\Bundle\AppBundle\PelagosAppBundle(),

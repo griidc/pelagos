@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a1f32014c35e1267ce2369fa2b38348d",
-    "content-hash": "30da5412788b0864a22229e12e2c70e6",
+    "hash": "f0a438c1ad8a4a5d45fd4606a17faf6b",
+    "content-hash": "25dbf7a0d55cb2b361401ab08fcdc866",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -930,7 +930,7 @@
                     "homepage": "https://github.com/friendsofsymfony/FOSJsRoutingBundle/contributors"
                 },
                 {
-                    "name": "William DURAND",
+                    "name": "William Durand",
                     "email": "william.durand1@gmail.com"
                 }
             ],
@@ -1035,12 +1035,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/hwi/HWIOAuthBundle.git",
-                "reference": "285c005ff2d90b6571cc62b019d461a0356cd1b2"
+                "reference": "b8fd3878f7f4674d7e51491ad931398a73eda9f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hwi/HWIOAuthBundle/zipball/285c005ff2d90b6571cc62b019d461a0356cd1b2",
-                "reference": "285c005ff2d90b6571cc62b019d461a0356cd1b2",
+                "url": "https://api.github.com/repos/hwi/HWIOAuthBundle/zipball/b8fd3878f7f4674d7e51491ad931398a73eda9f5",
+                "reference": "b8fd3878f7f4674d7e51491ad931398a73eda9f5",
                 "shasum": ""
             },
             "require": {
@@ -1057,6 +1057,7 @@
             },
             "require-dev": {
                 "doctrine/orm": "~2.3",
+                "fabpot/php-cs-fixer": "~1.11",
                 "friendsofsymfony/user-bundle": "~1.3|~2.0",
                 "phpunit/phpunit": "~4.8|~5.0",
                 "symfony/phpunit-bridge": "~2.7|~3.0",
@@ -1117,6 +1118,7 @@
                 "bitly",
                 "box",
                 "bufferapp",
+                "clever",
                 "dailymotion",
                 "deviantart",
                 "discogs",
@@ -1132,6 +1134,7 @@
                 "google",
                 "hubic",
                 "instagram",
+                "jawbone",
                 "jira",
                 "linkedin",
                 "mail.ru",
@@ -1167,7 +1170,7 @@
                 "yandex",
                 "youtube"
             ],
-            "time": "2016-06-29 10:47:30"
+            "time": "2016-07-29 12:56:05"
         },
         {
             "name": "incenteev/composer-parameter-handler",
@@ -2043,6 +2046,57 @@
                 "random"
             ],
             "time": "2016-03-18 20:34:03"
+        },
+        {
+            "name": "phobetor/rabbitmq-supervisor-bundle",
+            "version": "1.5.2",
+            "target-dir": "Phobetor/RabbitMqSupervisorBundle",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Phobetor/rabbitmq-supervisor-bundle.git",
+                "reference": "7fb59228f8e9cc4ac6486162c2fec6c25a257786"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Phobetor/rabbitmq-supervisor-bundle/zipball/7fb59228f8e9cc4ac6486162c2fec6c25a257786",
+                "reference": "7fb59228f8e9cc4ac6486162c2fec6c25a257786",
+                "shasum": ""
+            },
+            "require": {
+                "symfony/console": "~2.5|~3.0",
+                "symfony/framework-bundle": "~2.5|~3.0",
+                "symfony/process": "~2.5|~3.0"
+            },
+            "suggest": {
+                "oldsound/rabbitmq-bundle": "The abandoned older version of php-amqplib/rabbitmq-bundle which also works",
+                "php-amqplib/rabbitmq-bundle": "The rabbitmq bundle for symfony which this bundle takes the consumer information from"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Phobetor\\RabbitMqSupervisorBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andreas Kintzinger",
+                    "homepage": "https://github.com/Phobetor/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Symfony 2 bundle to automatically create and update supervisor configurations for RabbitMQ consumer daemons",
+            "homepage": "https://github.com/Phobetor/rabbitmq-supervisor-bundle",
+            "keywords": [
+                "Symfony2",
+                "rabbitmq",
+                "supervisor",
+                "supervisord"
+            ],
+            "time": "2016-07-13 19:00:48"
         },
         {
             "name": "php-amqplib/php-amqplib",
