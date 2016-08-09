@@ -10,6 +10,9 @@ parameters:
     jms_serializer.camel_case_naming_strategy.class: JMS\Serializer\Naming\IdenticalPropertyNamingStrategy
     router.request_context.host: "%hostname%"
     router.request_context.scheme: https
+    phobetor_rabbitmq_supervisor.consumers:
+        filer: ~
+        create_homedir: ~
 
 framework:
     #esi:             ~
