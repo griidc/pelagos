@@ -63,6 +63,9 @@ doctrine:
             xml: xml
             pelagos_geometry: pelagos_geometry
     orm:
+        metadata_cache_driver: apc
+        query_cache_driver: apc
+        result_cache_driver: apc
         mappings:
             Pelagos:
                 type: annotation
