@@ -186,3 +186,8 @@ hwi_oauth:
             client_secret:  "%google_oauth_client_secret%"
             scope:          "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
     use_referer: true
+
+rabbit_mq_supervisor:
+    supervisor_instance_identifier: "%pelagos_name%"
+    commands:
+        rabbitmq_consumer: rabbitmq:consumer -w %%2$s
