@@ -191,6 +191,15 @@ class FundingCycle extends Entity
     protected $udiPrefix;
 
     /**
+     * This holds the position in the sort order of this Entity.
+     *
+     * @var integer
+     *
+     * @ORM\Column(nullable=true)
+     */
+    protected $sortOrder;
+
+    /**
      * Setter for name.
      *
      * @param string $name Textual name of funding cycle.
@@ -382,6 +391,36 @@ class FundingCycle extends Entity
     public function getUdiPrefix()
     {
         return $this->udiPrefix;
+    }
+
+    /**
+     * Setter for sortOrder.
+     *
+     * @param integer $position The position to set in the sort ordering.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setSortOrder($position)
+    {
+        if (null === $position) {
+            $this->sortOrder = null;
+        } elseif (is_int($position)) {
+            $this->sortOrder = $position;
+        }
+    }
+
+    /**
+     * Getter for sortOrder.
+     *
+     * @access public
+     *
+     * @return integer Of position to use in a sorted list.
+     */
+    public function getSortOrder()
+    {
+        return $this->sortOrder;
     }
 
     /**
