@@ -233,7 +233,7 @@ class FundingOrganization extends Entity
      *
      * @ORM\OneToMany(targetEntity="FundingCycle", mappedBy="fundingOrganization")
      *
-     * @ORM\OrderBy({"sortOrder" = "ASC"})
+     * @ORM\OrderBy({"sortOrder" = "ASC", "name" = "ASC"})
      */
     protected $fundingCycles;
 
@@ -268,7 +268,7 @@ class FundingOrganization extends Entity
      *
      * @var integer
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(nullable=true, type="integer")
      */
     protected $sortOrder;
 
