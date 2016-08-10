@@ -91,7 +91,7 @@ class TreeController extends EntityController
                     ->getRepository(FundingOrganization::class)
                     ->findBy(
                         $criteria,
-                        array('name' => 'ASC')
+                        array('sortOrder' => 'ASC')
                     ),
                 'fundingCycleIds' => array_keys($fundingCycles),
             )

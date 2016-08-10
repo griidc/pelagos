@@ -233,7 +233,7 @@ class FundingOrganization extends Entity
      *
      * @ORM\OneToMany(targetEntity="FundingCycle", mappedBy="fundingOrganization")
      *
-     * @ORM\OrderBy({"name" = "ASC"})
+     * @ORM\OrderBy({"sortOrder" = "ASC"})
      */
     protected $fundingCycles;
 
