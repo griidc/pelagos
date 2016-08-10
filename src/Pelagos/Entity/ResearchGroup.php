@@ -73,7 +73,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="citext")
+     * @ORM\Column(type="citext", options={"collation":"POSIX"})
      *
      * @Assert\NotBlank(
      *     message="Name is required"
