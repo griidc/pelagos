@@ -264,6 +264,15 @@ class FundingOrganization extends Entity
     protected $dataRepository;
 
     /**
+     * This holds the position in the sort order of this Entity.
+     *
+     * @var integer
+     *
+     * @ORM\Column(nullable=true)
+     */
+    protected $sortOrder;
+
+    /**
      * Getter for fundingCycles.
      *
      * @access public
@@ -456,6 +465,18 @@ class FundingOrganization extends Entity
     public function getUrl()
     {
         return $this->url;
+    }
+
+    /**
+     * Getter for sortOrder.
+     *
+     * @access public
+     *
+     * @return integer Of position to use in a sorted list.
+     */
+    public function getSortOrder()
+    {
+        return $this->sortOrder;
     }
 
     /**
@@ -683,6 +704,24 @@ class FundingOrganization extends Entity
     public function getDataRepository()
     {
         return $this->dataRepository;
+    }
+
+    /**
+     * Setter for sortOrder.
+     *
+     * @param integer $position The position to set in the sort ordering.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setSortOrder($position)
+    {
+        if (null === $position) {
+            $this->sortOrder = null;
+        } elseif (is_int($position)) {
+            $this->sortOrder = $position;
+        }
     }
 
     /**
