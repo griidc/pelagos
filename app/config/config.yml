@@ -63,11 +63,11 @@ doctrine:
         types:
             text_array: "Doctrine\\DBAL\\PostgresTypes\\TextArrayType"
             xml: "Doctrine\\DBAL\\PostgresTypes\\XmlType"
-            pelagos_geometry: "Pelagos\\DoctrineExtensions\\DBAL\\Types\\GeometryType"
+            geometry: "Pelagos\\DoctrineExtensions\\DBAL\\Types\\GeometryType"
         mapping_types:
             _text: text_array
             xml: xml
-            pelagos_geometry: pelagos_geometry
+            geometry: geometry
     orm:
         metadata_cache_driver: apc
         query_cache_driver: apc
