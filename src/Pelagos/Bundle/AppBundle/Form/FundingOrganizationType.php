@@ -81,7 +81,6 @@ class FundingOrganizationType extends AbstractType
             ->add('sortOrder', IntegerType::class, array(
                 'label' => 'Sort Order:',
                 'required' => false,
-                'empty_data' => null,
             ));
     }
 
