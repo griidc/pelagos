@@ -38,7 +38,7 @@ class Metadata extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="pelagos_geometry", options={"srid"=4326}, nullable=true)
+     * @ORM\Column(type="geometry", options={"srid"=4326}, nullable=true)
      */
     protected $geometry;
 
