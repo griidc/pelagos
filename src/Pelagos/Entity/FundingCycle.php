@@ -195,7 +195,15 @@ class FundingCycle extends Entity
      *
      * @var integer
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(nullable=true, type="integer")
+     *
+     * @Assert\Range(
+     *     min = 1,
+     *     max = 2147483647,
+     *     minMessage = "Sort position must be {{ limit }} or more.",
+     *     maxMessage = "Sort position must be {{ limit }} or less.",
+     *     invalidMessage = "Sort position must be a positive integer."
+     * )
      */
     protected $sortOrder;
 
@@ -400,14 +408,16 @@ class FundingCycle extends Entity
      *
      * @access public
      *
+     * @throws \Exception If parameter passed is neither integer or null.
+     *
      * @return void
      */
     public function setSortOrder($position)
     {
-        if (null === $position) {
-            $this->sortOrder = null;
-        } elseif (is_int($position)) {
+        if (is_int($position) or null === $position) {
             $this->sortOrder = $position;
+        } else {
+            throw new \Exception('Unexpected input.  This should either be an int or null.');
         }
     }
 
