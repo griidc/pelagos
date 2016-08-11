@@ -408,7 +408,7 @@ class FundingCycle extends Entity
      *
      * @access public
      *
-     * @throws \Exception If parameter passed is neither integer or null.
+     * @throws \InvalidArgumentException If parameter passed is neither integer or null.
      *
      * @return void
      */
@@ -417,7 +417,7 @@ class FundingCycle extends Entity
         if (is_int($position) or null === $position) {
             $this->sortOrder = $position;
         } else {
-            throw new \Exception('Unexpected input.  This should either be an int or null.');
+            throw new \InvalidArgumentException('Unexpected input.  This should either be an int or null.');
         }
     }
 
