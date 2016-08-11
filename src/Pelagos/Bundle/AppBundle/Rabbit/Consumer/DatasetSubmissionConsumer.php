@@ -201,7 +201,9 @@ class DatasetSubmissionConsumer implements ConsumerInterface
         }
         // Log processing complete.
         $this->logger->info('Metadata file processing complete', $loggingContext);
-        $this->mdappLogger->writeLog(" $datasetId: Metadata file processing complete.");
+        $username = $datasetSubmission->getModifier()->getAccount()->getUsername();
+        $xferType = DatasetSubmission::TRANSFER_STATUSES[$datasetSubmission->getMetadataFileTransferType()];
+        $this->mdappLogger->writeLog("$username has registered new metadata via $xferType for $datasetId.");
         // Dispatch entity event.
         $this->entityEventDispatcher->dispatch($datasetSubmission, 'metadata_processed');
     }
