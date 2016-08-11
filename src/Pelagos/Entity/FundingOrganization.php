@@ -233,7 +233,7 @@ class FundingOrganization extends Entity
      *
      * @ORM\OneToMany(targetEntity="FundingCycle", mappedBy="fundingOrganization")
      *
-     * @ORM\OrderBy({"name" = "ASC"})
+     * @ORM\OrderBy({"sortOrder" = "ASC", "name" = "ASC"})
      */
     protected $fundingCycles;
 
@@ -262,6 +262,23 @@ class FundingOrganization extends Entity
      * )
      */
     protected $dataRepository;
+
+    /**
+     * This holds the position in the sort order of this Entity.
+     *
+     * @var integer
+     *
+     * @ORM\Column(nullable=true, type="integer")
+     *
+     * @Assert\Range(
+     *     min = 1,
+     *     max = 2147483647,
+     *     minMessage = "Sort position must be {{ limit }} or more.",
+     *     maxMessage = "Sort position must be {{ limit }} or less.",
+     *     invalidMessage = "Sort position must be a positive integer."
+     * )
+     */
+    protected $sortOrder;
 
     /**
      * Getter for fundingCycles.
@@ -456,6 +473,38 @@ class FundingOrganization extends Entity
     public function getUrl()
     {
         return $this->url;
+    }
+
+    /**
+     * Setter for sortOrder.
+     *
+     * @param integer $position The position to set in the sort ordering.
+     *
+     * @access public
+     *
+     * @throws \InvalidArgumentException If parameter passed is neither integer or null.
+     *
+     * @return void
+     */
+    public function setSortOrder($position)
+    {
+        if (is_int($position) or null === $position) {
+            $this->sortOrder = $position;
+        } else {
+            throw new \InvalidArgumentException('Unexpected input.  This should either be an int or null.');
+        }
+    }
+
+    /**
+     * Getter for sortOrder.
+     *
+     * @access public
+     *
+     * @return integer Of position to use in a sorted list.
+     */
+    public function getSortOrder()
+    {
+        return $this->sortOrder;
     }
 
     /**
