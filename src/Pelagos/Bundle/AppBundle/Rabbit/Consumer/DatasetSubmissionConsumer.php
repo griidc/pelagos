@@ -202,8 +202,26 @@ class DatasetSubmissionConsumer implements ConsumerInterface
         // Log processing complete.
         $this->logger->info('Metadata file processing complete', $loggingContext);
         $username = $datasetSubmission->getModifier()->getAccount()->getUsername();
-        $xferType = DatasetSubmission::TRANSFER_STATUSES[$datasetSubmission->getMetadataFileTransferType()];
-        $this->mdappLogger->writeLog("$username has registered new metadata via $xferType for $datasetId.");
+
+        $xferString = $datasetSubmission->getMetadataFileTransferType();
+        if (null === $xferString) {
+            $this->logger->error(
+                "Error processing metadata: unexpected null metadatafiletransfertype for dataset: $datasetId.",
+                $loggingContext
+            );
+            return;
+        } elseif (array_key_exists($xferString, DatasetSubmission::TRANSFER_TYPES)) {
+            $xferType = DatasetSubmission::TRANSFER_TYPES[$xferString];
+            $this->mdappLogger->writeLog(" $username has registered new metadata via $xferType for $datasetId.");
+        } else {
+            $this->logger->error(
+                'Error processing metadata: unexpected metadatafiletransfertype of: '
+                    . "$xferString for dataset: $datesetId.",
+                $loggingContext
+            );
+            return;
+        }
+
         // Dispatch entity event.
         $this->entityEventDispatcher->dispatch($datasetSubmission, 'metadata_processed');
     }
