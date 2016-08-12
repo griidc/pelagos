@@ -25,7 +25,7 @@ class Dataset extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $udi;
 
@@ -103,7 +103,7 @@ class Dataset extends Entity
      *
      * @see DatasetSubmission::METADATA_STATUS_* constants.
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      */
     protected $metadataStatus = DatasetSubmission::METADATA_STATUS_NONE;
 
@@ -132,7 +132,7 @@ class Dataset extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $issueTrackingTicket;
 

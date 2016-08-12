@@ -247,7 +247,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Title is required"
@@ -262,7 +262,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Abstract is required"
@@ -277,7 +277,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="At least one author is required"
@@ -292,7 +292,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Point of Contact Name is required"
@@ -307,7 +307,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Point of Contact E-Mail is required"
@@ -324,7 +324,7 @@ class DatasetSubmission extends Entity
      *
      * @see RESTRICTIONS class constant for valid values.
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      */
     protected $restrictions = self::RESTRICTION_NONE;
 
@@ -335,7 +335,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $doi;
 
@@ -348,7 +348,7 @@ class DatasetSubmission extends Entity
      *
      * @see TRANSFER_TYPES class constant for valid values.
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $datasetFileTransferType;
 
@@ -361,7 +361,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $datasetFileUri;
 
@@ -374,7 +374,7 @@ class DatasetSubmission extends Entity
      *
      * @see TRANSFER_STATUSES class constant for valid values.
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $datasetFileTransferStatus;
 
@@ -385,7 +385,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $datasetFileName;
 
@@ -407,7 +407,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $datasetFileMd5Hash;
 
@@ -418,7 +418,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $datasetFileSha1Hash;
 
@@ -429,7 +429,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $datasetFileSha256Hash;
 
@@ -497,7 +497,7 @@ class DatasetSubmission extends Entity
      *
      * @see TRANSFER_TYPES class constant for valid values.
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $metadataFileTransferType;
 
@@ -510,7 +510,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $metadataFileUri;
 
@@ -523,7 +523,7 @@ class DatasetSubmission extends Entity
      *
      * @see TRANSFER_STATUSES class constant for valid values.
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $metadataFileTransferStatus;
 
@@ -534,7 +534,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $metadataFileName;
 
@@ -545,7 +545,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $metadataFileSha256Hash;
 
@@ -558,7 +558,7 @@ class DatasetSubmission extends Entity
      *
      * @see METADATA_STATUSES class constant for valid values.
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      */
     protected $metadataStatus = self::METADATA_STATUS_NONE;
 

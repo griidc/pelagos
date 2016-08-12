@@ -140,7 +140,7 @@ class DIF extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Title is required"
@@ -175,7 +175,7 @@ class DIF extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Abstract is required"
@@ -251,7 +251,7 @@ class DIF extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $fieldOfStudyOther;
 
@@ -262,7 +262,7 @@ class DIF extends Entity
      *
      * @see DATA_SIZES class constant for valid values.
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $dataSize;
 
@@ -271,7 +271,7 @@ class DIF extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $variablesObserved;
 
@@ -325,7 +325,7 @@ class DIF extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $collectionMethodOther;
 
@@ -356,7 +356,7 @@ class DIF extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $spatialExtentDescription;
 
@@ -419,7 +419,7 @@ class DIF extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $nationalDataArchiveOther;
 
@@ -430,7 +430,7 @@ class DIF extends Entity
      *
      * @see ETHICAL_ISSUES class constant for valid values;
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $ethicalIssues;
 
@@ -439,7 +439,7 @@ class DIF extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $ethicalIssuesExplanation;
 
@@ -448,7 +448,7 @@ class DIF extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $remarks;
 
