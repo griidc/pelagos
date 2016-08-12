@@ -95,7 +95,7 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Description is required"
@@ -113,7 +113,7 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Website URL is required"
@@ -131,7 +131,7 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Phone number is required"
@@ -149,7 +149,7 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Delivery point is required"
@@ -167,7 +167,7 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="City is required"
@@ -185,7 +185,7 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Administrative area (state) is required"
@@ -203,7 +203,7 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Postal code (zip) is required"
@@ -221,7 +221,7 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Country is required"
