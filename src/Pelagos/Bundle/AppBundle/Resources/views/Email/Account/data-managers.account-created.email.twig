@@ -1,28 +1,34 @@
-{% block subject 'GRIIDC Account created' %}
+{% block subject 'GRIIDC Account created for ' ~ account.person.FirstName ~ ' ' ~ account.person.LastName %}
 
 {% block body_html %}
     Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},<br>
     <br>
-    An account has been requested and created for the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) for {{account.person.FirstName}} {{account.person.LastName}}, a member of {{ account.person.ResearchGroupNames | join(', ') }}.<br>
+    This email is being sent to notify you that {{account.person.FirstName}} {{account.person.LastName}} has completed
+    the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)
+    account creation process. {{account.person.FirstName}} {{account.person.LastName}} is a member of
+    {{ accoutn.person.ResearchGroupNames | join(', ') }}.<br />
     <br>
     Thank you,<br>
     <br>
     The GRIIDC Team<br>
     <br>
-    *You are receiving this email because you are identified as a data manager for a Gulf of Mexico Research Initiative Research Consortium. If you believe you should not be receiving this email please notify <a href="mailto:griidc@gomri.org">griidc@gomri.org</a>.*
+    *You are receiving this email because you are identified as a data manager for a Gulf of Mexico Research
+    Initiative Research Consortium. If you believe you should not be receiving this email please notify
+    <a href="mailto:griidc@gomri.org">griidc@gomri.org</a>.*
 {% endblock %}
 
 {% block body_text %}
-Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},
+This email is being sent to notify you that {{account.person.FirstName}} {{account.person.LastName}} has completed
+the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)
+account creation process. {{account.person.FirstName}} {{account.person.LastName}} is a member of
+{{ accoutn.person.ResearchGroupNames | join(', ') }}.
 
-
-An account has been requested and created for the Gulf of Mexico Research
-Initiative Information and Data Cooperative (GRIIDC) for {{account.person.FirstName}} {{account.person.LastName}},
-a member of {{ account.person.ResearchGroupNames | join(', ') }}.
 
 Thank you,
 
 The GRIIDC Team
 
-*You are receiving this email because you are identified as a data manager for a Gulf of Mexico Research Initiative Research Consortium. If you believe you should not be receiving this email please notify griidc@gomri.org.*
+*You are receiving this email because you are identified as a data manager for a Gulf of Mexico Research
+Initiative Research Consortium. If you believe you should not be receiving this email please notify
+griidc@gomri.org.*
 {% endblock %}
