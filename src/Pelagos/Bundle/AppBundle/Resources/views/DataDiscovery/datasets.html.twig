@@ -175,7 +175,7 @@ var tabIndex = 0;
             </div> <!-- tab2 -->
             <script>tabIndex++</script>
         {% endif %}
-        
+
         {% if datasets.inReview %}
             <script>datasets[tabIndex] = new Array();</script>
             <div id="tab-3" class="tab row">
@@ -263,7 +263,7 @@ var tabIndex = 0;
                                             <div class="attributes">
                                                 [<a href="javascript:showDatasetDetails({{ dataset[0].id }});" class="details_link">Show Details</a>]
                                                 {% if dataset[0].dif.estimatedStartDate or dataset[0].dif.estimatedEndDate %}
-                                                    [Data Acquisition Period: {{ dataset[0].dif.estimatedStartDate }} - {{ dataset[0].dif.estimatedEndDate }}]
+                                                    [Data Acquisition Period: {{ dataset[0].dif.estimatedStartDate|date('Y-m-d') }} - {{ dataset[0].dif.estimatedEndDate|date('Y-m-d') }}]
                                                 {% endif %}
                                                 <span class="disabled">[Size: ? MB]</span>
                                                 <span class="disabled">[Restrictions: ?]</span>
