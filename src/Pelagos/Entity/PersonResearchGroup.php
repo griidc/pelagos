@@ -99,7 +99,7 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Label is required"

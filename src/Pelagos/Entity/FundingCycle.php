@@ -97,7 +97,7 @@ class FundingCycle extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Description cannot contain angle brackets (< or >)"
@@ -112,7 +112,7 @@ class FundingCycle extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="URL cannot contain angle brackets (< or >)"
@@ -181,7 +181,7 @@ class FundingCycle extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\Regex(
      *      pattern="/^[A-Z\d]{2}$/",
