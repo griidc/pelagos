@@ -56,9 +56,9 @@ class DatasetSubmission extends Entity
      * Valid values for $restrictions.
      */
     const RESTRICTIONS = array(
-        'None' => self::RESTRICTION_NONE,
-        'Requires Author\'s Approval' => self::RESTRICTION_APPROVAL,
-        'Restricted' => self::RESTRICTION_RESTRICTED,
+        self::RESTRICTION_NONE => 'None',
+        self::RESTRICTION_APPROVAL => 'Requires Author\'s Approval',
+        self::RESTRICTION_RESTRICTED => 'Restricted',
     );
 
     /**
@@ -80,9 +80,9 @@ class DatasetSubmission extends Entity
      * Valid values for $datasetFileTransferType and $metadataFileTransferType.
      */
     const TRANSFER_TYPES = array(
-        'Direct Upload' => self::TRANSFER_TYPE_UPLOAD,
-        'Upload via SFTP/GridFTP' => self::TRANSFER_TYPE_SFTP,
-        'Request Pull from HTTP/FTP Server' => self::TRANSFER_TYPE_HTTP,
+        self::TRANSFER_TYPE_UPLOAD => 'Direct Upload',
+        self::TRANSFER_TYPE_SFTP => 'Upload via SFTP/GridFTP',
+        self::TRANSFER_TYPE_HTTP => 'Request Pull from HTTP/FTP Server',
     );
 
     /**
@@ -114,11 +114,11 @@ class DatasetSubmission extends Entity
      * Valid values for $datasetFileTransferStatus and $metadataFileTransferStatus.
      */
     const TRANSFER_STATUSES = array(
-        'Not Yet Transferred' => self::TRANSFER_STATUS_NONE,
-        'Transfer Complete' => self::TRANSFER_STATUS_COMPLETED,
-        'Transfer Error' => self::TRANSFER_STATUS_ERROR,
-        'URL Needs Review' => self::TRANSFER_STATUS_NEEDS_REVIEW,
-        'Remotely Hosted' => self::TRANSFER_STATUS_REMOTELY_HOSTED,
+        self::TRANSFER_STATUS_NONE => 'Not Yet Transferred',
+        self::TRANSFER_STATUS_COMPLETED => 'Transfer Complete',
+        self::TRANSFER_STATUS_ERROR => 'Transfer Error',
+        self::TRANSFER_STATUS_NEEDS_REVIEW => 'URL Needs Review',
+        self::TRANSFER_STATUS_REMOTELY_HOSTED => 'Remotely Hosted',
     );
 
     /**
@@ -155,12 +155,12 @@ class DatasetSubmission extends Entity
      * Valid values for $metadataStatus.
      */
     const METADATA_STATUSES = array(
-        'No Status' => self::METADATA_STATUS_NONE,
-        'Submitted' => self::METADATA_STATUS_SUBMITTED,
-        'In Review' => self::METADATA_STATUS_IN_REVIEW,
-        '2nd Check' => self::METADATA_STATUS_SECOND_CHECK,
-        'Accepted' => self::METADATA_STATUS_ACCEPTED,
-        'Bk To Sub' => self::METADATA_STATUS_BACK_TO_SUBMITTER,
+        self::METADATA_STATUS_NONE => 'No Status',
+        self::METADATA_STATUS_SUBMITTED => 'Submitted',
+        self::METADATA_STATUS_IN_REVIEW => 'In Review',
+        self::METADATA_STATUS_SECOND_CHECK => '2nd Check',
+        self::METADATA_STATUS_ACCEPTED => 'Accepted',
+        self::METADATA_STATUS_BACK_TO_SUBMITTER => 'Bk To Sub',
     );
 
     /**

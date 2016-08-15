@@ -58,7 +58,7 @@ class DatasetSubmissionType extends AbstractType
                 'required' => true,
             ))
             ->add('restrictions', ChoiceType::class, array(
-                'choices' => DatasetSubmission::RESTRICTIONS,
+                'choices' => array_flip(DatasetSubmission::RESTRICTIONS),
                 'data' => DatasetSubmission::RESTRICTION_NONE,
                 'label' => 'Restrictions:',
                 'placeholder' => false,
