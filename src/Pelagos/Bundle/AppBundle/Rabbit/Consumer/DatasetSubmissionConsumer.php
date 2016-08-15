@@ -124,6 +124,7 @@ class DatasetSubmissionConsumer implements ConsumerInterface
             return true;
         }
         $this->entityManager->persist($datasetSubmission);
+        $this->entityManager->persist($dataset);
         $this->entityManager->flush();
         return true;
     }
