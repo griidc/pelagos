@@ -129,6 +129,10 @@ class DatasetSubmissionController extends UIController
             }
         }
 
+        if ($dif->getStatus() !== DIF::STATUS_APPROVED) {
+            $datasetSubmission = null;
+        }
+
         $form = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionType::class,
@@ -213,6 +217,7 @@ class DatasetSubmissionController extends UIController
                 'researchGroups' => $researchGroups,
                 'researchers' => $researchers,
                 'loggedInPerson' => $loggedInPerson,
+                'dif' => $dif,
             )
         );
     }
