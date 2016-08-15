@@ -136,4 +136,28 @@ class DatasetController extends EntityController
         }
         return $this->makeNoContentResponse();
     }
+
+    /**
+     * Delete a Dataset and associated Metadata and Difs.
+     *
+     * @param integer $id The id of the Dataset to delete.
+     *
+     * @ApiDoc(
+     *   section = "Datasets",
+     *   statusCodes = {
+     *     204 = "The Dataset was successfully deleted.",
+     *     403 = "You do not have sufficient privileges to delete this Dataset.",
+     *     404 = "The requested Dataset was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @return Response A response object with an empty body and a "no content" status code.
+     */
+    public function deleteAction($id)
+    {
+        $this->handleDelete(Dataset::class, $id);
+        return $this->makeNoContentResponse();
+    }
+
 }
