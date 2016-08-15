@@ -70,7 +70,7 @@
 
 
 {% block body %}
-{% if found and dif.status != constant('Pelagos\\Entity\\DIF::STATUS_APPROVED') %}
+{% if found and dif is not null and dif.status != constant('Pelagos\\Entity\\DIF::STATUS_APPROVED') %}
     <div class="messages warning">
         <h2 class="element-invisible">Status message</h2>
         The DIF has not yet been submitted for dataset: {{ udi }}

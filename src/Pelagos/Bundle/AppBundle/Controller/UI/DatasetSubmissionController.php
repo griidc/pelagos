@@ -58,6 +58,8 @@ class DatasetSubmissionController extends UIController
 
         $buttonLabel = 'Register';
 
+        $dif = null;
+
         if ($udi != null) {
             $datasets = $this->entityHandler
                 ->getBy(Dataset::class, array('udi' => substr($udi, 0, 16)));
@@ -129,7 +131,7 @@ class DatasetSubmissionController extends UIController
             }
         }
 
-        if ($dif->getStatus() !== DIF::STATUS_APPROVED) {
+        if ($dif instanceof DIF and $dif->getStatus() !== DIF::STATUS_APPROVED) {
             $datasetSubmission = null;
         }
 
