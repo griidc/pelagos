@@ -38,7 +38,7 @@ class DoiRequest extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $doi;
 
@@ -58,7 +58,7 @@ class DoiRequest extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Website URL is required"
@@ -78,7 +78,7 @@ class DoiRequest extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="DOI Creator is required"
@@ -91,7 +91,7 @@ class DoiRequest extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Title is required"
@@ -104,7 +104,7 @@ class DoiRequest extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Publisher is required"
