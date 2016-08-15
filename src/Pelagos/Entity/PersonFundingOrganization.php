@@ -99,7 +99,7 @@ class PersonFundingOrganization extends Entity implements PersonAssociationInter
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Label is required"

@@ -73,7 +73,7 @@ class Password extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Password hash algorithm is required"

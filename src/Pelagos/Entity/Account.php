@@ -66,7 +66,7 @@ class Account extends Entity implements UserInterface, \Serializable
      *
      * @var string
      *
-     * @ORM\Column(unique=true)
+     * @ORM\Column(type="text", unique=true)
      *
      * @Assert\NotBlank(
      *     message="User ID is required"
@@ -130,7 +130,7 @@ class Account extends Entity implements UserInterface, \Serializable
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $homeDirectory;
 
@@ -139,7 +139,7 @@ class Account extends Entity implements UserInterface, \Serializable
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $loginShell;
 

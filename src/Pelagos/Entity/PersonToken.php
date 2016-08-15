@@ -57,7 +57,7 @@ class PersonToken extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Token text is required."
@@ -72,7 +72,7 @@ class PersonToken extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Token use is required."
