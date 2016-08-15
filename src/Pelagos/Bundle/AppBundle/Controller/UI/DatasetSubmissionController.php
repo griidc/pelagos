@@ -58,6 +58,8 @@ class DatasetSubmissionController extends UIController
 
         $buttonLabel = 'Register';
 
+        $dif = null;
+
         if ($udi != null) {
             $datasets = $this->entityHandler
                 ->getBy(Dataset::class, array('udi' => substr($udi, 0, 16)));
@@ -127,6 +129,10 @@ class DatasetSubmissionController extends UIController
                 }
                 $found = true;
             }
+        }
+
+        if ($dif instanceof DIF and $dif->getStatus() !== DIF::STATUS_APPROVED) {
+            $datasetSubmission = null;
         }
 
         $form = $this->get('form.factory')->createNamed(
@@ -213,6 +219,7 @@ class DatasetSubmissionController extends UIController
                 'researchGroups' => $researchGroups,
                 'researchers' => $researchers,
                 'loggedInPerson' => $loggedInPerson,
+                'dif' => $dif,
             )
         );
     }
