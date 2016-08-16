@@ -176,7 +176,7 @@ class DIFListener
      *
      * @param \Twig_Template $twigTemplate A twig template.
      * @param DIF            $dif          DIF of interest.
-     * @param array|null     $peopleObjs   An optional array of recepient Persons.
+     * @param array|null     $peopleObjs   An optional array of recipient Persons.
      *
      * @return void
      */
@@ -211,7 +211,7 @@ class DIFListener
      */
     protected function getDRPMs(DIF $dif)
     {
-        $recepientPeople = array();
+        $recipientPeople = array();
         $personDataRepositories = $dif->getResearchGroup()
                                       ->getFundingCycle()
                                       ->getFundingOrganization()
@@ -220,10 +220,10 @@ class DIFListener
 
         foreach ($personDataRepositories as $pdr) {
             if ($pdr->getRole()->getName() == DataRepositoryRoles::MANAGER) {
-                $recepientPeople[] = $pdr->getPerson();
+                $recipientPeople[] = $pdr->getPerson();
             }
         }
-        return $recepientPeople;
+        return $recipientPeople;
     }
 
     /**
@@ -235,15 +235,15 @@ class DIFListener
      */
     protected function getDMs(DIF $dif)
     {
-        $recepientPeople = array();
+        $recipientPeople = array();
         $personResearchGroups = $dif->getResearchGroup()->getPersonResearchGroups();
 
         foreach ($personResearchGroups as $prg) {
             if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
-                $recepientPeople[] = $prg->getPerson();
+                $recipientPeople[] = $prg->getPerson();
             }
         }
-        return $recepientPeople;
+        return $recipientPeople;
     }
 
     /**
@@ -273,17 +273,17 @@ class DIFListener
      */
     protected function getDMsFromPerson(Person $person)
     {
-        $recepientPeople = array();
+        $recipientPeople = array();
         $researchGroups = $person->getResearchGroups();
 
         foreach ($researchGroups as $rg) {
             $prgs = $rg->getPersonResearchGroups();
             foreach ($prgs as $prg) {
                 if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
-                    $recepientPeople[] = $prg->getPerson();
+                    $recipientPeople[] = $prg->getPerson();
                 }
             }
         }
-        return $recepientPeople;
+        return $recipientPeople;
     }
 }
