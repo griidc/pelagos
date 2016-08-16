@@ -92,11 +92,18 @@ abstract class EventListener
      * @param \Twig_Template $twigTemplate A twig template.
      * @param array          $mailData     Mail data array for email.
      * @param array|null     $peopleObjs   An optional array of recepient Persons.
+     * @param array          $attachments  An optional array of Swift_Message_Attachments to attach.
+     *
+     * @throws \InvalidArgumentException When any element of $attachments is not a Swift_Message_Attachment.
      *
      * @return void
      */
-    protected function sendMailMsg(\Twig_Template $twigTemplate, array $mailData, array $peopleObjs = null)
-    {
+    protected function sendMailMsg(
+        \Twig_Template $twigTemplate,
+        array $mailData,
+        array $peopleObjs = null,
+        array $attachments = array()
+    ) {
         $currentToken = $this->tokenStorage->getToken();
         if ($currentToken instanceof TokenInterface) {
             $currentUser = $this->tokenStorage->getToken()->getUser();
@@ -117,6 +124,12 @@ abstract class EventListener
                 ->setTo($person->getEmailAddress())
                 ->setBody($twigTemplate->renderBlock('body_html', $mailData), 'text/html')
                 ->addPart($twigTemplate->renderBlock('body_text', $mailData), 'text/plain');
+            foreach ($attachments as $attachment) {
+                if (!$attachment instanceof \Swift_Attachment) {
+                    throw new \InvalidArgumentException('Attachment is not an instance of Swift_Attachment');
+                }
+                $message->attach($attachment);
+            }
             $this->mailer->send($message);
         }
     }
