@@ -189,4 +189,27 @@ abstract class EventListener
         }
         return $recepientPeople;
     }
+
+    /**
+     * Internal method to resolve Data Managers from a Person.
+     *
+     * @param Person $person A Person entity.
+     *
+     * @return Array of all Persons who are Data Managers for the given Person.
+     */
+    protected function getDMsFromPerson(Person $person)
+    {
+        $recepientPeople = array();
+        $researchGroups = $person->getResearchGroups();
+
+        foreach ($researchGroups as $rg) {
+            $prgs = $rg->getPersonResearchGroups();
+            foreach ($prgs as $prg) {
+                if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
+                    $recepientPeople[] = $prg->getPerson();
+                }
+            }
+        }
+        return $recepientPeople;
+    }
 }
