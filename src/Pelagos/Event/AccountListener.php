@@ -35,18 +35,18 @@ class AccountListener extends EventListener
      */
     protected function getDMsFromAccount(Account $account)
     {
-        $recepientPeople = array();
+        $recipientPeople = array();
         $researchGroups = $account->getPerson()->getResearchGroups();
 
         foreach ($researchGroups as $rg) {
             $prgs = $rg->getPersonResearchGroups();
             foreach ($prgs as $prg) {
                 if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
-                    $recepientPeople[] = $prg->getPerson();
+                    $recipientPeople[] = $prg->getPerson();
                 }
             }
         }
-        return $recepientPeople;
+        return $recipientPeople;
     }
 
     /**

@@ -61,18 +61,18 @@ class DoiRequestListener extends EventListener
      */
     protected function getDMsFromDoiRequest(DoiRequest $doiRequest)
     {
-        $recepientPeople = array();
+        $recipientPeople = array();
         $researchGroups = $doiRequest->getCreator()->getResearchGroups();
 
         foreach ($researchGroups as $rg) {
             $prgs = $rg->getPersonResearchGroups();
             foreach ($prgs as $prg) {
                 if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
-                    $recepientPeople[] = $prg->getPerson();
+                    $recipientPeople[] = $prg->getPerson();
                 }
             }
         }
-        return $recepientPeople;
+        return $recipientPeople;
     }
 
     /**
