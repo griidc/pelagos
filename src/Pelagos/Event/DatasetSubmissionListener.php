@@ -105,5 +105,21 @@ class DatasetSubmissionListener extends EventListener
             ),
             array($datasetSubmission->getCreator())
         );
+
+        $metadataFileInfo = $this->dataStore->getDownloadFileInfo(
+            $datasetSubmission->getDataset()->getUdi(),
+            'metadata'
+        );
+
+        // email DRMs
+        $this->sendMailMsg(
+            $this->twig->loadTemplate('PelagosAppBundle:Email:data-repository-managers.metadata-processed.email.twig'),
+            array('datasetSubmission' => $datasetSubmission),
+            $this->getDRPMs($datasetSubmission->getDataset()),
+            array(
+                \Swift_Attachment::fromPath($metadataFileInfo->getRealPath())
+                    ->setFilename($datasetSubmission->getMetadataFileName())
+            )
+        );
     }
 }

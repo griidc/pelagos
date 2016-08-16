@@ -13,6 +13,7 @@ use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DataRepositoryRole;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\PersonDataRepository;
+use Pelagos\Util\DataStore;
 
 /**
  * Listener class for Dataset Submission-related events.
@@ -62,6 +63,13 @@ abstract class EventListener
     protected $entityHandler;
 
     /**
+     * An instance of the Pelagos Data Store utility service.
+     *
+     * @var DataStore
+     */
+    protected $dataStore;
+
+    /**
      * This is the class constructor to handle dependency injections.
      *
      * @param \Twig_Environment  $twig          Twig engine.
@@ -70,6 +78,7 @@ abstract class EventListener
      * @param string             $fromAddress   Sender's email address.
      * @param string             $fromName      Sender's name to include in email.
      * @param EntityHandler|null $entityHandler Pelagos entity handler.
+     * @param DataStore|null     $dataStore     An instance of the Pelagos Data Store utility service.
      */
     public function __construct(
         \Twig_Environment $twig,
@@ -77,13 +86,15 @@ abstract class EventListener
         TokenStorage $tokenStorage,
         $fromAddress,
         $fromName,
-        EntityHandler $entityHandler = null
+        EntityHandler $entityHandler = null,
+        DataStore $dataStore = null
     ) {
         $this->twig = $twig;
         $this->mailer = $mailer;
         $this->tokenStorage = $tokenStorage;
         $this->from = array($fromAddress => $fromName);
         $this->entityHandler = $entityHandler;
+        $this->dataStore = $dataStore;
     }
 
     /**
