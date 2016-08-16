@@ -68,7 +68,6 @@ class DIFListener
         $this->mailer = $mailer;
         $this->tokenStorage = $tokenStorage;
         $this->from = array($fromAddress => $fromName);
-        $this->currentUser = $tokenStorage->getToken()->getUser()->getPerson();
     }
 
     /**
@@ -92,7 +91,8 @@ class DIFListener
 
         // email Data Managers
         $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-submitted.email.twig');
-        $this->sendMailMsg($template, $dif, $this->getDMsFromPerson($this->currentUser));
+        $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
+        $this->sendMailMsg($template, $dif, $this->getDMsFromPerson($currentUser));
     }
 
     /**
@@ -152,7 +152,8 @@ class DIFListener
 
         // email DM
         $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-unlock-requested.email.twig');
-        $this->sendMailMsg($template, $dif, $this->getDMsFromPerson($this->currentUser));
+        $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
+        $this->sendMailMsg($template, $dif, $this->getDMsFromPerson($currentUser));
     }
 
     /**
@@ -166,7 +167,8 @@ class DIFListener
     {
         // email DM
         $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-created.email.twig');
-        $this->sendMailMsg($template, $this->getDIF($event), $this->getDMsFromPerson($this->currentUser));
+        $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
+        $this->sendMailMsg($template, $this->getDIF($event), $this->getDMsFromPerson($currentUser));
     }
 
     /**
@@ -260,5 +262,28 @@ class DIFListener
             throw new \Exception('Internal error: handler expects a DIF');
         }
         return $dif;
+    }
+
+    /**
+     * Internal method to resolve Data Managers from a Person.
+     *
+     * @param Person $person A Person entity.
+     *
+     * @return Array of all Persons who are Data Managers for the given Person.
+     */
+    protected function getDMsFromPerson(Person $person)
+    {
+        $recepientPeople = array();
+        $researchGroups = $person->getResearchGroups();
+
+        foreach ($researchGroups as $rg) {
+            $prgs = $rg->getPersonResearchGroups();
+            foreach ($prgs as $prg) {
+                if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
+                    $recepientPeople[] = $prg->getPerson();
+                }
+            }
+        }
+        return $recepientPeople;
     }
 }
