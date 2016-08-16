@@ -5,6 +5,8 @@ namespace Pelagos\Util;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
+use Pelagos\Exception\HtmlFoundException;
+
 /**
  * A class for manipulating the data store.
  */
@@ -87,8 +89,10 @@ class DataStore
      * @param string $datasetId The id of the dataset to add the file to.
      * @param string $type      The type (dataset or metadata) of the file.
      *
-     * @throws \Exception When the file URI is not set.
-     * @throws \Exception When the file does not exist.
+     * @throws \Exception         When the file URI is not set.
+     * @throws \Exception         When the file does not exist.
+     * @throws \Exception         When the file URI is http and file could not be downloaded.
+     * @throws HtmlFoundException When HTML is found.
      *
      * @return void
      */
@@ -99,6 +103,18 @@ class DataStore
         }
         if (preg_match('#^(file://|/)#', $fileUri) and !file_exists($fileUri)) {
             throw new \Exception("File: $fileUri not found!");
+        }
+        if (preg_match('/^http/', $fileUri)) {
+            $browser = new \Buzz\Browser();
+            $result = $browser->head($fileUri);
+            $status = $result->getHeaders()[0];
+            if (!preg_match('/200/', $status)) {
+                throw new \Exception("File could not be downloaded from $fileUri ($status)");
+            }
+            $contentType = $result->getHeader('Content-Type');
+            if (preg_match('#^text/html#', $contentType)) {
+                throw new HtmlFoundException("HTML file found at $fileUri");
+            }
         }
         $storeFileName = $this->getStoreFileName($datasetId, $type);
         $storeFilePath = $this->addFileToDataStoreDirectory($fileUri, $datasetId, $storeFileName);
