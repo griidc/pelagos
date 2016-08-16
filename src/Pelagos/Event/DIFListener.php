@@ -68,6 +68,7 @@ class DIFListener
         $this->mailer = $mailer;
         $this->tokenStorage = $tokenStorage;
         $this->from = array($fromAddress => $fromName);
+        $this->currentUser = $tokenStorage->getToken()->getUser()->getPerson();
     }
 
     /**
@@ -91,8 +92,7 @@ class DIFListener
 
         // email Data Managers
         $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-submitted.email.twig');
-        $this->sendMailMsg($template, $dif, $this->getDMs($dif));
-
+        $this->sendMailMsg($template, $dif, $this->getDMsFromPerson(Person $this->currentUser));
     }
 
     /**
@@ -132,7 +132,7 @@ class DIFListener
 
         // email data managers
         $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-unlocked.email.twig');
-        $this->sendMailMsg($template, $dif, $this->getDMs($dif));
+        $this->sendMailMsg($template, $dif, $this->getDMsFromPerson(Person $this->currentUser));
     }
 
     /**
@@ -166,7 +166,7 @@ class DIFListener
     {
         // email DM
         $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-created.email.twig');
-        $this->sendMailMsg($template, $this->getDIF($event), $this->getDMs($this->getDIF($event)));
+        $this->sendMailMsg($template, $this->getDIF($event), $this->getDMsFromPerson(Person $this->currentUser));
     }
 
     /**
