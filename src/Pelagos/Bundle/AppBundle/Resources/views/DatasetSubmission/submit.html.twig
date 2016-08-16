@@ -102,7 +102,7 @@ Thank you for your submission. Please email <a href="mailto:griidc@gomri.org?sub
                 <b>Available Date:</b>
             </td>
             <td>
-                {{ DatasetSubmission.getDatasetFileAvailabilityDate }}
+                {{ DatasetSubmission.getDatasetFileAvailabilityDate|date('Y-m-d') }}
             </td>
         </tr>
         <tr>
