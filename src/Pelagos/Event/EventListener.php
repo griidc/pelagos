@@ -13,6 +13,7 @@ use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DataRepositoryRole;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\PersonDataRepository;
+use Pelagos\Util\DataStore;
 
 /**
  * Listener class for Dataset Submission-related events.
@@ -62,6 +63,13 @@ abstract class EventListener
     protected $entityHandler;
 
     /**
+     * An instance of the Pelagos Data Store utility service.
+     *
+     * @var DataStore
+     */
+    protected $dataStore;
+
+    /**
      * This is the class constructor to handle dependency injections.
      *
      * @param \Twig_Environment  $twig          Twig engine.
@@ -70,6 +78,7 @@ abstract class EventListener
      * @param string             $fromAddress   Sender's email address.
      * @param string             $fromName      Sender's name to include in email.
      * @param EntityHandler|null $entityHandler Pelagos entity handler.
+     * @param DataStore|null     $dataStore     An instance of the Pelagos Data Store utility service.
      */
     public function __construct(
         \Twig_Environment $twig,
@@ -77,13 +86,15 @@ abstract class EventListener
         TokenStorage $tokenStorage,
         $fromAddress,
         $fromName,
-        EntityHandler $entityHandler = null
+        EntityHandler $entityHandler = null,
+        DataStore $dataStore = null
     ) {
         $this->twig = $twig;
         $this->mailer = $mailer;
         $this->tokenStorage = $tokenStorage;
         $this->from = array($fromAddress => $fromName);
         $this->entityHandler = $entityHandler;
+        $this->dataStore = $dataStore;
     }
 
     /**
@@ -92,11 +103,18 @@ abstract class EventListener
      * @param \Twig_Template $twigTemplate A twig template.
      * @param array          $mailData     Mail data array for email.
      * @param array|null     $peopleObjs   An optional array of recipient Persons.
+     * @param array          $attachments  An optional array of Swift_Message_Attachments to attach.
+     *
+     * @throws \InvalidArgumentException When any element of $attachments is not a Swift_Message_Attachment.
      *
      * @return void
      */
-    protected function sendMailMsg(\Twig_Template $twigTemplate, array $mailData, array $peopleObjs = null)
-    {
+    protected function sendMailMsg(
+        \Twig_Template $twigTemplate,
+        array $mailData,
+        array $peopleObjs = null,
+        array $attachments = array()
+    ) {
         $currentToken = $this->tokenStorage->getToken();
         if ($currentToken instanceof TokenInterface) {
             $currentUser = $this->tokenStorage->getToken()->getUser();
@@ -117,6 +135,12 @@ abstract class EventListener
                 ->setTo($person->getEmailAddress())
                 ->setBody($twigTemplate->renderBlock('body_html', $mailData), 'text/html')
                 ->addPart($twigTemplate->renderBlock('body_text', $mailData), 'text/plain');
+            foreach ($attachments as $attachment) {
+                if (!$attachment instanceof \Swift_Attachment) {
+                    throw new \InvalidArgumentException('Attachment is not an instance of Swift_Attachment');
+                }
+                $message->attach($attachment);
+            }
             $this->mailer->send($message);
         }
     }

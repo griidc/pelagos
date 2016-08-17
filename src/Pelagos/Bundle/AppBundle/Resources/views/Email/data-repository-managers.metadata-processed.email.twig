@@ -1,0 +1,25 @@
+{% block subject 'New metadata file for ' ~ datasetSubmission.dataset.udi %}
+
+{% block body_html %}
+A new metadata file for {{ datasetSubmission.dataset.udi }} has been submitted:<br>
+<br>
+Filename: {{ datasetSubmission.metadataFileName }}<br>
+UDI: {{ datasetSubmission.dataset.udi }}<br>
+Dataset Title: {{ datasetSubmission.dataset.title }}<br>
+Research Group: {{ datasetSubmission.dataset.researchGroup.name }}<br>
+SHA256 Hash: {{ datasetSubmission.metadataFileSha256Hash }}<br>
+<br>
+The metadata file is attached.
+{% endblock %}
+
+{% block body_text %}
+A new metadata file for {{ datasetSubmission.dataset.udi }} has been submitted:
+
+Filename: {{ datasetSubmission.metadataFileName }}
+UDI: {{ datasetSubmission.dataset.udi }}
+Dataset Title: {{ datasetSubmission.dataset.title }}
+Research Group: {{ datasetSubmission.dataset.researchGroup.name }}
+SHA256 Hash: {{ datasetSubmission.metadataFileSha256Hash }}
+
+The metadata file is attached.
+{% endblock %}
