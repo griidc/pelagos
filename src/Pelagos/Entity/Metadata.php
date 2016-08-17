@@ -671,8 +671,10 @@ EOF;
             '/text()'
         );
 
-        if (count($fileFormats) == 1) {
+        if (count($fileFormats) > 0) {
             $this->setFileFormat($fileFormats[0]);
+        } else {
+            $this->setFileFormat(null);
         }
 
         $basePath .= '/gmd:identificationInfo' .
@@ -687,8 +689,10 @@ EOF;
             '/text()'
         );
 
-        if (count($titles) == 1) {
+        if (count($titles) > 0) {
             $this->setTitle($titles[0]);
+        } else {
+            $this->setTitle(null);
         }
 
         $abstracts = $this->xml->xpath(
@@ -698,8 +702,10 @@ EOF;
             '/text()'
         );
 
-        if (count($abstracts) == 1) {
+        if (count($abstracts) > 0) {
             $this->setAbstract($abstracts[0]);
+        } else {
+            $this->setAbstract(null);
         }
 
         $purpose = $this->xml->xpath(
@@ -709,8 +715,10 @@ EOF;
             '/text()'
         );
 
-        if (count($purpose) == 1) {
+        if (count($purpose) > 0) {
             $this->setPurpose($purpose[0]);
+        } else {
+            $this->setPurpose(null);
         }
 
         $themeKeywords = $this->xml->xpath(
@@ -726,6 +734,8 @@ EOF;
 
         if (count($themeKeywords) > 0) {
             $this->setThemeKeywords($themeKeywords);
+        } else {
+            $this->setThemeKeywords(null);
         }
 
         $basePath .= '/gmd:extent' .
@@ -741,8 +751,10 @@ EOF;
             '/text()'
         );
 
-        if (count($beginPositions) == 1) {
+        if (count($beginPositions) > 0) {
             $this->setBeginPosition($beginPositions[0]);
+        } else {
+            $this->setBeginPosition(null);
         }
 
         $endPositions = $this->xml->xpath(
@@ -755,8 +767,10 @@ EOF;
             '/text()'
         );
 
-        if (count($endPositions) == 1) {
+        if (count($endPositions) > 0) {
             $this->setEndPosition($endPositions[0]);
+        } else {
+            $this->setEndPosition(null);
         }
 
         $extentDescriptions = $this->xml->xpath(
@@ -766,8 +780,10 @@ EOF;
             '/text()'
         );
 
-        if (count($extentDescriptions) == 1) {
+        if (count($extentDescriptions) > 0) {
             $this->setExtentDescription($extentDescriptions[0]);
+        } else {
+            $this->setExtentDescription(null);
         }
 
         $gmls = $this->xml->xpath(
@@ -778,9 +794,11 @@ EOF;
             '/child::*'
         );
 
-        if (count($gmls) == 1) {
+        if (count($gmls) > 0) {
             $gml = $gmls[0]->asXML();
             $this->setGeometry($gml);
+        } else {
+            $this->setGeometry(null);
         }
     }
 }
