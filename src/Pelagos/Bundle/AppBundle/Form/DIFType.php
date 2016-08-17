@@ -201,10 +201,11 @@ class DIFType extends AbstractType
                     'placeholder' => 'yyyy-mm-dd'
                 ),
             ))
-            ->add('spatialExtentDescription', TextType::class, array(
+            ->add('spatialExtentDescription', TextareaType::class, array(
                 'label' => 'Description:',
                 'attr' => array(
-                    'placeholder' => 'Example - "lab measurements of oil degradation, no field sampling involved"'
+                    'placeholder' => 'Example - "lab measurements of oil degradation, no field sampling involved"',
+                    'rows' => 5
                 ),
                 'required' => false,
             ))
