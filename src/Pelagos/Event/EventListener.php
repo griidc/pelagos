@@ -91,7 +91,7 @@ abstract class EventListener
      *
      * @param \Twig_Template $twigTemplate A twig template.
      * @param array          $mailData     Mail data array for email.
-     * @param array|null     $peopleObjs   An optional array of recepient Persons.
+     * @param array|null     $peopleObjs   An optional array of recipient Persons.
      *
      * @return void
      */
@@ -130,7 +130,7 @@ abstract class EventListener
      */
     protected function getDRPMs(Dataset $dataset)
     {
-        $recepientPeople = array();
+        $recipientPeople = array();
         $personDataRepositories = $dataset->getResearchGroup()
                                           ->getFundingCycle()
                                           ->getFundingOrganization()
@@ -139,10 +139,10 @@ abstract class EventListener
 
         foreach ($personDataRepositories as $pdr) {
             if ($pdr->getRole()->getName() == DataRepositoryRoles::MANAGER) {
-                $recepientPeople[] = $pdr->getPerson();
+                $recipientPeople[] = $pdr->getPerson();
             }
         }
-        return $recepientPeople;
+        return $recipientPeople;
     }
 
     /**
@@ -154,7 +154,7 @@ abstract class EventListener
      */
     protected function getAllDRPMs()
     {
-        $recepientPeople = array();
+        $recipientPeople = array();
         $eh = $this->entityHandler;
 
         $drpmRole = $eh->getBy(DataRepositoryRole::class, array('name' => DataRepositoryRoles::MANAGER));
@@ -164,10 +164,10 @@ abstract class EventListener
         $personDataRepositories = $eh->getBy(PersonDataRepository::class, array('role' => $drpmRole[0] ));
 
         foreach ($personDataRepositories as $pdr) {
-            $recepientPeople[] = $pdr->getPerson();
+            $recipientPeople[] = $pdr->getPerson();
         }
 
-        return $recepientPeople;
+        return $recipientPeople;
     }
 
     /**
@@ -179,14 +179,14 @@ abstract class EventListener
      */
     protected function getDMs(Dataset $dataset)
     {
-        $recepientPeople = array();
+        $recipientPeople = array();
         $personResearchGroups = $dataset->getResearchGroup()->getPersonResearchGroups();
 
         foreach ($personResearchGroups as $prg) {
             if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
-                $recepientPeople[] = $prg->getPerson();
+                $recipientPeople[] = $prg->getPerson();
             }
         }
-        return $recepientPeople;
+        return $recipientPeople;
     }
 }
