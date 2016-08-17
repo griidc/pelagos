@@ -122,4 +122,46 @@ class DatasetSubmissionListener extends EventListener
             )
         );
     }
+
+    /**
+     * Method to send an email to DRMs when HTML was found for a dataset file.
+     *
+     * @param EntityEvent $event Event being acted upon.
+     *
+     * @return void
+     */
+    public function onHtmlFound(EntityEvent $event)
+    {
+        $datasetSubmission = $event->getEntity();
+
+        // email DRMs
+        $this->sendMailMsg(
+            $this->twig->loadTemplate(
+                'PelagosAppBundle:Email:data-repository-managers.html-found-for-dataset.email.twig'
+            ),
+            array('datasetSubmission' => $datasetSubmission),
+            $this->getDRPMs($datasetSubmission->getDataset())
+        );
+    }
+
+    /**
+     * Method to send an email to DRMs when the submitted dataset file is unprocessable.
+     *
+     * @param EntityEvent $event Event being acted upon.
+     *
+     * @return void
+     */
+    public function onDatasetUnprocessable(EntityEvent $event)
+    {
+        $datasetSubmission = $event->getEntity();
+
+        // email DRMs
+        $this->sendMailMsg(
+            $this->twig->loadTemplate(
+                'PelagosAppBundle:Email:data-repository-managers.dataset-unprocessable.email.twig'
+            ),
+            array('datasetSubmission' => $datasetSubmission),
+            $this->getDRPMs($datasetSubmission->getDataset())
+        );
+    }
 }

@@ -15,6 +15,8 @@ use Pelagos\Entity\DatasetSubmission;
 
 use Pelagos\Event\EntityEventDispatcher;
 
+use Pelagos\Exception\HtmlFoundException;
+
 use Pelagos\Util\DataStore;
 use Pelagos\Util\MdappLogger;
 
@@ -157,8 +159,19 @@ class DatasetSubmissionConsumer implements ConsumerInterface
             $datasetSubmission->setDatasetFileTransferStatus(
                 DatasetSubmission::TRANSFER_STATUS_COMPLETED
             );
-        } catch (\Exception $exception) {
+        } catch (HtmlFoundException $exception) {
+            $datasetSubmission->setDatasetFileTransferStatus(
+                DatasetSubmission::TRANSFER_STATUS_NEEDS_REVIEW
+            );
             $this->logger->error('Error processing dataset: ' . $exception->getMessage(), $loggingContext);
+            $this->entityEventDispatcher->dispatch($datasetSubmission, 'html_found');
+            return;
+        } catch (\Exception $exception) {
+            $datasetSubmission->setDatasetFileTransferStatus(
+                DatasetSubmission::TRANSFER_STATUS_NEEDS_REVIEW
+            );
+            $this->logger->error('Error processing dataset: ' . $exception->getMessage(), $loggingContext);
+            $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_unprocessable');
             return;
         }
         // Log processing complete.
