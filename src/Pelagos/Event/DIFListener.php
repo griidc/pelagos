@@ -91,8 +91,8 @@ class DIFListener
 
         // email Data Managers
         $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-submitted.email.twig');
-        $this->sendMailMsg($template, $dif, $this->getDMs($dif));
-
+        $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
+        $this->sendMailMsg($template, $dif, $this->getDMsFromPerson($currentUser));
     }
 
     /**
@@ -152,7 +152,8 @@ class DIFListener
 
         // email DM
         $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-unlock-requested.email.twig');
-        $this->sendMailMsg($template, $dif, $this->getDMs($dif));
+        $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
+        $this->sendMailMsg($template, $dif, $this->getDMsFromPerson($currentUser));
     }
 
     /**
@@ -166,7 +167,8 @@ class DIFListener
     {
         // email DM
         $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-created.email.twig');
-        $this->sendMailMsg($template, $this->getDIF($event), $this->getDMs($this->getDIF($event)));
+        $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
+        $this->sendMailMsg($template, $this->getDIF($event), $this->getDMsFromPerson($currentUser));
     }
 
     /**
@@ -174,7 +176,7 @@ class DIFListener
      *
      * @param \Twig_Template $twigTemplate A twig template.
      * @param DIF            $dif          DIF of interest.
-     * @param array|null     $peopleObjs   An optional array of recepient Persons.
+     * @param array|null     $peopleObjs   An optional array of recipient Persons.
      *
      * @return void
      */
@@ -209,7 +211,7 @@ class DIFListener
      */
     protected function getDRPMs(DIF $dif)
     {
-        $recepientPeople = array();
+        $recipientPeople = array();
         $personDataRepositories = $dif->getResearchGroup()
                                       ->getFundingCycle()
                                       ->getFundingOrganization()
@@ -218,10 +220,10 @@ class DIFListener
 
         foreach ($personDataRepositories as $pdr) {
             if ($pdr->getRole()->getName() == DataRepositoryRoles::MANAGER) {
-                $recepientPeople[] = $pdr->getPerson();
+                $recipientPeople[] = $pdr->getPerson();
             }
         }
-        return $recepientPeople;
+        return $recipientPeople;
     }
 
     /**
@@ -233,15 +235,15 @@ class DIFListener
      */
     protected function getDMs(DIF $dif)
     {
-        $recepientPeople = array();
+        $recipientPeople = array();
         $personResearchGroups = $dif->getResearchGroup()->getPersonResearchGroups();
 
         foreach ($personResearchGroups as $prg) {
             if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
-                $recepientPeople[] = $prg->getPerson();
+                $recipientPeople[] = $prg->getPerson();
             }
         }
-        return $recepientPeople;
+        return $recipientPeople;
     }
 
     /**
@@ -260,5 +262,28 @@ class DIFListener
             throw new \Exception('Internal error: handler expects a DIF');
         }
         return $dif;
+    }
+
+    /**
+     * Internal method to resolve Data Managers from a Person.
+     *
+     * @param Person $person A Person entity.
+     *
+     * @return Array of all Persons who are Data Managers for the given Person.
+     */
+    protected function getDMsFromPerson(Person $person)
+    {
+        $recipientPeople = array();
+        $researchGroups = $person->getResearchGroups();
+
+        foreach ($researchGroups as $rg) {
+            $prgs = $rg->getPersonResearchGroups();
+            foreach ($prgs as $prg) {
+                if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
+                    $recipientPeople[] = $prg->getPerson();
+                }
+            }
+        }
+        return $recipientPeople;
     }
 }
