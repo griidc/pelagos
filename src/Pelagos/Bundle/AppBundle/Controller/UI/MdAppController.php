@@ -154,7 +154,9 @@ class MdAppController extends UIController
         $udi = $dataset->getUdi();
         $to = $request->request->get('to');
         if (null !== $to) {
-            $dataset->getDatasetSubmission()->setMetadataStatus($to);
+            $datasetSubmission = $dataset->getDatasetSubmission();
+            $datasetSubmission->setMetadataStatus($to);
+            $entityHandler->update($datasetSubmission);
             $entityHandler->update($dataset);
             $mdappLogger->writeLog($this->getUser()->getUsername() . " has changed metadata status for $udi ($from -> $to)");
         }
