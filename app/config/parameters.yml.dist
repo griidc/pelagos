@@ -20,6 +20,8 @@ parameters:
     mailer_password:   ~
     mailer_from_addr:  ~
     mailer_from_name:  ~
+    # Exim only allows 10 messages per connection by default
+    mailer_antiflood_threshold: 10
 
     # MDAPP Parameter - logfile l(must be read/writable by apache via facl)
     mdapp_logfile: ~
