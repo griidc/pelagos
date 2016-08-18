@@ -46,13 +46,13 @@ class DatalandController extends UIController
             $rawXml = $dataset->getMetadata()->getXml()->asXml();
         }
 
-         if ($dataset->getDif() instanceof DIF) {
+        if ($dataset->getDif() instanceof DIF) {
             $wkt = $geometryUtil->convertGmlToWkt(
                 $dataset
                 ->getDif()
                 ->getSpatialExtentGeometry()
             );
-         }
+        }
 
         if ($dataset->getMetadata() instanceof Metadata) {
             $wkt = $dataset->getMetadata()->getGeometry();
