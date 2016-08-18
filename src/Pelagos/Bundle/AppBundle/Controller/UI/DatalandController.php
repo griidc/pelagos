@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Pelagos\Entity\Dataset;
+use Pelagos\Entity\DIF;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\Metadata;
 
@@ -35,11 +36,26 @@ class DatalandController extends UIController
     {
         $dataset = $this->getDataset($udi);
 
+        $geometryUtil = $this->get('pelagos.util.geometry');
+
         $rawXml = null;
+        $wkt = null;
 
         if ($dataset->getMetadata() instanceof Metadata
             and $dataset->getMetadata()->getXml() instanceof \SimpleXMLElement) {
             $rawXml = $dataset->getMetadata()->getXml()->asXml();
+        }
+
+         if ($dataset->getDif() instanceof DIF) {
+            $wkt = $geometryUtil->convertGmlToWkt(
+                $dataset
+                ->getDif()
+                ->getSpatialExtentGeometry()
+            );
+         }
+
+        if ($dataset->getMetadata() instanceof Metadata) {
+            $wkt = $dataset->getMetadata()->getGeometry();
         }
 
         return $this->render(
@@ -47,6 +63,7 @@ class DatalandController extends UIController
             $twigData = array(
                 'dataset' => $dataset,
                 'rawxml' => $rawXml,
+                'wkt' => $wkt,
             )
         );
     }
