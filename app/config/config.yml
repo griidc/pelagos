@@ -94,7 +94,7 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     antiflood:
-        threshold:            10
+        threshold: 10
 
 fos_rest:
     view:
