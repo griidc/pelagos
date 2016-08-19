@@ -89,11 +89,7 @@
                 {% set registered_icon = red_icon %}
             {% endif %}
 
-            {% if dataset.datasetSubmissionStatus != constant('Pelagos\\Entity\\DatasetSubmission::STATUS_COMPLETE') %}
-                {% set metadata_na = metadata_na + 1 %}
-                {% set metadata_title = "This dataset has not yet been registered." %}
-                {% set metadata_icon = na_icon %}
-            {% elseif dataset.metadataStatus == constant('Pelagos\\Entity\\DatasetSubmission::METADATA_STATUS_NONE') %}
+            {% if dataset.metadataStatus == constant('Pelagos\\Entity\\DatasetSubmission::METADATA_STATUS_NONE') %}
                 {% set metadata_red = metadata_red + 1 %}
                 {% set metadata_title = "This dataset has been registered, but no metadata has been submitted." %}
                 {% set metadata_icon = red_icon %}
