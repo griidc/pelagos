@@ -186,7 +186,7 @@ class DIFListener
         $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
 
         $mailData = array('dif' => $dif, 'user' => $currentUser);
-        if ($peopleObjs == null) {
+        if (null === $peopleObjs) {
             $peopleObjs = array($currentUser);
         }
 
