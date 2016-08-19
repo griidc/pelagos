@@ -157,13 +157,13 @@ class DIFListener
     }
 
     /**
-     * Method to email data managers when a DIF is created.
+     * Method to email data managers when a DIF is saved but not submitted.
      *
      * @param EntityEvent $event Event being acted upon.
      *
      * @return void
      */
-    public function onCreated(EntityEvent $event)
+    public function onSavedNotSubmitted(EntityEvent $event)
     {
         // email DM
         $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-created.email.twig');
