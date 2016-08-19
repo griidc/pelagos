@@ -165,7 +165,7 @@ $(document).ready(function()
 
     });
 
-    $("#difGeoloc").change(function() {
+    $("#spatialExtentGeometry").change(function() {
         geowizard.haveGML($(this).val());
     });
 
@@ -634,6 +634,8 @@ function formReset(dontScrollToTop)
     $.when(formChanged()).done(function() {
         $("#difForm").trigger("reset");
         $("#udi").val("").change();
+        $("#spatialExtentGeometry").val("").change();
+        $("#spatialExtentDescription").val("").change();
         $("#status").val("Open").change();
         //formHash = $("#difForm").serialize();
         formHash = undefined;
