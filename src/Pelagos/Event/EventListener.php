@@ -121,7 +121,7 @@ abstract class EventListener
             if ($currentUser instanceof Account) {
                 $currentPerson = $currentUser->getPerson();
                 $mailData['user'] = $currentPerson;
-                if ($peopleObjs == null) {
+                if (null === $peopleObjs) {
                     $peopleObjs = array($currentPerson);
                 }
             }
