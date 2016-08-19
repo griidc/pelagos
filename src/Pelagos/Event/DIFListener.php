@@ -108,7 +108,7 @@ class DIFListener
 
         // email user
         $template = $this->twig->loadTemplate('@DIFEmail/user/user.dif-approved.email.twig');
-        $this->sendMailMsg($template, $dif);
+        $this->sendMailMsg($template, $dif, array($dif->getCreator()));
 
         // email DM
         $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-approved.email.twig');
@@ -128,7 +128,7 @@ class DIFListener
 
         // email user
         $template = $this->twig->loadTemplate('@DIFEmail/user/user.dif-unlocked.email.twig');
-        $this->sendMailMsg($template, $dif);
+        $this->sendMailMsg($template, $dif, array($dif->getCreator()));
 
         // email data managers
         $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-unlocked.email.twig');
