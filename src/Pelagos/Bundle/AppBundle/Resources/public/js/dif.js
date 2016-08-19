@@ -401,7 +401,7 @@ function setFormStatus()
     }
     else if (isAdmin != "1")
     {
-        $("form :input").not(":hidden").prop("disabled",true);
+        $("form :input").not(":hidden,#btnReset").prop("disabled",true);
         $("#btnSubmit").prop("disabled",true);
         $("#btnSave").prop("disabled",true);
         if (Status == "2")
