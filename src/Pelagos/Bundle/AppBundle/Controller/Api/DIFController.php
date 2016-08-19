@@ -108,8 +108,11 @@ class DIFController extends EntityController
         $udi = $this->container->get('pelagos.util.udi')->mintUdi($dataset);
         // Update the Dataset with the new UDI.
         $this->container->get('pelagos.entity.handler')->update($dataset);
-        // Dispatch an event to indicate a dataset has been created via a DIF.
-        $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch($dif, 'dataset_created');
+        // If the "Save and Continue Later" button was pressed.
+        if ($request->request->get('button') === 'save') {
+            // Dispatch an event to indicate a DIF has been saved but not submitted.
+            $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch($dif, 'saved_not_submitted');
+        }
         // Return a created response, adding the UDI as a custom response header.
         return $this->makeCreatedResponse('pelagos_api_difs_get', $dif->getId(), array('X-UDI' => $udi));
     }
