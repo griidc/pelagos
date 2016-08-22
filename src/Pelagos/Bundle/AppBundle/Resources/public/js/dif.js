@@ -255,7 +255,7 @@ $(document).ready(function()
     var $_GET = getQueryParams(document.location.search);
     if (typeof $_GET["id"] != "undefined") {
         var udi = $_GET["id"];
-        var url =  $("#difForm").attr("dataset") + "?udi=" + udi;
+        var url =  $("#difForm").attr("dataset") + "?udi=" + udi + "&_properties=dif.id";
         $.get(url, function(data) {
             if (data.length == 1) {
                 getNode(udi, data[0].dif.id);
