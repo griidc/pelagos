@@ -7,7 +7,7 @@
 {% if dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') or dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED') %}
 {% set dataset_available = 1 %}
 {% endif %}
-        
+
 <div style="position: relative;">
 <font size="3">
 <div style="float:right;" class="minitoolbar">
@@ -16,6 +16,14 @@
             {% if dataset_available %}
                 {% image '@PelagosAppBundle/Resources/public/images/download-package.png' %}
                 <img width="40px" height="40px" id="downloadds" src="{{asset_url}}">
+                {% endimage %}
+            {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED') %}
+                {% image '@PelagosAppBundle/Resources/public/images/download-package.png' %}
+                <img width="40px" height="40px" id="downloaddsdenrestricted" src="{{asset_url}}">
+                {% endimage %}
+            {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL') %}
+                {% image '@PelagosAppBundle/Resources/public/images/download-package.png' %}
+                <img width="40px" height="40px" id="downloaddsdenapproval" src="{{asset_url}}">
                 {% endimage %}
             {% else %}
                 {% image '@PelagosAppBundle/Resources/public/images/download-package-grey.png' %}

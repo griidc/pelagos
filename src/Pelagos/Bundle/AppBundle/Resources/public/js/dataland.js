@@ -70,6 +70,18 @@ var dlmap = new GeoViz();
             $("#download_dialog").dialog('open');
         });
 
+        $("#downloaddsdenrestricted").button().click(function() {
+            $("#download_dialog").dialog('option', 'title', 'Dataset Not Available');
+            $("#download_dialog").html('This dataset is restricted for author use only.');
+            $("#download_dialog").dialog('open');
+        });
+
+        $("#downloaddsdenapproval").button().click(function() {
+            $("#download_dialog").dialog('option', 'title', 'Dataset Not Available');
+            $("#download_dialog").html('This dataset can only be downloaded with author approval.');
+            $("#download_dialog").dialog('open');
+        });
+
         $("#metadatadl").button().click(function() {
             window.location = Routing.generate("pelagos_app_ui_dataland_metadata", {"udi": udi});
         });
@@ -114,6 +126,34 @@ var dlmap = new GeoViz();
             },
             content: {
                 text: 'This dataset is not currently available for download.'
+            }
+        });
+
+        $("#downloaddsdenrestricted").qtip({
+            position: {
+                adjust: {
+                    method: "flip flip"
+                },
+                my: "bottom right",
+                at: "top left",
+                viewport: $(window)
+            },
+            content: {
+                text: 'Download dataset'
+            }
+        });
+
+        $("#downloaddsdenapproval").qtip({
+            position: {
+                adjust: {
+                    method: "flip flip"
+                },
+                my: "bottom right",
+                at: "top left",
+                viewport: $(window)
+            },
+            content: {
+                text: 'Download dataset'
             }
         });
 
