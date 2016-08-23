@@ -306,7 +306,7 @@ class Dataset extends Entity
     {
         // If this Dataset has Metadata.
         if (null !== $this->metadata) {
-            // Return its title.
+            // Return its abstract.
             return $this->metadata->getAbstract();
         }
         // If this Dataset has a submission.
