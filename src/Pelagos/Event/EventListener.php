@@ -238,7 +238,7 @@ abstract class EventListener
      * Method to resolve all DMs associated with a Person and Dataset.
      *
      * @param Dataset $dataset A Dataset entity.
-     * @param Person $person A Person entity.
+     * @param Person  $person  A Person entity.
      *
      * @return Array of Persons who are Data Managers associated with the Person or Dataset.
      */
