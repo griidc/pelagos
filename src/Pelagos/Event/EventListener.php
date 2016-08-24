@@ -224,13 +224,17 @@ abstract class EventListener
     public function getPersonDMs(Person $person)
     {
         $recipientPeople = array();
-        $personResearchGroups = $person->getPersonResearchGroups();
+        $researchGroups = $person->getResearchGroups();
 
-        foreach ($personResearchGroups as $prg) {
-            if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
-                $recipientPeople[] = $prg->getPerson();
+        foreach ($researchGroups as $rg) {
+            $prgs = $rg->getPersonResearchGroups();
+            foreach ($prgs as $prg) {
+                if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
+                    $recipientPeople[] = $prg->getPerson();
+                }
             }
         }
+
         return $recipientPeople;
     }
 
