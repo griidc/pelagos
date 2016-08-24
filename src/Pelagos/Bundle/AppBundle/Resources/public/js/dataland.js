@@ -30,6 +30,10 @@ var dlmap = new GeoViz();
 
         $("#tabs").tabs({ heightStyle: "content" });
 
+        $('#tabs li[disabled]').each(function () {
+           $( "#tabs" ).tabs( "disable", $(this).find("a").attr("href") );
+        });
+
         $("#xmlradio").buttonset();
 
         $("#xmlraw").click(function() {
