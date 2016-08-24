@@ -219,7 +219,7 @@ abstract class EventListener
      *
      * @param Person $person A Person object.
      *
-     * @return Array of Persons who are Data Managers for the Person passed in.
+     * @return array of Persons who are Data Managers for the Person passed in.
      */
     public function getPersonDMs(Person $person)
     {
@@ -240,7 +240,7 @@ abstract class EventListener
      * @param Dataset $dataset A Dataset entity.
      * @param Person  $person  A Person entity.
      *
-     * @return Array of Persons who are Data Managers associated with the Person or Dataset.
+     * @return array of Persons who are Data Managers associated with the Person or Dataset.
      */
     public function getDMs(Dataset $dataset, Person $person)
     {
