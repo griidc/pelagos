@@ -201,7 +201,7 @@ abstract class EventListener
      *
      * @return Array of Persons who are Data Managers for the Research Group tied back to the DIF.
      */
-    public function getDatasetDMs(Dataset $dataset)
+    protected function getDatasetDMs(Dataset $dataset)
     {
         $recipientPeople = array();
         $personResearchGroups = $dataset->getResearchGroup()->getPersonResearchGroups();
@@ -221,7 +221,7 @@ abstract class EventListener
      *
      * @return array of Persons who are Data Managers for the Person passed in.
      */
-    public function getPersonDMs(Person $person)
+    protected function getPersonDMs(Person $person)
     {
         $recipientPeople = array();
         $researchGroups = $person->getResearchGroups();
@@ -246,7 +246,7 @@ abstract class EventListener
      *
      * @return array of Persons who are Data Managers associated with the Person or Dataset.
      */
-    public function getDMs(Dataset $dataset, Person $person)
+    protected function getDMs(Dataset $dataset, Person $person)
     {
         return array_unique(array_merge($this->getDatasetDMs($dataset), $this->getPersonDMs($person)));
     }
