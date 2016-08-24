@@ -73,7 +73,8 @@
                 <ul>
                     <li><a href="#tabs-1">Details</a></li>
                     <li><a href="#tabs-2">Metadata</a></li>
-                    <li><a href="#tabs-3">Publications</a></li>
+                    <li {{ dataset.datasetPublications|length == 0 ? ' disabled' : '' }}>
+                    <a href="#tabs-3">Publications</a></li>
                     <!--
                     <li><a href="#tabs-4">Manifest</a></li>
                     -->

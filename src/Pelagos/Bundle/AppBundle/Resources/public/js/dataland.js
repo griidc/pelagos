@@ -28,11 +28,11 @@ var dlmap = new GeoViz();
 
         $("#rawxml").width($(document).width()*.90);
 
-//        if ( 1 > 0) { // <?php echo $publinkCount ?>
-//            $("#tabs").tabs({ heightStyle: "content" });
-//        } else {
-            $("#tabs").tabs({ heightStyle: "content", disabled: [ 2 ] });
-//        }
+        $("#tabs").tabs({ heightStyle: "content" });
+
+        $('#tabs li[disabled]').each(function () {
+           $( "#tabs" ).tabs( "disable", $(this).find("a").attr("href") );
+        });
 
         $("#xmlradio").buttonset();
 
