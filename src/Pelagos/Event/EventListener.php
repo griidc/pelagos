@@ -195,13 +195,13 @@ abstract class EventListener
     }
 
     /**
-     * Internal method to resolve Data Managers from a Dataset.
+     * Method to resolve Data Managers from a Dataset.
      *
      * @param Dataset $dataset A Dataset entity.
      *
      * @return Array of Persons who are Data Managers for the Research Group tied back to the DIF.
      */
-    protected function getDMs(Dataset $dataset)
+    protected function getDatasetDMs(Dataset $dataset)
     {
         $recipientPeople = array();
         $personResearchGroups = $dataset->getResearchGroup()->getPersonResearchGroups();
@@ -212,5 +212,42 @@ abstract class EventListener
             }
         }
         return $recipientPeople;
+    }
+
+    /**
+     * Method to resolve a person's Data Managers.
+     *
+     * @param Person $person A Person object.
+     *
+     * @return array of Persons who are Data Managers for the Person passed in.
+     */
+    protected function getPersonDMs(Person $person)
+    {
+        $recipientPeople = array();
+        $researchGroups = $person->getResearchGroups();
+
+        foreach ($researchGroups as $rg) {
+            $prgs = $rg->getPersonResearchGroups();
+            foreach ($prgs as $prg) {
+                if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
+                    $recipientPeople[] = $prg->getPerson();
+                }
+            }
+        }
+
+        return $recipientPeople;
+    }
+
+    /**
+     * Method to resolve all DMs associated with a Person and Dataset.
+     *
+     * @param Dataset $dataset A Dataset entity.
+     * @param Person  $person  A Person entity.
+     *
+     * @return array of Persons who are Data Managers associated with the Person or Dataset.
+     */
+    protected function getDMs(Dataset $dataset, Person $person)
+    {
+        return array_unique(array_merge($this->getDatasetDMs($dataset), $this->getPersonDMs($person)));
     }
 }
