@@ -278,6 +278,11 @@ class Dataset extends Entity
      */
     public function getTitle()
     {
+        // If this Dataset has Metadata.
+        if (null !== $this->metadata) {
+            // Return its title.
+            return $this->metadata->getTitle();
+        }
         // If this Dataset has a submission.
         if (null !== $this->datasetSubmission) {
             // Return its title.
@@ -299,6 +304,11 @@ class Dataset extends Entity
      */
     public function getAbstract()
     {
+        // If this Dataset has Metadata.
+        if (null !== $this->metadata) {
+            // Return its abstract.
+            return $this->metadata->getAbstract();
+        }
         // If this Dataset has a submission.
         if (null !== $this->datasetSubmission) {
             // Return its abstract.

@@ -56,7 +56,7 @@ class Metadata extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="text")
      */
     protected $title;
 
@@ -65,7 +65,7 @@ class Metadata extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="text")
      */
     protected $abstract;
 
