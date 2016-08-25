@@ -57,7 +57,15 @@ var tabIndex = 0;
                                         <td class="info">
                                             {{ dataset[0].datasetSubmission.authors }}.
                                             {{ dataset[0].modificationTimeStamp | date('Y') }}.
-                                            <a href="{{ path('pelagos_app_ui_dataland_default', {'udi': dataset[0].udi}) }}" target="_blank">{{ dataset[0].datasetSubmission.title }}</a>.
+                                            <a href="{{ path('pelagos_app_ui_dataland_default', {'udi': dataset[0].udi}) }}" target="_blank">
+                                                {% if dataset[0].metadata %}
+                                                    {{ dataset[0].metadata.title }}
+                                                {% elseif dataset[0].datasetSubmission %}
+                                                    {{ dataset[0].datasetSubmission.title }}
+                                                {% else %}
+                                                    {{ dataset[0].dif.title }}
+                                                {% endif %}
+                                            </a>.
                                             {% if dataset[0].researchGroup %}
                                                 {{ dataset[0].researchGroup.name | trim }}.
                                             {% endif %}
@@ -143,7 +151,15 @@ var tabIndex = 0;
                                         <td class="info">
                                             {{ dataset[0].datasetSubmission.authors }}.
                                             {{ dataset[0].modificationTimeStamp | date('Y') }}.
-                                            <a href="{{ path('pelagos_app_ui_dataland_default', {'udi': dataset[0].udi}) }}" target="_blank">{{ dataset[0].datasetSubmission.title }}</a>.
+                                            <a href="{{ path('pelagos_app_ui_dataland_default', {'udi': dataset[0].udi}) }}" target="_blank">
+                                                {% if dataset[0].metadata %}
+                                                    {{ dataset[0].metadata.title }}
+                                                {% elseif dataset[0].datasetSubmission %}
+                                                    {{ dataset[0].datasetSubmission.title }}
+                                                {% else %}
+                                                    {{ dataset[0].dif.title }}
+                                                {% endif %}
+                                            </a>.
                                             {% if dataset[0].researchGroup %}
                                                 {{ dataset[0].researchGroup.name | trim }}.
                                             {% endif %}
@@ -204,7 +220,15 @@ var tabIndex = 0;
                                         <td class="info">
                                             {{ dataset[0].datasetSubmission.authors }}.
                                             {{ dataset[0].modificationTimeStamp | date('Y') }}.
-                                            <a href="{{ path('pelagos_app_ui_dataland_default', {'udi': dataset[0].udi}) }}" target="_blank">{{ dataset[0].datasetSubmission.title }}</a>.
+                                            <a href="{{ path('pelagos_app_ui_dataland_default', {'udi': dataset[0].udi}) }}" target="_blank">
+                                                {% if dataset[0].metadata %}
+                                                    {{ dataset[0].metadata.title }}
+                                                {% elseif dataset[0].datasetSubmission %}
+                                                    {{ dataset[0].datasetSubmission.title }}
+                                                {% else %}
+                                                    {{ dataset[0].dif.title }}
+                                                {% endif %}
+                                            </a>.
                                             {% if dataset[0].researchGroup %}
                                                 {{ dataset[0].researchGroup.name | trim }}.
                                             {% endif %}
@@ -250,10 +274,12 @@ var tabIndex = 0;
                                     {% endif %}
                                     <tr udi="{{ dataset[0].udi }}" datasetId="{{ dataset[0].id }}">
                                         <td class="info">
-                                            {% if dataset[0].datasetSubmission %}
-                                                {{ dataset[0].datasetSubmission.title }}.
+                                            {% if dataset[0].metadata %}
+                                                {{ dataset[0].metadata.title }}
+                                            {% elseif dataset[0].datasetSubmission %}
+                                                {{ dataset[0].datasetSubmission.title }}
                                             {% else %}
-                                                {{ dataset[0].dif.title }}.
+                                                {{ dataset[0].dif.title }}
                                             {% endif %}
                                             {{ dataset[0].researchGroup.name | trim }}.
                                             {% if dataset[0].datasetSubmission and dataset[0].datasetSubmission.doi %}
