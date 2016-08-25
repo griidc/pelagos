@@ -1,7 +1,6 @@
 <?php
 namespace Pelagos\Event;
 
-use Pelagos\Entity\Person;
 use Pelagos\Entity\DIF;
 
 /**
@@ -22,7 +21,7 @@ class DIFListener extends EventListener
 
         // email Reviewers
         $template = $this->twig->loadTemplate('@DIFEmail/reviewers/reviewers.dif-submitted.email.twig');
-        $this->sendMailMsg($template, array('dif' => $dif), $this->getDRPMs($dif));
+        $this->sendMailMsg($template, array('dif' => $dif), $this->getDRPMs($dif->getDataset()));
 
         // email User
         $template = $this->twig->loadTemplate('@DIFEmail/user/user.dif-submitted.email.twig');
@@ -87,7 +86,7 @@ class DIFListener extends EventListener
 
         // email reviewers
         $template = $this->twig->loadTemplate('@DIFEmail/reviewers/reviewers.dif-unlock-requested.email.twig');
-        $this->sendMailMsg($template, array('dif' => $dif), $this->getDRPMs($dif));
+        $this->sendMailMsg($template, array('dif' => $dif), $this->getDRPMs($dif->getDataset()));
 
         // email DM
         $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-unlock-requested.email.twig');
