@@ -1,75 +1,13 @@
 <?php
 namespace Pelagos\Event;
 
-use Pelagos\Entity\Account;
-use Pelagos\Entity\Person;
 use Pelagos\Entity\DIF;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
-use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
-use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
 
 /**
  * Listener class for DIF-related events.
  */
-class DIFListener
+class DIFListener extends EventListener
 {
-    /**
-     * The twig templating engine instance.
-     *
-     * @var \Twig_Environment
-     */
-    protected $twig;
-
-    /**
-     * The swiftmailer instance.
-     *
-     * @var \Swift_Mailer
-     */
-    protected $mailer;
-
-    /**
-     * Person entity for the logged-in user.
-     *
-     * @var Person
-     */
-    protected $currentUser;
-
-    /**
-     * The symfony-managed token object to traverse to current user Person.
-     *
-     * @var TokenStorage
-     */
-    protected $tokenStorage;
-
-    /**
-     * An array holding email from name/email information.
-     *
-     * @var array
-     */
-    protected $from;
-
-    /**
-     * This is the class constructor to handle dependency injections.
-     *
-     * @param \Twig_Environment $twig         Twig engine.
-     * @param \Swift_Mailer     $mailer       Email handling library.
-     * @param TokenStorage      $tokenStorage Symfony's token object.
-     * @param string            $fromAddress  Sender's email address.
-     * @param string            $fromName     Sender's name to include in email.
-     */
-    public function __construct(
-        \Twig_Environment $twig,
-        \Swift_Mailer $mailer,
-        TokenStorage $tokenStorage,
-        $fromAddress,
-        $fromName
-    ) {
-        $this->twig = $twig;
-        $this->mailer = $mailer;
-        $this->tokenStorage = $tokenStorage;
-        $this->from = array($fromAddress => $fromName);
-    }
-
     /**
      * Method to send an email to user and DRPMs on a submit event.
      *
@@ -83,16 +21,16 @@ class DIFListener
 
         // email Reviewers
         $template = $this->twig->loadTemplate('@DIFEmail/reviewers/reviewers.dif-submitted.email.twig');
-        $this->sendMailMsg($template, $dif, $this->getDRPMs($dif));
+        $this->sendMailMsg($template, array('dif' => $dif), $this->getDRPMs($dif->getDataset()));
 
         // email User
         $template = $this->twig->loadTemplate('@DIFEmail/user/user.dif-submitted.email.twig');
-        $this->sendMailMsg($template, $dif);
+        $this->sendMailMsg($template, array('dif' => $dif));
 
         // email Data Managers
         $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-submitted.email.twig');
         $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
-        $this->sendMailMsg($template, $dif, $this->getDMsFromPerson($currentUser));
+        $this->sendMailMsg($template, array('dif' => $dif), $this->getDMs($dif->getDataset(), $dif->getCreator()));
     }
 
     /**
@@ -108,11 +46,11 @@ class DIFListener
 
         // email user
         $template = $this->twig->loadTemplate('@DIFEmail/user/user.dif-approved.email.twig');
-        $this->sendMailMsg($template, $dif, array($dif->getCreator()));
+        $this->sendMailMsg($template, array('dif' => $dif), array($dif->getCreator()));
 
         // email DM
         $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-approved.email.twig');
-        $this->sendMailMsg($template, $dif, $this->getDMs($dif));
+        $this->sendMailMsg($template, array('dif' => $dif), $this->getDMs($dif->getDataset(), $dif->getCreator()));
     }
 
     /**
@@ -128,11 +66,11 @@ class DIFListener
 
         // email user
         $template = $this->twig->loadTemplate('@DIFEmail/user/user.dif-unlocked.email.twig');
-        $this->sendMailMsg($template, $dif, array($dif->getCreator()));
+        $this->sendMailMsg($template, array('dif' => $dif), array($dif->getCreator()));
 
         // email data managers
         $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-unlocked.email.twig');
-        $this->sendMailMsg($template, $dif, $this->getDMs($dif));
+        $this->sendMailMsg($template, array('dif' => $dif), $this->getDMs($dif->getDataset(), $dif->getCreator()));
     }
 
     /**
@@ -148,12 +86,12 @@ class DIFListener
 
         // email reviewers
         $template = $this->twig->loadTemplate('@DIFEmail/reviewers/reviewers.dif-unlock-requested.email.twig');
-        $this->sendMailMsg($template, $dif, $this->getDRPMs($dif));
+        $this->sendMailMsg($template, array('dif' => $dif), $this->getDRPMs($dif->getDataset()));
 
         // email DM
         $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-unlock-requested.email.twig');
         $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
-        $this->sendMailMsg($template, $dif, $this->getDMsFromPerson($currentUser));
+        $this->sendMailMsg($template, array('dif' => $dif), $this->getDMs($dif->getDataset(), $dif->getCreator()));
     }
 
     /**
@@ -165,85 +103,12 @@ class DIFListener
      */
     public function onSavedNotSubmitted(EntityEvent $event)
     {
+        $dif = $this->getDIF($event);
+
         // email DM
         $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-created.email.twig');
         $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
-        $this->sendMailMsg($template, $this->getDIF($event), $this->getDMsFromPerson($currentUser));
-    }
-
-    /**
-     * Method to build and send an email.
-     *
-     * @param \Twig_Template $twigTemplate A twig template.
-     * @param DIF            $dif          DIF of interest.
-     * @param array|null     $peopleObjs   An optional array of recipient Persons.
-     *
-     * @return void
-     */
-    protected function sendMailMsg(\Twig_Template $twigTemplate, DIF $dif, array $peopleObjs = null)
-    {
-        // Token's getUser returns an account, not a person directly.
-        $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
-
-        $mailData = array('dif' => $dif, 'user' => $currentUser);
-        if (null === $peopleObjs) {
-            $peopleObjs = array($currentUser);
-        }
-
-        foreach ($peopleObjs as $person) {
-            $mailData['recipient'] = $person;
-            $message = \Swift_Message::newInstance()
-                ->setSubject($twigTemplate->renderBlock('subject', $mailData))
-                ->setFrom($this->from)
-                ->setTo($person->getEmailAddress())
-                ->setBody($twigTemplate->renderBlock('body_html', $mailData), 'text/html')
-                ->addPart($twigTemplate->renderBlock('body_text', $mailData), 'text/plain');
-            $this->mailer->send($message);
-        }
-    }
-
-    /**
-     * Internal method to resolve DRPMs from a dif.
-     *
-     * @param DIF $dif A DIF entity.
-     *
-     * @return Array of Persons having DRPM status.
-     */
-    protected function getDRPMs(DIF $dif)
-    {
-        $recipientPeople = array();
-        $personDataRepositories = $dif->getResearchGroup()
-                                      ->getFundingCycle()
-                                      ->getFundingOrganization()
-                                      ->getDataRepository()
-                                      ->getPersonDataRepositories();
-
-        foreach ($personDataRepositories as $pdr) {
-            if ($pdr->getRole()->getName() == DataRepositoryRoles::MANAGER) {
-                $recipientPeople[] = $pdr->getPerson();
-            }
-        }
-        return $recipientPeople;
-    }
-
-    /**
-     * Internal method to resolve Data Managers from a dif.
-     *
-     * @param DIF $dif A DIF entity.
-     *
-     * @return Array of Persons who are Data Managers for the Research Group tied back to the DIF.
-     */
-    protected function getDMs(DIF $dif)
-    {
-        $recipientPeople = array();
-        $personResearchGroups = $dif->getResearchGroup()->getPersonResearchGroups();
-
-        foreach ($personResearchGroups as $prg) {
-            if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
-                $recipientPeople[] = $prg->getPerson();
-            }
-        }
-        return $recipientPeople;
+        $this->sendMailMsg($template, array('dif' => $dif), $this->getDMs($dif->getDataset(), $dif->getCreator()));
     }
 
     /**
@@ -262,28 +127,5 @@ class DIFListener
             throw new \Exception('Internal error: handler expects a DIF');
         }
         return $dif;
-    }
-
-    /**
-     * Internal method to resolve Data Managers from a Person.
-     *
-     * @param Person $person A Person entity.
-     *
-     * @return Array of all Persons who are Data Managers for the given Person.
-     */
-    protected function getDMsFromPerson(Person $person)
-    {
-        $recipientPeople = array();
-        $researchGroups = $person->getResearchGroups();
-
-        foreach ($researchGroups as $rg) {
-            $prgs = $rg->getPersonResearchGroups();
-            foreach ($prgs as $prg) {
-                if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
-                    $recipientPeople[] = $prg->getPerson();
-                }
-            }
-        }
-        return $recipientPeople;
     }
 }
