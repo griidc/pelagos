@@ -110,6 +110,8 @@ class DatasetRepository extends EntityRepository
             }
             $qb->andWhere($orX);
         }
+        $qb->orderBy('datasetSubmission.creationTimeStamp', 'DESC');
+        $qb->addOrderBy('dif.modificationTimeStamp', 'DESC');
         $query = $qb->getQuery();
         return $query->getResult($hydrator);
     }
