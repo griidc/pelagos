@@ -184,6 +184,11 @@ class DatasetSubmission extends Entity
     const AVAILABILITY_STATUS_NOT_AVAILABLE = 0;
 
     /**
+     * The dataset is not available because no metadata has been submitted.
+     */
+    const AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION = 2;
+
+    /**
      * The dataset is not available because it does not yet have approved metadata.
      */
     const AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL = 4;
@@ -1275,8 +1280,10 @@ class DatasetSubmission extends Entity
                             $availabilityStatus = self::AVAILABILITY_STATUS_RESTRICTED;
                             break;
                     }
-                } else {
+                } elseif ($this->getMetadataFileTransferStatus() === self::TRANSFER_STATUS_COMPLETED) {
                     $availabilityStatus = self::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
+                } else {
+                    $availabilityStatus = self::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
                 }
                 break;
             case self::TRANSFER_STATUS_REMOTELY_HOSTED:
@@ -1292,8 +1299,10 @@ class DatasetSubmission extends Entity
                             $availabilityStatus = self::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED;
                             break;
                     }
-                } else {
+                } elseif ($this->getMetadataFileTransferStatus() === self::TRANSFER_STATUS_COMPLETED) {
                     $availabilityStatus = self::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
+                } else {
+                    $availabilityStatus = self::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
                 }
                 break;
         }
