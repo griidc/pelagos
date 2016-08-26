@@ -128,6 +128,7 @@ class DataDiscoveryController extends UIController
                             array(
                                 'dataset.availabilityStatus' => array(
                                     DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE,
+                                    DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION,
                                 ),
                                 'dataset.identifiedStatus' => array(
                                     DIF::STATUS_APPROVED,
