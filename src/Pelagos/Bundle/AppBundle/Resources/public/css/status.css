@@ -1,0 +1,25 @@
+table.status {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    border-collapse: collapse;
+    clear: both;
+}
+
+table.status th {
+    border: 1px solid black;
+    font-weight: bold;
+    padding: 2px 5px;
+    text-align: center;
+    font-size: 85%;
+}
+
+table.status td {
+    border: 1px solid black;
+    padding: 2px 5px;
+    width: 4em;
+    text-align: center;
+}
+
+table.status img {
+    vertical-align: middle;
+}

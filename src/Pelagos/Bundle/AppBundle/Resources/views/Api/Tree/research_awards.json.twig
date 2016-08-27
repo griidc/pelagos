@@ -1,0 +1,63 @@
+[
+    {% for fundingOrg in fundingOrgs %}
+        {
+            "data": {
+                "title": "{{fundingOrg.getName}}",
+                "attr": {
+                    "style": "color:{{tree.rfp_color}}"
+                }
+             },
+            "children": [
+                {% set fundingCycles = [] %}
+                {% for fundingCycle in fundingOrg.getFundingCycles if fundingCycleIds|length == 0 or fundingCycle.id in fundingCycleIds %}
+                    {% set fundingCycles = fundingCycles|merge([fundingCycle]) %}
+                {% endfor %}
+                {% for fundSrc in fundingCycles %}
+                    {
+                        "data": {
+                            "title": "{{fundSrc.getName}}",
+                            "attr": {
+                                "style": "color:{{tree.rfp_color}}"
+                            }
+                        },
+                        "attr": {
+                            "id": "projects_funding-cycle_{{fundSrc.getId}}",
+                            "action": "{{tree.rfp_action | evaluate}}"
+                        }
+                        {% if tree.max_depth > 1 %}
+                            ,
+                            {% if tree.expand_to_depth > 1 %}
+                                "state": "open"
+                            {% else %}
+                                "state": "closed"
+                            {% endif %}
+                        {% endif %}
+                    }
+                    {% if not loop.last %}
+                        ,
+                    {% endif %}
+                {% endfor %}
+            ]
+            {% if tree.max_depth > 0 %}
+                ,
+                "state": "open"
+            {% endif %}
+        }
+        {% if not loop.last %}
+            ,
+        {% endif %}
+    {% endfor %}
+    {% if not fundingOrgs %}
+        {
+            "data": {
+                "title": "no datasets found",
+                "attr": {
+                    "style": "color:red"
+                }
+            },
+            "attr": {
+                "id": "noDatasetsFound"
+            }
+        }
+    {% endif %}
+]

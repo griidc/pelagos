@@ -1,0 +1,85 @@
+{% extends "PelagosAppBundle::layout.html.twig" %}
+
+{% block head %}
+    {{ parent() }}
+
+    {{
+        add_library (
+            [
+                'ui.tabs',
+                'jquery.cookie',
+            ]
+        )
+    }}
+
+    {% stylesheets
+        '@PelagosAppBundle/Resources/public/css/dataland-details.css'
+        '@PelagosAppBundle/Resources/public/css/status.css'
+        '@PelagosAppBundle/Resources/public/css/xmlverbatim.css'
+        '@PelagosAppBundle/Resources/public/css/download.css'
+    %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets %}
+
+    {{ add_js(
+            [
+                '//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',
+                '//maps.google.com/maps/api/js?v=3',
+                '/includes/geoviz/geoviz.js',
+            ]
+        )
+    }}
+
+    {% javascripts
+        '@FOSJsRoutingBundle/Resources/public/js/router.js'
+        '@PelagosAppBundle/Resources/public/js/mdapp-ul.js'
+    %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
+
+{% endblock %}
+
+{% block body %}
+    {% if warnings|length > 0 %}
+    <div class="messages warning">
+        <h2 class="element-invisible">Warning message</h2>
+        <ul>
+        {% for warning in warnings %}
+            <li>{{ warning }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    {% if errors|length > 0 %}
+    <div class="messages error">
+        <h2 class="element-invisible">Error message</h2>
+        <ul>
+        {% for error in errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <div id=olmap style="width:600px; height:400px;" geometry="{{ geometryWkt }}" envelope="{{ envelopeWkt }}" ></div>
+    <p>
+    {{ message }}
+    </p>
+    <p>
+        <ul>
+            {% if udi %}
+                <li> Dataset ID: <a href='{{ path('pelagos_app_ui_dataland_default', { 'udi': udi|default } ) }}' target='0'>{{ dataset.id|default }} ({{ udi|default }})</a></li>
+            {% else %}
+                <li> Dataset ID: Unable to determine.</li>
+            {% endif %}
+            <li> Given Filename: {{ orig_filename }}</li>
+            <li> Geometry Detected: {% if geometryWkt|default %}Yes{% else %}No{% endif %}</li>
+            {% if geometryWkt|default %}
+            <li> Geometry Status: {% if isoValid == true %}Verified by PostGIS as OK{% else %}Geometry not valid per PostGIS.{% endif %} </li>
+            {% endif %}
+        </ul>
+        <a href="{{ path('pelagos_app_ui_mdapp_default') }}">Continue</a>
+    </p>
+{% endblock %}

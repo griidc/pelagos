@@ -2,11 +2,32 @@
 
 namespace Pelagos\Bundle\AppBundle\Twig;
 
+use Doctrine\Common\Collections\Collection;
+
+use Pelagos\Entity\DIF;
+
 /**
  * Custom Twig extensions for Pelagos.
  */
 class Extensions extends \Twig_Extension
 {
+    /**
+     * The kernel root path.
+     *
+     * @var string
+     */
+    private $kernelRootDir;
+
+    /**
+     *  Constructor.
+     *
+     * @param string $kernelRootDir The kernel root path.
+     */
+    public function __construct($kernelRootDir)
+    {
+        $this->kernelRootDir = $kernelRootDir;
+    }
+
     /**
      * Return the name of this extension set.
      *
@@ -39,6 +60,44 @@ class Extensions extends \Twig_Extension
                 'add_library',
                 array(self::class, 'addLibrary'),
                 array('is_safe' => array('html'))
+            ),
+        );
+    }
+
+    /**
+     * Return a list of filters.
+     *
+     * @return array A list of Twig filters.
+     */
+    public function getFilters()
+    {
+        return array(
+            new \Twig_SimpleFilter(
+                'evaluate',
+                array(self::class, 'evaluate'),
+                array(
+                    'needs_environment' => true,
+                    'needs_context' => true,
+                    'is_safe' => array(
+                        'evaluate' => true,
+                    )
+                )
+            ),
+            new \Twig_SimpleFilter(
+                'submittedDIFs',
+                array(self::class, 'submittedDIFs')
+            ),
+            new \Twig_SimpleFilter(
+                'transformXml',
+                array($this, 'transformXml')
+            ),
+            new \Twig_SimpleFilter(
+                'role',
+                array(self::class, 'role')
+            ),
+            new \Twig_SimpleFilter(
+                'formatBytes',
+                array(self::class, 'formatBytes')
             ),
         );
     }
@@ -129,5 +188,117 @@ class Extensions extends \Twig_Extension
             }
         }
         return $return;
+    }
+
+    /**
+     * Evaluate Twig commands in a string.
+     *
+     * @param \Twig_Environment $environment The Twig environment.
+     * @param array             $context     The Twig context.
+     * @param string            $string      The string to evaluate.
+     *
+     * @return string The evaluated string.
+     */
+    public static function evaluate(\Twig_Environment $environment, array $context, $string)
+    {
+        $loader = $environment->getLoader();
+        $parsed = self::parseString($environment, $context, $string);
+        $environment->setLoader($loader);
+        return $parsed;
+    }
+
+    /**
+     * Filter for DIFs in submitted status.
+     *
+     * @param Collection $datasets A collection of datasets.
+     *
+     * @return Collection The filtered collection.
+     */
+    public static function submittedDIFs(Collection $datasets)
+    {
+        return $datasets->filter(
+            function ($dataset) {
+                return $dataset->getDif()->getStatus() !== DIF::STATUS_UNSUBMITTED;
+            }
+        );
+    }
+
+    /**
+     * Filter Person associations by role name.
+     *
+     * @param Collection $personAssociations A collection of Person associations.
+     * @param string     $roleName           The role name to filter by.
+     *
+     * @return Collection The filtered collection.
+     */
+    public static function role(Collection $personAssociations, $roleName)
+    {
+        return $personAssociations->filter(
+            function ($personAssociation) use ($roleName) {
+                return $personAssociation->getRole()->getName() === $roleName;
+            }
+        );
+    }
+
+    /**
+     * Parse Twig commands in a string.
+     *
+     * @param \Twig_Environment $environment The Twig environment.
+     * @param array             $context     The Twig context.
+     * @param string            $string      The string to parse.
+     *
+     * @return string The parsed string.
+     */
+    protected static function parseString(\Twig_Environment $environment, array $context, $string)
+    {
+        $environment->setLoader(new \Twig_Loader_String());
+        return $environment->render($string, $context);
+    }
+
+    /**
+     * Transform the xml document with provided xslt.
+     *
+     * @param string $xml The raw xml string of the to be formated xml.
+     * @param string $xsl The filename of the xsl template.
+     *
+     * @return string The xslt transformed xml.
+     */
+    public function transformXml($xml, $xsl)
+    {
+        if ($xml <> '' and $xml != null) {
+            $xmlDoc = new \DOMDocument();
+            $xmlDoc->loadXML($xml);
+
+            // XSL template.
+            $xslDoc = new \DOMDocument();
+            $xslDoc->load($this->kernelRootDir . '/../src/Pelagos/Bundle/AppBundle/Resources/views/xsl/' . $xsl);
+
+            // The Processor.
+            $proc = new \XSLTProcessor();
+            $proc->importStylesheet($xslDoc);
+            $newdom = $proc->transformToDoc($xmlDoc);
+
+            return $newdom->saveXML();
+        }
+    }
+
+    /**
+     * Format bytes as a human-readable string.
+     *
+     * @param integer $bytes     The bytes to format.
+     * @param integer $precision The the precision to use (default: 0).
+     *
+     * @return string
+     */
+    public static function formatBytes($bytes, $precision = 0)
+    {
+        $units = array('B','KB','MB','GB','TB');
+        for ($e = (count($units) - 1); $e > 0; $e--) {
+            $one = pow(1024, $e);
+            if ($bytes >= $one) {
+                return round(($bytes / $one), $precision) . ' ' . $units[$e];
+            }
+        }
+        return "$bytes $units[0]";
     }
 }

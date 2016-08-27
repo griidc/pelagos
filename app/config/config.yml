@@ -8,6 +8,14 @@ imports:
 parameters:
     locale: en
     jms_serializer.camel_case_naming_strategy.class: JMS\Serializer\Naming\IdenticalPropertyNamingStrategy
+    router.request_context.host: "%hostname%"
+    router.request_context.scheme: https
+    # This parameter is undocumented. By default rabbitmq-supervisor-bundle uses old_sound_rabbit_mq -> consumers
+    # from this config file to populate this parameter. As of rabbitmq-supervisor-bundle 1.5, only the array keys
+    # are used so the values can be null.
+    phobetor_rabbitmq_supervisor.consumers:
+        filer: ~
+        create_homedir: ~
 
 framework:
     #esi:             ~
@@ -39,6 +47,8 @@ twig:
     strict_variables: "%kernel.debug%"
     paths:
         "%kernel.root_dir%/../src/Pelagos/Bundle/AppBundle/Resources/views/template": templates
+        "%kernel.root_dir%/../src/Pelagos/Bundle/AppBundle/Resources/views/DIF/email": DIFEmail
+        "%kernel.root_dir%/../src/Pelagos/Bundle/AppBundle/Resources/views/Email": Email
 
 # Doctrine Configuration
 doctrine:
@@ -50,7 +60,14 @@ doctrine:
         user:     "%database_user%"
         password: "%database_password%"
         charset:  UTF8
-
+        types:
+            text_array: "Doctrine\\DBAL\\PostgresTypes\\TextArrayType"
+            xml: "Doctrine\\DBAL\\PostgresTypes\\XmlType"
+            geometry: "Pelagos\\DoctrineExtensions\\DBAL\\Types\\GeometryType"
+        mapping_types:
+            _text: text_array
+            xml: xml
+            geometry: geometry
     orm:
         metadata_cache_driver: apc
         query_cache_driver: apc
@@ -63,6 +80,12 @@ doctrine:
                 prefix: Pelagos\Entity
                 alias: Pelagos
         naming_strategy: doctrine.orm.naming_strategy.underscore
+        dql:
+            string_functions:
+                ST_Intersects: Jsor\Doctrine\PostGIS\Functions\ST_Intersects
+                ST_GeomFromText: Jsor\Doctrine\PostGIS\Functions\ST_GeomFromText
+                ST_AsText: Jsor\Doctrine\PostGIS\Functions\ST_AsText
+                ST_GeomFromGML: Jsor\Doctrine\PostGIS\Functions\ST_GeomFromGML
 
 # Swiftmailer Configuration
 swiftmailer:
@@ -70,7 +93,8 @@ swiftmailer:
     host:      "%mailer_host%"
     username:  "%mailer_user%"
     password:  "%mailer_password%"
-    spool:     { type: memory }
+    antiflood:
+        threshold: "%mailer_antiflood_threshold%"
 
 fos_rest:
     view:
@@ -107,3 +131,71 @@ simple_things_entity_audit:
         - Pelagos\Entity\PersonDataRepository
         - Pelagos\Entity\PersonFundingOrganization
         - Pelagos\Entity\PersonResearchGroup
+        - Pelagos\Entity\Dataset
+        - Pelagos\Entity\DIF
+        - Pelagos\Entity\DatasetSubmission
+
+fos_js_routing:
+    routes_to_expose: [ .* ]
+
+old_sound_rabbit_mq:
+    connections:
+        default:
+            host:     "%rabbit_mq_host%"
+            port:     "%rabbit_mq_port%"
+            user:     "%rabbit_mq_user%"
+            password: "%rabbit_mq_pass%"
+            vhost:    "%pelagos_name%"
+            lazy:     true
+            connection_timeout: 3
+            read_write_timeout: 3
+            keepalive: false
+            heartbeat: 0
+    producers:
+        dataset_submission:
+            connection:       default
+            exchange_options: { name: 'dataset_submission', type: topic }
+        create_homedir:
+            connection:       default
+            exchange_options: { name: 'create_homedir', type: direct }
+    consumers:
+        filer:
+            connection:       default
+            exchange_options: { name: 'dataset_submission', type: topic }
+            callback:         pelagos.rabbit.consumer.dataset_submission.filer
+            queue_options:
+                name: 'filer'
+                routing_keys:
+                    - 'dataset.upload'
+                    - 'dataset.SFTP'
+                    - 'metadata.#'
+        retriever:
+            connection:       default
+            exchange_options: { name: 'dataset_submission', type: topic }
+            callback:         pelagos.rabbit.consumer.dataset_submission.retriever
+            idle_timeout:     1
+            queue_options:
+                name: 'retriever'
+                routing_keys:
+                    - 'dataset.HTTP'
+        create_homedir:
+            connection:       default
+            exchange_options: { name: 'create_homedir', type: direct }
+            callback:         pelagos.rabbit.consumer.create_homedir
+            queue_options:
+                name: 'create_homedir'
+
+hwi_oauth:
+    firewall_names: [main]
+    resource_owners:
+        google:
+            type:           google
+            client_id:      "%google_oauth_client_id%"
+            client_secret:  "%google_oauth_client_secret%"
+            scope:          "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
+    use_referer: true
+
+rabbit_mq_supervisor:
+    supervisor_instance_identifier: "%pelagos_name%"
+    commands:
+        rabbitmq_consumer: rabbitmq:consumer -w %%2$s

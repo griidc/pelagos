@@ -3,6 +3,8 @@
 # http://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
 parameters:
     hostname: ~
+    # A unique name for this Pelagos instance
+    pelagos_name: ~
 
     database_host:     127.0.0.1
     database_port:     5432
@@ -18,6 +20,11 @@ parameters:
     mailer_password:   ~
     mailer_from_addr:  ~
     mailer_from_name:  ~
+    # Exim only allows 10 messages per connection by default
+    mailer_antiflood_threshold: 10
+
+    # MDAPP Parameter - logfile l(must be read/writable by apache via facl)
+    mdapp_logfile: ~
 
     ldap_host: localhost
     ldap_bind_dn: cn=ldapadmin,dc=griidc,dc=org
@@ -29,5 +36,43 @@ parameters:
     # When to warn account holders of soon to expire passwords (as ISO 8601 durations)
     account_password_expiration_warn: [P7D, P1D]
 
+    rabbit_mq_host: localhost
+    rabbit_mq_port: 5672
+    rabbit_mq_user: pelagos
+    rabbit_mq_pass: pelagos
+
+    data_store_directory:    /san/data/store
+    data_download_directory: /san/data/download
+    homedir_prefix:          /san/home
+
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
+
+    # Parameters for POSIX account generation
+    posix_starting_uid: 10000
+    posix_gid: 1001
+
+    # The POSIX user that will own files and directories in the data store.
+    data_store_owner: pelagos
+    # The POSIX group for files and directories in the data store.
+    data_store_group: pelagos
+    # The POSIX group that contains users that can browse all of the data download directory.
+    data_download_browser_group: GRIIDC
+    # The POSIX user the web server runs under.
+    web_server_user: apache
+
+    # Parameters EZID DOI API
+    doi_api_user_name: apitest
+    doi_api_password : apitest
+    doi_api_shoulder : doi:10.5072/FK2
+
+    # Base URL for an issue tracking system use to track datasets (without trailing /).
+    # The issue tracking ticket identifier will be appended to this URL.
+    issue_tracking_base_url: ~
+
+    # Google OAuth client id and secret used by HWIOAuthBundle.
+    google_oauth_client_id: ~
+    google_oauth_client_secret: ~
+
+    download_base_directory: /san/home/http/download
+    download_base_url: ~

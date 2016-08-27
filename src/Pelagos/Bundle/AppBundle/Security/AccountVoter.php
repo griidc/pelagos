@@ -11,6 +11,8 @@ use Pelagos\Entity\Account;
  */
 class AccountVoter extends PelagosEntityVoter
 {
+    const CAN_BROWSE_INCOMING_DIRECTORY = 'CAN_BROWSE_INCOMING_DIRECTORY';
+
     /**
      * Determines if the attribute and subject are supported by this voter.
      *
@@ -26,8 +28,8 @@ class AccountVoter extends PelagosEntityVoter
             return false;
         }
 
-        // This voter only supports CAN_CREATE and CAN_EDIT.
-        if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
+        // This voter only supports CAN_CREATE, CAN_EDIT, and CAN_BROWSE_INCOMING_DIRECTORY.
+        if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_BROWSE_INCOMING_DIRECTORY))) {
             return false;
         }
 
@@ -61,9 +63,15 @@ class AccountVoter extends PelagosEntityVoter
             return false;
         }
 
-        // A Person can create and edit their own account.
-        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT)) and
+        // A Person can create and edit their own account and browse their own incoming directory.
+        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_BROWSE_INCOMING_DIRECTORY)) and
             $subject->getPerson()->isSameTypeAndId($user->getPerson())) {
+            return true;
+        }
+
+        // A DRPM can browse other people's incoming directories.
+        if (in_array($attribute, array(self::CAN_BROWSE_INCOMING_DIRECTORY)) and
+            in_array(Account::ROLE_DATA_REPOSITORY_MANAGER, $user->getRoles())) {
             return true;
         }
 

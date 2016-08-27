@@ -1,0 +1,127 @@
+#stats-tabs {
+    display: table;
+    height: 100%;
+    width: 100%;
+    padding: 0px;
+    min-height: 450px;
+}
+
+.stats-overview {
+    display: table;
+    height: 50%;
+    width: 100%;
+    border-spacing: 10px;
+}
+
+.stats-overview-row {
+    display: table-row;
+}
+
+.stats-overview-cell {
+    display: table-cell;
+    width: 50%;
+    height: 50%;
+}
+
+.stats-section {
+    padding: 0px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    background: #F1F3F5;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.caption {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    color: #324b52;
+    text-align: center;
+    line-height: 100%;
+}
+
+
+#summary-of-records-legend {
+    margin-right: 7px;
+    margin-left: 24px;
+}
+
+#summary-of-records-legend table {
+    width: 93%;
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: collapse;
+    border-spacing: 0px;
+}
+
+#summary-of-records-legend td.legendLabel {
+    width: 33%;
+    text-align: center;
+    border: none;
+    padding: 0px;
+    margin: 0px;
+    vertical-align: top;
+    line-height: 100%;
+}
+
+#summary-of-records-legend td.legendColorBox {
+    display: none;
+}
+
+
+#dataset-size-ranges-legend {
+    margin-right: 7px;
+    margin-left: 24px;
+}
+
+#dataset-size-ranges-legend table {
+    width: 97%;
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: collapse;
+    border-spacing: 0px;
+}
+
+#dataset-size-ranges-legend td.legendLabel {
+    width: 16.7%;
+    text-align: center;
+    border: none;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    vertical-align: top;
+    line-height: 100%;
+}
+
+#dataset-size-ranges-legend td.legendColorBox {
+    display: none;
+}
+
+
+#program-resources table {
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: normal;
+    border-collapse: collapse;
+    border-spacing: 0px;
+}
+
+#program-resources table td {
+    text-align: center;
+    border: none;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+#program-resources .count {
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1.33em;
+    font-family: "Lato", Arial, sans-serif;
+}
+
+#program-resources .label {
+    font-size: 14px;
+    text-transform: uppercase;
+}

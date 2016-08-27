@@ -5,6 +5,7 @@ namespace Pelagos\Component\Ldap;
 use Pelagos\Entity\Person;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Pelagos\Exception\UidNumberInUseInLDAPException;
 
 /**
  * An LDAP abstraction library.
@@ -45,12 +46,19 @@ class Ldap
      *
      * @param Person $person The Person to add to LDAP.
      *
+     * @throws UidNumberInUseInLDAPException In event UID is already found in the LDAP.
+     *
      * @return void
      */
     public function addPerson(Person $person)
     {
-        $ldapPerson = $this->buildLdapPerson($person);
-        $this->ldapClient->add($ldapPerson['dn'], $ldapPerson['entry']);
+        $uidNumber = $person->getAccount()->getUidNumber();
+        if ($this->checkIfUidNumberAvailable($uidNumber)) {
+            $ldapPerson = $this->buildLdapPerson($person);
+            $this->ldapClient->add($ldapPerson['dn'], $ldapPerson['entry']);
+        } else {
+            throw new UidNumberInUseInLDAPException("This UID number ($uidNumber) is already in use in LDAP .");
+        }
     }
 
     /**
@@ -58,12 +66,19 @@ class Ldap
      *
      * @param Person $person The Person to update in LDAP.
      *
+     * @throws UidNumberInUseInLDAPException In event UID is already found in the LDAP.
+     *
      * @return void
      */
     public function updatePerson(Person $person)
     {
-        $ldapPerson = $this->buildLdapPerson($person);
-        $this->ldapClient->modify($ldapPerson['dn'], $ldapPerson['entry']);
+        $uidNumber = $person->getAccount()->getUidNumber();
+        if ($this->checkIfUidNumberAvailable($uidNumber, $person->getAccount()->getUserName())) {
+            $ldapPerson = $this->buildLdapPerson($person);
+            $this->ldapClient->modify($ldapPerson['dn'], $ldapPerson['entry']);
+        } else {
+            throw new UidNumberInUseInLDAPException("This UID number ($uidNumber) is already in use in LDAP .");
+        }
     }
 
     /**
@@ -135,10 +150,37 @@ class Ldap
             }
             if (count($accessor->getValue($person->getAccount(), 'sshPublicKeys')) > 0) {
                 $ldapPerson['entry']['objectClass'][] = 'ldapPublicKey';
-                $ldapPerson['entry']['sshPublicKey'] = array_values($accessor->getValue($person->getAccount(), 'sshPublicKeys'));
+                $ldapPerson['entry']['sshPublicKey'] = array_values(
+                    $accessor->getValue($person->getAccount(), 'sshPublicKeys')
+                );
             }
         }
 
         return $ldapPerson;
+    }
+
+    /**
+     * Determine if an UidNumber is already in use.
+     *
+     * @param string      $uidNumber User's Uid number.
+     * @param string|null $uid       Optional username to ignore associated uid Number of.
+     *
+     * @return boolean True if uidNumber is available, False if not.
+     */
+    protected function checkIfUidNumberAvailable($uidNumber, $uid = null)
+    {
+        // If not being set, then is available, so return true.
+        if (null === $uidNumber) {
+            return true;
+        }
+
+        // If we pass a userId, ignore its own uidNumber.
+        if (null === $uid) {
+            $query = "uidNumber=$uidNumber";
+        } else {
+            $query = "(&(uidNumber=$uidNumber)(!(uid=$uid)))";
+        }
+        $entries = $this->ldapClient->find($this->peopleOu, $query);
+        return null === $entries;
     }
 }

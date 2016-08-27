@@ -4,47 +4,10 @@
 require_once __DIR__.'/../../../vendor/autoload.php';
 
 $GLOBALS['pelagos']['title'] = 'ISO 19115-2 Metadata Editor';
-$base_path = $GLOBALS['pelagos']['base_path'];
-$component_path = $GLOBALS['pelagos']['component_path'];
+
+$config = parse_ini_file(__DIR__ . '/config.ini');
 
 include_once '/opt/pelagos/share/php/aliasIncludes.php';
-
-if (isset($_GET["udi"]))
-{
-	include_once '/opt/pelagos/share/php/pdo.php';
-
-	$udi = $_GET["udi"];
-
-	$configini = parse_ini_file("/etc/griidc/db.ini",true);
-
-	$config = $configini["GOMRI_RW"];
-
-	$dbconnstr = 'pgsql:host='. $config["host"];
-	$dbconnstr .= ' port=' . $config["port"];
-	$dbconnstr .= ' dbname=' . $config["dbname"];
-	$dbconnstr .= ' user=' . $config["username"];
-	$dbconnstr .= ' password=' . $config["password"];
-
-	$conn = pdoDBConnect($dbconnstr);
-
-
-
-	$query = "SELECT EXISTS(SELECT 1 FROM registry WHERE registry_id LIKE '$udi%' AND '$udi' != '' LIMIT 1) as \"UDIexists\";";
-
-	$row = pdoDBQuery($conn,$query);
-
-    $row = $row[0];
-
-	$returnexist = $row["UDIexists"];
-    $returnArray = array("UDIexists"=>$returnexist, "udi"=>$udi);
-
-    ob_clean();
-    flush();
-
-	echo json_encode($returnArray);
-    //"{\"UDIexists\":\"$returnexist\",\"udi\":\"$udi\"}";
-	drupal_exit();
-}
 
 include 'metaData.php';
 include 'loadXML.php';
@@ -79,7 +42,6 @@ $xmldoc = null;
 
 if (isset($_FILES["file"]))
 {
-
 	if ($_FILES["file"]["error"] > 0)
 	{
 		//echo "Error: " . $_FILES["file"]["error"] . "<br>";
@@ -108,7 +70,6 @@ if (isset($_GET["dataUrl"]) and !isset($_FILES["file"]))
 {
 	$xmlURL = $_GET["dataUrl"];
 	$xmldoc = loadXMLFromURL($xmlURL);
-
 
     if ($xmldoc != null and gettype($xmldoc) == 'object') {
         $dMessage = 'Successfully loaded XML from URL: ' .  $xmlURL;
@@ -144,7 +105,6 @@ if (isset($thefile))
 	}
 }
 
-
 $mMD = new metaData();
 
 if (isset($xmldoc))
@@ -159,8 +119,7 @@ $twigArray['onReady'] = $mMD->onReady;
 $twigArray['jqUIs'] = $mMD->jqUIs;
 $twigArray['validateRules'] = $mMD->validateRules;
 $twigArray['validateMessages'] = $mMD->validateMessages;
-$twigArray['base_path'] = $base_path;
-$twigArray['component_path'] = $component_path;
+$twigArray['metadata_api_path'] = $config['metadata_api_path'];
 
 echo "\n\n<script type=\"text/javascript\">\n";
 $mMD->jsString .= $mMD->twig->render('js/base.js', $twigArray);

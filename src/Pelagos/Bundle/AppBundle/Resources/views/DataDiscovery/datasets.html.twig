@@ -1,0 +1,348 @@
+<script>
+myGeoViz.removeAllFeaturesFromMap();
+datasets = new Array();
+var tabIndex = 0;
+</script>
+
+<div id="tabs">
+
+    {% if datasets.available | length or datasets.restricted | length or datasets.inReview | length or datasets.identified | length %}
+
+        <div id="tablist" class="row">
+            <div class="cell">
+                <ul>
+                    {% if datasets.available %}
+                        <li style="text-align:center"><a href="#tab-1">Available<br />({{ datasets.available | length }})</a></li>
+                    {% endif %}
+                    {% if datasets.restricted %}
+                        <li style="text-align:center"><a href="#tab-2">Available with<br />Restrictions ({{ datasets.restricted | length }})</span></a></li>
+                    {% endif %}
+                    {% if datasets.inReview %}
+                        <li style="text-align:center"><a href="#tab-3">Unavailable, Pending<br />Review ({{ datasets.inReview | length }})</a></li>
+                    {% endif %}
+                    {% if datasets.identified %}
+                        <li style="text-align:center"><a href="#tab-4">Unavailable &amp;<br />Expected Soon ({{ datasets.identified | length }})</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        {% if datasets.available %}
+            <script>datasets[tabIndex] = new Array();</script>
+            <div id="tab-1" class="tab row">
+                <div class="cell">
+                    <div class="viewport">
+                        <div class="overview">
+                            <table class="datasets">
+                                {% for dataset in datasets.available %}
+                                    {% if dataset[0].metadata and dataset[0].metadata.geometry %}
+                                        <script>
+                                            var ds = { 'udi': '{{ dataset[0].udi }}', 'geom': '{{ dataset[0].metadata.geometry }}' };
+                                            datasets[tabIndex].push(ds);
+                                        </script>
+                                    {% endif %}
+                                    <tr udi="{{ dataset[0].udi }}" datasetId="{{ dataset[0].id }}">
+                                        <td valign="top" class="direct-download">
+                                            {% set title='download dataset' %}
+                                            {% if dataset[0].datasetSubmission.datasetFileTransferStatus == constant('Pelagos\\Entity\\DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED')
+                                                and not (dataset[0].datasetSubmission.datasetFileUri matches '!^https?://data.gulfresearchinitiative.org!') %}
+                                                {% set title = "This dataset can be downloaded from an external repository." %}
+                                            {% endif %}
+                                            <a href="javascript:startDownload({{ dataset[0].id }});">
+                                                {% image '@PelagosAppBundle/Resources/public/images/download-package.png' %}
+                                                    <img src="{{ asset_url }}" title="{{ title }}">
+                                                {% endimage %}
+                                            </a>
+                                        </td>
+                                        <td class="info">
+                                            {{ dataset[0].datasetSubmission.authors }}.
+                                            {{ dataset[0].modificationTimeStamp | date('Y') }}.
+                                            <a href="{{ path('pelagos_app_ui_dataland_default', {'udi': dataset[0].udi}) }}" target="_blank">
+                                                {% if dataset[0].metadata %}
+                                                    {{ dataset[0].metadata.title }}
+                                                {% elseif dataset[0].datasetSubmission %}
+                                                    {{ dataset[0].datasetSubmission.title }}
+                                                {% else %}
+                                                    {{ dataset[0].dif.title }}
+                                                {% endif %}
+                                            </a>.
+                                            {% if dataset[0].researchGroup %}
+                                                {{ dataset[0].researchGroup.name | trim }}.
+                                            {% endif %}
+                                            {% if dataset[0].datasetSubmission.doi %}
+                                                DOI: <a href="http://dx.doi.org/{{ dataset[0].datasetSubmission.doi }}" target="_blank">{{ dataset[0].datasetSubmission.doi }}</a>
+                                            {% endif %}
+                                            <div class="details" style="display:none;"/>
+                                            <div class="attributes">
+                                                [<a href="javascript:showDatasetDetails({{ dataset[0].id }});" class="details_link">Show Details</a>]
+                                                {% if dataset[0].datasetSubmission.datasetFileSize %}
+                                                    [Size: <span style="{% if dataset[0].datasetSubmission.datasetFileSize > 1073741824 %}color:red;{% endif %}">{{ dataset[0].datasetSubmission.datasetFileSize | formatBytes }}</span>]
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div> <!-- overview -->
+                    </div> <!-- viewport -->
+                </div> <!-- cell -->
+            </div> <!-- tab1 -->
+            <script>tabIndex++</script>
+        {% endif %}
+
+        {% if datasets.restricted %}
+            <script>datasets[tabIndex] = new Array();</script>
+            <div id="tab-2" class="tab row" style="height:100%; padding:0">
+                <div class="cell">
+                    <div class="viewport">
+                        <div class="overview">
+                            <table class="datasets">
+                                {% for dataset in datasets.restricted %}
+                                    {% if dataset[0].metadata.geometry %}
+                                        <script>
+                                            var ds = { 'udi': '{{ dataset[0].udi }}', 'geom': '{{ dataset[0].metadata.geometry }}' };
+                                            datasets[tabIndex].push(ds);
+                                        </script>
+                                    {% endif %}
+                                    <tr udi="{{ dataset[0].udi }}" datasetId="{{ dataset[0].id }}">
+                                        <td valign="top" class="direct-download">
+                                            {% if dataset[0].datasetSubmission.datasetFileTransferStatus == "RemotelyHosted" %}
+                                                <a href="javascript:startDownload({{ dataset[0].id }});">
+                                                {% if dataset[0].datasetSubmission.restrictions == "Restricted" %}
+                                                    {% set title = "This dataset is hosted by an external repository and has been marked as restricted for author use only. Please contact the external repository for information on how to access this dataset." %}
+                                                    {% if dataset[0].datasetSubmission.datasetFileUri matches '!^https?://data.gulfresearchinitiative.org!' %}
+                                                        {% set title = "This dataset is restricted for author use only." %}
+                                                    {% endif %}
+                                                    {% image '@PelagosAppBundle/Resources/public/images/download-package-grey.png' %}
+                                                        <img src="{{ asset_url }}" title="{{ title }}">
+                                                    {% endimage %}
+                                                {% elseif dataset[0].datasetSubmission.restrictions == "Approval" %}
+                                                    {% set title = "This dataset is hosted by an external repository and has been marked as requiring author approval for download. Please contact the external repository for information on how to access this dataset." %}
+                                                    {% if dataset[0].datasetSubmission.datasetFileUri matches '!^https?://data.gulfresearchinitiative.org!' %}
+                                                        {% set title = "This dataset can only be downloaded with author approval." %}
+                                                    {% endif %}
+                                                    {% image '@PelagosAppBundle/Resources/public/images/download-package-grey.png' %}
+                                                        <img src="{{ asset_url }}" title="{{ title }}">
+                                                    {% endimage %}
+                                                {% else %}
+                                                    {% image '@PelagosAppBundle/Resources/public/images/download-package.png' %}
+                                                        <img src="{{ asset_url }}" title="download dataset">
+                                                    {% endimage %}
+                                                {% endif %}
+                                                </a>
+                                            {% else %}
+                                                {% if dataset[0].datasetSubmission.restrictions == "Restricted" %}
+                                                    {% image '@PelagosAppBundle/Resources/public/images/download-package-grey.png' %}
+                                                        <img src="{{ asset_url }}" title="This dataset is restricted for author use only.">
+                                                    {% endimage %}
+                                                {% elseif dataset[0].datasetSubmission.restrictions == "Approval" %}
+                                                    {% image '@PelagosAppBundle/Resources/public/images/download-package-grey.png' %}
+                                                        <img src="{{ asset_url }}" title="This dataset can only be downloaded with author approval.">
+                                                    {% endimage %}
+                                                {% else %}
+                                                    <a href="{{ path('pelagos_app_ui_dataland_download', {'udi': dataset[0].udi}) }}">
+                                                        {% image '@PelagosAppBundle/Resources/public/images/download-package.png' %}
+                                                            <img src="{{ asset_url }}" title="download dataset">
+                                                        {% endimage %}
+                                                    </a>
+                                                {% endif %}
+                                            {% endif %}
+                                        </td>
+                                        <td class="info">
+                                            {{ dataset[0].datasetSubmission.authors }}.
+                                            {{ dataset[0].modificationTimeStamp | date('Y') }}.
+                                            <a href="{{ path('pelagos_app_ui_dataland_default', {'udi': dataset[0].udi}) }}" target="_blank">
+                                                {% if dataset[0].metadata %}
+                                                    {{ dataset[0].metadata.title }}
+                                                {% elseif dataset[0].datasetSubmission %}
+                                                    {{ dataset[0].datasetSubmission.title }}
+                                                {% else %}
+                                                    {{ dataset[0].dif.title }}
+                                                {% endif %}
+                                            </a>.
+                                            {% if dataset[0].researchGroup %}
+                                                {{ dataset[0].researchGroup.name | trim }}.
+                                            {% endif %}
+                                            {% if dataset[0].datasetSubmission.doi %}
+                                                DOI: <a href="http://dx.doi.org/{{ dataset[0].datasetSubmission.doi }}" target="_blank">{{ dataset[0].datasetSubmission.doi }}</a>
+                                            {% endif %}
+                                            <div class="details" style="display:none;"/>
+                                            <div class="attributes">
+                                                [<a href="javascript:showDatasetDetails({{ dataset[0].id }});" class="details_link">Show Details</a>]
+                                                {% if dataset[0].datasetSubmission.datasetFileSize %}
+                                                    [Size: <span style="{% if dataset[0].datasetSubmission.datasetFileSize > 1073741824 %}color:red;{% endif %}">{{ dataset[0].datasetSubmission.datasetFileSize | formatBytes }}</span>]
+                                                {% endif %}
+                                                [Restrictions:
+                                                {% if dataset[0].datasetSubmission.restrictions == "Restricted" %}
+                                                    Author Use Only]
+                                                {% elseif dataset[0].datasetSubmission.restrictions == "Approval" %}
+                                                    Author Approval Required]
+                                                {% else %}
+                                                    Unknown]
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div> <!-- overview -->
+                    </div> <!-- viewport -->
+                </div> <!-- cell -->
+            </div> <!-- tab2 -->
+            <script>tabIndex++</script>
+        {% endif %}
+
+        {% if datasets.inReview %}
+            <script>datasets[tabIndex] = new Array();</script>
+            <div id="tab-3" class="tab row">
+                <div class="cell">
+                    <div class="viewport">
+                        <div class="overview">
+                            <table class="datasets">
+                                {% for dataset in datasets.inReview %}
+                                    {% if dataset[0].metadata and dataset[0].metadata.geometry %}
+                                        <script>
+                                            var ds = { 'udi': '{{ dataset[0].udi }}', 'geom': '{{ dataset[0].metadata.geometry }}' };
+                                            datasets[tabIndex].push(ds);
+                                        </script>
+                                    {% elseif dataset[0].dif.spatialExtentGeometry %}
+                                        <script>
+                                            var ds = { 'udi': '{{ dataset[0].udi }}', 'geom': '{{ dataset.difSpatialExtentGeometry }}' };
+                                            datasets[tabIndex].push(ds);
+                                        </script>
+                                    {% endif %}
+                                    <tr udi="{{ dataset[0].udi }}" datasetId="{{ dataset[0].id }}">
+                                        <td valign="top" class="direct-download">
+                                            {% image '@PelagosAppBundle/Resources/public/images/download-package-grey.png' %}
+                                                <img src="{{ asset_url }}" title="download unavailable">
+                                            {% endimage %}
+                                        </td>
+                                        <td class="info">
+                                            {{ dataset[0].datasetSubmission.authors }}.
+                                            {{ dataset[0].modificationTimeStamp | date('Y') }}.
+                                            <a href="{{ path('pelagos_app_ui_dataland_default', {'udi': dataset[0].udi}) }}" target="_blank">
+                                                {% if dataset[0].metadata %}
+                                                    {{ dataset[0].metadata.title }}
+                                                {% elseif dataset[0].datasetSubmission %}
+                                                    {{ dataset[0].datasetSubmission.title }}
+                                                {% else %}
+                                                    {{ dataset[0].dif.title }}
+                                                {% endif %}
+                                            </a>.
+                                            {% if dataset[0].researchGroup %}
+                                                {{ dataset[0].researchGroup.name | trim }}.
+                                            {% endif %}
+                                            {% if dataset[0].datasetSubmission.doi %}
+                                                DOI: <a href="http://dx.doi.org/{{ dataset[0].datasetSubmission.doi }}" target="_blank">{{ dataset[0].datasetSubmission.doi }}</a>
+                                            {% endif %}
+                                            <div class="details" style="display:none;"/>
+                                            <div class="attributes">
+                                                [<a href="javascript:showDatasetDetails({{ dataset[0].id }});" class="details_link">Show Details</a>]
+                                                {% if dataset[0].datasetSubmission.datasetFileSize %}
+                                                    [Size: <span style="{% if dataset[0].datasetSubmission.datasetFileSize > 1073741824 %}color:red;{% endif %}">{{ dataset[0].datasetSubmission.datasetFileSize | formatBytes }}</span>]
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div> <!-- overview -->
+                    </div> <!-- viewport -->
+                </div> <!-- cell -->
+            </div> <!-- tab3 -->
+            <script>tabIndex++</script>
+        {% endif %}
+
+        {% if datasets.identified %}
+            <script>datasets[tabIndex] = new Array();</script>
+            <div id="tab-4" class="tab row" style="height:100%; padding:0">
+                <div class="cell">
+                    <div class="viewport">
+                        <div class="overview">
+                            <table class="datasets">
+                                {% for dataset in datasets.identified %}
+                                    {% if dataset[0].metadata and dataset[0].metadata.geometry %}
+                                        <script>
+                                            var ds = { 'udi': '{{ dataset[0].udi }}', 'geom': '{{ dataset[0].metadata.geometry }}' };
+                                            datasets[tabIndex].push(ds);
+                                        </script>
+                                    {% elseif dataset[0].dif.spatialExtentGeometry %}
+                                        <script>
+                                            var ds = { 'udi': '{{ dataset[0].udi }}', 'geom': '{{ dataset.difSpatialExtentGeometry }}' };
+                                            datasets[tabIndex].push(ds);
+                                        </script>
+                                    {% endif %}
+                                    <tr udi="{{ dataset[0].udi }}" datasetId="{{ dataset[0].id }}">
+                                        <td class="info">
+                                            {% if dataset[0].metadata %}
+                                                {{ dataset[0].metadata.title }}
+                                            {% elseif dataset[0].datasetSubmission %}
+                                                {{ dataset[0].datasetSubmission.title }}
+                                            {% else %}
+                                                {{ dataset[0].dif.title }}
+                                            {% endif %}
+                                            {{ dataset[0].researchGroup.name | trim }}.
+                                            {% if dataset[0].datasetSubmission and dataset[0].datasetSubmission.doi %}
+                                                DOI: <a href="http://dx.doi.org/{{ dataset[0].datasetSubmission.doi }}" target="_blank">{{ dataset[0].datasetSubmission.doi }}</a>
+                                            {% endif %}
+                                            <div class="details" style="display:none;"/>
+                                            <div class="attributes">
+                                                [<a href="javascript:showDatasetDetails({{ dataset[0].id }});" class="details_link">Show Details</a>]
+                                                {% if dataset[0].dif.estimatedStartDate or dataset[0].dif.estimatedEndDate %}
+                                                    [Data Acquisition Period: {{ dataset[0].dif.estimatedStartDate|date('Y-m-d') }} - {{ dataset[0].dif.estimatedEndDate|date('Y-m-d') }}]
+                                                {% endif %}
+                                                <span class="disabled">[Size: ? MB]</span>
+                                                <span class="disabled">[Restrictions: ?]</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div> <!-- overview -->
+                    </div> <!-- viewport -->
+                </div> <!-- cell -->
+            </div> <!-- tab4 -->
+            <script>tabIndex++</script>
+        {% endif %}
+
+    {% else %}
+
+        <div id="no-datasets" class="row">
+            <div class="cell">
+                <div style="color:red; padding:10px; text-align:center; font-weight:bold; font-size:150%;">There were no datasets found that match your search criteria.</div>
+            </div>
+        </div>
+
+    {% endif %}
+
+</div>
+
+<script>
+
+if ($('#show_all_extents_checkbox').is(':checked')) {
+    if (datasets[0]) {
+        for (var i=0; i<datasets[0].length; i++) {
+            myGeoViz.addFeatureFromWKT(datasets[0][i].geom,{'udi':datasets[0][i].udi});
+        }
+    }
+}
+
+$('table.datasets tr').hover(function() {
+    if (!$('#show_all_extents_checkbox').is(':checked')) {
+        for (var j=0; j<datasets.length; j++) {
+            for (var i=0; i<datasets[j].length; i++) {
+                if (datasets[j][i].udi == $(this).attr('udi')) {
+                    myGeoViz.addFeatureFromWKT(datasets[j][i].geom,{'udi':datasets[j][i].udi});
+                }
+            }
+        }
+    }
+    myGeoViz.highlightFeature('udi',$(this).attr('udi'));
+},function() {
+    myGeoViz.unhighlightFeature('udi',$(this).attr('udi'));
+    if (!$('#show_all_extents_checkbox').is(':checked')) {
+        myGeoViz.removeAllFeaturesFromMap();
+    }
+});
+
+</script>
