@@ -59,9 +59,6 @@ function insertTree(tree) {
         document.write('                <option value="re"');
         if (tree.type == "re") document.write(' selected');
         document.write('>Researcher</option>');
-        document.write('                <option value="in"');
-        if (tree.type == "in") document.write(' selected');
-        document.write('>Institution</option>');
         document.write('            </select>');
     }
     else if (typeof tree.title !== 'undefined') {

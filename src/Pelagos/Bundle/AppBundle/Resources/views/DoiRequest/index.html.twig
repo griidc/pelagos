@@ -1,0 +1,43 @@
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
+
+{% block head %}
+    {{ parent() }}
+
+    {{
+        add_library (
+            [
+                'ui.dialog',
+                'ui.widget',
+            ]
+        )
+    }}
+
+    {% stylesheets
+        '@PelagosAppBundle/Resources/public/css/doi.css'
+    %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets %}
+    
+     {{
+        add_js(
+            [
+                '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',
+            ]
+        )
+    }}
+
+    {% javascripts
+        '@PelagosAppBundle/Resources/public/js/doi.js'
+        '@FOSJsRoutingBundle/Resources/public/js/router.js'
+    %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
+
+{% endblock %}
+
+{% block body %}
+    <h1 class="title">Digital Object Identifier (DOI) Request Form</h1>
+   {% include 'PelagosAppBundle:DoiRequest:doiForm.html.twig' %}
+{% endblock %}

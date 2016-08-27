@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use Doctrine\Common\Collections\Collection;
+
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -73,7 +75,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="citext")
+     * @ORM\Column(type="citext", options={"collation":"POSIX"})
      *
      * @Assert\NotBlank(
      *     message="Name is required"
@@ -108,7 +110,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Website URL cannot contain angle brackets (< or >)"
@@ -123,7 +125,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Phone number cannot contain angle brackets (< or >)"
@@ -138,7 +140,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Delievery point (address) cannot contain angle brackets (< or >)"
@@ -153,7 +155,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="City cannot contain angle brackets (< or >)"
@@ -168,7 +170,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Administrative area (state) cannot contain angle brackets (< or >)"
@@ -183,7 +185,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Postal code (zip) cannot contain angle brackets (< or >)"
@@ -198,7 +200,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Country cannot contain angle brackets (< or >)"
@@ -213,7 +215,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Description cannot contain angle brackets (< or >)"
@@ -262,6 +264,58 @@ class ResearchGroup extends Entity
      * @Serializer\MaxDepth(2)
      */
     protected $personResearchGroups;
+
+    /**
+     * Research group's list of Datasets.
+     *
+     * @var Collection $datasets
+     *
+     * @ORM\OneToMany(targetEntity="Dataset", mappedBy="researchGroup")
+     *
+     * @Serializer\Exclude
+     */
+    protected $datasets;
+
+    /**
+     * Getter for Datasets.
+     *
+     * @return Collection A Collection of Datasets.
+     */
+    public function getDatasets()
+    {
+        return $this->datasets;
+    }
+
+    /**
+     * Serializer for the datasets virtual property.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("datasets")
+     *
+     * @return array
+     */
+    public function serializeDatasets()
+    {
+        $datasets = array();
+        foreach ($this->datasets as $dataset) {
+            $datasetArray = array(
+                'id' => $dataset->getId(),
+                'title' => $dataset->getTitle(),
+                'udi' => $dataset->getUdi(),
+            );
+            if (null !== $dataset->getDif()) {
+                $datasetArray['dif'] = array(
+                    'id' => $dataset->getDif()->getId(),
+                    'status' => $dataset->getDif()->getStatus(),
+                    'title' => $dataset->getDif()->getTitle(),
+                );
+            } else {
+                $datasetArray['dif'] = null;
+            }
+            $datasets[] = $datasetArray;
+        }
+        return $datasets;
+    }
 
     /**
      * Setter for name.
@@ -653,5 +707,18 @@ class ResearchGroup extends Entity
             $notDeletableException->setReasons($notDeletableReasons);
             throw $notDeletableException;
         }
+    }
+
+    /**
+     * Compare two Research Groups by name.
+     *
+     * @param ResearchGroup $a First Research Group to compare.
+     * @param ResearchGroup $b Second Research Group to compare.
+     *
+     * @return integer
+     */
+    public static function compareByName(ResearchGroup $a, ResearchGroup $b)
+    {
+        return strcmp($a->getName(), $b->getName());
     }
 }

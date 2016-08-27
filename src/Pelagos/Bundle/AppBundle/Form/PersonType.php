@@ -7,9 +7,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
 
 /**
  * A form for creating people.
@@ -19,16 +18,16 @@ class PersonType extends AbstractType
     /**
      * Proteced router value instance of router service.
      *
-     * @var Router
+     * @var RouterInterface
      */
     protected $router;
 
     /**
      * Constructor that provides router.
      *
-     * @param Router $router The router instance.
+     * @param RouterInterface $router The router instance.
      */
-    public function __construct(Router $router)
+    public function __construct(RouterInterface $router)
     {
         $this->router = $router;
     }

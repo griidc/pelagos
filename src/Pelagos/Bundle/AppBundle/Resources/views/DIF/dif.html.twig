@@ -1,0 +1,172 @@
+{% extends "PelagosAppBundle::layout.html.twig" %}
+
+{% block head %}
+    {{
+        add_library (
+            [
+                'ui.datepicker',
+                'ui.dialog',
+                'ui.tabs',
+                'ui.widget',
+                'ui.autocomplete'
+            ]
+        )
+    }}
+
+    {{
+        add_css (
+            [
+                '//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.1/themes/default/style.min.css',
+            ]
+        )
+    }}
+    
+    {% stylesheets  '@PelagosAppBundle/Resources/public/css/dif.css' %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets  %}
+    
+    {{
+        add_js(
+            [
+                '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',
+                '//maps.google.com/maps/api/js?v=3',
+                '//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.1/jstree.min.js',
+                '/includes/geoviz/geoviz.js',
+                '/includes/geoviz/mapWizard.js',
+            ]
+        )
+    }}
+    
+    {% javascripts '@PelagosAppBundle/Resources/public/js/common.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    {% javascripts '@PelagosAppBundle/Resources/public/js/dif.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+   
+{% endblock %}
+
+
+{% block body %}
+<table width="100%" height="100%">
+    <tr>
+    <td style="vertical-align: top; width:60%" >
+    <div class="cleair">
+    <fieldset>
+        <h1>Dataset Information</h1>
+        <strong>NOTE:</strong>
+        To create a new DIF, begin by selecting the project title that you would like your dataset associated with from the drop down menu &ldquo;Project Title&rdquo;. To load an existing DIF, left click the dataset tile found in the &ldquo;Datasets&rdquo; list in the right hand panel. The red asterisk (<span class="emRequired"/>) is used to indicate required fields. Once a DIF is submitted, it will be locked to prevent additional changes. Please contact <a href="mailto:griidc@gomri.org?subject=DIF">griidc@gomri.org</a> with the dataset Unique Dataset Identifier (UDI) if you require additional assistance with the completion of this form.<br>
+        <hr>
+        <div id="statustext" class="statustext"></div>
+        {% include 'PelagosAppBundle:DIF:difForm.html.twig' %}
+    </div>
+    </td>
+    <td height="100%" valign="top">
+    <div style="height:100%; position:relative;">
+    <div class="cleair" style="position:absolute; top:0px; left:0px; right:0px; bottom:0px;">
+        <table width="100%" height="100%">
+        {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') or is_granted('ROLE_RESEARCH_GROUP_DATA') %}
+        <tr>
+        <td>
+            <div id="difFilterTools">
+                <table width="100%">
+                <tr>
+                    <td>
+                        <label>Show Projects Without Datasets</label><input type="radio" value="1" name="showempty" checked>Yes<input type="radio" value="0" name="showempty">No
+                    </td>
+                    <td>
+                        <label>Filter by Status:</label>
+                        <select id="fltStatus" style="width:95%;">
+                            <option value="">[SHOW ALL]</option>
+                            <option value="0">Open</option>
+                            <option value="1">Submitted</option>
+                            <option value="2">Approved</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button style="width:120px;" id="fltReset">Reset Filters</button>
+                        <input type="hidden" id="fltResearcher">
+                    </td>
+                <tr>
+                    <td colspan="2">
+                        <label>Search in Results</label><input placeholder="Search Title or UDI" style="width:95%;" id="fltResults">
+                    </td>
+                    <td><button style="width:120px;" type="button" id="btnSearch">Search</button></td>
+                </tr>
+                </table>
+            </div>
+        </td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td height="100%">
+                <table height="100%" width="100%">
+                    <tr>
+                        <td>
+                            <h3>Legend:&nbsp;
+                                <span class="statusicon" title="DIF is Open. DIF has been started and saved for this dataset, but has not yet been submitted to GRIIDC.">
+                                    {% image '@PelagosAppBundle/Resources/public/images/cross.png' %}
+                                    <img id="imgcross" src="{{ asset_url }}">
+                                    {% endimage %}
+                                    &nbsp;Open
+                                </span>&nbsp;-
+                                <span class="statusicon" title="DIF is locked and is in review. DIF has been completed and submitted to GRIIDC for review and approval.">
+                                    {% image '@PelagosAppBundle/Resources/public/images/error.png' %}
+                                    <img id="imgerror" src="{{ asset_url }}">
+                                    {% endimage %}
+                                    &nbsp;Submitted
+                                </span>&nbsp;-
+                                <span class="statusicon" title="DIF is locked and approved. DIF has been submitted to GRIIDC and reviewed and approved by GRIIDC. It is locked to prevent additional changes.">
+                                    {% image '@PelagosAppBundle/Resources/public/images/tick.png' %}
+                                    <img id="imgtick" src="{{ asset_url }}">
+                                    {% endimage %}
+                                    &nbsp;Approved
+                                </span>&nbsp;-
+                                <span class="statusicon" title="This is a project that you are associated with through your GoMRI proposal or grant funding agreement that has datasets identified">
+                                    {% image '@PelagosAppBundle/Resources/public/images/folder.png' %}
+                                    <img id="imgfolder" src="{{ asset_url }}">
+                                    {% endimage %}
+                                    &nbsp;Project
+                                </span>&nbsp;-
+                                <span class="statusicon" title="This is a project that you are associated with through your GoMRI proposal or grant funding agreement that does not yet have datasets identified.">
+                                    {% image '@PelagosAppBundle/Resources/public/images/folder_gray.png' %}
+                                    <img id="imgfoldergray" style="-webkit-filter:grayscale(100%);" src="{{ asset_url }}">
+                                    {% endimage %}
+                                    &nbsp;Project Without Datasets
+                                </span>
+                            </h3>
+                            <h1>Datasets</h1>
+                            <hr width="100%">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height="100%">
+                            <div style="position:relative;height:100%;overflow:auto;">
+                                <div id="diftree" class="diftree">
+                                    <a class="jstree-anchor" href="#">
+                                        {% image '@PelagosAppBundle/Resources/public/images/throbber.gif' %}
+                                        <img id="imgthrobber" src="{{ asset_url }}">
+                                        {% endimage %}
+                                        Loading...
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        </table>
+    </div>
+    </div>
+    </td>
+    </tr>
+</table>
+
+<div id="noresults" title="Search...">No Results Found.</div>
+<div class="modal" id="spinner"></div>
+{% endblock %}

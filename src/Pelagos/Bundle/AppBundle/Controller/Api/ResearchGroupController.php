@@ -82,10 +82,13 @@ class ResearchGroupController extends EntityController
      *
      * @ApiDoc(
      *   section = "Research Groups",
-     *   parameters = {
-     *     {"name"="properties", "dataType"="string", "required"=false, "format"="property1,property2,property3.subProperty,etc.", "description"="Return these properties"},
-     *     {"name"="orderBy", "dataType"="string", "required"=false, "format"="property1,property2,property3.subProperty,etc.", "description"="Order by these properties"},
-     *     {"name"="someProperty", "dataType"="string", "required"=false, "format"="value", "description"="Filter by someProperty"},
+     *   input = {
+     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCollectionType",
+     *     "name": "",
+     *     "options": {
+     *       "label": "Research Groups",
+     *       "data_class": "Pelagos\Entity\ResearchGroup"
+     *     }
      *   },
      *   output = "array<Pelagos\Entity\ResearchGroup>",
      *   statusCodes = {
@@ -96,23 +99,17 @@ class ResearchGroupController extends EntityController
      *
      * @Rest\Get("")
      *
+     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     *
      * @return Response
      */
     public function getCollectionAction(Request $request)
     {
-        $researchGroups = $this->handleGetCollection(ResearchGroup::class, $request);
-        for ($i = 0; $i < count($researchGroups); $i++) {
-            if (is_array($researchGroups[$i])
-                and array_key_exists('logo', $researchGroups[$i])
-                and null !== $researchGroups[$i]['logo']
-                and array_key_exists('id', $researchGroups[$i])) {
-                $researchGroups[$i]['logo'] = $this->getResourceUrl(
-                    'pelagos_api_research_groups_get_logo',
-                    $researchGroups[$i]['id']
-                );
-            }
-        }
-        return $this->makeJsonResponse($researchGroups);
+        return $this->handleGetCollection(
+            ResearchGroup::class,
+            $request,
+            array('logo' => 'pelagos_api_research_groups_get_logo')
+        );
     }
 
     /**

@@ -1,4 +1,10 @@
+parameters:
+    hwi_oauth.user.provider.class: Pelagos\Bundle\AppBundle\Security\OAuthUserProvider
+
 security:
+
+    # leave session alone
+    session_fixation_strategy: none
 
     providers:
         pelagos_account:
@@ -7,6 +13,8 @@ security:
                 property: userId
         person_token:
             id: person_token_user_provider
+        hwi_outh:
+            id: hwi_oauth.user.provider
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -33,6 +41,12 @@ security:
             # use REMOTE_USER environment variable if set
             remote_user:
                 provider: pelagos_account
+            oauth:
+                resource_owners:
+                    google:     check_google
+                login_path:     /
+                oauth_user_provider:
+                    oauth:
 
 services:
     super_user_voter:
@@ -57,5 +71,21 @@ services:
             - { name: security.voter }
     account_voter:
         class: Pelagos\Bundle\AppBundle\Security\AccountVoter
+        tags:
+            - { name: security.voter }
+    DIF_voter:
+        class: Pelagos\Bundle\AppBundle\Security\DIFVoter
+        tags:
+            - { name: security.voter }
+    dataset_submission_voter:
+        class: Pelagos\Bundle\AppBundle\Security\DatasetSubmissionVoter
+        tags:
+            - { name: security.voter }
+    dataset_voter:
+        class: Pelagos\Bundle\AppBundle\Security\DatasetVoter
+        tags:
+            - { name: security.voter }
+    doi_request_voter:
+        class: Pelagos\Bundle\AppBundle\Security\DoiRequestVoter
         tags:
             - { name: security.voter }

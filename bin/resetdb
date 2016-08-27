@@ -1,0 +1,70 @@
+#!/bin/bash
+
+parse_yaml() {
+   local prefix=$2
+   local s='[[:space:]]*' w='[a-zA-Z0-9_]*' fs=$(echo @|tr @ '\034')
+   sed -ne "s|^\($s\)\($w\)$s:$s[\"']\(.*\)[\"']$s\$|\1$fs\2$fs\3|p" \
+        -e "s|^\($s\)\($w\)$s:$s\(.*\)$s\$|\1$fs\2$fs\3|p"  $1 |
+   awk -F$fs '{
+      indent = length($1)/2;
+      vname[indent] = $2;
+      for (i in vname) {if (i > indent) {delete vname[i]}}
+      if (length($3) > 0) {
+         vn=""; for (i=0; i<indent; i++) {vn=(vn)(vname[i])("_")}
+         printf("%s%s%s=\"%s\"\n", "'$prefix'",vn, $2, $3);
+      }
+   }'
+}
+
+if [ ! -f app/config/parameters.yml ]; then
+    echo "parameters.yml not found"
+    exit
+fi
+
+eval $(parse_yaml app/config/parameters.yml "")
+
+echo "WARNING!!!: This will destroy all data in the $parameters__database_name database on $parameters__database_host!"
+read -r -p "Are you sure you want to do this? [y/N] " response
+if [[ ! $response =~ ^[yY]$ ]]; then
+    echo "Aborted"
+    exit
+fi
+
+if [ "$#" -eq 1 ]; then
+    export SYMFONY_ENV="$1"
+fi
+
+bin/console rabbitmq-supervisor:control stop
+
+echo "DROP DATABASE $parameters__database_name" | psql -h $parameters__database_host -U postgres || exit
+echo "Database $parameters__database_name dropped"
+echo "CREATE DATABASE $parameters__database_name" | psql -h $parameters__database_host -U postgres || exit
+echo "Created database $parameters__database_name"
+echo "ALTER DATABASE $parameters__database_name OWNER TO $parameters__database_user" | psql -h $parameters__database_host -U postgres || exit
+echo "Database $parameters__database_name ownership set to $parameters__database_user"
+echo "CREATE EXTENSION IF NOT EXISTS citext" | psql -h $parameters__database_host -U postgres $parameters__database_name || exit
+echo "Loaded citext extension"
+echo "CREATE EXTENSION IF NOT EXISTS postgis" | psql -h $parameters__database_host -U postgres $parameters__database_name || exit
+echo "Loaded Postgis Extention"
+echo "GRANT ALL PRIVILEGES ON TABLE spatial_ref_sys TO $parameters__database_user" | psql -h $parameters__database_host -U postgres $parameters__database_name || exit
+echo "Grant permissions to spatial_ref_sys"
+echo "GRANT ALL PRIVILEGES ON TABLE geometry_columns TO $parameters__database_user" | psql -h $parameters__database_host -U postgres $parameters__database_name || exit
+echo "Grant permissions to geometry_columns"
+
+bin/console doctrine:schema:create || exit
+echo "Generated/loaded DB schema"
+
+export PGPASSWORD="$parameters__database_password"
+
+echo "ALTER SEQUENCE funding_cycle_id_seq START WITH 801" | psql -h $parameters__database_host -U $parameters__database_user $parameters__database_name || exit
+echo "ALTER SEQUENCE funding_cycle_id_seq RESTART" | psql -h $parameters__database_host -U $parameters__database_user $parameters__database_name || exit
+echo "ALTER SEQUENCE research_group_id_seq START WITH 801" | psql -h $parameters__database_host -U $parameters__database_user $parameters__database_name || exit
+echo "ALTER SEQUENCE research_group_id_seq RESTART" | psql -h $parameters__database_host -U $parameters__database_user $parameters__database_name || exit
+echo "ALTER SEQUENCE person_id_seq START WITH 10001" | psql -h $parameters__database_host -U $parameters__database_user $parameters__database_name || exit
+echo "ALTER SEQUENCE person_id_seq RESTART" | psql -h $parameters__database_host -U $parameters__database_user $parameters__database_name || exit
+echo "Initialized sequences"
+
+echo "y" | bin/console doctrine:fixtures:load -v || exit
+echo "Loaded data fixtures"
+
+bin/console rabbitmq-supervisor:control start

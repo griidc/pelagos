@@ -84,6 +84,11 @@ class LdapAccountImportCommand extends ContainerAwareCommand
                 continue;
             }
 
+            if (!array_key_exists('userpassword', $ldapPerson)) {
+                $output->writeln($ldapPerson['uid'][0] . ' - no password set');
+                continue;
+            }
+
             if (!preg_match('/^\{([^\}]+)\}(.*)$/', $ldapPerson['userpassword'][0], $matches)) {
                 $output->writeln($ldapPerson['uid'][0] . ' - could not decode password hash');
                 continue;

@@ -27,3 +27,69 @@ services:
     pelagos.ldap:
         class: Pelagos\Component\Ldap\Ldap
         arguments: ["@pelagos.ldap_client","%ldap_bind_dn%","%ldap_bind_pw%","%ldap_people_ou%"]
+
+    pelagos.router:
+        public: false
+        class: Pelagos\Routing\Router
+        decorates: router
+        arguments: ["@pelagos.router.inner", "%pelagos.prefix%"]
+
+    pelagos.util.udi:
+        class: Pelagos\Util\Udi
+        arguments: ["@doctrine.orm.entity_manager"]
+
+    pelagos.util.posixify_account:
+        class: Pelagos\Util\POSIXifyAccount
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@pelagos.ldap"
+            - "@pelagos.entity.handler"
+            - '%posix_starting_uid%'
+            - '%posix_gid%'
+            - '%homedir_prefix%'
+            - "@old_sound_rabbit_mq.create_homedir_producer"
+
+    pelagos.util.publink:
+        class: Pelagos\Util\PubLinkUtil
+        arguments: ["@pelagos.entity.handler"]
+
+    pelagos.util.geometry:
+        class: Pelagos\Util\Geometry
+        arguments: ["@doctrine.orm.entity_manager"]
+
+    pelagos.util.mdapplogger:
+        class: Pelagos\Util\MdappLogger
+        arguments: ["%mdapp_logfile%"]
+
+    pelagos.util.metadata:
+        class: Pelagos\Util\Metadata
+
+    pelagos.util.data_store:
+        class: Pelagos\Util\DataStore
+        arguments:
+            - "%data_store_directory%"
+            - "%data_download_directory%"
+            - "%data_store_owner%"
+            - "%data_store_group%"
+            - "%data_download_browser_group%"
+            - "%web_server_user%"
+
+    pelagos.event.entity_event_dispatcher:
+        class: Pelagos\Event\EntityEventDispatcher
+        arguments: ["@event_dispatcher"]
+
+    monolog.processor.process_id:
+        class: Monolog\Processor\ProcessIdProcessor
+        tags:
+            - { name: monolog.processor, channel: filer }
+            - { name: monolog.processor, channel: retriever }
+
+    pelagos.console.listener:
+        class: Pelagos\Event\ConsoleListener
+        tags:
+            - { name: kernel.event_listener, event: console.exception, method: onException }
+
+    doctrine.postgis.subscriber:
+        class: Jsor\Doctrine\PostGIS\Event\ORMSchemaEventSubscriber
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }

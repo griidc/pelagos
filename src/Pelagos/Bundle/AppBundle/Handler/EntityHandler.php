@@ -19,7 +19,11 @@ use Pelagos\Entity\Entity;
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Password;
 use Pelagos\Entity\Person;
+
+use Pelagos\Event\EntityEventDispatcher;
+
 use Pelagos\Exception\UnmappedPropertyException;
+
 use Pelagos\Bundle\AppBundle\Security\PelagosEntityVoter;
 use Pelagos\Bundle\AppBundle\Security\EntityProperty;
 
@@ -50,6 +54,13 @@ class EntityHandler
     private $authorizationChecker;
 
     /**
+     * The entity event dispatcher.
+     *
+     * @var EntityEventDispatcher
+     */
+    private $entityEventDispatcher;
+
+    /**
      * A list of entities that are proctected and not accessible in collections.
      *
      * @var array
@@ -62,18 +73,21 @@ class EntityHandler
     /**
      * Constructor for EntityHandler.
      *
-     * @param EntityManager                 $entityManager        The entity manager to use.
-     * @param TokenStorageInterface         $tokenStorage         The token storage to use.
-     * @param AuthorizationCheckerInterface $authorizationChecker The authorization checker to use.
+     * @param EntityManager                 $entityManager         The entity manager to use.
+     * @param TokenStorageInterface         $tokenStorage          The token storage to use.
+     * @param AuthorizationCheckerInterface $authorizationChecker  The authorization checker to use.
+     * @param EntityEventDispatcher         $entityEventDispatcher The entity event dispatcher.
      */
     public function __construct(
         EntityManager $entityManager,
         TokenStorageInterface $tokenStorage,
-        AuthorizationCheckerInterface $authorizationChecker
+        AuthorizationCheckerInterface $authorizationChecker,
+        EntityEventDispatcher $entityEventDispatcher
     ) {
         $this->entityManager = $entityManager;
         $this->tokenStorage = $tokenStorage;
         $this->authorizationChecker = $authorizationChecker;
+        $this->entityEventDispatcher = $entityEventDispatcher;
     }
 
     /**
@@ -149,7 +163,7 @@ class EntityHandler
         $this->processOrderBy($orderBy, $qb, $joins);
         // Join all necessary joins.
         foreach ($joins as $entityProperty => $alias) {
-            $qb->join($entityProperty, $alias);
+            $qb->leftJoin($entityProperty, $alias);
         }
         // Get the query.
         $query = $qb->getQuery();
@@ -160,14 +174,15 @@ class EntityHandler
     /**
      * Create a new entity.
      *
-     * @param Entity $entity The entity to create.
+     * @param Entity      $entity          The entity to create.
+     * @param string|null $entityEventName The name of the entity event to dispatch (default: 'created').
      *
      * @throws \Exception            When the entity is already tracked by the entity manager.
      * @throws AccessDeniedException When the user does not have sufficient privileges to create the entity.
      *
      * @return Entity The new entity.
      */
-    public function create(Entity $entity)
+    public function create(Entity $entity, $entityEventName = 'created')
     {
         if ($this->entityManager->contains($entity)) {
             throw new \Exception('Attempted to create a ' . $entity::FRIENDLY_NAME . ' that is already tracked');
@@ -197,20 +212,22 @@ class EntityHandler
             // Restore the original ID generator for entities of this class.
             $metadata->setIdGenerator($idGenerator);
         }
+        $this->entityEventDispatcher->dispatch($entity, $entityEventName);
         return $entity;
     }
 
     /**
      * Update an entity.
      *
-     * @param Entity $entity The entity to update.
+     * @param Entity      $entity          The entity to update.
+     * @param string|null $entityEventName The name of the entity event to dispatch (default: 'updated').
      *
      * @throws \Exception            When the entity is not tracked by the entity manager.
      * @throws AccessDeniedException When the user does not have sufficient privileges to update the entity.
      *
      * @return Entity The updated entity.
      */
-    public function update(Entity $entity)
+    public function update(Entity $entity, $entityEventName = 'updated')
     {
         if (!$this->entityManager->contains($entity)) {
             throw new \Exception('Attempted to update an untracked ' . $entity::FRIENDLY_NAME);
@@ -232,20 +249,22 @@ class EntityHandler
         $entity->setModifier($this->getAuthenticatedPerson());
         $this->entityManager->persist($entity);
         $this->entityManager->flush($entity);
+        $this->entityEventDispatcher->dispatch($entity, $entityEventName);
         return $entity;
     }
 
     /**
      * Delete an entity.
      *
-     * @param Entity $entity The entity object to delete.
+     * @param Entity      $entity          The entity object to delete.
+     * @param string|null $entityEventName The name of the entity event to dispatch (default: 'deleted').
      *
      * @throws \Exception            When the entity is not tracked by the entity manager.
      * @throws AccessDeniedException When the user does not have sufficient privileges to delete the entity.
      *
      * @return Entity The entity object that was deleted.
      */
-    public function delete(Entity $entity)
+    public function delete(Entity $entity, $entityEventName = 'deleted')
     {
         if (!$this->entityManager->contains($entity)) {
             throw new \Exception('Attempted to delete an untracked ' . $entity::FRIENDLY_NAME);
@@ -257,6 +276,7 @@ class EntityHandler
         }
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
+        $this->entityEventDispatcher->dispatch($entity, $entityEventName);
         return $entity;
     }
 

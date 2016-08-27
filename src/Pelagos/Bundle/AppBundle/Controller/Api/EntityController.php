@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -28,41 +29,54 @@ abstract class EntityController extends FOSRestController
     /**
      * Get all entities of a given type.
      *
-     * @param string  $entityClass The type of entity.
-     * @param Request $request     The request object.
+     * @param string  $entityClass  The type of entity.
+     * @param Request $request      The request object.
+     * @param array   $subResources A list of properties that are sub-resources and the routes to access them.
      *
      * @return array
      */
-    public function handleGetCollection($entityClass, Request $request)
+    public function handleGetCollection($entityClass, Request $request, array $subResources = array())
     {
         $params = $request->query->all();
         if (array_key_exists('q', $params)) {
             // Remove the 'q' parameter if it exists (this comes from Drupal).
             unset($params['q']);
         }
+        if (array_key_exists('_permission', $params)) {
+            $permission = $params['_permission'];
+            unset($params['_permission']);
+        }
         foreach (array_keys($params) as $param) {
             str_replace('_', '.', $params[$param]);
         }
-        $orderBy = array();
-        if (array_key_exists('orderBy', $params)) {
-            foreach (preg_split('/[,\s]+/', $params['orderBy']) as $propertyOrder) {
-                $property = preg_split('/:/', $propertyOrder);
-                $orderBy[$property[0]] = count($property) === 1 ? 'ASC' : $property[1];
-            }
-            unset($params['orderBy']);
+        $orderBy = $this->getOrderBy($params);
+        $properties = $this->getProperties($params);
+        $hydrator = Query::HYDRATE_ARRAY;
+        if (isset($permission)) {
+            $hydrator = Query::HYDRATE_OBJECT;
         }
-        $properties = array();
-        if (array_key_exists('properties', $params)) {
-            $properties = preg_split('/[,\s]+/', $params['properties']);
-            unset($params['properties']);
-        }
-        return $this->container->get('pelagos.entity.handler')->getBy(
+        $entities = $this->container->get('pelagos.entity.handler')->getBy(
             $entityClass,
             $params,
             $orderBy,
             $properties,
-            Query::HYDRATE_ARRAY
+            $hydrator
         );
+        if (isset($permission)) {
+            $entities = $this->filterByPermission($entities, $permission);
+        }
+        if (count($subResources) > 0
+            and (
+                count($properties) === 0
+                or count(array_intersect(array_keys($subResources), $properties)) > 0
+            )
+        ) {
+            $this->processSubResources($entities, $subResources, Query::HYDRATE_OBJECT === $hydrator);
+        }
+        if (Query::HYDRATE_ARRAY === $hydrator) {
+            return $this->makeJsonResponse($entities);
+        }
+        return $entities;
     }
 
     /**
@@ -97,12 +111,15 @@ abstract class EntityController extends FOSRestController
      * @param string  $formType    The type of form.
      * @param string  $entityClass The type of entity.
      * @param Request $request     The request object.
+     * @param Entity  $entity      An optional entity to use instead of creating a new one.
      *
      * @return Entity The newly created entity.
      */
-    public function handlePost($formType, $entityClass, Request $request)
+    public function handlePost($formType, $entityClass, Request $request, Entity $entity = null)
     {
-        $entity = new $entityClass;
+        if (null === $entity) {
+            $entity = new $entityClass;
+        }
         $this->processForm($formType, $entity, $request, 'POST');
         $this->container->get('pelagos.entity.handler')->create($entity);
         return $entity;
@@ -350,22 +367,26 @@ abstract class EntityController extends FOSRestController
      *
      * @param string  $locationRouteName The name of the route to put in the Location header.
      * @param integer $resourceId        The id of the newly created resource.
+     * @param array   $additionalHeaders Array of additional headers to add to the response.
      *
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new Person to Research Group Association in the Location header.
      */
-    protected function makeCreatedResponse($locationRouteName, $resourceId)
+    protected function makeCreatedResponse($locationRouteName, $resourceId, array $additionalHeaders = array())
     {
         return new Response(
             null,
             Codes::HTTP_CREATED,
-            array(
-                'Content-Type' => 'application/x-empty',
-                'Location' => $this->generateUrl(
-                    $locationRouteName,
-                    ['id' => $resourceId]
+            array_merge(
+                array(
+                    'Content-Type' => 'application/x-empty',
+                    'Location' => $this->generateUrl(
+                        $locationRouteName,
+                        ['id' => $resourceId]
+                    ),
+                    'X-Resource-Id' => $resourceId,
                 ),
-                'X-Resource-Id' => $resourceId,
+                $additionalHeaders
             )
         );
     }
@@ -419,5 +440,97 @@ abstract class EntityController extends FOSRestController
                 'Content-Type' => 'application/json',
             )
         );
+    }
+
+    /**
+     * Get an orderBy array from request parameters.
+     *
+     * @param array $params The request parameters.
+     *
+     * @return array
+     */
+    private function getOrderBy(array &$params)
+    {
+        $orderBy = array();
+        if (array_key_exists('_orderBy', $params)) {
+            foreach (preg_split('/[,\s]+/', $params['_orderBy']) as $propertyOrder) {
+                $property = preg_split('/:/', $propertyOrder);
+                $orderBy[$property[0]] = count($property) === 1 ? 'ASC' : $property[1];
+            }
+            unset($params['_orderBy']);
+        }
+        return $orderBy;
+    }
+
+    /**
+     * Get a properties array from request parameters.
+     *
+     * @param array $params The request parameters.
+     *
+     * @return array
+     */
+    private function getProperties(array &$params)
+    {
+        $properties = array();
+        if (array_key_exists('_properties', $params)) {
+            $properties = preg_split('/[,\s]+/', $params['_properties']);
+            unset($params['_properties']);
+        }
+        return $properties;
+    }
+
+    /**
+     * Filter a list of entities by a permission.
+     *
+     * @param array  $entities   A list of entities.
+     * @param string $permission A permission.
+     *
+     * @return array
+     */
+    private function filterByPermission(array $entities, $permission)
+    {
+        $authorizedEntities = array();
+        foreach ($entities as $entity) {
+            if ($this->isGranted($permission, $entity)) {
+                $authorizedEntities[] = $entity;
+            }
+        }
+        return $authorizedEntities;
+    }
+
+    /**
+     * Change values for properties in a list of entities that are sub-resources to urls to retrieve them.
+     *
+     * @param array   $entities     A list of entities.
+     * @param array   $subResources A list of properties that are sub-resources and the routes to access them.
+     * @param boolean $objects      Whether or not the list of entities contains objects or not.
+     *
+     * @return void
+     */
+    private function processSubResources(array &$entities, array $subResources, $objects = true)
+    {
+        if (true === $objects) {
+            $accessor = PropertyAccess::createPropertyAccessor();
+            foreach ($entities as $entity) {
+                foreach ($subResources as $subResource => $routeName) {
+                    if (null !== $accessor->getValue($entity, $subResource)) {
+                        $accessor->setValue(
+                            $entity,
+                            $subResource,
+                            $this->getResourceUrl($routeName, $entity->getId())
+                        );
+                    }
+                }
+            }
+        } else {
+            foreach ($entities as $index => $entity) {
+                foreach ($subResources as $subResource => $routeName) {
+                    if (array_key_exists($subResource, $entities[$index])
+                        and null !== $entities[$index][$subResource]) {
+                        $entities[$index][$subResource] = $this->getResourceUrl($routeName, $entity['id']);
+                    }
+                }
+            }
+        }
     }
 }

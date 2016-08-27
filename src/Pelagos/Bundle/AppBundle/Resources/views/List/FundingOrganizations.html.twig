@@ -41,6 +41,30 @@
 
 {% endblock %}
 
+{%
+set properties = [
+    'sortOrder',
+    'name',
+    'emailAddress',
+    'description',
+    'url',
+    'phoneNumber',
+    'deliveryPoint',
+    'city',
+    'administrativeArea',
+    'postalCode',
+    'country',
+    'creationTimeStamp',
+    'creator.id',
+    'creator.firstName',
+    'creator.lastName',
+    'modificationTimeStamp',
+    'modifier.id',
+    'modifier.firstName',
+    'modifier.lastName',
+]
+%}
+
 {% block body %}
 <table
     viewInterface = "{{ path('pelagos_app_ui_fundingorganization_default') }}"
@@ -50,11 +74,12 @@
     class = "entityTable stripe"
     width = "100%"
     data-ajax = '{
-        "url": "{{ path('pelagos_api_funding_organizations_get_collection') }}?properties=name,emailAddress,description,url,phoneNumber,deliveryPoint,city,administrativeArea,postalCode,country,creationTimeStamp,modificationTimeStamp,creator.id,creator.firstName,creator.lastName,modifier.id,modifier.firstName,modifier.lastName",
+        "url": "{{ path('pelagos_api_funding_organizations_get_collection', {'_properties': properties | join(',')}) }}",
         "dataSrc": "",
         "cache": true
     }'
     data-columns = '[
+        { "data": "sortOrder" },
         { "data": "name" },
         { "data": "emailAddress" },
         { "data": "description" },
@@ -70,14 +95,15 @@
         { "data": "modificationTimeStamp" },
         { "data": "modifier" }
     ]'
-    data-order = '[[ 0, "asc" ]]'
-    creatorColumn = "11"
-    modifierColumn = "13"
-    creationTimeStampColumn = "10"
-    modificationTimeStampColumn = "12"
+    data-order = '[[ 1, "asc" ]]'
+    creatorColumn = "12"
+    modifierColumn = "14"
+    creationTimeStampColumn = "11"
+    modificationTimeStampColumn = "13"
 >
     <thead>
         <tr>
+            <th>Sort</th>
             <th>Funding Org Name</th>
             <th>Email</th>
             <th>Description</th>

@@ -103,13 +103,20 @@ abstract class Entity
     /**
      * Setter for identifier.
      *
-     * @param integer $id This entity's Identifier.
+     * @param integer|null $id This entity's Identifier.
+     *
+     * @throws \InvalidArgumentException When $id id not an integer or null.
      *
      * @return void
      */
-    public function setId($id)
+    public function setId($id = null)
     {
-        if ($this->id === null) {
+        // Must be an integer or null.
+        if (null !== $id and !is_numeric($id)) {
+            throw new \InvalidArgumentException('id must be an integer or null');
+        }
+        // Can only change from or to null.
+        if (null === $this->id or null === $id) {
             $this->id = $id;
         }
     }
@@ -423,5 +430,15 @@ abstract class Entity
             'firstName' => $this->modifier->getFirstName(),
             'lastName' => $this->modifier->getLastName(),
         );
+    }
+
+    /**
+     * Returns the name of this entity lowercased and separated by underscores.
+     *
+     * @return string
+     */
+    public function getUnderscoredName()
+    {
+        return strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', substr(strrchr(get_class($this), '\\'), 1)));
     }
 }

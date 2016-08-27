@@ -17,6 +17,8 @@ use Pelagos\Entity\DataRepository;
  */
 class ResearchGroupVoter extends PelagosEntityVoter
 {
+    const CAN_CREATE_DIF_FOR = 'CAN_CREATE_DIF_FOR';
+
     /**
      * Determines if the attribute and subject are supported by this voter.
      *
@@ -32,8 +34,12 @@ class ResearchGroupVoter extends PelagosEntityVoter
             return false;
         }
 
-        // If the attribute isn't one of  CAN_EDIT or CAN_DELETE, we cannot vote.
-        if (!in_array($attribute, array(PelagosEntityVoter::CAN_EDIT, PelagosEntityVoter::CAN_DELETE))) {
+        // If the attribute isn't one of CAN_EDIT, CAN_DELETE, or CAN_CREATE_DIF_FOR, we cannot vote.
+        if (!in_array($attribute, array(
+            PelagosEntityVoter::CAN_EDIT,
+            PelagosEntityVoter::CAN_DELETE,
+            self::CAN_CREATE_DIF_FOR))
+        ) {
             return false;
         }
 
@@ -92,6 +98,31 @@ class ResearchGroupVoter extends PelagosEntityVoter
                 return true;
             }
         }
+
+        if (self::CAN_CREATE_DIF_FOR === $attribute) {
+            $personDataRepositories = $userPerson->getPersonDataRepositories()->filter(
+                function ($personDataRepository) use ($object) {
+                    return (!$personDataRepository->isSameTypeAndId($object));
+                }
+            );
+            // Data Repository Managers can create DIFs for all Research Groups.
+            if ($this->doesUserHaveRole(
+                $userPerson,
+                $personDataRepositories,
+                array(DataRepositoryRoles::MANAGER)
+            )) {
+                return true;
+            }
+
+            // Regular people can create DIFs for Research Groups they are associated with.
+            $personResearchGroups = $object->getPersonResearchGroups();
+            foreach ($personResearchGroups as $personResearchGroup) {
+                if ($userPerson->isSameTypeAndId($personResearchGroup->getPerson())) {
+                    return true;
+                }
+            }
+        }
+
         // The default is to not authorize.
         return false;
     }

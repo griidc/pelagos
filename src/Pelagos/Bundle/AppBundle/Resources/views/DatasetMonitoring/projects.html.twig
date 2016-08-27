@@ -1,0 +1,71 @@
+<div class="projects-header">
+    Datasets for: {{header}}
+    {% if instName | default %}
+        <span class="header-inst-name">({{instName}})</span>
+    {% endif %}
+    {% if not pdf | default %}
+        <a href="/html2pdf?url={{ url(app.request.get('_route'), {'id': id, 'renderer': 'html2pdf'}) }}&format=Letter&orientation=portrait&margin=1cm&download=true&filename={{pdfFilename}}" class="download-pdf" title="save as pdf">
+        {% image '@PelagosAppBundle/Resources/public/images/pdf_icon.png' %}
+        <img src="{{asset_url}}">
+        {% endimage %}
+        </a>
+    {% endif %}
+</div>
+{% for ResearchGroup in researchGroups %}
+<div class="project" project="{{ResearchGroup.id}}">
+        <div class="project-title">{{ResearchGroup.name}}</div>
+        <div class="project-container">
+            <div class="fundSrc">
+                <span class="attr">Funding Source:</span> {{ResearchGroup.fundingCycle.name}}
+            </div>
+            <div class="pi">
+                <span class="attr">Leadership:</span>
+                {% set leadership = ResearchGroup.personResearchGroups | role(constant('Pelagos\\Bundle\\AppBundle\\DataFixtures\\ORM\\ResearchGroupRoles::LEADERSHIP')) %}
+                {% for prg in leadership | sortBy(['person.lastName', 'person.firstName']) %}
+                    {{ prg.person.firstName }} {{ prg.person.lastName }} - {{ prg.label }}
+                    {% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </div>
+            {% if not pdf | default %}
+            <br />
+            <div class="dotchartcontainer">
+                <table width="100%" cellpadding="5">
+                    <tr width="100%">
+                        <td width="80%">
+                            <div class="dotchart"></div>
+                        </td>
+                    <tr width="100%">
+                        <td>
+                            <div class="dotchart_legend" style="position: relative;">
+                                <span id="a"><strong>Dataset with status:</strong>
+                                {% image '@PelagosAppBundle/Resources/public/images/green-circle.png' %}
+                                    <img src="{{asset_url}}"> Available:
+                                {% endimage %}
+                                </span>
+                                <span id="r">
+                                {% image '@PelagosAppBundle/Resources/public/images/yellow-circle.png' %}
+                                    <img src="{{asset_url}}"> Registered:
+                                {% endimage %}
+                                </span>
+                                <span id="i">
+                                {% image '@PelagosAppBundle/Resources/public/images/empty-circle.png' %}
+                                    <img src="{{asset_url}}"> Identified:
+                                {% endimage %}
+                                </span>
+                                <div id="tot" style="position:absolute; right:0; bottom:0;">
+                                    <strong>Total Datasets:</strong>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            {% endif %}
+            {% if ResearchGroup.Datasets | submittedDIFs | length > 0 %}
+                {% include 'PelagosAppBundle:DatasetMonitoring:datasets.html.twig' with {'datasets': ResearchGroup.datasets} %}
+            {% else %}
+                <div class="nodata"><em>{no dataset identified}</em></div>
+            {% endif %}
+        </div>
+    </div>
+{% endfor %}

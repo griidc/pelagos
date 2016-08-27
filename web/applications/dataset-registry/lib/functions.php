@@ -3,25 +3,23 @@
 
 function displayTaskStatus($tasks,$update=null,$personid=null)
 {
-    // Rebuilding the Task array because it's in simpleXML object which don't like to be sorted easily.
-    $newTasks = array();
-    
+    $projects = array();
+    $projectIDs = array();
+
     foreach ($tasks as $task)
     {
-        $taskID = (integer)$task['ID'];
-        $taskTitle = (string)$task->Title;
-        $projectID = (integer)$task->Project['ID'];
+        $projectID = (integer) $task->Project['ID'];
+        $projectTitle = (string) $task->Project->Title;
         
-        $newTasks[] = array('title'=>$taskTitle, 'taskID'=>$taskID, 'projectID'=>$projectID);
+        if (!in_array($projectID, $projectIDs)) {
+            $projects[] = array('title'=>$projectTitle, 'projectID'=>$projectID);
+            $projectIDs[] = $projectID;
+        }
     }
     
-    sort($newTasks);
-    
-    $tasks = $newTasks;
+    sort($projects);
     
     $projectID ="";
-    $taskTitle="";
-    $taskID ="";
     echo "d = new dTree('d');\n\n";
 
     $folderCount =1;
@@ -95,23 +93,12 @@ function displayTaskStatus($tasks,$update=null,$personid=null)
 
     $folderCount=$nodeCount;
 
-    foreach ($tasks as $task)
+    foreach ($projects as $project)
     {
-        $taskID = $task['taskID'];
-        $taskTitle = $task['title'];
-        $projectID = $task['projectID'];
+        $projectID = $project['projectID'];
+        $projectTitle = $project['title'];
 
-        if ($taskID > 0)
-        {
-            $query = "select title,status,dataset_uid,dataset_udi from datasets where task_uid=$taskID and status=2";
-        }
-        else
-        {
-            $query = "select title,status,dataset_uid,dataset_udi from datasets where project_id=$projectID and status=2";
-
-        }
-        
-        $query .= " order by dataset_udi;";
+        $query = "select title,status,dataset_uid,dataset_udi from datasets where project_id=$projectID and status=2 order by dataset_udi;";
 
         $results = dbexecute($query);
 
@@ -119,7 +106,7 @@ function displayTaskStatus($tasks,$update=null,$personid=null)
 
         if ($rnum > 0)
         {
-            echo "d.add($nodeCount,$dsNode,'".addslashes($taskTitle)."','javascript: d.o($nodeCount);','".addslashes($taskTitle)."','','','',true);\n";
+            echo "d.add($nodeCount,$dsNode,'".addslashes($projectTitle)."','javascript: d.o($nodeCount);','".addslashes($projectTitle)."','','','',true);\n";
             $nodeCount++;
 
             while ($row = pg_fetch_row($results))

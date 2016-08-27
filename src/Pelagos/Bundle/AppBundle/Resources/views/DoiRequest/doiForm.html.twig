@@ -1,0 +1,136 @@
+
+{% if isValid and isSubmitted  and doiRequest.status == constant('Pelagos\\Entity\\DoiRequest::STATUS_SUBMITTED') %}
+<div class="messages status">
+    <h2 class="element-invisible">Status message</h2>
+    Thank you for your submission. You will be contacted by GRIIDC shortly with your DOI. Please email <a href="mailto:griidc@gomri.org?subject=Registration Form">griidc@gomri.org</a> if you have any questions.
+</div>
+{% endif %}
+
+{% if not isValid and isSubmitted %}
+<div class="messages error">
+    <h2 class="element-invisible">Status message</h2>
+    Something went wrong, please correct the form and resubmit. Please email <a href="mailto:griidc@gomri.org?subject=Registration Form">griidc@gomri.org</a> if you have any questions.
+    {{ form_errors(form) }}
+</div>
+{% endif %}
+
+{% if doiRequest.status == constant('Pelagos\\Entity\\DoiRequest::STATUS_APPROVED') %}
+<div class="messages warning">
+    <h2 class="element-invisible">Status message</h2>
+    The DOI form was Approved, your DOI will be e-mailed shorly. Please email <a href="mailto:griidc@gomri.org?subject=Registration Form">griidc@gomri.org</a> if you have any questions.
+    {{ form_errors(form) }}
+</div>
+{% endif %}
+
+{% if doiRequest.status == constant('Pelagos\\Entity\\DoiRequest::STATUS_ISSUED') %}
+<div class="messages status">
+    <h2 class="element-invisible">Status message</h2>
+    The DOI form was Approved, the issued DOI is: <b>{{doiRequest.doi}}</b>. Please email <a href="mailto:griidc@gomri.org?subject=Registration Form">griidc@gomri.org</a> if you have any questions.
+    {{ form_errors(form) }}
+</div>
+{% endif %}
+
+<table  border=0 width="45%,*">
+    <tr>
+        <td class="cleair cmxform">
+            <fieldset>
+                <p><STRONG> NOTE: </STRONG><FONT COLOR="grey">A <em>Digital Object Identifier</em> (DOI) is a persistent unique identifier of an electronic dataset or document and recognized internationally. The DOI is used by GRIIDC as an alternate to dataset registration identifiers and can be used to resolve back to the data itself. The following form will allow you to submit the appropriate information to receive a DOI for your dataset or document. Once you have completed this form, your information will be sent to GRIIDC for approval, and once approved a DOI will be sent to you.<font></p>
+            </fieldset>
+
+            <strong>NOTICE:</strong> Fields preceded by an asterisk (<em>*</em>) are required inputs.<hr />
+
+            {{ form_start(form, {'action': path('pelagos_app_ui_doirequest_default', {'id' : doiRequest.id|default}), 'method': 'POST'}) }}
+                <input type="hidden" id="id" value="{{doiRequest.id|default}}">
+                <input type="hidden" id="status" value="{{doiRequest.status|default}}">
+            
+                <fieldset id="qurl">
+                    <span class="helpSection">
+                        {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                        <img class="info" src="{{ asset_url }}">
+                        {% endimage %}
+                        <div class="tooltiptext">
+                            <p>
+                                <strong>Location (URL):</strong> This is the Uniform Resource Locator (URL) that resolves to the dataset.<br><em>(e.g. http://www.nodc.noaa.gov/cgi-bin/OAS/prd/download/65725.11.11.tar.gz)</em>
+                            </p>
+                        </div>
+                    </span>
+                    {{ form_label(form.url) }}
+                    <br />
+                    {{ form_widget(form.url) }}
+                    <br />
+                </fieldset>
+
+                <fieldset>
+                    <span class="helpSection">
+                        {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                        <img class="info" src="{{ asset_url }}">
+                        {% endimage %}
+                        <div class="tooltiptext">
+                            <p>
+                                <strong>Creator(s):</strong> The primary scientist or researcher in producing the data, or the authors of the publication in priority order. The names may include a corporate, institutions, or personal name. In personal names, list family name before given name, as in Darwin, Charles. Non-roman names should be transliterated according to the ALA-LC schemes. <a href="http://www.loc.gov/catdir/cpso/roman.html" target="_blank"><em>(http://www.loc.gov/catdir/cpso/roman.html)</em></a>. 
+                            </p>
+                        </div>
+                    </span>
+                    {{ form_label(form.responsibleParty) }}
+                    <br />
+                    {{ form_widget(form.responsibleParty) }}
+                    <br />
+                </fieldset>
+
+                <fieldset id="qtitle">
+                    <span class="helpSection">
+                        {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                        <img class="info" src="{{ asset_url }}">
+                        {% endimage %}
+                        <div class="tooltiptext">
+                            <p>
+                                <strong>Title:</strong> A label by which the data or publication is known. <em>(e.g. Multibeam bathymetry data for east Flower Garden Bank)</em>
+                            </p>
+                        </div>
+                    </span>
+                    {{ form_label(form.title) }}
+                    <br />
+                    {{ form_widget(form.title) }}
+                    <br />
+                </fieldset>
+
+                <fieldset id="qpub">
+                    <span class="helpSection">
+                        {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                        <img class="info" src="{{ asset_url }}">
+                        {% endimage %}
+                        <div class="tooltiptext">
+                            <p>
+                                <strong>Publisher:</strong> A holder of the data (e.g., GRIIDC) or the institution responsible for making the data available to the public. 
+                            </p>
+                        </div>
+                    </span>
+                    {{ form_label(form.publisher) }}
+                    <br />
+                    {{ form_widget(form.publisher) }}
+                    <br />
+                </fieldset>
+
+                <fieldset id="txtDate_fld">
+                    <span class="helpSection">
+                        {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                        <img class="info" src="{{ asset_url }}">
+                        {% endimage %}
+                        <div class="tooltiptext">
+                            <p>
+                                <strong>Publication Date:</strong> A valid ISO 8601 date <em>e.g. (2012-12-23)</em>
+                            </p>
+                        </div>
+                    </span>
+                    {{ form_label(form.publicationDate) }}
+                    <br />
+                    {{ form_widget(form.publicationDate) }}
+                    <br />
+                </fieldset>
+
+            {{ form_end(form) }}
+            </td>
+        <td>
+        </td>
+    </tr>
+</table>

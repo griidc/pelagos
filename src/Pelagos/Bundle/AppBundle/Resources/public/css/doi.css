@@ -1,0 +1,219 @@
+.emRequired::before
+{
+    font-weight: bold; color:#FF0000;
+    content:"*";
+}
+
+.helpSection img:hover
+{
+    opacity:1;   
+}
+
+.helpSection
+{
+    float:right;
+    
+}
+
+.tooltiptext
+{
+    display: none;
+}
+
+.ccc {
+background: -webkit-gradient(linear, bottom, left 175px, from(#CCCCCC), to(#EEEEEE));
+background: -moz-linear-gradient(bottom, #CCCCCC, #EEEEEE 175px);
+margin:auto;
+position:relative;
+text-align: left;
+width:750px;
+font-family: sans-serif, Tahoma, Geneva;
+font-size: 10px;
+line-height: 24px;
+background: #bec9cc;
+color: #40626b;
+vertical-align: middle;
+text-decoration: none;
+-webkit-border-radius: 10px;
+-moz-border-radius: 10px;
+border-radius: 10px;
+padding:50px;
+border: 1px solid #999;
+border: inset 1px solid #333;
+-webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+-moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+}
+
+.cccc {
+margin:auto;
+position:relative;
+text-align: left;
+width:90%;
+font-family: sans-serif, Tahoma, Geneva;
+font-size: 9px;
+line-height: 24px;
+//background: #f1f7fb;
+background: #bfcacd;
+color: #40626b;
+vertical-align: middle;
+text-decoration: none;
+-webkit-border-radius: 10px;
+-moz-border-radius: 10px;
+border-radius: 10px;
+padding:10px;
+-webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+-moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+}
+em.form { font-weight: bold; padding-right: 1em; vertical-align: top; color:#FF0000;}
+
+.cleair {
+margin:auto;
+position:relative;
+text-align: left;
+width:90%;
+font-family: sans-serif, Tahoma, Geneva;
+font-size: 12px;
+line-height: 24px;
+background: #f1f7fb;
+//background: #bfcacd;
+color: #40626b;
+vertical-align: middle;
+text-decoration: none;
+-webkit-border-radius: 10px;
+-moz-border-radius: 10px;
+border-radius: 10px;
+padding:50px;
+-webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+-moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+}
+
+.cle {
+margin:auto;
+position:relative;
+text-align: left;
+width:150px;
+font-family: sans-serif, Tahoma, Geneva;
+font-size: 10px;
+line-height: 24px;
+background: #ededed;
+color: #40626b;
+vertical-align: middle;
+text-decoration: none;
+-webkit-border-radius: 10px;
+-moz-border-radius: 10px;
+border-radius: 10px;
+padding:50px;
+-webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+-moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+}
+
+.info {
+margin:auto;
+position:relative;
+text-align: left;
+font-family: sans-serif, Tahoma, Geneva;
+font-size: 16px;
+line-height: 24px;
+background: #bfcacd;
+color: #40626b;
+vertical-align: middle;
+text-decoration: none;
+-webkit-border-radius: 10px;
+-moz-border-radius: 10px;
+border-radius: 10px;
+padding:2px;
+-webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+-moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+}
+
+.infomesg{
+font-family: sans-serif, Tahoma, Geneva;
+font-size: 12px;
+line-height: 24px;
+//background: #CDCDCD;
+color: #40626b;
+}
+
+img{border:none;}
+
+.bgCover { background:#000; position:absolute; left:0; top:0; display:none; overflow:hidden; z-index:500; }
+
+.overlayBox {
+        border:5px solid #335e5e;
+        position:absolute;
+        display:none;
+        width:500px;
+        height:500px;
+        background:#fff;
+        z-index:500;
+}
+.overlayContent {
+        padding:10px;
+}
+.closeLink {
+        float:right;
+        color:red;
+}
+a:hover { text-decoration:none; }
+h2 {
+        padding:5px;
+        margin:0;
+}
+
+
+.box{
+    position:fixed;
+    top:-200px;
+    left:30%;
+    right:30%;
+    background-color:#fff;
+    color:#7F7F7F;
+    padding:20px;
+    border:2px solid #ccc;
+    -moz-border-radius: 20px;
+    -webkit-border-radius:20px;
+    -khtml-border-radius:20px;
+    -moz-box-shadow: 0 1px 5px #333;
+    -webkit-box-shadow: 0 1px 5px #333;
+    z-index:101;
+}
+
+
+
+a.boxclose{
+    float:right;
+    width:26px;
+    height:26px;
+    background:transparent url(/dif/images/cancel.png) repeat top left;
+    margin-top:-30px;
+    margin-right:-30px;
+    cursor:pointer;
+}
+
+
+
+
+
+
+.box h1{
+    border-bottom: 1px dashed #7F7F7F;
+    margin:-20px -20px 0px -20px;
+    padding:10px;
+    background-color:#FFEFEF;
+    color:#EF7777;
+    -moz-border-radius:20px 20px 0px 0px;
+    -webkit-border-top-left-radius: 20px;
+    -webkit-border-top-right-radius: 20px;
+    -khtml-border-top-left-radius: 20px;
+    -khtml-border-top-right-radius: 20px;
+}
+
+
+
+
+

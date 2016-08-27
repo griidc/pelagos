@@ -18,15 +18,7 @@
                 {% endif %}
             </div>
             <div class="pi">
-                <span class="attr">Principal Investigator:</span> {{project.PI.FirstName | raw}} {{project.PI.LastName}} - {{project.PI.Institution_Name}}
-            </div>
-            <div class="institutions">
-                <span class="attr">Member Institutions:</span>
-                {% for inst in project.Institutions %}
-                    {% if inst.Name != '' %}
-                        {{inst.Name | trimws}}{% if not loop.last %}, {% endif %}
-                    {% endif %}
-                {% endfor %}
+                <span class="attr">Principal Investigator:</span> {{project.PI.FirstName | raw}} {{project.PI.LastName}}
             </div>
             {% if not pdf %}
             <br />
@@ -49,27 +41,12 @@
                 </table>
             </div>
             {% endif %}
-            {% if not project.tasks %}
-                {% if project.datasets %}
-                    {% set datasets = project.datasets %}
-                    {% include 'html/datasets.html' %}
-                {% else %}
-                    <div class="nodata"><em>{no dataset identified}</em></div>
-                {% endif %}
+            {% if project.datasets %}
+                {% set datasets = project.datasets %}
+                {% include 'html/datasets.html' %}
+            {% else %}
+                <div class="nodata"><em>{no dataset identified}</em></div>
             {% endif %}
         </div>
     </div>
-    {% for task in project.tasks %}
-        <div class="task">
-            <div class="task-title">{{task.SubTaskNum}}. {{task.Title}}<span style="font-size:85%; margin-left:1em;">Task ID: {{task.ID}}</span></div>
-            <div class="task-container">
-                {% if task.datasets %}
-                    {% set datasets = task.datasets %}
-                    {% include 'html/datasets.html' %}
-                {% else %}
-                    <div class="nodata"><em>{no dataset identified}</em></div>
-                {% endif %}
-            </div>
-        </div>
-    {% endfor %}
 {% endfor %}

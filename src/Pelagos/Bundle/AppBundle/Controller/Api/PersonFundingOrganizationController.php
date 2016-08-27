@@ -79,10 +79,13 @@ class PersonFundingOrganizationController extends EntityController
      *
      * @ApiDoc(
      *   section = "Person to Funding Organization Associations",
-     *   parameters = {
-     *     {"name"="properties", "dataType"="string", "required"=false, "format"="property1,property2,property3.subProperty,etc.", "description"="Return these properties"},
-     *     {"name"="orderBy", "dataType"="string", "required"=false, "format"="property1,property2,property3.subProperty,etc.", "description"="Order by these properties"},
-     *     {"name"="someProperty", "dataType"="string", "required"=false, "format"="value", "description"="Filter by someProperty"},
+     *   input = {
+     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCollectionType",
+     *     "name": "",
+     *     "options": {
+     *       "label": "Person to Funding Organization Associations",
+     *       "data_class": "Pelagos\Entity\PersonFundingOrganization"
+     *     }
      *   },
      *   output = "array<Pelagos\Entity\PersonFundingOrganization>",
      *   statusCodes = {
@@ -93,13 +96,13 @@ class PersonFundingOrganizationController extends EntityController
      *
      * @Rest\Get("")
      *
+     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     *
      * @return Response
      */
     public function getCollectionAction(Request $request)
     {
-        return $this->makeJsonResponse(
-            $this->handleGetCollection(PersonFundingOrganization::class, $request)
-        );
+        return $this->handleGetCollection(PersonFundingOrganization::class, $request);
     }
 
     /**

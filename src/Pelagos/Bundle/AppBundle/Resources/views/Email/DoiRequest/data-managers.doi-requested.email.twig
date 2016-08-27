@@ -1,0 +1,40 @@
+{% block subject 'DOI Requested for GRIIDC dataset' %}
+
+{% block body_html %}
+
+Dear {{ recipient.firstName }} {{ recipient.lastName }},<br>
+<p>
+    A Digital Object Identifier (DOI) has been requested for the dataset
+    <a href="{{ doiRequest.url }}">{{ doiRequest.url }}</a> that is submitted
+    and registered with the Gulf of Mexico Research Initiative Information and Data
+    Cooperative (GRIIDC) by {{ doiRequest.creator.firstName }} {{ doiRequest.creator.lastName }}.
+    {{ doiRequest.creator.firstName }} {{ doiRequest.creator.lastName }} is a member of {{ doiRequest.creator.researchGroupNames | join(', ') }}.
+</p>
+Thank you,<br />
+The GRIIDC Team<br />
+<br />
+<p>
+    You are receiving this email because you are identified as a data manager for a
+    Gulf of Mexico Research Initiative Research Consortium. If you believe you
+    should not be receiving this email please notify
+    <a href="mailto:griidc@gomri.org">griidc@gomri.org</a>
+</p>
+
+{% endblock %}
+
+{% block body_text %}
+
+Dear {{ recipient.firstName }} {{ recipient.lastName }},
+
+A Digital Object Identifier (DOI) has been requested for the dataset
+{{ doiRequest.url }} that is submitted and registered with the Gulf of Mexico
+Research Initiative Information and Data Cooperative (GRIIDC) by {{ doiRequest.creator.firstName }} {{ doiRequest.creator.lastName }}.
+{{ doiRequest.creator.firstName }} {{ doiRequest.creator.lastName }} is a member of {{ doiRequest.creator.researchGroupNames | join(', ') }}.
+
+Thank you,
+The GRIIDC Team
+
+You are receiving this email because you are identified as a data manager for a
+Gulf of Mexico Research Initiative Research Consortium. If you believe you
+should not be receiving this email please notify griidc@gomri.org.
+{% endblock %}

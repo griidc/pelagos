@@ -13,6 +13,7 @@ use JMS\Serializer\Annotation as Serializer;
 
 use Pelagos\Exception\PasswordException;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
+use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
 
 /**
  * Entity class to represent an Account.
@@ -37,6 +38,11 @@ class Account extends Entity implements UserInterface, \Serializable
      * A role given only to Data Repository Managers.
      */
     const ROLE_DATA_REPOSITORY_MANAGER = 'ROLE_DATA_REPOSITORY_MANAGER';
+
+    /**
+     * A role given only to Research Group Data people.
+     */
+    const ROLE_RESEARCH_GROUP_DATA = 'ROLE_RESEARCH_GROUP_DATA';
 
     /**
      * This is defined here to override the base class id.
@@ -66,7 +72,7 @@ class Account extends Entity implements UserInterface, \Serializable
      *
      * @var string
      *
-     * @ORM\Column(unique=true)
+     * @ORM\Column(type="text", unique=true)
      *
      * @Assert\NotBlank(
      *     message="User ID is required"
@@ -130,7 +136,7 @@ class Account extends Entity implements UserInterface, \Serializable
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $homeDirectory;
 
@@ -139,7 +145,7 @@ class Account extends Entity implements UserInterface, \Serializable
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $loginShell;
 
@@ -371,6 +377,18 @@ class Account extends Entity implements UserInterface, \Serializable
     }
 
     /**
+     * Set the home directory for this account.
+     *
+     * @param string $homeDir The home directory.
+     *
+     * @return void
+     */
+    public function setHomeDirectory($homeDir)
+    {
+        $this->homeDirectory = $homeDir;
+    }
+
+    /**
      * Get the login shell for this account.
      *
      * @return string
@@ -449,6 +467,13 @@ class Account extends Entity implements UserInterface, \Serializable
                 $roles[] = self::ROLE_DATA_REPOSITORY_MANAGER;
             }
         }
+        foreach ($this->getPerson()->getPersonResearchGroups() as $personResearchGroup) {
+            if ($personResearchGroup->getRole()->getName() == ResearchGroupRoles::DATA
+                and !in_array(self::ROLE_RESEARCH_GROUP_DATA, $roles)
+            ) {
+                $roles[] = self::ROLE_RESEARCH_GROUP_DATA;
+            }
+        }
         return $roles;
     }
 
@@ -474,7 +499,7 @@ class Account extends Entity implements UserInterface, \Serializable
     {
         return serialize(
             array(
-            $this->person,
+            $this->getId(),
             $this->userId,
             )
         );

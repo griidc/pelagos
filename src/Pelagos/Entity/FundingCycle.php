@@ -97,7 +97,7 @@ class FundingCycle extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Description cannot contain angle brackets (< or >)"
@@ -112,7 +112,7 @@ class FundingCycle extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="URL cannot contain angle brackets (< or >)"
@@ -181,9 +181,31 @@ class FundingCycle extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
+     *
+     * @Assert\Regex(
+     *      pattern="/^[A-Z\d]{2}$/",
+     *      message="Funding Cycle prefix must be composed of 2 uppercase characters or numbers."
+     * )
      */
     protected $udiPrefix;
+
+    /**
+     * This holds the position in the sort order of this Entity.
+     *
+     * @var integer
+     *
+     * @ORM\Column(nullable=true, type="integer")
+     *
+     * @Assert\Range(
+     *     min = 1,
+     *     max = 2147483647,
+     *     minMessage = "Sort position must be {{ limit }} or more.",
+     *     maxMessage = "Sort position must be {{ limit }} or less.",
+     *     invalidMessage = "Sort position must be a positive integer."
+     * )
+     */
+    protected $sortOrder;
 
     /**
      * Setter for name.
@@ -377,6 +399,38 @@ class FundingCycle extends Entity
     public function getUdiPrefix()
     {
         return $this->udiPrefix;
+    }
+
+    /**
+     * Setter for sortOrder.
+     *
+     * @param integer $position The position to set in the sort ordering.
+     *
+     * @access public
+     *
+     * @throws \InvalidArgumentException If parameter passed is neither integer or null.
+     *
+     * @return void
+     */
+    public function setSortOrder($position)
+    {
+        if (is_int($position) or null === $position) {
+            $this->sortOrder = $position;
+        } else {
+            throw new \InvalidArgumentException('Unexpected input.  This should either be an int or null.');
+        }
+    }
+
+    /**
+     * Getter for sortOrder.
+     *
+     * @access public
+     *
+     * @return integer Of position to use in a sorted list.
+     */
+    public function getSortOrder()
+    {
+        return $this->sortOrder;
     }
 
     /**

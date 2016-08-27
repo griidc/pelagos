@@ -201,21 +201,8 @@ $(document).ready(function()
         if (typeof formHash == 'undefined'){formHash = '';}
     });
     
-    $("#acResearcher").autocomplete({
-      source: "/services/DIF/getResearchers.php",
-      minLength: 2,
-      select: function(event, ui) {
-        //console.log( ui.item ? "Selected: " + ui.item.value + " aka " + ui.item.id : "Nothing selected, input was " + this.value );
-          $('#diftree').html('<a class="jstree-anchor" href="#"><img src="/images/icons/throbber.gif"> Loading...</a>');
-          $('#diftree').jstree("destroy");
-          $("#fltResearcher").val(ui.item.id); 
-          treeFilter();
-      }
-    });
-    
     $("#fltReset").button().click(function (){
         $("#fltStatus").val('');  
-        $("#acResearcher").val(''); 
         $("#fltResearcher").val('');
         $("#fltResults").val('');
         
@@ -418,7 +405,6 @@ function treeFilter()
 {
     $('#diftree').html('<a class="jstree-anchor" href="#"><img src="/images/icons/throbber.gif"> Loading...</a>');
     $('#diftree').jstree("destroy");
-    //$('#acResearcher').val('');
     loadDIFS($("#fltStatus").val(),$("#fltResearcher").val(),$("[name='showempty']:checked").val());
 }
 
