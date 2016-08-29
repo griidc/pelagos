@@ -108,7 +108,7 @@ class StatsController extends UIController
                 AND subDatasetSubmission.metadataStatus = :metadatastatus
                 AND subDatasetSubmission.restrictions = :restrictedstatus
                 AND (
-                    subDatasetSubmission.datasetFileTransferStatus = :transerstatuscompleted 
+                    subDatasetSubmission.datasetFileTransferStatus = :transerstatuscompleted
                     OR subDatasetSubmission.datasetFileTransferStatus = :transerstatusremotelyhosted
                 )
                 GROUP BY subDatasetSubmission.dataset
@@ -205,31 +205,34 @@ class StatsController extends UIController
             )
         );
 
-        $repository = $this
-            ->container->get('doctrine.orm.entity_manager')
-            ->getRepository(DatasetSubmission::class);
+        $entityManager = $this
+            ->container->get('doctrine.orm.entity_manager');
 
         $dataSizes = array();
 
         foreach ($dataSizeRanges as $index => $range) {
-            $queryBuilder = $repository->createQueryBuilder('datasetSubmission');
 
-            $queryBuilder
-                ->select($queryBuilder->expr()->count('datasetSubmission.id'));
+            $dql = 'SELECT count(d.id) FROM Pelagos\Entity\Dataset d
+                        JOIN Pelagos\Entity\DatasetSubmission ds
+                        WHERE d.datasetSubmission = ds.id';
 
             if (array_key_exists('range0', $range)) {
-                $queryBuilder
-                ->andWhere($queryBuilder->expr()->gt('datasetSubmission.datasetFileSize', ':range0'))
-                ->setParameter('range0', $range['range0']);
+                $dql .= ' AND ds.datasetFileSize > :range0';
             }
-
             if (array_key_exists('range1', $range)) {
-                $queryBuilder
-                    ->andWhere($queryBuilder->expr()->lt('datasetSubmission.datasetFileSize', ':range1'))
-                    ->setParameter('range1', $range['range1']);
+                $dql .= ' AND ds.datasetFileSize < :range1';
             }
 
-            $datasetCount = $queryBuilder->getQuery()->getSingleScalarResult();
+            $query = $entityManager->createQuery($dql);
+
+            if (array_key_exists('range0', $range)) {
+                $query->setParameter('range0', $range['range0']);
+            }
+            if (array_key_exists('range1', $range)) {
+                $query->setParameter('range1', $range['range1']);
+            }
+
+            $datasetCount = $query->getResult()[0][1];
 
             $dataSizes[] = array('label' => $range['label'],
                 'data' => array(array($index * 0.971 + 0.171, $datasetCount)),
