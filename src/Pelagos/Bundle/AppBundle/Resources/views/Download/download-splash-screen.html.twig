@@ -88,7 +88,7 @@
             <a href="{{ path('pelagos_app_ui_dataland_metadata', {'udi': dataset.udi}) }}">{{ dataset.udi|replace({':': '-'}) }}-metadata.xml</a>
             <br />
         {% endif %}
-        <strong>File name:</strong> {{ dataset.datasetSubmission.datasetFileName }} &nbsp; <strong>File size:</strong> {{ dataset.datasetSubmission.datasetFileSize }}<br />
+        <strong>File name:</strong> {{ dataset.datasetSubmission.datasetFileName }} &nbsp; <strong>File size:</strong> {{ dataset.datasetSubmission.datasetFileSize | formatBytes }}<br />
         <strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span>
         <table border='0'>
         <tr>
