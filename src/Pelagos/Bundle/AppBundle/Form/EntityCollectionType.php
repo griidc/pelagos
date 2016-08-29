@@ -12,6 +12,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class EntityCollectionType extends EntityType
 {
     /**
+     * This form type is used to *return* a collection.
+     */
+    const ACTION = 'return';
+
+    /**
      * Builds the form.
      *
      * @param FormBuilderInterface $builder The form builder.

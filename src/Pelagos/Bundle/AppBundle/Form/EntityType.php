@@ -34,7 +34,7 @@ abstract class EntityType extends AbstractType
      */
     protected function getPropertyFilterDescription($collectionName, $entityName)
     {
-        return "Only return $collectionName where someProperty=value " .
+        return 'Only ' . static::ACTION . " $collectionName where someProperty=value " .
                "(where someProperty is any valid property or sub-property of a $entityName).";
     }
 
@@ -47,7 +47,7 @@ abstract class EntityType extends AbstractType
      */
     protected function getPermissionDescription($collectionName)
     {
-        return "Only return $collectionName for which the current user " .
+        return 'Only ' . static::ACTION . " $collectionName for which the current user " .
                'has the specified permission (e.g. CAN_EDIT). ';
     }
 

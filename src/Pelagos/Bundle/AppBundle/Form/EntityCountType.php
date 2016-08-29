@@ -12,6 +12,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class EntityCountType extends EntityType
 {
     /**
+     * This form type is used to *count* a collection.
+     */
+    const ACTION = 'count';
+
+    /**
      * Builds the form.
      *
      * @param FormBuilderInterface $builder The form builder.
