@@ -205,34 +205,28 @@ class StatsController extends UIController
             )
         );
 
-        $entityManager = $this
-            ->container->get('doctrine.orm.entity_manager');
+        $repository = $this->container->get('doctrine.orm.entity_manager')
+            ->getRepository(Dataset::class);
 
         $dataSizes = array();
 
         foreach ($dataSizeRanges as $index => $range) {
 
-            $dql = 'SELECT count(d.id) FROM Pelagos\Entity\Dataset d
-                        JOIN Pelagos\Entity\DatasetSubmission ds
-                        WHERE d.datasetSubmission = ds.id';
+            $qb = $repository->createQueryBuilder('d');
+            $qb->select('count(d.id)');
+            $qb->join('d.datasetSubmission', 'ds');
 
             if (array_key_exists('range0', $range)) {
-                $dql .= ' AND ds.datasetFileSize > :range0';
+                $qb->andWhere('ds.datasetFileSize > :range0');
+                $qb->setParameter('range0', $range['range0']);
             }
             if (array_key_exists('range1', $range)) {
-                $dql .= ' AND ds.datasetFileSize < :range1';
+                $qb->andWhere('ds.datasetFileSize <= :range1');
+                $qb->setParameter('range1', $range['range1']);
             }
 
-            $query = $entityManager->createQuery($dql);
-
-            if (array_key_exists('range0', $range)) {
-                $query->setParameter('range0', $range['range0']);
-            }
-            if (array_key_exists('range1', $range)) {
-                $query->setParameter('range1', $range['range1']);
-            }
-
-            $datasetCount = $query->getResult()[0][1];
+            $query = $qb->getQuery();
+            $datasetCount = $query->getSingleScalarResult();
 
             $dataSizes[] = array('label' => $range['label'],
                 'data' => array(array($index * 0.971 + 0.171, $datasetCount)),
