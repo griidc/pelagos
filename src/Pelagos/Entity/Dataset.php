@@ -467,6 +467,7 @@ class Dataset extends Entity
         $datasetSubmission = $this->getDatasetSubmission();
 
         $title = $this->getTitle();
+        $title = preg_replace('/\.$/', '', $title);
         $udi = $this->getUdi();
 
         if ($datasetSubmission instanceof DatasetSubmission) {
@@ -474,15 +475,15 @@ class Dataset extends Entity
             $year = $datasetSubmission->getModificationTimeStamp()->format('Y');
             $doi = $datasetSubmission->getDoi();
 
-            if ($doi !== null) {
-                $url = 'http://dx.doi.org/' . $doi;
+            $citationString = $author . ' (' . $year . ') ' . $title . '.' .
+                ' Distributed by: Gulf of Mexico Research Initiative Information and Data Cooperative '
+                . '(GRIIDC), Harte Research Institute, Texas A&M University—Corpus Christi. ';
+
+            if (null !== $doi) {
+                $citationString .= "doi: $doi";
             } else {
-                $url = 'http://data.gulfresearchinitiative.org/data/' . $udi;
+                $citationString .= "Available from: http://data.gulfresearchinitiative.org/data/$udi";
             }
-
-            $citationString = "$author ($year) $title ($udi) " .
-                "[Data files] Available from $url";
-
             return $citationString;
         } else {
             $citationString = "This dataset has no registration: $title ($udi)";
