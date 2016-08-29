@@ -19,6 +19,38 @@ use Pelagos\Bundle\AppBundle\Form\PersonDataRepositoryType;
 class PersonDataRepositoryController extends EntityController
 {
     /**
+     * Get a count of Person to Data Repository Associations.
+     *
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "Person to Data Repository Associations",
+     *   input = {
+     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCountType",
+     *     "name": "",
+     *     "options": {
+     *       "label": "Person to Data Repository Associations",
+     *       "data_class": "Pelagos\Entity\PersonDataRepository"
+     *     }
+     *   },
+     *   statusCodes = {
+     *     200 = "A count of Person to Data Repository Associations was successfully returned.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Get("/count")
+     *
+     * @Rest\View()
+     *
+     * @return integer
+     */
+    public function countAction(Request $request)
+    {
+        return $this->handleCount(PersonDataRepository::class, $request);
+    }
+
+    /**
      * Validate a value for a property of a Person to Data Repository Association.
      *
      * @param Request $request The request object.

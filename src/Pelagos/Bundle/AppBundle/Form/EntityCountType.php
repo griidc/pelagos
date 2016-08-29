@@ -7,9 +7,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * A form for retrieving a collection of entities.
+ * A form for retrieving a count of entities.
  */
-class EntityCollectionType extends EntityType
+class EntityCountType extends EntityType
 {
     /**
      * Builds the form.
@@ -27,18 +27,6 @@ class EntityCollectionType extends EntityType
             ->add('someProperty', TextType::class, array(
                 'required' => false,
                 'description' => $this->getPropertyFilterDescription($collectionName, $entityName),
-            ))
-            ->add('_permission', TextType::class, array(
-                'required' => false,
-                'description' => $this->getPermissionDescription($collectionName),
-            ))
-            ->add('_properties', TextType::class, array(
-                'required' => false,
-                'description' => $this->getPropertiesDescription($entityName),
-            ))
-            ->add('_orderBy', TextType::class, array(
-                'required' => false,
-                'description' => $this->getOrderByDescription(),
             ));
     }
 }
