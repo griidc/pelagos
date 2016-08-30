@@ -108,7 +108,7 @@ class StatsController extends UIController
                 AND subDatasetSubmission.metadataStatus = :metadatastatus
                 AND subDatasetSubmission.restrictions = :restrictedstatus
                 AND (
-                    subDatasetSubmission.datasetFileTransferStatus = :transerstatuscompleted 
+                    subDatasetSubmission.datasetFileTransferStatus = :transerstatuscompleted
                     OR subDatasetSubmission.datasetFileTransferStatus = :transerstatusremotelyhosted
                 )
                 GROUP BY subDatasetSubmission.dataset
@@ -205,31 +205,28 @@ class StatsController extends UIController
             )
         );
 
-        $repository = $this
-            ->container->get('doctrine.orm.entity_manager')
-            ->getRepository(DatasetSubmission::class);
+        $repository = $this->container->get('doctrine.orm.entity_manager')
+            ->getRepository(Dataset::class);
 
         $dataSizes = array();
 
         foreach ($dataSizeRanges as $index => $range) {
-            $queryBuilder = $repository->createQueryBuilder('datasetSubmission');
 
-            $queryBuilder
-                ->select($queryBuilder->expr()->count('datasetSubmission.id'));
+            $qb = $repository->createQueryBuilder('d');
+            $qb->select('count(d.id)');
+            $qb->join('d.datasetSubmission', 'ds');
 
             if (array_key_exists('range0', $range)) {
-                $queryBuilder
-                ->andWhere($queryBuilder->expr()->gt('datasetSubmission.datasetFileSize', ':range0'))
-                ->setParameter('range0', $range['range0']);
+                $qb->andWhere('ds.datasetFileSize > :range0');
+                $qb->setParameter('range0', $range['range0']);
             }
-
             if (array_key_exists('range1', $range)) {
-                $queryBuilder
-                    ->andWhere($queryBuilder->expr()->lt('datasetSubmission.datasetFileSize', ':range1'))
-                    ->setParameter('range1', $range['range1']);
+                $qb->andWhere('ds.datasetFileSize <= :range1');
+                $qb->setParameter('range1', $range['range1']);
             }
 
-            $datasetCount = $queryBuilder->getQuery()->getSingleScalarResult();
+            $query = $qb->getQuery();
+            $datasetCount = $query->getSingleScalarResult();
 
             $dataSizes[] = array('label' => $range['label'],
                 'data' => array(array($index * 0.971 + 0.171, $datasetCount)),
