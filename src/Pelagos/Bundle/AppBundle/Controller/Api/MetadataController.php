@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+use FOS\RestBundle\Controller\Annotations as Rest;
+
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Pelagos\Entity\Dataset;
@@ -21,6 +23,38 @@ use Pelagos\Bundle\AppBundle\Form\MdappType;
  */
 class MetadataController extends EntityController
 {
+    /**
+     * Get a count of Metadata.
+     *
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "Metadata",
+     *   input = {
+     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCountType",
+     *     "name": "",
+     *     "options": {
+     *       "label": "Metadata",
+     *       "data_class": "Pelagos\Entity\Metadata"
+     *     }
+     *   },
+     *   statusCodes = {
+     *     200 = "A count of Metadata was successfully returned.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Get("/count")
+     *
+     * @Rest\View()
+     *
+     * @return integer
+     */
+    public function countAction(Request $request)
+    {
+        return $this->handleCount(Metadata::class, $request);
+    }
+
     /**
      * Get a single Metadata for a given id.
      *

@@ -172,6 +172,34 @@ class EntityHandler
     }
 
     /**
+     * Count all entities of $entityClass filtered by $criteria.
+     *
+     * @param string $entityClass The type of entity to count.
+     * @param array  $criteria    The criteria to filter by.
+     *
+     * @return intger
+     */
+    public function count($entityClass, array $criteria)
+    {
+        // Create query builder for this type of entity.
+        $qb = $this->entityManager->getRepository($entityClass)->createQueryBuilder('e');
+        // Initialize an array to hold all necessary joins.
+        $joins = array();
+        // Select a count of this type of entity.
+        $qb->select($qb->expr()->count('e'));
+        // Process the critera.
+        $this->processCriteria($criteria, $qb, $joins);
+        // Join all necessary joins.
+        foreach ($joins as $entityProperty => $alias) {
+            $qb->leftJoin($entityProperty, $alias);
+        }
+        // Get the query.
+        $query = $qb->getQuery();
+        // Return the result as a single scalar.
+        return $query->getSingleScalarResult();
+    }
+
+    /**
      * Create a new entity.
      *
      * @param Entity      $entity          The entity to create.

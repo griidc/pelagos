@@ -629,6 +629,9 @@ class DatasetSubmission extends Entity
     public function setTitle($title)
     {
         $this->title = $title;
+        if ($this->getDataset() instanceof Dataset) {
+            $this->getDataset()->updateTitle();
+        }
     }
 
     /**
@@ -651,6 +654,9 @@ class DatasetSubmission extends Entity
     public function setAbstract($abstract)
     {
         $this->abstract = $abstract;
+        if ($this->getDataset() instanceof Dataset) {
+            $this->getDataset()->updateAbstract();
+        }
     }
 
     /**
@@ -764,6 +770,9 @@ class DatasetSubmission extends Entity
     public function setDoi($doi)
     {
         $this->doi = $doi;
+        if ($this->getDataset() instanceof Dataset) {
+            $this->getDataset()->updateDoi();
+        }
     }
 
     /**
