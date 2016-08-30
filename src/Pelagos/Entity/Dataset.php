@@ -477,7 +477,7 @@ class Dataset extends Entity
 
             $citationString = $author . ' (' . $year . ') ' . $title . '.' .
                 ' Distributed by: Gulf of Mexico Research Initiative Information and Data Cooperative '
-                . '(GRIIDC), Harte Research Institute, Texas A&M University—Corpus Christi. ';
+                . '(GRIIDC), Harte Research Institute, Texas A&M University-Corpus Christi. ';
 
             if (null !== $doi) {
                 $citationString .= "doi: $doi";
