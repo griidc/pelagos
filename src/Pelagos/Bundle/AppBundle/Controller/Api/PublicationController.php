@@ -55,6 +55,39 @@ class PublicationController extends EntityController
     }
 
     /**
+     * Get a collection of Publications.
+     *
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "Publications",
+     *   input = {
+     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCollectionType",
+     *     "name": "",
+     *     "options": {
+     *       "label": "Publications",
+     *       "data_class": "Pelagos\Entity\Publication"
+     *     }
+     *   },
+     *   output = "array<Pelagos\Entity\Publication>",
+     *   statusCodes = {
+     *     200 = "The requested collection of Publications was successfully retrieved.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Get("")
+     *
+     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     *
+     * @return Response
+     */
+    public function getCollectionAction(Request $request)
+    {
+        return $this->handleGetCollection(Publication::class, $request);
+    }
+
+    /**
      * Fetch and cache a citation for a given DOI.
      *
      * @param Request $request A Symfony http request object, data includes the doi.
