@@ -27,6 +27,27 @@ use Pelagos\Exception\UnmappedPropertyException;
 abstract class EntityController extends FOSRestController
 {
     /**
+     * Count entities of a given type.
+     *
+     * @param string  $entityClass The type of entity.
+     * @param Request $request     The request object.
+     *
+     * @return integer
+     */
+    protected function handleCount($entityClass, Request $request)
+    {
+        $params = $request->query->all();
+        if (array_key_exists('q', $params)) {
+            // Remove the 'q' parameter if it exists (this comes from Drupal).
+            unset($params['q']);
+        }
+        foreach (array_keys($params) as $param) {
+            str_replace('_', '.', $params[$param]);
+        }
+        return $this->container->get('pelagos.entity.handler')->count($entityClass, $params);
+    }
+
+    /**
      * Get all entities of a given type.
      *
      * @param string  $entityClass  The type of entity.

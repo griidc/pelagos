@@ -19,6 +19,38 @@ use Pelagos\Bundle\AppBundle\Form\PersonFundingOrganizationType;
 class PersonFundingOrganizationController extends EntityController
 {
     /**
+     * Get a count of Person to Funding Organization Associations.
+     *
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "Person to Funding Organization Associations",
+     *   input = {
+     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCountType",
+     *     "name": "",
+     *     "options": {
+     *       "label": "Person to Funding Organization Associations",
+     *       "data_class": "Pelagos\Entity\PersonFundingOrganization"
+     *     }
+     *   },
+     *   statusCodes = {
+     *     200 = "A count of Person to Funding Organization Associations was successfully returned.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Get("/count")
+     *
+     * @Rest\View()
+     *
+     * @return integer
+     */
+    public function countAction(Request $request)
+    {
+        return $this->handleCount(PersonFundingOrganization::class, $request);
+    }
+
+    /**
      * Validate a value for a property of a Person to Funding Organization Association.
      *
      * @param Request $request The request object.
