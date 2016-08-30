@@ -65,16 +65,6 @@
                             </button>
                             Direct File Download
                         </div>
-                        {% if guest == false and gridOK == 1 %}
-                        <div style="display: table-cell;">
-                            <button id="gridftp_download_button" title="Place this file on the Globus/GridFTP gomri#griidc endpoint.  This option is the preferred method for server-to-server transfer of very large files, but requires access to a Globus-enabled GridFTP endpoint and a Globus.org login." class="dl_button" style="padding: 0px 0px;">
-                                {% image '@PelagosAppBundle/Resources/public/images/globus.png' %}
-                                    <img style="vertical-align:middle;" src="{{ asset_url }}">
-                                {% endimage %}
-                            </button>
-                            Download via the Globus/GridFTP Network
-                        </div>
-                        {% endif %}
                         <div style="display: table-cell;">
                             <button class="close_button" title="Cancel this download attempt and close this dialog screen." class="dl_button" style="padding: 0px 0px;">
                                 {% image '@PelagosAppBundle/Resources/public/images/cancel.png' %}
@@ -98,7 +88,7 @@
             <a href="{{ path('pelagos_app_ui_dataland_metadata', {'udi': dataset.udi}) }}">{{ dataset.udi|replace({':': '-'}) }}-metadata.xml</a>
             <br />
         {% endif %}
-        <strong>File name:</strong> {{ dataset.datasetSubmission.datasetFileName }} &nbsp; <strong>File size:</strong> {{ dataset.datasetSubmission.datasetFileSize }}<br />
+        <strong>File name:</strong> {{ dataset.datasetSubmission.datasetFileName }} &nbsp; <strong>File size:</strong> {{ dataset.datasetSubmission.datasetFileSize | formatBytes }}<br />
         <strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span>
         <table border='0'>
         <tr>
