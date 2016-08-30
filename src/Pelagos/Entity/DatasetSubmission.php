@@ -629,6 +629,9 @@ class DatasetSubmission extends Entity
     public function setTitle($title)
     {
         $this->title = $title;
+        if (!$this->getDataset()->hasMetadata()) {
+            $this->getDataset()->setTitle($this->title);
+        }
     }
 
     /**
@@ -651,6 +654,9 @@ class DatasetSubmission extends Entity
     public function setAbstract($abstract)
     {
         $this->abstract = $abstract;
+        if (!$this->getDataset()->hasMetadata()) {
+            $this->getDataset()->setAbstract($this->abstract);
+        }
     }
 
     /**
@@ -764,6 +770,7 @@ class DatasetSubmission extends Entity
     public function setDoi($doi)
     {
         $this->doi = $doi;
+        $this->getDataset()->setDoi($this->doi);
     }
 
     /**

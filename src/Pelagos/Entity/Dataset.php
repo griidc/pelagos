@@ -30,6 +30,33 @@ class Dataset extends Entity
     protected $udi;
 
     /**
+     * The title for this Dataset.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $title;
+
+    /**
+     * The abstract for this Dataset.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $abstract;
+
+    /**
+     * The DOI for this Dataset.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $doi;
+
+    /**
      * The Research Group this Dataset is attached to.
      *
      * @var ResearchGroup
@@ -272,29 +299,37 @@ class Dataset extends Entity
     }
 
     /**
+     * Set the title for this Dataset.
+     *
+     * @param string $title The title for this Dataset.
+     *
+     * @return void
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
+
+    /**
      * Get the title for this dataset.
      *
      * @return string
      */
     public function getTitle()
     {
-        // If this Dataset has Metadata.
-        if (null !== $this->metadata) {
-            // Return its title.
-            return $this->metadata->getTitle();
-        }
-        // If this Dataset has a submission.
-        if (null !== $this->datasetSubmission) {
-            // Return its title.
-            return $this->datasetSubmission->getTitle();
-        }
-        // If this Dataset only has a DIF.
-        if (null !== $this->dif) {
-            // Return its title.
-            return $this->dif->getTitle();
-        }
-        // Return null if we can't find a title.
-        return null;
+        return $this->title;
+    }
+
+    /**
+     * Set the abstract for this Dataset.
+     *
+     * @param string $abstract The abstract for this Dataset.
+     *
+     * @return void
+     */
+    public function setAbstract($abstract)
+    {
+        $this->abstract = $abstract;
     }
 
     /**
@@ -304,23 +339,29 @@ class Dataset extends Entity
      */
     public function getAbstract()
     {
-        // If this Dataset has Metadata.
-        if (null !== $this->metadata) {
-            // Return its abstract.
-            return $this->metadata->getAbstract();
-        }
-        // If this Dataset has a submission.
-        if (null !== $this->datasetSubmission) {
-            // Return its abstract.
-            return $this->datasetSubmission->getAbstract();
-        }
-        // If this Dataset only has a DIF.
-        if (null !== $this->dif) {
-            // Return its abstract.
-            return $this->dif->getAbstract();
-        }
-        // Return null if we can't find a abstract.
-        return null;
+        return $this->abstract;
+    }
+
+    /**
+     * Set the DOI for this Dataset.
+     *
+     * @param string $doi The DOI for this Dataset.
+     *
+     * @return void
+     */
+    public function setDoi($doi)
+    {
+        $this->doi = $doi;
+    }
+
+    /**
+     * Get the DOI for this Dataset.
+     *
+     * @return string
+     */
+    public function getDoi()
+    {
+        return $this->doi;
     }
 
     /**
@@ -488,5 +529,25 @@ class Dataset extends Entity
             $citationString = "This dataset has no registration: $title ($udi)";
             return $citationString;
         }
+    }
+
+    /**
+     * Whether this Dataset has a Dataset Submission.
+     *
+     * @return boolean
+     */
+    public function hasDatasetSubmission()
+    {
+        return null === $this->datasetSubmission;
+    }
+
+    /**
+     * Whether this Dataset has Metadata.
+     *
+     * @return boolean
+     */
+    public function hasMetadata()
+    {
+        return null === $this->metadata;
     }
 }

@@ -548,6 +548,9 @@ class DIF extends Entity
     public function setTitle($title)
     {
         $this->title = $title;
+        if (!$this->getDataset()->hasDatasetSubmission() and !$this->getDataset()->hasMetadata()) {
+            $this->getDataset()->setTitle($this->title);
+        }
     }
 
     /**
@@ -614,6 +617,9 @@ class DIF extends Entity
     public function setAbstract($abstract)
     {
         $this->abstract = $abstract;
+        if (!$this->getDataset()->hasDatasetSubmission() and !$this->getDataset()->hasMetadata()) {
+            $this->getDataset()->setAbstract($this->abstract);
+        }
     }
 
     /**
