@@ -250,7 +250,7 @@ class TreeController extends EntityController
                 )
             )
             ->orderBy('person.lastName')
-            ->orderBy('person.firstName')
+            ->addOrderBy('person.firstName')
             ->setParameter('letter', "$letter%")
             ->getQuery();
         $people = $query->getResult(Query::HYDRATE_ARRAY);
