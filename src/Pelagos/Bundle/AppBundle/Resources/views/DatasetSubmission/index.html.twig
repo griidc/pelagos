@@ -75,7 +75,7 @@
         <h2 class="element-invisible">Status message</h2>
         The DIF has not yet been approved for dataset: {{ udi }}. Please email <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> if you have any questions.
     </div>
-{% elseif found and dif is not null and dif.status != constant('Pelagos\\Entity\\DIF::STATUS_APPROVED') %}
+{% elseif found and dif is not null and dif.status == constant('Pelagos\\Entity\\DIF::STATUS_UNSUBMITTED') %}
     <div class="messages warning">
         <h2 class="element-invisible">Status message</h2>
         The DIF has not yet been submitted for dataset: {{ udi }}. Please email <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> if you have any questions.
