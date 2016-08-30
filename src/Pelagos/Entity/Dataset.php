@@ -299,15 +299,22 @@ class Dataset extends Entity
     }
 
     /**
-     * Set the title for this Dataset.
-     *
-     * @param string $title The title for this Dataset.
+     * Update the title for this Dataset.
      *
      * @return void
      */
-    public function setTitle($title)
+    public function updateTitle()
     {
-        $this->title = $title;
+        if ($this->hasMetadata()) {
+            // Copy Metadata title to Dataset.
+            $this->title = $this->getMetadata()->getTitle();
+        } elseif ($this->hasDatasetSubmission()) {
+            // Copy DatasetSubmission title to Dataset.
+            $this->title = $this->getDatasetSubmission()->getTitle();
+        } elseif ($this->hasDif()) {
+            // Copy DIF title to Dataset.
+            $this->title = $this->getDif()->getTitle();
+        }
     }
 
     /**
@@ -321,15 +328,22 @@ class Dataset extends Entity
     }
 
     /**
-     * Set the abstract for this Dataset.
-     *
-     * @param string $abstract The abstract for this Dataset.
+     * Update the abstract for this Dataset.
      *
      * @return void
      */
-    public function setAbstract($abstract)
+    public function updateAbstract()
     {
-        $this->abstract = $abstract;
+        if ($this->hasMetadata()) {
+            // Copy Metadata abstract to Dataset.
+            $this->abstract = $this->getMetadata()->getAbstract();
+        } elseif ($this->hasDatasetSubmission()) {
+            // Copy DatasetSubmission abstract to Dataset.
+            $this->abstract = $this->getDatasetSubmission()->getAbstract();
+        } elseif ($this->hasDif()) {
+            // Copy DIF abstract to Dataset.
+            $this->abstract = $this->getDif()->getAbstract();
+        }
     }
 
     /**
@@ -343,15 +357,16 @@ class Dataset extends Entity
     }
 
     /**
-     * Set the DOI for this Dataset.
-     *
-     * @param string $doi The DOI for this Dataset.
+     * Update the DOI for this Dataset.
      *
      * @return void
      */
-    public function setDoi($doi)
+    public function updateDoi()
     {
-        $this->doi = $doi;
+        if ($this->hasDatasetSubmission()) {
+            // Copy DatasetSubmission DOI to Dataset.
+            $this->doi = $this->getDatasetSubmission()->getDoi();
+        }
     }
 
     /**
@@ -532,13 +547,23 @@ class Dataset extends Entity
     }
 
     /**
+     * Whether this Dataset has a DIF.
+     *
+     * @return boolean
+     */
+    public function hasDif()
+    {
+        return $this->dif instanceof DIF;
+    }
+
+    /**
      * Whether this Dataset has a Dataset Submission.
      *
      * @return boolean
      */
     public function hasDatasetSubmission()
     {
-        return null === $this->datasetSubmission;
+        return $this->datasetSubmission instanceof DatasetSubmission;
     }
 
     /**
@@ -548,6 +573,6 @@ class Dataset extends Entity
      */
     public function hasMetadata()
     {
-        return null === $this->metadata;
+        return $this->metadata instanceof Metadata;
     }
 }
