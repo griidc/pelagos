@@ -24,6 +24,38 @@ use Pelagos\Bundle\AppBundle\Security\DIFVoter;
 class DIFController extends EntityController
 {
     /**
+     * Get a count of DIFs.
+     *
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "DIFs",
+     *   input = {
+     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCountType",
+     *     "name": "",
+     *     "options": {
+     *       "label": "DIFs",
+     *       "data_class": "Pelagos\Entity\DIF"
+     *     }
+     *   },
+     *   statusCodes = {
+     *     200 = "A count of DIFs was successfully returned.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Get("/count")
+     *
+     * @Rest\View()
+     *
+     * @return integer
+     */
+    public function countAction(Request $request)
+    {
+        return $this->handleCount(DIF::class, $request);
+    }
+
+    /**
      * Get a collection of DIFs.
      *
      * @param Request $request The request object.

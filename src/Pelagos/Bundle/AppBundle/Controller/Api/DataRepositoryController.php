@@ -20,6 +20,38 @@ use Pelagos\Bundle\AppBundle\Form\DataRepositoryType;
 class DataRepositoryController extends EntityController
 {
     /**
+     * Get a count of Data Repositories.
+     *
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "Data Repositories",
+     *   input = {
+     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCountType",
+     *     "name": "",
+     *     "options": {
+     *       "label": "Data Repositories",
+     *       "data_class": "Pelagos\Entity\DataRepository"
+     *     }
+     *   },
+     *   statusCodes = {
+     *     200 = "A count of Data Repositories was successfully returned.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Get("/count")
+     *
+     * @Rest\View()
+     *
+     * @return integer
+     */
+    public function countAction(Request $request)
+    {
+        return $this->handleCount(DataRepository::class, $request);
+    }
+
+    /**
      * Validate a value for a property of a Data Repository.
      *
      * @param Request $request The request object.

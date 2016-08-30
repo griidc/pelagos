@@ -19,6 +19,38 @@ use Pelagos\Bundle\AppBundle\Form\PersonResearchGroupType;
 class PersonResearchGroupController extends EntityController
 {
     /**
+     * Get a count of Person to Research Group Associations.
+     *
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "Person to Research Group Associations",
+     *   input = {
+     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCountType",
+     *     "name": "",
+     *     "options": {
+     *       "label": "Person to Research Group Associations",
+     *       "data_class": "Pelagos\Entity\PersonResearchGroup"
+     *     }
+     *   },
+     *   statusCodes = {
+     *     200 = "A count of Person to Research Group Associations was successfully returned.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Get("/count")
+     *
+     * @Rest\View()
+     *
+     * @return integer
+     */
+    public function countAction(Request $request)
+    {
+        return $this->handleCount(PersonResearchGroup::class, $request);
+    }
+
+    /**
      * Validate a value for a property of a Person to Research Group Association.
      *
      * @param Request $request The request object.
