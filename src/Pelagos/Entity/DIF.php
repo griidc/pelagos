@@ -548,6 +548,9 @@ class DIF extends Entity
     public function setTitle($title)
     {
         $this->title = $title;
+        if ($this->getDataset() instanceof Dataset) {
+            $this->getDataset()->updateTitle();
+        }
     }
 
     /**
@@ -614,6 +617,9 @@ class DIF extends Entity
     public function setAbstract($abstract)
     {
         $this->abstract = $abstract;
+        if ($this->getDataset() instanceof Dataset) {
+            $this->getDataset()->updateAbstract();
+        }
     }
 
     /**
