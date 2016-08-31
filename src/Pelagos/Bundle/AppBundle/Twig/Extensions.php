@@ -99,10 +99,6 @@ class Extensions extends \Twig_Extension
                 'formatBytes',
                 array(self::class, 'formatBytes')
             ),
-            new \Twig_SimpleFilter(
-                'griidcTime',
-                array(self::class, 'griidcTime')
-            ),
         );
     }
 
@@ -304,24 +300,5 @@ class Extensions extends \Twig_Extension
             }
         }
         return "$bytes $units[0]";
-    }
-
-    /**
-     * Formats a DateTime as Mon Day, Year HH:mm CDT|CST.
-     *
-     * @param \DateTime $timestamp A \DateTime timestamp set to any timezone.
-     *
-     * @return string
-     */
-    public static function griidcTime(\DateTime $timestamp)
-    {
-        $griidcTimestamp = clone $timestamp;
-        $griidcTimestamp->setTimezone(new \DateTimeZone('America/Chicago'));
-        if (-5 == ($griidcTimestamp->getOffset() / 3600)) {
-            $tzName = 'CDT';
-        } else {
-            $tzName = 'CST';
-        }
-        return $griidcTimestamp->format('M d, Y H:m:s') . " $tzName";
     }
 }
