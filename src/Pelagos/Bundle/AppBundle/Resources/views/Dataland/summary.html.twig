@@ -101,10 +101,12 @@
     <tr>
         <td valign="top">
             {% if dataset.metadata|default  %}
-                <b>Data Collection Period:</b><br/>
-                {{dataset.metadata.beginPosition}}
-                  to
-                {{dataset.metadata.endPosition}}
+                {% if dataset.metadata.beginPosition|default and dataset.metadata.endPosition|default %}
+                    <b>Data Collection Period:</b><br/>
+                    {{dataset.metadata.beginPosition}}
+                      to
+                    {{dataset.metadata.endPosition}}
+                {% endif %}
             {% endif %}
         </td>
     </tr>
@@ -112,8 +114,10 @@
     <tr>
         <td valign="top">
             {% if dataset.metadata|default %}
-              <tr><td colspan="2">&nbsp;</td></tr>
-              <tr><td colspan="2"><b>Extent Description:</b><br/> {{dataset.metadata.extentDescription}}</td></tr>
+                {% if dataset.metadata.extentDescription|default %}
+                    <tr><td colspan="2">&nbsp;</td></tr>
+                    <tr><td colspan="2"><b>Extent Description:</b><br/> {{dataset.metadata.extentDescription}}</td></tr>
+                {% endif %}
             {% endif %}
          </td>
     </tr>
