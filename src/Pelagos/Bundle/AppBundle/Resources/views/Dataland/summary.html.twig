@@ -64,7 +64,12 @@
         <td><b>UDI:</b><br/><span id="udi">{{dataset.udi}}</span></td>
         <td>
             <b>Last Update:</b><br>
-            {{ dataset.modificationTimeStamp|griidcTime }}<br>
+            {{ dataset.modificationTimeStamp|date('M d, Y H:m:s', 'America/Chicago') }}
+            {% if dataset.modificationTimeStamp|date('Z', 'America/Chicago')/3600 == -5 %}
+                CDT
+            {% else %}
+                CST
+            {% endif %}<br />
         </td>
     </tr>
 
