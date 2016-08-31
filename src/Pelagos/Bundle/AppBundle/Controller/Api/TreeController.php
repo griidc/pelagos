@@ -239,19 +239,18 @@ class TreeController extends EntityController
             ->getRepository(Person::class)
             ->createQueryBuilder('person');
 
-        $firstLetterLastName = $qb->expr()->upper($qb->expr()->substring('person.lastName', 1, 1));
-
         $query = $qb
             ->select('person')
             ->where(
-                $qb->expr()->like(
-                    $qb->expr()->upper('person.lastName'),
+                $qb->expr()->eq(
+                    // First letter of Last Name.
+                    $qb->expr()->upper($qb->expr()->substring('person.lastName', 1, 1)),
                     $qb->expr()->upper(':letter')
                 )
             )
             ->orderBy('person.lastName')
             ->addOrderBy('person.firstName')
-            ->setParameter('letter', "$letter%")
+            ->setParameter('letter', "$letter")
             ->getQuery();
         $people = $query->getResult(Query::HYDRATE_ARRAY);
 
