@@ -7,6 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -68,6 +69,7 @@ class MetadataController extends EntityController
      *   output = "XML",
      *   statusCodes = {
      *     200 = "The requested Metadata was successfully retrieved.",
+     *     415 = "String could not be parsed as XML.",
      *     404 = "The requested Dataset was not found.",
      *     500 = "An internal error has occurred.",
      *   }
@@ -76,6 +78,7 @@ class MetadataController extends EntityController
      * @throws \Exception              When more than one dataset is found.
      * @throws NotFoundHttpException   When dataset is not found, or no metadata is available.
      * @throws BadRequestHttpException When the Dataset Submission is Unsubmitted.
+     * @throws HttpException           When the XML can not be loaded from a file.
      *
      * @return Response
      */
@@ -103,9 +106,15 @@ class MetadataController extends EntityController
             ) {
                 $xml = $metadata->getXml()->asXML();
             } else {
-                $fileInfo = $this->get('pelagos.util.data_store')->getDownloadFileInfo($dataset->getUdi(), 'metadata');
-                $xmlDoc = new \SimpleXMLElement($fileInfo->getRealPath(), null, true);
-                $xml = $xmlDoc->asXML();
+                try {
+                    $fileInfo = $this
+                        ->get('pelagos.util.data_store')
+                        ->getDownloadFileInfo($dataset->getUdi(), 'metadata');
+                    $xmlDoc = new \SimpleXMLElement($fileInfo->getRealPath(), null, true);
+                    $xml = $xmlDoc->asXML();
+                } catch (\Exception $e) {
+                    throw new HttpException(415, $e->getMessage());
+                }
             }
         } else {
             $xml = $this->get('twig')->render(

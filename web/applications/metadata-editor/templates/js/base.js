@@ -274,7 +274,7 @@ function uploadFile()
             var udival = $('#udifld').val();
             jQuery.ajax({
             url: "{{ metadata_api_path }}?udi=" + udival.substring(0,16),
-            type: "GET",
+            type: "HEAD",
             async: true,
             statusCode: {
                 400: function(message,text,jqXHR) {
@@ -307,8 +307,12 @@ function uploadFile()
                         }
                     });
                 },
-                500: function(message,text,jqXHR) {
-                    jQuery('<div title="Warning"><p>Unable to load Dataset with UDI:' + udival + ', reason:' + message.responseJSON.message + '.</p></div>').dialog({
+                415 : function(message,text,jqXHR) {
+                    dMessage = 'Sorry, the GRIIDC Metadata Editor is unable to load ';
+                    dMessage += 'the submitted metadata file because it is not valid ';
+                    dMessage += 'ISO 19115-2 XML. Please contact griidc@gomri.org for ';
+                    dMessage += 'assistance.';
+                    jQuery('<div title="Warning"><p>' + dMessage + '</p></div>').dialog({
                         autoOpen: true,
                         resizable: false,
                         minWidth: 300,

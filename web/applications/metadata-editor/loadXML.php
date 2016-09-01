@@ -121,7 +121,7 @@ function loadXMLFromURL($url)
         } else {
             return false;
         }
-    } elseif ($httpstatus == 204) {
+    } elseif ($httpstatus == 415) {
         return $httpstatus;
     } else {
         return false;
