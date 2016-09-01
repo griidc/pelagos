@@ -76,7 +76,7 @@ function updateTree(tree) {
             init_open.push(tree.init_open[i]);
         }
     }
-
+    
 
     if (tree.selected) {
         selected_node = $("#" + tree.name).jstree('get_selected');
@@ -124,8 +124,9 @@ function updateTree(tree) {
                                 url = Routing.generate("pelagos_api_tree_get_research_groups_by_funding_cycle", {"fundingCycle": matchFundingCycleId[1]});
                             }
                         } else {
-                            if (null !== nodeId) {
-                                url = Routing.generate("pelagos_api_tree_get_people", {"letter": nodeId});
+                            var matchLetter = nodeId.match(/^([A-Z])$/);
+                            if (null !== matchLetter) {
+                                url = Routing.generate("pelagos_api_tree_get_people", {"letter": matchLetter[1]});
                             } else {
                                 var matchPeopleId = nodeId.match(/^projects_peopleId_(\d+)$/);
                                 if (null !== matchPeopleId) {
@@ -208,5 +209,5 @@ function loadOpenChildren(tree,node) {
             tree.open_node(childId);
         }
     }
-
+    
 }
