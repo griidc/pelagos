@@ -81,6 +81,14 @@ if (isset($_GET["dataUrl"]) and !isset($_FILES["file"]))
         $dMessage .= 'assistance.';
         drupal_set_message($dMessage, 'warning', false);
         $xmldoc = null;
+    } elseif ($xmldoc != null and is_array($xmldoc)) {
+        $eMessage = '';
+        foreach($xmldoc as $error) {
+            $eMessage .= $error->message . ' ';
+        }
+        $dMessage = 'Error while loading data from: ' .  $xmlURL . "<br>Reason: $eMessage.";
+		drupal_set_message($dMessage, 'error', false);
+        $xmldoc = null;
     } else {
 		$dMessage = 'Error while loading data from: ' .  $xmlURL;
 		drupal_set_message($dMessage, 'error', false);

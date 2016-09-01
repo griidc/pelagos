@@ -3,7 +3,7 @@
 
 /**
  * convert xml string to php array - useful to get a serializable value
- * 
+ *
  * @param string $xmlstr
  * @return array
  *
@@ -25,16 +25,16 @@ function xmlstr_to_array($xmlstr) {
 }
 
 function domnode_to_array($node) {
-	
+
 	$output = null;
-	
+
 	switch ($node->nodeType) {
-		
+
 		case XML_CDATA_SECTION_NODE:
 		case XML_TEXT_NODE:
 		$output = trim($node->textContent);
 		break;
-		
+
 		case XML_ELEMENT_NODE:
 		for ($i=0, $m=$node->childNodes->length; $i<$m; $i++) {
 			$child = $node->childNodes->item($i);
@@ -74,16 +74,16 @@ function domnode_to_array($node) {
 
 /**
  *  This function will produce a DomDocument from and XML file.
- *  
+ *
  *  @param String $file File and path of XML file.
  *  @return Mixed Return false on failure, XML Doc on success
- *  
+ *
  */
 function loadXMLFromFile($file)
 {
     $doc = new DomDocument('1.0','UTF-8');
     $fileContents = file_get_contents($file);
-    
+
     $retval = $doc->loadXML($fileContents);
 
     if ($retval == false) {
@@ -95,38 +95,40 @@ function loadXMLFromFile($file)
 
 /**
  *  This function will return XML document from URL
- *  
+ *
  *  @param String $url Parameter_Description
  *  @return Mixed Will return a DomDoc on success, false on failure, HTTP Status code (as int) if status 204
- *  
+ *
  */
 function loadXMLFromURL($url)
 {
     $ch = curl_init();
-    
+
     curl_setopt($ch, CURLOPT_URL, $url);
     // Since the request 302's (forwards/slim url rewrite)
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt ($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
     $output = curl_exec($ch);
     $curlinfo = curl_getinfo($ch);
     $httpstatus = $curlinfo["http_code"];
     curl_close($ch);
-    
+
+    libxml_use_internal_errors(true);
+
     if ($httpstatus == 200) {
         $doc = new DomDocument('1.0','UTF-8');
         if ($doc->loadXML($output, LIBXML_NOERROR)) {
             return $doc;
         } else {
-            return false;
+            return libxml_get_errors();
         }
     } elseif ($httpstatus == 415) {
         return $httpstatus;
     } else {
         return false;
     }
-    
+
 }
 
 function loadXML($url)
@@ -142,7 +144,7 @@ function loadXML($url)
 function getNodeValue($nodeName,$doc)
 {
 	$results = array();
-	
+
 	$nodes = $doc->getElementsByTagName ($nodeName);
 	foreach ($nodes as $node) {
 		$nodeValue =  $node->nodeValue;
