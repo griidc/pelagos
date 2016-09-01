@@ -64,7 +64,7 @@
         <td><b>UDI:</b><br/><span id="udi">{{dataset.udi}}</span></td>
         <td>
             <b>Last Update:</b><br>
-            {{ dataset.modificationTimeStamp|date('M d, Y H:m:s T', 'America/Chicago') }}<br />
+            {{ dataset.modificationTimeStamp|date('M d, Y H:m:s T', 'UTC') }}<br />
         </td>
     </tr>
 
