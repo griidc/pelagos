@@ -108,7 +108,7 @@ function loadXMLFromURL($url)
     // Since the request 302's (forwards/slim url rewrite)
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt ($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $output = curl_exec($ch);
     $curlinfo = curl_getinfo($ch);
     $httpstatus = $curlinfo["http_code"];
