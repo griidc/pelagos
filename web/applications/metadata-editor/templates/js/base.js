@@ -273,11 +273,32 @@ function uploadFile()
         {
             var udival = $('#udifld').val();
             jQuery.ajax({
-                url: "{{ metadata_api_path }}?udi=" + udival.substring(0,16),
-                type: "HEAD",
-                async: true,
-                error: function(message,text,jqXHR) {
-                    jQuery('<div title="Warning"><p>Dataset with UDI:' + udival + ', not found</p></div>').dialog({
+            url: "{{ metadata_api_path }}?udi=" + udival.substring(0,16),
+            type: "GET",
+            async: true,
+            statusCode: {
+                400: function(message,text,jqXHR) {
+                    jQuery('<div title="Warning"><p>Cannot load Dataset with UDI:' + udival + ', reason:' + message.responseJSON.message + '.</p></div>').dialog({
+                        autoOpen: true,
+                        resizable: false,
+                        minWidth: 300,
+                        height: "auto",
+                        width: "auto",
+                        modal: true,
+                        buttons: {
+                            Ok: function() {
+                                jQuery(this).dialog( "close" );
+                            }
+            }
+                    });
+                },
+                404: function(message,text,jqXHR) {
+                    jQuery('<div title="Warning"><p>Dataset with UDI:' + udival + ', not found.</p></div>').dialog({
+                        autoOpen: true,
+                        resizable: false,
+                        minWidth: 300,
+                        height: "auto",
+                        width: "auto",
                         modal: true,
                         buttons: {
                             Ok: function() {
@@ -286,6 +307,22 @@ function uploadFile()
                         }
                     });
                 },
+                500: function(message,text,jqXHR) {
+                    jQuery('<div title="Warning"><p>Unable to load Dataset with UDI:' + udival + ', reason:' + message.responseJSON.message + '.</p></div>').dialog({
+                        autoOpen: true,
+                        resizable: false,
+                        minWidth: 300,
+                        height: "auto",
+                        width: "auto",
+                        modal: true,
+                        buttons: {
+                            Ok: function() {
+                                jQuery(this).dialog( "close" );
+                            }
+                        }
+                    });
+                },
+            },
                 success: function(message,text,jqXHR) {
                     location.href = location.href.split('?')[0] + "?dataUrl=http://" + location.hostname + "{{ metadata_api_path }}?udi=" + udival.substring(0,16);
                 }
