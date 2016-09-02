@@ -7,6 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -110,6 +111,10 @@ class MetadataController extends EntityController
                     $fileInfo = $this
                         ->get('pelagos.util.data_store')
                         ->getDownloadFileInfo($dataset->getUdi(), 'metadata');
+                } catch (FileNotFoundException $e) {
+                    throw new NotFoundHttpException($e->getMessage());
+                }
+                try {
                     $xmlDoc = new \SimpleXMLElement($fileInfo->getRealPath(), null, true);
                     $xml = $xmlDoc->asXML();
                 } catch (\Exception $e) {
