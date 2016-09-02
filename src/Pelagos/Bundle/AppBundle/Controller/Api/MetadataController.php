@@ -80,6 +80,7 @@ class MetadataController extends EntityController
      * @throws NotFoundHttpException   When dataset is not found, or no metadata is available.
      * @throws BadRequestHttpException When the Dataset Submission is Unsubmitted.
      * @throws HttpException           When the XML can not be loaded from a file.
+     * @throws NotFoundHttpException   When the metadata file is not found.
      *
      * @return Response
      */
