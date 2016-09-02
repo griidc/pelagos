@@ -278,7 +278,7 @@ function uploadFile()
             async: true,
             statusCode: {
                 400: function(message,text,jqXHR) {
-                    jQuery('<div title="Warning"><p>Cannot load Dataset with UDI:' + udival + ', reason:' + message.responseJSON.message + '.</p></div>').dialog({
+                    jQuery('<div title="Warning"><p>Cannot load Dataset with UDI:' + udival + '.</p></div>').dialog({
                         autoOpen: true,
                         resizable: false,
                         minWidth: 300,
