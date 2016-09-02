@@ -32,22 +32,37 @@
 {% endblock %}
 
 {% block body %}
-<div id="stats-tabs">
-    <div style="display: table-cell; height:100%;">
-        <div class="stats-overview" style="margin-bottom: -10px;">
-            <div class="stats-overview-row">
-                {% include "PelagosAppBundle:Stats:total-records-over-time.html.twig" %}
-            </div>
-        </div>
-        <div class="stats-overview">
-            <div class="stats-overview-row">
-                {% include "PelagosAppBundle:Stats:dataset-size-ranges.html.twig" %}
-                {% include "PelagosAppBundle:Stats:program-resources.html.twig" %}
-            </div>
-        </div>
-    </div>
-</div>
 
-<div id="section_canvas_div">
-</div>
+    <div class="display-table">
+
+        <div class="display-table-row">
+            <div class="display-table-cell">
+                <h1>System Statistics (as of {{ 'now'|date('F j, Y') }})</h1>
+            </div>
+        </div>
+
+        <div class="display-table-row">
+            <div id="stats-container" class="display-table-cell">
+                <div id="stats-tabs">
+                    <div style="display: table-cell; height:100%;">
+                        <div class="stats-overview" style="margin-bottom: -10px;">
+                            <div class="stats-overview-row">
+                                {% include "PelagosAppBundle:Stats:total-records-over-time.html.twig" %}
+                            </div>
+                        </div>
+                        <div class="stats-overview">
+                            <div class="stats-overview-row">
+                                {% include "PelagosAppBundle:Stats:dataset-size-ranges.html.twig" %}
+                                {% include "PelagosAppBundle:Stats:program-resources.html.twig" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="section_canvas_div"></div>
+
 {% endblock %}
