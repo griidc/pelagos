@@ -51,5 +51,5 @@ if (preg_match('/^Pelagos\\\\/', $request->attributes->get('_controller'))) {
 } else {
     $response->send();
     $kernel->terminate($request, $response);
-    drupal_exit();
+    exit();
 }
