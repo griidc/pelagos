@@ -84,10 +84,13 @@ function loadXMLFromFile($file)
     $doc = new DomDocument('1.0','UTF-8');
     $fileContents = file_get_contents($file);
 
-    $retval = $doc->loadXML($fileContents);
+    libxml_use_internal_errors(true);
+
+    $retval = $doc->loadXML($fileContents, LIBXML_NOERROR);
 
     if ($retval == false) {
-        return false;
+        return libxml_get_errors();
+        //return false;
     } else {
         return $doc;
     }
