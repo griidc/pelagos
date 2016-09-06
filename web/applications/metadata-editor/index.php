@@ -74,7 +74,7 @@ if (isset($_GET["dataUrl"]) and !isset($_FILES["file"]))
     if ($xmldoc != null and gettype($xmldoc) == 'object') {
         $dMessage = 'Successfully loaded XML from URL: ' .  $xmlURL;
         drupal_set_message($dMessage, 'status',false);
-    } elseif ($xmldoc != null and $xmldoc == 204) {
+    } elseif ($xmldoc != null and $xmldoc == 415) {
         $dMessage =  'Sorry, the GRIIDC Metadata Editor is unable to load ';
         $dMessage .= 'the submitted metadata file because it is not valid ';
         $dMessage .= 'ISO 19115-2 XML. Please contact griidc@gomri.org for ';
