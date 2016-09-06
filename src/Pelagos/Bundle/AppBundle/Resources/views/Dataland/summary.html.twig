@@ -100,25 +100,25 @@
 
     {% if dataset.metadata|default %}
 
-        {% set showPeriod = false %}
+        {% set showExtent = false %}
         {% set showExtentDescription = false %}
 
         {# Metadata has an extent description and does not have a temporal extent. #}
         {# Display the extent description. #}
-        {% if dataset.metadata.beginPosition|default and dataset.metadata.endPosition|default and not dataset.metadata.extentDescription|default %}
-            {% set showPeriod = true %}
+        {% if dataset.metadata.extentDescription|default and not (dataset.metadata.endPosition|default and dataset.metadata.extentDescription|default) %}
+            {% set showExtentDescription = true %}
         {% endif %}
 
         {# Metadata has a temporal extent and does not have at extent description. #}
         {# Display the temporal extent. #}
-        {% if dataset.metadata.extentDescription|default and not (dataset.metadata.endPosition|default or dataset.metadata.extentDescription|default) %}
-            {% set showExtentDescription = true %}
+        {% if dataset.metadata.beginPosition|default and dataset.metadata.endPosition|default and not dataset.metadata.extentDescription|default %}
+            {% set showExtent = true %}
         {% endif %}
 
         {# Metadata has both an extent description and a temporal extent and extent contains a gmd:geograpicElement. #}
         {# Display the temporal extent. #}
         {% if dataset.metadata.beginPosition|default and dataset.metadata.endPosition|default and dataset.metadata.extentDescription|default and dataset.metadata.geometry|default %}
-            {% set showPeriod = true %}
+            {% set showExtent = true %}
         {% endif %}
 
         {# Metadata has both an extent description and a temporal extent and extent does not contain a gmd:geograpicElement. #}
@@ -130,7 +130,7 @@
         {# Metadata has neither extent description nor temporal extent.  #}
         {# Display nothing.  This is the default case. #}
 
-        {% if showPeriod == true  %}
+        {% if showExtent == true  %}
             <tr>
                 <td valign="top">
                         <b>Data Collection Period:</b><br/>
