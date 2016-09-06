@@ -37,7 +37,7 @@ class MdappLogger
         $origTz = date_default_timezone_get();
         date_default_timezone_set('America/Chicago');
         $dstamp = date('r');
-        file_put_contents($this->logfile, "$dstamp:$message\n", FILE_APPEND);
+        file_put_contents($this->logfile, "$dstamp: $message\n", FILE_APPEND);
         date_default_timezone_set($origTz);
     }
 }
