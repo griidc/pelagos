@@ -131,18 +131,25 @@
         {# Display nothing.  This is the default case. #}
 
         {% if showExtent == true %}
+
             {% if not dataset.metadata.beginPosition|default %}
-                {% set dataset.metadata.beginPosition = 'N/A' %}
+                {% set begin = 'N/A' %}
+            {% else %}
+                {% set begin = dataset.metadata.beginPosition %}
             {% endif %}
+
             {% if not dataset.metadata.endPosition|default %}
-                {% set dataset.metadata.endPosition = 'N/A' %}
+                {% set end = 'N/A' %}
+            {% else %}
+                {% set end = dataset.metadata.endPosition %}
             {% endif %}
+
             <tr>
                 <td valign="top">
                         <b>Data Collection Period:</b><br/>
-                        {{dataset.metadata.beginPosition}}
+                        {{ begin }}
                           to
-                        {{dataset.metadata.endPosition}}
+                        {{ end }}
                 </td>
             </tr>
         {% endif %}
