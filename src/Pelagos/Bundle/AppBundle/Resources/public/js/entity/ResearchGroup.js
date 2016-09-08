@@ -2,6 +2,32 @@ $(document).ready(function()
 {
     "use strict";
 
+    $("#person").select2({
+        placeholder: "[Please Select a Person]",
+        allowClear: true,
+        ajax: {
+            dataType: 'json',
+            data: function (params) {
+                var query = {
+                    "person.lastName": params.term + '*'
+                }
+                return query;
+            },
+            url: '/pelagos-symfony/dev/mvde/api/person-research-groups' +
+                '?_properties=id,person.id,person.firstName,person.lastName,person.emailAddress',
+            processResults: function (data) {
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            text: item.person.lastName + ", " +  item.person.firstName + ", " + item.person.emailAddress,
+                            id: item.id
+                        }
+                    })
+                };
+            }
+        }
+    });
+
     //Disable RIS ID if not in create mode
     if ($("form[entityType=\"ResearchGroup\"] #id").val() !== "") {
         $("form[entityType=\"ResearchGroup\"] #id").attr("readonly",true);
