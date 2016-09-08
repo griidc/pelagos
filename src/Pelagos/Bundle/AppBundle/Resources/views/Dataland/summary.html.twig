@@ -103,34 +103,40 @@
         {% set showExtent = false %}
         {% set showExtentDescription = false %}
 
-        {# Metadata has an extent description and does not have a temporal extent. #}
+        {# Metadata has an extent description and does not have a temporal extent. Presence of beginPosition or endPosition constitutes a temporal extent. #}
         {# Display the extent description. #}
-        {% if dataset.metadata.extentDescription|default and not (dataset.metadata.endPosition|default and dataset.metadata.extentDescription|default) %}
+        {% if dataset.metadata.extentDescription|default and not (dataset.metadata.beginPosition|default or dataset.metadata.endPosition|default) %}
             {% set showExtentDescription = true %}
         {% endif %}
 
         {# Metadata has a temporal extent and does not have at extent description. #}
         {# Display the temporal extent. #}
-        {% if dataset.metadata.beginPosition|default and dataset.metadata.endPosition|default and not dataset.metadata.extentDescription|default %}
+        {% if (dataset.metadata.beginPosition|default or dataset.metadata.endPosition|default) and not dataset.metadata.extentDescription|default %}
             {% set showExtent = true %}
         {% endif %}
 
         {# Metadata has both an extent description and a temporal extent and extent contains a gmd:geograpicElement. #}
         {# Display the temporal extent. #}
-        {% if dataset.metadata.beginPosition|default and dataset.metadata.endPosition|default and dataset.metadata.extentDescription|default and dataset.metadata.geometry|default %}
+        {% if (dataset.metadata.beginPosition|default or dataset.metadata.endPosition|default) and dataset.metadata.extentDescription|default and dataset.metadata.geometry|default %}
             {% set showExtent = true %}
         {% endif %}
 
         {# Metadata has both an extent description and a temporal extent and extent does not contain a gmd:geograpicElement. #}
         {# Display the extent description. #}
-        {% if dataset.metadata.beginPosition|default and dataset.metadata.endPosition|default and dataset.metadata.extentDescription|default and not dataset.metadata.geometry|default %}
+        {% if (dataset.metadata.beginPosition|default or dataset.metadata.endPosition|default) and dataset.metadata.extentDescription|default and not dataset.metadata.geometry|default %}
             {% set showExtentDescription = true %}
         {% endif %}
 
         {# Metadata has neither extent description nor temporal extent.  #}
         {# Display nothing.  This is the default case. #}
 
-        {% if showExtent == true  %}
+        {% if showExtent == true %}
+            {% if not dataset.metadata.beginPosition|default %}
+                {% set dataset.metadata.beginPosition = 'N/A' %}
+            {% endif %}
+            {% if not dataset.metadata.endPosition|default %}
+                {% set dataset.metadata.endPosition = 'N/A' %}
+            {% endif %}
             <tr>
                 <td valign="top">
                         <b>Data Collection Period:</b><br/>
