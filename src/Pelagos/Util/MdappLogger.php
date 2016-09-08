@@ -35,7 +35,7 @@ class MdappLogger
     public function writeLog($message)
     {
         $tz = ini_get('date.timezone');
-        $timestamp = new \DateTime(now, DateTimeZone($tz));
+        $timestamp = new \DateTime('now', new \DateTimeZone($tz));
         file_put_contents($this->logfile, $timestamp->format('r') . ": $message\n", FILE_APPEND);
     }
 }
