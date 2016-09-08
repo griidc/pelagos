@@ -195,6 +195,9 @@ class DatasetSubmissionController extends UIController
                 Dataset::class,
                 array (
                     'datasetSubmission.creator' => $loggedInPerson,
+                ),
+                array(
+                    'udi' => 'ASC'
                 )
             );
 
