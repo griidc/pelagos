@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * A form for retrieving a collection of entities.
  */
-class EntityCollectionType extends EntityType
+class EntityCollectionType extends EntityDescriptionsType
 {
     /**
      * This form type is used to *return* a collection.

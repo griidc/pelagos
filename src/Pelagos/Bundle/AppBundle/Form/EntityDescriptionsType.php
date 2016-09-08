@@ -6,9 +6,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * An abstract form for entities.
+ * An abstract form for descriptions of parameters used to query entities.
  */
-abstract class EntityType extends AbstractType
+abstract class EntityDescriptionsType extends AbstractType
 {
     /**
      * Configures the options for this type.
@@ -35,7 +35,9 @@ abstract class EntityType extends AbstractType
     protected function getPropertyFilterDescription($collectionName, $entityName)
     {
         return 'Only ' . static::ACTION . " $collectionName where someProperty=value " .
-               "(where someProperty is any valid property or sub-property of a $entityName).";
+               "(where someProperty is any valid property or sub-property of a $entityName" .
+               ' and value may be negated with a preceding ! and/or contain wildcards * or ?,' .
+               ' which can be escaped with a preceding \)';
     }
 
     /**
