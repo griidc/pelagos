@@ -6,9 +6,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * An abstract form for entities.
+ * An abstract form for descriptions of parameters used to query entities.
  */
-abstract class EntityType extends AbstractType
+abstract class EntityDescriptionsType extends AbstractType
 {
     /**
      * Configures the options for this type.
