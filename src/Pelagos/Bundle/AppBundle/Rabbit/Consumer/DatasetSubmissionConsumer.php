@@ -226,7 +226,7 @@ class DatasetSubmissionConsumer implements ConsumerInterface
             return;
         } elseif (array_key_exists($xferString, DatasetSubmission::TRANSFER_TYPES)) {
             $xferType = DatasetSubmission::TRANSFER_TYPES[$xferString];
-            $this->mdappLogger->writeLog(" $username has registered new metadata via $xferType for $datasetId.");
+            $this->mdappLogger->writeLog(" $username has registered new metadata via $xferType for $datasetId. (filer msg)");
         } else {
             $this->logger->error(
                 'Error processing metadata: unexpected metadatafiletransfertype of: '

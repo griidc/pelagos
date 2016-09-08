@@ -163,7 +163,8 @@ class DatasetController extends EntityController
                 $entityHandler->get(Dataset::class, $id)->getUdi() .
                 ' to ' .
                 $jiraLinkValue .
-                '.'
+                '.' .
+                ' (api msg)'
             );
         }
         return $this->makeNoContentResponse();

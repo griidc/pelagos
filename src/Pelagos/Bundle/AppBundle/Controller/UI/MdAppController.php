@@ -158,7 +158,7 @@ class MdAppController extends UIController
             $datasetSubmission->setMetadataStatus($to);
             $entityHandler->update($datasetSubmission);
             $entityHandler->update($dataset);
-            $mdappLogger->writeLog($this->getUser()->getUsername() . " has changed metadata status for $udi ($from -> $to)");
+            $mdappLogger->writeLog($this->getUser()->getUsername() . " has changed metadata status for $udi ($from -> $to) (mdapp msg)");
         }
         return $this->renderUi();
     }
@@ -487,7 +487,7 @@ class MdAppController extends UIController
             if (true == $data['acceptMetadata']) {
                 $loginfo .= ' and data was flagged as accepted';
             }
-            $loginfo .= '.';
+            $loginfo .= '. (mdapp msg)';
             $mdappLogger->writeLog($loginfo);
         } else {
             // Log why the upload failed.
@@ -497,7 +497,8 @@ class MdAppController extends UIController
                 . ' by: '
                 . $this->getUser()->getUsername()
                 . ' Reason: '
-                . $errStr);
+                . $errStr
+                . ' (mdapp msg)');
         }
 
         return array(
