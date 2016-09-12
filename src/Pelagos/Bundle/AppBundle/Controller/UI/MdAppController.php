@@ -611,7 +611,7 @@ class MdAppController extends UIController
             '/gmd:MD_Distributor' .
             '/gmd:distributorTransferOptions' .
             '/gmd:MD_DigitalTransferOptions' .
-            '/gmd:onLineResource' .
+            '/gmd:onLine' .
             '/gmd:CI_OnlineResource' .
             '/gmd:linkage' .
             '/gmd:URL' .
