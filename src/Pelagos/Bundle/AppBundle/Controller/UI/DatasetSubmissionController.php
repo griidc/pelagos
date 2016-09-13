@@ -195,6 +195,9 @@ class DatasetSubmissionController extends UIController
                 Dataset::class,
                 array (
                     'datasetSubmission.creator' => $loggedInPerson,
+                ),
+                array(
+                    'udi' => 'ASC'
                 )
             );
 
@@ -245,6 +248,7 @@ class DatasetSubmissionController extends UIController
             $sequence = $datasetSubmission->getSequence();
             $datasetSubmission = clone $datasetSubmission;
             $datasetSubmission->setId(null);
+            $datasetSubmission->setCreationTimeStamp(null);
         } else {
             $datasetSubmission = new DatasetSubmission;
         }

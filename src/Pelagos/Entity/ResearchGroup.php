@@ -272,6 +272,8 @@ class ResearchGroup extends Entity
      *
      * @ORM\OneToMany(targetEntity="Dataset", mappedBy="researchGroup")
      *
+     * @ORM\OrderBy({"udi" = "ASC"})
+     *
      * @Serializer\Exclude
      */
     protected $datasets;
