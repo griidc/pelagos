@@ -70,6 +70,9 @@
 
 
 {% block body %}
+
+<h1>Dataset Submission Form</h1>
+
 {% if found and dif is not null and dif.status == constant('Pelagos\\Entity\\DIF::STATUS_SUBMITTED') %}
     <div class="messages warning">
         <h2 class="element-invisible">Status message</h2>

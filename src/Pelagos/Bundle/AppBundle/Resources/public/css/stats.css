@@ -125,3 +125,21 @@
     font-size: 14px;
     text-transform: uppercase;
 }
+
+.display-table {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+
+.display-table-row {
+    display: table-row;
+}
+
+.display-table-cell {
+    display: table-cell;
+}
+
+#stats-container {
+    height: 100%;
+}

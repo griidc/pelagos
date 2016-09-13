@@ -2,32 +2,81 @@
 
 drupal_add_library('system', 'ui.dialog');
 
-?>
+$config = parse_ini_file(__DIR__ . '/config.ini');
 
+$metadata_api_path = $config['metadata_api_path'];
+
+?>
 
 <script>
 function getURLbyUDI()
 {
     var udival = document.getElementById("udi").value;
 
+    <?php
+    echo 'var metadata_api_path = "' . $config['metadata_api_path'] . '";';
+    echo 'var metadata_editor_path = "' . $config['metadata_editor_path'] . '";';
+    ?>
+
     if (udival != "")
     {
         jQuery.ajax({
-            url: "/pelagos-symfony/api/metadata?udi=" + udival.substring(0,16),
+            url: metadata_api_path + "?udi=" + udival.substring(0,16),
             type: "HEAD",
             async: true,
-            error: function(message,text,jqXHR) {
-                jQuery('<div title="Warning"><p>Dataset with UDI:' + udival + ', not found</p></div>').dialog({
-                    modal: true,
-                    buttons: {
-                        Ok: function() {
-                            jQuery(this).dialog( "close" );
+            statusCode: {
+                400: function(message,text,jqXHR) {
+                    jQuery('<div title="Warning"><p>Cannot load Dataset with UDI:' + udival + '.</p></div>').dialog({
+                        autoOpen: true,
+                        resizable: false,
+                        minWidth: 300,
+                        height: "auto",
+                        width: "auto",
+                        modal: true,
+                        buttons: {
+                            Ok: function() {
+                                jQuery(this).dialog( "close" );
+                            }
                         }
-                    }
-                });
+                    });
+                },
+                404: function(message,text,jqXHR) {
+                    jQuery('<div title="Warning"><p>Dataset with UDI:' + udival + ', not found.</p></div>').dialog({
+                        autoOpen: true,
+                        resizable: false,
+                        minWidth: 300,
+                        height: "auto",
+                        width: "auto",
+                        modal: true,
+                        buttons: {
+                            Ok: function() {
+                                jQuery(this).dialog( "close" );
+                            }
+                        }
+                    });
+                },
+                415: function(message,text,jqXHR) {
+                    dMessage = 'Sorry, the GRIIDC Metadata Editor is unable to load ';
+                    dMessage += 'the submitted metadata file because it is not valid ';
+                    dMessage += 'ISO 19115-2 XML. Please contact griidc@gomri.org for ';
+                    dMessage += 'assistance.';
+                    jQuery('<div title="Warning"><p>' + dMessage + '</p></div>').dialog({
+                        autoOpen: true,
+                        resizable: false,
+                        minWidth: 300,
+                        height: "auto",
+                        width: "auto",
+                        modal: true,
+                        buttons: {
+                            Ok: function() {
+                                jQuery(this).dialog( "close" );
+                            }
+                        }
+                    });
+                },
             },
             success: function(message,text,jqXHR) {
-                location.href = "/metadata-editor/?dataUrl=http://" + location.hostname + "/pelagos-symfony/api/metadata?udi=" + udival.substring(0,16);
+                location.href = metadata_editor_path + "?dataUrl=https://" + location.hostname + metadata_api_path + "?udi=" + udival.substring(0,16);
             }
         });
     }

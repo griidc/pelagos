@@ -573,7 +573,7 @@ class MdAppController extends UIController
                 ${$errorArray}[] = 'Filename does not match gmd:fileIdentifier!';
             }
         } else {
-            $warnings[] = 'File Identifier does not exist';
+            ${$errorArray}[] = 'File Identifier is missing or blank.';
         }
 
         if ($data['test2'] == true) {
@@ -594,7 +594,7 @@ class MdAppController extends UIController
                 ${$errorArray}[] = 'UDI does not match metadata URL';
             }
         } else {
-            $warnings[] = 'Metadata URL does not exist';
+            ${$errorArray}[] = 'Metadata URL is missing or blank.';
         }
 
         if ($data['test3'] == true) {
@@ -623,7 +623,7 @@ class MdAppController extends UIController
                 ${$errorArray}[] = 'UDI does not match distribution URL.';
             }
         } else {
-            $warnings[] = 'Distribution URL does not exist';
+            ${$errorArray}[] = 'Distribution URL is missing or blank.';
         }
     }
 }

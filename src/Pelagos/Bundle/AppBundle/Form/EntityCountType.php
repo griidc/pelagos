@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * A form for retrieving a count of entities.
  */
-class EntityCountType extends EntityType
+class EntityCountType extends EntityDescriptionsType
 {
     /**
      * This form type is used to *count* a collection.

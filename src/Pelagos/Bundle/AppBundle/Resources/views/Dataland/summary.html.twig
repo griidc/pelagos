@@ -64,7 +64,7 @@
         <td><b>UDI:</b><br/><span id="udi">{{dataset.udi}}</span></td>
         <td>
             <b>Last Update:</b><br>
-            {{dataset.modificationTimeStamp|date('c')}}<br>
+            {{ dataset.modificationTimeStamp|date('M d Y H:m T', 'UTC') }}<br />
         </td>
     </tr>
 
@@ -98,25 +98,71 @@
         </td>
     </tr>
 
-    <tr>
-        <td valign="top">
-            {% if dataset.metadata|default  %}
-                <b>Data Collection Period:</b><br/>
-                {{dataset.metadata.beginPosition}}
-                  to
-                {{dataset.metadata.endPosition}}
-            {% endif %}
-        </td>
-    </tr>
+    {% if dataset.metadata|default %}
 
-    <tr>
-        <td valign="top">
-            {% if dataset.metadata|default %}
-              <tr><td colspan="2">&nbsp;</td></tr>
-              <tr><td colspan="2"><b>Extent Description:</b><br/> {{dataset.metadata.extentDescription}}</td></tr>
+        {% set showExtent = false %}
+        {% set showExtentDescription = false %}
+
+        {# Metadata has an extent description and does not have a temporal extent. Presence of beginPosition or endPosition constitutes a temporal extent. #}
+        {# Display the extent description. #}
+        {% if dataset.metadata.extentDescription|default and not (dataset.metadata.beginPosition|default or dataset.metadata.endPosition|default) %}
+            {% set showExtentDescription = true %}
+        {% endif %}
+
+        {# Metadata has a temporal extent and does not have at extent description. #}
+        {# Display the temporal extent. #}
+        {% if (dataset.metadata.beginPosition|default or dataset.metadata.endPosition|default) and not dataset.metadata.extentDescription|default %}
+            {% set showExtent = true %}
+        {% endif %}
+
+        {# Metadata has both an extent description and a temporal extent and extent contains a gmd:geograpicElement. #}
+        {# Display the temporal extent. #}
+        {% if (dataset.metadata.beginPosition|default or dataset.metadata.endPosition|default) and dataset.metadata.extentDescription|default and dataset.metadata.geometry|default %}
+            {% set showExtent = true %}
+        {% endif %}
+
+        {# Metadata has both an extent description and a temporal extent and extent does not contain a gmd:geograpicElement. #}
+        {# Display the extent description. #}
+        {% if (dataset.metadata.beginPosition|default or dataset.metadata.endPosition|default) and dataset.metadata.extentDescription|default and not dataset.metadata.geometry|default %}
+            {% set showExtentDescription = true %}
+        {% endif %}
+
+        {# Metadata has neither extent description nor temporal extent.  #}
+        {# Display nothing.  This is the default case. #}
+
+        {% if showExtent == true %}
+
+            {% if not dataset.metadata.beginPosition|default %}
+                {% set begin = 'N/A' %}
+            {% else %}
+                {% set begin = dataset.metadata.beginPosition %}
             {% endif %}
-         </td>
-    </tr>
+
+            {% if not dataset.metadata.endPosition|default %}
+                {% set end = 'N/A' %}
+            {% else %}
+                {% set end = dataset.metadata.endPosition %}
+            {% endif %}
+
+            <tr>
+                <td valign="top">
+                        <b>Data Collection Period:</b><br/>
+                        {{ begin }}
+                          to
+                        {{ end }}
+                </td>
+            </tr>
+        {% endif %}
+
+        {% if showExtentDescription == true %}
+            <tr>
+                <td valign="top">
+                        <tr><td colspan="2">&nbsp;</td></tr>
+                        <tr><td colspan="2"><b>Extent Description:</b><br/> {{dataset.metadata.extentDescription}}</td></tr>
+                 </td>
+            </tr>
+        {% endif %}
+    {% endif %}
 </table>
 
 </font>

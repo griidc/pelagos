@@ -273,11 +273,32 @@ function uploadFile()
         {
             var udival = $('#udifld').val();
             jQuery.ajax({
-                url: "{{ metadata_api_path }}?udi=" + udival.substring(0,16),
-                type: "HEAD",
-                async: true,
-                error: function(message,text,jqXHR) {
-                    jQuery('<div title="Warning"><p>Dataset with UDI:' + udival + ', not found</p></div>').dialog({
+            url: "{{ metadata_api_path }}?udi=" + udival.substring(0,16),
+            type: "HEAD",
+            async: true,
+            statusCode: {
+                400: function(message,text,jqXHR) {
+                    jQuery('<div title="Warning"><p>Cannot load Dataset with UDI:' + udival + '.</p></div>').dialog({
+                        autoOpen: true,
+                        resizable: false,
+                        minWidth: 300,
+                        height: "auto",
+                        width: "auto",
+                        modal: true,
+                        buttons: {
+                            Ok: function() {
+                                jQuery(this).dialog( "close" );
+                            }
+            }
+                    });
+                },
+                404: function(message,text,jqXHR) {
+                    jQuery('<div title="Warning"><p>Dataset with UDI:' + udival + ', not found.</p></div>').dialog({
+                        autoOpen: true,
+                        resizable: false,
+                        minWidth: 300,
+                        height: "auto",
+                        width: "auto",
                         modal: true,
                         buttons: {
                             Ok: function() {
@@ -286,6 +307,26 @@ function uploadFile()
                         }
                     });
                 },
+                415 : function(message,text,jqXHR) {
+                    dMessage = 'Sorry, the GRIIDC Metadata Editor is unable to load ';
+                    dMessage += 'the submitted metadata file because it is not valid ';
+                    dMessage += 'ISO 19115-2 XML. Please contact griidc@gomri.org for ';
+                    dMessage += 'assistance.';
+                    jQuery('<div title="Warning"><p>' + dMessage + '</p></div>').dialog({
+                        autoOpen: true,
+                        resizable: false,
+                        minWidth: 300,
+                        height: "auto",
+                        width: "auto",
+                        modal: true,
+                        buttons: {
+                            Ok: function() {
+                                jQuery(this).dialog( "close" );
+                            }
+                        }
+                    });
+                },
+            },
                 success: function(message,text,jqXHR) {
                     location.href = location.href.split('?')[0] + "?dataUrl=http://" + location.hostname + "{{ metadata_api_path }}?udi=" + udival.substring(0,16);
                 }
