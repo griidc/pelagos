@@ -67,21 +67,25 @@ $(document).ready(function()
                     data: function (params) {
                         if (params.term != undefined) {
                             var query = {
-                                "person.lastName": params.term + '*'
+                                "lastName": params.term + '*'
                             }
                         } else {
                             var query = {}
                         }
                         return query;
                     },
-                    url: '/pelagos-symfony/dev/mvde/api/person-research-groups' +
-                    '?_properties=id,person.id,person.firstName,person.lastName,person.emailAddress',
+                    url: Routing.generate("pelagos_api_people_get_collection",
+                        {
+                            "_properties" : "id,firstName,lastName,emailAddress",
+                            "personResearchGroups.researchGroup" : researchGroup
+                        }
+                    ),
                     processResults: function (data) {
                         return {
                             results: $.map(data, function (item) {
                                 return {
-                                    text: item.person.lastName + ", " +  item.person.firstName + ", " + item.person.emailAddress,
-                                    id: item.person.id
+                                    text: item.lastName + ", " +  item.firstName + ", " + item.emailAddress,
+                                    id: item.id
                                 }
                             })
                         };

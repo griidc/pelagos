@@ -2,13 +2,14 @@
 
 {% block head %}
     {{ parent() }}
-    {% javascripts '@PelagosAppBundle/Resources/public/js/ResearchGroup.js' %}
+    {% javascripts  '@FOSJsRoutingBundle/Resources/public/js/router.js'
+                    '@PelagosAppBundle/Resources/public/js/ResearchGroup.js'
+                    '@PelagosAppBundle/Resources/public/js/entity/ResearchGroup.js'
+    %}
         {{ add_js(asset_url) }}
     {% endjavascripts %}
 
-    {% javascripts '@PelagosAppBundle/Resources/public/js/entity/ResearchGroup.js' %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
+    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
 {% endblock %}
 
 {% block body %}
