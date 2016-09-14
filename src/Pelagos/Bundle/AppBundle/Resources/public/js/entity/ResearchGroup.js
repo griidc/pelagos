@@ -2,14 +2,18 @@ $(document).ready(function()
 {
     "use strict";
 
-    $("#person").select2({
+    $('[name="person"]', $('[name="person"]').parent(':not([newform])')).select2({
         placeholder: "[Please Select a Person]",
         allowClear: true,
         ajax: {
             dataType: 'json',
             data: function (params) {
-                var query = {
-                    "person.lastName": params.term + '*'
+                if (params.term != undefined) {
+                    var query = {
+                        "person.lastName": params.term + '*'
+                    }
+                } else {
+                    var query = {}
                 }
                 return query;
             },
@@ -20,7 +24,7 @@ $(document).ready(function()
                     results: $.map(data, function (item) {
                         return {
                             text: item.person.lastName + ", " +  item.person.firstName + ", " + item.person.emailAddress,
-                            id: item.id
+                            id: item.person.id
                         }
                     })
                 };
@@ -63,6 +67,12 @@ $(document).ready(function()
         var fundingCycleValue = fundingCycle.attr("fundingCycle");
         fundingCycle.val(fundingCycleValue);
         fundingCycle.find("option[value=\"" + fundingCycleValue + "\"]").attr("selected", true);
+    });
+
+    $("form[entityType=\"PersonResearchGroup\"]").on("reset", function() {
+        setTimeout(function () {
+            $('[name="person"]').change();
+        });
     });
 });
 
