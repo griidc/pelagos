@@ -2,8 +2,6 @@ $(document).ready(function()
 {
     "use strict";
 
-    var researchGroup = $(".entityForm[entityType=\"ResearchGroup\"] #id").val();
-
     $('[name="person"]', $('[name="person"]').parent(':not([newform])')).select2({
         placeholder: "[Please Select a Person]",
         allowClear: true,
@@ -21,8 +19,7 @@ $(document).ready(function()
             },
             url: Routing.generate("pelagos_api_people_get_collection",
                 {
-                    "_properties" : "id,firstName,lastName,emailAddress",
-                    "personResearchGroups.researchGroup" : researchGroup
+                    "_properties" : "id,firstName,lastName,emailAddress"
                 }
             ),
             processResults: function (data) {

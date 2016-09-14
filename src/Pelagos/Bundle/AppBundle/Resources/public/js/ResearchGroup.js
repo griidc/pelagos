@@ -76,8 +76,7 @@ $(document).ready(function()
                     },
                     url: Routing.generate("pelagos_api_people_get_collection",
                         {
-                            "_properties" : "id,firstName,lastName,emailAddress",
-                            "personResearchGroups.researchGroup" : researchGroup
+                            "_properties" : "id,firstName,lastName,emailAddress"
                         }
                     ),
                     processResults: function (data) {
