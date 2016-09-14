@@ -202,6 +202,8 @@ class DatasetSubmissionConsumer implements ConsumerInterface
             $metadataFileUri = $datasetSubmission->getMetadataFileUri();
             $datasetId = $datasetSubmission->getDataset()->getUdi();
             $this->dataStore->addFile($metadataFileUri, $datasetId, 'metadata');
+            $metadataSha256Hash = hash('sha256', file_get_contents($metadataFileUri));
+            $datasetSubmission->setMetadataFileSha256Hash($metadataSha256Hash);
             $datasetSubmission->setMetadataFileName(basename($metadataFileUri));
             $datasetSubmission->setMetadataFileTransferStatus(
                 DatasetSubmission::TRANSFER_STATUS_COMPLETED
