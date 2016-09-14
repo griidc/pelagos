@@ -37,6 +37,7 @@ class AppKernel extends Kernel
             new \OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
             new \Phobetor\RabbitMqSupervisorBundle\RabbitMqSupervisorBundle(),
             new \HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
+            new \FOS\ElasticaBundle\FOSElasticaBundle(),
             new \Pelagos\Bundle\LegacyBundle\PelagosLegacyBundle(),
             new \Pelagos\Bundle\AppBundle\PelagosAppBundle(),
         );
