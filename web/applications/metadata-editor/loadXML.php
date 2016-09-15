@@ -90,7 +90,6 @@ function loadXMLFromFile($file)
 
     if ($retval == false) {
         return libxml_get_errors();
-        //return false;
     } else {
         return $doc;
     }
