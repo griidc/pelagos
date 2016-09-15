@@ -49,7 +49,7 @@ class PersonResearchGroupType extends AbstractType
                 'label' => 'Label:',
                 'required' => true,
             ))
-            ->addEventListener(FormEvents::PRE_SUBMIT, function(FormEvent $event) {
+            ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
                 $event->getForm()->add('person', EntityType::class, array(
                     'label' => 'Person:',
                     'class' => 'Pelagos:Person',
