@@ -105,7 +105,7 @@ $(document).ready(function()
     });
 
     $("#btnApprove").button().click(function() {
-        $("#btn").val($(this).val())
+        $("#btn").val($(this).val());
         $("#difForm").submit();
     });
 
@@ -114,7 +114,7 @@ $(document).ready(function()
     });
 
     $("#btnUpdate").button().click(function() {
-        $("#btn").val($(this).val())
+        $("#btn").val($(this).val());
         $("#difForm").submit();
     });
 
