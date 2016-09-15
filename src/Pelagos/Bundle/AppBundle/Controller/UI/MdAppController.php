@@ -569,7 +569,7 @@ class MdAppController extends UIController
         );
 
         if (count($fileIdentifier) > 0) {
-            if (!(bool) preg_match("/$originalFileName/i", $fileIdentifier[0], $matches)) {
+            if (!(bool) preg_match("/^$originalFileName$/i", $fileIdentifier[0], $matches)) {
                 ${$errorArray}[] = 'Filename does not match gmd:fileIdentifier!';
             }
         } else {
