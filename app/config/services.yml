@@ -99,3 +99,7 @@ services:
         arguments: ["@pelagos.util.geometry"]
         tags:
             - { name: kernel.event_subscriber }
+
+    pelagos.util.dataset_index:
+        class: Pelagos\Util\DatasetIndex
+        arguments: ["@fos_elastica.index.pelagos.dataset"]
