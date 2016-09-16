@@ -90,7 +90,7 @@ class Person extends Entity
      *
      * @var string $lastName
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="citext")
      *
      * @Assert\NotBlank(
      *     message="Last name is required"

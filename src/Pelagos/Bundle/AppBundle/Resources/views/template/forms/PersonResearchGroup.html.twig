@@ -7,8 +7,16 @@ action="{{path('pelagos_api_person_research_groups_post')}}">
 
     <input type="hidden" name="id" value="{{PersonResearchGroup.getId|default}}">
 
-    {{ form_row(form.person) }}
-    <label for="person" class="error"></label>
+    <label>Person:</label>
+    <select id="person" name="person" required="required">
+    {% if PersonResearchGroup.Person %}
+        <option value="{{PersonResearchGroup.Person.id}}">
+            {{PersonResearchGroup.Person.lastName}}, {{PersonResearchGroup.Person.firstName}}, {{PersonResearchGroup.Person.emailAddress}}
+        </option>
+    {% else %}
+        <option value="">[Please Select a Person]</option>
+    {% endif %}
+    </select>
 
     <span
     {% if Person is not defined %}
@@ -19,7 +27,7 @@ action="{{path('pelagos_api_person_research_groups_post')}}">
     {% if is_granted('CAN_CREATE', PersonResearchGroup) or  is_granted('CAN_EDIT', PersonResearchGroup)%}
         {{ form_row(form.role) }}
     {% endif %}
-    
+
     <div
     {% if is_granted('CAN_EDIT', editlabel|default) %}
      class="editableField"
