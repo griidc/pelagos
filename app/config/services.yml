@@ -93,3 +93,9 @@ services:
         class: Jsor\Doctrine\PostGIS\Event\ORMSchemaEventSubscriber
         tags:
             - { name: doctrine.event_subscriber, connection: default }
+
+    pelagos.event.dataset_index_subscriber:
+        class: Pelagos\Event\DatasetIndexSubscriber
+        arguments: ["@pelagos.util.geometry"]
+        tags:
+            - { name: kernel.event_subscriber }
