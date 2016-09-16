@@ -53,6 +53,9 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
         $wkt = null;
         if ($dataset->hasMetadata()) {
             $wkt = $dataset->getMetadata()->getGeometry();
+            if (preg_match('/^</', $wkt)) {
+                $wkt = $this->geometryUtil->convertGmlToWkt($wkt);
+            }
         } elseif ($dataset->hasDif() and null !== $dataset->getDif()->getSpatialExtentGeometry()) {
             $wkt = $this->geometryUtil->convertGmlToWkt(
                 $dataset->getDif()->getSpatialExtentGeometry()
