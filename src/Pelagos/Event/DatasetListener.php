@@ -9,26 +9,26 @@ use Pelagos\Entity\DIF;
 use Pelagos\Entity\Metadata;
 
 /**
- * Listener class for Dataset related events.
+ * Doctrine Listener class for Dataset related events.
  */
 class DatasetListener
 {
     /**
-     * Method to update dataset title and abstract when DIF dataset submission changes.
+     * Method to update dataset title and abstract when DIF, Dataset Submission, or Metadata changes.
      *
-     * @param EntityEvent $event Event being acted upon.
+     * @param LifecycleEventArgs $args Doctrine event arguments.
      *
      * @return void
      */
     public function postPersist(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
-        if ($entity instanceof DIF 
+        if ($entity instanceof DIF
             or $entity instanceof DatasetSubmission
             or $entity instanceof Metadata
             ) {
             $dataset = $entity->getDataset();
-        
+
             $dataset->updateTitle();
             $dataset->updateAbstract();
             $args->getEntityManager()->persist($dataset);
