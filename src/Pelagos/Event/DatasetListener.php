@@ -32,7 +32,6 @@ class DatasetListener
             $dataset->updateTitle();
             $dataset->updateAbstract();
             $args->getEntityManager()->persist($dataset);
-            //$this->entityHandler->update($dataset);
         }
     }
 }
