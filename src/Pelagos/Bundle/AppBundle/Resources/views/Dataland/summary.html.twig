@@ -64,7 +64,11 @@
         <td><b>UDI:</b><br/><span id="udi">{{dataset.udi}}</span></td>
         <td>
             <b>Last Update:</b><br>
-            {{ dataset.datasetSubmission.creationTimeStamp|date('M d Y H:i T', 'UTC') }}<br />
+            {% if dataset.datasetSubmission %}
+            {{ dataset.datasetSubmission.creationTimeStamp|date('M d Y H:i T', 'UTC') }}<br /> }}
+            {% else %}
+            {{ dataset.dif.creationTimeStamp|date('M d Y H:i T', 'UTC') }}
+            {% endif %}
         </td>
     </tr>
 
