@@ -172,8 +172,6 @@ class DIFController extends EntityController
     public function putAction($id, Request $request)
     {
         $this->handleUpdate(DIFType::class, DIF::class, $id, $request, 'PUT');
-        $dataset = $this->handleGetOne(DIF::class, $id)->getDataset();
-        $this->container->get('pelagos.entity.handler')->update($dataset);
         return $this->makeNoContentResponse();
     }
 
@@ -200,8 +198,6 @@ class DIFController extends EntityController
     public function patchAction($id, Request $request)
     {
         $this->handleUpdate(DIFType::class, DIF::class, $id, $request, 'PATCH');
-        $dataset = $this->handleGetOne(DIF::class, $id)->getDataset();
-        $this->container->get('pelagos.entity.handler')->update($dataset);
         return $this->makeNoContentResponse();
     }
 
