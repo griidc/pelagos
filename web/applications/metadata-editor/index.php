@@ -74,12 +74,20 @@ if (isset($_GET["dataUrl"]) and !isset($_FILES["file"]))
     if ($xmldoc != null and gettype($xmldoc) == 'object') {
         $dMessage = 'Successfully loaded XML from URL: ' .  $xmlURL;
         drupal_set_message($dMessage, 'status',false);
-    } elseif ($xmldoc != null and $xmldoc == 204) {
+    } elseif ($xmldoc != null and $xmldoc == 415) {
         $dMessage =  'Sorry, the GRIIDC Metadata Editor is unable to load ';
         $dMessage .= 'the submitted metadata file because it is not valid ';
         $dMessage .= 'ISO 19115-2 XML. Please contact griidc@gomri.org for ';
         $dMessage .= 'assistance.';
         drupal_set_message($dMessage, 'warning', false);
+        $xmldoc = null;
+    } elseif ($xmldoc != null and is_array($xmldoc)) {
+        $eMessage = '';
+        foreach($xmldoc as $error) {
+            $eMessage .= $error->message . ' ';
+        }
+        $dMessage = 'Error while loading data from: ' .  $xmlURL . "<br>Reason: $eMessage.";
+		drupal_set_message($dMessage, 'error', false);
         $xmldoc = null;
     } else {
 		$dMessage = 'Error while loading data from: ' .  $xmlURL;
@@ -92,9 +100,18 @@ if (isset($thefile))
 {
 	if ($_FILES["file"]["type"] == "text/xml") {
 		$xmldoc = loadXMLFromFile($thefile);
-        if ($xmldoc === false) {
+        if ($xmldoc != null and is_array($xmldoc)) {
+            $eMessage = '';
+            foreach($xmldoc as $error) {
+                $eMessage .= $error->message . ' ';
+            }
+            $dMessage = 'Unable to load file: ' .  $_FILES["file"]["name"] . "<br>Reason: $eMessage.";
+            drupal_set_message($dMessage, 'error', false);
+            $xmldoc = null;
+        } elseif ($xmldoc === false) {
             $dMessage = 'Unable to load file: ' .  $_FILES["file"]["name"];
             drupal_set_message($dMessage, 'error', false);
+            $xmldoc = null;
         } else {
             $dMessage = 'Successfully loaded file: ' .  $_FILES["file"]["name"];
             drupal_set_message($dMessage, 'status', false);
