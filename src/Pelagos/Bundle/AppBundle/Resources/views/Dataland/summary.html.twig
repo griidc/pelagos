@@ -67,7 +67,7 @@
             {% if dataset.datasetSubmission %}
             {{ dataset.datasetSubmission.creationTimeStamp|date('M d Y H:i T', 'UTC') }}<br /> }}
             {% else %}
-            {{ dataset.dif.creationTimeStamp|date('M d Y H:i T', 'UTC') }}
+            {{ dataset.dif.modificationTimeStamp|date('M d Y H:i T', 'UTC') }}
             {% endif %}
         </td>
     </tr>
