@@ -1,4 +1,5 @@
 <?php
+
 namespace Pelagos\Event;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -11,7 +12,7 @@ use Pelagos\Entity\Metadata;
 /**
  * Doctrine Listener class for Dataset related events.
  */
-class DatasetListener
+class DoctrineDatasetListener
 {
     /**
      * Method to update dataset title and abstract when DIF, Dataset Submission, or Metadata changes.
@@ -29,9 +30,12 @@ class DatasetListener
             ) {
             $dataset = $entity->getDataset();
 
-            $dataset->updateTitle();
-            $dataset->updateAbstract();
-            $args->getEntityManager()->persist($dataset);
+            if ($dataset instanceof Dataset) {
+                $dataset->updateTitle();
+                $dataset->updateAbstract();
+                $dataset->setModifier($entity->getModifier());
+                $args->getEntityManager()->persist($dataset);
+            }
         }
     }
 }

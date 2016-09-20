@@ -57,8 +57,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.account.created, method: onCreated }
 
-    pelagos.dataset.listener:
-        class: Pelagos\Event\DatasetListener
+    pelagos.doctrine.dataset.listener:
+        class: Pelagos\Event\DoctrineDatasetListener
         tags:
             - { name: doctrine.event_listener, event: postPersist }
 
