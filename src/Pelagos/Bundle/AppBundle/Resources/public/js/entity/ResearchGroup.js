@@ -2,6 +2,40 @@ $(document).ready(function()
 {
     "use strict";
 
+    $('[name="person"]', $('[name="person"]').parent(':not([newform])')).select2({
+        placeholder: "[Please Select a Person]",
+        allowClear: true,
+        ajax: {
+            dataType: 'json',
+            data: function (params) {
+                if (params.term != undefined) {
+                    var query = {
+                        "lastName": params.term + '*'
+                    }
+                } else {
+                    var query = {}
+                }
+                return query;
+            },
+            url: Routing.generate("pelagos_api_people_get_collection",
+                {
+                    "_properties" : "id,firstName,lastName,emailAddress",
+                    "_orderBy" : "lastName,firstName,emailAddress"
+                }
+            ),
+            processResults: function (data) {
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            text: item.lastName + ", " +  item.firstName + ", " + item.emailAddress,
+                            id: item.id
+                        }
+                    })
+                };
+            }
+        }
+    });
+
     //Disable RIS ID if not in create mode
     if ($("form[entityType=\"ResearchGroup\"] #id").val() !== "") {
         $("form[entityType=\"ResearchGroup\"] #id").attr("readonly",true);
@@ -37,6 +71,12 @@ $(document).ready(function()
         var fundingCycleValue = fundingCycle.attr("fundingCycle");
         fundingCycle.val(fundingCycleValue);
         fundingCycle.find("option[value=\"" + fundingCycleValue + "\"]").attr("selected", true);
+    });
+
+    $("form[entityType=\"PersonResearchGroup\"]").on("reset", function() {
+        setTimeout(function () {
+            $('[name="person"]').change();
+        });
     });
 });
 

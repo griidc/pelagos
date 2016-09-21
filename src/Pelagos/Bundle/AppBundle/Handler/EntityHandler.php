@@ -442,7 +442,7 @@ class EntityHandler
             // Get the alias and the property.
             list ($alias, $property) = $this->buildAliasedProperty($property, $joins);
             // Order by the aliased property.
-            $qb->orderBy("$alias.$property", $order);
+            $qb->addOrderBy("$alias.$property", $order);
         }
     }
 

@@ -4,6 +4,8 @@ namespace Pelagos\Bundle\AppBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
@@ -31,20 +33,11 @@ class PersonResearchGroupType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('person', EntityType::class, array(
-                'label' => 'Person:',
-                'class' => 'Pelagos:Person',
-                'choice_label' => function ($value, $key, $index) {
-                    return $value->getLastName() . ', ' . $value->getFirstName() . ', ' . $value->getEmailAddress();
-                },
-                'placeholder' => '[Please Select a Person]',
-            ))
             ->add('researchGroup', EntityType::class, array(
                 'label' => 'Research Group:',
                 'class' => 'Pelagos:ResearchGroup',
                 'choice_label' => 'name',
                 'placeholder' => '[Please Select a Research Group]',
-                //'attr' => array('class' => 'hiddenFormField'),
             ))
             ->add('role', EntityType::class, array(
                 'label' => 'Role:',
@@ -55,7 +48,17 @@ class PersonResearchGroupType extends AbstractType
             ->add('label', TextType::class, array(
                 'label' => 'Label:',
                 'required' => true,
-            ));
+            ))
+            ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+                $event->getForm()->add('person', EntityType::class, array(
+                    'label' => 'Person:',
+                    'class' => 'Pelagos:Person',
+                    'choice_label' => function ($value, $key, $index) {
+                        return $value->getLastName() . ', ' . $value->getFirstName() . ', ' . $value->getEmailAddress();
+                    },
+                    'placeholder' => '[Please Select a Person]',
+                ));
+            });
     }
 
     /**
@@ -86,12 +89,6 @@ class PersonResearchGroupType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        usort(
-            $view->children['person']->vars['choices'],
-            function (ChoiceView $a, ChoiceView $b) {
-                return strcasecmp($a->label, $b->label);
-            }
-        );
         usort(
             $view->children['researchGroup']->vars['choices'],
             function (ChoiceView $a, ChoiceView $b) {
