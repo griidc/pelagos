@@ -226,6 +226,7 @@ class DatasetSubmissionConsumer implements ConsumerInterface
             return;
         } elseif (array_key_exists($xferString, DatasetSubmission::TRANSFER_TYPES)) {
             $xferType = DatasetSubmission::TRANSFER_TYPES[$xferString];
+            $username = $datasetSubmission->getModifier()->getAccount()->getUsername();
             $mdappMsg = " $username has registered new metadata via $xferType for $datasetId.";
         } else {
             $this->logger->error(
@@ -245,6 +246,5 @@ class DatasetSubmissionConsumer implements ConsumerInterface
 
         // Log processing complete.
         $this->logger->info('Metadata file processing complete', $loggingContext);
-        $username = $datasetSubmission->getModifier()->getAccount()->getUsername();
     }
 }
