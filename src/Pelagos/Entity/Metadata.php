@@ -242,9 +242,6 @@ class Metadata extends Entity
     private function setTitle($title)
     {
         $this->title = $title;
-        if ($this->getDataset() instanceof Dataset) {
-            $this->getDataset()->updateTitle();
-        }
     }
 
     /**
