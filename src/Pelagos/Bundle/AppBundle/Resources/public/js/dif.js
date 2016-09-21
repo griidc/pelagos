@@ -622,7 +622,7 @@ function updateDIF(form)
             "<br>to your DIF, please email GRIIDC at griidc@gomri.org with the UDI for your dataset." +
             "<br>Please note that you will receive an email notification when your DIF is approved.</p></div>";
         } else if (status == 2) {
-            var title = "DIF Updated and Approved and updated";
+            var title = "DIF Updated and Approved";
             var message = '<div><img src="' + imgInfo + '">' +
             "<p>The application with DIF ID: " + udi + " was successfully updated and approved!" +
             "<br></p></div>";
