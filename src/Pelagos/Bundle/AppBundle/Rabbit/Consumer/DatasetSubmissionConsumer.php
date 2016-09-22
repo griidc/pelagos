@@ -163,21 +163,21 @@ class DatasetSubmissionConsumer implements ConsumerInterface
             $datasetSubmission->setDatasetFileTransferStatus(
                 DatasetSubmission::TRANSFER_STATUS_NEEDS_REVIEW
             );
-            $this->logger->error('Error processing dataset: ' . $exception->getMessage(), $loggingContext);
             $this->entityEventDispatcher->dispatch($datasetSubmission, 'html_found');
+            $this->logger->error('Error processing dataset: ' . $exception->getMessage(), $loggingContext);
             return;
         } catch (\Exception $exception) {
             $datasetSubmission->setDatasetFileTransferStatus(
                 DatasetSubmission::TRANSFER_STATUS_NEEDS_REVIEW
             );
-            $this->logger->error('Error processing dataset: ' . $exception->getMessage(), $loggingContext);
             $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_unprocessable');
+            $this->logger->error('Error processing dataset: ' . $exception->getMessage(), $loggingContext);
             return;
         }
-        // Log processing complete.
-        $this->logger->info('Dataset file processing complete', $loggingContext);
         // Dispatch entity event.
         $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_processed');
+        // Log processing complete.
+        $this->logger->info('Dataset file processing complete', $loggingContext);
     }
 
     /**
@@ -216,9 +216,6 @@ class DatasetSubmissionConsumer implements ConsumerInterface
             $this->logger->error('Error processing metadata: ' . $exception->getMessage(), $loggingContext);
             return;
         }
-        // Log processing complete.
-        $this->logger->info('Metadata file processing complete', $loggingContext);
-        $username = $datasetSubmission->getModifier()->getAccount()->getUsername();
 
         $xferString = $datasetSubmission->getMetadataFileTransferType();
         if (null === $xferString) {
@@ -229,7 +226,8 @@ class DatasetSubmissionConsumer implements ConsumerInterface
             return;
         } elseif (array_key_exists($xferString, DatasetSubmission::TRANSFER_TYPES)) {
             $xferType = DatasetSubmission::TRANSFER_TYPES[$xferString];
-            $this->mdappLogger->writeLog(" $username has registered new metadata via $xferType for $datasetId.");
+            $username = $datasetSubmission->getModifier()->getAccount()->getUsername();
+            $mdappMsg = " $username has registered new metadata via $xferType for $datasetId.";
         } else {
             $this->logger->error(
                 'Error processing metadata: unexpected metadatafiletransfertype of: '
@@ -241,5 +239,12 @@ class DatasetSubmissionConsumer implements ConsumerInterface
 
         // Dispatch entity event.
         $this->entityEventDispatcher->dispatch($datasetSubmission, 'metadata_processed');
+
+        if (isset($mdappMsg) and (null !== $mdappMsg)) {
+            $this->mdappLogger->writeLog($mdappMsg);
+        }
+
+        // Log processing complete.
+        $this->logger->info('Metadata file processing complete', $loggingContext);
     }
 }
