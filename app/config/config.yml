@@ -249,6 +249,10 @@ fos_elastica:
                             property_path: false
                         estimatedEndDate:
                             property_path: false
+                        updatedDateTime:
+                            type: 'date'
+                            format: 'basic_date_time_no_millis'
+                            property_path: false
                     persistence:
                         driver: orm
                         model: Pelagos\Entity\Dataset
