@@ -70,30 +70,42 @@ class DatasetIndex
     {
         $mainQuery = new Query\BoolQuery();
 
+        $text = trim($text);
+
         if (!empty($text)) {
             $textQuery = new Query\BoolQuery();
-            $datasetQuery = new Query\MultiMatch();
-            $datasetQuery->setQuery($text);
-            $datasetQuery->setFields(
-                array(
-                    'udi',
-                    'title',
-                    'abstract',
-                )
-            );
-            $textQuery->addShould($datasetQuery);
-            $researchGroupQuery = new Query\Nested();
-            $researchGroupQuery->setPath('researchGroup');
-            $researchGroupQuery->setQuery(
-                new Query\Match('researchGroup.name', $text)
-            );
-            $textQuery->addShould($researchGroupQuery);
-            $datasetSubmissionQuery = new Query\Nested();
-            $datasetSubmissionQuery->setPath('datasetSubmission');
-            $datasetSubmissionQuery->setQuery(
-                new Query\Match('datasetSubmission.authors', $text)
-            );
-            $textQuery->addShould($datasetSubmissionQuery);
+            $udiRegEx = '/\b([A-Z\d]{2}\.x\d\d\d\.\d\d\d:\d\d\d\d)\b/';
+            if (preg_match_all($udiRegEx, $text, $matches)) {
+                $text = trim(preg_replace($udiRegEx, '', $text));
+                foreach ($matches[1] as $udi) {
+                    $textQuery->addShould(
+                        new Query\MatchPhrase('udi', $udi)
+                    );
+                }
+            }
+            if (!empty($text)) {
+                $datasetQuery = new Query\MultiMatch();
+                $datasetQuery->setQuery($text);
+                $datasetQuery->setFields(
+                    array(
+                        'title',
+                        'abstract',
+                    )
+                );
+                $textQuery->addShould($datasetQuery);
+                $researchGroupQuery = new Query\Nested();
+                $researchGroupQuery->setPath('researchGroup');
+                $researchGroupQuery->setQuery(
+                    new Query\Match('researchGroup.name', $text)
+                );
+                $textQuery->addShould($researchGroupQuery);
+                $datasetSubmissionQuery = new Query\Nested();
+                $datasetSubmissionQuery->setPath('datasetSubmission');
+                $datasetSubmissionQuery->setQuery(
+                    new Query\Match('datasetSubmission.authors', $text)
+                );
+                $textQuery->addShould($datasetSubmissionQuery);
+            }
             $mainQuery->addMust($textQuery);
         }
 
