@@ -79,7 +79,6 @@ class DatasetIndex
                     'udi',
                     'title',
                     'abstract',
-                    'authors',
                 )
             );
             $textQuery->addShould($datasetQuery);
@@ -89,6 +88,12 @@ class DatasetIndex
                 new Query\Match('researchGroup.name', $text)
             );
             $textQuery->addShould($researchGroupQuery);
+            $datasetSubmissionQuery = new Query\Nested();
+            $datasetSubmissionQuery->setPath('datasetSubmission');
+            $datasetSubmissionQuery->setQuery(
+                new Query\Match('datasetSubmission.authors', $text)
+            );
+            $textQuery->addShould($datasetSubmissionQuery);
             $mainQuery->addMust($textQuery);
         }
 
