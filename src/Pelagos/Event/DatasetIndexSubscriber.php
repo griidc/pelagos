@@ -80,9 +80,9 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
             $document->set('updatedDateTime', $dataset->getDatasetSubmission()->getCreationTimeStamp()->format('Ymd\THis\Z'));
         } elseif ($dataset->hasDif()) {
             $document->set('updatedDateTime', $dataset->getDif()->getModificationTimeStamp()->format('Ymd\THis\Z'));
-	} else {
+        } else {
             $document->set('updatedDateTime', $dataset->getModificationTimeStamp()->format('Ymd\THis\Z'));
-	}
+        }
 
         if ($dataset->hasDif()) {
             if (null !== $dataset->getDif()->getEstimatedStartDate()) {
