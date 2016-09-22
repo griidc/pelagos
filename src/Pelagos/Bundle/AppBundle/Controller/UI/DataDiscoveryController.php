@@ -57,12 +57,12 @@ class DataDiscoveryController extends UIController
         if (!empty($request->query->get('by')) and !empty($request->query->get('id'))) {
             switch ($request->query->get('by')) {
                 case 'fundSrc':
-                    $criteria['fundingCycle'] = array(
+                    $criteria['researchGroup.fundingCycle.id'] = array(
                         $request->query->get('id')
                     );
                     break;
                 case 'projectId':
-                    $criteria['researchGroup'] = array(
+                    $criteria['researchGroup.id'] = array(
                         $request->query->get('id')
                     );
                     break;
@@ -76,17 +76,17 @@ class DataDiscoveryController extends UIController
         if (!empty($request->query->get('geo_filter'))) {
             $geoFilter = $request->query->get('geo_filter');
         }
-        $datasetRepository = $this->get('doctrine.orm.entity_manager')->getRepository(Dataset::class);
+        $datasetIndex = $this->get('pelagos.util.dataset_index');
 
         return $this->render(
             'PelagosAppBundle:DataDiscovery:datasets.html.twig',
             array(
                 'datasets' => array(
-                    'available' => $datasetRepository->filter(
+                    'available' => $datasetIndex->search(
                         array_merge(
                             $criteria,
                             array(
-                                'dataset.availabilityStatus' => array(
+                                'availabilityStatus' => array(
                                     DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
                                     DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
                                 )
@@ -95,11 +95,11 @@ class DataDiscoveryController extends UIController
                         $textFilter,
                         $geoFilter
                     ),
-                    'restricted' => $datasetRepository->filter(
+                    'restricted' => $datasetIndex->search(
                         array_merge(
                             $criteria,
                             array(
-                                'dataset.availabilityStatus' => array(
+                                'availabilityStatus' => array(
                                     DatasetSubmission::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL,
                                     DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED,
                                     DatasetSubmission::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL_REMOTELY_HOSTED,
@@ -110,11 +110,11 @@ class DataDiscoveryController extends UIController
                         $textFilter,
                         $geoFilter
                     ),
-                    'inReview' => $datasetRepository->filter(
+                    'inReview' => $datasetIndex->search(
                         array_merge(
                             $criteria,
                             array(
-                                'dataset.availabilityStatus' => array(
+                                'availabilityStatus' => array(
                                     DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL,
                                 )
                             )
@@ -122,15 +122,15 @@ class DataDiscoveryController extends UIController
                         $textFilter,
                         $geoFilter
                     ),
-                    'identified' => $datasetRepository->filter(
+                    'identified' => $datasetIndex->search(
                         array_merge(
                             $criteria,
                             array(
-                                'dataset.availabilityStatus' => array(
+                                'availabilityStatus' => array(
                                     DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE,
                                     DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION,
                                 ),
-                                'dataset.identifiedStatus' => array(
+                                'identifiedStatus' => array(
                                     DIF::STATUS_APPROVED,
                                 ),
                             )

@@ -675,7 +675,7 @@ EOF;
         );
 
         if (count($fileFormats) > 0) {
-            $this->setFileFormat($fileFormats[0]);
+            $this->setFileFormat((string) $fileFormats[0]);
         } else {
             $this->setFileFormat(null);
         }
@@ -693,7 +693,7 @@ EOF;
         );
 
         if (count($titles) > 0) {
-            $this->setTitle($titles[0]);
+            $this->setTitle((string) $titles[0]);
         } else {
             $this->setTitle(null);
         }
@@ -706,7 +706,7 @@ EOF;
         );
 
         if (count($abstracts) > 0) {
-            $this->setAbstract($abstracts[0]);
+            $this->setAbstract((string) $abstracts[0]);
         } else {
             $this->setAbstract(null);
         }
@@ -719,7 +719,7 @@ EOF;
         );
 
         if (count($purpose) > 0) {
-            $this->setPurpose($purpose[0]);
+            $this->setPurpose((string) $purpose[0]);
         } else {
             $this->setPurpose(null);
         }
@@ -736,6 +736,9 @@ EOF;
         );
 
         if (count($themeKeywords) > 0) {
+            foreach ($themeKeywords as $index => $themeKeyword) {
+                $themeKeywords[$index] = (string) $themeKeyword;
+            }
             $this->setThemeKeywords($themeKeywords);
         } else {
             $this->setThemeKeywords(null);
@@ -755,7 +758,7 @@ EOF;
         );
 
         if (count($beginPositions) > 0) {
-            $this->setBeginPosition($beginPositions[0]);
+            $this->setBeginPosition((string) $beginPositions[0]);
         } else {
             $this->setBeginPosition(null);
         }
@@ -771,7 +774,7 @@ EOF;
         );
 
         if (count($endPositions) > 0) {
-            $this->setEndPosition($endPositions[0]);
+            $this->setEndPosition((string) $endPositions[0]);
         } else {
             $this->setEndPosition(null);
         }
@@ -784,7 +787,7 @@ EOF;
         );
 
         if (count($extentDescriptions) > 0) {
-            $this->setExtentDescription($extentDescriptions[0]);
+            $this->setExtentDescription((string) $extentDescriptions[0]);
         } else {
             $this->setExtentDescription(null);
         }
