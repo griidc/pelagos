@@ -77,6 +77,11 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
 
         if (null !== $dataset->getDatasetSubmission()) {
             $document->set('year', $dataset->getDatasetSubmission()->getCreationTimeStamp()->format('Y'));
+            $document->set('updatedDateTime', $dataset->getDatasetSubmission()->getCreationTimeStamp()->format('Ymd\THis\Z'));
+        } elseif ($dataset->hasDif()) {
+            $document->set('updatedDateTime', $dataset->getDif()->getModificationTimeStamp()->format('Ymd\THis\Z'));
+        } else {
+            $document->set('updatedDateTime', $dataset->getModificationTimeStamp()->format('Ymd\THis\Z'));
         }
 
         if ($dataset->hasDif()) {

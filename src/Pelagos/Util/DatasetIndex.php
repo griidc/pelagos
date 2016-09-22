@@ -39,6 +39,9 @@ class DatasetIndex
     public function search(array $termsFilters = array(), $text = null, $geoFilter = null)
     {
         $query = $this->buildQuery($termsFilters, $text, $geoFilter);
+        if (empty(trim($text))) {
+            $query->addSort(array('updatedDateTime' => array('order' => 'desc')));
+        }
         return $this->datasetType->search($query);
     }
 
