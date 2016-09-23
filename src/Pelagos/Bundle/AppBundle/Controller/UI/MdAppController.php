@@ -154,9 +154,11 @@ class MdAppController extends UIController
         $udi = $dataset->getUdi();
         $to = $request->request->get('to');
         if (null !== $to) {
-            $dataset->getDatasetSubmission()->setMetadataStatus($to);
+            $datasetSubmission = $dataset->getDatasetSubmission();
+            $datasetSubmission->setMetadataStatus($to);
+            $entityHandler->update($datasetSubmission);
             $entityHandler->update($dataset);
-            $mdappLogger->writeLog($this->getUser()->getUsername() . " has changed metadata status for $udi ($from -> $to)");
+            $mdappLogger->writeLog($this->getUser()->getUsername() . " has changed metadata status for $udi ($from -> $to) (mdapp msg)");
         }
         return $this->renderUi();
     }
@@ -485,7 +487,7 @@ class MdAppController extends UIController
             if (true == $data['acceptMetadata']) {
                 $loginfo .= ' and data was flagged as accepted';
             }
-            $loginfo .= '.';
+            $loginfo .= '. (mdapp msg)';
             $mdappLogger->writeLog($loginfo);
         } else {
             // Log why the upload failed.
@@ -495,7 +497,8 @@ class MdAppController extends UIController
                 . ' by: '
                 . $this->getUser()->getUsername()
                 . ' Reason: '
-                . $errStr);
+                . $errStr
+                . ' (mdapp msg)');
         }
 
         return array(
@@ -567,11 +570,11 @@ class MdAppController extends UIController
         );
 
         if (count($fileIdentifier) > 0) {
-            if (!(bool) preg_match("/$originalFileName/i", $fileIdentifier[0], $matches)) {
+            if (!(bool) preg_match("/^$originalFileName$/i", $fileIdentifier[0], $matches)) {
                 ${$errorArray}[] = 'Filename does not match gmd:fileIdentifier!';
             }
         } else {
-            $warnings[] = 'File Identifier does not exist';
+            ${$errorArray}[] = 'File Identifier is missing or blank.';
         }
 
         if ($data['test2'] == true) {
@@ -592,7 +595,7 @@ class MdAppController extends UIController
                 ${$errorArray}[] = 'UDI does not match metadata URL';
             }
         } else {
-            $warnings[] = 'Metadata URL does not exist';
+            ${$errorArray}[] = 'Metadata URL is missing or blank.';
         }
 
         if ($data['test3'] == true) {
@@ -621,7 +624,7 @@ class MdAppController extends UIController
                 ${$errorArray}[] = 'UDI does not match distribution URL.';
             }
         } else {
-            $warnings[] = 'Distribution URL does not exist';
+            ${$errorArray}[] = 'Distribution URL is missing or blank.';
         }
     }
 }

@@ -25,9 +25,36 @@ class Dataset extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $udi;
+
+    /**
+     * The title for this Dataset.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $title;
+
+    /**
+     * The abstract for this Dataset.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $abstract;
+
+    /**
+     * The DOI for this Dataset.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $doi;
 
     /**
      * The Research Group this Dataset is attached to.
@@ -103,7 +130,7 @@ class Dataset extends Entity
      *
      * @see DatasetSubmission::METADATA_STATUS_* constants.
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      */
     protected $metadataStatus = DatasetSubmission::METADATA_STATUS_NONE;
 
@@ -132,7 +159,7 @@ class Dataset extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $issueTrackingTicket;
 
@@ -272,24 +299,51 @@ class Dataset extends Entity
     }
 
     /**
+     * Update the title for this Dataset.
+     *
+     * @return void
+     */
+    public function updateTitle()
+    {
+        if ($this->hasMetadata()) {
+            // Copy Metadata title to Dataset.
+            $this->title = $this->getMetadata()->getTitle();
+        } elseif ($this->hasDatasetSubmission()) {
+            // Copy DatasetSubmission title to Dataset.
+            $this->title = $this->getDatasetSubmission()->getTitle();
+        } elseif ($this->hasDif()) {
+            // Copy DIF title to Dataset.
+            $this->title = $this->getDif()->getTitle();
+        }
+    }
+
+    /**
      * Get the title for this dataset.
      *
      * @return string
      */
     public function getTitle()
     {
-        // If this Dataset has a submission.
-        if (null !== $this->datasetSubmission) {
-            // Return its title.
-            return $this->datasetSubmission->getTitle();
+        return $this->title;
+    }
+
+    /**
+     * Update the abstract for this Dataset.
+     *
+     * @return void
+     */
+    public function updateAbstract()
+    {
+        if ($this->hasMetadata()) {
+            // Copy Metadata abstract to Dataset.
+            $this->abstract = $this->getMetadata()->getAbstract();
+        } elseif ($this->hasDatasetSubmission()) {
+            // Copy DatasetSubmission abstract to Dataset.
+            $this->abstract = $this->getDatasetSubmission()->getAbstract();
+        } elseif ($this->hasDif()) {
+            // Copy DIF abstract to Dataset.
+            $this->abstract = $this->getDif()->getAbstract();
         }
-        // If this Dataset only has a DIF.
-        if (null !== $this->dif) {
-            // Return its title.
-            return $this->dif->getTitle();
-        }
-        // Return null if we can't find a title.
-        return null;
     }
 
     /**
@@ -299,18 +353,30 @@ class Dataset extends Entity
      */
     public function getAbstract()
     {
-        // If this Dataset has a submission.
-        if (null !== $this->datasetSubmission) {
-            // Return its abstract.
-            return $this->datasetSubmission->getAbstract();
+        return $this->abstract;
+    }
+
+    /**
+     * Update the DOI for this Dataset.
+     *
+     * @return void
+     */
+    public function updateDoi()
+    {
+        if ($this->hasDatasetSubmission()) {
+            // Copy DatasetSubmission DOI to Dataset.
+            $this->doi = $this->getDatasetSubmission()->getDoi();
         }
-        // If this Dataset only has a DIF.
-        if (null !== $this->dif) {
-            // Return its abstract.
-            return $this->dif->getAbstract();
-        }
-        // Return null if we can't find a abstract.
-        return null;
+    }
+
+    /**
+     * Get the DOI for this Dataset.
+     *
+     * @return string
+     */
+    public function getDoi()
+    {
+        return $this->doi;
     }
 
     /**
@@ -457,6 +523,7 @@ class Dataset extends Entity
         $datasetSubmission = $this->getDatasetSubmission();
 
         $title = $this->getTitle();
+        $title = preg_replace('/\.$/', '', $title);
         $udi = $this->getUdi();
 
         if ($datasetSubmission instanceof DatasetSubmission) {
@@ -464,19 +531,49 @@ class Dataset extends Entity
             $year = $datasetSubmission->getModificationTimeStamp()->format('Y');
             $doi = $datasetSubmission->getDoi();
 
-            if ($doi !== null) {
-                $url = 'http://dx.doi.org/' . $doi;
+            $citationString = $author . ' (' . $year . ') ' . $title . '.' .
+                ' Distributed by: Gulf of Mexico Research Initiative Information and Data Cooperative '
+                . '(GRIIDC), Harte Research Institute, Texas A&M University-Corpus Christi. ';
+
+            if (null !== $doi) {
+                $citationString .= "doi: $doi";
             } else {
-                $url = 'http://data.gulfresearchinitiative.org/data/' . $udi;
+                $citationString .= "Available from: http://data.gulfresearchinitiative.org/data/$udi";
             }
-
-            $citationString = "$author ($year) $title ($udi) " .
-                "[Data files] Available from $url";
-
             return $citationString;
         } else {
             $citationString = "This dataset has no registration: $title ($udi)";
             return $citationString;
         }
+    }
+
+    /**
+     * Whether this Dataset has a DIF.
+     *
+     * @return boolean
+     */
+    public function hasDif()
+    {
+        return $this->dif instanceof DIF;
+    }
+
+    /**
+     * Whether this Dataset has a Dataset Submission.
+     *
+     * @return boolean
+     */
+    public function hasDatasetSubmission()
+    {
+        return $this->datasetSubmission instanceof DatasetSubmission;
+    }
+
+    /**
+     * Whether this Dataset has Metadata.
+     *
+     * @return boolean
+     */
+    public function hasMetadata()
+    {
+        return $this->metadata instanceof Metadata;
     }
 }

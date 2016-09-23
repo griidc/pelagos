@@ -56,9 +56,9 @@ class DatasetSubmission extends Entity
      * Valid values for $restrictions.
      */
     const RESTRICTIONS = array(
-        'None' => self::RESTRICTION_NONE,
-        'Requires Author\'s Approval' => self::RESTRICTION_APPROVAL,
-        'Restricted' => self::RESTRICTION_RESTRICTED,
+        self::RESTRICTION_NONE => 'None',
+        self::RESTRICTION_APPROVAL => 'Requires Author\'s Approval',
+        self::RESTRICTION_RESTRICTED => 'Restricted',
     );
 
     /**
@@ -80,9 +80,9 @@ class DatasetSubmission extends Entity
      * Valid values for $datasetFileTransferType and $metadataFileTransferType.
      */
     const TRANSFER_TYPES = array(
-        'Direct Upload' => self::TRANSFER_TYPE_UPLOAD,
-        'Upload via SFTP/GridFTP' => self::TRANSFER_TYPE_SFTP,
-        'Request Pull from HTTP/FTP Server' => self::TRANSFER_TYPE_HTTP,
+        self::TRANSFER_TYPE_UPLOAD => 'Direct Upload',
+        self::TRANSFER_TYPE_SFTP => 'Upload via SFTP/GridFTP',
+        self::TRANSFER_TYPE_HTTP => 'Request Pull from HTTP/FTP Server',
     );
 
     /**
@@ -114,11 +114,11 @@ class DatasetSubmission extends Entity
      * Valid values for $datasetFileTransferStatus and $metadataFileTransferStatus.
      */
     const TRANSFER_STATUSES = array(
-        'Not Yet Transferred' => self::TRANSFER_STATUS_NONE,
-        'Transfer Complete' => self::TRANSFER_STATUS_COMPLETED,
-        'Transfer Error' => self::TRANSFER_STATUS_ERROR,
-        'URL Needs Review' => self::TRANSFER_STATUS_NEEDS_REVIEW,
-        'Remotely Hosted' => self::TRANSFER_STATUS_REMOTELY_HOSTED,
+        self::TRANSFER_STATUS_NONE => 'Not Yet Transferred',
+        self::TRANSFER_STATUS_COMPLETED => 'Transfer Complete',
+        self::TRANSFER_STATUS_ERROR => 'Transfer Error',
+        self::TRANSFER_STATUS_NEEDS_REVIEW => 'URL Needs Review',
+        self::TRANSFER_STATUS_REMOTELY_HOSTED => 'Remotely Hosted',
     );
 
     /**
@@ -155,12 +155,12 @@ class DatasetSubmission extends Entity
      * Valid values for $metadataStatus.
      */
     const METADATA_STATUSES = array(
-        'No Status' => self::METADATA_STATUS_NONE,
-        'Submitted' => self::METADATA_STATUS_SUBMITTED,
-        'In Review' => self::METADATA_STATUS_IN_REVIEW,
-        '2nd Check' => self::METADATA_STATUS_SECOND_CHECK,
-        'Accepted' => self::METADATA_STATUS_ACCEPTED,
-        'Bk To Sub' => self::METADATA_STATUS_BACK_TO_SUBMITTER,
+        self::METADATA_STATUS_NONE => 'No Status',
+        self::METADATA_STATUS_SUBMITTED => 'Submitted',
+        self::METADATA_STATUS_IN_REVIEW => 'In Review',
+        self::METADATA_STATUS_SECOND_CHECK => '2nd Check',
+        self::METADATA_STATUS_ACCEPTED => 'Accepted',
+        self::METADATA_STATUS_BACK_TO_SUBMITTER => 'Bk To Sub',
     );
 
     /**
@@ -182,6 +182,11 @@ class DatasetSubmission extends Entity
      * The dataset is not available to anyone.
      */
     const AVAILABILITY_STATUS_NOT_AVAILABLE = 0;
+
+    /**
+     * The dataset is not available because no metadata has been submitted.
+     */
+    const AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION = 2;
 
     /**
      * The dataset is not available because it does not yet have approved metadata.
@@ -247,7 +252,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Title is required"
@@ -262,7 +267,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Abstract is required"
@@ -277,7 +282,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="At least one author is required"
@@ -292,7 +297,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Point of Contact Name is required"
@@ -307,7 +312,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="Point of Contact E-Mail is required"
@@ -324,7 +329,7 @@ class DatasetSubmission extends Entity
      *
      * @see RESTRICTIONS class constant for valid values.
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      */
     protected $restrictions = self::RESTRICTION_NONE;
 
@@ -335,7 +340,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $doi;
 
@@ -348,7 +353,7 @@ class DatasetSubmission extends Entity
      *
      * @see TRANSFER_TYPES class constant for valid values.
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $datasetFileTransferType;
 
@@ -361,7 +366,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $datasetFileUri;
 
@@ -374,7 +379,7 @@ class DatasetSubmission extends Entity
      *
      * @see TRANSFER_STATUSES class constant for valid values.
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $datasetFileTransferStatus;
 
@@ -385,7 +390,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $datasetFileName;
 
@@ -407,7 +412,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $datasetFileMd5Hash;
 
@@ -418,7 +423,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $datasetFileSha1Hash;
 
@@ -429,7 +434,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $datasetFileSha256Hash;
 
@@ -497,7 +502,7 @@ class DatasetSubmission extends Entity
      *
      * @see TRANSFER_TYPES class constant for valid values.
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $metadataFileTransferType;
 
@@ -510,7 +515,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $metadataFileUri;
 
@@ -523,7 +528,7 @@ class DatasetSubmission extends Entity
      *
      * @see TRANSFER_STATUSES class constant for valid values.
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $metadataFileTransferStatus;
 
@@ -534,7 +539,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $metadataFileName;
 
@@ -545,7 +550,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $metadataFileSha256Hash;
 
@@ -558,7 +563,7 @@ class DatasetSubmission extends Entity
      *
      * @see METADATA_STATUSES class constant for valid values.
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      */
     protected $metadataStatus = self::METADATA_STATUS_NONE;
 
@@ -759,6 +764,9 @@ class DatasetSubmission extends Entity
     public function setDoi($doi)
     {
         $this->doi = $doi;
+        if ($this->getDataset() instanceof Dataset) {
+            $this->getDataset()->updateDoi();
+        }
     }
 
     /**
@@ -1275,8 +1283,10 @@ class DatasetSubmission extends Entity
                             $availabilityStatus = self::AVAILABILITY_STATUS_RESTRICTED;
                             break;
                     }
-                } else {
+                } elseif ($this->getMetadataFileTransferStatus() === self::TRANSFER_STATUS_COMPLETED) {
                     $availabilityStatus = self::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
+                } else {
+                    $availabilityStatus = self::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
                 }
                 break;
             case self::TRANSFER_STATUS_REMOTELY_HOSTED:
@@ -1292,8 +1302,10 @@ class DatasetSubmission extends Entity
                             $availabilityStatus = self::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED;
                             break;
                     }
-                } else {
+                } elseif ($this->getMetadataFileTransferStatus() === self::TRANSFER_STATUS_COMPLETED) {
                     $availabilityStatus = self::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
+                } else {
+                    $availabilityStatus = self::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
                 }
                 break;
         }

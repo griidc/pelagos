@@ -74,7 +74,7 @@ class Person extends Entity
      *
      * @var string $firstName
      *
-     * @ORM\Column
+     * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
      *     message="First name is required"
@@ -90,7 +90,7 @@ class Person extends Entity
      *
      * @var string $lastName
      *
-     * @ORM\Column
+     * @ORM\Column(type="citext")
      *
      * @Assert\NotBlank(
      *     message="Last name is required"
@@ -127,7 +127,7 @@ class Person extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Phone number cannot contain angle brackets (< or >)"
@@ -142,7 +142,7 @@ class Person extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Delievery point (address) cannot contain angle brackets (< or >)"
@@ -157,7 +157,7 @@ class Person extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="City cannot contain angle brackets (< or >)"
@@ -172,7 +172,7 @@ class Person extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Administrative area (state) cannot contain angle brackets (< or >)"
@@ -187,7 +187,7 @@ class Person extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Postal code (zip) cannot contain angle brackets (< or >)"
@@ -202,7 +202,7 @@ class Person extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Country cannot contain angle brackets (< or >)"
@@ -217,7 +217,7 @@ class Person extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Website URL cannot contain angle brackets (< or >)"
@@ -232,7 +232,7 @@ class Person extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Organization cannot contain angle brackets (< or >)"
@@ -247,7 +247,7 @@ class Person extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Position cannot contain angle brackets (< or >)"

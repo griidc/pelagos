@@ -28,7 +28,7 @@ class DatasetSubmissionListener extends EventListener
     }
 
     /**
-     * Method to send an email to user and DRPMs on a submitted event.
+     * Method to send an email to DMs on a submitted event.
      *
      * @param EntityEvent $event Event being acted upon.
      *
@@ -39,9 +39,9 @@ class DatasetSubmissionListener extends EventListener
         $datasetSubmission = $event->getEntity();
         $dataset = $datasetSubmission->getDataset();
 
-        // email User
+        // email DM(s)
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-submitted.email.twig');
-        $this->sendMailMsg($template, array('dataset' => $dataset), $this->getDMs($dataset));
+        $this->sendMailMsg($template, array('dataset' => $dataset), $this->getDMs($dataset, $datasetSubmission->getCreator()));
     }
 
     /**
@@ -56,9 +56,9 @@ class DatasetSubmissionListener extends EventListener
         $datasetSubmission = $event->getEntity();
         $dataset = $datasetSubmission->getDataset();
 
-        // email DM
+        // email DM(s)
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-updated.email.twig');
-        $this->sendMailMsg($template, array('dataset' => $dataset), $this->getDMs($dataset));
+        $this->sendMailMsg($template, array('dataset' => $dataset), $this->getDMs($dataset, $datasetSubmission->getCreator()));
     }
 
     /**
@@ -104,6 +104,64 @@ class DatasetSubmissionListener extends EventListener
                 'type' => 'metadata',
             ),
             array($datasetSubmission->getCreator())
+        );
+
+        $metadataFileInfo = $this->dataStore->getDownloadFileInfo(
+            $datasetSubmission->getDataset()->getUdi(),
+            'metadata'
+        );
+
+        // email DRMs
+        $this->sendMailMsg(
+            $this->twig->loadTemplate('PelagosAppBundle:Email:data-repository-managers.metadata-processed.email.twig'),
+            array('datasetSubmission' => $datasetSubmission),
+            $this->getDRPMs($datasetSubmission->getDataset()),
+            array(
+                \Swift_Attachment::fromPath($metadataFileInfo->getRealPath())
+                    ->setFilename($datasetSubmission->getMetadataFileName())
+            )
+        );
+    }
+
+    /**
+     * Method to send an email to DRMs when HTML was found for a dataset file.
+     *
+     * @param EntityEvent $event Event being acted upon.
+     *
+     * @return void
+     */
+    public function onHtmlFound(EntityEvent $event)
+    {
+        $datasetSubmission = $event->getEntity();
+
+        // email DRMs
+        $this->sendMailMsg(
+            $this->twig->loadTemplate(
+                'PelagosAppBundle:Email:data-repository-managers.html-found-for-dataset.email.twig'
+            ),
+            array('datasetSubmission' => $datasetSubmission),
+            $this->getDRPMs($datasetSubmission->getDataset())
+        );
+    }
+
+    /**
+     * Method to send an email to DRMs when the submitted dataset file is unprocessable.
+     *
+     * @param EntityEvent $event Event being acted upon.
+     *
+     * @return void
+     */
+    public function onDatasetUnprocessable(EntityEvent $event)
+    {
+        $datasetSubmission = $event->getEntity();
+
+        // email DRMs
+        $this->sendMailMsg(
+            $this->twig->loadTemplate(
+                'PelagosAppBundle:Email:data-repository-managers.dataset-unprocessable.email.twig'
+            ),
+            array('datasetSubmission' => $datasetSubmission),
+            $this->getDRPMs($datasetSubmission->getDataset())
         );
     }
 }

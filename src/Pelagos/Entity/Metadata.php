@@ -56,7 +56,7 @@ class Metadata extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="text")
      */
     protected $title;
 
@@ -65,7 +65,7 @@ class Metadata extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="text")
      */
     protected $abstract;
 
@@ -264,6 +264,9 @@ class Metadata extends Entity
     private function setAbstract($abstract)
     {
         $this->abstract = $abstract;
+        if ($this->getDataset() instanceof Dataset) {
+            $this->getDataset()->updateAbstract();
+        }
     }
 
     /**
@@ -671,8 +674,10 @@ EOF;
             '/text()'
         );
 
-        if (count($fileFormats) == 1) {
-            $this->setFileFormat($fileFormats[0]);
+        if (count($fileFormats) > 0) {
+            $this->setFileFormat((string) $fileFormats[0]);
+        } else {
+            $this->setFileFormat(null);
         }
 
         $basePath .= '/gmd:identificationInfo' .
@@ -687,8 +692,10 @@ EOF;
             '/text()'
         );
 
-        if (count($titles) == 1) {
-            $this->setTitle($titles[0]);
+        if (count($titles) > 0) {
+            $this->setTitle((string) $titles[0]);
+        } else {
+            $this->setTitle(null);
         }
 
         $abstracts = $this->xml->xpath(
@@ -698,8 +705,10 @@ EOF;
             '/text()'
         );
 
-        if (count($abstracts) == 1) {
-            $this->setAbstract($abstracts[0]);
+        if (count($abstracts) > 0) {
+            $this->setAbstract((string) $abstracts[0]);
+        } else {
+            $this->setAbstract(null);
         }
 
         $purpose = $this->xml->xpath(
@@ -709,8 +718,10 @@ EOF;
             '/text()'
         );
 
-        if (count($purpose) == 1) {
-            $this->setPurpose($purpose[0]);
+        if (count($purpose) > 0) {
+            $this->setPurpose((string) $purpose[0]);
+        } else {
+            $this->setPurpose(null);
         }
 
         $themeKeywords = $this->xml->xpath(
@@ -725,7 +736,12 @@ EOF;
         );
 
         if (count($themeKeywords) > 0) {
+            foreach ($themeKeywords as $index => $themeKeyword) {
+                $themeKeywords[$index] = (string) $themeKeyword;
+            }
             $this->setThemeKeywords($themeKeywords);
+        } else {
+            $this->setThemeKeywords(null);
         }
 
         $basePath .= '/gmd:extent' .
@@ -741,8 +757,10 @@ EOF;
             '/text()'
         );
 
-        if (count($beginPositions) == 1) {
-            $this->setBeginPosition($beginPositions[0]);
+        if (count($beginPositions) > 0) {
+            $this->setBeginPosition((string) $beginPositions[0]);
+        } else {
+            $this->setBeginPosition(null);
         }
 
         $endPositions = $this->xml->xpath(
@@ -755,8 +773,10 @@ EOF;
             '/text()'
         );
 
-        if (count($endPositions) == 1) {
-            $this->setEndPosition($endPositions[0]);
+        if (count($endPositions) > 0) {
+            $this->setEndPosition((string) $endPositions[0]);
+        } else {
+            $this->setEndPosition(null);
         }
 
         $extentDescriptions = $this->xml->xpath(
@@ -766,8 +786,10 @@ EOF;
             '/text()'
         );
 
-        if (count($extentDescriptions) == 1) {
-            $this->setExtentDescription($extentDescriptions[0]);
+        if (count($extentDescriptions) > 0) {
+            $this->setExtentDescription((string) $extentDescriptions[0]);
+        } else {
+            $this->setExtentDescription(null);
         }
 
         $gmls = $this->xml->xpath(
@@ -778,9 +800,11 @@ EOF;
             '/child::*'
         );
 
-        if (count($gmls) == 1) {
+        if (count($gmls) > 0) {
             $gml = $gmls[0]->asXML();
             $this->setGeometry($gml);
+        } else {
+            $this->setGeometry(null);
         }
     }
 }

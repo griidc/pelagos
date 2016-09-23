@@ -1,0 +1,13 @@
+<h2>Publications:</h2>
+<div class="pubcite">
+    {% for datasetPublication in dataset.datasetPublications %}
+        {% set doi = datasetPublication.publication.doi %}
+        {% for citation in datasetPublication.publication.citations %}
+            <p>
+                <a href="http://dx.doi.org/{{ doi }}" target="_blank">
+                    {{ citation.citationText }}
+                </a>
+            </p>
+        {% endfor %}
+    {% endfor %}
+</div>

@@ -5,6 +5,7 @@ action="{{path('pelagos_api_person_data_repositories_post')}}">
     <input type="hidden" name="id" value="{{PersonDataRepository.getId}}">
 
     {{ form_row(form.person) }}
+    <label for="person" class="error"></label>
 
     {{ form_row(form.dataRepository) }}
 

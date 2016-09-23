@@ -42,12 +42,12 @@
 {% if not dataset.datasetSubmission %}
     {% if dataset.dif.estimatedStartDate %}
         <div class="attr">
-            <span class="attr">Start Date:</span> {{ dataset.dif.estimatedStartDate }}
+            <span class="attr">Start Date:</span> {{ dataset.dif.estimatedStartDate|date('Y-m-d') }}
         </div>
     {% endif %}
     {% if dataset.dif.estimatedEndDate %}
         <div class="attr">
-            <span class="attr">End Date:</span> {{ dataset.dif.end_date }}
+            <span class="attr">End Date:</span> {{ dataset.dif.estimatedEndDate|date('Y-m-d') }}
         </div>
     {% endif %}
 {% endif %}

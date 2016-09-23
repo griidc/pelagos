@@ -162,6 +162,14 @@ span.attr {
     vertical-align: middle;
 }
 
+#downloaddsdenrestricted {
+    vertical-align: middle;
+}
+
+#downloaddsdenapproval {
+    vertical-align: middle;
+}
+
 #tabs li.ui-state-disabled {
     opacity: .5;
 }

@@ -105,7 +105,8 @@ $(document).ready(function()
     });
 
     $("#btnApprove").button().click(function() {
-        difStatus($('#difForm [name="id"]').val(), "approve");
+        $("#btn").val($(this).val());
+        $("#difForm").submit();
     });
 
     $("#btnReject").button().click(function() {
@@ -113,7 +114,7 @@ $(document).ready(function()
     });
 
     $("#btnUpdate").button().click(function() {
-        $("#btn").val($(this).val())
+        $("#btn").val($(this).val());
         $("#difForm").submit();
     });
 
@@ -165,7 +166,7 @@ $(document).ready(function()
 
     });
 
-    $("#difGeoloc").change(function() {
+    $("#spatialExtentGeometry").change(function() {
         geowizard.haveGML($(this).val());
     });
 
@@ -255,7 +256,7 @@ $(document).ready(function()
     var $_GET = getQueryParams(document.location.search);
     if (typeof $_GET["id"] != "undefined") {
         var udi = $_GET["id"];
-        var url =  $("#difForm").attr("dataset") + "?udi=" + udi;
+        var url =  $("#difForm").attr("dataset") + "?udi=" + udi + "&_properties=dif.id";
         $.get(url, function(data) {
             if (data.length == 1) {
                 getNode(udi, data[0].dif.id);
@@ -401,7 +402,7 @@ function setFormStatus()
     }
     else if (isAdmin != "1")
     {
-        $("form :input").not(":hidden").prop("disabled",true);
+        $("form :input").not(":hidden,#btnReset").prop("disabled",true);
         $("#btnSubmit").prop("disabled",true);
         $("#btnSave").prop("disabled",true);
         if (Status == "2")
@@ -554,6 +555,10 @@ function updateDIF(form)
         submit = true;
     }
 
+    if ($('[name="button"]', form).val() == "approve") {
+        approve = true;
+    }
+
     showSpinner();
     formHash = Form.serialize();
     $.ajax({
@@ -584,7 +589,20 @@ function updateDIF(form)
                         status = 1;
                     }
                 }
-            })
+            });
+        } else if (approve) {
+            // It was the approve button
+            return $.ajax({
+                url: url +"/approve",
+                type: "PATCH",
+                datatype: "json",
+                data: formData,
+                success: function(json, textStatus, jqXHR) {
+                    if (jqXHR.status === 204) {
+                        status = 2;
+                    }
+                }
+            });
         } else {
             // Not the submit button, still resolve.
             return $.Deferred().resolve();
@@ -596,13 +614,18 @@ function updateDIF(form)
             var title = "DIF Submitted";
             var message = '<div><img src="' + imgInfo + '"><p>Thank you for saving DIF with ID:  ' + udi
             + ".<br>Before registering this dataset you must return to this page and submit the dataset information form.</p></div>";
-        } else {
+        } else if (status == 1) {
             var title = "DIF Submitted";
             var message = '<div><img src="' + imgInfo + '">' +
             "<p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is " + udi + "." +
             "<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing. To make changes" +
             "<br>to your DIF, please email GRIIDC at griidc@gomri.org with the UDI for your dataset." +
             "<br>Please note that you will receive an email notification when your DIF is approved.</p></div>";
+        } else if (status == 2) {
+            var title = "DIF Updated and Approved";
+            var message = '<div><img src="' + imgInfo + '">' +
+            "<p>The application with DIF ID: " + udi + " was successfully updated and approved!" +
+            "<br></p></div>";
         }
 
         hideSpinner();
@@ -634,6 +657,8 @@ function formReset(dontScrollToTop)
     $.when(formChanged()).done(function() {
         $("#difForm").trigger("reset");
         $("#udi").val("").change();
+        $("#spatialExtentGeometry").val("").change();
+        $("#spatialExtentDescription").val("").change();
         $("#status").val("Open").change();
         //formHash = $("#difForm").serialize();
         formHash = undefined;

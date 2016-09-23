@@ -7,7 +7,11 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+use FOS\RestBundle\Controller\Annotations as Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
@@ -22,6 +26,38 @@ use Pelagos\Bundle\AppBundle\Form\MdappType;
 class MetadataController extends EntityController
 {
     /**
+     * Get a count of Metadata.
+     *
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "Metadata",
+     *   input = {
+     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCountType",
+     *     "name": "",
+     *     "options": {
+     *       "label": "Metadata",
+     *       "data_class": "Pelagos\Entity\Metadata"
+     *     }
+     *   },
+     *   statusCodes = {
+     *     200 = "A count of Metadata was successfully returned.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Get("/count")
+     *
+     * @Rest\View()
+     *
+     * @return integer
+     */
+    public function countAction(Request $request)
+    {
+        return $this->handleCount(Metadata::class, $request);
+    }
+
+    /**
      * Get a single Metadata for a given id.
      *
      * @param Request $request The request object.
@@ -34,6 +70,7 @@ class MetadataController extends EntityController
      *   output = "XML",
      *   statusCodes = {
      *     200 = "The requested Metadata was successfully retrieved.",
+     *     415 = "String could not be parsed as XML.",
      *     404 = "The requested Dataset was not found.",
      *     500 = "An internal error has occurred.",
      *   }
@@ -42,6 +79,8 @@ class MetadataController extends EntityController
      * @throws \Exception              When more than one dataset is found.
      * @throws NotFoundHttpException   When dataset is not found, or no metadata is available.
      * @throws BadRequestHttpException When the Dataset Submission is Unsubmitted.
+     * @throws HttpException           When the XML can not be loaded from a file.
+     * @throws NotFoundHttpException   When the metadata file is not found.
      *
      * @return Response
      */
@@ -69,9 +108,19 @@ class MetadataController extends EntityController
             ) {
                 $xml = $metadata->getXml()->asXML();
             } else {
-                $fileInfo = $this->get('pelagos.util.data_store')->getDownloadFileInfo($dataset->getUdi(), 'metadata');
-                $xmlDoc = new \SimpleXMLElement($fileInfo->getRealPath(), null, true);
-                $xml = $xmlDoc->asXML();
+                try {
+                    $fileInfo = $this
+                        ->get('pelagos.util.data_store')
+                        ->getDownloadFileInfo($dataset->getUdi(), 'metadata');
+                } catch (FileNotFoundException $e) {
+                    throw new NotFoundHttpException($e->getMessage());
+                }
+                try {
+                    $xmlDoc = new \SimpleXMLElement($fileInfo->getRealPath(), null, true);
+                    $xml = $xmlDoc->asXML();
+                } catch (\Exception $e) {
+                    throw new HttpException(415, $e->getMessage());
+                }
             }
         } else {
             $xml = $this->get('twig')->render(

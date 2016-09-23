@@ -34,6 +34,8 @@ if [ "$#" -eq 1 ]; then
     export SYMFONY_ENV="$1"
 fi
 
+bin/console rabbitmq-supervisor:control stop
+
 echo "DROP DATABASE $parameters__database_name" | psql -h $parameters__database_host -U postgres || exit
 echo "Database $parameters__database_name dropped"
 echo "CREATE DATABASE $parameters__database_name" | psql -h $parameters__database_host -U postgres || exit
@@ -62,5 +64,10 @@ echo "ALTER SEQUENCE person_id_seq START WITH 10001" | psql -h $parameters__data
 echo "ALTER SEQUENCE person_id_seq RESTART" | psql -h $parameters__database_host -U $parameters__database_user $parameters__database_name || exit
 echo "Initialized sequences"
 
+bin/console fos:elastica:reset
+echo "Reset Elasticsearch index"
+
 echo "y" | bin/console doctrine:fixtures:load -v || exit
 echo "Loaded data fixtures"
+
+bin/console rabbitmq-supervisor:control start

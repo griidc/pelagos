@@ -7,13 +7,13 @@
 if (get_class($response) == 'Symfony\Component\HttpFoundation\BinaryFileResponse') {
     $response->send();
     $kernel->terminate($request, $response);
-    drupal_exit();
+    exit();
 }
 
 if (preg_match('/^Pelagos\\\\Bundle\\\\AppBundle\\\\Controller\\\\Api\\\\/', $request->attributes->get('_controller'))) {
     $response->send();
     $kernel->terminate($request, $response);
-    drupal_exit();
+    exit();
 }
 
 if (in_array(
@@ -39,7 +39,7 @@ if (in_array(
 )) {
     $response->send();
     $kernel->terminate($request, $response);
-    drupal_exit();
+    exit();
 }
 
 if (preg_match('/^Pelagos\\\\/', $request->attributes->get('_controller'))) {
@@ -51,5 +51,5 @@ if (preg_match('/^Pelagos\\\\/', $request->attributes->get('_controller'))) {
 } else {
     $response->send();
     $kernel->terminate($request, $response);
-    drupal_exit();
+    exit();
 }

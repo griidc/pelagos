@@ -1,0 +1,17 @@
+{% block subject 'Dataset file URL resolves to HTML page for ' ~ datasetSubmission.dataset.udi %}
+
+{% block body_html %}
+The following URL was provided for the dataset file for dataset {{ datasetSubmission.dataset.udi }}<br>
+<br>
+{{ datasetSubmission.datasetFileUri }}<br>
+<br>
+It points to an HTML page instead of a file.<br>
+{% endblock %}
+
+{% block body_text %}
+The following URL was provided for the dataset file for dataset {{ datasetSubmission.dataset.udi }}
+
+{{ datasetSubmission.datasetFileUri }}
+
+It points to an HTML page instead of a file.
+{% endblock %}

@@ -26,7 +26,8 @@
         add_js(
             [
                 '//cdn.datatables.net/1.10.7/js/jquery.dataTables.js',
-                '//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js'
+                '//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js',
+                '//cdn.datatables.net/plug-ins/1.10.12/sorting/chinese-string.js'
             ]
         )
     }}
@@ -73,8 +74,8 @@ set properties = [
     }'
     data-columns = '[
         { "data": "id" },
-        { "data": "firstName" },
-        { "data": "lastName" },
+        { "data": "firstName", "type": "chinese-string" },
+        { "data": "lastName", "type": "chinese-string" },
         { "data": "emailAddress" },
         { "data": "creationTimeStamp" },
         { "data": "creator" },

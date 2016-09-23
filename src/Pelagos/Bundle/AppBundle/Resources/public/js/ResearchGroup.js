@@ -1,6 +1,7 @@
 $(document).ready(function()
 {
     "use strict";
+
     $(".entityForm[entityType=\"ResearchGroup\"] [name=\"logo\"]").on("logoChanged", function ()
     {
         if ($(this).attr("mimeType") !== "application/x-empty") {
@@ -23,13 +24,13 @@ $(document).ready(function()
     $("#tabs")
         .tabs({ heightStyle: "content" })
         .tabs("disable", 1);
-        
+
     $("#logobutton")
     .button()
     .click(function() {
         $("#fileupload").click();
     });
-    
+
     $("#fileupload").fileupload({
         url: $(this).attr("data-url"),
         method: "PUT",
@@ -57,6 +58,40 @@ $(document).ready(function()
                 .fadeIn()
                 .entityForm()
                 ;
+
+            $('[name="person"]', cloneForm).select2({
+                placeholder: "[Please Select a Person]",
+                allowClear: true,
+                ajax: {
+                    dataType: 'json',
+                    data: function (params) {
+                        if (params.term != undefined) {
+                            var query = {
+                                "lastName": params.term + '*'
+                            }
+                        } else {
+                            var query = {}
+                        }
+                        return query;
+                    },
+                    url: Routing.generate("pelagos_api_people_get_collection",
+                        {
+                            "_properties" : "id,firstName,lastName,emailAddress",
+                            "_orderBy" : "lastName,firstName,emailAddress"
+                        }
+                    ),
+                    processResults: function (data) {
+                        return {
+                            results: $.map(data, function (item) {
+                                return {
+                                    text: item.lastName + ", " +  item.firstName + ", " + item.emailAddress,
+                                    id: item.id
+                                }
+                            })
+                        };
+                    }
+                }
+            });
 
             $(cloneForm).find("#cancelButton").click(function() {
                 addImg.fadeIn();

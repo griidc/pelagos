@@ -58,6 +58,8 @@ class DatasetSubmissionController extends UIController
 
         $buttonLabel = 'Register';
 
+        $dif = null;
+
         if ($udi != null) {
             $datasets = $this->entityHandler
                 ->getBy(Dataset::class, array('udi' => substr($udi, 0, 16)));
@@ -129,6 +131,10 @@ class DatasetSubmissionController extends UIController
             }
         }
 
+        if ($dif instanceof DIF and $dif->getStatus() !== DIF::STATUS_APPROVED) {
+            $datasetSubmission = null;
+        }
+
         $form = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionType::class,
@@ -189,6 +195,9 @@ class DatasetSubmissionController extends UIController
                 Dataset::class,
                 array (
                     'datasetSubmission.creator' => $loggedInPerson,
+                ),
+                array(
+                    'udi' => 'ASC'
                 )
             );
 
@@ -213,6 +222,7 @@ class DatasetSubmissionController extends UIController
                 'researchGroups' => $researchGroups,
                 'researchers' => $researchers,
                 'loggedInPerson' => $loggedInPerson,
+                'dif' => $dif,
             )
         );
     }
@@ -238,6 +248,7 @@ class DatasetSubmissionController extends UIController
             $sequence = $datasetSubmission->getSequence();
             $datasetSubmission = clone $datasetSubmission;
             $datasetSubmission->setId(null);
+            $datasetSubmission->setCreationTimeStamp(null);
         } else {
             $datasetSubmission = new DatasetSubmission;
         }

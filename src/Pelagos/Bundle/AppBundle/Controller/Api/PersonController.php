@@ -19,6 +19,38 @@ use Pelagos\Bundle\AppBundle\Form\PersonType;
 class PersonController extends EntityController
 {
     /**
+     * Get a count of People.
+     *
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "People",
+     *   input = {
+     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCountType",
+     *     "name": "",
+     *     "options": {
+     *       "label": "People",
+     *       "data_class": "Pelagos\Entity\Person"
+     *     }
+     *   },
+     *   statusCodes = {
+     *     200 = "A count of People was successfully returned.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Get("/count")
+     *
+     * @Rest\View()
+     *
+     * @return integer
+     */
+    public function countAction(Request $request)
+    {
+        return $this->handleCount(Person::class, $request);
+    }
+
+    /**
      * Validate a value for a property of a Person.
      *
      * @param Request $request The request object.

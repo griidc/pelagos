@@ -21,3 +21,7 @@ config.php
 /web/bundles/
 bin/symfony_requirements
 /src/Pelagos/Bundle/AppBundle/DataFixtures/ORM/Test*
+/web/css
+/web/images
+/web/js
+/app/supervisor

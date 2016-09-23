@@ -26,7 +26,7 @@ services:
         class: Pelagos\Event\DIFListener
         arguments: ["@twig", "@mailer", "@security.token_storage", "%mailer_from_addr%", "%mailer_from_name%"]
         tags:
-            - { name: kernel.event_listener, event: pelagos.entity.dif.dataset_created, method: onCreated }
+            - { name: kernel.event_listener, event: pelagos.entity.dif.saved_not_submitted, method: onSavedNotSubmitted }
             - { name: kernel.event_listener, event: pelagos.entity.dif.submitted, method: onSubmitted }
             - { name: kernel.event_listener, event: pelagos.entity.dif.approved, method: onApproved }
             - { name: kernel.event_listener, event: pelagos.entity.dif.unlock_requested, method: onUnlockRequested }
@@ -34,13 +34,15 @@ services:
 
     pelagos.datasetsubmission.listener:
         class: Pelagos\Event\DatasetSubmissionListener
-        arguments: ["@twig", "@mailer", "@security.token_storage", "%mailer_from_addr%", "%mailer_from_name%"]
+        arguments: ["@twig", "@mailer", "@security.token_storage", "%mailer_from_addr%", "%mailer_from_name%", "@pelagos.entity.handler", "@pelagos.util.data_store"]
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.created, method: onCreated }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.submitted, method: onSubmitted }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.resubmitted, method: onResubmitted }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.dataset_processed, method: onDatasetProcessed }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.metadata_processed, method: onMetadataProcessed }
+            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.html_found, method: onHtmlFound }
+            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.dataset_unprocessable, method: onDatasetUnprocessable }
 
     pelagos.doirequest.listener:
         class: Pelagos\Event\DoiRequestListener
@@ -48,6 +50,17 @@ services:
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.doi_request.doi_requested, method: onDoiRequested }
             - { name: kernel.event_listener, event: pelagos.entity.doi_request.doi_issued, method: onDoiIssued }
+
+    pelagos.account.listener:
+        class: Pelagos\Event\AccountListener
+        arguments: ["@twig", "@mailer", "@security.token_storage", "%mailer_from_addr%", "%mailer_from_name%", "@pelagos.entity.handler"]
+        tags:
+            - { name: kernel.event_listener, event: pelagos.entity.account.created, method: onCreated }
+
+    pelagos.doctrine.dataset.listener:
+        class: Pelagos\Event\DoctrineDatasetListener
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
 
     pelagos.form.type.dif:
         class: Pelagos\Bundle\AppBundle\Form\DIFType

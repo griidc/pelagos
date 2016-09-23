@@ -15,6 +15,8 @@ use Pelagos\Entity\DatasetSubmission;
 
 use Pelagos\Event\EntityEventDispatcher;
 
+use Pelagos\Exception\HtmlFoundException;
+
 use Pelagos\Util\DataStore;
 use Pelagos\Util\MdappLogger;
 
@@ -124,6 +126,7 @@ class DatasetSubmissionConsumer implements ConsumerInterface
             return true;
         }
         $this->entityManager->persist($datasetSubmission);
+        $this->entityManager->persist($dataset);
         $this->entityManager->flush();
         return true;
     }
@@ -156,14 +159,25 @@ class DatasetSubmissionConsumer implements ConsumerInterface
             $datasetSubmission->setDatasetFileTransferStatus(
                 DatasetSubmission::TRANSFER_STATUS_COMPLETED
             );
+        } catch (HtmlFoundException $exception) {
+            $datasetSubmission->setDatasetFileTransferStatus(
+                DatasetSubmission::TRANSFER_STATUS_NEEDS_REVIEW
+            );
+            $this->entityEventDispatcher->dispatch($datasetSubmission, 'html_found');
+            $this->logger->error('Error processing dataset: ' . $exception->getMessage(), $loggingContext);
+            return;
         } catch (\Exception $exception) {
+            $datasetSubmission->setDatasetFileTransferStatus(
+                DatasetSubmission::TRANSFER_STATUS_NEEDS_REVIEW
+            );
+            $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_unprocessable');
             $this->logger->error('Error processing dataset: ' . $exception->getMessage(), $loggingContext);
             return;
         }
-        // Log processing complete.
-        $this->logger->info('Dataset file processing complete', $loggingContext);
         // Dispatch entity event.
         $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_processed');
+        // Log processing complete.
+        $this->logger->info('Dataset file processing complete', $loggingContext);
     }
 
     /**
@@ -188,6 +202,9 @@ class DatasetSubmissionConsumer implements ConsumerInterface
             $metadataFileUri = $datasetSubmission->getMetadataFileUri();
             $datasetId = $datasetSubmission->getDataset()->getUdi();
             $this->dataStore->addFile($metadataFileUri, $datasetId, 'metadata');
+            $mdSpiFileInfo = $this->dataStore->getFileInfo($datasetId, 'metadata');
+            $mdSha256Hash = hash('sha256', file_get_contents($mdSpiFileInfo->getRealPath()));
+            $datasetSubmission->setMetadataFileSha256Hash($mdSha256Hash);
             $datasetSubmission->setMetadataFileName(basename($metadataFileUri));
             $datasetSubmission->setMetadataFileTransferStatus(
                 DatasetSubmission::TRANSFER_STATUS_COMPLETED
@@ -199,10 +216,35 @@ class DatasetSubmissionConsumer implements ConsumerInterface
             $this->logger->error('Error processing metadata: ' . $exception->getMessage(), $loggingContext);
             return;
         }
-        // Log processing complete.
-        $this->logger->info('Metadata file processing complete', $loggingContext);
-        $this->mdappLogger->writeLog(" $datasetId: Metadata file processing complete.");
+
+        $xferString = $datasetSubmission->getMetadataFileTransferType();
+        if (null === $xferString) {
+            $this->logger->error(
+                "Error processing metadata: unexpected null metadatafiletransfertype for dataset: $datasetId.",
+                $loggingContext
+            );
+            return;
+        } elseif (array_key_exists($xferString, DatasetSubmission::TRANSFER_TYPES)) {
+            $xferType = DatasetSubmission::TRANSFER_TYPES[$xferString];
+            $username = $datasetSubmission->getModifier()->getAccount()->getUsername();
+            $mdappMsg = " $username has registered new metadata via $xferType for $datasetId.";
+        } else {
+            $this->logger->error(
+                'Error processing metadata: unexpected metadatafiletransfertype of: '
+                    . "$xferString for dataset: $datesetId.",
+                $loggingContext
+            );
+            return;
+        }
+
         // Dispatch entity event.
         $this->entityEventDispatcher->dispatch($datasetSubmission, 'metadata_processed');
+
+        if (isset($mdappMsg) and (null !== $mdappMsg)) {
+            $this->mdappLogger->writeLog($mdappMsg);
+        }
+
+        // Log processing complete.
+        $this->logger->info('Metadata file processing complete', $loggingContext);
     }
 }

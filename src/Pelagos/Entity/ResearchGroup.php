@@ -110,7 +110,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Website URL cannot contain angle brackets (< or >)"
@@ -125,7 +125,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Phone number cannot contain angle brackets (< or >)"
@@ -140,7 +140,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Delievery point (address) cannot contain angle brackets (< or >)"
@@ -155,7 +155,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="City cannot contain angle brackets (< or >)"
@@ -170,7 +170,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Administrative area (state) cannot contain angle brackets (< or >)"
@@ -185,7 +185,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Postal code (zip) cannot contain angle brackets (< or >)"
@@ -200,7 +200,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Country cannot contain angle brackets (< or >)"
@@ -215,7 +215,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Description cannot contain angle brackets (< or >)"
@@ -271,6 +271,8 @@ class ResearchGroup extends Entity
      * @var Collection $datasets
      *
      * @ORM\OneToMany(targetEntity="Dataset", mappedBy="researchGroup")
+     *
+     * @ORM\OrderBy({"udi" = "ASC"})
      *
      * @Serializer\Exclude
      */
