@@ -33,16 +33,6 @@ use JMS\Serializer\Annotation as Serializer;
  *   )
  * )
  * @Hateoas\Relation(
- *   "delete",
- *   href = @Hateoas\Route(
- *     "pelagos_api_difs_delete",
- *     parameters = { "id" = "expr(object.getId())" }
- *   ),
- *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not object.isDeletable() or not service('security.authorizationchecker').isGranted(['CAN_DELETE'], object))"
- *   )
- * )
- * @Hateoas\Relation(
  *   "submit",
  *   href = @Hateoas\Route(
  *     "pelagos_api_difs_submit",
