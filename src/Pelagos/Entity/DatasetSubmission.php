@@ -229,6 +229,8 @@ class DatasetSubmission extends Entity
      * @var Dataset
      *
      * @ORM\ManyToOne(targetEntity="Dataset", inversedBy="datasetSubmissionHistory", cascade={"persist"})
+     *
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     protected $dataset;
 

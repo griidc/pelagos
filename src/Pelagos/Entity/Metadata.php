@@ -19,6 +19,8 @@ class Metadata extends Entity
      * @var Dataset
      *
      * @ORM\OneToOne(targetEntity="Dataset", inversedBy="metadata")
+     *
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     protected $dataset;
 

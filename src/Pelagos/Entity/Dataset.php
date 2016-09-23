@@ -88,7 +88,7 @@ class Dataset extends Entity
      *
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="DatasetSubmission", mappedBy="dataset")
+     * @ORM\OneToMany(targetEntity="DatasetSubmission", mappedBy="dataset", cascade={"remove"})
      */
     protected $datasetSubmissionHistory;
 
@@ -97,7 +97,7 @@ class Dataset extends Entity
      *
      * @var Metadata
      *
-     * @ORM\OneToOne(targetEntity="Metadata", mappedBy="dataset")
+     * @ORM\OneToOne(targetEntity="Metadata", mappedBy="dataset", cascade={"remove"})
      */
     protected $metadata;
 

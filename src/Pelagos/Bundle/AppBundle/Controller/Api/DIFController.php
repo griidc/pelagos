@@ -202,29 +202,6 @@ class DIFController extends EntityController
     }
 
     /**
-     * Delete a DIF.
-     *
-     * @param integer $id The id of the DIF to delete.
-     *
-     * @ApiDoc(
-     *   section = "DIFs",
-     *   statusCodes = {
-     *     204 = "The DIF was successfully deleted.",
-     *     403 = "You do not have sufficient privileges to delete this DIF.",
-     *     404 = "The requested DIF was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
-     * )
-     *
-     * @return Response A response object with an empty body and a "no content" status code.
-     */
-    public function deleteAction($id)
-    {
-        $this->handleDelete(DIF::class, $id);
-        return $this->makeNoContentResponse();
-    }
-
-    /**
      * Submit a DIF.
      *
      * @param integer $id The id of the DIF to submit.
