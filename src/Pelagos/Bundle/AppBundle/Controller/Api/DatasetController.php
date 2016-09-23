@@ -197,5 +197,4 @@ class DatasetController extends EntityController
         }
         return $this->makeNoContentResponse();
     }
-
 }
