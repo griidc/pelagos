@@ -12,6 +12,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Pelagos\Bundle\AppBundle\Form\DatasetType;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\DIF;
 
 /**
  * The Dataset api controller.
@@ -189,7 +190,11 @@ class DatasetController extends EntityController
      */
     public function deleteAction($id)
     {
+        $dif = $this->handleGetOne(Dataset::class, $id)->getDif();
         $this->handleDelete(Dataset::class, $id);
+        if ($dif instanceof DIF) {
+            $this->handleDelete(DIF::class, $dif->getId());
+        }
         return $this->makeNoContentResponse();
     }
 
