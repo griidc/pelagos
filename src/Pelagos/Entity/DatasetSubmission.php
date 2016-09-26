@@ -1233,6 +1233,457 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Set the Person responsible for the creation of the majority of the associated dataset.
+     *
+     * @return void
+     */
+    public function setMetadataContactResponsibleParty(Person $responsibleParty)
+    {
+        $this->metadataContactResponsibleParty = $responsibleParty;
+    }
+
+    /**
+     * Get the Person responsible for the creation of the majority of the associated dataset.
+     *
+     * @return Person Who is the resposible party.
+     */
+    public function getMetadataContactResponsibleParty()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataContactResponsiblyPartyRole()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataContactResponsiblyPartyRole()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataTitle()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataTitle()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataShortTitle()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataShortTitle()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataReferenceDate()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataReferenceDate()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataReferenceDateType()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataReferenceDateType()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataAbstract()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataAbstract()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataPurpose()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataPurpose()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataSupplementalInformationParameters()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataSupplementalInformationParameters()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataSupplementalInformationMethods()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataSupplementalInformationMethods()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataSupplementalInformationInstruments()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function setMetadataSupplementalInformationInstruments()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataSupplementalInformationScaleRate()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataSupplementalInformationScaleRate()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataSupplementalInformationErrorAnalysis()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataSupplementalInformationErrorAnalysis()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataSupplementalInformationProvenance()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataSupplementalInformationProvenance()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataThemeKeywords()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataThemeKeywords()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataPlaceKeywords()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataPlaceKeywords()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataTopicKeywords()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataTopicKeywords()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataGeometry()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataGeometry()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataExtentDescription()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataExtentDescription()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataBeginPosition()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataBeginPosition()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataEndPosition()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataEndPosition()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataDataFiletype()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataDataFiletype()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataFileCompressionType()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataFileCompressionType()
+    {
+    }
+
+    /**
+     * Set (set from upload/filer, not form!)
+     * @return void
+     */
+    public function setMetadataDataFileSize()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataDataFileSize()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataDistributionContact()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataDistributionContact()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataDistributionContactRole()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataDistributionContactRole()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataContact()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataContact()
+    {
+    }
+
+    /**
+     * Set
+     * @return void
+     */
+    public function setMetadataContactRole()
+    {
+    }
+
+    /**
+     * Get
+     * @return
+     */
+    public function getMetadataContactRole()
+    {
+    }
+
+    /**
      * Update the dataset submission status in associated Dataset if a Dataset has been associated.
      *
      * @return void
