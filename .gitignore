@@ -4,7 +4,7 @@ config.php
 /app/config/parameters.yml
 /app/config/parameters_drupal_dev.yml
 /app/config/parameters_drupal_prod.yml
-/app/config/config_dev_local.yml
+/app/config/*.local.yml
 /build/
 /phpunit.xml
 /var/*
