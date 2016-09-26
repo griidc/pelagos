@@ -150,7 +150,7 @@ class Dataset extends Entity
      *
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="DatasetPublication", mappedBy="dataset")
+     * @ORM\OneToMany(targetEntity="DatasetPublication", mappedBy="dataset", orphanRemoval=true)
      */
     protected $datasetPublications;
 
