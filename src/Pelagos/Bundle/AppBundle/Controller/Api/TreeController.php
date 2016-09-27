@@ -74,12 +74,10 @@ class TreeController extends EntityController
         $fundingCycles = array();
         if ($filter) {
             $fundingOrganizations = array();
-            $datasets = $this->get('doctrine.orm.entity_manager')
-                ->getRepository(Dataset::class)
-                ->filter(array(), $textFilter, $geoFilter);
+            $datasets = $this->get('pelagos.util.dataset_index')->search(array(), $textFilter, $geoFilter);
             foreach ($datasets as $dataset) {
-                $fundingOrganizations[$dataset[0]['researchGroup']['fundingCycle']['fundingOrganization']['id']] = true;
-                $fundingCycles[$dataset[0]['researchGroup']['fundingCycle']['id']] = true;
+                $fundingOrganizations[$dataset->researchGroup['fundingCycle']['fundingOrganization']['id']] = true;
+                $fundingCycles[$dataset->researchGroup['fundingCycle']['id']] = true;
             }
             $criteria['id'] = array_keys($fundingOrganizations);
         }
@@ -136,11 +134,9 @@ class TreeController extends EntityController
         $criteria = array('fundingCycle' => $fundingCycle);
         if ($filter) {
             $researchGroups = array();
-            $datasets = $this->get('doctrine.orm.entity_manager')
-                ->getRepository(Dataset::class)
-                ->filter(array(), $textFilter, $geoFilter);
+            $datasets = $this->get('pelagos.util.dataset_index')->search(array(), $textFilter, $geoFilter);
             foreach ($datasets as $dataset) {
-                $researchGroups[$dataset[0]['researchGroup']['id']] = true;
+                $researchGroups[$dataset->researchGroup['id']] = true;
             }
             $criteria['id'] = array_keys($researchGroups);
         }

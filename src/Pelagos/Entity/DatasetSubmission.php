@@ -229,6 +229,8 @@ class DatasetSubmission extends Entity
      * @var Dataset
      *
      * @ORM\ManyToOne(targetEntity="Dataset", inversedBy="datasetSubmissionHistory", cascade={"persist"})
+     *
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     protected $dataset;
 
@@ -629,9 +631,6 @@ class DatasetSubmission extends Entity
     public function setTitle($title)
     {
         $this->title = $title;
-        if ($this->getDataset() instanceof Dataset) {
-            $this->getDataset()->updateTitle();
-        }
     }
 
     /**
@@ -654,9 +653,6 @@ class DatasetSubmission extends Entity
     public function setAbstract($abstract)
     {
         $this->abstract = $abstract;
-        if ($this->getDataset() instanceof Dataset) {
-            $this->getDataset()->updateAbstract();
-        }
     }
 
     /**

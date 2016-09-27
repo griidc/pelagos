@@ -81,6 +81,11 @@ if (isset($_GET["dataUrl"]) and !isset($_FILES["file"]))
         $dMessage .= 'assistance.';
         drupal_set_message($dMessage, 'warning', false);
         $xmldoc = null;
+    } elseif ($xmldoc != null and is_array($xmldoc)) {
+        $dMessage = 'Error while loading data from: ' .  $xmlURL;
+        $dMessage .= "<br>This does not appear to be a valid ISO 19115-2 metadata file.";
+		drupal_set_message($dMessage, 'error', false);
+        $xmldoc = null;
     } else {
 		$dMessage = 'Error while loading data from: ' .  $xmlURL;
 		drupal_set_message($dMessage, 'error', false);
@@ -92,9 +97,15 @@ if (isset($thefile))
 {
 	if ($_FILES["file"]["type"] == "text/xml") {
 		$xmldoc = loadXMLFromFile($thefile);
-        if ($xmldoc === false) {
+        if ($xmldoc != null and is_array($xmldoc)) {
+            $dMessage = 'Unable to load file: ' .  $_FILES["file"]["name"];
+            $dMessage .= "<br>This does not appear to be a valid ISO 19115-2 metadata file.";
+            drupal_set_message($dMessage, 'error', false);
+            $xmldoc = null;
+        } elseif ($xmldoc === false) {
             $dMessage = 'Unable to load file: ' .  $_FILES["file"]["name"];
             drupal_set_message($dMessage, 'error', false);
+            $xmldoc = null;
         } else {
             $dMessage = 'Successfully loaded file: ' .  $_FILES["file"]["name"];
             drupal_set_message($dMessage, 'status', false);

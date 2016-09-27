@@ -57,6 +57,11 @@ services:
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.account.created, method: onCreated }
 
+    pelagos.doctrine.dataset.listener:
+        class: Pelagos\Event\DoctrineDatasetListener
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+
     pelagos.form.type.dif:
         class: Pelagos\Bundle\AppBundle\Form\DIFType
         arguments: ["@doctrine.orm.entity_manager", "@security.authorization_checker"]

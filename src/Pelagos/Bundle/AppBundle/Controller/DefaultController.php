@@ -28,4 +28,14 @@ class DefaultController extends Controller
     {
         return $this->render('PelagosAppBundle:Default:admin.html.twig');
     }
+
+    /**
+     * The dataset summary action.
+     *
+     * @return Response A Response instance.
+     */
+    public function datasetSummaryAction()
+    {
+        return $this->render('PelagosAppBundle:Default:dataset-summary.html.twig');
+    }
 }

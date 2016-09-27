@@ -44,7 +44,11 @@
         "jsor/doctrine-postgis": "^1.1",
         "opensoft/doctrine-postgres-types": "^1.2",
         "hwi/oauth-bundle": "dev-master",
-        "phobetor/rabbitmq-supervisor-bundle": "^1.5"
+        "phobetor/rabbitmq-supervisor-bundle": "^1.5",
+        "friendsofsymfony/elastica-bundle": "^3.2",
+        "ruflin/elastica": "3.2.2 as 2.99.0",
+        "phayes/geophp": "^1.2",
+        "doctrine/doctrine-migrations-bundle": "^1.2"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

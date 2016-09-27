@@ -33,16 +33,6 @@ use JMS\Serializer\Annotation as Serializer;
  *   )
  * )
  * @Hateoas\Relation(
- *   "delete",
- *   href = @Hateoas\Route(
- *     "pelagos_api_difs_delete",
- *     parameters = { "id" = "expr(object.getId())" }
- *   ),
- *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not object.isDeletable() or not service('security.authorizationchecker').isGranted(['CAN_DELETE'], object))"
- *   )
- * )
- * @Hateoas\Relation(
  *   "submit",
  *   href = @Hateoas\Route(
  *     "pelagos_api_difs_submit",
@@ -548,9 +538,6 @@ class DIF extends Entity
     public function setTitle($title)
     {
         $this->title = $title;
-        if ($this->getDataset() instanceof Dataset) {
-            $this->getDataset()->updateTitle();
-        }
     }
 
     /**
@@ -617,9 +604,6 @@ class DIF extends Entity
     public function setAbstract($abstract)
     {
         $this->abstract = $abstract;
-        if ($this->getDataset() instanceof Dataset) {
-            $this->getDataset()->updateAbstract();
-        }
     }
 
     /**
