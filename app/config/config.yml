@@ -158,6 +158,9 @@ old_sound_rabbit_mq:
         create_homedir:
             connection:       default
             exchange_options: { name: 'create_homedir', type: direct }
+        dataset_file_hasher:
+            connection:       default
+            exchange_options: { name: 'dataset_file_hasher', type: direct }
     consumers:
         filer:
             connection:       default
