@@ -38,6 +38,7 @@ class AppKernel extends Kernel
             new \Phobetor\RabbitMqSupervisorBundle\RabbitMqSupervisorBundle(),
             new \HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
             new \FOS\ElasticaBundle\FOSElasticaBundle(),
+            new \Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new \Pelagos\Bundle\LegacyBundle\PelagosLegacyBundle(),
             new \Pelagos\Bundle\AppBundle\PelagosAppBundle(),
         );
