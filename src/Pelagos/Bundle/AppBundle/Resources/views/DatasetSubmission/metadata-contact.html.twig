@@ -1,0 +1,57 @@
+<fieldset>
+    <legend>Metadata Contact</legend>
+    <table class="tab-table">
+        <tr>
+            <td>
+                <label>Name</label>
+                <select id="metadatacontact" name="metadatacontact" required="required">
+                    {% if metadatacontact|default %}
+                    <option value="{{metadatacontact.Person.id}}">
+                        {{metadatacontact.lastName}}, {{metadatacontact.firstName}}, {{metadatacontact.emailAddress}}
+                    </option>
+                    {% else %}
+                    <option value="">[Please Select a Person]</option>
+                    {% endif %}
+                </select>
+                <label for="metadatacontact" class="error"></label>
+            </td>
+            <td>
+                <span class="field-help">
+                    The name of the individual responsible for maintaining the metadata, typically the scientists or researcher who created the dataset.
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="rolecode">Role</label>
+                <select id="rolecode" value="principalInvestigator">
+                    <option value="">[Please Select a Role]</option>
+                    <option value="resourceProvider">Resource Provider</option>
+                    <option value="custodian">Custodian</option>
+                    <option value="owner">Owner</option>
+                    <option value="distributor">Distributor</option>
+                    <option value="originator">Originator</option>
+                    <option selected="selected" value="pointOfContact">Point of Contact</option>
+                    <option value="principalInvestigator">Principal Investigator</option>
+                    <option value="processor">Processor</option>
+                    <option value="publisher">Publisher</option>
+                    <option value="author">Author</option>
+                </select>
+            </td>
+            <td>
+                <span class="field-help">
+                    Resource Provider: Party that supplies the resource.<br>
+                    Custodian: Party that accepts accountability and responsibility for the data and ensures appropriate care and maintenance of the resource.<br>
+                    Owner: Party that owns the resource.<br>
+                    Distributor: Party who distributes the resource.<br>
+                    Originator: Party who created the resource.<br>
+                    Point of Contact: Party who can be contacted for acquiring knowledge about or acquisition of the resource.<br>
+                    Principal Investigator: Key party responsible for gathering information and conducting research.<br>
+                    Processor: Party who has processed the data in a manner such that the resource has been modified.<br>
+                    Publisher: Party who published the resource.<br>
+                    Author: Party who authored the resource.<br>
+                </span>
+            </td>
+        </tr>
+    </table>
+</fieldsetfieldset>

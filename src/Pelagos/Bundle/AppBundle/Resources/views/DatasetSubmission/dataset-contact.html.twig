@@ -1,0 +1,69 @@
+<fieldset>
+    <legend>Dataset Contact</legend>
+    <table class="tab-table">
+        <tr>
+            <td>
+                <label for="contactperson">Name</label>
+                <select id="contactperson" name="contactperson" required="required">
+                    {% if contactperson|default %}
+                    <option value="{{contact-person.Person.id}}">
+                        {{contactperson.lastName}}, {{contactperson.firstName}}, {{contactperson.emailAddress}}
+                    </option>
+                    {% else %}
+                    <option value="">[Please Select a Person]</option>
+                    {% endif %}
+                </select>
+                <label for="contactperson" class="error"></label>
+            </td>
+            <td>
+                <span class="field-help">
+                    The name of the individual responsible for the creation of the majority of the dataset.
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="rolecode"><em>*</em>Role</label>
+                <select required="" id="rolecode" value="principalInvestigator">
+                    <option value="">[Please Select a Role]</option>
+                    <option value="resourceProvider">Resource Provider</option>
+                    <option value="custodian">Custodian</option>
+                    <option value="owner">Owner</option>
+                    <option value="distributor">Distributor</option>
+                    <option value="originator">Originator</option>
+                    <option value="pointOfContact">Point of Contact</option>
+                    <option selected="" value="principalInvestigator">Principal Investigator</option>
+                    <option value="processor">Processor</option>
+                    <option value="publisher">Publisher</option>
+                    <option value="author">Author</option>
+                </select>
+            </td>
+            <td>
+                <span class="field-help">
+                    Resource Provider: Party that supplies the resource.<br>
+                    Custodian: Party that accepts accountability and responsibility for the data and ensures appropriate care and maintenance of the resource.<br>
+                    Owner: Party that owns the resource.<br>
+                    Distributor: Party who distributes the resource.<br>
+                    Originator: Party who created the resource.<br>
+                    Point of Contact: Party who can be contacted for acquiring knowledge about or acquisition of the resource.<br>
+                    Principal Investigator: Key party responsible for gathering information and conducting research.<br>
+                    Processor: Party who has processed the data in a manner such that the resource has been modified.<br>
+                    Publisher: Party who published the resource.<br>
+                    Author: Party who authored the resource.<br>
+                </span>
+            </td>
+        </tr>
+        
+        <tr>
+            <td>
+                {{ form_row(form.authors) }}
+            </td>
+            <td>
+                <span class="field-help">
+                   The Suggested Author List should contain all participants who collaborated in the creation, processing or analysis of the data you are sending to GRIIDC who should be acknowledged if these data are cited as a published work. Please list suggested authors in the order in which they should be listed in a citation.
+                </span>
+            </td>
+        </tr>
+        
+    </table>
+</fieldsetfieldset>

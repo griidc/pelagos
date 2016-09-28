@@ -1,0 +1,132 @@
+
+<fieldset>
+    This section collects keywords/key phrases describing the theme and location of the dataset. Provides GRIIDC and future researchers with short descriptions to aid search. Some datasets may not have relevant place keywords (ex. lab simulations).
+</fieldset>
+
+<fieldset>
+    <legend>Theme Keywords</legend>
+    <table class="tab-table">
+        <tr class="oddrowcolor">
+            <td>
+                <table>
+                    <tr>
+                        <td>
+                            <label for="theme-keyword-input">Keyword</label>
+                            <input class="keywordinput" type="text" keyword="source" id="theme-keyword-input">
+                        </td>
+                        <td>
+                            <button class="keywordbutton" type="button">add</button>
+                            <br>
+                            <button class="keywordbutton" type="button">remove</button>
+                        </td>
+                        <td>
+                            <label>Theme Keywords</label>
+                            <select class="keywordinput" required="required" id="theme-keywords" keyword="target" list="theme-keywords-list" size="5"></select>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <span class="field-help">
+                    Commonly used words or short phrases which describe the themes or subjects related to the dataset. This element can repeat.
+                </span>
+            </td>
+        </tr>
+    </table>
+    </fieldset>
+    <input type="hidden" name="theme-keywords-list">
+    <hr>  
+    
+    <fieldset>
+        <legend>Place Keywords</legend>
+        <table class="tab-table">
+            <tr>
+                <td>
+                    <table>
+                        <tr>
+                            <td>
+                                <label for="place-keyword-input">Keyword</label>
+                                <input class="keywordinput"  keyword="source" type="text" id="place-keyword-input">
+                            </td>
+                            <td>
+                                <button class="keywordbutton" type="button">add</button>
+                                <br>
+                                <button class="keywordbutton" type="button">remove</button>
+                            </td>
+                            <td>
+                                <label>Place Keywords</label>
+                                <select class="keywordinput" id="place-keywords" keyword="target" size="5"></select>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                <span class="field-help">
+                    Commonly used words or short phrases which describe the geographic areas or places related to the dataset. This element can repeat.
+                </span>
+            </td>
+            </tr>
+        </table>
+    </fieldset>
+    <hr>
+    <input type="hidden" name="place-keywords-list">
+    
+    <fieldset>
+        <legend>Topic Category Keywords</legend>
+
+    <table class="tab-table">
+        <tr>
+            <td>
+                <table>
+                    <tr>
+                        <td>
+                            <label>Topic Category Keyword List</label>
+                            <select class="keywordinput" size="10" id="topic-keyword-select" keyword="source">
+                                    <option value="oceans" order="0" >Oceans</option>
+                                    <div class="topictooltip">
+                                        <b>Oceans:</b><br/>Features and characteristics of salt water bodies (excluding inland waters) Examples: tides, tidal waves, coastal information, reefs
+                                    </div>
+                                    <option value="biota" order="1">Biota</option>
+                                    <option value="boundaries" order="2">Boundaries</option>
+                                    <option value="climatologyMeteorologyAtmosphere" order="3">Climatology/Meteorology/Atmosphere</option>
+                                    <option value="economy" order="4">Economy</option>
+                                    <option value="elevation" order="5">Elevation</option>
+                                    <option value="environment" order="6">Environment</option>
+                                    <option value="farming" order="7">Farming</option>
+                                    <option value="geoscientificInformation" order="8">Geoscientific Information</option>
+                                    <option value="health" order="9">Health</option>
+                                    <option value="imageryBaseMapsEarthCover" order="10">Imagery/Base Maps/Earth Cover</option>
+                                    <option value="inlandWaters" order="11">Inland Waters</option>
+                                    <option value="location" order="12">Location</option>
+                                    <option value="intelligenceMilitary" order="13">Military Intelligence</option>
+                                    <option value="planningCadastre" order="14">Planning/Cadastre</option>
+                                    <option value="society" order="15">Society</option>
+                                    <option value="structure" order="16">Structure</option>
+                                    <option value="transportation" order="17">Transportation</option>
+                                    <option value="utilitiesCommunication" order="18">Utilities/Communication</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button class="keywordbutton" type="button">add</button><br>
+                            <button class="keywordbutton" type="button">remove</button>
+                        </td>
+                        <td>
+                            <label>Selected Topic Category Keywords</label>
+                            <select class="keywordinput" required="required" keyword="target" size="10" id="topic-keywords"></select>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <span class="field-help">
+                    The main theme(s) of the dataset. Must be selected from the provided keyword list.<br>
+                    These keywords are predefined by ISO and may not be very applicable to your dataset but at least one is required.<br>
+                    <i>(Hint: Double click to add or remove.)</i>
+                </span>
+            </td>
+        </tr>
+    </table>
+    <input type="ahidden" name="topic-keywords-list">
+	
+</fieldset>
+	
