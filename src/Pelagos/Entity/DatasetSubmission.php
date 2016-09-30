@@ -570,6 +570,16 @@ class DatasetSubmission extends Entity
     protected $metadataStatus = self::METADATA_STATUS_NONE;
 
     /**
+     * Get the choice list for restrictions.
+     *
+     * @return array
+     */
+    public static function getRestrictionsChoices()
+    {
+        return array_flip(static::RESTRICTIONS);
+    }
+
+    /**
      * Set the Dataset this Dataset Submission is attached to.
      *
      * @param Dataset $dataset The Dataset this Dataset Submission is attached to.
