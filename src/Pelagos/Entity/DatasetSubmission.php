@@ -224,6 +224,111 @@ class DatasetSubmission extends Entity
     const AVAILABILITY_STATUS_PUBLICLY_AVAILABLE = 10;
 
     /**
+     * Valid values for self::$referenceDateType.
+     *
+     * The array keys are the values to be set in self::referenceDateType.
+     */
+    const REFERENCE_DATE_TYPES = [
+        'creation' => [
+            'name' => 'Creation',
+            'description' => 'The date that identifies when the resource was brought into existence.'
+        ],
+        'publication' => [
+            'name' => 'Publication',
+            'description' => 'The date that identifies when the resource was issued.'
+        ],
+        'revision' => [
+            'name' => 'Revision',
+            'description' => 'The date that identifies when the resource was improved or amended.'
+        ],
+    ];
+
+    /**
+     * Valid values for self::$temporalExtent.
+     *
+     * The array keys are the values to be set in self::temporalExtent.
+     */
+    const REFERENCE_DATE_TYPES = [
+        'groundcondition' => [
+            'name' => 'Ground Condition',
+            'description' => 'Data represent the actual condition of things on the ground during the time period specified and may also be used to characterize data generated from a sample collection in the field when samples are subsequently analyzed in a laboratory.'
+        ],
+        'modeledperiod' => [
+            'name' => 'Modeled Period',
+            'description' => 'Data represents simulated conditions during the time period, and may be used to characterize data generated using a computational model.'
+        ],
+        'both' => [
+            'name' => 'Ground Condition and Modeled Period',
+            'description' => 'Both choices apply.'
+        ],
+    ];
+
+    /**
+     * Valid values for self::$topicKeywords.
+     *
+     * The array keys are the values to be set in self::topicKeywords.
+     */
+    const TOPIC_KEYWORD_CHOICES = [
+        'oceans' => [
+            'name' => 'Oceans',
+        ],
+        'biota' => [
+            'name' => 'Biota',
+        ],
+        'boundries' => [
+            'name' => 'Boundries',
+        ],
+        'climatology' => [
+            'name' => 'Climatology/Meteorology/Atmosphere',
+        ],
+        'economy' => [
+            'name' => 'Economy',
+        ],
+        'elevation' => [
+            'name' => '',
+        ],
+        'environment' => [
+            'name' => 'Environment',
+        ],
+        'farming' => [
+            'name' => 'Farming',
+        ],
+        'geoscientificInformation' => [
+            'name' => 'Geoscientific Information',
+        ],
+        'health' => [
+            'name' => 'Health',
+        ],
+        'imagery' => [
+            'name' => 'Imagery/Base Maps/Earth Cover',
+        ],
+        'inlandWaters' => [
+            'name' => 'Inland Waters',
+        ],
+        'location' => [
+            'name' => 'Location',
+        ],
+        'militaryIntelligence' => [
+            'name' => 'Military Intelligence',
+        ],
+        'planning' => [
+            'name' => 'Planning/Cadastre',
+        ],
+        'society' => [
+            'name' => 'Society',
+        ],
+        'structure' => [
+            'name' => 'Structure',
+        ],
+        'transportation' => [
+            'name' => 'Transportation',
+        ],
+        'utilities' => [
+            'name' => 'Utilities/Communication',
+        ],
+    ];
+
+    /**
      * The Dataset this Dataset Submission is attached to.
      *
      * @var Dataset
@@ -263,6 +368,19 @@ class DatasetSubmission extends Entity
     protected $title;
 
     /**
+     * The short title for this Dataset Submission.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text")
+     *
+     * @Assert\NotBlank(
+     *     message="Sort Title is required"
+     * )
+     */
+    protected $shortTitle;
+
+    /**
      * The abstract for this Dataset Submission.
      *
      * Legacy DB column: dataset_abstract
@@ -295,32 +413,28 @@ class DatasetSubmission extends Entity
     /**
      * The Point of Contact Name for this Dataset Submission.
      *
-     * Legacy DB column: dataset_poc_name
-     *
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionDatasetContact", mappedBy="datasetSubmission")
      *
      * @Assert\NotBlank(
-     *     message="Point of Contact Name is required"
+     *     message="Dataset contact person required."
      * )
      */
-    protected $pointOfContactName;
+    protected $datasetContacts;
 
     /**
-     * The Point of Contact E-Mail for this Dataset Submission.
-     *
-     * Legacy DB column: dataset_poc_email
+     * The Point of Contact Name for the metadata associated with this submission.
      *
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionMetadataContact", mappedBy="datasetSubmission")
      *
      * @Assert\NotBlank(
-     *     message="Point of Contact E-Mail is required"
+     *     message="Metadata contact person required."
      * )
      */
-    protected $pointOfContactEmail;
+    protected $metadataContacts;
 
     /**
      * Whether the dataset has any restrictions.
@@ -406,28 +520,6 @@ class DatasetSubmission extends Entity
      * @ORM\Column(type="bigint", nullable=true)
      */
     protected $datasetFileSize;
-
-    /**
-     * The dataset file md5 hash.
-     *
-     * Legacy DB column: fs_md5_hash
-     *
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected $datasetFileMd5Hash;
-
-    /**
-     * The dataset file sha1 hash.
-     *
-     * Legacy DB column: fs_sha1_hash
-     *
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected $datasetFileSha1Hash;
 
     /**
      * The dataset file sha256 hash.
@@ -570,6 +662,83 @@ class DatasetSubmission extends Entity
     protected $metadataStatus = self::METADATA_STATUS_NONE;
 
     /**
+     * The reference date for this dataset.
+     *
+     * @var \DateTime
+     *
+     * @ORM\Column(type="date", nullable=false)
+     *
+     * @Assert\NotBlank(
+     *     message="The dataset reference date is required."
+     * )
+     */
+    protected $referenceDate;
+
+    /**
+     * The type of the reference date for this dataset.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="date", nullable=false)
+     *
+     * @see REFERENCE_DATE_CHOICES class constant for valid values.
+     *
+     * @Assert\NotBlank(
+     *     message="The dataset reference date is required."
+     * )
+     */
+    protected $referenceDateType;
+
+    /**
+     * The purpose of this dataset.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=false)
+     *
+     * @Assert\NotBlank(
+     *     message="The dataset submission requires a purpose."
+     * )
+     */
+    protected $purpose;
+
+    /**
+     * Theme keywords describing this dataset.
+     *
+     * @var string $themeKeywords Freetext theme keywords describing dataset.
+     *
+     * @ORM\Column(type="text_array", nullable=false)
+     *
+     * @Assert\NotBlank(
+     *     message="The dataset submission at least one theme keyword."
+     * )
+     */
+    protected $themeKeywords;
+
+
+    /**
+     * Place keywords describing this dataset.
+     *
+     * @var string $placeKeywords Freetext place keywords describing the dataset.
+     *
+     * @ORM\Column(type="text_array", nullable=true)
+     */
+    protected $placeKeywords;
+
+    /**
+     * Topic keywords describing this dataset.
+     *
+     * @var string $topicKeywords Keywords describing dataset from NOAA list.
+     *
+     * @ORM\Column(type="text_array", nullable=false)
+     *
+     * @Assert\NotBlank(
+     *     message="The dataset submission requires selection of at least one topic keyword."
+     * )
+     */
+    protected $topicKeywords;
+
+    /**
      * Set the Dataset this Dataset Submission is attached to.
      *
      * @param Dataset $dataset The Dataset this Dataset Submission is attached to.
@@ -644,6 +813,28 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Set the short title for this Dataset Submission.
+     *
+     * @param string $shortTitle The short title for this Dataset Submission.
+     *
+     * @return void
+     */
+    public function setShortTitle($shortTitle)
+    {
+        $this->shortTitle = $shortTitle;
+    }
+
+    /**
+     * Get the short title for this Dataset Submission.
+     *
+     * @return string
+     */
+    public function getShortTitle()
+    {
+        return $this->shortTitle;
+    }
+
+    /**
      * Set the abstract for this Dataset Submission.
      *
      * @param string $abstract The abstract for this Dataset Submission.
@@ -668,7 +859,7 @@ class DatasetSubmission extends Entity
     /**
      * Set the author(s) for this Dataset Submission.
      *
-     * @param string $authors The author(s) for this Dataset Submission.
+     * @param String $authors The author(s) for this Dataset Submission.
      *
      * @return void
      */
@@ -688,47 +879,87 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * Set the Point of Contact Name for this Dataset Submission.
+     * Setter for datasetContacts.
      *
-     * @param string $pointOfContactName The Point of Contact Name for this Dataset Submission.
+     * @param array|\Traversable $datasetContacts Set of PersonDatasetSubmissionDatasetContact objects.
      *
-     * @return void
-     */
-    public function setPointOfContactName($pointOfContactName)
-    {
-        $this->pointOfContactName = $pointOfContactName;
-    }
-
-    /**
-     * Get the Point of Contact Name for this Dataset Submission.
+     * @access public
      *
-     * @return string
-     */
-    public function getPointOfContactName()
-    {
-        return $this->pointOfContactName;
-    }
-
-    /**
-     * Set the Point of Contact E-Mail for this Dataset Submission.
-     *
-     * @param string $pointOfContactEmail The Point of Contact E-Mail for this Dataset Submission.
+     * @throws \Exception When $datasetContacts is not an array or traversable object.
+     * @throws \Exception When Non-PersonDatasetSubmissionDatasetContact found within $datasetContacts.
      *
      * @return void
      */
-    public function setPointOfContactEmail($pointOfContactEmail)
+    public function setDatasetContacts($datasetContacts)
     {
-        $this->pointOfContactEmail = $pointOfContactEmail;
+        if (is_array($datasetContacts) || $datasetContacts instanceof \Traversable) {
+            foreach ($datasetContacts as $datasetContact) {
+                if (!$datasetContact instanceof PersonDatasetSubmissionDatasetContact) {
+                    throw new \Exception('Non-PersonDatasetSubmissionDatasetContact found in datasetContacts.');
+                }
+            }
+            $this->datasetContacts = $datasetContacts;
+            foreach ($this->datasetContacts as $datasetContact) {
+                $datasetContact->setDatasetSubmission($this);
+            }
+        } else {
+            throw new \Exception('datasetContacts must be either an array or a traversable object.');
+        }
     }
 
     /**
-     * Get the Point of Contact E-Mail for this Dataset Submission.
+     * Getter of metadataContacts.
      *
-     * @return string
+     * @access public
+     *
+     * @return \Doctrine\Common\Collections\Collection Collection containing PersonDatasetSubmissionDatasetContacts
+     *
      */
-    public function getPointOfContactEmail()
+    public function getDatasetContacts()
     {
-        return $this->pointOfContactEmail;
+        return $this->datasetContacts;
+    }
+
+    /**
+     * Setter for metadataContacts.
+     *
+     * @param array|\Traversable $metadataContacts Set of PersonDatasetSubmissionMetadataContact objects.
+     *
+     * @access public
+     *
+     * @throws \Exception When $metadataContacts is not an array or traversable object.
+     * @throws \Exception When Non-PersonDatasetSubmissionMetadataContact found within $metadataContacts.
+     *
+     * @return void
+     */
+    public function setMetadataContacts($metadataContacts)
+    {
+        if (is_array($metadataContacts) || $metadataContacts instanceof \Traversable) {
+            foreach ($metadataContacts as $metadataContact) {
+                if (!$metadataContact instanceof PersonDatasetSubmissionMetadataContact) {
+                    throw new \Exception('Non-PersonDatasetSubmissionMetadataContact found in metadataContacts.');
+                }
+            }
+            $this->metadataContacts = $metadataContacts;
+            foreach ($this->metadataContacts as $metadataContact) {
+                $metadataContact->setDatasetSubmission($this);
+            }
+        } else {
+            throw new \Exception('metadataContacts must be either an array or a traversable object.');
+        }
+    }
+
+    /**
+     * Getter of metadataContacts.
+     *
+     * @access public
+     *
+     * @return \Doctrine\Common\Collections\Collection Collection containing PersonDatasetSubmissionMetadataContacts
+     *
+     */
+    public function getMetadataContacts()
+    {
+        return $this->metadataContacts;
     }
 
     /**
@@ -895,50 +1126,6 @@ class DatasetSubmission extends Entity
     public function getDatasetFileSize()
     {
         return $this->datasetFileSize;
-    }
-
-    /**
-     * Set the dataset file md5 hash.
-     *
-     * @param string $datasetFileMd5Hash The dataset file md5 hash.
-     *
-     * @return void
-     */
-    public function setDatasetFileMd5Hash($datasetFileMd5Hash)
-    {
-        $this->datasetFileMd5Hash = $datasetFileMd5Hash;
-    }
-
-    /**
-     * Set the dataset file md5 hash.
-     *
-     * @return string
-     */
-    public function getDatasetFileMd5Hash()
-    {
-        return $this->datasetFileMd5Hash;
-    }
-
-    /**
-     * Set the dataset file sha1 hash.
-     *
-     * @param string $datasetFileSha1Hash The dataset file sha1 hash.
-     *
-     * @return void
-     */
-    public function setDatasetFileSha1Hash($datasetFileSha1Hash)
-    {
-        $this->datasetFileSha1Hash = $datasetFileSha1Hash;
-    }
-
-    /**
-     * Get the dataset file sha1 hash.
-     *
-     * @return string
-     */
-    public function getDatasetFileSha1Hash()
-    {
-        return $this->datasetFileSha1Hash;
     }
 
     /**
@@ -1233,454 +1420,97 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * Set the Person responsible for the creation of the majority of the associated dataset.
+     * Set the dataset's reference date.
+     *
+     * @param \DateTime $referenceDate The dataset's reference date.
      *
      * @return void
      */
-    public function setMetadataContactResponsibleParty(Person $responsibleParty)
+    public function setReferenceDate(\DateTime $referenceDate)
     {
-        $this->metadataContactResponsibleParty = $responsibleParty;
+        $this->referenceDate = $referenceDate;
     }
 
     /**
-     * Get the Person responsible for the creation of the majority of the associated dataset.
+     * Get the dataset's reference date.
      *
-     * @return Person Who is the resposible party.
+     * @return \DateTime
      */
-    public function getMetadataContactResponsibleParty()
+    public function getReferenceDate()
     {
+        return $this->referenceDate;
     }
 
     /**
-     * Set
+     * Set reference date type
+     *
+     * @param string $referenceDateType The designated type of dataset reference.
+     *
+     * @see REFERENCE_DATE_TYPES class constant for possible values.
+     *
+     * @throws \InvalidArgumentException When $referenceDateType is not a valid value.
+     *
      * @return void
      */
-    public function setMetadataContactResponsiblyPartyRole()
+    public function setReferenceDateType($referenceDateType)
     {
+        if (!array_key_exists($referenceDateType, static::REFERENCE_DATE_TYPES)) {
+            throw new \InvalidArgumentException("$referenceDateType is not a valid value for DatasetSubmission::REFERENCE_DATE_TYPES");
+        }
     }
 
     /**
-     * Get
-     * @return
+     * Get the type of reference date associated with this submission.
+     *
+     * @return string
      */
-    public function getMetadataContactResponsiblyPartyRole()
+    public function getReferenceDateType()
     {
+        return $this->referenceDateType;
     }
 
     /**
-     * Set
+     * Sets the purpose.
+     *
+     * @param string $purpose The purpose of the dataset.
+     *
      * @return void
      */
-    public function setMetadataTitle()
+    public function setPurpose($purpose)
     {
+        $this->purpose = $purpose;
     }
 
     /**
-     * Get
-     * @return
+     * Gets the purpose.
+     *
+     * @return string
      */
-    public function getMetadataTitle()
+    public function getPurpose()
     {
+        return $this->purpose;
     }
 
     /**
-     * Set
+     * Sets the Supplemental Information - Data Parameters and Units.
+     *
+     * @param string $suppParams Supplimental data parameters and units.
+     *
      * @return void
      */
-    public function setMetadataShortTitle()
+    public function setSuppParams($suppParams)
     {
+        $this->suppParams = $suppParams;
     }
 
     /**
-     * Get
-     * @return
+     * Gets the Supplemental Information - Data Parameters and Units.
+     *
+     * @return string
      */
-    public function getMetadataShortTitle()
+    public function getSuppParams()
     {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataReferenceDate()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataReferenceDate()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataReferenceDateType()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataReferenceDateType()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataAbstract()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataAbstract()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataPurpose()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataPurpose()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataSupplementalInformationParameters()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataSupplementalInformationParameters()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataSupplementalInformationMethods()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataSupplementalInformationMethods()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataSupplementalInformationInstruments()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function setMetadataSupplementalInformationInstruments()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataSupplementalInformationScaleRate()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataSupplementalInformationScaleRate()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataSupplementalInformationErrorAnalysis()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataSupplementalInformationErrorAnalysis()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataSupplementalInformationProvenance()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataSupplementalInformationProvenance()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataThemeKeywords()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataThemeKeywords()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataPlaceKeywords()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataPlaceKeywords()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataTopicKeywords()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataTopicKeywords()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataGeometry()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataGeometry()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataExtentDescription()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataExtentDescription()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataBeginPosition()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataBeginPosition()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataEndPosition()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataEndPosition()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataDataFiletype()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataDataFiletype()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataFileCompressionType()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataFileCompressionType()
-    {
-    }
-
-    /**
-     * Set (set from upload/filer, not form!)
-     * @return void
-     */
-    public function setMetadataDataFileSize()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataDataFileSize()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataDistributionContact()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataDistributionContact()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataDistributionContactRole()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataDistributionContactRole()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataContact()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataContact()
-    {
-    }
-
-    /**
-     * Set
-     * @return void
-     */
-    public function setMetadataContactRole()
-    {
-    }
-
-    /**
-     * Get
-     * @return
-     */
-    public function getMetadataContactRole()
-    {
+        return $this->suppParams;
     }
 
     /**
@@ -1763,5 +1593,35 @@ class DatasetSubmission extends Entity
                 break;
         }
         $this->getDataset()->setAvailabilityStatus($availabilityStatus);
+    }
+
+    /**
+     * Gets the valid choices for reference date types.
+     *
+     * @return array
+     */
+    public function getReferenceDateTypeChoices()
+    {
+        return array_flip(
+            array_map(
+                function ($type) {
+                    return $type['name'];
+                },
+                static::REFERENCE_DATE_TYPES
+    }
+
+    /**
+     * Gets the valid choices for topic keywords
+     *
+     * @return array
+     */
+    public function getTopicKeywordChoices()
+    {
+        return array_flip(
+            array_map(
+                function ($keyword) {
+                    return $keyword['name'];
+                },
+                static::TOPIC_KEYWORD_CHOICES
     }
 }
