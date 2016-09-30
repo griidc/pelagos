@@ -19,39 +19,47 @@ $(function() {
 
     $("button").button();
     
-    $('[name="contactperson"]').select2({
-        placeholder: "[Please Select a Person]",
-        allowClear: true,
-        ajax: {
-            dataType: 'json',
-            data: function (params) {
-                if (params.term != undefined) {
-                    var query = {
-                        "lastName": params.term + '*'
-                    }
-                } else {
-                    var query = {}
-                }
-                return query;
-            },
-            url: Routing.generate("pelagos_api_people_get_collection",
-            {
-                "_properties" : "id,firstName,lastName,emailAddress",
-                "_orderBy" : "lastName,firstName,emailAddress"
-            }
-            ),
-            processResults: function (data) {
-                return {
-                    results: $.map(data, function (item) {
-                        return {
-                            text: item.lastName + ", " +  item.firstName + ", " + item.emailAddress,
-                            id: item.id
-                        }
-                    })
-                };
-            }
-        }
+    $("#ds-contact,#ds-metadata-contact").on('active', function() {
+        select2ContactPerson();
     });
+    
+    select2ContactPerson();
+    
+    function select2ContactPerson() {
+        $('.contactperson').select2({
+            placeholder: "[Please Select a Person]",
+            allowClear: true,
+            ajax: {
+                dataType: 'json',
+                data: function (params) {
+                    if (params.term != undefined) {
+                        var query = {
+                            "lastName": params.term + '*'
+                        }
+                    } else {
+                        var query = {}
+                    }
+                    return query;
+                },
+                url: Routing.generate("pelagos_api_people_get_collection",
+                {
+                    "_properties" : "id,firstName,lastName,emailAddress",
+                    "_orderBy" : "lastName,firstName,emailAddress"
+                }
+                ),
+                processResults: function (data) {
+                    return {
+                        results: $.map(data, function (item) {
+                            return {
+                                text: item.lastName + ", " +  item.firstName + ", " + item.emailAddress,
+                                id: item.id
+                            }
+                        })
+                    };
+                }
+            }
+        });
+    }
     
     $("#regForm").validate(
         {
@@ -64,8 +72,8 @@ $(function() {
             "divSpatial":"spatial",
             "divNonSpatial":"nonspatial",
             "divSpatialWizard":"spatwizbtn",
-            "gmlField":"BPL1",
-            "descField":"EX1",
+            "gmlField":"gmlhere",
+            "descField":"deschere",
             "spatialFunction":""
         }
     );
