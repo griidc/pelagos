@@ -4,7 +4,7 @@
         <tr>
             <td>
                 <label>Name</label>
-                <select id="metadatacontact" name="metadatacontact" required="required">
+                <select class="contactperson" id="metadatacontact" name="metadatacontact" required="required">
                     {% if metadatacontact|default %}
                     <option value="{{metadatacontact.Person.id}}">
                         {{metadatacontact.lastName}}, {{metadatacontact.firstName}}, {{metadatacontact.emailAddress}}
