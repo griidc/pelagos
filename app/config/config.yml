@@ -260,3 +260,9 @@ fos_elastica:
                         listener:
                             logger: true
                         finder: ~
+
+doctrine_migrations:
+    dir_name: "%kernel.root_dir%/DoctrineMigrations"
+    namespace: Pelagos\Migrations
+    table_name: migration_versions
+    name: Pelagos Migrations

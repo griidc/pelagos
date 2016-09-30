@@ -17,7 +17,11 @@ $(document).ready(function() {
             "datasetSubmissionHistory.modifier",
             "metadata",
             "metadata.creator",
-            "metadata.modifier"
+            "metadata.modifier",
+            "datasetPublications",
+            "datasetPublications.creator",
+            "datasetPublications.modifier",
+            "datasetPublications.publication"
         ];
         $.ajax({
             url: Routing.generate("pelagos_api_datasets_get_collection"),

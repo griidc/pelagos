@@ -38,6 +38,7 @@ class AppKernel extends Kernel
             new \Phobetor\RabbitMqSupervisorBundle\RabbitMqSupervisorBundle(),
             new \HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
             new \FOS\ElasticaBundle\FOSElasticaBundle(),
+            new \Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new \Pelagos\Bundle\LegacyBundle\PelagosLegacyBundle(),
             new \Pelagos\Bundle\AppBundle\PelagosAppBundle(),
         );
@@ -92,5 +93,9 @@ class AppKernel extends Kernel
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load($this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml');
+        $localConfigFile = $this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.local.yml';
+        if (file_exists($localConfigFile)) {
+            $loader->load($localConfigFile);
+        }
     }
 }
