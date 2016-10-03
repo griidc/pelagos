@@ -248,7 +248,7 @@ class DatasetSubmission extends Entity
      *
      * The array keys are the values to be set in self::temporalExtent.
      */
-    const REFERENCE_DATE_TYPES = [
+    const TEMPORAL_EXTENT_DESCRIPTIONS = [
         'groundcondition' => [
             'name' => 'Ground Condition',
             'description' => 'Data represent the actual condition of things on the ground during the time period specified and may also be used to characterize data generated from a sample collection in the field when samples are subsequently analyzed in a laboratory.'
@@ -703,6 +703,64 @@ class DatasetSubmission extends Entity
     protected $purpose;
 
     /**
+     * Supplimental information - parameters.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=false)
+     *
+     * @Assert\NotBlank(
+     *     message="The dataset submission requires including data parameters and units."
+     * )
+     */
+    protected $suppParams;
+
+    /**
+     * Supplimental information - methods.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $suppMethods;
+
+    /**
+     * Supplimental information - instruments.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $suppInstruments;
+
+    /**
+     * Supplimental information - sample scales and rates.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $suppSampScalesRates;
+
+    /**
+     * Supplimental information - error analysis.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $suppErrorAnalysis;
+
+    /**
+     * Supplimental information - provenance and historical references.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $suppProvenance;
+
+    /**
      * Theme keywords describing this dataset.
      *
      * @var string $themeKeywords Freetext theme keywords describing dataset.
@@ -714,7 +772,6 @@ class DatasetSubmission extends Entity
      * )
      */
     protected $themeKeywords;
-
 
     /**
      * Place keywords describing this dataset.
@@ -737,6 +794,44 @@ class DatasetSubmission extends Entity
      * )
      */
     protected $topicKeywords;
+
+    /**
+     * Spatial extent as WKT.
+     *
+     * @var string $spatialExtent Geographic footprint as well-known text.
+     *
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $spatialExtent;
+
+    /**
+     * Time period description.
+     *
+     * @var string $timePeriodDesc Description of time period, either 'ground condition' or 'modeled period'.
+     *
+     * @see TEMPORAL_EXTENT_DESCRIPTIONS class constant for valid values.
+     *
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $timePeriodDesc;
+
+    /**
+     * The temporal beginning position (date).
+     *
+     * @var \DateTime
+     *
+     * @ORM\Column(type="date", nullable=true)
+     */
+    protected $temporalExtentBeginPosition;
+
+    /**
+     * The temporal ending position (date).
+     *
+     * @var \DateTime
+     *
+     * @ORM\Column(type="date", nullable=true)
+     */
+    protected $temporalExtentEndPosition;
 
     /**
      * Set the Dataset this Dataset Submission is attached to.
@@ -859,7 +954,7 @@ class DatasetSubmission extends Entity
     /**
      * Set the author(s) for this Dataset Submission.
      *
-     * @param String $authors The author(s) for this Dataset Submission.
+     * @param string $authors The author(s) for this Dataset Submission.
      *
      * @return void
      */
@@ -913,7 +1008,6 @@ class DatasetSubmission extends Entity
      * @access public
      *
      * @return \Doctrine\Common\Collections\Collection Collection containing PersonDatasetSubmissionDatasetContacts
-     *
      */
     public function getDatasetContacts()
     {
@@ -955,7 +1049,6 @@ class DatasetSubmission extends Entity
      * @access public
      *
      * @return \Doctrine\Common\Collections\Collection Collection containing PersonDatasetSubmissionMetadataContacts
-     *
      */
     public function getMetadataContacts()
     {
@@ -1442,7 +1535,7 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * Set reference date type
+     * Set reference date type.
      *
      * @param string $referenceDateType The designated type of dataset reference.
      *
@@ -1511,6 +1604,284 @@ class DatasetSubmission extends Entity
     public function getSuppParams()
     {
         return $this->suppParams;
+    }
+
+    /**
+     * Sets the Supplemental Information - Methods.
+     *
+     * @param string $suppMethods Supplimental data methods.
+     *
+     * @return void
+     */
+    public function setSuppMethods($suppMethods)
+    {
+        $this->suppMethods = $suppMethods;
+    }
+
+    /**
+     * Gets the Supplemental Information - Methods.
+     *
+     * @return string
+     */
+    public function getSuppMethods()
+    {
+        return $this->suppMethods;
+    }
+
+    /**
+     * Sets the Supplemental Information - Instruments.
+     *
+     * @param string $suppInstruments Supplimental data - instruments.
+     *
+     * @return void
+     */
+    public function setSuppInstruments($suppInstruments)
+    {
+        $this->suppInstruments = $suppInstruments;
+    }
+
+    /**
+     * Gets the Supplemental Information - Instruments.
+     *
+     * @return string
+     */
+    public function getSuppInstruments()
+    {
+        return $this->suppInstruments;
+    }
+
+    /**
+     * Sets the Supplemental Information - sampling scales and rates.
+     *
+     * @param string $suppSampScalesRates Supplimental data - sampling scales and rates.
+     *
+     * @return void
+     */
+    public function setSuppSampScalesRates($suppSampScalesRates)
+    {
+        $this->suppSampScalesRates = $suppSampScalesRates;
+    }
+
+    /**
+     * Gets the Supplemental Information - sampling scales and rates.
+     *
+     * @return string
+     */
+    public function getSuppSampScalesRates()
+    {
+        return $this->suppSampScalesRates;
+    }
+
+    /**
+     * Sets the Supplemental Information - error analysis.
+     *
+     * @param string $suppErrorAnalysis Supplimental data - error analysis.
+     *
+     * @return void
+     */
+    public function setSuppErrorAnalysis($suppErrorAnalysis)
+    {
+        $this->suppErrorAnalysis = $suppErrorAnalysis;
+    }
+
+    /**
+     * Gets the Supplemental Information - error analysis.
+     *
+     * @return string
+     */
+    public function getSuppErrorAnalysis()
+    {
+        return $this->suppErrorAnalysis;
+    }
+
+    /**
+     * Sets the Supplemental Information - provenance and historical references.
+     *
+     * @param string $suppProvenance Supplimental data - provenance and historical references.
+     *
+     * @return void
+     */
+    public function setSuppProvenance($suppProvenance)
+    {
+        $this->suppProvenance = $suppProvenance;
+    }
+
+    /**
+     * Gets the Supplemental Information - provenance and historical references.
+     *
+     * @return string
+     */
+    public function getSuppProvenance()
+    {
+        return $this->suppProvenance;
+    }
+
+    /**
+     * Setter for theme keywords.
+     *
+     * @param string $themeKeywords Array of keywords.
+     *
+     * @return void
+     */
+    public function setThemeKeywords($themeKeywords)
+    {
+        $this->themeKeywords = $themeKeywords;
+    }
+
+    /**
+     * Getter for theme keywords.
+     *
+     * @return string
+     */
+    public function getThemeKeywords()
+    {
+        return $this->themeKeywords;
+    }
+
+    /**
+     * Setter for place keywords.
+     *
+     * @param string $placeKeywords Array of keywords.
+     *
+     * @return void
+     */
+    public function setPlaceKeywords($placeKeywords)
+    {
+        $this->placeKeywords = $placeKeywords;
+    }
+
+    /**
+     * Getter for place keywords.
+     *
+     * @return string
+     */
+    public function getPlaceKeywords()
+    {
+        return $this->placeKeywords;
+    }
+
+    /**
+     * Setter for topic keywords.
+     *
+     * @param string $topicKeywords Array of keywords.
+     *
+     * @see TOPIC_KEYWORD_CHOICES
+     *
+     * @throws \InvalidArgumentException When $topicKeywords contains invalid value.
+     *
+     * @return void
+     */
+    public function setTopicKeywords($topicKeywords)
+    {
+        foreach ($topicKeywords as $keyword) {
+            if (!array_key_exists($keyword, static::TOPIC_KEYWORD_CHOICES)) {
+                throw new \InvalidArgumentException("$keyword is not a valid value for DatasetSubmission::TOPIC_KEYWORD_CHOICES");
+            }
+        }
+        $this->topicKeywords = $topicKeywords;
+    }
+
+    /**
+     * Getter for topic keywords.
+     *
+     * @return string
+     */
+    public function getTopicKeywords()
+    {
+        return $this->topicKeywords;
+    }
+
+    /**
+     * Setter for geographic spatial extent.
+     *
+     * @param string $spatialExtent Well-Known text of dataset's geometry.
+     *
+     * @return void
+     */
+    public function setSpatialExtent($spatialExtent)
+    {
+        $this->spatialExtent = $spatialExtent;
+    }
+
+    /**
+     * Getter for geographic spatial extent.
+     *
+     * @return string As WKT.
+     */
+    public function getSpatialExtent()
+    {
+        return $this->spatialExtent;
+    }
+
+    /**
+     * Setter for dataset's time period description.
+     *
+     * @param string $timePeriodDesc Description of temporal extent, either 'ground condition' or 'modeled period'.
+     *
+     * @throws \InvalidArgumentException If $timePeriodDesc is not in static::TEMPORAL_EXTENT_DESCRIPTIONS.
+     *
+     * @return void
+     */
+    public function setTimePeriodDesc($timePeriodDesc)
+    {
+        if (!array_key_exists($timePeriodDesc, static::TEMPORAL_EXTENT_DESCRIPTIONS)) {
+            throw new \InvalidArgumentException("$timePeriodDesc is not a valid value for DatasetSubmission::TEMPORAL_EXTENT_DESCRIPTIONS");
+        }
+        $this->timePeriodDesc = $timePeriodDesc;
+    }
+
+    /**
+     * Getter for dataset's time period description.
+     *
+     * @return string
+     */
+    public function getTimePeriodDesc()
+    {
+        return $this->timePeriodDesc;
+    }
+
+    /**
+     * Set the dataset's temporal extent begin position.
+     *
+     * @param \DateTime $temporalExtentBeginPosition The temporal extent begin position.
+     *
+     * @return void
+     */
+    public function setTemporalExtentBeginPosition(\DateTime $temporalExtentBeginPosition)
+    {
+        $this->temporalExtentBeginPosition = $temporalExtentBeginPosition;
+    }
+
+    /**
+     * Get the dataset's temporal extent begin position.
+     *
+     * @return \DateTime
+     */
+    public function getTemporalExtentBeginPosition()
+    {
+        return $this->temporalExtentBeginPosition;
+    }
+
+    /**
+     * Set the dataset's temporal extent end position.
+     *
+     * @param \DateTime $temporalExtentEndPosition The temporal extent end position.
+     *
+     * @return void
+     */
+    public function setTemporalExtentEndPosition(\DateTime $temporalExtentEndPosition)
+    {
+        $this->temporalExtentEndPosition = $temporalExtentEndPosition;
+    }
+
+    /**
+     * Get the dataset's temporal extent end position.
+     *
+     * @return \DateTime
+     */
+    public function getTemporalExtentEndPosition()
+    {
+        return $this->temporalExtentEndPosition;
     }
 
     /**
@@ -1608,10 +1979,12 @@ class DatasetSubmission extends Entity
                     return $type['name'];
                 },
                 static::REFERENCE_DATE_TYPES
+            )
+        );
     }
 
     /**
-     * Gets the valid choices for topic keywords
+     * Gets the valid choices for topic keywords.
      *
      * @return array
      */
@@ -1623,5 +1996,7 @@ class DatasetSubmission extends Entity
                     return $keyword['name'];
                 },
                 static::TOPIC_KEYWORD_CHOICES
+            )
+        );
     }
 }
