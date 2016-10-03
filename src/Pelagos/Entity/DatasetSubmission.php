@@ -251,11 +251,15 @@ class DatasetSubmission extends Entity
     const TEMPORAL_EXTENT_DESCRIPTIONS = [
         'groundcondition' => [
             'name' => 'Ground Condition',
-            'description' => 'Data represent the actual condition of things on the ground during the time period specified and may also be used to characterize data generated from a sample collection in the field when samples are subsequently analyzed in a laboratory.'
+            'description' => 'Data represent the actual condition of things on the ground during ' .
+                             'the time period specified and may also be used to characterize data ' .
+                             'generated from a sample collection in the field when samples are subsequently ' .
+                             'analyzed in a laboratory.'
         ],
         'modeledperiod' => [
             'name' => 'Modeled Period',
-            'description' => 'Data represents simulated conditions during the time period, and may be used to characterize data generated using a computational model.'
+            'description' => 'Data represents simulated conditions during the time period, ' .
+                             'and may be used to characterize data generated using a computational model.'
         ],
         'both' => [
             'name' => 'Ground Condition and Modeled Period',
@@ -285,7 +289,7 @@ class DatasetSubmission extends Entity
             'name' => 'Economy',
         ],
         'elevation' => [
-            'name' => '',
+            'name' => 'Elevation',
         ],
         'environment' => [
             'name' => 'Environment',
@@ -1719,11 +1723,11 @@ class DatasetSubmission extends Entity
     /**
      * Setter for theme keywords.
      *
-     * @param string $themeKeywords Array of keywords.
+     * @param array $themeKeywords Array of keywords.
      *
      * @return void
      */
-    public function setThemeKeywords($themeKeywords)
+    public function setThemeKeywords(array $themeKeywords)
     {
         $this->themeKeywords = $themeKeywords;
     }
@@ -1731,7 +1735,7 @@ class DatasetSubmission extends Entity
     /**
      * Getter for theme keywords.
      *
-     * @return string
+     * @return array
      */
     public function getThemeKeywords()
     {
@@ -1741,11 +1745,11 @@ class DatasetSubmission extends Entity
     /**
      * Setter for place keywords.
      *
-     * @param string $placeKeywords Array of keywords.
+     * @param array $placeKeywords Array of keywords.
      *
      * @return void
      */
-    public function setPlaceKeywords($placeKeywords)
+    public function setPlaceKeywords(array $placeKeywords)
     {
         $this->placeKeywords = $placeKeywords;
     }
@@ -1753,7 +1757,7 @@ class DatasetSubmission extends Entity
     /**
      * Getter for place keywords.
      *
-     * @return string
+     * @return array
      */
     public function getPlaceKeywords()
     {
@@ -1763,7 +1767,7 @@ class DatasetSubmission extends Entity
     /**
      * Setter for topic keywords.
      *
-     * @param string $topicKeywords Array of keywords.
+     * @param array $topicKeywords Array of keywords.
      *
      * @see TOPIC_KEYWORD_CHOICES
      *
@@ -1771,7 +1775,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setTopicKeywords($topicKeywords)
+    public function setTopicKeywords(array $topicKeywords)
     {
         foreach ($topicKeywords as $keyword) {
             if (!array_key_exists($keyword, static::TOPIC_KEYWORD_CHOICES)) {
@@ -1784,7 +1788,7 @@ class DatasetSubmission extends Entity
     /**
      * Getter for topic keywords.
      *
-     * @return string
+     * @return array
      */
     public function getTopicKeywords()
     {
