@@ -14,43 +14,14 @@
     }}
 
     {{
-        add_css (
-            [
-                '//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.1/themes/default/style.min.css',
-            ]
-        )
-    }}
-
-    {% stylesheets  '@PelagosAppBundle/Resources/public/css/dtree.css' %}
-        {{ add_css(asset_url) }}
-    {% endstylesheets  %}
-
-    {% stylesheets  '@PelagosAppBundle/Resources/public/css/registry.css' %}
-        {{ add_css(asset_url) }}
-    {% endstylesheets  %}
-
-    {{
         add_js(
             [
                 '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',
                 '//cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js',
-                '//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.1/jstree.min.js',
                 '//cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js',
             ]
         )
     }}
-
-    {% javascripts '@PelagosAppBundle/Resources/public/js/dtree.js' %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
-
-    {% stylesheets '@PelagosAppBundle/Resources/public/css/fileBrowser.css' %}
-        {{ add_css(asset_url) }}
-    {% endstylesheets  %}
-
-    {% javascripts '@PelagosAppBundle/Resources/public/js/fileBrowser.js' %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
 
     {% javascripts '@PelagosAppBundle/Resources/public/js/registry.js' %}
         {{ add_js(asset_url) }}
@@ -95,17 +66,7 @@
     </div>
 {% endif %}
 
+{% include 'PelagosAppBundle:DatasetSubmission:form.html.twig' %}
 
-<table border="0" style="height:100%;width:100%;">
-    <tr>
-        <td width="60%" style="vertical-align: top; background: transparent;">
-        {% include 'PelagosAppBundle:DatasetSubmission:form.html.twig' %}
-        </td>
-        <td width="*">&nbsp;&nbsp;</td>
-        <td width="40%" style="vertical-align: top; background: transparent;">
-            {% include 'PelagosAppBundle:DatasetSubmission:tree.html.twig' %}
-        </td>
-    </tr>
-</table>
 <div class="modal" id="spinner"></div>
 {% endblock %}
