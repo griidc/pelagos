@@ -219,8 +219,8 @@ class DatasetSubmissionController extends UIController
                 'found'  => $found,
                 'udi'  => $udi,
                 'datasetSubmissions' => $datasetSubmissions,
-                //'researchGroups' => $researchGroups,
-                //'researchers' => $researchers,
+                'researchGroups' => $researchGroups,
+                'researchers' => $researchers,
                 'loggedInPerson' => $loggedInPerson,
                 'dif' => $dif,
             )
