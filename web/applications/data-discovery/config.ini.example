@@ -1,7 +1,0 @@
-[DataDiscovery]
-registeredOrderBy = "submittimestamp DESC"
-identifiedOrderBy = "last_edit DESC"
-treePaneCollapsed = 0
-alternateDownloadSite = 0
-alternateDownloadSiteServer = "poseidon-cs.tamu.edu"
-downloadDir = "/san/home/http/download"
