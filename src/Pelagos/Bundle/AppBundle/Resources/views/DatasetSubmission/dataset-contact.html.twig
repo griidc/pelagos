@@ -4,7 +4,7 @@
         <tr>
             <td>
                 <label for="contactperson">Name</label>
-                <select class="contactperson" id="contactperson" name="contactperson" required="required">
+                <select id="contactperson" name="contactperson" required="required">
                     {% if contactperson|default %}
                     <option value="{{contact-person.Person.id}}">
                         {{contactperson.lastName}}, {{contactperson.firstName}}, {{contactperson.emailAddress}}

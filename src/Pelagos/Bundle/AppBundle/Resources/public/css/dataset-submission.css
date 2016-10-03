@@ -1,12 +1,3 @@
-.toolbarbutton {
-    padding: 4px;
-    font-size: 12px;
-}
-
-#helpinfo .ui-button{
-    display:block;
-}
-
 .emRequired::before
 {
     font-weight: bold; color:#FF0000;
