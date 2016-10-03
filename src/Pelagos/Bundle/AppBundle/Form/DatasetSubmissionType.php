@@ -8,6 +8,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 
 /**
  * A form type for creating a Dataset Submission form.
@@ -260,6 +262,28 @@ class DatasetSubmissionType extends AbstractType
                 'html5' => false,
                 'format' => 'yyyy-MM-dd',
                 'required' => true,
+            ))
+            ->add('datasetContacts', Type\CollectionType::class, array(
+                'label' => 'Dataset Contacts',
+                'entry_type' => PersonDatasetSubmissionType::class,
+                'entry_options' => array(
+                    'data_class' => PersonDatasetSubmissionDatasetContact::class,
+                ),
+                'allow_add' => true,
+                'allow_delete' => true,
+                'delete_empty' => true,
+                'required' => true,
+            ))
+            ->add('metadataContacts', Type\CollectionType::class, array(
+                'label' => 'Metadata Contacts',
+                'entry_type' => PersonDatasetSubmissionType::class,
+                'entry_options' => array(
+                    'data_class' => PersonDatasetSubmissionMetadataContact::class,
+                ),
+                'allow_add' => true,
+                'allow_delete' => true,
+                'delete_empty' => true,
+                'required' => true,
             ));
     }
 
@@ -273,7 +297,7 @@ class DatasetSubmissionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Pelagos\Entity\DatasetSubmission',
+            'data_class' => DatasetSubmission::class,
             'allow_extra_fields' => true,
         ));
     }
