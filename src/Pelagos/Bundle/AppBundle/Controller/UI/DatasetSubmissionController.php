@@ -48,8 +48,19 @@ class DatasetSubmissionController extends UIController
      */
     public function defaultAction(Request $request)
     {
-        $difId = $request->query->get('uid');
         $udi = $request->query->get('regid');
+        
+        if (isset($udi)) {
+            return $this->processUdi($udi);
+        } else {
+            return $this->render(
+                'PelagosAppBundle:DatasetSubmission:index.html.twig'
+            );
+        }
+    }    
+        
+    protected function processUdi($udi)
+    {    
 
         $datasetSubmission = null;
         $datasetId = null;
@@ -92,40 +103,6 @@ class DatasetSubmissionController extends UIController
                     );
                 } else {
                     $buttonLabel = 'Update';
-                }
-                $found = true;
-            }
-        }
-
-        if ($difId != null) {
-            $dif = $this->entityHandler->get(DIF::class, $difId);
-
-            if ($dif instanceof DIF) {
-                $dataset = $dif->getDataset();
-
-                $datasetId = $dataset->getId();
-
-                $datasetSubmission = $dataset->getDatasetSubmission();
-                if ($datasetSubmission instanceof DatasetSubmission == false) {
-                    $datasetSubmission = new DatasetSubmission;
-                    $datasetSubmission->setTitle($dif->getTitle());
-                    $datasetSubmission->setAbstract($dif->getAbstract());
-                    $datasetSubmission->setPointOfContactName(
-                        $dif
-                        ->getPrimaryPointOfContact()
-                        ->getLastName()
-                        . ', ' .
-                        $dif
-                        ->getPrimaryPointOfContact()
-                        ->getFirstName()
-                    );
-                    $datasetSubmission->setPointOfContactEmail(
-                        $dif
-                        ->getPrimaryPointOfContact()
-                        ->getEmailAddress()
-                    );
-                } else {
-                    $udi = $dataset->getUdi();
                 }
                 $found = true;
             }
@@ -212,7 +189,7 @@ class DatasetSubmissionController extends UIController
             ->getAll(Person::class);
 
         return $this->render(
-            'PelagosAppBundle:DatasetSubmission:index.html.twig',
+            'PelagosAppBundle:DatasetSubmission:datasetSubmission.html.twig',
             array(
                 'form' => $form->createView(),
                 'datasetSubmission' => $datasetSubmission,

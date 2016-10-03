@@ -8,11 +8,10 @@
                 'ui.dialog',
                 'ui.tabs',
                 'ui.widget',
-                'ui.autocomplete'
             ]
         )
     }}
-    
+
     {{
         add_css (
             [
@@ -41,7 +40,7 @@
             ]
         )
     }}
-    
+
     {% stylesheets '@PelagosAppBundle/Resources/public/css/fileBrowser.css' %}
         {{ add_css(asset_url) }}
     {% endstylesheets  %}
@@ -66,9 +65,10 @@
 
 {% endblock %}
 
+
 {% block body %}
 
-<h1>Dataset Submission Form</h1>
+<h1>Dataset Submission</h1>
 
 {% if found and dif is not null and dif.status == constant('Pelagos\\Entity\\DIF::STATUS_SUBMITTED') %}
     <div class="messages warning">
@@ -92,11 +92,8 @@
     </div>
 {% endif %}
 
-{% if datasetSubmission %}
-    {% include 'PelagosAppBundle:DatasetSubmission:form.html.twig' %}
-{% else %}
-    {% include 'PelagosAppBundle:DatasetSubmission:submission-form.html.twig' %}
-{% endif %}
+
+{% include 'PelagosAppBundle:DatasetSubmission:submission-form.html.twig' %}
 
 <div class="modal" id="spinner"></div>
 {% endblock %}
