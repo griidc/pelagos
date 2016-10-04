@@ -5,6 +5,8 @@ namespace Pelagos\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Dataset Submission Entity class.
@@ -366,7 +368,7 @@ class DatasetSubmission extends Entity
      * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
-     *     message="Title is required"
+     *     message="The dataset submission title is required."
      * )
      */
     protected $title;
@@ -379,7 +381,7 @@ class DatasetSubmission extends Entity
      * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
-     *     message="Sort Title is required"
+     *     message="The dataset submission short title is required."
      * )
      */
     protected $shortTitle;
@@ -394,7 +396,7 @@ class DatasetSubmission extends Entity
      * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
-     *     message="Abstract is required"
+     *     message="The dataset submission abstract is required."
      * )
      */
     protected $abstract;
@@ -409,15 +411,15 @@ class DatasetSubmission extends Entity
      * @ORM\Column(type="text")
      *
      * @Assert\NotBlank(
-     *     message="At least one author is required"
+     *     message="The dataset submission author list is required."
      * )
      */
     protected $authors;
 
     /**
-     * The Point of Contact Name for this Dataset Submission.
+     * The Point of Contact for this Dataset Submission.
      *
-     * @var string
+     * @var Collection
      *
      * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionDatasetContact", mappedBy="datasetSubmission")
      *
@@ -428,9 +430,9 @@ class DatasetSubmission extends Entity
     protected $datasetContacts;
 
     /**
-     * The Point of Contact Name for the metadata associated with this submission.
+     * The Point of Contact for the metadata associated with this submission.
      *
-     * @var string
+     * @var Collection
      *
      * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionMetadataContact", mappedBy="datasetSubmission")
      *
@@ -673,7 +675,7 @@ class DatasetSubmission extends Entity
      * @ORM\Column(type="date", nullable=false)
      *
      * @Assert\NotBlank(
-     *     message="The dataset reference date is required."
+     *     message="The dataset submission reference date field is required."
      * )
      */
     protected $referenceDate;
@@ -683,12 +685,12 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="date", nullable=false)
+     * @ORM\Column(type="text", nullable=false)
      *
      * @see REFERENCE_DATE_CHOICES class constant for valid values.
      *
      * @Assert\NotBlank(
-     *     message="The dataset reference date is required."
+     *     message="The dataset submission reference date type field is required."
      * )
      */
     protected $referenceDateType;
@@ -701,26 +703,26 @@ class DatasetSubmission extends Entity
      * @ORM\Column(type="text", nullable=false)
      *
      * @Assert\NotBlank(
-     *     message="The dataset submission requires a purpose."
+     *     message="The dataset submission purpose field is required."
      * )
      */
     protected $purpose;
 
     /**
-     * Supplimental information - parameters.
+     * Supplemental information - parameters.
      *
      * @var string
      *
      * @ORM\Column(type="text", nullable=false)
      *
      * @Assert\NotBlank(
-     *     message="The dataset submission requires including data parameters and units."
+     *     message="The dataset submission data parameters/units field is required."
      * )
      */
     protected $suppParams;
 
     /**
-     * Supplimental information - methods.
+     * Supplemental information - methods.
      *
      * @var string
      *
@@ -729,7 +731,7 @@ class DatasetSubmission extends Entity
     protected $suppMethods;
 
     /**
-     * Supplimental information - instruments.
+     * Supplemental information - instruments.
      *
      * @var string
      *
@@ -738,7 +740,7 @@ class DatasetSubmission extends Entity
     protected $suppInstruments;
 
     /**
-     * Supplimental information - sample scales and rates.
+     * Supplemental information - sample scales and rates.
      *
      * @var string
      *
@@ -747,7 +749,7 @@ class DatasetSubmission extends Entity
     protected $suppSampScalesRates;
 
     /**
-     * Supplimental information - error analysis.
+     * Supplemental information - error analysis.
      *
      * @var string
      *
@@ -756,7 +758,7 @@ class DatasetSubmission extends Entity
     protected $suppErrorAnalysis;
 
     /**
-     * Supplimental information - provenance and historical references.
+     * Supplemental information - provenance and historical references.
      *
      * @var string
      *
@@ -772,7 +774,7 @@ class DatasetSubmission extends Entity
      * @ORM\Column(type="text_array", nullable=false)
      *
      * @Assert\NotBlank(
-     *     message="The dataset submission at least one theme keyword."
+     *     message="The dataset submission keyword(s) field is required."
      * )
      */
     protected $themeKeywords;
@@ -794,7 +796,7 @@ class DatasetSubmission extends Entity
      * @ORM\Column(type="text_array", nullable=false)
      *
      * @Assert\NotBlank(
-     *     message="The dataset submission requires selection of at least one topic keyword."
+     *     message="The dataset submission topic keyword(s) field is required."
      * )
      */
     protected $topicKeywords;
@@ -836,6 +838,17 @@ class DatasetSubmission extends Entity
      * @ORM\Column(type="date", nullable=true)
      */
     protected $temporalExtentEndPosition;
+
+    /**
+     * Constructor.
+     *
+     * Initializes collections to empty collections.
+     */
+    public function __construct()
+    {
+        $this->datasetContacts = new ArrayCollection;
+        $this->metadataContacts = new ArrayCollection;
+    }
 
     /**
      * Set the Dataset this Dataset Submission is attached to.
@@ -994,7 +1007,7 @@ class DatasetSubmission extends Entity
         if (is_array($datasetContacts) || $datasetContacts instanceof \Traversable) {
             foreach ($datasetContacts as $datasetContact) {
                 if (!$datasetContact instanceof PersonDatasetSubmissionDatasetContact) {
-                    throw new \Exception('Non-PersonDatasetSubmissionDatasetContact found in datasetContacts.');
+                    throw new \InvalidArgumentException('Non-PersonDatasetSubmissionDatasetContact found in datasetContacts.');
                 }
             }
             $this->datasetContacts = $datasetContacts;
@@ -1002,7 +1015,7 @@ class DatasetSubmission extends Entity
                 $datasetContact->setDatasetSubmission($this);
             }
         } else {
-            throw new \Exception('datasetContacts must be either an array or a traversable object.');
+            throw new \InvalidArgumentException('datasetContacts must be either an array or a traversable object.');
         }
     }
 
@@ -1591,7 +1604,7 @@ class DatasetSubmission extends Entity
     /**
      * Sets the Supplemental Information - Data Parameters and Units.
      *
-     * @param string $suppParams Supplimental data parameters and units.
+     * @param string $suppParams Supplemental data parameters and units.
      *
      * @return void
      */
@@ -1613,7 +1626,7 @@ class DatasetSubmission extends Entity
     /**
      * Sets the Supplemental Information - Methods.
      *
-     * @param string $suppMethods Supplimental data methods.
+     * @param string $suppMethods Supplemental data methods.
      *
      * @return void
      */
@@ -1635,7 +1648,7 @@ class DatasetSubmission extends Entity
     /**
      * Sets the Supplemental Information - Instruments.
      *
-     * @param string $suppInstruments Supplimental data - instruments.
+     * @param string $suppInstruments Supplemental data - instruments.
      *
      * @return void
      */
@@ -1657,7 +1670,7 @@ class DatasetSubmission extends Entity
     /**
      * Sets the Supplemental Information - sampling scales and rates.
      *
-     * @param string $suppSampScalesRates Supplimental data - sampling scales and rates.
+     * @param string $suppSampScalesRates Supplemental data - sampling scales and rates.
      *
      * @return void
      */
@@ -1679,7 +1692,7 @@ class DatasetSubmission extends Entity
     /**
      * Sets the Supplemental Information - error analysis.
      *
-     * @param string $suppErrorAnalysis Supplimental data - error analysis.
+     * @param string $suppErrorAnalysis Supplemental data - error analysis.
      *
      * @return void
      */
@@ -1701,7 +1714,7 @@ class DatasetSubmission extends Entity
     /**
      * Sets the Supplemental Information - provenance and historical references.
      *
-     * @param string $suppProvenance Supplimental data - provenance and historical references.
+     * @param string $suppProvenance Supplemental data - provenance and historical references.
      *
      * @return void
      */
