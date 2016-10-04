@@ -365,7 +365,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission title is required."
@@ -378,7 +378,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission short title is required."
@@ -393,7 +393,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission abstract is required."
@@ -408,7 +408,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission author list is required."
@@ -451,7 +451,7 @@ class DatasetSubmission extends Entity
      *
      * @see RESTRICTIONS class constant for valid values.
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $restrictions = self::RESTRICTION_NONE;
 
@@ -685,7 +685,7 @@ class DatasetSubmission extends Entity
      *
      * @see METADATA_STATUSES class constant for valid values.
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $metadataStatus = self::METADATA_STATUS_NONE;
 
@@ -694,7 +694,7 @@ class DatasetSubmission extends Entity
      *
      * @var \DateTime
      *
-     * @ORM\Column(type="date", nullable=false)
+     * @ORM\Column(type="date", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission reference date field is required."
@@ -707,7 +707,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text", nullable=false)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @see REFERENCE_DATE_CHOICES class constant for valid values.
      *
@@ -722,7 +722,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text", nullable=false)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission purpose field is required."
@@ -735,7 +735,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text", nullable=false)
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission data parameters/units field is required."
@@ -793,7 +793,7 @@ class DatasetSubmission extends Entity
      *
      * @var string $themeKeywords Freetext theme keywords describing dataset.
      *
-     * @ORM\Column(type="text_array", nullable=false)
+     * @ORM\Column(type="text_array", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission keyword(s) field is required."
@@ -815,7 +815,7 @@ class DatasetSubmission extends Entity
      *
      * @var string $topicKeywords Keywords describing dataset from NOAA list.
      *
-     * @ORM\Column(type="text_array", nullable=false)
+     * @ORM\Column(type="text_array", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission topic keyword(s) field is required."
