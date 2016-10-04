@@ -421,7 +421,7 @@ class DatasetSubmission extends Entity
      *
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionDatasetContact", mappedBy="datasetSubmission")
+     * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionDatasetContact", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
      *
      * @Assert\NotBlank(
      *     message="Dataset contact person required."
@@ -434,7 +434,7 @@ class DatasetSubmission extends Entity
      *
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionMetadataContact", mappedBy="datasetSubmission")
+     * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionMetadataContact", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
      *
      * @Assert\NotBlank(
      *     message="Metadata contact person required."
@@ -1048,7 +1048,7 @@ class DatasetSubmission extends Entity
         if (!$datasetContact instanceof PersonDatasetSubmissionDatasetContact) {
             throw new \InvalidArgumentException('Non-PersonDatasetSubmissionDatasetContact found.');
         }
-        $this->datasetContacts->remove($datasetContact);
+        $this->datasetContacts->removeElement($datasetContact);
     }
 
     /**
@@ -1099,7 +1099,7 @@ class DatasetSubmission extends Entity
         if (!$metadataContact instanceof PersonDatasetSubmissionMetadataContact) {
             throw new \InvalidArgumentException('Non-PersonDatasetSubmissionMetadataContact found.');
         }
-        $this->metadataContacts->remove($metadataContact);
+        $this->metadataContacts->removeElement($metadataContact);
     }
 
     /**
