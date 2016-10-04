@@ -6,6 +6,10 @@ pelagos_admin:
     path:     /admin
     defaults: { _controller: PelagosAppBundle:Default:admin }
 
+pelagos_dataset_summary:
+    path:     /dataset-summary
+    defaults: { _controller: PelagosAppBundle:Default:datasetSummary }
+
 pelagos_ui:
     resource: "@PelagosAppBundle/Resources/config/routing_ui.yml"
 

@@ -1,0 +1,37 @@
+{% extends "PelagosAppBundle::layout.html.twig" %}
+
+{% block head %}
+    {% javascripts
+        '@PelagosAppBundle/Resources/public/js/dataset-summary.js'
+        '@FOSJsRoutingBundle/Resources/public/js/router.js'
+    %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
+{% endblock %}
+
+{% block body %}
+    {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
+        <div style="display:table; width:100%; height:100%;">
+            <div style="display:table-row;">
+                <div style="display:table-cell; text-align:center;">
+                    UDI: <input id="udi" type="text">
+                    <button id="view-dataset-summary">View Summary</button>
+                    <button id="download-dataset-summary" disabled>Download Summary</button>
+                    <button id="delete-dataset" disabled>Delete Dataset</button>
+                </div>
+            </div>
+            <div style="display:table-row;">
+                <div style="display:table-cell; height:100%; padding-top:10px;">
+                    <textarea id="summary-display" style="width:100%; height:100%;"></textarea>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="messages error">
+            <h2 class="element-invisible">Error message</h2>
+            This page is only accessible by Data Repository Managers.
+        </div>
+    {% endif %}
+{% endblock %}
