@@ -423,6 +423,8 @@ class DatasetSubmission extends Entity
      *
      * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionDatasetContact", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
      *
+     * @ORM\OrderBy({"creationTimeStamp" = "ASC"})
+     *
      * @Assert\NotBlank(
      *     message="Dataset contact person required."
      * )
@@ -435,6 +437,8 @@ class DatasetSubmission extends Entity
      * @var Collection
      *
      * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionMetadataContact", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
+     *
+     * @ORM\OrderBy({"creationTimeStamp" = "ASC"})
      *
      * @Assert\NotBlank(
      *     message="Metadata contact person required."
@@ -1061,6 +1065,38 @@ class DatasetSubmission extends Entity
     public function getDatasetContacts()
     {
         return $this->datasetContacts;
+    }
+
+    /**
+     * This is as emulated getter for the previous pointOfContactName attribute.
+     *
+     * This returns the "last, first" name of the first of the datasetContacts collection.
+     *
+     * @access public
+     *
+     * @return string
+     */
+    public function getPointOfContactName()
+    {
+        $contactPeople = $this->getDatasetContacts;
+        $contactPerson = $contactPeople[0];
+        return $contactPerson->getLastName() . ' ,' . $contactPerson->getFirstName();
+    }
+
+    /**
+     * This is as emulated getter for the previous pointOfContactEmail attribute.
+     *
+     * This returns the email address of the first of the datasetContacts collection.
+     *
+     * @access public
+     *
+     * @return string
+     */
+    public function getPointOfContactEmail()
+    {
+        $contactPeople = $this->getDatasetContacts;
+        $contactPerson = $contactPeople[0];
+        return $contactPerson->getEmailAddress;
     }
 
     /**
