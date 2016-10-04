@@ -793,7 +793,7 @@ class DatasetSubmission extends Entity
      *
      * @var string $themeKeywords Freetext theme keywords describing dataset.
      *
-     * @ORM\Column(type="text_array", nullable=true)
+     * @ORM\Column(type="json_array", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission keyword(s) field is required."
@@ -806,7 +806,7 @@ class DatasetSubmission extends Entity
      *
      * @var string $placeKeywords Freetext place keywords describing the dataset.
      *
-     * @ORM\Column(type="text_array", nullable=true)
+     * @ORM\Column(type="json_array", nullable=true)
      */
     protected $placeKeywords;
 
@@ -815,7 +815,7 @@ class DatasetSubmission extends Entity
      *
      * @var string $topicKeywords Keywords describing dataset from NOAA list.
      *
-     * @ORM\Column(type="text_array", nullable=true)
+     * @ORM\Column(type="json_array", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="The dataset submission topic keyword(s) field is required."
@@ -828,14 +828,14 @@ class DatasetSubmission extends Entity
      *
      * @var string $spatialExtent Geographic footprint as well-known text.
      *
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="geometry", options={"srid"=4326}, nullable=true)
      */
     protected $spatialExtent;
 
     /**
      * Time period description.
      *
-     * @var string $timePeriodDesc Description of time period, either 'ground condition' or 'modeled period'.
+     * @var string $timePeriodDesc Description of time period as: 'ground condition', 'modeled period', or 'both'.
      *
      * @see TEMPORAL_EXTENT_DESCRIPTIONS class constant for valid values.
      *
