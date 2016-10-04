@@ -791,7 +791,7 @@ class DatasetSubmission extends Entity
     /**
      * Theme keywords describing this dataset.
      *
-     * @var string $themeKeywords Freetext theme keywords describing dataset.
+     * @var array
      *
      * @ORM\Column(type="json_array", nullable=true)
      *
@@ -804,7 +804,7 @@ class DatasetSubmission extends Entity
     /**
      * Place keywords describing this dataset.
      *
-     * @var string $placeKeywords Freetext place keywords describing the dataset.
+     * @var array
      *
      * @ORM\Column(type="json_array", nullable=true)
      */
@@ -813,7 +813,7 @@ class DatasetSubmission extends Entity
     /**
      * Topic keywords describing this dataset.
      *
-     * @var string $topicKeywords Keywords describing dataset from NOAA list.
+     * @var array
      *
      * @ORM\Column(type="json_array", nullable=true)
      *
@@ -824,9 +824,9 @@ class DatasetSubmission extends Entity
     protected $topicKeywords;
 
     /**
-     * Spatial extent as WKT.
+     * Spatial extent.
      *
-     * @var string $spatialExtent Geographic footprint as well-known text.
+     * @var string
      *
      * @ORM\Column(type="geometry", options={"srid"=4326}, nullable=true)
      */
@@ -835,7 +835,7 @@ class DatasetSubmission extends Entity
     /**
      * Temporal extent description.
      *
-     * @var string $temporalExtentDesc Description of time period as: 'ground condition', 'modeled period', or 'both'.
+     * @var string
      *
      * @see TEMPORAL_EXTENT_DESCRIPTIONS class constant for valid values.
      *
