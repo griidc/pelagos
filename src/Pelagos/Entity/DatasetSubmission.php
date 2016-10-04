@@ -1015,7 +1015,7 @@ class DatasetSubmission extends Entity
     /**
      * Adder for dataset contact.
      *
-     * @param PersonDatasetSubmissionDatasetContact Single object to be added.
+     * @param PersonDatasetSubmissionDatasetContact $datasetContact Single object to be added.
      *
      * @access public
      *
@@ -1023,7 +1023,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function addDatasetContact($datasetContact)
+    public function addDatasetContact(PersonDatasetSubmissionDatasetContact $datasetContact)
     {
         if (!$datasetContact instanceof PersonDatasetSubmissionDatasetContact) {
             throw new \InvalidArgumentException('Non-PersonDatasetSubmissionDatasetContact found.');
@@ -1035,7 +1035,7 @@ class DatasetSubmission extends Entity
     /**
      * Remover for dataset contact.
      *
-     * @param PersonDatasetSubmissionDatasetContact Single object to be removed.
+     * @param PersonDatasetSubmissionDatasetContact $datasetContact Single object to be removed.
      *
      * @access public
      *
@@ -1043,7 +1043,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function removeDatasetContact($datasetContact)
+    public function removeDatasetContact(PersonDatasetSubmissionDatasetContact $datasetContact)
     {
         if (!$datasetContact instanceof PersonDatasetSubmissionDatasetContact) {
             throw new \InvalidArgumentException('Non-PersonDatasetSubmissionDatasetContact found.');
@@ -1066,7 +1066,7 @@ class DatasetSubmission extends Entity
     /**
      * Adder for metadata contact.
      *
-     * @param PersonDatasetSubmissionMetadataContact Single object to be added.
+     * @param PersonDatasetSubmissionMetadataContact $metadataContact Single object to be added.
      *
      * @access public
      *
@@ -1074,7 +1074,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function addMetadataContact($metadataContact)
+    public function addMetadataContact(PersonDatasetSubmissionMetadataContact $metadataContact)
     {
         if (!$metadataContact instanceof PersonDatasetSubmissionMetadataContact) {
             throw new \InvalidArgumentException('Non-PersonDatasetSubmissionMetadataContact found.');
@@ -1086,7 +1086,7 @@ class DatasetSubmission extends Entity
     /**
      * Remover for metadata contact.
      *
-     * @param PersonDatasetSubmissionMetadataContact Single object to be removed.
+     * @param PersonDatasetSubmissionMetadataContact $metadataContact Single object to be removed.
      *
      * @access public
      *
@@ -1094,7 +1094,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function removeMetadataContact($metadataContact)
+    public function removeMetadataContact(PersonDatasetSubmissionMetadataContact $metadataContact)
     {
         if (!$metadataContact instanceof PersonDatasetSubmissionMetadataContact) {
             throw new \InvalidArgumentException('Non-PersonDatasetSubmissionMetadataContact found.');
