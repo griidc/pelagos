@@ -245,7 +245,7 @@ class DatasetSubmissionType extends AbstractType
                 'choices' => DatasetSubmission::getTemporalExtentDescChoices(),
                 'required' => true,
             ))
-            ->add('temporalExtentStartDate', Type\DateType::class, array(
+            ->add('temporalExtentBeginPosition', Type\DateType::class, array(
                 'label' => 'Start Date',
                 'required' => true,
                 'attr' => array('placeholder' => 'yyyy-mm-dd'),
@@ -254,7 +254,7 @@ class DatasetSubmissionType extends AbstractType
                 'format' => 'yyyy-MM-dd',
                 'required' => true,
             ))
-            ->add('temporalExtentEndDate', Type\DateType::class, array(
+            ->add('temporalExtentEndPosition', Type\DateType::class, array(
                 'label' => 'End Date',
                 'required' => true,
                 'attr' => array('placeholder' => 'yyyy-mm-dd'),
