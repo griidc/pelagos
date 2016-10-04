@@ -1019,8 +1019,8 @@ class DatasetSubmission extends Entity
      *
      * @access public
      *
-     * @throws \Exception When $datasetContacts is not an array or traversable object.
-     * @throws \Exception When Non-PersonDatasetSubmissionDatasetContact found within $datasetContacts.
+     * @throws \InvalidArgumentException When $datasetContacts is not an array or traversable object.
+     * @throws \InvalidArgumentException When Non-PersonDatasetSubmissionDatasetContact found within $datasetContacts.
      *
      * @return void
      */
