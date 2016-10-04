@@ -1013,36 +1013,46 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * Setter for datasetContacts.
+     * Adder for dataset contact.
      *
-     * @param array|\Traversable $datasetContacts Set of PersonDatasetSubmissionDatasetContact objects.
+     * @param PersonDatasetSubmissionDatasetContact Single object to be added.
      *
      * @access public
      *
-     * @throws \InvalidArgumentException When $datasetContacts is not an array or traversable object.
-     * @throws \InvalidArgumentException When Non-PersonDatasetSubmissionDatasetContact found within $datasetContacts.
+     * @throws \InvalidArgumentException When $datasetContact is not a PersonDatasetSubmissionDatasetContact.
      *
      * @return void
      */
-    public function setDatasetContacts($datasetContacts)
+    public function addDatasetContact($datasetContact)
     {
-        if (is_array($datasetContacts) || $datasetContacts instanceof \Traversable) {
-            foreach ($datasetContacts as $datasetContact) {
-                if (!$datasetContact instanceof PersonDatasetSubmissionDatasetContact) {
-                    throw new \InvalidArgumentException('Non-PersonDatasetSubmissionDatasetContact found in datasetContacts.');
-                }
-            }
-            $this->datasetContacts = $datasetContacts;
-            foreach ($this->datasetContacts as $datasetContact) {
-                $datasetContact->setDatasetSubmission($this);
-            }
-        } else {
-            throw new \InvalidArgumentException('datasetContacts must be either an array or a traversable object.');
+        if (!$datasetContact instanceof PersonDatasetSubmissionDatasetContact) {
+            throw new \InvalidArgumentException('Non-PersonDatasetSubmissionDatasetContact found.');
         }
+        $datasetContact->setDatasetSubmission($this);
+        $this->datasetContacts->add($datasetContact);
     }
 
     /**
-     * Getter of metadataContacts.
+     * Remover for dataset contact.
+     *
+     * @param PersonDatasetSubmissionDatasetContact Single object to be removed.
+     *
+     * @access public
+     *
+     * @throws \InvalidArgumentException When $datasetContact is not a PersonDatasetSubmissionDatasetContact.
+     *
+     * @return void
+     */
+    public function removeDatasetContact($datasetContact)
+    {
+        if (!$datasetContact instanceof PersonDatasetSubmissionDatasetContact) {
+            throw new \InvalidArgumentException('Non-PersonDatasetSubmissionDatasetContact found.');
+        }
+        $this->datasetContacts->remove($datasetContact);
+    }
+
+    /**
+     * Getter of datasetContacts.
      *
      * @access public
      *
@@ -1054,32 +1064,42 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * Setter for metadataContacts.
+     * Adder for metadata contact.
      *
-     * @param array|\Traversable $metadataContacts Set of PersonDatasetSubmissionMetadataContact objects.
+     * @param PersonDatasetSubmissionMetadataContact Single object to be added.
      *
      * @access public
      *
-     * @throws \Exception When $metadataContacts is not an array or traversable object.
-     * @throws \Exception When Non-PersonDatasetSubmissionMetadataContact found within $metadataContacts.
+     * @throws \InvalidArgumentException When $metadataContact is not a PersonDatasetSubmissionMetadataContact.
      *
      * @return void
      */
-    public function setMetadataContacts($metadataContacts)
+    public function addMetadataContact($metadataContact)
     {
-        if (is_array($metadataContacts) || $metadataContacts instanceof \Traversable) {
-            foreach ($metadataContacts as $metadataContact) {
-                if (!$metadataContact instanceof PersonDatasetSubmissionMetadataContact) {
-                    throw new \Exception('Non-PersonDatasetSubmissionMetadataContact found in metadataContacts.');
-                }
-            }
-            $this->metadataContacts = $metadataContacts;
-            foreach ($this->metadataContacts as $metadataContact) {
-                $metadataContact->setDatasetSubmission($this);
-            }
-        } else {
-            throw new \Exception('metadataContacts must be either an array or a traversable object.');
+        if (!$metadataContact instanceof PersonDatasetSubmissionMetadataContact) {
+            throw new \InvalidArgumentException('Non-PersonDatasetSubmissionMetadataContact found.');
         }
+        $metadataContact->setDatasetSubmission($this);
+        $this->metadataContacts->add($metadataContact);
+    }
+
+    /**
+     * Remover for metadata contact.
+     *
+     * @param PersonDatasetSubmissionMetadataContact Single object to be removed.
+     *
+     * @access public
+     *
+     * @throws \InvalidArgumentException When $metadataContact is not a PersonDatasetSubmissionMetadataContact.
+     *
+     * @return void
+     */
+    public function removeMetadataContact($metadataContact)
+    {
+        if (!$metadataContact instanceof PersonDatasetSubmissionMetadataContact) {
+            throw new \InvalidArgumentException('Non-PersonDatasetSubmissionMetadataContact found.');
+        }
+        $this->metadataContacts->remove($metadataContact);
     }
 
     /**
