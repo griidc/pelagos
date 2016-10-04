@@ -528,6 +528,28 @@ class DatasetSubmission extends Entity
     protected $datasetFileSize;
 
     /**
+     * The dataset file md5 hash.
+     *
+     * Legacy DB column: fs_md5_hash
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $datasetFileMd5Hash;
+
+    /**
+     * The dataset file sha1 hash.
+     *
+     * Legacy DB column: fs_sha1_hash
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $datasetFileSha1Hash;
+
+    /**
      * The dataset file sha256 hash.
      *
      * Legacy DB column: fs_sha256_hash
@@ -1236,6 +1258,50 @@ class DatasetSubmission extends Entity
     public function getDatasetFileSize()
     {
         return $this->datasetFileSize;
+    }
+
+    /**
+     * Set the dataset file md5 hash.
+     *
+     * @param string $datasetFileMd5Hash The dataset file md5 hash.
+     *
+     * @return void
+     */
+    public function setDatasetFileMd5Hash($datasetFileMd5Hash)
+    {
+        $this->datasetFileMd5Hash = $datasetFileMd5Hash;
+    }
+
+    /**
+     * Set the dataset file md5 hash.
+     *
+     * @return string
+     */
+    public function getDatasetFileMd5Hash()
+    {
+        return $this->datasetFileMd5Hash;
+    }
+
+    /**
+     * Set the dataset file sha1 hash.
+     *
+     * @param string $datasetFileSha1Hash The dataset file sha1 hash.
+     *
+     * @return void
+     */
+    public function setDatasetFileSha1Hash($datasetFileSha1Hash)
+    {
+        $this->datasetFileSha1Hash = $datasetFileSha1Hash;
+    }
+
+    /**
+     * Get the dataset file sha1 hash.
+     *
+     * @return string
+     */
+    public function getDatasetFileSha1Hash()
+    {
+        return $this->datasetFileSha1Hash;
     }
 
     /**
