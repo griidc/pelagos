@@ -1,7 +1,6 @@
 {% set sftpuser=loggedInPerson.getAccount().isPosix() %}
 
-<div>
-
+<div class="cleair">
     <fieldset>
         <p>
             <strong>NOTE:</strong> <span style="color:grey">You must have an approved Dataset Information Form (DIF) to fill out and submit a Dataset Submission Form. The red asterisk (<span class="emRequired"/>) is used to indicate required fields. If you need assistance while completing this form, please contact <a href=mailto:griidc@gomri.org>griidc@gomri.org</a>.</span>
@@ -9,7 +8,6 @@
     </fieldset>
 
     <fieldset> <!-- Dataset Information Header -->
-
         <legend class="section-header">Dataset Information Header</legend>
 
         <p> <!-- Registry Identifier -->
@@ -25,6 +23,7 @@
                     document.getElementById('registry_id').value;"
                     name="regbutton" id="regbutton"
                     type="button">Load Dataset</button>
+                    <label class="error" for="registry_id"></label>
                 </form>
             </fieldset>
         </p>
