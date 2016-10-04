@@ -833,15 +833,15 @@ class DatasetSubmission extends Entity
     protected $spatialExtent;
 
     /**
-     * Time period description.
+     * Temporal extent description.
      *
-     * @var string $timePeriodDesc Description of time period as: 'ground condition', 'modeled period', or 'both'.
+     * @var string $temporalExtentDesc Description of time period as: 'ground condition', 'modeled period', or 'both'.
      *
      * @see TEMPORAL_EXTENT_DESCRIPTIONS class constant for valid values.
      *
      * @ORM\Column(type="string", nullable=true)
      */
-    protected $timePeriodDesc;
+    protected $temporalExtentDesc;
 
     /**
      * The temporal beginning position (date).
@@ -1917,30 +1917,30 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * Setter for dataset's time period description.
+     * Setter for dataset's temporal extent description.
      *
-     * @param string $timePeriodDesc Description of temporal extent, either 'ground condition' or 'modeled period'.
+     * @param string $temporalExtentDesc Description of temporal extent, either 'ground condition' or 'modeled period'.
      *
-     * @throws \InvalidArgumentException If $timePeriodDesc is not in static::TEMPORAL_EXTENT_DESCRIPTIONS.
+     * @throws \InvalidArgumentException If $temporalExtentDesc is not in static::TEMPORAL_EXTENT_DESCRIPTIONS.
      *
      * @return void
      */
-    public function setTimePeriodDesc($timePeriodDesc)
+    public function setTimePeriodDesc($temporalExtentDesc)
     {
-        if (!array_key_exists($timePeriodDesc, static::TEMPORAL_EXTENT_DESCRIPTIONS)) {
-            throw new \InvalidArgumentException("$timePeriodDesc is not a valid value for DatasetSubmission::TEMPORAL_EXTENT_DESCRIPTIONS");
+        if (!array_key_exists($temporalExtentDesc, static::TEMPORAL_EXTENT_DESCRIPTIONS)) {
+            throw new \InvalidArgumentException("$temporalExtentDesc is not a valid value for DatasetSubmission::TEMPORAL_EXTENT_DESCRIPTIONS");
         }
-        $this->timePeriodDesc = $timePeriodDesc;
+        $this->temporalExtentDesc = $temporalExtentDesc;
     }
 
     /**
-     * Getter for dataset's time period description.
+     * Getter for dataset's temporal extent description.
      *
      * @return string
      */
-    public function getTimePeriodDesc()
+    public function getTemporalExtentDesc()
     {
-        return $this->timePeriodDesc;
+        return $this->temporalExtentDesc;
     }
 
     /**
