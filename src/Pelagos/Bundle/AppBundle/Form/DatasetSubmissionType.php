@@ -269,6 +269,7 @@ class DatasetSubmissionType extends AbstractType
                 'entry_options' => array(
                     'data_class' => PersonDatasetSubmissionDatasetContact::class,
                 ),
+                'by_reference' => false,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'delete_empty' => true,
@@ -280,6 +281,7 @@ class DatasetSubmissionType extends AbstractType
                 'entry_options' => array(
                     'data_class' => PersonDatasetSubmissionMetadataContact::class,
                 ),
+                'by_reference' => false,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'delete_empty' => true,
