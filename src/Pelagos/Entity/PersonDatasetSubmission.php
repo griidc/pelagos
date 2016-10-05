@@ -142,6 +142,7 @@ abstract class PersonDatasetSubmission extends Entity
         if (!array_key_exists($role, static::ROLES)) {
             throw new \InvalidArgumentException("$role is not a valid value for PersonDatasetSubmission::\$role");
         }
+        $this->role = $role;
     }
 
     /**
