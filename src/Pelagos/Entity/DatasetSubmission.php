@@ -1029,9 +1029,6 @@ class DatasetSubmission extends Entity
      */
     public function addDatasetContact(PersonDatasetSubmissionDatasetContact $datasetContact)
     {
-        if (!$datasetContact instanceof PersonDatasetSubmissionDatasetContact) {
-            throw new \InvalidArgumentException('Non-PersonDatasetSubmissionDatasetContact found.');
-        }
         $datasetContact->setDatasetSubmission($this);
         $this->datasetContacts->add($datasetContact);
     }
@@ -1049,9 +1046,6 @@ class DatasetSubmission extends Entity
      */
     public function removeDatasetContact(PersonDatasetSubmissionDatasetContact $datasetContact)
     {
-        if (!$datasetContact instanceof PersonDatasetSubmissionDatasetContact) {
-            throw new \InvalidArgumentException('Non-PersonDatasetSubmissionDatasetContact found.');
-        }
         $this->datasetContacts->removeElement($datasetContact);
     }
 
@@ -1116,9 +1110,6 @@ class DatasetSubmission extends Entity
      */
     public function addMetadataContact(PersonDatasetSubmissionMetadataContact $metadataContact)
     {
-        if (!$metadataContact instanceof PersonDatasetSubmissionMetadataContact) {
-            throw new \InvalidArgumentException('Non-PersonDatasetSubmissionMetadataContact found.');
-        }
         $metadataContact->setDatasetSubmission($this);
         $this->metadataContacts->add($metadataContact);
     }
@@ -1136,9 +1127,6 @@ class DatasetSubmission extends Entity
      */
     public function removeMetadataContact(PersonDatasetSubmissionMetadataContact $metadataContact)
     {
-        if (!$metadataContact instanceof PersonDatasetSubmissionMetadataContact) {
-            throw new \InvalidArgumentException('Non-PersonDatasetSubmissionMetadataContact found.');
-        }
         $this->metadataContacts->removeElement($metadataContact);
     }
 
