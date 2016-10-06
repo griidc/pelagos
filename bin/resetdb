@@ -51,7 +51,8 @@ echo "Grant permissions to spatial_ref_sys"
 echo "GRANT ALL PRIVILEGES ON TABLE geometry_columns TO $parameters__database_user" | psql -h $parameters__database_host -U postgres $parameters__database_name || exit
 echo "Grant permissions to geometry_columns"
 
-bin/console doctrine:migrations:migrate -n || exit
+#bin/console doctrine:migrations:migrate -n || exit
+bin/console doctrine:schema:create || exit
 echo "Generated/loaded DB schema"
 
 export PGPASSWORD="$parameters__database_password"

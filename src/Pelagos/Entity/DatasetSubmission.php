@@ -1078,10 +1078,11 @@ class DatasetSubmission extends Entity
      */
     public function getPointOfContactName()
     {
-        $personDatasetSubmissionDatasetContacts = $this->getDatasetContacts();
-        $personDatasetSubmissionDatasetContact = $personDatasetSubmissionDatasetContacts[0];
-        $contactPerson = $personDatasetSubmissionDatasetContact->getPerson();
-        return $contactPerson->getLastName() . ' ,' . $contactPerson->getFirstName();
+        if ($this->getDatasetContacts()->isEmpty()) {
+            return null;
+        }
+        $contactPerson = $this->getDatasetContacts->first()->getPerson();
+        return $contactPerson->getLastName() . ', ' . $contactPerson->getFirstName();
     }
 
     /**
@@ -1095,9 +1096,10 @@ class DatasetSubmission extends Entity
      */
     public function getPointOfContactEmail()
     {
-        $personDatasetSubmissionDatasetContacts = $this->getDatasetContacts();
-        $personDatasetSubmissionDatasetContact = $personDatasetSubmissionDatasetContacts[0];
-        $contactPerson = $personDatasetSubmissionDatasetContact->getPerson();
+        if ($this->getDatasetContacts()->isEmpty()) {
+            return null;
+        }
+        $contactPerson = $this->getDatasetContacts->first()->getPerson();
         return $contactPerson->getEmailAddress();
     }
 
