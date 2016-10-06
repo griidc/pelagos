@@ -90,7 +90,7 @@ var spinner;
             selDays(false);
         });
 
-        $('input[name="datasetFilePullCertainTimesOnly"').click(function() {
+        $('input[name="datasetFilePullCertainTimesOnly"]').click(function() {
             if (this.value == "1") {
                 $("#whendiv").show();
             } else {
