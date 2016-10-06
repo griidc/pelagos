@@ -5,6 +5,7 @@ namespace Pelagos\Bundle\AppBundle\Rabbit\Consumer;
 use Doctrine\ORM\EntityManager;
 
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
+use OldSound\RabbitMqBundle\RabbitMq\Producer;
 
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -63,26 +64,36 @@ class DatasetSubmissionConsumer implements ConsumerInterface
     protected $entityEventDispatcher;
 
     /**
+     * The dataset file hasher AQMP producer.
+     *
+     * @var Producer
+     */
+    protected $datasetFileHasherProducer;
+
+    /**
      * Constructor.
      *
-     * @param EntityManager         $entityManager         The entity manager.
-     * @param DataStore             $dataStore             The data store service.
-     * @param Logger                $logger                A Monolog logger.
-     * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
-     * @param MdappLogger           $mdappLogger           A MDAPP logger.
+     * @param EntityManager         $entityManager             The entity manager.
+     * @param DataStore             $dataStore                 The data store service.
+     * @param Logger                $logger                    A Monolog logger.
+     * @param EntityEventDispatcher $entityEventDispatcher     The entity event dispatcher.
+     * @param MdappLogger           $mdappLogger               A MDAPP logger.
+     * @param Producer              $datasetFileHasherProducer The dataset file hasher AQMP producer.
      */
     public function __construct(
         EntityManager $entityManager,
         DataStore $dataStore,
         Logger $logger,
         EntityEventDispatcher $entityEventDispatcher,
-        MdappLogger $mdappLogger
+        MdappLogger $mdappLogger,
+        Producer $datasetFileHasherProducer
     ) {
         $this->entityManager = $entityManager;
         $this->dataStore = $dataStore;
         $this->logger = $logger;
         $this->entityEventDispatcher = $entityEventDispatcher;
         $this->mdappLogger = $mdappLogger;
+        $this->datasetFileHasherProducer = $datasetFileHasherProducer;
     }
 
     /**
@@ -178,6 +189,8 @@ class DatasetSubmissionConsumer implements ConsumerInterface
         $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_processed');
         // Log processing complete.
         $this->logger->info('Dataset file processing complete', $loggingContext);
+        // Publish an AMQP message to trigger dataset file hashing.
+        $this->datasetFileHasherProducer->publish($datasetSubmission->getDataset()->getId());
     }
 
     /**
