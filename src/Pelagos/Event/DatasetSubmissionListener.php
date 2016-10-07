@@ -82,6 +82,13 @@ class DatasetSubmissionListener extends EventListener
             ),
             array($datasetSubmission->getCreator())
         );
+
+        // email DRMs
+        $this->sendMailMsg(
+            $this->twig->loadTemplate('PelagosAppBundle:Email:data-repository-managers.dataset-processed.email.twig'),
+            array('datasetSubmission' => $datasetSubmission),
+            $this->getDRPMs($datasetSubmission->getDataset())
+        );
     }
 
     /**

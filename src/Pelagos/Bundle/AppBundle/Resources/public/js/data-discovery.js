@@ -216,7 +216,7 @@ function addTree() {
     insertTree({
         start: "ra",
         title: "Filter by Research Award",
-        theme: "classic",
+        theme: "pelagos",
         max_depth: 2,
         expand_to_depth: 0,
         include_datasets: "identified",
