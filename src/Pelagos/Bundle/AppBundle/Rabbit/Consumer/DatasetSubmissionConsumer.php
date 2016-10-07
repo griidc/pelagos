@@ -152,6 +152,8 @@ class DatasetSubmissionConsumer implements ConsumerInterface
      */
     protected function processDataset(DatasetSubmission $datasetSubmission, array $loggingContext)
     {
+        // Log processing start.
+        $this->logger->info('Dataset file processing starting', $loggingContext);
         $datasetFileTransferStatus = $datasetSubmission->getDatasetFileTransferStatus();
         if ($datasetFileTransferStatus !== DatasetSubmission::TRANSFER_STATUS_NONE) {
             $this->logger->warning(
@@ -203,6 +205,8 @@ class DatasetSubmissionConsumer implements ConsumerInterface
      */
     protected function processMetadata(DatasetSubmission $datasetSubmission, array $loggingContext)
     {
+        // Log processing start.
+        $this->logger->info('Metadata file processing starting', $loggingContext);
         $metadataFileTransferStatus = $datasetSubmission->getMetadataFileTransferStatus();
         if ($metadataFileTransferStatus !== DatasetSubmission::TRANSFER_STATUS_NONE) {
             $this->logger->warning(

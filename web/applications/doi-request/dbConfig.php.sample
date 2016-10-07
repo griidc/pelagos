@@ -1,7 +1,0 @@
-<?php
-$username='user';
-$password='password';
-$database='doi';
-$dbserver='database.somewhere.com';
-$port=5432;
-?>
