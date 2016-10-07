@@ -1,3 +1,0 @@
-[RISDATA]
-RPIS_TASK_BASEURL = "http://proteus.tamucc.edu/services/RPIS/getTaskDetails.php"
-RPIS_PEOPLE_BASEURL = "http://proteus.tamucc.edu/services/RPIS/getPeopleDetails.php"
