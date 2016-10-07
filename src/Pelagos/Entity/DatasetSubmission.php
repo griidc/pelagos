@@ -1075,7 +1075,7 @@ class DatasetSubmission extends Entity
         if ($this->getDatasetContacts()->isEmpty()) {
             return null;
         }
-        $contactPerson = $this->getDatasetContacts->first()->getPerson();
+        $contactPerson = $this->getDatasetContacts()->first()->getPerson();
         return $contactPerson->getLastName() . ', ' . $contactPerson->getFirstName();
     }
 
@@ -1093,7 +1093,7 @@ class DatasetSubmission extends Entity
         if ($this->getDatasetContacts()->isEmpty()) {
             return null;
         }
-        $contactPerson = $this->getDatasetContacts->first()->getPerson();
+        $contactPerson = $this->getDatasetContacts()->first()->getPerson();
         return $contactPerson->getEmailAddress();
     }
 
