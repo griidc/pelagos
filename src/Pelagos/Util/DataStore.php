@@ -54,7 +54,20 @@ class DataStore
      * @var string
      */
     protected $webServerUser;
-
+    
+    /**
+     * Indicates the algorithm used to produce the MD hash.
+     */
+    const SHA256 = 'sha256';
+    /**
+     * Indicates that the type of the file type is a data file, not metadata.
+     */
+    const DATASET_FILE_TYPE = 'dataset';
+    
+    /**
+     * Indicates that the type of the file named is metadata.
+     */
+    const METADATA_FILE_TYPE = 'metadata';
     /**
      * Constructor.
      *
@@ -342,7 +355,7 @@ class DataStore
             }
         }
     }
-
+    
     /**
      * Get the name for a file in the data store.
      *
@@ -357,10 +370,10 @@ class DataStore
     {
         $storeFileName = "$datasetId.";
         switch ($type) {
-            case 'dataset':
+            case self::DATASET_FILE_TYPE:
                 $storeFileName .= 'dat';
                 break;
-            case 'metadata':
+            case self::METADATA_FILE_TYPE:
                 $storeFileName .= 'met';
                 break;
             default:

@@ -12,6 +12,7 @@ use Pelagos\Util\DataStore;
 
 /**
  * A consumer of dataset hash file request messages.
+ *
  * Calculate a SHA256 hash of the dataset file and store it
  * in the DatasetSubmission datasetFileSha256Hash attribute.
  *
@@ -96,12 +97,12 @@ class DatasetFileHasherConsumer implements ConsumerInterface
         
         $datasetFileInfo = $this->dataStore->getFileInfo($datasetId, DataStore::DATASET_FILE_TYPE);
         $fileName = $datasetFileInfo->getFilename();
-        $fileContentsString = file_get_contents ($filename);
-        if($fileContentsString == false) {
-            $this->logger->warning('Unable to get contents of file '. $fileName, $loggingContext);
+        $fileContentsString = file_get_contents($fileName);
+        if ($fileContentsString == false) {
+            $this->logger->warning('Unable to get contents of file ' . $fileName, $loggingContext);
             return true;
         }
-        $hexDigits = hash (DataStore::SHA256,$fileContentsString ,false );
+        $hexDigits = hash(DataStore::SHA256, $fileContentsString, false);
         $datasetSubmission->setDatasetFileSha256Hash($hexDigits);
         $loggingContext['dataset_submission_id'] = $datasetSubmission->getId();
         
@@ -123,4 +124,3 @@ class DatasetFileHasherConsumer implements ConsumerInterface
         return true;
     }
 }
-
