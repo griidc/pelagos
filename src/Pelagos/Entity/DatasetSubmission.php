@@ -1646,11 +1646,11 @@ class DatasetSubmission extends Entity
     /**
      * Set the dataset's reference date.
      *
-     * @param \DateTime $referenceDate The dataset's reference date.
+     * @param \DateTime|null $referenceDate The dataset's reference date.
      *
      * @return void
      */
-    public function setReferenceDate(\DateTime $referenceDate)
+    public function setReferenceDate(\DateTime $referenceDate = null)
     {
         $this->referenceDate = $referenceDate;
     }
@@ -1975,11 +1975,11 @@ class DatasetSubmission extends Entity
     /**
      * Set the dataset's temporal extent begin position.
      *
-     * @param \DateTime $temporalExtentBeginPosition The temporal extent begin position.
+     * @param \DateTime|null $temporalExtentBeginPosition The temporal extent begin position.
      *
      * @return void
      */
-    public function setTemporalExtentBeginPosition(\DateTime $temporalExtentBeginPosition)
+    public function setTemporalExtentBeginPosition(\DateTime $temporalExtentBeginPosition = null)
     {
         $this->temporalExtentBeginPosition = $temporalExtentBeginPosition;
     }
@@ -1997,11 +1997,11 @@ class DatasetSubmission extends Entity
     /**
      * Set the dataset's temporal extent end position.
      *
-     * @param \DateTime $temporalExtentEndPosition The temporal extent end position.
+     * @param \DateTime|null $temporalExtentEndPosition The temporal extent end position.
      *
      * @return void
      */
-    public function setTemporalExtentEndPosition(\DateTime $temporalExtentEndPosition)
+    public function setTemporalExtentEndPosition(\DateTime $temporalExtentEndPosition = null)
     {
         $this->temporalExtentEndPosition = $temporalExtentEndPosition;
     }
