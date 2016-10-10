@@ -2131,4 +2131,21 @@ class DatasetSubmission extends Entity
             )
         );
     }
+
+    /**
+     * Gets the valid choices for temporal extent description.
+     *
+     * @return array
+     */
+    public function getTemporalExtentDescChoices()
+    {
+        return array_flip(
+            array_map(
+                function ($keyword) {
+                    return $keyword['name'];
+                },
+                static::TEMPORAL_EXTENT_DESCRIPTIONS
+            )
+        );
+    }
 }
