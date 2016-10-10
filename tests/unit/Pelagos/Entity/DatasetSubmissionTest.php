@@ -142,21 +142,25 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      */
     public function testBasicInfo()
     {
+        $this->datasetSubmission->setTitle(null);
         $this->datasetSubmission->setTitle('test title');
         $this->assertEquals(
             'test title',
             $this->datasetSubmission->getTitle()
         );
+        $this->datasetSubmission->setShortTitle(null);
         $this->datasetSubmission->setShortTitle('test short title');
         $this->assertEquals(
             'test short title',
             $this->datasetSubmission->getShortTitle()
         );
+        $this->datasetSubmission->setAbstract(null);
         $this->datasetSubmission->setAbstract('test abstract');
         $this->assertEquals(
             'test abstract',
             $this->datasetSubmission->getAbstract()
         );
+        $this->datasetSubmission->setAuthors(null);
         $this->datasetSubmission->setAuthors('test authors');
         $this->assertEquals(
             'test authors',
@@ -270,6 +274,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      */
     public function testDoi()
     {
+        $this->datasetSubmission->setDoi(null);
         $this->datasetSubmission->setDataset($this->mockDataset);
         $this->datasetSubmission->setDoi('doi123');
         $this->assertEquals(
@@ -325,6 +330,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             'cafe',
             $this->datasetSubmission->getDatasetFileSha256hash()
         );
+        $this->datasetSubmission->setDatasetFileAvailabilityDate(null);
         $availabilityDate = new \DateTime();
         $this->datasetSubmission->setDatasetFileAvailabilityDate($availabilityDate);
         $this->assertSame(
@@ -333,6 +339,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
         );
         $this->datasetSubmission->setDatasetFilePullCertainTimesOnly(true);
         $this->assertTrue($this->datasetSubmission->getDatasetFilePullCertainTimesOnly());
+        $this->datasetSubmission->setDatasetFilePullStartTime(null);
         $startTime = new \DateTime();
         $this->datasetSubmission->setDatasetFilePullStartTime($startTime);
         $this->assertSame(
@@ -420,6 +427,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      */
     public function testReferenceDateAndType()
     {
+        $this->datasetSubmission->setReferenceDate(null);
         $referenceDate = new \DateTime;
         $this->datasetSubmission->setReferenceDate($referenceDate);
         $this->assertSame(
@@ -453,6 +461,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      */
     public function testPurpose()
     {
+        $this->datasetSubmission->setPurpose(null);
         $purpose = 'To test purpose';
         $this->datasetSubmission->setPurpose($purpose);
         $this->assertEquals(
@@ -468,36 +477,42 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupplementals()
     {
+        $this->datasetSubmission->setSuppParams(null);
         $suppParams = 'supplemental parameters';
         $this->datasetSubmission->setSuppParams($suppParams);
         $this->assertEquals(
             $suppParams,
             $this->datasetSubmission->getSuppParams()
         );
+        $this->datasetSubmission->setSuppMethods(null);
         $suppMethods = 'supplemental methods';
         $this->datasetSubmission->setSuppMethods($suppMethods);
         $this->assertEquals(
             $suppMethods,
             $this->datasetSubmission->getSuppMethods()
         );
+        $this->datasetSubmission->setSuppInstruments(null);
         $suppInstruments = 'supplemental instruments';
         $this->datasetSubmission->setSuppInstruments($suppInstruments);
         $this->assertEquals(
             $suppInstruments,
             $this->datasetSubmission->getSuppInstruments()
         );
+        $this->datasetSubmission->setSuppSampScalesRates(null);
         $suppSampScalesRates = 'supplemental samp scales rates';
         $this->datasetSubmission->setSuppSampScalesRates($suppSampScalesRates);
         $this->assertEquals(
             $suppSampScalesRates,
             $this->datasetSubmission->getSuppSampScalesRates()
         );
+        $this->datasetSubmission->setSuppErrorAnalysis(null);
         $suppErrorAnalysis = 'supplemental error analysis';
         $this->datasetSubmission->setSuppErrorAnalysis($suppErrorAnalysis);
         $this->assertEquals(
             $suppErrorAnalysis,
             $this->datasetSubmission->getSuppErrorAnalysis()
         );
+        $this->datasetSubmission->setSuppProvenance(null);
         $suppProvenance = 'supplemental provenance';
         $this->datasetSubmission->setSuppProvenance($suppProvenance);
         $this->assertEquals(
@@ -513,17 +528,29 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      */
     public function testKeywords()
     {
+        $this->assertEquals(
+            array(),
+            $this->datasetSubmission->getThemeKeywords()
+        );
         $themeKeywords = array('foo','bar','baz');
         $this->datasetSubmission->setThemeKeywords($themeKeywords);
         $this->assertEquals(
             $themeKeywords,
             $this->datasetSubmission->getThemeKeywords()
         );
+        $this->assertEquals(
+            array(),
+            $this->datasetSubmission->getPlaceKeywords()
+        );
         $placeKeywords = array('Texas','Louisiana','Mississippi');
         $this->datasetSubmission->setPlaceKeywords($placeKeywords);
         $this->assertEquals(
             $placeKeywords,
             $this->datasetSubmission->getPlaceKeywords()
+        );
+        $this->assertEquals(
+            array(),
+            $this->datasetSubmission->getTopicKeywords()
         );
         $topicKeywords = array_keys(DatasetSubmission::TOPIC_KEYWORD_CHOICES);
         $this->datasetSubmission->setTopicKeywords($topicKeywords);
@@ -552,6 +579,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      */
     public function testSpatialExtent()
     {
+        $this->datasetSubmission->setSpatialExtent(null);
         $spatialExtent = 'spatial extent';
         $this->datasetSubmission->setSpatialExtent($spatialExtent);
         $this->assertEquals(
@@ -567,18 +595,21 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      */
     public function testTemporalExtent()
     {
+        $this->datasetSubmission->setTemporalExtentDesc(null);
         $temporalExtentDesc = array_keys(DatasetSubmission::TEMPORAL_EXTENT_DESCRIPTIONS)[0];
         $this->datasetSubmission->setTemporalExtentDesc($temporalExtentDesc);
         $this->assertEquals(
             $temporalExtentDesc,
             $this->datasetSubmission->getTemporalExtentDesc()
         );
+        $this->datasetSubmission->setTemporalExtentBeginPosition(null);
         $temporalExtentBeginPosition = new \DateTime;
         $this->datasetSubmission->setTemporalExtentBeginPosition($temporalExtentBeginPosition);
         $this->assertSame(
             $temporalExtentBeginPosition,
             $this->datasetSubmission->getTemporalExtentBeginPosition()
         );
+        $this->datasetSubmission->setTemporalExtentEndPosition(null);
         $temporalExtentEndPosition = new \DateTime;
         $this->datasetSubmission->setTemporalExtentEndPosition($temporalExtentEndPosition);
         $this->assertSame(
