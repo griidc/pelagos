@@ -45,9 +45,9 @@ class DatasetFileHasherConsumer implements ConsumerInterface
     /**
      * Constructor.
      *
-     * @param EntityManager         $entityManager         The entity manager.
-     * @param DataStore             $dataStore             The data store service.
-     * @param Logger                $logger                A Monolog logger.
+     * @param EntityManager $entityManager The entity manager.
+     * @param DataStore     $dataStore     The data store service.
+     * @param Logger        $logger        A Monolog logger.
      */
     public function __construct(
         EntityManager $entityManager,
@@ -61,6 +61,7 @@ class DatasetFileHasherConsumer implements ConsumerInterface
 
    /**
     * Process a hash_file message.
+    *
     * Create a hash of the data file
     *
     * @param AMQPMessage $message A hash_file message.
@@ -83,8 +84,9 @@ class DatasetFileHasherConsumer implements ConsumerInterface
             $this->logger->warning('No dataset found', $loggingContext);
             return true;
         }
-        if (null !== $dataset->getUdi()) {
-            $loggingContext['udi'] = $dataset->getUdi();
+        $datasetUdi = $dataset->getUdi();
+        if (null !== $datasetUdi) {
+            $loggingContext['udi'] = $datasetUdi;
         }
         // get the DatasetSubmission referenced in the found Dataset.
         // This is the instance to which this code writes the calculated
@@ -95,19 +97,18 @@ class DatasetFileHasherConsumer implements ConsumerInterface
             return true;
         }
         
-        $datasetFileInfo = $this->dataStore->getFileInfo($datasetId, DataStore::DATASET_FILE_TYPE);
+        $datasetFileInfo = $this->dataStore->getFileInfo($datasetUdi, DataStore::DATASET_FILE_TYPE);
         $fileName = $datasetFileInfo->getFilename();
-        $fileContentsString = file_get_contents($fileName);
-        if ($fileContentsString == false) {
-            $this->logger->warning('Unable to get contents of file ' . $fileName, $loggingContext);
+        
+        if (!file_exists($fileName)) {
+            $this->logger->warning('Can not hash file: ' . $fileName . '. File does not exist ', $loggingContext);
             return true;
         }
-        $hexDigits = hash(DataStore::SHA256, $fileContentsString, false);
+        $hexDigits = hash_file('sha256', $fileName);
         $datasetSubmission->setDatasetFileSha256Hash($hexDigits);
         $loggingContext['dataset_submission_id'] = $datasetSubmission->getId();
         
         // @codingStandardsIgnoreStart
-        $routingKey = $message->delivery_info['routing_key'];
         // @codingStandardsIgnoreEnd
         if (preg_match('/^dataset\./', $routingKey)) {
             $this->processDataset($datasetSubmission, $loggingContext);
@@ -118,7 +119,6 @@ class DatasetFileHasherConsumer implements ConsumerInterface
             return true;
         }
         $this->entityManager->persist($datasetSubmission);
-        $this->entityManager->persist($dataset);
         $this->entityManager->flush();
         $this->logger->info('Dataset File Hash end', $loggingContext);
         return true;

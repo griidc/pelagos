@@ -54,11 +54,7 @@ class DataStore
      * @var string
      */
     protected $webServerUser;
-    
-    /**
-     * Indicates the algorithm used to produce the MD hash.
-     */
-    const SHA256 = 'sha256';
+
     /**
      * Indicates that the type of the file type is a data file, not metadata.
      */
@@ -355,7 +351,7 @@ class DataStore
             }
         }
     }
-    
+
     /**
      * Get the name for a file in the data store.
      *
