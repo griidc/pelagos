@@ -2120,7 +2120,7 @@ class DatasetSubmission extends Entity
      *
      * @return array
      */
-    public function getTopicKeywordChoices()
+    public function getTopicKeywordsChoices()
     {
         return array_flip(
             array_map(
