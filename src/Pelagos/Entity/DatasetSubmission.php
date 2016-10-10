@@ -803,7 +803,7 @@ class DatasetSubmission extends Entity
      *     message="The dataset submission keyword(s) field is required."
      * )
      */
-    protected $themeKeywords;
+    protected $themeKeywords = array();
 
     /**
      * Place keywords describing this dataset.
@@ -812,7 +812,7 @@ class DatasetSubmission extends Entity
      *
      * @ORM\Column(type="json_array", nullable=true)
      */
-    protected $placeKeywords;
+    protected $placeKeywords = array();
 
     /**
      * Topic keywords describing this dataset.
@@ -825,7 +825,7 @@ class DatasetSubmission extends Entity
      *     message="The dataset submission topic keyword(s) field is required."
      * )
      */
-    protected $topicKeywords;
+    protected $topicKeywords = array();
 
     /**
      * Spatial extent.
