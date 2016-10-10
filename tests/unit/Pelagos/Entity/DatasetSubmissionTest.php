@@ -677,4 +677,19 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             $this->assertInternalType('string', $value);
         }
     }
+
+    /**
+     * Test getting the choice list for temporalExtentDesc.
+     *
+     * @return void
+     */
+    public function testGetTemporalExtentDescChoices()
+    {
+        $temporalExtentDescChoices = $this->datasetSubmission->getTemporalExtentDescChoices();
+        $this->assertInternalType('array', $temporalExtentDescChoices);
+        foreach ($temporalExtentDescChoices as $index => $value) {
+            $this->assertInternalType('string', $index);
+            $this->assertInternalType('string', $value);
+        }
+    }
 }
