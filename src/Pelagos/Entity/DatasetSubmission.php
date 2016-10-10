@@ -2113,7 +2113,7 @@ class DatasetSubmission extends Entity
      *
      * @return array
      */
-    public function getReferenceDateTypeChoices()
+    public static function getReferenceDateTypeChoices()
     {
         return array_flip(
             array_map(
@@ -2130,7 +2130,7 @@ class DatasetSubmission extends Entity
      *
      * @return array
      */
-    public function getTopicKeywordsChoices()
+    public static function getTopicKeywordsChoices()
     {
         return array_flip(
             array_map(
@@ -2147,7 +2147,7 @@ class DatasetSubmission extends Entity
      *
      * @return array
      */
-    public function getTemporalExtentDescChoices()
+    public static function getTemporalExtentDescChoices()
     {
         return array_flip(
             array_map(
