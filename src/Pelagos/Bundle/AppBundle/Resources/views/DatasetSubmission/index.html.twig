@@ -65,7 +65,6 @@
 
 {% endblock %}
 
-
 {% block body %}
 
 <h1>Dataset Submission</h1>
@@ -85,6 +84,7 @@
         <h2 class="element-invisible">Status message</h2>
         Dataset Identifier <b>'{{ udi }}'</b> was found. The latest version has been loaded.
     </div>
+    {% set showform = true %}
 {% elseif udi != '' %}
     <div class="messages warning">
         <h2 class="element-invisible">Status message</h2>
@@ -92,8 +92,10 @@
     </div>
 {% endif %}
 
-
-{% include 'PelagosAppBundle:DatasetSubmission:submission-form.html.twig' %}
-
+{% if showform|default %}
+    {% include 'PelagosAppBundle:DatasetSubmission:submission-form.html.twig' %}
+{% else %}
+    {% include 'PelagosAppBundle:DatasetSubmission:form.html.twig' %}
+{% endif %}
 <div class="modal" id="spinner"></div>
 {% endblock %}

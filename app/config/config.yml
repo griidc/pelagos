@@ -158,11 +158,15 @@ old_sound_rabbit_mq:
         create_homedir:
             connection:       default
             exchange_options: { name: 'create_homedir', type: direct }
+        dataset_file_hasher:
+            connection:       default
+            exchange_options: { name: 'dataset_file_hasher', type: direct }
     consumers:
         filer:
             connection:       default
             exchange_options: { name: 'dataset_submission', type: topic }
             callback:         pelagos.rabbit.consumer.dataset_submission.filer
+            qos_options:      { prefetch_count: 1, global: false }
             queue_options:
                 name: 'filer'
                 routing_keys:
@@ -173,6 +177,7 @@ old_sound_rabbit_mq:
             connection:       default
             exchange_options: { name: 'dataset_submission', type: topic }
             callback:         pelagos.rabbit.consumer.dataset_submission.retriever
+            qos_options:      { prefetch_count: 1, global: false }
             idle_timeout:     1
             queue_options:
                 name: 'retriever'

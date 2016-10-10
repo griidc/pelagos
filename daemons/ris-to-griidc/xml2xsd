@@ -1,4 +1,0 @@
-#!/bin/sh
-#
-# run the alias xml2xsd on the args supplied 
-java -jar /Users/jvh/JavaLibraries/trang/trang.jar refBase.xml refBase.xsd

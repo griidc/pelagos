@@ -1,7 +1,0 @@
-[email]
-disable_email = 0
-
-; This parameter anchors the jira ticket to a specific instance
-; of Jira.  This makes parsing out individual tickets reliable.
-[jira]
-jira_base = 'https://triton.tamucc.edu/issues/browse'

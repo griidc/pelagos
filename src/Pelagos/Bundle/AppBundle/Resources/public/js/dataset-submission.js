@@ -10,6 +10,18 @@ $(function() {
     
     $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");
     
+    $('#regbutton').button({
+        disabled: true
+    });
+    
+    $('#regidform').bind('change keyup mouseout', function() {
+        if($(this).validate().checkForm() && $('#registry_id').val() != '' && $('#registry_id').is(':disabled') == false) {
+            $('#regbutton').button("enable");
+        } else {
+            $('#regbutton').button("disable");
+        }
+    });
+    
     $("#dtabs").tabs({
         heightStyle: "content",
         activate: function(event, ui) {

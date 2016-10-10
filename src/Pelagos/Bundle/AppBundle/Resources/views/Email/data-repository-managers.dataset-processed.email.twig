@@ -1,0 +1,19 @@
+{% block subject 'New dataset file for ' ~ datasetSubmission.dataset.udi %}
+
+{% block body_html %}
+A new dataset file for {{ datasetSubmission.dataset.udi }} has been submitted:<br>
+<br>
+Filename: {{ datasetSubmission.datasetFileName }}<br>
+UDI: {{ datasetSubmission.dataset.udi }}<br>
+Dataset Title: {{ datasetSubmission.dataset.title }}<br>
+Research Group: {{ datasetSubmission.dataset.researchGroup.name }}<br>
+{% endblock %}
+
+{% block body_text %}
+A new dataset file for {{ datasetSubmission.dataset.udi }} has been submitted:
+
+Filename: {{ datasetSubmission.datasetFileName }}
+UDI: {{ datasetSubmission.dataset.udi }}
+Dataset Title: {{ datasetSubmission.dataset.title }}
+Research Group: {{ datasetSubmission.dataset.researchGroup.name }}
+{% endblock %}
