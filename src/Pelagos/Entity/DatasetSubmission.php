@@ -1954,7 +1954,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setTimePeriodDesc($temporalExtentDesc)
+    public function setTemporalExtentDesc($temporalExtentDesc)
     {
         if (!array_key_exists($temporalExtentDesc, static::TEMPORAL_EXTENT_DESCRIPTIONS)) {
             throw new \InvalidArgumentException("$temporalExtentDesc is not a valid value for DatasetSubmission::TEMPORAL_EXTENT_DESCRIPTIONS");
