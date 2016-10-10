@@ -182,7 +182,7 @@ class DatasetSubmissionType extends AbstractType
                 'format' => 'yyyy-MM-dd',
                 'required' => true,
             ))
-            ->add('referenceDateType', ChoiceType::class, array(
+            ->add('referenceDateType', Type\ChoiceType::class, array(
                 'label' => 'Date Type',
                 'choices' => DatasetSubmission::getReferenceDateTypeChoices(),
                 'placeholder' => '[Please Select a Date Type]',
@@ -232,7 +232,7 @@ class DatasetSubmissionType extends AbstractType
                 'delete_empty' => true,
                 'required' => false,
             ))
-            ->add('topicKeywords', ChoiceType::class, array(
+            ->add('topicKeywords', Type\ChoiceType::class, array(
                 'label' => 'Topic Category Keywords',
                 'choices' => DatasetSubmission::getTopicKeywordsChoices(),
                 'required' => true,
