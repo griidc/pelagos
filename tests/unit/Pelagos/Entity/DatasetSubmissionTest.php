@@ -686,7 +686,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetReferenceDateTypeChoices()
     {
-        $referenceDateTypeChoices = $this->datasetSubmission->getReferenceDateTypeChoices();
+        $referenceDateTypeChoices = DatasetSubmission::getReferenceDateTypeChoices();
         $this->assertInternalType('array', $referenceDateTypeChoices);
         foreach ($referenceDateTypeChoices as $index => $value) {
             $this->assertInternalType('string', $index);
@@ -701,7 +701,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetTopicKeywordsChoices()
     {
-        $topicKeywordsChoices = $this->datasetSubmission->getTopicKeywordsChoices();
+        $topicKeywordsChoices = DatasetSubmission::getTopicKeywordsChoices();
         $this->assertInternalType('array', $topicKeywordsChoices);
         foreach ($topicKeywordsChoices as $index => $value) {
             $this->assertInternalType('string', $index);
@@ -716,7 +716,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetTemporalExtentDescChoices()
     {
-        $temporalExtentDescChoices = $this->datasetSubmission->getTemporalExtentDescChoices();
+        $temporalExtentDescChoices = DatasetSubmission::getTemporalExtentDescChoices();
         $this->assertInternalType('array', $temporalExtentDescChoices);
         foreach ($temporalExtentDescChoices as $index => $value) {
             $this->assertInternalType('string', $index);
