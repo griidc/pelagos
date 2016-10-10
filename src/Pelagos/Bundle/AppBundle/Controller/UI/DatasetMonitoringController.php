@@ -131,7 +131,7 @@ class DatasetMonitoringController extends UIController
                 array(
                     'researchGroups' => $researchGroups,
                     'header' => $title,
-                    'pdfFilename' => 'Dataset Monitoring - ' . $researcher->getLastName() . ', ' . $researcher->getFirstName()
+                    'pdfFilename' => 'Dataset Monitoring - ' . $researcher->getLastName() . ' ' . $researcher->getFirstName()
                 )
             );
         } else {
@@ -140,7 +140,7 @@ class DatasetMonitoringController extends UIController
                 array(
                     'researchGroups' => $researchGroups,
                     'header' => $title,
-                    'pdfFilename' => 'Dataset Monitoring - ' . $researcher->getLastName() . ', ' . $researcher->getFirstName(),
+                    'pdfFilename' => 'Dataset Monitoring - ' . $researcher->getLastName() . ' ' . $researcher->getFirstName(),
                     'id' => $id,
                 )
             );
