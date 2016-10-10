@@ -1678,7 +1678,7 @@ class DatasetSubmission extends Entity
      */
     public function setReferenceDateType($referenceDateType)
     {
-        if (!array_key_exists($referenceDateType, static::REFERENCE_DATE_TYPES)) {
+        if (null !== $referenceDateType and !array_key_exists($referenceDateType, static::REFERENCE_DATE_TYPES)) {
             throw new \InvalidArgumentException("$referenceDateType is not a valid value for DatasetSubmission::REFERENCE_DATE_TYPES");
         }
         $this->referenceDateType = $referenceDateType;
@@ -1956,7 +1956,7 @@ class DatasetSubmission extends Entity
      */
     public function setTemporalExtentDesc($temporalExtentDesc)
     {
-        if (!array_key_exists($temporalExtentDesc, static::TEMPORAL_EXTENT_DESCRIPTIONS)) {
+        if (null !== $temporalExtentDesc and !array_key_exists($temporalExtentDesc, static::TEMPORAL_EXTENT_DESCRIPTIONS)) {
             throw new \InvalidArgumentException("$temporalExtentDesc is not a valid value for DatasetSubmission::TEMPORAL_EXTENT_DESCRIPTIONS");
         }
         $this->temporalExtentDesc = $temporalExtentDesc;
