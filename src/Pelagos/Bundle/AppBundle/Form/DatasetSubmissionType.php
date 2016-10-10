@@ -235,6 +235,7 @@ class DatasetSubmissionType extends AbstractType
             ->add('topicKeywords', Type\ChoiceType::class, array(
                 'label' => 'Topic Category Keywords',
                 'choices' => DatasetSubmission::getTopicKeywordsChoices(),
+                'multiple' => true,
                 'required' => true,
             ))
             ->add('spatialExtent', Type\HiddenType::class, array(
