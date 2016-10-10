@@ -723,4 +723,19 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             $this->assertInternalType('string', $value);
         }
     }
+
+    /**
+     * Test getting the choice list for restrictions.
+     *
+     * @return void
+     */
+    public function testGetRestrictionsChoices()
+    {
+        $restrictionsChoices = DatasetSubmission::getRestrictionsChoices();
+        $this->assertInternalType('array', $restrictionsChoices);
+        foreach ($restrictionsChoices as $index => $value) {
+            $this->assertInternalType('string', $index);
+            $this->assertInternalType('string', $value);
+        }
+    }
 }
