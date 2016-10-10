@@ -115,45 +115,48 @@ $(document).ready(function(){
             var url = $(self).attr("entityApi") + "/" + id;
             var deleteURL;
             $.ajax({
-                url: url
-            }).success(function (data) {
-                if (typeof(data._links.delete) != "undefined") {
-                    deleteURL = data._links.delete.href;
-                    var msg = "You are about to remove a " + entityNiceName + ".";
-                    $.when(showConfirmation({
-                            title: "Please confirm:",
-                            message: msg,
-                            buttons: {
-                                "Yes": {
-                                    text: "Delete " + entityNiceName
-                                },
-                                "No": {
-                                    text: "Cancel"
+                url: url,
+                success: function (data) {
+                    if (typeof(data._links.delete) != "undefined") {
+                        deleteURL = data._links.delete.href;
+                        var msg = "You are about to remove a " + entityNiceName + ".";
+                        $.when(showConfirmation({
+                                title: "Please confirm:",
+                                message: msg,
+                                buttons: {
+                                    "Yes": {
+                                        text: "Delete " + entityNiceName
+                                    },
+                                    "No": {
+                                        text: "Cancel"
+                                    }
                                 }
-                            }
-                        })).done(function() {
-                        $.ajax({
-                            url: deleteURL,
-                            method: "DELETE"
-                        }).success(function () {
-                            $(".selected").fadeOut("slow", function () {
-                                table.row(".selected").remove().draw(false);
-                                $("#button_delete").button("option", "disabled", "true");
-                                $("#button_detail").button("option", "disabled", "true");
-                                $("#selection_comment").fadeIn();
+                            })).done(function() {
+                            $.ajax({
+                                url: deleteURL,
+                                method: "DELETE",
+                                success: function () {
+                                    $(".selected").fadeOut("slow", function () {
+                                        table.row(".selected").remove().draw(false);
+                                        $("#button_delete").button("option", "disabled", "true");
+                                        $("#button_detail").button("option", "disabled", "true");
+                                        $("#selection_comment").fadeIn();
+                                    })
+                                }
+                            }).fail(function (xhr) {
+                                var jsonError = xhr.responseJSON.message;
+                                showDialog("Error", jsonError);
                             });
-                        }).fail(function (xhr) {
-                            var jsonError = xhr.responseJSON.message;
-                            showDialog("Error", jsonError);
                         });
-                    });
-                } else {
-                    showDialog("Error", "This selection can no longer be deleted.");
-                    $("#button_delete").button("option", "disabled", true);
+                    } else {
+                        showDialog("Error", "This selection can no longer be deleted.");
+                        $("#button_delete").button("option", "disabled", true);
+                    }
                 }
             }).fail(function (xhr) {
                 showDialog("Error", "Cannot delete selection.");
             });
+
         });
 
         table.on("deselect", function ()
