@@ -528,7 +528,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             array(),
             $this->datasetSubmission->getTopicKeywords()
         );
-        $topicKeywords = array_keys(DatasetSubmission::TOPIC_KEYWORD_CHOICES);
+        $topicKeywords = array_keys(DatasetSubmission::TOPIC_KEYWORDS);
         $this->datasetSubmission->setTopicKeywords($topicKeywords);
         $this->assertEquals(
             $topicKeywords,

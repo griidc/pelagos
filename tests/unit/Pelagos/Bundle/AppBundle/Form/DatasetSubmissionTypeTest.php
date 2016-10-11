@@ -94,7 +94,7 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
             'suppProvenance' => 'test supplemental provenance',
             'themeKeywords' => array('themeFoo','themeBar','themeBaz'),
             'placeKeywords' => array('placeFoo','placeBar','placeBaz'),
-            'topicKeywords' => array_keys(DatasetSubmission::TOPIC_KEYWORD_CHOICES),
+            'topicKeywords' => array_keys(DatasetSubmission::TOPIC_KEYWORDS),
             'spatialExtent' => 'test spatial extent',
             'temporalExtentDesc' => array_keys(DatasetSubmission::TEMPORAL_EXTENT_DESCRIPTIONS)[0],
             'temporalExtentBeginPosition' => '2000-01-02',

@@ -274,7 +274,7 @@ class DatasetSubmission extends Entity
      *
      * The array keys are the values to be set in self::topicKeywords.
      */
-    const TOPIC_KEYWORD_CHOICES = [
+    const TOPIC_KEYWORDS = [
         'oceans' => [
             'name' => 'Oceans',
         ],
@@ -1733,7 +1733,7 @@ class DatasetSubmission extends Entity
      *
      * @param array $topicKeywords Array of keywords.
      *
-     * @see TOPIC_KEYWORD_CHOICES
+     * @see TOPIC_KEYWORDS
      *
      * @throws \InvalidArgumentException When $topicKeywords contains invalid value.
      *
@@ -1742,8 +1742,8 @@ class DatasetSubmission extends Entity
     public function setTopicKeywords(array $topicKeywords)
     {
         foreach ($topicKeywords as $keyword) {
-            if (!array_key_exists($keyword, static::TOPIC_KEYWORD_CHOICES)) {
-                throw new \InvalidArgumentException("'$keyword' is not a valid value for DatasetSubmission::TOPIC_KEYWORD_CHOICES");
+            if (!array_key_exists($keyword, static::TOPIC_KEYWORDS)) {
+                throw new \InvalidArgumentException("'$keyword' is not a valid value for topicKeywords");
             }
         }
         $this->topicKeywords = $topicKeywords;
@@ -1963,7 +1963,7 @@ class DatasetSubmission extends Entity
                 function ($keyword) {
                     return $keyword['name'];
                 },
-                static::TOPIC_KEYWORD_CHOICES
+                static::TOPIC_KEYWORDS
             )
         );
     }
