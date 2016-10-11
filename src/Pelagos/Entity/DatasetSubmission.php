@@ -978,8 +978,6 @@ class DatasetSubmission extends Entity
      *
      * @access public
      *
-     * @throws \InvalidArgumentException When $datasetContact is not a PersonDatasetSubmissionDatasetContact.
-     *
      * @return void
      */
     public function addDatasetContact(PersonDatasetSubmissionDatasetContact $datasetContact)
@@ -994,8 +992,6 @@ class DatasetSubmission extends Entity
      * @param PersonDatasetSubmissionDatasetContact $datasetContact Single object to be removed.
      *
      * @access public
-     *
-     * @throws \InvalidArgumentException When $datasetContact is not a PersonDatasetSubmissionDatasetContact.
      *
      * @return void
      */
@@ -1059,8 +1055,6 @@ class DatasetSubmission extends Entity
      *
      * @access public
      *
-     * @throws \InvalidArgumentException When $metadataContact is not a PersonDatasetSubmissionMetadataContact.
-     *
      * @return void
      */
     public function addMetadataContact(PersonDatasetSubmissionMetadataContact $metadataContact)
@@ -1075,8 +1069,6 @@ class DatasetSubmission extends Entity
      * @param PersonDatasetSubmissionMetadataContact $metadataContact Single object to be removed.
      *
      * @access public
-     *
-     * @throws \InvalidArgumentException When $metadataContact is not a PersonDatasetSubmissionMetadataContact.
      *
      * @return void
      */
@@ -1523,7 +1515,7 @@ class DatasetSubmission extends Entity
     public function setReferenceDateType($referenceDateType)
     {
         if (null !== $referenceDateType and !array_key_exists($referenceDateType, static::REFERENCE_DATE_TYPES)) {
-            throw new \InvalidArgumentException("$referenceDateType is not a valid value for referenceDateType");
+            throw new \InvalidArgumentException("'$referenceDateType' is not a valid value for referenceDateType");
         }
         $this->referenceDateType = $referenceDateType;
     }
@@ -1751,7 +1743,7 @@ class DatasetSubmission extends Entity
     {
         foreach ($topicKeywords as $keyword) {
             if (!array_key_exists($keyword, static::TOPIC_KEYWORD_CHOICES)) {
-                throw new \InvalidArgumentException("$keyword is not a valid value for DatasetSubmission::TOPIC_KEYWORD_CHOICES");
+                throw new \InvalidArgumentException("'$keyword' is not a valid value for DatasetSubmission::TOPIC_KEYWORD_CHOICES");
             }
         }
         $this->topicKeywords = $topicKeywords;
@@ -1801,7 +1793,7 @@ class DatasetSubmission extends Entity
     public function setTemporalExtentDesc($temporalExtentDesc)
     {
         if (null !== $temporalExtentDesc and !array_key_exists($temporalExtentDesc, static::TEMPORAL_EXTENT_DESCRIPTIONS)) {
-            throw new \InvalidArgumentException("$temporalExtentDesc is not a valid value for DatasetSubmission::TEMPORAL_EXTENT_DESCRIPTIONS");
+            throw new \InvalidArgumentException("'$temporalExtentDesc' is not a valid value for temporalExtentDesc");
         }
         $this->temporalExtentDesc = $temporalExtentDesc;
     }
