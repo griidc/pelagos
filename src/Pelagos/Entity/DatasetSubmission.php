@@ -1523,7 +1523,7 @@ class DatasetSubmission extends Entity
     public function setReferenceDateType($referenceDateType)
     {
         if (null !== $referenceDateType and !array_key_exists($referenceDateType, static::REFERENCE_DATE_TYPES)) {
-            throw new \InvalidArgumentException("$referenceDateType is not a valid value for DatasetSubmission::REFERENCE_DATE_TYPES");
+            throw new \InvalidArgumentException("$referenceDateType is not a valid value for referenceDateType");
         }
         $this->referenceDateType = $referenceDateType;
     }
