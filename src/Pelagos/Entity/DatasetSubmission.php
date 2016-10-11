@@ -788,7 +788,7 @@ class DatasetSubmission extends Entity
      *
      * @see TEMPORAL_EXTENT_DESCRIPTIONS class constant for valid values.
      *
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $temporalExtentDesc;
 
