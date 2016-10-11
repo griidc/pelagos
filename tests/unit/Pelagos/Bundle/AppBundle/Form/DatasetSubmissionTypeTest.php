@@ -96,6 +96,7 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
             'placeKeywords' => array('placeFoo','placeBar','placeBaz'),
             'topicKeywords' => array_keys(DatasetSubmission::TOPIC_KEYWORDS),
             'spatialExtent' => 'test spatial extent',
+            'spatialExtentDescription' => 'test spatial extent description',
             'temporalExtentDesc' => array_keys(DatasetSubmission::TEMPORAL_EXTENT_DESCRIPTIONS)[0],
             'temporalExtentBeginPosition' => '2000-01-02',
             'temporalExtentEndPosition' => '2000-01-03',

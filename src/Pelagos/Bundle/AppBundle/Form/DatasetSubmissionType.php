@@ -193,6 +193,10 @@ class DatasetSubmissionType extends AbstractType
             ->add('spatialExtent', Type\HiddenType::class, array(
                 'required' => true,
             ))
+            ->add('spatialExtentDescription', Type\TextareaType::class, array(
+                'label' => 'Spatial Extent Description',
+                'required' => true,
+            ))
             ->add('temporalExtentDesc', Type\ChoiceType::class, array(
                 'label' => 'Time Period Description',
                 'choices' => DatasetSubmission::getTemporalExtentDescChoices(),
