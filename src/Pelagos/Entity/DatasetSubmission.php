@@ -782,6 +782,15 @@ class DatasetSubmission extends Entity
     protected $spatialExtent;
 
     /**
+     * Spatial extent description.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $spatialExtentDescription;
+
+    /**
      * Temporal extent description.
      *
      * @var string
@@ -1779,6 +1788,28 @@ class DatasetSubmission extends Entity
     public function getSpatialExtent()
     {
         return $this->spatialExtent;
+    }
+
+    /**
+     * Setter for spatial extent description.
+     *
+     * @param string $spatialExtentDescription Description of spatial extent.
+     *
+     * @return void
+     */
+    public function setSpatialExtentDescription($spatialExtentDescription)
+    {
+        $this->spatialExtentDescription = $spatialExtentDescription;
+    }
+
+    /**
+     * Getter for spatial extent description.
+     *
+     * @return string
+     */
+    public function getSpatialExtentDescription()
+    {
+        return $this->spatialExtentDescription;
     }
 
     /**

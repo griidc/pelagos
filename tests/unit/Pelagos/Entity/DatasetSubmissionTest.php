@@ -562,6 +562,13 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             $spatialExtent,
             $this->datasetSubmission->getSpatialExtent()
         );
+        $this->datasetSubmission->setSpatialExtentDescription(null);
+        $spatialExtentDescription = 'spatial extent description';
+        $this->datasetSubmission->setSpatialExtentDescription($spatialExtentDescription);
+        $this->assertEquals(
+            $spatialExtentDescription,
+            $this->datasetSubmission->getSpatialExtentDescription()
+        );
     }
 
     /**
