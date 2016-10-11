@@ -42,14 +42,6 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Dataset Author(s)',
                 'required' => true,
             ))
-            ->add('pointOfContactName', Type\TextType::class, array(
-                'label' => 'Name',
-                'required' => true,
-            ))
-            ->add('pointOfContactEmail', Type\TextType::class, array(
-                'label' => 'E-Mail',
-                'required' => true,
-            ))
             ->add('restrictions', Type\ChoiceType::class, array(
                 'choices' => DatasetSubmission::getRestrictionsChoices(),
                 'label' => 'Restrictions',
@@ -95,46 +87,6 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'download this file again from the same URL',
                 'required' => false,
                 'mapped' => false,
-            ))
-            ->add('datasetFileAvailabilityDate', Type\DateType::class, array(
-                'label' => 'Availability Date',
-                'input' => 'datetime',
-                'widget' => 'single_text',
-                'html5' => false,
-                'format' => 'yyyy-MM-dd',
-                'required' => false,
-            ))
-            ->add('datasetFilePullCertainTimesOnly', Type\ChoiceType::class, array(
-                'choices' => array('Yes' => true, 'No' => false),
-                'label' => 'Download Certain Times Only',
-                'required' => true,
-                'expanded' => true,
-                'multiple' => false,
-                'placeholder' => false,
-            ))
-            ->add('datasetFilePullStartTime', Type\TimeType::class, array(
-                'label' => 'Start Time',
-                'input' => 'datetime',
-                'widget' => 'choice',
-                'minutes' => array(0, 15, 30, 45),
-                'html5' => false,
-                'required' => false,
-            ))
-            ->add('datasetFilePullDays', Type\ChoiceType::class, array(
-                'choices' => array_combine($days, $days),
-                'label' => 'Weekdays',
-                'data' => $days,
-                'required' => false,
-                'expanded' => true,
-                'multiple' => true,
-            ))
-            ->add('datasetFilePullSourceData', Type\ChoiceType::class, array(
-                'choices' => array('Yes' => true, 'No' => false),
-                'data' => true,
-                'label' => 'Pull Source Data',
-                'required' => false,
-                'expanded' => true,
-                'multiple' => false,
             ))
             ->add('metadataFileTransferType', Type\HiddenType::class, array(
                 'required' => false,
