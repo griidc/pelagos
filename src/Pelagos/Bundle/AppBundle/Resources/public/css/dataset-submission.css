@@ -8,6 +8,10 @@
     display:block;
 }
 
+#navbuttons .ui-button{
+    display:block;
+}
+
 .emRequired::before
 {
     font-weight: bold; color:#FF0000;

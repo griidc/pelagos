@@ -3,6 +3,7 @@
     <table class="tab-table">
         <tr>
             <td>
+                {{ form_row(form.datasetContacts) }}
                 <label for="contactperson">Name</label>
                 <select class="contactperson" id="contactperson" name="contactperson" required="required">
                     {% if contactperson|default %}

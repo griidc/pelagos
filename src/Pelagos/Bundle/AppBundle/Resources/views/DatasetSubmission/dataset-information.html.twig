@@ -13,8 +13,7 @@
         </tr>
         <tr>
             <td>
-                <label for="CIT2_DataIdent">Short Title</label>
-                <input value="" type="text" id="CIT2_DataIdent" size="80" name="">
+                {{ form_row(form.shortTitle) }}
             </td>
             <td>
                 <span class="field-help">
@@ -24,8 +23,7 @@
         </tr>
         <tr>
             <td>
-                <label for="DATE1_DataIdent">Date</label>
-                <input value="" class="required dateISO hasDatepicker" type="text" id="DATE1_DataIdent" name="" size="10"><button type="button" class="ui-datepicker-trigger">...</button></td>
+                {{ form_row(form.referenceDate) }}
             <td>
                 <span class="field-help">
                     Reference date for the cited dataset. This date can refer to dataset creation, publication, or revision. Format should be YYYY-MM-DD.
@@ -34,13 +32,7 @@
         </tr>
         <tr>
             <td>
-                <label for="DATECode_DataIdent"><em>*</em>Date Type</label>
-                <select class="required" id="DATECode_DataIdent" value="publication">
-                    <option value="">[Please Select Date Type]</option>
-                    <option value="creation">Creation</option>
-                    <option selected="" value="publication">Publication</option>
-                    <option value="revision">Revision</option>
-                </select>
+                {{ form_row(form.referenceDateType) }}
             </td>
             <td>
                 <span class="field-help">
@@ -62,8 +54,7 @@
         </tr>
         <tr>
             <td>
-                <label for="MDD2_DataIdent"><em>*</em>Purpose</label>
-                <textarea name="__purpose" class="required"></textarea></td>
+                {{ form_row(form.purpose) }}
             <td>
                 <span class="field-help">
                     Summary of the intentions for which the dataset was developed.
@@ -83,9 +74,9 @@
         </tr>
         <tr>
             <td>
-                <label for="MDD5a_DataIdent"><em>*</em>Supplemental Information - Data Parameters and Units</label>
-                <textarea></textarea>
-                </td><td>
+                {{ form_row(form.suppParams) }}
+            </td>
+            <td>
                 <span class="field-help">
                     Descriptive Information about the Data Parameters and Units.
                 </span>
@@ -93,8 +84,7 @@
         </tr>
         <tr>
             <td>
-                <label for="MDD5b_DataIdent">Supplemental Information - Methods</label>
-                <textarea></textarea>
+                {{ form_row(form.suppMethods) }}
             </td>
             <td>
                 <span class="field-help">
@@ -104,8 +94,7 @@
         </tr>
         <tr>
             <td>
-                <label for="MDD5c_DataIdent">Supplemental Information - Instruments</label>
-                <textarea></textarea>
+                {{ form_row(form.suppInstruments) }}
             </td>
             <td>
                 <span class="field-help">
@@ -115,8 +104,7 @@
         </tr>
         <tr>
             <td>
-                <label for="MDD5d_DataIdent">Supplemental Information - Sampling Scales and Rates</label>
-                <textarea></textarea>
+                {{ form_row(form.suppSampScalesRates) }}
             </td>
             <td>
                 <span class="field-help">
@@ -126,9 +114,7 @@
         </tr>
         <tr>
             <td>
-                <label for="MDD5e_DataIdent">Supplemental Information - Error Analysis</label>
-                <textarea></textarea>
-            </td>
+                {{ form_row(form.suppErrorAnalysis) }}
             <td>
                 <span class="field-help">
                     Descriptive Information about the error analysis.
@@ -137,8 +123,7 @@
         </tr>
         <tr>
             <td>
-                <label for="MDD5f_DataIdent">Supplemental Information - Provenance and Historical References</label>
-                <textarea></textarea>
+                {{ form_row(form.suppProvenance) }}
             </td>
             <td>
                 <span class="field-help">

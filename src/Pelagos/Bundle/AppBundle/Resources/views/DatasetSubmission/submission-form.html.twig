@@ -1,11 +1,8 @@
 {{ form_start(form, {'attr': {'id': 'regForm'}}) }}
     <div id="metatoolbar" class="ui-widget-header ui-corner-all toolbarbutton">
-        <button id="upload">Load from File</button>
-        <button id="fromudi">Load from Registered Dataset</button>
-        <button id="forcesave">Save to File</button>
-        <button id="startover">Clear Form</button>
-        <button id="generate">Check and Save to File</button>
-        <button id="helpscreen">Help</button>
+        <button type="button" id="upload">Load from File</button>
+        <button type="button" id="fromudi">Load from URL</button>
+        <button type="button" id="save">Save and Continue later</button>
     </div>
 
     <fieldset>
@@ -71,7 +68,15 @@
     </fieldset>
 
     <div id="navtoolbar" class="ui-widget-header ui-corner-all toolbarbutton">
-        <button id="btn-previous">Previous</button>
-        <button id="btn-next">Next</button>
+        <table width="100%" id="navbuttons">
+            <tr>
+                <td width="50%">
+                    <button type="button" id="btn-previous">Previous</button>
+                </td>
+                <td width="50%">
+                    <button type="button" id="btn-next">Next</button>
+                </td>
+            </tr>
+        </table>
     </div>
 {{ form_end(form, {'render_rest': false}) }}
