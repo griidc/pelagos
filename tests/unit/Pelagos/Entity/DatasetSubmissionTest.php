@@ -330,30 +330,6 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             'cafe',
             $this->datasetSubmission->getDatasetFileSha256hash()
         );
-        $this->datasetSubmission->setDatasetFileAvailabilityDate(null);
-        $availabilityDate = new \DateTime();
-        $this->datasetSubmission->setDatasetFileAvailabilityDate($availabilityDate);
-        $this->assertSame(
-            $availabilityDate,
-            $this->datasetSubmission->getDatasetFileAvailabilityDate()
-        );
-        $this->datasetSubmission->setDatasetFilePullCertainTimesOnly(true);
-        $this->assertTrue($this->datasetSubmission->getDatasetFilePullCertainTimesOnly());
-        $this->datasetSubmission->setDatasetFilePullStartTime(null);
-        $startTime = new \DateTime();
-        $this->datasetSubmission->setDatasetFilePullStartTime($startTime);
-        $this->assertSame(
-            $startTime,
-            $this->datasetSubmission->getDatasetFilePullStartTime()
-        );
-        $pullDays = array('Monday','Wednesday','Friday');
-        $this->datasetSubmission->setDatasetFilePullDays($pullDays);
-        $this->assertEquals(
-            $pullDays,
-            $this->datasetSubmission->getDatasetFilePullDays()
-        );
-        $this->datasetSubmission->setDatasetFilePullSourceData(true);
-        $this->assertTrue($this->datasetSubmission->getDatasetFilePullSourceData());
     }
 
     /**
