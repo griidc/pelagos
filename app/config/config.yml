@@ -13,9 +13,9 @@ parameters:
     # This parameter is undocumented. By default rabbitmq-supervisor-bundle uses old_sound_rabbit_mq -> consumers
     # from this config file to populate this parameter. As of rabbitmq-supervisor-bundle 1.5, only the array keys
     # are used so the values can be null.
-    phobetor_rabbitmq_supervisor.consumers:
-        filer: ~
-        create_homedir: ~
+    #phobetor_rabbitmq_supervisor.consumers:
+    #   filer: ~
+    #   create_homedir: ~
 
 framework:
     #esi:             ~
@@ -158,11 +158,15 @@ old_sound_rabbit_mq:
         create_homedir:
             connection:       default
             exchange_options: { name: 'create_homedir', type: direct }
+        dataset_file_hasher:
+            connection:       default
+            exchange_options: { name: 'dataset_file_hasher', type: direct }
     consumers:
         filer:
             connection:       default
             exchange_options: { name: 'dataset_submission', type: topic }
             callback:         pelagos.rabbit.consumer.dataset_submission.filer
+            qos_options:      { prefetch_count: 1, global: false }
             queue_options:
                 name: 'filer'
                 routing_keys:
@@ -173,7 +177,7 @@ old_sound_rabbit_mq:
             connection:       default
             exchange_options: { name: 'dataset_submission', type: topic }
             callback:         pelagos.rabbit.consumer.dataset_submission.retriever
-            idle_timeout:     1
+            qos_options:      { prefetch_count: 1, global: false }
             queue_options:
                 name: 'retriever'
                 routing_keys:

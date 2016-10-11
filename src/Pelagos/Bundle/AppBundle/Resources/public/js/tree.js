@@ -24,7 +24,7 @@ function insertTree(tree) {
         tree.animation = 250;
     }
     if (typeof tree.theme === 'undefined') {
-        tree.theme = "classic";
+        tree.theme = "pelagos";
     }
     if (typeof tree.dots === 'undefined') {
         tree.dots = true;
@@ -169,10 +169,6 @@ function updateTree(tree) {
     $("#" + tree.name).bind("loaded.jstree", function(event, data) {
         if (typeof tree.onload !== 'undefined') {
             eval(tree.onload);
-        }
-        cssUrl = '/tree/includes/css/jstree.css';
-        if ($('link[rel*=style][href="' + cssUrl + '"]').length==0) {
-            $('head').append('<link rel="stylesheet" type="text/css" media="all" href="' + cssUrl + '" />');
         }
         loadOpenChildren(data.inst,-1);
         var root_nodes=data.inst._get_children(-1);

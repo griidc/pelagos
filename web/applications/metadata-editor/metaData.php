@@ -42,7 +42,7 @@ class metaData
             
             $mynodes = $xpath->query($query);
             
-			if( $mynodes->length > 0 )
+            if ($mynodes !== false and $mynodes->length > 0)
 			{
 				$mynode = $mynodes->item(0);
                 $this->xmldoc->normalizeDocument();
@@ -88,8 +88,8 @@ class metaData
 		$elements = $xpathdoc->query($xpath);
 		
 		$xmlArray = array();
-		
-		if (!is_null($elements)) {
+
+        if (false !== $elements) {
 			foreach ($elements as $element) {
 				//echo "<br/>[". $element->nodeName. "]";
 				
