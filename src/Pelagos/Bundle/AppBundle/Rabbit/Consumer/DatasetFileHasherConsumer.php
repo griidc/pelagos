@@ -9,6 +9,7 @@ use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Symfony\Bridge\Monolog\Logger;
 use Pelagos\Util\DataStore;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 /**
  * A consumer of dataset hash file request messages.
