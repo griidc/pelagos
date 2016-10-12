@@ -107,17 +107,6 @@ class DatasetFileHasherConsumer implements ConsumerInterface
                  $this->logger->warning('Can not hash file: ' . $fileName . '. File does not exist ', $loggingContext);
                  return true;
         }
-
-// @codingStandardsIgnoreStart
-        // @codingStandardsIgnoreEnd
-        if (preg_match('/^dataset\./', $routingKey)) {
-            $this->processDataset($datasetSubmission, $loggingContext);
-        } elseif (preg_match('/^metadata\./', $routingKey)) {
-            $this->processMetadata($datasetSubmission, $loggingContext);
-        } else {
-            $this->logger->warning("Unknown routing key: $routingKey", $loggingContext);
-            return true;
-        }
         $this->entityManager->persist($datasetSubmission);
         $this->entityManager->flush();
         $this->logger->info('Dataset File Hash end', $loggingContext);
