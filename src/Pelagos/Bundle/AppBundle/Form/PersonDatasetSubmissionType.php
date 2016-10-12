@@ -32,13 +32,13 @@ class PersonDatasetSubmissionType extends AbstractType
     {
         $builder
             ->add('role', ChoiceType::class, array(
-                'label' => 'Role:',
+                'label' => 'Role',
                 'choices' => PersonDatasetSubmission::getRoleChoices(),
                 'placeholder' => '[Please Select a Role]',
             ))
             ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
                 $event->getForm()->add('person', EntityType::class, array(
-                    'label' => 'Person:',
+                    'label' => 'Person',
                     'class' => Person::class,
                     'choice_label' => function ($value, $key, $index) {
                         return $value->getLastName() . ', ' . $value->getFirstName() . ', ' . $value->getEmailAddress();
