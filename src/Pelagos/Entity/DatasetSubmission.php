@@ -335,6 +335,15 @@ class DatasetSubmission extends Entity
     ];
 
     /**
+     * Status of this Dataset Submission.
+     *
+     * @var integer
+     *
+     * @ORM\Column(type="integer")
+     */
+    protected $status = self::STATUS_INCOMPLETE;
+
+    /**
      * The Dataset this Dataset Submission is attached to.
      *
      * @var Dataset
@@ -859,6 +868,27 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Submit this Dataset Submission.
+     *
+     * @return void
+     */
+    public function submit()
+    {
+        $this->status = self::STATUS_COMPLETE;
+        $this->updateDatasetSubmissionStatus();
+    }
+
+    /**
+     * Get the status of this dataset submission.
+     *
+     * @return integer
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
      * Set the Dataset this Dataset Submission is attached to.
      *
      * @param Dataset $dataset The Dataset this Dataset Submission is attached to.
@@ -1200,7 +1230,6 @@ class DatasetSubmission extends Entity
     public function setDatasetFileUri($datasetFileUri)
     {
         $this->datasetFileUri = $datasetFileUri;
-        $this->updateDatasetSubmissionStatus();
     }
 
     /**
@@ -1953,11 +1982,7 @@ class DatasetSubmission extends Entity
     protected function updateDatasetSubmissionStatus()
     {
         if ($this->getDataset() instanceof Dataset) {
-            if (null === $this->getDatasetFileUri()) {
-                $this->getDataset()->setDatasetSubmissionStatus(self::STATUS_INCOMPLETE);
-            } else {
-                $this->getDataset()->setDatasetSubmissionStatus(self::STATUS_COMPLETE);
-            }
+            $this->getDataset()->setDatasetSubmissionStatus($this->status);
         }
     }
 
