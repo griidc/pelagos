@@ -59,9 +59,20 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
             return false;
         }
 
-        // Anyone with an account can create or edit.
-        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
+        // Anyone with an account can edit.
+        if (self::CAN_EDIT == $attribute) {
             return true;
+        }
+
+        // A user with an account can only create dataset submissions
+        // associated with research groups that they (the user) are a member of.
+        $researchGroups = $user->getPerson()->getResearchGroups();
+        $submissionResearchGroup = $subject->getDataset()->getResearchGroup();
+
+        if (self::CAN_CREATE == $attribute) {
+            if (null !== $submissionResearchGroup and in_array($submissionResearchGroup, $researchGroups)) {
+                return true;
+            }
         }
 
         return false;
