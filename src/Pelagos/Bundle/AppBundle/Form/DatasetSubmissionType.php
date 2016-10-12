@@ -220,6 +220,14 @@ class DatasetSubmissionType extends AbstractType
                 'format' => 'yyyy-MM-dd',
                 'required' => true,
             ))
+            ->add('distributionFormatName', Type\TextType::class, array(
+                'label' => 'Distribution Format Name',
+                'required' => false,
+            ))
+            ->add('fileDecompressionTechnique', Type\TextType::class, array(
+                'label' => 'File Decompression Technique',
+                'required' => false,
+            ))
             ->add('datasetContacts', Type\CollectionType::class, array(
                 'label' => 'Dataset Contacts',
                 'entry_type' => PersonDatasetSubmissionType::class,

@@ -100,6 +100,8 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
             'temporalExtentDesc' => array_keys(DatasetSubmission::TEMPORAL_EXTENT_DESCRIPTIONS)[0],
             'temporalExtentBeginPosition' => '2000-01-02',
             'temporalExtentEndPosition' => '2000-01-03',
+            'distributionFormatName' => 'test distribution format name',
+            'fileDecompressionTechnique' => 'test file decompression technique',
             'datasetContacts' => array(
                 array(
                     'role' => 'pointOfContact',
