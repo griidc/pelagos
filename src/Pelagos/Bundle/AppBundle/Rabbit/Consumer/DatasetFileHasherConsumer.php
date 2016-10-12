@@ -103,9 +103,9 @@ class DatasetFileHasherConsumer implements ConsumerInterface
             $hexDigits = hash_file(DatasetSubmission::SHA256, $fileName);
             $datasetSubmission->setDatasetFileSha256Hash($hexDigits);
             $loggingContext['dataset_submission_id'] = $datasetSubmission->getId();
-        } catch (FileNotFoundException ex) {
-                 $this->logger->warning('Can not hash file: ' . $fileName . '. File does not exist ', $loggingContext);
-                 return true;
+        } catch (FileNotFoundException $ex) {
+            $this->logger->warning('Can not hash file: ' . $fileName . '. File does not exist ', $loggingContext);
+            return true;
         }
         $this->entityManager->persist($datasetSubmission);
         $this->entityManager->flush();
