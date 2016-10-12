@@ -95,6 +95,24 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test status.
+     *
+     * @return void
+     */
+    public function testStatus()
+    {
+        $this->assertEquals(
+            DatasetSubmission::STATUS_INCOMPLETE,
+            $this->datasetSubmission->getStatus()
+        );
+        $this->datasetSubmission->submit();
+        $this->assertEquals(
+            DatasetSubmission::STATUS_COMPLETE,
+            $this->datasetSubmission->getStatus()
+        );
+    }
+
+    /**
      * Test dataset setter and getter.
      *
      * @return void
@@ -330,30 +348,6 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             'cafe',
             $this->datasetSubmission->getDatasetFileSha256hash()
         );
-        $this->datasetSubmission->setDatasetFileAvailabilityDate(null);
-        $availabilityDate = new \DateTime();
-        $this->datasetSubmission->setDatasetFileAvailabilityDate($availabilityDate);
-        $this->assertSame(
-            $availabilityDate,
-            $this->datasetSubmission->getDatasetFileAvailabilityDate()
-        );
-        $this->datasetSubmission->setDatasetFilePullCertainTimesOnly(true);
-        $this->assertTrue($this->datasetSubmission->getDatasetFilePullCertainTimesOnly());
-        $this->datasetSubmission->setDatasetFilePullStartTime(null);
-        $startTime = new \DateTime();
-        $this->datasetSubmission->setDatasetFilePullStartTime($startTime);
-        $this->assertSame(
-            $startTime,
-            $this->datasetSubmission->getDatasetFilePullStartTime()
-        );
-        $pullDays = array('Monday','Wednesday','Friday');
-        $this->datasetSubmission->setDatasetFilePullDays($pullDays);
-        $this->assertEquals(
-            $pullDays,
-            $this->datasetSubmission->getDatasetFilePullDays()
-        );
-        $this->datasetSubmission->setDatasetFilePullSourceData(true);
-        $this->assertTrue($this->datasetSubmission->getDatasetFilePullSourceData());
     }
 
     /**
@@ -552,7 +546,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             array(),
             $this->datasetSubmission->getTopicKeywords()
         );
-        $topicKeywords = array_keys(DatasetSubmission::TOPIC_KEYWORD_CHOICES);
+        $topicKeywords = array_keys(DatasetSubmission::TOPIC_KEYWORDS);
         $this->datasetSubmission->setTopicKeywords($topicKeywords);
         $this->assertEquals(
             $topicKeywords,
@@ -585,6 +579,13 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             $spatialExtent,
             $this->datasetSubmission->getSpatialExtent()
+        );
+        $this->datasetSubmission->setSpatialExtentDescription(null);
+        $spatialExtentDescription = 'spatial extent description';
+        $this->datasetSubmission->setSpatialExtentDescription($spatialExtentDescription);
+        $this->assertEquals(
+            $spatialExtentDescription,
+            $this->datasetSubmission->getSpatialExtentDescription()
         );
     }
 
@@ -628,6 +629,38 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
     public function testBadTemporalExtentDesc()
     {
         $this->datasetSubmission->setTemporalExtentDesc('bad temporal extent description');
+    }
+
+    /**
+     * Test distribution format name.
+     *
+     * @return void
+     */
+    public function testDistributionFormatName()
+    {
+        $this->datasetSubmission->setDistributionFormatName(null);
+        $distributionFormatName = 'distribution format name';
+        $this->datasetSubmission->setDistributionFormatName($distributionFormatName);
+        $this->assertEquals(
+            $distributionFormatName,
+            $this->datasetSubmission->getDistributionFormatName()
+        );
+    }
+
+    /**
+     * Test file decompression technique.
+     *
+     * @return void
+     */
+    public function testFileDecompressionTechnique()
+    {
+        $this->datasetSubmission->setFileDecompressionTechnique(null);
+        $fileDecompressionTechnique = 'file decompression technique';
+        $this->datasetSubmission->setFileDecompressionTechnique($fileDecompressionTechnique);
+        $this->assertEquals(
+            $fileDecompressionTechnique,
+            $this->datasetSubmission->getFileDecompressionTechnique()
+        );
     }
 
     /**
@@ -686,7 +719,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetReferenceDateTypeChoices()
     {
-        $referenceDateTypeChoices = $this->datasetSubmission->getReferenceDateTypeChoices();
+        $referenceDateTypeChoices = DatasetSubmission::getReferenceDateTypeChoices();
         $this->assertInternalType('array', $referenceDateTypeChoices);
         foreach ($referenceDateTypeChoices as $index => $value) {
             $this->assertInternalType('string', $index);
@@ -701,7 +734,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetTopicKeywordsChoices()
     {
-        $topicKeywordsChoices = $this->datasetSubmission->getTopicKeywordsChoices();
+        $topicKeywordsChoices = DatasetSubmission::getTopicKeywordsChoices();
         $this->assertInternalType('array', $topicKeywordsChoices);
         foreach ($topicKeywordsChoices as $index => $value) {
             $this->assertInternalType('string', $index);
@@ -716,9 +749,24 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetTemporalExtentDescChoices()
     {
-        $temporalExtentDescChoices = $this->datasetSubmission->getTemporalExtentDescChoices();
+        $temporalExtentDescChoices = DatasetSubmission::getTemporalExtentDescChoices();
         $this->assertInternalType('array', $temporalExtentDescChoices);
         foreach ($temporalExtentDescChoices as $index => $value) {
+            $this->assertInternalType('string', $index);
+            $this->assertInternalType('string', $value);
+        }
+    }
+
+    /**
+     * Test getting the choice list for restrictions.
+     *
+     * @return void
+     */
+    public function testGetRestrictionsChoices()
+    {
+        $restrictionsChoices = DatasetSubmission::getRestrictionsChoices();
+        $this->assertInternalType('array', $restrictionsChoices);
+        foreach ($restrictionsChoices as $index => $value) {
             $this->assertInternalType('string', $index);
             $this->assertInternalType('string', $value);
         }
