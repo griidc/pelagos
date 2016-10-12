@@ -7,7 +7,7 @@
     <table class="tab-table">
         <tr>
             <td>
-                {{ form_row(form.temporalExtentEndPosition) }}
+                {{ form_row(form.distributionFormatName) }}
             </td>
             <td>
                 <pre>
@@ -17,8 +17,7 @@
         </tr>
         <tr>
             <td>
-                <label for="MDF2_DistroInfo">File Decompression Technique</label>
-                <input type="text">
+                {{ form_row(form.fileDecompressionTechnique) }}
             </td>
             <td>
                 <pre>

@@ -20,6 +20,9 @@ use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\ResearchGroup;
+use Pelagos\Entity\PersonDatasetSubmission;
+use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 
 /**
  * The Dataset Submission controller for the Pelagos UI App Bundle.
@@ -48,7 +51,6 @@ class DatasetSubmissionController extends UIController
      */
     public function defaultAction(Request $request)
     {
-        $difId = $request->query->get('uid');
         $udi = $request->query->get('regid');
 
         $datasetSubmission = null;
@@ -74,58 +76,24 @@ class DatasetSubmissionController extends UIController
                 $datasetSubmission = $dataset->getDatasetSubmission();
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
                     $datasetSubmission = new DatasetSubmission;
+
+                    $dataset->setDatasetSubmission($datasetSubmission);
+
                     $datasetSubmission->setTitle($dif->getTitle());
                     $datasetSubmission->setAbstract($dif->getAbstract());
-                    $datasetSubmission->setPointOfContactName(
-                        $dif
-                        ->getPrimaryPointOfContact()
-                        ->getLastName()
-                        . ', ' .
-                        $dif
-                        ->getPrimaryPointOfContact()
-                        ->getFirstName()
-                    );
-                    $datasetSubmission->setPointOfContactEmail(
-                        $dif
-                        ->getPrimaryPointOfContact()
-                        ->getEmailAddress()
-                    );
+
+                    $datasetContact = new PersonDatasetSubmissionDatasetContact();
+                    $datasetContact->setDatasetSubmission($datasetSubmission);
+                    $datasetContact->setRole('pointOfContact');
+                    $datasetContact->setPerson($dif->getPrimaryPointOfContact());
+                    $datasetSubmission->addDatasetContact($datasetContact);
+
+                    $metadataContact = new PersonDatasetSubmissionMetadataContact();
+                    $metadataContact->setDatasetSubmission($datasetSubmission);
+                    $metadataContact->setRole('pointOfContact');
+                    $datasetSubmission->addMetadataContact($metadataContact);
                 } else {
                     $buttonLabel = 'Update';
-                }
-                $found = true;
-            }
-        }
-
-        if ($difId != null) {
-            $dif = $this->entityHandler->get(DIF::class, $difId);
-
-            if ($dif instanceof DIF) {
-                $dataset = $dif->getDataset();
-
-                $datasetId = $dataset->getId();
-
-                $datasetSubmission = $dataset->getDatasetSubmission();
-                if ($datasetSubmission instanceof DatasetSubmission == false) {
-                    $datasetSubmission = new DatasetSubmission;
-                    $datasetSubmission->setTitle($dif->getTitle());
-                    $datasetSubmission->setAbstract($dif->getAbstract());
-                    $datasetSubmission->setPointOfContactName(
-                        $dif
-                        ->getPrimaryPointOfContact()
-                        ->getLastName()
-                        . ', ' .
-                        $dif
-                        ->getPrimaryPointOfContact()
-                        ->getFirstName()
-                    );
-                    $datasetSubmission->setPointOfContactEmail(
-                        $dif
-                        ->getPrimaryPointOfContact()
-                        ->getEmailAddress()
-                    );
-                } else {
-                    $udi = $dataset->getUdi();
                 }
                 $found = true;
             }
@@ -201,16 +169,6 @@ class DatasetSubmissionController extends UIController
                 )
             );
 
-        $researchGroups = array();
-        foreach ($this->entityHandler->getAll(ResearchGroup::class) as $entity) {
-            if ($this->isGranted('CAN_CREATE_DIF_FOR', $entity)) {
-                $researchGroups[] = $entity;
-            }
-        }
-
-        $researchers = $this->entityHandler
-            ->getAll(Person::class);
-
         return $this->render(
             'PelagosAppBundle:DatasetSubmission:index.html.twig',
             array(
@@ -219,8 +177,6 @@ class DatasetSubmissionController extends UIController
                 'found'  => $found,
                 'udi'  => $udi,
                 'datasetSubmissions' => $datasetSubmissions,
-                //'researchGroups' => $researchGroups,
-                //'researchers' => $researchers,
                 'loggedInPerson' => $loggedInPerson,
                 'dif' => $dif,
             )
@@ -247,6 +203,15 @@ class DatasetSubmissionController extends UIController
         if ($datasetSubmission instanceof DatasetSubmission) {
             $sequence = $datasetSubmission->getSequence();
             $datasetSubmission = clone $datasetSubmission;
+
+            foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+                $datasetSubmission->removeDatasetContact($datasetContact);
+            }
+
+            foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+                $datasetSubmission->removeMetadataContact($metadataContact);
+            }
+
             $datasetSubmission->setId(null);
             $datasetSubmission->setCreationTimeStamp(null);
         } else {
@@ -261,9 +226,11 @@ class DatasetSubmissionController extends UIController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
             $dataset->setDatasetSubmission($datasetSubmission);
             $sequence = $datasetSubmission->getSequence();
+
+
 
             if ($sequence == null) {
                 $sequence = 0;

@@ -21,7 +21,11 @@
                         </td>
                         <td>
                             <label>Theme Keywords</label>
-                            <select class="keywordinput" required="required" id="theme-keywords" keyword="target" list="theme-keywords-list" size="5"></select>
+                            <select class="keywordinput" required="required" id="theme-keywords" keyword="target" list="theme-keywords-list" size="5">
+                            {% for keyword in form.themeKeywords %}
+                                <option value="{{keyword.vars.value}}">{{keyword.vars.value}}</option>
+                            {% endfor %}
+                            </select>
                         </td>
                     </tr>
                 </table>
@@ -34,9 +38,9 @@
         </tr>
     </table>
     </fieldset>
-    <input type="hidden" name="theme-keywords-list">
-    <hr>  
-    
+    <select hidden readonly multiple id="themeKeywords" name="themeKeywords[]"></select>
+    <hr>
+
     <fieldset>
         <legend>Place Keywords</legend>
         <table class="tab-table">
@@ -55,7 +59,11 @@
                             </td>
                             <td>
                                 <label>Place Keywords</label>
-                                <select class="keywordinput" id="place-keywords" keyword="target" size="5"></select>
+                                <select class="keywordinput" id="place-keywords" keyword="target" size="5">
+                                {% for keyword in form.placeKeywords %}
+                                    <option value="{{keyword.vars.value}}">{{keyword.vars.value}}</option>
+                                {% endfor %}
+                                </select>
                             </td>
                         </tr>
                     </table>
@@ -69,8 +77,8 @@
         </table>
     </fieldset>
     <hr>
-    <input type="hidden" name="place-keywords-list">
-    
+    <select hidden readonly multiple id="placeKeywords" name="placeKeywords[]"></select>
+
     <fieldset>
         <legend>Topic Category Keywords</legend>
 
@@ -82,28 +90,19 @@
                         <td>
                             <label>Topic Category Keyword List</label>
                             <select class="keywordinput" size="10" id="topic-keyword-select" keyword="source">
-                                    <option value="oceans" order="0" >Oceans</option>
-                                    <div class="topictooltip">
-                                        <b>Oceans:</b><br/>Features and characteristics of salt water bodies (excluding inland waters) Examples: tides, tidal waves, coastal information, reefs
-                                    </div>
-                                    <option value="biota" order="1">Biota</option>
-                                    <option value="boundaries" order="2">Boundaries</option>
-                                    <option value="climatologyMeteorologyAtmosphere" order="3">Climatology/Meteorology/Atmosphere</option>
-                                    <option value="economy" order="4">Economy</option>
-                                    <option value="elevation" order="5">Elevation</option>
-                                    <option value="environment" order="6">Environment</option>
-                                    <option value="farming" order="7">Farming</option>
-                                    <option value="geoscientificInformation" order="8">Geoscientific Information</option>
-                                    <option value="health" order="9">Health</option>
-                                    <option value="imageryBaseMapsEarthCover" order="10">Imagery/Base Maps/Earth Cover</option>
-                                    <option value="inlandWaters" order="11">Inland Waters</option>
-                                    <option value="location" order="12">Location</option>
-                                    <option value="intelligenceMilitary" order="13">Military Intelligence</option>
-                                    <option value="planningCadastre" order="14">Planning/Cadastre</option>
-                                    <option value="society" order="15">Society</option>
-                                    <option value="structure" order="16">Structure</option>
-                                    <option value="transportation" order="17">Transportation</option>
-                                    <option value="utilitiesCommunication" order="18">Utilities/Communication</option>
+                                {% set order = 0 %}
+                                {% for keyword in form.topicKeywords.vars.choices %}
+                                    {% set found = false  %}
+                                    {% for keywordValue in form.topicKeywords.vars.value %}
+                                        {% if keyword.value == keywordValue %}
+                                            {% set found = true %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if not found|default %}
+                                        <option value="{{keyword.value}}" order="{{order}}">{{keyword.label}}</option>
+                                    {% endif %}
+                                    {% set order = order + 1 %}
+                                {% endfor %}
                             </select>
                         </td>
                         <td>
@@ -112,7 +111,17 @@
                         </td>
                         <td>
                             <label>Selected Topic Category Keywords</label>
-                            <select class="keywordinput" required="required" keyword="target" size="10" id="topic-keywords"></select>
+                            <select class="keywordinput" required="required" keyword="target" size="10" id="topic-keywords">
+                            {% for keywordValue in form.topicKeywords.vars.value %}
+                                {% set order = 0 %}
+                                {% for keyword in form.topicKeywords.vars.choices %}
+                                    {% if keyword.value == keywordValue %}
+                                        <option value="{{keyword.value}}" order={{order}}>{{keyword.label}}</option>
+                                    {% endif %}
+                                    {% set order = order + 1 %}
+                                {% endfor %}
+                            {% endfor %}
+                            </select>
                         </td>
                     </tr>
                 </table>
@@ -126,7 +135,5 @@
             </td>
         </tr>
     </table>
-    <input type="ahidden" name="topic-keywords-list">
-	
+    <select hidden readonly multiple id="topicKeywords" name="topicKeywords[]"></select>
 </fieldset>
-	

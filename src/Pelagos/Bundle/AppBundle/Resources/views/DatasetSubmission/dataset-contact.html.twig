@@ -1,14 +1,14 @@
 <fieldset>
     <legend>Dataset Contact</legend>
     <table class="tab-table">
+        {% for contact in form.datasetContacts %}
         <tr>
             <td>
-                {{ form_row(form.datasetContacts) }}
                 <label for="contactperson">Name</label>
-                <select class="contactperson" id="contactperson" name="contactperson" required="required">
-                    {% if contactperson|default %}
-                    <option value="{{contact-person.Person.id}}">
-                        {{contactperson.lastName}}, {{contactperson.firstName}}, {{contactperson.emailAddress}}
+                <select class="contactperson" id="contactperson" name="datasetContacts[0][person]" required="required">
+                    {% if contact.vars.data.person|default %}
+                    <option value="{{contact.vars.data.person.id}}">
+                        {{contact.vars.data.person.lastName}}, {{contact.vars.data.person.firstName}}, {{contact.vars.data.person.emailAddress}}
                     </option>
                     {% else %}
                     <option value="">[Please Select a Person]</option>
@@ -24,21 +24,7 @@
         </tr>
         <tr>
             <td>
-                <label for="rolecode"><em>*</em>Role</label>
-                <select required="" id="rolecode" value="principalInvestigator">
-                    <option value="">[Please Select a Role]</option>
-                    <option value="resourceProvider">Resource Provider</option>
-                    <option value="custodian">Custodian</option>
-                    <option value="owner">Owner</option>
-                    <option value="distributor">Distributor</option>
-                    <option value="originator">Originator</option>
-                    <option value="pointOfContact">Point of Contact</option>
-                    <option selected="" value="principalInvestigator">Principal Investigator</option>
-                    <option value="processor">Processor</option>
-                    <option value="publisher">Publisher</option>
-                    <option value="author">Author</option>
-                </select>
-            </td>
+                {{ form_row(contact.role) }}
             <td>
                 <span class="field-help">
                     Resource Provider: Party that supplies the resource.<br>
@@ -54,7 +40,7 @@
                 </span>
             </td>
         </tr>
-        
+        {% endfor %}
         <tr>
             <td>
                 {{ form_row(form.authors) }}
@@ -65,6 +51,5 @@
                 </span>
             </td>
         </tr>
-        
     </table>
-</fieldsetfieldset>
+</fieldset>

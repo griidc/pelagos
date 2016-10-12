@@ -1,13 +1,14 @@
 <fieldset>
     <legend>Metadata Contact</legend>
     <table class="tab-table">
+        {% for contact in form.metadataContacts %}
         <tr>
             <td>
                 <label>Name</label>
                 <select class="contactperson" id="metadatacontact" name="metadatacontact" required="required">
-                    {% if metadatacontact|default %}
+                    {% if contact.vars.data.person|default %}
                     <option value="{{metadatacontact.Person.id}}">
-                        {{metadatacontact.lastName}}, {{metadatacontact.firstName}}, {{metadatacontact.emailAddress}}
+                        {{contact.vars.data.person.lastName}}, {{contact.vars.data.person.firstName}}, {{contact.vars.data.person.emailAddress}}
                     </option>
                     {% else %}
                     <option value="">[Please Select a Person]</option>
@@ -23,20 +24,7 @@
         </tr>
         <tr>
             <td>
-                <label for="rolecode">Role</label>
-                <select id="rolecode" value="principalInvestigator">
-                    <option value="">[Please Select a Role]</option>
-                    <option value="resourceProvider">Resource Provider</option>
-                    <option value="custodian">Custodian</option>
-                    <option value="owner">Owner</option>
-                    <option value="distributor">Distributor</option>
-                    <option value="originator">Originator</option>
-                    <option selected="selected" value="pointOfContact">Point of Contact</option>
-                    <option value="principalInvestigator">Principal Investigator</option>
-                    <option value="processor">Processor</option>
-                    <option value="publisher">Publisher</option>
-                    <option value="author">Author</option>
-                </select>
+                {{ form_row(contact.role) }}
             </td>
             <td>
                 <span class="field-help">
@@ -53,5 +41,6 @@
                 </span>
             </td>
         </tr>
+        {% endfor %}
     </table>
-</fieldsetfieldset>
+</fieldset>
