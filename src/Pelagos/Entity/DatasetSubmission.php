@@ -1901,21 +1901,45 @@ class DatasetSubmission extends Entity
         return $this->temporalExtentEndPosition;
     }
 
+    /**
+     * Set the distribution format name.
+     *
+     * @param string $distributionFormatName The distribution format name.
+     *
+     * @return void
+     */
     public function setDistributionFormatName($distributionFormatName)
     {
         $this->distributionFormatName = $distributionFormatName;
     }
 
+    /**
+     * Get the distribution format name.
+     *
+     * @return string
+     */
     public function getDistributionFormatName()
     {
         return $this->distributionFormatName;
     }
 
+    /**
+     * Set the file decompression technique.
+     *
+     * @param string $fileDecompressionTechnique The file decompression technique.
+     *
+     * @return void
+     */
     public function setFileDecompressionTechnique($fileDecompressionTechnique)
     {
         $this->fileDecompressionTechnique = $fileDecompressionTechnique;
     }
 
+    /**
+     * Get the file decompression technique.
+     *
+     * @return string
+     */
     public function getFileDecompressionTechnique()
     {
         return $this->fileDecompressionTechnique;
