@@ -97,18 +97,18 @@ class DatasetFileHasherConsumer implements ConsumerInterface
             return true;
         }
         
-        $datasetFileInfo = $this->dataStore->getFileInfo($datasetUdi, DataStore::DATASET_FILE_TYPE);
-        $fileName = $datasetFileInfo->getFilename();
-        
-        if (!file_exists($fileName)) {
-            $this->logger->warning('Can not hash file: ' . $fileName . '. File does not exist ', $loggingContext);
-            return true;
+        try {
+            $datasetFileInfo = $this->dataStore->getFileInfo($datasetUdi, DataStore::DATASET_FILE_TYPE);
+            $fileName = $datasetFileInfo->getFilename();
+            $hexDigits = hash_file(DatasetSubmission::SHA256, $fileName);
+            $datasetSubmission->setDatasetFileSha256Hash($hexDigits);
+            $loggingContext['dataset_submission_id'] = $datasetSubmission->getId();
+        } catch (FileNotFoundException ex) {
+                 $this->logger->warning('Can not hash file: ' . $fileName . '. File does not exist ', $loggingContext);
+                 return true;
         }
-        $hexDigits = hash_file('sha256', $fileName);
-        $datasetSubmission->setDatasetFileSha256Hash($hexDigits);
-        $loggingContext['dataset_submission_id'] = $datasetSubmission->getId();
-        
-        // @codingStandardsIgnoreStart
+
+// @codingStandardsIgnoreStart
         // @codingStandardsIgnoreEnd
         if (preg_match('/^dataset\./', $routingKey)) {
             $this->processDataset($datasetSubmission, $loggingContext);

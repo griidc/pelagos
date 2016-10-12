@@ -64,6 +64,7 @@ class DataStore
      * Indicates that the type of the file named is metadata.
      */
     const METADATA_FILE_TYPE = 'metadata';
+    
     /**
      * Constructor.
      *

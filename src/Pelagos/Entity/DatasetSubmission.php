@@ -33,6 +33,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 class DatasetSubmission extends Entity
 {
     /**
+     * Indicates the algorithm used to produce the MD hash.
+     *
+     * This is used as an indicator of change in submitted data.
+     */
+    const SHA256 = 'sha256';
+
+    /**
      * A friendly name for this type of entity.
      */
     const FRIENDLY_NAME = 'Dataset Submission';
