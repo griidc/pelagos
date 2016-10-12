@@ -291,10 +291,6 @@ class DatasetSubmission extends Entity
             'name' => 'Climatology/Meteorology/Atmosphere',
             'description' => 'processes and phenomena of the atmosphere. Examples: cloud cover, weather, climate, atmospheric conditions, climate change, precipitation',
         ],
-        'disaster' => [
-            'name' => 'Disaster',
-            'description' => 'Information related to disasters. Examples: site of the disaster, evacuation zone, disaster-prevention facility, disaster relief activities',
-        ],
         'economy' => [
             'name' => 'Economy',
             'description' => 'economic activities, conditions and employment. Examples: production, labour, revenue, commerce, industry, tourism and ecotourism, forestry, fisheries, commercial or subsistence hunting, exploration and exploitation of resources such as minerals, oil and gas',
@@ -306,10 +302,6 @@ class DatasetSubmission extends Entity
         'environment' => [
             'name' => 'Environment',
             'description' => 'environmental resources, protection and conservation. Examples: environmental pollution, waste storage and treatment, environmental impact assessment, monitoring environmental risk, nature reserves, landscape',
-        ],
-        'extraTerrestrial' => [
-            'name' => 'Extra Terrestrial',
-            'description' => 'region more than 100 km above the surface of the Earth',
         ],
         'farming' => [
             'name' => 'Farming',
