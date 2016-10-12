@@ -95,6 +95,24 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test status.
+     *
+     * @return void
+     */
+    public function testStatus()
+    {
+        $this->assertEquals(
+            DatasetSubmission::STATUS_INCOMPLETE,
+            $this->datasetSubmission->getStatus()
+        );
+        $this->datasetSubmission->submit();
+        $this->assertEquals(
+            DatasetSubmission::STATUS_COMPLETE,
+            $this->datasetSubmission->getStatus()
+        );
+    }
+
+    /**
      * Test dataset setter and getter.
      *
      * @return void

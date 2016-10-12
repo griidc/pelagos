@@ -277,62 +277,90 @@ class DatasetSubmission extends Entity
     const TOPIC_KEYWORDS = [
         'oceans' => [
             'name' => 'Oceans',
+            'description' => 'features and characteristics of salt water bodies (excluding inland waters). Examples: tides, tidal waves, coastal information, reefs',
         ],
         'biota' => [
             'name' => 'Biota',
+            'description' => 'flora and/or fauna in natural environment. Examples: wildlife, vegetation, biological sciences, ecology, wilderness, sealife, wetlands, habitat',
         ],
-        'boundries' => [
-            'name' => 'Boundries',
+        'boundaries' => [
+            'name' => 'Boundaries',
+            'description' => 'legal land descriptions. Examples: political and administrative boundaries',
         ],
-        'climatology' => [
+        'climatologyMeteorologyAtmosphere' => [
             'name' => 'Climatology/Meteorology/Atmosphere',
+            'description' => 'processes and phenomena of the atmosphere. Examples: cloud cover, weather, climate, atmospheric conditions, climate change, precipitation',
         ],
         'economy' => [
             'name' => 'Economy',
+            'description' => 'economic activities, conditions and employment. Examples: production, labour, revenue, commerce, industry, tourism and ecotourism, forestry, fisheries, commercial or subsistence hunting, exploration and exploitation of resources such as minerals, oil and gas',
         ],
         'elevation' => [
             'name' => 'Elevation',
+            'description' => 'height above or below sea level. Examples: altitude, bathymetry, digital elevation models, slope, derived products',
         ],
         'environment' => [
             'name' => 'Environment',
+            'description' => 'environmental resources, protection and conservation. Examples: environmental pollution, waste storage and treatment, environmental impact assessment, monitoring environmental risk, nature reserves, landscape',
         ],
         'farming' => [
             'name' => 'Farming',
+            'description' => 'rearing of animals and/or cultivation of plants. Examples: agriculture, irrigation, aquaculture, plantations, herding, pests and diseases affecting crops and livestock',
         ],
         'geoscientificInformation' => [
             'name' => 'Geoscientific Information',
+            'description' => 'information pertaining to earth sciences. Examples: geophysical features and processes, geology, minerals, sciences dealing with the composition, structure and origin of the earth s rocks, risks of earthquakes, volcanic activity, landslides, gravity information, soils, permafrost, hydrogeology, erosion',
         ],
         'health' => [
             'name' => 'Health',
+            'description' => 'health, health services, human ecology, and safety. Examples: disease and illness, factors affecting health, hygiene, substance abuse, mental and physical health, health services',
         ],
-        'imagery' => [
+        'imageryBaseMapsEarthCover' => [
             'name' => 'Imagery/Base Maps/Earth Cover',
+            'description' => 'base maps. Examples: land cover, topographic maps, imagery, unclassified images, annotations',
         ],
         'inlandWaters' => [
             'name' => 'Inland Waters',
+            'description' => 'inland water features, drainage systems and their characteristics. Examples: rivers and glaciers, salt lakes, water utilization plans, dams, currents, floods, water quality, hydrographic charts',
         ],
         'location' => [
             'name' => 'Location',
+            'description' => 'positional information and services. Examples: addresses, geodetic networks, control points, postal zones and services, place names',
         ],
-        'militaryIntelligence' => [
+        'intelligenceMilitary' => [
             'name' => 'Military Intelligence',
+            'description' => 'military bases, structures, activities. Examples: barracks, training grounds, military transportation, information collection',
         ],
-        'planning' => [
+        'planningCadastre' => [
             'name' => 'Planning/Cadastre',
+            'description' => 'information used for appropriate actions for future use of the land. Examples: land use maps, zoning maps, cadastral surveys, land ownership',
         ],
         'society' => [
             'name' => 'Society',
+            'description' => 'characteristics of society and cultures. Examples: settlements, anthropology, archaeology, education, traditional beliefs, manners and customs, demographic data, recreational areas and activities, social impact assessments, crime and justice, census information',
         ],
         'structure' => [
             'name' => 'Structure',
+            'description' => 'man-made construction. Examples: buildings, museums, churches, factories, housing, monuments, shops, towers',
         ],
         'transportation' => [
             'name' => 'Transportation',
+            'description' => 'means and aids for conveying persons and/or goods. Examples: roads, airports/airstrips, shipping routes, tunnels, nautical charts, vehicle or vessel location, aeronautical charts, railways',
         ],
-        'utilities' => [
+        'utilitiesCommunication' => [
             'name' => 'Utilities/Communication',
+            'description' => 'energy, water and waste systems and communications infrastructure and services. Examples: hydroelectricity, geothermal, solar and nuclear sources of energy, water purification and distribution, sewage collection and disposal, electricity and gas distribution, data communication, telecommunication, radio, communication networks',
         ],
     ];
+
+    /**
+     * Status of this Dataset Submission.
+     *
+     * @var integer
+     *
+     * @ORM\Column(type="integer")
+     */
+    protected $status = self::STATUS_INCOMPLETE;
 
     /**
      * The Dataset this Dataset Submission is attached to.
@@ -859,6 +887,27 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Submit this Dataset Submission.
+     *
+     * @return void
+     */
+    public function submit()
+    {
+        $this->status = self::STATUS_COMPLETE;
+        $this->updateDatasetSubmissionStatus();
+    }
+
+    /**
+     * Get the status of this dataset submission.
+     *
+     * @return integer
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
      * Set the Dataset this Dataset Submission is attached to.
      *
      * @param Dataset $dataset The Dataset this Dataset Submission is attached to.
@@ -1200,7 +1249,6 @@ class DatasetSubmission extends Entity
     public function setDatasetFileUri($datasetFileUri)
     {
         $this->datasetFileUri = $datasetFileUri;
-        $this->updateDatasetSubmissionStatus();
     }
 
     /**
@@ -1953,11 +2001,7 @@ class DatasetSubmission extends Entity
     protected function updateDatasetSubmissionStatus()
     {
         if ($this->getDataset() instanceof Dataset) {
-            if (null === $this->getDatasetFileUri()) {
-                $this->getDataset()->setDatasetSubmissionStatus(self::STATUS_INCOMPLETE);
-            } else {
-                $this->getDataset()->setDatasetSubmissionStatus(self::STATUS_COMPLETE);
-            }
+            $this->getDataset()->setDatasetSubmissionStatus($this->status);
         }
     }
 

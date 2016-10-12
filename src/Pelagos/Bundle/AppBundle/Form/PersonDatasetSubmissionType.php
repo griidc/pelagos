@@ -10,7 +10,6 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\PersonDatasetSubmission;
 
@@ -32,20 +31,14 @@ class PersonDatasetSubmissionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('datasetSubmission', EntityType::class, array(
-                'label' => 'Dataset Submission:',
-                'class' => DatasetSubmission::class,
-                'choice_label' => 'id',
-                'placeholder' => '[Please Select a Dataset Submission]',
-            ))
             ->add('role', ChoiceType::class, array(
-                'label' => 'Role:',
+                'label' => 'Role',
                 'choices' => PersonDatasetSubmission::getRoleChoices(),
                 'placeholder' => '[Please Select a Role]',
             ))
             ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
                 $event->getForm()->add('person', EntityType::class, array(
-                    'label' => 'Person:',
+                    'label' => 'Person',
                     'class' => Person::class,
                     'choice_label' => function ($value, $key, $index) {
                         return $value->getLastName() . ', ' . $value->getFirstName() . ', ' . $value->getEmailAddress();
