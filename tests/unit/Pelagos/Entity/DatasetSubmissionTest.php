@@ -614,6 +614,38 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test distribution format name.
+     *
+     * @return void
+     */
+    public function testDistributionFormatName()
+    {
+        $this->datasetSubmission->setDistributionFormatName(null);
+        $distributionFormatName = 'distribution format name';
+        $this->datasetSubmission->setDistributionFormatName($distributionFormatName);
+        $this->assertEquals(
+            $distributionFormatName,
+            $this->datasetSubmission->getDistributionFormatName()
+        );
+    }
+
+    /**
+     * Test file decompression technique.
+     *
+     * @return void
+     */
+    public function testFileDecompressionTechnique()
+    {
+        $this->datasetSubmission->setFileDecompressionTechnique(null);
+        $fileDecompressionTechnique = 'file decompression technique';
+        $this->datasetSubmission->setFileDecompressionTechnique($fileDecompressionTechnique);
+        $this->assertEquals(
+            $fileDecompressionTechnique,
+            $this->datasetSubmission->getFileDecompressionTechnique()
+        );
+    }
+
+    /**
      * Test update dataset submission status.
      *
      * @return void

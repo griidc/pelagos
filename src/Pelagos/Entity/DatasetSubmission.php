@@ -820,6 +820,24 @@ class DatasetSubmission extends Entity
     protected $temporalExtentEndPosition;
 
     /**
+     * The name of the format the data is distributed in.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $distributionFormatName;
+
+    /**
+     * The technique used to decompress the dataset.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $fileDecompressionTechnique;
+
+    /**
      * Constructor.
      *
      * Initializes collections to empty collections.
@@ -1881,6 +1899,26 @@ class DatasetSubmission extends Entity
     public function getTemporalExtentEndPosition()
     {
         return $this->temporalExtentEndPosition;
+    }
+
+    public function setDistributionFormatName($distributionFormatName)
+    {
+        $this->distributionFormatName = $distributionFormatName;
+    }
+
+    public function getDistributionFormatName()
+    {
+        return $this->distributionFormatName;
+    }
+
+    public function setFileDecompressionTechnique($fileDecompressionTechnique)
+    {
+        $this->fileDecompressionTechnique = $fileDecompressionTechnique;
+    }
+
+    public function getFileDecompressionTechnique()
+    {
+        return $this->fileDecompressionTechnique;
     }
 
     /**
