@@ -4,6 +4,7 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Symfony\Component\Ldap\Exception\LdapException;
 
@@ -86,7 +87,7 @@ class AccountController extends UIController
             $personToken->getPerson()->setToken(null);
             $this->entityHandler->delete($personToken);
         }
-        
+
         $hasAccount = $person->getAccount() instanceof Account;
 
         if ($hasAccount and !$reset) {
@@ -177,6 +178,21 @@ class AccountController extends UIController
                 'personToken' => $this->getUser()->getPerson()->getToken(),
             )
         );
+    }
+
+    /**
+     * Redirect GET sent to this route (CAS does this after PW reset).
+     *
+     * @Route("/create")
+     * @Method("GET")
+     *
+     * @return Response A Symfony Response instance.
+     */
+    public function redirectAction()
+    {
+        $url = $this->generateUrl('pelagos_homepage');
+        $redirectResponse = new RedirectResponse($url, 303);
+        return $redirectResponse;
     }
 
     /**
