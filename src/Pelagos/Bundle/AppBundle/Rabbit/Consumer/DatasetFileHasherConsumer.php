@@ -10,6 +10,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 use Symfony\Bridge\Monolog\Logger;
 use Pelagos\Util\DataStore;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+use Pelagos\Entity\DatasetSubmission;
 
 /**
  * A consumer of dataset hash file request messages.
@@ -98,16 +99,16 @@ class DatasetFileHasherConsumer implements ConsumerInterface
             return true;
         }
         
+        $loggingContext['dataset_submission_id'] = $datasetSubmission->getId();
         try {
             $datasetFileInfo = $this->dataStore->getFileInfo($datasetUdi, DataStore::DATASET_FILE_TYPE);
-            $fileName = $datasetFileInfo->getFilename();
-            $hexDigits = hash_file(DatasetSubmission::SHA256, $fileName);
-            $datasetSubmission->setDatasetFileSha256Hash($hexDigits);
-            $loggingContext['dataset_submission_id'] = $datasetSubmission->getId();
         } catch (FileNotFoundException $ex) {
-            $this->logger->warning('Can not hash file: ' . $fileName . '. File does not exist ', $loggingContext);
+            $this->logger->warning('Can not hash dataset file. File not found ', $loggingContext);
             return true;
         }
+        $filePath = $datasetFileInfo->getRealPath();
+        $hexDigits = hash_file(DatasetSubmission::SHA256, $filePath);
+        $datasetSubmission->setDatasetFileSha256Hash($hexDigits);
         $this->entityManager->persist($datasetSubmission);
         $this->entityManager->flush();
         $this->logger->info('Dataset File Hash end', $loggingContext);

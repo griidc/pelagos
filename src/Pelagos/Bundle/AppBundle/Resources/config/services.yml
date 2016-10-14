@@ -86,12 +86,6 @@ services:
         tags:
             - { name: monolog.logger, channel: create_homedir }
             
-    pelagos.rabbit.consumer.hash_file:
-        class: Pelagos\Bundle\AppBundle\Rabbit\Consumer\HashFileConsumer
-        arguments: ["@doctrine.orm.entity_manager", "@logger"]
-        tags:
-            - { name: monolog.logger, channel: hash_file }  
-            
     pelagos.rabbit.consumer.dataset_file_hasher:
         class: Pelagos\Bundle\AppBundle\Rabbit\Consumer\DatasetFileHasherConsumer
         arguments: ["@doctrine.orm.entity_manager", "@pelagos.util.data_store", "@logger"]
