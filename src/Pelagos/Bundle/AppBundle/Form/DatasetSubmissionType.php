@@ -3,20 +3,13 @@
 namespace Pelagos\Bundle\AppBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
-
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\TimeType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 
 /**
  * A form type for creating a Dataset Submission form.
@@ -37,144 +30,227 @@ class DatasetSubmissionType extends AbstractType
     {
         $days = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
         $builder
-            ->add('title', TextType::class, array(
-                'label' => 'Dataset Title:',
+            ->add('title', Type\TextType::class, array(
+                'label' => 'Dataset Title',
                 'required' => true,
             ))
-            ->add('abstract', TextareaType::class, array(
-                'label' => 'Dataset Abstract:',
+            ->add('abstract', Type\TextareaType::class, array(
+                'label' => 'Dataset Abstract',
                 'required' => true,
             ))
-            ->add('authors', TextType::class, array(
-                'label' => 'Dataset Author(s):',
+            ->add('authors', Type\TextType::class, array(
+                'label' => 'Dataset Author(s)',
                 'required' => true,
             ))
-            ->add('pointOfContactName', TextType::class, array(
-                'label' => 'Name:',
-                'required' => true,
-            ))
-            ->add('pointOfContactEmail', TextType::class, array(
-                'label' => 'E-Mail:',
-                'required' => true,
-            ))
-            ->add('restrictions', ChoiceType::class, array(
-                'choices' => array_flip(DatasetSubmission::RESTRICTIONS),
-                'label' => 'Restrictions:',
+            ->add('restrictions', Type\ChoiceType::class, array(
+                'choices' => DatasetSubmission::getRestrictionsChoices(),
+                'label' => 'Restrictions',
                 'placeholder' => false,
                 'required' => false,
                 'expanded' => true,
                 'multiple' => false,
             ))
-            ->add('doi', TextType::class, array(
-                'label' => 'Digital Object Identifier:',
+            ->add('doi', Type\TextType::class, array(
+                'label' => 'Digital Object Identifier',
                 'required' => false,
                  'attr' => array('size' => '60'),
             ))
-            ->add('datasetFileTransferType', HiddenType::class, array(
+            ->add('datasetFileTransferType', Type\HiddenType::class, array(
                 'required' => false,
             ))
-            ->add('datasetFile', FileType::class, array(
-                'label' => 'Dataset File:',
+            ->add('datasetFile', Type\FileType::class, array(
+                'label' => 'Dataset File',
                 'required' => false,
                 'mapped' => false,
             ))
-            ->add('datasetFileUpload', TextType::class, array(
+            ->add('datasetFileUpload', Type\TextType::class, array(
                 'required' => false,
                 'mapped' => false,
                 'disabled' => true,
             ))
-            ->add('datasetFilePath', TextType::class, array(
-                'label' => 'Dataset File Path:',
+            ->add('datasetFilePath', Type\TextType::class, array(
+                'label' => 'Dataset File Path',
                 'required' => false,
                 'mapped' => false,
             ))
-            ->add('datasetFileForceImport', CheckboxType::class, array(
+            ->add('datasetFileForceImport', Type\CheckboxType::class, array(
                 'label' => 'import this file again from the same path',
                 'required' => false,
                 'mapped' => false,
             ))
-            ->add('datasetFileUrl', TextType::class, array(
-                'label' => 'Dataset File URL:',
+            ->add('datasetFileUrl', Type\TextType::class, array(
+                'label' => 'Dataset File URL',
                 'required' => false,
                 'mapped' => false,
             ))
-            ->add('datasetFileForceDownload', CheckboxType::class, array(
+            ->add('datasetFileForceDownload', Type\CheckboxType::class, array(
                 'label' => 'download this file again from the same URL',
                 'required' => false,
                 'mapped' => false,
             ))
-            ->add('datasetFileAvailabilityDate', DateType::class, array(
-                'label' => 'Availability Date:',
-                'input' => 'datetime',
+            ->add('metadataFileTransferType', Type\HiddenType::class, array(
+                'required' => false,
+            ))
+            ->add('metadataFile', Type\FileType::class, array(
+                'label' => 'Metadata File',
+                'required' => false,
+                'mapped' => false,
+            ))
+            ->add('metadataFileUpload', Type\TextType::class, array(
+                'required' => false,
+                'mapped' => false,
+                'disabled' => true,
+            ))
+            ->add('metadataFilePath', Type\TextType::class, array(
+                'label' => 'Metadata File Path',
+                'required' => false,
+                'mapped' => false,
+            ))
+            ->add('metadataFileForceImport', Type\CheckboxType::class, array(
+                'label' => 'import this file again from the same path',
+                'required' => false,
+                'mapped' => false,
+            ))
+            ->add('metadataFileUrl', Type\TextType::class, array(
+                'label' => 'Metadata File URL',
+                'required' => false,
+                'mapped' => false,
+            ))
+            ->add('metadataFileForceDownload', Type\CheckboxType::class, array(
+                'label' => 'download this file again from the same URL',
+                'required' => false,
+                'mapped' => false,
+            ))
+            ->add('shortTitle', Type\TextType::class, array(
+                'label' => 'Short Title',
+                'required' => false,
+            ))
+            ->add('referenceDate', Type\DateType::class, array(
+                'label' => 'Date',
+                'required' => true,
+                'attr' => array('placeholder' => 'yyyy-mm-dd'),
                 'widget' => 'single_text',
                 'html5' => false,
                 'format' => 'yyyy-MM-dd',
-                'required' => false,
-            ))
-            ->add('datasetFilePullCertainTimesOnly', ChoiceType::class, array(
-                'choices' => array('Yes' => true, 'No' => false),
-                'label' => 'Download Certain Times Only:',
                 'required' => true,
-                'expanded' => true,
-                'multiple' => false,
-                'placeholder' => false,
             ))
-            ->add('datasetFilePullStartTime', TimeType::class, array(
-                'label' => 'Start Time:',
-                'input' => 'datetime',
-                'widget' => 'choice',
-                'minutes' => array(0, 15, 30, 45),
-                'html5' => false,
+            ->add('referenceDateType', Type\ChoiceType::class, array(
+                'label' => 'Date Type',
+                'choices' => DatasetSubmission::getReferenceDateTypeChoices(),
+                'placeholder' => '[Please Select a Date Type]',
+                'required' => true,
+            ))
+            ->add('purpose', Type\TextareaType::class, array(
+                'label' => 'Purpose',
+                'required' => true,
+            ))
+            ->add('suppParams', Type\TextareaType::class, array(
+                'label' => 'Supplemental Information - Data Parameters and Units',
+                'required' => true,
+            ))
+            ->add('suppMethods', Type\TextareaType::class, array(
+                'label' => 'Supplemental Information - Methods',
                 'required' => false,
             ))
-            ->add('datasetFilePullDays', ChoiceType::class, array(
-                'choices' => array_combine($days, $days),
-                'label' => 'Weekdays:',
-                'data' => $days,
+            ->add('suppInstruments', Type\TextareaType::class, array(
+                'label' => 'Supplemental Information - Instruments',
                 'required' => false,
-                'expanded' => true,
+            ))
+            ->add('suppSampScalesRates', Type\TextareaType::class, array(
+                'label' => 'Supplemental Information - Sampling Scales and Rates',
+                'required' => false,
+            ))
+            ->add('suppErrorAnalysis', Type\TextareaType::class, array(
+                'label' => 'Supplemental Information - Error Analysis',
+                'required' => false,
+            ))
+            ->add('suppProvenance', Type\TextareaType::class, array(
+                'label' => 'Supplemental Information - Provenance and Historical References',
+                'required' => false,
+            ))
+            ->add('themeKeywords', Type\CollectionType::class, array(
+                'label' => 'Theme Keywords',
+                'entry_type' => Type\TextType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'delete_empty' => true,
+                'required' => true,
+            ))
+            ->add('placeKeywords', Type\CollectionType::class, array(
+                'label' => 'Place Keywords',
+                'entry_type' => Type\TextType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'delete_empty' => true,
+                'required' => false,
+            ))
+            ->add('topicKeywords', Type\ChoiceType::class, array(
+                'label' => 'Topic Category Keywords',
+                'choices' => DatasetSubmission::getTopicKeywordsChoices(),
                 'multiple' => true,
+                'required' => true,
             ))
-            ->add('datasetFilePullSourceData', ChoiceType::class, array(
-                'choices' => array('Yes' => true, 'No' => false),
-                'data' => true,
-                'label' => 'Pull Source Data:',
-                'required' => false,
-                'expanded' => true,
-                'multiple' => false,
+            ->add('spatialExtent', Type\HiddenType::class, array(
+                'required' => true,
             ))
-            ->add('metadataFileTransferType', HiddenType::class, array(
+            ->add('spatialExtentDescription', Type\TextareaType::class, array(
+                'label' => 'Spatial Extent Description',
+                'required' => true,
+            ))
+            ->add('temporalExtentDesc', Type\ChoiceType::class, array(
+                'label' => 'Time Period Description',
+                'choices' => DatasetSubmission::getTemporalExtentDescChoices(),
+                'required' => true,
+            ))
+            ->add('temporalExtentBeginPosition', Type\DateType::class, array(
+                'label' => 'Start Date',
+                'required' => true,
+                'attr' => array('placeholder' => 'yyyy-mm-dd'),
+                'widget' => 'single_text',
+                'html5' => false,
+                'format' => 'yyyy-MM-dd',
+                'required' => true,
+            ))
+            ->add('temporalExtentEndPosition', Type\DateType::class, array(
+                'label' => 'End Date',
+                'required' => true,
+                'attr' => array('placeholder' => 'yyyy-mm-dd'),
+                'widget' => 'single_text',
+                'html5' => false,
+                'format' => 'yyyy-MM-dd',
+                'required' => true,
+            ))
+            ->add('distributionFormatName', Type\TextType::class, array(
+                'label' => 'Distribution Format Name',
                 'required' => false,
             ))
-            ->add('metadataFile', FileType::class, array(
-                'label' => 'Metadata File:',
+            ->add('fileDecompressionTechnique', Type\TextType::class, array(
+                'label' => 'File Decompression Technique',
                 'required' => false,
-                'mapped' => false,
             ))
-            ->add('metadataFileUpload', TextType::class, array(
-                'required' => false,
-                'mapped' => false,
-                'disabled' => true,
+            ->add('datasetContacts', Type\CollectionType::class, array(
+                'label' => 'Dataset Contacts',
+                'entry_type' => PersonDatasetSubmissionType::class,
+                'entry_options' => array(
+                    'data_class' => PersonDatasetSubmissionDatasetContact::class,
+                ),
+                'by_reference' => false,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'delete_empty' => true,
+                'required' => true,
             ))
-            ->add('metadataFilePath', TextType::class, array(
-                'label' => 'Metadata File Path:',
-                'required' => false,
-                'mapped' => false,
-            ))
-            ->add('metadataFileForceImport', CheckboxType::class, array(
-                'label' => 'import this file again from the same path',
-                'required' => false,
-                'mapped' => false,
-            ))
-            ->add('metadataFileUrl', TextType::class, array(
-                'label' => 'Metadata File URL:',
-                'required' => false,
-                'mapped' => false,
-            ))
-            ->add('metadataFileForceDownload', CheckboxType::class, array(
-                'label' => 'download this file again from the same URL',
-                'required' => false,
-                'mapped' => false,
+            ->add('metadataContacts', Type\CollectionType::class, array(
+                'label' => 'Metadata Contacts',
+                'entry_type' => PersonDatasetSubmissionType::class,
+                'entry_options' => array(
+                    'data_class' => PersonDatasetSubmissionMetadataContact::class,
+                ),
+                'by_reference' => false,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'delete_empty' => true,
+                'required' => true,
             ));
     }
 
@@ -188,7 +264,7 @@ class DatasetSubmissionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Pelagos\Entity\DatasetSubmission',
+            'data_class' => DatasetSubmission::class,
             'allow_extra_fields' => true,
         ));
     }
