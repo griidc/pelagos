@@ -190,8 +190,7 @@ class AccountController extends UIController
      */
     public function redirectAction()
     {
-        $url = $this->generateUrl('pelagos_homepage');
-        $redirectResponse = new RedirectResponse($url, 303);
+        $redirectResponse = new RedirectResponse('/', 303);
         return $redirectResponse;
     }
 
