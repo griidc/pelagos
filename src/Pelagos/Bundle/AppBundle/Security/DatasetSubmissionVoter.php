@@ -66,11 +66,14 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
         $submissionResearchGroup = $subject->getDataset()->getResearchGroup();
 
         if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
-            if (null !== $submissionResearchGroup and in_array($submissionResearchGroup, $researchGroups)) {
-                return true;
+            if (null !== $submissionResearchGroup) {
+                foreach ($researchGroups as $researchGroup) {
+                    if ($submissionResearchGroup->isSameTypeAndId($researchGroup)) {
+                        return true;
+                    }
+                }
             }
         }
-
         return false;
     }
 }
