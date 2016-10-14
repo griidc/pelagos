@@ -324,7 +324,6 @@ class DatasetSubmissionController extends UIController
         DatasetSubmission $datasetSubmission,
         $incomingDirectory
     ) {
-        $datasetId = $datasetSubmission->getDataset()->getId();
         switch ($datasetSubmission->getDatasetFileTransferType()) {
             case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
                 $datasetFile = $form['datasetFile']->getData();
@@ -332,8 +331,7 @@ class DatasetSubmissionController extends UIController
                     $originalFileName = $datasetFile->getClientOriginalName();
                     $movedDatasetFile = $datasetFile->move($incomingDirectory, $originalFileName);
                     $datasetSubmission->setDatasetFileUri('file://' . $movedDatasetFile->getRealPath());
-                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'dataset.upload');
+                    $this->newDatasetFile($datasetSubmission);
                 }
                 break;
             case DatasetSubmission::TRANSFER_TYPE_SFTP:
@@ -394,7 +392,6 @@ class DatasetSubmissionController extends UIController
         DatasetSubmission $datasetSubmission,
         $incomingDirectory
     ) {
-        $datasetId = $datasetSubmission->getDataset()->getId();
         switch ($datasetSubmission->getMetadataFileTransferType()) {
             case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
                 $metadataFile = $form['metadataFile']->getData();
