@@ -97,7 +97,10 @@
     {% if is_granted('CAN_CREATE', datasetSubmission) or is_granted('CAN_EDIT', datasetSubmission) %}
     INCLUDE DATASUBMISSION FORM HERE!
     {% else %}
-    Sorry, but you can only create or edit dataset submissions on datasets associated with your research groups.
+    <div class="messages warning">
+        <h2 class="element-invisible">Status message</h2>
+        Sorry, but you can only create or edit dataset submissions on datasets associated with your research groups.
+    </div>
     {% endif %}
 {% else %}
     {% include 'PelagosAppBundle:DatasetSubmission:form.html.twig' %}
