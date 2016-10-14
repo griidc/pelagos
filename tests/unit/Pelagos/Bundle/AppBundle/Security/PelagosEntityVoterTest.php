@@ -253,6 +253,16 @@ abstract class PelagosEntityVoterTest extends \PHPUnit_Framework_TestCase
                 ->getPerson()
                 ->shouldReceive('getPersonDataRepositories')
                 ->andReturn(new ArrayCollection);
+            $mockToken
+                ->getUser()
+                ->getPerson()
+                ->shouldReceive('getPersonResearchGroups')
+                ->andReturn(new ArrayCollection);
+            $mockToken
+                ->getUser()
+                ->getPerson()
+                ->shouldReceive('getResearchGroups')
+                ->andReturn(array());
             $this->assertEquals(
                 Voter::ACCESS_DENIED,
                 $this->voter->vote(
@@ -338,6 +348,21 @@ abstract class PelagosEntityVoterTest extends \PHPUnit_Framework_TestCase
             $token->getUser()->getPerson()
                 ->shouldReceive('getPersonDataRepositories')
                 ->andReturn(new ArrayCollection);
+        }
+        if ($type == 'ResearchGroup') {
+            $token->getUser()->getPerson()
+                ->shouldReceive('getPersonResearchGroups')
+                ->andReturn(new ArrayCollection(array($personAssociation)));
+            $token->getUser()->getPerson()
+                ->shouldReceive('getResearchGroups')
+                ->andReturn(array(\Mockery::mock('\Pelagos\Entity\ResearchGroup')));
+        } else {
+            $token->getUser()->getPerson()
+                ->shouldReceive('getPersonResearchGroups')
+                ->andReturn(new ArrayCollection);
+            $token->getUser()->getPerson()
+                ->shouldReceive('getResearchGroups')
+                ->andReturn(array());
         }
         return $personAssociation;
     }
