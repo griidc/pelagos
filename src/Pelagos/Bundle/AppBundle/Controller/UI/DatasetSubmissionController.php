@@ -374,7 +374,10 @@ class DatasetSubmissionController extends UIController
         $datasetSubmission->setDatasetFileMd5Hash(null);
         $datasetSubmission->setDatasetFileSha1Hash(null);
         $datasetSubmission->setDatasetFileSha256Hash(null);
-        $this->messages[] = array('body' => $datasetId, 'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType());
+        $this->messages[] = array(
+            'body' => $datasetSubmission->getDataset()->getId(),
+            'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
+        );
     }
 
     /**
@@ -437,6 +440,9 @@ class DatasetSubmissionController extends UIController
         $datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
         $datasetSubmission->setMetadataFileName(null);
         $datasetSubmission->setMetadataFileSha256Hash(null);
-        $this->messages[] = array('body' => $datasetId, 'routing_key' => 'metadata.' . $datasetSubmission->getMetadataFileTransferType());
+        $this->messages[] = array(
+            'body' => $datasetSubmission->getDataset()->getId(),
+            'routing_key' => 'metadata.' . $datasetSubmission->getMetadataFileTransferType()
+        );
     }
 }
