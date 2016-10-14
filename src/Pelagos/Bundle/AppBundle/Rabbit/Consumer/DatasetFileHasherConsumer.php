@@ -11,6 +11,7 @@ use Symfony\Bridge\Monolog\Logger;
 use Pelagos\Util\DataStore;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\Dataset;
 
 /**
  * A consumer of dataset hash file request messages.
