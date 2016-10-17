@@ -453,7 +453,7 @@ class DatasetSubmission extends Entity
      *
      * @deprecated Replaced by self::$datasetContacts.
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="Point of Contact Name is required"
@@ -470,7 +470,7 @@ class DatasetSubmission extends Entity
      *
      * @deprecated Replaced by self::$datasetContacts.
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NotBlank(
      *     message="Point of Contact E-Mail is required"
