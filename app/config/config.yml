@@ -188,6 +188,13 @@ old_sound_rabbit_mq:
             callback:         pelagos.rabbit.consumer.create_homedir
             queue_options:
                 name: 'create_homedir'
+        dataset_file_hasher:
+            connection:       default
+            exchange_options: { name: 'dataset_file_hasher', type: direct }
+            callback:         pelagos.rabbit.consumer.dataset_file_hasher
+            qos_options:      { prefetch_count: 1, global: false }
+            queue_options:
+                name: 'dataset_file_hasher'
 
 hwi_oauth:
     firewall_names: [main]
