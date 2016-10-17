@@ -445,6 +445,40 @@ class DatasetSubmission extends Entity
     protected $authors;
 
     /**
+     * The Point of Contact Name for this Dataset Submission.
+     *
+     * Legacy DB column: dataset_poc_name
+     *
+     * @var string
+     *
+     * @deprecated Replaced by self::$datasetContacts.
+     *
+     * @ORM\Column(type="text", nullable=true)
+     *
+     * @Assert\NotBlank(
+     *     message="Point of Contact Name is required"
+     * )
+     */
+    protected $pointOfContactName;
+
+    /**
+     * The Point of Contact E-Mail for this Dataset Submission.
+     *
+     * Legacy DB column: dataset_poc_email
+     *
+     * @var string
+     *
+     * @deprecated Replaced by self::$datasetContacts.
+     *
+     * @ORM\Column(type="text", nullable=true)
+     *
+     * @Assert\NotBlank(
+     *     message="Point of Contact E-Mail is required"
+     * )
+     */
+    protected $pointOfContactEmail;
+
+    /**
      * The Point of Contact for this Dataset Submission.
      *
      * @var Collection
@@ -1095,11 +1129,18 @@ class DatasetSubmission extends Entity
      *
      * @access public
      *
+     * @deprecated The self::$pointOfContactName property is deprecated and replaced by self::$datasetContacts.
+     *
+     * @see self::getDatasetContacts()
+     *
      * @return string
      */
     public function getPointOfContactName()
     {
         if ($this->getDatasetContacts()->isEmpty()) {
+            if (property_exists(self::class, 'pointOfContactName')) {
+                return $this->pointOfContactName;
+            }
             return null;
         }
         $contactPerson = $this->getDatasetContacts()->first()->getPerson();
@@ -1116,11 +1157,18 @@ class DatasetSubmission extends Entity
      *
      * @access public
      *
+     * @deprecated The self::$pointOfContactEmail property is deprecated and replaced by self::$datasetContacts.
+     *
+     * @see self::getDatasetContacts()
+     *
      * @return string
      */
     public function getPointOfContactEmail()
     {
         if ($this->getDatasetContacts()->isEmpty()) {
+            if (property_exists(self::class, 'pointOfContactEmail')) {
+                return $this->pointOfContactEmail;
+            }
             return null;
         }
         $contactPerson = $this->getDatasetContacts()->first()->getPerson();
