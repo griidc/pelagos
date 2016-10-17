@@ -805,7 +805,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="geometry", options={"srid"=4326}, nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $spatialExtent;
 

@@ -99,6 +99,7 @@ $(function() {
 
     $("#ds-extent").on("active", function() {
         geowizard.flashMap();
+        geowizard.haveGML($("#spatialExtent").val());
     });
 
     $("select.keywordinput").dblclick(function (event) {
