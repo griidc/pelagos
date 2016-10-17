@@ -35,7 +35,7 @@
         "friendsofsymfony/rest-bundle": "^1.7",
         "jms/serializer-bundle": "^1.1",
         "nelmio/api-doc-bundle": "^2.11",
-        "symfony/assetic-bundle": "^2.7",
+        "symfony/assetic-bundle": "^2.8",
         "doctrine/doctrine-fixtures-bundle": "^2.3",
         "willdurand/hateoas-bundle": "^1.1",
         "simplethings/entity-audit-bundle": "^0.9.1",
