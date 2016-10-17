@@ -53,7 +53,6 @@ class DatasetSubmissionType extends AbstractType
             ->add('doi', Type\TextType::class, array(
                 'label' => 'Digital Object Identifier',
                 'required' => false,
-                 'attr' => array('size' => '60'),
             ))
             ->add('datasetFileTransferType', Type\HiddenType::class, array(
                 'required' => false,
@@ -196,11 +195,13 @@ class DatasetSubmissionType extends AbstractType
             ->add('spatialExtentDescription', Type\TextareaType::class, array(
                 'label' => 'Spatial Extent Description',
                 'required' => true,
+                'attr' => array('rows' => '5'),
             ))
             ->add('temporalExtentDesc', Type\ChoiceType::class, array(
                 'label' => 'Time Period Description',
                 'choices' => DatasetSubmission::getTemporalExtentDescChoices(),
                 'required' => true,
+                'placeholder' => '[Please Select a Time Period Description]',
             ))
             ->add('temporalExtentBeginPosition', Type\DateType::class, array(
                 'label' => 'Start Date',

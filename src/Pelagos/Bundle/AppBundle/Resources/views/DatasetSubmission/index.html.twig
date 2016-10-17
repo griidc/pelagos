@@ -8,7 +8,6 @@
                 'ui.dialog',
                 'ui.tabs',
                 'ui.widget',
-                'ui.autocomplete'
             ]
         )
     }}
@@ -68,7 +67,7 @@
 
 {% block body %}
 
-<h1>Dataset Submission Form</h1>
+<h1>Dataset Submission</h1>
 
 {% if found and dif is not null and dif.status == constant('Pelagos\\Entity\\DIF::STATUS_SUBMITTED') %}
     <div class="messages warning">
@@ -95,12 +94,12 @@
 
 {% if showform|default %}
     {% if is_granted('CAN_CREATE', datasetSubmission) or is_granted('CAN_EDIT', datasetSubmission) %}
-    INCLUDE DATASUBMISSION FORM HERE!
+        {% include 'PelagosAppBundle:DatasetSubmission:submission-form.html.twig' %}
     {% else %}
-    <div class="messages warning">
-        <h2 class="element-invisible">Status message</h2>
-        Sorry, but you can only create or edit dataset submissions on datasets associated with your research groups.
-    </div>
+        <div class="messages warning">
+            <h2 class="element-invisible">Status message</h2>
+            Sorry, but you can only create or edit dataset submissions on datasets associated with your research groups.
+        </div>
     {% endif %}
 {% else %}
     {% include 'PelagosAppBundle:DatasetSubmission:form.html.twig' %}

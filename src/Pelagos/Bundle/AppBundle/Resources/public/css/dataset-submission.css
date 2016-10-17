@@ -1,3 +1,94 @@
+
+.toolbarbutton {
+    padding: 4px;
+    font-size: 12px;
+}
+
+#helpinfo .ui-button{
+    display:block;
+}
+
+#navbuttons .ui-button{
+    display:block;
+}
+
+.emRequired::before
+{
+    font-weight: bold; color:#FF0000;
+    content:"*";
+}
+
+.keywordbutton {
+    width:80px;
+}
+
+.keywordinput {
+    width:350px;
+}
+
+.dstablink {
+    outline:none;
+}
+
+.topictooltip {
+    display:none;
+}
+
+.tab-table {
+    width: 100%;
+}
+
+.tab-table td:nth-last-child(1){
+    width:40%;
+}
+
+.tab-table td {
+    padding: 5px;
+}
+
+input,select,textarea {
+    width:90%;
+}
+
+textarea{
+    resize: none
+}
+
+
+textarea#abstract {
+    height:20em;
+}
+
+.tab-table tr:nth-child(even) {
+    background-color: #CCC
+}
+
+.tab-table tr:nth-child(odd) {
+    background-color: #DDD
+}
+
+.field-help {
+    font-family: monospace;
+}
+
+legend
+	{
+		text-shadow: 2px 2px 3px rgba(150, 150, 150, 0.75);
+		font-family:Verdana, Geneva, sans-serif;
+		font-size:1.4em;
+		padding: 3px;
+		border-top: 1px solid #000;
+		border-left: 1px solid #000;
+		border-right:  1px solid #000;
+		border-bottom:  1px solid #000;
+		background-color: white;
+	}
+
+fieldset
+{
+    border: 1px dotted #AAA;
+}
+
 .cleair {
     margin:auto;
     position:relative;
@@ -20,7 +111,3 @@
     box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
 }
 
-.emRequired::before {
-    font-weight: bold; color:#FF0000;
-    content:"*";
-}
