@@ -1,0 +1,135 @@
+<fieldset>
+    <legend>Dataset Information</legend>
+    <table class="tab-table">
+        <tr>
+            <td>
+                {{ form_row(form.title) }}
+            </td>
+            <td>
+                <span class="field-help">
+                    Name by which the cited resource is known. It is recommended the title include (where applicable) a description of the data, a date or date range, and geographic area.
+                <span class="field-help">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_row(form.shortTitle) }}
+            </td>
+            <td>
+                <span class="field-help">
+                    Short name or other language name by which the cited information is known.
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_row(form.referenceDate) }}
+            <td>
+                <span class="field-help">
+                    Reference date for the cited dataset. This date can refer to dataset creation, publication, or revision. Format should be YYYY-MM-DD.
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_row(form.referenceDateType) }}
+            </td>
+            <td>
+                <span class="field-help">
+                    Creation: Date identifies when the resource was brought into existence.<br>
+                    Publication: Date identifies when the resource was issued.<br>
+                    Revision: Date identifies when the resource was examined or re-examined and improved or amended.<br>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_row(form.abstract) }}
+            </td>
+            <td>
+                <span class="field-help">
+                    Brief narrative summary of the dataset's contents.
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_row(form.purpose) }}
+            <td>
+                <span class="field-help">
+                    Summary of the intentions for which the dataset was developed.
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_row(form.doi) }}
+            </td>
+            <td>
+                <span class="field-help">
+                    If your dataset has been issued a DOI from another repository or archive, please provide it here.<br>
+                    Please note that this field is for <strong>dataset</strong> DOIs only, as publication DOIs are recorded elsewhere.
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_row(form.suppParams) }}
+            </td>
+            <td>
+                <span class="field-help">
+                    Descriptive Information about the Data Parameters and Units.
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_row(form.suppMethods) }}
+            </td>
+            <td>
+                <span class="field-help">
+                    Descriptive Information about the methods used.
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_row(form.suppInstruments) }}
+            </td>
+            <td>
+                <span class="field-help">
+                    Descriptive Information about the instruments and equipment used.
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_row(form.suppSampScalesRates) }}
+            </td>
+            <td>
+                <span class="field-help">
+                    Descriptive Information about the sampling spatial and temporal scales and rates.
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_row(form.suppErrorAnalysis) }}
+            <td>
+                <span class="field-help">
+                    Descriptive Information about the error analysis.
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_row(form.suppProvenance) }}
+            </td>
+            <td>
+                <span class="field-help">
+                    Descriptive Information about the provenance, historical data, key information packaged elsewhere.
+                </span>
+            </td>
+        </tr>
+    </table>
+</fieldset>

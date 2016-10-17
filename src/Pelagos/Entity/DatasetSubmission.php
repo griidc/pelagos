@@ -805,7 +805,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="geometry", options={"srid"=4326}, nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $spatialExtent;
 
@@ -1103,6 +1103,9 @@ class DatasetSubmission extends Entity
             return null;
         }
         $contactPerson = $this->getDatasetContacts()->first()->getPerson();
+        if (!$contactPerson instanceof Person) {
+            return null;
+        }
         return $contactPerson->getLastName() . ', ' . $contactPerson->getFirstName();
     }
 
@@ -1121,6 +1124,9 @@ class DatasetSubmission extends Entity
             return null;
         }
         $contactPerson = $this->getDatasetContacts()->first()->getPerson();
+        if (!$contactPerson instanceof Person) {
+            return null;
+        }
         return $contactPerson->getEmailAddress();
     }
 

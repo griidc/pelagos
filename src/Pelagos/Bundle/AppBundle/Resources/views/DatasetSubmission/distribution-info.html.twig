@@ -1,0 +1,29 @@
+<fieldset>
+	This section collects technical details related to the distribution of the dataset. Provides GRIIDC and future researchers the means to evaluate the means needed to download and read the dataset.
+</fieldset>
+<fieldset>
+    <legend>Format</legend>
+
+    <table class="tab-table">
+        <tr>
+            <td>
+                {{ form_row(form.distributionFormatName) }}
+            </td>
+            <td>
+                <pre>
+                    Name of the data transfer format, e.g. CSV, Excel Spreadsheet, ASCII TXT, netCDF, GRIB, HDF5, TIFF, etc
+                </pre>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_row(form.fileDecompressionTechnique) }}
+            </td>
+            <td>
+                <pre>
+                    Description of recommended processes or algorithms to apply to the compressed resource.
+                </pre>
+            </td>
+        </tr>
+    </table>
+</fieldset>
