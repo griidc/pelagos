@@ -1103,6 +1103,9 @@ class DatasetSubmission extends Entity
             return null;
         }
         $contactPerson = $this->getDatasetContacts()->first()->getPerson();
+        if (!$contactPerson instanceof Person) {
+            return null;
+        }
         return $contactPerson->getLastName() . ', ' . $contactPerson->getFirstName();
     }
 
@@ -1121,6 +1124,9 @@ class DatasetSubmission extends Entity
             return null;
         }
         $contactPerson = $this->getDatasetContacts()->first()->getPerson();
+        if (!$contactPerson instanceof Person) {
+            return null;
+        }
         return $contactPerson->getEmailAddress();
     }
 

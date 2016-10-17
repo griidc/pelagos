@@ -1,17 +1,15 @@
 <fieldset>
     <legend>Dataset Contact</legend>
     <table class="tab-table">
-        {% for contact in form.datasetContacts %}
+        {% set contact = form.datasetContacts[0]|default %}
         <tr>
             <td>
                 <label for="contactperson">Name</label>
                 <select class="contactperson" id="contactperson" name="datasetContacts[0][person]" required="required">
                     {% if contact.vars.data.person|default %}
-                    <option value="{{contact.vars.data.person.id}}">
+                    <option selected value="{{contact.vars.data.person.id}}">
                         {{contact.vars.data.person.lastName}}, {{contact.vars.data.person.firstName}}, {{contact.vars.data.person.emailAddress}}
                     </option>
-                    {% else %}
-                    <option value="">[Please Select a Person]</option>
                     {% endif %}
                 </select>
                 <label for="contactperson" class="error"></label>
@@ -40,7 +38,7 @@
                 </span>
             </td>
         </tr>
-        {% endfor %}
+
         <tr>
             <td>
                 {{ form_row(form.authors) }}

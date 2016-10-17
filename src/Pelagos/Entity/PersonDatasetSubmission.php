@@ -83,7 +83,7 @@ abstract class PersonDatasetSubmission extends Entity
      *
      * @see ROLES class constant for possible values.
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $role;
 

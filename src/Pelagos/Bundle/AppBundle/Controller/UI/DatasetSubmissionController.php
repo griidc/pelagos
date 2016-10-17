@@ -103,6 +103,14 @@ class DatasetSubmissionController extends UIController
             $datasetSubmission = null;
         }
 
+        if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
+            $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
+        }
+
+        if ($datasetSubmission->getMetadataContacts()->isEmpty()) {
+            $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
+        }
+
         $form = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionType::class,
