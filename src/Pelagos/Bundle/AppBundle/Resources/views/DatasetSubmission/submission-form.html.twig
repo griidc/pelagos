@@ -10,24 +10,31 @@
             <ul>
                 <li>
                     <a class="dstablink" href="#ds-contact">Dataset Contact</a>
+                    <img>
                 </li>
                 <li>
                     <a class="dstablink" href="#ds-information">Dataset Information</a>
+                    <img>
                 </li>
                 <li>
                     <a class="dstablink" href="#ds-keywords">Keywords</a>
+                    <img>
                 </li>
                 <li>
                     <a class="dstablink" href="#ds-extent">Data Extent</a>
+                    <img>
                 </li>
                 <li>
                     <a class="dstablink" href="#ds-distribution">Distribution Info</a>
+                    <img>
                 </li>
                 <li>
                     <a class="dstablink" href="#ds-metadata-contact">Metadata Contact</a>
+                    <img>
                 </li>
                 <li>
                     <a class="dstablink" href="#ds-submit">Submit</a>
+                    <img>
                 </li>
             </ul>
 
@@ -60,9 +67,7 @@
             </div>
             
             <div id="ds-submit">
-                SUBMIT YOUR SUBMISSION THINGY HERE!<BR>
-                {{ form_widget(form.submit) }}
-                <BR>
+                {% include 'PelagosAppBundle:DatasetSubmission:file-submit.html.twig' %}
             </div>
         </div>
     </fieldset>

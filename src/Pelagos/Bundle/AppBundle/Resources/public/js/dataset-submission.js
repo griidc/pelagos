@@ -22,7 +22,13 @@ $(function() {
         }
     });
 
-    $("#dtabs").tabs({
+    $("#regForm").validate(
+        {
+            //ignore: ""
+        }
+    );
+
+    $("#dtabs,#filetabs").tabs({
         heightStyle: "content",
         activate: function(event, ui) {
             $(ui.newTab.context.hash).trigger("active");
@@ -38,6 +44,23 @@ $(function() {
 
     $("#ds-contact,#ds-metadata-contact").on("active", function() {
         select2ContactPerson();
+    });
+
+    $("#ds-submit").on("active", function() {
+        // $(".invaliddsform").show();
+        // $(".validdsform").hide();
+        // var valid = $("#regForm").valid();
+        // console.log(valid);
+
+        // if (false == valid) {
+            // $("#dtabs .ui-tabs-panel").has(":input.error").each(function() {
+                // var label = $(this).attr("aria-labelledby");
+                // $("#" + label).next("img").prop("src", "/pelagos/dev/mvde/applications/metadata-editor/includes/images/warning.png");
+            // });
+        // } else {
+            // $(".invaliddsform").hide();
+            // $(".validdsform").show();
+        // }
     });
 
     select2ContactPerson();
@@ -77,11 +100,6 @@ $(function() {
             }
         });
     }
-
-    $("#regForm").validate(
-        {
-        }
-    );
 
     geowizard = new MapWizard(
         {
