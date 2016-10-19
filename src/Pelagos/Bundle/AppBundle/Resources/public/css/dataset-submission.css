@@ -97,6 +97,13 @@ fieldset
     display: none;
 }
 
+.tabimg {
+    margin: 2px;
+    height: 16px;
+    width: 16px;
+    display: none;
+}
+
 .cleair {
     margin:auto;
     position:relative;

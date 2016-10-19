@@ -24,7 +24,7 @@ $(function() {
 
     $("#regForm").validate(
         {
-            //ignore: ""
+            ignore: ""
         }
     );
 
@@ -46,21 +46,43 @@ $(function() {
         select2ContactPerson();
     });
 
-    $("#ds-submit").on("active", function() {
-        // $(".invaliddsform").show();
-        // $(".validdsform").hide();
-        // var valid = $("#regForm").valid();
-        // console.log(valid);
+    $("#dtabs .ui-tabs-panel").on("active", function() {
 
-        // if (false == valid) {
-            // $("#dtabs .ui-tabs-panel").has(":input.error").each(function() {
-                // var label = $(this).attr("aria-labelledby");
-                // $("#" + label).next("img").prop("src", "/pelagos/dev/mvde/applications/metadata-editor/includes/images/warning.png");
-            // });
-        // } else {
-            // $(".invaliddsform").hide();
-            // $(".validdsform").show();
-        // }
+    });
+
+    $("#ds-submit").on("active", function() {
+        $(".invaliddsform").show();
+        $(".validdsform").hide();
+        $("#regForm select[keyword=target] option").prop('selected', true);
+        var valid = $("#regForm").valid();
+        console.log(valid);
+
+        if (false == valid) {
+            $(".tabimg").show();
+            $("#dtabs .ui-tabs-panel").each(function() {
+                var label = $(this).attr("aria-labelledby");
+                if ($(this).has(":input.error").length ? true : false ) {
+                    $("#" + label).next("img").prop("src", "/pelagos/dev/mvde/applications/metadata-editor/includes/images/warning.png");
+                } else {
+                    $("#" + label).next("img").prop("src", "/pelagos/dev/mvde/applications/metadata-editor/includes/images/check.png");
+                };
+
+                $(this).find(":input").on("change blur", function() {
+                    $("#dtabs .ui-tabs-panel").each(function() {
+                        var label = $(this).attr("aria-labelledby");
+                        $(this).find(":input").each(function() {
+                            $(this).valid()
+                        });
+                        if ($(this).find(":input").valid()) {
+                            $("#" + label).next("img").prop("src", "/pelagos/dev/mvde/applications/metadata-editor/includes/images/check.png");
+                        }
+                    });
+                });
+            });
+        } else {
+            $(".invaliddsform").hide();
+            $(".validdsform").show();
+        }
     });
 
     select2ContactPerson();
@@ -144,16 +166,16 @@ $(function() {
             if (source.is("input")) {
                 var optionText = source.val();
                 var option = new Option(optionText, optionText);
-                $(option).html(optionText);
+                $(option).html(optionText).prop("selected", true);
                 target.append(option);
                 source.val("");
             } else if (source.is("select")) {
-                var option = source.find("option:selected").detach().prop("selected", false);
+                var option = source.find("option:selected").detach();
                 target.append(option);
                 target.append(sortOptions(target.find("option").detach()));
             }
         } else if ($(event.currentTarget).text() == "remove") {
-            var option = target.find("option:selected").detach().prop("selected", false);
+            var option = target.find("option:selected").detach();
             if (option.attr("order") != undefined) {
                 source.append(option);
                 source.append(sortOptions(source.find("option").detach()));

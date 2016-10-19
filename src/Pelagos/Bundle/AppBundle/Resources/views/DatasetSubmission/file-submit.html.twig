@@ -1,6 +1,12 @@
 {% set sftpuser=app.user.isPosix() %}
 
-<div>
+<div class="invaliddsform">
+    <h1>
+        There are some error on the previous tabs, please correct those before submitting a file, then return here.
+    </h1>
+</div>
+
+<div class="validdsform">
     <fieldset> <!-- Dataset File Transfer Details -->
         <legend class="section-header">Dataset File Transfer Details</legend>
 
@@ -103,22 +109,6 @@
                                     <p><strong>Dataset File URL:</strong></p>
                                     <p>This is the URL that leads to the data being registered. Package the components of the datasets (if applicable) to form a single file (e.g. ZIP, TAR).</p>
                                     <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <label>Pull Source Data:</label>
-                                <div id="datasetFilePullSourceData">
-                                    <input type="radio" id="datasetFilePullSourceData_0" name="datasetFilePullSourceData" value="1" checked="checked">
-                                    <label for="datasetFilePullSourceData_0">Yes</label>
-                                    <input type="radio" id="datasetFilePullSourceData_1" name="datasetFilePullSourceData" value="">
-                                    <label for="datasetFilePullSourceData_1">No</label>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="field-help">
-                                    <strong>Pull Source Data:</strong><p/> If the source data is archived in a cyber-infrastructure that can be maintained in the next decade, select "No". If unsure, select "Yes".
                                 </span>
                             </td>
                         </tr>
