@@ -15,7 +15,7 @@ $(function() {
     });
 
     $("#regidform").bind("change keyup mouseout", function() {
-        if($(this).validate().checkForm() && $("#registry_id").val() != "" && $("#registry_id").is(":disabled") == false) {
+        if($(this).validate().checkForm() && $("#regid").val() != "" && $("#regid").is(":disabled") == false) {
             $("#regbutton").button("enable");
         } else {
             $("#regbutton").button("disable");

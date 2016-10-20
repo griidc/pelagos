@@ -1,5 +1,3 @@
-{% set sftpuser=loggedInPerson.getAccount().isPosix() %}
-
 <div class="cleair">
     <fieldset>
         <p>
@@ -16,14 +14,14 @@
                     Please enter the Unique Dataset Identifier (UDI) that GRIIDC assigned to your dataset and select "Load Dataset" to load the most recent information for your dataset.
                 </p>
                 <form id="regidform">
-                    <label for="registry_id"><b>Unique Dataset Identifier (UDI): </b></label>
-                    <input minlength="15" type="text" id="registry_id" name="registry_id" size="60" value="{{datasetSubmission.getDatasetSubmissionId|default}}">
+                    <label for="regid"><b>Unique Dataset Identifier (UDI): </b></label>
+                    <input minlength="15" type="text" id="regid" name="regid" size="60" value="{{datasetSubmission.getDatasetSubmissionId|default}}">
                     <button disabled
                     onclick="window.location.href='{{ path('pelagos_app_ui_datasetsubmission_default') }}?regid=' +
-                    document.getElementById('registry_id').value;"
+                    document.getElementById('regid').value;"
                     name="regbutton" id="regbutton"
                     type="button">Load Dataset</button>
-                    <label class="error" for="registry_id"></label>
+                    <label class="error" for="regid"></label>
                 </form>
             </fieldset>
         </p>
