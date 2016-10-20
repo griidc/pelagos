@@ -46,10 +46,6 @@ $(function() {
         select2ContactPerson();
     });
 
-    $("#dtabs .ui-tabs-panel").on("active", function() {
-
-    });
-
     $("#ds-submit").on("active", function() {
         $(".invaliddsform").show();
         $(".validdsform").hide();
@@ -125,6 +121,7 @@ $(function() {
         });
     }
 
+
     geowizard = new MapWizard(
         {
             "divSmallMap":"smlMDEMap",
@@ -133,11 +130,19 @@ $(function() {
             "divSpatialWizard":"spatwizbtn",
             "gmlField":"spatialExtent",
             "descField":"spatialExtentDescription",
-            "spatialFunction":""
+            "spatialFunction":"checkSpatial"
         }
     );
 
-    $("#ds-extent").tabs({ event: "click"})
+    if ($("#spatialExtentDescription").val()!="" && $("#spatialExtent").val()=="") {
+        geowizard.haveSpatial(true);
+    } else {
+        geowizard.haveSpatial(false);
+    }
+
+    if ($("#spatialExtent").val()!="") {
+        geowizard.haveSpatial(false);
+    }
 
     $("#ds-extent").on("active", function() {
         geowizard.flashMap();
@@ -183,10 +188,7 @@ $(function() {
                 source.append(sortOptions(source.find("option").detach()));
             }
         }
-
-
         buildKeywordLists();
-
     });
 
     // Build list arrays/fake multiselect boxes.
@@ -462,3 +464,13 @@ $(function() {
 
     }
 });
+
+function checkSpatial(isNonSpatial) {
+    if (isNonSpatial) {
+        $("#nonspatial").find(":input").attr("required", "required");
+        $("#spatial").find(":input").removeAttr("required");
+    } else {
+        $("#spatial").find(":input").attr("required", "required");
+        $("#nonspatial").find(":input").removeAttr("required");
+    }
+}
