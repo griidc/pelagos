@@ -53,6 +53,7 @@ class DatasetSubmissionController extends UIController
     {
         $udi = $request->query->get('regid');
 
+        $dataset = null;
         $datasetSubmission = null;
         $datasetId = null;
 
@@ -103,12 +104,14 @@ class DatasetSubmissionController extends UIController
             $datasetSubmission = null;
         }
 
-        if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
-            $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
-        }
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
+                $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
+            }
 
-        if ($datasetSubmission->getMetadataContacts()->isEmpty()) {
-            $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
+            if ($datasetSubmission->getMetadataContacts()->isEmpty()) {
+                $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
+            }
         }
 
         $form = $this->get('form.factory')->createNamed(
@@ -166,27 +169,12 @@ class DatasetSubmissionController extends UIController
             'attr'  => array('class' => 'submitButton'),
         ));
 
-        $datasetSubmissions = $this->entityHandler
-            ->getBy(
-                Dataset::class,
-                array (
-                    'datasetSubmission.creator' => $loggedInPerson,
-                ),
-                array(
-                    'udi' => 'ASC'
-                )
-            );
-
         return $this->render(
             'PelagosAppBundle:DatasetSubmission:index.html.twig',
             array(
                 'form' => $form->createView(),
-                'datasetSubmission' => $datasetSubmission,
-                'found'  => $found,
                 'udi'  => $udi,
-                'datasetSubmissions' => $datasetSubmissions,
-                'loggedInPerson' => $loggedInPerson,
-                'dif' => $dif,
+                'dataset' => $dataset,
             )
         );
     }

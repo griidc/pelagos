@@ -7,7 +7,7 @@
                 <label>Name</label>
                 <select class="contactperson" id="metadatacontact" name="metadatacontact" required="required">
                     {% if contact.vars.data.person|default %}
-                    <option value="{{metadatacontact.Person.id}}">
+                    <option value="{{contact.vars.data.person.id}}">
                         {{contact.vars.data.person.lastName}}, {{contact.vars.data.person.firstName}}, {{contact.vars.data.person.emailAddress}}
                     </option>
                     {% else %}
