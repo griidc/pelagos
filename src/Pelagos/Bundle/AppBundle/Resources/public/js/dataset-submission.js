@@ -55,7 +55,6 @@ $(function() {
         $(".validdsform").hide();
         $("#regForm select[keyword=target] option").prop('selected', true);
         var valid = $("#regForm").valid();
-        console.log(valid);
 
         if (false == valid) {
             $(".tabimg").show();
@@ -67,7 +66,7 @@ $(function() {
                     $("#" + label).next("img").prop("src", "/pelagos/dev/mvde/applications/metadata-editor/includes/images/check.png");
                 };
 
-                $(this).find(":input").on("change blur", function() {
+                $(this).find(":input").on("change blur keyup", function() {
                     $("#dtabs .ui-tabs-panel").each(function() {
                         var label = $(this).attr("aria-labelledby");
                         $(this).find(":input").each(function() {
@@ -75,7 +74,9 @@ $(function() {
                         });
                         if ($(this).find(":input").valid()) {
                             $("#" + label).next("img").prop("src", "/pelagos/dev/mvde/applications/metadata-editor/includes/images/check.png");
-                        }
+                        } else {
+                            $("#" + label).next("img").prop("src", "/pelagos/dev/mvde/applications/metadata-editor/includes/images/warning.png");
+                        };
                     });
                 });
             });
