@@ -37,6 +37,19 @@ $(function() {
 
     $("button").button();
 
+    $("#btn-previous").click(function() {
+       var activeTab = $("#dtabs").tabs("option","active");
+       activeTab--;
+       if (activeTab < 0) {activeTab = 0};
+       $("#dtabs").tabs({active:activeTab});
+    });
+
+    $("#btn-next").click(function() {
+        var activeTab = $("#dtabs").tabs("option","active");
+        activeTab++;
+        $("#dtabs").tabs({active:activeTab});
+    });
+
     $("[placeholder=yyyy-mm-dd]").datepicker({
         dateFormat: "yy-mm-dd",
         autoSize:true
