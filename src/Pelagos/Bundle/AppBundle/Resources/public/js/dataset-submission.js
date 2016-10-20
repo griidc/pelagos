@@ -175,16 +175,16 @@ $(function() {
             if (source.is("input")) {
                 var optionText = source.val();
                 var option = new Option(optionText, optionText);
-                $(option).html(optionText).prop("selected", true);
+                $(option).html(optionText);
                 target.append(option);
                 source.val("");
             } else if (source.is("select")) {
-                var option = source.find("option:selected").detach();
+                var option = source.find("option:selected").detach().prop("selected", false);
                 target.append(option);
                 target.append(sortOptions(target.find("option").detach()));
             }
         } else if ($(event.currentTarget).text() == "remove") {
-            var option = target.find("option:selected").detach();
+            var option = target.find("option:selected").detach().prop("selected", false);
             if (option.attr("order") != undefined) {
                 source.append(option);
                 source.append(sortOptions(source.find("option").detach()));
@@ -197,13 +197,13 @@ $(function() {
     function buildKeywordLists()
     {
         $("#themeKeywords option").remove();
-        $("#themeKeywords").append($("#theme-keywords").find("option").clone().prop("selected", true));
+        $("#themeKeywords").append($("#theme-keywords").find("option").clone().prop("selected", true)).change();
 
         $("#placeKeywords option").remove();
-        $("#placeKeywords").append($("#place-keywords").find("option").clone().prop("selected", true));
+        $("#placeKeywords").append($("#place-keywords").find("option").clone().prop("selected", true)).change();
 
         $("#topicKeywords option").remove();
-        $("#topicKeywords").append($("#topic-keywords").find("option").clone().prop("selected", true));
+        $("#topicKeywords").append($("#topic-keywords").find("option").clone().prop("selected", true)).change();
     }
 
     $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
