@@ -407,10 +407,6 @@ class DatasetSubmission extends Entity
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
-     *
-     * @Assert\NotBlank(
-     *     message="The dataset submission short title is required."
-     * )
      */
     protected $shortTitle;
 
@@ -454,10 +450,6 @@ class DatasetSubmission extends Entity
      * @deprecated Replaced by self::$datasetContacts.
      *
      * @ORM\Column(type="text", nullable=true)
-     *
-     * @Assert\NotBlank(
-     *     message="Point of Contact Name is required"
-     * )
      */
     protected $pointOfContactName;
 
@@ -471,10 +463,6 @@ class DatasetSubmission extends Entity
      * @deprecated Replaced by self::$datasetContacts.
      *
      * @ORM\Column(type="text", nullable=true)
-     *
-     * @Assert\NotBlank(
-     *     message="Point of Contact E-Mail is required"
-     * )
      */
     protected $pointOfContactEmail;
 

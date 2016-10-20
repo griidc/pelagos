@@ -86,6 +86,7 @@ $(function() {
     });
 
     select2ContactPerson();
+    buildKeywordLists();
 
     function select2ContactPerson() {
         $(".contactperson").select2({
@@ -182,7 +183,14 @@ $(function() {
             }
         }
 
-        // Build list arrays/fake multiselect boxes.
+
+        buildKeywordLists();
+
+    });
+
+    // Build list arrays/fake multiselect boxes.
+    function buildKeywordLists()
+    {
         $("#themeKeywords option").remove();
         $("#themeKeywords").append($("#theme-keywords").find("option").clone().prop("selected", true));
 
@@ -191,7 +199,7 @@ $(function() {
 
         $("#topicKeywords option").remove();
         $("#topicKeywords").append($("#topic-keywords").find("option").clone().prop("selected", true));
-    });
+    }
 
     $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
         style: {
