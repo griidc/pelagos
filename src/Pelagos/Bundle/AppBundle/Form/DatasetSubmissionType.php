@@ -194,7 +194,7 @@ class DatasetSubmissionType extends AbstractType
             ))
             ->add('spatialExtentDescription', Type\TextareaType::class, array(
                 'label' => 'Spatial Extent Description',
-                'required' => true,
+                'required' => false,
                 'attr' => array('rows' => '5'),
             ))
             ->add('temporalExtentDesc', Type\ChoiceType::class, array(

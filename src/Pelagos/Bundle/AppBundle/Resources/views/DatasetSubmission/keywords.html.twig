@@ -20,12 +20,13 @@
                             <button class="keywordbutton" type="button">remove</button>
                         </td>
                         <td>
-                            <label>Theme Keywords</label>
-                            <select class="keywordinput" required="required" id="theme-keywords" keyword="target" list="theme-keywords-list" size="5">
+                            <label><span class="emRequired">Theme Keywords</span></label>
+                            <select class="keywordinput" id="theme-keywords" keyword="target" list="theme-keywords-list" size="5">
                             {% for keyword in form.themeKeywords %}
                                 <option value="{{keyword.vars.value}}">{{keyword.vars.value}}</option>
                             {% endfor %}
                             </select>
+                            <label for="themeKeywords" class="error"></label>
                         </td>
                     </tr>
                 </table>
@@ -38,7 +39,7 @@
         </tr>
     </table>
     </fieldset>
-    <select hidden readonly multiple id="themeKeywords" name="themeKeywords[]"></select>
+    <select hidden readonly required="required" multiple id="themeKeywords" name="themeKeywords[]"></select>
     <hr>
 
     <fieldset>
@@ -64,6 +65,7 @@
                                     <option value="{{keyword.vars.value}}">{{keyword.vars.value}}</option>
                                 {% endfor %}
                                 </select>
+                                <label for="placeKeywords" class="error"></label>
                             </td>
                         </tr>
                     </table>
@@ -110,8 +112,8 @@
                             <button class="keywordbutton" type="button">remove</button>
                         </td>
                         <td>
-                            <label>Selected Topic Category Keywords</label>
-                            <select class="keywordinput" required="required" keyword="target" size="10" id="topic-keywords">
+                            <label><span class="emRequired">Selected Topic Category Keywords</span></label>
+                            <select class="keywordinput" keyword="target" size="10" id="topic-keywords">
                             {% for keywordValue in form.topicKeywords.vars.value %}
                                 {% set order = 0 %}
                                 {% for keyword in form.topicKeywords.vars.choices %}
@@ -122,6 +124,7 @@
                                 {% endfor %}
                             {% endfor %}
                             </select>
+                            <label for="topicKeywords" class="error"></label>
                         </td>
                     </tr>
                 </table>
@@ -135,5 +138,5 @@
             </td>
         </tr>
     </table>
-    <select hidden readonly multiple id="topicKeywords" name="topicKeywords[]"></select>
+    <select hidden readonly required="required" multiple id="topicKeywords" name="topicKeywords[]"></select>
 </fieldset>

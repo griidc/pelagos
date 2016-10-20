@@ -1,0 +1,123 @@
+{% set sftpuser=app.user.isPosix() %}
+
+<div class="invaliddsform">
+    <h1>
+        You have not completed all required fields.
+    </h1>
+</div>
+
+<div class="validdsform">
+    <fieldset> <!-- Dataset File Transfer Details -->
+        <legend class="section-header">Dataset File Transfer Details</legend>
+
+        <div style="background: transparent;" id="filetabs">
+            <ul>
+                <li value="upload"><a href="#tabs-1">Direct Upload</a></li>
+                <li value="SFTP"><a href="#tabs-2">Upload via SFTP/GridFTP</a></li>
+                <li value="HTTP"><a href="#tabs-3">Request Pull from HTTP/FTP Server</a></li>
+            </ul>
+
+            <div id="tabs-1"> <!-- Direct Upload -->
+                For small datasets (&lt;1 GB), you may upload the dataset file directly, using your web browser. Depending on the size of the file, this may take several minutes. The maximum time the system will wait for the file to upload is 10 minutes. For larger files, please consider using SFTP or GridFTP to upload the file.
+                <fieldset>
+                    <table class="tab-table">
+                        <tr>
+                            <td>
+                                {{ form_label(form.datasetFile) }}
+                                {% if form.datasetFileUpload.vars.value is not empty %}
+                                    <div class="fwtextboxcont">
+                                        {{ form_widget(form.datasetFileUpload) }}
+                                    </div>
+                                    To replace the dataset file:
+                                {% endif %}
+                                {{ form_widget(form.datasetFile) }}
+                            </td>
+                            <td>
+                             <span class="field-help">
+                                <p><strong>Dataset File:</strong></p>
+                                <p>Please select from your local machine the data file for the dataset you are registering.</p>
+                                <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
+                            </span>
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </div> <!-- tabs-1 -->
+
+            <div id="tabs-2"> <!-- Upload via SFTP/GridFTP -->
+                <p>Use this method when the dataset is &gt;1GB and you wish to upload the dataset file to GRIIDC (rather than place the dataset file on an HTTP (web) or FTP server and have GRIIDC pull it).
+                <strong>Note:</strong> <em>Using this method requires that you have <strong>first</strong> uploaded the file via SFTP or GridFTP.</em></p>
+                <div>
+                    <div class="sftpYes {{ sftpuser ? 'sftpshow' : 'sftphidden' }}" style="color:black;">
+                        Your account has been configured for SFTP/GridFTP access.
+                        Click <a href="https://data.gulfresearchinitiative.org/data-file-transfer-methods#SFTP" TARGET="_NEW">here</a> for instructions.</p>
+                    </div>
+                    <div class="sftpNo {{ sftpuser ? 'sftphidden' : 'sftpshow' }}" style="color:red;">
+                        <p>
+                        Your account has not been configured for SFTP/GridFTP access.
+                        If you wish to use SFTP/GridFTP, please click here to request SFTP/GridFTP access:
+                        <BUTTON id=sftpButton sftpPath={{ path('pelagos_api_account_make_posix') }} type=button>REQUEST SFTP/GridFTP</button></p>
+                    </div>
+                </div>
+                <fieldset>
+                    <table class="tab-table">
+                        <tr>
+                            <td>
+                                <div class="fwtextboxcont">
+                                    {% if sftpuser %}
+                                        {{ form_row(form.datasetFilePath) }}
+                                    {% else %}
+                                        {{ form_row(form.datasetFilePath, { 'attr':{'disabled':'disabled'} }) }}
+                                    {% endif %}
+                                </div>
+                                <input type="button" value="Browse..." class="fileBrowserButton" data-target="#datasetFilePath" data-type="data" {{ sftpuser ? '' : 'disabled' }}>
+                                {% if form.datasetFilePath.vars.value is not empty %}
+                                    <div class="file_force">
+                                        {{ form_widget(form.datasetFileForceImport) }} {{ form_label(form.datasetFileForceImport) }}
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="field-help">
+                                    <p><strong>Dataset File Path:</strong></p>
+                                    <p>This is the path on the server to the data file being registered. Click "Browse..." to find and select the data file you uploaded via SFTP/GridFTP.</p>
+                                    <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </div> <!-- tabs-2 -->
+
+            <div id="tabs-3"> <!-- Request Pull from HTTP/FTP Server -->
+                Use this method when you wish to place the dataset file on an HTTP (web) or FTP server at your institution (or elsewhere) and have GRIIDC pull it. You may specify an optional availability date, after which the dataset will be available at the provided URL, as well as optional preferred days and times of day to initiate the download. Additionally, if the dataset file is archived in a cyber-infrastructure that can be maintained for the next decade (e.g. NODC), you may specify that GRIIDC point to the dataset at the provided URL rather than download and house it at GRIIDC.
+                <fieldset>
+                    <table class="tab-table">
+                        <tr>
+                            <td>
+                                <div class="fwtextboxcont">
+                                    {{ form_row(form.datasetFileUrl) }}
+                                </div>
+                                {% if form.datasetFileUrl.vars.value is not empty %}
+                                    <div class="file_force">
+                                        {{ form_widget(form.datasetFileForceDownload) }} {{ form_label(form.datasetFileForceDownload) }}
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="field-help">
+                                    <p><strong>Dataset File URL:</strong></p>
+                                    <p>This is the URL that leads to the data being registered. Package the components of the datasets (if applicable) to form a single file (e.g. ZIP, TAR).</p>
+                                    <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </div> <!-- tabs-3 -->
+
+        </div> <!-- tabs -->
+
+    </fieldset> <!-- Dataset File Transfer Details -->
+    {{ form_widget(form.submit) }}
+</div>
