@@ -116,4 +116,12 @@
 {% endif %}
 
 <div class="modal" id="spinner"></div>
+<div style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/x.png' %}
+        <img id="imgwarning" src="{{ asset_url }}">
+    {% endimage %}
+    {% image '@PelagosAppBundle/Resources/public/images/check.png' %}
+        <img id="imgcheck" src="{{ asset_url }}">
+    {% endimage %}
+</div>
 {% endblock %}

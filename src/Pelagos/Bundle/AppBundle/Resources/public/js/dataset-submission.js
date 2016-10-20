@@ -50,6 +50,8 @@ $(function() {
         $(".invaliddsform").show();
         $(".validdsform").hide();
         $("#regForm select[keyword=target] option").prop('selected', true);
+        var imgWarning = $("#imgwarning").attr("src");
+        var imgCheck = $("#imgcheck").attr("src");
         var valid = $("#regForm").valid();
 
         if (false == valid) {
@@ -57,9 +59,9 @@ $(function() {
             $("#dtabs .ui-tabs-panel").each(function() {
                 var label = $(this).attr("aria-labelledby");
                 if ($(this).has(":input.error").length ? true : false ) {
-                    $("#" + label).next("img").prop("src", "/pelagos/dev/mvde/applications/metadata-editor/includes/images/warning.png");
+                    $("#" + label).next("img").prop("src", imgWarning);
                 } else {
-                    $("#" + label).next("img").prop("src", "/pelagos/dev/mvde/applications/metadata-editor/includes/images/check.png");
+                    $("#" + label).next("img").prop("src", imgCheck);
                 };
 
                 $(this).find(":input").on("change blur keyup", function() {
@@ -69,9 +71,9 @@ $(function() {
                             $(this).valid()
                         });
                         if ($(this).find(":input").valid()) {
-                            $("#" + label).next("img").prop("src", "/pelagos/dev/mvde/applications/metadata-editor/includes/images/check.png");
+                            $("#" + label).next("img").prop("src", imgCheck);
                         } else {
-                            $("#" + label).next("img").prop("src", "/pelagos/dev/mvde/applications/metadata-editor/includes/images/warning.png");
+                            $("#" + label).next("img").prop("src", imgWarning);
                         };
                     });
                 });
@@ -461,7 +463,6 @@ $(function() {
 
             return a-b;
         });
-
     }
 });
 
