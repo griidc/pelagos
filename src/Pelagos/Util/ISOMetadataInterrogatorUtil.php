@@ -47,22 +47,6 @@ class ISOMetadataInterrogatorUtil
     }
 
     /**
-     * Private function that sets an attribute in dataset submission if value isn't null.
-     *
-     * @param DatasetSubmission $datasetSubmission A Dataset Submission, passed/changed by reference.
-     * @param string            $setter            A string of the setter to call in DatasetSubmission.
-     * @param mixed             $attributeValue    The value extracted from XML.
-     *
-     * @return void
-     */
-    private function setIfHas(DatasetSubmission $datasetSubmission, $setter, $attributeValue = null)
-    {
-        if (null !== $attributeValue) {
-            $datasetSubmission->$$setter($attributeValue);
-        }
-    }
-
-    /**
      * Extracts title from XML metadata.
      *
      * @param \SimpleXml $xml The XML to extract from.
