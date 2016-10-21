@@ -10,65 +10,66 @@ use Pelagos\Entity\DatasetSubmission;
 class ISOMetadataInterrogatorUtil
 {
     /**
-     * Metadata file as SimpleXML object.
-     *
-     * @var \SimpleXMLElement
-     */
-    protected $xmlMetadata;
-
-    /**
-     * The dataset submission object.
-     *
-     * @var DatasetSubmission
-     */
-    protected $datasetSubmission;
-
-    /**
-     * Constructor for this class.
-     *
-     * @param \SimpleXmlElement $xmlMetadata       The XML object to examine for values.
-     * @param DatasetSubmission $datasetSubmission The Dataset Submission to examine for values, populate & return.
-     */
-    public function __construct(\SimpleXmlElement $xmlMetadata, DatasetSubmission $datasetSubmission)
-    {
-        $this->xmlMetadata = $xmlMetadata;
-        $this->datasetSubmission = $datasetSubmission;
-    }
-
-    /**
-     * Returns a populated Dataset Submission object.
+     * Conditionally populates Dataset Submission object, by reference.
      *
      * Return a DatasetSubmission object populated with values from both
      * the Dataset Submission and the XML object, with values from the
      * XML object overriding any values from the Dataset Submission.
      *
-     * @return DatasetSubmission
+     * @param \SimpleXmlElement $xmlMetadata       The XML to be read from.
+     * @param DatasetSubmission $datasetSubmission The datasetSubmission object to be modified.
+     *
+     * @return void
      */
-    public function returnDsWithXmlPri()
+    public static function returnDsWithXmlPri(\SimpleXmlElement $xmlMetadata, DatasetSubmission $datasetSubmission)
     {
-        return $this->datasetSubmission;
+        setIfHas($datasetSubmission, 'setTitle', extractTitle($xmlMetadata));
+        setIfHas($datasetSubmission, 'setSortTitle', extractShortTitle($xmlMetadata));
+        setIfHas($datasetSubmission, 'setAbstract', extractAbstract($xmlMetadata));
+        setIfHas($datasetSubmission, 'setPurpose', extractPurpose($xmlMetadata));
+        setIfHas($datasetSubmission, 'setSuppParams', extractSuppParams($xmlMetadata));
+        setIfHas($datasetSubmission, 'setSuppInstruments', extractSuppInstruments($xmlMetadata));
+        setIfHas($datasetSubmission, 'setSuppSampScalesRates', extractSuppSampScalesRates($xmlMetadata));
+        setIfHas($datasetSubmission, 'setSuppErrorAnalysis', extractSuppErrorAnalysis($xmlMetadata));
+        setIfHas($datasetSubmission, 'setSuppProvenance', extractSuppProvenance($xmlMetadata));
+        setIfHas($datasetSubmission, 'setReferenceDate', extractReferenceDate($xmlMetadata));
+        setIfHas($datasetSubmission, 'setReferenceDateType', extractReferenceType($xmlMetadata));
+        setIfHas($datasetSubmission, 'setThemeKeywords', extractThemeKeywords($xmlMetadata));
+        setIfHas($datasetSubmission, 'setPlaceKeywords', extractPlaceKeywords($xmlMetadata));
+        setIfHas($datasetSubmission, 'setTopicKeywords', extractTopicKeywords($xmlMetadata));
+        setIfHas($datasetSubmission, 'setSpatialExtent', extractSpacialExtent($xmlMetadata));
+        setIfHas($datasetSubmission, 'setTemporalExtentDesc', extractTemporalExtentDesc($xmlMetadata));
+        setIfHas($datasetSubmission, 'setTemporalExtentBeginPosition', extractTemporalExtentBeginPosition($xmlMetadata));
+        setIfHas($datasetSubmission, 'setTemporalExtentEndPosition', extractTemporalExtentEndPosition($xmlMetadata));
+        setIfHas($datasetSubmission, 'setDistributionFormatName', extractDistributionFormatName($xmlMetadata));
+        setIfHas($datasetSubmission, 'setFileDecompressionTechnique', extractFileDecompressionTechnique($xmlMetadata));
+        setIfHas($datasetSubmission, 'setDatasetFileUri', extractDatasetUri($xmlMetadata));
     }
 
     /**
-     * Returns a populated Dataset Submission object.
+     * Private function that sets an attribute in dataset submission if value isn't null.
      *
-     * Return a DatasetSubmission object populated with values from both
-     * the Dataset Submission and the XML object, with values from the passed
-     * Dataset Submission overriding any values from the XML object.
+     * @param DatasetSubmission $datasetSubmission A Dataset Submission, passed/changed by reference.
+     * @param string            $setter            A string of the setter to call in DatasetSubmission.
+     * @param mixed             $attributeValue    The value extracted from XML.
      *
-     * @return DatasetSubmission
+     * @return void
      */
-    public function returnDsWithDatasetSubmissionPri()
+    private function setIfHas(DatasetSubmission $datasetSubmission, $setter, $attributeValue = null)
     {
-        return $this->datasetSubmission;
+        if (null !== $attributeValue) {
+            $datasetSubmission->$$setter($attributeValue);
+        }
     }
 
     /**
      * Extracts title from XML metadata.
      *
+     * @param \SimpleXml $xml The XML to extract from.
+     *
      * @return string|null Returns the title as a string, or null.
      */
-    protected function extractTitle()
+    protected function extractTitle(\SimpleXml $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:citation' .
@@ -77,15 +78,17 @@ class ISOMetadataInterrogatorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        return $this->querySingle($query);
+        return $this->querySingle($xml, $query);
     }
 
     /**
      * Extracts short title from XML metadata.
      *
+     * @param \SimpleXml $xml The XML to extract from.
+     *
      * @return string|null Returns the title as a string, or null.
      */
-    protected function extractShortTitle()
+    protected function extractShortTitle(\SimpleXml $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -96,7 +99,7 @@ class ISOMetadataInterrogatorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        return $this->querySingle($query);
+        return $this->querySingle($xml, $query);
     }
 
     /**
@@ -539,13 +542,14 @@ class ISOMetadataInterrogatorUtil
     /**
      * Runs xpath and returns resulting single value or null.
      *
-     * @param string $xpath The xpath query to run.
+     * @param \SimpleXml $xml   The XML to query.
+     * @param string     $xpath The xpath query to run.
      *
      * @return string|null Item queried in xpath.
      */
-    protected function querySingle($xpath)
+    protected function querySingle(\SimpleXml $xml, $xpath)
     {
-        $query = $this->xmlMetadata->xpath($xpath);
+        $query = $xml->xpath($xpath);
 
         if (false === $query) {
             // This is a best effort, so null if xpath fails.
@@ -563,13 +567,14 @@ class ISOMetadataInterrogatorUtil
     /**
      * Runs xpath and returns resulting single value as GML or null.
      *
-     * @param string $xpath The xpath query to run.
+     * @param \SimpleXml $xml   The XML to query.
+     * @param string     $xpath The xpath query to run.
      *
      * @return string|null Item queried in xpath.
      */
-    protected function querySingleGml($xpath)
+    protected function querySingleGml(\SimpleXml $xml, $xpath)
     {
-        $query = $this->xmlMetadata->xpath($xpath);
+        $query = $xml->xpath($xpath);
 
         if (false === $query) {
             return null;
@@ -586,13 +591,14 @@ class ISOMetadataInterrogatorUtil
     /**
      * Runs xpath and returns an array, or empty array.
      *
-     * @param string $xpath The xpath query to run.
+     * @param \SimpleXml $xml   The XML to query.
+     * @param string     $xpath The xpath query to run.
      *
      * @return array Result of items queried in xpath.
      */
-    protected function queryMultiple($xpath)
+    protected function queryMultiple(\SimpleXml $xml, $xpath)
     {
-        $query = $this->xmlMetadata->xpath($xpath);
+        $query = $xml->xpath($xpath);
 
         if (false === $query) {
             // This is a best effort, so empty array if xpath fails.
