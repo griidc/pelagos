@@ -125,7 +125,7 @@
 
             elements.cancel = $("<div/>").addClass("fileBrowserCancel")
                 .append(
-                    $("<button>Cancel</button>").click(function() {
+                    $("<button type=\"button\">Cancel</button>").click(function() {
                         elements.overlay.hide();
                     })
                 );

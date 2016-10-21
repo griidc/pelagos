@@ -28,12 +28,14 @@ $(function() {
         }
     );
 
-    $("#dtabs,#filetabs").tabs({
+    $("#dtabs").tabs({
         heightStyle: "content",
         activate: function(event, ui) {
             $(ui.newTab.context.hash).trigger("active");
         }
     });
+
+    $("#filetabs").tabs();
 
     $("button").button();
 
@@ -86,6 +88,12 @@ $(function() {
 
     select2ContactPerson();
     buildKeywordLists();
+
+    $(".fileBrowserButton").fileBrowser(
+        {
+            url: Routing.generate("pelagos_api_account_get_incoming_directory", { id: "self" })
+        }
+    );
 
     function select2ContactPerson() {
         $(".contactperson").select2({
