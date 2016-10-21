@@ -68,7 +68,7 @@ class DatasetSubmissionController extends EntityController
      *
      * @Rest\View(serializerEnableMaxDepthChecks = true)
      *
-     * @return Dataset Submission
+     * @return DatasetSubmission
      */
     public function getAction($id)
     {
