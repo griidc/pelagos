@@ -23,56 +23,77 @@ class ISOMetadataInterrogatorUtil
      */
     public static function returnDsWithXmlPri(\SimpleXmlElement $xmlMetadata, DatasetSubmission $datasetSubmission)
     {
-        setIfHas($datasetSubmission, 'setTitle', extractTitle($xmlMetadata));
-        setIfHas($datasetSubmission, 'setSortTitle', extractShortTitle($xmlMetadata));
-        setIfHas($datasetSubmission, 'setAbstract', extractAbstract($xmlMetadata));
-        setIfHas($datasetSubmission, 'setPurpose', extractPurpose($xmlMetadata));
-        setIfHas($datasetSubmission, 'setSuppParams', extractSuppParams($xmlMetadata));
-        setIfHas($datasetSubmission, 'setSuppInstruments', extractSuppInstruments($xmlMetadata));
-        setIfHas($datasetSubmission, 'setSuppSampScalesRates', extractSuppSampScalesRates($xmlMetadata));
-        setIfHas($datasetSubmission, 'setSuppErrorAnalysis', extractSuppErrorAnalysis($xmlMetadata));
-        setIfHas($datasetSubmission, 'setSuppProvenance', extractSuppProvenance($xmlMetadata));
-        setIfHas($datasetSubmission, 'setReferenceDate', extractReferenceDate($xmlMetadata));
-        setIfHas($datasetSubmission, 'setReferenceDateType', extractReferenceType($xmlMetadata));
-        setIfHas($datasetSubmission, 'setThemeKeywords', extractThemeKeywords($xmlMetadata));
-        setIfHas($datasetSubmission, 'setPlaceKeywords', extractPlaceKeywords($xmlMetadata));
-        setIfHas($datasetSubmission, 'setTopicKeywords', extractTopicKeywords($xmlMetadata));
-        setIfHas($datasetSubmission, 'setSpatialExtent', extractSpacialExtent($xmlMetadata));
-        setIfHas($datasetSubmission, 'setTemporalExtentDesc', extractTemporalExtentDesc($xmlMetadata));
-        setIfHas($datasetSubmission, 'setTemporalExtentBeginPosition', extractTemporalExtentBeginPosition($xmlMetadata));
-        setIfHas($datasetSubmission, 'setTemporalExtentEndPosition', extractTemporalExtentEndPosition($xmlMetadata));
-        setIfHas($datasetSubmission, 'setDistributionFormatName', extractDistributionFormatName($xmlMetadata));
-        setIfHas($datasetSubmission, 'setFileDecompressionTechnique', extractFileDecompressionTechnique($xmlMetadata));
-        setIfHas($datasetSubmission, 'setDatasetFileUri', extractDatasetUri($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setTitle', self::extractTitle($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setShortTitle', self::extractShortTitle($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setAbstract', self::extractAbstract($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setPurpose', self::extractPurpose($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setSuppParams', self::extractSuppParams($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setSuppInstruments', self::extractSuppInstruments($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setSuppMethods', self::extractSuppMethods($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setSuppSampScalesRates', self::extractSuppSampScalesRates($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setSuppErrorAnalysis', self::extractSuppErrorAnalysis($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setSuppProvenance', self::extractSuppProvenance($xmlMetadata));
+        /*
+        self::setIfHas($datasetSubmission, 'setReferenceDate', extractReferenceDate($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setReferenceDateType', extractReferenceType($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setThemeKeywords', extractThemeKeywords($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setPlaceKeywords', extractPlaceKeywords($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setTopicKeywords', extractTopicKeywords($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setSpatialExtent', extractSpacialExtent($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setTemporalExtentDesc', extractTemporalExtentDesc($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setTemporalExtentBeginPosition', extractTemporalExtentBeginPosition($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setTemporalExtentEndPosition', extractTemporalExtentEndPosition($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setDistributionFormatName', extractDistributionFormatName($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setFileDecompressionTechnique', extractFileDecompressionTechnique($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setDatasetFileUri', extractDatasetUri($xmlMetadata));
+        */
+    }
+
+    /**
+     * Sets value in DatasetSubmission (by reference) if not null in XML.
+     *
+     * @param DatasetSubmission $ds     A DatasetSubmission object.
+     * @param string            $setter The setter of DatasetSubmission for this attribute.
+     * @param mixed             $value  The value of the attribute in the XML.
+     *
+     * @return void
+     */
+    protected static function setIfHas(DatasetSubmission $ds, $setter, $value)
+    {
+        if (null !== $value) {
+            $ds->$setter($value);
+        }
     }
 
     /**
      * Extracts title from XML metadata.
      *
-     * @param \SimpleXml $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml The XML to extract from.
      *
      * @return string|null Returns the title as a string, or null.
      */
-    protected function extractTitle(\SimpleXml $xml)
+    protected static function extractTitle(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
+                 '/gmd:identificationInfo' .
+                 '/gmd:MD_DataIdentification' .
                  '/gmd:citation' .
                  '/gmd:CI_Citation' .
                  '/gmd:title' .
                  '/gco:CharacterString' .
                  '/text()';
 
-        return $this->querySingle($xml, $query);
+        return self::querySingle($xml, $query);
     }
 
     /**
      * Extracts short title from XML metadata.
      *
-     * @param \SimpleXml $xml The XML to extract from.
+     * @param \SimpleXmlElement $xml The XML to extract from.
      *
      * @return string|null Returns the title as a string, or null.
      */
-    protected function extractShortTitle(\SimpleXml $xml)
+    protected static function extractShortTitle(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -83,15 +104,17 @@ class ISOMetadataInterrogatorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        return $this->querySingle($xml, $query);
+        return self::querySingle($xml, $query);
     }
 
     /**
      * Extracts abstract from XML metadata.
      *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     *
      * @return string|null Returns the abstract as a string, or null.
      */
-    protected function extractAbstract()
+    protected static function extractAbstract(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -100,15 +123,17 @@ class ISOMetadataInterrogatorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        return $this->querySingle($query);
+        return self::querySingle($xml, $query);
     }
 
     /**
      * Extracts purpose from XML metadata.
      *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     *
      * @return string|null Returns the purpose as a string, or null.
      */
-    protected function extractPurpose()
+    protected static function extractPurpose(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -117,15 +142,17 @@ class ISOMetadataInterrogatorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        return $this->querySingle($query);
+        return self::querySingle($xml, $query);
     }
 
     /**
      * Extracts supplemental parameters from XML metadata.
      *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     *
      * @return string|null Returns the parameters as a string, or null.
      */
-    protected function extractSuppParams()
+    protected static function extractSuppParams(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -134,9 +161,10 @@ class ISOMetadataInterrogatorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        $supplementalData = $this->querySingle($query);
+        $supplementalData = self::querySingle($xml, $query);
         if (null !== $supplementalData) {
-            $parameters = $supplementaldata[0];
+            $supplementalList = preg_split('/\|/', $supplementalData);
+            $parameters = $supplementalList[0];
             if (null !== $parameters) {
                 return $parameters;
             } else {
@@ -148,9 +176,11 @@ class ISOMetadataInterrogatorUtil
     /**
      * Extracts supplemental methods from XML metadata.
      *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     *
      * @return string|null Returns the methods as a string, or null.
      */
-    protected function extractSuppMethods()
+    protected static function extractSuppMethods(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -159,9 +189,10 @@ class ISOMetadataInterrogatorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        $supplementalData = $this->querySingle($query);
+        $supplementalData = self::querySingle($xml, $query);
         if (null !== $supplementalData) {
-            $methods = $supplementaldata[1];
+            $supplementalList = preg_split('/\|/', $supplementalData);
+            $methods = $supplementalList[1];
             if (null !== $methods) {
                 return $methods;
             } else {
@@ -173,9 +204,11 @@ class ISOMetadataInterrogatorUtil
     /**
      * Extracts supplemental instruments from XML metadata.
      *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     *
      * @return string|null Returns the instruments as a string, or null.
      */
-    protected function extractSuppInstruments()
+    protected static function extractSuppInstruments(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -184,9 +217,10 @@ class ISOMetadataInterrogatorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        $supplementalData = $this->querySingle($query);
+        $supplementalData = self::querySingle($xml, $query);
         if (null !== $supplementalData) {
-            $instruments = $supplementaldata[2];
+            $supplementalList = preg_split('/\|/', $supplementalData);
+            $instruments = $supplementalList[2];
             if (null !== $instruments) {
                 return $instruments;
             } else {
@@ -198,9 +232,11 @@ class ISOMetadataInterrogatorUtil
     /**
      * Extracts sample scales and rates from XML metadata.
      *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     *
      * @return string|null Returns the sample scales and rates as a string, or null.
      */
-    protected function extractSuppSampScalesRates()
+    protected static function extractSuppSampScalesRates(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -209,11 +245,12 @@ class ISOMetadataInterrogatorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        $supplementalData = $this->querySingle($query);
+        $supplementalData = self::querySingle($xml, $query);
         if (null !== $supplementalData) {
-            $sampScalesAndRates = $supplementaldata[3];
-            if (null !== $supplementalData) {
-                return $supplementalData;
+            $supplementalList = preg_split('/\|/', $supplementalData);
+            $sampScalesAndRates = $supplementalList[3];
+            if (null !== $sampScalesAndRates) {
+                return $sampScalesAndRates;
             } else {
                 return null;
             }
@@ -223,9 +260,11 @@ class ISOMetadataInterrogatorUtil
     /**
      * Extracts error analysis from XML metadata.
      *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     *
      * @return string|null Returns the error analysis as a string, or null.
      */
-    protected function extractSuppErrorAnalysis()
+    protected static function extractSuppErrorAnalysis(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -234,9 +273,10 @@ class ISOMetadataInterrogatorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        $supplementalData = $this->querySingle($query);
+        $supplementalData = self::querySingle($xml, $query);
         if (null !== $supplementalData) {
-            $errorAnalysis = $supplementaldata[4];
+            $supplementalList = preg_split('/\|/', $supplementalData);
+            $errorAnalysis = $supplementalList[4];
             if (null !== $errorAnalysis) {
                 return $errorAnalysis;
             } else {
@@ -248,9 +288,11 @@ class ISOMetadataInterrogatorUtil
     /**
      * Extracts provenance from XML metadata.
      *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     *
      * @return string|null Returns the provenance as a string, or null.
      */
-    protected function extractSuppProvenance()
+    protected static function extractSuppProvenance(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -259,9 +301,10 @@ class ISOMetadataInterrogatorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        $supplementalData = $this->querySingle($query);
+        $supplementalData = self::querySingle($xml, $query);
         if (null !== $supplementalData) {
-            $provenance = $supplementaldata[5];
+            $supplementalList = preg_split('/\|/', $supplementalData);
+            $provenance = $supplementalList[5];
             if (null !== $provenance) {
                 return $provenance;
             } else {
@@ -275,7 +318,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return \DateTime|null Returns the reference date as a DateTime, or null.
      */
-    protected function extractReferenceDate()
+    protected function extractReferenceDate(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -301,7 +344,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the  as a string, or null.
      */
-    protected function extractReferenceType()
+    protected function extractReferenceType(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -321,7 +364,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return array Returns the theme keywords as an array, or empty array.
      */
-    protected function extractThemeKeywords()
+    protected function extractThemeKeywords(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -342,7 +385,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return array Returns the place keywords as an array, or empty array.
      */
-    protected function extractPlaceKeywords()
+    protected function extractPlaceKeywords(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -363,7 +406,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return array Returns the topic keywords as an array, or empty array.
      */
-    protected function extractTopicKeywords()
+    protected function extractTopicKeywords(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -380,7 +423,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the GML as a string, or null.
      */
-    protected function extractSpacialExtent()
+    protected function extractSpacialExtent(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -400,7 +443,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the  as a string, or null.
      */
-    protected function extractTemporalExtentDesc()
+    protected function extractTemporalExtentDesc(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:extent' .
@@ -416,7 +459,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return \DateTime|null Returns the starting date as a DateTime, or null.
      */
-    protected function extractTemporalExtentBeginPosition()
+    protected function extractTemporalExtentBeginPosition(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:extent' .
@@ -442,7 +485,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return \DateTime|null Returns the ending date as a DateTime, or null.
      */
-    protected function extractTemporalExtentEndPosition()
+    protected function extractTemporalExtentEndPosition(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:extent' .
@@ -468,7 +511,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the file format as a string, or null.
      */
-    protected function extractDistributionFormatName()
+    protected function extractDistributionFormatName(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:distributionInfo' .
@@ -489,7 +532,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the archive format as a string, or null.
      */
-    protected function extractFileDecompressionTechnique()
+    protected function extractFileDecompressionTechnique(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:distributionInfo' .
@@ -513,7 +556,7 @@ class ISOMetadataInterrogatorUtil
      * The NOAA ISO 19115 Geographic Information - Metadata Workbook
      * discusses this on page 22.  (MI_Metadata.pdf)
      */
-    protected function extractDatasetUri()
+    protected function extractDatasetUri(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:dataSetURI' .
@@ -526,12 +569,12 @@ class ISOMetadataInterrogatorUtil
     /**
      * Runs xpath and returns resulting single value or null.
      *
-     * @param \SimpleXml $xml   The XML to query.
-     * @param string     $xpath The xpath query to run.
+     * @param \SimpleXmlElement $xml   The XML to query.
+     * @param string            $xpath The xpath query to run.
      *
      * @return string|null Item queried in xpath.
      */
-    protected function querySingle(\SimpleXml $xml, $xpath)
+    protected static function querySingle(\SimpleXmlElement $xml, $xpath)
     {
         $query = $xml->xpath($xpath);
 
@@ -551,12 +594,12 @@ class ISOMetadataInterrogatorUtil
     /**
      * Runs xpath and returns resulting single value as GML or null.
      *
-     * @param \SimpleXml $xml   The XML to query.
-     * @param string     $xpath The xpath query to run.
+     * @param \SimpleXmlElement $xml   The XML to query.
+     * @param string            $xpath The xpath query to run.
      *
      * @return string|null Item queried in xpath.
      */
-    protected function querySingleGml(\SimpleXml $xml, $xpath)
+    protected function querySingleGml(\SimpleXmlElement $xml, $xpath)
     {
         $query = $xml->xpath($xpath);
 
@@ -575,12 +618,12 @@ class ISOMetadataInterrogatorUtil
     /**
      * Runs xpath and returns an array, or empty array.
      *
-     * @param \SimpleXml $xml   The XML to query.
-     * @param string     $xpath The xpath query to run.
+     * @param \SimpleXmlElement $xml   The XML to query.
+     * @param string            $xpath The xpath query to run.
      *
      * @return array Result of items queried in xpath.
      */
-    protected function queryMultiple(\SimpleXml $xml, $xpath)
+    protected function queryMultiple(\SimpleXmlElement $xml, $xpath)
     {
         $query = $xml->xpath($xpath);
 
