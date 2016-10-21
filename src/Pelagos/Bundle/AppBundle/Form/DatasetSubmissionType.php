@@ -255,13 +255,6 @@ class DatasetSubmissionType extends AbstractType
                 'allow_delete' => true,
                 'delete_empty' => true,
                 'required' => true,
-            ))
-            ->add('dataset', EntityType::class, array(
-                'label' => 'Dataset:',
-                'class' => 'Pelagos:Dataset',
-                'choice_label' => 'id',
-                'placeholder' => '[Select a Dataset]',
-                'attr' => array('class' => 'hiddenFormField'),
             ));
     }
 

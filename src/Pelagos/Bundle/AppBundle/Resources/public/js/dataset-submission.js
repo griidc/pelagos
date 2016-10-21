@@ -52,19 +52,11 @@ $(function() {
     
     $("#btn-save").click(function() {
         var datasetSubmissionId = $("form[datasetsubmission]").attr("datasetsubmission");
-        var url = "/pelagos-symfony/dev/mvde/api/dataset_submission";
-        var method = "POST";
-        
-        if (datasetSubmissionId != "") {
-            url += "/" + datasetSubmissionId ;
-            method = "PATCH";
-        } 
-        
-        url += "?validate=false";
+        var url = "/pelagos-symfony/dev/mvde/api/dataset_submission/";
         
         $.ajax({
-            url: url,
-            method: method,
+            url: url + datasetSubmissionId + "?validate=false",
+            method: "PATCH",
             data: $("form[datasetsubmission]").serialize(),
             success: function(data, textStatus, jqXHR) {
                 var n = noty(
