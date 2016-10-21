@@ -49,6 +49,52 @@ $(function() {
         activeTab++;
         $("#dtabs").tabs({active:activeTab});
     });
+    
+    $("#btn-save").click(function() {
+        var datasetSubmissionId = $("form[datasetsubmission]").attr("datasetsubmission");
+        var url = "/pelagos-symfony/dev/mvde/api/dataset_submission";
+        var method = "POST";
+        
+        if (datasetSubmissionId != "") {
+            url += "/" + datasetSubmissionId ;
+            method = "PATCH";
+        } 
+        
+        url += "?validate=false";
+        
+        $.ajax({
+            url: url,
+            method: method,
+            data: $("form[datasetsubmission]").serialize(),
+            success: function(data, textStatus, jqXHR) {
+                var n = noty(
+                {
+                    layout: 'top',
+                    theme: 'relax',
+                    type: 'success',
+                    text: 'Succesfully Saved', 
+                    dismissQueue: true, // If you want to use queue feature set this true
+                    timeout: 3000,
+                    modal: false,
+                });
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                var message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
+                var n = noty(
+                {
+                    layout: 'top',
+                    theme: 'relax',
+                    type: 'error',
+                    text: message, 
+                    dismissQueue: true, // If you want to use queue feature set this true
+                    //timeout: 5000,
+                    modal: true,
+                });
+            }
+        });
+        
+        //PUT /pelagos-symfony/dev/mvde/api/dataset_submission/{id}
+    });
 
     $("[placeholder=yyyy-mm-dd]").datepicker({
         dateFormat: "yy-mm-dd",

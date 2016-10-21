@@ -7,6 +7,9 @@ use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+
+use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
@@ -252,6 +255,13 @@ class DatasetSubmissionType extends AbstractType
                 'allow_delete' => true,
                 'delete_empty' => true,
                 'required' => true,
+            ))
+            ->add('dataset', EntityType::class, array(
+                'label' => 'Dataset:',
+                'class' => 'Pelagos:Dataset',
+                'choice_label' => 'id',
+                'placeholder' => '[Select a Dataset]',
+                'attr' => array('class' => 'hiddenFormField'),
             ));
     }
 

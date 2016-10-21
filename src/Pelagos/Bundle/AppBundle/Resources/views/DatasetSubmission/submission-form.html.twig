@@ -1,8 +1,9 @@
 {{ form_start(form, {'attr': {'id': 'regForm'}}) }}
+    {{ form_widget(form.dataset) }}
     <div id="metatoolbar" class="ui-widget-header ui-corner-all toolbarbutton">
-        <button type="button" id="upload">Load from File</button>
-        <button type="button" id="fromudi">Load from URL</button>
-        <button type="button" id="save">Save and Continue later</button>
+        <button type="button" id="btn-upload">Load from File</button>
+        <button type="button" id="btn-fromudi">Load from URL</button>
+        <button type="button" id="btn-save">Save and Continue later</button>
     </div>
 
     <fieldset>

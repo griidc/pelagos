@@ -52,15 +52,9 @@ class DatasetSubmissionController extends UIController
     public function defaultAction(Request $request)
     {
         $udi = $request->query->get('regid');
-
         $dataset = null;
         $datasetSubmission = null;
         $datasetId = null;
-
-        $found = false;
-
-        $buttonLabel = 'Register';
-
         $dif = null;
 
         if ($udi != null) {
@@ -80,6 +74,8 @@ class DatasetSubmissionController extends UIController
 
                     $dataset->setDatasetSubmission($datasetSubmission);
 
+                    $datasetSubmission->setSequence(1);
+
                     $datasetSubmission->setTitle($dif->getTitle());
                     $datasetSubmission->setAbstract($dif->getAbstract());
 
@@ -93,15 +89,16 @@ class DatasetSubmissionController extends UIController
                     $metadataContact->setDatasetSubmission($datasetSubmission);
                     $metadataContact->setRole('pointOfContact');
                     $datasetSubmission->addMetadataContact($metadataContact);
-                } else {
-                    $buttonLabel = 'Update';
-                }
-                $found = true;
-            }
-        }
 
-        if ($dif instanceof DIF and $dif->getStatus() !== DIF::STATUS_APPROVED) {
-            $datasetSubmission = null;
+                    $this->entityHandler->create($datasetSubmission);
+                } else {
+                    if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+                        $sequence = $datasetSubmission->getSequence();
+                        $datasetSubmission->setSequence(++$sequence);
+
+                    }
+                }
+            }
         }
 
         if ($datasetSubmission instanceof DatasetSubmission) {
@@ -121,6 +118,10 @@ class DatasetSubmissionController extends UIController
             array(
                 'action' => $this->generateUrl('pelagos_app_ui_datasetsubmission_post', array('id' => $datasetId)),
                 'method' => 'POST',
+                'attr' => array(
+                    'datasetSubmission' => $datasetSubmission->getId(),
+                    'datasetSubmission' => $datasetSubmission->getId(),
+                ),
             )
         );
 
@@ -158,14 +159,8 @@ class DatasetSubmissionController extends UIController
             }
         }
 
-        if ($this->getUser() instanceof Account) {
-            $loggedInPerson = $this->getUser()->getPerson();
-        } else {
-            $loggedInPerson = null;
-        }
-
         $form->add('submit', SubmitType::class, array(
-            'label' => $buttonLabel,
+            'label' => 'Submit',
             'attr'  => array('class' => 'submitButton'),
         ));
 
@@ -225,8 +220,6 @@ class DatasetSubmissionController extends UIController
         if ($form->isSubmitted()) {
             $dataset->setDatasetSubmission($datasetSubmission);
             $sequence = $datasetSubmission->getSequence();
-
-
 
             if ($sequence == null) {
                 $sequence = 0;
