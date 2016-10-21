@@ -68,7 +68,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the title as a string, or null.
      */
-    private function extractTitle()
+    protected function extractTitle()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:citation' .
@@ -85,7 +85,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the title as a string, or null.
      */
-    private function extractShortTitle()
+    protected function extractShortTitle()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -104,7 +104,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the abstract as a string, or null.
      */
-    private function extractAbstract()
+    protected function extractAbstract()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -121,7 +121,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the purpose as a string, or null.
      */
-    private function extractPurpose()
+    protected function extractPurpose()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -138,7 +138,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the parameters as a string, or null.
      */
-    private function extractSuppParams()
+    protected function extractSuppParams()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -163,7 +163,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the methods as a string, or null.
      */
-    private function extractSuppMethods()
+    protected function extractSuppMethods()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -188,7 +188,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the instruments as a string, or null.
      */
-    private function extractSuppInstruments()
+    protected function extractSuppInstruments()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -213,7 +213,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the sample scales and rates as a string, or null.
      */
-    private function extractSuppSampScalesRates()
+    protected function extractSuppSampScalesRates()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -238,7 +238,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the error analysis as a string, or null.
      */
-    private function extractSuppErrorAnalysis()
+    protected function extractSuppErrorAnalysis()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -263,7 +263,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the provenance as a string, or null.
      */
-    private function extractSuppProvenance()
+    protected function extractSuppProvenance()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -288,7 +288,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return \DateTime|null Returns the reference date as a DateTime, or null.
      */
-    private function extractReferenceDate()
+    protected function extractReferenceDate()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -314,7 +314,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the  as a string, or null.
      */
-    private function extractReferenceType()
+    protected function extractReferenceType()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -334,7 +334,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return array Returns the theme keywords as an array, or empty array.
      */
-    private function extractThemeKeywords()
+    protected function extractThemeKeywords()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -355,7 +355,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return array Returns the place keywords as an array, or empty array.
      */
-    private function extractPlaceKeywords()
+    protected function extractPlaceKeywords()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -376,7 +376,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return array Returns the topic keywords as an array, or empty array.
      */
-    private function extractTopicKeywords()
+    protected function extractTopicKeywords()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -393,7 +393,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the GML as a string, or null.
      */
-    private function extractSpacialExtent()
+    protected function extractSpacialExtent()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -413,7 +413,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the  as a string, or null.
      */
-    private function extractTemporalExtentDesc()
+    protected function extractTemporalExtentDesc()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:extent' .
@@ -429,7 +429,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return \DateTime|null Returns the starting date as a DateTime, or null.
      */
-    private function extractTemporalExtentBeginPosition()
+    protected function extractTemporalExtentBeginPosition()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:extent' .
@@ -455,7 +455,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return \DateTime|null Returns the ending date as a DateTime, or null.
      */
-    private function extractTemporalExtentEndPosition()
+    protected function extractTemporalExtentEndPosition()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:extent' .
@@ -481,7 +481,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the file format as a string, or null.
      */
-    private function extractDistributionFormatName()
+    protected function extractDistributionFormatName()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:distributionInfo' .
@@ -502,7 +502,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the archive format as a string, or null.
      */
-    private function extractFileDecompressionTechnique()
+    protected function extractFileDecompressionTechnique()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:distributionInfo' .
@@ -526,7 +526,7 @@ class ISOMetadataInterrogatorUtil
      * The NOAA ISO 19115 Geographic Information - Metadata Workbook
      * discusses this on page 22.  (MI_Metadata.pdf)
      */
-    private function extractDatasetUri()
+    protected function extractDatasetUri()
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:dataSetURI' .
@@ -543,7 +543,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Item queried in xpath.
      */
-    private function querySingle($xpath)
+    protected function querySingle($xpath)
     {
         $query = $this->xmlMetadata->xpath($xpath);
 
@@ -567,7 +567,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Item queried in xpath.
      */
-    private function querySingleGml($xpath)
+    protected function querySingleGml($xpath)
     {
         $query = $this->xmlMetadata->xpath($xpath);
 
@@ -590,7 +590,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return array Result of items queried in xpath.
      */
-    private function queryMultiple($xpath)
+    protected function queryMultiple($xpath)
     {
         $query = $this->xmlMetadata->xpath($xpath);
 
