@@ -55,7 +55,7 @@ class ISOMetadataInterrogatorUtilTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->util = new ISOMetadataInterrogatorUtil;
-        $this->xml = simplexml_load_file('/home/mwilliamson/pelagos/tests/data/test-metadata.xml');
+        $this->xml = simplexml_load_file(dirname(__FILE__) . '/../../../data/test-metadata.xml');
         // I really should be mocking this, but I really need it to remember what it set, so I'm not.
         $this->datasetSubmission = new DatasetSubmission;
     }
