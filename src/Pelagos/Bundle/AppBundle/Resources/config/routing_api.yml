@@ -87,3 +87,9 @@ metadata:
     resource: Pelagos\Bundle\AppBundle\Controller\Api\MetadataController
     name_prefix: metadata_
     prefix: metadata
+
+upload:
+    type: rest
+    resource: Pelagos\Bundle\AppBundle\Controller\Api\UploadController
+    name_prefix: upload_
+    prefix: upload
