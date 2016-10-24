@@ -61,13 +61,13 @@ class ISOMetadataInterrogatorUtilTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests the returnDsWithXmlPri method.
+     * Tests the populateDatasetSubmissionWithXMLValues method.
      *
      * @return void
      */
-    public function testReturnDsWithXmlPri()
+    public function testPopulateDatasetSubmissionWithXMLValues()
     {
-        $this->util->returnDsWithXmlPri($this->xml, $this->datasetSubmission);
+        $this->util->populateDatasetSubmissionWithXMLValues($this->xml, $this->datasetSubmission);
 
         $this->assertEquals('Test title', $this->datasetSubmission->getTitle());
         $this->assertEquals('tst ttl', $this->datasetSubmission->getShortTitle());

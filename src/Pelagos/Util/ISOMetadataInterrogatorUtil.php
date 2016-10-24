@@ -21,7 +21,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return void
      */
-    public static function returnDsWithXmlPri(\SimpleXmlElement $xmlMetadata, DatasetSubmission $datasetSubmission)
+    public static function populateDatasetSubmissionWithXMLValues(\SimpleXmlElement $xmlMetadata, DatasetSubmission $datasetSubmission)
     {
         self::setIfHas($datasetSubmission, 'setTitle', self::extractTitle($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setShortTitle', self::extractShortTitle($xmlMetadata));
