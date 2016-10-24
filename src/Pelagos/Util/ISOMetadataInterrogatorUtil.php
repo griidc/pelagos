@@ -314,6 +314,8 @@ class ISOMetadataInterrogatorUtil
     /**
      * Extracts reference date from XML metadata.
      *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     *
      * @return \DateTime|null Returns the reference date as a DateTime, or null.
      */
     protected static function extractReferenceDate(\SimpleXmlElement $xml)
@@ -340,6 +342,8 @@ class ISOMetadataInterrogatorUtil
     /**
      * Extracts referenceDateType from XML metadata.
      *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     *
      * @return string|null Returns the reference date type as a string, or null.
      */
     protected static function extractReferenceType(\SimpleXmlElement $xml)
@@ -359,6 +363,8 @@ class ISOMetadataInterrogatorUtil
 
     /**
      * Extracts theme keywords from XML metadata.
+     *
+     * @param \SimpleXmlElement $xml The XML to extract from.
      *
      * @return array Returns the theme keywords as an array, or empty array.
      */
@@ -381,6 +387,8 @@ class ISOMetadataInterrogatorUtil
     /**
      * Extracts place keywords from XML metadata.
      *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     *
      * @return array Returns the place keywords as an array, or empty array.
      */
     protected static function extractPlaceKeywords(\SimpleXmlElement $xml)
@@ -402,6 +410,8 @@ class ISOMetadataInterrogatorUtil
     /**
      * Extracts topic keywords from XML metadata.
      *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     *
      * @return array Returns the topic keywords as an array, or empty array.
      */
     protected static function extractTopicKeywords(\SimpleXmlElement $xml)
@@ -418,6 +428,8 @@ class ISOMetadataInterrogatorUtil
 
     /**
      * Extracts GML from XML metadata.
+     *
+     * @param \SimpleXmlElement $xml The XML to extract from.
      *
      * @return string|null Returns the GML as a string, or null.
      */
@@ -438,6 +450,8 @@ class ISOMetadataInterrogatorUtil
 
     /**
      * Extracts temporal extent description from XML metadata.
+     *
+     * @param \SimpleXmlElement $xml The XML to extract from.
      *
      * @return string|null Returns the temporal extent description as a string, or null.
      */
@@ -460,6 +474,8 @@ class ISOMetadataInterrogatorUtil
 
     /**
      * Extracts temporal begin position from XML metadata.
+     *
+     * @param \SimpleXmlElement $xml The XML to extract from.
      *
      * @return \DateTime|null Returns the starting date as a DateTime, or null.
      */
@@ -489,6 +505,8 @@ class ISOMetadataInterrogatorUtil
     /**
      * Extracts temporal end position from XML metadata.
      *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     *
      * @return \DateTime|null Returns the ending date as a DateTime, or null.
      */
     protected static function extractTemporalExtentEndPosition(\SimpleXmlElement $xml)
@@ -517,6 +535,8 @@ class ISOMetadataInterrogatorUtil
     /**
      * Extracts file format from XML metadata.
      *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     *
      * @return string|null Returns the file format as a string, or null.
      */
     protected static function extractDistributionFormatName(\SimpleXmlElement $xml)
@@ -538,6 +558,8 @@ class ISOMetadataInterrogatorUtil
     /**
      * Extracts archive format from XML metadata.
      *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     *
      * @return string|null Returns the archive format as a string, or null.
      */
     protected static function extractFileDecompressionTechnique(\SimpleXmlElement $xml)
@@ -558,6 +580,8 @@ class ISOMetadataInterrogatorUtil
 
     /**
      * Extracts URI of the dataset to which the metadata applies.
+     *
+     * @param \SimpleXmlElement $xml The XML to extract from.
      *
      * @return string|null Returns the datasetURI as a string, or null.
      *
