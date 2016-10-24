@@ -96,10 +96,7 @@ class DatasetSubmissionController extends UIController
                     if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
                         $sequence = $datasetSubmission->getSequence();
                         $datasetSubmission = clone $datasetSubmission;
-                        $datasetSubmission->setStatus(DatasetSubmission::STATUS_INCOMPLETE);
-
                         $datasetSubmission->setSequence(++$sequence);
-
                     }
                 }
             }
