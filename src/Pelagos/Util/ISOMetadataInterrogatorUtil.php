@@ -33,20 +33,18 @@ class ISOMetadataInterrogatorUtil
         self::setIfHas($datasetSubmission, 'setSuppSampScalesRates', self::extractSuppSampScalesRates($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setSuppErrorAnalysis', self::extractSuppErrorAnalysis($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setSuppProvenance', self::extractSuppProvenance($xmlMetadata));
-        /*
-        self::setIfHas($datasetSubmission, 'setReferenceDate', extractReferenceDate($xmlMetadata));
-        self::setIfHas($datasetSubmission, 'setReferenceDateType', extractReferenceType($xmlMetadata));
-        self::setIfHas($datasetSubmission, 'setThemeKeywords', extractThemeKeywords($xmlMetadata));
-        self::setIfHas($datasetSubmission, 'setPlaceKeywords', extractPlaceKeywords($xmlMetadata));
-        self::setIfHas($datasetSubmission, 'setTopicKeywords', extractTopicKeywords($xmlMetadata));
-        self::setIfHas($datasetSubmission, 'setSpatialExtent', extractSpacialExtent($xmlMetadata));
-        self::setIfHas($datasetSubmission, 'setTemporalExtentDesc', extractTemporalExtentDesc($xmlMetadata));
-        self::setIfHas($datasetSubmission, 'setTemporalExtentBeginPosition', extractTemporalExtentBeginPosition($xmlMetadata));
-        self::setIfHas($datasetSubmission, 'setTemporalExtentEndPosition', extractTemporalExtentEndPosition($xmlMetadata));
-        self::setIfHas($datasetSubmission, 'setDistributionFormatName', extractDistributionFormatName($xmlMetadata));
-        self::setIfHas($datasetSubmission, 'setFileDecompressionTechnique', extractFileDecompressionTechnique($xmlMetadata));
-        self::setIfHas($datasetSubmission, 'setDatasetFileUri', extractDatasetUri($xmlMetadata));
-        */
+        self::setIfHas($datasetSubmission, 'setReferenceDate', self::extractReferenceDate($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setReferenceDateType', self::extractReferenceType($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setThemeKeywords', self::extractThemeKeywords($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setPlaceKeywords', self::extractPlaceKeywords($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setTopicKeywords', self::extractTopicKeywords($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setSpatialExtent', self::extractSpacialExtent($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setTemporalExtentDesc', self::extractTemporalExtentDesc($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setTemporalExtentBeginPosition', self::extractTemporalExtentBeginPosition($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setTemporalExtentEndPosition', self::extractTemporalExtentEndPosition($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setDistributionFormatName', self::extractDistributionFormatName($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setFileDecompressionTechnique', self::extractFileDecompressionTechnique($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setDatasetFileUri', self::extractDatasetUri($xmlMetadata));
     }
 
     /**
@@ -318,7 +316,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return \DateTime|null Returns the reference date as a DateTime, or null.
      */
-    protected function extractReferenceDate(\SimpleXmlElement $xml)
+    protected static function extractReferenceDate(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -330,7 +328,7 @@ class ISOMetadataInterrogatorUtil
                  '/gmd:date' .
                  '/gco:Date';
 
-        $date = $this->querySingle($query);
+        $date = self::querySingle($xml, $query);
         if (null !== $date and preg_match('/\d\d\d\d-\d{1,2}-\d{1,2}/', $date)) {
             $dateTime = new \DateTime($date, new \DateTimeZone('UTC'));
             return $dateTime;
@@ -340,11 +338,11 @@ class ISOMetadataInterrogatorUtil
     }
 
     /**
-     * Extracts  from XML metadata.
+     * Extracts referenceDateType from XML metadata.
      *
-     * @return string|null Returns the  as a string, or null.
+     * @return string|null Returns the reference date type as a string, or null.
      */
-    protected function extractReferenceType(\SimpleXmlElement $xml)
+    protected static function extractReferenceType(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -356,7 +354,7 @@ class ISOMetadataInterrogatorUtil
                  '/gmd:dateType' .
                  '/gmd:CI_DateTypeCode';
 
-        return $this->querySingle($query);
+        return self::querySingle($xml, $query);
     }
 
     /**
@@ -364,7 +362,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return array Returns the theme keywords as an array, or empty array.
      */
-    protected function extractThemeKeywords(\SimpleXmlElement $xml)
+    protected static function extractThemeKeywords(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -377,7 +375,7 @@ class ISOMetadataInterrogatorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        return $this->queryMultiple($query);
+        return self::queryMultiple($xml, $query);
     }
 
     /**
@@ -385,7 +383,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return array Returns the place keywords as an array, or empty array.
      */
-    protected function extractPlaceKeywords(\SimpleXmlElement $xml)
+    protected static function extractPlaceKeywords(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -398,7 +396,7 @@ class ISOMetadataInterrogatorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        return $this->queryMultiple($query);
+        return self::queryMultiple($xml, $query);
     }
 
     /**
@@ -406,7 +404,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return array Returns the topic keywords as an array, or empty array.
      */
-    protected function extractTopicKeywords(\SimpleXmlElement $xml)
+    protected static function extractTopicKeywords(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -415,7 +413,7 @@ class ISOMetadataInterrogatorUtil
                  '/gmd:MD_TopicCategoryCode' .
                  '/text()';
 
-        return $this->queryMultiple($query);
+        return self::queryMultiple($xml, $query);
     }
 
     /**
@@ -423,7 +421,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the GML as a string, or null.
      */
-    protected function extractSpacialExtent(\SimpleXmlElement $xml)
+    protected static function extractSpacialExtent(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -435,23 +433,29 @@ class ISOMetadataInterrogatorUtil
                  '/gmd:polygon' .
                  '/child::*';
 
-        return $this->querySingleGml($query);
+        return self::querySingleGml($xml, $query);
     }
 
     /**
-     * Extracts  from XML metadata.
+     * Extracts temporal extent description from XML metadata.
      *
-     * @return string|null Returns the  as a string, or null.
+     * @return string|null Returns the temporal extent description as a string, or null.
      */
-    protected function extractTemporalExtentDesc(\SimpleXmlElement $xml)
+    protected static function extractTemporalExtentDesc(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
+                 '/gmd:identificationInfo' .
+                 '/gmd:MD_DataIdentification' .
                  '/gmd:extent' .
                  '/gmd:EX_Extent' .
-                 '/gmd:description' .
+                 '/gmd:temporalElement' .
+                 '/gmd:EX_TemporalExtent' .
+                 '/gmd:extent/' .
+                 '/gml:TimePeriod' .
+                 '/gml:description' .
                  '/text()';
 
-        return $this->querySingle($query);
+        return self::querySingle($xml, $query);
     }
 
     /**
@@ -459,19 +463,21 @@ class ISOMetadataInterrogatorUtil
      *
      * @return \DateTime|null Returns the starting date as a DateTime, or null.
      */
-    protected function extractTemporalExtentBeginPosition(\SimpleXmlElement $xml)
+    protected static function extractTemporalExtentBeginPosition(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
+                 '/gmd:identificationInfo' .
+                 '/gmd:MD_DataIdentification' .
                  '/gmd:extent' .
                  '/gmd:EX_Extent' .
                  '/gmd:temporalElement' .
                  '/gmd:EX_TemporalExtent' .
-                 '/gmd:extent' .
+                 '/gmd:extent/' .
                  '/gml:TimePeriod' .
                  '/gml:beginPosition' .
                  '/text()';
 
-        $date = $this->querySingle($query);
+        $date = self::querySingle($xml, $query);
         if (null !== $date and preg_match('/\d\d\d\d-\d{1,2}-\d{1,2}/', $date)) {
             $dateTime = new \DateTime($date, new \DateTimeZone('UTC'));
             return $dateTime;
@@ -485,19 +491,21 @@ class ISOMetadataInterrogatorUtil
      *
      * @return \DateTime|null Returns the ending date as a DateTime, or null.
      */
-    protected function extractTemporalExtentEndPosition(\SimpleXmlElement $xml)
+    protected static function extractTemporalExtentEndPosition(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
+                 '/gmd:identificationInfo' .
+                 '/gmd:MD_DataIdentification' .
                  '/gmd:extent' .
                  '/gmd:EX_Extent' .
                  '/gmd:temporalElement' .
                  '/gmd:EX_TemporalExtent' .
-                 '/gmd:extent' .
+                 '/gmd:extent/' .
                  '/gml:TimePeriod' .
                  '/gml:endPosition' .
                  '/text()';
 
-        $date = $this->querySingle($query);
+        $date = self::querySingle($xml, $query);
         if (null !== $date and preg_match('/\d\d\d\d-\d{1,2}-\d{1,2}/', $date)) {
             $dateTime = new \DateTime($date, new \DateTimeZone('UTC'));
             return $dateTime;
@@ -511,7 +519,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the file format as a string, or null.
      */
-    protected function extractDistributionFormatName(\SimpleXmlElement $xml)
+    protected static function extractDistributionFormatName(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:distributionInfo' .
@@ -524,7 +532,7 @@ class ISOMetadataInterrogatorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        return $this->querySingle($query);
+        return self::querySingle($xml, $query);
     }
 
     /**
@@ -532,7 +540,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Returns the archive format as a string, or null.
      */
-    protected function extractFileDecompressionTechnique(\SimpleXmlElement $xml)
+    protected static function extractFileDecompressionTechnique(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:distributionInfo' .
@@ -545,7 +553,7 @@ class ISOMetadataInterrogatorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        return $this->querySingle($query);
+        return self::querySingle($xml, $query);
     }
 
     /**
@@ -556,14 +564,22 @@ class ISOMetadataInterrogatorUtil
      * The NOAA ISO 19115 Geographic Information - Metadata Workbook
      * discusses this on page 22.  (MI_Metadata.pdf)
      */
-    protected function extractDatasetUri(\SimpleXmlElement $xml)
+    protected static function extractDatasetUri(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:dataSetURI' .
-                 '/gco:CharacterString' .
+                 '/gmd:distributionInfo' .
+                 '/gmd:MD_Distribution' .
+                 '/gmd:distributor' .
+                 '/gmd:MD_Distributor' .
+                 '/gmd:distributorTransferOptions' .
+                 '/gmd:MD_DigitalTransferOptions' .
+                 '/gmd:onLine' .
+                 '/gmd:CI_OnlineResource' .
+                 '/gmd:linkage' .
+                 '/gmd:URL' .
                  '/text()';
 
-        return $this->querySingle($query);
+        return self::querySingle($xml, $query);
     }
 
     /**
@@ -599,7 +615,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return string|null Item queried in xpath.
      */
-    protected function querySingleGml(\SimpleXmlElement $xml, $xpath)
+    protected static function querySingleGml(\SimpleXmlElement $xml, $xpath)
     {
         $query = $xml->xpath($xpath);
 
@@ -623,7 +639,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return array Result of items queried in xpath.
      */
-    protected function queryMultiple(\SimpleXmlElement $xml, $xpath)
+    protected static function queryMultiple(\SimpleXmlElement $xml, $xpath)
     {
         $query = $xml->xpath($xpath);
 
