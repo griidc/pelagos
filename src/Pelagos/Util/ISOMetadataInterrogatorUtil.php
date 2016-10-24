@@ -21,7 +21,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return void
      */
-    public static function populateDatasetSubmissionWithXMLValues(\SimpleXmlElement $xmlMetadata, DatasetSubmission $datasetSubmission)
+    public static function populateDatasetSubmissionWithXMLValues(\SimpleXmlElement $xmlMetadata, DatasetSubmission &$datasetSubmission)
     {
         self::setIfHas($datasetSubmission, 'setTitle', self::extractTitle($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setShortTitle', self::extractShortTitle($xmlMetadata));
@@ -56,7 +56,7 @@ class ISOMetadataInterrogatorUtil
      *
      * @return void
      */
-    protected static function setIfHas(DatasetSubmission $ds, $setter, $value)
+    protected static function setIfHas(DatasetSubmission &$ds, $setter, $value)
     {
         if (null !== $value) {
             $ds->$setter($value);
