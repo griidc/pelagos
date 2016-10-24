@@ -49,13 +49,13 @@ $(function() {
         activeTab++;
         $("#dtabs").tabs({active:activeTab});
     });
-    
+
     $("#btn-save").click(function() {
         var datasetSubmissionId = $("form[datasetsubmission]").attr("datasetsubmission");
-        var url = "/pelagos-symfony/dev/mvde/api/dataset_submission/";
-        
+        var url = Routing.generate('pelagos_api_dataset_submission_patch');
+
         $.ajax({
-            url: url + datasetSubmissionId + "?validate=false",
+            url: url + "/" + datasetSubmissionId + "?validate=false",
             method: "PATCH",
             data: $("form[datasetsubmission]").serialize(),
             success: function(data, textStatus, jqXHR) {
@@ -64,10 +64,15 @@ $(function() {
                     layout: 'top',
                     theme: 'relax',
                     type: 'success',
-                    text: 'Succesfully Saved', 
-                    dismissQueue: true, // If you want to use queue feature set this true
+                    text: 'Succesfully Saved',
                     timeout: 3000,
                     modal: false,
+                    animation: {
+                        open: "animated bounceIn", // Animate.css class names
+                        close: "animated fadeOut", // Animate.css class names
+                        easing: "swing", // unavailable - no need
+                        speed: 500 // unavailable - no need
+                    }
                 });
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -77,14 +82,12 @@ $(function() {
                     layout: 'top',
                     theme: 'relax',
                     type: 'error',
-                    text: message, 
-                    dismissQueue: true, // If you want to use queue feature set this true
-                    //timeout: 5000,
+                    text: message,
                     modal: true,
                 });
             }
         });
-        
+
         //PUT /pelagos-symfony/dev/mvde/api/dataset_submission/{id}
     });
 

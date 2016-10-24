@@ -1,5 +1,4 @@
 {{ form_start(form, {'attr': {'id': 'regForm'}}) }}
-    {{ form_widget(form.dataset) }}
     <div id="metatoolbar" class="ui-widget-header ui-corner-all toolbarbutton">
         <button type="button" id="btn-upload">Load from File</button>
         <button type="button" id="btn-fromudi">Load from URL</button>
@@ -49,15 +48,15 @@
             <div id="ds-information">
                 {% include 'PelagosAppBundle:DatasetSubmission:dataset-information.html.twig' %}
             </div>
-            
+
             <div id="ds-keywords">
                 {% include 'PelagosAppBundle:DatasetSubmission:keywords.html.twig' %}
             </div>
-            
+
             <div id="ds-extent">
                 {% include 'PelagosAppBundle:DatasetSubmission:extent.html.twig' %}
             </div>
-            
+
             <div id="ds-distribution">
                 {% include 'PelagosAppBundle:DatasetSubmission:distribution-info.html.twig' %}
             </div>
@@ -65,7 +64,7 @@
             <div id="ds-metadata-contact">
                 {% include 'PelagosAppBundle:DatasetSubmission:metadata-contact.html.twig' %}
             </div>
-            
+
             <div id="ds-submit">
                 {% include 'PelagosAppBundle:DatasetSubmission:file-submit.html.twig' %}
             </div>
