@@ -55,6 +55,7 @@ class DatasetSubmissionController extends UIController
         $dataset = null;
         $datasetSubmission = null;
         $datasetId = null;
+        $datasetSubmissionId = null;
         $dif = null;
 
         if ($udi != null) {
@@ -108,6 +109,8 @@ class DatasetSubmissionController extends UIController
             if ($datasetSubmission->getMetadataContacts()->isEmpty()) {
                 $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
             }
+
+            $datasetSubmissionId = $datasetSubmission->getId();
         }
 
         $form = $this->get('form.factory')->createNamed(
@@ -118,8 +121,7 @@ class DatasetSubmissionController extends UIController
                 'action' => $this->generateUrl('pelagos_app_ui_datasetsubmission_post', array('id' => $datasetId)),
                 'method' => 'POST',
                 'attr' => array(
-                    'datasetSubmission' => $datasetSubmission->getId(),
-                    'datasetSubmission' => $datasetSubmission->getId(),
+                    'datasetSubmission' => $datasetSubmissionId,
                 ),
             )
         );
