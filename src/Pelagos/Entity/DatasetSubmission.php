@@ -906,6 +906,22 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Clone Handler.
+     *
+     * Set and correct attributes when cloned.
+     *
+     * @return void
+     */
+    public function __clone()
+    {
+        $this->setId(null);
+        $this->setCreationTimeStamp(null);
+        if ($this->getStatus() === self::STATUS_COMPLETE) {
+            $this->status = self::STATUS_INCOMPLETE;
+        }
+    }
+
+    /**
      * Get the choice list for restrictions.
      *
      * @return array
