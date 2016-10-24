@@ -95,7 +95,11 @@ class DatasetSubmissionController extends UIController
                 } else {
                     if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
                         $sequence = $datasetSubmission->getSequence();
+                        $datasetSubmission = clone $datasetSubmission;
+                        $datasetSubmission->setStatus(DatasetSubmission::STATUS_INCOMPLETE);
+
                         $datasetSubmission->setSequence(++$sequence);
+
                     }
                 }
             }
@@ -203,9 +207,6 @@ class DatasetSubmissionController extends UIController
             foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
                 $datasetSubmission->removeMetadataContact($metadataContact);
             }
-
-            $datasetSubmission->setId(null);
-            $datasetSubmission->setCreationTimeStamp(null);
         } else {
             $datasetSubmission = new DatasetSubmission;
         }
