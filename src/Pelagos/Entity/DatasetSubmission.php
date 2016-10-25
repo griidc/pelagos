@@ -939,6 +939,7 @@ class DatasetSubmission extends Entity
     public function submit()
     {
         $this->status = self::STATUS_COMPLETE;
+        $this->metadataStatus = self::METADATA_STATUS_SUBMITTED;
         $this->getDataset()->setDatasetSubmission($this);
     }
 
