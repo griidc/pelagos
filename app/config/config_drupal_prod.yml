@@ -22,6 +22,10 @@ monolog:
             type:     stream
             path:     "%kernel.logs_dir%/create_homedir.log"
             channels: ["create_homedir"]
+        dataset_file_hasher:
+            type:     stream
+            path:     "%kernel.logs_dir%/dataset_file_hasher.log"
+            channels: ["dataset_file_hasher"]
         main:
             type:         fingers_crossed
             action_level: error

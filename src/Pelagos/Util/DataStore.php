@@ -56,6 +56,16 @@ class DataStore
     protected $webServerUser;
 
     /**
+     * Indicates that the type of the file type is a data file, not metadata.
+     */
+    const DATASET_FILE_TYPE = 'dataset';
+    
+    /**
+     * Indicates that the type of the file named is metadata.
+     */
+    const METADATA_FILE_TYPE = 'metadata';
+    
+    /**
      * Constructor.
      *
      * @param string $dataStoreDirectory       The data store directory.
@@ -357,10 +367,10 @@ class DataStore
     {
         $storeFileName = "$datasetId.";
         switch ($type) {
-            case 'dataset':
+            case self::DATASET_FILE_TYPE:
                 $storeFileName .= 'dat';
                 break;
-            case 'metadata':
+            case self::METADATA_FILE_TYPE:
                 $storeFileName .= 'met';
                 break;
             default:

@@ -324,7 +324,6 @@ class DatasetSubmissionController extends UIController
         DatasetSubmission $datasetSubmission,
         $incomingDirectory
     ) {
-        $datasetId = $datasetSubmission->getDataset()->getId();
         switch ($datasetSubmission->getDatasetFileTransferType()) {
             case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
                 $datasetFile = $form['datasetFile']->getData();
@@ -332,8 +331,7 @@ class DatasetSubmissionController extends UIController
                     $originalFileName = $datasetFile->getClientOriginalName();
                     $movedDatasetFile = $datasetFile->move($incomingDirectory, $originalFileName);
                     $datasetSubmission->setDatasetFileUri('file://' . $movedDatasetFile->getRealPath());
-                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'dataset.upload');
+                    $this->newDatasetFile($datasetSubmission);
                 }
                 break;
             case DatasetSubmission::TRANSFER_TYPE_SFTP:
@@ -341,11 +339,9 @@ class DatasetSubmissionController extends UIController
                 $newDatasetFileUri = empty($datasetFilePath) ? null : "file://$datasetFilePath";
                 if ($newDatasetFileUri !== $datasetSubmission->getDatasetFileUri()) {
                     $datasetSubmission->setDatasetFileUri($newDatasetFileUri);
-                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'dataset.SFTP');
+                    $this->newDatasetFile($datasetSubmission);
                 } elseif ($form['datasetFileForceImport']->getData()) {
-                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'dataset.SFTP');
+                    $this->newDatasetFile($datasetSubmission);
                 }
                 break;
             case DatasetSubmission::TRANSFER_TYPE_HTTP:
@@ -353,14 +349,33 @@ class DatasetSubmissionController extends UIController
                 $newDatasetFileUri = empty($datasetFileUrl) ? null : $datasetFileUrl;
                 if ($newDatasetFileUri !== $datasetSubmission->getDatasetFileUri()) {
                     $datasetSubmission->setDatasetFileUri($newDatasetFileUri);
-                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'dataset.HTTP');
+                    $this->newDatasetFile($datasetSubmission);
                 } elseif ($form['datasetFileForceDownload']->getData()) {
-                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'dataset.HTTP');
+                    $this->newDatasetFile($datasetSubmission);
                 }
                 break;
         }
+    }
+
+    /**
+     * Take appropriate actions when a new dataset file is submitted.
+     *
+     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
+     *
+     * @return void
+     */
+    protected function newDatasetFile(DatasetSubmission $datasetSubmission)
+    {
+        $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+        $datasetSubmission->setDatasetFileName(null);
+        $datasetSubmission->setDatasetFileSize(null);
+        $datasetSubmission->setDatasetFileMd5Hash(null);
+        $datasetSubmission->setDatasetFileSha1Hash(null);
+        $datasetSubmission->setDatasetFileSha256Hash(null);
+        $this->messages[] = array(
+            'body' => $datasetSubmission->getDataset()->getId(),
+            'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
+        );
     }
 
     /**
@@ -377,7 +392,6 @@ class DatasetSubmissionController extends UIController
         DatasetSubmission $datasetSubmission,
         $incomingDirectory
     ) {
-        $datasetId = $datasetSubmission->getDataset()->getId();
         switch ($datasetSubmission->getMetadataFileTransferType()) {
             case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
                 $metadataFile = $form['metadataFile']->getData();
@@ -385,8 +399,7 @@ class DatasetSubmissionController extends UIController
                     $originalFileName = $metadataFile->getClientOriginalName();
                     $movedMetadataFile = $metadataFile->move($incomingDirectory, $originalFileName);
                     $datasetSubmission->setMetadataFileUri('file://' . $movedMetadataFile->getRealPath());
-                    $datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'metadata.upload');
+                    $this->newMetadataFile($datasetSubmission);
                 }
                 break;
             case DatasetSubmission::TRANSFER_TYPE_SFTP:
@@ -394,11 +407,9 @@ class DatasetSubmissionController extends UIController
                 $newMetadataFileUri = empty($metadataFilePath) ? null : "file://$metadataFilePath";
                 if ($newMetadataFileUri !== $datasetSubmission->getMetadataFileUri()) {
                     $datasetSubmission->setMetadataFileUri($newMetadataFileUri);
-                    $datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'metadata.SFTP');
+                    $this->newMetadataFile($datasetSubmission);
                 } elseif ($form['metadataFileForceImport']->getData()) {
-                    $datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'metadata.SFTP');
+                    $this->newMetadataFile($datasetSubmission);
                 }
                 break;
             case DatasetSubmission::TRANSFER_TYPE_HTTP:
@@ -406,13 +417,29 @@ class DatasetSubmissionController extends UIController
                 $newMetadataFileUri = empty($metadataFileUrl) ? null : $metadataFileUrl;
                 if ($newMetadataFileUri !== $datasetSubmission->getMetadataFileUri()) {
                     $datasetSubmission->setMetadataFileUri($newMetadataFileUri);
-                    $datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'metadata.HTTP');
+                    $this->newMetadataFile($datasetSubmission);
                 } elseif ($form['metadataFileForceDownload']->getData()) {
-                    $datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'metadata.HTTP');
+                    $this->newMetadataFile($datasetSubmission);
                 }
                 break;
         }
+    }
+
+    /**
+     * Take appropriate actions when a new metadata file is submitted.
+     *
+     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
+     *
+     * @return void
+     */
+    protected function newMetadataFile(DatasetSubmission $datasetSubmission)
+    {
+        $datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+        $datasetSubmission->setMetadataFileName(null);
+        $datasetSubmission->setMetadataFileSha256Hash(null);
+        $this->messages[] = array(
+            'body' => $datasetSubmission->getDataset()->getId(),
+            'routing_key' => 'metadata.' . $datasetSubmission->getMetadataFileTransferType()
+        );
     }
 }
