@@ -48,9 +48,15 @@ $(function() {
         var activeTab = $("#dtabs").tabs("option","active");
         activeTab++;
         $("#dtabs").tabs({active:activeTab});
+        saveDatasetSubmission();
     });
 
     $("#btn-save").click(function() {
+        saveDatasetSubmission();
+    });
+
+    function saveDatasetSubmission()
+    {
         var datasetSubmissionId = $("form[datasetsubmission]").attr("datasetsubmission");
         var url = Routing.generate('pelagos_api_dataset_submission_patch');
 
@@ -65,7 +71,7 @@ $(function() {
                     theme: 'relax',
                     type: 'success',
                     text: 'Succesfully Saved',
-                    timeout: 3000,
+                    timeout: 1000,
                     modal: false,
                     animation: {
                         open: "animated bounceIn", // Animate.css class names
@@ -88,8 +94,7 @@ $(function() {
             }
         });
 
-        //PUT /pelagos-symfony/dev/mvde/api/dataset_submission/{id}
-    });
+    }
 
     $("[placeholder=yyyy-mm-dd]").datepicker({
         dateFormat: "yy-mm-dd",
