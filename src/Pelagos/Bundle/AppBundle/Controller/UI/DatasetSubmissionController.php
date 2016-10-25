@@ -96,6 +96,13 @@ class DatasetSubmissionController extends UIController
                     $datasetSubmission->setSuppParams($dif->getVariablesObserved());
                     $datasetSubmission->setSpatialExtent($dif->getSpatialExtentGeometry());
 
+                    if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
+                        ISOMetadataInterrogatorUtil::populateDatasetSubmissionWithXMLValues(
+                            $datasetSubmission->getDataset()->getMetadata()->getXml(),
+                            $datasetSubmission
+                        );
+                    }
+
                     try {
                         $this->entityHandler->create($datasetSubmission);
                     } catch (AccessDeniedException $e) {
@@ -103,6 +110,12 @@ class DatasetSubmissionController extends UIController
                     }
                 } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
                     // The latest submission is complete.
+                    if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
+                        ISOMetadataInterrogatorUtil::populateDatasetSubmissionWithXMLValues(
+                            $datasetSubmission->getDataset()->getMetadata()->getXml(),
+                            $datasetSubmission
+                        );
+                    }
                     $sequence = $datasetSubmission->getSequence();
                     $datasetSubmission = clone $datasetSubmission;
                     $datasetSubmission->setSequence(++$sequence);
