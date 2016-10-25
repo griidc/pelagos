@@ -89,7 +89,11 @@ class DatasetSubmissionController extends UIController
                     $metadataContact = new PersonDatasetSubmissionMetadataContact();
                     $metadataContact->setDatasetSubmission($datasetSubmission);
                     $metadataContact->setRole('pointOfContact');
+                    $metadataContact->setPerson($dif->getPrimaryPointOfContact());
                     $datasetSubmission->addMetadataContact($metadataContact);
+
+                    $datasetSubmission->setSuppParams($dif->getVariablesObserved());
+                    $datasetSubmission->setSpatialExtent($dif->getSpatialExtentGeometry());
 
                     $this->entityHandler->create($datasetSubmission);
                 } else {
