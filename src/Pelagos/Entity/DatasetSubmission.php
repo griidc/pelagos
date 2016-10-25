@@ -939,7 +939,7 @@ class DatasetSubmission extends Entity
     public function submit()
     {
         $this->status = self::STATUS_COMPLETE;
-        $this->updateDatasetSubmissionStatus();
+        $this->getDataset()->setDatasetSubmission($this);
     }
 
     /**
@@ -962,9 +962,6 @@ class DatasetSubmission extends Entity
     public function setDataset(Dataset $dataset)
     {
         $this->dataset = $dataset;
-        $this->updateDatasetSubmissionStatus();
-        $this->updateMetadataStatus();
-        $this->updateAvailabilityStatus();
     }
 
     /**
@@ -2092,48 +2089,7 @@ class DatasetSubmission extends Entity
         if (!$this->getDataset() instanceof Dataset) {
             return;
         }
-        $availabilityStatus = self::AVAILABILITY_STATUS_NOT_AVAILABLE;
-        switch ($this->getDatasetFileTransferStatus()) {
-            case self::TRANSFER_STATUS_COMPLETED:
-                if ($this->getMetadataStatus() === self::METADATA_STATUS_ACCEPTED) {
-                    switch ($this->getRestrictions()) {
-                        case self::RESTRICTION_NONE:
-                            $availabilityStatus = self::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE;
-                            break;
-                        case self::RESTRICTION_APPROVAL:
-                            $availabilityStatus = self::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL;
-                            break;
-                        case self::RESTRICTION_RESTRICTED:
-                            $availabilityStatus = self::AVAILABILITY_STATUS_RESTRICTED;
-                            break;
-                    }
-                } elseif ($this->getMetadataFileTransferStatus() === self::TRANSFER_STATUS_COMPLETED) {
-                    $availabilityStatus = self::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
-                } else {
-                    $availabilityStatus = self::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
-                }
-                break;
-            case self::TRANSFER_STATUS_REMOTELY_HOSTED:
-                if ($this->getMetadataStatus() === self::METADATA_STATUS_ACCEPTED) {
-                    switch ($this->getRestrictions()) {
-                        case self::RESTRICTION_NONE:
-                            $availabilityStatus = self::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED;
-                            break;
-                        case self::RESTRICTION_APPROVAL:
-                            $availabilityStatus = self::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL_REMOTELY_HOSTED;
-                            break;
-                        case self::RESTRICTION_RESTRICTED:
-                            $availabilityStatus = self::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED;
-                            break;
-                    }
-                } elseif ($this->getMetadataFileTransferStatus() === self::TRANSFER_STATUS_COMPLETED) {
-                    $availabilityStatus = self::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
-                } else {
-                    $availabilityStatus = self::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
-                }
-                break;
-        }
-        $this->getDataset()->setAvailabilityStatus($availabilityStatus);
+        $this->getDataset()->updateAvailabilityStatus();
     }
 
     /**
