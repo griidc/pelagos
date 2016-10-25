@@ -89,6 +89,8 @@ class Dataset extends Entity
      * @var Collection
      *
      * @ORM\OneToMany(targetEntity="DatasetSubmission", mappedBy="dataset", cascade={"remove"})
+     *
+     * @ORM\OrderBy({"sequence" = "DESC"})
      */
     protected $datasetSubmissionHistory;
 
