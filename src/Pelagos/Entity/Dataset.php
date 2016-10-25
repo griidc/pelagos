@@ -587,7 +587,7 @@ class Dataset extends Entity
      *
      * @return void
      */
-    protected function updateAvailabilityStatus()
+    public function updateAvailabilityStatus()
     {
         $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE;
         switch ($this->getDatasetSubmission()->getDatasetFileTransferStatus()) {
