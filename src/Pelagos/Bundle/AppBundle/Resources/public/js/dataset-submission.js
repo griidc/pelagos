@@ -37,6 +37,65 @@ $(function() {
 
     $("button").button();
 
+    $("#btn-previous").click(function() {
+       var activeTab = $("#dtabs").tabs("option","active");
+       activeTab--;
+       if (activeTab < 0) {activeTab = 0};
+       $("#dtabs").tabs({active:activeTab});
+    });
+
+    $("#btn-next").click(function() {
+        var activeTab = $("#dtabs").tabs("option","active");
+        activeTab++;
+        $("#dtabs").tabs({active:activeTab});
+        saveDatasetSubmission();
+    });
+
+    $("#btn-save").click(function() {
+        saveDatasetSubmission();
+    });
+
+    function saveDatasetSubmission()
+    {
+        var datasetSubmissionId = $("form[datasetsubmission]").attr("datasetsubmission");
+        var url = Routing.generate('pelagos_api_dataset_submission_patch');
+
+        $.ajax({
+            url: url + "/" + datasetSubmissionId + "?validate=false",
+            method: "PATCH",
+            data: $("form[datasetsubmission]").serialize(),
+            success: function(data, textStatus, jqXHR) {
+                var n = noty(
+                {
+                    layout: 'top',
+                    theme: 'relax',
+                    type: 'success',
+                    text: 'Succesfully Saved',
+                    timeout: 1000,
+                    modal: false,
+                    animation: {
+                        open: "animated bounceIn", // Animate.css class names
+                        close: "animated fadeOut", // Animate.css class names
+                        easing: "swing", // unavailable - no need
+                        speed: 500 // unavailable - no need
+                    }
+                });
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                var message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
+                var n = noty(
+                {
+                    layout: 'top',
+                    theme: 'relax',
+                    type: 'error',
+                    text: message,
+                    modal: true,
+                });
+            }
+        });
+
+    }
+
     $("[placeholder=yyyy-mm-dd]").datepicker({
         dateFormat: "yy-mm-dd",
         autoSize:true
