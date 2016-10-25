@@ -71,6 +71,7 @@ class DatasetSubmissionController extends UIController
 
                 $datasetSubmission = $dataset->getDatasetSubmission();
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
+                    // This is the first submission, so create a new one.
                     $datasetSubmission = new DatasetSubmission;
 
                     $dataset->setDatasetSubmission($datasetSubmission);
@@ -96,12 +97,12 @@ class DatasetSubmissionController extends UIController
                     $datasetSubmission->setSpatialExtent($dif->getSpatialExtentGeometry());
 
                     $this->entityHandler->create($datasetSubmission);
-                } else {
-                    if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
-                        $sequence = $datasetSubmission->getSequence();
-                        $datasetSubmission = clone $datasetSubmission;
-                        $datasetSubmission->setSequence(++$sequence);
-                    }
+                } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+                    // The latest submission is complete.
+                    $sequence = $datasetSubmission->getSequence();
+                    $datasetSubmission = clone $datasetSubmission;
+                    $datasetSubmission->setSequence(++$sequence);
+                    $this->entityHandler->create($datasetSubmission);
                 }
             }
         }
