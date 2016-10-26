@@ -20,11 +20,14 @@ use Pelagos\Entity\Account;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\Metadata;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\ResearchGroup;
 use Pelagos\Entity\PersonDatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
+
+use Pelagos\Util\ISOMetadataExtractorUtil;
 
 /**
  * The Dataset Submission controller for the Pelagos UI App Bundle.
@@ -97,9 +100,10 @@ class DatasetSubmissionController extends UIController
                     $datasetSubmission->setSpatialExtent($dif->getSpatialExtentGeometry());
 
                     if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
-                        ISOMetadataInterrogatorUtil::populateDatasetSubmissionWithXMLValues(
+                        ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
                             $datasetSubmission->getDataset()->getMetadata()->getXml(),
-                            $datasetSubmission
+                            $datasetSubmission,
+                            $this-entityHandler
                         );
                     }
 
@@ -110,15 +114,18 @@ class DatasetSubmissionController extends UIController
                     }
                 } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
                     // The latest submission is complete.
-                    if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
-                        ISOMetadataInterrogatorUtil::populateDatasetSubmissionWithXMLValues(
-                            $datasetSubmission->getDataset()->getMetadata()->getXml(),
-                            $datasetSubmission
-                        );
-                    }
                     $sequence = $datasetSubmission->getSequence();
                     $datasetSubmission = clone $datasetSubmission;
                     $datasetSubmission->setSequence(++$sequence);
+
+                    if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
+                        ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
+                        $datasetSubmission->getDataset()->getMetadata()->getXml(),
+                        $datasetSubmission,
+                        $this->entityHandler
+                        );
+                    }
+
                     try {
                         $this->entityHandler->create($datasetSubmission);
                     } catch (AccessDeniedException $e) {
