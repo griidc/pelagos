@@ -84,18 +84,6 @@ class DatasetSubmissionController extends UIController
                     $datasetSubmission->setTitle($dif->getTitle());
                     $datasetSubmission->setAbstract($dif->getAbstract());
 
-                    $datasetContact = new PersonDatasetSubmissionDatasetContact();
-                    $datasetContact->setDatasetSubmission($datasetSubmission);
-                    $datasetContact->setRole('pointOfContact');
-                    $datasetContact->setPerson($dif->getPrimaryPointOfContact());
-                    $datasetSubmission->addDatasetContact($datasetContact);
-
-                    $metadataContact = new PersonDatasetSubmissionMetadataContact();
-                    $metadataContact->setDatasetSubmission($datasetSubmission);
-                    $metadataContact->setRole('pointOfContact');
-                    $metadataContact->setPerson($dif->getPrimaryPointOfContact());
-                    $datasetSubmission->addMetadataContact($metadataContact);
-
                     $datasetSubmission->setSuppParams($dif->getVariablesObserved());
                     $datasetSubmission->setSpatialExtent($dif->getSpatialExtentGeometry());
 
@@ -105,6 +93,18 @@ class DatasetSubmissionController extends UIController
                             $datasetSubmission,
                             $this->entityHandler
                         );
+                    } else {
+                        $datasetContact = new PersonDatasetSubmissionDatasetContact();
+                        $datasetContact->setDatasetSubmission($datasetSubmission);
+                        $datasetContact->setRole('pointOfContact');
+                        $datasetContact->setPerson($dif->getPrimaryPointOfContact());
+                        $datasetSubmission->addDatasetContact($datasetContact);
+                        
+                        $metadataContact = new PersonDatasetSubmissionMetadataContact();
+                        $metadataContact->setDatasetSubmission($datasetSubmission);
+                        $metadataContact->setRole('pointOfContact');
+                        $metadataContact->setPerson($dif->getPrimaryPointOfContact());
+                        $datasetSubmission->addMetadataContact($metadataContact);
                     }
 
                     try {
