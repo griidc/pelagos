@@ -103,7 +103,7 @@ class ISOMetadataExtractorUtil
             array()
         );
 
-        if (count($people > 0)) {
+        if (count($people) > 0) {
             $person = $people[0];
         } else {
             $person = null;
@@ -164,7 +164,7 @@ class ISOMetadataExtractorUtil
             array()
         );
 
-        if (count($people > 0)) {
+        if (count($people) > 0) {
             $person = $people[0];
         } else {
             $person = null;
