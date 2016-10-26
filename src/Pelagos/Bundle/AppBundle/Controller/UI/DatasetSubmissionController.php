@@ -103,7 +103,7 @@ class DatasetSubmissionController extends UIController
                         ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
                             $datasetSubmission->getDataset()->getMetadata()->getXml(),
                             $datasetSubmission,
-                            $this-entityHandler
+                            $this->entityHandler
                         );
                     }
 
@@ -120,9 +120,9 @@ class DatasetSubmissionController extends UIController
 
                     if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
                         ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                        $datasetSubmission->getDataset()->getMetadata()->getXml(),
-                        $datasetSubmission,
-                        $this->entityHandler
+                            $datasetSubmission->getDataset()->getMetadata()->getXml(),
+                            $datasetSubmission,
+                            $this->entityHandler
                         );
                     }
 
