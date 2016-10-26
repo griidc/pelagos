@@ -57,18 +57,12 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Digital Object Identifier',
                 'required' => false,
             ))
+            ->add('datasetFileUri', Type\HiddenType::class, array(
+                'required' => true,
+                'attr' => array('data-msg-required' => 'You must provide a dataset file using one of the methods below.'),
+            ))
             ->add('datasetFileTransferType', Type\HiddenType::class, array(
                 'required' => false,
-            ))
-            ->add('datasetFile', Type\FileType::class, array(
-                'label' => 'Dataset File',
-                'required' => false,
-                'mapped' => false,
-            ))
-            ->add('datasetFileUpload', Type\TextType::class, array(
-                'required' => false,
-                'mapped' => false,
-                'disabled' => true,
             ))
             ->add('datasetFilePath', Type\TextType::class, array(
                 'label' => 'Dataset File Path',
@@ -86,39 +80,6 @@ class DatasetSubmissionType extends AbstractType
                 'mapped' => false,
             ))
             ->add('datasetFileForceDownload', Type\CheckboxType::class, array(
-                'label' => 'download this file again from the same URL',
-                'required' => false,
-                'mapped' => false,
-            ))
-            ->add('metadataFileTransferType', Type\HiddenType::class, array(
-                'required' => false,
-            ))
-            ->add('metadataFile', Type\FileType::class, array(
-                'label' => 'Metadata File',
-                'required' => false,
-                'mapped' => false,
-            ))
-            ->add('metadataFileUpload', Type\TextType::class, array(
-                'required' => false,
-                'mapped' => false,
-                'disabled' => true,
-            ))
-            ->add('metadataFilePath', Type\TextType::class, array(
-                'label' => 'Metadata File Path',
-                'required' => false,
-                'mapped' => false,
-            ))
-            ->add('metadataFileForceImport', Type\CheckboxType::class, array(
-                'label' => 'import this file again from the same path',
-                'required' => false,
-                'mapped' => false,
-            ))
-            ->add('metadataFileUrl', Type\TextType::class, array(
-                'label' => 'Metadata File URL',
-                'required' => false,
-                'mapped' => false,
-            ))
-            ->add('metadataFileForceDownload', Type\CheckboxType::class, array(
                 'label' => 'download this file again from the same URL',
                 'required' => false,
                 'mapped' => false,
