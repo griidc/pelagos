@@ -67,7 +67,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
      */
     public function testPopulateDatasetSubmissionWithXMLValues()
     {
-        $this->util->populateDatasetSubmissionWithXMLValues($this->xml, $this->datasetSubmission);
+        $this->util->populateDatasetSubmissionWithXMLValues($this->xml, $this->datasetSubmission, $this->get('pelagos.entity.handler'));
 
         $this->assertEquals('Test title', $this->datasetSubmission->getTitle());
         $this->assertEquals('tst ttl', $this->datasetSubmission->getShortTitle());

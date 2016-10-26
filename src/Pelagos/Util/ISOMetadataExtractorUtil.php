@@ -80,11 +80,9 @@ class ISOMetadataExtractorUtil
     protected static function extractDatasetContact(\SimpleXmlElement $xml, EntityHandler $eh)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:distributionInfo' .
-                 '/gmd:MD_Distribution' .
-                 '/gmd:distributor' .
-                 '/gmd:MD_Distributor' .
-                 '/gmd:distributorContact' .
+                 '/gmd:identificationInfo' .
+                 '/gmd:MD_DataIdentification' .
+                 '/gmd:pointOfContact' .
                  '/gmd:CI_ResponsibleParty[1]' .
                  '/gmd:contactInfo' .
                  '/gmd:CI_Contact' .
@@ -103,11 +101,9 @@ class ISOMetadataExtractorUtil
         );
 
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:distributionInfo' .
-                 '/gmd:MD_Distribution' .
-                 '/gmd:distributor' .
-                 '/gmd:MD_Distributor' .
-                 '/gmd:distributorContact' .
+                 '/gmd:identificationInfo' .
+                 '/gmd:MD_DataIdentification' .
+                 '/gmd:pointOfContact' .
                  '/gmd:CI_ResponsibleParty[1]' .
                  '/gmd:role' .
                  '/gmd:CI_RoleCode' .
