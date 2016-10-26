@@ -1,17 +1,17 @@
 <?php
 
-namespace Pelagos;
+namespace Tests\unit\Pelagos\Util;
 
 use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Util\ISOMetadataInterrogatorUtil;
+use Pelagos\Util\ISOMetadataExtractorUtil;
 
 /**
- * Unit tests for Pelagos\Util\ISOMetadataInterrogatorUtilTest.
+ * Unit tests for Pelagos\Util\ISOMetadataExtractorUtilTest.
  *
  * @group Pelagos
  * @group Pelagos\Util
  */
-class ISOMetadataInterrogatorUtilTest extends \PHPUnit_Framework_TestCase
+class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * A \SimpleXml object used in testing.
@@ -28,9 +28,9 @@ class ISOMetadataInterrogatorUtilTest extends \PHPUnit_Framework_TestCase
     protected $datasetSubmission;
 
     /**
-     * Holds a ISOMetadataInterrogatorUtil class under test.
+     * Holds a ISOMetadataExtractorUtil class under test.
      *
-     * @var Pelagos\Util\ISOMetadataInterrogatorUtil
+     * @var Pelagos\Util\ISOMetadataExtractorUtil
      */
     protected $util;
 
@@ -54,8 +54,8 @@ class ISOMetadataInterrogatorUtilTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->util = new ISOMetadataInterrogatorUtil;
-        $this->xml = simplexml_load_file(dirname(__FILE__) . '/../../../data/test-metadata.xml');
+        $this->util = new ISOMetadataExtractorUtil;
+        $this->xml = simplexml_load_file(__DIR__ . '/../../../data/test-metadata.xml');
         // I really should be mocking this, but I really need it to remember what it set, so I'm not.
         $this->datasetSubmission = new DatasetSubmission;
     }

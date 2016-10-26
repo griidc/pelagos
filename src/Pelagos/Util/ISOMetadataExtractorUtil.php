@@ -10,7 +10,7 @@ use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 /**
  * A utility class for extracting information from ISO metadata.
  */
-class ISOMetadataInterrogatorUtil
+class ISOMetadataExtractorUtil
 {
     /**
      * Conditionally populates Dataset Submission object, by reference.
