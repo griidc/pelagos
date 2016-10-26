@@ -1,8 +1,8 @@
 <?php
-
 namespace Tests\unit\Pelagos\Util;
 
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\Person;
 use Pelagos\Util\ISOMetadataExtractorUtil;
 
 /**
@@ -48,12 +48,40 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
                                 </gml:Polygon>';
 
     /**
+     * Holds a Mock Pelagos EntityHandler instance.
+     *
+     * @var EntityHandler
+     */
+    protected $mockEntityHandler;
+
+    /**
+     * Holds a Mock Person instance.
+     *
+     * @var Person
+     */
+    protected $mockPerson;
+
+    /**
      * Unit test setup.
      *
      * @return void
      */
     public function setUp()
     {
+        $this->mockPerson = \Mockery::mock(
+            'Pelagos\Entity\Person',
+            array(
+                'getEmailAddress' => 'blah@blah.com'
+            )
+        );
+
+        $this->mockEntityHandler = \Mockery::mock(
+            'Pelagos\Bundle\AppBundle\Handler\EntityHandler',
+            array(
+                'getBy' => array($this->mockPerson)
+            )
+        );
+
         $this->util = new ISOMetadataExtractorUtil;
         $this->xml = simplexml_load_file(__DIR__ . '/../../../data/test-metadata.xml');
         // I really should be mocking this, but I really need it to remember what it set, so I'm not.
@@ -67,7 +95,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
      */
     public function testPopulateDatasetSubmissionWithXMLValues()
     {
-        $this->util->populateDatasetSubmissionWithXMLValues($this->xml, $this->datasetSubmission, $this->get('pelagos.entity.handler'));
+        $this->util->populateDatasetSubmissionWithXMLValues($this->xml, $this->datasetSubmission, $this->mockEntityHandler);
 
         $this->assertEquals('Test title', $this->datasetSubmission->getTitle());
         $this->assertEquals('tst ttl', $this->datasetSubmission->getShortTitle());
@@ -91,5 +119,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('test format', $this->datasetSubmission->getDistributionFormatName());
         $this->assertEquals('test compression', $this->datasetSubmission->getFileDecompressionTechnique());
         $this->assertEquals('http://test.url', $this->datasetSubmission->getDatasetFileUri());
+        $this->assertEquals($this->mockPerson, $this->datasetSubmission->getDatasetContacts()[0]->getPerson());
+        $this->assertEquals($this->mockPerson, $this->datasetSubmission->getMetadataContacts()[0]->getPerson());
     }
 }
