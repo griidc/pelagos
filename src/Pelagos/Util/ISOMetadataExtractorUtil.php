@@ -29,8 +29,8 @@ class ISOMetadataExtractorUtil
      */
     public static function populateDatasetSubmissionWithXMLValues(\SimpleXmlElement $xmlMetadata, DatasetSubmission &$datasetSubmission, EntityHandler $entityHandler)
     {
-        self::setIfHas($datasetSubmission, 'addDatasetContact', self::extractDatasetContact($xmlMetadata), $entityHandler);
-        self::setIfHas($datasetSubmission, 'addMetadataContact', self::extractMetadataContact($xmlMetadata), $entityHandler);
+        self::setIfHas($datasetSubmission, 'addDatasetContact', self::extractDatasetContact($xmlMetadata, $entityHandler));
+        self::setIfHas($datasetSubmission, 'addMetadataContact', self::extractMetadataContact($xmlMetadata, $entityHandler));
         self::setIfHas($datasetSubmission, 'setTitle', self::extractTitle($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setShortTitle', self::extractShortTitle($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setAbstract', self::extractAbstract($xmlMetadata));
