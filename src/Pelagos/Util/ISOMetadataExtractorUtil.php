@@ -75,6 +75,7 @@ class ISOMetadataExtractorUtil
      * Determines the dataset contact from XML metadata.
      *
      * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
      * @param EntityHandler     $eh  A Pelagos Entity Handler instance.
      *
      * @return PersonDatasetSubmissionDatasetContact|null Returns the dataset contact, or null.
@@ -131,6 +132,7 @@ class ISOMetadataExtractorUtil
      * Determines the metadata contact from XML metadata.
      *
      * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
      * @param EntityHandler     $eh  A Pelagos Entity Handler instance.
      *
      * @return PersonDatasetSubmissionMetadataContact|null Returns the metadata contact, or null.
