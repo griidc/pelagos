@@ -97,11 +97,17 @@ class ISOMetadataExtractorUtil
 
         $email = self::querySingle($xml, $query);
 
-        $person = $eh->getBy(
+        $people = $eh->getBy(
             Person::class,
             array('emailAddress' => $email),
             array()
-        )[0];
+        );
+
+        if (count($people > 0)) {
+            $person = $people[0];
+        } else {
+            $person = null;
+        }
 
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -152,11 +158,17 @@ class ISOMetadataExtractorUtil
 
         $email = self::querySingle($xml, $query);
 
-        $person = $eh->getBy(
+        $people = $eh->getBy(
             Person::class,
             array('emailAddress' => $email),
             array()
-        )[0];
+        );
+
+        if (count($people > 0)) {
+            $person = $people[0];
+        } else {
+            $person = null;
+        }
 
         $query = '/gmi:MI_Metadata' .
                  '/gmd:contact' .
