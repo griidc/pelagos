@@ -79,6 +79,7 @@
                                 (function(j) {
                                     return function() {
                                         $(localSettings.target).val(data.basePath + "/" + data.files[j].path);
+                                        $(localSettings.target).change();
                                         elements.overlay.hide();
                                     }
                                 }(i))
