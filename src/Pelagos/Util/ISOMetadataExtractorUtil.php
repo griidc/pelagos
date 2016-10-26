@@ -2,6 +2,8 @@
 
 namespace Pelagos\Util;
 
+use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
+
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
@@ -123,7 +125,6 @@ class ISOMetadataExtractorUtil
         } else {
             return null;
         }
-
     }
 
     /**
