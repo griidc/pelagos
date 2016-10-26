@@ -29,8 +29,8 @@ class ISOMetadataExtractorUtil
      */
     public static function populateDatasetSubmissionWithXMLValues(\SimpleXmlElement $xmlMetadata, DatasetSubmission &$datasetSubmission, EntityHandler $entityHandler)
     {
-        self::setIfHas($datasetSubmission, 'addDatasetContact', self::extractDatasetContact($xmlMetadata, $entityHandler));
-        self::setIfHas($datasetSubmission, 'addMetadataContact', self::extractMetadataContact($xmlMetadata, $entityHandler));
+        self::setIfHas($datasetSubmission, 'addDatasetContact', self::extractDatasetContact($xmlMetadata, $datasetSubmission, $entityHandler));
+        self::setIfHas($datasetSubmission, 'addMetadataContact', self::extractMetadataContact($xmlMetadata, $datasetSubmission, $entityHandler));
         self::setIfHas($datasetSubmission, 'setTitle', self::extractTitle($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setShortTitle', self::extractShortTitle($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setAbstract', self::extractAbstract($xmlMetadata));
@@ -79,7 +79,7 @@ class ISOMetadataExtractorUtil
      *
      * @return PersonDatasetSubmissionDatasetContact|null Returns the dataset contact, or null.
      */
-    protected static function extractDatasetContact(\SimpleXmlElement $xml, EntityHandler $eh)
+    protected static function extractDatasetContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityHandler $eh)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -100,7 +100,7 @@ class ISOMetadataExtractorUtil
             Person::class,
             array('emailAddress' => $email),
             array()
-        );
+        )[0];
 
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -114,7 +114,7 @@ class ISOMetadataExtractorUtil
         $role = self::querySingle($xml, $query);
 
         if ($person instanceof Person) {
-            $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact;
+            $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact();
             $personDatasetSubmissionDatasetContact->setPerson($person);
             // Only set role if it is a valid role, otherwise leave unset.
             if (null !== $role and array_key_exists($role, PersonDatasetSubmissionDatasetContact::ROLES)) {
@@ -135,7 +135,7 @@ class ISOMetadataExtractorUtil
      *
      * @return PersonDatasetSubmissionMetadataContact|null Returns the metadata contact, or null.
      */
-    protected static function extractMetadataContact(\SimpleXmlElement $xml, EntityHandler $eh)
+    protected static function extractMetadataContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityHandler $eh)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:contact' .
@@ -154,7 +154,7 @@ class ISOMetadataExtractorUtil
             Person::class,
             array('emailAddress' => $email),
             array()
-        );
+        )[0];
 
         $query = '/gmi:MI_Metadata' .
                  '/gmd:contact' .
@@ -166,7 +166,7 @@ class ISOMetadataExtractorUtil
         $role = self::querySingle($xml, $query);
 
         if ($person instanceof Person) {
-            $personDatasetSubmissionMetadataContact = new PersonDatasetSubmissionMetadataContact;
+            $personDatasetSubmissionMetadataContact = new PersonDatasetSubmissionMetadataContact();
             $personDatasetSubmissionMetadataContact->setPerson($person);
             // Only set role if it is a valid role, otherwise leave unset.
             if (null !== $role and array_key_exists($role, PersonDatasetSubmissionMetadataContact::ROLES)) {
