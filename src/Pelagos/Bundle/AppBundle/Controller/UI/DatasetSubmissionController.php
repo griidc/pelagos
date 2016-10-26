@@ -119,6 +119,14 @@ class DatasetSubmissionController extends UIController
                     $datasetSubmission->setSequence(++$sequence);
 
                     if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
+                        foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+                            $datasetSubmission->removeDatasetContact($datasetContact);
+                        }
+
+                        foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+                            $datasetSubmission->removeMetadataContact($metadataContact);
+                        }
+
                         ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
                             $datasetSubmission->getDataset()->getMetadata()->getXml(),
                             $datasetSubmission,
