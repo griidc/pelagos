@@ -184,22 +184,6 @@ class DatasetSubmissionController extends UIController
                     $form->get('datasetFileUrl')->setData($datasetSubmission->getDatasetFileUri());
                     break;
             }
-
-            switch ($datasetSubmission->getMetadataFileTransferType()) {
-                case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
-                    $form->get('metadataFileUpload')->setData(
-                        preg_replace('#^file://#', '', $datasetSubmission->getMetadataFileUri())
-                    );
-                    break;
-                case DatasetSubmission::TRANSFER_TYPE_SFTP:
-                    $form->get('metadataFilePath')->setData(
-                        preg_replace('#^file://#', '', $datasetSubmission->getMetadataFileUri())
-                    );
-                    break;
-                case DatasetSubmission::TRANSFER_TYPE_HTTP:
-                    $form->get('metadataFileUrl')->setData($datasetSubmission->getMetadataFileUri());
-                    break;
-            }
         }
 
         $form->add('submit', SubmitType::class, array(
