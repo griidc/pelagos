@@ -10,6 +10,9 @@
     <fieldset> <!-- Dataset File Transfer Details -->
         <legend class="section-header">Dataset File Transfer Details</legend>
 
+        {{ form_widget(form.datasetFileUri) }}
+        {{ form_widget(form.datasetFileTransferType) }}
+
         <div style="background: transparent;" id="filetabs">
             <ul>
                 <li value="upload"><a href="#tabs-1">Direct Upload</a></li>
@@ -18,23 +21,15 @@
             </ul>
 
             <div id="tabs-1"> <!-- Direct Upload -->
-                For small datasets (&lt;1 GB), you may upload the dataset file directly, using your web browser. Depending on the size of the file, this may take several minutes. The maximum time the system will wait for the file to upload is 10 minutes. For larger files, please consider using SFTP or GridFTP to upload the file.
+                You may upload a single dataset file of any size using direct upload. If your upload is interrupted, the upload will retry automatically or you may return to this page and select the same file and it will resume where it left off. You may also manually pause your upload and continue later.
                 <fieldset>
                     <table class="tab-table">
                         <tr>
                             <td>
-                                {{ form_label(form.datasetFile) }}
-                                {% if form.datasetFileUpload.vars.value is not empty %}
-                                    <div class="fwtextboxcont">
-                                        {{ form_widget(form.datasetFileUpload) }}
-                                    </div>
-                                    To replace the dataset file:
-                                {% endif %}
-                                {{ form_widget(form.datasetFile) }}
+                                <div id="fine-uploader-manual-trigger"></div>
                             </td>
                             <td>
                              <span class="field-help">
-                                <p><strong>Dataset File:</strong></p>
                                 <p>Please select from your local machine the data file for the dataset you are registering.</p>
                                 <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
                             </span>
@@ -45,7 +40,7 @@
             </div> <!-- tabs-1 -->
 
             <div id="tabs-2"> <!-- Upload via SFTP/GridFTP -->
-                <p>Use this method when the dataset is &gt;1GB and you wish to upload the dataset file to GRIIDC (rather than place the dataset file on an HTTP (web) or FTP server and have GRIIDC pull it).
+                <p>Use this method when you wish to upload the dataset file to GRIIDC (rather than place the dataset file on an HTTP (web) or FTP server and have GRIIDC pull it).
                 <strong>Note:</strong> <em>Using this method requires that you have <strong>first</strong> uploaded the file via SFTP or GridFTP.</em></p>
                 <div>
                     <div class="sftpYes {{ sftpuser ? 'sftpshow' : 'sftphidden' }}" style="color:black;">
@@ -90,7 +85,7 @@
             </div> <!-- tabs-2 -->
 
             <div id="tabs-3"> <!-- Request Pull from HTTP/FTP Server -->
-                Use this method when you wish to place the dataset file on an HTTP (web) or FTP server at your institution (or elsewhere) and have GRIIDC pull it. You may specify an optional availability date, after which the dataset will be available at the provided URL, as well as optional preferred days and times of day to initiate the download. Additionally, if the dataset file is archived in a cyber-infrastructure that can be maintained for the next decade (e.g. NODC), you may specify that GRIIDC point to the dataset at the provided URL rather than download and house it at GRIIDC.
+                Use this method when you wish to place the dataset file on an HTTP (web) or FTP server at your institution (or elsewhere) and have GRIIDC pull it.
                 <fieldset>
                     <table class="tab-table">
                         <tr>
