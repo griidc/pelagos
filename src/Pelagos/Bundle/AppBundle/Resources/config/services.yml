@@ -36,7 +36,6 @@ services:
         class: Pelagos\Event\DatasetSubmissionListener
         arguments: ["@twig", "@mailer", "@security.token_storage", "%mailer_from_addr%", "%mailer_from_name%", "@pelagos.entity.handler", "@pelagos.util.data_store"]
         tags:
-            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.created, method: onCreated }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.submitted, method: onSubmitted }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.resubmitted, method: onResubmitted }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.dataset_processed, method: onDatasetProcessed }
@@ -85,3 +84,9 @@ services:
         arguments: ["@doctrine.orm.entity_manager", "@logger"]
         tags:
             - { name: monolog.logger, channel: create_homedir }
+            
+    pelagos.rabbit.consumer.dataset_file_hasher:
+        class: Pelagos\Bundle\AppBundle\Rabbit\Consumer\DatasetFileHasherConsumer
+        arguments: ["@doctrine.orm.entity_manager", "@pelagos.util.data_store", "@logger"]
+        tags:
+            - { name: monolog.logger, channel: dataset_file_hasher }

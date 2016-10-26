@@ -12,22 +12,6 @@ use Pelagos\Entity\DatasetSubmission;
 class DatasetSubmissionListener extends EventListener
 {
     /**
-     * Method to send an email to user on a create event.
-     *
-     * @param EntityEvent $event Event being acted upon.
-     *
-     * @return void
-     */
-    public function onCreated(EntityEvent $event)
-    {
-        $datasetSubmission = $event->getEntity();
-
-        // email User
-        $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
-        $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission));
-    }
-
-    /**
      * Method to send an email to DMs on a submitted event.
      *
      * @param EntityEvent $event Event being acted upon.
@@ -38,6 +22,10 @@ class DatasetSubmissionListener extends EventListener
     {
         $datasetSubmission = $event->getEntity();
         $dataset = $datasetSubmission->getDataset();
+
+        // email User
+        $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
+        $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission));
 
         // email DM(s)
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-submitted.email.twig');
@@ -55,6 +43,10 @@ class DatasetSubmissionListener extends EventListener
     {
         $datasetSubmission = $event->getEntity();
         $dataset = $datasetSubmission->getDataset();
+
+        // email User
+        $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
+        $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission));
 
         // email DM(s)
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-updated.email.twig');

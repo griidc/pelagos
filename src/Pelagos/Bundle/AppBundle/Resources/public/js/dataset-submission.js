@@ -15,14 +15,20 @@ $(function() {
     });
 
     $("#regidform").bind("change keyup mouseout", function() {
-        if($(this).validate().checkForm() && $("#registry_id").val() != "" && $("#registry_id").is(":disabled") == false) {
+        if($(this).validate().checkForm() && $("#regid").val() != "" && $("#regid").is(":disabled") == false) {
             $("#regbutton").button("enable");
         } else {
             $("#regbutton").button("disable");
         }
     });
 
-    $("#dtabs").tabs({
+    $("#regForm").validate(
+        {
+            ignore: ""
+        }
+    );
+
+    $("#dtabs,#filetabs").tabs({
         heightStyle: "content",
         activate: function(event, ui) {
             $(ui.newTab.context.hash).trigger("active");
@@ -30,6 +36,65 @@ $(function() {
     });
 
     $("button").button();
+
+    $("#btn-previous").click(function() {
+       var activeTab = $("#dtabs").tabs("option","active");
+       activeTab--;
+       if (activeTab < 0) {activeTab = 0};
+       $("#dtabs").tabs({active:activeTab});
+    });
+
+    $("#btn-next").click(function() {
+        var activeTab = $("#dtabs").tabs("option","active");
+        activeTab++;
+        $("#dtabs").tabs({active:activeTab});
+        saveDatasetSubmission();
+    });
+
+    $("#btn-save").click(function() {
+        saveDatasetSubmission();
+    });
+
+    function saveDatasetSubmission()
+    {
+        var datasetSubmissionId = $("form[datasetsubmission]").attr("datasetsubmission");
+        var url = Routing.generate('pelagos_api_dataset_submission_patch');
+
+        $.ajax({
+            url: url + "/" + datasetSubmissionId + "?validate=false",
+            method: "PATCH",
+            data: $("form[datasetsubmission]").serialize(),
+            success: function(data, textStatus, jqXHR) {
+                var n = noty(
+                {
+                    layout: 'top',
+                    theme: 'relax',
+                    type: 'success',
+                    text: 'Succesfully Saved',
+                    timeout: 1000,
+                    modal: false,
+                    animation: {
+                        open: "animated bounceIn", // Animate.css class names
+                        close: "animated fadeOut", // Animate.css class names
+                        easing: "swing", // unavailable - no need
+                        speed: 500 // unavailable - no need
+                    }
+                });
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                var message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
+                var n = noty(
+                {
+                    layout: 'top',
+                    theme: 'relax',
+                    type: 'error',
+                    text: message,
+                    modal: true,
+                });
+            }
+        });
+
+    }
 
     $("[placeholder=yyyy-mm-dd]").datepicker({
         dateFormat: "yy-mm-dd",
@@ -40,7 +105,46 @@ $(function() {
         select2ContactPerson();
     });
 
+    $("#ds-submit").on("active", function() {
+        $(".invaliddsform").show();
+        $(".validdsform").hide();
+        $("#regForm select[keyword=target] option").prop("selected", true);
+        var imgWarning = $("#imgwarning").attr("src");
+        var imgCheck = $("#imgcheck").attr("src");
+        var valid = $("#regForm").valid();
+
+        if (false == valid) {
+            $(".tabimg").show();
+            $("#dtabs .ui-tabs-panel").each(function() {
+                var tabLabel = $(this).attr("aria-labelledby");
+                if ($(this).has(":input.error").length ? true : false) {
+                    $("#" + tabLabel).next("img").prop("src", imgWarning);
+                } else {
+                    $("#" + tabLabel).next("img").prop("src", imgCheck);
+                };
+
+                $(this).find(":input").on("change blur keyup", function() {
+                    $("#dtabs .ui-tabs-panel").each(function() {
+                        var label = $(this).attr("aria-labelledby");
+                        $(this).find(":input").each(function() {
+                            $(this).valid()
+                        });
+                        if ($(this).find(":input").valid()) {
+                            $("#" + label).next("img").prop("src", imgCheck);
+                        } else {
+                            $("#" + label).next("img").prop("src", imgWarning);
+                        };
+                    });
+                });
+            });
+        } else {
+            $(".invaliddsform").hide();
+            $(".validdsform").show();
+        }
+    });
+
     select2ContactPerson();
+    buildKeywordLists();
 
     function select2ContactPerson() {
         $(".contactperson").select2({
@@ -78,10 +182,6 @@ $(function() {
         });
     }
 
-    $("#regForm").validate(
-        {
-        }
-    );
 
     geowizard = new MapWizard(
         {
@@ -91,11 +191,19 @@ $(function() {
             "divSpatialWizard":"spatwizbtn",
             "gmlField":"spatialExtent",
             "descField":"spatialExtentDescription",
-            "spatialFunction":""
+            "spatialFunction":"checkSpatial"
         }
     );
 
-    $("#ds-extent").tabs({ event: "click"})
+    if ($("#spatialExtentDescription").val()!="" && $("#spatialExtent").val()=="") {
+        geowizard.haveSpatial(true);
+    } else {
+        geowizard.haveSpatial(false);
+    }
+
+    if ($("#spatialExtent").val()!="") {
+        geowizard.haveSpatial(false);
+    }
 
     $("#ds-extent").on("active", function() {
         geowizard.flashMap();
@@ -141,17 +249,21 @@ $(function() {
                 source.append(sortOptions(source.find("option").detach()));
             }
         }
+        buildKeywordLists();
+    });
 
-        // Build list arrays/fake multiselect boxes.
+    // Build list arrays/fake multiselect boxes.
+    function buildKeywordLists()
+    {
         $("#themeKeywords option").remove();
-        $("#themeKeywords").append($("#theme-keywords").find("option").clone().prop("selected", true));
+        $("#themeKeywords").append($("#theme-keywords").find("option").clone().prop("selected", true)).change();
 
         $("#placeKeywords option").remove();
-        $("#placeKeywords").append($("#place-keywords").find("option").clone().prop("selected", true));
+        $("#placeKeywords").append($("#place-keywords").find("option").clone().prop("selected", true)).change();
 
         $("#topicKeywords option").remove();
-        $("#topicKeywords").append($("#topic-keywords").find("option").clone().prop("selected", true));
-    });
+        $("#topicKeywords").append($("#topic-keywords").find("option").clone().prop("selected", true)).change();
+    }
 
     $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
         style: {
@@ -410,6 +522,15 @@ $(function() {
 
             return a-b;
         });
-
     }
 });
+
+function checkSpatial(isNonSpatial) {
+    if (isNonSpatial) {
+        $("#nonspatial").find(":input").attr("required", "required");
+        $("#spatial").find(":input").removeAttr("required");
+    } else {
+        $("#spatial").find(":input").attr("required", "required");
+        $("#nonspatial").find(":input").removeAttr("required");
+    }
+}

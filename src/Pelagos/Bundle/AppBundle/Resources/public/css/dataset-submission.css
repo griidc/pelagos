@@ -1,3 +1,6 @@
+.hiddenFormField{
+    display:none;
+}
 
 .toolbarbutton {
     padding: 4px;
@@ -46,14 +49,13 @@
     padding: 5px;
 }
 
-input,select,textarea {
+input[type=text],select,textarea {
     width:90%;
 }
 
 textarea{
     resize: none
 }
-
 
 textarea#abstract {
     height:20em;
@@ -87,6 +89,21 @@ legend
 fieldset
 {
     border: 1px dotted #AAA;
+}
+
+.sftphidden {
+    display: none;
+}
+
+.validdsform {
+    display: none;
+}
+
+.tabimg {
+    margin: 2px;
+    height: 16px;
+    width: 16px;
+    display: none;
 }
 
 .cleair {

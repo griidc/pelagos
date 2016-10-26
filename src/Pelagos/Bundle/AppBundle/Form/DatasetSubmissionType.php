@@ -7,6 +7,9 @@ use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+
+use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
@@ -194,7 +197,7 @@ class DatasetSubmissionType extends AbstractType
             ))
             ->add('spatialExtentDescription', Type\TextareaType::class, array(
                 'label' => 'Spatial Extent Description',
-                'required' => true,
+                'required' => false,
                 'attr' => array('rows' => '5'),
             ))
             ->add('temporalExtentDesc', Type\ChoiceType::class, array(

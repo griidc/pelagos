@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 
 use Pelagos\Entity\Account;
@@ -52,14 +54,9 @@ class DatasetSubmissionController extends UIController
     public function defaultAction(Request $request)
     {
         $udi = $request->query->get('regid');
-
+        $dataset = null;
         $datasetSubmission = null;
-        $datasetId = null;
-
-        $found = false;
-
-        $buttonLabel = 'Register';
-
+        $datasetSubmissionId = null;
         $dif = null;
 
         if ($udi != null) {
@@ -69,15 +66,17 @@ class DatasetSubmissionController extends UIController
             if (count($datasets) == 1) {
                 $dataset = $datasets[0];
 
-                $datasetId = $dataset->getId();
-
                 $dif = $dataset->getDif();
 
-                $datasetSubmission = $dataset->getDatasetSubmission();
+                $datasetSubmission = $dataset->getDatasetSubmissionHistory()->first();
+
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
+                    // This is the first submission, so create a new one.
                     $datasetSubmission = new DatasetSubmission;
 
-                    $dataset->setDatasetSubmission($datasetSubmission);
+                    $datasetSubmission->setDataset($dataset);
+
+                    $datasetSubmission->setSequence(1);
 
                     $datasetSubmission->setTitle($dif->getTitle());
                     $datasetSubmission->setAbstract($dif->getAbstract());
@@ -91,24 +90,41 @@ class DatasetSubmissionController extends UIController
                     $metadataContact = new PersonDatasetSubmissionMetadataContact();
                     $metadataContact->setDatasetSubmission($datasetSubmission);
                     $metadataContact->setRole('pointOfContact');
+                    $metadataContact->setPerson($dif->getPrimaryPointOfContact());
                     $datasetSubmission->addMetadataContact($metadataContact);
-                } else {
-                    $buttonLabel = 'Update';
+
+                    $datasetSubmission->setSuppParams($dif->getVariablesObserved());
+                    $datasetSubmission->setSpatialExtent($dif->getSpatialExtentGeometry());
+
+                    try {
+                        $this->entityHandler->create($datasetSubmission);
+                    } catch (AccessDeniedException $e) {
+                        // This is handled in the template.
+                    }
+                } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+                    // The latest submission is complete.
+                    $sequence = $datasetSubmission->getSequence();
+                    $datasetSubmission = clone $datasetSubmission;
+                    $datasetSubmission->setSequence(++$sequence);
+                    try {
+                        $this->entityHandler->create($datasetSubmission);
+                    } catch (AccessDeniedException $e) {
+                        // This is handled in the template.
+                    }
                 }
-                $found = true;
             }
         }
 
-        if ($dif instanceof DIF and $dif->getStatus() !== DIF::STATUS_APPROVED) {
-            $datasetSubmission = null;
-        }
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
+                $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
+            }
 
-        if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
-            $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
-        }
+            if ($datasetSubmission->getMetadataContacts()->isEmpty()) {
+                $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
+            }
 
-        if ($datasetSubmission->getMetadataContacts()->isEmpty()) {
-            $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
+            $datasetSubmissionId = $datasetSubmission->getId();
         }
 
         $form = $this->get('form.factory')->createNamed(
@@ -116,8 +132,11 @@ class DatasetSubmissionController extends UIController
             DatasetSubmissionType::class,
             $datasetSubmission,
             array(
-                'action' => $this->generateUrl('pelagos_app_ui_datasetsubmission_post', array('id' => $datasetId)),
+                'action' => $this->generateUrl('pelagos_app_ui_datasetsubmission_post', array('id' => $datasetSubmissionId)),
                 'method' => 'POST',
+                'attr' => array(
+                    'datasetSubmission' => $datasetSubmissionId,
+                ),
             )
         );
 
@@ -155,38 +174,17 @@ class DatasetSubmissionController extends UIController
             }
         }
 
-        if ($this->getUser() instanceof Account) {
-            $loggedInPerson = $this->getUser()->getPerson();
-        } else {
-            $loggedInPerson = null;
-        }
-
         $form->add('submit', SubmitType::class, array(
-            'label' => $buttonLabel,
+            'label' => 'Submit',
             'attr'  => array('class' => 'submitButton'),
         ));
-
-        $datasetSubmissions = $this->entityHandler
-            ->getBy(
-                Dataset::class,
-                array (
-                    'datasetSubmission.creator' => $loggedInPerson,
-                ),
-                array(
-                    'udi' => 'ASC'
-                )
-            );
 
         return $this->render(
             'PelagosAppBundle:DatasetSubmission:index.html.twig',
             array(
                 'form' => $form->createView(),
-                'datasetSubmission' => $datasetSubmission,
-                'found'  => $found,
                 'udi'  => $udi,
-                'datasetSubmissions' => $datasetSubmissions,
-                'loggedInPerson' => $loggedInPerson,
-                'dif' => $dif,
+                'datasetSubmission' => $datasetSubmission,
             )
         );
     }
@@ -195,7 +193,7 @@ class DatasetSubmissionController extends UIController
      * The post action for Dataset Submission.
      *
      * @param Request     $request The Symfony request object.
-     * @param string|null $id      The id of the Dataset to load.
+     * @param string|null $id      The id of the Dataset Submission to load.
      *
      * @Route("/{id}")
      *
@@ -205,13 +203,9 @@ class DatasetSubmissionController extends UIController
      */
     public function postAction(Request $request, $id = null)
     {
-        $dataset = $this->entityHandler->get(Dataset::class, $id);
+        $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
 
-        $datasetSubmission = $dataset->getDatasetSubmission();
         if ($datasetSubmission instanceof DatasetSubmission) {
-            $sequence = $datasetSubmission->getSequence();
-            $datasetSubmission = clone $datasetSubmission;
-
             foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                 $datasetSubmission->removeDatasetContact($datasetContact);
             }
@@ -219,11 +213,6 @@ class DatasetSubmissionController extends UIController
             foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
                 $datasetSubmission->removeMetadataContact($metadataContact);
             }
-
-            $datasetSubmission->setId(null);
-            $datasetSubmission->setCreationTimeStamp(null);
-        } else {
-            $datasetSubmission = new DatasetSubmission;
         }
 
         $form = $this->get('form.factory')->createNamed(
@@ -234,20 +223,14 @@ class DatasetSubmissionController extends UIController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
-            $dataset->setDatasetSubmission($datasetSubmission);
-            $sequence = $datasetSubmission->getSequence();
+        if ($form->isSubmitted() and $form->isValid()) {
+            $datasetSubmission->submit();
 
-
-
-            if ($sequence == null) {
-                $sequence = 0;
-                $eventName = 'submitted';
-            } else {
+            if ($datasetSubmission->getSequence() > 1) {
                 $eventName = 'resubmitted';
+            } else {
+                $eventName = 'submitted';
             }
-
-            $datasetSubmission->setSequence(++$sequence);
 
             if ($this->getUser()->isPosix()) {
                 $incomingDirectory = $this->getUser()->getHomeDirectory() . '/incoming';
@@ -263,8 +246,7 @@ class DatasetSubmissionController extends UIController
 
             $this->processMetadataFileTransferDetails($form, $datasetSubmission, $incomingDirectory);
 
-            $this->entityHandler->create($datasetSubmission);
-            $this->entityHandler->update($dataset);
+            $this->entityHandler->update($datasetSubmission);
 
             $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
                 $datasetSubmission,
@@ -283,6 +265,8 @@ class DatasetSubmissionController extends UIController
                 array('DatasetSubmission' => $datasetSubmission)
             );
         }
+        // This should not normally happen.
+        return new Response((string) $form->getErrors(true, false));
     }
 
     /**
@@ -299,7 +283,6 @@ class DatasetSubmissionController extends UIController
         DatasetSubmission $datasetSubmission,
         $incomingDirectory
     ) {
-        $datasetId = $datasetSubmission->getDataset()->getId();
         switch ($datasetSubmission->getDatasetFileTransferType()) {
             case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
                 $datasetFile = $form['datasetFile']->getData();
@@ -307,8 +290,7 @@ class DatasetSubmissionController extends UIController
                     $originalFileName = $datasetFile->getClientOriginalName();
                     $movedDatasetFile = $datasetFile->move($incomingDirectory, $originalFileName);
                     $datasetSubmission->setDatasetFileUri('file://' . $movedDatasetFile->getRealPath());
-                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'dataset.upload');
+                    $this->newDatasetFile($datasetSubmission);
                 }
                 break;
             case DatasetSubmission::TRANSFER_TYPE_SFTP:
@@ -316,11 +298,9 @@ class DatasetSubmissionController extends UIController
                 $newDatasetFileUri = empty($datasetFilePath) ? null : "file://$datasetFilePath";
                 if ($newDatasetFileUri !== $datasetSubmission->getDatasetFileUri()) {
                     $datasetSubmission->setDatasetFileUri($newDatasetFileUri);
-                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'dataset.SFTP');
+                    $this->newDatasetFile($datasetSubmission);
                 } elseif ($form['datasetFileForceImport']->getData()) {
-                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'dataset.SFTP');
+                    $this->newDatasetFile($datasetSubmission);
                 }
                 break;
             case DatasetSubmission::TRANSFER_TYPE_HTTP:
@@ -328,14 +308,33 @@ class DatasetSubmissionController extends UIController
                 $newDatasetFileUri = empty($datasetFileUrl) ? null : $datasetFileUrl;
                 if ($newDatasetFileUri !== $datasetSubmission->getDatasetFileUri()) {
                     $datasetSubmission->setDatasetFileUri($newDatasetFileUri);
-                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'dataset.HTTP');
+                    $this->newDatasetFile($datasetSubmission);
                 } elseif ($form['datasetFileForceDownload']->getData()) {
-                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'dataset.HTTP');
+                    $this->newDatasetFile($datasetSubmission);
                 }
                 break;
         }
+    }
+
+    /**
+     * Take appropriate actions when a new dataset file is submitted.
+     *
+     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
+     *
+     * @return void
+     */
+    protected function newDatasetFile(DatasetSubmission $datasetSubmission)
+    {
+        $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+        $datasetSubmission->setDatasetFileName(null);
+        $datasetSubmission->setDatasetFileSize(null);
+        $datasetSubmission->setDatasetFileMd5Hash(null);
+        $datasetSubmission->setDatasetFileSha1Hash(null);
+        $datasetSubmission->setDatasetFileSha256Hash(null);
+        $this->messages[] = array(
+            'body' => $datasetSubmission->getDataset()->getId(),
+            'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
+        );
     }
 
     /**
@@ -352,7 +351,6 @@ class DatasetSubmissionController extends UIController
         DatasetSubmission $datasetSubmission,
         $incomingDirectory
     ) {
-        $datasetId = $datasetSubmission->getDataset()->getId();
         switch ($datasetSubmission->getMetadataFileTransferType()) {
             case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
                 $metadataFile = $form['metadataFile']->getData();
@@ -360,8 +358,7 @@ class DatasetSubmissionController extends UIController
                     $originalFileName = $metadataFile->getClientOriginalName();
                     $movedMetadataFile = $metadataFile->move($incomingDirectory, $originalFileName);
                     $datasetSubmission->setMetadataFileUri('file://' . $movedMetadataFile->getRealPath());
-                    $datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'metadata.upload');
+                    $this->newMetadataFile($datasetSubmission);
                 }
                 break;
             case DatasetSubmission::TRANSFER_TYPE_SFTP:
@@ -369,11 +366,9 @@ class DatasetSubmissionController extends UIController
                 $newMetadataFileUri = empty($metadataFilePath) ? null : "file://$metadataFilePath";
                 if ($newMetadataFileUri !== $datasetSubmission->getMetadataFileUri()) {
                     $datasetSubmission->setMetadataFileUri($newMetadataFileUri);
-                    $datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'metadata.SFTP');
+                    $this->newMetadataFile($datasetSubmission);
                 } elseif ($form['metadataFileForceImport']->getData()) {
-                    $datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'metadata.SFTP');
+                    $this->newMetadataFile($datasetSubmission);
                 }
                 break;
             case DatasetSubmission::TRANSFER_TYPE_HTTP:
@@ -381,13 +376,29 @@ class DatasetSubmissionController extends UIController
                 $newMetadataFileUri = empty($metadataFileUrl) ? null : $metadataFileUrl;
                 if ($newMetadataFileUri !== $datasetSubmission->getMetadataFileUri()) {
                     $datasetSubmission->setMetadataFileUri($newMetadataFileUri);
-                    $datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'metadata.HTTP');
+                    $this->newMetadataFile($datasetSubmission);
                 } elseif ($form['metadataFileForceDownload']->getData()) {
-                    $datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'metadata.HTTP');
+                    $this->newMetadataFile($datasetSubmission);
                 }
                 break;
         }
+    }
+
+    /**
+     * Take appropriate actions when a new metadata file is submitted.
+     *
+     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
+     *
+     * @return void
+     */
+    protected function newMetadataFile(DatasetSubmission $datasetSubmission)
+    {
+        $datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+        $datasetSubmission->setMetadataFileName(null);
+        $datasetSubmission->setMetadataFileSha256Hash(null);
+        $this->messages[] = array(
+            'body' => $datasetSubmission->getDataset()->getId(),
+            'routing_key' => 'metadata.' . $datasetSubmission->getMetadataFileTransferType()
+        );
     }
 }
