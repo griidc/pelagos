@@ -88,6 +88,12 @@ metadata:
     name_prefix: metadata_
     prefix: metadata
 
+dataset_submission:
+    type: rest
+    resource: Pelagos\Bundle\AppBundle\Controller\Api\DatasetSubmissionController
+    name_prefix: dataset_submission_
+    prefix: dataset_submission
+
 upload:
     type: rest
     resource: Pelagos\Bundle\AppBundle\Controller\Api\UploadController

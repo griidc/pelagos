@@ -62,9 +62,11 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
         $this->mockDataset = \Mockery::mock(
             Dataset::class,
             array(
+                'setDatasetSubmission' => null,
                 'setDatasetSubmissionStatus' => null,
                 'setMetadataStatus' => null,
                 'setAvailabilityStatus' => null,
+                'updateAvailabilityStatus' => null,
                 'updateDoi' => null,
                 'getUdi' => 'T1.x123.000:0001',
             )
@@ -101,6 +103,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      */
     public function testStatus()
     {
+        $this->datasetSubmission->setDataset($this->mockDataset);
         $this->assertEquals(
             DatasetSubmission::STATUS_INCOMPLETE,
             $this->datasetSubmission->getStatus()

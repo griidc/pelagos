@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 
 use Pelagos\Entity\Account;
@@ -52,15 +54,9 @@ class DatasetSubmissionController extends UIController
     public function defaultAction(Request $request)
     {
         $udi = $request->query->get('regid');
-
         $dataset = null;
         $datasetSubmission = null;
-        $datasetId = null;
-
-        $found = false;
-
-        $buttonLabel = 'Register';
-
+        $datasetSubmissionId = null;
         $dif = null;
 
         if ($udi != null) {
@@ -70,15 +66,17 @@ class DatasetSubmissionController extends UIController
             if (count($datasets) == 1) {
                 $dataset = $datasets[0];
 
-                $datasetId = $dataset->getId();
-
                 $dif = $dataset->getDif();
 
-                $datasetSubmission = $dataset->getDatasetSubmission();
+                $datasetSubmission = $dataset->getDatasetSubmissionHistory()->first();
+
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
+                    // This is the first submission, so create a new one.
                     $datasetSubmission = new DatasetSubmission;
 
-                    $dataset->setDatasetSubmission($datasetSubmission);
+                    $datasetSubmission->setDataset($dataset);
+
+                    $datasetSubmission->setSequence(1);
 
                     $datasetSubmission->setTitle($dif->getTitle());
                     $datasetSubmission->setAbstract($dif->getAbstract());
@@ -92,16 +90,29 @@ class DatasetSubmissionController extends UIController
                     $metadataContact = new PersonDatasetSubmissionMetadataContact();
                     $metadataContact->setDatasetSubmission($datasetSubmission);
                     $metadataContact->setRole('pointOfContact');
+                    $metadataContact->setPerson($dif->getPrimaryPointOfContact());
                     $datasetSubmission->addMetadataContact($metadataContact);
-                } else {
-                    $buttonLabel = 'Update';
-                }
-                $found = true;
-            }
-        }
 
-        if ($dif instanceof DIF and $dif->getStatus() !== DIF::STATUS_APPROVED) {
-            $datasetSubmission = null;
+                    $datasetSubmission->setSuppParams($dif->getVariablesObserved());
+                    $datasetSubmission->setSpatialExtent($dif->getSpatialExtentGeometry());
+
+                    try {
+                        $this->entityHandler->create($datasetSubmission);
+                    } catch (AccessDeniedException $e) {
+                        // This is handled in the template.
+                    }
+                } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+                    // The latest submission is complete.
+                    $sequence = $datasetSubmission->getSequence();
+                    $datasetSubmission = clone $datasetSubmission;
+                    $datasetSubmission->setSequence(++$sequence);
+                    try {
+                        $this->entityHandler->create($datasetSubmission);
+                    } catch (AccessDeniedException $e) {
+                        // This is handled in the template.
+                    }
+                }
+            }
         }
 
         if ($datasetSubmission instanceof DatasetSubmission) {
@@ -112,6 +123,8 @@ class DatasetSubmissionController extends UIController
             if ($datasetSubmission->getMetadataContacts()->isEmpty()) {
                 $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
             }
+
+            $datasetSubmissionId = $datasetSubmission->getId();
         }
 
         $form = $this->get('form.factory')->createNamed(
@@ -119,8 +132,11 @@ class DatasetSubmissionController extends UIController
             DatasetSubmissionType::class,
             $datasetSubmission,
             array(
-                'action' => $this->generateUrl('pelagos_app_ui_datasetsubmission_post', array('id' => $datasetId)),
+                'action' => $this->generateUrl('pelagos_app_ui_datasetsubmission_post', array('id' => $datasetSubmissionId)),
                 'method' => 'POST',
+                'attr' => array(
+                    'datasetSubmission' => $datasetSubmissionId,
+                ),
             )
         );
 
@@ -158,14 +174,8 @@ class DatasetSubmissionController extends UIController
             }
         }
 
-        if ($this->getUser() instanceof Account) {
-            $loggedInPerson = $this->getUser()->getPerson();
-        } else {
-            $loggedInPerson = null;
-        }
-
         $form->add('submit', SubmitType::class, array(
-            'label' => $buttonLabel,
+            'label' => 'Submit',
             'attr'  => array('class' => 'submitButton'),
         ));
 
@@ -174,7 +184,7 @@ class DatasetSubmissionController extends UIController
             array(
                 'form' => $form->createView(),
                 'udi'  => $udi,
-                'dataset' => $dataset,
+                'datasetSubmission' => $datasetSubmission,
             )
         );
     }
@@ -183,7 +193,7 @@ class DatasetSubmissionController extends UIController
      * The post action for Dataset Submission.
      *
      * @param Request     $request The Symfony request object.
-     * @param string|null $id      The id of the Dataset to load.
+     * @param string|null $id      The id of the Dataset Submission to load.
      *
      * @Route("/{id}")
      *
@@ -193,13 +203,9 @@ class DatasetSubmissionController extends UIController
      */
     public function postAction(Request $request, $id = null)
     {
-        $dataset = $this->entityHandler->get(Dataset::class, $id);
+        $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
 
-        $datasetSubmission = $dataset->getDatasetSubmission();
         if ($datasetSubmission instanceof DatasetSubmission) {
-            $sequence = $datasetSubmission->getSequence();
-            $datasetSubmission = clone $datasetSubmission;
-
             foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                 $datasetSubmission->removeDatasetContact($datasetContact);
             }
@@ -207,11 +213,6 @@ class DatasetSubmissionController extends UIController
             foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
                 $datasetSubmission->removeMetadataContact($metadataContact);
             }
-
-            $datasetSubmission->setId(null);
-            $datasetSubmission->setCreationTimeStamp(null);
-        } else {
-            $datasetSubmission = new DatasetSubmission;
         }
 
         $form = $this->get('form.factory')->createNamed(
@@ -222,20 +223,14 @@ class DatasetSubmissionController extends UIController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
-            $dataset->setDatasetSubmission($datasetSubmission);
-            $sequence = $datasetSubmission->getSequence();
+        if ($form->isSubmitted() and $form->isValid()) {
+            $datasetSubmission->submit();
 
-
-
-            if ($sequence == null) {
-                $sequence = 0;
-                $eventName = 'submitted';
-            } else {
+            if ($datasetSubmission->getSequence() > 1) {
                 $eventName = 'resubmitted';
+            } else {
+                $eventName = 'submitted';
             }
-
-            $datasetSubmission->setSequence(++$sequence);
 
             if ($this->getUser()->isPosix()) {
                 $incomingDirectory = $this->getUser()->getHomeDirectory() . '/incoming';
@@ -251,8 +246,7 @@ class DatasetSubmissionController extends UIController
 
             $this->processMetadataFileTransferDetails($form, $datasetSubmission, $incomingDirectory);
 
-            $this->entityHandler->create($datasetSubmission);
-            $this->entityHandler->update($dataset);
+            $this->entityHandler->update($datasetSubmission);
 
             $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
                 $datasetSubmission,
@@ -271,6 +265,8 @@ class DatasetSubmissionController extends UIController
                 array('DatasetSubmission' => $datasetSubmission)
             );
         }
+        // This should not normally happen.
+        return new Response((string) $form->getErrors(true, false));
     }
 
     /**
