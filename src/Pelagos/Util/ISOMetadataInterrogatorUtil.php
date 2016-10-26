@@ -3,6 +3,9 @@
 namespace Pelagos\Util;
 
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\Person;
+use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 
 /**
  * A utility class for extracting information from ISO metadata.
@@ -18,11 +21,14 @@ class ISOMetadataInterrogatorUtil
      *
      * @param \SimpleXmlElement $xmlMetadata       The XML to be read from.
      * @param DatasetSubmission $datasetSubmission The datasetSubmission object to be modified.
+     * @param EntityHandler     $entityHandler     A Pelagos Entity Handler instance.
      *
      * @return void
      */
-    public static function populateDatasetSubmissionWithXMLValues(\SimpleXmlElement $xmlMetadata, DatasetSubmission &$datasetSubmission)
+    public static function populateDatasetSubmissionWithXMLValues(\SimpleXmlElement $xmlMetadata, DatasetSubmission &$datasetSubmission, EntityHandler $entityHandler)
     {
+        self::setIfHas($datasetSubmission, 'addDatasetContact', self::extractDatasetContact($xmlMetadata), $entityHandler);
+        self::setIfHas($datasetSubmission, 'addMetadataContact', self::extractMetadataContact($xmlMetadata), $entityHandler);
         self::setIfHas($datasetSubmission, 'setTitle', self::extractTitle($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setShortTitle', self::extractShortTitle($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setAbstract', self::extractAbstract($xmlMetadata));
@@ -51,8 +57,8 @@ class ISOMetadataInterrogatorUtil
      * Sets value in DatasetSubmission (by reference) if not null in XML.
      *
      * @param DatasetSubmission $ds     A DatasetSubmission object.
-     * @param string            $setter The setter of DatasetSubmission for this attribute.
-     * @param mixed             $value  The value of the attribute in the XML.
+     * @param string            $setter DatasetSubmission's setter/adder for the attribute.
+     * @param mixed             $value  The value of the attribute derived from the XML.
      *
      * @return void
      */
@@ -60,6 +66,119 @@ class ISOMetadataInterrogatorUtil
     {
         if (null !== $value) {
             $ds->$setter($value);
+        }
+    }
+
+    /**
+     * Determines the dataset contact from XML metadata.
+     *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param EntityHandler     $eh  A Pelagos Entity Handler instance.
+     *
+     * @return PersonDatasetSubmissionDatasetContact|null Returns the dataset contact, or null.
+     */
+    protected static function extractDatasetContact(\SimpleXmlElement $xml, EntityHandler $eh)
+    {
+        $query = '/gmi:MI_Metadata' .
+                 '/gmd:distributionInfo' .
+                 '/gmd:MD_Distribution' .
+                 '/gmd:distributor' .
+                 '/gmd:MD_Distributor' .
+                 '/gmd:distributorContact' .
+                 '/gmd:CI_ResponsibleParty[1]' .
+                 '/gmd:contactInfo' .
+                 '/gmd:CI_Contact' .
+                 '/gmd:address' .
+                 '/gmd:CI_Address' .
+                 '/gmd:electronicMailAddress' .
+                 '/gco:CharacterString' .
+                 '/text()';
+
+        $email = self::querySingle($xml, $query);
+
+        $person = $eh->getBy(
+            Person::class,
+            array('emailAddress' => $email),
+            array()
+        );
+
+        $query = '/gmi:MI_Metadata' .
+                 '/gmd:distributionInfo' .
+                 '/gmd:MD_Distribution' .
+                 '/gmd:distributor' .
+                 '/gmd:MD_Distributor' .
+                 '/gmd:distributorContact' .
+                 '/gmd:CI_ResponsibleParty[1]' .
+                 '/gmd:role' .
+                 '/gmd:CI_RoleCode' .
+                 '/text()';
+
+        $role = self::querySingle($xml, $query);
+
+        if ($person instanceof Person) {
+            $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact;
+            $personDatasetSubmissionDatasetContact->setPerson($person);
+            // Only set role if it is a valid role, otherwise leave unset.
+            if (null !== $role and array_key_exists($role, PersonDatasetSubmissionDatasetContact::ROLES)) {
+                $personDatasetSubmissionDatasetContact->setRole($role);
+            }
+            $personDatasetSubmissionDatasetContact->setDatasetSubmission($ds);
+            return $personDatasetSubmissionDatasetContact;
+        } else {
+            return null;
+        }
+
+    }
+
+    /**
+     * Determines the metadata contact from XML metadata.
+     *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param EntityHandler     $eh  A Pelagos Entity Handler instance.
+     *
+     * @return PersonDatasetSubmissionMetadataContact|null Returns the metadata contact, or null.
+     */
+    protected static function extractMetadataContact(\SimpleXmlElement $xml, EntityHandler $eh)
+    {
+        $query = '/gmi:MI_Metadata' .
+                 '/gmd:contact' .
+                 '/gmd:CI_ResponsibleParty[1]' .
+                 '/gmd:contactInfo' .
+                 '/gmd:CI_Contact' .
+                 '/gmd:address' .
+                 '/gmd:CI_Address' .
+                 '/gmd:electronicMailAddress' .
+                 '/gco:CharacterString' .
+                 '/text()';
+
+        $email = self::querySingle($xml, $query);
+
+        $person = $eh->getBy(
+            Person::class,
+            array('emailAddress' => $email),
+            array()
+        );
+
+        $query = '/gmi:MI_Metadata' .
+                 '/gmd:contact' .
+                 '/gmd:CI_ResponsibleParty[1]' .
+                 '/gmd:role' .
+                 '/gmd:CI_RoleCode' .
+                 '/text()';
+
+        $role = self::querySingle($xml, $query);
+
+        if ($person instanceof Person) {
+            $personDatasetSubmissionMetadataContact = new PersonDatasetSubmissionMetadataContact;
+            $personDatasetSubmissionMetadataContact->setPerson($person);
+            // Only set role if it is a valid role, otherwise leave unset.
+            if (null !== $role and array_key_exists($role, PersonDatasetSubmissionMetadataContact::ROLES)) {
+                $personDatasetSubmissionMetadataContact->setRole($role);
+            }
+            $personDatasetSubmissionMetadataContact->setDatasetSubmission($ds);
+            return $personDatasetSubmissionMetadataContact;
+        } else {
+            return null;
         }
     }
 
