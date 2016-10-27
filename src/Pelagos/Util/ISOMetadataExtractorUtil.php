@@ -46,7 +46,7 @@ class ISOMetadataExtractorUtil
         self::setIfHas($datasetSubmission, 'setThemeKeywords', self::extractThemeKeywords($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setPlaceKeywords', self::extractPlaceKeywords($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setTopicKeywords', self::extractTopicKeywords($xmlMetadata));
-        self::setIfHas($datasetSubmission, 'setSpatialExtent', self::extractSpacialExtent($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setSpatialExtent', self::extractSpatialExtent($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setTemporalExtentDesc', self::extractTemporalExtentDesc($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setTemporalExtentBeginPosition', self::extractTemporalExtentBeginPosition($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setTemporalExtentEndPosition', self::extractTemporalExtentEndPosition($xmlMetadata));
@@ -293,11 +293,10 @@ class ISOMetadataExtractorUtil
         if (null !== $supplementalData) {
             $supplementalList = preg_split('/\|/', $supplementalData);
             $parameters = $supplementalList[0];
-            if (null !== $parameters) {
-                return $parameters;
-            } else {
+            if (empty($parameters)) {
                 return null;
             }
+            return $parameters;
         }
     }
 
@@ -321,11 +320,10 @@ class ISOMetadataExtractorUtil
         if (null !== $supplementalData) {
             $supplementalList = preg_split('/\|/', $supplementalData);
             $methods = $supplementalList[1];
-            if (null !== $methods) {
-                return $methods;
-            } else {
+            if (empty($methods)) {
                 return null;
             }
+            return $methods;
         }
     }
 
@@ -349,11 +347,10 @@ class ISOMetadataExtractorUtil
         if (null !== $supplementalData) {
             $supplementalList = preg_split('/\|/', $supplementalData);
             $instruments = $supplementalList[2];
-            if (null !== $instruments) {
-                return $instruments;
-            } else {
+            if (empty($instruments)) {
                 return null;
             }
+            return $instruments;
         }
     }
 
@@ -377,11 +374,10 @@ class ISOMetadataExtractorUtil
         if (null !== $supplementalData) {
             $supplementalList = preg_split('/\|/', $supplementalData);
             $sampScalesAndRates = $supplementalList[3];
-            if (null !== $sampScalesAndRates) {
-                return $sampScalesAndRates;
-            } else {
+            if (empty($sampScalesAndRates)) {
                 return null;
             }
+            return $sampScalesAndRates;
         }
     }
 
@@ -405,11 +401,10 @@ class ISOMetadataExtractorUtil
         if (null !== $supplementalData) {
             $supplementalList = preg_split('/\|/', $supplementalData);
             $errorAnalysis = $supplementalList[4];
-            if (null !== $errorAnalysis) {
-                return $errorAnalysis;
-            } else {
+            if (empty($errorAnalysis)) {
                 return null;
             }
+            return $errorAnalysis;
         }
     }
 
@@ -433,11 +428,10 @@ class ISOMetadataExtractorUtil
         if (null !== $supplementalData) {
             $supplementalList = preg_split('/\|/', $supplementalData);
             $provenance = $supplementalList[5];
-            if (null !== $provenance) {
-                return $provenance;
-            } else {
+            if (empty($provenance)) {
                 return null;
             }
+            return $provenance;
         }
     }
 
@@ -563,7 +557,7 @@ class ISOMetadataExtractorUtil
      *
      * @return string|null Returns the GML as a string, or null.
      */
-    protected static function extractSpacialExtent(\SimpleXmlElement $xml)
+    protected static function extractSpatialExtent(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
