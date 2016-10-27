@@ -774,9 +774,9 @@ class ISOMetadataExtractorUtil
         if (null === $list) {
             return null;
         } else {
-            $items = preg_split('/\|/', $list);
-            // preg_split returns false on fail, return null in this case.
-            if (false === $items) {
+            $items = explode('|', $list);
+
+            if (!array_key_exists($offset, $items)) {
                 return null;
             }
 
