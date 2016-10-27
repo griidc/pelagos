@@ -218,7 +218,7 @@
                 </gmd:EX_Extent>
             </gmd:extent>
             <gmd:supplementalInformation>
-                <gco:CharacterString />
+                <gco:CharacterString>|||||</gco:CharacterString>
             </gmd:supplementalInformation>
         </gmd:MD_DataIdentification>
     </gmd:identificationInfo>
