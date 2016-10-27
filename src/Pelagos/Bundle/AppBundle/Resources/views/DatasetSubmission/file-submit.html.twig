@@ -15,9 +15,9 @@
 
         <div style="background: transparent;" id="filetabs">
             <ul>
-                <li value="upload"><a href="#tabs-1">Direct Upload</a></li>
-                <li value="SFTP"><a href="#tabs-2">Upload via SFTP/GridFTP</a></li>
-                <li value="HTTP"><a href="#tabs-3">Request Pull from HTTP/FTP Server</a></li>
+                <li datasetFileTransferType="upload"><a href="#tabs-1">Direct Upload</a></li>
+                <li datasetFileTransferType="SFTP"><a href="#tabs-2">Upload via SFTP/GridFTP</a></li>
+                <li datasetFileTransferType="HTTP"><a href="#tabs-3">Request Pull from HTTP/FTP Server</a></li>
             </ul>
 
             <div id="tabs-1"> <!-- Direct Upload -->
@@ -66,7 +66,7 @@
                                     {% endif %}
                                 </div>
                                 <input type="button" value="Browse..." class="fileBrowserButton" data-target="#datasetFilePath" data-type="data" {{ sftpuser ? '' : 'disabled' }}>
-                                {% if form.datasetFilePath.vars.value is not empty %}
+                                {% if showForceImport %}
                                     <div class="file_force">
                                         {{ form_widget(form.datasetFileForceImport) }} {{ form_label(form.datasetFileForceImport) }}
                                     </div>
@@ -93,7 +93,7 @@
                                 <div class="fwtextboxcont">
                                     {{ form_row(form.datasetFileUrl) }}
                                 </div>
-                                {% if form.datasetFileUrl.vars.value is not empty %}
+                                {% if showForceDownload %}
                                     <div class="file_force">
                                         {{ form_widget(form.datasetFileForceDownload) }} {{ form_label(form.datasetFileForceDownload) }}
                                     </div>

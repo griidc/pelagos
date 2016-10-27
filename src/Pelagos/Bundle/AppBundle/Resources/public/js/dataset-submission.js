@@ -37,6 +37,18 @@ $(function() {
 
     $("#filetabs").tabs();
 
+    switch ($("#datasetFileTransferType").val()) {
+        case "upload":
+            $("#filetabs").tabs("option", "active", 0);
+            break;
+        case "SFTP":
+            $("#filetabs").tabs("option", "active", 1);
+            break;
+        case "HTTP":
+            $("#filetabs").tabs("option", "active", 2);
+            break;
+    }
+
     $("button").button();
 
     $("#btn-previous").click(function() {
@@ -113,11 +125,11 @@ $(function() {
         $("#regForm select[keyword=target] option").prop("selected", true);
         var imgWarning = $("#imgwarning").attr("src");
         var imgCheck = $("#imgcheck").attr("src");
-        var valid = $("#regForm").valid();
+        var valid = $(".ds-metadata :input").valid();
 
         if (false == valid) {
             $(".tabimg").show();
-            $("#dtabs .ui-tabs-panel").each(function() {
+            $("#dtabs .ds-metadata").each(function() {
                 var tabLabel = $(this).attr("aria-labelledby");
                 if ($(this).has(":input.error").length ? true : false) {
                     $("#" + tabLabel).next("img").prop("src", imgWarning);
@@ -126,7 +138,7 @@ $(function() {
                 };
 
                 $(this).find(":input").on("change blur keyup", function() {
-                    $("#dtabs .ui-tabs-panel").each(function() {
+                    $("#dtabs .ds-metadata").each(function() {
                         var label = $(this).attr("aria-labelledby");
                         $(this).find(":input").each(function() {
                             $(this).valid()
@@ -148,11 +160,94 @@ $(function() {
     select2ContactPerson();
     buildKeywordLists();
 
-    $(".fileBrowserButton").fileBrowser(
-        {
-            url: Routing.generate("pelagos_api_account_get_incoming_directory", { id: "self" })
+    // Direct Upload
+    $("#fine-uploader-manual-trigger").fineUploader({
+        template: "qq-template-manual-trigger",
+        multiple: false,
+        request: {
+            endpoint: Routing.generate("pelagos_api_upload_post")
+        },
+        session: {
+            endpoint: Routing.generate("pelagos_api_dataset_submission_get_uploaded_files", { id: $("form[datasetsubmission]").attr("datasetsubmission") })
+        },
+        chunking: {
+            enabled: true,
+            concurrent: {
+                enabled: true
+            },
+            success: {
+                endpoint: Routing.generate("pelagos_api_upload_post") + "?done"
+            }
+        },
+        resume: {
+            enabled: true
+        },
+        retry: {
+            enableAuto: true
+        },
+        deleteFile: {
+            enabled: true,
+            forceConfirm: true,
+            endpoint: Routing.generate("pelagos_api_upload_delete")
+        },
+        callbacks: {
+            onSubmit: function (id, name) {
+                setDatasetFileUri("");
+            },
+            onComplete: function (id, name, responseJSON, xhr) {
+                if (responseJSON.success) {
+                    setDatasetFileUri(responseJSON.path);
+                    saveDatasetSubmission();
+                }
+            },
+            onDelete: function (id) {
+                setDatasetFileUri("");
+                saveDatasetSubmission();
+            }
         }
-    );
+    });
+
+    // File browser for SFTP/GridFTP
+    $(".fileBrowserButton").fileBrowser({
+        url: Routing.generate("pelagos_api_account_get_incoming_directory", { id: "self" })
+    });
+
+    // SFTP/GridFTP and HTTP/FTP
+    $("#datasetFilePath, #datasetFileUrl").on("keyup change", function() {
+        setDatasetFileUri($(this).val());
+    });
+    $("#datasetFilePath, #datasetFileUrl").change(function() {
+        saveDatasetSubmission();
+    });
+
+    // set the datasetFileUri and datasetFileTransferType
+    function setDatasetFileUri(datasetFileUri) {
+        // get the datasetFileTransferType from the active tab
+        datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
+        // set the datasetFileTransferType
+        $("#datasetFileTransferType").val(datasetFileTransferType);
+        if (datasetFileTransferType != "upload") {
+            // clear uploaded files list (Direct Upload tab)
+            $(".qq-upload-list").html("")
+        }
+        if (datasetFileTransferType != "SFTP") {
+            // clear datasetFilePath (Upload via SFTP/GridFTP tab)
+            $("#datasetFilePath").val("");
+        }
+        if (datasetFileTransferType != "HTTP") {
+            // clear datasetFileUrl (Request Pull from HTTP/FTP Server tab)
+            $("#datasetFileUrl").val("");
+            // if datasetFileUri is set
+            if (datasetFileUri != "") {
+                // prepend file uri prefix
+                datasetFileUri = "file://" + datasetFileUri;
+            }
+        }
+        // remove datasetFileUri error label
+        $('label.error[for="datasetFileUri"]').remove();
+        // set datasetFileUri
+        $("#datasetFileUri").val(datasetFileUri);
+    }
 
     function select2ContactPerson() {
         $(".contactperson").select2({
