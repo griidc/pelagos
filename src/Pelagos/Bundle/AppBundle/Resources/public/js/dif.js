@@ -84,6 +84,13 @@ $(document).ready(function()
         }
     });
 
+    $("#btnDS").button({
+        disabled : true
+    }).click(function() {
+        var submissionUrl = Routing.generate("pelagos_app_ui_datasetsubmission_default") + "?regid=" + $("[name=udi]").val();
+        window.location.href = submissionUrl;
+    });
+
     $("#btnSubmit").button().click(function() {
         $("#btn").val($(this).val());
         //$("#status").val("Open");
@@ -193,6 +200,7 @@ $(document).ready(function()
     });
 
     $("#status").change(function(){
+        $("#btnDS").button("option", "disabled", true);
         if ($('[name="udi"]').val() != "")
         {
             if ($(this).val() == "0")
@@ -206,6 +214,7 @@ $(document).ready(function()
             else if ($(this).val() == "2")
             {
                 $("#statustext").html('<fieldset><img src="' + imgTick +'">&nbsp;DIF approved (locked)</fieldset>');
+                $("#btnDS").button("option", "disabled", false);
             }
             $("#researchGroup").prop("disabled", true);
             formHash = $("#difForm").serialize();
