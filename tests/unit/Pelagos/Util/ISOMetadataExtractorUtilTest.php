@@ -82,8 +82,16 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
             )
         );
 
+        $this->mockEntityHandlerNoMatch = \Mockery::mock(
+            'Pelagos\Bundle\AppBundle\Handler\EntityHandler',
+            array(
+                'getBy' => array()
+            )
+        );
+
         $this->util = new ISOMetadataExtractorUtil;
         $this->xml = simplexml_load_file(__DIR__ . '/../../../data/test-metadata.xml');
+        $this->xmlEmptyVals = simplexml_load_file(__DIR__ . '/../../../data/test-metadata-empty-vals.xml');
         // I really should be mocking this, but I really need it to remember what it set, so I'm not.
         $this->datasetSubmission = new DatasetSubmission;
     }
@@ -121,5 +129,40 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('http://test.url', $this->datasetSubmission->getDatasetFileUri());
         $this->assertEquals($this->mockPerson, $this->datasetSubmission->getDatasetContacts()[0]->getPerson());
         $this->assertEquals($this->mockPerson, $this->datasetSubmission->getMetadataContacts()[0]->getPerson());
+    }
+
+    /**
+     * Tests the populateDatasetSubmissionWithXMLValues with xml that contains empty values.
+     *
+     * @return void
+     */
+    public function testPopulateDatasetSubmissionWithXMLValuesEmptyVals()
+    {
+        $this->util->populateDatasetSubmissionWithXMLValues($this->xmlEmptyVals, $this->datasetSubmission, $this->mockEntityHandlerNoMatch);
+
+        $this->assertNull($this->datasetSubmission->getTitle());
+        $this->assertNull($this->datasetSubmission->getShortTitle());
+        $this->assertNull($this->datasetSubmission->getAbstract());
+        $this->assertNull($this->datasetSubmission->getPurpose());
+        $this->assertNull($this->datasetSubmission->getSuppParams());
+        $this->assertNull($this->datasetSubmission->getSuppMethods());
+        $this->assertNull($this->datasetSubmission->getSuppInstruments());
+        $this->assertNull($this->datasetSubmission->getSuppSampScalesRates());
+        $this->assertNull($this->datasetSubmission->getSuppErrorAnalysis());
+        $this->assertNull($this->datasetSubmission->getSuppProvenance());
+        $this->assertNull($this->datasetSubmission->getReferenceDate());
+        $this->assertNull($this->datasetSubmission->getReferenceDateType());
+        $this->assertEmpty($this->datasetSubmission->getThemeKeywords());
+        $this->assertEmpty($this->datasetSubmission->getPlaceKeywords());
+        $this->assertEmpty($this->datasetSubmission->getTopicKeywords());
+        $this->assertNull($this->datasetSubmission->getSpatialExtent());
+        $this->assertNull($this->datasetSubmission->getTemporalExtentDesc());
+        $this->assertNull($this->datasetSubmission->getTemporalExtentBeginPosition());
+        $this->assertNull($this->datasetSubmission->getTemporalExtentEndPosition());
+        $this->assertNull($this->datasetSubmission->getDistributionFormatName());
+        $this->assertNull($this->datasetSubmission->getFileDecompressionTechnique());
+        $this->assertNull($this->datasetSubmission->getDatasetFileUri());
+        $this->assertEmpty($this->datasetSubmission->getDatasetContacts());
+        $this->assertEmpty($this->datasetSubmission->getMetadataContacts());
     }
 }
