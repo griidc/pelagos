@@ -62,6 +62,13 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
     protected $mockPerson;
 
     /**
+     * The directory that contains the test data.
+     *
+     * @var string
+     */
+    protected $testDataDir = __DIR__ . '/../../../data/';
+
+    /**
      * Unit test setup.
      *
      * @return void
@@ -90,8 +97,6 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->util = new ISOMetadataExtractorUtil;
-        $this->xml = simplexml_load_file(__DIR__ . '/../../../data/test-metadata.xml');
-        $this->xmlEmptyVals = simplexml_load_file(__DIR__ . '/../../../data/test-metadata-empty-vals.xml');
         // I really should be mocking this, but I really need it to remember what it set, so I'm not.
         $this->datasetSubmission = new DatasetSubmission;
     }
@@ -103,7 +108,11 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
      */
     public function testPopulateDatasetSubmissionWithXMLValues()
     {
-        $this->util->populateDatasetSubmissionWithXMLValues($this->xml, $this->datasetSubmission, $this->mockEntityHandler);
+        $this->util->populateDatasetSubmissionWithXMLValues(
+            simplexml_load_file($this->testDataDir . 'test-metadata.xml'),
+            $this->datasetSubmission,
+            $this->mockEntityHandler
+        );
 
         $this->assertEquals('Test title', $this->datasetSubmission->getTitle());
         $this->assertEquals('tst ttl', $this->datasetSubmission->getShortTitle());
@@ -138,8 +147,53 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
      */
     public function testPopulateDatasetSubmissionWithXMLValuesEmptyVals()
     {
-        $this->util->populateDatasetSubmissionWithXMLValues($this->xmlEmptyVals, $this->datasetSubmission, $this->mockEntityHandlerNoMatch);
+        $this->util->populateDatasetSubmissionWithXMLValues(
+            simplexml_load_file($this->testDataDir . 'test-metadata-empty-vals.xml'),
+            $this->datasetSubmission,
+            $this->mockEntityHandlerNoMatch
+        );
 
+        $this->assertAllNullOrEmpty();
+    }
+
+    /**
+     * Tests the populateDatasetSubmissionWithXMLValues with empty ISO xml.
+     *
+     * @return void
+     */
+    public function testPopulateDatasetSubmissionWithEmptyISOXML()
+    {
+        $this->util->populateDatasetSubmissionWithXMLValues(
+            simplexml_load_file($this->testDataDir . 'test-metadata-empty-iso.xml'),
+            $this->datasetSubmission,
+            $this->mockEntityHandlerNoMatch
+        );
+
+        $this->assertAllNullOrEmpty();
+    }
+
+    /**
+     * Tests the populateDatasetSubmissionWithXMLValues with xml that is well-forme, but non-ISO.
+     *
+     * @return void
+     */
+    public function testPopulateDatasetSubmissionWithXMLValuesWellFormedNonIsoXML()
+    {
+        $this->util->populateDatasetSubmissionWithXMLValues(
+            simplexml_load_file($this->testDataDir . 'test-metadata-well-formed-non-iso.xml'),
+            $this->datasetSubmission,
+            $this->mockEntityHandlerNoMatch
+        );
+        $this->assertAllNullOrEmpty();
+    }
+
+    /**
+     * Assert that all metadata properties of $this->datasetSubmission are null or empty.
+     *
+     * @return void
+     */
+    protected function assertAllNullOrEmpty()
+    {
         $this->assertNull($this->datasetSubmission->getTitle());
         $this->assertNull($this->datasetSubmission->getShortTitle());
         $this->assertNull($this->datasetSubmission->getAbstract());
