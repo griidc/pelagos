@@ -293,15 +293,7 @@ class ISOMetadataExtractorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        $supplementalData = self::querySingle($xml, $query);
-        if (null !== $supplementalData) {
-            $supplementalList = preg_split('/\|/', $supplementalData);
-            $parameters = $supplementalList[0];
-            if (empty($parameters)) {
-                return null;
-            }
-            return $parameters;
-        }
+        return self::getDelimitedItem(self::querySingle($xml, $query), 0);
     }
 
     /**
@@ -320,15 +312,7 @@ class ISOMetadataExtractorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        $supplementalData = self::querySingle($xml, $query);
-        if (null !== $supplementalData) {
-            $supplementalList = preg_split('/\|/', $supplementalData);
-            $methods = $supplementalList[1];
-            if (empty($methods)) {
-                return null;
-            }
-            return $methods;
-        }
+        return self::getDelimitedItem(self::querySingle($xml, $query), 1);
     }
 
     /**
@@ -347,15 +331,7 @@ class ISOMetadataExtractorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        $supplementalData = self::querySingle($xml, $query);
-        if (null !== $supplementalData) {
-            $supplementalList = preg_split('/\|/', $supplementalData);
-            $instruments = $supplementalList[2];
-            if (empty($instruments)) {
-                return null;
-            }
-            return $instruments;
-        }
+        return self::getDelimitedItem(self::querySingle($xml, $query), 2);
     }
 
     /**
@@ -374,15 +350,7 @@ class ISOMetadataExtractorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        $supplementalData = self::querySingle($xml, $query);
-        if (null !== $supplementalData) {
-            $supplementalList = preg_split('/\|/', $supplementalData);
-            $sampScalesAndRates = $supplementalList[3];
-            if (empty($sampScalesAndRates)) {
-                return null;
-            }
-            return $sampScalesAndRates;
-        }
+        return self::getDelimitedItem(self::querySingle($xml, $query), 3);
     }
 
     /**
@@ -401,15 +369,7 @@ class ISOMetadataExtractorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        $supplementalData = self::querySingle($xml, $query);
-        if (null !== $supplementalData) {
-            $supplementalList = preg_split('/\|/', $supplementalData);
-            $errorAnalysis = $supplementalList[4];
-            if (empty($errorAnalysis)) {
-                return null;
-            }
-            return $errorAnalysis;
-        }
+        return self::getDelimitedItem(self::querySingle($xml, $query), 4);
     }
 
     /**
@@ -428,15 +388,7 @@ class ISOMetadataExtractorUtil
                  '/gco:CharacterString' .
                  '/text()';
 
-        $supplementalData = self::querySingle($xml, $query);
-        if (null !== $supplementalData) {
-            $supplementalList = preg_split('/\|/', $supplementalData);
-            $provenance = $supplementalList[5];
-            if (empty($provenance)) {
-                return null;
-            }
-            return $provenance;
-        }
+        return self::getDelimitedItem(self::querySingle($xml, $query), 5);
     }
 
     /**
@@ -806,5 +758,35 @@ class ISOMetadataExtractorUtil
             $arrayOfStrings[$key] = (string) $value;
         }
         return $arrayOfStrings;
+    }
+
+    /**
+     * Picks an item from a bar delimited list.
+     *
+     * @param string  $list   A bar delimited list of strings.
+     * @param integer $offset The array offset of the desired position in the list.
+     *
+     * @return string|null The item at the given offset, or null.
+     */
+    private static function getDelimitedItem($list, $offset)
+    {
+        // If null input given for list, return null.
+        if (null === $list) {
+            return null;
+        } else {
+            $items = preg_split('/\|/', $list);
+            // preg_split returns false on fail, return null in this case.
+            if (false === $items) {
+                return null;
+            }
+
+            $item = $items[$offset];
+            // If blank at given position, return null, otherwise return the item.
+            if (empty($item)) {
+                return $null;
+            } else {
+                return $item;
+            }
+        }
     }
 }
