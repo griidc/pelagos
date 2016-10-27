@@ -157,6 +157,22 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests the populateDatasetSubmissionWithXMLValues with xml that has bad delimeters for supplemental info.
+     *
+     * @return void
+     */
+    public function testPopulateDatasetSubmissionWithXMLValuesEmptyValsBadDelimiters()
+    {
+        $this->util->populateDatasetSubmissionWithXMLValues(
+            simplexml_load_file($this->testDataDir . 'test-metadata-bad-delimiters.xml'),
+            $this->datasetSubmission,
+            $this->mockEntityHandlerNoMatch
+        );
+
+        $this->assertAllNullOrEmpty();
+    }
+
+    /**
      * Tests the populateDatasetSubmissionWithXMLValues with empty ISO xml.
      *
      * @return void
