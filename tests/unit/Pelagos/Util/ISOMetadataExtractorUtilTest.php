@@ -169,7 +169,15 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
             $this->mockEntityHandlerNoMatch
         );
 
-        $this->assertAllNullOrEmpty();
+        $this->assertEquals(
+            'test parameter,test method,test instrument,test scale,test error,test provenance',
+            $this->datasetSubmission->getSuppParams()
+        );
+        $this->assertNull($this->datasetSubmission->getSuppMethods());
+        $this->assertNull($this->datasetSubmission->getSuppInstruments());
+        $this->assertNull($this->datasetSubmission->getSuppSampScalesRates());
+        $this->assertNull($this->datasetSubmission->getSuppErrorAnalysis());
+        $this->assertNull($this->datasetSubmission->getSuppProvenance());
     }
 
     /**
