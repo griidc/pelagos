@@ -67,7 +67,11 @@ class ISOMetadataExtractorUtil
     protected static function setIfHas(DatasetSubmission &$ds, $setter, $value)
     {
         if (null !== $value) {
-            $ds->$setter($value);
+            try {
+                $ds->$setter($value);
+            } catch (\InvalidArgumentException $e) {
+                // couldn't set.
+            }
         }
     }
 
