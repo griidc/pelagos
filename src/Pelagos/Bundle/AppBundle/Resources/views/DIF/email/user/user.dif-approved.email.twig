@@ -5,7 +5,7 @@
     <br />
     Your Dataset Information Form (DIF) <a href="{{ url('pelagos_app_ui_dif_default') }}?id={{ dif.dataset.udi }}">{{ dif.dataset.udi }}</a> has been approved by the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC).
     <br>
-    You will now be able to register the associated dataset at https://data.gulfresearchinitiative.org/dataset-registration.
+    You will now be able to register the associated dataset at <a href="{{ url('pelagos_app_ui_datasetsubmission_default') }}?regid={{ dif.dataset.udi }}">https://data.gulfresearchinitiative.org/dataset-registration</a>
     <br>
     If you have any questions regarding your DIF please contact griidc@gomri.org.<br>
     <br>
@@ -18,7 +18,7 @@ Congratulations {{ recipient.getFirstName }} {{ recipient.getLastName }},
 
 Your Dataset Information Form (DIF) {{ url('pelagos_app_ui_dif_default') }}?id={{ dif.dataset.udi }} has been approved by the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC).
 
-You will now be able to register the associated dataset at https://data.gulfresearchinitiative.org/dataset-registration.
+You will now be able to register the associated dataset at https://data.gulfresearchinitiative.org/dataset-registration?regid={{ dif.dataset.udi }}.
 
 If you have any questions regarding your DIF please contact griidc@gomri.org.
 
