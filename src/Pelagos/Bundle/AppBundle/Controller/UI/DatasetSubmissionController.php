@@ -20,11 +20,14 @@ use Pelagos\Entity\Account;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\Metadata;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\ResearchGroup;
 use Pelagos\Entity\PersonDatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
+
+use Pelagos\Util\ISOMetadataExtractorUtil;
 
 /**
  * The Dataset Submission controller for the Pelagos UI App Bundle.
@@ -81,20 +84,28 @@ class DatasetSubmissionController extends UIController
                     $datasetSubmission->setTitle($dif->getTitle());
                     $datasetSubmission->setAbstract($dif->getAbstract());
 
-                    $datasetContact = new PersonDatasetSubmissionDatasetContact();
-                    $datasetContact->setDatasetSubmission($datasetSubmission);
-                    $datasetContact->setRole('pointOfContact');
-                    $datasetContact->setPerson($dif->getPrimaryPointOfContact());
-                    $datasetSubmission->addDatasetContact($datasetContact);
-
-                    $metadataContact = new PersonDatasetSubmissionMetadataContact();
-                    $metadataContact->setDatasetSubmission($datasetSubmission);
-                    $metadataContact->setRole('pointOfContact');
-                    $metadataContact->setPerson($dif->getPrimaryPointOfContact());
-                    $datasetSubmission->addMetadataContact($metadataContact);
-
                     $datasetSubmission->setSuppParams($dif->getVariablesObserved());
                     $datasetSubmission->setSpatialExtent($dif->getSpatialExtentGeometry());
+
+                    if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
+                        ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
+                            $datasetSubmission->getDataset()->getMetadata()->getXml(),
+                            $datasetSubmission,
+                            $this->entityHandler
+                        );
+                    } else {
+                        $datasetContact = new PersonDatasetSubmissionDatasetContact();
+                        $datasetContact->setDatasetSubmission($datasetSubmission);
+                        $datasetContact->setRole('pointOfContact');
+                        $datasetContact->setPerson($dif->getPrimaryPointOfContact());
+                        $datasetSubmission->addDatasetContact($datasetContact);
+                        
+                        $metadataContact = new PersonDatasetSubmissionMetadataContact();
+                        $metadataContact->setDatasetSubmission($datasetSubmission);
+                        $metadataContact->setRole('pointOfContact');
+                        $metadataContact->setPerson($dif->getPrimaryPointOfContact());
+                        $datasetSubmission->addMetadataContact($metadataContact);
+                    }
 
                     try {
                         $this->entityHandler->create($datasetSubmission);
@@ -106,6 +117,23 @@ class DatasetSubmissionController extends UIController
                     $sequence = $datasetSubmission->getSequence();
                     $datasetSubmission = clone $datasetSubmission;
                     $datasetSubmission->setSequence(++$sequence);
+
+                    if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
+                        foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+                            $datasetSubmission->removeDatasetContact($datasetContact);
+                        }
+
+                        foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+                            $datasetSubmission->removeMetadataContact($metadataContact);
+                        }
+
+                        ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
+                            $datasetSubmission->getDataset()->getMetadata()->getXml(),
+                            $datasetSubmission,
+                            $this->entityHandler
+                        );
+                    }
+
                     try {
                         $this->entityHandler->create($datasetSubmission);
                     } catch (AccessDeniedException $e) {
@@ -154,22 +182,6 @@ class DatasetSubmissionController extends UIController
                     break;
                 case DatasetSubmission::TRANSFER_TYPE_HTTP:
                     $form->get('datasetFileUrl')->setData($datasetSubmission->getDatasetFileUri());
-                    break;
-            }
-
-            switch ($datasetSubmission->getMetadataFileTransferType()) {
-                case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
-                    $form->get('metadataFileUpload')->setData(
-                        preg_replace('#^file://#', '', $datasetSubmission->getMetadataFileUri())
-                    );
-                    break;
-                case DatasetSubmission::TRANSFER_TYPE_SFTP:
-                    $form->get('metadataFilePath')->setData(
-                        preg_replace('#^file://#', '', $datasetSubmission->getMetadataFileUri())
-                    );
-                    break;
-                case DatasetSubmission::TRANSFER_TYPE_HTTP:
-                    $form->get('metadataFileUrl')->setData($datasetSubmission->getMetadataFileUri());
                     break;
             }
         }

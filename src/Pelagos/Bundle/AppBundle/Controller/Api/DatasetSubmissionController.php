@@ -148,7 +148,14 @@ class DatasetSubmissionController extends EntityController
      */
     public function patchAction($id, Request $request)
     {
-        $this->handleUpdate(DatasetSubmissionType::class, DatasetSubmission::class, $id, $request, 'PATCH');
+        $entityHandler = $this->container->get('pelagos.entity.handler');
+        $datasetSubmission = $this->handleUpdate(DatasetSubmissionType::class, DatasetSubmission::class, $id, $request, 'PATCH');
+        foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+            $entityHandler->update($datasetContact);
+        }
+        foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+            $entityHandler->update($metadataContact);
+        }
         return $this->makeNoContentResponse();
     }
 
