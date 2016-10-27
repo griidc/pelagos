@@ -696,7 +696,7 @@ class ISOMetadataExtractorUtil
      */
     protected static function querySingle(\SimpleXmlElement $xml, $xpath)
     {
-        $query = $xml->xpath($xpath);
+        $query = @$xml->xpath($xpath);
 
         if (false === $query) {
             // This is a best effort, so null if xpath fails.
@@ -721,7 +721,7 @@ class ISOMetadataExtractorUtil
      */
     protected static function querySingleGml(\SimpleXmlElement $xml, $xpath)
     {
-        $query = $xml->xpath($xpath);
+        $query = @$xml->xpath($xpath);
 
         if (false === $query) {
             return null;
@@ -745,7 +745,7 @@ class ISOMetadataExtractorUtil
      */
     protected static function queryMultiple(\SimpleXmlElement $xml, $xpath)
     {
-        $query = $xml->xpath($xpath);
+        $query = @$xml->xpath($xpath);
 
         if (false === $query) {
             // This is a best effort, so empty array if xpath fails.
@@ -783,7 +783,7 @@ class ISOMetadataExtractorUtil
             $item = $items[$offset];
             // If blank at given position, return null, otherwise return the item.
             if (empty($item)) {
-                return $null;
+                return null;
             } else {
                 return $item;
             }
