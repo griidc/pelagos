@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * A handler for uploads.
  *
- * This is based on src/Pelagos/Bundle/AppBundle/Handler/UploadHandler.php
+ * This is based on https://github.com/FineUploader/php-traditional-server/blob/master/handler.php
  */
 class UploadHandler
 {
