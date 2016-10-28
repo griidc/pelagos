@@ -172,6 +172,7 @@ $(function() {
         },
         chunking: {
             enabled: true,
+            partSize: 10000000,
             concurrent: {
                 enabled: true
             },
