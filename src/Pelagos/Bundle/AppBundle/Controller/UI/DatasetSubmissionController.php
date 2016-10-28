@@ -126,9 +126,9 @@ class DatasetSubmissionController extends UIController
                         }
 
                         ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                        $datasetSubmission->getDataset()->getMetadata()->getXml(),
-                        $datasetSubmission,
-                        $this->entityHandler
+                            $datasetSubmission->getDataset()->getMetadata()->getXml(),
+                            $datasetSubmission,
+                            $this->entityHandler
                         );
                     } else {
                         foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
