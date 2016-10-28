@@ -95,13 +95,11 @@ class DatasetSubmissionController extends UIController
                         );
                     } else {
                         $datasetContact = new PersonDatasetSubmissionDatasetContact();
-                        $datasetContact->setDatasetSubmission($datasetSubmission);
                         $datasetContact->setRole('pointOfContact');
                         $datasetContact->setPerson($dif->getPrimaryPointOfContact());
                         $datasetSubmission->addDatasetContact($datasetContact);
-                        
+
                         $metadataContact = new PersonDatasetSubmissionMetadataContact();
-                        $metadataContact->setDatasetSubmission($datasetSubmission);
                         $metadataContact->setRole('pointOfContact');
                         $metadataContact->setPerson($dif->getPrimaryPointOfContact());
                         $datasetSubmission->addMetadataContact($metadataContact);
@@ -128,10 +126,26 @@ class DatasetSubmissionController extends UIController
                         }
 
                         ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                            $datasetSubmission->getDataset()->getMetadata()->getXml(),
-                            $datasetSubmission,
-                            $this->entityHandler
+                        $datasetSubmission->getDataset()->getMetadata()->getXml(),
+                        $datasetSubmission,
+                        $this->entityHandler
                         );
+                    } else {
+                        foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+                            $datasetSubmission->removeDatasetContact($datasetContact);
+                            $newDatasetContact = new PersonDatasetSubmissionDatasetContact();
+                            $newDatasetContact->setRole($datasetContact->getRole());
+                            $newDatasetContact->setPerson($datasetContact->getPerson());
+                            $datasetSubmission->addDatasetContact($newDatasetContact);
+                        }
+
+                        foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+                            $datasetSubmission->removeMetadataContact($metadataContact);
+                            $newMetadataContact = new PersonDatasetSubmissionMetadataContact();
+                            $newMetadataContact->setRole($metadataContact->getRole());
+                            $newMetadataContact->setPerson($metadataContact->getPerson());
+                            $datasetSubmission->addMetadataContact($newMetadataContact);
+                        }
                     }
 
                     try {
@@ -164,6 +178,7 @@ class DatasetSubmissionController extends UIController
                 'method' => 'POST',
                 'attr' => array(
                     'datasetSubmission' => $datasetSubmissionId,
+                    'researchGroup' => $dataset->getResearchGroup()->getId(),
                 ),
             )
         );

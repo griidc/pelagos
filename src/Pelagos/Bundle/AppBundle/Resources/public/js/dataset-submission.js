@@ -163,10 +163,11 @@ $(function() {
                     return query;
                 },
                 url: Routing.generate("pelagos_api_people_get_collection",
-                {
-                    "_properties" : "id,firstName,lastName,emailAddress",
-                    "_orderBy" : "lastName,firstName,emailAddress"
-                }
+                    {
+                        "_properties" : "id,firstName,lastName,emailAddress",
+                        "_orderBy" : "lastName,firstName,emailAddress",
+                        "personResearchGroups.researchGroup" : $("[researchGroup]").attr("researchGroup"),
+                    }
                 ),
                 processResults: function (data) {
                     return {
