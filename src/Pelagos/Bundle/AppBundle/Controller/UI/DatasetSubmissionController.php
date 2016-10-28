@@ -29,6 +29,9 @@ use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 
 use Pelagos\Util\ISOMetadataExtractorUtil;
 
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\PhpBridgeSessionStorage;
+
 /**
  * The Dataset Submission controller for the Pelagos UI App Bundle.
  *
@@ -63,6 +66,7 @@ class DatasetSubmissionController extends UIController
         $dif = null;
 
         if ($udi != null) {
+
             $datasets = $this->entityHandler
                 ->getBy(Dataset::class, array('udi' => substr($udi, 0, 16)));
 
@@ -72,6 +76,19 @@ class DatasetSubmissionController extends UIController
                 $dif = $dataset->getDif();
 
                 $datasetSubmission = $dataset->getDatasetSubmissionHistory()->first();
+
+                $session = new Session(new PhpBridgeSessionStorage());
+                $session->start();
+                $userXml = $session->get('userXml');
+
+                if (null !== $userXml) {
+                    $util = new ISOMetadataExtractorUtil();
+                    // $datasetSubmission object passed by reference and updated with values from Xml.
+                    $util->populateDatasetSubmissionWithXMLValues($userXml, $datasetSubmission);
+                    // Get clarification on this behavior.
+                    // since values already copied into object. Reload currently reverts.
+                    $session->remove('userXml');
+                }
 
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
                     // This is the first submission, so create a new one.
@@ -99,7 +116,7 @@ class DatasetSubmissionController extends UIController
                         $datasetContact->setRole('pointOfContact');
                         $datasetContact->setPerson($dif->getPrimaryPointOfContact());
                         $datasetSubmission->addDatasetContact($datasetContact);
-                        
+
                         $metadataContact = new PersonDatasetSubmissionMetadataContact();
                         $metadataContact->setDatasetSubmission($datasetSubmission);
                         $metadataContact->setRole('pointOfContact');
@@ -412,5 +429,32 @@ class DatasetSubmissionController extends UIController
             'body' => $datasetSubmission->getDataset()->getId(),
             'routing_key' => 'metadata.' . $datasetSubmission->getMetadataFileTransferType()
         );
+    }
+
+    /**
+     * The post action for Dataset Submission XML file.
+     *
+     * @param Request     $request The Symfony request object.
+     * @param string|null $id      The id of the Dataset Submission to load.
+     *
+     * @Route("/xml/{id}/")
+     *
+     * @Method("POST")
+     *
+     * @return Response A Response instance.
+     */
+    public function postXmlUri(Request $request, $id = null)
+    {
+        $xml = simplexml_load_file($request->files[0]);
+        if ($xml) {
+            $session = new Session(new PhpBridgeSessionStorage());
+            $session->start();
+            $session->set('UserXml', $xml);
+        }
+        if (null !== $id) {
+            return $this->redirectToRoute('pelagos_app_ui_datasetsubmission_default', array('regid' => $id));
+        } else {
+            return $this->redirectToRoute('pelagos_app_ui_datasetsubmission_default');
+        }
     }
 }

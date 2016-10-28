@@ -51,6 +51,10 @@ $(function() {
         saveDatasetSubmission();
     });
 
+    $("#btn-xml-button").click(function() {
+        $('form[name="XmlForm"]').submit();
+    });
+
     $("#btn-save").click(function() {
         saveDatasetSubmission();
     });
