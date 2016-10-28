@@ -195,6 +195,9 @@ $(function() {
             onSubmit: function (id, name) {
                 setDatasetFileUri("");
             },
+            onProgress: function (id, name, totalUploadedBytes, totalBytes) {
+                updateSpeedText(totalUploadedBytes, totalBytes);
+            },
             onComplete: function (id, name, responseJSON, xhr) {
                 if (responseJSON.success) {
                     setDatasetFileUri(responseJSON.path);
@@ -204,6 +207,15 @@ $(function() {
             onDelete: function (id) {
                 setDatasetFileUri("");
                 saveDatasetSubmission();
+            },
+            onStatusChange: function (id, oldStatus, newStatus) {
+                switch (newStatus) {
+                    case qq.status.CANCELED:
+                    case qq.status.DELETED:
+                    case qq.status.PAUSED:
+                    case qq.status.UPLOAD_SUCCESSFUL:
+                        resetSpeedText();
+                }
             }
         }
     });
@@ -248,6 +260,102 @@ $(function() {
         $('label.error[for="datasetFileUri"]').remove();
         // set datasetFileUri
         $("#datasetFileUri").val(datasetFileUri);
+    }
+
+    var uploadSpeeds = [];
+    var updateSpeeds = true;
+
+    function updateSpeedText(totalUploadedBytes, totalBytes) {
+        if (!updateSpeeds) {
+            return;
+        }
+        uploadSpeeds.push({
+            totalUploadedBytes: totalUploadedBytes,
+            currentTime: new Date().getTime()
+        });
+        var minSamples = 6;
+        var maxSamples = 20;
+        if (uploadSpeeds.length > maxSamples) {
+            uploadSpeeds.shift();
+        }
+        if (uploadSpeeds.length >= minSamples) {
+            try {
+                var firstSample = uploadSpeeds[0];
+                var lastSample = uploadSpeeds[uploadSpeeds.length - 1];
+                var progressBytes = lastSample.totalUploadedBytes - firstSample.totalUploadedBytes;
+                var progressTimeMS = lastSample.currentTime - firstSample.currentTime;
+                var bytesPerSecond = progressBytes / (progressTimeMS / 1000);
+                console.log(uploadSpeeds.length);
+                if (bytesPerSecond > 0) {
+                    var speedPrecision = 0;
+                    MBps = bytesPerSecond / 1e6;
+                    if (MBps < 10) {
+                        speedPrecision = 1;
+                    }
+                    if (MBps < 1) {
+                        speedPrecision = 2;
+                    }
+                    if (MBps < 0.1) {
+                        speedPrecision = 3;
+                    }
+                    $("#uploader-speed").text("Transfer speed: " + MBps.toFixed(speedPrecision) + " MB per second");
+                    var remainingDays = 0;
+                    var remainingHours = 0;
+                    var remainingMinutes = 0;
+                    var remainingSeconds = ((totalBytes - totalUploadedBytes) / bytesPerSecond).toFixed(0);
+                    if (remainingSeconds >= 60) {
+                        remainingMinutes = Math.floor(remainingSeconds / 60);
+                        remainingSeconds %= 60;
+                    }
+                    if (remainingMinutes >= 60) {
+                        remainingHours = Math.floor(remainingMinutes / 60);
+                        remainingMinutes %= 60;
+                    }
+                    if (remainingHours >= 24) {
+                        remainingDays = Math.floor(remainingHours / 24);
+                        remainingHours %= 24;
+                    }
+                    var remainingText = "";
+                    if (remainingDays > 0) {
+                        remainingText += " " + remainingDays + " day";
+                        if (remainingDays > 1) {
+                            remainingText += "s";
+                        }
+                    }
+                    if (remainingHours > 0) {
+                        remainingText += " " + remainingHours + " hour";
+                        if (remainingHours > 1) {
+                            remainingText += "s";
+                        }
+                    }
+                    if (remainingMinutes > 0) {
+                        remainingText += " " + remainingMinutes + " minute";
+                        if (remainingMinutes > 1) {
+                            remainingText += "s";
+                        }
+                    }
+                    if (remainingSeconds > 0) {
+                        remainingText += " " + remainingSeconds + " second";
+                        if (remainingSeconds > 1) {
+                            remainingText += "s";
+                        }
+                    }
+                    $("#uploader-remaining").text("Time remaining:" + remainingText);
+                    updateSpeeds = false;
+                    setTimeout(function () {
+                        updateSpeeds = true;
+                    }, 500);
+                }
+            } catch (err) {
+            }
+        }
+    }
+
+    function resetSpeedText() {
+        $("#uploader-speed").text("");
+        $("#uploader-remaining").text("");
+        uploadSpeeds = [];
+        updateSpeeds = true;
     }
 
     function select2ContactPerson() {
