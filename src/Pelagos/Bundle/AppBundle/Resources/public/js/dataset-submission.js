@@ -29,6 +29,11 @@ $(function() {
         }
     );
 
+    $("#regForm").on("submit", function () {
+        formHash = $("#regForm").serialize();
+        $("#regForm").prop("unsavedChanges", false);
+    });
+
     $("#dtabs,#filetabs").tabs({
         heightStyle: "content",
         activate: function(event, ui) {
