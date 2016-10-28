@@ -4,7 +4,9 @@
             <gmd:title>
                 <gco:CharacterString>{{dataset.title}}</gco:CharacterString>
             </gmd:title>
-            <gmd:alternateTitle/>
+            <gmd:alternateTitle>
+                <gco:CharacterString>{{dataset.datasetSubmission.shortTitle}}</gco:CharacterString>
+            </gmd:alternateTitle>
             <gmd:date>
                 <gmd:CI_Date>
                     <gmd:date>
@@ -24,12 +26,14 @@
     </gmd:status>
     {% if dataset.dif.primaryPointOfContact %}
     <gmd:pointOfContact>
+    {% for contact in dataset.datasetSubmission.datasetContacts %}
         {% include "PelagosAppBundle:MetadataGenerator:CI_ResponsibleParty.xml.twig" with 
             {
-                "Person" : dataset.dif.primaryPointOfContact,
-                "role" : {"name" : "pointOfContact", "code" : "007"},
+                "Person" : contact.person,
+                "role" : contact.role,
             } 
         %}
+    {% endfor %}
     </gmd:pointOfContact>
     {% endif %}
     <gmd:language>
