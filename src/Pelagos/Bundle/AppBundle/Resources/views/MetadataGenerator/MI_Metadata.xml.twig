@@ -15,15 +15,14 @@
     <gmd:contact>
     {% for contact in dataset.datasetSubmission.metadataContacts %}
     {{ contact.role }}
-        {% include "PelagosAppBundle:MetadataGenerator:CI_ResponsibleParty.xml.twig" with 
+        {% include "PelagosAppBundle:MetadataGenerator:CI_ResponsibleParty.xml.twig" with
             {
             "Person" : contact.person,
             "role" : contact.role,
-            } 
+            }
         %}
     {% endfor %}
     </gmd:contact>
-
     <gmd:dateStamp>
         <gco:DateTime>{{ "now" | date("c") }}</gco:DateTime>
     </gmd:dateStamp>
@@ -37,7 +36,7 @@
         <gco:CharacterString>https://data.gulfresearchinitiative.org/metadata/{{dataset.udi}}</gco:CharacterString>
     </gmd:dataSetURI>
     <gmd:identificationInfo>
-        {% include "PelagosAppBundle:MetadataGenerator:MD_DataIdentification.xml.twig" %} 
+        {% include "PelagosAppBundle:MetadataGenerator:MD_DataIdentification.xml.twig" %}
     </gmd:identificationInfo>
     <gmd:distributionInfo>
         {% include "PelagosAppBundle:MetadataGenerator:MD_Distribution.xml.twig" %}
