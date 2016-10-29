@@ -165,6 +165,8 @@ class EntityHandler
         foreach ($joins as $entityProperty => $alias) {
             $qb->leftJoin($entityProperty, $alias);
         }
+        // Eliminate duplicates.
+        $qb->distinct();
         // Get the query.
         $query = $qb->getQuery();
         // Return the result using the requested hydrator.
@@ -185,8 +187,8 @@ class EntityHandler
         $qb = $this->entityManager->getRepository($entityClass)->createQueryBuilder('e');
         // Initialize an array to hold all necessary joins.
         $joins = array();
-        // Select a count of this type of entity.
-        $qb->select($qb->expr()->count('e'));
+        // Select a distinct count of this type of entity.
+        $qb->select($qb->expr()->countDistinct('e'));
         // Process the critera.
         $this->processCriteria($criteria, $qb, $joins);
         // Join all necessary joins.
