@@ -161,8 +161,8 @@ $(function() {
     buildKeywordLists();
 
     // Direct Upload
-    $("#fine-uploader-manual-trigger").fineUploader({
-        template: "qq-template-manual-trigger",
+    $("#fine-uploader").fineUploader({
+        template: "qq-template",
         multiple: false,
         request: {
             endpoint: Routing.generate("pelagos_api_upload_post")
@@ -192,8 +192,14 @@ $(function() {
             endpoint: Routing.generate("pelagos_api_upload_delete")
         },
         callbacks: {
+            onSessionRequestComplete: function (response, success, xhrOrXdr) {
+                if (response.length > 0) {
+                    $("#fine-uploader .qq-upload-button").hide();
+                }
+            },
             onSubmit: function (id, name) {
                 setDatasetFileUri("");
+                $("#fine-uploader .qq-upload-button").hide();
             },
             onProgress: function (id, name, totalUploadedBytes, totalBytes) {
                 updateSpeedText(totalUploadedBytes, totalBytes);
@@ -215,6 +221,11 @@ $(function() {
                     case qq.status.PAUSED:
                     case qq.status.UPLOAD_SUCCESSFUL:
                         resetSpeedText();
+                }
+                switch (newStatus) {
+                    case qq.status.CANCELED:
+                    case qq.status.DELETED:
+                        $("#fine-uploader .qq-upload-button").show();
                 }
             }
         }
@@ -242,6 +253,8 @@ $(function() {
         if (datasetFileTransferType != "upload") {
             // clear uploaded files list (Direct Upload tab)
             $(".qq-upload-list").html("")
+            // show upload button (Direct Upload tab)
+            $("#fine-uploader .qq-upload-button").show();
         }
         if (datasetFileTransferType != "SFTP") {
             // clear datasetFilePath (Upload via SFTP/GridFTP tab)
