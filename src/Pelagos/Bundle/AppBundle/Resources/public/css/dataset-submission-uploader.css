@@ -23,3 +23,19 @@
     /* hide total progress bar, for now, since we're limiting to one file */
     display: none;
 }
+
+#fine-uploader-manual-trigger .qq-upload-button {
+    border-radius: 4px;
+}
+
+#fine-uploader-manual-trigger .qq-upload-button-hover {
+    border: 1px solid #999999;
+    background: #dadada;
+    color: #212121;
+}
+
+#fine-uploader-manual-trigger .qq-upload-button:active {
+    border: 1px solid #aaaaaa;
+    background: #ffffff;
+    color: #212121;
+}
