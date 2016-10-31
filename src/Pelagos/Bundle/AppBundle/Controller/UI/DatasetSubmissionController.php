@@ -437,24 +437,22 @@ class DatasetSubmissionController extends UIController
      * @param Request     $request The Symfony request object.
      * @param string|null $id      The id of the Dataset Submission to load.
      *
-     * @Route("/xml/{id}/")
+     * @Route("/xml/{udi}/")
      *
      * @Method("POST")
      *
      * @return Response A Response instance.
      */
-    public function postXmlUri(Request $request, $id = null)
+    public function postXmlUri(Request $request, $udi)
     {
+        print_r($request->files); die();
         $xml = simplexml_load_file($request->files[0]);
         if ($xml) {
             $session = new Session(new PhpBridgeSessionStorage());
             $session->start();
             $session->set('UserXml', $xml);
         }
-        if (null !== $id) {
-            return $this->redirectToRoute('pelagos_app_ui_datasetsubmission_default', array('regid' => $id));
-        } else {
-            return $this->redirectToRoute('pelagos_app_ui_datasetsubmission_default');
-        }
+
+        //return $this->redirectToRoute('pelagos_app_ui_datasetsubmission_default', array('regid' => $udi));
     }
 }

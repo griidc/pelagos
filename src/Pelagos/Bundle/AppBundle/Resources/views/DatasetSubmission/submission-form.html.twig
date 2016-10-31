@@ -1,9 +1,12 @@
+<form id="xmlUpload" method="post" enctype="multipart/form-data" action="{{ path('pelagos_app_ui_datasetsubmission_postxmluri', { 'udi': udi } ) }}">
+    <div>
+        <button type="button" id="btn-xml-button">Prefill from XML file/URL.</button>
+        <input type="file">
+    </div>
+</form>
+
 {{ form_start(form, {'attr': {'id': 'regForm'}}) }}
     <div id="metatoolbar" class="ui-widget-header ui-corner-all toolbarbutton">
-        <form name="XmlForm" method="post" action="{{path('pelagos_app_ui_datasetsubmission_postxmluri') . '?regid=' . DatasetSubmissionId }}">
-            <button type="button" id="btn-xml-button">Prefill from XML file/URL.</button>
-            <input type="file">
-        </form>
         <button type="button" id="btn-save">Save and Continue later</button>
     </div>
 

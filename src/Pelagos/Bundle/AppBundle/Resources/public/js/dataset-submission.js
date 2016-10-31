@@ -52,7 +52,7 @@ $(function() {
     });
 
     $("#btn-xml-button").click(function() {
-        $('form[name="XmlForm"]').submit();
+        $('form[id="xmlUpload"]').submit();
     });
 
     $("#btn-save").click(function() {
