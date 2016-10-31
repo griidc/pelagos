@@ -13,6 +13,18 @@
                     {% endif %}
                 </select>
                 <label for="contactperson" class="error"></label>
+                {{ form_row(contact.person.firstName, {'attr': {'disabled': 'true'} , 'required': false}) }}
+                {{ form_row(contact.person.lastName, {'attr': {'disabled': 'true'} , 'required': false}) }}
+                {{ form_row(contact.person.emailAddress, {'attr': {'disabled': 'true'} , 'required': false}) }}
+                {{ form_row(contact.person.phoneNumber, {'attr': {'disabled': 'true'} , 'required': false}) }}
+                {{ form_row(contact.person.deliveryPoint, {'attr': {'disabled': 'true'} , 'required': false}) }}
+                {{ form_row(contact.person.city, {'attr': {'disabled': 'true'} , 'required': false}) }}
+                {{ form_row(contact.person.administrativeArea, {'attr': {'disabled': 'true'} , 'required': false}) }}
+                {{ form_row(contact.person.postalCode, {'attr': {'disabled': 'true'} , 'required': false}) }}
+                {{ form_row(contact.person.country, {'attr': {'disabled': 'true'} , 'required': false}) }}
+                {{ form_row(contact.person.url, {'attr': {'disabled': 'true'} , 'required': false}) }}
+                {{ form_row(contact.person.organization, {'attr': {'disabled': 'true'} , 'required': false}) }}
+                {{ form_row(contact.person.position, {'attr': {'disabled': 'true'} , 'required': false}) }}
             </td>
             <td>
                 <span class="field-help">
