@@ -117,6 +117,8 @@ class DataStore
         // Default to the base name of the file URI.
         $fileName = basename($fileUri);
         if (preg_match('/^http/', $fileUri)) {
+            // Decode any characters escaped in the URL.
+            $fileName = urldecode($fileName);
             $browser = new \Buzz\Browser();
             $result = $browser->head($fileUri);
             $status = $result->getHeaders()[0];
