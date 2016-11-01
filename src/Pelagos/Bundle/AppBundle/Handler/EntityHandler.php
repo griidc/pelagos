@@ -388,35 +388,40 @@ class EntityHandler
         foreach ($criteria as $property => $value) {
             // Get the alias and the property.
             list ($alias, $property) = $this->buildAliasedProperty($property, $joins);
-            if ('*' === $value) {
-                $compareExpression = $qb->expr()->isNotNull("$alias.$property");
-            } elseif ('!*' === $value) {
-                $compareExpression = $qb->expr()->isNull("$alias.$property");
+            if (gettype($value) === 'string') {
+                if ('*' === $value) {
+                    $compareExpression = $qb->expr()->isNotNull("$alias.$property");
+                } elseif ('!*' === $value) {
+                    $compareExpression = $qb->expr()->isNull("$alias.$property");
+                } else {
+                    // The default compare is equivalency.
+                    $compareExpression = $qb->expr()->eq("$alias.$property", "?$paramToken");
+                    // If the criteria value contains unescaped wildcard characters (* or ?).
+                    if (preg_match('/(?<!\\\\)(\*|\?)/', $value)) {
+                        // Use like for comparison instead.
+                        $compareExpression = $qb->expr()->like("$alias.$property", "?$paramToken");
+                        // Escape %.
+                        $value = preg_replace('/%/', '\\\\%', $value);
+                        // Replace unescaped * with %.
+                        $value = preg_replace('/(?<!\\\\)\*/', '%', $value);
+                        // Unescape escaped *.
+                        $value = preg_replace('/\\\\\*/', '*', $value);
+                        // Escape _.
+                        $value = preg_replace('/_/', '\\\\_', $value);
+                        // Replace unescaped ? with _.
+                        $value = preg_replace('/(?<!\\\\)\?/', '_', $value);
+                        // Unescape escaped ?.
+                        $value = preg_replace('/\\\\\?/', '?', $value);
+                    }
+                    if (preg_match('/^!/', $value)) {
+                        $value = preg_replace('/^!/', '', $value);
+                        $compareExpression = $qb->expr()->not($compareExpression);
+                    }
+                    // Set the parameter.
+                    $qb->setParameter($paramToken, $value);
+                }
             } else {
-                // The default compare is equivalency.
                 $compareExpression = $qb->expr()->eq("$alias.$property", "?$paramToken");
-                // If the criteria value contains unescaped wildcard characters (* or ?).
-                if (preg_match('/(?<!\\\\)(\*|\?)/', $value)) {
-                    // Use like for comparison instead.
-                    $compareExpression = $qb->expr()->like("$alias.$property", "?$paramToken");
-                    // Escape %.
-                    $value = preg_replace('/%/', '\\\\%', $value);
-                    // Replace unescaped * with %.
-                    $value = preg_replace('/(?<!\\\\)\*/', '%', $value);
-                    // Unescape escaped *.
-                    $value = preg_replace('/\\\\\*/', '*', $value);
-                    // Escape _.
-                    $value = preg_replace('/_/', '\\\\_', $value);
-                    // Replace unescaped ? with _.
-                    $value = preg_replace('/(?<!\\\\)\?/', '_', $value);
-                    // Unescape escaped ?.
-                    $value = preg_replace('/\\\\\?/', '?', $value);
-                }
-                if (preg_match('/^!/', $value)) {
-                    $value = preg_replace('/^!/', '', $value);
-                    $compareExpression = $qb->expr()->not($compareExpression);
-                }
-                // Set the parameter.
                 $qb->setParameter($paramToken, $value);
             }
             // Filter by the aliased property.
