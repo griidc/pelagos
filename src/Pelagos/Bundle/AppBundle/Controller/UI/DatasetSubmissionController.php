@@ -15,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
+use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionXmlFileType;
 
 use Pelagos\Entity\Account;
 use Pelagos\Entity\DIF;
@@ -28,9 +29,6 @@ use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 
 use Pelagos\Util\ISOMetadataExtractorUtil;
-
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\Storage\PhpBridgeSessionStorage;
 
 /**
  * The Dataset Submission controller for the Pelagos UI App Bundle.
@@ -76,19 +74,6 @@ class DatasetSubmissionController extends UIController
                 $dif = $dataset->getDif();
 
                 $datasetSubmission = $dataset->getDatasetSubmissionHistory()->first();
-
-                $session = new Session(new PhpBridgeSessionStorage());
-                $session->start();
-                $userXml = $session->get('userXml');
-
-                if (null !== $userXml) {
-                    $util = new ISOMetadataExtractorUtil();
-                    // $datasetSubmission object passed by reference and updated with values from Xml.
-                    $util->populateDatasetSubmissionWithXMLValues($userXml, $datasetSubmission);
-                    // Get clarification on this behavior.
-                    // since values already copied into object. Reload currently reverts.
-                    $session->remove('userXml');
-                }
 
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
                     // This is the first submission, so create a new one.
@@ -208,10 +193,21 @@ class DatasetSubmissionController extends UIController
             'attr'  => array('class' => 'submitButton'),
         ));
 
+        $xmlForm = $this->get('form.factory')->createNamed(
+            null,
+            DatasetSubmissionXmlFileType::class,
+            null,
+            array(
+                'action' => $this->generateUrl('pelagos_app_ui_datasetsubmission_postxmluri', array('id' => $datasetSubmissionId)),
+                'method' => 'POST',
+            )
+        );
+
         return $this->render(
             'PelagosAppBundle:DatasetSubmission:index.html.twig',
             array(
                 'form' => $form->createView(),
+                'xmlForm' => $xmlForm->createView(),
                 'udi'  => $udi,
                 'datasetSubmission' => $datasetSubmission,
             )
@@ -437,22 +433,98 @@ class DatasetSubmissionController extends UIController
      * @param Request     $request The Symfony request object.
      * @param string|null $id      The id of the Dataset Submission to load.
      *
-     * @Route("/xml/{udi}/")
+     * @Route("/xml/{id}/")
      *
      * @Method("POST")
      *
      * @return Response A Response instance.
      */
-    public function postXmlUri(Request $request, $udi)
+    public function postXmlUri(Request $request, $id)
     {
-        print_r($request->files); die();
-        $xml = simplexml_load_file($request->files[0]);
-        if ($xml) {
-            $session = new Session(new PhpBridgeSessionStorage());
-            $session->start();
-            $session->set('UserXml', $xml);
+        $datasetSubmission = $this->entityHandler
+            ->get(DatasetSubmission::class, $id);
+
+        $xmlForm = $this->get('form.factory')->createNamed(
+            null,
+            DatasetSubmissionXmlFileType::class,
+            null
+        );
+
+        $xmlForm->handleRequest($request);
+        $xmlFile = $xmlForm['xmlFile']->getData();
+
+        if ($xmlFile instanceof UploadedFile) {
+            $xml = simplexml_load_file($xmlFile->getRealPath());
+            ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues($xml, $datasetSubmission, $this->entityHandler);
         }
 
-        //return $this->redirectToRoute('pelagos_app_ui_datasetsubmission_default', array('regid' => $udi));
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
+                $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
+            }
+
+            if ($datasetSubmission->getMetadataContacts()->isEmpty()) {
+                $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
+            }
+
+            $datasetSubmissionId = $datasetSubmission->getId();
+        }
+
+        $form = $this->get('form.factory')->createNamed(
+            null,
+            DatasetSubmissionType::class,
+            $datasetSubmission,
+            array(
+                'action' => $this->generateUrl('pelagos_app_ui_datasetsubmission_post', array('id' => $datasetSubmissionId)),
+                'method' => 'POST',
+                'attr' => array(
+                    'datasetSubmission' => $datasetSubmissionId,
+                ),
+            )
+        );
+
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            switch ($datasetSubmission->getDatasetFileTransferType()) {
+                case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
+                    $form->get('datasetFileUpload')->setData(
+                        preg_replace('#^file://#', '', $datasetSubmission->getDatasetFileUri())
+                    );
+                    break;
+                case DatasetSubmission::TRANSFER_TYPE_SFTP:
+                    $form->get('datasetFilePath')->setData(
+                        preg_replace('#^file://#', '', $datasetSubmission->getDatasetFileUri())
+                    );
+                    break;
+                case DatasetSubmission::TRANSFER_TYPE_HTTP:
+                    $form->get('datasetFileUrl')->setData($datasetSubmission->getDatasetFileUri());
+                    break;
+            }
+        }
+
+        $form->add('submit', SubmitType::class, array(
+            'label' => 'Submit',
+            'attr'  => array('class' => 'submitButton'),
+        ));
+
+        $xmlForm = $this->get('form.factory')->createNamed(
+            null,
+            DatasetSubmissionXmlFileType::class,
+            null,
+            array(
+                'action' => $this->generateUrl('pelagos_app_ui_datasetsubmission_postxmluri', array('id' => $datasetSubmissionId)),
+                'method' => 'POST',
+            )
+        );
+
+        return $this->render(
+            'PelagosAppBundle:DatasetSubmission:index.html.twig',
+            array(
+                'form' => $form->createView(),
+                'xmlForm' => $xmlForm->createView(),
+                'udi'  => $datasetSubmission->getDataset()->getUdi(),
+                'datasetSubmission' => $datasetSubmission,
+            )
+        );
+
     }
 }
