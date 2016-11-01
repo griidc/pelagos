@@ -103,6 +103,7 @@ class DataStore
      * @throws \Exception         When the file does not exist.
      * @throws \Exception         When the file URI is http and file could not be downloaded.
      * @throws HtmlFoundException When HTML is found.
+     * @throws HtmlFoundException When HTML is found but not properly declared in the HTTP header.
      *
      * @return string The original file name of the added file.
      */
@@ -143,6 +144,10 @@ class DataStore
         }
         $storeFileName = $this->getStoreFileName($datasetId, $type);
         $storeFilePath = $this->addFileToDataStoreDirectory($fileUri, $datasetId, $storeFileName);
+        if (preg_match('/^http/', $fileUri) and mime_content_type($storeFilePath) === 'text/html') {
+            // If the HTTP header Content-Type check above failed to detect an html file.
+            throw new HtmlFoundException("HTML file found at $fileUri");
+        }
         $this->createLinkInDownloadDirectory($storeFilePath, $datasetId, $storeFileName);
         return $fileName;
     }
