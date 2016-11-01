@@ -104,7 +104,7 @@ class DataStore
      * @throws \Exception         When the file URI is http and file could not be downloaded.
      * @throws HtmlFoundException When HTML is found.
      *
-     * @return void
+     * @return string The original file name of the added file.
      */
     public function addFile($fileUri, $datasetId, $type)
     {
@@ -114,6 +114,8 @@ class DataStore
         if (preg_match('#^(file://|/)#', $fileUri) and !file_exists($fileUri)) {
             throw new \Exception("File: $fileUri not found!");
         }
+        // Default to the base name of the file URI.
+        $fileName = basename($fileUri);
         if (preg_match('/^http/', $fileUri)) {
             $browser = new \Buzz\Browser();
             $result = $browser->head($fileUri);
@@ -125,10 +127,22 @@ class DataStore
             if (preg_match('#^text/html#', $contentType)) {
                 throw new HtmlFoundException("HTML file found at $fileUri");
             }
+            $contentDisposition = $result->getHeader('Content-Disposition');
+            // Match quoted or unquoted file names.
+            if (preg_match('/^attachment;\s*filename=(?:"([^"]+)"|(.+))$/', $contentDisposition, $matches)) {
+                if (!empty($matches[1])) {
+                    // We found a quoted file name.
+                    $fileName = $matches[1];
+                } elseif (!empty($matches[2])) {
+                    // We found an unquoted file name.
+                    $fileName = $matches[2];
+                }
+            }
         }
         $storeFileName = $this->getStoreFileName($datasetId, $type);
         $storeFilePath = $this->addFileToDataStoreDirectory($fileUri, $datasetId, $storeFileName);
         $this->createLinkInDownloadDirectory($storeFilePath, $datasetId, $storeFileName);
+        return $fileName;
     }
 
     /**
