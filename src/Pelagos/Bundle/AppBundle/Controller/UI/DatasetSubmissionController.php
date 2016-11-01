@@ -168,20 +168,25 @@ class DatasetSubmissionController extends UIController
             )
         );
 
+        $showForceImport = false;
+        $showForceDownload = false;
         if ($datasetSubmission instanceof DatasetSubmission) {
             switch ($datasetSubmission->getDatasetFileTransferType()) {
-                case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
-                    $form->get('datasetFileUpload')->setData(
-                        preg_replace('#^file://#', '', $datasetSubmission->getDatasetFileUri())
-                    );
-                    break;
                 case DatasetSubmission::TRANSFER_TYPE_SFTP:
                     $form->get('datasetFilePath')->setData(
                         preg_replace('#^file://#', '', $datasetSubmission->getDatasetFileUri())
                     );
+                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
+                        and $datasetSubmission->getDatasetFileUri() == $dataset->getDatasetSubmission()->getDatasetFileUri()) {
+                        $showForceImport = true;
+                    }
                     break;
                 case DatasetSubmission::TRANSFER_TYPE_HTTP:
                     $form->get('datasetFileUrl')->setData($datasetSubmission->getDatasetFileUri());
+                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
+                        and $datasetSubmission->getDatasetFileUri() == $dataset->getDatasetSubmission()->getDatasetFileUri()) {
+                        $showForceDownload = true;
+                    }
                     break;
             }
         }
@@ -197,6 +202,8 @@ class DatasetSubmissionController extends UIController
                 'form' => $form->createView(),
                 'udi'  => $udi,
                 'datasetSubmission' => $datasetSubmission,
+                'showForceImport' => $showForceImport,
+                'showForceDownload' => $showForceDownload,
             )
         );
     }
@@ -236,6 +243,9 @@ class DatasetSubmissionController extends UIController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() and $form->isValid()) {
+
+            $this->processDatasetFileTransferDetails($form, $datasetSubmission);
+
             $datasetSubmission->submit();
 
             if ($datasetSubmission->getSequence() > 1) {
@@ -253,10 +263,6 @@ class DatasetSubmissionController extends UIController
                     mkdir($incomingDirectory, 0755, true);
                 }
             }
-
-            $this->processDatasetFileTransferDetails($form, $datasetSubmission, $incomingDirectory);
-
-            $this->processMetadataFileTransferDetails($form, $datasetSubmission, $incomingDirectory);
 
             $this->entityHandler->update($datasetSubmission);
 
@@ -286,45 +292,27 @@ class DatasetSubmissionController extends UIController
      *
      * @param Form              $form              The submitted dataset submission form.
      * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
-     * @param string            $incomingDirectory The user's incoming directory.
      *
      * @return void
      */
     protected function processDatasetFileTransferDetails(
         Form $form,
-        DatasetSubmission $datasetSubmission,
-        $incomingDirectory
+        DatasetSubmission $datasetSubmission
     ) {
-        switch ($datasetSubmission->getDatasetFileTransferType()) {
-            case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
-                $datasetFile = $form['datasetFile']->getData();
-                if ($datasetFile instanceof UploadedFile) {
-                    $originalFileName = $datasetFile->getClientOriginalName();
-                    $movedDatasetFile = $datasetFile->move($incomingDirectory, $originalFileName);
-                    $datasetSubmission->setDatasetFileUri('file://' . $movedDatasetFile->getRealPath());
-                    $this->newDatasetFile($datasetSubmission);
-                }
-                break;
-            case DatasetSubmission::TRANSFER_TYPE_SFTP:
-                $datasetFilePath = $form['datasetFilePath']->getData();
-                $newDatasetFileUri = empty($datasetFilePath) ? null : "file://$datasetFilePath";
-                if ($newDatasetFileUri !== $datasetSubmission->getDatasetFileUri()) {
-                    $datasetSubmission->setDatasetFileUri($newDatasetFileUri);
-                    $this->newDatasetFile($datasetSubmission);
-                } elseif ($form['datasetFileForceImport']->getData()) {
-                    $this->newDatasetFile($datasetSubmission);
-                }
-                break;
-            case DatasetSubmission::TRANSFER_TYPE_HTTP:
-                $datasetFileUrl = $form['datasetFileUrl']->getData();
-                $newDatasetFileUri = empty($datasetFileUrl) ? null : $datasetFileUrl;
-                if ($newDatasetFileUri !== $datasetSubmission->getDatasetFileUri()) {
-                    $datasetSubmission->setDatasetFileUri($newDatasetFileUri);
-                    $this->newDatasetFile($datasetSubmission);
-                } elseif ($form['datasetFileForceDownload']->getData()) {
-                    $this->newDatasetFile($datasetSubmission);
-                }
-                break;
+        // If there was a previous Dataset Submission.
+        if ($datasetSubmission->getDataset()->getDatasetSubmission() instanceof DatasetSubmission) {
+            // Get the previous datasetFileUri.
+            $previousDatasetFileUri = $datasetSubmission->getDataset()->getDatasetSubmission()->getDatasetFileUri();
+            // If the datasetFileUri has changed or the user has requested to force import or download.
+            if ($datasetSubmission->getDatasetFileUri() !== $previousDatasetFileUri
+                or $form['datasetFileForceImport']->getData()
+                or $form['datasetFileForceDownload']->getData()) {
+                // Assume the dataset file is new.
+                $this->newDatasetFile($datasetSubmission);
+            }
+        } else {
+            // This is the first submission so the dataset file is new.
+            $this->newDatasetFile($datasetSubmission);
         }
     }
 
@@ -346,71 +334,6 @@ class DatasetSubmissionController extends UIController
         $this->messages[] = array(
             'body' => $datasetSubmission->getDataset()->getId(),
             'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
-        );
-    }
-
-    /**
-     * Process the Metadata File Transfer Details and update the Dataset Submission.
-     *
-     * @param Form              $form              The submitted dataset submission form.
-     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
-     * @param string            $incomingDirectory The user's incoming directory.
-     *
-     * @return void
-     */
-    protected function processMetadataFileTransferDetails(
-        Form $form,
-        DatasetSubmission $datasetSubmission,
-        $incomingDirectory
-    ) {
-        switch ($datasetSubmission->getMetadataFileTransferType()) {
-            case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
-                $metadataFile = $form['metadataFile']->getData();
-                if ($metadataFile instanceof UploadedFile) {
-                    $originalFileName = $metadataFile->getClientOriginalName();
-                    $movedMetadataFile = $metadataFile->move($incomingDirectory, $originalFileName);
-                    $datasetSubmission->setMetadataFileUri('file://' . $movedMetadataFile->getRealPath());
-                    $this->newMetadataFile($datasetSubmission);
-                }
-                break;
-            case DatasetSubmission::TRANSFER_TYPE_SFTP:
-                $metadataFilePath = $form['metadataFilePath']->getData();
-                $newMetadataFileUri = empty($metadataFilePath) ? null : "file://$metadataFilePath";
-                if ($newMetadataFileUri !== $datasetSubmission->getMetadataFileUri()) {
-                    $datasetSubmission->setMetadataFileUri($newMetadataFileUri);
-                    $this->newMetadataFile($datasetSubmission);
-                } elseif ($form['metadataFileForceImport']->getData()) {
-                    $this->newMetadataFile($datasetSubmission);
-                }
-                break;
-            case DatasetSubmission::TRANSFER_TYPE_HTTP:
-                $metadataFileUrl = $form['metadataFileUrl']->getData();
-                $newMetadataFileUri = empty($metadataFileUrl) ? null : $metadataFileUrl;
-                if ($newMetadataFileUri !== $datasetSubmission->getMetadataFileUri()) {
-                    $datasetSubmission->setMetadataFileUri($newMetadataFileUri);
-                    $this->newMetadataFile($datasetSubmission);
-                } elseif ($form['metadataFileForceDownload']->getData()) {
-                    $this->newMetadataFile($datasetSubmission);
-                }
-                break;
-        }
-    }
-
-    /**
-     * Take appropriate actions when a new metadata file is submitted.
-     *
-     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
-     *
-     * @return void
-     */
-    protected function newMetadataFile(DatasetSubmission $datasetSubmission)
-    {
-        $datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-        $datasetSubmission->setMetadataFileName(null);
-        $datasetSubmission->setMetadataFileSha256Hash(null);
-        $this->messages[] = array(
-            'body' => $datasetSubmission->getDataset()->getId(),
-            'routing_key' => 'metadata.' . $datasetSubmission->getMetadataFileTransferType()
         );
     }
 }
