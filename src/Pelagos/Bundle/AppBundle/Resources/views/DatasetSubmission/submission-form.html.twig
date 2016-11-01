@@ -1,9 +1,7 @@
-<form id="xmlUpload" method="post" enctype="multipart/form-data" action="{{ path('pelagos_app_ui_datasetsubmission_postxmluri', { 'udi': udi } ) }}">
-    <div>
-        <button type="button" id="btn-xml-button">Prefill from XML file/URL.</button>
-        <input type="file">
-    </div>
-</form>
+{{ form_start(xmlForm) }}
+    {{ form_widget(xmlForm) }}
+    <button type="submit">Upload XML</button>
+{{ form_end(form, {'render_rest': false}) }}
 
 {{ form_start(form, {'attr': {'id': 'regForm'}}) }}
     <div id="metatoolbar" class="ui-widget-header ui-corner-all toolbarbutton">
