@@ -78,7 +78,7 @@ $(function() {
     function saveDatasetSubmission()
     {
         var datasetSubmissionId = $("form[datasetsubmission]").attr("datasetsubmission");
-        var url = Routing.generate('pelagos_api_dataset_submission_patch');
+        var url = Routing.generate("pelagos_api_dataset_submission_patch");
 
         $.ajax({
             url: url + "/" + datasetSubmissionId + "?validate=false",
@@ -89,10 +89,10 @@ $(function() {
                 $("#regForm").prop("unsavedChanges", false);
                 var n = noty(
                 {
-                    layout: 'top',
-                    theme: 'relax',
-                    type: 'success',
-                    text: 'Succesfully Saved',
+                    layout: "top",
+                    theme: "relax",
+                    type: "success",
+                    text: "Succesfully Saved",
                     timeout: 1000,
                     modal: false,
                     animation: {
@@ -107,9 +107,9 @@ $(function() {
                 var message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
                 var n = noty(
                 {
-                    layout: 'top',
-                    theme: 'relax',
-                    type: 'error',
+                    layout: "top",
+                    theme: "relax",
+                    type: "error",
                     text: message,
                     modal: true,
                 });
