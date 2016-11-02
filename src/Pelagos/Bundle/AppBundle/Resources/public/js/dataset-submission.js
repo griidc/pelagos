@@ -148,7 +148,6 @@ $(function() {
 
     $(".contactperson").on("select2:selecting", function(e) {
         var id = e.params.args.data.id;
-        console.log('stop');
         var url = Routing.generate("pelagos_api_people_get", {"id" : id});
         var selected = $(this);
         jQuery.get(url, function(data) {
