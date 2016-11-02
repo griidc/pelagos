@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Component\Form\Form;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -349,11 +348,6 @@ class DatasetSubmissionController extends UIController
                     break;
             }
         }
-
-        $form->add('submit', SubmitType::class, array(
-            'label' => 'Submit',
-            'attr'  => array('class' => 'submitButton'),
-        ));
 
         return $this->render(
             'PelagosAppBundle:DatasetSubmission:index.html.twig',
