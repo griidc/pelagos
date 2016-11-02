@@ -23,11 +23,14 @@ $(function() {
         }
     });
 
-    $("#regForm").validate(
-        {
-            ignore: ".ignore"
-        }
-    );
+    $("#regForm").validate({
+        ignore: ".ignore",
+        submitHandler: function(form) {
+            if ($(".ignore").valid()) {
+                form.submit();
+            }
+        },
+    });
 
     $("#regForm").on("submit", function () {
         formHash = $("#regForm").serialize();
