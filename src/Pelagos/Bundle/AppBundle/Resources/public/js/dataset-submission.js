@@ -158,6 +158,10 @@ $(function() {
         });
     });
 
+    $(".contactperson").on("select2:unselecting", function(e) {
+        $(this).siblings().find(":input").val("")
+    });
+
     function select2ContactPerson() {
         $(".contactperson").select2({
             placeholder: "[Please Select a Person]",
