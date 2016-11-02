@@ -112,7 +112,8 @@ class DatasetSubmissionController extends UIController
                     $datasetSubmission = clone $datasetSubmission;
                     $datasetSubmission->setSequence(++$sequence);
 
-                    if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
+                    if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata
+                        and $datasetSubmission->getDataset()->getMetadataStatus() == DatasetSubmission::METADATA_STATUS_ACCEPTED) {
                         foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                             $datasetSubmission->removeDatasetContact($datasetContact);
                         }
@@ -193,6 +194,8 @@ class DatasetSubmissionController extends UIController
         if ($form->isSubmitted() and $form->isValid()) {
 
             $this->processDatasetFileTransferDetails($form, $datasetSubmission);
+
+            $datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_SUBMITTED);
 
             $datasetSubmission->submit();
 

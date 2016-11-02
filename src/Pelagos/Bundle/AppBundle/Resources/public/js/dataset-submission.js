@@ -80,10 +80,19 @@ $(function() {
         var datasetSubmissionId = $("form[datasetsubmission]").attr("datasetsubmission");
         var url = Routing.generate("pelagos_api_dataset_submission_patch");
 
+        var formData = $("form[datasetsubmission]").serialize();
+
+        if ($("#contactperson").val() == null ) {
+            formData += "&datasetContacts[0][person]=";
+        }
+        if ($("#metadatacontact").val() == null ) {
+            formData += "&metadataContacts[0][person]=";
+        }
+
         $.ajax({
             url: url + "/" + datasetSubmissionId + "?validate=false",
             method: "PATCH",
-            data: $("form[datasetsubmission]").serialize(),
+            data: formData,
             success: function(data, textStatus, jqXHR) {
                 formHash = $("#regForm").serialize();
                 $("#regForm").prop("unsavedChanges", false);
