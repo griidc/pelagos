@@ -589,6 +589,11 @@ class Dataset extends Entity
      */
     public function updateAvailabilityStatus()
     {
+        if (!$this->getDatasetSubmission() instanceof DatasetSubmission) {
+            // Set availability status to not available and return if we don't have a Dataset Submission.
+            $this->setAvailabilityStatus(DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE);
+            return;
+        }
         $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE;
         switch ($this->getDatasetSubmission()->getDatasetFileTransferStatus()) {
             case DatasetSubmission::TRANSFER_STATUS_COMPLETED:

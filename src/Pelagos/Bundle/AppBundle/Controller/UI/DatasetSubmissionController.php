@@ -57,10 +57,7 @@ class DatasetSubmissionController extends UIController
     public function defaultAction(Request $request)
     {
         $udi = $request->query->get('regid');
-        $dataset = null;
         $datasetSubmission = null;
-        $datasetSubmissionId = null;
-        $dif = null;
 
         if ($udi != null) {
             $datasets = $this->entityHandler
@@ -95,13 +92,11 @@ class DatasetSubmissionController extends UIController
                         );
                     } else {
                         $datasetContact = new PersonDatasetSubmissionDatasetContact();
-                        $datasetContact->setDatasetSubmission($datasetSubmission);
                         $datasetContact->setRole('pointOfContact');
                         $datasetContact->setPerson($dif->getPrimaryPointOfContact());
                         $datasetSubmission->addDatasetContact($datasetContact);
-                        
+
                         $metadataContact = new PersonDatasetSubmissionMetadataContact();
-                        $metadataContact->setDatasetSubmission($datasetSubmission);
                         $metadataContact->setRole('pointOfContact');
                         $metadataContact->setPerson($dif->getPrimaryPointOfContact());
                         $datasetSubmission->addMetadataContact($metadataContact);
@@ -132,6 +127,22 @@ class DatasetSubmissionController extends UIController
                             $datasetSubmission,
                             $this->entityHandler
                         );
+                    } else {
+                        foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+                            $datasetSubmission->removeDatasetContact($datasetContact);
+                            $newDatasetContact = new PersonDatasetSubmissionDatasetContact();
+                            $newDatasetContact->setRole($datasetContact->getRole());
+                            $newDatasetContact->setPerson($datasetContact->getPerson());
+                            $datasetSubmission->addDatasetContact($newDatasetContact);
+                        }
+
+                        foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+                            $datasetSubmission->removeMetadataContact($metadataContact);
+                            $newMetadataContact = new PersonDatasetSubmissionMetadataContact();
+                            $newMetadataContact->setRole($metadataContact->getRole());
+                            $newMetadataContact->setPerson($metadataContact->getPerson());
+                            $datasetSubmission->addMetadataContact($newMetadataContact);
+                        }
                     }
 
                     try {
@@ -143,69 +154,7 @@ class DatasetSubmissionController extends UIController
             }
         }
 
-        if ($datasetSubmission instanceof DatasetSubmission) {
-            if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
-                $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
-            }
-
-            if ($datasetSubmission->getMetadataContacts()->isEmpty()) {
-                $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
-            }
-
-            $datasetSubmissionId = $datasetSubmission->getId();
-        }
-
-        $form = $this->get('form.factory')->createNamed(
-            null,
-            DatasetSubmissionType::class,
-            $datasetSubmission,
-            array(
-                'action' => $this->generateUrl('pelagos_app_ui_datasetsubmission_post', array('id' => $datasetSubmissionId)),
-                'method' => 'POST',
-                'attr' => array(
-                    'datasetSubmission' => $datasetSubmissionId,
-                ),
-            )
-        );
-
-        $showForceImport = false;
-        $showForceDownload = false;
-        if ($datasetSubmission instanceof DatasetSubmission) {
-            switch ($datasetSubmission->getDatasetFileTransferType()) {
-                case DatasetSubmission::TRANSFER_TYPE_SFTP:
-                    $form->get('datasetFilePath')->setData(
-                        preg_replace('#^file://#', '', $datasetSubmission->getDatasetFileUri())
-                    );
-                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
-                        and $datasetSubmission->getDatasetFileUri() == $dataset->getDatasetSubmission()->getDatasetFileUri()) {
-                        $showForceImport = true;
-                    }
-                    break;
-                case DatasetSubmission::TRANSFER_TYPE_HTTP:
-                    $form->get('datasetFileUrl')->setData($datasetSubmission->getDatasetFileUri());
-                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
-                        and $datasetSubmission->getDatasetFileUri() == $dataset->getDatasetSubmission()->getDatasetFileUri()) {
-                        $showForceDownload = true;
-                    }
-                    break;
-            }
-        }
-
-        $form->add('submit', SubmitType::class, array(
-            'label' => 'Submit',
-            'attr'  => array('class' => 'submitButton'),
-        ));
-
-        return $this->render(
-            'PelagosAppBundle:DatasetSubmission:index.html.twig',
-            array(
-                'form' => $form->createView(),
-                'udi'  => $udi,
-                'datasetSubmission' => $datasetSubmission,
-                'showForceImport' => $showForceImport,
-                'showForceDownload' => $showForceDownload,
-            )
-        );
+        return $this->makeSubmissionForm($udi, $datasetSubmission);
     }
 
     /**
@@ -334,6 +283,87 @@ class DatasetSubmissionController extends UIController
         $this->messages[] = array(
             'body' => $datasetSubmission->getDataset()->getId(),
             'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
+        );
+    }
+
+    /**
+     * Make the submission form and return it.
+     *
+     * @param string            $udi               The UDI entered by the user.
+     * @param DatasetSubmission $datasetSubmission The Dataset Submission.
+     *
+     * @return Response
+     */
+    protected function makeSubmissionForm($udi, DatasetSubmission $datasetSubmission = null)
+    {
+        $datasetSubmissionId = null;
+        $researchGroupId = null;
+        $dataset = null;
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
+                $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
+            }
+
+            if ($datasetSubmission->getMetadataContacts()->isEmpty()) {
+                $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
+            }
+
+            $datasetSubmissionId = $datasetSubmission->getId();
+            $dataset = $datasetSubmission->getDataset();
+            $researchGroupId = $dataset->getResearchGroup()->getId();
+        }
+
+        $form = $this->get('form.factory')->createNamed(
+            null,
+            DatasetSubmissionType::class,
+            $datasetSubmission,
+            array(
+                'action' => $this->generateUrl('pelagos_app_ui_datasetsubmission_post', array('id' => $datasetSubmissionId)),
+                'method' => 'POST',
+                'attr' => array(
+                    'datasetSubmission' => $datasetSubmissionId,
+                    'researchGroup' => $researchGroupId,
+                ),
+            )
+        );
+
+        $showForceImport = false;
+        $showForceDownload = false;
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            switch ($datasetSubmission->getDatasetFileTransferType()) {
+                case DatasetSubmission::TRANSFER_TYPE_SFTP:
+                    $form->get('datasetFilePath')->setData(
+                        preg_replace('#^file://#', '', $datasetSubmission->getDatasetFileUri())
+                    );
+                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
+                        and $datasetSubmission->getDatasetFileUri() == $dataset->getDatasetSubmission()->getDatasetFileUri()) {
+                        $showForceImport = true;
+                    }
+                    break;
+                case DatasetSubmission::TRANSFER_TYPE_HTTP:
+                    $form->get('datasetFileUrl')->setData($datasetSubmission->getDatasetFileUri());
+                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
+                        and $datasetSubmission->getDatasetFileUri() == $dataset->getDatasetSubmission()->getDatasetFileUri()) {
+                        $showForceDownload = true;
+                    }
+                    break;
+            }
+        }
+
+        $form->add('submit', SubmitType::class, array(
+            'label' => 'Submit',
+            'attr'  => array('class' => 'submitButton'),
+        ));
+
+        return $this->render(
+            'PelagosAppBundle:DatasetSubmission:index.html.twig',
+            array(
+                'form' => $form->createView(),
+                'udi'  => $udi,
+                'datasetSubmission' => $datasetSubmission,
+                'showForceImport' => $showForceImport,
+                'showForceDownload' => $showForceDownload,
+            )
         );
     }
 }
