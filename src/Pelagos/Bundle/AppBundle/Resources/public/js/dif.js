@@ -84,6 +84,13 @@ $(document).ready(function()
         }
     });
 
+    $("#btnDS").button({
+        disabled : true
+    }).click(function() {
+        var submissionUrl = Routing.generate("pelagos_app_ui_datasetsubmission_default") + "?regid=" + $("[name=udi]").val();
+        window.location.href = submissionUrl;
+    });
+
     $("#btnSubmit").button().click(function() {
         $("#btn").val($(this).val());
         //$("#status").val("Open");
@@ -193,6 +200,7 @@ $(document).ready(function()
     });
 
     $("#status").change(function(){
+        $("#btnDS").button("option", "disabled", true);
         if ($('[name="udi"]').val() != "")
         {
             if ($(this).val() == "0")
@@ -206,6 +214,7 @@ $(document).ready(function()
             else if ($(this).val() == "2")
             {
                 $("#statustext").html('<fieldset><img src="' + imgTick +'">&nbsp;DIF approved (locked)</fieldset>');
+                $("#btnDS").button("option", "disabled", false);
             }
             $("#researchGroup").prop("disabled", true);
             formHash = $("#difForm").serialize();
@@ -274,19 +283,19 @@ function difStatus(id, status)
     var message = '<div><img src="' + imgInfo + '"><p>';
 
     switch (status) {
-        case 'approve':
+        case "approve":
             var msgtext  = "The application with DIF ID: " + udi + " was successfully approved!";
             var msgtitle = "DIF Approved";
             break;
-        case 'reject':
+        case "reject":
             var msgtext  = "The application with DIF ID: " + udi + " was successfully rejected!";
             var msgtitle = "DIF Rejected";
             break;
-        case 'unlock':
+        case "unlock":
             var msgtext  = "Successfully unlocked DIF with ID: " + udi + ".";
             var msgtitle = "DIF Unlocked";
             break;
-        case 'request-unlock':
+        case "request-unlock":
             var msgtext  = "Your unlock request has been submitted for ID: " + udi + ".<br>Your unlock request will be reviewed by GRIIDC staff.<br>You will receive an e-mail when the DIF is unlocked.";
             var msgtitle = "DIF Unlock Request Submitted";
             break;
@@ -322,15 +331,15 @@ function difStatus(id, status)
                 });
             },
             error: function(x, t, m) {
-                var message;
+                var errorMessage;
                 if (typeof m.message != "undefined") {
-                    message = m.message;}else{message = m;
+                    errorMessage = m.message;}else{message = m;
                 }
                 if (x.status == 400 || x.status == 403) {
-                    message = x.responseJSON.message;
+                    errorMessage = x.responseJSON.message;
                 }
                 $("#spinner").hide();
-                $("<div>"+message+"</div>").dialog({
+                $("<div>"+errorMessage+"</div>").dialog({
                     autoOpen: true,
                     height: "auto",
                     resizable: false,
