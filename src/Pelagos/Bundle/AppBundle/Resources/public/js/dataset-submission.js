@@ -25,7 +25,7 @@ $(function() {
 
     $("#regForm").validate(
         {
-            ignore: ""
+            ignore: ".ignore"
         }
     );
 
@@ -133,7 +133,7 @@ $(function() {
         $("#regForm select[keyword=target] option").prop("selected", true);
         var imgWarning = $("#imgwarning").attr("src");
         var imgCheck = $("#imgcheck").attr("src");
-        var valid = $(".ds-metadata :input").valid();
+        var valid = $("#regForm").valid();
 
         if (false == valid) {
             $(".tabimg").show();

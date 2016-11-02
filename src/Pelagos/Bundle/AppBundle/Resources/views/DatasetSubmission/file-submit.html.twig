@@ -10,7 +10,7 @@
     <fieldset> <!-- Dataset File Transfer Details -->
         <legend class="section-header">Dataset File Transfer Details</legend>
 
-        {{ form_widget(form.datasetFileUri) }}
+        {{ form_widget(form.datasetFileUri, { attr: { class: 'ignore'} }) }}
         {{ form_widget(form.datasetFileTransferType) }}
 
         <div style="background: transparent;" id="filetabs">
