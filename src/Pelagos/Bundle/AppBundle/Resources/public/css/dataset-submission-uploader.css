@@ -1,0 +1,49 @@
+#trigger-upload {
+    color: white;
+    background-color: #00ABC7;
+    font-size: 14px;
+    padding: 7px 20px;
+    background-image: none;
+}
+
+#fine-uploader .qq-upload-button {
+    margin-right: 15px;
+}
+
+#fine-uploader .buttons {
+    width: 36%;
+}
+
+#fine-uploader .qq-uploader {
+    overflow-x: hidden;
+}
+
+#fine-uploader .qq-uploader .qq-total-progress-bar-container {
+    width: 60%;
+    /* hide total progress bar, for now, since we're limiting to one file */
+    display: none;
+}
+
+#fine-uploader .qq-upload-button {
+    border-radius: 4px;
+}
+
+#fine-uploader .qq-upload-button-hover {
+    border: 1px solid #999999;
+    background: #dadada;
+    color: #212121;
+}
+
+#fine-uploader .qq-upload-button:active {
+    border: 1px solid #aaaaaa;
+    background: #ffffff;
+    color: #212121;
+}
+
+#upload-info {
+    margin-top: 10px;
+}
+
+#uploader-remaining {
+    margin-left: 10px;
+}

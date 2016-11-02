@@ -17,11 +17,16 @@
             [
                 '//cdnjs.cloudflare.com/ajax/libs/animate.css/3.3.0/animate.min.css',
                 '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css',
+                '//cdnjs.cloudflare.com/ajax/libs/file-uploader/5.11.8/fine-uploader-new.min.css',
             ]
         )
     }}
 
-    {% stylesheets  '@PelagosAppBundle/Resources/public/css/dataset-submission.css' %}
+    {% stylesheets
+        '@PelagosAppBundle/Resources/public/css/fileBrowser.css'
+        '@PelagosAppBundle/Resources/public/css/dataset-submission.css'
+        '@PelagosAppBundle/Resources/public/css/dataset-submission-uploader.css'
+    %}
         {{ add_css(asset_url) }}
     {% endstylesheets  %}
 
@@ -34,16 +39,13 @@
                 '//cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js',
                 '//cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js',
                 '//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',
+                '//cdnjs.cloudflare.com/ajax/libs/file-uploader/5.11.8/jquery.fine-uploader/jquery.fine-uploader.min.js',
                 '//maps.google.com/maps/api/js?v=3&key=AIzaSyBJjBREwu85aoCAbqqk-htGlPdSX7HAb6s',
                 '/includes/geoviz/geoviz.js',
                 '/includes/geoviz/mapWizard.js',
             ]
         )
     }}
-
-    {% stylesheets '@PelagosAppBundle/Resources/public/css/fileBrowser.css' %}
-        {{ add_css(asset_url) }}
-    {% endstylesheets  %}
 
     {% javascripts '@PelagosAppBundle/Resources/public/js/fileBrowser.js' %}
         {{ add_js(asset_url) }}
@@ -62,6 +64,8 @@
     {% javascripts '@PelagosAppBundle/Resources/public/js/dataset-submission.js' %}
         {{ add_js(asset_url) }}
     {% endjavascripts %}
+
+    {% include 'PelagosAppBundle:DatasetSubmission:uploader-template.html.twig' %}
 
 {% endblock %}
 

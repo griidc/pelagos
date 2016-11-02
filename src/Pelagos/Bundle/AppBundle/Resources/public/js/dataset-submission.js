@@ -1,6 +1,7 @@
 var $ = jQuery.noConflict();
 
 var geowizard;
+var formHash;
 
 //FOUC preventor
 $("html").hide();
@@ -15,25 +16,47 @@ $(function() {
     });
 
     $("#regidform").bind("change keyup mouseout", function() {
-        if($(this).validate().checkForm() && $("#regid").val() != "" && $("#regid").is(":disabled") == false) {
+        if($(this).validate() && $("#regid").val() != "" && $("#regid").is(":disabled") == false) {
             $("#regbutton").button("enable");
         } else {
             $("#regbutton").button("disable");
         }
     });
 
-    $("#regForm").validate(
-        {
-            ignore: ""
-        }
-    );
+    $("#regForm").validate({
+        ignore: ".ignore",
+        submitHandler: function(form) {
+            if ($(".ignore").valid()) {
+                form.submit();
+            }
+        },
+    });
 
-    $("#dtabs,#filetabs").tabs({
+    $("#regForm").on("submit", function () {
+        formHash = $("#regForm").serialize();
+        $("#regForm").prop("unsavedChanges", false);
+    });
+
+    $("#dtabs").tabs({
         heightStyle: "content",
         activate: function(event, ui) {
             $(ui.newTab.context.hash).trigger("active");
         }
     });
+
+    $("#filetabs").tabs();
+
+    switch ($("#datasetFileTransferType").val()) {
+        case "upload":
+            $("#filetabs").tabs("option", "active", 0);
+            break;
+        case "SFTP":
+            $("#filetabs").tabs("option", "active", 1);
+            break;
+        case "HTTP":
+            $("#filetabs").tabs("option", "active", 2);
+            break;
+    }
 
     $("button").button();
 
@@ -65,6 +88,8 @@ $(function() {
             method: "PATCH",
             data: $("form[datasetsubmission]").serialize(),
             success: function(data, textStatus, jqXHR) {
+                formHash = $("#regForm").serialize();
+                $("#regForm").prop("unsavedChanges", false);
                 var n = noty(
                 {
                     layout: 'top',
@@ -115,7 +140,7 @@ $(function() {
 
         if (false == valid) {
             $(".tabimg").show();
-            $("#dtabs .ui-tabs-panel").each(function() {
+            $("#dtabs .ds-metadata").each(function() {
                 var tabLabel = $(this).attr("aria-labelledby");
                 if ($(this).has(":input.error").length ? true : false) {
                     $("#" + tabLabel).next("img").prop("src", imgWarning);
@@ -124,7 +149,7 @@ $(function() {
                 };
 
                 $(this).find(":input").on("change blur keyup", function() {
-                    $("#dtabs .ui-tabs-panel").each(function() {
+                    $("#dtabs .ds-metadata").each(function() {
                         var label = $(this).attr("aria-labelledby");
                         $(this).find(":input").each(function() {
                             $(this).valid()
@@ -161,6 +186,217 @@ $(function() {
         $(this).siblings().find(":input").val("")
     });
 
+    // Direct Upload
+    $("#fine-uploader").fineUploader({
+        template: "qq-template",
+        multiple: false,
+        request: {
+            endpoint: Routing.generate("pelagos_api_upload_post")
+        },
+        session: {
+            endpoint: Routing.generate("pelagos_api_dataset_submission_get_uploaded_files", { id: $("form[datasetsubmission]").attr("datasetsubmission") })
+        },
+        chunking: {
+            enabled: true,
+            partSize: 10000000,
+            concurrent: {
+                enabled: true
+            },
+            success: {
+                endpoint: Routing.generate("pelagos_api_upload_post") + "?done"
+            }
+        },
+        resume: {
+            enabled: true
+        },
+        retry: {
+            enableAuto: true
+        },
+        deleteFile: {
+            enabled: true,
+            forceConfirm: true,
+            endpoint: Routing.generate("pelagos_api_upload_delete")
+        },
+        callbacks: {
+            onSessionRequestComplete: function (response, success, xhrOrXdr) {
+                if (response.length > 0) {
+                    $("#fine-uploader .qq-upload-button").hide();
+                }
+            },
+            onSubmit: function (id, name) {
+                setDatasetFileUri("");
+                $("#fine-uploader .qq-upload-button").hide();
+            },
+            onProgress: function (id, name, totalUploadedBytes, totalBytes) {
+                updateSpeedText(totalUploadedBytes, totalBytes);
+            },
+            onComplete: function (id, name, responseJSON, xhr) {
+                if (responseJSON.success) {
+                    setDatasetFileUri(responseJSON.path);
+                    saveDatasetSubmission();
+                }
+            },
+            onDelete: function (id) {
+                setDatasetFileUri("");
+                saveDatasetSubmission();
+            },
+            onStatusChange: function (id, oldStatus, newStatus) {
+                switch (newStatus) {
+                    case qq.status.CANCELED:
+                    case qq.status.DELETED:
+                    case qq.status.PAUSED:
+                    case qq.status.UPLOAD_SUCCESSFUL:
+                        resetSpeedText();
+                }
+                switch (newStatus) {
+                    case qq.status.CANCELED:
+                    case qq.status.DELETED:
+                        $("#fine-uploader .qq-upload-button").show();
+                }
+            }
+        }
+    });
+
+    // File browser for SFTP/GridFTP
+    $(".fileBrowserButton").fileBrowser({
+        url: Routing.generate("pelagos_api_account_get_incoming_directory", { id: "self" })
+    });
+
+    // SFTP/GridFTP and HTTP/FTP
+    $("#datasetFilePath, #datasetFileUrl").on("keyup change", function() {
+        setDatasetFileUri($(this).val());
+    });
+    $("#datasetFilePath, #datasetFileUrl").change(function() {
+        saveDatasetSubmission();
+    });
+
+    // set the datasetFileUri and datasetFileTransferType
+    function setDatasetFileUri(datasetFileUri) {
+        // get the datasetFileTransferType from the active tab
+        datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
+        // set the datasetFileTransferType
+        $("#datasetFileTransferType").val(datasetFileTransferType);
+        if (datasetFileTransferType != "upload") {
+            // clear uploaded files list (Direct Upload tab)
+            $(".qq-upload-list").html("")
+            // show upload button (Direct Upload tab)
+            $("#fine-uploader .qq-upload-button").show();
+        }
+        if (datasetFileTransferType != "SFTP") {
+            // clear datasetFilePath (Upload via SFTP/GridFTP tab)
+            $("#datasetFilePath").val("");
+        }
+        if (datasetFileTransferType != "HTTP") {
+            // clear datasetFileUrl (Request Pull from HTTP/FTP Server tab)
+            $("#datasetFileUrl").val("");
+            // if datasetFileUri is set
+            if (datasetFileUri != "") {
+                // prepend file uri prefix
+                datasetFileUri = "file://" + datasetFileUri;
+            }
+        }
+        // remove datasetFileUri error label
+        $('label.error[for="datasetFileUri"]').remove();
+        // set datasetFileUri
+        $("#datasetFileUri").val(datasetFileUri);
+    }
+
+    var uploadSpeeds = [];
+    var updateSpeeds = true;
+
+    function updateSpeedText(totalUploadedBytes, totalBytes) {
+        if (!updateSpeeds) {
+            return;
+        }
+        uploadSpeeds.push({
+            totalUploadedBytes: totalUploadedBytes,
+            currentTime: new Date().getTime()
+        });
+        var minSamples = 6;
+        var maxSamples = 20;
+        if (uploadSpeeds.length > maxSamples) {
+            uploadSpeeds.shift();
+        }
+        if (uploadSpeeds.length >= minSamples) {
+            try {
+                var firstSample = uploadSpeeds[0];
+                var lastSample = uploadSpeeds[uploadSpeeds.length - 1];
+                var progressBytes = lastSample.totalUploadedBytes - firstSample.totalUploadedBytes;
+                var progressTimeMS = lastSample.currentTime - firstSample.currentTime;
+                var bytesPerSecond = progressBytes / (progressTimeMS / 1000);
+                console.log(uploadSpeeds.length);
+                if (bytesPerSecond > 0) {
+                    var speedPrecision = 0;
+                    MBps = bytesPerSecond / 1e6;
+                    if (MBps < 10) {
+                        speedPrecision = 1;
+                    }
+                    if (MBps < 1) {
+                        speedPrecision = 2;
+                    }
+                    if (MBps < 0.1) {
+                        speedPrecision = 3;
+                    }
+                    $("#uploader-speed").text("Transfer speed: " + MBps.toFixed(speedPrecision) + " MB per second");
+                    var remainingDays = 0;
+                    var remainingHours = 0;
+                    var remainingMinutes = 0;
+                    var remainingSeconds = ((totalBytes - totalUploadedBytes) / bytesPerSecond).toFixed(0);
+                    if (remainingSeconds >= 60) {
+                        remainingMinutes = Math.floor(remainingSeconds / 60);
+                        remainingSeconds %= 60;
+                    }
+                    if (remainingMinutes >= 60) {
+                        remainingHours = Math.floor(remainingMinutes / 60);
+                        remainingMinutes %= 60;
+                    }
+                    if (remainingHours >= 24) {
+                        remainingDays = Math.floor(remainingHours / 24);
+                        remainingHours %= 24;
+                    }
+                    var remainingText = "";
+                    if (remainingDays > 0) {
+                        remainingText += " " + remainingDays + " day";
+                        if (remainingDays > 1) {
+                            remainingText += "s";
+                        }
+                    }
+                    if (remainingHours > 0) {
+                        remainingText += " " + remainingHours + " hour";
+                        if (remainingHours > 1) {
+                            remainingText += "s";
+                        }
+                    }
+                    if (remainingMinutes > 0) {
+                        remainingText += " " + remainingMinutes + " minute";
+                        if (remainingMinutes > 1) {
+                            remainingText += "s";
+                        }
+                    }
+                    if (remainingSeconds > 0) {
+                        remainingText += " " + remainingSeconds + " second";
+                        if (remainingSeconds > 1) {
+                            remainingText += "s";
+                        }
+                    }
+                    $("#uploader-remaining").text("Time remaining:" + remainingText);
+                    updateSpeeds = false;
+                    setTimeout(function () {
+                        updateSpeeds = true;
+                    }, 500);
+                }
+            } catch (err) {
+            }
+        }
+    }
+
+    function resetSpeedText() {
+        $("#uploader-speed").text("");
+        $("#uploader-remaining").text("");
+        uploadSpeeds = [];
+        updateSpeeds = true;
+    }
+
     function select2ContactPerson() {
         $(".contactperson").select2({
             placeholder: "[Please Select a Person]",
@@ -178,10 +414,11 @@ $(function() {
                     return query;
                 },
                 url: Routing.generate("pelagos_api_people_get_collection",
-                {
-                    "_properties" : "id,firstName,lastName,emailAddress",
-                    "_orderBy" : "lastName,firstName,emailAddress"
-                }
+                    {
+                        "_properties" : "id,firstName,lastName,emailAddress",
+                        "_orderBy" : "lastName,firstName,emailAddress",
+                        "personResearchGroups.researchGroup" : $("[researchGroup]").attr("researchGroup"),
+                    }
                 ),
                 processResults: function (data) {
 
@@ -280,6 +517,29 @@ $(function() {
         $("#topicKeywords option").remove();
         $("#topicKeywords").append($("#topic-keywords").find("option").clone().prop("selected", true)).change();
     }
+
+    /*
+     * Navigate away without saving preventor.
+     */
+    window.onbeforeunload = function () {
+        var unsavedChanges = false;
+        $("#regForm").each(function () {
+            if ($(this).prop("unsavedChanges")) {
+                unsavedChanges = true;
+            }
+        });
+        if (unsavedChanges) {
+            return "You have unsaved changes!\nAre you sure you want to navigate away?";
+        }
+    };
+
+    formHash = $("#regForm").serialize();
+
+    $("#regForm").on("keyup change", function () {
+        if ($("#regForm").serialize() != formHash) {
+            $(this).prop("unsavedChanges", true);
+        }
+    });
 
     $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
         style: {

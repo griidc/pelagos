@@ -81,7 +81,6 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
             'restrictions' => DatasetSubmission::RESTRICTION_NONE,
             'doi' => 'test doi',
             'datasetFileTransferType' => 'test dataset file transfer type',
-            'metadataFileTransferType' => 'test metadata file transfer type',
             'shortTitle' => 'test short title',
             'referenceDate' => '2000-01-01',
             'referenceDateType' => array_keys(DatasetSubmission::REFERENCE_DATE_TYPES)[0],

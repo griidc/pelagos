@@ -181,4 +181,50 @@ class DatasetSubmissionController extends EntityController
         $this->handleDelete(DatasetSubmission::class, $id);
         return $this->makeNoContentResponse();
     }
+
+    /**
+     * Return a list of files uploaded for a dataset submission.
+     *
+     * @param string $id The id of the dataset submission.
+     *
+     * @Rest\Get("/uploaded-files/{id}")
+     *
+     * @Rest\View()
+     *
+     * @return array The list of uploaded files.
+     */
+    public function getUploadedFilesAction($id)
+    {
+        $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
+        // If the dataset transfer type is not upload.
+        if ($datasetSubmission->getDatasetFileTransferType() !== DatasetSubmission::TRANSFER_TYPE_UPLOAD) {
+            // Return empty file list.
+            return array();
+        }
+        $datasetFileUri = $datasetSubmission->getDatasetFileUri();
+        // If the datasetFileUri is not set.
+        if (empty($datasetFileUri)) {
+            // Return empty file list.
+            return array();
+        }
+        // Initialize file info.
+        $fileInfo = array(
+            'name' => basename($datasetFileUri),
+            'size' => -1,
+            'uuid' => '00000000-0000-0000-0000-000000000000',
+        );
+        // Try to get file info from the file.
+        try {
+            $file = new \SplFileInfo($datasetFileUri);
+            $fileInfo['name'] = $file->getFilename();
+            $fileInfo['size'] = $file->getSize();
+        } catch (\Exception $e) {
+            // Just use defaults if we're unable to get file info (e.g. file has been deleted from disk).
+        }
+        // Match the UUID out of the datsetFileUri.
+        if (preg_match('!/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/!', $datasetFileUri, $matches)) {
+            $uuid = $matches[1];
+        }
+        return array($fileInfo);
+    }
 }
