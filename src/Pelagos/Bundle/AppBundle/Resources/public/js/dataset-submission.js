@@ -27,14 +27,11 @@ $(function() {
         ignore: ".ignore",
         submitHandler: function(form) {
             if ($(".ignore").valid()) {
+                formHash = $("#regForm").serialize();
+                $("#regForm").prop("unsavedChanges", false);
                 form.submit();
             }
         },
-    });
-
-    $("#regForm").on("submit", function () {
-        formHash = $("#regForm").serialize();
-        $("#regForm").prop("unsavedChanges", false);
     });
 
     $("#dtabs").tabs({
