@@ -97,7 +97,7 @@ if (isset($thefile))
 {
 	if ($_FILES["file"]["type"] == "text/xml") {
 		$xmldoc = loadXMLFromFile($thefile);
-        if ($xmldoc != null and is_array($xmldoc)) {
+        if ($xmldoc != null and (is_array($xmldoc) or 'gmi:MI_Metadata' !== $xmldoc->documentElement->tagName)) {
             $dMessage = 'Unable to load file: ' .  $_FILES["file"]["name"];
             $dMessage .= "<br>This does not appear to be a valid ISO 19115-2 metadata file.";
             drupal_set_message($dMessage, 'error', false);

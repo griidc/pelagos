@@ -96,58 +96,6 @@ Thank you for your submission. Please email <a href="mailto:griidc@gomri.org?sub
                 {{ DatasetSubmission.metadataFileUri }}
             </td>
         </tr>
-        {% if DatasetSubmission.getDatasetFileTransferType == 'HTTP' %}
-        <tr>
-            <td>
-                <b>Available Date:</b>
-            </td>
-            <td>
-                {{ DatasetSubmission.getDatasetFileAvailabilityDate|date('Y-m-d') }}
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <b>Download on Certain Times:</b>
-            </td>
-            <td>
-                {{ DatasetSubmission.getDatasetFilePullCertainTimesOnly ? 'Yes':'No' }}
-            </td>
-        </tr>
-            {% if DatasetSubmission.getDatasetFilePullCertainTimesOnly %}
-        <tr>
-            <td>
-                <b>Download only on these days:</b>
-            </td>
-            <td>
-                {{ DatasetSubmission.getDatasetFilePullDays|join(',') }}
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <b>Download only after:</b>
-            </td>
-            <td>
-            {{ DatasetSubmission.getDatasetFilePullStartTime.format('H:i') }}
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <b>Local Timezone:</b>
-            </td>
-            <td>
-                {{ DatasetSubmission.getDatasetFilePullStartTime.getTimezone.getName }}
-            </td>
-        </tr>
-            {% endif %}
-        <tr>
-            <td>
-                <b>Pull Source Data:</b>
-            </td>
-            <td>
-                {{ DatasetSubmission.getDatasetFilePullSourceData ? 'Yes':'No' }}
-            </td>
-        </tr>
-        {% endif %}
         <tr>
             <td>
                 <b>Submitted by User:</b>

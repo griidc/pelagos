@@ -42,7 +42,10 @@ if (in_array(
     exit();
 }
 
-if (preg_match('/^Pelagos\\\\/', $request->attributes->get('_controller'))) {
+if (preg_match('/^Pelagos\\\\/', $request->attributes->get('_controller'))
+    or $request->attributes->get('_route') === null
+    or $request->attributes->get('_route') === '_twig_error_test'
+) {
     $content = $response->getContent();
     $newContent = preg_replace('/<\/body>/', '', $content);
     $response->setContent($newContent);

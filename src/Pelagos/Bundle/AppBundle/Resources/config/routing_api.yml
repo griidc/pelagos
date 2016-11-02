@@ -93,3 +93,9 @@ dataset_submission:
     resource: Pelagos\Bundle\AppBundle\Controller\Api\DatasetSubmissionController
     name_prefix: dataset_submission_
     prefix: dataset_submission
+
+upload:
+    type: rest
+    resource: Pelagos\Bundle\AppBundle\Controller\Api\UploadController
+    name_prefix: upload_
+    prefix: upload

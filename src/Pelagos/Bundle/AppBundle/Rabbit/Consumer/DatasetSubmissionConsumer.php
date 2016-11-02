@@ -165,8 +165,8 @@ class DatasetSubmissionConsumer implements ConsumerInterface
         try {
             $datasetFileUri = $datasetSubmission->getDatasetFileUri();
             $datasetId = $datasetSubmission->getDataset()->getUdi();
-            $this->dataStore->addFile($datasetFileUri, $datasetId, 'dataset');
-            $datasetSubmission->setDatasetFileName(basename($datasetFileUri));
+            $datasetFileName = $this->dataStore->addFile($datasetFileUri, $datasetId, 'dataset');
+            $datasetSubmission->setDatasetFileName($datasetFileName);
             $datasetFileInfo = $this->dataStore->getFileInfo($datasetId, 'dataset');
             $datasetSubmission->setDatasetFileSize($datasetFileInfo->getSize());
             $datasetSubmission->setDatasetFileTransferStatus(
@@ -218,11 +218,11 @@ class DatasetSubmissionConsumer implements ConsumerInterface
         try {
             $metadataFileUri = $datasetSubmission->getMetadataFileUri();
             $datasetId = $datasetSubmission->getDataset()->getUdi();
-            $this->dataStore->addFile($metadataFileUri, $datasetId, 'metadata');
+            $metadataFileName = $this->dataStore->addFile($metadataFileUri, $datasetId, 'metadata');
             $mdSpiFileInfo = $this->dataStore->getFileInfo($datasetId, 'metadata');
             $mdSha256Hash = hash('sha256', file_get_contents($mdSpiFileInfo->getRealPath()));
             $datasetSubmission->setMetadataFileSha256Hash($mdSha256Hash);
-            $datasetSubmission->setMetadataFileName(basename($metadataFileUri));
+            $datasetSubmission->setMetadataFileName($metadataFileName);
             $datasetSubmission->setMetadataFileTransferStatus(
                 DatasetSubmission::TRANSFER_STATUS_COMPLETED
             );
