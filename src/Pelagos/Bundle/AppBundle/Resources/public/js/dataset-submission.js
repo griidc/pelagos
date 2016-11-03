@@ -1,6 +1,7 @@
 var $ = jQuery.noConflict();
 
 var geowizard;
+var formHash;
 
 //FOUC preventor
 $("html").hide();
@@ -15,18 +16,23 @@ $(function() {
     });
 
     $("#regidform").bind("change keyup mouseout", function() {
-        if($(this).validate().checkForm() && $("#regid").val() != "" && $("#regid").is(":disabled") == false) {
+        if($(this).validate() && $("#regid").val() != "" && $("#regid").is(":disabled") == false) {
             $("#regbutton").button("enable");
         } else {
             $("#regbutton").button("disable");
         }
     });
 
-    $("#regForm").validate(
-        {
-            ignore: ""
-        }
-    );
+    $("#regForm").validate({
+        ignore: ".ignore",
+        submitHandler: function(form) {
+            if ($(".ignore").valid()) {
+                formHash = $("#regForm").serialize();
+                $("#regForm").prop("unsavedChanges", false);
+                form.submit();
+            }
+        },
+    });
 
     $("#dtabs").tabs({
         heightStyle: "content",
@@ -76,19 +82,30 @@ $(function() {
     function saveDatasetSubmission()
     {
         var datasetSubmissionId = $("form[datasetsubmission]").attr("datasetsubmission");
-        var url = Routing.generate('pelagos_api_dataset_submission_patch');
+        var url = Routing.generate("pelagos_api_dataset_submission_patch");
+
+        var formData = $("form[datasetsubmission]").serialize();
+
+        if ($("#contactperson").val() == null ) {
+            formData += "&datasetContacts[0][person]=";
+        }
+        if ($("#metadatacontact").val() == null ) {
+            formData += "&metadataContacts[0][person]=";
+        }
 
         $.ajax({
             url: url + "/" + datasetSubmissionId + "?validate=false",
             method: "PATCH",
-            data: $("form[datasetsubmission]").serialize(),
+            data: formData,
             success: function(data, textStatus, jqXHR) {
+                formHash = $("#regForm").serialize();
+                $("#regForm").prop("unsavedChanges", false);
                 var n = noty(
                 {
-                    layout: 'top',
-                    theme: 'relax',
-                    type: 'success',
-                    text: 'Succesfully Saved',
+                    layout: "top",
+                    theme: "relax",
+                    type: "success",
+                    text: "Succesfully Saved",
                     timeout: 1000,
                     modal: false,
                     animation: {
@@ -103,9 +120,9 @@ $(function() {
                 var message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
                 var n = noty(
                 {
-                    layout: 'top',
-                    theme: 'relax',
-                    type: 'error',
+                    layout: "top",
+                    theme: "relax",
+                    type: "error",
                     text: message,
                     modal: true,
                 });
@@ -129,7 +146,7 @@ $(function() {
         $("#regForm select[keyword=target] option").prop("selected", true);
         var imgWarning = $("#imgwarning").attr("src");
         var imgCheck = $("#imgcheck").attr("src");
-        var valid = $(".ds-metadata :input").valid();
+        var valid = $("#regForm").valid();
 
         if (false == valid) {
             $(".tabimg").show();
@@ -163,6 +180,21 @@ $(function() {
 
     select2ContactPerson();
     buildKeywordLists();
+
+    $(".contactperson").on("select2:selecting", function(e) {
+        var id = e.params.args.data.id;
+        var url = Routing.generate("pelagos_api_people_get", {"id" : id});
+        var selected = $(this);
+        jQuery.get(url, function(data) {
+            $.each(data, function(field, value) {
+                selected.parent().find("[name*=" + field + "]").val(value);
+            });
+        });
+    });
+
+    $(".contactperson").on("select2:unselecting", function(e) {
+        $(this).siblings().find(":input").val("")
+    });
 
     // Direct Upload
     $("#fine-uploader").fineUploader({
@@ -392,12 +424,14 @@ $(function() {
                     return query;
                 },
                 url: Routing.generate("pelagos_api_people_get_collection",
-                {
-                    "_properties" : "id,firstName,lastName,emailAddress",
-                    "_orderBy" : "lastName,firstName,emailAddress"
-                }
+                    {
+                        "_properties" : "id,firstName,lastName,emailAddress",
+                        "_orderBy" : "lastName,firstName,emailAddress",
+                        "personResearchGroups.researchGroup" : $("[researchGroup]").attr("researchGroup"),
+                    }
                 ),
                 processResults: function (data) {
+
                     return {
                         results: $.map(data, function (item) {
                             return {
@@ -493,6 +527,29 @@ $(function() {
         $("#topicKeywords option").remove();
         $("#topicKeywords").append($("#topic-keywords").find("option").clone().prop("selected", true)).change();
     }
+
+    /*
+     * Navigate away without saving preventor.
+     */
+    window.onbeforeunload = function () {
+        var unsavedChanges = false;
+        $("#regForm").each(function () {
+            if ($(this).prop("unsavedChanges")) {
+                unsavedChanges = true;
+            }
+        });
+        if (unsavedChanges) {
+            return "You have unsaved changes!\nAre you sure you want to navigate away?";
+        }
+    };
+
+    formHash = $("#regForm").serialize();
+
+    $("#regForm").on("keyup change", function () {
+        if ($("#regForm").serialize() != formHash) {
+            $(this).prop("unsavedChanges", true);
+        }
+    });
 
     $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
         style: {

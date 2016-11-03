@@ -111,7 +111,7 @@ abstract class PersonDatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setPerson(Person $person)
+    public function setPerson(Person $person = null)
     {
         $this->person = $person;
     }

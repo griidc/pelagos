@@ -31,6 +31,7 @@ class PersonDatasetSubmissionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('person', PersonType::class)
             ->add('role', ChoiceType::class, array(
                 'label' => 'Role',
                 'choices' => PersonDatasetSubmission::getRoleChoices(),
