@@ -131,3 +131,7 @@ fieldset
 #filetabs .file_force label {
     display: inline;
 }
+
+#spinner {
+    display: none;
+}

@@ -7,6 +7,25 @@ var formHash;
 $("html").hide();
 
 $(function() {
+    new Spinner({
+        lines: 13, // The number of lines to draw
+        length: 40, // The length of each line
+        width: 15, // The line thickness
+        radius: 50, // The radius of the inner circle
+        corners: 1, // Corner roundness (0..1)
+        rotate: 0, // The rotation offset
+        direction: 1, // 1: clockwise, -1: counterclockwise
+        color: "#000", // #rgb or #rrggbb or array of colors
+        speed: 1, // Rounds per second
+        trail: 60, // Afterglow percentage
+        shadow: true, // Whether to render a shadow
+        hwaccel: true, // Whether to use hardware acceleration
+        className: "spinner", // The CSS class to assign to the spinner
+        zIndex: 2000000000, // The z-index (defaults to 2000000000)
+        top: "50%", // Top position relative to parent
+        left: "50%" // Left position relative to parent
+    }).spin($("#spinner")[0]);
+
     $("html").show();
 
     $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");
@@ -263,6 +282,28 @@ $(function() {
         }
     });
 
+    // Request SFTP/GridFTP button
+    $("#sftpButton").click(function() {
+        $("#spinner").show();
+        $.ajax({
+            url: $("#sftpButton").attr("sftppath"),
+            type: "PATCH",
+            success: function() {
+                showDialog("SFTP Access", "SFTP Access has been granted.");
+                $(".sftpYes").show();
+                $(".sftpNo").hide();
+                // Enable file path for dataset.
+                $("#datasetFilePath").prop("disabled", false);
+                // Enable file browse buttons..
+                $(".fileBrowserButton").prop("disabled", false);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                showDialog("Problem with your request", jqXHR.responseJSON.message);
+            }
+        }).always(function() {
+            $("#spinner").hide();
+        });
+    });
     // File browser for SFTP/GridFTP
     $(".fileBrowserButton").fileBrowser({
         url: Routing.generate("pelagos_api_account_get_incoming_directory", { id: "self" })
