@@ -27,14 +27,11 @@ $(function() {
         ignore: ".ignore",
         submitHandler: function(form) {
             if ($(".ignore").valid()) {
+                formHash = $("#regForm").serialize();
+                $("#regForm").prop("unsavedChanges", false);
                 form.submit();
             }
         },
-    });
-
-    $("#regForm").on("submit", function () {
-        formHash = $("#regForm").serialize();
-        $("#regForm").prop("unsavedChanges", false);
     });
 
     $("#dtabs").tabs({
@@ -81,21 +78,30 @@ $(function() {
     function saveDatasetSubmission()
     {
         var datasetSubmissionId = $("form[datasetsubmission]").attr("datasetsubmission");
-        var url = Routing.generate('pelagos_api_dataset_submission_patch');
+        var url = Routing.generate("pelagos_api_dataset_submission_patch");
+
+        var formData = $("form[datasetsubmission]").serialize();
+
+        if ($("#contactperson").val() == null ) {
+            formData += "&datasetContacts[0][person]=";
+        }
+        if ($("#metadatacontact").val() == null ) {
+            formData += "&metadataContacts[0][person]=";
+        }
 
         $.ajax({
             url: url + "/" + datasetSubmissionId + "?validate=false",
             method: "PATCH",
-            data: $("form[datasetsubmission]").serialize(),
+            data: formData,
             success: function(data, textStatus, jqXHR) {
                 formHash = $("#regForm").serialize();
                 $("#regForm").prop("unsavedChanges", false);
                 var n = noty(
                 {
-                    layout: 'top',
-                    theme: 'relax',
-                    type: 'success',
-                    text: 'Succesfully Saved',
+                    layout: "top",
+                    theme: "relax",
+                    type: "success",
+                    text: "Succesfully Saved",
                     timeout: 1000,
                     modal: false,
                     animation: {
@@ -110,9 +116,9 @@ $(function() {
                 var message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
                 var n = noty(
                 {
-                    layout: 'top',
-                    theme: 'relax',
-                    type: 'error',
+                    layout: "top",
+                    theme: "relax",
+                    type: "error",
                     text: message,
                     modal: true,
                 });
@@ -170,6 +176,21 @@ $(function() {
 
     select2ContactPerson();
     buildKeywordLists();
+
+    $(".contactperson").on("select2:selecting", function(e) {
+        var id = e.params.args.data.id;
+        var url = Routing.generate("pelagos_api_people_get", {"id" : id});
+        var selected = $(this);
+        jQuery.get(url, function(data) {
+            $.each(data, function(field, value) {
+                selected.parent().find("[name*=" + field + "]").val(value);
+            });
+        });
+    });
+
+    $(".contactperson").on("select2:unselecting", function(e) {
+        $(this).siblings().find(":input").val("")
+    });
 
     // Direct Upload
     $("#fine-uploader").fineUploader({
@@ -406,6 +427,7 @@ $(function() {
                     }
                 ),
                 processResults: function (data) {
+
                     return {
                         results: $.map(data, function (item) {
                             return {

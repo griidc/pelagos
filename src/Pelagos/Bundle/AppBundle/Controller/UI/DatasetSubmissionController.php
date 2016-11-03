@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Component\Form\Form;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -113,7 +112,8 @@ class DatasetSubmissionController extends UIController
                     $datasetSubmission = clone $datasetSubmission;
                     $datasetSubmission->setSequence(++$sequence);
 
-                    if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
+                    if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata
+                        and $datasetSubmission->getDataset()->getMetadataStatus() == DatasetSubmission::METADATA_STATUS_ACCEPTED) {
                         foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                             $datasetSubmission->removeDatasetContact($datasetContact);
                         }
@@ -194,6 +194,8 @@ class DatasetSubmissionController extends UIController
         if ($form->isSubmitted() and $form->isValid()) {
 
             $this->processDatasetFileTransferDetails($form, $datasetSubmission);
+
+            $datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_SUBMITTED);
 
             $datasetSubmission->submit();
 
@@ -349,11 +351,6 @@ class DatasetSubmissionController extends UIController
                     break;
             }
         }
-
-        $form->add('submit', SubmitType::class, array(
-            'label' => 'Submit',
-            'attr'  => array('class' => 'submitButton'),
-        ));
 
         return $this->render(
             'PelagosAppBundle:DatasetSubmission:index.html.twig',

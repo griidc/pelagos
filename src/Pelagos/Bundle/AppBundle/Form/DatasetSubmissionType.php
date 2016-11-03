@@ -216,6 +216,10 @@ class DatasetSubmissionType extends AbstractType
                 'allow_delete' => true,
                 'delete_empty' => true,
                 'required' => true,
+            ))
+            ->add('submitButton', Type\SubmitType::class, array(
+                'label' => 'Submit',
+                'attr'  => array('class' => 'submitButton'),
             ));
     }
 
