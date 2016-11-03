@@ -101,6 +101,7 @@ class MetadataController extends EntityController
         }
 
         $metadata = $dataset->getMetadata();
+        $metadataFilename = preg_replace('/:/', '-', $dataset->getUdi()) . '-metadata.xml';
 
         if ($dataset->getMetadataStatus() == DatasetSubmission::METADATA_STATUS_ACCEPTED) {
             if ($dataset->getMetadata() instanceof Metadata and
@@ -123,17 +124,19 @@ class MetadataController extends EntityController
                 }
             }
         } else {
+            
             $xml = $this->get('twig')->render(
                 'PelagosAppBundle:MetadataGenerator:MI_Metadata.xml.twig',
                 array(
                     'dataset' => $dataset,
-                    'metadataFilename' => preg_replace('/:/', '-', $dataset->getUdi()) . '-metadata.xml',
+                    'metadataFilename' => $metadataFilename,
                     )
             );
         }
 
         $response = new Response($xml);
         $response->headers->set('Content-Type', 'text/xml');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $metadataFilename .'"');
 
         return $response;
     }
