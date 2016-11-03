@@ -675,6 +675,7 @@ function formReset(dontScrollToTop)
         $("form :input").prop("disabled",false);
         $("#btnSubmit").prop("disabled",false);
         $("#btnSave").prop("disabled",false);
+        $("#btnDS").button("option", "disabled", true);
         $("#btnReqUnlock").hide();
         geowizard.haveSpatial(false);
         if (!dontScrollToTop){scrollToTop();}
