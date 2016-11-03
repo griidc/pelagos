@@ -47,11 +47,6 @@ class AccountController extends UIController
      */
     public function passwordResetAction()
     {
-        // If the user is authenticated.
-        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            // Redirect to change password.
-            return $this->redirectToRoute('pelagos_app_ui_account_changepassword');
-        }
         return $this->render('PelagosAppBundle:Account:PasswordReset.html.twig');
     }
 
