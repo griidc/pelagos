@@ -47,24 +47,6 @@ class DoiRequestController extends UIController
             $doiRequest = new DoiRequest;
         }
 
-        if ($request->request->get('Approve') == 'Approve') {
-            $this->approve($doiRequest);
-
-            // $url, $who, $what, $where, $date
-            $doi = $this->issueDOI(
-                $doiRequest->getUrl(),
-                $doiRequest->getResponsibleParty(),
-                $doiRequest->getTitle(),
-                $doiRequest->getPublisher(),
-                $doiRequest->getPublicationDate()->format('Y-m-d')
-            );
-
-            $doiRequest->issue($doi);
-
-            $this->container->get('pelagos.event.entity_event_dispatcher')
-            ->dispatch($doiRequest, 'doi_issued');
-        }
-
         if ($this->isGranted(DoiRequestVoter::CAN_APPROVE, $doiRequest) and
             null !== $id and
             $doiRequest->getStatus() == DoiRequest::STATUS_SUBMITTED
@@ -93,6 +75,24 @@ class DoiRequestController extends UIController
         );
 
         $form->handleRequest($request);
+
+        if ($request->request->get('Approve') == 'Approve') {
+            $this->approve($doiRequest);
+
+            // $url, $who, $what, $where, $date
+            $doi = $this->issueDOI(
+                $doiRequest->getUrl(),
+                $doiRequest->getResponsibleParty(),
+                $doiRequest->getTitle(),
+                $doiRequest->getPublisher(),
+                $doiRequest->getPublicationDate()->format('Y-m-d')
+            );
+
+            $doiRequest->issue($doi);
+
+            $this->container->get('pelagos.event.entity_event_dispatcher')
+            ->dispatch($doiRequest, 'doi_issued');
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             if (null !== $id) {
