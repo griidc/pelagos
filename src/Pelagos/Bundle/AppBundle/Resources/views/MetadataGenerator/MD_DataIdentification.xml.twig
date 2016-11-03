@@ -38,9 +38,7 @@
     {% endfor %}
     </gmd:pointOfContact>
     {% endif %}
-    {% if dataset.datasetSubmission.themeKeywords or
-        dataset.datasetSubmission.placeKeywords
-    %}
+    {% if dataset.datasetSubmission.themeKeywords %}
     <gmd:descriptiveKeywords>
         {% include "PelagosAppBundle:MetadataGenerator:MD_Keywords.xml.twig" with
             {
@@ -49,6 +47,8 @@
             }
         %}
     </gmd:descriptiveKeywords>
+    {% endif %}
+    {% if dataset.datasetSubmission.placeKeywords %}
     <gmd:descriptiveKeywords>
         {% include "PelagosAppBundle:MetadataGenerator:MD_Keywords.xml.twig" with
             {
