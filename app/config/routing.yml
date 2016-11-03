@@ -14,3 +14,7 @@ pelagos:
 
 fos_js_routing:
     resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
+
+redirecting:
+    resource: "@PelagosAppBundle/Controller/RedirectingController.php"
+    type: annotation
