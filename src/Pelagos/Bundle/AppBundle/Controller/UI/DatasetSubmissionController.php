@@ -353,18 +353,18 @@ class DatasetSubmissionController extends UIController
             }
         }
 
-        $xmlFormView = null;
-        if (null !== $datasetSubmissionId) {
-            $xmlFormView = $this->get('form.factory')->createNamed(
-                null,
-                DatasetSubmissionXmlFileType::class,
-                null,
-                array(
-                    'action' => $this->generateUrl('pelagos_app_ui_datasetsubmission_postxmluri', array('id' => $datasetSubmissionId)),
-                    'method' => 'POST',
+        $xmlFormView = $this->get('form.factory')->createNamed(
+            null,
+            DatasetSubmissionXmlFileType::class,
+            null,
+            array(
+                'action' => $this->generateUrl('pelagos_app_ui_datasetsubmission_postxmluri', array('id' => $datasetSubmissionId)),
+                'method' => 'POST',
+                'attr' => array(
+                    'id' => 'xmlUploadForm',
                 )
-            )->createView();
-        }
+            )
+        )->createView();
 
         return $this->render(
             'PelagosAppBundle:DatasetSubmission:index.html.twig',
@@ -385,13 +385,13 @@ class DatasetSubmissionController extends UIController
     * @param Request     $request The Symfony request object.
     * @param string|null $id      The id of the Dataset Submission to load.
     *
-    * @Route("/xml/{id}/")
+    * @Route("/xml/{id}")
     *
     * @Method("POST")
     *
     * @return Response A Response instance.
     */
-    public function postXmlUri(Request $request, $id)
+    public function postXmlUri(Request $request, $id = null)
     {
         $xmlForm = $this->get('form.factory')->createNamed(
             null,
@@ -401,18 +401,43 @@ class DatasetSubmissionController extends UIController
 
         $xmlForm->handleRequest($request);
         $xmlFile = $xmlForm['xmlFile']->getData();
-
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
-
-        if ($xmlFile instanceof UploadedFile) {
-            $xml = simplexml_load_file($xmlFile->getRealPath());
-            ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues($xml, $datasetSubmission, $this->entityHandler);
-        }
-
         if ($datasetSubmission instanceof DatasetSubmission) {
-            $datasetSubmissionUdi = $datasetSubmission->getDataset()->getUdi();
-        }
+            if ($xmlFile instanceof UploadedFile) {
 
+                libxml_use_internal_errors(true);
+                $xml = @simplexml_load_file($xmlFile->getRealPath());
+                $fatal = false;
+
+                if (false !== $xml) {
+                    $xmlErrors = libxml_get_errors();
+                    libxml_clear_errors();
+
+                    for ($i = 0; $i < count($xmlErrors); $i++) {
+                        if ($xmlErrors[$i]->level == 'LIBXML_ERR_FATAL') {
+                            $fatal = true;
+                        }
+                    }
+
+                    if (false === $fatal) {
+                        foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+                            $datasetSubmission->removeDatasetContact($datasetContact);
+                        }
+
+                        foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+                            $datasetSubmission->removeMetadataContact($metadataContact);
+                        }
+                        //$this->entityHandler->update($datasetSubmission);
+                        ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues($xml, $datasetSubmission, $this->entityHandler);
+                    }
+                }
+            }
+
+                $datasetSubmissionUdi = $datasetSubmission->getDataset()->getUdi();
+        }
+        //$dataset = $datasetSubmission->getDataset();
+        //$datasetSubmission = new DatasetSubmission();
+        //$datasetSubmission->setDataset($dataset);
         return $this->makeSubmissionForm($datasetSubmissionUdi, $datasetSubmission);
     }
 }
