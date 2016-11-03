@@ -1,10 +1,13 @@
 {{ form_start(xmlForm) }}
-    {{ form_widget(xmlForm) }}
-    <button type="submit">Upload XML</button>
+    <div style="display:none;">
+        {{ form_widget(xmlForm) }}
+    </div>
 {{ form_end(form, {'render_rest': false}) }}
 
 {{ form_start(form, {'attr': {'id': 'regForm'}}) }}
     <div id="metatoolbar" class="ui-widget-header ui-corner-all toolbarbutton">
+        <button type="button" id="btn-upload">Load from File</button>
+        <button type="button" id="btn-from-url">Load from URL</button>
         <button type="button" id="btn-save">Save and Continue later</button>
     </div>
 

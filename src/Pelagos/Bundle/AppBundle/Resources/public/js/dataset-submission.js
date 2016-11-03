@@ -71,8 +71,12 @@ $(function() {
         saveDatasetSubmission();
     });
 
-    $("#btn-xml-button").click(function() {
-        $('form[id="xmlUpload"]').submit();
+    $("#btn-upload").click(function() {
+        $('#xmlFile').click();
+    });
+
+    $("#xmlFile").change(function() {
+        $('#xmlUploadForm').submit();
     });
 
     $("#btn-save").click(function() {
