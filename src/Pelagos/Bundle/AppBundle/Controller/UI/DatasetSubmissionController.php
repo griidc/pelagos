@@ -27,6 +27,8 @@ use Pelagos\Entity\PersonDatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 
+use Pelagos\Exception\InvalidMetadataException;
+
 use Pelagos\Util\ISOMetadataExtractorUtil;
 
 /**
@@ -79,7 +81,11 @@ class DatasetSubmissionController extends UIController
 
                 if ($xmlForm->isSubmitted()) {
                     $xmlFile = $xmlForm['xmlFile']->getData();
-                    $this->loadFromXml($xmlFile, $datasetSubmission);
+                    try {
+                        $this->loadFromXml($xmlFile, $datasetSubmission);
+                    } catch (InvalidMetadataException $e) {
+                        // Bad XML!
+                    }
                 }
 
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
@@ -397,36 +403,27 @@ class DatasetSubmissionController extends UIController
      * @param UploadedFile|null $xmlFile           The file containing the XML.
      * @param DatasetSubmission $datasetSubmission The dataset submission that will be populated with XML data.
      *
+     * @throws InvalidMetadataException When the file is not Simple XML.
+     *
      * @return void
      */
     private function loadFromXml($xmlFile, DatasetSubmission $datasetSubmission)
     {
         if ($xmlFile instanceof UploadedFile) {
-            libxml_use_internal_errors(true);
-            $xml = @simplexml_load_file($xmlFile->getRealPath());
-            $fatal = false;
+            $xml = simplexml_load_file($xmlFile->getRealPath(), 'SimpleXMLElement', LIBXML_NOERROR);
 
-            if (false !== $xml) {
-                $xmlErrors = libxml_get_errors();
-                libxml_clear_errors();
-
-                for ($i = 0; $i < count($xmlErrors); $i++) {
-                    if ($xmlErrors[$i]->level == 'LIBXML_ERR_FATAL') {
-                        $fatal = true;
-                    }
+            if ($xml instanceof \SimpleXMLElement) {
+                foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+                    $datasetSubmission->removeDatasetContact($datasetContact);
                 }
 
-                if (false === $fatal) {
-                    foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
-                        $datasetSubmission->removeDatasetContact($datasetContact);
-                    }
-
-                    foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
-                        $datasetSubmission->removeMetadataContact($metadataContact);
-                    }
-
-                    ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues($xml, $datasetSubmission, $this->entityHandler);
+                foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+                    $datasetSubmission->removeMetadataContact($metadataContact);
                 }
+
+                ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues($xml, $datasetSubmission, $this->entityHandler);
+            } else {
+                throw new InvalidMetadataException(libxml_get_errors());
             }
         }
     }
