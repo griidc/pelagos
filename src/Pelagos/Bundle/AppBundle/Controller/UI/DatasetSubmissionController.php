@@ -50,8 +50,6 @@ class DatasetSubmissionController extends UIController
      *
      * @Route("")
      *
-     * @Method("GET")
-     *
      * @return Response A Response instance.
      */
     public function defaultAction(Request $request)
@@ -70,6 +68,19 @@ class DatasetSubmissionController extends UIController
                 $dif = $dataset->getDif();
 
                 $datasetSubmission = $dataset->getDatasetSubmissionHistory()->first();
+
+                $xmlForm = $this->get('form.factory')->createNamed(
+                    null,
+                    DatasetSubmissionXmlFileType::class,
+                    null
+                );
+
+                $xmlForm->handleRequest($request);
+
+                if ($xmlForm->isSubmitted()) {
+                    $xmlFile = $xmlForm['xmlFile']->getData();
+                    $this->loadFromXml($xmlFile, $datasetSubmission);
+                }
 
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
                     // This is the first submission, so create a new one.
@@ -359,7 +370,7 @@ class DatasetSubmissionController extends UIController
             DatasetSubmissionXmlFileType::class,
             null,
             array(
-                'action' => $this->generateUrl('pelagos_app_ui_datasetsubmission_postxmluri', array('id' => $datasetSubmissionId)),
+                'action' => '',
                 'method' => 'POST',
                 'attr' => array(
                     'id' => 'xmlUploadForm',
@@ -380,65 +391,43 @@ class DatasetSubmissionController extends UIController
         );
     }
 
-   /**
-    * The post action for Dataset Submission XML file.
-    *
-    * @param Request     $request The Symfony request object.
-    * @param string|null $id      The id of the Dataset Submission to load.
-    *
-    * @Route("/xml/{id}")
-    *
-    * @Method("POST")
-    *
-    * @return Response A Response instance.
-    */
-    public function postXmlUri(Request $request, $id = null)
+    /**
+     * Load XML into Dataset from file.
+     *
+     * @param UploadedFile|null $xmlFile           The file containing the XML.
+     * @param DatasetSubmission $datasetSubmission The dataset submission that will be populated with XML data.
+     *
+     * @return void
+     */
+    private function loadFromXml($xmlFile, DatasetSubmission $datasetSubmission)
     {
-        $xmlForm = $this->get('form.factory')->createNamed(
-            null,
-            DatasetSubmissionXmlFileType::class,
-            null
-        );
+        if ($xmlFile instanceof UploadedFile) {
+            libxml_use_internal_errors(true);
+            $xml = @simplexml_load_file($xmlFile->getRealPath());
+            $fatal = false;
 
-        $xmlForm->handleRequest($request);
-        $xmlFile = $xmlForm['xmlFile']->getData();
-        $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
-        if ($datasetSubmission instanceof DatasetSubmission) {
-            if ($xmlFile instanceof UploadedFile) {
+            if (false !== $xml) {
+                $xmlErrors = libxml_get_errors();
+                libxml_clear_errors();
 
-                libxml_use_internal_errors(true);
-                $xml = @simplexml_load_file($xmlFile->getRealPath());
-                $fatal = false;
-
-                if (false !== $xml) {
-                    $xmlErrors = libxml_get_errors();
-                    libxml_clear_errors();
-
-                    for ($i = 0; $i < count($xmlErrors); $i++) {
-                        if ($xmlErrors[$i]->level == 'LIBXML_ERR_FATAL') {
-                            $fatal = true;
-                        }
-                    }
-
-                    if (false === $fatal) {
-                        foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
-                            $datasetSubmission->removeDatasetContact($datasetContact);
-                        }
-
-                        foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
-                            $datasetSubmission->removeMetadataContact($metadataContact);
-                        }
-                        //$this->entityHandler->update($datasetSubmission);
-                        ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues($xml, $datasetSubmission, $this->entityHandler);
+                for ($i = 0; $i < count($xmlErrors); $i++) {
+                    if ($xmlErrors[$i]->level == 'LIBXML_ERR_FATAL') {
+                        $fatal = true;
                     }
                 }
-            }
 
-                $datasetSubmissionUdi = $datasetSubmission->getDataset()->getUdi();
+                if (false === $fatal) {
+                    foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+                        $datasetSubmission->removeDatasetContact($datasetContact);
+                    }
+
+                    foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+                        $datasetSubmission->removeMetadataContact($metadataContact);
+                    }
+
+                    ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues($xml, $datasetSubmission, $this->entityHandler);
+                }
+            }
         }
-        //$dataset = $datasetSubmission->getDataset();
-        //$datasetSubmission = new DatasetSubmission();
-        //$datasetSubmission->setDataset($dataset);
-        return $this->makeSubmissionForm($datasetSubmissionUdi, $datasetSubmission);
     }
 }
