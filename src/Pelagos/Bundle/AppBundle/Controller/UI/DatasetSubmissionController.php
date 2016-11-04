@@ -55,10 +55,11 @@ class DatasetSubmissionController extends UIController
      */
     public function defaultAction(Request $request)
     {
-        $udi = trim($request->query->get('regid'));
+        $udi = $request->query->get('regid');
         $datasetSubmission = null;
 
         if ($udi != null) {
+            $udi = trim($udi);
             $datasets = $this->entityHandler
                 ->getBy(Dataset::class, array('udi' => substr($udi, 0, 16)));
 
