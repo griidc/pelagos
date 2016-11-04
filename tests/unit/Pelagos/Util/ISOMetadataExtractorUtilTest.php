@@ -135,7 +135,6 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new \DateTime('2016-10-22', new \DateTimeZone('UTC')), $this->datasetSubmission->getTemporalExtentEndPosition());
         $this->assertEquals('test format', $this->datasetSubmission->getDistributionFormatName());
         $this->assertEquals('test compression', $this->datasetSubmission->getFileDecompressionTechnique());
-        $this->assertEquals('http://test.url', $this->datasetSubmission->getDatasetFileUri());
         $this->assertEquals($this->mockPerson, $this->datasetSubmission->getDatasetContacts()[0]->getPerson());
         $this->assertEquals($this->mockPerson, $this->datasetSubmission->getMetadataContacts()[0]->getPerson());
     }
@@ -239,7 +238,6 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($this->datasetSubmission->getTemporalExtentEndPosition());
         $this->assertNull($this->datasetSubmission->getDistributionFormatName());
         $this->assertNull($this->datasetSubmission->getFileDecompressionTechnique());
-        $this->assertNull($this->datasetSubmission->getDatasetFileUri());
         $this->assertEmpty($this->datasetSubmission->getDatasetContacts());
         $this->assertEmpty($this->datasetSubmission->getMetadataContacts());
     }
