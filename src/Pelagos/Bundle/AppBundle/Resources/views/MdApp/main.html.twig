@@ -154,7 +154,7 @@
                                     <tr>
                                         <td id="button"><button style="font-size:66%" onclick="javascript:showLogEntries('{{dta.udi}}')" id="log_butt_{{dta.udi}}">Log</button></td>
                                         <td id="file_dl_icon">
-                                            <a href="{{ path('pelagos_app_ui_mdapp_downloadmetadatafromoriginalfile', {'id': dta.id}) }}" id="filedllnk_{{dta.udi}}">
+                                            <a href="{{ path('pelagos_api_metadata_get') }}?udi={{dta.udi}}" id="filedllnk_{{dta.udi}}">
                                                 {% image '@PelagosAppBundle/Resources/public/images/download.png' %}
                                                     <img src="{{ asset_url }}">
                                                 {% endimage %}
