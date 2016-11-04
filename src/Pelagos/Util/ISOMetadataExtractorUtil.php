@@ -52,7 +52,6 @@ class ISOMetadataExtractorUtil
         self::setIfHas($datasetSubmission, 'setTemporalExtentEndPosition', self::extractTemporalExtentEndPosition($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setDistributionFormatName', self::extractDistributionFormatName($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setFileDecompressionTechnique', self::extractFileDecompressionTechnique($xmlMetadata));
-        self::setIfHas($datasetSubmission, 'setDatasetFileUri', self::extractDatasetUri($xmlMetadata));
     }
 
     /**
@@ -653,34 +652,6 @@ class ISOMetadataExtractorUtil
                  '/gmd:MD_Format' .
                  '/gmd:fileDecompressionTechnique' .
                  '/gco:CharacterString' .
-                 '/text()';
-
-        return self::querySingle($xml, $query);
-    }
-
-    /**
-     * Extracts URI of the dataset to which the metadata applies.
-     *
-     * @param \SimpleXmlElement $xml The XML to extract from.
-     *
-     * @return string|null Returns the datasetURI as a string, or null.
-     *
-     * The NOAA ISO 19115 Geographic Information - Metadata Workbook
-     * discusses this on page 22.  (MI_Metadata.pdf)
-     */
-    protected static function extractDatasetUri(\SimpleXmlElement $xml)
-    {
-        $query = '/gmi:MI_Metadata' .
-                 '/gmd:distributionInfo' .
-                 '/gmd:MD_Distribution' .
-                 '/gmd:distributor' .
-                 '/gmd:MD_Distributor' .
-                 '/gmd:distributorTransferOptions' .
-                 '/gmd:MD_DigitalTransferOptions' .
-                 '/gmd:onLine' .
-                 '/gmd:CI_OnlineResource' .
-                 '/gmd:linkage' .
-                 '/gmd:URL' .
                  '/text()';
 
         return self::querySingle($xml, $query);
