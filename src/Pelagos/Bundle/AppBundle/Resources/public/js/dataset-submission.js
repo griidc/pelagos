@@ -90,6 +90,14 @@ $(function() {
         saveDatasetSubmission();
     });
 
+    $("#btn-upload").click(function() {
+        $('#xmlFile').click();
+    });
+
+    $("#xmlFile").change(function() {
+        $('#xmlUploadForm').submit();
+    });
+
     $("#btn-save").click(function() {
         saveDatasetSubmission();
     });

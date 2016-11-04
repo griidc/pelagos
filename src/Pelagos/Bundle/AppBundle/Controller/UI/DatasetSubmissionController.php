@@ -14,6 +14,7 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
+use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionXmlFileType;
 
 use Pelagos\Entity\Account;
 use Pelagos\Entity\DIF;
@@ -25,6 +26,8 @@ use Pelagos\Entity\ResearchGroup;
 use Pelagos\Entity\PersonDatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
+
+use Pelagos\Exception\InvalidMetadataException;
 
 use Pelagos\Util\ISOMetadataExtractorUtil;
 
@@ -49,8 +52,6 @@ class DatasetSubmissionController extends UIController
      *
      * @Route("")
      *
-     * @Method("GET")
-     *
      * @return Response A Response instance.
      */
     public function defaultAction(Request $request)
@@ -69,6 +70,23 @@ class DatasetSubmissionController extends UIController
                 $dif = $dataset->getDif();
 
                 $datasetSubmission = $dataset->getDatasetSubmissionHistory()->first();
+
+                $xmlForm = $this->get('form.factory')->createNamed(
+                    null,
+                    DatasetSubmissionXmlFileType::class,
+                    null
+                );
+
+                $xmlForm->handleRequest($request);
+
+                if ($xmlForm->isSubmitted()) {
+                    $xmlFile = $xmlForm['xmlFile']->getData();
+                    try {
+                        $this->loadFromXml($xmlFile, $datasetSubmission);
+                    } catch (InvalidMetadataException $e) {
+                        // Bad XML!
+                    }
+                }
 
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
                     // This is the first submission, so create a new one.
@@ -353,15 +371,60 @@ class DatasetSubmissionController extends UIController
             }
         }
 
+        $xmlFormView = $this->get('form.factory')->createNamed(
+            null,
+            DatasetSubmissionXmlFileType::class,
+            null,
+            array(
+                'action' => '',
+                'method' => 'POST',
+                'attr' => array(
+                    'id' => 'xmlUploadForm',
+                )
+            )
+        )->createView();
+
         return $this->render(
             'PelagosAppBundle:DatasetSubmission:index.html.twig',
             array(
                 'form' => $form->createView(),
+                'xmlForm' => $xmlFormView,
                 'udi'  => $udi,
                 'datasetSubmission' => $datasetSubmission,
                 'showForceImport' => $showForceImport,
                 'showForceDownload' => $showForceDownload,
             )
         );
+    }
+
+    /**
+     * Load XML into Dataset from file.
+     *
+     * @param UploadedFile|null $xmlFile           The file containing the XML.
+     * @param DatasetSubmission $datasetSubmission The dataset submission that will be populated with XML data.
+     *
+     * @throws InvalidMetadataException When the file is not Simple XML.
+     *
+     * @return void
+     */
+    private function loadFromXml($xmlFile, DatasetSubmission $datasetSubmission)
+    {
+        if ($xmlFile instanceof UploadedFile) {
+            $xml = simplexml_load_file($xmlFile->getRealPath(), 'SimpleXMLElement', LIBXML_NOERROR);
+
+            if ($xml instanceof \SimpleXMLElement) {
+                foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+                    $datasetSubmission->removeDatasetContact($datasetContact);
+                }
+
+                foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+                    $datasetSubmission->removeMetadataContact($metadataContact);
+                }
+
+                ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues($xml, $datasetSubmission, $this->entityHandler);
+            } else {
+                throw new InvalidMetadataException(libxml_get_errors());
+            }
+        }
     }
 }

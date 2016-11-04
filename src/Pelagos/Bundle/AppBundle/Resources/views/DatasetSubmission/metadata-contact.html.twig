@@ -1,7 +1,7 @@
 <fieldset>
     <legend>Metadata Contact</legend>
     <table class="tab-table">
-        {% set contact = form.metadataContacts[0]|default %}
+        {% set contact = form.metadataContacts | first %}
         <tr>
             <td>
                 <label for="metadatacontact">Name</label>
