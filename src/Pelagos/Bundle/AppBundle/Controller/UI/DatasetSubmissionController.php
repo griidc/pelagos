@@ -85,7 +85,7 @@ class DatasetSubmissionController extends UIController
 
                     if ($xmlFile instanceof UploadedFile) {
                         $xmlURI = $xmlFile->getRealPath();
-                    } elseif ($xmlUrl !== "") {
+                    } elseif ($xmlUrl !== '') {
                         $xmlURI = $xmlUrl;
                     }
 
@@ -408,8 +408,8 @@ class DatasetSubmissionController extends UIController
     /**
      * Load XML into Dataset from file.
      *
-     * @param UploadedFile|null $xmlFile           The file containing the XML.
-     * @param DatasetSubmission $datasetSubmission The dataset submission that will be populated with XML data.
+     * @param UploadedFile|string $xmlURI            The file containing the XML.
+     * @param DatasetSubmission   $datasetSubmission The dataset submission that will be populated with XML data.
      *
      * @throws InvalidMetadataException When the file is not Simple XML.
      *
@@ -417,7 +417,7 @@ class DatasetSubmissionController extends UIController
      */
     private function loadFromXml($xmlURI, DatasetSubmission $datasetSubmission)
     {
-        $xml = simplexml_load_file($xmlURI, 'SimpleXMLElement', LIBXML_NOERROR|LIBXML_NOWARNING);
+        $xml = simplexml_load_file($xmlURI, 'SimpleXMLElement', (LIBXML_NOERROR | LIBXML_NOWARNING));
 
         if ($xml instanceof \SimpleXMLElement) {
             foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
