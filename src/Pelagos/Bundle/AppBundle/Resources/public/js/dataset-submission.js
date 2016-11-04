@@ -860,8 +860,10 @@ function checkSpatial(isNonSpatial) {
     if (isNonSpatial) {
         $("#nonspatial").find(":input").attr("required", "required");
         $("#spatial").find(":input").removeAttr("required");
+        $("#spatialExtras").hide().find(":input").removeAttr("required").val("");
     } else {
         $("#spatial").find(":input").attr("required", "required");
         $("#nonspatial").find(":input").removeAttr("required");
+        $("#spatialExtras").show().find(":input").attr("required", "required");
     }
 }
