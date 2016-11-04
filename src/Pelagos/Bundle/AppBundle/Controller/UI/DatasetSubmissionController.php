@@ -55,7 +55,7 @@ class DatasetSubmissionController extends UIController
      */
     public function defaultAction(Request $request)
     {
-        $udi = $request->query->get('regid');
+        $udi = trim($request->query->get('regid'));
         $datasetSubmission = null;
 
         if ($udi != null) {
