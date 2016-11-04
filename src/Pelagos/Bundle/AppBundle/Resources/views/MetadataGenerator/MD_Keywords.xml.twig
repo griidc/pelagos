@@ -1,0 +1,10 @@
+<gmd:MD_Keywords>
+    {% for keyword in keywords %}
+    <gmd:keyword>
+        <gco:CharacterString>{{keyword}}</gco:CharacterString>
+    </gmd:keyword>
+    {% endfor %}
+    <gmd:type>
+        <gmd:MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="{{type.name}}" codeSpace="{{type.code}}">{{type.name}}</gmd:MD_KeywordTypeCode>
+    </gmd:type>
+</gmd:MD_Keywords>
