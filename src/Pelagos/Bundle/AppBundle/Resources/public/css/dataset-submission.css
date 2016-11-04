@@ -131,3 +131,11 @@ fieldset
 #filetabs .file_force label {
     display: inline;
 }
+
+#spinner {
+    display: none;
+}
+
+#restrictions label{
+    display: inline;
+}
