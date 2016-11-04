@@ -1,7 +1,7 @@
 <fieldset>
     <legend>Dataset Contact</legend>
     <table class="tab-table">
-        {% set contact = form.datasetContacts[0]|default %}
+        {% set contact = form.datasetContacts | first %}
         <tr>
             <td>
                 <label for="contactperson">Name</label>
