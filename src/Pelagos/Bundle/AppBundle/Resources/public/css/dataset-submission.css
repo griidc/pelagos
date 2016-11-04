@@ -135,3 +135,7 @@ fieldset
 #spinner {
     display: none;
 }
+
+#restrictions label{
+    display: inline;
+}

@@ -114,9 +114,22 @@
                     </table>
                 </fieldset>
             </div> <!-- tabs-3 -->
-
         </div> <!-- tabs -->
-
     </fieldset> <!-- Dataset File Transfer Details -->
+    <fieldset>
+        <legend class="section-header">{{ form.restrictions.vars.label }}</legend>
+        <table class="tab-table">
+            <tr>
+                <td >
+                    {{ form_widget(form.restrictions) }}
+                </td>
+                <td>
+                    <span class="field-help">
+                        If data is available to the general public, select "None". Select "Restricted" if data cannot be shared to anyone. Select "Requires Author's Approval" if you can share the data but prefer to control the sharing of the dataset. In the later case, GRIIDC will maintain a list of users associated to a dataset.
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </fieldset>
     {{ form_widget(form.submitButton) }}
 </div>
