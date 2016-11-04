@@ -18,7 +18,7 @@
                     <input minlength="15" type="text" id="regid" name="regid" size="60" value="{{datasetSubmission.getDatasetSubmissionId|default}}">
                     <button disabled
                     onclick="window.location.href='{{ path('pelagos_app_ui_datasetsubmission_default') }}?regid=' +
-                    document.getElementById('regid').value;"
+                    document.getElementById('regid').value.trim();"
                     name="regbutton" id="regbutton"
                     type="button">Load Dataset</button>
                     <label class="error" for="regid"></label>
