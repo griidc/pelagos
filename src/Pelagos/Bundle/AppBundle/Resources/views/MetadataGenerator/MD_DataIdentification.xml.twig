@@ -12,7 +12,9 @@
                     <gmd:date>
                         <gco:Date>{{ "now" | date("Y-m-d") }}</gco:Date>
                     </gmd:date>
-                    <gmd:dateType>{{dataset.datasetSubmission.referenceDateType}}</gmd:dateType>
+                    <gmd:dateType>
+                        <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="{{dataset.datasetSubmission.referenceDateType}}">{{dataset.datasetSubmission.referenceDateType}}</gmd:CI_DateTypeCode>
+                    </gmd:dateType>
                 </gmd:CI_Date>
             </gmd:date>
         </gmd:CI_Citation>
@@ -86,7 +88,11 @@
                 <gmd:EX_TemporalExtent>
                     <gmd:extent>
                         <gml:TimePeriod gml:id="boundingTemporalExtent">
+                            {% if dataset.datasetSubmission.temporalExtentDesc %}
+                            <gml:description>{{dataset.datasetSubmission.temporalExtentDesc}}</gml:description>
+                            {% else %}
                             <gml:description />
+                            {% endif %}
                             {% if dataset.datasetSubmission.temporalExtentBeginPosition %}
                                 <gml:beginPosition>{{dataset.datasetSubmission.temporalExtentBeginPosition|date("Y-m-d")}}</gml:beginPosition>
                             {% else %}
