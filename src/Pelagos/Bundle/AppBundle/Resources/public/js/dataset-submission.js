@@ -76,6 +76,28 @@ $(function() {
 
     $("button").button();
 
+    dialog = $("#urlDialog").dialog({
+        autoOpen: false,
+        height: "auto",
+        width: "auto",
+        modal: true,
+        buttons: {
+            Submit: function() {
+                $("#xmlUrl").val($("#xmlURI").val());
+                dialog.dialog("close");
+                $("#xmlUploadForm").submit();
+            },
+            Cancel: function() {
+                dialog.dialog("close");
+            }
+        }
+    });
+
+    $("#btn-from-url").click(function() {
+        dialog.dialog("open");
+    });
+
+
     $("#btn-previous").click(function() {
        var activeTab = $("#dtabs").tabs("option","active");
        activeTab--;
@@ -91,11 +113,11 @@ $(function() {
     });
 
     $("#btn-upload").click(function() {
-        $('#xmlFile').click();
+        $("#xmlFile").click();
     });
 
     $("#xmlFile").change(function() {
-        $('#xmlUploadForm').submit();
+        $("#xmlUploadForm").submit();
     });
 
     $("#btn-save").click(function() {
@@ -109,10 +131,10 @@ $(function() {
 
         var formData = $("form[datasetsubmission]").serialize();
 
-        if ($("#contactperson").val() == null ) {
+        if ($("#contactperson").val() == null) {
             formData += "&datasetContacts[0][person]=";
         }
-        if ($("#metadatacontact").val() == null ) {
+        if ($("#metadatacontact").val() == null) {
             formData += "&metadataContacts[0][person]=";
         }
 
@@ -860,8 +882,10 @@ function checkSpatial(isNonSpatial) {
     if (isNonSpatial) {
         $("#nonspatial").find(":input").attr("required", "required");
         $("#spatial").find(":input").removeAttr("required");
+        $("#spatialExtras").hide().find(":input").removeAttr("required").val("");
     } else {
         $("#spatial").find(":input").attr("required", "required");
         $("#nonspatial").find(":input").removeAttr("required");
+        $("#spatialExtras").show().find(":input").attr("required", "required");
     }
 }

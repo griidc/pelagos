@@ -4,6 +4,7 @@ namespace Pelagos\Bundle\AppBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -29,7 +30,8 @@ class DatasetSubmissionXmlFileType extends AbstractType
                 'label' => 'Xml File',
                 'required' => false,
                 'mapped' => false,
-            ));
+            ))
+            ->add('xmlUrl', HiddenType::class, array());
     }
 
     /**
