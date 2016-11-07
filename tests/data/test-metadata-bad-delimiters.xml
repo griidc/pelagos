@@ -220,7 +220,7 @@
                         <gmd:EX_TemporalExtent>
                             <gmd:extent>
                                 <gml:TimePeriod gml:id="boundingTemporalExtent">
-                                    <gml:description>groundcondition</gml:description>
+                                    <gml:description>ground condition</gml:description>
                                     <gml:beginPosition>2016-10-21</gml:beginPosition>
                                     <gml:endPosition>2016-10-22</gml:endPosition>
                                 </gml:TimePeriod>

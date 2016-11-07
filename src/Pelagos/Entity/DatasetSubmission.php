@@ -258,19 +258,19 @@ class DatasetSubmission extends Entity
      * The array keys are the values to be set in self::temporalExtent.
      */
     const TEMPORAL_EXTENT_DESCRIPTIONS = [
-        'groundcondition' => [
+        'ground condition' => [
             'name' => 'Ground Condition',
             'description' => 'Data represent the actual condition of things on the ground during ' .
                              'the time period specified and may also be used to characterize data ' .
                              'generated from a sample collection in the field when samples are subsequently ' .
                              'analyzed in a laboratory.'
         ],
-        'modeledperiod' => [
+        'modeled period' => [
             'name' => 'Modeled Period',
             'description' => 'Data represents simulated conditions during the time period, ' .
                              'and may be used to characterize data generated using a computational model.'
         ],
-        'both' => [
+        'ground condition and modeled period' => [
             'name' => 'Ground Condition and Modeled Period',
             'description' => 'Both choices apply.'
         ],
