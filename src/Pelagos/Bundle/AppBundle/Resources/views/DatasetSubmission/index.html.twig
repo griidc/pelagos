@@ -102,10 +102,24 @@
             </div>
             {% include 'PelagosAppBundle:DatasetSubmission:form.html.twig' %}
         {% else %}
+            {% for error in xmlStatus.errors %}
+            <div class="messages warning">
+                <h2 class="element-invisible">Status message</h2>
+                {{error}}
+            </div>
+            {% endfor %}
+            {% if xmlStatus.success %}
+            <div class="messages status">
+                <h2 class="element-invisible">Status message</h2>
+                Successfully imported XML.
+            </div>
+            {% endif %}
+            {% if xmlStatus.success is null %}
             <div class="messages status">
                 <h2 class="element-invisible">Status message</h2>
                 Dataset Identifier <b>'{{ udi }}'</b> was found. The latest version has been loaded.
             </div>
+            {% endif %}
             {% include 'PelagosAppBundle:DatasetSubmission:submission-form.html.twig' %}
         {% endif %}
     {% endif %}

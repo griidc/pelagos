@@ -58,6 +58,10 @@ class DatasetSubmissionController extends UIController
     {
         $udi = $request->query->get('regid');
         $datasetSubmission = null;
+        $xmlStatus = array(
+            'success' => null,
+            'errors' => null,
+            );
 
         if ($udi != null) {
             $udi = trim($udi);
@@ -91,8 +95,10 @@ class DatasetSubmissionController extends UIController
 
                     try {
                         $this->loadFromXml($xmlURI, $datasetSubmission);
+                        $xmlStatus['success'] = true;
                     } catch (InvalidMetadataException $e) {
-                        // Bad XML!
+                        $xmlStatus['errors'] = $e->getErrors();
+                        $xmlStatus['success'] = false;
                     }
                 }
 
@@ -181,7 +187,7 @@ class DatasetSubmissionController extends UIController
             }
         }
 
-        return $this->makeSubmissionForm($udi, $datasetSubmission);
+        return $this->makeSubmissionForm($udi, $datasetSubmission, $xmlStatus);
     }
 
     /**
@@ -320,10 +326,11 @@ class DatasetSubmissionController extends UIController
      *
      * @param string            $udi               The UDI entered by the user.
      * @param DatasetSubmission $datasetSubmission The Dataset Submission.
+     * @param array             $xmlStatus         Error message when loading XML.
      *
      * @return Response
      */
-    protected function makeSubmissionForm($udi, DatasetSubmission $datasetSubmission = null)
+    protected function makeSubmissionForm($udi, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null)
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;
@@ -398,6 +405,7 @@ class DatasetSubmissionController extends UIController
                 'form' => $form->createView(),
                 'xmlForm' => $xmlFormView,
                 'udi'  => $udi,
+                'xmlStatus' => $xmlStatus,
                 'datasetSubmission' => $datasetSubmission,
                 'showForceImport' => $showForceImport,
                 'showForceDownload' => $showForceDownload,
@@ -419,7 +427,7 @@ class DatasetSubmissionController extends UIController
     {
         $xml = simplexml_load_file($xmlURI, 'SimpleXMLElement', (LIBXML_NOERROR | LIBXML_NOWARNING));
 
-        if ($xml instanceof \SimpleXMLElement) {
+        if ($xml instanceof \SimpleXMLElement and 'MI_Metadata' == $xml->getName()) {
             foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                 $datasetSubmission->removeDatasetContact($datasetContact);
             }
@@ -430,7 +438,7 @@ class DatasetSubmissionController extends UIController
 
             ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues($xml, $datasetSubmission, $this->entityHandler);
         } else {
-            throw new InvalidMetadataException(libxml_get_errors());
+            throw new InvalidMetadataException(array('This does not appear to be valid ISO 19115-2 metadata.'));
         }
     }
 }
