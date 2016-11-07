@@ -1,4 +1,7 @@
 <gmd:MD_Keywords>
+    {% if keywords is empty %}
+    <gmd:keyword gco:nilReason="inapplicable" />
+    {% endif %}
     {% for keyword in keywords %}
     <gmd:keyword>
         <gco:CharacterString>{{keyword}}</gco:CharacterString>

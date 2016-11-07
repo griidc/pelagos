@@ -12,7 +12,9 @@
                     <gmd:date>
                         <gco:Date>{{ "now" | date("Y-m-d") }}</gco:Date>
                     </gmd:date>
-                    <gmd:dateType></gmd:dateType>
+                    <gmd:dateType>
+                        <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="{{dataset.datasetSubmission.referenceDateType}}">{{dataset.datasetSubmission.referenceDateType}}</gmd:CI_DateTypeCode>
+                    </gmd:dateType>
                 </gmd:CI_Date>
             </gmd:date>
         </gmd:CI_Citation>
@@ -21,12 +23,11 @@
         <gco:CharacterString><![CDATA[{{dataset.abstract | trim}}]]></gco:CharacterString>
     </gmd:abstract>
     <gmd:purpose>
-        <gco:CharacterString>{{dataset.datasetSubmission.purpose}}]></gco:CharacterString>
+        <gco:CharacterString><![CDATA[{{dataset.datasetSubmission.purpose}}]]></gco:CharacterString>
     </gmd:purpose>
     <gmd:status>
         <gmd:MD_ProgressCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ProgressCode" codeListValue="completed" codeSpace="001">completed</gmd:MD_ProgressCode>
     </gmd:status>
-    {% if dataset.dif.primaryPointOfContact %}
     <gmd:pointOfContact>
     {% for contact in dataset.datasetSubmission.datasetContacts %}
         {% include "PelagosAppBundle:MetadataGenerator:CI_ResponsibleParty.xml.twig" with
@@ -37,8 +38,6 @@
         %}
     {% endfor %}
     </gmd:pointOfContact>
-    {% endif %}
-    {% if dataset.datasetSubmission.themeKeywords %}
     <gmd:descriptiveKeywords>
         {% include "PelagosAppBundle:MetadataGenerator:MD_Keywords.xml.twig" with
             {
@@ -47,8 +46,6 @@
             }
         %}
     </gmd:descriptiveKeywords>
-    {% endif %}
-    {% if dataset.datasetSubmission.placeKeywords %}
     <gmd:descriptiveKeywords>
         {% include "PelagosAppBundle:MetadataGenerator:MD_Keywords.xml.twig" with
             {
@@ -57,17 +54,14 @@
             }
         %}
     </gmd:descriptiveKeywords>
-    {% endif %}
     <gmd:language>
         <gco:CharacterString>eng; USA</gco:CharacterString>
     </gmd:language>
-    {% if dataset.datasetSubmission.topicKeywords %}
     {% for topickeyword in dataset.datasetSubmission.topicKeywords %}
     <gmd:topicCategory>
         <gmd:MD_TopicCategoryCode>{{topickeyword}}</gmd:MD_TopicCategoryCode>
     </gmd:topicCategory>
     {% endfor %}
-    {% endif %}
     {% if dataset.datasetSubmission.spatialExtent or
         dataset.datasetSubmission.spatialExtentDescription or
         dataset.datasetSubmission.temporalExtentBeginPosition or
@@ -94,7 +88,11 @@
                 <gmd:EX_TemporalExtent>
                     <gmd:extent>
                         <gml:TimePeriod gml:id="boundingTemporalExtent">
+                            {% if dataset.datasetSubmission.temporalExtentDesc %}
+                            <gml:description>{{dataset.datasetSubmission.temporalExtentDesc}}</gml:description>
+                            {% else %}
                             <gml:description />
+                            {% endif %}
                             {% if dataset.datasetSubmission.temporalExtentBeginPosition %}
                                 <gml:beginPosition>{{dataset.datasetSubmission.temporalExtentBeginPosition|date("Y-m-d")}}</gml:beginPosition>
                             {% else %}
@@ -114,6 +112,6 @@
     </gmd:extent>
     {% endif %}
     <gmd:supplementalInformation>
-        <gco:CharacterString>{{dataset.datasetSubmission.suppParams}}|{{dataset.datasetSubmission.suppMethods}}|{{dataset.datasetSubmission.suppInstruments}}|{{dataset.datasetSubmission.suppSampScalesRates}}|{{dataset.datasetSubmission.suppErrorAnalysis}}|{{dataset.datasetSubmission.suppProvenance}}</gco:CharacterString>
+        <gco:CharacterString><![CDATA[{{dataset.datasetSubmission.suppParams}}|{{dataset.datasetSubmission.suppMethods}}|{{dataset.datasetSubmission.suppInstruments}}|{{dataset.datasetSubmission.suppSampScalesRates}}|{{dataset.datasetSubmission.suppErrorAnalysis}}|{{dataset.datasetSubmission.suppProvenance}}]]></gco:CharacterString>
     </gmd:supplementalInformation>
 </gmd:MD_DataIdentification>

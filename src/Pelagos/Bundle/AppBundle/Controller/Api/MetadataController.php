@@ -133,7 +133,24 @@ class MetadataController extends EntityController
             );
         }
 
-        $response = new Response($xml);
+        $tidyXml = new \tidy;
+        $tidyXml->parseString(
+            $xml,
+            array(
+                'input-xml' => true,
+                'output-xml' => true,
+                'indent' => true,
+                'indent-spaces' => 4,
+                'wrap' => 0,
+            ),
+            'utf8'
+        );
+
+        // Remove extra whitespace added around CDATA tags by tidy.
+        $outXml = preg_replace('/>[\s]+<\!\[CDATA\[/', '><![CDATA[', $tidyXml);
+        $outXml = preg_replace('/]]>\s+</', ']]><', $outXml);
+
+        $response = new Response($outXml);
         $response->headers->set('Content-Type', 'text/xml');
         $response->headers->set('Content-Disposition', 'attachment; filename="' . $metadataFilename . '"');
 
