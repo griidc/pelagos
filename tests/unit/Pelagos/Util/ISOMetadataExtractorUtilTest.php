@@ -130,7 +130,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('test place 1', 'test place 2', 'test place 3'), $this->datasetSubmission->getPlaceKeywords());
         $this->assertEquals(array('oceans', 'economy'), $this->datasetSubmission->getTopicKeywords());
         $this->assertEquals($this->testSpatialExtent, $this->datasetSubmission->getSpatialExtent());
-        $this->assertEquals('groundcondition', $this->datasetSubmission->getTemporalExtentDesc());
+        $this->assertEquals('ground condition', $this->datasetSubmission->getTemporalExtentDesc());
         $this->assertEquals(new \DateTime('2016-10-21', new \DateTimeZone('UTC')), $this->datasetSubmission->getTemporalExtentBeginPosition());
         $this->assertEquals(new \DateTime('2016-10-22', new \DateTimeZone('UTC')), $this->datasetSubmission->getTemporalExtentEndPosition());
         $this->assertEquals('test format', $this->datasetSubmission->getDistributionFormatName());
