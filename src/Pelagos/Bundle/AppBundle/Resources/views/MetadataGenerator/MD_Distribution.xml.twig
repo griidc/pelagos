@@ -84,7 +84,7 @@ Unit 5869]]>
                         <gmd:transferSize/>
                     {% else %}
                         <gmd:transferSize>
-                            <gco:Real>{{dataset.datasetSubmission.datasetFileSize}}</gco:Real>
+                            <gco:Real>{{ (dataset.datasetSubmission.datasetFileSize / 1000000) | round(4) }}</gco:Real>
                         </gmd:transferSize>
                     {% endif %}
                     <gmd:onLine>
