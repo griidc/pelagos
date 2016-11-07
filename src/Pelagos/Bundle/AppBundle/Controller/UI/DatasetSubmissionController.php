@@ -427,7 +427,7 @@ class DatasetSubmissionController extends UIController
     {
         $xml = simplexml_load_file($xmlURI, 'SimpleXMLElement', (LIBXML_NOERROR | LIBXML_NOWARNING));
 
-        if ($xml instanceof \SimpleXMLElement) {
+        if ($xml instanceof \SimpleXMLElement and 'gmi:MI_Metadata' == $xml->documentElement->tagName) {
             foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                 $datasetSubmission->removeDatasetContact($datasetContact);
             }
