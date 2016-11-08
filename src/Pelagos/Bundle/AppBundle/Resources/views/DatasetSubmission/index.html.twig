@@ -86,7 +86,7 @@
         {% elseif not is_granted('CAN_CREATE', datasetSubmission) and not is_granted('CAN_EDIT', datasetSubmission) %}
             <div class="messages warning">
                     <h2 class="element-invisible">Status message</h2>
-                    Sorry, but you can only create or edit dataset submissions on datasets associated with your research groups.
+                    Sorry, but you can only create or edit dataset submissions for datasets associated with your research groups.
             </div>
             {% include 'PelagosAppBundle:DatasetSubmission:form.html.twig' %}
         {% elseif datasetSubmission.dataset.dif.status == constant('Pelagos\\Entity\\DIF::STATUS_SUBMITTED') %}
