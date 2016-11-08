@@ -1,0 +1,79 @@
+{% block head %}
+    {{
+        add_library (
+            [
+                'ui.dialog'
+            ]
+        )
+    }}
+
+    {{
+        add_css (
+            [
+                '//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css',
+                '//cdn.datatables.net/select/1.0.1/css/select.dataTables.min.css'
+            ]
+        )
+    }}
+
+    {% stylesheets  '@PelagosAppBundle/Resources/public/css/entity.css' %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets  %}
+
+    {{
+        add_js(
+            [
+                '//cdn.datatables.net/1.10.7/js/jquery.dataTables.js',
+                '//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js',
+            ]
+        )
+    }}
+
+    {% javascripts '@PelagosAppBundle/Resources/public/js/common.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    {% javascripts '@PelagosAppBundle/Resources/public/js/datasetsWithApprovedDifs.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+{% endblock %}
+
+{%
+set properties = [
+    'researchGroup.name',
+    'udi',
+    'title'
+]
+%}
+
+{% block body %}
+<table
+    entityNiceName = "Datasets"
+    entityApi = "{{ path('pelagos_app_ui_datasetsubmission_default') }}"
+    class = "entityTable stripe"
+    width = "100%"
+    data-ajax = '{
+        "url": "{{ path('pelagos_api_datasets_get_collection', {'_properties': properties | join(',')}) }}",
+        "dataSrc": "",
+        "cache": true
+    }'
+    data-columns = '[
+        { "data": "researchGroup.name" },
+        { "data": "udi" },
+        { "data": "title" }
+    ]'
+    data-order = '[
+        [ 1, "asc" ]
+    ]'
+    >
+    <thead>
+        <tr>
+            <th>Research Group</th>
+            <th>Dataset UDI</th>
+            <th>Dataset Title</th>
+        </tr>
+    </thead>
+</table>
+{% endblock %}
+
