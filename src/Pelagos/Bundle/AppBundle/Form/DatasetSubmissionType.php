@@ -78,6 +78,7 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Dataset File URL',
                 'required' => false,
                 'mapped' => false,
+                'attr' => array('data-rule-url' => true),
             ))
             ->add('datasetFileForceDownload', Type\CheckboxType::class, array(
                 'label' => 'download this file again from the same URL',
