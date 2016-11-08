@@ -26,3 +26,6 @@ NelmioApiDocBundle:
 
 pelagos_download:
     resource: Pelagos\Bundle\AppBundle\Controller\DownloadController
+
+pelagos_gml:
+    resource: Pelagos\Bundle\AppBundle\Controller\GmlController
