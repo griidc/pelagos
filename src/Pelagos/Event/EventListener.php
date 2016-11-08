@@ -127,7 +127,7 @@ abstract class EventListener
             }
         }
 
-        foreach ($peopleObjs as $person) {
+        foreach (array_unique($peopleObjs) as $person) {
             $mailData['recipient'] = $person;
             $message = \Swift_Message::newInstance()
                 ->setSubject($twigTemplate->renderBlock('subject', $mailData))
