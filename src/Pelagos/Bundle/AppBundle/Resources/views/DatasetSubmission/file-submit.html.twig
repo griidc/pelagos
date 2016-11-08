@@ -95,7 +95,7 @@
                         <tr>
                             <td>
                                 <div class="fwtextboxcont">
-                                    {{ form_row(form.datasetFileUrl) }}
+                                    {{ form_row(form.datasetFileUrl, { attr: { class: 'ignore'} }) }}
                                 </div>
                                 {% if showForceDownload %}
                                     <div class="file_force">
