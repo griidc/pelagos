@@ -37,7 +37,9 @@ class GmlController extends Controller
         if ($gml !== null and $gml !== '') {
             $query = 'SELECT ST_asText(ST_GeomFromGML(:gml, 4326));';
             $connection = $this->getDoctrine()->getManager()->getConnection();
-            $statement = $connection->prepare($query)->bindValue('gml', $gml)->execute();
+            $statement = $connection->prepare($query);
+            $statement->bindValue('gml', $gml);
+            $statement->execute();
             $results = $statement->fetchAll();
             $wkt = $results[0]['st_astext'];
 
@@ -71,7 +73,9 @@ class GmlController extends Controller
         if ($wkt !== null and $wkt !== '') {
             $query = 'SELECT ST_asGML(3,ST_GeomFromText(:wkt,4326),5,17)';
             $connection = $this->getDoctrine()->getManager()->getConnection();
-            $statement = $connection->prepare($query)->bindValue('wkt', $wkt)->execute();
+            $statement = $connection->prepare($query);
+            $statement->bindValue('wkt', $wkt);
+            $statement->execute();
             $results = $statement->fetchAll();
             $gml = $results[0]['st_asgml'];
             $gml = $this->addGMLid($gml);
