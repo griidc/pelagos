@@ -10,7 +10,7 @@ function GeoViz()
     var defaultStyleMap;
     var lastBounds;
     var firstLoad;
-    var drawMode = 'polygon';
+    var drawMode = "polygon";
     
     this.drawMode = drawMode;
     
@@ -38,8 +38,8 @@ function GeoViz()
     
     var lon = -90.5, lat = 25, //Gulf of Mexico
     zoom = 4,
-    epsg4326 = new OpenLayers.Projection('EPSG:4326'),
-    epsg900913 = new OpenLayers.Projection('EPSG:900913');
+    epsg4326 = new OpenLayers.Projection("EPSG:4326"),
+    epsg900913 = new OpenLayers.Projection("EPSG:900913");
                 
     this.initMap = function(DIV,Options)
     {
@@ -51,7 +51,7 @@ function GeoViz()
         
         mapOptions = Options;
         
-        google_hybrid = new OpenLayers.Layer.Google('Google Hybrid Map',
+        google_hybrid = new OpenLayers.Layer.Google("Google Hybrid Map",
         {
             type: google.maps.MapTypeId.HYBRID,
             numZoomLevels: googleZoomLevel,
@@ -59,7 +59,7 @@ function GeoViz()
             displayInLayerSwitcher: true
         });
 
-        google_sat = new OpenLayers.Layer.Google('Google BaseMap',
+        google_sat = new OpenLayers.Layer.Google("Google BaseMap",
         {
             type: google.maps.MapTypeId.SATELLITE,
             numZoomLevels: 22,
@@ -70,11 +70,11 @@ function GeoViz()
         map = new OpenLayers.Map( 
         {
             layers: [google_sat, google_hybrid],
-            center: new OpenLayers.LonLat(lon, lat).transform('EPSG:4326', 'EPSG:900913'),
+            center: new OpenLayers.LonLat(lon, lat).transform("EPSG:4326", "EPSG:900913"),
             zoom: zoom,
             div: DIV,
-            projection: new OpenLayers.Projection('EPSG:900913'),
-            displayProjection: new OpenLayers.Projection('EPSG:4326'),
+            projection: new OpenLayers.Projection("EPSG:900913"),
+            displayProjection: new OpenLayers.Projection("EPSG:4326"),
             zoomDuration: 20,
             maxResolution: "auto",
             maxExtent: new OpenLayers.Bounds(-180, -90, 180, 90),
@@ -86,19 +86,19 @@ function GeoViz()
                     e.feature.renderIntent = "select";
                     e.feature.layer.drawFeature(e.feature);
                     //console.log("Map says: " + e.feature.id + " mouse over " + e.feature.layer.name);
-                    jQuery(mapDiv).trigger('overFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
+                    jQuery(mapDiv).trigger("overFeature",{"featureID":e.feature.id,"attributes":e.feature.attributes});
                 },
                 featureout: function(e) 
                 {
                     e.feature.renderIntent = "default";
                     e.feature.layer.drawFeature(e.feature);
                     //console.log("Map says: " + e.feature.id + " mouse out " + e.feature.layer.name);
-                    jQuery(mapDiv).trigger('outFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
+                    jQuery(mapDiv).trigger("outFeature",{"featureID":e.feature.id,"attributes":e.feature.attributes});
                 },
                 featureclick: function(e) 
                 {
                     //console.log("Map says: " + e.feature.id + " clicked on " + e.feature.layer.name + " udi:" + e.feature.attributes["udi"]);
-                    jQuery(mapDiv).trigger('clickFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
+                    jQuery(mapDiv).trigger("clickFeature",{"featureID":e.feature.id,"attributes":e.feature.attributes});
                 }
             }
         });
@@ -147,7 +147,7 @@ function GeoViz()
         });
         
         
-        google_terain = new OpenLayers.Layer.Google('Google Terrain Map', 
+        google_terain = new OpenLayers.Layer.Google("Google Terrain Map", 
         {
             type: google.maps.MapTypeId.TERRAIN,
             numZoomLevels: googleZoomLevel,
@@ -156,12 +156,12 @@ function GeoViz()
         });
         
         vlayer = new OpenLayers.Layer.Vector("Datasets",{
-            projection: new OpenLayers.Projection('EPSG:4326'),
+            projection: new OpenLayers.Projection("EPSG:4326"),
             styleMap: defaultStyleMap,
             rendererOptions: {zIndexing: true},
             afterAdd: function() 
             {
-                //console.log('layer ready');
+                //console.log("layer ready");
             },
             displayInLayerSwitcher: false
         });
@@ -227,8 +227,8 @@ function GeoViz()
         
         map.events.register("click", map , function(e){
             var vpxy = map.getLayerPxFromViewPortPx(e.xy) ;
-            //console.debug('clicked on'+vpxy);
-            jQuery(mapDiv).trigger('mapClick',vpxy);
+            //console.debug("clicked on"+vpxy);
+            jQuery(mapDiv).trigger("mapClick",vpxy);
         });
         
         function get_my_url (bounds) {
@@ -249,11 +249,11 @@ function GeoViz()
         if (Options.showRadar)
         {
             var n0q = new OpenLayers.Layer.TMS(
-            'NEXRAD Base Reflectivity',
-            'https://mesonet.agron.iastate.edu/cache/tile.py/',
-            {layername      : 'nexrad-n0q-900913',
-                service         : '1.0.0',
-                type            : 'png',
+            "NEXRAD Base Reflectivity",
+            "https://mesonet.agron.iastate.edu/cache/tile.py/",
+            {layername      : "nexrad-n0q-900913",
+                service         : "1.0.0",
+                type            : "png",
                 visibility      : true,
                 getURL          : get_my_url,
             isBaseLayer     : false}
@@ -282,11 +282,11 @@ function GeoViz()
             map.addControl(drawControls[key]);
         }
         
-        this.setDrawMode('polygon');
+        this.setDrawMode("polygon");
         
-        map.events.register('updatesize', map, function () {
-            //console.log('Window Resized');
-            setTimeout( function() { 
+        map.events.register("updatesize", map, function () {
+            //console.log("Window Resized");
+            setTimeout(function () { 
                 lastBounds = map.getExtent()
                 }, 200);
                 if (lastBounds)
@@ -296,69 +296,69 @@ function GeoViz()
             
         });
         
-        map.events.register('preaddlayer', map, function () {
-            //console.log('Adding something?');
+        map.events.register("preaddlayer", map, function () {
+            //console.log("Adding something?");
         });
         
         checkAllowModify(false);
         
-        vlayer.events.register('loadstart', vlayer, function () {
+        vlayer.events.register("loadstart", vlayer, function () {
             //console.log("loading");
         });
         
         vlayer.events.on({
-            'beforefeaturemodified': function(event) {
+            "beforefeaturemodified": function(event) {
                 //console.log("Selected " + event.feature.id  + " for modification");
                 jQuery("#eraseTool").button("enable");
-                if (typeof event.feature == 'object')
+                if (typeof event.feature == "object")
                 {
                     //checkPolygon(event.feature.id);
                 }
-                //jQuery("#helptext").html('Modify Mode<br>(Drag points to modify feature)');
-                jQuery(mapDiv).trigger('modeChange','Modify');
+                //jQuery("#helptext").html("Modify Mode<br>(Drag points to modify feature)");
+                jQuery(mapDiv).trigger("modeChange","Modify");
             },
-            'afterfeaturemodified': function(event) {
+            "afterfeaturemodified": function(event) {
                 //console.log("Finished with " + event.feature.id);
                 jQuery("#eraseTool").button("disable");
                 checkOnlyOnePolygon();
-                if (typeof event.feature == 'object')
+                if (typeof event.feature == "object")
                 {
-                    jQuery(mapDiv).trigger('featureAdded',getCoordinateList(event.feature));
+                    jQuery(mapDiv).trigger("featureAdded",getCoordinateList(event.feature));
                 }
-                //jQuery("#helptext").text('Navigation Mode');
-                jQuery(mapDiv).trigger('modeChange','Navigation');
+                //jQuery("#helptext").text("Navigation Mode");
+                jQuery(mapDiv).trigger("modeChange","Navigation");
                 
             },
-            'beforefeatureadded': function(event) {
+            "beforefeatureadded": function(event) {
                 stopDrawing();
                 checkAllowModify(true);
             },
-            'sketchstarted': function(event) {
-                jQuery(mapDiv).trigger('modeChange','Drawing');
+            "sketchstarted": function(event) {
+                jQuery(mapDiv).trigger("modeChange","Drawing");
             },
-            'sketchcomplete': function(event) {
-                jQuery(mapDiv).trigger('modeChange','Navigation');
+            "sketchcomplete": function(event) {
+                jQuery(mapDiv).trigger("modeChange","Navigation");
                 
             },
-            'featureadded': function(event) {
+            "featureadded": function(event) {
                 //checkPolygon(event.feature.id);
                 checkOnlyOnePolygon();
-                jQuery(mapDiv).trigger('featureAdded',getCoordinateList(event.feature));
+                jQuery(mapDiv).trigger("featureAdded",getCoordinateList(event.feature));
             },
-            'loadend': function(event) {
-                //console.log('Done loading vlayer layer');
+            "loadend": function(event) {
+                //console.log("Done loading vlayer layer");
                 map.updateSize();
                 vlayer.redraw();
             },
-            'loadstart': function(event) {
-                //console.log('Done Drawing?');
+            "loadstart": function(event) {
+                //console.log("Done Drawing?");
             },
-            'vertexmodified': function(event) {
-                jQuery(mapDiv).trigger('vectorChanged',getCoordinateList(event.feature));
+            "vertexmodified": function(event) {
+                jQuery(mapDiv).trigger("vectorChanged",getCoordinateList(event.feature));
             },
-            'sketchmodified': function(event) {
-                jQuery(mapDiv).trigger('vectorChanged',getCoordinateList(event.feature));
-                //jQuery(mapDiv).trigger('vectorChanged',event.feature.getCoordinateList());
+            "sketchmodified": function(event) {
+                jQuery(mapDiv).trigger("vectorChanged",getCoordinateList(event.feature));
+                //jQuery(mapDiv).trigger("vectorChanged",event.feature.getCoordinateList());
             }
         });
         
@@ -369,24 +369,24 @@ function GeoViz()
                 filter.deactivate();
             },
             featureadded: function(event) {
-                jQuery(mapDiv).trigger('filterDrawn');
+                jQuery(mapDiv).trigger("filterDrawn");
             }
         });
         
         google.maps.event.addListener(google_hybrid.mapObject, "tilesloaded", function() {
             console.log("Google Tiles Loaded");
-            google.maps.event.clearListeners(google_hybrid.mapObject, 'tilesloaded');
+            google.maps.event.clearListeners(google_hybrid.mapObject, "tilesloaded");
             google.maps.event.addListener(google_hybrid.mapObject, "idle", function() {
                 console.log("Google Map Idle");
 
-                setTimeout( function() {
+                setTimeout(function () {
                     // Hotfix to allow Hybrid map being loaded with New Google API (15 Feb 2016)
                     map.setBaseLayer(google_hybrid);
                     console.log("Map is Ready");
-                    jQuery(mapDiv).trigger('imready',mapDiv);
+                    jQuery(mapDiv).trigger("imready",mapDiv);
                     }
                 , 100);
-                google.maps.event.clearListeners(google_hybrid.mapObject, 'idle');
+                google.maps.event.clearListeners(google_hybrid.mapObject, "idle");
             });
         });
         
@@ -405,7 +405,7 @@ function GeoViz()
     
     this.flashMap = function ()
     {
-        setTimeout( function() { 
+        setTimeout(function () { 
             map.removeLayer(google_hybrid);
             map.updateSize();
             map.addLayer(google_hybrid);
@@ -440,11 +440,11 @@ function GeoViz()
     
     this.makeStatic = function ()
     {
-        Controls = map.getControlsByClass('OpenLayers.Control.Navigation');
+        Controls = map.getControlsByClass("OpenLayers.Control.Navigation");
         if (Controls.length > 0)
         {Controls[0].destroy();}
         
-        Controls = map.getControlsByClass('OpenLayers.Control.Zoom');
+        Controls = map.getControlsByClass("OpenLayers.Control.Zoom");
         if (Controls.length > 0)
         {Controls[0].destroy();}
     }
@@ -453,13 +453,13 @@ function GeoViz()
     {
         map.addLayers([google_terain]);
         //map.setBaseLayer(map.layers[1]);
-        map.setBaseLayer(map.getLayersByName('Google Terrain Map'));
+        map.setBaseLayer(map.getLayersByName("Google Terrain Map"));
     }
     
     this.showHybridMap = function ()
     {
         //map.setBaseLayer(map.layers[0]);
-        map.setBaseLayer(map.getLayersByName('Google Hybrid Map'));
+        map.setBaseLayer(map.getLayersByName("Google Hybrid Map"));
     }
         
     this.drawFilter = function ()
@@ -480,7 +480,7 @@ function GeoViz()
     this.addImage = function (Img,Opacity)
     {
         var graphic = new OpenLayers.Layer.Image(
-        'Image',
+        "Image",
         Img,
         map.getExtent(),
         new OpenLayers.Size(0,0),
@@ -495,7 +495,7 @@ function GeoViz()
     
     this.removeImage = function ()
     {
-        var graphic = map.getLayersByName('Image');
+        var graphic = map.getLayersByName("Image");
         for (var i=0;i<graphic.length;i++)
         {
             map.removeLayer(graphic[i]);
@@ -507,10 +507,10 @@ function GeoViz()
     {
         toolbarOptions = Options;
         
-        this.toolbardiv = '#'+DIV;
+        this.toolbardiv = "#"+DIV;
         jQuery(this.toolbardiv)
         .append('<img id="homeTool" src="/images/geoviz/home.png">')
-        //.append('<img id="filterTool" src="/images/geoviz/filter.png">')
+        //.append("<img id="filterTool" src="/images/geoviz/filter.png">")
         .append('<img id="drawTool" src="/images/geoviz/paint.png">');
         
         jQuery(this.toolbardiv).append('<span id="drawtools"></span>');
@@ -540,7 +540,7 @@ function GeoViz()
             closeMe();
             }).qtip({
             content: {
-                text: 'Exit the Map'
+                text: "Exit the Map"
             }
         })
         
@@ -558,11 +558,11 @@ function GeoViz()
             goHome();
             }).qtip({
             content: {
-                text: 'Go Home'
+                text: "Go Home"
             }
         });
         
-        jQuery("#drawTool").button().qtip({content: {text: 'Draw a Polygon'}})
+        jQuery("#drawTool").button().qtip({content: {text: "Draw a Polygon"}})
         .click(function() {
             if (drawControls[drawMode].active)
             {
@@ -589,19 +589,19 @@ function GeoViz()
         jQuery("#eraseTool").button()
         .click(function() {
             deleteSelected();
-        }).qtip({content: {text: 'Delete a Feature'}});
+        }).qtip({content: {text: "Delete a Feature"}});
         
-        jQuery("#worldTool").button().qtip({content: {text: 'Maximum Zoom Out'}})
+        jQuery("#worldTool").button().qtip({content: {text: "Maximum Zoom Out"}})
         .click(function() {
             zoomToMaxExtent();
         });
         
-        jQuery("#zoominTool").button().qtip({content: {text: 'Zoom In'}})
+        jQuery("#zoominTool").button().qtip({content: {text: "Zoom In"}})
         .click(function() {
             zoomIn();
         });
         
-        jQuery("#zoomoutTool").button().qtip({content: {text: 'Zoom Out'}})
+        jQuery("#zoomoutTool").button().qtip({content: {text: "Zoom Out"}})
         .click(function() {
             zoomOut();
         });
@@ -610,7 +610,7 @@ function GeoViz()
         
         jQuery(this.toolbardiv).append('<span style="font-family:Arial, Verdana, sans-serif;text-align:right;float:right;font-size:20;" id="helptext"></span>');
         
-        //jQuery("#helptext").text('Navigation Mode');
+        //jQuery("#helptext").text("Navigation Mode");
         
     }
     
@@ -736,7 +736,7 @@ function GeoViz()
             context: document.body
             }).done(function(html) {
             eventObj = jQuery.parseJSON(html);
-            jQuery(mapDiv).trigger('featureConverted',eventObj);
+            jQuery(mapDiv).trigger("featureConverted",eventObj);
             //console.log(html);
             return true;
         });    
@@ -751,7 +751,7 @@ function GeoViz()
             context: document.body
             }).done(function(html) {
                 //eventObj = jQuery.parseJSON(html);
-                jQuery(mapDiv).trigger('gmlConverted',html);
+                jQuery(mapDiv).trigger("gmlConverted",html);
                 //console.log(html);
             return true;
         });    
@@ -766,7 +766,7 @@ function GeoViz()
             context: document.body
             }).done(function(html) {
                 //eventObj = jQuery.parseJSON(html);
-                jQuery(mapDiv).trigger('wktConverted',html);
+                jQuery(mapDiv).trigger("wktConverted",html);
                 //console.log(html);
             return true;
         });    
@@ -784,7 +784,7 @@ function GeoViz()
             context: document.body
             }).done(function(html) {
                 eventObj = jQuery.parseJSON(html);
-                jQuery(mapDiv).trigger('featureConverted',eventObj);
+                jQuery(mapDiv).trigger("featureConverted",eventObj);
                 //console.log(html);
                 return html;
         });
@@ -797,9 +797,9 @@ function GeoViz()
             var addFeature = this.wkt.read(this.wktTransformToSperMerc(WKT));
             
             // Sample: {"strokeColor": "#ff00ff", "fillColor": "#ffffff"}
-            if (typeof Style == 'object')
+            if (typeof Style == "object")
             {
-                var style = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
+                var style = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style["default"]);
                 //style.fillColor = Style.fillColor;
                 //style.fillOpacity = Style.fillOpacity;
                 //style.strokeColor = Style.strokeColor;
@@ -810,7 +810,7 @@ function GeoViz()
             }
             
             // Sample: {"attribute" : "value", "label": "text"}
-            if (typeof Attributes == 'object')
+            if (typeof Attributes == "object")
             {
                 addFeature.attributes = Attributes;
             }
@@ -829,14 +829,14 @@ function GeoViz()
     function featureTransformToWGS84(Feature)
     {
         var myFeature = Feature.clone();
-        myFeature.geometry.transform(map.getProjectionObject(),'EPSG:4326');
+        myFeature.geometry.transform(map.getProjectionObject(),"EPSG:4326");
         return myFeature;
     }
     
     function featureTransformToSperMerc(Feature)
     {
         var myFeature = Feature.clone();
-        myFeature.geometry.transform('EPSG:4326',map.getProjectionObject());
+        myFeature.geometry.transform("EPSG:4326",map.getProjectionObject());
         return myFeature;
     }
     
@@ -845,7 +845,7 @@ function GeoViz()
         if (WKT != "")
         {
             var wktFeature = this.wkt.read(WKT);
-            wktFeature.geometry.transform(map.getProjectionObject(),'EPSG:4326');
+            wktFeature.geometry.transform(map.getProjectionObject(),"EPSG:4326");
             return this.wkt.write(wktFeature);
         }
     }
@@ -855,7 +855,7 @@ function GeoViz()
         if (WKT != "")
         {
             var wktFeature = this.wkt.read(WKT);
-            wktFeature.geometry.transform('EPSG:4326',map.getProjectionObject());
+            wktFeature.geometry.transform("EPSG:4326",map.getProjectionObject());
             return this.wkt.write(wktFeature);
         }
     }
@@ -866,7 +866,7 @@ function GeoViz()
         for (var i=0;i<tLayer.features.length;i++)
         {
             var tFeature = tLayer.features[i];
-            tFeature.geometry.transform(map.getProjectionObject(),'EPSG:4326');
+            tFeature.geometry.transform(map.getProjectionObject(),"EPSG:4326");
         }
         return tLayer;
     }
@@ -900,60 +900,60 @@ function GeoViz()
             
             if (Math.abs(pointSplit[0]) > 90 && Math.abs(pointSplit[1]) <= 90)
             {
-                //console.log ('LongLat');
-                orders.push('LongLat');
+                //console.log ("LongLat");
+                orders.push("LongLat");
                 LongLat += 1;
             }
             else if (Math.abs(pointSplit[0]) <= 90 && Math.abs(pointSplit[1]) > 90)
             {
-                //console.log('LatLong');
+                //console.log("LatLong");
                 LatLong += 1;
             }
             else if (pointSplit[0] > pointSplit[1] && pointSplit[1] < 0 && (pointSplit[0] - (pointSplit[1])) > 90)
             {
-                //console.log('Pos LatLong');
+                //console.log("Pos LatLong");
                 LatLong += .5;
             }
             else
             {
-                //console.log('unknown');
+                //console.log("unknown");
                 LatLong += 0;
             }
         }
         
         if ((LatLong == pointList.length))
         {
-            //console.log('For Sure Lat:Long');
+            //console.log("For Sure Lat:Long");
             return this.orderEnum.LATLONG;
         }
         else if ((LatLong == pointList.length))
         {
-            //console.log('For Sure Lat:Long');
+            //console.log("For Sure Lat:Long");
             return this.orderEnum.LATLONG;
         }
         else if ((LongLat == pointList.length))
         {
-            //console.log('For Sure Long:Lat');
+            //console.log("For Sure Long:Lat");
             return this.orderEnum.LONGLAT;
         }
         else if (LongLat > 0 && LatLong > 0)
         {
-            //console.log('Unknown Mixed');
+            //console.log("Unknown Mixed");
             return this.orderEnum.MIXED;
         }
         else if ((LatLong / pointList.length) > (LongLat / pointList.length))
         {
-            //console.log('Most Likely Lat:Long');
+            //console.log("Most Likely Lat:Long");
             return this.orderEnum.LATLONGML;
         }
         else if ((LatLong / pointList.length) < (LongLat / pointList.length))
         {
-            //console.log('Most Likely Long:Lat');
+            //console.log("Most Likely Long:Lat");
             return this.orderEnum.LONGLATML;
         }
         else if (LongLat == 0 && LatLong == 0)
         {
-            //console.log('Really Unknown');
+            //console.log("Really Unknown");
             return this.orderEnum.UNKNOWN;
         }
     }
@@ -979,15 +979,15 @@ function GeoViz()
         
         if (Math.abs(lxMax) > 90 || Math.abs(lxMin) > 90)
         {
-            return 'LongLat';
+            return "LongLat";
         }
         else if (Math.abs(ryMax) > 90 || Math.abs(ryMin) > 90)
         {
-            return 'LatLong';
+            return "LatLong";
         }
         else
         {
-            return 'Unknown';
+            return "Unknown";
         }
     }
     
@@ -997,7 +997,7 @@ function GeoViz()
         var lx = 0;
         var ry = 0;
         var msg = new Array();
-        var msgTxt = 'OK';
+        var msgTxt = "OK";
         
         var superList = pointList.trim();
         superList = superList.split(/[\s,]+/); // /^\s+(.*?)\s+$/
@@ -1014,32 +1014,32 @@ function GeoViz()
                 
                 if (Math.abs(lx) > 90 && Math.abs(ry) > 90)
                 {
-                    msgTxt = 'Both coordinates over 90 in set '+(i+1);
+                    msgTxt = "Both coordinates over 90 in set "+(i+1);
                     msg.push(msgTxt);
                 }
                 
                 if (Math.abs(lx) > 180 || Math.abs(ry) > 180)
                 {
-                    msgTxt = 'Some coordinates over 180 in set '+(i+1);
+                    msgTxt = "Some coordinates over 180 in set "+(i+1);
                     msg.push(msgTxt);
                 }
                 
                 // if (Math.abs(lx) > 90 && Math.abs(lx))
                 // {
-                    // msgTxt = 'Suspected tuple in set '+(i+1);
+                    // msgTxt = "Suspected tuple in set "+(i+1);
                     // msg.push(msgTxt);
                     // //console.log(msgTxt);
                 // }
             }
             
-            if (msgTxt == 'OK')
+            if (msgTxt == "OK")
             {
                 msg.push(msgTxt);
             }
         }
         else
         {
-            msgTxt = 'Odd number of values. Coordinates must be in latitude longitude pairs, only '+superList.length+' coordinates found';
+            msgTxt = "Odd number of values. Coordinates must be in latitude longitude pairs, only "+superList.length+" coordinates found";
             msg.push(msgTxt);
             //console.log(msg);
         }
@@ -1052,7 +1052,7 @@ function GeoViz()
     {
         var points = "";
         
-        if (typeof Feature != 'undefined')
+        if (typeof Feature != "undefined")
         {
             var myFeature = Feature.clone();
             myFeature = featureTransformToWGS84(myFeature);
@@ -1087,7 +1087,7 @@ function GeoViz()
             {
                 if (i!=0) {pointList += " "};
                 pointList += points[i];
-                if (typeof points[i+1] !== 'undefined')
+                if (typeof points[i+1] !== "undefined")
                 {
                     pointList += "," + points[i+1];
                 }
@@ -1103,9 +1103,9 @@ function GeoViz()
         //console.log(determineOrder(List));
         
         checkMsg = this.checkCoordList(List);
-        if (checkMsg != 'OK')
+        if (checkMsg != "OK")
         {
-            jQuery(mapDiv).trigger('coordinateError',checkMsg);
+            jQuery(mapDiv).trigger("coordinateError",checkMsg);
             //console.debug(checkMsg);
             return false;
         }
@@ -1126,15 +1126,15 @@ function GeoViz()
                     points += pointSplit[0]+" "+pointSplit[1]+",";
                 }
             }
-            if (drawMode == 'polygon' || drawMode == 'box')
+            if (drawMode == "polygon" || drawMode == "box")
             {
                 var WKT = "POLYGON((" + points.substring(0,(points.length)-1) + "))";
             }
-            else if (drawMode == 'point')
+            else if (drawMode == "point")
             {
                 var WKT = "MULTIPOINT(" + points.substring(0,(points.length)-1) + ")";
             }
-            else if (drawMode == 'line')
+            else if (drawMode == "line")
             {
                 var WKT = "LINESTRING(" + points.substring(0,(points.length)-1) + ")";
             }
@@ -1170,7 +1170,7 @@ function GeoViz()
     
     function startDrawing ()
     {
-        if (typeof toolbarOptions != 'undefined')
+        if (typeof toolbarOptions != "undefined")
         {
             if (toolbarOptions.showDrawTools)
             {
@@ -1184,7 +1184,7 @@ function GeoViz()
             checkAllowModify(true);
             //draw.activate();
             drawControls[drawMode].activate()
-            //jQuery("#helptext").html('Drawing Mode<br>(Double click to stop)');
+            //jQuery("#helptext").html("Drawing Mode<br>(Double click to stop)");
             
         }
     }
@@ -1207,7 +1207,7 @@ function GeoViz()
         drawControls[drawMode].deactivate();
         filter.deactivate();
         modify.activate();
-        jQuery("#helptext").text('Navigation Mode');
+        jQuery("#helptext").text("Navigation Mode");
         return true;
 
     }
@@ -1219,7 +1219,7 @@ function GeoViz()
     
     this.goHome = function ()
     {
-        map.setCenter(new OpenLayers.LonLat(lon, lat).transform('EPSG:4326', 'EPSG:900913'), zoom);
+        map.setCenter(new OpenLayers.LonLat(lon, lat).transform("EPSG:4326", "EPSG:900913"), zoom);
     }    
     
     this.zoomToMaxExtent = function ()
@@ -1236,7 +1236,7 @@ function GeoViz()
     this.getSingleFeature = function ()
     {
         var Feature = vlayer.features[0];
-        if (typeof Feature != 'undefined')
+        if (typeof Feature != "undefined")
         {
             return Feature.id;
         }
@@ -1244,12 +1244,12 @@ function GeoViz()
     
     this.getSingleFeatureClass = function ()
     {
-        if (typeof vlayer.features[0] != 'undefined')
+        if (typeof vlayer.features[0] != "undefined")
         {
             var ClassName = vlayer.features[0].geometry.CLASS_NAME;
-            if (typeof ClassName != 'undefined')
+            if (typeof ClassName != "undefined")
             {
-                return ClassName.split('.')[2];
+                return ClassName.split(".")[2];
             }
         }
         else
@@ -1274,7 +1274,7 @@ function GeoViz()
             deleteFeatureID = modify.feature.id
             modify.unselectFeature();
             vlayer.removeFeatures(vlayer.getFeatureById(deleteFeatureID));
-            jQuery(mapDiv).trigger('featureAdded','');
+            jQuery(mapDiv).trigger("featureAdded","");
         }
         checkOnlyOnePolygon();
     }
@@ -1282,12 +1282,12 @@ function GeoViz()
     function closeMe()
     {
         coordlist = this.getCoordinateList(vlayer.features[0]);
-        jQuery(mapDiv).trigger('closeMe',coordlist);
+        jQuery(mapDiv).trigger("closeMe",coordlist);
     }
     
     function writeGML(Feature)
     {
-        Feature.geometry.transform('EPSG:900913','EPSG:4326');
+        Feature.geometry.transform("EPSG:900913","EPSG:4326");
         return gml.write(Feature)
         
     }
@@ -1295,7 +1295,7 @@ function GeoViz()
     this.getWKT = function (FeatureID)
     {
         var Feature = vlayer.getFeatureById(FeatureID);
-        if (typeof Feature == 'object' && Feature != null)
+        if (typeof Feature == "object" && Feature != null)
         {
             return this.wkt.write(Feature);
         }
@@ -1326,11 +1326,11 @@ function GeoViz()
         
         //console.log(wgs84WKT);
         
-        if (typeof wgs84WKT != 'undefined')
+        if (typeof wgs84WKT != "undefined")
         {
             myFeature = this.wkt.read(wgs84WKT);
                 
-            if (typeof myFeature == 'object' && myFeature != null)
+            if (typeof myFeature == "object" && myFeature != null)
             {   
                 var myBounds = myFeature.geometry.getBounds();
                 
