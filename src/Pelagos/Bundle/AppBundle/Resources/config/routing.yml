@@ -26,3 +26,6 @@ NelmioApiDocBundle:
 
 pelagos_download:
     resource: Pelagos\Bundle\AppBundle\Controller\DownloadController
+
+pelagos_geoviz:
+    resource: "@PelagosAppBundle/Resources/config/routing_geoviz.yml"

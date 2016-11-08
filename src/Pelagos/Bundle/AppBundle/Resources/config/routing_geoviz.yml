@@ -1,0 +1,11 @@
+pelagos_geoviz_wizard_dialog:
+    path: /geoviz/wizard_dialog.html
+    defaults:
+        _controller: FrameworkBundle:Template:template
+        template:    "PelagosAppBundle:GeoViz:wizard_dialog.html.twig"
+
+pelagos_geoviz_wizard_map:
+    path: /geoviz/wizard_map.html
+    defaults:
+        _controller: FrameworkBundle:Template:template
+        template:    "PelagosAppBundle:GeoViz:wizard_map.html.twig"
