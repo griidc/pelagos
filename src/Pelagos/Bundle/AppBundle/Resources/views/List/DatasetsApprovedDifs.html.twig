@@ -54,7 +54,15 @@ set properties = [
     class = "entityTable stripe"
     width = "100%"
     data-ajax = '{
-        "url": "{{ path('pelagos_api_datasets_get_collection', {'_properties': properties | join(',')}) }}",
+        "url": "{{ path('pelagos_api_datasets_get_collection') }}",
+        "data": {
+                    "_properties": "{{ properties | join(',') }}",
+                    "dif.status": 2
+                    {% if not is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
+                    ,
+                    "researchGroup": "{{ researchGroupList | join(',') }}"
+                    {% endif %}
+                },
         "dataSrc": "",
         "cache": true
     }'
