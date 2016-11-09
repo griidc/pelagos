@@ -30,6 +30,10 @@
                 "Deferred",
                 "XRegExp",
                 "DataTable"
+            ],
+            "newIsCapExceptions": [
+                "OpenLayers.Format.GML.v3",
+                "OpenLayers.Bounds.fromArray"
             ]
         }],
         "quotes": [2, "double", "avoid-escape"]
