@@ -554,6 +554,7 @@ function updateDIF(form)
     var resourceId = $('[name="id"]', form).val();
     var status = 0;
     var submit = false;
+    var approve = false;
 
     if (udi != "") {
         method = "PUT"
