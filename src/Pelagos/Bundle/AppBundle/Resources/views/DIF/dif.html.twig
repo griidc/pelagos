@@ -34,19 +34,21 @@
                 '//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',
                 '//maps.google.com/maps/api/js?v=3',
                 '//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.1/jstree.min.js',
-                '/includes/geoviz/geoviz.js',
-                '/includes/geoviz/mapWizard.js',
             ]
         )
     }}
     
-    {% javascripts '@PelagosAppBundle/Resources/public/js/common.js' %}
+    {% javascripts
+        '@FOSJsRoutingBundle/Resources/public/js/router.js'
+        '@PelagosAppBundle/Resources/public/js/common.js'
+        '@PelagosAppBundle/Resources/public/js/geoviz.js'
+        '@PelagosAppBundle/Resources/public/js/mapWizard.js'
+        '@PelagosAppBundle/Resources/public/js/dif.js'
+    %}
         {{ add_js(asset_url) }}
     {% endjavascripts %}
 
-    {% javascripts '@PelagosAppBundle/Resources/public/js/dif.js' %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
+    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
    
 {% endblock %}
 
