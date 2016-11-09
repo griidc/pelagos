@@ -218,6 +218,9 @@ function MapWizard(json)
             case "Point":
                 $("#drawPoint").click();
                 break;
+            case "MultiPoint":
+                $("#drawPoint").click();
+                break;
             case "Line":
                 $("#drawLine").click();
                 break;
