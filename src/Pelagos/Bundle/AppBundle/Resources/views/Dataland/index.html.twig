@@ -27,13 +27,12 @@
             [
                 '//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',
                 '//maps.google.com/maps/api/js?v=3',
-                '/includes/geoviz/geoviz.js',
-                '/includes/geoviz/mapWizard.js',
             ]
         )
     }}
 
     {% javascripts
+        '@PelagosAppBundle/Resources/public/js/geoviz.js'
         '@PelagosAppBundle/Resources/public/js/dataland.js'
         '@PelagosAppBundle/Resources/public/js/download.js'
         '@FOSJsRoutingBundle/Resources/public/js/router.js'
