@@ -86,7 +86,7 @@ function MapWizard(json)
         $("#"+json.descField).hide().prop("disabled",true);
 
         $.ajax({
-            url: "/includes/geoviz/wizard_dialog.html",
+            url: Routing.generate("pelagos_geoviz_wizard_dialog"),
             success: function(html) {
                 $(document.body).append('<div id="divMapWizard">'+html+"</div>");
             },
@@ -129,7 +129,7 @@ function MapWizard(json)
     {
         //Synchonous load of HTML, then append to DIV
         $.ajax({
-            url:    "/includes/geoviz/wizard_map.html",
+            url: Routing.generate("pelagos_geoviz_wizard_map"),
             success: function(html) {
                 $("#divMapWizard").append(html);
             },
