@@ -310,10 +310,6 @@ function GeoViz()
             "beforefeaturemodified": function(event) {
                 //console.log("Selected " + event.feature.id  + " for modification");
                 jQuery("#eraseTool").button("enable");
-                if (typeof event.feature == "object")
-                {
-                    //checkPolygon(event.feature.id);
-                }
                 //jQuery("#helptext").html("Modify Mode<br>(Drag points to modify feature)");
                 jQuery(mapDiv).trigger("modeChange","Modify");
             },
@@ -341,7 +337,6 @@ function GeoViz()
 
             },
             "featureadded": function(event) {
-                //checkPolygon(event.feature.id);
                 checkOnlyOnePolygon();
                 jQuery(mapDiv).trigger("featureAdded",getCoordinateList(event.feature));
             },
@@ -751,24 +746,6 @@ function GeoViz()
                 jQuery(mapDiv).trigger("wktConverted",html);
                 //console.log(html);
             return true;
-        });
-    }
-
-    this.checkPolygon = function (FeatureID)
-    {
-        var Feature = vlayer.getFeatureById(FeatureID);
-        var featureID = Feature.id;
-        var WKT = this.wkt.write(Feature);
-        jQuery.ajax({
-            url: "/includes/geoviz/geocheck.php", // replace this url with geoviz lib
-            type: "POST",
-            data: {wkt: WKT, featureid: featureID},
-            context: document.body
-            }).done(function(html) {
-                eventObj = jQuery.parseJSON(html);
-                jQuery(mapDiv).trigger("featureConverted",eventObj);
-                //console.log(html);
-                return html;
         });
     }
 
