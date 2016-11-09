@@ -76,3 +76,5 @@ parameters:
 
     download_base_directory: /san/home/http/download
     download_base_url: ~
+
+    google_maps_api_key: ~
