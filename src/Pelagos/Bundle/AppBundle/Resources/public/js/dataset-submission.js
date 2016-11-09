@@ -341,6 +341,7 @@ $(function() {
 
     // SFTP/GridFTP and HTTP/FTP
     $("#datasetFilePath, #datasetFileUrl").on("keyup change", function() {
+        $(this).valid();
         setDatasetFileUri($(this).val());
     });
     $("#datasetFilePath, #datasetFileUrl").change(function() {
