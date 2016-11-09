@@ -326,15 +326,11 @@ function GeoViz()
         });
 
         google.maps.event.addListener(google_hybrid.mapObject, "tilesloaded", function() {
-            console.log("Google Tiles Loaded");
             google.maps.event.clearListeners(google_hybrid.mapObject, "tilesloaded");
             google.maps.event.addListener(google_hybrid.mapObject, "idle", function() {
-                console.log("Google Map Idle");
-
                 setTimeout(function () {
                     // Hotfix to allow Hybrid map being loaded with New Google API (15 Feb 2016)
                     map.setBaseLayer(google_hybrid);
-                    console.log("Map is Ready");
                     jQuery(mapDiv).trigger("imready",mapDiv);
                     }
                 , 100);
