@@ -35,6 +35,8 @@ if (in_array(
         'pelagos_app_download_default',
         'pelagos_app_download_http',
         'pelagos_app_download_gridftp',
+        'pelagos_app_gml_towkt',
+        'pelagos_app_gml_fromwkt',
     )
 )) {
     $response->send();
