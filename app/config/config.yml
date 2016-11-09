@@ -49,6 +49,8 @@ twig:
         "%kernel.root_dir%/../src/Pelagos/Bundle/AppBundle/Resources/views/template": templates
         "%kernel.root_dir%/../src/Pelagos/Bundle/AppBundle/Resources/views/DIF/email": DIFEmail
         "%kernel.root_dir%/../src/Pelagos/Bundle/AppBundle/Resources/views/Email": Email
+    globals:
+        google_maps_api_key: "%google_maps_api_key%"
 
 # Doctrine Configuration
 doctrine:
