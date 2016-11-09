@@ -1,7 +1,5 @@
 function MapWizard(json)
 {
-    //var $ = jQuery.noConflict();
-
     var json;
 
     var seed = Math.round(Math.random()*1e10);
@@ -33,14 +31,6 @@ function MapWizard(json)
             if (typeof m.message != "undefined")
             {message = m.message;}else{message = m;};
             console.log("Error in Ajax:"+t+" Message:"+message);
-            // $('<div title="Ajax Error:'+t+'"><p>Message:'+message+"</p></div>").dialog({
-                // modal: true,
-                // buttons: {
-                    // Ok: function() {
-                        // $( this ).dialog( "close" );
-                    // }
-                // }
-            // });
         }
     });
 
@@ -66,7 +56,6 @@ function MapWizard(json)
         smlGeoViz.flashMap();
     }
 
-    //function haveGML(gml)
     this.haveGML = function(gml)
     {
         smlGeoViz.goHome();
@@ -105,10 +94,6 @@ function MapWizard(json)
             smlGeoViz.removeImage();
             smlGeoViz.removeAllFeaturesFromMap();
             smlGeoViz.gmlToWKT($(gmlField).val());
-            if ($(gmlField).val() == "")
-            {
-                //smlGeoViz.addImage("includes/images/notdefined.png",1);
-            }
         });
 
         $("#geowizBtn").button().click(function()
@@ -140,9 +125,7 @@ function MapWizard(json)
         wizGeoViz = new GeoViz();
 
         var mymap = $("#mapwiz table#maptoolstbl tbody tr td").first();
-        //$(mymap).append("<div />").attr("id","olmap").css({width:$(this).width(),height:$(this).height()});
         $(mymap).append("<div />").attr("id","olmap").css({width:100,height:600});
-        //.html('<div id="olmap" style="width: 400px;height: 500px"></div>');
         wizGeoViz.initMap("olmap",{"onlyOneFeature":true,"allowModify":true,"allowDelete":true});
 
         $("#coordTabs").tabs();
@@ -180,8 +163,6 @@ function MapWizard(json)
         });
 
         setEvents();
-
-        //console.log("Spatial Wizard Ready");
     }
 
     function showWizard()
@@ -216,12 +197,7 @@ function MapWizard(json)
                         wizGeoViz.updateMap();
                     }
                 }
-            }//,
-            // create:function () {
-                // $(this).closest(".ui-dialog")
-                // .find(".ui-button") // the first button
-                // .css("font-weight","bold");
-            // }
+            }
         });
 
         $(document).on("imready", function(e,who) {
@@ -296,7 +272,6 @@ function MapWizard(json)
         $(gmlField).val("");
         $(gmlField).trigger("change");
         $("#wizDesc").val("")
-        //$("#wizDescForm").validate();
     }
 
     this.haveSpatial = function(Spatial)
@@ -502,11 +477,7 @@ function MapWizard(json)
 
     function renderBoundingBox(maxLong,minLong,maxLat,minLat)
     {
-        //var wkt = "POLYGON ((" + minLong + " " + maxLat + "," + maxLong + " " +  maxLat + "," + maxLong + " " + minLat + "," + minLong + " " + minLat + "))";
-
         var wkt = wizGeoViz.getWKTFromBounds(minLong,minLat,maxLong,maxLat);
-
-        //console.log(wkt);
 
         var triedAdd = wizGeoViz.addFeatureFromcoordinateList(wkt);
 
@@ -615,21 +586,6 @@ function MapWizard(json)
             $("#coordlist").val(eventInfo);
         });
 
-        // $("#olmap").on("coordinateError", function(e, eventInfo) {
-            // $("<div>"+eventInfo+"</divp.dialog({
-                // autoOpen: true,
-                // title: "WARNING!",
-                // buttons: {
-                    // OK: function() {
-                    // $(this).dialog("close");
-                    // }},
-                // modal: true,
-                // close: function( event, ui ) {
-                    // $(this).dialog("destroy").remove();
-                // }
-            // });
-        // });
-
         $("#saveFeature")
         .button({ icons: { primary: "ui-icon ui-icon-disk"}},{disabled: true})
         .click(function()
@@ -662,8 +618,6 @@ function MapWizard(json)
 
         $("#deleteFeature").button({ icons: { primary: "ui-icon ui-icon-trash"}},{disabled: true}).click(function()
         {
-            //wizGeoViz.removeAllFeaturesFromMap();
-            //$("#coordlist").val("");
             wizGeoViz.deleteSelected();
         })
         .parent()
@@ -671,9 +625,6 @@ function MapWizard(json)
         .qtip({
             content: $("#deleteFeature").attr("title")
         });
-        // .qtip({    content: {
-            // text: "Deletes selected feature"
-        // }});
 
         $("#exitDialog").button({ icons: { primary: "ui-icon ui-icon-refresh"}}).click(function()
         {
@@ -801,9 +752,6 @@ function MapWizard(json)
 
         $("#coordlist").height((tblHgt*.3));
         $("#maphelptxt").height((tblHgt*.3));
-        //$("#wiztoolbar").height();
         $("#coordlist").css("max-width:"+$("#coordlist").width()+"px;")
-
     }
-
 }

@@ -1,7 +1,5 @@
 function GeoViz()
 {
-    //var mxml = new OpenLayers.Format.XML();
-    //var gml = new OpenLayers.Format.GML();
     var map,modify,vlayer,google_hybrid,flayer;
     var mapOptions, toolbarOptions;
     var drawControls;
@@ -79,25 +77,21 @@ function GeoViz()
             maxResolution: "auto",
             maxExtent: new OpenLayers.Bounds(-180, -90, 180, 90),
             minResolution: "auto",
-            //allOverlays:true,
             eventListeners: {
                 featureover: function(e)
                 {
                     e.feature.renderIntent = "select";
                     e.feature.layer.drawFeature(e.feature);
-                    //console.log("Map says: " + e.feature.id + " mouse over " + e.feature.layer.name);
                     jQuery(mapDiv).trigger("overFeature",{"featureID":e.feature.id,"attributes":e.feature.attributes});
                 },
                 featureout: function(e)
                 {
                     e.feature.renderIntent = "default";
                     e.feature.layer.drawFeature(e.feature);
-                    //console.log("Map says: " + e.feature.id + " mouse out " + e.feature.layer.name);
                     jQuery(mapDiv).trigger("outFeature",{"featureID":e.feature.id,"attributes":e.feature.attributes});
                 },
                 featureclick: function(e)
                 {
-                    //console.log("Map says: " + e.feature.id + " clicked on " + e.feature.layer.name + " udi:" + e.feature.attributes["udi"]);
                     jQuery(mapDiv).trigger("clickFeature",{"featureID":e.feature.id,"attributes":e.feature.attributes});
                 }
             }
@@ -114,7 +108,6 @@ function GeoViz()
         dstyle.fillOpacity = 0;
         dstyle.strokeOpacity = 0.5;
         dstyle.strokeWidth = 2;
-        //dstyle.pointRadius = 10;
 
         defaultStyle = new OpenLayers.Style(dstyle);
 
@@ -123,14 +116,11 @@ function GeoViz()
         sstyle.fillOpacity = 0.0;
         sstyle.strokeWidth = 4;
         sstyle.strokeOpacity = 1.0;
-        //sstyle.graphicZIndex = 2;
         sstyle.pointRadius = 12;
-        //sstyle.strokeColor = "#FFFFFF";
 
         if (Options.labelAttr)
         {
             sstyle.label = "${" + Options.labelAttr + "}";
-            //console.log("label set");
             sstyle.labelAlign = "cm";
         }
 
@@ -159,10 +149,6 @@ function GeoViz()
             projection: new OpenLayers.Projection("EPSG:4326"),
             styleMap: defaultStyleMap,
             rendererOptions: {zIndexing: true},
-            afterAdd: function()
-            {
-                //console.log("layer ready");
-            },
             displayInLayerSwitcher: false
         });
 
@@ -221,13 +207,10 @@ function GeoViz()
             });
         map.addControl(filter);
 
-        //TODO: if Options.BaseMapTerainDefault == true then add terain layer first.
-
         map.addLayers([vlayer, flayer]);
 
         map.events.register("click", map , function(e){
             var vpxy = map.getLayerPxFromViewPortPx(e.xy) ;
-            //console.debug("clicked on"+vpxy);
             jQuery(mapDiv).trigger("mapClick",vpxy);
         });
 
@@ -262,9 +245,6 @@ function GeoViz()
             map.addLayers([n0q]);
         }
 
-        //draw = new OpenLayers.Control.DrawFeature(vlayer, OpenLayers.Handler.Polygon);
-        //map.addControl(draw);
-
         drawControls = {
             point: new OpenLayers.Control.DrawFeature(vlayer,OpenLayers.Handler.Point),
             line: new OpenLayers.Control.DrawFeature(vlayer,OpenLayers.Handler.Path),
@@ -285,45 +265,29 @@ function GeoViz()
         this.setDrawMode("polygon");
 
         map.events.register("updatesize", map, function () {
-            //console.log("Window Resized");
             setTimeout(function () {
                 lastBounds = map.getExtent()
                 }, 200);
                 if (lastBounds)
                 {
+                    // May need this because resizing screen can mess up zoom level.
                     //map.zoomToExtent(lastBounds,true);
                 }
-
-        });
-
-        map.events.register("preaddlayer", map, function () {
-            //console.log("Adding something?");
         });
 
         checkAllowModify(false);
 
-        vlayer.events.register("loadstart", vlayer, function () {
-            //console.log("loading");
-        });
-
         vlayer.events.on({
             "beforefeaturemodified": function(event) {
-                //console.log("Selected " + event.feature.id  + " for modification");
-                jQuery("#eraseTool").button("enable");
-                //jQuery("#helptext").html("Modify Mode<br>(Drag points to modify feature)");
                 jQuery(mapDiv).trigger("modeChange","Modify");
             },
             "afterfeaturemodified": function(event) {
-                //console.log("Finished with " + event.feature.id);
-                jQuery("#eraseTool").button("disable");
                 checkOnlyOnePolygon();
                 if (typeof event.feature == "object")
                 {
                     jQuery(mapDiv).trigger("featureAdded",getCoordinateList(event.feature));
                 }
-                //jQuery("#helptext").text("Navigation Mode");
                 jQuery(mapDiv).trigger("modeChange","Navigation");
-
             },
             "beforefeatureadded": function(event) {
                 stopDrawing();
@@ -334,32 +298,25 @@ function GeoViz()
             },
             "sketchcomplete": function(event) {
                 jQuery(mapDiv).trigger("modeChange","Navigation");
-
             },
             "featureadded": function(event) {
                 checkOnlyOnePolygon();
                 jQuery(mapDiv).trigger("featureAdded",getCoordinateList(event.feature));
             },
             "loadend": function(event) {
-                //console.log("Done loading vlayer layer");
                 map.updateSize();
                 vlayer.redraw();
-            },
-            "loadstart": function(event) {
-                //console.log("Done Drawing?");
             },
             "vertexmodified": function(event) {
                 jQuery(mapDiv).trigger("vectorChanged",getCoordinateList(event.feature));
             },
             "sketchmodified": function(event) {
                 jQuery(mapDiv).trigger("vectorChanged",getCoordinateList(event.feature));
-                //jQuery(mapDiv).trigger("vectorChanged",event.feature.getCoordinateList());
             }
         });
 
         flayer.events.on({
             beforefeatureadded: function(event) {
-                //console.debug(wkt.write(event.feature));
                 flayer.removeAllFeatures();
                 filter.deactivate();
             },
@@ -385,17 +342,11 @@ function GeoViz()
             });
         });
 
-        //map.render(DIV);
-
         //Add map selector for highlighting
         mapOptions.allowModify
         selectControl = new OpenLayers.Control.SelectFeature(vlayer);
         map.addControls([selectControl]);
-        //selectControl.activate();
-
         lastBounds = map.getExtent();
-
-
     }
 
     this.flashMap = function ()
@@ -407,7 +358,6 @@ function GeoViz()
             map.updateSize();
         }
         , 100)
-
     }
 
     this.setDrawMode = function(handlerType)
@@ -416,7 +366,6 @@ function GeoViz()
             var control = drawControls[key];
             if (handlerType == key)
             {
-                //control.activate();
                 this.drawMode = handlerType;
                 drawMode = handlerType;
                 control.deactivate();
@@ -447,13 +396,11 @@ function GeoViz()
     this.showTerrainMap = function ()
     {
         map.addLayers([google_terain]);
-        //map.setBaseLayer(map.layers[1]);
         map.setBaseLayer(map.getLayersByName("Google Terrain Map"));
     }
 
     this.showHybridMap = function ()
     {
-        //map.setBaseLayer(map.layers[0]);
         map.setBaseLayer(map.getLayersByName("Google Hybrid Map"));
     }
 
@@ -495,10 +442,7 @@ function GeoViz()
         {
             map.removeLayer(graphic[i]);
         }
-
     }
-
-    //TODO: Zoom/Pan/Select/Highlight Feature Function
 
     this.gotoAllFeatures = function ()
     {
@@ -616,9 +560,7 @@ function GeoViz()
             data: {gml: GML},
             context: document.body
             }).done(function(html) {
-                //eventObj = jQuery.parseJSON(html);
                 jQuery(mapDiv).trigger("gmlConverted",html);
-                //console.log(html);
             return true;
         });
     }
@@ -631,9 +573,7 @@ function GeoViz()
             data: {wkt: WKT},
             context: document.body
             }).done(function(html) {
-                //eventObj = jQuery.parseJSON(html);
                 jQuery(mapDiv).trigger("wktConverted",html);
-                //console.log(html);
             return true;
         });
     }
@@ -748,60 +688,49 @@ function GeoViz()
 
             if (Math.abs(pointSplit[0]) > 90 && Math.abs(pointSplit[1]) <= 90)
             {
-                //console.log ("LongLat");
                 orders.push("LongLat");
                 LongLat += 1;
             }
             else if (Math.abs(pointSplit[0]) <= 90 && Math.abs(pointSplit[1]) > 90)
             {
-                //console.log("LatLong");
                 LatLong += 1;
             }
             else if (pointSplit[0] > pointSplit[1] && pointSplit[1] < 0 && (pointSplit[0] - (pointSplit[1])) > 90)
             {
-                //console.log("Pos LatLong");
                 LatLong += .5;
             }
             else
             {
-                //console.log("unknown");
                 LatLong += 0;
             }
         }
 
         if ((LatLong == pointList.length))
         {
-            //console.log("For Sure Lat:Long");
             return this.orderEnum.LATLONG;
         }
         else if ((LatLong == pointList.length))
         {
-            //console.log("For Sure Lat:Long");
             return this.orderEnum.LATLONG;
         }
         else if ((LongLat == pointList.length))
         {
-            //console.log("For Sure Long:Lat");
             return this.orderEnum.LONGLAT;
         }
         else if (LongLat > 0 && LatLong > 0)
         {
-            //console.log("Unknown Mixed");
             return this.orderEnum.MIXED;
         }
         else if ((LatLong / pointList.length) > (LongLat / pointList.length))
         {
-            //console.log("Most Likely Lat:Long");
             return this.orderEnum.LATLONGML;
         }
         else if ((LatLong / pointList.length) < (LongLat / pointList.length))
         {
-            //console.log("Most Likely Long:Lat");
             return this.orderEnum.LONGLATML;
         }
         else if (LongLat == 0 && LatLong == 0)
         {
-            //console.log("Really Unknown");
             return this.orderEnum.UNKNOWN;
         }
     }
@@ -871,13 +800,6 @@ function GeoViz()
                     msgTxt = "Some coordinates over 180 in set "+(i+1);
                     msg.push(msgTxt);
                 }
-
-                // if (Math.abs(lx) > 90 && Math.abs(lx))
-                // {
-                    // msgTxt = "Suspected tuple in set "+(i+1);
-                    // msg.push(msgTxt);
-                    // //console.log(msgTxt);
-                // }
             }
 
             if (msgTxt == "OK")
@@ -889,10 +811,8 @@ function GeoViz()
         {
             msgTxt = "Odd number of values. Coordinates must be in latitude longitude pairs, only "+superList.length+" coordinates found";
             msg.push(msgTxt);
-            //console.log(msg);
         }
 
-        //console.debug(msg);
         return msg;
     }
 
@@ -906,13 +826,10 @@ function GeoViz()
             myFeature = featureTransformToWGS84(myFeature);
             var pointList = myFeature.geometry.getVertices();
 
-
             for (var i=0;i<pointList.length;i++)
             {
                 points += pointList[i].y.toPrecision(8) + ","+pointList[i].x.toPrecision(8)+" ";
             }
-
-            //points += pointList[0].y.toPrecision(8) + ","+pointList[0].x.toPrecision(8);
         }
         return points;
 
@@ -948,18 +865,14 @@ function GeoViz()
     {
         var pointList = this.checkPointList(List);
 
-        //console.log(determineOrder(List));
-
         checkMsg = this.checkCoordList(List);
         if (checkMsg != "OK")
         {
             jQuery(mapDiv).trigger("coordinateError",checkMsg);
-            //console.debug(checkMsg);
             return false;
         }
         else
         {
-
             pointList = pointList.split(" ");
             var points = "";
             for (var i=0;i<pointList.length;i++)
@@ -986,7 +899,6 @@ function GeoViz()
             {
                 var WKT = "LINESTRING(" + points.substring(0,(points.length)-1) + ")";
             }
-            //console.debug(WKT);
             var sMwkt = this.wktTransformToSperMerc(WKT);
             if (sMwkt.indexOf("NaN") == -1)
             {
@@ -999,7 +911,6 @@ function GeoViz()
             {
                 return false;
             }
-
         }
     }
 
@@ -1023,17 +934,13 @@ function GeoViz()
             if (toolbarOptions.showDrawTools)
             {
                 jQuery("#drawtools").fadeIn();
-                //$("#drawtools").show();
             }
         }
 
         if (!checkOnlyOnePolygon())
         {
             checkAllowModify(true);
-            //draw.activate();
             drawControls[drawMode].activate()
-            //jQuery("#helptext").html("Drawing Mode<br>(Double click to stop)");
-
         }
     }
 
@@ -1049,15 +956,12 @@ function GeoViz()
             return false;
         }
         jQuery("#drawtools").fadeOut();
-        //$("#drawtools").hide();
         modify.deactivate();
-        //draw.deactivate();
         drawControls[drawMode].deactivate();
         filter.deactivate();
         modify.activate();
         jQuery("#helptext").text("Navigation Mode");
         return true;
-
     }
 
     this.stopDrawing = function ()
@@ -1102,7 +1006,6 @@ function GeoViz()
         }
         else
         { return false; }
-
     }
 
     this.zoomIn = function ()
@@ -1153,13 +1056,9 @@ function GeoViz()
 
     this.getWKTFromBounds = function(left, bottom, right, top)
     {
-        //debugger;
         var bounds = new OpenLayers.Bounds.fromArray(Array(left, bottom, right, top));
-        //console.debug(bounds.toBBOX());
         var myGeometry = bounds.toGeometry();
-        //console.debug(myGeometry);
         var newFeature = new OpenLayers.Feature.Vector(myGeometry);
-        //console.debug(newFeature);
         var myWKT = this.wkt.write(newFeature);
 
         return myWKT;
@@ -1167,22 +1066,17 @@ function GeoViz()
 
     this.getBBOX = function(FeatureID)
     {
-        //var myFeature = vlayer.getFeatureById(FeatureID);
         var myWKT = this.getWKT(FeatureID);
 
         var wgs84WKT = this.wktTransformToWGS84(myWKT);
 
-        //console.log(wgs84WKT);
-
         if (typeof wgs84WKT != "undefined")
         {
-            myFeature = this.wkt.read(wgs84WKT);
+            var myFeature = this.wkt.read(wgs84WKT);
 
             if (typeof myFeature == "object" && myFeature != null)
             {
                 var myBounds = myFeature.geometry.getBounds();
-
-                //console.log(myBounds.toBBOX());
 
                 return myBounds.toArray();
             }
