@@ -745,7 +745,7 @@ function GeoViz()
     this.gmlToWKT = function (GML)
     {
         jQuery.ajax({
-            url: "/includes/geoviz/gmltowkt.php", // replace this url with geoviz lib
+            url: Routing.generate("pelagos_app_gml_towkt"),
             type: "POST",
             data: {gml: GML},
             context: document.body
@@ -760,7 +760,7 @@ function GeoViz()
     this.wktToGML = function (WKT)
     {
         jQuery.ajax({
-            url: "/includes/geoviz/wkttogml.php", // replace this url with geoviz lib
+            url: Routing.generate("pelagos_app_gml_fromwkt"),
             type: "POST",
             data: {wkt: WKT},
             context: document.body
