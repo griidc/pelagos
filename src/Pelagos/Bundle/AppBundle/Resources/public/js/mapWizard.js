@@ -371,19 +371,6 @@ function MapWizard(json)
         wizGeoViz.updateMap();
     }
 
-
-    function convertToConvexHull()
-    {
-        wizGeoViz.convexHull(wizGeoViz.getSingleFeature());
-
-        $("#olmap").on("featureConverted", function(e, eventObj) {
-            wizGeoViz.removeAllFeaturesFromMap();
-            wizGeoViz.addFeatureFromWKT(wizGeoViz.wktTransformToWGS84(eventObj.wkt));
-        });
-
-        return true;
-    }
-
     function whatIsCoordinateOrder()
     {
         //todo: remove dialogs from if's, only one end dialog, and test wizAddFeature result for additional dialog.

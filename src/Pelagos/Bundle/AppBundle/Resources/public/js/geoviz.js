@@ -724,24 +724,6 @@ function GeoViz()
         return myFeature.id;
     }
 
-    this.convexHull = function (FeatureID)
-    {
-        var Feature = vlayer.getFeatureById(FeatureID);
-        var featureID = Feature.id;
-        var WKT = this.wkt.write(Feature);
-        jQuery.ajax({
-            url: "/includes/geoviz/convexhull.php", // replace this url with geoviz lib
-            type: "POST",
-            data: {wkt: WKT, featureid: featureID},
-            context: document.body
-            }).done(function(html) {
-            eventObj = jQuery.parseJSON(html);
-            jQuery(mapDiv).trigger("featureConverted",eventObj);
-            //console.log(html);
-            return true;
-        });
-    }
-
     this.gmlToWKT = function (GML)
     {
         jQuery.ajax({
