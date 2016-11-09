@@ -29,3 +29,6 @@ pelagos_download:
 
 pelagos_gml:
     resource: Pelagos\Bundle\AppBundle\Controller\GmlController
+
+pelagos_geoviz:
+    resource: "@PelagosAppBundle/Resources/config/routing_geoviz.yml"
