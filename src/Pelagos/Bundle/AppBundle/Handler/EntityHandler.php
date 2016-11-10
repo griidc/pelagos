@@ -389,7 +389,11 @@ class EntityHandler
         // Loop through the criteria.
         foreach ($criteria as $property => $rawValue) {
             $orX = $qb->expr()->orX();
-            foreach (explode(',', $rawValue) as $value) {
+            $valueList = array($rawValue);
+            if (gettype($rawValue) === 'string') {
+                $valueList = explode(',', $rawValue);
+            }
+            foreach ($valueList as $value) {
                 // Get the alias and the property.
                 list ($alias, $property) = $this->buildAliasedProperty($property, $joins);
                 if (gettype($value) === 'string') {
