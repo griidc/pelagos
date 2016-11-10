@@ -64,7 +64,7 @@ doctrine:
         charset:  UTF8
         types:
             text_array: "Doctrine\\DBAL\\PostgresTypes\\TextArrayType"
-            xml: "Doctrine\\DBAL\\PostgresTypes\\XmlType"
+            xml: "Pelagos\\DoctrineExtensions\\DBAL\\Types\\PelagosXmlType"
             geometry: "Pelagos\\DoctrineExtensions\\DBAL\\Types\\GeometryType"
         mapping_types:
             _text: text_array
