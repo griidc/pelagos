@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Component\Form\Form;
 
+use Symfony\Component\PropertyAccess\PropertyAccess;
+
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
@@ -451,9 +453,41 @@ class DatasetSubmissionController extends UIController
             foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                 $datasetSubmission->removeDatasetContact($datasetContact);
             }
-
             foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
                 $datasetSubmission->removeMetadataContact($metadataContact);
+            }
+            $accessor = PropertyAccess::createPropertyAccessor();
+            $clearProperties = array(
+                'title',
+                'shortTitle',
+                'abstract',
+                'purpose',
+                'suppParams',
+                'suppInstruments',
+                'suppMethods',
+                'suppSampScalesRates',
+                'suppErrorAnalysis',
+                'suppProvenance',
+                'referenceDate',
+                'referenceDateType',
+                'spatialExtent',
+                'spatialExtentDescription',
+                'temporalExtentDesc',
+                'temporalExtentBeginPosition',
+                'temporalExtentEndPosition',
+                'distributionFormatName',
+                'fileDecompressionTechnique',
+            );
+            foreach ($clearProperties as $property) {
+                $accessor->setValue($datasetSubmission, $property, null);
+            }
+            $emptyProperties = array(
+                'themeKeywords',
+                'placeKeywords',
+                'topicKeywords',
+            );
+            foreach ($emptyProperties as $property) {
+                $accessor->setValue($datasetSubmission, $property, array());
             }
 
             ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues($xml, $datasetSubmission, $this->entityHandler);
