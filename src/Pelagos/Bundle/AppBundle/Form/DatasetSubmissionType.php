@@ -68,6 +68,7 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Dataset File Path',
                 'required' => false,
                 'mapped' => false,
+                'attr' => array('disabled' => 'disabled'),
             ))
             ->add('datasetFileForceImport', Type\CheckboxType::class, array(
                 'label' => 'import this file again from the same path',
