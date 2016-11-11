@@ -19,31 +19,6 @@ abstract class PersonDatasetSubmission extends Entity
      * The array keys are the values to be set in self::role.
      */
     const ROLES = [
-        'resourceProvider' => [
-            'name' => 'Resource Provider',
-            'description' => 'Party that supplies the resource.'
-        ],
-        'custodian' => [
-            'name' => 'Custodian',
-            'description' => 'Party that accepts accountability and responsibility for the data and ' .
-                             'ensures appropriate care and maintenance of the resource.',
-        ],
-        'owner' => [
-            'name' => 'Owner',
-            'description' => 'Party that owns the resource.',
-        ],
-        'user' => [
-            'name' => 'User',
-            'description' => 'Party who uses the resource.',
-        ],
-        'distributor' => [
-            'name' => 'Distributor',
-            'description' => 'Party who distributes the resource.',
-        ],
-        'originator' => [
-            'name' => 'Originator',
-            'description' => 'Party who created the resource.',
-        ],
         'pointOfContact' => [
             'name' => 'Point of Contact',
             'description' => 'Party who can be contacted for acquiring knowledge ' .
@@ -52,14 +27,6 @@ abstract class PersonDatasetSubmission extends Entity
         'principalInvestigator' => [
             'name' => 'Principal Investigator',
             'description' => 'Key party responsible for gathering information and conducting research.',
-        ],
-        'processor' => [
-            'name' => 'Processor',
-            'description' => 'Party who has processed the data in a manner such that the resource has been modified.',
-        ],
-        'publisher' => [
-            'name' => 'Publisher',
-            'description' => 'Party who published the resource.',
         ],
         'author' => [
             'name' => 'Author',
@@ -137,9 +104,9 @@ abstract class PersonDatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setRole($role)
+    public function setRole($role = null)
     {
-        if (!array_key_exists($role, static::ROLES)) {
+        if (!array_key_exists($role, static::ROLES) and $role !== null) {
             throw new \InvalidArgumentException("$role is not a valid value for PersonDatasetSubmission::\$role");
         }
         $this->role = $role;
