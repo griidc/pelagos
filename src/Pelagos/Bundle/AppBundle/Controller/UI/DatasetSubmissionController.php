@@ -115,6 +115,7 @@ class DatasetSubmissionController extends UIController
 
                     $datasetSubmission->setSuppParams($dif->getVariablesObserved());
                     $datasetSubmission->setSpatialExtent($dif->getSpatialExtentGeometry());
+                    $datasetSubmission->setSpatialExtentDescription($dif->getSpatialExtentDescription());
 
                     if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
                         ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
