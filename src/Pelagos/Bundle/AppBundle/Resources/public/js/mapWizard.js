@@ -72,7 +72,7 @@ function MapWizard(json)
         $(divSpatialWizard).html('<fieldset><div class="ui-widget-header ui-corner-all"><button style="color:#039203;font-size:larger;width:100%;" id="geowizBtn" type="button">Define Spatial Extent</button></div><p>'+buttonText+"</p></fieldset>").show();
 
         $(divNonSpatial).hide();
-        $("#"+json.descField).hide().prop("disabled",true);
+        $("#"+json.descField).hide();
 
         $.ajax({
             url: Routing.generate("pelagos_geoviz_wizard_dialog"),
@@ -294,15 +294,12 @@ function MapWizard(json)
         {
             $("#"+json.divNonSpatial).show();
             $("#"+json.divSpatial).hide();
-            $("#"+json.descField).show().prop("disabled",false);
-            $("#"+json.gmlField).prop("disabled",true);
+            $("#"+json.descField).show();
         }
         else
         {
             $("#"+json.divSpatial).show();
             $("#"+json.divNonSpatial).hide();
-            $("#"+json.descField).prop("disabled",true);
-            $("#"+json.gmlField).prop("disabled",false);
         }
     }
 
