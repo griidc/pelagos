@@ -103,6 +103,7 @@ $(function() {
        activeTab--;
        if (activeTab < 0) {activeTab = 0};
        $("#dtabs").tabs({active:activeTab});
+       saveDatasetSubmission();
     });
 
     $("#btn-next").click(function() {
