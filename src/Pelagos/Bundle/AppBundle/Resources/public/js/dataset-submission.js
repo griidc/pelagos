@@ -30,6 +30,27 @@ $(function() {
 
     $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");
 
+    //Setup qTip
+    $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
+        position: {
+            viewport: $(window),
+            my: "bottom left",
+            at: "top right",
+        },
+        style: {
+            classes: "qtip-shadow qtip-tipped customqtip"
+        }
+    });
+
+    // load qTip descriptions
+    $("img.info").each(function() {
+        $(this).qtip({
+            content: {
+                text: $(this).next(".tooltiptext")
+            }
+        });
+    });
+
     $("#regbutton").button({
         disabled: true
     });

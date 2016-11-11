@@ -29,14 +29,17 @@
                 <fieldset>
                     <table class="tab-table">
                         <tr>
-                            <td>
-                                <div id="fine-uploader"></div>
-                            </td>
-                            <td>
-                             <span class="field-help">
-                                <p>Please select from your local machine the data file for the dataset you are registering.</p>
-                                <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
+                            <span class="helpSection">
+                                {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+                                <img class="info" src="{{ asset_url }}">
+                                {% endimage %}
+                                <div class="tooltiptext">
+                                    <p>Please select from your local machine the data file for the dataset you are registering.</p>
+                                    <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
+                                </div>
                             </span>
+                            <td width="*">
+                                <div id="fine-uploader"></div>
                             </td>
                         </tr>
                     </table>
@@ -61,7 +64,17 @@
                 <fieldset>
                     <table class="tab-table">
                         <tr>
-                            <td>
+                            <td width="*">
+                                <span class="helpSection">
+                                    {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+                                    <img class="info" src="{{ asset_url }}">
+                                    {% endimage %}
+                                    <div class="tooltiptext">
+                                        <p><strong>Dataset File Path:</strong></p>
+                                        <p>This is the path on the server to the data file being registered. Click "Browse..." to find and select the data file you uploaded via SFTP/GridFTP.</p>
+                                        <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
+                                    </div>
+                                </span>
                                 <div class="fwtextboxcont">
                                     {% if sftpuser %}
                                         {{ form_row(form.datasetFilePath) }}
@@ -76,13 +89,6 @@
                                     </div>
                                 {% endif %}
                             </td>
-                            <td>
-                                <span class="field-help">
-                                    <p><strong>Dataset File Path:</strong></p>
-                                    <p>This is the path on the server to the data file being registered. Click "Browse..." to find and select the data file you uploaded via SFTP/GridFTP.</p>
-                                    <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
-                                </span>
-                            </td>
                         </tr>
                     </table>
                 </fieldset>
@@ -93,7 +99,17 @@
                 <fieldset>
                     <table class="tab-table">
                         <tr>
-                            <td>
+                            <td width="*">
+                                <span class="helpSection">
+                                    {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+                                    <img class="info" src="{{ asset_url }}">
+                                    {% endimage %}
+                                    <div class="tooltiptext">
+                                        <p><strong>Dataset File URL:</strong></p>
+                                        <p>This is the URL that leads to the data being registered. Package the components of the datasets (if applicable) to form a single file (e.g. ZIP, TAR).</p>
+                                        <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
+                                    </div>
+                                </span>
                                 <div class="fwtextboxcont">
                                     {{ form_row(form.datasetFileUrl, { attr: { class: 'ignore'} }) }}
                                 </div>
@@ -102,13 +118,6 @@
                                         {{ form_widget(form.datasetFileForceDownload) }} {{ form_label(form.datasetFileForceDownload) }}
                                     </div>
                                 {% endif %}
-                            </td>
-                            <td>
-                                <span class="field-help">
-                                    <p><strong>Dataset File URL:</strong></p>
-                                    <p>This is the URL that leads to the data being registered. Package the components of the datasets (if applicable) to form a single file (e.g. ZIP, TAR).</p>
-                                    <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
-                                </span>
                             </td>
                         </tr>
                     </table>
@@ -120,13 +129,16 @@
         <legend class="section-header">{{ form.restrictions.vars.label }}</legend>
         <table class="tab-table">
             <tr>
-                <td >
+                <td width="*">
+					<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+						If data is available to the general public, select "None". Select "Restricted" if data cannot be shared to anyone. Select "Requires Author's Approval" if you can share the data but prefer to control the sharing of the dataset. In the later case, GRIIDC will maintain a list of users associated to a dataset.
+					</div>
+				</span>
                     {{ form_widget(form.restrictions) }}
-                </td>
-                <td>
-                    <span class="field-help">
-                        If data is available to the general public, select "None". Select "Restricted" if data cannot be shared to anyone. Select "Requires Author's Approval" if you can share the data but prefer to control the sharing of the dataset. In the later case, GRIIDC will maintain a list of users associated to a dataset.
-                    </span>
                 </td>
             </tr>
         </table>

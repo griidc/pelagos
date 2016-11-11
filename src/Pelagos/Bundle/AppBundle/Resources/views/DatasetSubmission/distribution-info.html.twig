@@ -3,26 +3,31 @@
 </fieldset>
 <fieldset>
     <legend>Format</legend>
-
     <table class="tab-table">
         <tr>
             <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+						Name of the data transfer format, e.g. CSV, Excel Spreadsheet, ASCII TXT, netCDF, GRIB, HDF5, TIFF, etc
+					</div>
+				</span>
                 {{ form_row(form.distributionFormatName) }}
-            </td>
-            <td>
-                <pre>
-                    Name of the data transfer format, e.g. CSV, Excel Spreadsheet, ASCII TXT, netCDF, GRIB, HDF5, TIFF, etc
-                </pre>
             </td>
         </tr>
         <tr>
             <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+						Description of recommended processes or algorithms to apply to the compressed resource.
+					</div>
+				</span>
                 {{ form_row(form.fileDecompressionTechnique) }}
-            </td>
-            <td>
-                <pre>
-                    Description of recommended processes or algorithms to apply to the compressed resource.
-                </pre>
             </td>
         </tr>
     </table>
