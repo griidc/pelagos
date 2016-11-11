@@ -139,3 +139,8 @@ fieldset
 #restrictions label{
     display: inline;
 }
+
+table.dataTable.stripe tbody tr:hover {
+    cursor: pointer;
+    background-color: #becacd;
+}

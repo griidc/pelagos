@@ -146,7 +146,8 @@ class DatasetSubmissionController extends UIController
                     $datasetSubmission->setSequence(++$sequence);
 
                     if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata
-                        and $datasetSubmission->getDataset()->getMetadataStatus() == DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+                        and $datasetSubmission->getDataset()->getMetadataStatus()
+                            == DatasetSubmission::METADATA_STATUS_ACCEPTED) {
                         foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                             $datasetSubmission->removeDatasetContact($datasetContact);
                         }
@@ -399,6 +400,23 @@ class DatasetSubmissionController extends UIController
             )
         )->createView();
 
+        $researchGroupList = null;
+        if (null === $udi) {
+            $account = $this->getUser();
+            if (null !== $account) {
+                $user = $account->getPerson();
+
+                // Find all RG's user has CREATE_DIF_DIF_ON on.
+                $researchGroups = $user->getResearchGroups();
+                $researchGroupList = array_map(
+                    function ($researchGroup) {
+                        return $researchGroup->getId();
+                    },
+                    $researchGroups
+                );
+            }
+        }
+
         return $this->render(
             'PelagosAppBundle:DatasetSubmission:index.html.twig',
             array(
@@ -409,6 +427,7 @@ class DatasetSubmissionController extends UIController
                 'datasetSubmission' => $datasetSubmission,
                 'showForceImport' => $showForceImport,
                 'showForceDownload' => $showForceDownload,
+                'researchGroupList' => $researchGroupList,
             )
         );
     }
