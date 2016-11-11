@@ -41,10 +41,6 @@
     width: 100%;
 }
 
-.dtab-table td:nth-last-child(1){
-    width:40%;
-}
-
 .tab-table td {
     padding: 5px;
 }
