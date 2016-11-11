@@ -127,9 +127,9 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
         $this->assertTrue($this->form->isSynchronized());
 
         // Convert date strings to DateTimes.
-        $formData['referenceDate'] = new \DateTime($formData['referenceDate']);
-        $formData['temporalExtentBeginPosition'] = new \DateTime($formData['temporalExtentBeginPosition']);
-        $formData['temporalExtentEndPosition'] = new \DateTime($formData['temporalExtentEndPosition']);
+        $formData['referenceDate'] = new \DateTime($formData['referenceDate'], new \DateTimeZone('UTC'));
+        $formData['temporalExtentBeginPosition'] = new \DateTime($formData['temporalExtentBeginPosition'], new \DateTimeZone('UTC'));
+        $formData['temporalExtentEndPosition'] = new \DateTime($formData['temporalExtentEndPosition'], new \DateTimeZone('UTC'));
 
         // Convert dataset contacts to PersonDatasetSubmissionDatasetContacts.
         $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact();

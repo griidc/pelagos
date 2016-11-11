@@ -97,6 +97,8 @@ class DatasetSubmissionType extends AbstractType
                 'html5' => false,
                 'format' => 'yyyy-MM-dd',
                 'required' => true,
+                'model_timezone' => 'UTC',
+                'view_timezone' => 'UTC',
             ))
             ->add('referenceDateType', Type\ChoiceType::class, array(
                 'label' => 'Date Type',
@@ -176,6 +178,8 @@ class DatasetSubmissionType extends AbstractType
                 'html5' => false,
                 'format' => 'yyyy-MM-dd',
                 'required' => true,
+                'model_timezone' => 'UTC',
+                'view_timezone' => 'UTC',
             ))
             ->add('temporalExtentEndPosition', Type\DateType::class, array(
                 'label' => 'End Date',
@@ -185,6 +189,8 @@ class DatasetSubmissionType extends AbstractType
                 'html5' => false,
                 'format' => 'yyyy-MM-dd',
                 'required' => true,
+                'model_timezone' => 'UTC',
+                'view_timezone' => 'UTC',
             ))
             ->add('distributionFormatName', Type\TextType::class, array(
                 'label' => 'Distribution Format Name',
