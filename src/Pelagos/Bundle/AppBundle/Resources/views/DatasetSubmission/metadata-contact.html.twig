@@ -4,6 +4,14 @@
         {% set contact = form.metadataContacts | first %}
         <tr>
             <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+						The name of the individual responsible for maintaining the metadata, typically the scientists or researcher who created the dataset.
+					</div>
+				</span>
                 <label for="metadatacontact">Name</label>
                 <select class="contactperson" id="metadatacontact" name="metadataContacts[0][person]" required="required">
                     {% if contact.vars.data.person|default %}
@@ -26,29 +34,27 @@
                 {{ form_row(contact.person.organization, {'attr': {'disabled': 'true'} , 'required': false}) }}
                 {{ form_row(contact.person.position, {'attr': {'disabled': 'true'} , 'required': false}) }}
             </td>
-            <td>
-                <span class="field-help">
-                    The name of the individual responsible for maintaining the metadata, typically the scientists or researcher who created the dataset.
-                </span>
-            </td>
         </tr>
         <tr>
             <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+						Resource Provider: Party that supplies the resource.<br>
+						Custodian: Party that accepts accountability and responsibility for the data and ensures appropriate care and maintenance of the resource.<br>
+						Owner: Party that owns the resource.<br>
+						Distributor: Party who distributes the resource.<br>
+						Originator: Party who created the resource.<br>
+						Point of Contact: Party who can be contacted for acquiring knowledge about or acquisition of the resource.<br>
+						Principal Investigator: Key party responsible for gathering information and conducting research.<br>
+						Processor: Party who has processed the data in a manner such that the resource has been modified.<br>
+						Publisher: Party who published the resource.<br>
+						Author: Party who authored the resource.<br>
+					</div>
+				</span>
                 {{ form_row(contact.role) }}
-            </td>
-            <td>
-                <span class="field-help">
-                    Resource Provider: Party that supplies the resource.<br>
-                    Custodian: Party that accepts accountability and responsibility for the data and ensures appropriate care and maintenance of the resource.<br>
-                    Owner: Party that owns the resource.<br>
-                    Distributor: Party who distributes the resource.<br>
-                    Originator: Party who created the resource.<br>
-                    Point of Contact: Party who can be contacted for acquiring knowledge about or acquisition of the resource.<br>
-                    Principal Investigator: Key party responsible for gathering information and conducting research.<br>
-                    Processor: Party who has processed the data in a manner such that the resource has been modified.<br>
-                    Publisher: Party who published the resource.<br>
-                    Author: Party who authored the resource.<br>
-                </span>
             </td>
         </tr>
     </table>

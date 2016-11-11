@@ -41,7 +41,7 @@
     width: 100%;
 }
 
-.tab-table td:nth-last-child(1){
+.dtab-table td:nth-last-child(1){
     width:40%;
 }
 
@@ -139,3 +139,30 @@ fieldset
 #restrictions label{
     display: inline;
 }
+
+table.dataTable.stripe tbody tr:hover {
+    cursor: pointer;
+    background-color: #becacd;
+}
+
+.helpSection img
+{
+    opacity:.5;
+}
+
+.helpSection img:hover
+{
+    opacity:1;
+}
+
+.helpSection
+{
+    float:right;
+	margin-right:42px;
+}
+
+.tooltiptext
+{
+    display: none;
+}
+

@@ -8,18 +8,26 @@
     <table class="tab-table">
         <tr class="oddrowcolor">
             <td>
-                <table>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+						Commonly used words or short phrases which describe the themes or subjects related to the dataset. This element can repeat.
+					</div>
+				</span>
+                <table width="80%">
                     <tr>
-                        <td>
+                        <td width="40%">
                             <label for="theme-keyword-input">Keyword</label>
                             <input class="keywordinput" type="text" keyword="source" id="theme-keyword-input">
                         </td>
-                        <td>
+                        <td width="20%">
                             <button class="keywordbutton" type="button">add</button>
                             <br>
                             <button class="keywordbutton" type="button">remove</button>
                         </td>
-                        <td>
+                        <td width="40%">
                             <label><span class="emRequired">Theme Keywords</span></label>
                             <select class="keywordinput" id="theme-keywords" keyword="target" list="theme-keywords-list" size="5">
                             {% for keyword in form.themeKeywords %}
@@ -30,11 +38,6 @@
                         </td>
                     </tr>
                 </table>
-            </td>
-            <td>
-                <span class="field-help">
-                    Commonly used words or short phrases which describe the themes or subjects related to the dataset. This element can repeat.
-                </span>
             </td>
         </tr>
     </table>
@@ -47,18 +50,26 @@
         <table class="tab-table">
             <tr>
                 <td>
-                    <table>
+					<span class="helpSection">
+						{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+						<img class="info" src="{{ asset_url }}">
+						{% endimage %}
+						<div class="tooltiptext">
+							Commonly used words or short phrases which describe the geographic areas or places related to the dataset. This element can repeat.
+						</div>
+					</span>
+                    <table width="80%">
                         <tr>
-                            <td>
+                            <td width="40%">
                                 <label for="place-keyword-input">Keyword</label>
                                 <input class="keywordinput"  keyword="source" type="text" id="place-keyword-input">
                             </td>
-                            <td>
+                            <td width="20%">
                                 <button class="keywordbutton" type="button">add</button>
                                 <br>
                                 <button class="keywordbutton" type="button">remove</button>
                             </td>
-                            <td>
+                            <td width="40%">
                                 <label>Place Keywords</label>
                                 <select class="keywordinput" id="place-keywords" keyword="target" size="5">
                                 {% for keyword in form.placeKeywords %}
@@ -70,11 +81,6 @@
                         </tr>
                     </table>
                 </td>
-                <td>
-                <span class="field-help">
-                    Commonly used words or short phrases which describe the geographic areas or places related to the dataset. This element can repeat.
-                </span>
-            </td>
             </tr>
         </table>
     </fieldset>
@@ -87,9 +93,19 @@
     <table class="tab-table">
         <tr>
             <td>
-                <table>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+						The main theme(s) of the dataset. Must be selected from the provided keyword list.<br>
+						These keywords are predefined by ISO and may not be very applicable to your dataset but at least one is required.<br>
+						<i>(Hint: Double click to add or remove.)</i>
+					</div>
+				</span>
+                <table width="80%">
                     <tr>
-                        <td>
+                        <td width="40%">
                             <label>Topic Category Keyword List</label>
                             <select class="keywordinput" size="10" id="topic-keyword-select" keyword="source">
                                 {% set order = 0 %}
@@ -107,11 +123,11 @@
                                 {% endfor %}
                             </select>
                         </td>
-                        <td>
+                        <td  width="20%">
                             <button class="keywordbutton" type="button">add</button><br>
                             <button class="keywordbutton" type="button">remove</button>
                         </td>
-                        <td>
+                        <td  width="40%">
                             <label><span class="emRequired">Selected Topic Category Keywords</span></label>
                             <select class="keywordinput" keyword="target" size="10" id="topic-keywords">
                             {% for keywordValue in form.topicKeywords.vars.value %}
@@ -128,13 +144,6 @@
                         </td>
                     </tr>
                 </table>
-            </td>
-            <td>
-                <span class="field-help">
-                    The main theme(s) of the dataset. Must be selected from the provided keyword list.<br>
-                    These keywords are predefined by ISO and may not be very applicable to your dataset but at least one is required.<br>
-                    <i>(Hint: Double click to add or remove.)</i>
-                </span>
             </td>
         </tr>
     </table>

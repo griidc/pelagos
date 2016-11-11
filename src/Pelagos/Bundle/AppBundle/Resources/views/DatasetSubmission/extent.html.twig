@@ -28,34 +28,44 @@
                 <td colspan="2"></td>
             </tr>
             <tr>
-                <td>
+                <td colspan="2">
+					<span class="helpSection">
+						{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+						<img class="info" src="{{ asset_url }}">
+						{% endimage %}
+						<div class="tooltiptext">
+							Text description of the dates documented below. This field has two possible values <b><i>'ground condition'</i></b> or <b><i>'modeled period'</i></b>.<i>'Ground condition'</i> means the data represent the actual condition of things on the ground during the time period specified. <i>'Ground condition'</i> may be used to characterize data generated from a sample collection in the field when samples are subsequently analyzed in a laboratory. <i>'Modeled period'</i> means that data represent simulated conditions during the time period, and may be used to characterize data generated using a computational model.
+						</div>
+					</span>
                     {{ form_row(form.temporalExtentDesc) }}
                 </td>
-                <td>
-                    <span class="field-help">
-                        Text description of the dates documented below. This field has two possible values <b><i>'ground condition'</i></b> or <b><i>'modeled period'</i></b>.<i>'Ground condition'</i> means the data represent the actual condition of things on the ground during the time period specified. <i>'Ground condition'</i> may be used to characterize data generated from a sample collection in the field when samples are subsequently analyzed in a laboratory. <i>'Modeled period'</i> means that data represent simulated conditions during the time period, and may be used to characterize data generated using a computational model.
-                    </span>
-                </td>
             </tr>
             <tr>
-                <td>
+                <td colspan="2">
+					<span class="helpSection">
+						{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+						<img class="info" src="{{ asset_url }}">
+						{% endimage %}
+						<div class="tooltiptext">
+							The beginning date of the content of the dataset. Format should be YYYY-MM-DD
+						</div>
+					</span>
                     {{ form_row(form.temporalExtentBeginPosition) }}
                 </td>
-                <td>
-                    <span class="field-help">
-                        The beginning date of the content of the dataset. Format should be YYYY-MM-DD
-                    </span>
-                </td>
             </tr>
             <tr>
-                <td>
+                <td colspan="2">
+					<span class="helpSection">
+						{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+						<img class="info" src="{{ asset_url }}">
+						{% endimage %}
+						<div class="tooltiptext">
+							The ending date of the content of the dataset. Format should be YYYY-MM-DD
+						</div>
+					</span>
                     {{ form_row(form.temporalExtentEndPosition) }}
                 </td>
-                <td>
-                    <span class="field-help">
-                        The ending date of the content of the dataset. Format should be YYYY-MM-DD
-                    </span>
-                </td>
+
             </tr>
         </table>
 </fieldset>
