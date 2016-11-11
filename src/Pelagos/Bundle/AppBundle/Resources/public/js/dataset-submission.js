@@ -120,16 +120,30 @@ $(function() {
 
 
     $("#btn-previous").click(function() {
-       var activeTab = $("#dtabs").tabs("option","active");
-       activeTab--;
-       if (activeTab < 0) {activeTab = 0};
-       $("#dtabs").tabs({active:activeTab});
-    });
+        var activeTab = $("#dtabs").tabs("option","active");
+        activeTab--;
+        if (activeTab < 0) {activeTab = 0};
+        $("#dtabs").tabs({active:activeTab});
+    }).button('disable');
 
     $("#btn-next").click(function() {
         var activeTab = $("#dtabs").tabs("option","active");
         activeTab++;
         $("#dtabs").tabs({active:activeTab});
+    });
+
+    $("#dtabs").on("active", function() {
+        var activeTab = $("#dtabs").tabs("option","active");
+        if (activeTab == 0) {
+            $("#btn-previous").button("disable");
+        } else {
+            $("#btn-previous").button("enable");
+        }
+        if (activeTab == 6) {
+            $("#btn-next").button("disable");
+        } else {
+            $("#btn-next").button("enable");
+        }
         saveDatasetSubmission();
     });
 
