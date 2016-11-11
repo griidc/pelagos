@@ -47,6 +47,7 @@ class ISOMetadataExtractorUtil
         self::setIfHas($datasetSubmission, 'setPlaceKeywords', self::extractPlaceKeywords($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setTopicKeywords', self::extractTopicKeywords($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setSpatialExtent', self::extractSpatialExtent($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setSpatialExtentDescription', self::extractSpatialExtentDescription($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setTemporalExtentDesc', self::extractTemporalExtentDesc($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setTemporalExtentBeginPosition', self::extractTemporalExtentBeginPosition($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setTemporalExtentEndPosition', self::extractTemporalExtentEndPosition($xmlMetadata));
@@ -525,6 +526,27 @@ class ISOMetadataExtractorUtil
                  '/child::*';
 
         return self::querySingleGml($xml, $query);
+    }
+
+    /**
+     * Extracts spatial extent description from XML metadata.
+     *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     *
+     * @return string|null Returns the spatial extent description as a string, or null.
+     */
+    protected static function extractSpatialExtentDescription(\SimpleXmlElement $xml)
+    {
+        $query = '/gmi:MI_Metadata' .
+                 '/gmd:identificationInfo' .
+                 '/gmd:MD_DataIdentification' .
+                 '/gmd:extent' .
+                 '/gmd:EX_Extent' .
+                 '/gmd:description' .
+                 '/gco:CharacterString' .
+                 '/text()';
+
+        return self::querySingle($xml, $query);
     }
 
     /**
