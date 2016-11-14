@@ -14,11 +14,11 @@
                     </gmd:date>
                     <gmd:dateType>
                         {% if dataset.datasetSubmission.referenceDateType == "creation" %}
-                            {% set codespace = 001 %}
+                            {% set codespace = "001" %}
                         {% elseif dataset.datasetSubmission.referenceDateType == "publication" %}
-                            {% set codespace = 002 %}
+                            {% set codespace = "002" %}
                         {% elseif dataset.datasetSubmission.referenceDateType == "revision" %}
-                            {% set codespace = 003 %}
+                            {% set codespace = "003" %}
                         {% endif %}
                         <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="{{dataset.datasetSubmission.referenceDateType}}" codeSpace="{{codespace}}">{{dataset.datasetSubmission.referenceDateType}}</gmd:CI_DateTypeCode>
                     </gmd:dateType>
