@@ -10,7 +10,7 @@
             <gmd:date>
                 <gmd:CI_Date>
                     <gmd:date>
-                        <gco:Date>{{ "now" | date("Y-m-d") }}</gco:Date>
+                        <gco:Date>{{ dataset.datasetSubmission.referenceDate | date("Y-m-d", "UTC") }}</gco:Date>
                     </gmd:date>
                     <gmd:dateType>
                         <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="{{dataset.datasetSubmission.referenceDateType}}">{{dataset.datasetSubmission.referenceDateType}}</gmd:CI_DateTypeCode>
@@ -94,12 +94,12 @@
                             <gml:description />
                             {% endif %}
                             {% if dataset.datasetSubmission.temporalExtentBeginPosition %}
-                                <gml:beginPosition>{{dataset.datasetSubmission.temporalExtentBeginPosition|date("Y-m-d")}}</gml:beginPosition>
+                                <gml:beginPosition>{{dataset.datasetSubmission.temporalExtentBeginPosition|date("Y-m-d", "UTC")}}</gml:beginPosition>
                             {% else %}
                                 <gml:beginPosition />
                             {% endif %}
                             {% if dataset.datasetSubmission.temporalExtentEndPosition %}
-                                <gml:endPosition>{{dataset.datasetSubmission.temporalExtentEndPosition|date("Y-m-d")}}</gml:endPosition>
+                                <gml:endPosition>{{dataset.datasetSubmission.temporalExtentEndPosition|date("Y-m-d", "UTC")}}</gml:endPosition>
                             {% else %}
                                 <gml:endPosition />
                             {% endif %}
