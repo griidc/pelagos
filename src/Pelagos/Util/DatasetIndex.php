@@ -86,6 +86,20 @@ class DatasetIndex
                     );
                 }
             }
+            $doiRegEx = '!\b(10.\d{4,9}/[-._;()/:A-Z0-9]+)\b!';
+            if (preg_match_all($doiRegEx, $text, $matches)) {
+                $text = trim(preg_replace($doiRegEx, '', $text));
+                foreach ($matches[1] as $doi) {
+                    $doiQuery = new Query\Nested();
+                    $doiQuery->setPath('datasetSubmission');
+                    $doiQuery->setQuery(
+                        new Query\MatchPhrase('datasetSubmission.doi', $doi)
+                    );
+                    $textQuery->addShould($doiQuery);
+                    $textQuery->addShould(new Query\MatchPhrase('title', $doi));
+                    $textQuery->addShould(new Query\MatchPhrase('abstract', $doi));
+                }
+            }
             if (!empty($text)) {
                 $datasetQuery = new Query\MultiMatch();
                 $datasetQuery->setQuery($text);
