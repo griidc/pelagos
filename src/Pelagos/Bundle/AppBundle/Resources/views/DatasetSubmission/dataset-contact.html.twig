@@ -13,7 +13,7 @@
 					</div>
 				</span>
                 <label for="contactperson">Name</label>
-                <select class="contactperson" id="contactperson" name="datasetContacts[0][person]" required="required">
+                <select class="contactperson" id="contactperson" name="{{contact.person.vars.full_name}}" required="required">
                     {% if contact.vars.data.person|default %}
                     <option selected value="{{contact.vars.data.person.id}}">
                         {{contact.vars.data.person.lastName}}, {{contact.vars.data.person.firstName}}, {{contact.vars.data.person.emailAddress}}
