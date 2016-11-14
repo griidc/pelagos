@@ -131,10 +131,11 @@ class DoiRequestController extends UIController
      */
     private function alreadyExists($url)
     {
+        $url = rtrim($url, '/');
         $existing = $this->entityHandler->getBy(
             DoiRequest::class,
             array(
-                'url' => $url,
+                'url' => "$url,$url/",
                 'status' => DoiRequest::STATUS_ISSUED
             )
         );
