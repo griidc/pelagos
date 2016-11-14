@@ -13,7 +13,14 @@
                         <gco:Date>{{ dataset.datasetSubmission.referenceDate | date("Y-m-d", "UTC") }}</gco:Date>
                     </gmd:date>
                     <gmd:dateType>
-                        <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="{{dataset.datasetSubmission.referenceDateType}}">{{dataset.datasetSubmission.referenceDateType}}</gmd:CI_DateTypeCode>
+                        {% if dataset.datasetSubmission.referenceDateType == "creation" %}
+                            {% set codespace = 001 %}
+                        {% elseif dataset.datasetSubmission.referenceDateType == "publication" %}
+                            {% set codespace = 002 %}
+                        {% elseif dataset.datasetSubmission.referenceDateType == "revision" %}
+                            {% set codespace = 003 %}
+                        {% endif %}
+                        <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="{{dataset.datasetSubmission.referenceDateType}}" codeSpace="{{codespace}}">{{dataset.datasetSubmission.referenceDateType}}</gmd:CI_DateTypeCode>
                     </gmd:dateType>
                 </gmd:CI_Date>
             </gmd:date>
