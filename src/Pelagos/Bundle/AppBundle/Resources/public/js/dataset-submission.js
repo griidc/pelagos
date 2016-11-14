@@ -357,8 +357,6 @@ $(function() {
                 showDialog("SFTP Access", "SFTP Access has been granted.");
                 $(".sftpYes").show();
                 $(".sftpNo").hide();
-                // Enable file path for dataset.
-                $("#datasetFilePath").prop("disabled", false);
                 // Enable file browse buttons..
                 $(".fileBrowserButton").prop("disabled", false);
             },
