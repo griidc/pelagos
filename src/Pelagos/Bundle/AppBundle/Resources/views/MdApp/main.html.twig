@@ -46,6 +46,11 @@
 {% if error %}
     <div class="messages error">{{ error }}</div>
 {% endif %}
+
+{% if message|default %}
+    <div class="message info">{{ message|default }}</div>
+{% endif %}
+
 <script type="text/javascript">var issueTrackingBaseUrl="{{ issueTrackingBaseUrl }}";</script>
 <div style="background: #fff2e8; padding:0px;" id="tabs">
   <div class="ui-tabs">
