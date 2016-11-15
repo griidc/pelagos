@@ -12,6 +12,11 @@ use Doctrine\ORM\Mapping as ORM;
 class PersonDatasetSubmissionDatasetContact extends PersonDatasetSubmission
 {
     /**
+     * A friendly name for this type of entity.
+     */
+    const FRIENDLY_NAME = 'Dataset Contact';
+
+    /**
      * The Dataset Submission for this association.
      *
      * @var DatasetSubmission
