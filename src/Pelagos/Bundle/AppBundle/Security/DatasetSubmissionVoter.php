@@ -6,6 +6,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Pelagos\Entity\Account;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\PersonDatasetSubmission;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 
 /**
@@ -26,7 +27,7 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
     protected function supports($attribute, $subject)
     {
         // Abstain if the subject is not an instance of DatasetSubmission.
-        if (!$subject instanceof DatasetSubmission) {
+        if (!$subject instanceof DatasetSubmission and !$subject instanceof PersonDatasetSubmission) {
             return false;
         }
 
@@ -63,7 +64,13 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
         // associated with research groups that they (the user) are a member of.
 
         $researchGroups = $user->getPerson()->getResearchGroups();
-        $submissionResearchGroup = $subject->getDataset()->getResearchGroup();
+        if ($subject instanceof DatasetSubmission) {
+            $submissionResearchGroup = $subject->getDataset()->getResearchGroup();
+        } elseif ($subject instanceof PersonDatasetSubmission) {
+            $submissionResearchGroup = $subject->getDatasetSubmission()->getDataset()->getResearchGroup();
+        } else {
+            return false;
+        }
 
         if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
             if (null !== $submissionResearchGroup) {
