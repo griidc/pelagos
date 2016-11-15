@@ -94,14 +94,19 @@ class DoiRequestController extends UIController
             ->dispatch($doiRequest, 'doi_issued');
         }
 
+        $alreadyExists = false;
         if ($form->isSubmitted() && $form->isValid()) {
             if (null !== $id) {
                 $doiRequest = $this->entityHandler->update($doiRequest);
             } else {
-                $doiRequest = $this->entityHandler->create($doiRequest);
+                if ($this->alreadyExists($request->get('url'))) {
+                    $alreadyExists = true;
+                } else {
+                    $doiRequest = $this->entityHandler->create($doiRequest);
 
-                $this->container->get('pelagos.event.entity_event_dispatcher')
-                ->dispatch($doiRequest, 'doi_requested');
+                    $this->container->get('pelagos.event.entity_event_dispatcher')
+                    ->dispatch($doiRequest, 'doi_requested');
+                }
             }
         }
 
@@ -112,8 +117,30 @@ class DoiRequestController extends UIController
                 'isValid' => $form->isValid(),
                 'isSubmitted' => $form->isSubmitted(),
                 'doiRequest' => $doiRequest,
+                'alreadyExists' => $alreadyExists,
             )
         );
+    }
+
+    /**
+     * Checks to see if the passed URL already has a DOI registered against it.
+     *
+     * @param string $url The URL possibly already registered in a DOI.
+     *
+     * @return boolean
+     */
+    private function alreadyExists($url)
+    {
+        $url = rtrim($url, '/');
+        $existing = $this->entityHandler->getBy(
+            DoiRequest::class,
+            array(
+                'url' => "$url,$url/",
+                'status' => DoiRequest::STATUS_ISSUED
+            )
+        );
+
+        return (count($existing) > 0);
     }
 
     /**
