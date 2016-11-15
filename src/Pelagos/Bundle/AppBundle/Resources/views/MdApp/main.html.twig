@@ -110,19 +110,25 @@
                                         <option value="Submitted" SELECTED>Submitted</option>
                                         <option value="InReview" style="background-color: yellow;">InReview</option>
                                         <option value="SecondCheck">SecondCheck</option>
-                                        <option value="Accepted">Accepted</option>
+                                        {% if dta.metadata.id|default %}
+                                            <option value="Accepted">Accepted</option>
+                                        {% endif %}
                                         <option value="BackToSubmitter">BackToSubmitter</option>
                                     {% elseif sname == 'inreview' %}
                                         <option value="Submitted">Submitted</option>
                                         <option value="InReview" SELECTED>InReview</option>
                                         <option value="SecondCheck" style="background-color: yellow;">SecondCheck</option>
-                                        <option value="Accepted">Accepted</option>
+                                        {% if dta.metadata.id|default %}
+                                            <option value="Accepted">Accepted</option>
+                                        {% endif %}
                                         <option value="BackToSubmitter">BackToSubmitter</option>
                                     {% elseif sname == 'secondcheck' %}
                                         <option value="Submitted">Submitted</option>
                                         <option value="SecondCheck" SELECTED>SecondCheck</option>
                                         <option value="InReview">InReview</option>
-                                        <option value="Accepted" style="background-color: yellow;">Accepted</option>
+                                        {% if dta.metadata.id|default %}
+                                            <option value="Accepted" style="background-color: yellow;">Accepted</option>
+                                        {% endif %}
                                         <option value="BackToSubmitter">BackToSubmitter</option>
                                     {% elseif sname == 'accepted' %}
                                         <option value="Submitted">Submitted</option>
@@ -135,12 +141,16 @@
                                         <option value="BackToSubmitter" SELECTED>BackToSubmitter</option>
                                         <option value="InReview" style="background-color: yellow;">InReview</option>
                                         <option value="SecondCheck">SecondCheck</option>
-                                        <option value="Accepted">Accepted</option>
+                                        {% if dta.metadata.id|default %}
+                                            <option value="Accepted">Accepted</option>
+                                        {% endif %}
                                     {% else %}
                                         <option value="Submitted">Submitted</option>
                                         <option value="InReview">InReview</option>
                                         <option value="SecondCheck">SecondCheck</option>
-                                        <option value="Accepted">Accepted</option>
+                                        {% if dta.metadata.id|default %}
+                                            <option value="Accepted">Accepted</option>
+                                        {% endif %}
                                         <option value="BackToSubmitter">BackToSubmitter</option>
                                     {% endif %}
 
