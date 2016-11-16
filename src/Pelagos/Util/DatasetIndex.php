@@ -86,7 +86,7 @@ class DatasetIndex
                     );
                 }
             }
-            $doiRegEx = '!\b(10.\d{4,9}/[-._;()/:A-Z0-9]+)\b!';
+            $doiRegEx = '!\b(?:[Dd][Oo][Ii]\s*:\s*)?(10.\d{4,9}/[-._;()/:A-Z0-9]+)\b!';
             if (preg_match_all($doiRegEx, $text, $matches)) {
                 $text = trim(preg_replace($doiRegEx, '', $text));
                 foreach ($matches[1] as $doi) {
