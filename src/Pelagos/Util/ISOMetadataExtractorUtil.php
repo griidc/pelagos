@@ -96,8 +96,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:address' .
                  '/gmd:CI_Address' .
                  '/gmd:electronicMailAddress' .
-                 '/gco:CharacterString' .
-                 '/text()';
+                 '/gco:CharacterString';
 
         $email = self::querySingle($xml, $query);
 
@@ -119,8 +118,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:pointOfContact' .
                  '/gmd:CI_ResponsibleParty[1]' .
                  '/gmd:role' .
-                 '/gmd:CI_RoleCode' .
-                 '/text()';
+                 '/gmd:CI_RoleCode';
 
         $role = self::querySingle($xml, $query);
 
@@ -157,8 +155,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:address' .
                  '/gmd:CI_Address' .
                  '/gmd:electronicMailAddress' .
-                 '/gco:CharacterString' .
-                 '/text()';
+                 '/gco:CharacterString';
 
         $email = self::querySingle($xml, $query);
 
@@ -178,8 +175,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:contact' .
                  '/gmd:CI_ResponsibleParty[1]' .
                  '/gmd:role' .
-                 '/gmd:CI_RoleCode' .
-                 '/text()';
+                 '/gmd:CI_RoleCode';
 
         $role = self::querySingle($xml, $query);
 
@@ -212,8 +208,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:citation' .
                  '/gmd:CI_Citation' .
                  '/gmd:title' .
-                 '/gco:CharacterString' .
-                 '/text()';
+                 '/gco:CharacterString';
 
         return self::querySingle($xml, $query);
     }
@@ -233,8 +228,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:citation' .
                  '/gmd:CI_Citation' .
                  '/gmd:alternateTitle' .
-                 '/gco:CharacterString' .
-                 '/text()';
+                 '/gco:CharacterString';
 
         return self::querySingle($xml, $query);
     }
@@ -252,8 +246,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:identificationInfo' .
                  '/gmd:MD_DataIdentification' .
                  '/gmd:abstract' .
-                 '/gco:CharacterString' .
-                 '/text()';
+                 '/gco:CharacterString';
 
         return self::querySingle($xml, $query);
     }
@@ -271,8 +264,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:identificationInfo' .
                  '/gmd:MD_DataIdentification' .
                  '/gmd:purpose' .
-                 '/gco:CharacterString' .
-                 '/text()';
+                 '/gco:CharacterString';
 
         return self::querySingle($xml, $query);
     }
@@ -290,8 +282,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:identificationInfo' .
                  '/gmd:MD_DataIdentification' .
                  '/gmd:supplementalInformation' .
-                 '/gco:CharacterString' .
-                 '/text()';
+                 '/gco:CharacterString';
 
         return self::getDelimitedItem(self::querySingle($xml, $query), 0);
     }
@@ -309,8 +300,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:identificationInfo' .
                  '/gmd:MD_DataIdentification' .
                  '/gmd:supplementalInformation' .
-                 '/gco:CharacterString' .
-                 '/text()';
+                 '/gco:CharacterString';
 
         return self::getDelimitedItem(self::querySingle($xml, $query), 1);
     }
@@ -328,8 +318,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:identificationInfo' .
                  '/gmd:MD_DataIdentification' .
                  '/gmd:supplementalInformation' .
-                 '/gco:CharacterString' .
-                 '/text()';
+                 '/gco:CharacterString';
 
         return self::getDelimitedItem(self::querySingle($xml, $query), 2);
     }
@@ -347,8 +336,8 @@ class ISOMetadataExtractorUtil
                  '/gmd:identificationInfo' .
                  '/gmd:MD_DataIdentification' .
                  '/gmd:supplementalInformation' .
-                 '/gco:CharacterString' .
-                 '/text()';
+                 '/gco:CharacterString';
+
 
         return self::getDelimitedItem(self::querySingle($xml, $query), 3);
     }
@@ -366,8 +355,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:identificationInfo' .
                  '/gmd:MD_DataIdentification' .
                  '/gmd:supplementalInformation' .
-                 '/gco:CharacterString' .
-                 '/text()';
+                 '/gco:CharacterString';
 
         return self::getDelimitedItem(self::querySingle($xml, $query), 4);
     }
@@ -385,8 +373,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:identificationInfo' .
                  '/gmd:MD_DataIdentification' .
                  '/gmd:supplementalInformation' .
-                 '/gco:CharacterString' .
-                 '/text()';
+                 '/gco:CharacterString';
 
         return self::getDelimitedItem(self::querySingle($xml, $query), 5);
     }
@@ -458,8 +445,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:type[descendant::text()="theme"]' .
                  '/parent::gmd:MD_Keywords' .
                  '/gmd:keyword' .
-                 '/gco:CharacterString' .
-                 '/text()';
+                 '/gco:CharacterString';
 
         return self::queryMultiple($xml, $query);
     }
@@ -481,8 +467,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:type[descendant::text()="place"]' .
                  '/parent::gmd:MD_Keywords' .
                  '/gmd:keyword' .
-                 '/gco:CharacterString' .
-                 '/text()';
+                 '/gco:CharacterString';
 
         return self::queryMultiple($xml, $query);
     }
@@ -500,8 +485,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:identificationInfo' .
                  '/gmd:MD_DataIdentification' .
                  '/gmd:topicCategory' .
-                 '/gmd:MD_TopicCategoryCode' .
-                 '/text()';
+                 '/gmd:MD_TopicCategoryCode';
 
         return self::queryMultiple($xml, $query);
     }
@@ -543,8 +527,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:extent' .
                  '/gmd:EX_Extent' .
                  '/gmd:description' .
-                 '/gco:CharacterString' .
-                 '/text()';
+                 '/gco:CharacterString';
 
         return self::querySingle($xml, $query);
     }
@@ -567,8 +550,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:EX_TemporalExtent' .
                  '/gmd:extent/' .
                  '/gml:TimePeriod' .
-                 '/gml:description' .
-                 '/text()';
+                 '/gml:description';
 
         return self::querySingle($xml, $query);
     }
@@ -591,8 +573,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:EX_TemporalExtent' .
                  '/gmd:extent/' .
                  '/gml:TimePeriod' .
-                 '/gml:beginPosition' .
-                 '/text()';
+                 '/gml:beginPosition';
 
         $date = self::querySingle($xml, $query);
         if (null !== $date and preg_match('/\d\d\d\d-\d{1,2}-\d{1,2}/', $date)) {
@@ -621,8 +602,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:EX_TemporalExtent' .
                  '/gmd:extent/' .
                  '/gml:TimePeriod' .
-                 '/gml:endPosition' .
-                 '/text()';
+                 '/gml:endPosition';
 
         $date = self::querySingle($xml, $query);
         if (null !== $date and preg_match('/\d\d\d\d-\d{1,2}-\d{1,2}/', $date)) {
@@ -650,8 +630,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:distributorFormat' .
                  '/gmd:MD_Format' .
                  '/gmd:name' .
-                 '/gco:CharacterString' .
-                 '/text()';
+                 '/gco:CharacterString';
 
         return self::querySingle($xml, $query);
     }
@@ -673,8 +652,7 @@ class ISOMetadataExtractorUtil
                  '/gmd:distributorFormat' .
                  '/gmd:MD_Format' .
                  '/gmd:fileDecompressionTechnique' .
-                 '/gco:CharacterString' .
-                 '/text()';
+                 '/gco:CharacterString';
 
         return self::querySingle($xml, $query);
     }
@@ -697,8 +675,12 @@ class ISOMetadataExtractorUtil
         }
 
         if (count($query) > 0) {
-            // return first value as string.
-            return (string) $query[0];
+            // get first value as string.
+            $value = (string) $query[0];
+            if (empty($value)) {
+                return null;
+            }
+            return $value;
         } else {
             return null;
         }
@@ -722,6 +704,9 @@ class ISOMetadataExtractorUtil
 
         if (count($query) > 0) {
             $gml = $query[0]->asXML();
+            if (empty($gml)) {
+                return null;
+            }
             return $gml;
         } else {
             return null;
@@ -748,7 +733,9 @@ class ISOMetadataExtractorUtil
         $arrayOfStrings = array();
         // Cast results to string.
         foreach ($query as $key => $value) {
-            $arrayOfStrings[$key] = (string) $value;
+            if (!empty($value)) {
+                $arrayOfStrings[$key] = (string) $value;
+            }
         }
         return $arrayOfStrings;
     }
