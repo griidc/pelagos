@@ -202,7 +202,12 @@ class DatasetSubmissionController extends UIController
             );
 
         $researchGroups = array();
-        foreach ($this->entityHandler->getAll(ResearchGroup::class) as $entity) {
+        $researchGroupCandidates = $this->entityHandler->getBy(
+            ResearchGroup::class,
+            array('datasets.dif.status' => 2),
+            array('name' => 'ASC')
+        );
+        foreach ($researchGroupCandidates as $entity) {
             if ($this->isGranted('CAN_CREATE_DIF_FOR', $entity)) {
                 $researchGroups[] = $entity;
             }
