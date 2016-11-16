@@ -675,8 +675,12 @@ class ISOMetadataExtractorUtil
         }
 
         if (count($query) > 0) {
-            // return first value as string.
-            return (string) $query[0];
+            // get first value as string.
+            $value = (string) $query[0];
+            if (empty($value)) {
+                return null;
+            }
+            return $value;
         } else {
             return null;
         }
@@ -700,6 +704,9 @@ class ISOMetadataExtractorUtil
 
         if (count($query) > 0) {
             $gml = $query[0]->asXML();
+            if (empty($gml)) {
+                return null;
+            }
             return $gml;
         } else {
             return null;
@@ -726,7 +733,9 @@ class ISOMetadataExtractorUtil
         $arrayOfStrings = array();
         // Cast results to string.
         foreach ($query as $key => $value) {
-            $arrayOfStrings[$key] = (string) $value;
+            if (!empty($value)) {
+                $arrayOfStrings[$key] = (string) $value;
+            }
         }
         return $arrayOfStrings;
     }
