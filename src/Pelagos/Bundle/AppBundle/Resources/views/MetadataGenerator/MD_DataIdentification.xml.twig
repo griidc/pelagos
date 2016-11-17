@@ -75,7 +75,13 @@
         dataset.datasetSubmission.temporalExtentEndPosition
     %}
     <gmd:extent>
+        {% if dataset.datasetSubmission.spatialExtent and not dataset.datasetSubmission.spatialExtentDescription %}
         <gmd:EX_Extent id="boundingExtent">
+        {% elseif dataset.datasetSubmission.spatialExtentDescription and not dataset.datasetSubmission.spatialExtent %}
+        <gmd:EX_Extent id="descriptiveExtent">
+        {% else %}
+        <gmd:EX_Extent>
+        {% endif %}
             {% if dataset.datasetSubmission.spatialExtentDescription %}
             <gmd:description>
                 <gco:CharacterString>{{dataset.datasetSubmission.spatialExtentDescription}}</gco:CharacterString>
