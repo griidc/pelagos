@@ -97,6 +97,9 @@ $(function() {
 
     $("button").button();
 
+    $("#btn-upload").qtip();
+    $("#btn-save").qtip();
+
     dialog = $("#urlDialog").dialog({
         autoOpen: false,
         height: "auto",
