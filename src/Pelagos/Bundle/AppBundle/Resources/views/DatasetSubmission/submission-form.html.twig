@@ -18,7 +18,7 @@
         <button type="button" id="btn-upload">Import XML Metadata From File</button>
         <button type="button" id="btn-from-url">Import XML Metadata from URL</button>
         <button type="button" id="btn-save">Save and Continue later</button>
-        <button type="button" id="btn-discard" title="This button will discard all saved changes. The information from the most recent submission to GRIIDC will be loaded.">Discard Changes</button>
+        <button type="button" id="btn-discard" title="This button will discard all saved changes. The information from the most recent submission to GRIIDC will be loaded." {% if not enableDiscard%}disabled{% endif %}>Discard Changes</button>
     </div>
 
     <fieldset>

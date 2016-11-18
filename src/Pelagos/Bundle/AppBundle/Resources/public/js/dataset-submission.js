@@ -183,6 +183,7 @@ $(function() {
             method: "PATCH",
             data: formData,
             success: function(data, textStatus, jqXHR) {
+                $("#btn-discard").button("enable");
                 formHash = $("#regForm").serialize();
                 $("#regForm").prop("unsavedChanges", false);
                 var n = noty(

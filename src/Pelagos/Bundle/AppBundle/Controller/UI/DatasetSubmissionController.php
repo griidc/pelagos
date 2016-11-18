@@ -65,6 +65,9 @@ class DatasetSubmissionController extends UIController
             'errors' => null,
             );
 
+        // Assume we have a saved draft and enable discard button by default.
+        $enableDiscard = true;
+
         if ($udi != null) {
             $udi = trim($udi);
             $datasets = $this->entityHandler
@@ -114,6 +117,8 @@ class DatasetSubmissionController extends UIController
                 }
 
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
+                    // We didn't have a saved or submitted dataset submission, so disable discard button.
+                    $enableDiscard = false;
                     // This is the first submission, so create a new one.
                     $datasetSubmission = new DatasetSubmission;
 
@@ -152,6 +157,8 @@ class DatasetSubmissionController extends UIController
                         // This is handled in the template.
                     }
                 } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+                    // We only have a submitted dataset submission, so disable discard button.
+                    $enableDiscard = false;
                     // The latest submission is complete.
                     $sequence = $datasetSubmission->getSequence();
                     $datasetSubmission = clone $datasetSubmission;
@@ -200,7 +207,7 @@ class DatasetSubmissionController extends UIController
             }
         }
 
-        return $this->makeSubmissionForm($udi, $datasetSubmission, $xmlStatus);
+        return $this->makeSubmissionForm($udi, $datasetSubmission, $xmlStatus, $enableDiscard);
     }
 
     /**
@@ -340,10 +347,11 @@ class DatasetSubmissionController extends UIController
      * @param string            $udi               The UDI entered by the user.
      * @param DatasetSubmission $datasetSubmission The Dataset Submission.
      * @param array             $xmlStatus         Error message when loading XML.
+     * @param boolean           $enableDiscard     Whether to enable to discard button.
      *
      * @return Response
      */
-    protected function makeSubmissionForm($udi, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null)
+    protected function makeSubmissionForm($udi, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null, $enableDiscard = true)
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;
@@ -440,6 +448,7 @@ class DatasetSubmissionController extends UIController
                 'showForceImport' => $showForceImport,
                 'showForceDownload' => $showForceDownload,
                 'researchGroupList' => $researchGroupList,
+                'enableDiscard' => $enableDiscard,
             )
         );
     }
