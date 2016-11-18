@@ -210,16 +210,6 @@ class DatasetSubmissionController extends UIController
     {
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
 
-        if ($datasetSubmission instanceof DatasetSubmission) {
-            foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
-                $datasetSubmission->removeDatasetContact($datasetContact);
-            }
-
-            foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
-                $datasetSubmission->removeMetadataContact($metadataContact);
-            }
-        }
-
         $form = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionType::class,
@@ -253,6 +243,12 @@ class DatasetSubmissionController extends UIController
             }
 
             $this->entityHandler->update($datasetSubmission);
+            foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+                $this->entityHandler->update($datasetContact);
+            }
+            foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+                $this->entityHandler->update($metadataContact);
+            }
 
             $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
                 $datasetSubmission,
