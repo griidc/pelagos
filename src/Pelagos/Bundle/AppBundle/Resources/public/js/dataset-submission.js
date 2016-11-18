@@ -267,7 +267,14 @@ $(function() {
         var selected = $(this);
         jQuery.get(url, function(data) {
             $.each(data, function(field, value) {
-                selected.parent().find("[name*=" + field + "]").val(value);
+                if (null === value) {
+                    value='';
+                }
+                if (field == "city" && value) {
+                    selected.parent().find("[field=" + field + "]").text(value + ',')
+                } else {
+                    selected.parent().find("[field=" + field + "]").text(value);
+                }
             });
         });
     });
