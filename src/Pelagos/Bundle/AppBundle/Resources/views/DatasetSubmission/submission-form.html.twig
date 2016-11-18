@@ -9,11 +9,16 @@
     </div>
 {{ form_end(xmlForm, {'render_rest': false}) }}
 
+<form id="discardForm" action="" method="POST">
+    <input type="hidden" name="discard" value="discard">
+</form>
+
 {{ form_start(form, {'attr': {'id': 'regForm'}}) }}
     <div id="metatoolbar" class="ui-widget-header ui-corner-all toolbarbutton">
         <button type="button" id="btn-upload">Import XML Metadata From File</button>
         <button type="button" id="btn-from-url">Import XML Metadata from URL</button>
         <button type="button" id="btn-save">Save and Continue later</button>
+        <button type="button" id="btn-discard" title="This button will discard all saved changes. The information from the most recent submission to GRIIDC will be loaded.">Discard Changes</button>
     </div>
 
     <fieldset>

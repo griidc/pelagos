@@ -97,6 +97,8 @@ $(function() {
 
     $("button").button();
 
+    $("#btn-discard").qtip();
+
     dialog = $("#urlDialog").dialog({
         autoOpen: false,
         height: "auto",
@@ -118,6 +120,9 @@ $(function() {
         dialog.dialog("open");
     });
 
+    $("#btn-discard").click(function() {
+        $("#discardForm").submit();
+    });
 
     $("#btn-previous").click(function() {
         var activeTab = $("#dtabs").tabs("option","active");

@@ -77,6 +77,15 @@ class DatasetSubmissionController extends UIController
 
                 $datasetSubmission = $dataset->getDatasetSubmissionHistory()->first();
 
+                if (null !== $request->request->get('discard')
+                    and $datasetSubmission->getStatus() === DatasetSubmission::STATUS_INCOMPLETE
+                ) {
+                    // Delete the current Dataset Submission.
+                    $this->entityHandler->delete($datasetSubmission);
+                    // Get the previous Dataset Submission (if any).
+                    $datasetSubmission = $dataset->getDatasetSubmissionHistory()->first();
+                }
+
                 $xmlForm = $this->get('form.factory')->createNamed(
                     null,
                     DatasetSubmissionXmlFileType::class,
