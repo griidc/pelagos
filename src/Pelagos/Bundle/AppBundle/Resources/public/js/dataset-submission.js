@@ -200,14 +200,16 @@ $(function() {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 var message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
-                var n = noty(
-                {
-                    layout: "top",
-                    theme: "relax",
-                    type: "error",
-                    text: message,
-                    modal: true,
-                });
+                if (notify) {
+                    var n = noty(
+                    {
+                        layout: "top",
+                        theme: "relax",
+                        type: "error",
+                        text: message,
+                        modal: true,
+                    });
+                }
             }
         });
 
