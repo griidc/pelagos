@@ -137,10 +137,10 @@ $(function() {
     });
 
     $("#btn-save").click(function() {
-        saveDatasetSubmission();
+        saveDatasetSubmission(true);
     });
 
-    function saveDatasetSubmission()
+    function saveDatasetSubmission(notify)
     {
         var datasetSubmissionId = $("form[datasetsubmission]").attr("datasetsubmission");
         var url = Routing.generate("pelagos_api_dataset_submission_patch");
@@ -161,32 +161,36 @@ $(function() {
             success: function(data, textStatus, jqXHR) {
                 formHash = $("#regForm").serialize();
                 $("#regForm").prop("unsavedChanges", false);
-                var n = noty(
-                {
-                    layout: "top",
-                    theme: "relax",
-                    type: "success",
-                    text: "Succesfully Saved",
-                    timeout: 1000,
-                    modal: false,
-                    animation: {
-                        open: "animated bounceIn", // Animate.css class names
-                        close: "animated fadeOut", // Animate.css class names
-                        easing: "swing", // unavailable - no need
-                        speed: 500 // unavailable - no need
-                    }
-                });
+                if (notify) {
+                    var n = noty(
+                    {
+                        layout: "top",
+                        theme: "relax",
+                        type: "success",
+                        text: "Succesfully Saved",
+                        timeout: 4000,
+                        modal: false,
+                        animation: {
+                            open: "animated fadeIn", // Animate.css class names
+                            close: "animated fadeOut", // Animate.css class names
+                            easing: "swing", // unavailable - no need
+                            speed: 500 // unavailable - no need
+                        }
+                    });
+                }
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 var message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
-                var n = noty(
-                {
-                    layout: "top",
-                    theme: "relax",
-                    type: "error",
-                    text: message,
-                    modal: true,
-                });
+                if (notify) {
+                    var n = noty(
+                    {
+                        layout: "top",
+                        theme: "relax",
+                        type: "error",
+                        text: message,
+                        modal: true,
+                    });
+                }
             }
         });
 
