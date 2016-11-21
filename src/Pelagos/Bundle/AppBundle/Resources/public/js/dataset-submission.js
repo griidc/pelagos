@@ -262,6 +262,7 @@ $(function() {
     buildKeywordLists();
 
     $(".contactperson").on("select2:selecting", function(e) {
+        $(this).parent().find(".contactinformation span").text("");
         var id = e.params.args.data.id;
         var url = Routing.generate("pelagos_api_people_get", {"id" : id});
         var selected = $(this);
