@@ -1,11 +1,6 @@
 {{ form_start(xmlForm) }}
     <div style="display:none;">
         {{ form_widget(xmlForm.xmlFile) }}
-        {{ form_row(xmlForm.xmlUrl) }}
-    </div>
-    <div id="urlDialog" title="Please enter the URL for a Metadata File">
-        <label for="xmlURI">Metadata URL:</label>
-        <input type="text" id="xmlURI" size="100">
     </div>
 {{ form_end(xmlForm, {'render_rest': false}) }}
 
@@ -15,9 +10,8 @@
 
 {{ form_start(form, {'attr': {'id': 'regForm'}}) }}
     <div id="metatoolbar" class="ui-widget-header ui-corner-all toolbarbutton">
-        <button type="button" id="btn-upload">Import XML Metadata From File</button>
-        <button type="button" id="btn-from-url">Import XML Metadata from URL</button>
-        <button type="button" id="btn-save">Save and Continue later</button>
+        <button type="button" id="btn-upload" title="This button will allow you to populate tabs with information from a Valid ISO 19115-2 file in xml format from your computer.">Import ISO Metadata XML File</button>
+        <button type="button" id="btn-save" title="This button saves the information you have entered into the form but does not submit the information to GRIIDC.">Save and Continue later</button>
         <button type="button" id="btn-discard" title="This button will discard all saved changes. The information from the most recent submission to GRIIDC will be loaded." {% if not enableDiscard%}disabled{% endif %}>Discard Changes</button>
     </div>
 

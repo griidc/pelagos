@@ -97,28 +97,9 @@ $(function() {
 
     $("button").button();
 
+    $("#btn-upload").qtip();
+    $("#btn-save").qtip();
     $("#btn-discard").qtip();
-
-    dialog = $("#urlDialog").dialog({
-        autoOpen: false,
-        height: "auto",
-        width: "auto",
-        modal: true,
-        buttons: {
-            Submit: function() {
-                $("#xmlUrl").val($("#xmlURI").val());
-                dialog.dialog("close");
-                $("#xmlUploadForm").submit();
-            },
-            Cancel: function() {
-                dialog.dialog("close");
-            }
-        }
-    });
-
-    $("#btn-from-url").click(function() {
-        dialog.dialog("open");
-    });
 
     $("#btn-discard").click(function() {
         $("#discardForm").submit();
