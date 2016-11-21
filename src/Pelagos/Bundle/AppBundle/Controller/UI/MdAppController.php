@@ -33,16 +33,13 @@ class MdAppController extends UIController
     /**
      * MDApp UI.
      *
-     * @param Request $request The Symfony request object.
-     *
      * @Route("")
      *
      * @return Response
      */
-    public function defaultAction(Request $request)
+    public function defaultAction()
     {
-        $message = $request->query->get('message');
-        return $this->renderUi($message);
+        return $this->renderUi();
     }
 
     /**
@@ -177,18 +174,17 @@ class MdAppController extends UIController
                 $message = "Status for $udi has been changed from $from to $to.";
             }
         }
-        $url = $this->generateUrl('pelagos_app_ui_mdapp_default', array('message' => $message));
+        $this->get('session')->getFlashBag()->add('notice', $message);
+        $url = $this->generateUrl('pelagos_app_ui_mdapp_default');
         header("location: $url");
     }
 
     /**
      * Render the UI for MDApp.
      *
-     * @param string|null $message Informational message to display in template.
-     *
      * @return Response
      */
-    protected function renderUi($message = null)
+    protected function renderUi()
     {
         // If not DRPM, show Access Denied message.  This is simply for
         // display purposes as the security model is enforced on the
@@ -248,7 +244,6 @@ class MdAppController extends UIController
                         Query::HYDRATE_ARRAY
                     ),
                 ),
-                'message' => $message,
             )
         );
     }
