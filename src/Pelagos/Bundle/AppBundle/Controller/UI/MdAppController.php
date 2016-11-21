@@ -177,7 +177,8 @@ class MdAppController extends UIController
                 $message = "Status for $udi has been changed from $from to $to.";
             }
         }
-        return $this->redirectToRoute('pelagos_app_ui_mdapp_default', array('message' => $message));
+        $url = $this->generateUrl('pelagos_app_ui_mdapp_default', array('message' => $message));
+        header("location: $url");
     }
 
     /**
