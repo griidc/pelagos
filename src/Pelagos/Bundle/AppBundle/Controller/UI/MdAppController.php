@@ -33,9 +33,9 @@ class MdAppController extends UIController
     /**
      * MDApp UI.
      *
-     * @Route("")
-     *
      * @param Request $request The Symfony request object.
+     *
+     * @Route("")
      *
      * @return Response
      */
