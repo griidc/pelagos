@@ -100,28 +100,6 @@ $(function() {
     $("#btn-upload").qtip();
     $("#btn-save").qtip();
 
-    dialog = $("#urlDialog").dialog({
-        autoOpen: false,
-        height: "auto",
-        width: "auto",
-        modal: true,
-        buttons: {
-            Submit: function() {
-                $("#xmlUrl").val($("#xmlURI").val());
-                dialog.dialog("close");
-                $("#xmlUploadForm").submit();
-            },
-            Cancel: function() {
-                dialog.dialog("close");
-            }
-        }
-    });
-
-    $("#btn-from-url").click(function() {
-        dialog.dialog("open");
-    });
-
-
     $("#btn-previous").click(function() {
         var activeTab = $("#dtabs").tabs("option","active");
         activeTab--;
