@@ -144,7 +144,7 @@ class MdAppController extends UIController
      * @Route("/change-metadata-status/{id}")
      * @Method("POST")
      *
-     * @return Response
+     * @return void
      */
     public function changeMetadataStatusAction(Request $request, $id)
     {
