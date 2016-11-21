@@ -1,18 +1,12 @@
 {{ form_start(xmlForm) }}
     <div style="display:none;">
         {{ form_widget(xmlForm.xmlFile) }}
-        {{ form_row(xmlForm.xmlUrl) }}
-    </div>
-    <div id="urlDialog" title="Please enter the URL for a Metadata File">
-        <label for="xmlURI">Metadata URL:</label>
-        <input type="text" id="xmlURI" size="100">
     </div>
 {{ form_end(xmlForm, {'render_rest': false}) }}
 
 {{ form_start(form, {'attr': {'id': 'regForm'}}) }}
     <div id="metatoolbar" class="ui-widget-header ui-corner-all toolbarbutton">
         <button type="button" id="btn-upload">Import ISO Metadata XML File</button>
-        <button type="button" id="btn-from-url">Import XML Metadata from URL</button>
         <button type="button" id="btn-save">Save and Continue later</button>
     </div>
 

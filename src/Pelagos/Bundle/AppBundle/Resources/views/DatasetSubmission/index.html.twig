@@ -69,7 +69,7 @@
 
 {% block body %}
 
-<h1>Dataset Submission</h1>
+<h1>Dataset Submission{% if datasetSubmission is not null %} for {{ datasetSubmission.dataset.udi }}{% endif %}</h1>
 
 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
     {% if udi is null %}

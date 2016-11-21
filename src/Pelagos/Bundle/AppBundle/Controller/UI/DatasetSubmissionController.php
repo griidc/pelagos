@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
 use Symfony\Component\Form\Form;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -52,6 +54,8 @@ class DatasetSubmissionController extends UIController
      *
      * @param Request $request The Symfony request object.
      *
+     * @throws BadRequestHttpException When xmlUploadForm is submitted without a file.
+     *
      * @Route("")
      *
      * @return Response A Response instance.
@@ -87,12 +91,11 @@ class DatasetSubmissionController extends UIController
 
                 if ($xmlForm->isSubmitted()) {
                     $xmlFile = $xmlForm['xmlFile']->getData();
-                    $xmlUrl = $xmlForm['xmlUrl']->getData();
 
                     if ($xmlFile instanceof UploadedFile) {
                         $xmlURI = $xmlFile->getRealPath();
-                    } elseif ($xmlUrl !== '') {
-                        $xmlURI = $xmlUrl;
+                    } else {
+                        throw new BadRequestHttpException('No file provided.');
                     }
 
                     try {
