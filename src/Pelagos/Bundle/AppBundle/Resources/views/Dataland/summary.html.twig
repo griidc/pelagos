@@ -21,10 +21,6 @@
                 {% image '@PelagosAppBundle/Resources/public/images/download-package.png' %}
                 <img width="40px" height="40px" id="downloaddsdenrestricted" src="{{asset_url}}">
                 {% endimage %}
-            {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL') %}
-                {% image '@PelagosAppBundle/Resources/public/images/download-package.png' %}
-                <img width="40px" height="40px" id="downloaddsdenapproval" src="{{asset_url}}">
-                {% endimage %}
             {% else %}
                 {% image '@PelagosAppBundle/Resources/public/images/download-package-grey.png' %}
                 <img width="40px" height="40px" id="downloaddsden" src="{{asset_url}}">

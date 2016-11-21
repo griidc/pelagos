@@ -52,11 +52,6 @@ class DatasetSubmission extends Entity
     const RESTRICTION_NONE = 'None';
 
     /**
-     * Indicates the dataset requires author's approval to be downloaded.
-     */
-    const RESTRICTION_APPROVAL = 'Approval';
-
-    /**
      * Indicates the dataset may only be downloaded by the submitter.
      */
     const RESTRICTION_RESTRICTED = 'Restricted';
@@ -66,7 +61,6 @@ class DatasetSubmission extends Entity
      */
     const RESTRICTIONS = array(
         self::RESTRICTION_NONE => 'None',
-        self::RESTRICTION_APPROVAL => 'Requires Author\'s Approval',
         self::RESTRICTION_RESTRICTED => 'Restricted',
     );
 
@@ -208,11 +202,6 @@ class DatasetSubmission extends Entity
     const AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED = 5;
 
     /**
-     * The dataset is marked as available to users with approval, but is remotely hosted.
-     */
-    const AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL_REMOTELY_HOSTED = 6;
-
-    /**
      * The dataset is marked as publicly available, but is remotely hosted.
      */
     const AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED = 7;
@@ -221,11 +210,6 @@ class DatasetSubmission extends Entity
      * The dataset is restricted to author use only.
      */
     const AVAILABILITY_STATUS_RESTRICTED = 8;
-
-    /**
-     * The dataset is available to users with approval.
-     */
-    const AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL = 9;
 
     /**
      * The dataset is publicly available.

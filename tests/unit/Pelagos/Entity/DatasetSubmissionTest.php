@@ -136,7 +136,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      */
     public function testSequence()
     {
-        
+
         $this->datasetSubmission->setSequence(42);
         $this->assertEquals(
             42,
@@ -691,8 +691,6 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
         $this->datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
         $this->datasetSubmission->setRestrictions(DatasetSubmission::RESTRICTION_NONE);
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
-        $this->datasetSubmission->setRestrictions(DatasetSubmission::RESTRICTION_APPROVAL);
-        $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
         $this->datasetSubmission->setRestrictions(DatasetSubmission::RESTRICTION_RESTRICTED);
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
         $this->datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_NONE);
@@ -703,8 +701,6 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
         // datasetFileTransferStatus == TRANSFER_STATUS_REMOTELY_HOSTED
         $this->datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
         $this->datasetSubmission->setRestrictions(DatasetSubmission::RESTRICTION_NONE);
-        $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
-        $this->datasetSubmission->setRestrictions(DatasetSubmission::RESTRICTION_APPROVAL);
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
         $this->datasetSubmission->setRestrictions(DatasetSubmission::RESTRICTION_RESTRICTED);
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
