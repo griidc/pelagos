@@ -540,13 +540,20 @@ $(function() {
         }
     );
 
-    if ($("#spatialExtentDescription").val()!="" && $("#spatialExtent").val()=="") {
+    if ($("#spatialExtent").val() != ""
+        && (
+            $("#temporalExtentDesc").val() != ""
+            || $("#temporalExtentBeginPosition").val() != ""
+            || $("#temporalExtentEndPosition").val() != ""
+           )
+        ) {
+        // if we have spatial and temporal extents, show spatial and temporal extent
+        geowizard.haveSpatial(false);
+    } else if ($("#spatialExtentDescription").val() != "") {
+        // else if we have a description, show description
         geowizard.haveSpatial(true);
     } else {
-        geowizard.haveSpatial(false);
-    }
-
-    if ($("#spatialExtent").val()!="") {
+        // otherwise show spatial and temporal extent
         geowizard.haveSpatial(false);
     }
 
