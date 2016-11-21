@@ -97,6 +97,9 @@ $(function() {
 
     $("button").button();
 
+    $("#btn-upload").qtip();
+    $("#btn-save").qtip();
+
     $("#btn-previous").click(function() {
         var activeTab = $("#dtabs").tabs("option","active");
         activeTab--;
