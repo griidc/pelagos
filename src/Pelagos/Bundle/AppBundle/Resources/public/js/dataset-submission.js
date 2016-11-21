@@ -247,18 +247,26 @@ $(function() {
     buildKeywordLists();
 
     $(".contactperson").on("select2:selecting", function(e) {
+        $(this).parent().find(".contactinformation span").text("");
         var id = e.params.args.data.id;
         var url = Routing.generate("pelagos_api_people_get", {"id" : id});
         var selected = $(this);
         jQuery.get(url, function(data) {
             $.each(data, function(field, value) {
-                selected.parent().find("[name*=" + field + "]").val(value);
+                if (null === value) {
+                    value='';
+                }
+                if (field == "city" && value) {
+                    selected.parent().find("[field=" + field + "]").text(value + ',')
+                } else {
+                    selected.parent().find("[field=" + field + "]").text(value);
+                }
             });
         });
     });
 
     $(".contactperson").on("select2:unselecting", function(e) {
-        $(this).siblings().find(":input").val("")
+        $(this).parent().find(".contactinformation span").text("");
     });
 
     // Direct Upload
