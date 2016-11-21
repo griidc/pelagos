@@ -35,11 +35,14 @@ class MdAppController extends UIController
      *
      * @Route("")
      *
+     * @param Request $request The Symfony request object.
+     *
      * @return Response
      */
-    public function defaultAction()
+    public function defaultAction(Request $request)
     {
-        return $this->renderUi();
+        $message = $request->query->get('message');
+        return $this->renderUi($message);
     }
 
     /**
@@ -155,21 +158,15 @@ class MdAppController extends UIController
         $udi = $dataset->getUdi();
         $to = $request->request->get('to');
         $message = null;
-        $error = null;
         if (null !== $to) {
-            if ('Accepted' == $to) {
-                if ($dataset->getMetadata() instanceof Metadata) {
-                    $datasetSubmission = $dataset->getDatasetSubmission();
-                    $datasetSubmission->setMetadataStatus($to);
-                    $entityHandler->update($datasetSubmission);
-                    $entityHandler->update($dataset);
-                    $mdappLogger->writeLog($this->getUser()->getUsername() .
-                        " has changed metadata status for $udi ($from -> $to) (mdapp msg)");
-                    $message = "Status for $udi has been changed from $from to $to.";
-                } else {
-                    $error = 'A dataset can only be placed into the "Accepted" state if ' .
-                        'metadata has been previously uploaded via MDAPP.';
-                }
+            if ('Accepted' == $to and $dataset->getMetadata() instanceof Metadata) {
+                $datasetSubmission = $dataset->getDatasetSubmission();
+                $datasetSubmission->setMetadataStatus($to);
+                $entityHandler->update($datasetSubmission);
+                $entityHandler->update($dataset);
+                $mdappLogger->writeLog($this->getUser()->getUsername() .
+                    " has changed metadata status for $udi ($from -> $to) (mdapp msg)");
+                $message = "Status for $udi has been changed from $from to $to.";
             } else {
                 $datasetSubmission = $dataset->getDatasetSubmission();
                 $datasetSubmission->setMetadataStatus($to);
@@ -180,18 +177,17 @@ class MdAppController extends UIController
                 $message = "Status for $udi has been changed from $from to $to.";
             }
         }
-        return $this->redirectToRoute('pelagos_app_ui_mdapp_default', array('message' => $message, 'error' => $error));
+        return $this->redirectToRoute('pelagos_app_ui_mdapp_default', array('message' => $message));
     }
 
     /**
      * Render the UI for MDApp.
      *
      * @param string|null $message Informational message to display in template.
-     * @param string|null $error   Error message to display in template.
      *
      * @return Response
      */
-    protected function renderUi($message = null, $error = null)
+    protected function renderUi($message = null)
     {
         // If not DRPM, show Access Denied message.  This is simply for
         // display purposes as the security model is enforced on the
@@ -251,7 +247,6 @@ class MdAppController extends UIController
                         Query::HYDRATE_ARRAY
                     ),
                 ),
-                'error' => $error,
                 'message' => $message,
             )
         );
