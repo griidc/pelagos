@@ -280,7 +280,7 @@ $(function() {
     });
 
     $(".contactperson").on("select2:unselecting", function(e) {
-        $(this).siblings().find(":input").val("")
+        $(this).parent().find(".contactinformation span").text("");
     });
 
     // Direct Upload
