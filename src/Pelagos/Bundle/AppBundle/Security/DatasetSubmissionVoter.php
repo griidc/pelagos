@@ -32,7 +32,7 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
         }
 
         // Supports create and edit.
-        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
+        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_DELETE))) {
             return true;
         }
 
@@ -66,13 +66,23 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
         $researchGroups = $user->getPerson()->getResearchGroups();
         if ($subject instanceof DatasetSubmission) {
             $submissionResearchGroup = $subject->getDataset()->getResearchGroup();
+            $submissionStatus = $subject->getStatus();
         } elseif ($subject instanceof PersonDatasetSubmission) {
             $submissionResearchGroup = $subject->getDatasetSubmission()->getDataset()->getResearchGroup();
+            $submissionStatus = $subject->getDatasetSubmission()->getStatus();
         } else {
             return false;
         }
 
         if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
+            if (null !== $submissionResearchGroup) {
+                foreach ($researchGroups as $researchGroup) {
+                    if ($submissionResearchGroup->isSameTypeAndId($researchGroup)) {
+                        return true;
+                    }
+                }
+            }
+        } elseif (self::CAN_DELETE === $attribute and DatasetSubmission::STATUS_INCOMPLETE === $submissionStatus) {
             if (null !== $submissionResearchGroup) {
                 foreach ($researchGroups as $researchGroup) {
                     if ($submissionResearchGroup->isSameTypeAndId($researchGroup)) {
