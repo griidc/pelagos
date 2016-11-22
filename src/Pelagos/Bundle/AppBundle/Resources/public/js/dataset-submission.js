@@ -167,7 +167,7 @@ $(function() {
                         layout: "top",
                         theme: "relax",
                         type: "success",
-                        text: "Succesfully Saved",
+                        text: "Your changes have been saved but not submitted to GRIIDC",
                         timeout: 4000,
                         modal: false,
                         animation: {
