@@ -55,7 +55,7 @@ class ManuallyMarkRemotelyHostedCommand extends ContainerAwareCommand
         $this->output = $output;
 
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
-        $datasets = $entityManager->getRepository('Pelagos\Entity\Dataset')->findBy(array('udi' => 'A1.x801.000:0014'));
+        $datasets = $entityManager->getRepository('Pelagos\Entity\Dataset')->findBy(array('udi' => 'A1.x801.000:0018'));
         $dataset = $datasets[0];
 
         if (!($dataset instanceof Dataset)) {
@@ -69,7 +69,7 @@ class ManuallyMarkRemotelyHostedCommand extends ContainerAwareCommand
 
         $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
         $entityManager->persist($datasetSubmission);
-        $entityManager->persist($dataset);
+        $entityManager->flush();
 
         return 0;
     }
