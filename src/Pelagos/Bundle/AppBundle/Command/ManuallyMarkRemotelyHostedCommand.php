@@ -4,6 +4,7 @@ namespace Pelagos\Bundle\AppBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use Pelagos\Entity\Dataset;
@@ -32,7 +33,8 @@ class ManuallyMarkRemotelyHostedCommand extends ContainerAwareCommand
     {
         $this
             ->setName('dataset-submission:set-remotely-hosted')
-            ->setDescription('Manually set a dataset submission as Remotely Hosted.');
+            ->setDescription('Manually set a dataset submission as Remotely Hosted.')
+            ->addArgument('UDI', InputArgument::REQUIRED, 'What is the UDI of the dataset submission\'s dataset?');
     }
 
     /**
@@ -48,19 +50,17 @@ class ManuallyMarkRemotelyHostedCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // This command takes no input.
-        unset($input);
 
-        // Save output object for use in other methods.
-        $this->output = $output;
+        $udi = $input->getArgument('UDI');
 
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
-        $datasets = $entityManager->getRepository('Pelagos\Entity\Dataset')->findBy(array('udi' => 'A1.x801.000:0018'));
-        $dataset = $datasets[0];
+        $datasets = $entityManager->getRepository('Pelagos\Entity\Dataset')->findBy(array('udi' => $udi));
 
-        if (!($dataset instanceof Dataset)) {
-            throw new \Exception('Could not find dataset.');
+        if (count($datasets) == 0) {
+            throw new \Exception('Could not find a dataset with the udi provided.');
         }
+
+        $dataset = $datasets[0];
 
         $datasetSubmission = $dataset->getDatasetSubmission();
         if (!($datasetSubmission instanceof DatasetSubmission)) {
@@ -70,6 +70,10 @@ class ManuallyMarkRemotelyHostedCommand extends ContainerAwareCommand
         $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
         $entityManager->persist($datasetSubmission);
         $entityManager->flush();
+        $output->writeln("The dataset submission for dataset with UDI $udi has now been marked at remotely hosted.");
+
+        // Save output object for use in other methods.
+        $this->output = $output;
 
         return 0;
     }
