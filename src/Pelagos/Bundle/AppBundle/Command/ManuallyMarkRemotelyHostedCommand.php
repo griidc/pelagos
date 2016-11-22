@@ -10,7 +10,7 @@ use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 
 /**
- * Notify holders of accounts with soon to expire or expired passwords.
+ * Mark dataset's dataset submission as remotely hosted, as identified by hardcoded UDI.
  *
  * @see ContainerAwareCommand
  */
