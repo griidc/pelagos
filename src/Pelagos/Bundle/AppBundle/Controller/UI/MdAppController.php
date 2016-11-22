@@ -144,7 +144,7 @@ class MdAppController extends UIController
      * @Route("/change-metadata-status/{id}")
      * @Method("POST")
      *
-     * @return void
+     * @return Response
      */
     public function changeMetadataStatusAction(Request $request, $id)
     {
@@ -175,8 +175,7 @@ class MdAppController extends UIController
             }
         }
         $this->get('session')->getFlashBag()->add('notice', $message);
-        $url = $this->generateUrl('pelagos_app_ui_mdapp_default');
-        header("location: $url");
+        return $this->redirectToRoute('pelagos_app_ui_mdapp_default');
     }
 
     /**
