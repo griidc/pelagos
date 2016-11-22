@@ -496,7 +496,7 @@ class DatasetSubmission extends Entity
      *
      * @see RESTRICTIONS class constant for valid values.
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="text", nullable=false)
      */
     protected $restrictions;
 
@@ -887,6 +887,7 @@ class DatasetSubmission extends Entity
      */
     public function __construct(Entity $entity = null)
     {
+        $this->setRestrictions(self::RESTRICTION_NONE);
         $this->datasetContacts = new ArrayCollection;
         $this->metadataContacts = new ArrayCollection;
         if ($entity instanceof DIF) {
