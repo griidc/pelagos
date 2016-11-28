@@ -498,7 +498,7 @@ class DatasetSubmission extends Entity
      *
      * @ORM\Column(type="text", nullable=false)
      */
-    protected $restrictions;
+    protected $restrictions = self::RESTRICTION_NONE;
 
     /**
      * The DOI for this dataset.
@@ -887,7 +887,6 @@ class DatasetSubmission extends Entity
      */
     public function __construct(Entity $entity = null)
     {
-        $this->setRestrictions(self::RESTRICTION_NONE);
         $this->datasetContacts = new ArrayCollection;
         $this->metadataContacts = new ArrayCollection;
         if ($entity instanceof DIF) {
