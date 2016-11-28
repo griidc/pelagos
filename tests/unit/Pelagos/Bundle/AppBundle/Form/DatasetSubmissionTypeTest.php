@@ -62,6 +62,10 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
     public function testSubmitNoData()
     {
         $this->form->submit(array());
+
+        // Set this to null for purposes of this test.
+        $this->datasetSubmission->setRestrictions(null);
+
         // Make sure an empty form does not change any default values.
         $this->assertEquals($this->datasetSubmission, $this->form->getData());
     }
