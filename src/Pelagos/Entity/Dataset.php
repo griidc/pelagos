@@ -602,9 +602,6 @@ class Dataset extends Entity
                         case DatasetSubmission::RESTRICTION_NONE:
                             $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE;
                             break;
-                        case DatasetSubmission::RESTRICTION_APPROVAL:
-                            $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL;
-                            break;
                         case DatasetSubmission::RESTRICTION_RESTRICTED:
                             $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED;
                             break;
@@ -620,9 +617,6 @@ class Dataset extends Entity
                     switch ($this->getDatasetSubmission()->getRestrictions()) {
                         case DatasetSubmission::RESTRICTION_NONE:
                             $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED;
-                            break;
-                        case DatasetSubmission::RESTRICTION_APPROVAL:
-                            $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL_REMOTELY_HOSTED;
                             break;
                         case DatasetSubmission::RESTRICTION_RESTRICTED:
                             $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED;

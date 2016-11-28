@@ -52,11 +52,6 @@ class DatasetSubmission extends Entity
     const RESTRICTION_NONE = 'None';
 
     /**
-     * Indicates the dataset requires author's approval to be downloaded.
-     */
-    const RESTRICTION_APPROVAL = 'Approval';
-
-    /**
      * Indicates the dataset may only be downloaded by the submitter.
      */
     const RESTRICTION_RESTRICTED = 'Restricted';
@@ -66,7 +61,6 @@ class DatasetSubmission extends Entity
      */
     const RESTRICTIONS = array(
         self::RESTRICTION_NONE => 'None',
-        self::RESTRICTION_APPROVAL => 'Requires Author\'s Approval',
         self::RESTRICTION_RESTRICTED => 'Restricted',
     );
 
@@ -208,11 +202,6 @@ class DatasetSubmission extends Entity
     const AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED = 5;
 
     /**
-     * The dataset is marked as available to users with approval, but is remotely hosted.
-     */
-    const AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL_REMOTELY_HOSTED = 6;
-
-    /**
      * The dataset is marked as publicly available, but is remotely hosted.
      */
     const AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED = 7;
@@ -221,11 +210,6 @@ class DatasetSubmission extends Entity
      * The dataset is restricted to author use only.
      */
     const AVAILABILITY_STATUS_RESTRICTED = 8;
-
-    /**
-     * The dataset is available to users with approval.
-     */
-    const AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL = 9;
 
     /**
      * The dataset is publicly available.
@@ -898,11 +882,90 @@ class DatasetSubmission extends Entity
      * Constructor.
      *
      * Initializes collections to empty collections.
+     *
+     * @param Entity $entity A DIF or DatasetSubmission to base this DatasetSubmission on.
      */
-    public function __construct()
+    public function __construct(Entity $entity = null)
     {
         $this->datasetContacts = new ArrayCollection;
         $this->metadataContacts = new ArrayCollection;
+        if ($entity instanceof DIF) {
+            // Populate from DIF
+            $this->setDataset($entity->getDataset());
+            $this->setTitle($entity->getTitle());
+            $this->setAbstract($entity->getAbstract());
+            $this->setSuppParams($entity->getVariablesObserved());
+            $this->setSpatialExtent($entity->getSpatialExtentGeometry());
+            $this->setSpatialExtentDescription($entity->getSpatialExtentDescription());
+            // Add DIF primary point of contact as dataset contact.
+            $datasetContact = new PersonDatasetSubmissionDatasetContact();
+            $datasetContact->setRole('pointOfContact');
+            $datasetContact->setPerson($entity->getPrimaryPointOfContact());
+            $this->addDatasetContact($datasetContact);
+            // Add DIF primary point of contact as metadata contact.
+            $metadataContact = new PersonDatasetSubmissionMetadataContact();
+            $metadataContact->setRole('pointOfContact');
+            $metadataContact->setPerson($entity->getPrimaryPointOfContact());
+            $this->addMetadataContact($metadataContact);
+        } elseif ($entity instanceof DatasetSubmission) {
+            // Increment the sequence.
+            $this->setSequence($entity->getSequence() + 1);
+            // Populate from original Dataset Submission.
+            $this->setDataset($entity->getDataset());
+            $this->setTitle($entity->getTitle());
+            $this->setShortTitle($entity->getShortTitle());
+            $this->setAbstract($entity->getAbstract());
+            $this->setAuthors($entity->getAuthors());
+            $this->setRestrictions($entity->getRestrictions());
+            $this->setDoi($entity->getDoi());
+            $this->setDatasetFileTransferType($entity->getDatasetFileTransferType());
+            $this->setDatasetFileUri($entity->getDatasetFileUri());
+            $this->setDatasetFileTransferStatus($entity->getDatasetFileTransferStatus());
+            $this->setDatasetFileName($entity->getDatasetFileName());
+            $this->setDatasetFileSize($entity->getDatasetFileSize());
+            $this->setDatasetFileMd5Hash($entity->getDatasetFileMd5Hash());
+            $this->setDatasetFileSha1Hash($entity->getDatasetFileSha1Hash());
+            $this->setDatasetFileSha256Hash($entity->getDatasetFileSha256Hash());
+            $this->setMetadataFileTransferType($entity->getMetadataFileTransferType());
+            $this->setMetadataFileUri($entity->getMetadataFileUri());
+            $this->setMetadataFileTransferStatus($entity->getMetadataFileTransferStatus());
+            $this->setMetadataFileName($entity->getMetadataFileName());
+            $this->setMetadataFileSha256Hash($entity->getMetadataFileSha256Hash());
+            $this->setMetadataStatus($entity->getMetadataStatus());
+            $this->setReferenceDate($entity->getReferenceDate());
+            $this->setReferenceDateType($entity->getReferenceDateType());
+            $this->setPurpose($entity->getPurpose());
+            $this->setSuppParams($entity->getSuppParams());
+            $this->setSuppMethods($entity->getSuppMethods());
+            $this->setSuppInstruments($entity->getSuppInstruments());
+            $this->setSuppSampScalesRates($entity->getSuppSampScalesRates());
+            $this->setSuppErrorAnalysis($entity->getSuppErrorAnalysis());
+            $this->setSuppProvenance($entity->getSuppProvenance());
+            $this->setThemeKeywords($entity->getThemeKeywords());
+            $this->setPlaceKeywords($entity->getPlaceKeywords());
+            $this->setTopicKeywords($entity->getTopicKeywords());
+            $this->setSpatialExtent($entity->getSpatialExtent());
+            $this->setSpatialExtentDescription($entity->getSpatialExtentDescription());
+            $this->setTemporalExtentDesc($entity->getTemporalExtentDesc());
+            $this->setTemporalExtentBeginPosition($entity->getTemporalExtentBeginPosition());
+            $this->setTemporalExtentEndPosition($entity->getTemporalExtentEndPosition());
+            $this->setDistributionFormatName($entity->getDistributionFormatName());
+            $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
+            // Copy the original Dataset Submission's dataset contacts.
+            foreach ($entity->getDatasetContacts() as $datasetContact) {
+                $newDatasetContact = new PersonDatasetSubmissionDatasetContact();
+                $newDatasetContact->setRole($datasetContact->getRole());
+                $newDatasetContact->setPerson($datasetContact->getPerson());
+                $this->addDatasetContact($newDatasetContact);
+            }
+            // Copy the original Dataset Submission's metadata contacts.
+            foreach ($entity->getMetadataContacts() as $metadataContact) {
+                $newMetadataContact = new PersonDatasetSubmissionMetadataContact();
+                $newMetadataContact->setRole($metadataContact->getRole());
+                $newMetadataContact->setPerson($metadataContact->getPerson());
+                $this->addMetadataContact($newMetadataContact);
+            }
+        }
     }
 
     /**

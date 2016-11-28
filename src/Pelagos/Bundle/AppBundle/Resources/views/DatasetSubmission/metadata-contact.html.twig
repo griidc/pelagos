@@ -12,7 +12,7 @@
 						The name of the individual responsible for maintaining the metadata, typically the scientists or researcher who created the dataset.
 					</div>
 				</span>
-                <label for="metadatacontact">Name</label>
+                <label for="metadatacontact">Person</label>
                 <select class="contactperson" id="metadatacontact" name="{{contact.person.vars.full_name}}" required="required">
                     {% if contact.vars.data.person|default %}
                     <option selected value="{{contact.vars.data.person.id}}">
@@ -21,18 +21,7 @@
                     {% endif %}
                 </select>
                 <label for="metadatacontact" class="error"></label>
-                {{ form_row(contact.person.firstName, {'attr': {'disabled': 'true'} , 'required': false}) }}
-                {{ form_row(contact.person.lastName, {'attr': {'disabled': 'true'} , 'required': false}) }}
-                {{ form_row(contact.person.emailAddress, {'attr': {'disabled': 'true'} , 'required': false}) }}
-                {{ form_row(contact.person.phoneNumber, {'attr': {'disabled': 'true'} , 'required': false}) }}
-                {{ form_row(contact.person.deliveryPoint, {'attr': {'disabled': 'true'} , 'required': false}) }}
-                {{ form_row(contact.person.city, {'attr': {'disabled': 'true'} , 'required': false}) }}
-                {{ form_row(contact.person.administrativeArea, {'attr': {'disabled': 'true'} , 'required': false}) }}
-                {{ form_row(contact.person.postalCode, {'attr': {'disabled': 'true'} , 'required': false}) }}
-                {{ form_row(contact.person.country, {'attr': {'disabled': 'true'} , 'required': false}) }}
-                {{ form_row(contact.person.url, {'attr': {'disabled': 'true'} , 'required': false}) }}
-                {{ form_row(contact.person.organization, {'attr': {'disabled': 'true'} , 'required': false}) }}
-                {{ form_row(contact.person.position, {'attr': {'disabled': 'true'} , 'required': false}) }}
+                {% include "PelagosAppBundle:DatasetSubmission:contact-information.html.twig" %}
             </td>
         </tr>
         <tr>

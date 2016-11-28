@@ -153,22 +153,40 @@ class MdAppController extends UIController
         $from = $dataset->getMetadataStatus();
         $udi = $dataset->getUdi();
         $to = $request->request->get('to');
+        $error = null;
         if (null !== $to) {
-            $datasetSubmission = $dataset->getDatasetSubmission();
-            $datasetSubmission->setMetadataStatus($to);
-            $entityHandler->update($datasetSubmission);
-            $entityHandler->update($dataset);
-            $mdappLogger->writeLog($this->getUser()->getUsername() . " has changed metadata status for $udi ($from -> $to) (mdapp msg)");
+            if ('Accepted' == $to) {
+                if ($dataset->getMetadata() instanceof Metadata) {
+                    $datasetSubmission = $dataset->getDatasetSubmission();
+                    $datasetSubmission->setMetadataStatus($to);
+                    $entityHandler->update($datasetSubmission);
+                    $entityHandler->update($dataset);
+                    $mdappLogger->writeLog($this->getUser()->getUsername() .
+                        " has changed metadata status for $udi ($from -> $to) (mdapp msg)");
+                } else {
+                    $error = 'A dataset can only be placed into the "Accepted" state if ' .
+                        'metadata has been previously uploaded via MDAPP.';
+                }
+            } else {
+                $datasetSubmission = $dataset->getDatasetSubmission();
+                $datasetSubmission->setMetadataStatus($to);
+                $entityHandler->update($datasetSubmission);
+                $entityHandler->update($dataset);
+                $mdappLogger->writeLog($this->getUser()->getUsername() .
+                    " has changed metadata status for $udi ($from -> $to) (mdapp msg)");
+            }
         }
-        return $this->renderUi();
+        return $this->renderUi($error);
     }
 
     /**
      * Render the UI for MDApp.
      *
+     * @param string|null $error Error message to display in template.
+     *
      * @return Response
      */
-    protected function renderUi()
+    protected function renderUi($error = null)
     {
         // If not DRPM, show Access Denied message.  This is simply for
         // display purposes as the security model is enforced on the
@@ -228,6 +246,7 @@ class MdAppController extends UIController
                         Query::HYDRATE_ARRAY
                     ),
                 ),
+                'error' => $error
             )
         );
     }

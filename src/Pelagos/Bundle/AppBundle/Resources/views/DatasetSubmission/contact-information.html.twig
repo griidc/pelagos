@@ -1,0 +1,16 @@
+<div class="contactinformation">
+    <span field="position">{{ contact.vars.data.person.position|default }}</span><br />
+    <span field="organization">{{ contact.vars.data.person.organization|default }}</span><br />
+    <span field="deliveryPoint">{{ contact.vars.data.person.deliveryPoint|default }}</span><br />
+    {%if contact.vars.data.person.city|default != '' and contact.vars.data.person.city != '' %}
+        <span field="city">{{ contact.vars.data.person.city }},</span>
+    {% else %}
+        <span field="city"></span>
+    {% endif %}
+    <span field="administrativeArea"> {{ contact.vars.data.person.administrativeArea|default }}</span>
+    <span field="postalCode"> {{ contact.vars.data.person.postalCode|default }}</span><br />
+    <span field="country"> {{ contact.vars.data.person.country|default }}</span><br />
+    <span field="phoneNumber"> {{ contact.vars.data.person.phoneNumber|default }}</span><br />
+    <span field="url">{{ contact.vars.data.person.url|default }}</span> <br />
+</div>
+

@@ -122,36 +122,21 @@ class DatasetSubmissionController extends UIController
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
                     // We didn't have a saved or submitted dataset submission, so disable discard button.
                     $enableDiscard = false;
-                    // This is the first submission, so create a new one.
-                    $datasetSubmission = new DatasetSubmission;
-
-                    $datasetSubmission->setDataset($dataset);
-
+                    // This is the first submission, so create a new one based on the DIF.
+                    $datasetSubmission = new DatasetSubmission($dif);
                     $datasetSubmission->setSequence(1);
 
-                    $datasetSubmission->setTitle($dif->getTitle());
-                    $datasetSubmission->setAbstract($dif->getAbstract());
-
-                    $datasetSubmission->setSuppParams($dif->getVariablesObserved());
-                    $datasetSubmission->setSpatialExtent($dif->getSpatialExtentGeometry());
-                    $datasetSubmission->setSpatialExtentDescription($dif->getSpatialExtentDescription());
-
+                    // If we have metadata.
                     if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
+                        // Clear dataset and metadata contacts.
+                        $datasetSubmission->getDatasetContacts()->clear();
+                        $datasetSubmission->getMetadataContacts()->clear();
+                        // Populate from metadata.
                         ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
                             $datasetSubmission->getDataset()->getMetadata()->getXml(),
                             $datasetSubmission,
                             $this->entityHandler
                         );
-                    } else {
-                        $datasetContact = new PersonDatasetSubmissionDatasetContact();
-                        $datasetContact->setRole('pointOfContact');
-                        $datasetContact->setPerson($dif->getPrimaryPointOfContact());
-                        $datasetSubmission->addDatasetContact($datasetContact);
-
-                        $metadataContact = new PersonDatasetSubmissionMetadataContact();
-                        $metadataContact->setRole('pointOfContact');
-                        $metadataContact->setPerson($dif->getPrimaryPointOfContact());
-                        $datasetSubmission->addMetadataContact($metadataContact);
                     }
 
                     try {
@@ -162,43 +147,22 @@ class DatasetSubmissionController extends UIController
                 } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
                     // We only have a submitted dataset submission, so disable discard button.
                     $enableDiscard = false;
-                    // The latest submission is complete.
-                    $sequence = $datasetSubmission->getSequence();
-                    $datasetSubmission = clone $datasetSubmission;
-                    $datasetSubmission->setSequence(++$sequence);
+                    // The latest submission is complete, so create new one based on it.
+                    $datasetSubmission = new DatasetSubmission($datasetSubmission);
 
+                    // If we have accepted metadata.
                     if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata
                         and $datasetSubmission->getDataset()->getMetadataStatus()
                             == DatasetSubmission::METADATA_STATUS_ACCEPTED) {
-                        foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
-                            $datasetSubmission->removeDatasetContact($datasetContact);
-                        }
-
-                        foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
-                            $datasetSubmission->removeMetadataContact($metadataContact);
-                        }
-
+                        // Clear dataset and metadata contacts.
+                        $datasetSubmission->getDatasetContacts()->clear();
+                        $datasetSubmission->getMetadataContacts()->clear();
+                        // Populate from metadata.
                         ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
                             $datasetSubmission->getDataset()->getMetadata()->getXml(),
                             $datasetSubmission,
                             $this->entityHandler
                         );
-                    } else {
-                        foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
-                            $datasetSubmission->removeDatasetContact($datasetContact);
-                            $newDatasetContact = new PersonDatasetSubmissionDatasetContact();
-                            $newDatasetContact->setRole($datasetContact->getRole());
-                            $newDatasetContact->setPerson($datasetContact->getPerson());
-                            $datasetSubmission->addDatasetContact($newDatasetContact);
-                        }
-
-                        foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
-                            $datasetSubmission->removeMetadataContact($metadataContact);
-                            $newMetadataContact = new PersonDatasetSubmissionMetadataContact();
-                            $newMetadataContact->setRole($metadataContact->getRole());
-                            $newMetadataContact->setPerson($metadataContact->getPerson());
-                            $datasetSubmission->addMetadataContact($newMetadataContact);
-                        }
                     }
 
                     try {
@@ -228,16 +192,6 @@ class DatasetSubmissionController extends UIController
     public function postAction(Request $request, $id = null)
     {
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
-
-        if ($datasetSubmission instanceof DatasetSubmission) {
-            foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
-                $datasetSubmission->removeDatasetContact($datasetContact);
-            }
-
-            foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
-                $datasetSubmission->removeMetadataContact($metadataContact);
-            }
-        }
 
         $form = $this->get('form.factory')->createNamed(
             null,
@@ -272,6 +226,12 @@ class DatasetSubmissionController extends UIController
             }
 
             $this->entityHandler->update($datasetSubmission);
+            foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+                $this->entityHandler->update($datasetContact);
+            }
+            foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+                $this->entityHandler->update($metadataContact);
+            }
 
             $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
                 $datasetSubmission,

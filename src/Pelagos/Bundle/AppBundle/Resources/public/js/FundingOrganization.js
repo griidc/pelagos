@@ -27,7 +27,7 @@ $(document).ready(function()
         method: "PUT",
         multipart: false,
         done: function (e, data) {
-            $("#fundingOrganizationLogo img").attr("src", data.url);
+            $("#fundingOrganizationLogo img").attr("src", data.url + "?" + new Date().getTime());
         }
     }).prop("disabled", !$.support.fileInput)
     .parent().addClass($.support.fileInput ? undefined : "disabled");

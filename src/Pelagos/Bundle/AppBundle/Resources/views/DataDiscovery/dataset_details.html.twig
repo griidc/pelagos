@@ -27,12 +27,6 @@
             {% else %}
                 This dataset is restricted for author use only.
             {% endif %}
-        {% elseif dataset.datasetSubmission.restrictions | default == "Approval" %}
-            {% if dataset.datasetSubmission.datasetFileTransferStatus == 'RemotelyHosted' and not dataset.datasetSubmission.datasetFileUri matches '!^https?://data.gulfresearchinitiative.org!' %}
-                This dataset is hosted by an external repository and has been marked as requiring author approval for download. Please contact the external repository for access to this dataset.
-            {% else %}
-                This dataset can only be downloaded with author approval. Please contact the dataset Point of Contact to access this dataset.
-            {% endif %}
         {% else %}
             unknown
         {% endif %}

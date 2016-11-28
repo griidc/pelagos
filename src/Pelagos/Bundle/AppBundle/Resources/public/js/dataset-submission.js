@@ -142,10 +142,10 @@ $(function() {
     });
 
     $("#btn-save").click(function() {
-        saveDatasetSubmission();
+        saveDatasetSubmission(true);
     });
 
-    function saveDatasetSubmission()
+    function saveDatasetSubmission(notify)
     {
         var datasetSubmissionId = $("form[datasetsubmission]").attr("datasetsubmission");
         var url = Routing.generate("pelagos_api_dataset_submission_patch");
@@ -167,32 +167,36 @@ $(function() {
                 $("#btn-discard").button("enable");
                 formHash = $("#regForm").serialize();
                 $("#regForm").prop("unsavedChanges", false);
-                var n = noty(
-                {
-                    layout: "top",
-                    theme: "relax",
-                    type: "success",
-                    text: "Succesfully Saved",
-                    timeout: 1000,
-                    modal: false,
-                    animation: {
-                        open: "animated bounceIn", // Animate.css class names
-                        close: "animated fadeOut", // Animate.css class names
-                        easing: "swing", // unavailable - no need
-                        speed: 500 // unavailable - no need
-                    }
-                });
+                if (notify) {
+                    var n = noty(
+                    {
+                        layout: "top",
+                        theme: "relax",
+                        type: "success",
+                        text: "Your changes have been saved but not submitted to GRIIDC",
+                        timeout: 4000,
+                        modal: false,
+                        animation: {
+                            open: "animated fadeIn", // Animate.css class names
+                            close: "animated fadeOut", // Animate.css class names
+                            easing: "swing", // unavailable - no need
+                            speed: 500 // unavailable - no need
+                        }
+                    });
+                }
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 var message = jqXHR.responseJSON == null ? errorThrown: jqXHR.responseJSON.message;
-                var n = noty(
-                {
-                    layout: "top",
-                    theme: "relax",
-                    type: "error",
-                    text: message,
-                    modal: true,
-                });
+                if (notify) {
+                    var n = noty(
+                    {
+                        layout: "top",
+                        theme: "relax",
+                        type: "error",
+                        text: message,
+                        modal: true,
+                    });
+                }
             }
         });
 
@@ -249,18 +253,26 @@ $(function() {
     buildKeywordLists();
 
     $(".contactperson").on("select2:selecting", function(e) {
+        $(this).parent().find(".contactinformation span").text("");
         var id = e.params.args.data.id;
         var url = Routing.generate("pelagos_api_people_get", {"id" : id});
         var selected = $(this);
         jQuery.get(url, function(data) {
             $.each(data, function(field, value) {
-                selected.parent().find("[name*=" + field + "]").val(value);
+                if (null === value) {
+                    value='';
+                }
+                if (field == "city" && value) {
+                    selected.parent().find("[field=" + field + "]").text(value + ',')
+                } else {
+                    selected.parent().find("[field=" + field + "]").text(value);
+                }
             });
         });
     });
 
     $(".contactperson").on("select2:unselecting", function(e) {
-        $(this).siblings().find(":input").val("")
+        $(this).parent().find(".contactinformation span").text("");
     });
 
     // Direct Upload
@@ -546,13 +558,20 @@ $(function() {
         }
     );
 
-    if ($("#spatialExtentDescription").val()!="" && $("#spatialExtent").val()=="") {
+    if ($("#spatialExtent").val() != ""
+        && (
+            $("#temporalExtentDesc").val() != ""
+            || $("#temporalExtentBeginPosition").val() != ""
+            || $("#temporalExtentEndPosition").val() != ""
+           )
+        ) {
+        // if we have spatial and temporal extents, show spatial and temporal extent
+        geowizard.haveSpatial(false);
+    } else if ($("#spatialExtentDescription").val() != "") {
+        // else if we have a description, show description
         geowizard.haveSpatial(true);
     } else {
-        geowizard.haveSpatial(false);
-    }
-
-    if ($("#spatialExtent").val()!="") {
+        // otherwise show spatial and temporal extent
         geowizard.haveSpatial(false);
     }
 
