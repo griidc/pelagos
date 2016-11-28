@@ -99,6 +99,11 @@ $(function() {
 
     $("#btn-upload").qtip();
     $("#btn-save").qtip();
+    $("#btn-discard").qtip();
+
+    $("#btn-discard").click(function() {
+        $("#discardForm").submit();
+    });
 
     $("#btn-previous").click(function() {
         var activeTab = $("#dtabs").tabs("option","active");
@@ -159,6 +164,7 @@ $(function() {
             method: "PATCH",
             data: formData,
             success: function(data, textStatus, jqXHR) {
+                $("#btn-discard").button("enable");
                 formHash = $("#regForm").serialize();
                 $("#regForm").prop("unsavedChanges", false);
                 if (notify) {
