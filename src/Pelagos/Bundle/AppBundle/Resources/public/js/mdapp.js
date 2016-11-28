@@ -24,6 +24,14 @@ $(document).ready(function(){
          }
     } );
 
+    $("table.display").on("draw.dt", function () {
+        initJiraLinks();
+    });
+
+    initJiraLinks();
+});
+
+function initJiraLinks() {
     $(".jlink").click(function(){
         // store original value in cookie for .fail later
         var udi = $(this).parents("tr").children(".udiTD").text();
@@ -86,7 +94,7 @@ $(document).ready(function(){
             alert("Please post a Jira ticket.");
         }
     });
-});
+}
 
 function clearStatusMessages() {
     $("#messages").fadeOut("fast");

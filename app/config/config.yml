@@ -248,7 +248,7 @@ fos_elastica:
                                 datasetFileTransferStatus: ~
                                 datasetFileUri: ~
                                 datasetFileSize: ~
-                                doi: ~
+                                doi: { boost: 3 }
                                 restrictions: ~
                         geometry:
                             type: 'string'

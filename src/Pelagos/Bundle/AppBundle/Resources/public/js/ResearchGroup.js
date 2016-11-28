@@ -36,7 +36,7 @@ $(document).ready(function()
         method: "PUT",
         multipart: false,
         done: function (e, data) {
-            $("#researchGroupLogo img").attr("src", data.url);
+            $("#researchGroupLogo img").attr("src", data.url + "?" + new Date().getTime());
         }
     }).prop("disabled", !$.support.fileInput)
         .parent().addClass($.support.fileInput ? undefined : "disabled");
