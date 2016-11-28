@@ -770,4 +770,41 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             $this->assertInternalType('string', $value);
         }
     }
+
+    /**
+     * Test submitting a Datatset Submission.
+     *
+     * @return void
+     */
+    public function testSubmit()
+    {
+        // Check for expected values for an incomplete submission.
+        $this->assertEquals(
+            DatasetSubmission::STATUS_INCOMPLETE,
+            $this->datasetSubmission->getStatus()
+        );
+        $this->assertEquals(
+            DatasetSubmission::METADATA_STATUS_NONE,
+            $this->datasetSubmission->getMetadataStatus()
+        );
+        $this->assertNull($this->datasetSubmission->getSubmissionTimeStamp());
+        $this->datasetSubmission->setDataset($this->mockDataset);
+
+        // Submit it.
+        $this->datasetSubmission->submit();
+
+        // Check for expected values for a complete submission.
+        $this->assertEquals(
+            DatasetSubmission::STATUS_COMPLETE,
+            $this->datasetSubmission->getStatus()
+        );
+        $this->assertEquals(
+            DatasetSubmission::METADATA_STATUS_SUBMITTED,
+            $this->datasetSubmission->getMetadataStatus()
+        );
+        $this->assertInstanceOf(
+            \DateTime::class,
+            $this->datasetSubmission->getSubmissionTimeStamp()
+        );
+    }
 }

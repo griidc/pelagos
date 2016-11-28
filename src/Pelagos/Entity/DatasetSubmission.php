@@ -879,6 +879,15 @@ class DatasetSubmission extends Entity
     protected $fileDecompressionTechnique;
 
     /**
+     * When this Dataset Submission was submitted.
+     *
+     * @var \DateTime
+     *
+     * @ORM\Column(type="datetimetz", nullable=true)
+     */
+    protected $submissionTimeStamp;
+
+    /**
      * Constructor.
      *
      * Initializes collections to empty collections.
@@ -1004,6 +1013,7 @@ class DatasetSubmission extends Entity
         $this->status = self::STATUS_COMPLETE;
         $this->metadataStatus = self::METADATA_STATUS_SUBMITTED;
         $this->getDataset()->setDatasetSubmission($this);
+        $this->submissionTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
     /**
@@ -2126,6 +2136,16 @@ class DatasetSubmission extends Entity
     public function getFileDecompressionTechnique()
     {
         return $this->fileDecompressionTechnique;
+    }
+
+    /**
+     * Get the submission time stamp.
+     *
+     * @return \DateTime
+     */
+    public function getSubmissionTimeStamp()
+    {
+        return $this->submissionTimeStamp;
     }
 
     /**
