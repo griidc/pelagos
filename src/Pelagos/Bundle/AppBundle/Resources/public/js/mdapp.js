@@ -1,6 +1,11 @@
 var $ = jQuery.noConflict();
 
+//FOUC preventor
+$("html").hide();
+
 $(document).ready(function(){
+    $("html").show();
+
     if ($.cookie("activetab") == null) {
         $.cookie("activetab", 0);
     }
