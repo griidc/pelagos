@@ -1,5 +1,10 @@
+{% if alreadyExists %}
+<div class="messages error">
+    The dataset already has a DOI assigned. For more information please email <a href="mailto:griidc@gomri.org">griidc@gomri.org</a>.
+</div>
+{% endif %}
 
-{% if isValid and isSubmitted  and doiRequest.status == constant('Pelagos\\Entity\\DoiRequest::STATUS_SUBMITTED') %}
+{% if not alreadyExists and isValid and isSubmitted  and doiRequest.status == constant('Pelagos\\Entity\\DoiRequest::STATUS_SUBMITTED') %}
 <div class="messages status">
     <h2 class="element-invisible">Status message</h2>
     Thank you for your submission. You will be contacted by GRIIDC shortly with your DOI. Please email <a href="mailto:griidc@gomri.org?subject=Registration Form">griidc@gomri.org</a> if you have any questions.
@@ -42,7 +47,7 @@
             {{ form_start(form, {'action': path('pelagos_app_ui_doirequest_default', {'id' : doiRequest.id|default}), 'method': 'POST'}) }}
                 <input type="hidden" id="id" value="{{doiRequest.id|default}}">
                 <input type="hidden" id="status" value="{{doiRequest.status|default}}">
-            
+
                 <fieldset id="qurl">
                     <span class="helpSection">
                         {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
@@ -67,7 +72,7 @@
                         {% endimage %}
                         <div class="tooltiptext">
                             <p>
-                                <strong>Creator(s):</strong> The primary scientist or researcher in producing the data, or the authors of the publication in priority order. The names may include a corporate, institutions, or personal name. In personal names, list family name before given name, as in Darwin, Charles. Non-roman names should be transliterated according to the ALA-LC schemes. <a href="http://www.loc.gov/catdir/cpso/roman.html" target="_blank"><em>(http://www.loc.gov/catdir/cpso/roman.html)</em></a>. 
+                                <strong>Creator(s):</strong> The primary scientist or researcher in producing the data, or the authors of the publication in priority order. The names may include a corporate, institutions, or personal name. In personal names, list family name before given name, as in Darwin, Charles. Non-roman names should be transliterated according to the ALA-LC schemes. <a href="http://www.loc.gov/catdir/cpso/roman.html" target="_blank"><em>(http://www.loc.gov/catdir/cpso/roman.html)</em></a>.
                             </p>
                         </div>
                     </span>
@@ -101,7 +106,7 @@
                         {% endimage %}
                         <div class="tooltiptext">
                             <p>
-                                <strong>Publisher:</strong> A holder of the data (e.g., GRIIDC) or the institution responsible for making the data available to the public. 
+                                <strong>Publisher:</strong> A holder of the data (e.g., GRIIDC) or the institution responsible for making the data available to the public.
                             </p>
                         </div>
                     </span>

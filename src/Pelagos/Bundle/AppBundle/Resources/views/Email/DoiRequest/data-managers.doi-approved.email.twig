@@ -6,7 +6,7 @@ Dear {{ recipient.firstName }} {{ recipient.lastName }},<br>
 <p>
     The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has
     approved the request for a Digital Object Identifier (DOI) for the URL
-    <a href="{{ doiRequest.url }}">{{ doiRequest.doi }}</a>. This request was submitted by
+    <a href="{{ doiRequest.url }}">{{ doiRequest.url }}</a> for {{ doiRequest.doi }}. This request was submitted by
     {{ doiRequest.creator.firstName }} {{ doiRequest.creator.lastName }} who is a member of {{ doiRequest.creator.researchGroupNames | join(', ') }}.
 </p>
 
@@ -31,7 +31,7 @@ Dear {{ recipient.firstName }} {{ recipient.lastName }},
 
 The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has
 approved the request for a Digital Object Identifier (DOI) for the the URL
-{{ doiRequest.url }} for DOI {{ doiRequest.doi }}. This request was submitted by {{ doiRequest.creator.firstName }} {{ doiRequest.creator.lastName }}
+{{ doiRequest.url }} for {{ doiRequest.doi }}. This request was submitted by {{ doiRequest.creator.firstName }} {{ doiRequest.creator.lastName }}
 who is a member of {{ doiRequest.creator.researchGroupNames | join(', ') }}.
 
 

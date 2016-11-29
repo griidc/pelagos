@@ -27,9 +27,6 @@
         add_js(
             [
                 '//cdn.datatables.net/1.10.7/js/jquery.dataTables.js',
-                '//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',
-                '//maps.google.com/maps/api/js?v=3',
-                '/includes/geoviz/geoviz.js',
             ]
         )
     }}
@@ -46,6 +43,11 @@
 {% endblock %}
 
 {% block body %}
+
+{% for flashMessage in app.session.flashbag.get('notice') %}
+    <div class="messages status">{{ flashMessage }}</div>
+{% endfor %}
+
 <script type="text/javascript">var issueTrackingBaseUrl="{{ issueTrackingBaseUrl }}";</script>
 <div style="background: #fff2e8; padding:0px;" id="tabs">
   <div class="ui-tabs">
@@ -110,19 +112,25 @@
                                         <option value="Submitted" SELECTED>Submitted</option>
                                         <option value="InReview" style="background-color: yellow;">InReview</option>
                                         <option value="SecondCheck">SecondCheck</option>
-                                        <option value="Accepted">Accepted</option>
+                                        {% if dta.metadata.id|default %}
+                                            <option value="Accepted">Accepted</option>
+                                        {% endif %}
                                         <option value="BackToSubmitter">BackToSubmitter</option>
                                     {% elseif sname == 'inreview' %}
                                         <option value="Submitted">Submitted</option>
                                         <option value="InReview" SELECTED>InReview</option>
                                         <option value="SecondCheck" style="background-color: yellow;">SecondCheck</option>
-                                        <option value="Accepted">Accepted</option>
+                                        {% if dta.metadata.id|default %}
+                                            <option value="Accepted">Accepted</option>
+                                        {% endif %}
                                         <option value="BackToSubmitter">BackToSubmitter</option>
                                     {% elseif sname == 'secondcheck' %}
                                         <option value="Submitted">Submitted</option>
                                         <option value="SecondCheck" SELECTED>SecondCheck</option>
                                         <option value="InReview">InReview</option>
-                                        <option value="Accepted" style="background-color: yellow;">Accepted</option>
+                                        {% if dta.metadata.id|default %}
+                                            <option value="Accepted" style="background-color: yellow;">Accepted</option>
+                                        {% endif %}
                                         <option value="BackToSubmitter">BackToSubmitter</option>
                                     {% elseif sname == 'accepted' %}
                                         <option value="Submitted">Submitted</option>
@@ -135,12 +143,16 @@
                                         <option value="BackToSubmitter" SELECTED>BackToSubmitter</option>
                                         <option value="InReview" style="background-color: yellow;">InReview</option>
                                         <option value="SecondCheck">SecondCheck</option>
-                                        <option value="Accepted">Accepted</option>
+                                        {% if dta.metadata.id|default %}
+                                            <option value="Accepted">Accepted</option>
+                                        {% endif %}
                                     {% else %}
                                         <option value="Submitted">Submitted</option>
                                         <option value="InReview">InReview</option>
                                         <option value="SecondCheck">SecondCheck</option>
-                                        <option value="Accepted">Accepted</option>
+                                        {% if dta.metadata.id|default %}
+                                            <option value="Accepted">Accepted</option>
+                                        {% endif %}
                                         <option value="BackToSubmitter">BackToSubmitter</option>
                                     {% endif %}
 

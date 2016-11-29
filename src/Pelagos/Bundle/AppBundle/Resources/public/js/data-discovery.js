@@ -111,7 +111,7 @@ function showDatasets(by,id) {
     $.ajax({
         "url": Routing.generate('pelagos_app_ui_datadiscovery_datasets'),
         "data": {
-            "filter": jQuery('#filter-applied').val().replace(/\//g,""),
+            "filter": jQuery('#filter-applied').val(),
             "by": by,
             "id": id,
             "geo_filter": geo_filter

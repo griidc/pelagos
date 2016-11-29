@@ -50,6 +50,7 @@ class DatasetMonitoringController extends UIController
     {
         $fundingCycle = $this->entityHandler->get('Pelagos:FundingCycle', $id);
         $title = $fundingCycle->getName();
+        $pdfFilename = 'Dataset Monitoring-' . date('Y-m-d');
         $researchGroups = $fundingCycle->getResearchGroups();
 
         if ('html2pdf' == $renderer) {
@@ -58,7 +59,7 @@ class DatasetMonitoringController extends UIController
                 array(
                     'researchGroups' => $researchGroups,
                     'header' => $title,
-                    'pdfFilename' => "Dataset Monitoring - $title"
+                    'pdfFilename' => $pdfFilename,
                 )
             );
         } else {
@@ -67,7 +68,7 @@ class DatasetMonitoringController extends UIController
                 array(
                     'researchGroups' => $researchGroups,
                     'header' => $title,
-                    'pdfFilename' => "Dataset Monitoring - $title",
+                    'pdfFilename' => $pdfFilename,
                     'id' => $id,
                 )
             );
@@ -88,13 +89,14 @@ class DatasetMonitoringController extends UIController
     {
         $researchGroup = $this->entityHandler->get('Pelagos:ResearchGroup', $id);
         $title = $researchGroup->getName();
+        $pdfFilename = 'Dataset Monitoring-' . date('Y-m-d');
         if ('html2pdf' == $renderer) {
             return $this->render(
                 'PelagosAppBundle:DatasetMonitoring:pdf.html.twig',
                 array(
                     'researchGroups' => array($researchGroup),
                     'header' => $title,
-                    'pdfFilename' => "Dataset Monitoring - $title"
+                    'pdfFilename' => $pdfFilename,
                 )
             );
         } else {
@@ -103,7 +105,7 @@ class DatasetMonitoringController extends UIController
                 array(
                     'researchGroups' => array($researchGroup),
                     'header' => $title,
-                    'pdfFilename' => "Dataset Monitoring - $title",
+                    'pdfFilename' => $pdfFilename,
                     'id' => $id,
                 )
             );

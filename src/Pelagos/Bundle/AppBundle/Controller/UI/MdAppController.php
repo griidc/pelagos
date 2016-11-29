@@ -5,6 +5,7 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Pelagos\Bundle\AppBundle\Form\MdappType;
 
@@ -153,14 +154,28 @@ class MdAppController extends UIController
         $from = $dataset->getMetadataStatus();
         $udi = $dataset->getUdi();
         $to = $request->request->get('to');
+        $message = null;
         if (null !== $to) {
-            $datasetSubmission = $dataset->getDatasetSubmission();
-            $datasetSubmission->setMetadataStatus($to);
-            $entityHandler->update($datasetSubmission);
-            $entityHandler->update($dataset);
-            $mdappLogger->writeLog($this->getUser()->getUsername() . " has changed metadata status for $udi ($from -> $to) (mdapp msg)");
+            if ('Accepted' == $to and $dataset->getMetadata() instanceof Metadata) {
+                $datasetSubmission = $dataset->getDatasetSubmission();
+                $datasetSubmission->setMetadataStatus($to);
+                $entityHandler->update($datasetSubmission);
+                $entityHandler->update($dataset);
+                $mdappLogger->writeLog($this->getUser()->getUsername() .
+                    " has changed metadata status for $udi ($from -> $to) (mdapp msg)");
+                $message = "Status for $udi has been changed from $from to $to.";
+            } else {
+                $datasetSubmission = $dataset->getDatasetSubmission();
+                $datasetSubmission->setMetadataStatus($to);
+                $entityHandler->update($datasetSubmission);
+                $entityHandler->update($dataset);
+                $mdappLogger->writeLog($this->getUser()->getUsername() .
+                    " has changed metadata status for $udi ($from -> $to) (mdapp msg)");
+                $message = "Status for $udi has been changed from $from to $to.";
+            }
         }
-        return $this->renderUi();
+        $this->get('session')->getFlashBag()->add('notice', $message);
+        return $this->redirectToRoute('pelagos_app_ui_mdapp_default');
     }
 
     /**

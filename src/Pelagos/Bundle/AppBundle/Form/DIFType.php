@@ -211,7 +211,7 @@ class DIFType extends AbstractType
             ))
             ->add('spatialExtentGeometry', HiddenType::class)
             ->add('nationalDataArchiveNODC', CheckboxType::class, array(
-                 'label' => 'National Oceanographic Data Center',
+                 'label' => 'National Centers for Environmental Information',
                  'required' => false,
             ))
             ->add('nationalDataArchiveStoret', CheckboxType::class, array(

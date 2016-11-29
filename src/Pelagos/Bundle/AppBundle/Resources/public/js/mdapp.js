@@ -1,14 +1,19 @@
 var $ = jQuery.noConflict();
 
+//FOUC preventor
+$("html").hide();
+
 $(document).ready(function(){
+    $("html").show();
+
     if ($.cookie("activetab") == null) {
-        $.cookie("activetab", 0, { path: "/mdapp" });
+        $.cookie("activetab", 0);
     }
 
     $("#tabs").tabs({
         active: $.cookie("activetab"),
         activate: function(event, ui) {
-            $.cookie("activetab", ui.newTab.index(), 1, { path: "/mdapp" });
+            $.cookie("activetab", ui.newTab.index());
             $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
         }
     });
@@ -24,6 +29,14 @@ $(document).ready(function(){
          }
     } );
 
+    $("table.display").on("draw.dt", function () {
+        initJiraLinks();
+    });
+
+    initJiraLinks();
+});
+
+function initJiraLinks() {
     $(".jlink").click(function(){
         // store original value in cookie for .fail later
         var udi = $(this).parents("tr").children(".udiTD").text();
@@ -86,7 +99,7 @@ $(document).ready(function(){
             alert("Please post a Jira ticket.");
         }
     });
-});
+}
 
 function clearStatusMessages() {
     $("#messages").fadeOut("fast");
