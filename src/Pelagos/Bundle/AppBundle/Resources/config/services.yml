@@ -34,7 +34,7 @@ services:
 
     pelagos.datasetsubmission.listener:
         class: Pelagos\Event\DatasetSubmissionListener
-        arguments: ["@twig", "@mailer", "@security.token_storage", "%mailer_from_addr%", "%mailer_from_name%", "@pelagos.entity.handler", "@pelagos.util.data_store"]
+        arguments: ["@twig", "@mailer", "@security.token_storage", "%mailer_from_addr%", "%mailer_from_name%", "@pelagos.entity.handler", "@pelagos.util.data_store", "@pelagos.util.mdapplogger"]
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.submitted, method: onSubmitted }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.resubmitted, method: onResubmitted }

@@ -23,6 +23,14 @@ class DatasetSubmissionListener extends EventListener
         $datasetSubmission = $event->getEntity();
         $dataset = $datasetSubmission->getDataset();
 
+        $this->mdappLogger->writeLog(
+            sprintf(
+                '%s submitted a dataset for %s',
+                $datasetSubmission->getModifier()->getAccount()->getUsername(),
+                $dataset->getUdi()
+            )
+        );
+
         // email User
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
         $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission));
@@ -43,6 +51,14 @@ class DatasetSubmissionListener extends EventListener
     {
         $datasetSubmission = $event->getEntity();
         $dataset = $datasetSubmission->getDataset();
+
+        $this->mdappLogger->writeLog(
+            sprintf(
+                '%s updated the submission for %s',
+                $datasetSubmission->getModifier()->getAccount()->getUsername(),
+                $dataset->getUdi()
+            )
+        );
 
         // email User
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
