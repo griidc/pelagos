@@ -1,14 +1,19 @@
 var $ = jQuery.noConflict();
 
+//FOUC preventor
+$("html").hide();
+
 $(document).ready(function(){
+    $("html").show();
+
     if ($.cookie("activetab") == null) {
-        $.cookie("activetab", 0, { path: "/mdapp" });
+        $.cookie("activetab", 0);
     }
 
     $("#tabs").tabs({
         active: $.cookie("activetab"),
         activate: function(event, ui) {
-            $.cookie("activetab", ui.newTab.index(), 1, { path: "/mdapp" });
+            $.cookie("activetab", ui.newTab.index());
             $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
         }
     });
