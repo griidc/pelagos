@@ -200,7 +200,7 @@ class MdAppController extends UIController
         $objNeeded = array(
             'udi',
             'issueTrackingTicket',
-            'datasetSubmission.creationTimeStamp',
+            'datasetSubmission.submissionTimeStamp',
             'metadata.id',
             'datasetSubmission.metadataFileName');
 
