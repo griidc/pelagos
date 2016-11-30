@@ -393,9 +393,9 @@ class EntityHandler
             if (gettype($rawValue) === 'string') {
                 $valueList = explode(',', $rawValue);
             }
+            // Get the alias and the property.
+            list ($alias, $property) = $this->buildAliasedProperty($property, $joins);
             foreach ($valueList as $value) {
-                // Get the alias and the property.
-                list ($alias, $property) = $this->buildAliasedProperty($property, $joins);
                 if (gettype($value) === 'string') {
                     if ('*' === $value) {
                         $compareExpression = $qb->expr()->isNotNull("$alias.$property");
