@@ -89,8 +89,8 @@ class ISOMetadataExtractorUtil
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
                  '/gmd:MD_DataIdentification' .
-                 '/gmd:pointOfContact' .
-                 '/gmd:CI_ResponsibleParty[1]' .
+                 '/gmd:pointOfContact[1]' .
+                 '/gmd:CI_ResponsibleParty' .
                  '/gmd:contactInfo' .
                  '/gmd:CI_Contact' .
                  '/gmd:address' .
@@ -115,8 +115,8 @@ class ISOMetadataExtractorUtil
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
                  '/gmd:MD_DataIdentification' .
-                 '/gmd:pointOfContact' .
-                 '/gmd:CI_ResponsibleParty[1]' .
+                 '/gmd:pointOfContact[1]' .
+                 '/gmd:CI_ResponsibleParty' .
                  '/gmd:role' .
                  '/gmd:CI_RoleCode';
 
@@ -148,8 +148,8 @@ class ISOMetadataExtractorUtil
     protected static function extractMetadataContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityHandler $eh)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:contact' .
-                 '/gmd:CI_ResponsibleParty[1]' .
+                 '/gmd:contact[1]' .
+                 '/gmd:CI_ResponsibleParty' .
                  '/gmd:contactInfo' .
                  '/gmd:CI_Contact' .
                  '/gmd:address' .
@@ -172,8 +172,8 @@ class ISOMetadataExtractorUtil
         }
 
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:contact' .
-                 '/gmd:CI_ResponsibleParty[1]' .
+                 '/gmd:contact[1]' .
+                 '/gmd:CI_ResponsibleParty' .
                  '/gmd:role' .
                  '/gmd:CI_RoleCode';
 
