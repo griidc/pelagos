@@ -497,6 +497,10 @@ class DatasetSubmission extends Entity
      * @see RESTRICTIONS class constant for valid values.
      *
      * @ORM\Column(type="text", nullable=false)
+     *
+     * @Assert\NotBlank(
+     *     message="The dataset submission restrictions must be set."
+     * )
      */
     protected $restrictions = self::RESTRICTION_NONE;
 
@@ -521,6 +525,10 @@ class DatasetSubmission extends Entity
      * @see TRANSFER_TYPES class constant for valid values.
      *
      * @ORM\Column(type="text", nullable=true)
+     *
+     * @Assert\NotBlank(
+     *     message="The dataset submission dataset file transfer type must be set."
+     * )
      */
     protected $datasetFileTransferType;
 
@@ -534,6 +542,10 @@ class DatasetSubmission extends Entity
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
+     *
+     * @Assert\NotBlank(
+     *     message="The dataset submission must include a dataset file."
+     * )
      */
     protected $datasetFileUri;
 
@@ -786,7 +798,7 @@ class DatasetSubmission extends Entity
      * @ORM\Column(type="json_array", nullable=true)
      *
      * @Assert\NotBlank(
-     *     message="The dataset submission keyword(s) field is required."
+     *     message="The dataset submission theme keyword(s) field is required."
      * )
      */
     protected $themeKeywords = array();
