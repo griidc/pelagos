@@ -108,7 +108,6 @@ class Version20161207095609 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN dataset_submission_audit.theme_keywords IS \'(DC2Type:json_array)\'');
         $this->addSql('COMMENT ON COLUMN dataset_submission_audit.place_keywords IS \'(DC2Type:json_array)\'');
         $this->addSql('COMMENT ON COLUMN dataset_submission_audit.topic_keywords IS \'(DC2Type:json_array)\'');
-        $this->addSql('COMMENT ON COLUMN metadata.geometry IS \'(DC2Type:geometry)\'');
     }
 
     /**
@@ -186,6 +185,5 @@ class Version20161207095609 extends AbstractMigration
         $this->addSql('ALTER TABLE dataset_submission ALTER point_of_contact_email SET NOT NULL');
         $this->addSql('ALTER TABLE dataset_submission ALTER metadata_status SET NOT NULL');
         $this->addSql('COMMENT ON COLUMN dataset_submission.dataset_file_pull_days IS \'(DC2Type:simple_array)\'');
-        $this->addSql('COMMENT ON COLUMN metadata.geometry IS \'(DC2Type:geometry)(DC2Type:geometry)\'');
     }
 }
