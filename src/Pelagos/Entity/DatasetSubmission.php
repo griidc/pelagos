@@ -466,8 +466,9 @@ class DatasetSubmission extends Entity
      *
      * @ORM\OrderBy({"creationTimeStamp" = "ASC"})
      *
-     * @Assert\NotBlank(
-     *     message="Dataset contact person required."
+     * @Assert\Count(
+     *      min = "1",
+     *      minMessage="A Dataset contact person is required."
      * )
      */
     protected $datasetContacts;
@@ -481,8 +482,9 @@ class DatasetSubmission extends Entity
      *
      * @ORM\OrderBy({"creationTimeStamp" = "ASC"})
      *
-     * @Assert\NotBlank(
-     *     message="Metadata contact person required."
+     * @Assert\Count(
+     *      min = "1",
+     *      minMessage="A Metadata contact person is required."
      * )
      */
     protected $metadataContacts;
