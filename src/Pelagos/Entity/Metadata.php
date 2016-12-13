@@ -638,8 +638,7 @@ EOF;
             '/gmd:onLine' .
             '/gmd:CI_OnlineResource' .
             '/gmd:linkage' .
-            '/gmd:URL' .
-            '/text()'
+            '/gmd:URL'
         );
 
         if (count($distributionUrl) > 0) {
@@ -672,8 +671,7 @@ EOF;
             '/gmd:distributorFormat' .
             '/gmd:MD_Format' .
             '/gmd:name' .
-            '/gco:CharacterString' .
-            '/text()'
+            '/gco:CharacterString'
         );
 
         if (count($fileFormats) > 0) {
@@ -690,8 +688,7 @@ EOF;
             '/gmd:citation' .
             '/gmd:CI_Citation' .
             '/gmd:title' .
-            '/gco:CharacterString' .
-            '/text()'
+            '/gco:CharacterString'
         );
 
         if (count($titles) > 0) {
@@ -703,8 +700,7 @@ EOF;
         $abstracts = $this->xml->xpath(
             $basePath .
             '/gmd:abstract' .
-            '/gco:CharacterString' .
-            '/text()'
+            '/gco:CharacterString'
         );
 
         if (count($abstracts) > 0) {
@@ -716,8 +712,7 @@ EOF;
         $purpose = $this->xml->xpath(
             $basePath .
             '/gmd:purpose' .
-            '/gco:CharacterString' .
-            '/text()'
+            '/gco:CharacterString'
         );
 
         if (count($purpose) > 0) {
@@ -733,8 +728,7 @@ EOF;
             '/gmd:type[descendant::text()="theme"]' .
             '/parent::gmd:MD_Keywords' .
             '/gmd:keyword' .
-            '/gco:CharacterString' .
-            '/text()'
+            '/gco:CharacterString'
         );
 
         if (count($themeKeywords) > 0) {
@@ -755,8 +749,7 @@ EOF;
             '/gmd:EX_TemporalExtent' .
             '/gmd:extent' .
             '/gml:TimePeriod' .
-            '/gml:beginPosition' .
-            '/text()'
+            '/gml:beginPosition'
         );
 
         if (count($beginPositions) > 0) {
@@ -771,8 +764,7 @@ EOF;
             '/gmd:EX_TemporalExtent' .
             '/gmd:extent' .
             '/gml:TimePeriod' .
-            '/gml:endPosition' .
-            '/text()'
+            '/gml:endPosition'
         );
 
         if (count($endPositions) > 0) {
@@ -784,8 +776,7 @@ EOF;
         $extentDescriptions = $this->xml->xpath(
             $basePath .
             '/gmd:description' .
-            '/gco:CharacterString' .
-            '/text()'
+            '/gco:CharacterString'
         );
 
         if (count($extentDescriptions) > 0) {
