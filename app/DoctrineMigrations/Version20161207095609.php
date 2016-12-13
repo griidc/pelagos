@@ -21,6 +21,7 @@ class Version20161207095609 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
+        // Add person_dataset_submission.
         $this->addSql('CREATE SEQUENCE person_dataset_submission_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE person_dataset_submission (id INT NOT NULL, person_id INT DEFAULT NULL, creator_id INT DEFAULT NULL, modifier_id INT DEFAULT NULL, dataset_submission_id INT DEFAULT NULL, role TEXT DEFAULT NULL, creation_time_stamp TIMESTAMP(0) WITH TIME ZONE NOT NULL, modification_time_stamp TIMESTAMP(0) WITH TIME ZONE NOT NULL, discr VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_2E97B45B217BBB47 ON person_dataset_submission (person_id)');
@@ -32,6 +33,8 @@ class Version20161207095609 extends AbstractMigration
         $this->addSql('ALTER TABLE person_dataset_submission ADD CONSTRAINT FK_2E97B45BD079F553 FOREIGN KEY (modifier_id) REFERENCES person (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE person_dataset_submission ADD CONSTRAINT FK_2E97B45B8488BA54 FOREIGN KEY (dataset_submission_id) REFERENCES dataset_submission (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
 
+
+        // Modify dataset_submission.
         // Add nullable dataset_submission.status.
         $this->addSql('ALTER TABLE dataset_submission ADD status INT DEFAULT NULL');
         // Copy dataset.dataset_submission_status to dataset_submission.status.
@@ -77,6 +80,12 @@ class Version20161207095609 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN dataset_submission.theme_keywords IS \'(DC2Type:json_array)\'');
         $this->addSql('COMMENT ON COLUMN dataset_submission.place_keywords IS \'(DC2Type:json_array)\'');
         $this->addSql('COMMENT ON COLUMN dataset_submission.topic_keywords IS \'(DC2Type:json_array)\'');
+
+        // Merge Approval restriction state into Restricted.
+        $this->addSql('UPDATE dataset_submission SET restrictions = \'Restricted\' WHERE restrictions = \'Approval\'');
+
+
+        // Modify dataset_submission_audit.
         $this->addSql('ALTER TABLE dataset_submission_audit ADD status INT DEFAULT NULL');
         $this->addSql('ALTER TABLE dataset_submission_audit ADD short_title TEXT DEFAULT NULL');
         $this->addSql('ALTER TABLE dataset_submission_audit ADD reference_date TIMESTAMP(0) WITH TIME ZONE DEFAULT NULL');
@@ -107,6 +116,9 @@ class Version20161207095609 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN dataset_submission_audit.theme_keywords IS \'(DC2Type:json_array)\'');
         $this->addSql('COMMENT ON COLUMN dataset_submission_audit.place_keywords IS \'(DC2Type:json_array)\'');
         $this->addSql('COMMENT ON COLUMN dataset_submission_audit.topic_keywords IS \'(DC2Type:json_array)\'');
+
+        // Merge Approval restriction state into Restricted.
+        $this->addSql('UPDATE dataset_submission_audit SET restrictions = \'Restricted\' WHERE restrictions = \'Approval\'');
     }
 
     /**
