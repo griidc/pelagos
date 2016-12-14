@@ -24,10 +24,10 @@ class ChangeMetadataRolesCommand extends ContainerAwareCommand
      *
      * @var boolean
      */
-    private $foundBadRoles = false;
-    
+    private $foundBadRoles;
+
     /**
-     * A boolean to check if bad roles were found.
+     * The number of roles that were modified.
      *
      * @var integer
      */
@@ -66,6 +66,7 @@ class ChangeMetadataRolesCommand extends ContainerAwareCommand
             ->findBy(array('metadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED));
 
         foreach ($datasets as $dataset) {
+            $this->foundBadRoles = false;
 
             $metadata = $dataset->getMetadata();
 
