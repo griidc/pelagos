@@ -135,12 +135,13 @@ class DatasetSubmissionController extends UIController
                         ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
                             $datasetSubmission->getDataset()->getMetadata()->getXml(),
                             $datasetSubmission,
-                            $this->entityHandler
+                            $this->get('doctrine.orm.entity_manager')
                         );
                     }
 
                     try {
                         $this->entityHandler->create($datasetSubmission);
+                        $dataset->setDatasetSubmission($datasetSubmission);
                     } catch (AccessDeniedException $e) {
                         // This is handled in the template.
                     }
@@ -161,7 +162,7 @@ class DatasetSubmissionController extends UIController
                         ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
                             $datasetSubmission->getDataset()->getMetadata()->getXml(),
                             $datasetSubmission,
-                            $this->entityHandler
+                            $this->get('doctrine.orm.entity_manager')
                         );
                     }
 
@@ -471,7 +472,11 @@ class DatasetSubmissionController extends UIController
                 $accessor->setValue($datasetSubmission, $property, array());
             }
 
-            ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues($xml, $datasetSubmission, $this->entityHandler);
+            ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
+                $xml,
+                $datasetSubmission,
+                $this->get('doctrine.orm.entity_manager')
+            );
         } else {
             throw new InvalidMetadataException(array('This does not appear to be valid ISO 19115-2 metadata.'));
         }
