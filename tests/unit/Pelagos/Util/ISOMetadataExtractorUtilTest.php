@@ -1,6 +1,9 @@
 <?php
 namespace Tests\unit\Pelagos\Util;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\Person;
 use Pelagos\Util\ISOMetadataExtractorUtil;
@@ -48,11 +51,18 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
                                 </gml:Polygon>';
 
     /**
-     * Holds a Mock Pelagos EntityHandler instance.
+     * Holds a mock entity manager instance that matches a person.
      *
-     * @var EntityHandler
+     * @var EntityManager
      */
-    protected $mockEntityHandler;
+    protected $mockEntityManager;
+
+    /**
+     * Holds a mock entity manager instance that doesn't match a person.
+     *
+     * @var EntityManager
+     */
+    protected $mockEntityManagerNoMatch;
 
     /**
      * Holds a Mock Person instance.
@@ -82,17 +92,27 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $this->mockEntityHandler = \Mockery::mock(
-            'Pelagos\Bundle\AppBundle\Handler\EntityHandler',
+        $this->mockEntityManager = \Mockery::mock(
+            EntityManager::class,
             array(
-                'getBy' => array($this->mockPerson)
+                'getRepository' => \Mockery::mock(
+                    EntityRepository::class,
+                    array(
+                        'findBy' => array($this->mockPerson),
+                    )
+                ),
             )
         );
 
-        $this->mockEntityHandlerNoMatch = \Mockery::mock(
-            'Pelagos\Bundle\AppBundle\Handler\EntityHandler',
+        $this->mockEntityManagerNoMatch = \Mockery::mock(
+            EntityManager::class,
             array(
-                'getBy' => array()
+                'getRepository' => \Mockery::mock(
+                    EntityRepository::class,
+                    array(
+                        'findBy' => array(),
+                    )
+                ),
             )
         );
 
@@ -111,7 +131,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
         $this->util->populateDatasetSubmissionWithXMLValues(
             simplexml_load_file($this->testDataDir . 'test-metadata.xml'),
             $this->datasetSubmission,
-            $this->mockEntityHandler
+            $this->mockEntityManager
         );
 
         $this->assertEquals('Test title', $this->datasetSubmission->getTitle());
@@ -149,7 +169,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
         $this->util->populateDatasetSubmissionWithXMLValues(
             simplexml_load_file($this->testDataDir . 'test-metadata-empty-vals.xml'),
             $this->datasetSubmission,
-            $this->mockEntityHandlerNoMatch
+            $this->mockEntityManagerNoMatch
         );
 
         $this->assertAllNullOrEmpty();
@@ -165,7 +185,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
         $this->util->populateDatasetSubmissionWithXMLValues(
             simplexml_load_file($this->testDataDir . 'test-metadata-bad-delimiters.xml'),
             $this->datasetSubmission,
-            $this->mockEntityHandlerNoMatch
+            $this->mockEntityManagerNoMatch
         );
 
         $this->assertEquals(
@@ -189,7 +209,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
         $this->util->populateDatasetSubmissionWithXMLValues(
             simplexml_load_file($this->testDataDir . 'test-metadata-empty-iso.xml'),
             $this->datasetSubmission,
-            $this->mockEntityHandlerNoMatch
+            $this->mockEntityManagerNoMatch
         );
 
         $this->assertAllNullOrEmpty();
@@ -205,7 +225,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
         $this->util->populateDatasetSubmissionWithXMLValues(
             simplexml_load_file($this->testDataDir . 'test-metadata-well-formed-non-iso.xml'),
             $this->datasetSubmission,
-            $this->mockEntityHandlerNoMatch
+            $this->mockEntityManagerNoMatch
         );
         $this->assertAllNullOrEmpty();
     }
