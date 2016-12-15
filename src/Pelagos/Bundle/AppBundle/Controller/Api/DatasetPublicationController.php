@@ -147,6 +147,8 @@ class DatasetPublicationController extends EntityController
      *
      * @throws BadRequestHttpException If link already exists.
      * @throws BadRequestHttpException If Dataset is not found internally.
+     * @throws BadRequestHttpException If database throws this specific uniqueness violation.
+     * @throws Exception               If entity handler throws any other exception.
      *
      * @return Response A HTTP Response object.
      */
