@@ -175,7 +175,15 @@ class DatasetPublicationController extends EntityController
 
         $dataPub = new DatasetPublication($publication, $dataset);
         $entityHandler = $this->get('pelagos.entity.handler');
-        $entityHandler->create($dataPub);
+        try {
+            $entityHandler->create($dataPub);
+        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
+            if (preg_match('/uniq_dataset_publication/', $e->getMessage())) {
+                throw new BadRequestHttpException('Link already exists.');
+            } else {
+                throw $e;
+            }
+        }
 
         return $this->makeNoContentResponse();
     }
