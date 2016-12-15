@@ -8,6 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
  * This Entity contains a link between Publications and Datasets.
  *
  * @ORM\Entity
+ *
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="uniq_dataset_publication",columns={"publication_id", "dataset_id"})})
  */
 class DatasetPublication extends Entity
 {
