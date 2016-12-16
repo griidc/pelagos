@@ -8,6 +8,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\Query;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -145,10 +146,10 @@ class DatasetPublicationController extends EntityController
      *
      * @Rest\View
      *
-     * @throws BadRequestHttpException If link already exists.
-     * @throws BadRequestHttpException If Dataset is not found internally.
-     * @throws BadRequestHttpException If database throws this specific uniqueness violation.
-     * @throws Exception               If entity handler throws any other exception.
+     * @throws BadRequestHttpException            If link already exists.
+     * @throws BadRequestHttpException            If Dataset is not found internally.
+     * @throws BadRequestHttpException            If database throws this specific uniqueness violation.
+     * @throws UniqueConstraintViolationException If entity handler re-throws a this exception that isn't uniq_dataset_publication.
      *
      * @return Response A HTTP Response object.
      */
@@ -179,7 +180,7 @@ class DatasetPublicationController extends EntityController
         $entityHandler = $this->get('pelagos.entity.handler');
         try {
             $entityHandler->create($dataPub);
-        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
+        } catch (UniqueConstraintViolationException $e) {
             if (preg_match('/uniq_dataset_publication/', $e->getMessage())) {
                 throw new BadRequestHttpException('Link already exists.');
             } else {
