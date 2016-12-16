@@ -5,6 +5,7 @@ namespace Pelagos\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Content\Execution\ExecutionContextInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -1000,37 +1001,35 @@ class DatasetSubmission extends Entity
      */
     public function validate(ExecutionContextInterface $context)
     {
-        $valid = false;
+        if (null !== $this->spatialExtent) {
+            if (null === $this->temporalExtentDesc) {
+                $context->buildViolation('Since a spatial extent is present, this submissiom must ' .
+                    'include a time period description.')
+                    ->atPath('temporalExtentDesc')
+                    ->addViolation();
+            }
 
-        if (null === $this->spatialExtent) {
-            if (null === $spatialExtentDescription) {
+            if (!($this->temporalExtentBeginPosition instanceof \DateTime)) {
+                $context->buildViolation('Since a spatial extent is present, this submissiom must ' .
+                    'include a start date.')
+                    ->atPath('temporalExtentBeginPosition')
+                    ->addViolation();
+            }
+
+            if (!($this->temporalExtentEndPosition instanceof \DateTime)) {
+                $context->buildViolation('Since a spatial extent is present, this submissiom must ' .
+                    'include a end date.')
+                    ->atPath('temporalExtentEndPosition')
+                    ->addViolation();
+            }
+
+        } else {
+            if (null === $this->spatialExtentDescription) {
                 $context->buildViolation('If a spatial extent is not present, a submissiom must ' .
                     'include a spatial extent description.')
                     ->atPath('spatialExtentDescription')
                     ->addViolation();
-            } else {
-                $valid = true;
             }
-        } else {
-            if ((null !== $temporalExtentDesc)
-                and ($temporalExtentBeginPosition instanceof \DateTime)
-                and ($temporalExtentEndPosition instanceof \DateTime)) {
-                $valid = true;
-            } else {
-                $context->buildViolation('If a spatial extent is present, a submissiom must ' .
-                    'also include a time period description, start date, and an end date.')
-                    ->atPath('spatialExtent')
-                    ->addViolation();
-            }
-        }
-
-        // One of the cases above must have be true to be valid.
-        if (false === $valid) {
-            $context->buildViolation('A submission with a spatial extent must also include a time period ' .
-                'description, start date, and end date.  A submission without a spatial extent must have ' .
-                'a spatial extent description.')
-                ->atPath('spatialExtent')
-                ->addViolation();
         }
     }
 
