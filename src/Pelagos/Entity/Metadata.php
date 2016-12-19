@@ -606,13 +606,12 @@ EOF;
         $metadataUrl = $this->xml->xpath(
             '/gmi:MI_Metadata' .
             '/gmd:dataSetURI' .
-            '/gco:CharacterString' .
-            '/text()'
+            '/gco:CharacterString'
         );
 
         if (count($metadataUrl) > 0) {
             $udi = $this->dataset->getUdi();
-            return (bool) preg_match("/\/$udi$/", $metadataUrl[0]);
+            return (bool) preg_match("/\/$udi$/", (string) $metadataUrl[0]);
         } else {
             throw new \Exception('Metadata URL does not exist');
         }
@@ -643,7 +642,7 @@ EOF;
 
         if (count($distributionUrl) > 0) {
             $udi = $this->dataset->getUdi();
-            return (bool) preg_match("/\/$udi$/", $distributionUrl[0]);
+            return (bool) preg_match("/\/$udi$/", (string) $distributionUrl[0]);
         } else {
             throw new \Exception('Distribution URL does not exist');
         }
