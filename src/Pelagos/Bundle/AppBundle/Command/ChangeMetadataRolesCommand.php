@@ -70,8 +70,20 @@ class ChangeMetadataRolesCommand extends ContainerAwareCommand
 
             $metadata = $dataset->getMetadata();
 
+            if (!$metadata instanceof Metadata) {
+                // Skip datasets without metadata.
+                continue;
+            }
+
+            $xml = $metadata->getXml();
+
+            if (!$xml instanceof \SimpleXMLElement) {
+                // Skip datasets without valid xml metadata.
+                continue;
+            }
+
             $doc = new \DomDocument('1.0', 'UTF-8');
-            $doc->loadXML($metadata->getXml()->asXml());
+            $doc->loadXML($xml->asXml());
 
             $xpathdoc = new \DOMXpath($doc);
 
