@@ -687,7 +687,7 @@ class DatasetSubmission extends Entity
      *
      * @see METADATA_STATUSES class constant for valid values.
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="text", nullable=false)
      */
     protected $metadataStatus = self::METADATA_STATUS_NONE;
 
