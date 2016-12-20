@@ -20,7 +20,7 @@
                         {% elseif dataset.datasetSubmission.referenceDateType == "revision" %}
                             {% set codespace = "003" %}
                         {% endif %}
-                        <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="{{dataset.datasetSubmission.referenceDateType}}" codeSpace="{{codespace}}">{{dataset.datasetSubmission.referenceDateType}}</gmd:CI_DateTypeCode>
+                        <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="{{dataset.datasetSubmission.referenceDateType}}" codeSpace="{{codespace|default}}">{{dataset.datasetSubmission.referenceDateType}}</gmd:CI_DateTypeCode>
                     </gmd:dateType>
                 </gmd:CI_Date>
             </gmd:date>
