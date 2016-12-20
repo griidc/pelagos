@@ -2,7 +2,7 @@
     <gmd:citation>
         <gmd:CI_Citation>
             <gmd:title>
-                <gco:CharacterString>{{dataset.title}}</gco:CharacterString>
+                <gco:CharacterString>{{dataset.datasetSubmission.title}}</gco:CharacterString>
             </gmd:title>
             <gmd:alternateTitle>
                 <gco:CharacterString>{{dataset.datasetSubmission.shortTitle}}</gco:CharacterString>
@@ -27,7 +27,7 @@
         </gmd:CI_Citation>
     </gmd:citation>
     <gmd:abstract>
-        <gco:CharacterString><![CDATA[{{dataset.abstract | trim}}]]></gco:CharacterString>
+        <gco:CharacterString><![CDATA[{{dataset.datasetSubmission.abstract | trim}}]]></gco:CharacterString>
     </gmd:abstract>
     <gmd:purpose>
         <gco:CharacterString><![CDATA[{{dataset.datasetSubmission.purpose}}]]></gco:CharacterString>
