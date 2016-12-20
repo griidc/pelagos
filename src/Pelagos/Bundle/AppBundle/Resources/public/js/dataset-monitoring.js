@@ -17,9 +17,9 @@ $(document).ready(function() {
         if (m) {
             if (typeof m[1] !== 'undefined') {
                 if (typeof m[2] === 'undefined') {
-                    if ($('#projects_funding-cycle_' + m[1]).length && $('#tree').jstree('get_selected').attr('id') != 'projects_fundSrc_' + m[1]) {
+                    if ($('#projects_funding-cycle_' + m[1]).length && $('#tree').jstree('get_selected').attr('id') != 'projects_funding-cycle_' + m[1]) {
                         $("#tree").jstree("deselect_all");
-                        $("#tree").jstree("select_node", ('#projects_fundSrc_' + m[1]));
+                        $("#tree").jstree("select_node", ('#projects_funding-cycle_' + m[1]));
                     }
                 }
                 else {
