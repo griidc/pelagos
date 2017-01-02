@@ -1,6 +1,8 @@
 
 <fieldset>
-    This section collects keywords/key phrases describing the theme and location of the dataset. Provides GRIIDC and future researchers with short descriptions to aid search. Some datasets may not have relevant place keywords (ex. lab simulations).
+    This section collects keywords/key phrases describing the theme and location of the dataset
+    and provides GRIIDC and future researchers with short descriptions to aid search. Some datasets
+    may not have relevant place keywords (ex. lab simulations).
 </fieldset>
 
 <fieldset>
@@ -13,7 +15,9 @@
 					<img class="info" src="{{ asset_url }}">
 					{% endimage %}
 					<div class="tooltiptext">
-						Commonly used words or short phrases which describe the themes or subjects related to the dataset. This element can repeat.
+						Commonly used words or short phrases that describe themes or subjects related to the dataset.
+                        These may be keywords used to describe the publication associated with the dataset. Do not
+                        include keywords that describe the location or geography of the data.
 					</div>
 				</span>
                 <table width="80%">
@@ -55,7 +59,8 @@
 						<img class="info" src="{{ asset_url }}">
 						{% endimage %}
 						<div class="tooltiptext">
-							Commonly used words or short phrases which describe the geographic areas or places related to the dataset. This element can repeat.
+                            Commonly used words or short phrases that describe the geographic areas, locations,
+                            or places associated with the data, if applicable.
 						</div>
 					</span>
                     <table width="80%">
@@ -98,9 +103,8 @@
 					<img class="info" src="{{ asset_url }}">
 					{% endimage %}
 					<div class="tooltiptext">
-						The main theme(s) of the dataset. Must be selected from the provided keyword list.<br>
-						These keywords are predefined by ISO and may not be very applicable to your dataset but at least one is required.<br>
-						<i>(Hint: Double click to add or remove.)</i>
+                        These keywords are pre-defined by the ISO 1115-2 metadata standard used by GRIIDC.
+                        Hover over the keyword to see a definition.
 					</div>
 				</span>
                 <table width="80%">

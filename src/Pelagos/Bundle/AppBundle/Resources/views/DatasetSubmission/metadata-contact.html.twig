@@ -9,7 +9,10 @@
 					<img class="info" src="{{ asset_url }}">
 					{% endimage %}
 					<div class="tooltiptext">
-						The name of the individual responsible for maintaining the metadata, typically the scientists or researcher who created the dataset.
+						Please use the drop down list to select the person who can be contacted
+                        concerning questions about the dataset. If the person is not in
+                        the list or their contact information is incorrect, please contact
+                        <a href=mailto:griidc@gomri.org>griidc@gomri.org</a>.
 					</div>
 				</span>
                 <label for="metadatacontact">Person</label>
@@ -31,9 +34,8 @@
 					<img class="info" src="{{ asset_url }}">
 					{% endimage %}
 					<div class="tooltiptext">
-						Point of Contact: Party who can be contacted for acquiring knowledge about or acquisition of the resource.<br>
-						Principal Investigator: Key party responsible for gathering information and conducting research.<br>
-						Author: Party who authored the resource.<br>
+                        Please select the person’s relationship to the dataset description from
+                        the drop down list.
 					</div>
 				</span>
                 {{ form_row(contact.role) }}
