@@ -623,7 +623,7 @@ function updateDIF(form)
         if (status == 0) {
             var title = "DIF Submitted";
             var message = '<div><img src="' + imgInfo + '"><p>Thank you for saving DIF with ID:  ' + udi
-            + ".<br>Before registering this dataset you must return to this page and submit the dataset information form.</p></div>";
+            + ".<br>Before submitting this dataset you must return to this page and submit the dataset information form.</p></div>";
         } else if (status == 1) {
             var title = "DIF Submitted";
             var message = '<div><img src="' + imgInfo + '">' +
