@@ -251,8 +251,12 @@ class Dataset extends Entity
      */
     public function setDatasetSubmission(DatasetSubmission $datasetSubmission)
     {
-        $this->datasetSubmission = $datasetSubmission;
-        $this->datasetSubmission->setDataset($this);
+        if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+            $this->datasetSubmission = $datasetSubmission;
+        } else {
+            $this->datasetSubmission = null;
+        }
+        $datasetSubmission->setDataset($this);
         $this->setDatasetSubmissionStatus($datasetSubmission->getStatus());
         $this->setMetadataStatus($datasetSubmission->getMetadataStatus());
         $this->updateAvailabilityStatus();

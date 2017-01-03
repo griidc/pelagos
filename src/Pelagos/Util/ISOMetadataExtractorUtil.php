@@ -2,7 +2,7 @@
 
 namespace Pelagos\Util;
 
-use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
+use Doctrine\ORM\EntityManager;
 
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\Person;
@@ -23,14 +23,14 @@ class ISOMetadataExtractorUtil
      *
      * @param \SimpleXmlElement $xmlMetadata       The XML to be read from.
      * @param DatasetSubmission $datasetSubmission The datasetSubmission object to be modified.
-     * @param EntityHandler     $entityHandler     A Pelagos Entity Handler instance.
+     * @param EntityManager     $entityManager     An entity manager.
      *
      * @return void
      */
-    public static function populateDatasetSubmissionWithXMLValues(\SimpleXmlElement $xmlMetadata, DatasetSubmission &$datasetSubmission, EntityHandler $entityHandler)
+    public static function populateDatasetSubmissionWithXMLValues(\SimpleXmlElement $xmlMetadata, DatasetSubmission &$datasetSubmission, EntityManager $entityManager)
     {
-        self::setIfHas($datasetSubmission, 'addDatasetContact', self::extractDatasetContact($xmlMetadata, $datasetSubmission, $entityHandler));
-        self::setIfHas($datasetSubmission, 'addMetadataContact', self::extractMetadataContact($xmlMetadata, $datasetSubmission, $entityHandler));
+        self::setIfHas($datasetSubmission, 'addDatasetContact', self::extractDatasetContact($xmlMetadata, $datasetSubmission, $entityManager));
+        self::setIfHas($datasetSubmission, 'addMetadataContact', self::extractMetadataContact($xmlMetadata, $datasetSubmission, $entityManager));
         self::setIfHas($datasetSubmission, 'setTitle', self::extractTitle($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setShortTitle', self::extractShortTitle($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setAbstract', self::extractAbstract($xmlMetadata));
@@ -80,11 +80,11 @@ class ISOMetadataExtractorUtil
      *
      * @param \SimpleXmlElement $xml The XML to extract from.
      * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
-     * @param EntityHandler     $eh  A Pelagos Entity Handler instance.
+     * @param EntityManager     $em  An entity manager.
      *
      * @return PersonDatasetSubmissionDatasetContact|null Returns the dataset contact, or null.
      */
-    protected static function extractDatasetContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityHandler $eh)
+    protected static function extractDatasetContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
@@ -100,10 +100,8 @@ class ISOMetadataExtractorUtil
 
         $email = self::querySingle($xml, $query);
 
-        $people = $eh->getBy(
-            Person::class,
-            array('emailAddress' => $email),
-            array()
+        $people = $em->getRepository(Person::class)->findBy(
+            array('emailAddress' => $email)
         );
 
         if (count($people) > 0) {
@@ -141,11 +139,11 @@ class ISOMetadataExtractorUtil
      *
      * @param \SimpleXmlElement $xml The XML to extract from.
      * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
-     * @param EntityHandler     $eh  A Pelagos Entity Handler instance.
+     * @param EntityManager     $em  An entity manager.
      *
      * @return PersonDatasetSubmissionMetadataContact|null Returns the metadata contact, or null.
      */
-    protected static function extractMetadataContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityHandler $eh)
+    protected static function extractMetadataContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
     {
         $query = '/gmi:MI_Metadata' .
                  '/gmd:contact[1]' .
@@ -159,10 +157,8 @@ class ISOMetadataExtractorUtil
 
         $email = self::querySingle($xml, $query);
 
-        $people = $eh->getBy(
-            Person::class,
-            array('emailAddress' => $email),
-            array()
+        $people = $em->getRepository(Person::class)->findBy(
+            array('emailAddress' => $email)
         );
 
         if (count($people) > 0) {
