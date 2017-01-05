@@ -1025,9 +1025,8 @@ class DatasetSubmission extends Entity
 
         } else {
             if (null === $this->spatialExtentDescription) {
-                $context->buildViolation('If a spatial extent is not present, a submissiom must ' .
-                    'include a spatial extent description.')
-                    ->atPath('spatialExtentDescription')
+                $context->buildViolation('You must provide either a spatial extent or a spatial extent description.')
+                    ->atPath('spatialExtent')
                     ->addViolation();
             }
         }
