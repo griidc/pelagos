@@ -5,6 +5,7 @@ namespace Pelagos\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Content\Execution\ExecutionContextInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -987,6 +988,48 @@ class DatasetSubmission extends Entity
                 $newMetadataContact->setRole($metadataContact->getRole());
                 $newMetadataContact->setPerson($metadataContact->getPerson());
                 $this->addMetadataContact($newMetadataContact);
+            }
+        }
+    }
+
+    /**
+     * This validator class enforces spatial extent Pelagos requirements.
+     *
+     * @param ExecutionContextInterface $context Validation context.
+     *
+     * @Assert\Callback
+     *
+     * @return void
+     */
+    public function validate(ExecutionContextInterface $context)
+    {
+        if (null !== $this->spatialExtent) {
+            if (null === $this->temporalExtentDesc) {
+                $context->buildViolation('Since a spatial extent is present, this submissiom must ' .
+                    'include a time period description.')
+                    ->atPath('temporalExtentDesc')
+                    ->addViolation();
+            }
+
+            if (!($this->temporalExtentBeginPosition instanceof \DateTime)) {
+                $context->buildViolation('Since a spatial extent is present, this submissiom must ' .
+                    'include a start date.')
+                    ->atPath('temporalExtentBeginPosition')
+                    ->addViolation();
+            }
+
+            if (!($this->temporalExtentEndPosition instanceof \DateTime)) {
+                $context->buildViolation('Since a spatial extent is present, this submissiom must ' .
+                    'include a end date.')
+                    ->atPath('temporalExtentEndPosition')
+                    ->addViolation();
+            }
+
+        } else {
+            if (null === $this->spatialExtentDescription) {
+                $context->buildViolation('You must provide either a spatial extent or a spatial extent description.')
+                    ->atPath('spatialExtent')
+                    ->addViolation();
             }
         }
     }
