@@ -1005,21 +1005,21 @@ class DatasetSubmission extends Entity
     {
         if (null !== $this->spatialExtent) {
             if (null === $this->temporalExtentDesc) {
-                $context->buildViolation('Since a spatial extent is present, this submissiom must ' .
+                $context->buildViolation('Since a spatial extent is present, this submission must ' .
                     'include a time period description.')
                     ->atPath('temporalExtentDesc')
                     ->addViolation();
             }
 
             if (!($this->temporalExtentBeginPosition instanceof \DateTime)) {
-                $context->buildViolation('Since a spatial extent is present, this submissiom must ' .
+                $context->buildViolation('Since a spatial extent is present, this submission must ' .
                     'include a start date.')
                     ->atPath('temporalExtentBeginPosition')
                     ->addViolation();
             }
 
             if (!($this->temporalExtentEndPosition instanceof \DateTime)) {
-                $context->buildViolation('Since a spatial extent is present, this submissiom must ' .
+                $context->buildViolation('Since a spatial extent is present, this submission must ' .
                     'include a end date.')
                     ->atPath('temporalExtentEndPosition')
                     ->addViolation();
