@@ -61,9 +61,17 @@ class ChangeMetadataRolesCommand extends ContainerAwareCommand
         $personID = $input->getArgument('PersonID');
 
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
-        $datasets = $entityManager
+        $qb = $entityManager
             ->getRepository('Pelagos\Entity\Dataset')
-            ->findBy(array('metadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED));
+            ->createQueryBuilder('dataset');
+
+        $qb
+            ->where('dataset.metadataStatus != :metadataStatus')
+            ->andWhere('dataset.udi NOT LIKE :udi')
+            ->setParameter('udi', 'BP%')
+            ->setParameter('metadataStatus', DatasetSubmission::METADATA_STATUS_ACCEPTED);
+
+        $datasets = $qb->getQuery()->getResult();
 
         foreach ($datasets as $dataset) {
             $this->foundBadRoles = false;
