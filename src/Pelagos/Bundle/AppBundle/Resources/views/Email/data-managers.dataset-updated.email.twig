@@ -3,7 +3,7 @@
 {% block body_html %}
     Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},<br>
     <br>
-    A submission has been made which updates the dataset {{dataset.getUdi}} in the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) system. This update was made by {{dataset.getDatasetSubmission.getCreator.getFirstName}} {{dataset.getDatasetSubmission.getCreator.getLastName}}. {{dataset.getDatasetSubmission.getCreator.getFirstName}} {{dataset.getDatasetSubmission.getCreator.getLastName}} is a member of {{ dataset.getDatasetSubmission.getCreator.getResearchGroupNames | join(', ') }} and the dataset is associated with {{dataset.getResearchGroup.getName}}.<br>
+    The GRIIDC dataset {{dataset.getUdi}} has been updated. This update was made by {{dataset.getDatasetSubmission.getCreator.getFirstName}} {{dataset.getDatasetSubmission.getCreator.getLastName}}. {{dataset.getDatasetSubmission.getCreator.getFirstName}} {{dataset.getDatasetSubmission.getCreator.getLastName}} is a member of {{ dataset.getDatasetSubmission.getCreator.getResearchGroupNames | join(', ') }} and the dataset is associated with {{dataset.getResearchGroup.getName}}.<br>
     <br>
     Thank you,<br>
     <br>
@@ -15,7 +15,7 @@
 {% block body_text %}
 Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},
 
-A submission has been made which updates the dataset {{dataset.getUdi}} in the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) system. This update was made by {{dataset.getDatasetSubmission.getCreator.getFirstName}} {{dataset.getDatasetSubmission.getCreator.getLastName}}. {{dataset.getDatasetSubmission.getCreator.getFirstName}} {{dataset.getDatasetSubmission.getCreator.getLastName}} is a member of {{ dataset.getDatasetSubmission.getCreator.getResearchGroupNames | join(', ') }} and the dataset is associated with {{dataset.getResearchGroup.getName}}.
+The GRIIDC dataset {{dataset.getUdi}} has been updated. This update was made by {{dataset.getDatasetSubmission.getCreator.getFirstName}} {{dataset.getDatasetSubmission.getCreator.getLastName}}. {{dataset.getDatasetSubmission.getCreator.getFirstName}} {{dataset.getDatasetSubmission.getCreator.getLastName}} is a member of {{ dataset.getDatasetSubmission.getCreator.getResearchGroupNames | join(', ') }} and the dataset is associated with {{dataset.getResearchGroup.getName}}.
 
 Thank you,
 
