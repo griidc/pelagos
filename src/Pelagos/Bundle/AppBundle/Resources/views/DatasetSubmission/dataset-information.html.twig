@@ -8,7 +8,9 @@
 					<img class="info" src="{{ asset_url }}">
 					{% endimage %}
 					<div class="tooltiptext">
-						Name by which the cited resource is known. It is recommended the title include (where applicable) a description of the data, a date or date range, and geographic area.
+                        The dataset title should be unique and describe what data are
+                        in the dataset and, if applicable, the relevant date, date
+                        range, and geographical area.
 					</div>
 				</span>
                 {{ form_row(form.title) }}
@@ -21,7 +23,7 @@
 					<img class="info" src="{{ asset_url }}">
 					{% endimage %}
 					<div class="tooltiptext">
-						Short name or other language name by which the cited information is known.
+                        A short name or alternative title for the dataset.
 					</div>
 				</span>
                 {{ form_row(form.shortTitle) }}
@@ -34,7 +36,9 @@
 					<img class="info" src="{{ asset_url }}">
 					{% endimage %}
 					<div class="tooltiptext">
-						Reference date for the cited dataset. This date can refer to dataset creation, publication, or revision. Format should be YYYY-MM-DD.
+                        The date that will be used to reference the dataset. This
+                        date can represent the date the dataset was created,
+                        published, or revised.
 					</div>
 				</span>
                 {{ form_row(form.referenceDate) }}
@@ -47,9 +51,8 @@
 					<img class="info" src="{{ asset_url }}">
 					{% endimage %}
 					<div class="tooltiptext">
-						Creation: Date identifies when the resource was brought into existence.<br>
-						Publication: Date identifies when the resource was issued.<br>
-						Revision: Date identifies when the resource was examined or re-examined and improved or amended.<br>
+                        A description of the date provided above if the date refers
+                        to the date the dataset was created, published, or revised.
 					</div>
 				</span>
                 {{ form_row(form.referenceDateType) }}
@@ -62,7 +65,11 @@
 					<img class="info" src="{{ asset_url }}">
 					{% endimage %}
 					<div class="tooltiptext">
-						Brief narrative summary of the dataset's contents.
+						A brief description of the contents of the dataset including
+                        what data are included in the dataset, how these data were
+                        acquired, and if applicable, where and when these data were
+                        acquired. This should not be the same as the publication
+                        abstract.
 					</div>
 				</span>
                 {{ form_row(form.abstract) }}
@@ -75,7 +82,8 @@
 					<img class="info" src="{{ asset_url }}">
 					{% endimage %}
 					<div class="tooltiptext">
-						Summary of the intentions for which the dataset was developed.
+						A summary of the reason why the data were collected,
+                        generated, or otherwise acquired.
 					</div>
 				</span>
                 {{ form_row(form.purpose) }}
@@ -88,8 +96,10 @@
 					<img class="info" src="{{ asset_url }}">
 					{% endimage %}
 					<div class="tooltiptext">
-						If your dataset has been issued a DOI from another repository or archive, please provide it here.<br>
-						Please note that this field is for <strong>dataset</strong> DOIs only, as publication DOIs are recorded elsewhere.
+                        The DOI assigned to the DATASET. If your dataset has been
+                        issued a DOI by GRIIDC or another repository or archive
+                        please provide it here. Please <strong>do not</strong>
+                        provide DOIs assigned to publications.
 					</div>
 				</span>
                 {{ form_row(form.doi) }}
@@ -102,7 +112,8 @@
 					<img class="info" src="{{ asset_url }}">
 					{% endimage %}
 					<div class="tooltiptext">
-						Descriptive Information about the Data Parameters and Units.
+						A list of the parameters/variables and units included
+                        in the dataset.
 					</div>
 				</span>
                 {{ form_row(form.suppParams) }}
@@ -115,7 +126,8 @@
 					<img class="info" src="{{ asset_url }}">
 					{% endimage %}
 					<div class="tooltiptext">
-						Descriptive Information about the methods used.
+						A brief description of methods used to acquire the data
+                        included in the dataset.
 					</div>
 				</span>
                 {{ form_row(form.suppMethods) }}
@@ -128,7 +140,8 @@
 					<img class="info" src="{{ asset_url }}">
 					{% endimage %}
 					<div class="tooltiptext">
-						Descriptive Information about the instruments and equipment used.
+						A list of instruments used to acquire the data included
+                        in the dataset.
 					</div>
 				</span>
                 {{ form_row(form.suppInstruments) }}
@@ -141,7 +154,9 @@
 					<img class="info" src="{{ asset_url }}">
 					{% endimage %}
 					<div class="tooltiptext">
-						Descriptive Information about the sampling spatial and temporal scales and rates.
+						A description of spatial and temporal scales and rates
+                        that were used to collect and/or generate the data, if
+                        applicable.
 					</div>
 				</span>
                 {{ form_row(form.suppSampScalesRates) }}
@@ -154,7 +169,9 @@
 					<img class="info" src="{{ asset_url }}">
 					{% endimage %}
 					<div class="tooltiptext">
-						Descriptive Information about the error analysis
+					    A description of any error or uncertainty analysis
+                        completed on the final data and the results of the
+                        analysis.
 					</div>
 				</span>
                 {{ form_row(form.suppErrorAnalysis) }}
@@ -167,7 +184,11 @@
 					<img class="info" src="{{ asset_url }}">
 					{% endimage %}
 					<div class="tooltiptext">
-						Descriptive Information about the provenance, historical data, key information packaged elsewhere.
+                        If existing historical data were used as part of
+                        the dataset, please provide a description of this
+                        data, including who created the original dataset
+                        (person and/or organization) and where the historical
+                        data can be obtained.
 					</div>
 				</span>
                 {{ form_row(form.suppProvenance) }}
