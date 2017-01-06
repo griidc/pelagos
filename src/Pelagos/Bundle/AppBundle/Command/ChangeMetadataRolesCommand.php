@@ -75,6 +75,8 @@ class ChangeMetadataRolesCommand extends ContainerAwareCommand
 
         foreach ($datasets as $dataset) {
             $this->foundBadRoles = false;
+            $metadataRoleModified = false;
+            $datasetRoleModified = false;
 
             $metadata = $dataset->getMetadata();
 
@@ -105,7 +107,7 @@ class ChangeMetadataRolesCommand extends ContainerAwareCommand
 
             if ($elements->length > 0) {
                 $node = $elements->item(0);
-                $this->modifyRole($node);
+                $metadataRoleModified = $this->modifyRole($node);
             }
 
             $xpath = '/gmi:MI_Metadata' .
@@ -120,7 +122,7 @@ class ChangeMetadataRolesCommand extends ContainerAwareCommand
 
             if ($elements->length > 0) {
                 $node = $elements->item(0);
-                $this->modifyRole($node);
+                $datasetRoleModified = $this->modifyRole($node);
             }
 
             if ($this->foundBadRoles) {
@@ -141,6 +143,15 @@ class ChangeMetadataRolesCommand extends ContainerAwareCommand
 
                 $entityManager->persist($metadata);
                 $entityManager->persist($dataset);
+
+                echo $dataset->getUdi() . ":\n";
+
+                if ($metadataRoleModified) {
+                    echo "  modified metadata contact role\n";
+                }
+                if ($datasetRoleModified) {
+                    echo "  modified dataset contact role\n";
+                }
             }
         }
 
@@ -156,7 +167,7 @@ class ChangeMetadataRolesCommand extends ContainerAwareCommand
      *
      * @param \DOMNode $node A Dom Doc Node.
      *
-     * @return void
+     * @return boolean True if role was modified, false otherwise.
      */
     private function modifyRole(\DOMNode &$node)
     {
@@ -189,6 +200,8 @@ class ChangeMetadataRolesCommand extends ContainerAwareCommand
                     $node->setAttribute('codeSpace', $role['codeSpace']);
                 }
             }
+            return true;
         }
+        return false;
     }
 }
