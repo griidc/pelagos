@@ -11,7 +11,7 @@
             <th title="sort by Title">Title</th>
             {% endif %}
             <th class="status" {% if not dataland | default %} title="sort by Identified status" {% endif %}>Identified</th>
-            <th class="status" {% if not dataland | default %} title="sort by Registered status" {% endif %}>Registered</th>
+            <th class="status" {% if not dataland | default %} title="sort by Submitted status" {% endif %}>Submitted</th>
             <th class="status" {% if not dataland | default %} title="sort by Metadata status" {% endif %}>Metadata</th>
             <th class="status" {% if not dataland | default %} title="sort by Available status" {% endif %}>Available</th>
         </tr>
@@ -77,25 +77,25 @@
 
             {% if dataset.datasetSubmissionStatus == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_COMPLETE') %}
                 {% set registered_green = registered_green + 1 %}
-                {% set registered_title = "This dataset has been registered successfully." %}
+                {% set registered_title = "This dataset has been submitted successfully." %}
                 {% set registered_icon = green_icon %}
             {% elseif dataset.datasetSubmissionStatus == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_INCOMPLETE') %}
                 {% set registered_yellow = registered_yellow + 1 %}
-                {% set registered_title = "A registration has been created, but a data file was not provided at the time of registration." %}
+                {% set registered_title = "A submission has been created, but a data file was not provided at the time of submission." %}
                 {% set registered_icon = yellow_icon %}
             {% else %}
                 {% set registered_red = registered_red + 1 %}
-                {% set registered_title = "This dataset has not yet been registered." %}
+                {% set registered_title = "This dataset has not yet been submitted." %}
                 {% set registered_icon = red_icon %}
             {% endif %}
 
             {% if dataset.datasetSubmissionStatus == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_UNSUBMITTED') %}
                 {% set metadata_na = metadata_na + 1 %}
-                {% set metadata_title = "This dataset has not yet been registered, therefore no metadata is available." %}
+                {% set metadata_title = "This dataset has not yet been submitted, therefore no metadata is available." %}
                 {% set metadata_icon = na_icon %}
             {% elseif dataset.metadataStatus == constant('Pelagos\\Entity\\DatasetSubmission::METADATA_STATUS_NONE') %}
                 {% set metadata_red = metadata_red + 1 %}
-                {% set metadata_title = "This dataset has been registered, but no metadata has been submitted." %}
+                {% set metadata_title = "This dataset has been submitted, but no metadata has been submitted." %}
                 {% set metadata_icon = red_icon %}
             {% elseif dataset.metadataStatus == constant('Pelagos\\Entity\\DatasetSubmission::METADATA_STATUS_SUBMITTED') %}
                 {% set metadata_yellow = metadata_yellow + 1 %}
@@ -113,11 +113,11 @@
 
             {% if dataset.datasetSubmissionStatus == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_UNSUBMITTED') %}
                 {% set available_na = available_na + 1 %}
-                {% set available_title = "This dataset has not yet been registered, therefore it is not yet available." %}
+                {% set available_title = "This dataset has not yet been submitted, therefore it is not yet available." %}
                 {% set available_icon = na_icon %}
             {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE') %}
                 {% set available_red = available_red + 1 %}
-                {% set available_title = "This dataset has been registered, but the data is not yet available." %}
+                {% set available_title = "This dataset has been submitted, but the data is not yet available." %}
                 {% set available_icon = red_icon %}
             {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION') %}
                 {% set available_yellow = available_yellow + 1 %}
@@ -260,7 +260,7 @@
                 <td style="border: 0px;"></td>
                 <td style="border: 0px;"></td>
                 <th>Identified</th>
-                <th>Registered</th>
+                <th>Submitted</th>
                 <th>Metadata</th>
                 <th>Available</th>
             </tr>
