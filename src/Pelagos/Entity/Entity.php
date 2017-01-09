@@ -408,7 +408,7 @@ abstract class Entity
      */
     public function serializeCreator()
     {
-        if (null === $this->creator) {
+        if (!($this->creator instanceof Person)) {
             return null;
         }
         return array(
@@ -428,7 +428,7 @@ abstract class Entity
      */
     public function serializeModifier()
     {
-        if (null === $this->modifier) {
+        if (!($this->modifier instanceof Person)) {
             return null;
         }
         return array(
