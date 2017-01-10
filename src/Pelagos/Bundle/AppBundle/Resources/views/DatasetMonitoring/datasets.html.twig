@@ -81,7 +81,7 @@
                 {% set registered_icon = green_icon %}
             {% elseif dataset.datasetSubmissionStatus == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_INCOMPLETE') %}
                 {% set registered_yellow = registered_yellow + 1 %}
-                {% set registered_title = "A submission has been created, but a data file was not provided at the time of submission." %}
+                {% set registered_title = "A dataset submission has been saved but not yet submitted to GRIIDC." %}
                 {% set registered_icon = yellow_icon %}
             {% else %}
                 {% set registered_red = registered_red + 1 %}
