@@ -81,7 +81,7 @@
                 {% set registered_icon = green_icon %}
             {% elseif dataset.datasetSubmissionStatus == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_INCOMPLETE') %}
                 {% set registered_yellow = registered_yellow + 1 %}
-                {% set registered_title = "A submission has been created, but a data file was not provided at the time of submission." %}
+                {% set registered_title = "A dataset submission has been saved but not yet submitted to GRIIDC." %}
                 {% set registered_icon = yellow_icon %}
             {% else %}
                 {% set registered_red = registered_red + 1 %}
@@ -89,7 +89,7 @@
                 {% set registered_icon = red_icon %}
             {% endif %}
 
-            {% if dataset.datasetSubmissionStatus == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_UNSUBMITTED') %}
+            {% if dataset.datasetSubmissionStatus != constant('Pelagos\\Entity\\DatasetSubmission::STATUS_COMPLETE') %}
                 {% set metadata_na = metadata_na + 1 %}
                 {% set metadata_title = "This dataset has not yet been submitted, therefore no metadata is available." %}
                 {% set metadata_icon = na_icon %}
@@ -111,7 +111,7 @@
                 {% set metadata_icon = yellow_icon %}
             {% endif %}
 
-            {% if dataset.datasetSubmissionStatus == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_UNSUBMITTED') %}
+            {% if dataset.datasetSubmissionStatus != constant('Pelagos\\Entity\\DatasetSubmission::STATUS_COMPLETE') %}
                 {% set available_na = available_na + 1 %}
                 {% set available_title = "This dataset has not yet been submitted, therefore it is not yet available." %}
                 {% set available_icon = na_icon %}
