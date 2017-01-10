@@ -88,6 +88,16 @@ class ImportSubmittedMetadataCommand extends ContainerAwareCommand
                     $datasetSubmission,
                     $entityManager
                 );
+                // Copy creator and modifier from submission for imported dataset contacts.
+                foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+                    $datasetContact->setCreator($datasetSubmission->getCreator());
+                    $datasetContact->setModifier($datasetSubmission->getModifier());
+                }
+                // Copy creator and modifier from submission for imported metadata contacts.
+                foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+                    $metadataContact->setCreator($datasetSubmission->getCreator());
+                    $metadataContact->setModifier($datasetSubmission->getModifier());
+                }
                 $output->writeln("  Imported submitted metadata for $udi.");
                 $counts['imported']++;
             } else {
