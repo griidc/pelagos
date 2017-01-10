@@ -1,9 +1,4 @@
 <fieldset>
-	This section collects technical details related to the distribution of the dataset and provides
-    GRIIDC and future researchers the means to evaluate the means needed to download and read the
-    dataset.
-</fieldset>
-<fieldset>
     <legend>Format</legend>
     <table class="tab-table">
         <tr>
@@ -13,8 +8,8 @@
 					<img class="info" src="{{ asset_url }}">
 					{% endimage %}
 					<div class="tooltiptext">
-						A list of all the file types or extensions of all the files included as
-                        part of your dataset. For example: xlsx, csv, tiff, txt, etc.
+						A list of all the file types or extensions of all the files included as part
+                        of your dataset. For example: xlsx, csv, tiff, txt, etc.
 					</div>
 				</span>
                 {{ form_row(form.distributionFormatName) }}
@@ -27,9 +22,9 @@
 					<img class="info" src="{{ asset_url }}">
 					{% endimage %}
 					<div class="tooltiptext">
-				        If multiple files were packaged together to create a single dataset file,
-                        please provide the method used to package these files together. Common
-                        examples include zip and tar.
+						If multiple files were packaged together to create a single dataset file, please
+                        provide the method used to package these files together. Common examples include
+                        zip and tar.
 					</div>
 				</span>
                 {{ form_row(form.fileDecompressionTechnique) }}
