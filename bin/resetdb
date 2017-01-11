@@ -67,7 +67,7 @@ echo "Initialized sequences"
 bin/console fos:elastica:reset
 echo "Reset Elasticsearch index"
 
-echo "y" | bin/console doctrine:fixtures:load -vv || exit
+echo "y" | bin/console doctrine:fixtures:load -v || exit
 echo "Loaded data fixtures"
 
 bin/console rabbitmq-supervisor:control start
