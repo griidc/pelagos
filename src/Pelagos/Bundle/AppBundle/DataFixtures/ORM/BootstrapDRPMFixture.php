@@ -15,6 +15,9 @@ use Pelagos\Entity\RoleInterface;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 /**
  * Fixture to load test People into the GRIIDC Data Repository.
  */
@@ -74,39 +77,40 @@ class BootstrapDRPMFixture extends AbstractFixture implements OrderedFixtureInte
         $metadata->setIdGenerator(new AssignedGenerator());
 
         // make container aware
-        if $this->container->hasParameter('super_drpm_id') {
-            $superDrpmId = $this->container->getParameter('super_drpm_id');
-        }
-        if $this->container->hasParameter('super_drpm_first_name') {
+        if ($this->container->hasParameter('super_drpm_first_name')) {
             $superDrpmFirstName = $this->container->getParameter('super_drpm_first_name');
         }
-        if $this->container->hasParameter('super_drpm_last_name') {
+        if ($this->container->hasParameter('super_drpm_last_name')) {
             $superDrpmLastName = $this->container->getParameter('super_drpm_last_name');
         }
-        if $this->container->hasParameter('super_drpm_email') {
+        if ($this->container->hasParameter('super_drpm_email')) {
             $superDrpmEmail = $this->container->getParameter('super_drpm_email');
         }
 
         // only if parameters above are all set
-        if (isset($superDrpmId)
-            and isset($superDrpmFirstName)
+        if (isset($superDrpmFirstName)
             and isset($superDrpmLastName)
             and isset($superDrpmEmail)) {
+
             $person = new Person;
+
+            $person->setId(1);
             $person->setFirstName($superDrpmFirstName);
             $person->setLastName($superDrpmLastName);
-            $person->setEmailAddress($suprDrpmEmail);
+            $person->setEmailAddress($superDrpmEmail);
             $person->setCreator($this->systemPerson);
-            $entityManager->persist($person);
-            $entityManager->flush();
 
             // Bestow superpowers.
             $this->givePersonRole(
                 $person,
                 'DataRepository',
                 DataRepositoryRoles::MANAGER,
-                $this->getReference($initialDataRepositoryName)
+                $this->getReference('Initial Data Repository')
             );
+
+            $entityManager->persist($person);
+            $entityManager->flush();
+
         }
     }
 
@@ -117,7 +121,7 @@ class BootstrapDRPMFixture extends AbstractFixture implements OrderedFixtureInte
      */
     public function getOrder()
     {
-        return 102;
+        return 105;
     }
 
     /**
