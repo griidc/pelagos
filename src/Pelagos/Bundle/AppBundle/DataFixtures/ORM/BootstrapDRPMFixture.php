@@ -6,8 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Doctrine\ORM\Id\AssignedGenerator;
-
+use Pelagos\Entity\DataRepository;
 use Pelagos\Entity\Entity;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\RoleInterface;
@@ -72,10 +71,6 @@ class BootstrapDRPMFixture extends AbstractFixture implements OrderedFixtureInte
 
         $this->systemPerson = $entityManager->find(Person::class, 0);
 
-        $metadata = $entityManager->getClassMetaData(Person::class);
-        $idGenerator = $metadata->idGenerator;
-        $metadata->setIdGenerator(new AssignedGenerator());
-
         // make container aware
         if ($this->container->hasParameter('super_drpm_first_name')) {
             $superDrpmFirstName = $this->container->getParameter('super_drpm_first_name');
@@ -94,7 +89,6 @@ class BootstrapDRPMFixture extends AbstractFixture implements OrderedFixtureInte
 
             $person = new Person;
 
-            $person->setId(1);
             $person->setFirstName($superDrpmFirstName);
             $person->setLastName($superDrpmLastName);
             $person->setEmailAddress($superDrpmEmail);
@@ -105,12 +99,11 @@ class BootstrapDRPMFixture extends AbstractFixture implements OrderedFixtureInte
                 $person,
                 'DataRepository',
                 DataRepositoryRoles::MANAGER,
-                $this->getReference('Initial Data Repository')
+                $this->entityManager->find(DataRepository::class, 1)
             );
 
             $entityManager->persist($person);
             $entityManager->flush();
-
         }
     }
 

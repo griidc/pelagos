@@ -22,6 +22,7 @@ class BootstrapDataRepositoryFixture extends AbstractFixture implements OrderedF
      */
     public function load(ObjectManager $entityManager)
     {
+
         $systemPerson = $entityManager->find(Person::class, 0);
 
         $name = 'Initial Data Repository';
@@ -44,7 +45,6 @@ class BootstrapDataRepositoryFixture extends AbstractFixture implements OrderedF
 
         $entityManager->persist($dataRepository);
         $entityManager->flush();
-        $this->addReference($name, $dataRepository);
     }
 
     /**
