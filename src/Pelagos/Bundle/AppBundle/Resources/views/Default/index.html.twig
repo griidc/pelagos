@@ -2,4 +2,16 @@
 
 {% block body %}
     Pelagos is a system for maintaining a repository of scientific research data.
+    <h3>Links to:</h3>
+    <ul>
+        <li><a href="{{ path("pelagos_app_ui_account_default") }}">Request Account</a></li>
+        <li><a href="{{ path("pelagos_app_ui_account_passwordreset") }}">Password Reset</a></li>
+        <li><a href="{{ path("pelagos_admin") }}">Admin Page</a></li>
+        <li><a href="{{ path("pelagos_app_ui_dif_default") }}">DIF</a></li>
+        <li><a href="{{ path("pelagos_app_ui_datasetsubmission_default") }}">Dataset Submission</a></li>
+        <li><a href="{{ path("pelagos_app_ui_datasetmonitoring_default") }}">Dataset Monitoring</a></li>
+        <li><a href="{{ path("pelagos_app_ui_datadiscovery_default") }}">Dataset Discovery</a></li>
+        <li><a href="{{ path("pelagos_app_ui_doirequest_default") }}">DOI Request</a></li>
+        <li><a href="{{ path("pelagos_app_ui_stats_default") }}">Stats</a></li>
+    </ul>
 {% endblock %}
