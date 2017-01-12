@@ -114,7 +114,7 @@ class BootstrapDRPMFixture extends AbstractFixture implements OrderedFixtureInte
      */
     public function getOrder()
     {
-        return 105;
+        return 20;
     }
 
     /**

@@ -54,6 +54,6 @@ class BootstrapDataRepositoryFixture extends AbstractFixture implements OrderedF
      */
     public function getOrder()
     {
-        return 1;
+        return 10;
     }
 }
