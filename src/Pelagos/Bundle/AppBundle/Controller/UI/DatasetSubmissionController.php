@@ -385,7 +385,7 @@ class DatasetSubmissionController extends UIController
         )->createView();
 
         $researchGroupList = null;
-        if (null === $udi) {
+        if (null === $dataset) {
             $account = $this->getUser();
             if (null !== $account) {
                 $user = $account->getPerson();
