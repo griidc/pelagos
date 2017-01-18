@@ -36,10 +36,10 @@ fi
 
 bin/console rabbitmq-supervisor:control stop
 
-echo "DROP DATABASE $parameters__database_name" | psql -h $parameters__database_host -U postgres || exit
-echo "Database $parameters__database_name dropped"
-echo "CREATE DATABASE $parameters__database_name" | psql -h $parameters__database_host -U postgres || exit
-echo "Created database $parameters__database_name"
+#echo "DROP DATABASE $parameters__database_name" | psql -h $parameters__database_host -U postgres || exit
+#echo "Database $parameters__database_name dropped"
+#echo "CREATE DATABASE $parameters__database_name" | psql -h $parameters__database_host -U postgres || exit
+#echo "Created database $parameters__database_name"
 echo "ALTER DATABASE $parameters__database_name OWNER TO $parameters__database_user" | psql -h $parameters__database_host -U postgres || exit
 echo "Database $parameters__database_name ownership set to $parameters__database_user"
 echo "CREATE EXTENSION IF NOT EXISTS citext" | psql -h $parameters__database_host -U postgres $parameters__database_name || exit
@@ -50,7 +50,7 @@ echo "GRANT ALL PRIVILEGES ON TABLE spatial_ref_sys TO $parameters__database_use
 echo "Grant permissions to spatial_ref_sys"
 echo "GRANT ALL PRIVILEGES ON TABLE geometry_columns TO $parameters__database_user" | psql -h $parameters__database_host -U postgres $parameters__database_name || exit
 echo "Grant permissions to geometry_columns"
-
+exit
 bin/console doctrine:schema:create || exit
 echo "Generated/loaded DB schema"
 

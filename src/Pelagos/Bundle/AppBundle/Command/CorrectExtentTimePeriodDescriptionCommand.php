@@ -24,7 +24,7 @@ class CorrectExtentTimePeriodDescriptionCommand extends ContainerAwareCommand
      *
      * @var boolean
      */
-    private $foundBadRoles;
+    private $foundBadDescriptions;
 
     /**
      * The number of time periods that were modified.
@@ -74,9 +74,7 @@ class CorrectExtentTimePeriodDescriptionCommand extends ContainerAwareCommand
         $datasets = $qb->getQuery()->getResult();
 
         foreach ($datasets as $dataset) {
-            $this->foundBadRoles = false;
-            $metadataRoleModified = false;
-            $datasetRoleModified = false;
+            $this->foundBadDescriptions = false;
 
             $metadata = $dataset->getMetadata();
 
@@ -128,13 +126,13 @@ class CorrectExtentTimePeriodDescriptionCommand extends ContainerAwareCommand
                     $newValue = 'modeled period';
                 }
                 if ($nodeValue !== $newValue) {
-                    $this->foundBadRoles = true;
+                    $this->foundBadDescriptions = true;
                     $this->numberModified++;
                     $node->nodeValue = $newValue;
                 }
             }
 
-            if ($this->foundBadRoles) {
+            if ($this->foundBadDescriptions) {
                 $doc->formatOutput = true;
                 $doc->normalizeDocument();
 
