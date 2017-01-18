@@ -548,7 +548,20 @@ class ISOMetadataExtractorUtil
                  '/gml:TimePeriod' .
                  '/gml:description';
 
-        return self::querySingle($xml, $query);
+        $temporalExtentDescription = self::querySingle($xml, $query);
+        $groundCondition = preg_match('/ground.*condition/i', $temporalExtentDescription);
+        $modeledPeriod = preg_match('/modeled.*period/i', $temporalExtentDescription);
+
+        if (1 === $groundCondition and 1 === $modeledPeriod) {
+            return 'ground condition and modeled period';
+        }
+        if (1 === $groundCondition) {
+            return 'ground condition';
+        }
+        if (1 === $modeledPeriod) {
+            return 'modeled period';
+        }
+        return $temporalExtentDescription;
     }
 
     /**
