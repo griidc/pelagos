@@ -610,7 +610,7 @@ class Dataset extends Entity
                             $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED;
                             break;
                     }
-                } elseif ($this->getDatasetSubmission()->getMetadataFileTransferStatus() === DatasetSubmission::TRANSFER_STATUS_COMPLETED) {
+                } elseif ($this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
                     $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
                 } else {
                     $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
@@ -626,7 +626,7 @@ class Dataset extends Entity
                             $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED;
                             break;
                     }
-                } elseif ($this->getDatasetSubmission()->getMetadataFileTransferStatus() === DatasetSubmission::TRANSFER_STATUS_COMPLETED) {
+                } elseif ($this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
                     $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
                 } else {
                     $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
