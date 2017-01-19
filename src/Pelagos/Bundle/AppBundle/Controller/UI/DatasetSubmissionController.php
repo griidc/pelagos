@@ -384,7 +384,7 @@ class DatasetSubmissionController extends UIController
             )
         )->createView();
 
-        $researchGroupList = null;
+        $researchGroupList = array();
         if (null === $dataset) {
             $account = $this->getUser();
             if (null !== $account) {
@@ -399,6 +399,13 @@ class DatasetSubmissionController extends UIController
                     $researchGroups
                 );
             }
+        }
+
+        // If there are no research groups, substitute in '!*'
+        // to ensure the query sent by datatables does not try and
+        // search for a blank parameter.
+        if (0 === count($researchGroupList)) {
+            $researchGroupList = '!*';
         }
 
         return $this->render(
