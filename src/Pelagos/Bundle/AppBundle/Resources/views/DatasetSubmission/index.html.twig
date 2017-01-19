@@ -69,7 +69,12 @@
 
 {% block body %}
 
-<h1>Dataset Submission{% if datasetSubmission is not null %} for {{ datasetSubmission.dataset.udi }}{% endif %}</h1>
+{% if datasetSubmission is null %}
+    <h1>Dataset Submission not found</h1>
+{% elseif not is_granted('CAN_CREATE', datasetSubmission) and not is_granted('CAN_EDIT', datasetSubmission) %}
+{% else %}
+    <h1>Dataset Submission{% if datasetSubmission is not null %} for {{ datasetSubmission.dataset.udi }}{% endif %}</h1>
+{% endif %}
 
 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
     {% if udi is null %}
