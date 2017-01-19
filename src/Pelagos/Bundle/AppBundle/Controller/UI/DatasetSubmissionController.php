@@ -385,27 +385,25 @@ class DatasetSubmissionController extends UIController
         )->createView();
 
         $researchGroupList = array();
-        if (null === $dataset) {
-            $account = $this->getUser();
-            if (null !== $account) {
-                $user = $account->getPerson();
+        $account = $this->getUser();
+        if (null !== $account) {
+            $user = $account->getPerson();
 
-                // Find all RG's user has CREATE_DIF_DIF_ON on.
-                $researchGroups = $user->getResearchGroups();
-                $researchGroupList = array_map(
-                    function ($researchGroup) {
-                        return $researchGroup->getId();
-                    },
-                    $researchGroups
-                );
-            }
+            // Find all RG's user has CREATE_DIF_DIF_ON on.
+            $researchGroups = $user->getResearchGroups();
+            $researchGroupList = array_map(
+                function ($researchGroup) {
+                    return $researchGroup->getId();
+                },
+                $researchGroups
+            );
         }
 
         // If there are no research groups, substitute in '!*'
         // to ensure the query sent by datatables does not try and
         // search for a blank parameter.
         if (0 === count($researchGroupList)) {
-            $researchGroupList = '!*';
+            $researchGroupList = array('!*');
         }
 
         return $this->render(
