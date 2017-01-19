@@ -12,7 +12,7 @@
                 </p>
                 <form id="regidform">
                     <label for="regid"><b>Unique Dataset Identifier (UDI): </b></label>
-                    <input minlength="15" type="text" id="regid" name="regid" size="60" value="{{datasetSubmission.getDatasetSubmissionId|default}}">
+                    <input minlength="16" type="text" id="regid" name="regid" size="60" value="{{datasetSubmission.getDatasetSubmissionId|default}}">
                     <button disabled
                     onclick="window.location.href='{{ path('pelagos_app_ui_datasetsubmission_default') }}?regid=' +
                     document.getElementById('regid').value.trim();"
