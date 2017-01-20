@@ -69,9 +69,6 @@ class DatasetSubmissionController extends UIController
             'errors' => null,
             );
 
-        // Assume we have a saved draft and enable discard button by default.
-        $enableDiscard = true;
-
         if ($udi != null) {
             $udi = trim($udi);
             $datasets = $this->entityHandler
@@ -83,15 +80,6 @@ class DatasetSubmissionController extends UIController
                 $dif = $dataset->getDif();
 
                 $datasetSubmission = $dataset->getDatasetSubmissionHistory()->first();
-
-                if (null !== $request->request->get('discard')
-                    and $datasetSubmission->getStatus() === DatasetSubmission::STATUS_INCOMPLETE
-                ) {
-                    // Delete the current Dataset Submission.
-                    $this->entityHandler->delete($datasetSubmission);
-                    // Get the previous Dataset Submission (if any).
-                    $datasetSubmission = $dataset->getDatasetSubmissionHistory()->first();
-                }
 
                 $xmlForm = $this->get('form.factory')->createNamed(
                     null,
@@ -120,8 +108,6 @@ class DatasetSubmissionController extends UIController
                 }
 
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
-                    // We didn't have a saved or submitted dataset submission, so disable discard button.
-                    $enableDiscard = false;
                     // This is the first submission, so create a new one based on the DIF.
                     $datasetSubmission = new DatasetSubmission($dif);
                     $datasetSubmission->setSequence(1);
@@ -146,8 +132,6 @@ class DatasetSubmissionController extends UIController
                         // This is handled in the template.
                     }
                 } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
-                    // We only have a submitted dataset submission, so disable discard button.
-                    $enableDiscard = false;
                     // The latest submission is complete, so create new one based on it.
                     $datasetSubmission = new DatasetSubmission($datasetSubmission);
 
@@ -175,7 +159,7 @@ class DatasetSubmissionController extends UIController
             }
         }
 
-        return $this->makeSubmissionForm($udi, $datasetSubmission, $xmlStatus, $enableDiscard);
+        return $this->makeSubmissionForm($udi, $datasetSubmission, $xmlStatus);
     }
 
     /**
@@ -311,11 +295,10 @@ class DatasetSubmissionController extends UIController
      * @param string            $udi               The UDI entered by the user.
      * @param DatasetSubmission $datasetSubmission The Dataset Submission.
      * @param array             $xmlStatus         Error message when loading XML.
-     * @param boolean           $enableDiscard     Whether to enable to discard button.
      *
      * @return Response
      */
-    protected function makeSubmissionForm($udi, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null, $enableDiscard = true)
+    protected function makeSubmissionForm($udi, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null)
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;
@@ -412,7 +395,6 @@ class DatasetSubmissionController extends UIController
                 'showForceImport' => $showForceImport,
                 'showForceDownload' => $showForceDownload,
                 'researchGroupList' => $researchGroupList,
-                'enableDiscard' => $enableDiscard,
             )
         );
     }
