@@ -16,6 +16,17 @@ $(document).ready(function(){
 
         if (typeof options.columnDefs === "undefined") {
             options.columnDefs = [];
+            options.columnDefs.push({
+                "render": function (data, type, row) {
+                    if (type === "display") {
+                        // Escape potentially dangerous content.
+                        return data.replace(/[^0-9A-Za-z ]/g, function(c) {return "&#" + c.charCodeAt(0) + ";";});
+                    } else {
+                        return data;
+                    }
+                },
+                "targets": "_all"
+            });
         }
 
         var columnDefinitions = $(this).data("columnDefinitions");

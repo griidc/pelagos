@@ -781,7 +781,9 @@ function makeTree(Status, Person, ShowEmpty, json)
                     break;
             }
             var clickAction = "getNode('" + dataset.udi + "'," + dataset.dif.id + ");";
-            var datasetNodeText = "[" + dataset.udi + "] " + dataset.dif.title;
+            var datasetNodeText = "[" + dataset.udi + "] " +
+                dataset.dif.title
+                    .replace(/[^0-9A-Za-z ]/g, function(c) {return "&#" + c.charCodeAt(0) + ";";});
 
             var datasetNode = {
                 id          : dataset.id,
