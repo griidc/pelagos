@@ -47,6 +47,7 @@ select, input{
 }
 
 .entityForm input[type="text"],
+.entityForm input[type="email"],
 .entityForm textarea {
     width:100%;
 }

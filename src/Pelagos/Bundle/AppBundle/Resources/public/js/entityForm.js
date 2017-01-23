@@ -136,7 +136,7 @@
 
                         url += "/validateProperty";
 
-                        $("input:visible:text,input:visible[type=number],textarea,select", this).each(function() {
+                        $("input:visible:text,input:visible[type=number],input:visible[type=email],textarea,select", this).each(function() {
                             $(this).attr("disabled", false);
                             if (!$(this).hasAttr("dontvalidate")) {
                                 $(this).rules("add", {
