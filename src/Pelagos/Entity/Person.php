@@ -115,7 +115,8 @@ class Person extends Entity
      *     message="Email address cannot contain angle brackets (< or >)"
      * )
      * @Assert\Email(
-     *     message="Email address is invalid"
+     *     message="Email address is invalid",
+     *     strict=true
      * )
      */
     protected $emailAddress;
