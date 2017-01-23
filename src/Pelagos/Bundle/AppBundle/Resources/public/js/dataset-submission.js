@@ -99,11 +99,6 @@ $(function() {
 
     $("#btn-upload").qtip();
     $("#btn-save").qtip();
-    $("#btn-discard").qtip();
-
-    $("#btn-discard").click(function() {
-        $("#discardForm").submit();
-    });
 
     $("#btn-previous").click(function() {
         var activeTab = $("#dtabs").tabs("option","active");
