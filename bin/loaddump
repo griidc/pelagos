@@ -21,6 +21,17 @@ if [ ! -f app/config/parameters.yml ]; then
     exit
 fi
 
+if [ -z "$1" ]; then
+    echo "dumpfile to load not specified."
+    exit
+fi
+
+if [ ! -f $1 ]; then
+    echo "dumpfile specified not found."
+    exit
+fi
+
+
 eval $(parse_yaml app/config/parameters.yml "")
 
 echo "WARNING!!!: This will destroy all data in the $parameters__database_name database on $parameters__database_host!"
@@ -30,8 +41,8 @@ if [[ ! $response =~ ^[yY]$ ]]; then
     exit
 fi
 
-if [ "$#" -eq 1 ]; then
-    export SYMFONY_ENV="$1"
+if [ "$#" -eq 2 ]; then
+    export SYMFONY_ENV="$2"
 fi
 
 bin/console rabbitmq-supervisor:control stop
@@ -56,7 +67,7 @@ echo "Grant permissions to geometry_columns"
 
 # Load Dump
 echo "Importing database dump";
-/usr/bin/psql -h $parameters__database_host -U postgres $parameters__database_name < ~/production-dump.sql
+/usr/bin/psql -h $parameters__database_host -U postgres $parameters__database_name < $1
 
 # Reset spatial Permissions
 echo "GRANT ALL PRIVILEGES ON TABLE spatial_ref_sys TO $parameters__database_user" | psql -h $parameters__database_host -U postgres $parameters__database_name || exit
