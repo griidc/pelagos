@@ -4,6 +4,7 @@ namespace Pelagos\Bundle\AppBundle\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Form\FormInterface;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -106,6 +107,8 @@ class DatasetSubmissionController extends EntityController
      * @param integer $id      The id of the Dataset Submission to replace.
      * @param Request $request The request object.
      *
+     * @throws BadRequestHttpException When the submission has already been submitted.
+     *
      * @ApiDoc(
      *   section = "Dataset Submission",
      *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType", "name" = ""},
@@ -122,6 +125,10 @@ class DatasetSubmissionController extends EntityController
      */
     public function putAction($id, Request $request)
     {
+        $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
+        if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+            throw new BadRequestHttpException('This submission has already been submitted');
+        }
         $this->handleUpdate(DatasetSubmissionType::class, DatasetSubmission::class, $id, $request, 'PUT');
         return $this->makeNoContentResponse();
     }
@@ -131,6 +138,8 @@ class DatasetSubmissionController extends EntityController
      *
      * @param integer $id      The id of the Dataset Submission to update.
      * @param Request $request The request object.
+     *
+     * @throws BadRequestHttpException When the submission has already been submitted.
      *
      * @ApiDoc(
      *   section = "Dataset Submission",
@@ -148,6 +157,10 @@ class DatasetSubmissionController extends EntityController
      */
     public function patchAction($id, Request $request)
     {
+        $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
+        if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+            throw new BadRequestHttpException('This submission has already been submitted');
+        }
         $entityHandler = $this->container->get('pelagos.entity.handler');
         $datasetSubmission = $this->handleUpdate(DatasetSubmissionType::class, DatasetSubmission::class, $id, $request, 'PATCH');
         foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
