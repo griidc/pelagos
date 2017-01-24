@@ -41,6 +41,16 @@ if [[ ! $response =~ ^[yY]$ ]]; then
     exit
 fi
 
+echo "This can also re-index your elastica database."
+read -r -p "Are you sure you want to do this? [y/N] " response
+if [[ $response =~ ^[yY]$ ]]; then
+    ELASTICA_INDEX=1
+    echo "You chose to re-index elastica. This will take some additional time."
+else
+    ELASTICA_INDEX=0
+    echo "You chose not to re-index elastica. As a result, contents may be stale."
+fi
+
 if [ "$#" -eq 2 ]; then
     export SYMFONY_ENV="$2"
 fi
@@ -80,8 +90,11 @@ export PGPASSWORD="$parameters__database_password"
 bin/console doctrine:migrations:migrate -n
 echo "Migrated DB schema"
 
-bin/console fos:elastica:reset
-echo "Reset Elasticsearch index"
+if [ $ELASTICA_INDEX -eq 1 ]; then
+    bin/console fos:elastica:reset
+    bin/console fos:elastica:populate
+    echo "Populated Elasticsearch index"
+fi
 
 # Local DRPM fixture, optional.
 if [ -f $parameters__local_drpm_fixture ]
