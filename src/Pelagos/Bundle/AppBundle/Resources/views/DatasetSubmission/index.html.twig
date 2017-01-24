@@ -102,7 +102,10 @@
         {% elseif datasetSubmission.status == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_COMPLETE')
                   and (
                        datasetSubmission.datasetFileTransferStatus == constant('Pelagos\\Entity\\DatasetSubmission::TRANSFER_STATUS_NONE')
-                       or datasetSubmission.datasetFileSha256Hash is empty
+                       or (
+                           datasetSubmission.datasetFileTransferStatus == constant('Pelagos\\Entity\\DatasetSubmission::TRANSFER_STATUS_COMPLETED')
+                           and datasetSubmission.datasetFileSha256Hash is empty
+                       )
                   )
         %}
             <div class="messages warning">

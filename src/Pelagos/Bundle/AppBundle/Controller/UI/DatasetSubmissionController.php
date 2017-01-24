@@ -133,7 +133,10 @@ class DatasetSubmissionController extends UIController
                     }
                 } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
                     and $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_NONE
-                    and $datasetSubmission->getDatasetFileSha256Hash() !== null
+                    and (
+                        $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_COMPLETED
+                        or $datasetSubmission->getDatasetFileSha256Hash() !== null
+                    )
                 ) {
                     // The latest submission is complete, so create new one based on it.
                     $datasetSubmission = new DatasetSubmission($datasetSubmission);
