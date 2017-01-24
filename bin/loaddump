@@ -80,7 +80,7 @@ export PGPASSWORD="$parameters__database_password"
 bin/console doctrine:migrations:migrate -n
 echo "Migrated DB schema"
 
-#bin/console fos:elastica:reset
+bin/console fos:elastica:reset
 echo "Reset Elasticsearch index"
 
 # Local DRPM fixture, optional.
