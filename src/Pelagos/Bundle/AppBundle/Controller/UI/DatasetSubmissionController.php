@@ -131,7 +131,10 @@ class DatasetSubmissionController extends UIController
                     } catch (AccessDeniedException $e) {
                         // This is handled in the template.
                     }
-                } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+                } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
+                    and $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_NONE
+                    and $datasetSubmission->getDatasetFileSha256Hash() !== null
+                ) {
                     // The latest submission is complete, so create new one based on it.
                     $datasetSubmission = new DatasetSubmission($datasetSubmission);
 
