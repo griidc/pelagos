@@ -131,7 +131,10 @@ class DatasetSubmissionController extends UIController
                     } catch (AccessDeniedException $e) {
                         // This is handled in the template.
                     }
-                } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+                } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
+                    and $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_NONE
+                    and $datasetSubmission->getDatasetFileSha256Hash() !== null
+                ) {
                     // The latest submission is complete, so create new one based on it.
                     $datasetSubmission = new DatasetSubmission($datasetSubmission);
 
@@ -168,6 +171,8 @@ class DatasetSubmissionController extends UIController
      * @param Request     $request The Symfony request object.
      * @param string|null $id      The id of the Dataset Submission to load.
      *
+     * @throws BadRequestHttpException When dataset submission has already been submitted.
+     *
      * @Route("/{id}")
      *
      * @Method("POST")
@@ -177,6 +182,10 @@ class DatasetSubmissionController extends UIController
     public function postAction(Request $request, $id = null)
     {
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
+
+        if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+            throw new BadRequestHttpException('This submission has already been submitted.');
+        }
 
         $form = $this->get('form.factory')->createNamed(
             null,

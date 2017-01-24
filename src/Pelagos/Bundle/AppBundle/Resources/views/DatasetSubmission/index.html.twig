@@ -99,6 +99,17 @@
                 The DIF has not yet been submitted for dataset: {{ udi }}. Please email <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> if you have any questions.
             </div>
             {% include 'PelagosAppBundle:DatasetSubmission:form.html.twig' %}
+        {% elseif datasetSubmission.status == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_COMPLETE')
+                  and (
+                       datasetSubmission.datasetFileTransferStatus == constant('Pelagos\\Entity\\DatasetSubmission::TRANSFER_STATUS_NONE')
+                       or datasetSubmission.datasetFileSha256Hash is empty
+                  )
+        %}
+            <div class="messages warning">
+                <h2 class="element-invisible">Status message</h2>
+                The previous Dataset Submission for {{ udi }} is still being processed. Please try again later.
+            </div>
+            {% include 'PelagosAppBundle:DatasetSubmission:form.html.twig' %}
         {% else %}
             {% for error in xmlStatus.errors %}
             <div class="messages warning">
