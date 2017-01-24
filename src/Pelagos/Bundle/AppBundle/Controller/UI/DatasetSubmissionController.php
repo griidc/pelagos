@@ -168,6 +168,8 @@ class DatasetSubmissionController extends UIController
      * @param Request     $request The Symfony request object.
      * @param string|null $id      The id of the Dataset Submission to load.
      *
+     * @throws BadRequestHttpException When dataset submission has already been submitted.
+     *
      * @Route("/{id}")
      *
      * @Method("POST")
@@ -177,6 +179,10 @@ class DatasetSubmissionController extends UIController
     public function postAction(Request $request, $id = null)
     {
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
+
+        if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+            throw new BadRequestHttpException('This submission has already been submitted.');
+        }
 
         $form = $this->get('form.factory')->createNamed(
             null,
