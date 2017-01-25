@@ -64,6 +64,7 @@ class DatasetSubmissionController extends UIController
     {
         $udi = $request->query->get('regid');
         $datasetSubmission = null;
+        $dataset = null;
         $xmlStatus = array(
             'success' => null,
             'errors' => null,
@@ -73,6 +74,7 @@ class DatasetSubmissionController extends UIController
             $udi = trim($udi);
             $datasets = $this->entityHandler
                 ->getBy(Dataset::class, array('udi' => substr($udi, 0, 16)));
+            $datasetSubmission = null;
 
             if (count($datasets) == 1) {
                 $dataset = $datasets[0];
@@ -80,6 +82,10 @@ class DatasetSubmissionController extends UIController
                 $dif = $dataset->getDif();
 
                 $datasetSubmission = $dataset->getDatasetSubmissionHistory()->first();
+
+                if ($datasetSubmission instanceof DatasetSubmission == false) {
+                    $datasetSubmission = null;
+                }
 
                 $xmlForm = $this->get('form.factory')->createNamed(
                     null,
@@ -108,28 +114,31 @@ class DatasetSubmissionController extends UIController
                 }
 
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
-                    // This is the first submission, so create a new one based on the DIF.
-                    $datasetSubmission = new DatasetSubmission($dif);
-                    $datasetSubmission->setSequence(1);
 
-                    // If we have metadata.
-                    if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
-                        // Clear dataset and metadata contacts.
-                        $datasetSubmission->getDatasetContacts()->clear();
-                        $datasetSubmission->getMetadataContacts()->clear();
-                        // Populate from metadata.
-                        ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
+                    if ($dif->getStatus() == DIF::STATUS_APPROVED) {
+                        // This is the first submission, so create a new one based on the DIF.
+                        $datasetSubmission = new DatasetSubmission($dif);
+                        $datasetSubmission->setSequence(1);
+
+                        // If we have metadata.
+                        if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
+                            // Clear dataset and metadata contacts.
+                            $datasetSubmission->getDatasetContacts()->clear();
+                            $datasetSubmission->getMetadataContacts()->clear();
+                            // Populate from metadata.
+                            ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
                             $datasetSubmission->getDataset()->getMetadata()->getXml(),
                             $datasetSubmission,
                             $this->get('doctrine.orm.entity_manager')
-                        );
-                    }
+                            );
+                        }
 
-                    try {
-                        $this->entityHandler->create($datasetSubmission);
-                        $dataset->setDatasetSubmission($datasetSubmission);
-                    } catch (AccessDeniedException $e) {
-                        // This is handled in the template.
+                        try {
+                            $this->entityHandler->create($datasetSubmission);
+                            $dataset->setDatasetSubmission($datasetSubmission);
+                        } catch (AccessDeniedException $e) {
+                            // This is handled in the template.
+                        }
                     }
                 } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
                     and $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_NONE
@@ -165,7 +174,7 @@ class DatasetSubmissionController extends UIController
             }
         }
 
-        return $this->makeSubmissionForm($udi, $datasetSubmission, $xmlStatus);
+        return $this->makeSubmissionForm($udi, $dataset, $datasetSubmission, $xmlStatus);
     }
 
     /**
@@ -310,11 +319,10 @@ class DatasetSubmissionController extends UIController
      *
      * @return Response
      */
-    protected function makeSubmissionForm($udi, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null)
+    protected function makeSubmissionForm($udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null)
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;
-        $dataset = null;
         if ($datasetSubmission instanceof DatasetSubmission) {
             if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
                 $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
@@ -325,7 +333,6 @@ class DatasetSubmissionController extends UIController
             }
 
             $datasetSubmissionId = $datasetSubmission->getId();
-            $dataset = $datasetSubmission->getDataset();
             $researchGroupId = $dataset->getResearchGroup()->getId();
         }
 
@@ -408,6 +415,7 @@ class DatasetSubmissionController extends UIController
                 'xmlForm' => $xmlFormView,
                 'udi'  => $udi,
                 'xmlStatus' => $xmlStatus,
+                'dataset' => $dataset,
                 'datasetSubmission' => $datasetSubmission,
                 'showForceImport' => $showForceImport,
                 'showForceDownload' => $showForceDownload,
