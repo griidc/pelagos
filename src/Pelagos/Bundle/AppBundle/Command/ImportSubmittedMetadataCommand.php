@@ -65,43 +65,45 @@ class ImportSubmittedMetadataCommand extends ContainerAwareCommand
 
             $dataStore = $this->getContainer()->get('pelagos.util.data_store');
 
+            $metadataFileInfo = null;
             try {
                 $metadataFileInfo = $dataStore->getFileInfo($udi, DataStore::METADATA_FILE_TYPE);
             } catch (FileNotFoundException $e) {
                 $output->writeln("  No submitted metadata file found for $udi.");
-                continue;
             }
-            $output->writeln("  Found metadata file for $udi.");
-            $counts['foundmd']++;
+            if ($metadataFileInfo instanceof \SplFileInfo) {
+                $output->writeln("  Found metadata file for $udi.");
+                $counts['foundmd']++;
 
-            $xml = simplexml_load_file(
-                $metadataFileInfo->getRealPath(),
-                'SimpleXMLElement',
-                (LIBXML_NOERROR | LIBXML_NOWARNING)
-            );
-
-            if ($xml instanceof \SimpleXMLElement and 'MI_Metadata' == $xml->getName()) {
-                $datasetSubmission->getDatasetContacts()->clear();
-                $datasetSubmission->getMetadataContacts()->clear();
-                ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                    $xml,
-                    $datasetSubmission,
-                    $entityManager
+                $xml = simplexml_load_file(
+                    $metadataFileInfo->getRealPath(),
+                    'SimpleXMLElement',
+                    (LIBXML_NOERROR | LIBXML_NOWARNING)
                 );
-                // Copy creator and modifier from submission for imported dataset contacts.
-                foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
-                    $datasetContact->setCreator($datasetSubmission->getCreator());
-                    $datasetContact->setModifier($datasetSubmission->getModifier());
+
+                if ($xml instanceof \SimpleXMLElement and 'MI_Metadata' == $xml->getName()) {
+                    $datasetSubmission->getDatasetContacts()->clear();
+                    $datasetSubmission->getMetadataContacts()->clear();
+                    ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
+                        $xml,
+                        $datasetSubmission,
+                        $entityManager
+                    );
+                    // Copy creator and modifier from submission for imported dataset contacts.
+                    foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+                        $datasetContact->setCreator($datasetSubmission->getCreator());
+                        $datasetContact->setModifier($datasetSubmission->getModifier());
+                    }
+                    // Copy creator and modifier from submission for imported metadata contacts.
+                    foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+                        $metadataContact->setCreator($datasetSubmission->getCreator());
+                        $metadataContact->setModifier($datasetSubmission->getModifier());
+                    }
+                    $output->writeln("  Imported submitted metadata for $udi.");
+                    $counts['imported']++;
+                } else {
+                    $output->writeln("  Failed to imported submitted metadata for $udi.");
                 }
-                // Copy creator and modifier from submission for imported metadata contacts.
-                foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
-                    $metadataContact->setCreator($datasetSubmission->getCreator());
-                    $metadataContact->setModifier($datasetSubmission->getModifier());
-                }
-                $output->writeln("  Imported submitted metadata for $udi.");
-                $counts['imported']++;
-            } else {
-                $output->writeln("  Failed to imported submitted metadata for $udi.");
             }
 
             $errors = $this->getContainer()->get('validator')->validate($datasetSubmission);
