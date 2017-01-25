@@ -91,15 +91,8 @@ bin/console doctrine:migrations:migrate -n
 echo "Migrated DB schema"
 
 if [ $ELASTICA_INDEX -eq 1 ]; then
-    bin/console fos:elastica:reset
     bin/console fos:elastica:populate
     echo "Populated Elasticsearch index"
-fi
-
-# Local DRPM fixture, optional.
-if [ -f $parameters__local_drpm_fixture ]
-    then
-        echo "y" | bin/console doctrine:fixtures:load --append --fixtures $parameters__local_drpm_fixture -v || exit
 fi
 
 bin/console rabbitmq-supervisor:control start

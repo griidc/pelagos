@@ -78,9 +78,3 @@ parameters:
     download_base_url: ~
 
     google_maps_api_key: ~
-
-    # Parameters for optional local DRPM
-    local_drpm_fixture: ~
-    local_drpm_email: ~
-
-
