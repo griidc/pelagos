@@ -127,9 +127,9 @@ class DatasetSubmissionController extends UIController
                             $datasetSubmission->getMetadataContacts()->clear();
                             // Populate from metadata.
                             ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                            $datasetSubmission->getDataset()->getMetadata()->getXml(),
-                            $datasetSubmission,
-                            $this->get('doctrine.orm.entity_manager')
+                                $datasetSubmission->getDataset()->getMetadata()->getXml(),
+                                $datasetSubmission,
+                                $this->get('doctrine.orm.entity_manager')
                             );
                         }
 
@@ -314,6 +314,7 @@ class DatasetSubmissionController extends UIController
      * Make the submission form and return it.
      *
      * @param string            $udi               The UDI entered by the user.
+     * @param Dataset           $dataset           The Dataset.
      * @param DatasetSubmission $datasetSubmission The Dataset Submission.
      * @param array             $xmlStatus         Error message when loading XML.
      *
