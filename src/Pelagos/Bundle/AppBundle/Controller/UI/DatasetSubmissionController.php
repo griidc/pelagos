@@ -74,7 +74,6 @@ class DatasetSubmissionController extends UIController
             $udi = trim($udi);
             $datasets = $this->entityHandler
                 ->getBy(Dataset::class, array('udi' => substr($udi, 0, 16)));
-            $datasetSubmission = null;
 
             if (count($datasets) == 1) {
                 $dataset = $datasets[0];
