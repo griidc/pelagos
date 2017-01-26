@@ -134,7 +134,6 @@ class DatasetSubmissionController extends UIController
 
                         try {
                             $this->entityHandler->create($datasetSubmission);
-                            $dataset->setDatasetSubmission($datasetSubmission);
                         } catch (AccessDeniedException $e) {
                             // This is handled in the template.
                         }
