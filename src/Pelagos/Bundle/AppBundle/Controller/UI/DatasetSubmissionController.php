@@ -119,19 +119,6 @@ class DatasetSubmissionController extends UIController
                         $datasetSubmission = new DatasetSubmission($dif);
                         $datasetSubmission->setSequence(1);
 
-                        // If we have metadata.
-                        if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
-                            // Clear dataset and metadata contacts.
-                            $datasetSubmission->getDatasetContacts()->clear();
-                            $datasetSubmission->getMetadataContacts()->clear();
-                            // Populate from metadata.
-                            ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                                $datasetSubmission->getDataset()->getMetadata()->getXml(),
-                                $datasetSubmission,
-                                $this->get('doctrine.orm.entity_manager')
-                            );
-                        }
-
                         try {
                             $this->entityHandler->create($datasetSubmission);
                         } catch (AccessDeniedException $e) {
