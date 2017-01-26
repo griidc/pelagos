@@ -436,6 +436,14 @@ class MdAppController extends UIController
             $errors[] = "Dataset with udi:$udi not found!";
         }
 
+        // Check to see if the dataset has a completed submission associated with it.
+        $datasetSubmission = $dataset->getDatasetSubmission();
+        if (false === $datasetSubmission instanceof DatasetSubmission) {
+            $error[] = 'You may not upload XML for a dataset that has no submission.';
+        } elseif ($datasetSubmission->getStatus() != DatasetSubmission::STATUS_COMPLETE) {
+            $error[] = 'You may not upload XML for a dataset that has an unapproved submission.';
+        }
+
         // Attempt to parse uploaded file.
         libxml_use_internal_errors(true);
         $testDoc = new \DomDocument('1.0', 'UTF-8');
