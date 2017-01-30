@@ -21,6 +21,9 @@ class Version20161207095609 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
+        // Add unique constraint on dataset_publication
+        $this->addSql('CREATE UNIQUE INDEX uniq_dataset_publication ON dataset_publication (publication_id, dataset_id)');
+
         // Add person_dataset_submission.
         $this->addSql('CREATE SEQUENCE person_dataset_submission_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE person_dataset_submission (id INT NOT NULL, person_id INT DEFAULT NULL, creator_id INT DEFAULT NULL, modifier_id INT DEFAULT NULL, dataset_submission_id INT DEFAULT NULL, role TEXT DEFAULT NULL, creation_time_stamp TIMESTAMP(0) WITH TIME ZONE NOT NULL, modification_time_stamp TIMESTAMP(0) WITH TIME ZONE NOT NULL, discr VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
@@ -208,5 +211,6 @@ class Version20161207095609 extends AbstractMigration
         $this->addSql('ALTER TABLE dataset_submission ALTER point_of_contact_name SET NOT NULL');
         $this->addSql('ALTER TABLE dataset_submission ALTER point_of_contact_email SET NOT NULL');
         $this->addSql('COMMENT ON COLUMN dataset_submission.dataset_file_pull_days IS \'(DC2Type:simple_array)\'');
+        $this->addSql('DROP INDEX uniq_dataset_publication');
     }
 }
