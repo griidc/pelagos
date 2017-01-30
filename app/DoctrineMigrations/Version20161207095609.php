@@ -21,6 +21,9 @@ class Version20161207095609 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
+        // Add unique constraint on dataset_publication
+        $this->addSql('CREATE UNIQUE INDEX uniq_dataset_publication ON dataset_publication (publication_id, dataset_id)');
+
         // Add person_dataset_submission.
         $this->addSql('CREATE SEQUENCE person_dataset_submission_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE person_dataset_submission (id INT NOT NULL, person_id INT DEFAULT NULL, creator_id INT DEFAULT NULL, modifier_id INT DEFAULT NULL, dataset_submission_id INT DEFAULT NULL, role TEXT DEFAULT NULL, creation_time_stamp TIMESTAMP(0) WITH TIME ZONE NOT NULL, modification_time_stamp TIMESTAMP(0) WITH TIME ZONE NOT NULL, discr VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
@@ -67,6 +70,14 @@ class Version20161207095609 extends AbstractMigration
         // Copy dataset_submission.creation_time_stamp to dataset_submission.submission_time_stamp.
         $this->addSql('UPDATE dataset_submission SET submission_time_stamp = creation_time_stamp');
 
+        // Add column/indexes for submitter
+        $this->addSql('ALTER TABLE dataset_submission ADD submitter_id INT DEFAULT NULL');
+        $this->addSql('ALTER TABLE dataset_submission ADD CONSTRAINT FK_FEFE73FC919E5513 FOREIGN KEY (submitter_id) REFERENCES person (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('CREATE INDEX IDX_FEFE73FC919E5513 ON dataset_submission (submitter_id)');
+
+        // Copy dataset_submission creator to dataset_submission submittor_id
+        $this->addSql('UPDATE dataset_submission SET submitter_id = creator_id');
+
         $this->addSql('ALTER TABLE dataset_submission DROP dataset_file_availability_date');
         $this->addSql('ALTER TABLE dataset_submission DROP dataset_file_pull_certain_times_only');
         $this->addSql('ALTER TABLE dataset_submission DROP dataset_file_pull_start_time');
@@ -108,6 +119,7 @@ class Version20161207095609 extends AbstractMigration
         $this->addSql('ALTER TABLE dataset_submission_audit ADD distribution_format_name TEXT DEFAULT NULL');
         $this->addSql('ALTER TABLE dataset_submission_audit ADD file_decompression_technique TEXT DEFAULT NULL');
         $this->addSql('ALTER TABLE dataset_submission_audit ADD submission_time_stamp TIMESTAMP(0) WITH TIME ZONE DEFAULT NULL');
+        $this->addSql('ALTER TABLE dataset_submission_audit ADD submitter_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE dataset_submission_audit DROP dataset_file_availability_date');
         $this->addSql('ALTER TABLE dataset_submission_audit DROP dataset_file_pull_certain_times_only');
         $this->addSql('ALTER TABLE dataset_submission_audit DROP dataset_file_pull_start_time');
@@ -161,6 +173,7 @@ class Version20161207095609 extends AbstractMigration
         $this->addSql('ALTER TABLE dataset_submission_audit DROP distribution_format_name');
         $this->addSql('ALTER TABLE dataset_submission_audit DROP file_decompression_technique');
         $this->addSql('ALTER TABLE dataset_submission_audit DROP submission_time_stamp');
+        $this->addSql('ALTER TABLE dataset_submission_audit DROP submitter_id');
         $this->addSql('COMMENT ON COLUMN dataset_submission_audit.dataset_file_pull_days IS \'(DC2Type:simple_array)\'');
         $this->addSql('ALTER TABLE dataset_submission ADD dataset_file_availability_date DATE DEFAULT NULL');
         $this->addSql('ALTER TABLE dataset_submission ADD dataset_file_pull_certain_times_only BOOLEAN DEFAULT NULL');
@@ -189,11 +202,15 @@ class Version20161207095609 extends AbstractMigration
         $this->addSql('ALTER TABLE dataset_submission DROP distribution_format_name');
         $this->addSql('ALTER TABLE dataset_submission DROP file_decompression_technique');
         $this->addSql('ALTER TABLE dataset_submission DROP submission_time_stamp');
+        $this->addSql('ALTER TABLE dataset_submission DROP CONSTRAINT FK_FEFE73FC919E5513');
+        $this->addSql('DROP INDEX IDX_FEFE73FC919E5513');
+        $this->addSql('ALTER TABLE dataset_submission DROP submitter_id');
         $this->addSql('ALTER TABLE dataset_submission ALTER title SET NOT NULL');
         $this->addSql('ALTER TABLE dataset_submission ALTER abstract SET NOT NULL');
         $this->addSql('ALTER TABLE dataset_submission ALTER authors SET NOT NULL');
         $this->addSql('ALTER TABLE dataset_submission ALTER point_of_contact_name SET NOT NULL');
         $this->addSql('ALTER TABLE dataset_submission ALTER point_of_contact_email SET NOT NULL');
         $this->addSql('COMMENT ON COLUMN dataset_submission.dataset_file_pull_days IS \'(DC2Type:simple_array)\'');
+        $this->addSql('DROP INDEX uniq_dataset_publication');
     }
 }
