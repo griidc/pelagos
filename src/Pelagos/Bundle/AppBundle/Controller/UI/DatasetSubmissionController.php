@@ -198,7 +198,7 @@ class DatasetSubmissionController extends UIController
 
             $datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_SUBMITTED);
 
-            $datasetSubmission->submit();
+            $datasetSubmission->submit($this->getUser()->getPerson());
 
             if ($datasetSubmission->getSequence() > 1) {
                 $eventName = 'resubmitted';
