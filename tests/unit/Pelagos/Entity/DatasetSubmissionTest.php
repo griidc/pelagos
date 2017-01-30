@@ -108,7 +108,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             DatasetSubmission::STATUS_INCOMPLETE,
             $this->datasetSubmission->getStatus()
         );
-        $this->datasetSubmission->submit();
+        $this->datasetSubmission->submit($this->mockPerson);
         $this->assertEquals(
             DatasetSubmission::STATUS_COMPLETE,
             $this->datasetSubmission->getStatus()
@@ -788,10 +788,11 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             $this->datasetSubmission->getMetadataStatus()
         );
         $this->assertNull($this->datasetSubmission->getSubmissionTimeStamp());
+        $this->assertNull($this->datasetSubmission->getSubmitter());
         $this->datasetSubmission->setDataset($this->mockDataset);
 
         // Submit it.
-        $this->datasetSubmission->submit();
+        $this->datasetSubmission->submit($this->mockPerson);
 
         // Check for expected values for a complete submission.
         $this->assertEquals(
@@ -805,6 +806,10 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(
             \DateTime::class,
             $this->datasetSubmission->getSubmissionTimeStamp()
+        );
+        $this->assertSame(
+            $this->mockPerson,
+            $this->datasetSubmission->getSubmitter()
         );
     }
 }

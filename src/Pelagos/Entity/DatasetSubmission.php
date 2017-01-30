@@ -903,6 +903,15 @@ class DatasetSubmission extends Entity
     protected $submissionTimeStamp;
 
     /**
+     * The Person who submitted this Dataset Submission.
+     *
+     * @var Person
+     *
+     * @ORM\ManyToOne(targetEntity="Person")
+     */
+    protected $submitter;
+
+    /**
      * Constructor.
      *
      * Initializes collections to empty collections.
@@ -1063,14 +1072,17 @@ class DatasetSubmission extends Entity
     /**
      * Submit this Dataset Submission.
      *
+     * @param Person $submitter The submitter.
+     *
      * @return void
      */
-    public function submit()
+    public function submit(Person $submitter)
     {
         $this->status = self::STATUS_COMPLETE;
         $this->metadataStatus = self::METADATA_STATUS_SUBMITTED;
         $this->getDataset()->setDatasetSubmission($this);
         $this->submissionTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->submitter = $submitter;
     }
 
     /**
@@ -2203,6 +2215,16 @@ class DatasetSubmission extends Entity
     public function getSubmissionTimeStamp()
     {
         return $this->submissionTimeStamp;
+    }
+
+    /**
+     * Get the submitter.
+     *
+     * @return Person|null
+     */
+    public function getSubmitter()
+    {
+        return $this->submitter;
     }
 
     /**
