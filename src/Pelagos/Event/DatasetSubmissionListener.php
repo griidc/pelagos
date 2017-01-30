@@ -37,7 +37,7 @@ class DatasetSubmissionListener extends EventListener
 
         // email DM(s)
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-submitted.email.twig');
-        $this->sendMailMsg($template, array('dataset' => $dataset), $this->getDMs($dataset, $datasetSubmission->getCreator()));
+        $this->sendMailMsg($template, array('dataset' => $dataset), $this->getDMs($dataset, $datasetSubmission->getSubmitter()));
     }
 
     /**
@@ -66,7 +66,7 @@ class DatasetSubmissionListener extends EventListener
 
         // email DM(s)
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-updated.email.twig');
-        $this->sendMailMsg($template, array('dataset' => $dataset), $this->getDMs($dataset, $datasetSubmission->getCreator()));
+        $this->sendMailMsg($template, array('dataset' => $dataset), $this->getDMs($dataset, $datasetSubmission->getSubmitter()));
     }
 
     /**
@@ -88,7 +88,7 @@ class DatasetSubmissionListener extends EventListener
                 'datasetSubmission' => $datasetSubmission,
                 'type' => 'dataset',
             ),
-            array($datasetSubmission->getCreator())
+            array($datasetSubmission->getSubmitter())
         );
 
         // email DRMs
