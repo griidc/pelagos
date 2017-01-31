@@ -2,18 +2,28 @@ var $ = jQuery.noConflict();
 
 $(document).ready(function() {
     $('#menu .overview').width($('#menu .viewport').width() - 15);
+
+    // Due to a bug in hashChange (old version, no newer compatible with current jQuery),
+    // manualy detect the hash on load, and force hash change.
+    // But we have to wait with opening nodes until js Tree is fully loaded.
+    $("#tree").bind('loaded.jstree', function(e, data) {
+        if (window.location.hash != "") {
+            $(window).hashchange();
+        }
+    });
+
     $(window).hashchange( function(){
         var m = location.hash.match(/^#([^\/]+)\/?([^\/]+)?/);
         if (m) {
             if (typeof m[1] !== 'undefined') {
                 if (typeof m[2] === 'undefined') {
-                    if ($('#projects_fundSrc_' + m[1]).length && $('#tree').jstree('get_selected').attr('id') != 'projects_fundSrc_' + m[1]) {
+                    if ($('#projects_funding-cycle_' + m[1]).length && $('#tree').jstree('get_selected').attr('id') != 'projects_funding-cycle_' + m[1]) {
                         $("#tree").jstree("deselect_all");
-                        $("#tree").jstree("select_node", ('#projects_fundSrc_' + m[1]));
+                        $("#tree").jstree("select_node", ('#projects_funding-cycle_' + m[1]));
                     }
                 }
                 else {
-                    $("#tree").jstree("open_node", $('#projects_fundSrc_' + m[1]));
+                    $("#tree").jstree("open_node", $('#projects_funding-cycle_' + m[1]));
                     if ($('#datasets_projectId_' + m[2]).length && $('#tree').jstree('get_selected').attr('id') != 'datasets_projectId_' + m[2]) {
                         $("#tree").jstree("deselect_all");
                         $("#tree").jstree("select_node", $('#datasets_projectId_' + m[2]), true);

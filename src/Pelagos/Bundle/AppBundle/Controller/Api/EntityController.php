@@ -211,7 +211,8 @@ abstract class EntityController extends FOSRestController
                 'You did not pass any valid parameters for a ' . $entity::FRIENDLY_NAME . '.'
             );
         }
-        if (!$form->isValid()) {
+        $validate = ($request->query->get('validate') == 'false') ? false : true;
+        if ($validate and !$form->isValid()) {
             throw new BadRequestHttpException(
                 (string) $form->getErrors(true, true)
             );

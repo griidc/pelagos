@@ -404,10 +404,13 @@ abstract class Entity
      * @Serializer\VirtualProperty
      * @Serializer\SerializedName("creator")
      *
-     * @return array
+     * @return array|null
      */
     public function serializeCreator()
     {
+        if (!($this->creator instanceof Person)) {
+            return null;
+        }
         return array(
             'id' => $this->creator->getId(),
             'firstName' => $this->creator->getFirstName(),
@@ -421,10 +424,13 @@ abstract class Entity
      * @Serializer\VirtualProperty
      * @Serializer\SerializedName("modifier")
      *
-     * @return array
+     * @return array|null
      */
     public function serializeModifier()
     {
+        if (!($this->modifier instanceof Person)) {
+            return null;
+        }
         return array(
             'id' => $this->modifier->getId(),
             'firstName' => $this->modifier->getFirstName(),

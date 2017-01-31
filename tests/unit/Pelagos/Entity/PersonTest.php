@@ -2,6 +2,7 @@
 
 namespace Pelagos\Entity;
 
+use Symfony\Component\Validator\Constraints;
 use Symfony\Component\Validator\Validation;
 
 /**
@@ -13,6 +14,8 @@ use Symfony\Component\Validator\Validation;
  */
 class PersonTest extends \PHPUnit_Framework_TestCase
 {
+    use \Tests\helpers\ValidationAssertions;
+
     /**
      * Property to hold an instance of Person for testing.
      * @var Person
@@ -362,17 +365,12 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     {
         $this->person->setEmailAddress(null);
         $violations = $this->validator->validateProperty($this->person, 'emailAddress');
-        $this->assertCount(1, $violations);
-        $this->assertInstanceOf(
-            '\Symfony\Component\Validator\ConstraintViolation',
-            $violations[0]
+        $this->assertContainsConstraintForProperty(
+            $violations,
+            'emailAddress',
+            Constraints\NotBlank::class,
+            'Email address is required'
         );
-        $this->assertInstanceOf(
-            '\Symfony\Component\Validator\Constraints\NotBlank',
-            $violations[0]->getConstraint()
-        );
-        $this->assertEquals('emailAddress', $violations[0]->getPropertyPath());
-        $this->assertEquals('Email address is required', $violations[0]->getMessage());
     }
 
     /**
@@ -384,17 +382,12 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     {
         $this->person->setEmailAddress('');
         $violations = $this->validator->validateProperty($this->person, 'emailAddress');
-        $this->assertCount(1, $violations);
-        $this->assertInstanceOf(
-            '\Symfony\Component\Validator\ConstraintViolation',
-            $violations[0]
+        $this->assertContainsConstraintForProperty(
+            $violations,
+            'emailAddress',
+            Constraints\NotBlank::class,
+            'Email address is required'
         );
-        $this->assertInstanceOf(
-            '\Symfony\Component\Validator\Constraints\NotBlank',
-            $violations[0]->getConstraint()
-        );
-        $this->assertEquals('emailAddress', $violations[0]->getPropertyPath());
-        $this->assertEquals('Email address is required', $violations[0]->getMessage());
     }
 
     /**
@@ -406,17 +399,12 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     {
         $this->person->setEmailAddress('<i>' . self::$testEmailAddress . '</i>');
         $violations = $this->validator->validateProperty($this->person, 'emailAddress');
-        $this->assertCount(1, $violations);
-        $this->assertInstanceOf(
-            '\Symfony\Component\Validator\ConstraintViolation',
-            $violations[0]
+        $this->assertContainsConstraintForProperty(
+            $violations,
+            'emailAddress',
+            Constraints\NoAngleBrackets::class,
+            'Email address cannot contain angle brackets (< or >)'
         );
-        $this->assertInstanceOf(
-            '\Symfony\Component\Validator\Constraints\NoAngleBrackets',
-            $violations[0]->getConstraint()
-        );
-        $this->assertEquals('emailAddress', $violations[0]->getPropertyPath());
-        $this->assertEquals('Email address cannot contain angle brackets (< or >)', $violations[0]->getMessage());
     }
 
     /**
@@ -428,17 +416,12 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     {
         $this->person->setEmailAddress(self::$testInvalidEmailAddress);
         $violations = $this->validator->validateProperty($this->person, 'emailAddress');
-        $this->assertCount(1, $violations);
-        $this->assertInstanceOf(
-            '\Symfony\Component\Validator\ConstraintViolation',
-            $violations[0]
+        $this->assertContainsConstraintForProperty(
+            $violations,
+            'emailAddress',
+            Constraints\Email::class,
+            'Email address is invalid'
         );
-        $this->assertInstanceOf(
-            '\Symfony\Component\Validator\Constraints\Email',
-            $violations[0]->getConstraint()
-        );
-        $this->assertEquals('emailAddress', $violations[0]->getPropertyPath());
-        $this->assertEquals('Email address is invalid', $violations[0]->getMessage());
     }
 
     /**

@@ -38,7 +38,7 @@ function getURLbyUDI()
                     });
                 }
             return true;
-        });    
+        });
     }
     else
     jQuery('<div title="Warning"><p>No UDI provided.</p></div>').dialog({
@@ -99,7 +99,7 @@ function uploadFile()
                 <u><h1>Ways to Use The Metadata Editor</h1></u>
                 <p><button onclick="location.href='/metadata-editor/';" type="button">Start from Scratch</button> (start with a blank form)</p>
                 <p><button id="upload" type="button">Load from File</button> (load a file from your computer)</p>
-                <p><button onclick="getURLbyUDI();" type="button">Load from Registered Dataset</button> UDI: <input type="text" id="udi"></p>
+                <p><button onclick="getURLbyUDI();" type="button">Load from Submitted Dataset</button> UDI: <input type="text" id="udi"></p>
                 <p><button onclick="loadExternalURL();" type="button">Load from External URL</button> URL: <input type="text" id="url" size="70"></p>
             </fieldset>
         <td>

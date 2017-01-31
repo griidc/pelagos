@@ -269,6 +269,18 @@ class Extensions extends \Twig_Extension
             $xmlDoc = new \DOMDocument();
             $xmlDoc->loadXML($xml);
 
+            $xpathdoc = new \DOMXpath($xmlDoc);
+
+            // Go through all the leaves.
+            foreach ($xpathdoc->query('//*[not(*)]') as $element) {
+                if (strlen($element->nodeValue) > 10000) {
+                    // Trim values longer than 10000 characters and insert a veritcal ellipsis.
+                    $element->nodeValue = substr($element->nodeValue, 0, 9900) . "\n"
+                        . json_decode('"\u22EE"') . "\n"
+                        . substr($element->nodeValue, -100);
+                }
+            }
+
             // XSL template.
             $xslDoc = new \DOMDocument();
             $xslDoc->load($this->kernelRootDir . '/../src/Pelagos/Bundle/AppBundle/Resources/views/xsl/' . $xsl);
@@ -276,9 +288,8 @@ class Extensions extends \Twig_Extension
             // The Processor.
             $proc = new \XSLTProcessor();
             $proc->importStylesheet($xslDoc);
-            $newdom = $proc->transformToDoc($xmlDoc);
 
-            return $newdom->saveXML();
+            return $proc->transformToXml($xmlDoc);
         }
     }
 

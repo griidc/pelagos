@@ -1,0 +1,81 @@
+<fieldset>
+    <legend>Data Extent</legend>
+    <fieldset>
+        This section collects information describing the spatial and temporal extent
+        of the dataset contents. If a dataset does not have a relevant location or
+        time (ex. lab simulations), a short explanation is requested.
+    </fieldset>
+    <div id="geoWizard" style="width:100%;height:100%;"/>
+        <table class="tab-table">
+            <tr>
+                <td valign="top" width="60%"">
+                    <div id="nonspatial">
+                        {{ form_row(form.spatialExtentDescription) }}
+                    </div>
+                    <div id="spatial">
+                        <label><span class="emRequired"/>Spatial Extent</label>
+                        <div>
+                            <div style="width:500px;height:300px;" id="smlMDEMap"/>
+                        </div>
+                        {{ form_row(form.spatialExtent) }}
+                    </div>
+                </td>
+                <td>
+                    <div id="spatwizbtn"></div>
+                </td>
+            </tr>
+        </table>
+        <table class="tab-table" id="spatialExtras">
+            <tr>
+                <td colspan="2"></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+					<span class="helpSection">
+						{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+						<img class="info" src="{{ asset_url }}">
+						{% endimage %}
+						<div class="tooltiptext">
+                            A description of what the time period represents. If the data represent
+                            real world conditions during the time period, select “ground condition”.
+                            If the data represent a simulation during a specific time period, select
+                            “modeled period”.  If the data represent both real world conditions and
+                            model simulations, select “ground condition and modeled period”.  If the
+                            data do not have a relevant time period, including mesocosm data, use the
+                            spatial wizard above and select “Non-Spatial”.
+						</div>
+					</span>
+                    {{ form_row(form.temporalExtentDesc) }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+					<span class="helpSection">
+						{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+						<img class="info" src="{{ asset_url }}">
+						{% endimage %}
+						<div class="tooltiptext">
+							The beginning date when the data were collected. Alternatively, for a model,
+                            the earliest date for which the data were generated.
+						</div>
+					</span>
+                    {{ form_row(form.temporalExtentBeginPosition) }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+					<span class="helpSection">
+						{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+						<img class="info" src="{{ asset_url }}">
+						{% endimage %}
+						<div class="tooltiptext">
+                            The end date when the data were collected. Alternatively, for a model, the
+                            end date for which the data were generated.
+						</div>
+					</span>
+                    {{ form_row(form.temporalExtentEndPosition) }}
+                </td>
+
+            </tr>
+        </table>
+</fieldset>

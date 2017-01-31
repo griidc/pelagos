@@ -1,3 +1,6 @@
 parameters:
     # The URL prefix for the drupal_prod environment (with no preceding or trailing slashes)
     pelagos.prefix: ~
+    super_drpm_first_name: ~
+    super_drpm_last_name: ~
+    super_drpm_email: ~

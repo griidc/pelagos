@@ -20,11 +20,11 @@
             ]
         )
     }}
-    
+
     {% stylesheets  '@PelagosAppBundle/Resources/public/css/dif.css' %}
         {{ add_css(asset_url) }}
     {% endstylesheets  %}
-    
+
     {{
         add_js(
             [
@@ -49,7 +49,7 @@
     {% endjavascripts %}
 
     {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
-   
+
 {% endblock %}
 
 

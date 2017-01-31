@@ -5,6 +5,9 @@ namespace Pelagos\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Dataset Submission Entity class.
@@ -50,11 +53,6 @@ class DatasetSubmission extends Entity
     const RESTRICTION_NONE = 'None';
 
     /**
-     * Indicates the dataset requires author's approval to be downloaded.
-     */
-    const RESTRICTION_APPROVAL = 'Approval';
-
-    /**
      * Indicates the dataset may only be downloaded by the submitter.
      */
     const RESTRICTION_RESTRICTED = 'Restricted';
@@ -64,7 +62,6 @@ class DatasetSubmission extends Entity
      */
     const RESTRICTIONS = array(
         self::RESTRICTION_NONE => 'None',
-        self::RESTRICTION_APPROVAL => 'Requires Author\'s Approval',
         self::RESTRICTION_RESTRICTED => 'Restricted',
     );
 
@@ -206,11 +203,6 @@ class DatasetSubmission extends Entity
     const AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED = 5;
 
     /**
-     * The dataset is marked as available to users with approval, but is remotely hosted.
-     */
-    const AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL_REMOTELY_HOSTED = 6;
-
-    /**
      * The dataset is marked as publicly available, but is remotely hosted.
      */
     const AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED = 7;
@@ -221,14 +213,146 @@ class DatasetSubmission extends Entity
     const AVAILABILITY_STATUS_RESTRICTED = 8;
 
     /**
-     * The dataset is available to users with approval.
-     */
-    const AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL = 9;
-
-    /**
      * The dataset is publicly available.
      */
     const AVAILABILITY_STATUS_PUBLICLY_AVAILABLE = 10;
+
+    /**
+     * Valid values for self::$referenceDateType.
+     *
+     * The array keys are the values to be set in self::referenceDateType.
+     */
+    const REFERENCE_DATE_TYPES = [
+        'creation' => [
+            'name' => 'Creation',
+            'description' => 'The date that identifies when the resource was brought into existence.'
+        ],
+        'publication' => [
+            'name' => 'Publication',
+            'description' => 'The date that identifies when the resource was issued.'
+        ],
+        'revision' => [
+            'name' => 'Revision',
+            'description' => 'The date that identifies when the resource was improved or amended.'
+        ],
+    ];
+
+    /**
+     * Valid values for self::$temporalExtent.
+     *
+     * The array keys are the values to be set in self::temporalExtent.
+     */
+    const TEMPORAL_EXTENT_DESCRIPTIONS = [
+        'ground condition' => [
+            'name' => 'Ground Condition',
+            'description' => 'Data represent the actual condition of things on the ground during ' .
+                             'the time period specified and may also be used to characterize data ' .
+                             'generated from a sample collection in the field when samples are subsequently ' .
+                             'analyzed in a laboratory.'
+        ],
+        'modeled period' => [
+            'name' => 'Modeled Period',
+            'description' => 'Data represents simulated conditions during the time period, ' .
+                             'and may be used to characterize data generated using a computational model.'
+        ],
+        'ground condition and modeled period' => [
+            'name' => 'Ground Condition and Modeled Period',
+            'description' => 'Both choices apply.'
+        ],
+    ];
+
+    /**
+     * Valid values for self::$topicKeywords.
+     *
+     * The array keys are the values to be set in self::topicKeywords.
+     */
+    const TOPIC_KEYWORDS = [
+        'oceans' => [
+            'name' => 'Oceans',
+            'description' => 'features and characteristics of salt water bodies (excluding inland waters). Examples: tides, tidal waves, coastal information, reefs',
+        ],
+        'biota' => [
+            'name' => 'Biota',
+            'description' => 'flora and/or fauna in natural environment. Examples: wildlife, vegetation, biological sciences, ecology, wilderness, sealife, wetlands, habitat',
+        ],
+        'boundaries' => [
+            'name' => 'Boundaries',
+            'description' => 'legal land descriptions. Examples: political and administrative boundaries',
+        ],
+        'climatologyMeteorologyAtmosphere' => [
+            'name' => 'Climatology/Meteorology/Atmosphere',
+            'description' => 'processes and phenomena of the atmosphere. Examples: cloud cover, weather, climate, atmospheric conditions, climate change, precipitation',
+        ],
+        'economy' => [
+            'name' => 'Economy',
+            'description' => 'economic activities, conditions and employment. Examples: production, labour, revenue, commerce, industry, tourism and ecotourism, forestry, fisheries, commercial or subsistence hunting, exploration and exploitation of resources such as minerals, oil and gas',
+        ],
+        'elevation' => [
+            'name' => 'Elevation',
+            'description' => 'height above or below sea level. Examples: altitude, bathymetry, digital elevation models, slope, derived products',
+        ],
+        'environment' => [
+            'name' => 'Environment',
+            'description' => 'environmental resources, protection and conservation. Examples: environmental pollution, waste storage and treatment, environmental impact assessment, monitoring environmental risk, nature reserves, landscape',
+        ],
+        'farming' => [
+            'name' => 'Farming',
+            'description' => 'rearing of animals and/or cultivation of plants. Examples: agriculture, irrigation, aquaculture, plantations, herding, pests and diseases affecting crops and livestock',
+        ],
+        'geoscientificInformation' => [
+            'name' => 'Geoscientific Information',
+            'description' => 'information pertaining to earth sciences. Examples: geophysical features and processes, geology, minerals, sciences dealing with the composition, structure and origin of the earth s rocks, risks of earthquakes, volcanic activity, landslides, gravity information, soils, permafrost, hydrogeology, erosion',
+        ],
+        'health' => [
+            'name' => 'Health',
+            'description' => 'health, health services, human ecology, and safety. Examples: disease and illness, factors affecting health, hygiene, substance abuse, mental and physical health, health services',
+        ],
+        'imageryBaseMapsEarthCover' => [
+            'name' => 'Imagery/Base Maps/Earth Cover',
+            'description' => 'base maps. Examples: land cover, topographic maps, imagery, unclassified images, annotations',
+        ],
+        'inlandWaters' => [
+            'name' => 'Inland Waters',
+            'description' => 'inland water features, drainage systems and their characteristics. Examples: rivers and glaciers, salt lakes, water utilization plans, dams, currents, floods, water quality, hydrographic charts',
+        ],
+        'location' => [
+            'name' => 'Location',
+            'description' => 'positional information and services. Examples: addresses, geodetic networks, control points, postal zones and services, place names',
+        ],
+        'intelligenceMilitary' => [
+            'name' => 'Military Intelligence',
+            'description' => 'military bases, structures, activities. Examples: barracks, training grounds, military transportation, information collection',
+        ],
+        'planningCadastre' => [
+            'name' => 'Planning/Cadastre',
+            'description' => 'information used for appropriate actions for future use of the land. Examples: land use maps, zoning maps, cadastral surveys, land ownership',
+        ],
+        'society' => [
+            'name' => 'Society',
+            'description' => 'characteristics of society and cultures. Examples: settlements, anthropology, archaeology, education, traditional beliefs, manners and customs, demographic data, recreational areas and activities, social impact assessments, crime and justice, census information',
+        ],
+        'structure' => [
+            'name' => 'Structure',
+            'description' => 'man-made construction. Examples: buildings, museums, churches, factories, housing, monuments, shops, towers',
+        ],
+        'transportation' => [
+            'name' => 'Transportation',
+            'description' => 'means and aids for conveying persons and/or goods. Examples: roads, airports/airstrips, shipping routes, tunnels, nautical charts, vehicle or vessel location, aeronautical charts, railways',
+        ],
+        'utilitiesCommunication' => [
+            'name' => 'Utilities/Communication',
+            'description' => 'energy, water and waste systems and communications infrastructure and services. Examples: hydroelectricity, geothermal, solar and nuclear sources of energy, water purification and distribution, sewage collection and disposal, electricity and gas distribution, data communication, telecommunication, radio, communication networks',
+        ],
+    ];
+
+    /**
+     * Status of this Dataset Submission.
+     *
+     * @var integer
+     *
+     * @ORM\Column(type="integer")
+     */
+    protected $status = self::STATUS_INCOMPLETE;
 
     /**
      * The Dataset this Dataset Submission is attached to.
@@ -261,13 +385,22 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NotBlank(
-     *     message="Title is required"
+     *     message="The dataset submission title is required."
      * )
      */
     protected $title;
+
+    /**
+     * The short title for this Dataset Submission.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $shortTitle;
 
     /**
      * The abstract for this Dataset Submission.
@@ -276,10 +409,10 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NotBlank(
-     *     message="Abstract is required"
+     *     message="The dataset submission abstract is required."
      * )
      */
     protected $abstract;
@@ -291,10 +424,10 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\NotBlank(
-     *     message="At least one author is required"
+     *     message="The dataset submission author list is required."
      * )
      */
     protected $authors;
@@ -306,11 +439,9 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @deprecated Replaced by self::$datasetContacts.
      *
-     * @Assert\NotBlank(
-     *     message="Point of Contact Name is required"
-     * )
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $pointOfContactName;
 
@@ -321,13 +452,43 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @deprecated Replaced by self::$datasetContacts.
      *
-     * @Assert\NotBlank(
-     *     message="Point of Contact E-Mail is required"
-     * )
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $pointOfContactEmail;
+
+    /**
+     * The Point of Contact for this Dataset Submission.
+     *
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionDatasetContact", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
+     *
+     * @ORM\OrderBy({"creationTimeStamp" = "ASC"})
+     *
+     * @Assert\Count(
+     *      min = "1",
+     *      minMessage="A Dataset contact person is required."
+     * )
+     */
+    protected $datasetContacts;
+
+    /**
+     * The Point of Contact for the metadata associated with this submission.
+     *
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionMetadataContact", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
+     *
+     * @ORM\OrderBy({"creationTimeStamp" = "ASC"})
+     *
+     * @Assert\Count(
+     *      min = "1",
+     *      minMessage="A Metadata contact person is required."
+     * )
+     */
+    protected $metadataContacts;
 
     /**
      * Whether the dataset has any restrictions.
@@ -338,7 +499,11 @@ class DatasetSubmission extends Entity
      *
      * @see RESTRICTIONS class constant for valid values.
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=false)
+     *
+     * @Assert\NotBlank(
+     *     message="The dataset submission restrictions must be set."
+     * )
      */
     protected $restrictions = self::RESTRICTION_NONE;
 
@@ -363,6 +528,10 @@ class DatasetSubmission extends Entity
      * @see TRANSFER_TYPES class constant for valid values.
      *
      * @ORM\Column(type="text", nullable=true)
+     *
+     * @Assert\NotBlank(
+     *     message="The dataset submission dataset file transfer type must be set."
+     * )
      */
     protected $datasetFileTransferType;
 
@@ -376,6 +545,10 @@ class DatasetSubmission extends Entity
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
+     *
+     * @Assert\NotBlank(
+     *     message="The dataset submission must include a dataset file."
+     * )
      */
     protected $datasetFileUri;
 
@@ -448,61 +621,6 @@ class DatasetSubmission extends Entity
     protected $datasetFileSha256Hash;
 
     /**
-     * The date after which the dataset file will be available for pull.
-     *
-     * Legacy DB column: availability_date
-     *
-     * @var \DateTime
-     *
-     * @ORM\Column(type="date", nullable=true)
-     */
-    protected $datasetFileAvailabilityDate;
-
-    /**
-     * Whether the dataset should only be pulled at certain times.
-     *
-     * Legacy DB column: access_period
-     *
-     * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $datasetFilePullCertainTimesOnly;
-
-    /**
-     * The time of day to start pulling this dataset.
-     *
-     * Legacy DB column: access_period_start
-     *
-     * @var \DateTime
-     *
-     * @ORM\Column(type="time", nullable=true)
-     */
-    protected $datasetFilePullStartTime;
-
-    /**
-     * Days this dataset can be pulled.
-     *
-     * Legacy DB column: access_period_weekdays
-     *
-     * @var array
-     *
-     * @ORM\Column(type="simple_array", nullable=true)
-     */
-    protected $datasetFilePullDays = array();
-
-    /**
-     * Whether to pull the source data.
-     *
-     * Legacy DB column: data_source_pull
-     *
-     * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $datasetFilePullSourceData;
-
-    /**
      * The metadata file transfer type.
      *
      * Legacy DB column: metadata_server_type
@@ -572,9 +690,410 @@ class DatasetSubmission extends Entity
      *
      * @see METADATA_STATUSES class constant for valid values.
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=false)
      */
     protected $metadataStatus = self::METADATA_STATUS_NONE;
+
+    /**
+     * The reference date for this dataset.
+     *
+     * @var \DateTime
+     *
+     * @ORM\Column(type="datetimetz", nullable=true)
+     *
+     * @Assert\NotBlank(
+     *     message="The dataset submission reference date field is required."
+     * )
+     */
+    protected $referenceDate;
+
+    /**
+     * The type of the reference date for this dataset.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     *
+     * @see REFERENCE_DATE_CHOICES class constant for valid values.
+     *
+     * @Assert\NotBlank(
+     *     message="The dataset submission reference date type field is required."
+     * )
+     */
+    protected $referenceDateType;
+
+    /**
+     * The purpose of this dataset.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     *
+     * @Assert\NotBlank(
+     *     message="The dataset submission purpose field is required."
+     * )
+     */
+    protected $purpose;
+
+    /**
+     * Supplemental information - parameters.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     *
+     * @Assert\NotBlank(
+     *     message="The dataset submission data parameters/units field is required."
+     * )
+     */
+    protected $suppParams;
+
+    /**
+     * Supplemental information - methods.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $suppMethods;
+
+    /**
+     * Supplemental information - instruments.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $suppInstruments;
+
+    /**
+     * Supplemental information - sample scales and rates.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $suppSampScalesRates;
+
+    /**
+     * Supplemental information - error analysis.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $suppErrorAnalysis;
+
+    /**
+     * Supplemental information - provenance and historical references.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $suppProvenance;
+
+    /**
+     * Theme keywords describing this dataset.
+     *
+     * @var array
+     *
+     * @ORM\Column(type="json_array", nullable=true)
+     *
+     * @Assert\NotBlank(
+     *     message="The dataset submission theme keyword(s) field is required."
+     * )
+     */
+    protected $themeKeywords = array();
+
+    /**
+     * Place keywords describing this dataset.
+     *
+     * @var array
+     *
+     * @ORM\Column(type="json_array", nullable=true)
+     */
+    protected $placeKeywords = array();
+
+    /**
+     * Topic keywords describing this dataset.
+     *
+     * @var array
+     *
+     * @ORM\Column(type="json_array", nullable=true)
+     *
+     * @Assert\NotBlank(
+     *     message="The dataset submission topic keyword(s) field is required."
+     * )
+     */
+    protected $topicKeywords = array();
+
+    /**
+     * Spatial extent.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $spatialExtent;
+
+    /**
+     * Spatial extent description.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $spatialExtentDescription;
+
+    /**
+     * Temporal extent description.
+     *
+     * @var string
+     *
+     * @see TEMPORAL_EXTENT_DESCRIPTIONS class constant for valid values.
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $temporalExtentDesc;
+
+    /**
+     * The temporal beginning position (date).
+     *
+     * @var \DateTime
+     *
+     * @ORM\Column(type="datetimetz", nullable=true)
+     */
+    protected $temporalExtentBeginPosition;
+
+    /**
+     * The temporal ending position (date).
+     *
+     * @var \DateTime
+     *
+     * @ORM\Column(type="datetimetz", nullable=true)
+     */
+    protected $temporalExtentEndPosition;
+
+    /**
+     * The name of the format the data is distributed in.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $distributionFormatName;
+
+    /**
+     * The technique used to decompress the dataset.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $fileDecompressionTechnique;
+
+    /**
+     * When this Dataset Submission was submitted.
+     *
+     * @var \DateTime
+     *
+     * @ORM\Column(type="datetimetz", nullable=true)
+     */
+    protected $submissionTimeStamp;
+
+    /**
+     * The Person who submitted this Dataset Submission.
+     *
+     * @var Person
+     *
+     * @ORM\ManyToOne(targetEntity="Person")
+     */
+    protected $submitter;
+
+    /**
+     * Constructor.
+     *
+     * Initializes collections to empty collections.
+     *
+     * @param Entity $entity A DIF or DatasetSubmission to base this DatasetSubmission on.
+     */
+    public function __construct(Entity $entity = null)
+    {
+        $this->datasetContacts = new ArrayCollection;
+        $this->metadataContacts = new ArrayCollection;
+        if ($entity instanceof DIF) {
+            // Populate from DIF
+            $this->setDataset($entity->getDataset());
+            $this->setTitle($entity->getTitle());
+            $this->setAbstract($entity->getAbstract());
+            $this->setSuppParams($entity->getVariablesObserved());
+            $this->setSpatialExtent($entity->getSpatialExtentGeometry());
+            $this->setSpatialExtentDescription($entity->getSpatialExtentDescription());
+            // Add DIF primary point of contact as dataset contact.
+            $datasetContact = new PersonDatasetSubmissionDatasetContact();
+            $datasetContact->setRole('pointOfContact');
+            $datasetContact->setPerson($entity->getPrimaryPointOfContact());
+            $this->addDatasetContact($datasetContact);
+            // Add DIF primary point of contact as metadata contact.
+            $metadataContact = new PersonDatasetSubmissionMetadataContact();
+            $metadataContact->setRole('pointOfContact');
+            $metadataContact->setPerson($entity->getPrimaryPointOfContact());
+            $this->addMetadataContact($metadataContact);
+        } elseif ($entity instanceof DatasetSubmission) {
+            // Increment the sequence.
+            $this->setSequence($entity->getSequence() + 1);
+            // Populate from original Dataset Submission.
+            $this->setDataset($entity->getDataset());
+            $this->setTitle($entity->getTitle());
+            $this->setShortTitle($entity->getShortTitle());
+            $this->setAbstract($entity->getAbstract());
+            $this->setAuthors($entity->getAuthors());
+            $this->setRestrictions($entity->getRestrictions());
+            $this->setDoi($entity->getDoi());
+            $this->setDatasetFileTransferType($entity->getDatasetFileTransferType());
+            $this->setDatasetFileUri($entity->getDatasetFileUri());
+            $this->setDatasetFileTransferStatus($entity->getDatasetFileTransferStatus());
+            $this->setDatasetFileName($entity->getDatasetFileName());
+            $this->setDatasetFileSize($entity->getDatasetFileSize());
+            $this->setDatasetFileMd5Hash($entity->getDatasetFileMd5Hash());
+            $this->setDatasetFileSha1Hash($entity->getDatasetFileSha1Hash());
+            $this->setDatasetFileSha256Hash($entity->getDatasetFileSha256Hash());
+            $this->setMetadataFileTransferType($entity->getMetadataFileTransferType());
+            $this->setMetadataFileUri($entity->getMetadataFileUri());
+            $this->setMetadataFileTransferStatus($entity->getMetadataFileTransferStatus());
+            $this->setMetadataFileName($entity->getMetadataFileName());
+            $this->setMetadataFileSha256Hash($entity->getMetadataFileSha256Hash());
+            $this->setMetadataStatus($entity->getMetadataStatus());
+            $this->setReferenceDate($entity->getReferenceDate());
+            $this->setReferenceDateType($entity->getReferenceDateType());
+            $this->setPurpose($entity->getPurpose());
+            $this->setSuppParams($entity->getSuppParams());
+            $this->setSuppMethods($entity->getSuppMethods());
+            $this->setSuppInstruments($entity->getSuppInstruments());
+            $this->setSuppSampScalesRates($entity->getSuppSampScalesRates());
+            $this->setSuppErrorAnalysis($entity->getSuppErrorAnalysis());
+            $this->setSuppProvenance($entity->getSuppProvenance());
+            $this->setThemeKeywords($entity->getThemeKeywords());
+            $this->setPlaceKeywords($entity->getPlaceKeywords());
+            $this->setTopicKeywords($entity->getTopicKeywords());
+            $this->setSpatialExtent($entity->getSpatialExtent());
+            $this->setSpatialExtentDescription($entity->getSpatialExtentDescription());
+            $this->setTemporalExtentDesc($entity->getTemporalExtentDesc());
+            $this->setTemporalExtentBeginPosition($entity->getTemporalExtentBeginPosition());
+            $this->setTemporalExtentEndPosition($entity->getTemporalExtentEndPosition());
+            $this->setDistributionFormatName($entity->getDistributionFormatName());
+            $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
+            // Copy the original Dataset Submission's dataset contacts.
+            foreach ($entity->getDatasetContacts() as $datasetContact) {
+                $newDatasetContact = new PersonDatasetSubmissionDatasetContact();
+                $newDatasetContact->setRole($datasetContact->getRole());
+                $newDatasetContact->setPerson($datasetContact->getPerson());
+                $this->addDatasetContact($newDatasetContact);
+            }
+            // Copy the original Dataset Submission's metadata contacts.
+            foreach ($entity->getMetadataContacts() as $metadataContact) {
+                $newMetadataContact = new PersonDatasetSubmissionMetadataContact();
+                $newMetadataContact->setRole($metadataContact->getRole());
+                $newMetadataContact->setPerson($metadataContact->getPerson());
+                $this->addMetadataContact($newMetadataContact);
+            }
+        }
+    }
+
+    /**
+     * This validator class enforces spatial extent Pelagos requirements.
+     *
+     * @param ExecutionContextInterface $context Validation context.
+     *
+     * @Assert\Callback
+     *
+     * @return void
+     */
+    public function validate(ExecutionContextInterface $context)
+    {
+        if (null !== $this->spatialExtent) {
+            if (null === $this->temporalExtentDesc) {
+                $context->buildViolation('Since a spatial extent is present, this submission must ' .
+                    'include a time period description.')
+                    ->atPath('temporalExtentDesc')
+                    ->addViolation();
+            }
+
+            if (!($this->temporalExtentBeginPosition instanceof \DateTime)) {
+                $context->buildViolation('Since a spatial extent is present, this submission must ' .
+                    'include a start date.')
+                    ->atPath('temporalExtentBeginPosition')
+                    ->addViolation();
+            }
+
+            if (!($this->temporalExtentEndPosition instanceof \DateTime)) {
+                $context->buildViolation('Since a spatial extent is present, this submission must ' .
+                    'include a end date.')
+                    ->atPath('temporalExtentEndPosition')
+                    ->addViolation();
+            }
+
+        } else {
+            if (null === $this->spatialExtentDescription) {
+                $context->buildViolation('You must provide either a spatial extent or a spatial extent description.')
+                    ->atPath('spatialExtent')
+                    ->addViolation();
+            }
+        }
+    }
+
+    /**
+     * Clone Handler.
+     *
+     * Set and correct attributes when cloned.
+     *
+     * @return void
+     */
+    public function __clone()
+    {
+        $this->setId(null);
+        $this->setCreationTimeStamp(null);
+        if ($this->getStatus() === self::STATUS_COMPLETE) {
+            $this->status = self::STATUS_INCOMPLETE;
+        }
+    }
+
+    /**
+     * Get the choice list for restrictions.
+     *
+     * @return array
+     */
+    public static function getRestrictionsChoices()
+    {
+        return array_flip(static::RESTRICTIONS);
+    }
+
+    /**
+     * Submit this Dataset Submission.
+     *
+     * @param Person $submitter The submitter.
+     *
+     * @return void
+     */
+    public function submit(Person $submitter)
+    {
+        $this->status = self::STATUS_COMPLETE;
+        $this->metadataStatus = self::METADATA_STATUS_SUBMITTED;
+        $this->getDataset()->setDatasetSubmission($this);
+        $this->submissionTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->submitter = $submitter;
+    }
+
+    /**
+     * Get the status of this dataset submission.
+     *
+     * @return integer
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
 
     /**
      * Set the Dataset this Dataset Submission is attached to.
@@ -586,9 +1105,6 @@ class DatasetSubmission extends Entity
     public function setDataset(Dataset $dataset)
     {
         $this->dataset = $dataset;
-        $this->updateDatasetSubmissionStatus();
-        $this->updateMetadataStatus();
-        $this->updateAvailabilityStatus();
     }
 
     /**
@@ -651,6 +1167,28 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Set the short title for this Dataset Submission.
+     *
+     * @param string $shortTitle The short title for this Dataset Submission.
+     *
+     * @return void
+     */
+    public function setShortTitle($shortTitle)
+    {
+        $this->shortTitle = $shortTitle;
+    }
+
+    /**
+     * Get the short title for this Dataset Submission.
+     *
+     * @return string
+     */
+    public function getShortTitle()
+    {
+        return $this->shortTitle;
+    }
+
+    /**
      * Set the abstract for this Dataset Submission.
      *
      * @param string $abstract The abstract for this Dataset Submission.
@@ -695,47 +1233,141 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * Set the Point of Contact Name for this Dataset Submission.
+     * Adder for dataset contact.
      *
-     * @param string $pointOfContactName The Point of Contact Name for this Dataset Submission.
+     * @param PersonDatasetSubmissionDatasetContact $datasetContact Single object to be added.
+     *
+     * @access public
      *
      * @return void
      */
-    public function setPointOfContactName($pointOfContactName)
+    public function addDatasetContact(PersonDatasetSubmissionDatasetContact $datasetContact)
     {
-        $this->pointOfContactName = $pointOfContactName;
+        $datasetContact->setDatasetSubmission($this);
+        $this->datasetContacts->add($datasetContact);
     }
 
     /**
-     * Get the Point of Contact Name for this Dataset Submission.
+     * Remover for dataset contact.
+     *
+     * @param PersonDatasetSubmissionDatasetContact $datasetContact Single object to be removed.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function removeDatasetContact(PersonDatasetSubmissionDatasetContact $datasetContact)
+    {
+        $this->datasetContacts->removeElement($datasetContact);
+    }
+
+    /**
+     * Getter of datasetContacts.
+     *
+     * @access public
+     *
+     * @return \Doctrine\Common\Collections\Collection Collection containing PersonDatasetSubmissionDatasetContacts
+     */
+    public function getDatasetContacts()
+    {
+        return $this->datasetContacts;
+    }
+
+    /**
+     * This is as emulated getter for the previous pointOfContactName attribute.
+     *
+     * This returns the "last, first" name of the first of the datasetContacts collection.
+     *
+     * @access public
+     *
+     * @deprecated The self::$pointOfContactName property is deprecated and replaced by self::$datasetContacts.
+     *
+     * @see self::getDatasetContacts()
      *
      * @return string
      */
     public function getPointOfContactName()
     {
-        return $this->pointOfContactName;
+        if ($this->getDatasetContacts()->isEmpty()) {
+            if (property_exists(self::class, 'pointOfContactName')) {
+                return $this->pointOfContactName;
+            }
+            return null;
+        }
+        $contactPerson = $this->getDatasetContacts()->first()->getPerson();
+        if (!$contactPerson instanceof Person) {
+            return null;
+        }
+        return $contactPerson->getLastName() . ', ' . $contactPerson->getFirstName();
     }
 
     /**
-     * Set the Point of Contact E-Mail for this Dataset Submission.
+     * This is as emulated getter for the previous pointOfContactEmail attribute.
      *
-     * @param string $pointOfContactEmail The Point of Contact E-Mail for this Dataset Submission.
+     * This returns the email address of the first of the datasetContacts collection.
      *
-     * @return void
-     */
-    public function setPointOfContactEmail($pointOfContactEmail)
-    {
-        $this->pointOfContactEmail = $pointOfContactEmail;
-    }
-
-    /**
-     * Get the Point of Contact E-Mail for this Dataset Submission.
+     * @access public
+     *
+     * @deprecated The self::$pointOfContactEmail property is deprecated and replaced by self::$datasetContacts.
+     *
+     * @see self::getDatasetContacts()
      *
      * @return string
      */
     public function getPointOfContactEmail()
     {
-        return $this->pointOfContactEmail;
+        if ($this->getDatasetContacts()->isEmpty()) {
+            if (property_exists(self::class, 'pointOfContactEmail')) {
+                return $this->pointOfContactEmail;
+            }
+            return null;
+        }
+        $contactPerson = $this->getDatasetContacts()->first()->getPerson();
+        if (!$contactPerson instanceof Person) {
+            return null;
+        }
+        return $contactPerson->getEmailAddress();
+    }
+
+    /**
+     * Adder for metadata contact.
+     *
+     * @param PersonDatasetSubmissionMetadataContact $metadataContact Single object to be added.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function addMetadataContact(PersonDatasetSubmissionMetadataContact $metadataContact)
+    {
+        $metadataContact->setDatasetSubmission($this);
+        $this->metadataContacts->add($metadataContact);
+    }
+
+    /**
+     * Remover for metadata contact.
+     *
+     * @param PersonDatasetSubmissionMetadataContact $metadataContact Single object to be removed.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function removeMetadataContact(PersonDatasetSubmissionMetadataContact $metadataContact)
+    {
+        $this->metadataContacts->removeElement($metadataContact);
+    }
+
+    /**
+     * Getter of metadataContacts.
+     *
+     * @access public
+     *
+     * @return \Doctrine\Common\Collections\Collection Collection containing PersonDatasetSubmissionMetadataContacts
+     */
+    public function getMetadataContacts()
+    {
+        return $this->metadataContacts;
     }
 
     /**
@@ -822,7 +1454,6 @@ class DatasetSubmission extends Entity
     public function setDatasetFileUri($datasetFileUri)
     {
         $this->datasetFileUri = $datasetFileUri;
-        $this->updateDatasetSubmissionStatus();
     }
 
     /**
@@ -968,117 +1599,6 @@ class DatasetSubmission extends Entity
     public function getDatasetFileSha256Hash()
     {
         return $this->datasetFileSha256Hash;
-    }
-
-    /**
-     * Set the date after which the dataset file will be available for pull.
-     *
-     * @param \DateTime|null $datasetFileAvailabilityDate The date after which the dataset
-     *                                                    file will be available for pull.
-     *
-     * @return void
-     */
-    public function setDatasetFileAvailabilityDate(\DateTime $datasetFileAvailabilityDate = null)
-    {
-        $this->datasetFileAvailabilityDate = $datasetFileAvailabilityDate;
-    }
-
-    /**
-     * Get the date after which the dataset file will be available for pull.
-     *
-     * @return \DateTime
-     */
-    public function getDatasetFileAvailabilityDate()
-    {
-        return $this->datasetFileAvailabilityDate;
-    }
-
-    /**
-     * Set whether the dataset should only be pulled at certain times.
-     *
-     * @param boolean $datasetFilePullCertainTimesOnly Whether the dataset should only be pulled at certain times.
-     *
-     * @return void
-     */
-    public function setDatasetFilePullCertainTimesOnly($datasetFilePullCertainTimesOnly)
-    {
-        $this->datasetFilePullCertainTimesOnly = $datasetFilePullCertainTimesOnly;
-    }
-
-    /**
-     * Get whether the dataset should only be pulled at certain times.
-     *
-     * @return boolean
-     */
-    public function getDatasetFilePullCertainTimesOnly()
-    {
-        return $this->datasetFilePullCertainTimesOnly;
-    }
-
-    /**
-     * Set the time of day to start pulling this dataset.
-     *
-     * @param \DateTime|null $datasetFilePullStartTime The time of day to start pulling this dataset.
-     *
-     * @return void
-     */
-    public function setDatasetFilePullStartTime(\DateTime $datasetFilePullStartTime = null)
-    {
-        $this->datasetFilePullStartTime = $datasetFilePullStartTime;
-    }
-
-    /**
-     * Set the time of day to start pulling this dataset.
-     *
-     * @return \DateTime
-     */
-    public function getDatasetFilePullStartTime()
-    {
-        return $this->datasetFilePullStartTime;
-    }
-
-    /**
-     * Set the Days this dataset can be pulled.
-     *
-     * @param array $datasetFilePullDays The days this dataset can be pulled.
-     *
-     * @return void
-     */
-    public function setDatasetFilePullDays(array $datasetFilePullDays)
-    {
-        $this->datasetFilePullDays = $datasetFilePullDays;
-    }
-
-    /**
-     * Get the Days this dataset can be pulled.
-     *
-     * @return string
-     */
-    public function getDatasetFilePullDays()
-    {
-        return $this->datasetFilePullDays;
-    }
-
-    /**
-     * Set whether to pull the source data.
-     *
-     * @param boolean $datasetFilePullSourceData Whether to pull the source data.
-     *
-     * @return void
-     */
-    public function setDatasetFilePullSourceData($datasetFilePullSourceData)
-    {
-        $this->datasetFilePullSourceData = $datasetFilePullSourceData;
-    }
-
-    /**
-     * Set whether to pull the source data.
-     *
-     * @return boolean
-     */
-    public function getDatasetFilePullSourceData()
-    {
-        return $this->datasetFilePullSourceData;
     }
 
     /**
@@ -1240,6 +1760,474 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Set the dataset's reference date.
+     *
+     * @param \DateTime|null $referenceDate The dataset's reference date.
+     *
+     * @return void
+     */
+    public function setReferenceDate(\DateTime $referenceDate = null)
+    {
+        if ($referenceDate != null) {
+            $referenceDate->setTimeZone(new \DateTimeZone('UTC'));
+        }
+        $this->referenceDate = $referenceDate;
+    }
+
+    /**
+     * Get the dataset's reference date.
+     *
+     * @return \DateTime
+     */
+    public function getReferenceDate()
+    {
+        return $this->referenceDate;
+    }
+
+    /**
+     * Set reference date type.
+     *
+     * @param string $referenceDateType The designated type of dataset reference.
+     *
+     * @see REFERENCE_DATE_TYPES class constant for possible values.
+     *
+     * @throws \InvalidArgumentException When $referenceDateType is not a valid value.
+     *
+     * @return void
+     */
+    public function setReferenceDateType($referenceDateType)
+    {
+        if (null !== $referenceDateType and !array_key_exists($referenceDateType, static::REFERENCE_DATE_TYPES)) {
+            throw new \InvalidArgumentException("'$referenceDateType' is not a valid value for referenceDateType");
+        }
+        $this->referenceDateType = $referenceDateType;
+    }
+
+    /**
+     * Get the type of reference date associated with this submission.
+     *
+     * @return string
+     */
+    public function getReferenceDateType()
+    {
+        return $this->referenceDateType;
+    }
+
+    /**
+     * Sets the purpose.
+     *
+     * @param string $purpose The purpose of the dataset.
+     *
+     * @return void
+     */
+    public function setPurpose($purpose)
+    {
+        $this->purpose = $purpose;
+    }
+
+    /**
+     * Gets the purpose.
+     *
+     * @return string
+     */
+    public function getPurpose()
+    {
+        return $this->purpose;
+    }
+
+    /**
+     * Sets the Supplemental Information - Data Parameters and Units.
+     *
+     * @param string $suppParams Supplemental data parameters and units.
+     *
+     * @return void
+     */
+    public function setSuppParams($suppParams)
+    {
+        $this->suppParams = $suppParams;
+    }
+
+    /**
+     * Gets the Supplemental Information - Data Parameters and Units.
+     *
+     * @return string
+     */
+    public function getSuppParams()
+    {
+        return $this->suppParams;
+    }
+
+    /**
+     * Sets the Supplemental Information - Methods.
+     *
+     * @param string $suppMethods Supplemental data methods.
+     *
+     * @return void
+     */
+    public function setSuppMethods($suppMethods)
+    {
+        $this->suppMethods = $suppMethods;
+    }
+
+    /**
+     * Gets the Supplemental Information - Methods.
+     *
+     * @return string
+     */
+    public function getSuppMethods()
+    {
+        return $this->suppMethods;
+    }
+
+    /**
+     * Sets the Supplemental Information - Instruments.
+     *
+     * @param string $suppInstruments Supplemental data - instruments.
+     *
+     * @return void
+     */
+    public function setSuppInstruments($suppInstruments)
+    {
+        $this->suppInstruments = $suppInstruments;
+    }
+
+    /**
+     * Gets the Supplemental Information - Instruments.
+     *
+     * @return string
+     */
+    public function getSuppInstruments()
+    {
+        return $this->suppInstruments;
+    }
+
+    /**
+     * Sets the Supplemental Information - sampling scales and rates.
+     *
+     * @param string $suppSampScalesRates Supplemental data - sampling scales and rates.
+     *
+     * @return void
+     */
+    public function setSuppSampScalesRates($suppSampScalesRates)
+    {
+        $this->suppSampScalesRates = $suppSampScalesRates;
+    }
+
+    /**
+     * Gets the Supplemental Information - sampling scales and rates.
+     *
+     * @return string
+     */
+    public function getSuppSampScalesRates()
+    {
+        return $this->suppSampScalesRates;
+    }
+
+    /**
+     * Sets the Supplemental Information - error analysis.
+     *
+     * @param string $suppErrorAnalysis Supplemental data - error analysis.
+     *
+     * @return void
+     */
+    public function setSuppErrorAnalysis($suppErrorAnalysis)
+    {
+        $this->suppErrorAnalysis = $suppErrorAnalysis;
+    }
+
+    /**
+     * Gets the Supplemental Information - error analysis.
+     *
+     * @return string
+     */
+    public function getSuppErrorAnalysis()
+    {
+        return $this->suppErrorAnalysis;
+    }
+
+    /**
+     * Sets the Supplemental Information - provenance and historical references.
+     *
+     * @param string $suppProvenance Supplemental data - provenance and historical references.
+     *
+     * @return void
+     */
+    public function setSuppProvenance($suppProvenance)
+    {
+        $this->suppProvenance = $suppProvenance;
+    }
+
+    /**
+     * Gets the Supplemental Information - provenance and historical references.
+     *
+     * @return string
+     */
+    public function getSuppProvenance()
+    {
+        return $this->suppProvenance;
+    }
+
+    /**
+     * Setter for theme keywords.
+     *
+     * @param array $themeKeywords Array of keywords.
+     *
+     * @return void
+     */
+    public function setThemeKeywords(array $themeKeywords)
+    {
+        $this->themeKeywords = $themeKeywords;
+    }
+
+    /**
+     * Getter for theme keywords.
+     *
+     * @return array
+     */
+    public function getThemeKeywords()
+    {
+        return $this->themeKeywords;
+    }
+
+    /**
+     * Setter for place keywords.
+     *
+     * @param array $placeKeywords Array of keywords.
+     *
+     * @return void
+     */
+    public function setPlaceKeywords(array $placeKeywords)
+    {
+        $this->placeKeywords = $placeKeywords;
+    }
+
+    /**
+     * Getter for place keywords.
+     *
+     * @return array
+     */
+    public function getPlaceKeywords()
+    {
+        return $this->placeKeywords;
+    }
+
+    /**
+     * Setter for topic keywords.
+     *
+     * @param array $topicKeywords Array of keywords.
+     *
+     * @see TOPIC_KEYWORDS
+     *
+     * @throws \InvalidArgumentException When $topicKeywords contains invalid value.
+     *
+     * @return void
+     */
+    public function setTopicKeywords(array $topicKeywords)
+    {
+        foreach ($topicKeywords as $keyword) {
+            if (!array_key_exists($keyword, static::TOPIC_KEYWORDS)) {
+                throw new \InvalidArgumentException("'$keyword' is not a valid value for topicKeywords");
+            }
+        }
+        $this->topicKeywords = $topicKeywords;
+    }
+
+    /**
+     * Getter for topic keywords.
+     *
+     * @return array
+     */
+    public function getTopicKeywords()
+    {
+        return $this->topicKeywords;
+    }
+
+    /**
+     * Setter for geographic spatial extent.
+     *
+     * @param string $spatialExtent Well-Known text of dataset's geometry.
+     *
+     * @return void
+     */
+    public function setSpatialExtent($spatialExtent)
+    {
+        $this->spatialExtent = $spatialExtent;
+    }
+
+    /**
+     * Getter for geographic spatial extent.
+     *
+     * @return string As WKT.
+     */
+    public function getSpatialExtent()
+    {
+        return $this->spatialExtent;
+    }
+
+    /**
+     * Setter for spatial extent description.
+     *
+     * @param string $spatialExtentDescription Description of spatial extent.
+     *
+     * @return void
+     */
+    public function setSpatialExtentDescription($spatialExtentDescription)
+    {
+        $this->spatialExtentDescription = $spatialExtentDescription;
+    }
+
+    /**
+     * Getter for spatial extent description.
+     *
+     * @return string
+     */
+    public function getSpatialExtentDescription()
+    {
+        return $this->spatialExtentDescription;
+    }
+
+    /**
+     * Setter for dataset's temporal extent description.
+     *
+     * @param string $temporalExtentDesc Description of temporal extent, either 'ground condition' or 'modeled period'.
+     *
+     * @throws \InvalidArgumentException If $temporalExtentDesc is not in static::TEMPORAL_EXTENT_DESCRIPTIONS.
+     *
+     * @return void
+     */
+    public function setTemporalExtentDesc($temporalExtentDesc)
+    {
+        if (null !== $temporalExtentDesc and !array_key_exists($temporalExtentDesc, static::TEMPORAL_EXTENT_DESCRIPTIONS)) {
+            throw new \InvalidArgumentException("'$temporalExtentDesc' is not a valid value for temporalExtentDesc");
+        }
+        $this->temporalExtentDesc = $temporalExtentDesc;
+    }
+
+    /**
+     * Getter for dataset's temporal extent description.
+     *
+     * @return string
+     */
+    public function getTemporalExtentDesc()
+    {
+        return $this->temporalExtentDesc;
+    }
+
+    /**
+     * Set the dataset's temporal extent begin position.
+     *
+     * @param \DateTime|null $temporalExtentBeginPosition The temporal extent begin position.
+     *
+     * @return void
+     */
+    public function setTemporalExtentBeginPosition(\DateTime $temporalExtentBeginPosition = null)
+    {
+        if ($temporalExtentBeginPosition != null) {
+            $temporalExtentBeginPosition->setTimeZone(new \DateTimeZone('UTC'));
+        }
+        $this->temporalExtentBeginPosition = $temporalExtentBeginPosition;
+    }
+
+    /**
+     * Get the dataset's temporal extent begin position.
+     *
+     * @return \DateTime
+     */
+    public function getTemporalExtentBeginPosition()
+    {
+        return $this->temporalExtentBeginPosition;
+    }
+
+    /**
+     * Set the dataset's temporal extent end position.
+     *
+     * @param \DateTime|null $temporalExtentEndPosition The temporal extent end position.
+     *
+     * @return void
+     */
+    public function setTemporalExtentEndPosition(\DateTime $temporalExtentEndPosition = null)
+    {
+        if ($temporalExtentEndPosition != null) {
+            $temporalExtentEndPosition->setTimeZone(new \DateTimeZone('UTC'));
+        }
+        $this->temporalExtentEndPosition = $temporalExtentEndPosition;
+    }
+
+    /**
+     * Get the dataset's temporal extent end position.
+     *
+     * @return \DateTime
+     */
+    public function getTemporalExtentEndPosition()
+    {
+        return $this->temporalExtentEndPosition;
+    }
+
+    /**
+     * Set the distribution format name.
+     *
+     * @param string $distributionFormatName The distribution format name.
+     *
+     * @return void
+     */
+    public function setDistributionFormatName($distributionFormatName)
+    {
+        $this->distributionFormatName = $distributionFormatName;
+    }
+
+    /**
+     * Get the distribution format name.
+     *
+     * @return string
+     */
+    public function getDistributionFormatName()
+    {
+        return $this->distributionFormatName;
+    }
+
+    /**
+     * Set the file decompression technique.
+     *
+     * @param string $fileDecompressionTechnique The file decompression technique.
+     *
+     * @return void
+     */
+    public function setFileDecompressionTechnique($fileDecompressionTechnique)
+    {
+        $this->fileDecompressionTechnique = $fileDecompressionTechnique;
+    }
+
+    /**
+     * Get the file decompression technique.
+     *
+     * @return string
+     */
+    public function getFileDecompressionTechnique()
+    {
+        return $this->fileDecompressionTechnique;
+    }
+
+    /**
+     * Get the submission time stamp.
+     *
+     * @return \DateTime
+     */
+    public function getSubmissionTimeStamp()
+    {
+        return $this->submissionTimeStamp;
+    }
+
+    /**
+     * Get the submitter.
+     *
+     * @return Person|null
+     */
+    public function getSubmitter()
+    {
+        return $this->submitter;
+    }
+
+    /**
      * Update the dataset submission status in associated Dataset if a Dataset has been associated.
      *
      * @return void
@@ -1247,11 +2235,7 @@ class DatasetSubmission extends Entity
     protected function updateDatasetSubmissionStatus()
     {
         if ($this->getDataset() instanceof Dataset) {
-            if (null === $this->getDatasetFileUri()) {
-                $this->getDataset()->setDatasetSubmissionStatus(self::STATUS_INCOMPLETE);
-            } else {
-                $this->getDataset()->setDatasetSubmissionStatus(self::STATUS_COMPLETE);
-            }
+            $this->getDataset()->setDatasetSubmissionStatus($this->status);
         }
     }
 
@@ -1277,47 +2261,57 @@ class DatasetSubmission extends Entity
         if (!$this->getDataset() instanceof Dataset) {
             return;
         }
-        $availabilityStatus = self::AVAILABILITY_STATUS_NOT_AVAILABLE;
-        switch ($this->getDatasetFileTransferStatus()) {
-            case self::TRANSFER_STATUS_COMPLETED:
-                if ($this->getMetadataStatus() === self::METADATA_STATUS_ACCEPTED) {
-                    switch ($this->getRestrictions()) {
-                        case self::RESTRICTION_NONE:
-                            $availabilityStatus = self::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE;
-                            break;
-                        case self::RESTRICTION_APPROVAL:
-                            $availabilityStatus = self::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL;
-                            break;
-                        case self::RESTRICTION_RESTRICTED:
-                            $availabilityStatus = self::AVAILABILITY_STATUS_RESTRICTED;
-                            break;
-                    }
-                } elseif ($this->getMetadataFileTransferStatus() === self::TRANSFER_STATUS_COMPLETED) {
-                    $availabilityStatus = self::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
-                } else {
-                    $availabilityStatus = self::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
-                }
-                break;
-            case self::TRANSFER_STATUS_REMOTELY_HOSTED:
-                if ($this->getMetadataStatus() === self::METADATA_STATUS_ACCEPTED) {
-                    switch ($this->getRestrictions()) {
-                        case self::RESTRICTION_NONE:
-                            $availabilityStatus = self::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED;
-                            break;
-                        case self::RESTRICTION_APPROVAL:
-                            $availabilityStatus = self::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL_REMOTELY_HOSTED;
-                            break;
-                        case self::RESTRICTION_RESTRICTED:
-                            $availabilityStatus = self::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED;
-                            break;
-                    }
-                } elseif ($this->getMetadataFileTransferStatus() === self::TRANSFER_STATUS_COMPLETED) {
-                    $availabilityStatus = self::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
-                } else {
-                    $availabilityStatus = self::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
-                }
-                break;
-        }
-        $this->getDataset()->setAvailabilityStatus($availabilityStatus);
+        $this->getDataset()->updateAvailabilityStatus();
+    }
+
+    /**
+     * Gets the valid choices for reference date types.
+     *
+     * @return array
+     */
+    public static function getReferenceDateTypeChoices()
+    {
+        return array_flip(
+            array_map(
+                function ($type) {
+                    return $type['name'];
+                },
+                static::REFERENCE_DATE_TYPES
+            )
+        );
+    }
+
+    /**
+     * Gets the valid choices for topic keywords.
+     *
+     * @return array
+     */
+    public static function getTopicKeywordsChoices()
+    {
+        return array_flip(
+            array_map(
+                function ($keyword) {
+                    return $keyword['name'];
+                },
+                static::TOPIC_KEYWORDS
+            )
+        );
+    }
+
+    /**
+     * Gets the valid choices for temporal extent description.
+     *
+     * @return array
+     */
+    public static function getTemporalExtentDescChoices()
+    {
+        return array_flip(
+            array_map(
+                function ($keyword) {
+                    return $keyword['name'];
+                },
+                static::TEMPORAL_EXTENT_DESCRIPTIONS
+            )
+        );
     }
 }

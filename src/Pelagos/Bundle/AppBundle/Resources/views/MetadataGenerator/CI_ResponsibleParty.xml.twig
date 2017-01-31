@@ -57,7 +57,7 @@
     </gmd:contactInfo>
     <gmd:role>
         {% if role %}
-            <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="{{role.name}}" codeSpace="{{role.code}}">{{role.name}}</gmd:CI_RoleCode>
+            {% include "PelagosAppBundle:MetadataGenerator:CI_RoleCode.xml.twig" with {"role" : role} %}
         {% endif %}
     </gmd:role>
 </gmd:CI_ResponsibleParty>

@@ -4,6 +4,7 @@ namespace Pelagos\Bundle\AppBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -27,7 +28,7 @@ class PersonType extends AbstractType
      *
      * @param RouterInterface $router The router instance.
      */
-    public function __construct(RouterInterface $router)
+    public function __construct(RouterInterface $router = null)
     {
         $this->router = $router;
     }
@@ -44,6 +45,18 @@ class PersonType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $organizationAttr = array();
+        $positionAttr = array();
+        if ($this->router instanceof RouterInterface) {
+            $organizationAttr['data-url'] = $this->router->generate(
+                'pelagos_api_people_get_distinct_vals',
+                array('property' => 'organization')
+            );
+            $positionAttr['data-url'] = $this->router->generate(
+                'pelagos_api_people_get_distinct_vals',
+                array('property' => 'position')
+            );
+        }
         $builder
             ->add('id', TextType::class, array(
                 'label' => 'Person ID:',
@@ -55,7 +68,7 @@ class PersonType extends AbstractType
             ->add('lastName', TextType::class, array(
                 'label' => 'Family Name:',
             ))
-            ->add('emailAddress', TextType::class, array(
+            ->add('emailAddress', EmailType::class, array(
                 'label' => 'E-Mail Address:',
             ))
             ->add('phoneNumber', TextType::class, array(
@@ -90,22 +103,12 @@ class PersonType extends AbstractType
             ->add('organization', TextType::class, array(
                 'label' => 'Organization:',
                 'required' => false,
-                'attr' => array(
-                    'data-url' => $this->router->generate(
-                        'pelagos_api_people_get_distinct_vals',
-                        array('property' => 'organization')
-                    )
-                ),
+                'attr' => $organizationAttr,
             ))
             ->add('position', TextType::class, array(
                 'label' => 'Position:',
                 'required' => false,
-                'attr' => array(
-                    'data-url' => $this->router->generate(
-                        'pelagos_api_people_get_distinct_vals',
-                        array('property' => 'position')
-                    )
-                ),
+                'attr' => $positionAttr,
             ));
     }
 

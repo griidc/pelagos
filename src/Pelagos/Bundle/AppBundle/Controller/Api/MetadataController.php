@@ -101,8 +101,9 @@ class MetadataController extends EntityController
         }
 
         $metadata = $dataset->getMetadata();
+        $metadataFilename = preg_replace('/:/', '-', $dataset->getUdi()) . '-metadata.xml';
 
-        if ($dataset->getMetadataStatus() != DatasetSubmission::METADATA_STATUS_NONE) {
+        if ($dataset->getMetadataStatus() == DatasetSubmission::METADATA_STATUS_ACCEPTED) {
             if ($dataset->getMetadata() instanceof Metadata and
                 $dataset->getMetadata()->getXml() instanceof \SimpleXMLElement
             ) {
@@ -127,13 +128,31 @@ class MetadataController extends EntityController
                 'PelagosAppBundle:MetadataGenerator:MI_Metadata.xml.twig',
                 array(
                     'dataset' => $dataset,
-                    'metadataFilename' => preg_replace('/:/', '-', $dataset->getUdi()) . '-metadata.xml',
+                    'metadataFilename' => $metadataFilename,
                     )
             );
         }
 
-        $response = new Response($xml);
+        $tidyXml = new \tidy;
+        $tidyXml->parseString(
+            $xml,
+            array(
+                'input-xml' => true,
+                'output-xml' => true,
+                'indent' => true,
+                'indent-spaces' => 4,
+                'wrap' => 0,
+            ),
+            'utf8'
+        );
+
+        // Remove extra whitespace added around CDATA tags by tidy.
+        $outXml = preg_replace('/>[\s]+<\!\[CDATA\[/', '><![CDATA[', $tidyXml);
+        $outXml = preg_replace('/]]>\s+</', ']]><', $outXml);
+
+        $response = new Response($outXml);
         $response->headers->set('Content-Type', 'text/xml');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $metadataFilename . '"');
 
         return $response;
     }

@@ -42,46 +42,48 @@
         </div>
 
         <div class="display-table-row">
-            <div id="container" class="display-table-cell">
-                <div id="left">
-                    <div id="menu">
-                        <div class="viewport">
-                            <div class="overview">
-                                <script type="text/javascript">
-                                    var tree = {
-                                                theme: "pelagos",
-                                                max_depth: 2,
-                                                expand_to_depth: 0,
-                                                animation: 250,
-                                                type: "ra",
+            <div class="display-table-cell" style="height:100%">
+                <div id="container">
+                    <div id="left">
+                        <div id="menu">
+                            <div class="viewport">
+                                <div class="overview">
+                                    <script type="text/javascript">
+                                        var tree = {
+                                                    theme: "pelagos",
+                                                    max_depth: 2,
+                                                    expand_to_depth: 0,
+                                                    animation: 250,
+                                                    type: "ra",
 
-                                                rfp_color: "#00A",
-                                                rfp_action: "updateHash(\{\{fundSrc.id\}\});showProjects('fundSrc',\{\{fundSrc.id\}\});",
+                                                    rfp_color: "#00A",
+                                                    rfp_action: "updateHash(\{\{fundSrc.id\}\});showProjects('fundSrc',\{\{fundSrc.id\}\});",
 
-                                                project_color: "#00A",
-                                                project_action: "updateHash(\{\{project.fundingCycle.id\}\},\{\{project.id\}\});showProjects('projectId',\{\{project.id\}\});",
+                                                    project_color: "#00A",
+                                                    project_action: "updateHash(\{\{project.fundingCycle.id\}\},\{\{project.id\}\});showProjects('projectId',\{\{project.id\}\});",
 
-                                                researcher_color: "#00A",
-                                                researcher_action: "location.href='#';showProjects('peopleId',\{\{person.id\}\});",
+                                                    researcher_color: "#00A",
+                                                    researcher_action: "location.href='#';showProjects('peopleId',\{\{person.id\}\});",
 
-                                                afteropen: "$(window).hashchange();"
-                                               }
+                                                    afteropen: "$(window).hashchange();"
+                                                   }
 
-                                    insertTree(tree);
-                                </script>
+                                        insertTree(tree);
+                                    </script>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div id="right">
-                    <div id="content">
-                        <div class="viewport">
-                            <div class="overview"></div>
-                            <div class="spinner">
-                                <div>
-                                    {% image '@PelagosAppBundle/Resources/public/images/spinner.gif' %}
-                                        <img src="{{ asset_url }}">
-                                    {% endimage %}
+                    <div id="right">
+                        <div id="content">
+                            <div class="viewport">
+                                <div class="overview"></div>
+                                <div class="spinner">
+                                    <div>
+                                        {% image '@PelagosAppBundle/Resources/public/images/spinner.gif' %}
+                                            <img src="{{ asset_url }}">
+                                        {% endimage %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
