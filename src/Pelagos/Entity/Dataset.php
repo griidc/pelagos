@@ -89,6 +89,8 @@ class Dataset extends Entity
      * @var Collection
      *
      * @ORM\OneToMany(targetEntity="DatasetSubmission", mappedBy="dataset", cascade={"remove"})
+     *
+     * @ORM\OrderBy({"sequence" = "DESC"})
      */
     protected $datasetSubmissionHistory;
 
@@ -249,8 +251,15 @@ class Dataset extends Entity
      */
     public function setDatasetSubmission(DatasetSubmission $datasetSubmission)
     {
-        $this->datasetSubmission = $datasetSubmission;
-        $this->datasetSubmission->setDataset($this);
+        if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+            $this->datasetSubmission = $datasetSubmission;
+        } else {
+            $this->datasetSubmission = null;
+        }
+        $datasetSubmission->setDataset($this);
+        $this->setDatasetSubmissionStatus($datasetSubmission->getStatus());
+        $this->setMetadataStatus($datasetSubmission->getMetadataStatus());
+        $this->updateAvailabilityStatus();
     }
 
     /**
@@ -575,5 +584,55 @@ class Dataset extends Entity
     public function hasMetadata()
     {
         return $this->metadata instanceof Metadata;
+    }
+
+    /**
+     * Update the availability status based on current dataset submission.
+     *
+     * @return void
+     */
+    public function updateAvailabilityStatus()
+    {
+        if (!$this->getDatasetSubmission() instanceof DatasetSubmission) {
+            // Set availability status to not available and return if we don't have a Dataset Submission.
+            $this->setAvailabilityStatus(DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE);
+            return;
+        }
+        $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE;
+        switch ($this->getDatasetSubmission()->getDatasetFileTransferStatus()) {
+            case DatasetSubmission::TRANSFER_STATUS_COMPLETED:
+                if ($this->getDatasetSubmission()->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+                    switch ($this->getDatasetSubmission()->getRestrictions()) {
+                        case DatasetSubmission::RESTRICTION_NONE:
+                            $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE;
+                            break;
+                        case DatasetSubmission::RESTRICTION_RESTRICTED:
+                            $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED;
+                            break;
+                    }
+                } elseif ($this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+                    $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
+                } else {
+                    $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
+                }
+                break;
+            case DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED:
+                if ($this->getDatasetSubmission()->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+                    switch ($this->getDatasetSubmission()->getRestrictions()) {
+                        case DatasetSubmission::RESTRICTION_NONE:
+                            $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED;
+                            break;
+                        case DatasetSubmission::RESTRICTION_RESTRICTED:
+                            $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED;
+                            break;
+                    }
+                } elseif ($this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+                    $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
+                } else {
+                    $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
+                }
+                break;
+        }
+        $this->setAvailabilityStatus($availabilityStatus);
     }
 }

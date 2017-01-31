@@ -3,12 +3,12 @@
 	<label for="OLR1_{{instanceName}}"><em>*</em>URL</label>
 	<input value="{{xmlArray["gmd:URL"]}}" onblur="popProtocol{{instanceName}}();" type="text" class="required url" size=80" id="OLR1_{{instanceName}}" name="{{instanceType}}-gmd:linkage-gmd:URL"/></td>
 	<td>
-	{% if forContact == true %}	
+	{% if forContact == true %}
 		<pre>Organization URL. Should be formatted 'protocol://domain', e.g., http://gomri.org</pre></td></tr>
 	{% else %}
-		<pre>URL which points to a Internet location where the dataset can be obtained. If your dataset is registered with GRIIDC, the URL should be http://data.gulfresearchinitiative.org/data/&lt;UDI&gt;, where &lt;UDI&gt; is the GRIIDC UDI for your dataset</pre></td></tr>
-	{% endif %}	
-	
+		<pre>URL which points to a Internet location where the dataset can be obtained. If your dataset has been submitted to GRIIDC, the URL should be http://data.gulfresearchinitiative.org/data/&lt;UDI&gt;, where &lt;UDI&gt; is the GRIIDC UDI for your dataset</pre></td></tr>
+	{% endif %}
+
 	<input type="hidden" size=80" id="OLR2_{{instanceName}}" name="{{instanceType}}-gmd:protocol-gco:CharacterString"/></td>
 
 {% if complex == true %}
@@ -16,17 +16,17 @@
 	<label for="OLR3_{{instanceName}}">applicationProfile</label>
 	<input type="text" id="OLR3_{{instanceName}}" name="{{instanceType}}-gmd:applicationProfile-gco:CharacterString"/></td>
 	<td><pre>Profile</pre></td></tr>
-	
+
 	<tr><td>
 	<label for="OLR4_{{instanceName}}">name</label>
 	<input type="text" id="OLR4_{{instanceName}}" name="{{instanceType}}-gmd:name-gco:CharacterString"/></td>
 	<td><pre>Name</pre></td></tr>
-	
+
 	<tr><td>
 	<label for="OLR5_{{instanceName}}">description</label>
 	<input type="text" id="OLR5_{{instanceName}}" name="{{instanceType}}-gmd:description-gco:CharacterString"/></td>
 	<td><pre>description</pre></td></tr>
-	
+
 	<tr><td>
 	<label for="OLR6_{{instanceName}}">role</label>
 	<select id="OLR6_{{instanceName}}" name="{{instanceType}}-gmd:function-gmd:CI_OnlineFunctionCode"</select>
@@ -39,6 +39,6 @@
 	</td>
 	<td><pre>URL Role</pre></td></tr>
 {% endif %}
-	
+
 
 

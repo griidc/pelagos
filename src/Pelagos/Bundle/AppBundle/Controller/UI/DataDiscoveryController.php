@@ -100,9 +100,7 @@ class DataDiscoveryController extends UIController
                             $criteria,
                             array(
                                 'availabilityStatus' => array(
-                                    DatasetSubmission::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL,
                                     DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED,
-                                    DatasetSubmission::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL_REMOTELY_HOSTED,
                                     DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
                                 )
                             )

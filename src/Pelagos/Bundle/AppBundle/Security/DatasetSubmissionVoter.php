@@ -6,6 +6,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Pelagos\Entity\Account;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\PersonDatasetSubmission;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 
 /**
@@ -26,12 +27,12 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
     protected function supports($attribute, $subject)
     {
         // Abstain if the subject is not an instance of DatasetSubmission.
-        if (!$subject instanceof DatasetSubmission) {
+        if (!$subject instanceof DatasetSubmission and !$subject instanceof PersonDatasetSubmission) {
             return false;
         }
 
         // Supports create and edit.
-        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
+        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_DELETE))) {
             return true;
         }
 
@@ -59,11 +60,37 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
             return false;
         }
 
-        // Anyone with an account can create or edit.
-        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
-            return true;
+        // A user with an account can only create or edit dataset submissions
+        // associated with research groups that they (the user) are a member of.
+
+        $researchGroups = $user->getPerson()->getResearchGroups();
+        if ($subject instanceof DatasetSubmission) {
+            $submissionResearchGroup = $subject->getDataset()->getResearchGroup();
+            $submissionStatus = $subject->getStatus();
+        } elseif ($subject instanceof PersonDatasetSubmission) {
+            $submissionResearchGroup = $subject->getDatasetSubmission()->getDataset()->getResearchGroup();
+            $submissionStatus = $subject->getDatasetSubmission()->getStatus();
+        } else {
+            return false;
         }
 
+        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
+            if (null !== $submissionResearchGroup) {
+                foreach ($researchGroups as $researchGroup) {
+                    if ($submissionResearchGroup->isSameTypeAndId($researchGroup)) {
+                        return true;
+                    }
+                }
+            }
+        } elseif (self::CAN_DELETE === $attribute and DatasetSubmission::STATUS_INCOMPLETE === $submissionStatus) {
+            if (null !== $submissionResearchGroup) {
+                foreach ($researchGroups as $researchGroup) {
+                    if ($submissionResearchGroup->isSameTypeAndId($researchGroup)) {
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 }

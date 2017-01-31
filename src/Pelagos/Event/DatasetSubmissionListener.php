@@ -12,22 +12,6 @@ use Pelagos\Entity\DatasetSubmission;
 class DatasetSubmissionListener extends EventListener
 {
     /**
-     * Method to send an email to user on a create event.
-     *
-     * @param EntityEvent $event Event being acted upon.
-     *
-     * @return void
-     */
-    public function onCreated(EntityEvent $event)
-    {
-        $datasetSubmission = $event->getEntity();
-
-        // email User
-        $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
-        $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission));
-    }
-
-    /**
      * Method to send an email to DMs on a submitted event.
      *
      * @param EntityEvent $event Event being acted upon.
@@ -39,9 +23,21 @@ class DatasetSubmissionListener extends EventListener
         $datasetSubmission = $event->getEntity();
         $dataset = $datasetSubmission->getDataset();
 
+        $this->mdappLogger->writeLog(
+            sprintf(
+                '%s submitted a dataset for %s',
+                $datasetSubmission->getModifier()->getAccount()->getUsername(),
+                $dataset->getUdi()
+            )
+        );
+
+        // email User
+        $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
+        $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission));
+
         // email DM(s)
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-submitted.email.twig');
-        $this->sendMailMsg($template, array('dataset' => $dataset), $this->getDMs($dataset, $datasetSubmission->getCreator()));
+        $this->sendMailMsg($template, array('dataset' => $dataset), $this->getDMs($dataset, $datasetSubmission->getSubmitter()));
     }
 
     /**
@@ -56,9 +52,21 @@ class DatasetSubmissionListener extends EventListener
         $datasetSubmission = $event->getEntity();
         $dataset = $datasetSubmission->getDataset();
 
+        $this->mdappLogger->writeLog(
+            sprintf(
+                '%s updated the submission for %s',
+                $datasetSubmission->getModifier()->getAccount()->getUsername(),
+                $dataset->getUdi()
+            )
+        );
+
+        // email User
+        $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
+        $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission));
+
         // email DM(s)
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-updated.email.twig');
-        $this->sendMailMsg($template, array('dataset' => $dataset), $this->getDMs($dataset, $datasetSubmission->getCreator()));
+        $this->sendMailMsg($template, array('dataset' => $dataset), $this->getDMs($dataset, $datasetSubmission->getSubmitter()));
     }
 
     /**
@@ -72,7 +80,7 @@ class DatasetSubmissionListener extends EventListener
     {
         $datasetSubmission = $event->getEntity();
 
-        // email creator
+        // email submitter
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-processed.email.twig');
         $this->sendMailMsg(
             $template,
@@ -80,7 +88,7 @@ class DatasetSubmissionListener extends EventListener
                 'datasetSubmission' => $datasetSubmission,
                 'type' => 'dataset',
             ),
-            array($datasetSubmission->getCreator())
+            array($datasetSubmission->getSubmitter())
         );
 
         // email DRMs
@@ -102,7 +110,7 @@ class DatasetSubmissionListener extends EventListener
     {
         $datasetSubmission = $event->getEntity();
 
-        // email creator
+        // email submitter
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-processed.email.twig');
         $this->sendMailMsg(
             $template,
@@ -110,7 +118,7 @@ class DatasetSubmissionListener extends EventListener
                 'datasetSubmission' => $datasetSubmission,
                 'type' => 'metadata',
             ),
-            array($datasetSubmission->getCreator())
+            array($datasetSubmission->getSubmitter())
         );
 
         $metadataFileInfo = $this->dataStore->getDownloadFileInfo(

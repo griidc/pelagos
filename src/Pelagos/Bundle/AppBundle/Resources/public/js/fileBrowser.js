@@ -79,6 +79,7 @@
                                 (function(j) {
                                     return function() {
                                         $(localSettings.target).val(data.basePath + "/" + data.files[j].path);
+                                        $(localSettings.target).change();
                                         elements.overlay.hide();
                                     }
                                 }(i))
@@ -125,7 +126,7 @@
 
             elements.cancel = $("<div/>").addClass("fileBrowserCancel")
                 .append(
-                    $("<button>Cancel</button>").click(function() {
+                    $("<button type=\"button\">Cancel</button>").click(function() {
                         elements.overlay.hide();
                     })
                 );

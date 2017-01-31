@@ -3,7 +3,7 @@
 {% block body_html %}
 A new dataset file for {{ datasetSubmission.dataset.udi }} has been submitted:<br>
 <br>
-Submitter: {{ datasetSubmission.creator.firstName }} {{ datasetSubmission.creator.lastName }}<br>
+Submitter: {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }}<br>
 File Name: {{ datasetSubmission.datasetFileName }}<br>
 File Size: {{ datasetSubmission.datasetFileSize|formatBytes }}<br>
 UDI: {{ datasetSubmission.dataset.udi }}<br>
@@ -14,7 +14,7 @@ Research Group: {{ datasetSubmission.dataset.researchGroup.name }}<br>
 {% block body_text %}
 A new dataset file for {{ datasetSubmission.dataset.udi }} has been submitted:
 
-Submitter: {{ datasetSubmission.creator.firstName }} {{ datasetSubmission.creator.lastName }}
+Submitter: {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }}
 File Name: {{ datasetSubmission.datasetFileName }}
 File Size: {{ datasetSubmission.datasetFileSize|formatBytes }}
 UDI: {{ datasetSubmission.dataset.udi }}

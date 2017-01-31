@@ -442,7 +442,7 @@ function uploadFile()
 
         $("#fromudi").qtip({
             content: {
-                text: "This button will pre-populate the form with information about a dataset from the GRIIDC Registry."
+                text: "This button will pre-populate the form with information about a dataset previously submitted to GRIIDC."
             },
             position: {
                 my: "bottom left",

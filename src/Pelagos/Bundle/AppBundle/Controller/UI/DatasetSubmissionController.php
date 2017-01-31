@@ -9,17 +9,31 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
 use Symfony\Component\Form\Form;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
+use Symfony\Component\PropertyAccess\PropertyAccess;
+
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
+use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionXmlFileType;
 
 use Pelagos\Entity\Account;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\Metadata;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\ResearchGroup;
+use Pelagos\Entity\PersonDatasetSubmission;
+use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
+
+use Pelagos\Exception\InvalidMetadataException;
+
+use Pelagos\Util\ISOMetadataExtractorUtil;
 
 /**
  * The Dataset Submission controller for the Pelagos UI App Bundle.
@@ -40,203 +54,121 @@ class DatasetSubmissionController extends UIController
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("")
+     * @throws BadRequestHttpException When xmlUploadForm is submitted without a file.
      *
-     * @Method("GET")
+     * @Route("")
      *
      * @return Response A Response instance.
      */
     public function defaultAction(Request $request)
     {
-        $difId = $request->query->get('uid');
         $udi = $request->query->get('regid');
-
         $datasetSubmission = null;
-        $datasetId = null;
-
-        $found = false;
-
-        $buttonLabel = 'Register';
-
-        $dif = null;
+        $dataset = null;
+        $xmlStatus = array(
+            'success' => null,
+            'errors' => null,
+            );
 
         if ($udi != null) {
+            $udi = trim($udi);
             $datasets = $this->entityHandler
                 ->getBy(Dataset::class, array('udi' => substr($udi, 0, 16)));
 
             if (count($datasets) == 1) {
                 $dataset = $datasets[0];
 
-                $datasetId = $dataset->getId();
-
                 $dif = $dataset->getDif();
 
-                $datasetSubmission = $dataset->getDatasetSubmission();
+                $datasetSubmission = $dataset->getDatasetSubmissionHistory()->first();
+
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
-                    $datasetSubmission = new DatasetSubmission;
-                    $datasetSubmission->setTitle($dif->getTitle());
-                    $datasetSubmission->setAbstract($dif->getAbstract());
-                    $datasetSubmission->setPointOfContactName(
-                        $dif
-                        ->getPrimaryPointOfContact()
-                        ->getLastName()
-                        . ', ' .
-                        $dif
-                        ->getPrimaryPointOfContact()
-                        ->getFirstName()
-                    );
-                    $datasetSubmission->setPointOfContactEmail(
-                        $dif
-                        ->getPrimaryPointOfContact()
-                        ->getEmailAddress()
-                    );
-                } else {
-                    $buttonLabel = 'Update';
+                    $datasetSubmission = null;
                 }
-                $found = true;
-            }
-        }
 
-        if ($difId != null) {
-            $dif = $this->entityHandler->get(DIF::class, $difId);
+                $xmlForm = $this->get('form.factory')->createNamed(
+                    null,
+                    DatasetSubmissionXmlFileType::class,
+                    null
+                );
 
-            if ($dif instanceof DIF) {
-                $dataset = $dif->getDataset();
+                $xmlForm->handleRequest($request);
 
-                $datasetId = $dataset->getId();
+                if ($xmlForm->isSubmitted()) {
+                    $xmlFile = $xmlForm['xmlFile']->getData();
 
-                $datasetSubmission = $dataset->getDatasetSubmission();
+                    if ($xmlFile instanceof UploadedFile) {
+                        $xmlURI = $xmlFile->getRealPath();
+                    } else {
+                        throw new BadRequestHttpException('No file provided.');
+                    }
+
+                    try {
+                        $this->loadFromXml($xmlURI, $datasetSubmission);
+                        $xmlStatus['success'] = true;
+                    } catch (InvalidMetadataException $e) {
+                        $xmlStatus['errors'] = $e->getErrors();
+                        $xmlStatus['success'] = false;
+                    }
+                }
+
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
-                    $datasetSubmission = new DatasetSubmission;
-                    $datasetSubmission->setTitle($dif->getTitle());
-                    $datasetSubmission->setAbstract($dif->getAbstract());
-                    $datasetSubmission->setPointOfContactName(
-                        $dif
-                        ->getPrimaryPointOfContact()
-                        ->getLastName()
-                        . ', ' .
-                        $dif
-                        ->getPrimaryPointOfContact()
-                        ->getFirstName()
-                    );
-                    $datasetSubmission->setPointOfContactEmail(
-                        $dif
-                        ->getPrimaryPointOfContact()
-                        ->getEmailAddress()
-                    );
-                } else {
-                    $udi = $dataset->getUdi();
+
+                    if ($dif->getStatus() == DIF::STATUS_APPROVED) {
+                        // This is the first submission, so create a new one based on the DIF.
+                        $datasetSubmission = new DatasetSubmission($dif);
+                        $datasetSubmission->setSequence(1);
+
+                        try {
+                            $this->entityHandler->create($datasetSubmission);
+                        } catch (AccessDeniedException $e) {
+                            // This is handled in the template.
+                        }
+                    }
+                } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
+                    and $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_NONE
+                    and (
+                        $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_COMPLETED
+                        or $datasetSubmission->getDatasetFileSha256Hash() !== null
+                    )
+                ) {
+                    // The latest submission is complete, so create new one based on it.
+                    $datasetSubmission = new DatasetSubmission($datasetSubmission);
+
+                    // If we have accepted metadata.
+                    if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata
+                        and $datasetSubmission->getDataset()->getMetadataStatus()
+                            == DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+                        // Clear dataset and metadata contacts.
+                        $datasetSubmission->getDatasetContacts()->clear();
+                        $datasetSubmission->getMetadataContacts()->clear();
+                        // Populate from metadata.
+                        ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
+                            $datasetSubmission->getDataset()->getMetadata()->getXml(),
+                            $datasetSubmission,
+                            $this->get('doctrine.orm.entity_manager')
+                        );
+                    }
+
+                    try {
+                        $this->entityHandler->create($datasetSubmission);
+                    } catch (AccessDeniedException $e) {
+                        // This is handled in the template.
+                    }
                 }
-                $found = true;
             }
         }
 
-        if ($dif instanceof DIF and $dif->getStatus() !== DIF::STATUS_APPROVED) {
-            $datasetSubmission = null;
-        }
-
-        $form = $this->get('form.factory')->createNamed(
-            null,
-            DatasetSubmissionType::class,
-            $datasetSubmission,
-            array(
-                'action' => $this->generateUrl('pelagos_app_ui_datasetsubmission_post', array('id' => $datasetId)),
-                'method' => 'POST',
-            )
-        );
-
-        if ($datasetSubmission instanceof DatasetSubmission) {
-            switch ($datasetSubmission->getDatasetFileTransferType()) {
-                case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
-                    $form->get('datasetFileUpload')->setData(
-                        preg_replace('#^file://#', '', $datasetSubmission->getDatasetFileUri())
-                    );
-                    break;
-                case DatasetSubmission::TRANSFER_TYPE_SFTP:
-                    $form->get('datasetFilePath')->setData(
-                        preg_replace('#^file://#', '', $datasetSubmission->getDatasetFileUri())
-                    );
-                    break;
-                case DatasetSubmission::TRANSFER_TYPE_HTTP:
-                    $form->get('datasetFileUrl')->setData($datasetSubmission->getDatasetFileUri());
-                    break;
-            }
-
-            switch ($datasetSubmission->getMetadataFileTransferType()) {
-                case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
-                    $form->get('metadataFileUpload')->setData(
-                        preg_replace('#^file://#', '', $datasetSubmission->getMetadataFileUri())
-                    );
-                    break;
-                case DatasetSubmission::TRANSFER_TYPE_SFTP:
-                    $form->get('metadataFilePath')->setData(
-                        preg_replace('#^file://#', '', $datasetSubmission->getMetadataFileUri())
-                    );
-                    break;
-                case DatasetSubmission::TRANSFER_TYPE_HTTP:
-                    $form->get('metadataFileUrl')->setData($datasetSubmission->getMetadataFileUri());
-                    break;
-            }
-        }
-
-        if ($this->getUser() instanceof Account) {
-            $loggedInPerson = $this->getUser()->getPerson();
-        } else {
-            $loggedInPerson = null;
-        }
-
-        $form->add('submit', SubmitType::class, array(
-            'label' => $buttonLabel,
-            'attr'  => array('class' => 'submitButton'),
-        ));
-
-        $datasetSubmissions = $this->entityHandler
-            ->getBy(
-                Dataset::class,
-                array (
-                    'datasetSubmission.creator' => $loggedInPerson,
-                ),
-                array(
-                    'udi' => 'ASC'
-                )
-            );
-
-        $researchGroups = array();
-        $researchGroupCandidates = $this->entityHandler->getBy(
-            ResearchGroup::class,
-            array('datasets.dif.status' => 2),
-            array('name' => 'ASC')
-        );
-        foreach ($researchGroupCandidates as $entity) {
-            if ($this->isGranted('CAN_CREATE_DIF_FOR', $entity)) {
-                $researchGroups[] = $entity;
-            }
-        }
-
-        $researchers = $this->entityHandler
-            ->getAll(Person::class);
-
-        return $this->render(
-            'PelagosAppBundle:DatasetSubmission:index.html.twig',
-            array(
-                'form' => $form->createView(),
-                'datasetSubmission' => $datasetSubmission,
-                'found'  => $found,
-                'udi'  => $udi,
-                'datasetSubmissions' => $datasetSubmissions,
-                'researchGroups' => $researchGroups,
-                'researchers' => $researchers,
-                'loggedInPerson' => $loggedInPerson,
-                'dif' => $dif,
-            )
-        );
+        return $this->makeSubmissionForm($udi, $dataset, $datasetSubmission, $xmlStatus);
     }
 
     /**
      * The post action for Dataset Submission.
      *
      * @param Request     $request The Symfony request object.
-     * @param string|null $id      The id of the Dataset to load.
+     * @param string|null $id      The id of the Dataset Submission to load.
+     *
+     * @throws BadRequestHttpException When dataset submission has already been submitted.
      *
      * @Route("/{id}")
      *
@@ -246,16 +178,10 @@ class DatasetSubmissionController extends UIController
      */
     public function postAction(Request $request, $id = null)
     {
-        $dataset = $this->entityHandler->get(Dataset::class, $id);
+        $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
 
-        $datasetSubmission = $dataset->getDatasetSubmission();
-        if ($datasetSubmission instanceof DatasetSubmission) {
-            $sequence = $datasetSubmission->getSequence();
-            $datasetSubmission = clone $datasetSubmission;
-            $datasetSubmission->setId(null);
-            $datasetSubmission->setCreationTimeStamp(null);
-        } else {
-            $datasetSubmission = new DatasetSubmission;
+        if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+            throw new BadRequestHttpException('This submission has already been submitted.');
         }
 
         $form = $this->get('form.factory')->createNamed(
@@ -266,18 +192,19 @@ class DatasetSubmissionController extends UIController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $dataset->setDatasetSubmission($datasetSubmission);
-            $sequence = $datasetSubmission->getSequence();
+        if ($form->isSubmitted() and $form->isValid()) {
 
-            if ($sequence == null) {
-                $sequence = 0;
-                $eventName = 'submitted';
-            } else {
+            $this->processDatasetFileTransferDetails($form, $datasetSubmission);
+
+            $datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_SUBMITTED);
+
+            $datasetSubmission->submit($this->getUser()->getPerson());
+
+            if ($datasetSubmission->getSequence() > 1) {
                 $eventName = 'resubmitted';
+            } else {
+                $eventName = 'submitted';
             }
-
-            $datasetSubmission->setSequence(++$sequence);
 
             if ($this->getUser()->isPosix()) {
                 $incomingDirectory = $this->getUser()->getHomeDirectory() . '/incoming';
@@ -289,12 +216,13 @@ class DatasetSubmissionController extends UIController
                 }
             }
 
-            $this->processDatasetFileTransferDetails($form, $datasetSubmission, $incomingDirectory);
-
-            $this->processMetadataFileTransferDetails($form, $datasetSubmission, $incomingDirectory);
-
-            $this->entityHandler->create($datasetSubmission);
-            $this->entityHandler->update($dataset);
+            $this->entityHandler->update($datasetSubmission);
+            foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+                $this->entityHandler->update($datasetContact);
+            }
+            foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+                $this->entityHandler->update($metadataContact);
+            }
 
             $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
                 $datasetSubmission,
@@ -313,6 +241,8 @@ class DatasetSubmissionController extends UIController
                 array('DatasetSubmission' => $datasetSubmission)
             );
         }
+        // This should not normally happen.
+        return new Response((string) $form->getErrors(true, false));
     }
 
     /**
@@ -320,45 +250,27 @@ class DatasetSubmissionController extends UIController
      *
      * @param Form              $form              The submitted dataset submission form.
      * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
-     * @param string            $incomingDirectory The user's incoming directory.
      *
      * @return void
      */
     protected function processDatasetFileTransferDetails(
         Form $form,
-        DatasetSubmission $datasetSubmission,
-        $incomingDirectory
+        DatasetSubmission $datasetSubmission
     ) {
-        switch ($datasetSubmission->getDatasetFileTransferType()) {
-            case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
-                $datasetFile = $form['datasetFile']->getData();
-                if ($datasetFile instanceof UploadedFile) {
-                    $originalFileName = $datasetFile->getClientOriginalName();
-                    $movedDatasetFile = $datasetFile->move($incomingDirectory, $originalFileName);
-                    $datasetSubmission->setDatasetFileUri('file://' . $movedDatasetFile->getRealPath());
-                    $this->newDatasetFile($datasetSubmission);
-                }
-                break;
-            case DatasetSubmission::TRANSFER_TYPE_SFTP:
-                $datasetFilePath = $form['datasetFilePath']->getData();
-                $newDatasetFileUri = empty($datasetFilePath) ? null : "file://$datasetFilePath";
-                if ($newDatasetFileUri !== $datasetSubmission->getDatasetFileUri()) {
-                    $datasetSubmission->setDatasetFileUri($newDatasetFileUri);
-                    $this->newDatasetFile($datasetSubmission);
-                } elseif ($form['datasetFileForceImport']->getData()) {
-                    $this->newDatasetFile($datasetSubmission);
-                }
-                break;
-            case DatasetSubmission::TRANSFER_TYPE_HTTP:
-                $datasetFileUrl = $form['datasetFileUrl']->getData();
-                $newDatasetFileUri = empty($datasetFileUrl) ? null : $datasetFileUrl;
-                if ($newDatasetFileUri !== $datasetSubmission->getDatasetFileUri()) {
-                    $datasetSubmission->setDatasetFileUri($newDatasetFileUri);
-                    $this->newDatasetFile($datasetSubmission);
-                } elseif ($form['datasetFileForceDownload']->getData()) {
-                    $this->newDatasetFile($datasetSubmission);
-                }
-                break;
+        // If there was a previous Dataset Submission.
+        if ($datasetSubmission->getDataset()->getDatasetSubmission() instanceof DatasetSubmission) {
+            // Get the previous datasetFileUri.
+            $previousDatasetFileUri = $datasetSubmission->getDataset()->getDatasetSubmission()->getDatasetFileUri();
+            // If the datasetFileUri has changed or the user has requested to force import or download.
+            if ($datasetSubmission->getDatasetFileUri() !== $previousDatasetFileUri
+                or $form['datasetFileForceImport']->getData()
+                or $form['datasetFileForceDownload']->getData()) {
+                // Assume the dataset file is new.
+                $this->newDatasetFile($datasetSubmission);
+            }
+        } else {
+            // This is the first submission so the dataset file is new.
+            $this->newDatasetFile($datasetSubmission);
         }
     }
 
@@ -384,67 +296,182 @@ class DatasetSubmissionController extends UIController
     }
 
     /**
-     * Process the Metadata File Transfer Details and update the Dataset Submission.
+     * Make the submission form and return it.
      *
-     * @param Form              $form              The submitted dataset submission form.
-     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
-     * @param string            $incomingDirectory The user's incoming directory.
+     * @param string            $udi               The UDI entered by the user.
+     * @param Dataset           $dataset           The Dataset.
+     * @param DatasetSubmission $datasetSubmission The Dataset Submission.
+     * @param array             $xmlStatus         Error message when loading XML.
      *
-     * @return void
+     * @return Response
      */
-    protected function processMetadataFileTransferDetails(
-        Form $form,
-        DatasetSubmission $datasetSubmission,
-        $incomingDirectory
-    ) {
-        switch ($datasetSubmission->getMetadataFileTransferType()) {
-            case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
-                $metadataFile = $form['metadataFile']->getData();
-                if ($metadataFile instanceof UploadedFile) {
-                    $originalFileName = $metadataFile->getClientOriginalName();
-                    $movedMetadataFile = $metadataFile->move($incomingDirectory, $originalFileName);
-                    $datasetSubmission->setMetadataFileUri('file://' . $movedMetadataFile->getRealPath());
-                    $this->newMetadataFile($datasetSubmission);
-                }
-                break;
-            case DatasetSubmission::TRANSFER_TYPE_SFTP:
-                $metadataFilePath = $form['metadataFilePath']->getData();
-                $newMetadataFileUri = empty($metadataFilePath) ? null : "file://$metadataFilePath";
-                if ($newMetadataFileUri !== $datasetSubmission->getMetadataFileUri()) {
-                    $datasetSubmission->setMetadataFileUri($newMetadataFileUri);
-                    $this->newMetadataFile($datasetSubmission);
-                } elseif ($form['metadataFileForceImport']->getData()) {
-                    $this->newMetadataFile($datasetSubmission);
-                }
-                break;
-            case DatasetSubmission::TRANSFER_TYPE_HTTP:
-                $metadataFileUrl = $form['metadataFileUrl']->getData();
-                $newMetadataFileUri = empty($metadataFileUrl) ? null : $metadataFileUrl;
-                if ($newMetadataFileUri !== $datasetSubmission->getMetadataFileUri()) {
-                    $datasetSubmission->setMetadataFileUri($newMetadataFileUri);
-                    $this->newMetadataFile($datasetSubmission);
-                } elseif ($form['metadataFileForceDownload']->getData()) {
-                    $this->newMetadataFile($datasetSubmission);
-                }
-                break;
+    protected function makeSubmissionForm($udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null)
+    {
+        $datasetSubmissionId = null;
+        $researchGroupId = null;
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
+                $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
+            }
+
+            if ($datasetSubmission->getMetadataContacts()->isEmpty()) {
+                $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
+            }
+
+            $datasetSubmissionId = $datasetSubmission->getId();
+            $researchGroupId = $dataset->getResearchGroup()->getId();
         }
+
+        $form = $this->get('form.factory')->createNamed(
+            null,
+            DatasetSubmissionType::class,
+            $datasetSubmission,
+            array(
+                'action' => $this->generateUrl('pelagos_app_ui_datasetsubmission_post', array('id' => $datasetSubmissionId)),
+                'method' => 'POST',
+                'attr' => array(
+                    'datasetSubmission' => $datasetSubmissionId,
+                    'researchGroup' => $researchGroupId,
+                ),
+            )
+        );
+
+        $showForceImport = false;
+        $showForceDownload = false;
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            switch ($datasetSubmission->getDatasetFileTransferType()) {
+                case DatasetSubmission::TRANSFER_TYPE_SFTP:
+                    $form->get('datasetFilePath')->setData(
+                        preg_replace('#^file://#', '', $datasetSubmission->getDatasetFileUri())
+                    );
+                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
+                        and $datasetSubmission->getDatasetFileUri() == $dataset->getDatasetSubmission()->getDatasetFileUri()) {
+                        $showForceImport = true;
+                    }
+                    break;
+                case DatasetSubmission::TRANSFER_TYPE_HTTP:
+                    $form->get('datasetFileUrl')->setData($datasetSubmission->getDatasetFileUri());
+                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
+                        and $datasetSubmission->getDatasetFileUri() == $dataset->getDatasetSubmission()->getDatasetFileUri()) {
+                        $showForceDownload = true;
+                    }
+                    break;
+            }
+        }
+
+        $xmlFormView = $this->get('form.factory')->createNamed(
+            null,
+            DatasetSubmissionXmlFileType::class,
+            null,
+            array(
+                'action' => '',
+                'method' => 'POST',
+                'attr' => array(
+                    'id' => 'xmlUploadForm',
+                )
+            )
+        )->createView();
+
+        $researchGroupList = array();
+        $account = $this->getUser();
+        if (null !== $account) {
+            $user = $account->getPerson();
+
+            // Find all RG's user has CREATE_DIF_DIF_ON on.
+            $researchGroups = $user->getResearchGroups();
+            $researchGroupList = array_map(
+                function ($researchGroup) {
+                    return $researchGroup->getId();
+                },
+                $researchGroups
+            );
+        }
+
+        // If there are no research groups, substitute in '!*'
+        // to ensure the query sent by datatables does not try and
+        // search for a blank parameter.
+        if (0 === count($researchGroupList)) {
+            $researchGroupList = array('!*');
+        }
+
+        return $this->render(
+            'PelagosAppBundle:DatasetSubmission:index.html.twig',
+            array(
+                'form' => $form->createView(),
+                'xmlForm' => $xmlFormView,
+                'udi'  => $udi,
+                'xmlStatus' => $xmlStatus,
+                'dataset' => $dataset,
+                'datasetSubmission' => $datasetSubmission,
+                'showForceImport' => $showForceImport,
+                'showForceDownload' => $showForceDownload,
+                'researchGroupList' => $researchGroupList,
+            )
+        );
     }
 
     /**
-     * Take appropriate actions when a new metadata file is submitted.
+     * Load XML into Dataset from file.
      *
-     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
+     * @param UploadedFile|string $xmlURI            The file containing the XML.
+     * @param DatasetSubmission   $datasetSubmission The dataset submission that will be populated with XML data.
+     *
+     * @throws InvalidMetadataException When the file is not Simple XML.
      *
      * @return void
      */
-    protected function newMetadataFile(DatasetSubmission $datasetSubmission)
+    private function loadFromXml($xmlURI, DatasetSubmission $datasetSubmission)
     {
-        $datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-        $datasetSubmission->setMetadataFileName(null);
-        $datasetSubmission->setMetadataFileSha256Hash(null);
-        $this->messages[] = array(
-            'body' => $datasetSubmission->getDataset()->getId(),
-            'routing_key' => 'metadata.' . $datasetSubmission->getMetadataFileTransferType()
-        );
+        $xml = simplexml_load_file($xmlURI, 'SimpleXMLElement', (LIBXML_NOERROR | LIBXML_NOWARNING));
+
+        if ($xml instanceof \SimpleXMLElement and 'MI_Metadata' == $xml->getName()) {
+            foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+                $datasetSubmission->removeDatasetContact($datasetContact);
+            }
+            foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+                $datasetSubmission->removeMetadataContact($metadataContact);
+            }
+            $accessor = PropertyAccess::createPropertyAccessor();
+            $clearProperties = array(
+                'title',
+                'shortTitle',
+                'abstract',
+                'purpose',
+                'suppParams',
+                'suppInstruments',
+                'suppMethods',
+                'suppSampScalesRates',
+                'suppErrorAnalysis',
+                'suppProvenance',
+                'referenceDate',
+                'referenceDateType',
+                'spatialExtent',
+                'spatialExtentDescription',
+                'temporalExtentDesc',
+                'temporalExtentBeginPosition',
+                'temporalExtentEndPosition',
+                'distributionFormatName',
+                'fileDecompressionTechnique',
+            );
+            foreach ($clearProperties as $property) {
+                $accessor->setValue($datasetSubmission, $property, null);
+            }
+            $emptyProperties = array(
+                'themeKeywords',
+                'placeKeywords',
+                'topicKeywords',
+            );
+            foreach ($emptyProperties as $property) {
+                $accessor->setValue($datasetSubmission, $property, array());
+            }
+
+            ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
+                $xml,
+                $datasetSubmission,
+                $this->get('doctrine.orm.entity_manager')
+            );
+        } else {
+            throw new InvalidMetadataException(array('This does not appear to be valid ISO 19115-2 metadata.'));
+        }
     }
 }

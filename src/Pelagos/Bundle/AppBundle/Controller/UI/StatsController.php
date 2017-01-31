@@ -143,7 +143,7 @@ class StatsController extends UIController
         $result = array();
         $result['page'] = 'overview';
         $result['section'] = 'total-records-over-time';
-        $result['data'][0] = array ('label' => 'Registered', 'data' => $registered);
+        $result['data'][0] = array ('label' => 'Submitted', 'data' => $registered);
         $result['data'][1] = array ('label' => 'Available', 'data' => $available);
 
         $response = new Response(json_encode($result));

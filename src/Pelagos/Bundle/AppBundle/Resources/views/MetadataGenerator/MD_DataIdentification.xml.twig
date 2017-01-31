@@ -2,82 +2,129 @@
     <gmd:citation>
         <gmd:CI_Citation>
             <gmd:title>
-                <gco:CharacterString>{{dataset.title}}</gco:CharacterString>
+                <gco:CharacterString>{{dataset.datasetSubmission.title}}</gco:CharacterString>
             </gmd:title>
-            <gmd:alternateTitle/>
+            <gmd:alternateTitle>
+                <gco:CharacterString>{{dataset.datasetSubmission.shortTitle}}</gco:CharacterString>
+            </gmd:alternateTitle>
             <gmd:date>
                 <gmd:CI_Date>
                     <gmd:date>
-                        <gco:Date>{{ "now" | date("Y-m-d") }}</gco:Date>
+                        <gco:Date>{{ dataset.datasetSubmission.referenceDate | date("Y-m-d", "UTC") }}</gco:Date>
                     </gmd:date>
-                    <gmd:dateType></gmd:dateType>
+                    <gmd:dateType>
+                        {% if dataset.datasetSubmission.referenceDateType == "creation" %}
+                            {% set codespace = "001" %}
+                        {% elseif dataset.datasetSubmission.referenceDateType == "publication" %}
+                            {% set codespace = "002" %}
+                        {% elseif dataset.datasetSubmission.referenceDateType == "revision" %}
+                            {% set codespace = "003" %}
+                        {% endif %}
+                        <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="{{dataset.datasetSubmission.referenceDateType}}" codeSpace="{{codespace|default}}">{{dataset.datasetSubmission.referenceDateType}}</gmd:CI_DateTypeCode>
+                    </gmd:dateType>
                 </gmd:CI_Date>
             </gmd:date>
         </gmd:CI_Citation>
     </gmd:citation>
     <gmd:abstract>
-        <gco:CharacterString><![CDATA[{{dataset.abstract | trim}}]]></gco:CharacterString>
+        <gco:CharacterString><![CDATA[{{dataset.datasetSubmission.abstract | trim}}]]></gco:CharacterString>
     </gmd:abstract>
-    <gmd:purpose/>
+    <gmd:purpose>
+        <gco:CharacterString><![CDATA[{{dataset.datasetSubmission.purpose}}]]></gco:CharacterString>
+    </gmd:purpose>
     <gmd:status>
         <gmd:MD_ProgressCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ProgressCode" codeListValue="completed" codeSpace="001">completed</gmd:MD_ProgressCode>
     </gmd:status>
-    {% if dataset.dif.primaryPointOfContact %}
+    {% for contact in dataset.datasetSubmission.datasetContacts %}
     <gmd:pointOfContact>
-        {% include "PelagosAppBundle:MetadataGenerator:CI_ResponsibleParty.xml.twig" with 
+        {% include "PelagosAppBundle:MetadataGenerator:CI_ResponsibleParty.xml.twig" with
             {
-                "Person" : dataset.dif.primaryPointOfContact,
-                "role" : {"name" : "pointOfContact", "code" : "007"},
-            } 
+                "Person" : contact.person,
+                "role" : contact.role,
+            }
         %}
     </gmd:pointOfContact>
-    {% endif %}
+    {% endfor %}
+    <gmd:descriptiveKeywords>
+        {% include "PelagosAppBundle:MetadataGenerator:MD_Keywords.xml.twig" with
+            {
+                "keywords" : dataset.datasetSubmission.themeKeywords,
+                "type" : {"name" : "theme", "code" : "005"},
+            }
+        %}
+    </gmd:descriptiveKeywords>
+    <gmd:descriptiveKeywords>
+        {% include "PelagosAppBundle:MetadataGenerator:MD_Keywords.xml.twig" with
+            {
+                "keywords" : dataset.datasetSubmission.placeKeywords,
+                "type" : {"name" : "place", "code" : "002"},
+            }
+        %}
+    </gmd:descriptiveKeywords>
     <gmd:language>
         <gco:CharacterString>eng; USA</gco:CharacterString>
     </gmd:language>
-    {% if dataset.dif.spatialExtentDescription or 
-        dataset.dif.spatialExtentGeometry or 
-        dataset.dif.estimatedStartDate or 
-        dataset.dif.estimatedEndDate 
+    {% for topickeyword in dataset.datasetSubmission.topicKeywords %}
+    <gmd:topicCategory>
+        <gmd:MD_TopicCategoryCode>{{topickeyword}}</gmd:MD_TopicCategoryCode>
+    </gmd:topicCategory>
+    {% endfor %}
+    {% if dataset.datasetSubmission.spatialExtent or
+        dataset.datasetSubmission.spatialExtentDescription or
+        dataset.datasetSubmission.temporalExtentBeginPosition or
+        dataset.datasetSubmission.temporalExtentEndPosition
     %}
-        <gmd:extent>
-            <gmd:EX_Extent id="boundingExtent">
-                {% if dataset.dif.spatialExtentDescription %}
-                    <gmd:description>
-                        <gco:CharacterString>{{dataset.dif.spatialExtentDescription}}</gco:CharacterString>
-                    </gmd:description>
-                {% endif %}
-                {% if dataset.dif.spatialExtentGeometry %}
-                    <gmd:geographicElement>
-                        <gmd:EX_BoundingPolygon>
-                            <gmd:polygon>
-                                {{dataset.dif.spatialExtentGeometry | raw}}
-                            </gmd:polygon>
-                        </gmd:EX_BoundingPolygon>
-                    </gmd:geographicElement>
-                {% endif %}
-                {% if dataset.dif.estimatedStartDate or dataset.dif.estimatedEndDate %}
-                    <gmd:temporalElement>
-                        <gmd:EX_TemporalExtent>
-                            <gmd:extent>
-                                <gml:TimePeriod gml:id="boundingTemporalExtent">
-                                    <gml:description />
-                                    {% if dataset.dif.estimatedStartDate %}
-                                        <gml:beginPosition>{{dataset.dif.estimatedStartDate|date("Y-m-d")}}</gml:beginPosition>
-                                    {% else %}
-                                        <gml:beginPosition />
-                                    {% endif %}
-                                    {% if dataset.dif.estimatedStartDate %}
-                                        <gml:endPosition>{{dataset.dif.estimatedEndDate|date("Y-m-d")}}</gml:endPosition>
-                                    {% else %}
-                                        <gml:endPosition />
-                                    {% endif %}
-                                </gml:TimePeriod>
-                           </gmd:extent>
-                       </gmd:EX_TemporalExtent>
-                   </gmd:temporalElement>
-                {% endif %}
-           </gmd:EX_Extent>
-       </gmd:extent>
+    <gmd:extent>
+        {% if dataset.datasetSubmission.spatialExtent and not dataset.datasetSubmission.spatialExtentDescription %}
+        <gmd:EX_Extent id="boundingExtent">
+        {% elseif dataset.datasetSubmission.spatialExtentDescription and not dataset.datasetSubmission.spatialExtent %}
+        <gmd:EX_Extent id="descriptiveExtent">
+        {% else %}
+        <gmd:EX_Extent>
+        {% endif %}
+            {% if dataset.datasetSubmission.spatialExtentDescription %}
+            <gmd:description>
+                <gco:CharacterString>{{dataset.datasetSubmission.spatialExtentDescription}}</gco:CharacterString>
+            </gmd:description>
+            {% endif %}
+            {% if dataset.datasetSubmission.spatialExtent %}
+            <gmd:geographicElement>
+                <gmd:EX_BoundingPolygon>
+                    <gmd:polygon>
+                        {{dataset.datasetSubmission.spatialExtent | raw}}
+                    </gmd:polygon>
+                </gmd:EX_BoundingPolygon>
+            </gmd:geographicElement>
+            {% endif %}
+            {% if dataset.datasetSubmission.temporalExtentBeginPosition or dataset.datasetSubmission.temporalExtentEndPosition %}
+            <gmd:temporalElement>
+                <gmd:EX_TemporalExtent>
+                    <gmd:extent>
+                        <gml:TimePeriod gml:id="boundingTemporalExtent">
+                            {% if dataset.datasetSubmission.temporalExtentDesc %}
+                            <gml:description>{{dataset.datasetSubmission.temporalExtentDesc}}</gml:description>
+                            {% else %}
+                            <gml:description />
+                            {% endif %}
+                            {% if dataset.datasetSubmission.temporalExtentBeginPosition %}
+                                <gml:beginPosition>{{dataset.datasetSubmission.temporalExtentBeginPosition|date("Y-m-d", "UTC")}}</gml:beginPosition>
+                            {% else %}
+                                <gml:beginPosition />
+                            {% endif %}
+                            {% if dataset.datasetSubmission.temporalExtentEndPosition %}
+                                <gml:endPosition>{{dataset.datasetSubmission.temporalExtentEndPosition|date("Y-m-d", "UTC")}}</gml:endPosition>
+                            {% else %}
+                                <gml:endPosition />
+                            {% endif %}
+                        </gml:TimePeriod>
+                   </gmd:extent>
+               </gmd:EX_TemporalExtent>
+            </gmd:temporalElement>
+            {% endif %}
+        </gmd:EX_Extent>
+    </gmd:extent>
     {% endif %}
+    <gmd:supplementalInformation>
+        <gco:CharacterString><![CDATA[{{dataset.datasetSubmission.suppParams}}|{{dataset.datasetSubmission.suppMethods}}|{{dataset.datasetSubmission.suppInstruments}}|{{dataset.datasetSubmission.suppSampScalesRates}}|{{dataset.datasetSubmission.suppErrorAnalysis}}|{{dataset.datasetSubmission.suppProvenance}}]]></gco:CharacterString>
+    </gmd:supplementalInformation>
 </gmd:MD_DataIdentification>

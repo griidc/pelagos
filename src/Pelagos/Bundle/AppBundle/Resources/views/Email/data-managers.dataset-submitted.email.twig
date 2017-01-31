@@ -1,9 +1,9 @@
-{% block subject 'GRIIDC Dataset Registration Submitted' %}
+{% block subject 'GRIIDC Dataset Submitted' %}
 
 {% block body_html %}
-    Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},<br>
+    Dear {{ recipient.firstName }} {{ recipient.lastName }},<br>
     <br>
-    A registration form has been submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{dataset.getDatasetSubmission.getCreator.getFirstName}} {{dataset.getDatasetSubmission.getCreator.getLastName}} for the dataset {{dataset.getUdi}}. {{dataset.getDatasetSubmission.getCreator.getFirstName}} {{dataset.getDatasetSubmission.getCreator.getLastName}} is a member of {{ dataset.getDatasetSubmission.getCreator.getResearchGroupNames | join(', ') }} and the dataset is associated with {{dataset.getResearchGroup.getName}}.<br>
+    A dataset has been submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} for the dataset {{dataset.udi}}. {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} is a member of {{ dataset.datasetSubmission.submitter.researchGroupNames | join(', ') }} and the dataset is associated with {{dataset.researchGroup.name}}.<br>
     <br>
     Thank you,<br>
     <br>
@@ -13,9 +13,9 @@
 {% endblock %}
 
 {% block body_text %}
-Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},
+Dear {{ recipient.firstName }} {{ recipient.lastName }},
 
-A registration form has been submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{dataset.getDatasetSubmission.getCreator.getFirstName}} {{dataset.getDatasetSubmission.getCreator.getLastName}} for the dataset {{dataset.getUdi}}. {{dataset.getDatasetSubmission.getCreator.getFirstName}} {{dataset.getDatasetSubmission.getCreator.getLastName}} is a member of {{ dataset.getDatasetSubmission.getCreator.getResearchGroupNames | join(', ') }} and the dataset is associated with {{dataset.getResearchGroup.getName}}.
+A dataset has been submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} for the dataset {{dataset.udi}}. {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} is a member of {{ dataset.datasetSubmission.submitter.researchGroupNames | join(', ') }} and the dataset is associated with {{dataset.researchGroup.name}}.
 
 Thank you,
 

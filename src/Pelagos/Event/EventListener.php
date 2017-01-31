@@ -14,6 +14,7 @@ use Pelagos\Entity\DataRepositoryRole;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\PersonDataRepository;
 use Pelagos\Util\DataStore;
+use Pelagos\Util\MdappLogger;
 
 /**
  * Listener class for Dataset Submission-related events.
@@ -70,6 +71,13 @@ abstract class EventListener
     protected $dataStore;
 
     /**
+     * An MDAPP logger.
+     *
+     * @var MdappLogger
+     */
+    protected $mdappLogger;
+
+    /**
      * This is the class constructor to handle dependency injections.
      *
      * @param \Twig_Environment  $twig          Twig engine.
@@ -79,6 +87,7 @@ abstract class EventListener
      * @param string             $fromName      Sender's name to include in email.
      * @param EntityHandler|null $entityHandler Pelagos entity handler.
      * @param DataStore|null     $dataStore     An instance of the Pelagos Data Store utility service.
+     * @param MdappLogger|null   $mdappLogger   An MDAPP logger.
      */
     public function __construct(
         \Twig_Environment $twig,
@@ -87,7 +96,8 @@ abstract class EventListener
         $fromAddress,
         $fromName,
         EntityHandler $entityHandler = null,
-        DataStore $dataStore = null
+        DataStore $dataStore = null,
+        MdappLogger $mdappLogger = null
     ) {
         $this->twig = $twig;
         $this->mailer = $mailer;
@@ -95,6 +105,7 @@ abstract class EventListener
         $this->from = array($fromAddress => $fromName);
         $this->entityHandler = $entityHandler;
         $this->dataStore = $dataStore;
+        $this->mdappLogger = $mdappLogger;
     }
 
     /**

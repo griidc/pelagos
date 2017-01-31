@@ -152,7 +152,7 @@ Click OK to download.
 <div style="font-size:smaller;" id="errordialog"></div>
 
 <div id="udidialog" title="Load from UDI">
-  <p>Please enter your UDI/Registration ID.</p>
+  <p>Please enter your UDI/Submission ID.</p>
   <form>
   <fieldset>
     <label for="udifld">UDI</label>
@@ -166,7 +166,7 @@ Click OK to download.
 		<td width="100%">
 			<div id="metatoolbar" class="ui-widget-header ui-corner-all toolbarbutton">
 				<button id="upload">Load from File</button>
-				<button id="fromudi">Load from Registered Dataset</button>
+				<button id="fromudi">Load from Submitted Dataset</button>
 				<button id="forcesave">Save to File</button>
 				<button id="startover">Clear Form</button>
 				<button id="generate">Check and Save to File</button>
