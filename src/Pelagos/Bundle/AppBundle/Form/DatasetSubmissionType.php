@@ -40,6 +40,7 @@ class DatasetSubmissionType extends AbstractType
             ->add('abstract', Type\TextareaType::class, array(
                 'label' => 'Dataset Abstract',
                 'required' => true,
+                'attr' => array('rows' => '16'),
             ))
             ->add('authors', Type\TextType::class, array(
                 'label' => 'Dataset Author(s)',
@@ -110,30 +111,37 @@ class DatasetSubmissionType extends AbstractType
             ->add('purpose', Type\TextareaType::class, array(
                 'label' => 'Purpose',
                 'required' => true,
+                'attr' => array('rows' => '5'),
             ))
             ->add('suppParams', Type\TextareaType::class, array(
                 'label' => 'Supplemental Information - Data Parameters and Units',
                 'required' => true,
+                'attr' => array('rows' => '5'),
             ))
             ->add('suppMethods', Type\TextareaType::class, array(
                 'label' => 'Supplemental Information - Methods',
                 'required' => false,
+                'attr' => array('rows' => '5'),
             ))
             ->add('suppInstruments', Type\TextareaType::class, array(
                 'label' => 'Supplemental Information - Instruments',
                 'required' => false,
+                'attr' => array('rows' => '5'),
             ))
             ->add('suppSampScalesRates', Type\TextareaType::class, array(
                 'label' => 'Supplemental Information - Sampling Scales and Rates',
                 'required' => false,
+                'attr' => array('rows' => '5'),
             ))
             ->add('suppErrorAnalysis', Type\TextareaType::class, array(
                 'label' => 'Supplemental Information - Error Analysis',
                 'required' => false,
+                'attr' => array('rows' => '5'),
             ))
             ->add('suppProvenance', Type\TextareaType::class, array(
                 'label' => 'Supplemental Information - Provenance and Historical References',
                 'required' => false,
+                'attr' => array('rows' => '5'),
             ))
             ->add('themeKeywords', Type\CollectionType::class, array(
                 'label' => 'Theme Keywords',

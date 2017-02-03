@@ -50,11 +50,7 @@ input[type=text],select,textarea {
 }
 
 textarea{
-    resize: none
-}
-
-textarea#abstract {
-    height:20em;
+    resize: vertical;
 }
 
 .tab-table tr:nth-child(even) {
