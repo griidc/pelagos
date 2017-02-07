@@ -204,11 +204,11 @@
         <div id="uploadnewmetadata">
             <div>
                 <!-- The data encoding type, enctype, MUST be specified as below -->
-                <form enctype="multipart/form-data" action="{{ path('pelagos_app_ui_mdapp_uploadmetadatafile') }}" method="POST">
+                <form enctype="multipart/form-data" action="{{ path('pelagos_app_ui_mdapp_uploadmetadatafile') }}" method="POST" id="MdappFileUploadForm">
                     <!-- MAX_FILE_SIZE must precede the file input field -->
                     <input type="hidden" name="MAX_FILE_SIZE" value="1000000" />
                     <!-- Name of input element determines name in $_FILES array -->
-                    <input name="newMetadataFile" type="file" style="width:100%" />
+                    <input name="newMetadataFile" type="file" style="width:100%" id="newMetadataFile" />
                     <hr>
                     <div>
                         <h3>Additional Actions</h3>
@@ -227,8 +227,8 @@
                     <input type="checkbox" name="test2" CHECKED>UDI matches metadata URL (/gmi:MI_Metadata/gmd:dataSetURI/gco:CharacterString)<br />
                     <input type="checkbox" name="test3" CHECKED>UDI matches distribution URL (/gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1])<br />
                     <hr>
-                    <input type="submit" value="Upload File" id="FileUploadButton" /><br />
                 </form>
+                <button id="FileUploadButton">Upload File</button><br />
             </div>
         </div>
 </div>
