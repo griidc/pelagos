@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use \Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 use Pelagos\Bundle\AppBundle\Form\MdappType;
 
@@ -402,9 +403,6 @@ class MdAppController extends UIController
      */
     private function processForm(Form $form)
     {
-        $data = $form->getData();
-        $file = $data['newMetadataFile'];
-        $originalFileName = $file->getClientOriginalName();
         $mdappLogger = $this->get('pelagos.util.mdapplogger');
 
         $errors = array();
@@ -416,6 +414,35 @@ class MdAppController extends UIController
         $envelopeWkt = null;
         $boundingBoxArray = null;
         $okToValidate = true;
+
+        $data = $form->getData();
+        $file = $data['newMetadataFile'];
+
+        if (null === $file) {
+            $errors[] = 'No file was selected for upload.';
+            $errStr = implode(', ', $errors);
+            $mdappLogger->writeLog('Failed upload attempt on: '
+                . ' unknown UDI '
+                . ' by: '
+                . $this->getUser()->getUsername()
+                . ' Reason: '
+                . $errStr
+                . ' (mdapp msg)');
+
+            return array(
+                'errors' => $errors,
+                'warnings' => null,
+                'dataset' => null,
+                'orig_filename' => null,
+                'geometryWkt' => null,
+                'envelopeWkt' => null,
+                'message' => null,
+                'udi' => null,
+                'isoValid' => null,
+            );
+        }
+
+        $originalFileName = $file->getClientOriginalName();
 
         // Check to see if filename is in correct format.
         if ($this->checkFilenameFormat($originalFileName)) {
