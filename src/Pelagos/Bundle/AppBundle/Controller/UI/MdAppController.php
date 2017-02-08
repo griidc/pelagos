@@ -471,37 +471,22 @@ class MdAppController extends UIController
                 try {
                     $geometry = $geoUtil->convertGmlToWkt($gml);
                 } catch (InvalidGmlException $e) {
-                    if (preg_match('//', $e->getMessage())) {
-                        $errors[] = 'Could not convert GML to WKT because the supplied GML is invalid due to an ' .
-                        'unknown spatial reference system';
-                    } else {
-                        $errors[] = 'Could not convert GML to WKT because the supplied GML is invalid.';
-                        $geometry = null;
-                    }
+                    $errors[] = $e->getMessage() . ' while attempting GML to WKT conversion';
+                    $geometry = null;
                 }
 
                 try {
                     $envelopeWkt = $geoUtil->calculateEnvelopeFromGml($gml);
                 } catch (InvalidGmlException $e) {
-                    if (preg_match('//', $e->getMessage())) {
-                        $errors[] = 'Envelope could not be determined because the supplied GML is invalid due to an ' .
-                        'unknown spatial reference system';
-                    } else {
-                        $errors[] = 'Envelope could not be determined because he supplied GML is invalid.';
-                        $envelopeWkt = null;
-                    }
+                    $errors[] = $e->getMessage() . ' while attempting to calculate envelope from gml';
+                    $envelopeWkt = null;
                 }
 
                 try {
                     $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
                 } catch (InvalidGmlException $e) {
-                    if (preg_match('//', $e->getMessage())) {
-                        $errors[] = 'Could not determine bounding box because supplied GML is invalid due to an ' .
-                        'unknown spatial reference system';
-                    } else {
-                        $errors[] = 'Could not determine bounding box because the supplied GML is invalid.';
-                        $boundingBoxArray = array();
-                    }
+                    $errors[] = $e->getMessage() . ' while attempting to calculate bonding box from gml';
+                    $boundingBoxArray = array();
                 }
             }
         }
