@@ -23,6 +23,8 @@ use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\Metadata;
 
+use Pelagos\Exception\InvalidGmlException;
+
 /**
  * The MDApp controller.
  *
@@ -466,9 +468,41 @@ class MdAppController extends UIController
             // otherwise, leave them set to null.
             if (count($gmls) > 0) {
                 $gml = $gmls[0];
-                $geometry = $geoUtil->convertGmlToWkt($gml);
-                $envelopeWkt = $geoUtil->calculateEnvelopeFromGml($gml);
-                $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
+                try {
+                    $geometry = $geoUtil->convertGmlToWkt($gml);
+                } catch (InvalidGmlException $e) {
+                    if (preg_match('//', $e->getMessage())) {
+                        $errors[] = 'Could not convert GML to WKT because the supplied GML is invalid due to an ' .
+                        'unknown spatial reference system';
+                    } else {
+                        $errors[] = 'Could not convert GML to WKT because the supplied GML is invalid.';
+                        $geometry = null;
+                    }
+                }
+
+                try {
+                    $envelopeWkt = $geoUtil->calculateEnvelopeFromGml($gml);
+                } catch (InvalidGmlException $e) {
+                    if (preg_match('//', $e->getMessage())) {
+                        $errors[] = 'Envelope could not be determined because the supplied GML is invalid due to an ' .
+                        'unknown spatial reference system';
+                    } else {
+                        $errors[] = 'Envelope could not be determined because he supplied GML is invalid.';
+                        $envelopeWkt = null;
+                    }
+                }
+
+                try {
+                    $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
+                } catch (InvalidGmlException $e) {
+                    if (preg_match('//', $e->getMessage())) {
+                        $errors[] = 'Could not determine bounding box because supplied GML is invalid due to an ' .
+                        'unknown spatial reference system';
+                    } else {
+                        $errors[] = 'Could not determine bounding box because the supplied GML is invalid.';
+                        $boundingBoxArray = array();
+                    }
+                }
             }
         }
 
