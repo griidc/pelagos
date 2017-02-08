@@ -32,3 +32,7 @@ pelagos_gml:
 
 pelagos_geoviz:
     resource: "@PelagosAppBundle/Resources/config/routing_geoviz.yml"
+
+pelagos_metadata:
+    path:     /metadata/{udi}
+    defaults: { _controller: PelagosAppBundle:UI/Dataland:metadata }
