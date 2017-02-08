@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ed2ad8ee5d3b097e1b4b39e0c2c1b317",
-    "content-hash": "7fa638d5afa637dbcd57b2847d2af315",
+    "hash": "0cfd42f7dba4ccac1ca57974215db67f",
+    "content-hash": "7ece2d47a0a5520b93513ad85ee68e45",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -3008,12 +3008,12 @@
             "version": "v1.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/simplethings/EntityAudit.git",
+                "url": "https://github.com/simplethings/EntityAuditBundle.git",
                 "reference": "13e38364241ee6f2d65fa820d59def4e8be484d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/simplethings/EntityAudit/zipball/13e38364241ee6f2d65fa820d59def4e8be484d5",
+                "url": "https://api.github.com/repos/simplethings/EntityAuditBundle/zipball/13e38364241ee6f2d65fa820d59def4e8be484d5",
                 "reference": "13e38364241ee6f2d65fa820d59def4e8be484d5",
                 "shasum": ""
             },
@@ -3283,34 +3283,35 @@
         },
         {
             "name": "symfony/monolog-bundle",
-            "version": "v2.8.2",
+            "version": "3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/monolog-bundle.git",
-                "reference": "84785c4d44801c4dd82829fa2e1820cacfe2c46f"
+                "reference": "5f2d2d62530cd66be361216107869a3b061045db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/monolog-bundle/zipball/84785c4d44801c4dd82829fa2e1820cacfe2c46f",
-                "reference": "84785c4d44801c4dd82829fa2e1820cacfe2c46f",
+                "url": "https://api.github.com/repos/symfony/monolog-bundle/zipball/5f2d2d62530cd66be361216107869a3b061045db",
+                "reference": "5f2d2d62530cd66be361216107869a3b061045db",
                 "shasum": ""
             },
             "require": {
-                "monolog/monolog": "~1.8",
+                "monolog/monolog": "~1.18",
                 "php": ">=5.3.2",
-                "symfony/config": "~2.3|~3.0",
-                "symfony/dependency-injection": "~2.3|~3.0",
-                "symfony/http-kernel": "~2.3|~3.0",
-                "symfony/monolog-bridge": "~2.3|~3.0"
+                "symfony/config": "~2.7|~3.0",
+                "symfony/dependency-injection": "~2.7|~3.0",
+                "symfony/http-kernel": "~2.7|~3.0",
+                "symfony/monolog-bridge": "~2.7|~3.0"
             },
             "require-dev": {
+                "phpunit/phpunit": "^4.8",
                 "symfony/console": "~2.3|~3.0",
                 "symfony/yaml": "~2.3|~3.0"
             },
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8.x-dev"
+                    "dev-master": "3.x-dev"
                 }
             },
             "autoload": {
@@ -3338,7 +3339,7 @@
                 "log",
                 "logging"
             ],
-            "time": "2015-11-17 10:02:29"
+            "time": "2016-11-15 15:54:07"
         },
         {
             "name": "symfony/polyfill-intl-icu",
