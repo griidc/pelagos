@@ -1,7 +1,9 @@
 <?php
 namespace Pelagos\Util;
 
+use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManager;
+use Pelagos\Exception\InvalidGmlException;
 
 /**
  * This is a utility class for dealing with envelope calculation.
@@ -30,14 +32,24 @@ class Geometry
      *
      * @param string $gml The GML polygon to calculate the envelope for.
      *
-     * @return string WKT string for the envelope.
+     * @return string|null WKT string for the envelope or null if bad gml.
      */
     public function calculateEnvelopeFromGml($gml)
     {
         $sql = 'SELECT ST_AsText(ST_Envelope(ST_GeomFromGML(:gml, :srid)))';
         $connection = $this->entityManager->getConnection();
         $sth = $connection->prepare($sql);
-        $sth->execute(array('gml' => $gml, 'srid' => 4326));
+        try {
+            $sth->execute(array('gml' => $gml, 'srid' => 4326));
+        } catch (DriverException $e) {
+            if (preg_match('/unknown spatial reference system/', $e->getMessage())) {
+                $err = "unknown spatial reference system in GML";
+            } else {
+                $err = "unknown GML error";
+            }
+            throw new InvalidGmlException($err);
+            return null;
+        }
         $geom = $sth->fetchColumn();
 
         return $geom;
@@ -60,7 +72,16 @@ class Geometry
 
         $connection = $this->entityManager->getConnection();
         $sth = $connection->prepare($sql);
-        $sth->execute(array('gml' => $gml));
+        try {
+            $sth->execute(array('gml' => $gml));
+        } catch (DriverException $e) {
+            if (preg_match('/unknown spatial reference system/', $e->getMessage())) {
+                $err = "unknown spatial reference system in GML";
+            } else {
+                $err = "unknown GML error";
+            }
+            throw new InvalidGmlException($err);
+        }
         $geom = $sth->fetch(\PDO::FETCH_ASSOC);
 
         return $geom;
@@ -78,7 +99,16 @@ class Geometry
         $sql = 'SELECT ST_AsText(ST_GeomFromGML(:gml, :srid))';
         $connection = $this->entityManager->getConnection();
         $sth = $connection->prepare($sql);
-        $sth->execute(array('gml' => $gml, 'srid' => 4326));
+        try {
+            $sth->execute(array('gml' => $gml, 'srid' => 4326));
+        } catch (DriverException $e) {
+            if (preg_match('/unknown spatial reference system/', $e->getMessage())) {
+                $err = "unknown spatial reference system in GML";
+            } else {
+                $err = "unknown GML error";
+            }
+            throw new InvalidGmlException($err);
+        }
         $wkt = $sth->fetchColumn();
         return $wkt;
     }
