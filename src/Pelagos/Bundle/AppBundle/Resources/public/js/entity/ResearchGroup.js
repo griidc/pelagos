@@ -60,8 +60,9 @@ $(document).ready(function()
 
     // Set FundingCycle list back to match with the original funding organization
     $("form[entityType=\"ResearchGroup\"]").on("reset", function() {
+        console.log('i run?');
         var fundingOrganization = $(this).find("[fundingOrganization]");
-        var fundingOrganizationValue = fundingOrganization.attr("fundingCycle.fundingOrganization");
+        var fundingOrganizationValue = fundingOrganization.attr("fundingOrganization");
         fundingOrganization.find("option").attr("selected", false);
         fundingOrganization.val(fundingOrganizationValue);
         fundingOrganization.find("[value=\"" + fundingOrganizationValue + "\"]").attr("selected", true);
