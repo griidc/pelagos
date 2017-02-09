@@ -128,11 +128,11 @@
                     if (!$(this).hasClass("active")) {
                         $(this).addClass("active");
 
+                        var url = actionURL;
+
                         if (!($(thisForm).find("[name=\"id\"]").val() === "")) {
                             url += "/" + $(thisForm).find("[name=\"id\"]").val();
                         }
-
-                        var url = actionURL;
 
                         url += "/validateProperty";
 
