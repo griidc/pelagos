@@ -2,7 +2,7 @@
 {% if is_granted('CAN_EDIT', DataRepository) %}
  editable
 {% endif %}
-action="{{path('pelagos_api_data_repositories_get_collection')}}">
+_action="{{path('pelagos_api_data_repositories_get_collection')}}">
 
     <input type="hidden" name="id" value="{{DataRepository.getId}}">
 
