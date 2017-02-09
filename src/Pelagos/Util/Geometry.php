@@ -34,7 +34,7 @@ class Geometry
      *
      * @throws InvalidGmlException When PG Driver cannot process the supplied GML.
      *
-     * @return string WKT string for the envelope or null if bad gml.
+     * @return string WKT string for the envelope.
      */
     public function calculateEnvelopeFromGml($gml)
     {
