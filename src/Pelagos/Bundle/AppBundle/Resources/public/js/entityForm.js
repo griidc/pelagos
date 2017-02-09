@@ -132,6 +132,8 @@
                             url += "/" + $(thisForm).find("[name=\"id\"]").val();
                         }
 
+                        var url = actionURL;
+
                         url += "/validateProperty";
 
                         $("input:visible:text,input:visible[type=number],input:visible[type=email],textarea,select", this).each(function() {
