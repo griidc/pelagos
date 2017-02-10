@@ -23,6 +23,8 @@ use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\Metadata;
 
+use Pelagos\Exception\InvalidGmlException;
+
 /**
  * The MDApp controller.
  *
@@ -492,9 +494,26 @@ class MdAppController extends UIController
             // otherwise, leave them set to null.
             if (count($gmls) > 0) {
                 $gml = $gmls[0];
-                $geometry = $geoUtil->convertGmlToWkt($gml);
-                $envelopeWkt = $geoUtil->calculateEnvelopeFromGml($gml);
-                $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
+                try {
+                    $geometry = $geoUtil->convertGmlToWkt($gml);
+                } catch (InvalidGmlException $e) {
+                    $errors[] = $e->getMessage() . ' while attempting GML to WKT conversion';
+                    $geometry = null;
+                }
+
+                try {
+                    $envelopeWkt = $geoUtil->calculateEnvelopeFromGml($gml);
+                } catch (InvalidGmlException $e) {
+                    $errors[] = $e->getMessage() . ' while attempting to calculate envelope from gml';
+                    $envelopeWkt = null;
+                }
+
+                try {
+                    $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
+                } catch (InvalidGmlException $e) {
+                    $errors[] = $e->getMessage() . ' while attempting to calculate bonding box from gml';
+                    $boundingBoxArray = array();
+                }
             }
         }
 
