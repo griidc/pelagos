@@ -143,7 +143,7 @@ $(function() {
     function saveDatasetSubmission(notify)
     {
         var datasetSubmissionId = $("form[datasetsubmission]").attr("datasetsubmission");
-        var url = Routing.generate("pelagos_api_dataset_submission_patch");
+        var url = Routing.generate("pelagos_api_dataset_submission_put");
 
         var formData = $("form[datasetsubmission]").serialize();
 
@@ -156,7 +156,7 @@ $(function() {
 
         $.ajax({
             url: url + "/" + datasetSubmissionId + "?validate=false",
-            method: "PATCH",
+            method: "PUT",
             data: formData,
             success: function(data, textStatus, jqXHR) {
                 $("#btn-discard").button("enable");
