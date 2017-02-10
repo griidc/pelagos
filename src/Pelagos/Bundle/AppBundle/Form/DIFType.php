@@ -80,21 +80,13 @@ class DIFType extends AbstractType
                 'label' => 'Dataset Title:',
                 'required' => true,
             ))
-            ->add('primaryPointOfContact', EntityType::class, array(
-                'class' => Person::class,
+            ->add('primaryPointOfContact', ChoiceType::class, array(
                 'label' => 'Primary Point of Contact:',
-                'choice_label' => function ($value, $key, $index) {
-                    return $value->getLastName() . ', ' . $value->getFirstName() . ', ' . $value->getEmailAddress();
-                },
                 'placeholder' => '[PLEASE SELECT PROJECT FIRST]',
                 'required' => true,
             ))
-            ->add('secondaryPointOfContact', EntityType::class, array(
-                'class' => Person::class,
+            ->add('secondaryPointOfContact', ChoiceType::class, array(
                 'label' => 'Secondary Point of Contact:',
-                'choice_label' => function ($value, $key, $index) {
-                    return $value->getLastName() . ', ' . $value->getFirstName() . ', ' . $value->getEmailAddress();
-                },
                 'placeholder' => '[PLEASE SELECT PROJECT FIRST]',
                 'required' => false,
             ))
@@ -249,7 +241,16 @@ class DIFType extends AbstractType
                 'attr' => array('rows' => 3),
                 'label' => 'Remarks:',
                 'required' => false,
-            ));
+            ))
+            ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+                $event->getForm()
+                ->add('primaryPointOfContact', EntityType::class, array(
+                    'class' => 'Pelagos:Person',
+                ))
+                ->add('secondaryPointOfContact', EntityType::class, array(
+                    'class' => 'Pelagos:Person',
+                ));
+            });
 
             $builder->addEventListener(FormEvents::PRE_SET_DATA, array($this, 'onPreSetData'));
     }

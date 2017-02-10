@@ -737,7 +737,8 @@ function loadDIFS(Status, Person, ShowEmpty)
     var url = $("#difForm").attr("researchgroup");
     $("#btnSearch").button("disable");
     $.ajax({
-        url: url +"?_permission=CAN_CREATE_DIF_FOR",
+        url: url + "?id=" + $("#diftree").data("research-groups")
+             + "&_properties=name,datasets.udi,datasets.title,datasets.dif.title,datasets.dif.status",
         type: "GET",
         datatype: "json",
     }).done(function(json) {
