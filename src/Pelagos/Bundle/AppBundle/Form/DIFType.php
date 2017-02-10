@@ -17,12 +17,14 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 use Doctrine\ORM\EntityManager;
 
 use Pelagos\Bundle\AppBundle\Security\ResearchGroupVoter;
 
+use Pelagos\Entity\Account;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\ResearchGroup;
 use Pelagos\Entity\Person;
@@ -47,15 +49,27 @@ class DIFType extends AbstractType
     protected $authorizationChecker;
 
     /**
+     * The token storage to use in this form type.
+     *
+     * @var TokenStorageInterface
+     */
+    protected $tokenStorage;
+
+    /**
      * Constructor.
      *
      * @param EntityManager                 $entityManager        The entity manager to use.
      * @param AuthorizationCheckerInterface $authorizationChecker The authorization checker to use.
+     * @param TokenStorageInterface         $tokenStorage         The token storage to use.
      */
-    public function __construct(EntityManager $entityManager, AuthorizationCheckerInterface $authorizationChecker)
-    {
+    public function __construct(
+        EntityManager $entityManager,
+        AuthorizationCheckerInterface $authorizationChecker,
+        TokenStorageInterface $tokenStorage
+    ) {
         $this->entityManager = $entityManager;
         $this->authorizationChecker = $authorizationChecker;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -267,14 +281,10 @@ class DIFType extends AbstractType
     public function onPreSetData(FormEvent $event)
     {
         $researchGroups = array();
-        $allResearchGroups = $this->entityManager->getRepository(ResearchGroup::class)->findBy(
-            array(),
-            array('name' => 'ASC')
-        );
-        foreach ($allResearchGroups as $researchGroup) {
-            if ($this->authorizationChecker->isGranted(ResearchGroupVoter::CAN_CREATE_DIF_FOR, $researchGroup)) {
-                $researchGroups[] = $researchGroup;
-            }
+        if ($this->authorizationChecker->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            $researchGroups = $this->entityManager->getRepository(ResearchGroup::class)->findAll();
+        } elseif ($this->tokenStorage->getToken()->getUser() instanceof Account) {
+            $researchGroups = $this->tokenStorage->getToken()->getUser()->getPerson()->getResearchGroups();
         }
 
         $event->getForm()->add('researchGroup', EntityType::class, array(
