@@ -38,7 +38,7 @@
                 return false;
             }
 
-            var actionURL = $(this).attr("action");
+            var actionURL = $(this).attr("_action");
 
             $("input,textarea,select", this).each(function() {
                 $(this)
@@ -139,10 +139,23 @@
                         $("input:visible:text,input:visible[type=number],input:visible[type=email],textarea,select", this).each(function() {
                             $(this).attr("disabled", false);
                             if (!$(this).hasAttr("dontvalidate")) {
+                                var field = this;
                                 $(this).rules("add", {
                                     remote: {
-                                        url: url
+                                        url: url,
+                                        error: function(jqXHR, textStatus, errorThrown) {
+                                            var n = noty(
+                                            {
+                                                layout: "top",
+                                                theme: "relax",
+                                                type: "error",
+                                                text: "Validation for field "
+                                                    + field.name + " failed.<br>Reason: " + textStatus,
+                                                modal: true,
+                                            });
+                                        }
                                     }
+
                                 });
                             }
                         });
@@ -379,7 +392,7 @@
         var entityType = $(form).attr("entityType");
         var entityId = $(form).find("[name=\"id\"]").val();
         var url;
-        var actionURL = $(form).attr("action");
+        var actionURL = $(form).attr("_action");
         var type;
         var returnCode;
         var prefixPhrase;

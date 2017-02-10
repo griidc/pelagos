@@ -1,6 +1,6 @@
 <form class="entityForm" entityType="FundingOrganization"
 {% include '@templates/forms/permissionsBlock.html.twig' with {'Entity': FundingOrganization} %}
-action="{{path('pelagos_api_funding_organizations_post')}}">
+_action="{{path('pelagos_api_funding_organizations_post')}}">
 
     <input type="hidden" name="id" value="{{FundingOrganization.getId}}">
 
