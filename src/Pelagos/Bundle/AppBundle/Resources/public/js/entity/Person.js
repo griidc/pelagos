@@ -16,7 +16,7 @@ $(document).ready(function()
         $('form[entityType="Person"] input[name="phoneNumber"]').val(phoneValue);
     });
 
-    $("form[entityType=\"Person\"]").on("reset", function(event) {
+    $("form[entityType=\"Person\"]").on("reset", function() {
         setTimeout(function() {
             var value = $('form[entityType="Person"] input[name="phoneNumber"]').val();
             $("#phoneNumber").val(value);
