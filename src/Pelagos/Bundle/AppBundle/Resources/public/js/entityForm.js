@@ -144,15 +144,17 @@
                                     remote: {
                                         url: url,
                                         error: function(jqXHR, textStatus, errorThrown) {
-                                            var n = noty(
-                                            {
-                                                layout: "top",
-                                                theme: "relax",
-                                                type: "error",
-                                                text: "Validation for field "
-                                                    + field.name + " failed.<br>Reason: " + textStatus,
-                                                modal: true,
-                                            });
+                                            if (textStatus == "error") {
+                                                var n = noty(
+                                                {
+                                                    layout: "top",
+                                                    theme: "relax",
+                                                    type: "error",
+                                                    text: "Validation for field "
+                                                        + field.name + " failed.<br>Reason: " + textStatus,
+                                                    modal: true,
+                                                });
+                                            }
                                         }
                                     }
 
