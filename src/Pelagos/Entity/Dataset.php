@@ -637,13 +637,13 @@ class Dataset extends Entity
     }
 
     /**
-     * Gets the Dataset's Point of Contact Person.
+     * Gets the Dataset's Primary Point of Contact Person.
      *
      * @throws Exception If a Dataset Submission is encountered missing a contact.
      *
      * @return Person|null
      */
-    public function getDatasetPointOfContact()
+    public function getPrimaryPointOfContact()
     {
         $datasetSubmission = $this->getDatasetSubmission();
         $dif = $this->getDif();
