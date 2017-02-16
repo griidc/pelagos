@@ -649,15 +649,17 @@ class Dataset extends Entity
         $dif = $this->getDif();
 
         // If we have a complete submission, use its POC.
-        if ($datasetSubmission instanceof DatasetSubmission and $datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+        if ($datasetSubmission instanceof DatasetSubmission
+            and $datasetSubmission->getStatus() == DatasetSubmission::STATUS_COMPLETE) {
+
             $datasetContacts = $datasetSubmission->getDatasetContacts();
             if (count($datasetContacts) > 0) {
-                return $datasetContacts[0];
+                return $datasetContacts[0]->getPerson();
             } else {
                 throw new Exception('A Dataset Submission was found that was missing a contact.');
             }
         // Otherwise, use the POC from an approved dif.
-        } elseif ($dif instanceof DIF and DIF::STATUS_APPROVED === $dif->getStatus()) {
+        } elseif ($dif instanceof DIF and DIF::STATUS_APPROVED == $dif->getStatus()) {
             return $dif->getPrimaryPointOfContact();
         } else {
             // And if we don't have an approved DIF, return nothing.
