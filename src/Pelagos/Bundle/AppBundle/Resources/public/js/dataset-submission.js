@@ -150,9 +150,6 @@ $(function() {
         if ($("#contactperson").val() == null) {
             formData += "&datasetContacts[0][person]=";
         }
-        if ($("#metadatacontact").val() == null) {
-            formData += "&metadataContacts[0][person]=";
-        }
 
         $.ajax({
             url: url + "/" + datasetSubmissionId + "?validate=false",
@@ -202,7 +199,7 @@ $(function() {
         autoSize:true
     });
 
-    $("#ds-contact,#ds-metadata-contact").on("active", function() {
+    $("#ds-contact").on("active", function() {
         select2ContactPerson();
     });
 
