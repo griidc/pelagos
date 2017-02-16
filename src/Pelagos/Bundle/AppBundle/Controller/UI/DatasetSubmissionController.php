@@ -29,7 +29,6 @@ use Pelagos\Entity\Person;
 use Pelagos\Entity\ResearchGroup;
 use Pelagos\Entity\PersonDatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
-use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 
 use Pelagos\Exception\InvalidMetadataException;
 
@@ -220,9 +219,6 @@ class DatasetSubmissionController extends UIController
             foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                 $this->entityHandler->update($datasetContact);
             }
-            foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
-                $this->entityHandler->update($metadataContact);
-            }
 
             $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
                 $datasetSubmission,
@@ -312,10 +308,6 @@ class DatasetSubmissionController extends UIController
         if ($datasetSubmission instanceof DatasetSubmission) {
             if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
                 $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
-            }
-
-            if ($datasetSubmission->getMetadataContacts()->isEmpty()) {
-                $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
             }
 
             $datasetSubmissionId = $datasetSubmission->getId();
@@ -427,9 +419,6 @@ class DatasetSubmissionController extends UIController
         if ($xml instanceof \SimpleXMLElement and 'MI_Metadata' == $xml->getName()) {
             foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                 $datasetSubmission->removeDatasetContact($datasetContact);
-            }
-            foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
-                $datasetSubmission->removeMetadataContact($metadataContact);
             }
             $accessor = PropertyAccess::createPropertyAccessor();
             $clearProperties = array(
