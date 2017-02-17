@@ -140,7 +140,6 @@ class DatasetSubmissionController extends UIController
                             == DatasetSubmission::METADATA_STATUS_ACCEPTED) {
                         // Clear dataset and metadata contacts.
                         $datasetSubmission->getDatasetContacts()->clear();
-                        $datasetSubmission->getMetadataContacts()->clear();
                         // Populate from metadata.
                         ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
                             $datasetSubmission->getDataset()->getMetadata()->getXml(),
