@@ -7,7 +7,6 @@ use Doctrine\ORM\EntityManager;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
-use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 
 /**
  * A utility class for extracting information from ISO metadata.
