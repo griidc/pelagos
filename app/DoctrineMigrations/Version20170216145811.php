@@ -6,12 +6,16 @@ use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
- * Auto-generated Migration: Please modify to your needs!
+ * Migration to remove Metadata Contacts.
  */
 class Version20170216145811 extends AbstractMigration
 {
     /**
-     * @param Schema $schema
+     * Bring database schema up from previous version.
+     *
+     * @param Schema $schema The DBAL schema.
+     *
+     * @return void
      */
     public function up(Schema $schema)
     {
@@ -23,7 +27,11 @@ class Version20170216145811 extends AbstractMigration
     }
 
     /**
-     * @param Schema $schema
+     * Revert database schema down to previous version.
+     *
+     * @param Schema $schema The DBAL schema.
+     *
+     * @return void
      */
     public function down(Schema $schema)
     {
