@@ -639,7 +639,7 @@ class Dataset extends Entity
     /**
      * Gets the Dataset's Primary Point of Contact Person.
      *
-     * @throws Exception If a Dataset Submission is encountered missing a contact.
+     * @throws \Exception If a Dataset Submission is encountered missing a contact.
      *
      * @return Person|null
      */
