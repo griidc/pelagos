@@ -116,6 +116,18 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
             )
         );
 
+        $this->mockDatasetSubmissionCompleteMissingContact = \Mockery::mock(
+            DatasetSubmission::class,
+            array(
+                'getStatus' => DatasetSubmission::STATUS_COMPLETE,
+                'setDataset' => null,
+                'getMetadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED,
+                'getDatasetFileTransferStatus' => null,
+                'getRestrictions' => null,
+                'getDatasetContacts' => null,
+            )
+        );
+
         $this->mockApprovedDif = \Mockery::mock(
             DIF::class,
             array(
@@ -157,7 +169,7 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testStatus()
+    public function testGetPrimaryPointOfContact()
     {
         // Case: We have a complete submission and an approved DIF.
         $this->dataset->setDif($this->mockApprovedDif);
@@ -208,6 +220,20 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
             $this->dataset->getPrimaryPointOfContact()
         );
 
+    }
 
+    /**
+     * Test getPrimaryPointOfContact w/bad submission (missing contact).
+     *
+     * @expectedException \Exception
+     *
+     * @return void
+     */
+    public function testInvalidSubmissionMissingContact()
+    {
+        // Case: We have a dataset submission that dosen't have a contact.
+        $this->dataset->setDif($this->mockApprovedDif);
+        $this->dataset->setDatasetSubmission($this->mockDatasetSubmissionCompleteMissingContact);
+        $nothing = $this->dataset->getPrimaryPointOfContact();
     }
 }
