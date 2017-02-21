@@ -51,6 +51,89 @@ $(function() {
         });
     });
 
+    var datasetContactsCount = $("#dataset-contacts table").length;
+
+    var newContact = $("#dataset-contacts table:last").clone(false);
+
+    $("#btnAddContact").button().click(function(){
+        newContact
+            .find("[name^=datasetContacts]")
+            .attr("name", function() {
+                    return this.name.replace(/\d/g, datasetContactsCount);
+            })
+            .end()
+            .fadeIn('slow');
+
+        $("label[for=datasetcontact]", newContact).text("Additional Person");
+
+        $(".contactperson", newContact).select2({
+            placeholder: "[Please Select a Person]",
+            allowClear: true,
+            ajax: {
+                dataType: "json",
+                data: function (params) {
+                    if (params.term != undefined) {
+                        var query = {
+                            "lastName": params.term + "*"
+                        }
+                    } else {
+                        var query = {}
+                    }
+                    return query;
+                },
+                url: Routing.generate("pelagos_api_people_get_collection",
+                {
+                    "_properties" : "id,firstName,lastName,emailAddress",
+                    "_orderBy" : "lastName,firstName,emailAddress",
+                    "personResearchGroups.researchGroup" : $("[researchGroup]").attr("researchGroup"),
+                }
+                ),
+                processResults: function (data) {
+                    return {
+                        results: $.map(data, function (item) {
+                            return {
+                                text: item.lastName + ", " +  item.firstName + ", " + item.emailAddress,
+                                id: item.id
+                            }
+                        })
+                    };
+                }
+            }
+        })
+        .on("select2:selecting", function(e) {
+            $(this).parent().find(".contactinformation span").text("");
+            var id = e.params.args.data.id;
+            var url = Routing.generate("pelagos_api_people_get", {"id" : id});
+            var selected = $(this);
+            jQuery.get(url, function(data) {
+                $.each(data, function(field, value) {
+                    if (null === value) {
+                        value='';
+                    }
+                    if (field == "city" && value) {
+                        selected.parent().find("[field=" + field + "]").text(value + ',')
+                    } else {
+                        selected.parent().find("[field=" + field + "]").text(value);
+                    }
+                });
+            });
+        })
+        .on("select2:unselecting", function(e) {
+            $(this).parent().find(".contactinformation span").text("");
+        });
+
+        $("#dataset-contacts table:last").append(newContact);
+
+        datasetContactsCount++;
+
+        select2ContactPerson();
+    });
+
+    $("#btnDeleteContact").button().click(function(){
+        $("#dataset-contacts table:last").remove();
+    });
+
+
     $("#regbutton").button({
         disabled: true
     });
@@ -523,7 +606,6 @@ $(function() {
                     }
                 ),
                 processResults: function (data) {
-
                     return {
                         results: $.map(data, function (item) {
                             return {
