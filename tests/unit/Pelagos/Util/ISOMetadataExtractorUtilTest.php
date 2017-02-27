@@ -268,6 +268,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
     /**
      * Test the extractPointsOfContact method that extracts PersonDatasetSubmissionDatasetContacts from XML.
      *
+     * @return void
      */
     public function testExtractPointsOfContact()
     {
