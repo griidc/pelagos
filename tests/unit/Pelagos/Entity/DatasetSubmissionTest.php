@@ -37,13 +37,6 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
     protected $mockPersonDatasetSubmissionDatasetContact;
 
     /**
-     * A mock PersonDatasetSubmissionMetadataContact.
-     *
-     * @var PersonDatasetSubmissionMetadataContact
-     */
-    protected $mockPersonDatasetSubmissionMetadataContact;
-
-    /**
      * A mock Person.
      *
      * @var Person
@@ -81,13 +74,6 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
         );
         $this->mockPersonDatasetSubmissionDatasetContact = \Mockery::mock(
             PersonDatasetSubmissionDatasetContact::class,
-            array(
-                'setDatasetSubmission' => null,
-                'getPerson' => $this->mockPerson,
-            )
-        );
-        $this->mockPersonDatasetSubmissionMetadataContact = \Mockery::mock(
-            PersonDatasetSubmissionMetadataContact::class,
             array(
                 'setDatasetSubmission' => null,
                 'getPerson' => $this->mockPerson,
@@ -240,38 +226,6 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             'mock.person@test.null',
             $this->datasetSubmission->getPointOfContactEmail()
         );
-    }
-
-    /**
-     * Test metadataContacts.
-     *
-     * @return void
-     */
-    public function testMetadataContacts()
-    {
-        // metadataContacts should be a Collection.
-        $this->assertInstanceOf(
-            Collection::class,
-            $this->datasetSubmission->getMetadataContacts()
-        );
-        // metadataContacts should be initially empty.
-        $this->assertTrue($this->datasetSubmission->getMetadataContacts()->isEmpty());
-        // Add a mock contact.
-        $this->datasetSubmission->addMetadataContact($this->mockPersonDatasetSubmissionMetadataContact);
-        // There should be one item in metadataContacts.
-        $this->assertEquals(
-            1,
-            $this->datasetSubmission->getMetadataContacts()->count()
-        );
-        // The item should be the mock PersonDatasetSubmissionMetadataContact.
-        $this->assertSame(
-            $this->mockPersonDatasetSubmissionMetadataContact,
-            $this->datasetSubmission->getMetadataContacts()->first()
-        );
-        // Remove the contact.
-        $this->datasetSubmission->removeMetadataContact($this->mockPersonDatasetSubmissionMetadataContact);
-        // metadataContacts should now be empty.
-        $this->assertTrue($this->datasetSubmission->getMetadataContacts()->isEmpty());
     }
 
     /**
