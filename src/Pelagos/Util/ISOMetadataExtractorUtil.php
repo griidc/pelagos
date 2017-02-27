@@ -135,6 +135,72 @@ class ISOMetadataExtractorUtil
     }
 
     /**
+     * Determines the dataset contact from XML metadata.
+     *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
+     * @param EntityManager     $em  An entity manager.
+     *
+     * @return Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
+     */
+    public static function extractPointsOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
+    {
+        $personDatasetSubmissionDatasetContacts = array();
+
+        $query = '/gmi:MI_Metadata' .
+                 '/gmd:identificationInfo' .
+                 '/gmd:MD_DataIdentification' .
+                 '/gmd:pointOfContact';
+
+        $pointsOfContact = @$xml->xpath($query);
+
+        if (null !== $pointsOfContact) {
+            foreach ($pointsOfContact as $pointOfContact) {
+
+                // Find Person
+                $query = './gmd:CI_ResponsibleParty' .
+                         '/gmd:contactInfo' .
+                         '/gmd:CI_Contact' .
+                         '/gmd:address' .
+                         '/gmd:CI_Address' .
+                         '/gmd:electronicMailAddress' .
+                         '/gco:CharacterString';
+
+                $email = self::querySingle($pointOfContact, $query);
+                $personArray = $em->getRepository(Person::class)->findBy(
+                    array('emailAddress' => $email)
+                );
+
+                if (count($personArray) > 0) {
+                    $person = $personArray[0];
+                } else {
+                    $person = null;
+                }
+
+                // Find Role
+                $query = './gmd:CI_ResponsibleParty' .
+                         '/gmd:role' .
+                         '/gmd:CI_RoleCode';
+
+                $role = self::querySingle($pointOfContact, $query);
+
+                // If we've found a person build personDatasetSubmissionDatasetContact.
+                if ($person instanceof Person) {
+                    $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact();
+                    $personDatasetSubmissionDatasetContact->setPerson($person);
+                    // Only set role if it is a valid role, otherwise leave unset.
+                    if (null !== $role and array_key_exists($role, PersonDatasetSubmissionDatasetContact::ROLES)) {
+                        $personDatasetSubmissionDatasetContact->setRole($role);
+                    }
+                    $personDatasetSubmissionDatasetContact->setDatasetSubmission($ds);
+                    $personDatasetSubmissionDatasetContacts[] = $personDatasetSubmissionDatasetContact;
+                }
+            }
+        }
+        return $personDatasetSubmissionDatasetContacts;
+    }
+
+    /**
      * Determines the metadata contact from XML metadata.
      *
      * @param \SimpleXmlElement $xml The XML to extract from.
