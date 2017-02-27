@@ -173,16 +173,15 @@ class ISOMetadataExtractorUtil
 
                 if (count($personArray) > 0) {
                     $person = $personArray[0];
+                    // Find Role
+                    $query = './gmd:CI_ResponsibleParty' .
+                             '/gmd:role' .
+                             '/gmd:CI_RoleCode';
+
+                    $role = self::querySingle($pointOfContact, $query);
                 } else {
                     $person = null;
                 }
-
-                // Find Role
-                $query = './gmd:CI_ResponsibleParty' .
-                         '/gmd:role' .
-                         '/gmd:CI_RoleCode';
-
-                $role = self::querySingle($pointOfContact, $query);
 
                 // If we've found a person build personDatasetSubmissionDatasetContact.
                 if ($person instanceof Person) {
