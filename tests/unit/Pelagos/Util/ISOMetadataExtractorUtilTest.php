@@ -107,6 +107,18 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
             )
         );
 
+        $this->mockEntityManagerUnknownPerson = \Mockery::mock(
+            EntityManager::class,
+            array(
+                'getRepository' => \Mockery::mock(
+                    EntityRepository::class,
+                    array(
+                        'findBy' => null,
+                    )
+                ),
+            )
+        );
+
         $this->mockEntityManagerNoMatch = \Mockery::mock(
             EntityManager::class,
             array(
@@ -303,6 +315,8 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
             'author',
             $contacts[1]->getRole()
         );
+
+        $this->assertEmpty(ISOMetadataExtractorUtil::extractPointsOfContact($this->xml, $this->datasetSubmission, $this->mockEntityManagerUnknownPerson));
 
     }
 }
