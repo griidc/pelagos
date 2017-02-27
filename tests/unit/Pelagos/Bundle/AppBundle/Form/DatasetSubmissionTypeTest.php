@@ -110,11 +110,6 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
                     'role' => 'pointOfContact',
                 ),
             ),
-            'metadataContacts' => array(
-                array(
-                    'role' => 'pointOfContact',
-                ),
-            ),
         );
 
         // Create a form view.
@@ -139,11 +134,6 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
         $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact();
         $personDatasetSubmissionDatasetContact->setRole($formData['datasetContacts'][0]['role']);
         $formData['datasetContacts'] = array($personDatasetSubmissionDatasetContact);
-
-        // Convert metadata contacts to PersonDatasetSubmissionMetadataContacts.
-        $personMetadataSubmissionMetadataContact = new PersonDatasetSubmissionMetadataContact();
-        $personMetadataSubmissionMetadataContact->setRole($formData['metadataContacts'][0]['role']);
-        $formData['metadataContacts'] = array($personMetadataSubmissionMetadataContact);
 
         // Create a DatasetSubmission.
         $datasetSubmission = new DatasetSubmission;
