@@ -156,6 +156,38 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('test format', $this->datasetSubmission->getDistributionFormatName());
         $this->assertEquals('test compression', $this->datasetSubmission->getFileDecompressionTechnique());
         $this->assertEquals($this->mockPerson, $this->datasetSubmission->getDatasetContacts()[0]->getPerson());
+
+        $this->util->populateDatasetSubmissionWithXMLValues(
+            simplexml_load_file($this->testDataDir . 'test-metadata-modeledperiod.xml'),
+            $this->datasetSubmission,
+            $this->mockEntityManager
+        );
+
+        $this->assertEquals('modeled period', $this->datasetSubmission->getTemporalExtentDesc());
+
+        $this->util->populateDatasetSubmissionWithXMLValues(
+            simplexml_load_file($this->testDataDir . 'test-metadata-groundcondition-modeledperiod.xml'),
+            $this->datasetSubmission,
+            $this->mockEntityManager
+        );
+
+        $this->assertEquals('ground condition and modeled period', $this->datasetSubmission->getTemporalExtentDesc());
+    }
+
+    /**
+     * Tests testPopulateDatasetSubmission with xml containing an empty GML section.
+     *
+     * @return void
+     */
+    public function testPopulateDatasetSubmissionEmptyGml()
+    {
+        $this->util->populateDatasetSubmissionWithXMLValues(
+            simplexml_load_file($this->testDataDir . 'test-metadata-empty-gml.xml'),
+            $this->datasetSubmission,
+            $this->mockEntityManager
+        );
+
+        $this->assertNull($this->datasetSubmission->getSpatialExtent());
     }
 
     /**
