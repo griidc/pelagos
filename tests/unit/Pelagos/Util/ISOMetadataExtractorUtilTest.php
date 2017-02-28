@@ -274,7 +274,6 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($this->datasetSubmission->getDistributionFormatName());
         $this->assertNull($this->datasetSubmission->getFileDecompressionTechnique());
         $this->assertEmpty($this->datasetSubmission->getDatasetContacts());
-        $this->assertEmpty($this->datasetSubmission->getMetadataContacts());
     }
 
     /**

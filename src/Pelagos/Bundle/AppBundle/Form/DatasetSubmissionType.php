@@ -12,7 +12,6 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
-use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 
 /**
  * A form type for creating a Dataset Submission form.

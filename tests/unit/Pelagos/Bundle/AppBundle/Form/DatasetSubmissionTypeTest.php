@@ -6,7 +6,6 @@ use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
-use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 
 /**
  * Tests for Form/DatasetSubmissionType.
@@ -36,7 +35,6 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
             array(
                 DatasetSubmission::class,
                 PersonDatasetSubmissionDatasetContact::class,
-                PersonDatasetSubmissionMetadataContact::class,
                 Person::class,
             )
         );
