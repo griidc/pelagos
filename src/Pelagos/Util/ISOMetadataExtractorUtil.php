@@ -780,9 +780,6 @@ class ISOMetadataExtractorUtil
 
         if (count($query) > 0) {
             $gml = $query[0]->asXML();
-            if (empty($gml)) {
-                return null;
-            }
             return $gml;
         } else {
             return null;
