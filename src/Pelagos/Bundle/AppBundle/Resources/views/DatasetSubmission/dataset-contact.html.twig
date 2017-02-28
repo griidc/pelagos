@@ -47,8 +47,10 @@
             </tr>
         </table>
         {% endfor %}
-        <button type="button" id="btnAddContact">Add New</button>
-        <button type="button" id="btnDeleteContact">Delete This</button>
+        {% image '@PelagosAppBundle/Resources/public/images/add.png' %}
+            <img id="addContact" src="{{asset_url}}">
+        {% endimage %}<br>
+        <button type="button" id="btnDeleteContact">Delete last Contact (i'm only here for debug!)</button>
     </div>
 
     <table class="tab-table">

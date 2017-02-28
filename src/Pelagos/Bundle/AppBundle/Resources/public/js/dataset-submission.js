@@ -53,16 +53,17 @@ $(function() {
 
     var datasetContactsCount = $("#dataset-contacts table").length;
 
-    var newContact = $("#dataset-contacts table:last").clone(false);
+    var contactPrototype = $("#dataset-contacts table:last").clone(false);
 
-    $("#btnAddContact").button().click(function(){
-        newContact
+    $("#addContact").button().click(function(){
+        var newContact = contactPrototype
+            .clone(false)
             .find("[name^=datasetContacts]")
             .attr("name", function() {
                     return this.name.replace(/\d/g, datasetContactsCount);
             })
             .end()
-            .fadeIn('slow');
+            .fadeIn("slow");
 
         $("label[for=datasetcontact]", newContact).text("Additional Person");
 
@@ -108,10 +109,10 @@ $(function() {
             jQuery.get(url, function(data) {
                 $.each(data, function(field, value) {
                     if (null === value) {
-                        value='';
+                        value = "";
                     }
                     if (field == "city" && value) {
-                        selected.parent().find("[field=" + field + "]").text(value + ',')
+                        selected.parent().find("[field=" + field + "]").text(value + ",")
                     } else {
                         selected.parent().find("[field=" + field + "]").text(value);
                     }
@@ -130,7 +131,7 @@ $(function() {
     });
 
     $("#btnDeleteContact").button().click(function(){
-        $("#dataset-contacts table:last").remove();
+        $("#dataset-contacts table:last").hide("slow").remove();
     });
 
 
@@ -188,7 +189,7 @@ $(function() {
         activeTab--;
         if (activeTab < 0) {activeTab = 0};
         $("#dtabs").tabs({active:activeTab});
-    }).button('disable');
+    }).button("disable");
 
     $("#btn-next").click(function() {
         var activeTab = $("#dtabs").tabs("option","active");
@@ -335,10 +336,10 @@ $(function() {
         jQuery.get(url, function(data) {
             $.each(data, function(field, value) {
                 if (null === value) {
-                    value='';
+                    value = "";
                 }
                 if (field == "city" && value) {
-                    selected.parent().find("[field=" + field + "]").text(value + ',')
+                    selected.parent().find("[field=" + field + "]").text(value + ",")
                 } else {
                     selected.parent().find("[field=" + field + "]").text(value);
                 }
