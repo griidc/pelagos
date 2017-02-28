@@ -29,8 +29,11 @@ class ISOMetadataExtractorUtil
      */
     public static function populateDatasetSubmissionWithXMLValues(\SimpleXmlElement $xmlMetadata, DatasetSubmission &$datasetSubmission, EntityManager $entityManager)
     {
-        self::setIfHas($datasetSubmission, 'addDatasetContact', self::extractDatasetContact($xmlMetadata, $datasetSubmission, $entityManager));
-        self::setIfHas($datasetSubmission, 'addMetadataContact', self::extractMetadataContact($xmlMetadata, $datasetSubmission, $entityManager));
+        $pointsOfContact = self::extractPointsOfContact($xmlMetadata, $datasetSubmission, $entityManager);
+        foreach ($pointsOfContact as $poc) {
+            self::setIfHas($datasetSubmission, 'addDatasetContact', $poc);
+        }
+        //self::setIfHas($datasetSubmission, 'addMetadataContact', self::extractMetadataContact($xmlMetadata, $datasetSubmission, $entityManager));
         self::setIfHas($datasetSubmission, 'setTitle', self::extractTitle($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setShortTitle', self::extractShortTitle($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setAbstract', self::extractAbstract($xmlMetadata));
@@ -154,7 +157,7 @@ class ISOMetadataExtractorUtil
 
         $pointsOfContact = @$xml->xpath($query);
 
-        if (null !== $pointsOfContact) {
+        if (null !== $pointsOfContact and false !== $pointsOfContact) {
             foreach ($pointsOfContact as $pointOfContact) {
 
                 // Find Person
