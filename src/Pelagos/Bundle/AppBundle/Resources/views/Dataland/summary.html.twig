@@ -75,15 +75,15 @@
     <tr>
         <td valign="top"><b>Dataset Author(s):</b><br/> {{dataset.datasetSubmission.authors|default}}</td>
         <td rowspan="4" valign="top">
-            {% if dataset.dif %}
+            {% if dataset.primaryPointOfContact %}
                 <b>Point of Contact:</b><br/>
-                {{dataset.dif.primaryPointOfContact.lastName}}, {{dataset.dif.primaryPointOfContact.firstName}}<br/>
-                {{dataset.dif.primaryPointOfContact.organization}}<br/>
-                {{dataset.dif.primaryPointOfContact.deliveryPoint}}<br>
-                {{dataset.dif.primaryPointOfContact.city}}, {{dataset.dif.primaryPointOfContact.administrativeArea}}&nbsp;&nbsp;{{dataset.dif.primaryPointOfContact.postalCode}}<br>
-                {{dataset.dif.primaryPointOfContact.country}}<br>
-                <a href="mailto:{{dataset.dif.primaryPointOfContact.emailAddress}}">
-                    {{dataset.dif.primaryPointOfContact.emailAddress}}
+                {{dataset.primaryPointOfContact.lastName}}, {{dataset.primaryPointOfContact.firstName}}<br/>
+                {{dataset.primaryPointOfContact.organization}}<br/>
+                {{dataset.primaryPointOfContact.deliveryPoint}}<br>
+                {{dataset.primaryPointOfContact.city}}, {{dataset.primaryPointOfContact.administrativeArea}}&nbsp;&nbsp;{{dataset.primaryPointOfContact.postalCode}}<br>
+                {{dataset.primaryPointOfContact.country}}<br>
+                <a href="mailto:{{dataset.primaryPointOfContact.emailAddress}}">
+                    {{dataset.primaryPointOfContact.emailAddress}}
                 </a>
             {% endif %}
         </td>
