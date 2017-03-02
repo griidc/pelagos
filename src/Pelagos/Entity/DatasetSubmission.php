@@ -475,6 +475,15 @@ class DatasetSubmission extends Entity
     protected $datasetContacts;
 
     /**
+     * The Primary Point of Contact for this Dataset Submission.
+     *
+     * @var PersonDatasetSubmissionDatasetContact
+     *
+     * @ORM\OneToOne(targetEntity="PersonDatasetSubmissionDatasetContact")
+     */
+    protected $primaryDatasetContact;
+
+    /**
      * Whether the dataset has any restrictions.
      *
      * Legacy DB column: access_status
@@ -1216,6 +1225,7 @@ class DatasetSubmission extends Entity
     {
         $datasetContact->setDatasetSubmission($this);
         $this->datasetContacts->add($datasetContact);
+        $this->setPrimaryDatasetContact($this->datasetContacts->first());
     }
 
     /**
@@ -1230,6 +1240,7 @@ class DatasetSubmission extends Entity
     public function removeDatasetContact(PersonDatasetSubmissionDatasetContact $datasetContact)
     {
         $this->datasetContacts->removeElement($datasetContact);
+        $this->setPrimaryDatasetContact($this->datasetContacts->first());
     }
 
     /**
@@ -1243,6 +1254,37 @@ class DatasetSubmission extends Entity
     {
         return $this->datasetContacts;
     }
+
+    /**
+     * Getter of primaryDatasetContact
+     *
+     * @access public
+     *
+     * @return PersonDatasetSubmissionDatasetContact
+     */
+    public function getPrimaryDatasetContact()
+    {
+        return $this->primaryDatasetContact;
+    }
+
+    /**
+     * Setter of primaryDatasetContact
+     *
+     * @access public
+     *
+     * @param PersonDatasetSubmissionDatasetContact $primaryPoc The primary POC for this dataset.
+     *
+     * @return void
+     */
+    public function setPrimaryDatasetContact($primaryPoc)
+    {
+        if (false === $primaryPoc) {
+            $this->primaryDatasetContact = null;
+        } else {
+            $this->primaryDatasetContact = $primaryPoc;
+        }
+    }
+
 
     /**
      * This is as emulated getter for the previous pointOfContactName attribute.
