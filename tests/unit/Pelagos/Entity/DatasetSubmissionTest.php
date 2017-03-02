@@ -72,11 +72,26 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
                 'getEmailAddress' => 'mock.person@test.null',
             )
         );
+        $this->mockPerson2 = \Mockery::mock(
+            Person::class,
+            array(
+                'getLastName' => 'OtherPerson',
+                'getFirstName' => 'Mock',
+                'getEmailAddress' => 'mock.otherperson@test.null',
+            )
+        );
         $this->mockPersonDatasetSubmissionDatasetContact = \Mockery::mock(
             PersonDatasetSubmissionDatasetContact::class,
             array(
                 'setDatasetSubmission' => null,
                 'getPerson' => $this->mockPerson,
+            )
+        );
+        $this->mockPersonDatasetSubmissionDatasetContact2 = \Mockery::mock(
+            PersonDatasetSubmissionDatasetContact::class,
+            array(
+                'setDatasetSubmission' => null,
+                'getPerson' => $this->mockPerson2,
             )
         );
         $this->datasetSubmission = new DatasetSubmission;
@@ -201,10 +216,33 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             $this->mockPersonDatasetSubmissionDatasetContact,
             $this->datasetSubmission->getDatasetContacts()->first()
         );
-        // Remove the contact.
+        // Primary POC should be pointing to the only POC
+        $this->assertSame(
+            $this->mockPersonDatasetSubmissionDatasetContact,
+            $this->datasetSubmission->getPrimaryDatasetContact()
+        );
+        // Add Another POC.
+        $this->datasetSubmission->addDatasetContact($this->mockPersonDatasetSubmissionDatasetContact2);
+        // Primary POC should still be pointing to the first POC.
+        $this->assertSame(
+            $this->mockPersonDatasetSubmissionDatasetContact,
+            $this->datasetSubmission->getPrimaryDatasetContact()
+        );
+        // Remove the first POC.
         $this->datasetSubmission->removeDatasetContact($this->mockPersonDatasetSubmissionDatasetContact);
+        // Primary POC should now be pointing to the other POC.
+        $this->assertSame(
+            $this->mockPersonDatasetSubmissionDatasetContact2,
+            $this->datasetSubmission->getPrimaryDatasetContact()
+        );
+        // Remove the contact.
+        $this->datasetSubmission->removeDatasetContact($this->mockPersonDatasetSubmissionDatasetContact2);
         // datasetContacts should now be empty.
         $this->assertTrue($this->datasetSubmission->getDatasetContacts()->isEmpty());
+        // Primary POC should now be null.
+        $this->assertNull(
+            $this->datasetSubmission->getPrimaryDatasetContact()
+        );
     }
 
     /**
