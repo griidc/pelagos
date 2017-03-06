@@ -157,3 +157,10 @@ table.dataTable.stripe tbody tr:hover {
 {
     display: none;
 }
+
+.blabla
+{
+    outline:2px solid rgba(255,0,0,0.5);
+    padding:2px;
+    opacity:.7;
+}
