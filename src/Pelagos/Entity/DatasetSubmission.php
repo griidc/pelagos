@@ -922,11 +922,13 @@ class DatasetSubmission extends Entity
             $this->setSuppParams($entity->getVariablesObserved());
             $this->setSpatialExtent($entity->getSpatialExtentGeometry());
             $this->setSpatialExtentDescription($entity->getSpatialExtentDescription());
-            // Add DIF primary point of contact as dataset contact.
+            // Add DIF primary point of contact to collection and designate as primary dataset contact.
             $datasetContact = new PersonDatasetSubmissionDatasetContact();
             $datasetContact->setRole('pointOfContact');
+            // DIF's primaryPointOfContact is required by DIF.
             $datasetContact->setPerson($entity->getPrimaryPointOfContact());
             $this->addDatasetContact($datasetContact);
+            $this->setPrimaryDatasetContact($datasetContact);
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
             $this->setSequence($entity->getSequence() + 1);
@@ -971,13 +973,11 @@ class DatasetSubmission extends Entity
             $this->setTemporalExtentEndPosition($entity->getTemporalExtentEndPosition());
             $this->setDistributionFormatName($entity->getDistributionFormatName());
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
-            // Copy the original Dataset Submission's dataset contacts.
-            foreach ($entity->getDatasetContacts() as $datasetContact) {
-                $newDatasetContact = new PersonDatasetSubmissionDatasetContact();
-                $newDatasetContact->setRole($datasetContact->getRole());
-                $newDatasetContact->setPerson($datasetContact->getPerson());
-                $this->addDatasetContact($newDatasetContact);
-            }
+            $this->setPrimaryDatasetContact($entity->getPrimaryDatasetContact());
+        } else {
+            // This is a brand new DatasetSubmission (draft). Create and set
+            // the initial PersonDatasetSubmissionDatasetContact.
+            $this->setPrimaryDatasetContact(new PersonDatasetSubmissionDatasetContact);
         }
     }
 
@@ -1225,7 +1225,6 @@ class DatasetSubmission extends Entity
     {
         $datasetContact->setDatasetSubmission($this);
         $this->datasetContacts->add($datasetContact);
-        $this->setPrimaryDatasetContact($this->datasetContacts->first());
     }
 
     /**
@@ -1240,7 +1239,6 @@ class DatasetSubmission extends Entity
     public function removeDatasetContact(PersonDatasetSubmissionDatasetContact $datasetContact)
     {
         $this->datasetContacts->removeElement($datasetContact);
-        $this->setPrimaryDatasetContact($this->datasetContacts->first());
     }
 
     /**
@@ -1256,7 +1254,7 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * Getter of primaryDatasetContact
+     * Getter of primaryDatasetContact.
      *
      * @access public
      *
@@ -1268,15 +1266,15 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * Setter of primaryDatasetContact
-     *
-     * @access public
+     * Setter of primaryDatasetContact.
      *
      * @param PersonDatasetSubmissionDatasetContact $primaryPoc The primary POC for this dataset.
      *
+     * @access public
+     *
      * @return void
      */
-    public function setPrimaryDatasetContact($primaryPoc)
+    public function setPrimaryDatasetContact(PersonDatasetSubmissionDatasetContact $primaryPoc)
     {
         if (false === $primaryPoc) {
             $this->primaryDatasetContact = null;
@@ -1284,7 +1282,6 @@ class DatasetSubmission extends Entity
             $this->primaryDatasetContact = $primaryPoc;
         }
     }
-
 
     /**
      * This is as emulated getter for the previous pointOfContactName attribute.
