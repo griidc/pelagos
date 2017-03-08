@@ -205,10 +205,6 @@ $(function() {
 
         var formData = $("form[datasetsubmission]").serialize();
 
-        if ($("#datasetContacts[0][person]").val() == null) {
-            formData += "&datasetContacts[0][person]=";
-        }
-
         $.ajax({
             url: url + "/" + datasetSubmissionId + "?validate=false",
             method: "PUT",
