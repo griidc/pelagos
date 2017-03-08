@@ -101,9 +101,12 @@ $(function() {
     })
     .click(function(){
         var deleteTable = this;
-        $(this).parents("#dataset-contacts table").fadeOut("slow", function() {
+        $(this).parents("#dataset-contacts table").fadeIn("slow", function() {
+            debugger;
             $(deleteTable).parents("#dataset-contacts table")
             .find(".error").remove()
+            .end()
+            .find(":input").trigger("blur")
             .end()
             .remove();
         });
