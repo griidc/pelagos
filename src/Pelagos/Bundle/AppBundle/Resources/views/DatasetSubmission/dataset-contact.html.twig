@@ -89,14 +89,14 @@
                 </span>
                 <button class="deletebutton" type="button">Delete Contact</button>
                 <label for="datasetcontact">Additional Person</label>
-                <select disabled class="contactperson" name="{{contact.person.vars.full_name}}" required="required">
+                <select disabled class="contactperson prototype" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
                     {% if contact.vars.data.person|default %}
                     <option selected value="{{contact.vars.data.person.id}}">
                         {{contact.vars.data.person.lastName}}, {{contact.vars.data.person.firstName}}, {{contact.vars.data.person.emailAddress}}
                     </option>
                     {% endif %}
                 </select>
-                <label for="contactperson" class="error"></label>
+                <label for="{{contact.person.vars.full_name}}" class="error"></label>
                 {% include "PelagosAppBundle:DatasetSubmission:contact-information.html.twig" %}
             </td>
         </tr>
@@ -111,7 +111,7 @@
                         list.
                     </div>
                 </span>
-                {{ form_row(contact.role) }}
+                {{ form_row(contact.role, {"attr": {"class": "prototype", "disabled": "disabled"}}) }}
             </td>
         </tr>
     </table>

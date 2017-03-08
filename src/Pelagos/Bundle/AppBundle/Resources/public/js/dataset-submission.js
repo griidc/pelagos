@@ -53,23 +53,29 @@ $(function() {
 
     var datasetContactsCount = $("#dataset-contacts table").length;
 
-    $("#contact-prototype select").attr("disabled", "disabled");
+    //$("#contact-prototype select").attr("disabled", "disabled");
 
     $("#addContact")
     .button()
     .click(function(){
         var newContact = $("#contact-prototype table")
-            .find(".qtip").remove().end()
-            .clone(true)
-            .find(":input")
-            .removeAttr("disabled")
-            .end()
-            .find("[name^=datasetContacts]")
-            .attr("name", function() {
-                    return this.name.replace(/__name__/g, datasetContactsCount);
-            })
-            .end()
-            .fadeIn("slow");
+        .clone(true)
+        .find(":input[id][name]")
+        .removeClass("prototype error")
+        .removeAttr("disabled")
+        .attr("name", function() {
+            return $(this).attr("name").replace(/__name__/g, datasetContactsCount);
+        })
+        .attr("id", function() {
+            return $(this).attr("id").replace(/__name__/g, datasetContactsCount);
+        })
+        .end()
+        .find("label[for]")
+        .attr("for", function() {
+            return $(this).attr("for").replace(/__name__/g, datasetContactsCount);
+        })
+        .end()
+        .fadeIn("slow");
 
         $("#dataset-contacts").append(newContact);
 
@@ -113,7 +119,7 @@ $(function() {
     });
 
     $("#regForm").validate({
-        ignore: ".ignore",
+        ignore: ".ignore,.prototype",
         submitHandler: function(form) {
             if ($(".ignore").valid()) {
                 formHash = $("#regForm").serialize();
@@ -273,10 +279,10 @@ $(function() {
                 $(this).find(":input").on("change blur keyup", function() {
                     $("#dtabs .ds-metadata").each(function() {
                         var label = $(this).attr("aria-labelledby");
-                        $(this).find(":input").each(function() {
+                        $(this).find(":input").not(".prototype").each(function() {
                             $(this).valid()
                         });
-                        if ($(this).find(":input").valid()) {
+                        if ($(this).find(":input").not(".prototype").valid()) {
                             $("#" + label).next("img").prop("src", imgCheck);
                         } else {
                             $("#" + label).next("img").prop("src", imgWarning);
