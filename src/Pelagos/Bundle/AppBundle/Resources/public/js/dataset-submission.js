@@ -53,8 +53,6 @@ $(function() {
 
     var datasetContactsCount = $("#dataset-contacts table").length;
 
-    //$("#contact-prototype select").attr("disabled", "disabled");
-
     $("#addContact")
     .button()
     .click(function(){
