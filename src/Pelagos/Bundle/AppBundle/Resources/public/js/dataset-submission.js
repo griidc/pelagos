@@ -26,8 +26,6 @@ $(function() {
         left: "50%" // Left position relative to parent
     }).spin($("#spinner")[0]);
 
-
-
     $("html").show();
 
     $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");
@@ -45,21 +43,27 @@ $(function() {
     });
 
     // load qTip descriptions
-    $("img.info").each(function() {
+    $("img.info").not("#contact-prototype img.info").each(function() {
         $(this).qtip({
             content: {
-                text: $(this).next(".tooltiptext")
+                text: $(this).next(".tooltiptext").clone()
             }
         });
     });
 
     var datasetContactsCount = $("#dataset-contacts table").length;
 
-    //var contactPrototype = $("#contact-prototype").clone(false);
+    $("#contact-prototype select").attr("disabled", "disabled");
 
-     $("#addContact").button().click(function(){
+    $("#addContact")
+    .button()
+    .click(function(){
         var newContact = $("#contact-prototype table")
+            .find(".qtip").remove().end()
             .clone(true)
+            .find(":input")
+            .removeAttr("disabled")
+            .end()
             .find("[name^=datasetContacts]")
             .attr("name", function() {
                     return this.name.replace(/__name__/g, datasetContactsCount);
@@ -72,16 +76,27 @@ $(function() {
         datasetContactsCount++;
 
         select2ContactPerson();
+
+        $("img.info", newContact).each(function() {
+            $(this).qtip({
+                content: {
+                    text: $(this).next(".tooltiptext").clone()
+                }
+            });
+        });
     });
 
-    $(".deletebutton").hover(function() {
-        $(this).parents("table").addClass("blabla");
+    $(".deletebutton")
+    .button()
+    .hover(function() {
+        $(this).parents("table").addClass("delete-contact");
         }, function() {
-        $(this).parents("table").removeClass("blabla");
+        $(this).parents("table").removeClass("delete-contact");
     })
     .click(function(){
+        var deleteTable = this;
         $(this).parents("#dataset-contacts table").fadeOut("slow", function() {
-            $(this).parents("#dataset-contacts table").remove();
+            $(deleteTable).parents("#dataset-contacts table").remove();
         });
     });
 
@@ -181,7 +196,7 @@ $(function() {
 
         var formData = $("form[datasetsubmission]").serialize();
 
-        if ($("#contactperson").val() == null) {
+        if ($("#datasetContacts[0][person]").val() == null) {
             formData += "&datasetContacts[0][person]=";
         }
 

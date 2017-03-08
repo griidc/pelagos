@@ -16,21 +16,14 @@
                         </div>
                     </span>
                     {% if not loop.first %}
-                    <span class="deletebutton">
-                        {% image '@PelagosAppBundle/Resources/public/images/delete.png' %}
-                        <img class="info" src="{{ asset_url }}">
-                        {% endimage %}
-                        <div class="tooltiptext">
-                            Click to delete this contact.
-                        </div>
-                    </span>
+                        <button class="deletebutton" type="button">Delete Contact</button>
                     {% endif %}
                     {% if loop.first %}
-                    <label for="datasetcontact">Primary Person</label>
+                    <label for="datasetcontact">Primary Point of Contact</label>
                     {% else %}
-                    <label for="datasetcontact">Additional Person</label>
+                    <label for="datasetcontact">Additional Point of Contact</label>
                     {% endif %}
-                    <select class="contactperson" id="contactperson" name="{{contact.person.vars.full_name}}" required="required">
+                    <select class="contactperson" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
                         {% if contact.vars.data.person|default %}
                         <option selected value="{{contact.vars.data.person.id}}">
                             {{contact.vars.data.person.lastName}}, {{contact.vars.data.person.firstName}}, {{contact.vars.data.person.emailAddress}}
@@ -58,14 +51,8 @@
         </table>
         {% endfor %}
     </div>
-    <span class="addbutton">
-        {% image '@PelagosAppBundle/Resources/public/images/add.png' %}
-        <img class="info" id="addContact" src="{{asset_url}}">
-        {% endimage %}
-        <div class="tooltiptext">
-            Click to add a contact.
-        </div>
-    </span>
+
+    <button id="addContact" type="button">Add Contact</button>
 
     <table class="tab-table">
         <tr>
@@ -84,7 +71,8 @@
         </tr>
     </table>
 </fieldset>
-<div id="contact-prototype" style="display:none;">
+
+<div id="contact-prototype">
     {% set contact = form.datasetContacts.vars.prototype %}
     <table class="tab-table dataset-contacts">
         <tr>
@@ -99,16 +87,9 @@
                         is incorrect, please contact griidc@gomri.org.
                     </div>
                 </span>
-                <span class="deletebutton">
-                    {% image '@PelagosAppBundle/Resources/public/images/delete.png' %}
-                    <img class="info" src="{{ asset_url }}">
-                    {% endimage %}
-                    <div class="tooltiptext">
-                        Click to delete this contact.
-                    </div>
-                </span>
+                <button class="deletebutton" type="button">Delete Contact</button>
                 <label for="datasetcontact">Additional Person</label>
-                <select class="contactperson" id="contactperson" name="{{contact.person.vars.full_name}}" required="required">
+                <select disabled class="contactperson" name="{{contact.person.vars.full_name}}" required="required">
                     {% if contact.vars.data.person|default %}
                     <option selected value="{{contact.vars.data.person.id}}">
                         {{contact.vars.data.person.lastName}}, {{contact.vars.data.person.firstName}}, {{contact.vars.data.person.emailAddress}}
