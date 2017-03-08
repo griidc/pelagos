@@ -102,6 +102,7 @@ $(function() {
     .click(function(){
         var deleteTable = this;
         $(this).parents("#dataset-contacts table").fadeOut("slow", function() {
+            $(deleteTable).parents("#dataset-contacts table").find(".error").remove();
             $(deleteTable).parents("#dataset-contacts table").remove();
         });
     });
