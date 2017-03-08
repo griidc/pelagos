@@ -104,7 +104,7 @@ $(function() {
         $(this).parents("#dataset-contacts table").fadeOut("slow", function() {
             $(deleteTable).parents("#dataset-contacts table")
             .find(".error").remove()
-            .end();
+            .end()
             .remove();
         });
     });
