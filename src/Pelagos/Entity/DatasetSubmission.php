@@ -909,12 +909,19 @@ class DatasetSubmission extends Entity
      *
      * Initializes collections to empty collections.
      *
-     * @param Entity $entity A DIF or DatasetSubmission to base this DatasetSubmission on.
+     * @param Entity                                $entity      A DIF or DatasetSubmission to base this DatasetSubmission on.
+     * @param PersonDatasetSubmissionDatasetContact $datasetPPOc The dataset's Primary P.O.C., used if creating from a DIF.
+     *
+     * @throws \Exception When a DIF is passed without a PersonDatasetSubmissionDatasetContact.
+     * @throws \Exception When an entity is passed that is not a DIF or DatasetSubmission.
      */
-    public function __construct(Entity $entity = null)
+    public function __construct(Entity $entity, PersonDatasetSubmissionDatasetContact $datasetPPOc = null)
     {
         $this->datasetContacts = new ArrayCollection;
         if ($entity instanceof DIF) {
+            if (null === $datasetPPOc) {
+                throw new \Exception('Constructor requires PersonDatasetSubmissionDatasetContact if passed a DIF entity');
+            }
             // Populate from DIF
             $this->setDataset($entity->getDataset());
             $this->setTitle($entity->getTitle());
@@ -923,12 +930,10 @@ class DatasetSubmission extends Entity
             $this->setSpatialExtent($entity->getSpatialExtentGeometry());
             $this->setSpatialExtentDescription($entity->getSpatialExtentDescription());
             // Add DIF primary point of contact to collection and designate as primary dataset contact.
-            $datasetContact = new PersonDatasetSubmissionDatasetContact();
-            $datasetContact->setRole('pointOfContact');
             // DIF's primaryPointOfContact is required by DIF.
-            $datasetContact->setPerson($entity->getPrimaryPointOfContact());
-            $this->addDatasetContact($datasetContact);
-            $this->setPrimaryDatasetContact($datasetContact);
+            $datasetPPOc->setPerson($entity->getPrimaryPointOfContact());
+            $this->addDatasetContact($datasetPPOc);
+            $this->setPrimaryDatasetContact($datasetPPOc);
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
             $this->setSequence($entity->getSequence() + 1);
@@ -975,9 +980,7 @@ class DatasetSubmission extends Entity
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
             $this->setPrimaryDatasetContact($entity->getPrimaryDatasetContact());
         } else {
-            // This is a brand new DatasetSubmission (draft). Create and set
-            // the initial PersonDatasetSubmissionDatasetContact.
-            $this->setPrimaryDatasetContact(new PersonDatasetSubmissionDatasetContact);
+            throw new \Exception('Class constructor requires a DIF or a DatasetSubmission. A ' . get_class($entity) . ' was passed.');
         }
     }
 
