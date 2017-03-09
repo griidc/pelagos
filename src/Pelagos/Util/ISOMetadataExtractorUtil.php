@@ -28,7 +28,10 @@ class ISOMetadataExtractorUtil
      */
     public static function populateDatasetSubmissionWithXMLValues(\SimpleXmlElement $xmlMetadata, DatasetSubmission &$datasetSubmission, EntityManager $entityManager)
     {
-        self::setIfHas($datasetSubmission, 'addDatasetContact', self::extractDatasetContact($xmlMetadata, $datasetSubmission, $entityManager));
+        $pointsOfContact = self::extractPointsOfContact($xmlMetadata, $datasetSubmission, $entityManager);
+        foreach ($pointsOfContact as $poc) {
+            self::setIfHas($datasetSubmission, 'addDatasetContact', $poc);
+        }
         self::setIfHas($datasetSubmission, 'setTitle', self::extractTitle($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setShortTitle', self::extractShortTitle($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setAbstract', self::extractAbstract($xmlMetadata));
@@ -80,56 +83,62 @@ class ISOMetadataExtractorUtil
      * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
      * @param EntityManager     $em  An entity manager.
      *
-     * @return PersonDatasetSubmissionDatasetContact|null Returns the dataset contact, or null.
+     * @return Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
      */
-    protected static function extractDatasetContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
+    public static function extractPointsOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
     {
-        $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:pointOfContact[1]' .
-                 '/gmd:CI_ResponsibleParty' .
-                 '/gmd:contactInfo' .
-                 '/gmd:CI_Contact' .
-                 '/gmd:address' .
-                 '/gmd:CI_Address' .
-                 '/gmd:electronicMailAddress' .
-                 '/gco:CharacterString';
-
-        $email = self::querySingle($xml, $query);
-
-        $people = $em->getRepository(Person::class)->findBy(
-            array('emailAddress' => $email)
-        );
-
-        if (count($people) > 0) {
-            $person = $people[0];
-        } else {
-            $person = null;
-        }
+        $personDatasetSubmissionDatasetContacts = array();
 
         $query = '/gmi:MI_Metadata' .
                  '/gmd:identificationInfo' .
                  '/gmd:MD_DataIdentification' .
-                 '/gmd:pointOfContact[1]' .
-                 '/gmd:CI_ResponsibleParty' .
-                 '/gmd:role' .
-                 '/gmd:CI_RoleCode';
+                 '/gmd:pointOfContact';
 
-        $role = self::querySingle($xml, $query);
+        $pointsOfContact = @$xml->xpath($query);
 
-        if ($person instanceof Person) {
-            $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact();
-            $personDatasetSubmissionDatasetContact->setPerson($person);
-            // Only set role if it is a valid role, otherwise leave unset.
-            if (null !== $role and array_key_exists($role, PersonDatasetSubmissionDatasetContact::ROLES)) {
-                $personDatasetSubmissionDatasetContact->setRole($role);
+        if (!empty($pointsOfContact)) {
+            foreach ($pointsOfContact as $pointOfContact) {
+
+                // Find Person
+                $query = './gmd:CI_ResponsibleParty' .
+                         '/gmd:contactInfo' .
+                         '/gmd:CI_Contact' .
+                         '/gmd:address' .
+                         '/gmd:CI_Address' .
+                         '/gmd:electronicMailAddress' .
+                         '/gco:CharacterString';
+
+                $email = self::querySingle($pointOfContact, $query);
+                $personArray = $em->getRepository(Person::class)->findBy(
+                    array('emailAddress' => $email)
+                );
+
+                if (count($personArray) > 0) {
+                    $person = $personArray[0];
+                    // Find Role
+                    $query = './gmd:CI_ResponsibleParty' .
+                             '/gmd:role' .
+                             '/gmd:CI_RoleCode';
+
+                    $role = self::querySingle($pointOfContact, $query);
+                } else {
+                    $person = null;
+                }
+
+                // If we've found a person build personDatasetSubmissionDatasetContact.
+                if ($person instanceof Person) {
+                    $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact();
+                    $personDatasetSubmissionDatasetContact->setPerson($person);
+                    // Only set role if it is a valid role, otherwise leave unset.
+                    if (null !== $role and array_key_exists($role, PersonDatasetSubmissionDatasetContact::ROLES)) {
+                        $personDatasetSubmissionDatasetContact->setRole($role);
+                    }
+                    $personDatasetSubmissionDatasetContact->setDatasetSubmission($ds);
+                    $personDatasetSubmissionDatasetContacts[] = $personDatasetSubmissionDatasetContact;
+                }
             }
-            $personDatasetSubmissionDatasetContact->setDatasetSubmission($ds);
-            return $personDatasetSubmissionDatasetContact;
-        } else {
-            return null;
         }
+        return $personDatasetSubmissionDatasetContacts;
     }
 
     /**
@@ -656,9 +665,6 @@ class ISOMetadataExtractorUtil
 
         if (count($query) > 0) {
             $gml = $query[0]->asXML();
-            if (empty($gml)) {
-                return null;
-            }
             return $gml;
         } else {
             return null;
