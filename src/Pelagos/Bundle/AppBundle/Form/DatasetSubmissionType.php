@@ -5,12 +5,14 @@ namespace Pelagos\Bundle\AppBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\Entity;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 
 /**
@@ -18,6 +20,12 @@ use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
  */
 class DatasetSubmissionType extends AbstractType
 {
+    public function __construct(Entity $entity = null, PersonDatasetSubmissionDatasetContact $poc = null)
+    {
+        $this->formEntity = $entity;
+        $this->formPoc = $poc;
+    }
+
     /**
      * Builds the form.
      *
@@ -235,9 +243,15 @@ class DatasetSubmissionType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        $entity = $this->formEntity;
+        $poc = $this->formPoc;
+
         $resolver->setDefaults(array(
             'data_class' => DatasetSubmission::class,
             'allow_extra_fields' => true,
+            'empty_data' => function (FormInterface $form) use ($entity, $poc) {
+                return new DatasetSubmission($entity, $poc);
+            },
         ));
     }
 }
