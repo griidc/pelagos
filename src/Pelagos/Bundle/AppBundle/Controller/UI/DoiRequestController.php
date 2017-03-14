@@ -188,11 +188,11 @@ class DoiRequestController extends UIController
      */
     private function issueDOI($url, $who, $what, $where, $date, $type = 'Dataset')
     {
-        $input = "_target:$url\n";
+        $input = '_target:' . $this->escapeSpecialCharacters($url) . "\n";
         $input .= "_profile:dc\n";
-        $input .= "dc.creator:$who\n";
-        $input .= "dc.title:$what\n";
-        $input .= "dc.publisher:$where\n";
+        $input .= 'dc.creator:' . $this->escapeSpecialCharacters($who) . "\n";
+        $input .= 'dc.title:' . $this->escapeSpecialCharacters($what) . "\n";
+        $input .= 'dc.publisher:' . $this->escapeSpecialCharacters($where) . "\n";
         $input .= "dc.date:$date\n";
         $input .= "dc.type:$type";
 
@@ -201,6 +201,7 @@ class DoiRequestController extends UIController
         $doipassword = $this->getParameter('doi_api_password');
 
         utf8_encode($input);
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "https://ezid.cdlib.org/shoulder/$doishoulder");
         curl_setopt($ch, CURLOPT_USERPWD, "$doiusername:$doipassword");
@@ -224,5 +225,23 @@ class DoiRequestController extends UIController
         $doi = preg_match('/^success: (doi:\S+)/', $output, $matches);
 
         return $matches[1];
+    }
+
+    /**
+     * This function escape :%\n\r characters, because these are special with EZID.
+     *
+     * @param string $input Text that needs to be escaped.
+     *
+     * @return string The escaped string.
+     */
+    private function escapeSpecialCharacters($input)
+    {
+        return preg_replace_callback(
+            '/[%:\r\n]/',
+            function ($matches) {
+                return sprintf('%%%02X', ord($matches[0]));
+            },
+            $input
+        );
     }
 }

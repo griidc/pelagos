@@ -17,10 +17,12 @@ $(document).ready(function()
     });
 
     $("form[entityType=\"Person\"]").on("reset", function() {
-        var value = $('form[entityType="Person"] input[name="phoneNumber"]').val();
-        $("#phoneNumber").val(value);
-        $("#phoneNumber").mask("(999) 999-9999");
-        $("#phoneNumber").prop("defaultValue", $("#phoneNumber").val());
+        setTimeout(function() {
+            var value = $('form[entityType="Person"] input[name="phoneNumber"]').val();
+            $("#phoneNumber").val(value);
+            $("#phoneNumber").mask("(999) 999-9999");
+            $("#phoneNumber").prop("defaultValue", $("#phoneNumber").val());
+        });
     });
 
     $.ajax({

@@ -3,7 +3,7 @@
  newform
 {% endif %}
 {% include '@templates/forms/permissionsBlock.html.twig' with {'Entity': PersonResearchGroup} %}
-action="{{path('pelagos_api_person_research_groups_post')}}">
+_action="{{path('pelagos_api_person_research_groups_post')}}">
 
     <input type="hidden" name="id" value="{{PersonResearchGroup.getId|default}}">
 

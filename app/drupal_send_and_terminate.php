@@ -43,6 +43,7 @@ if (in_array(
         'pelagos_app_download_gridftp',
         'pelagos_app_gml_towkt',
         'pelagos_app_gml_fromwkt',
+        'pelagos_metadata',
     )
 )) {
     $response->send();

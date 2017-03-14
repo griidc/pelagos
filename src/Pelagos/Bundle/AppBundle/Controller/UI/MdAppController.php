@@ -23,6 +23,8 @@ use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\Metadata;
 
+use Pelagos\Exception\InvalidGmlException;
+
 /**
  * The MDApp controller.
  *
@@ -402,9 +404,6 @@ class MdAppController extends UIController
      */
     private function processForm(Form $form)
     {
-        $data = $form->getData();
-        $file = $data['newMetadataFile'];
-        $originalFileName = $file->getClientOriginalName();
         $mdappLogger = $this->get('pelagos.util.mdapplogger');
 
         $errors = array();
@@ -416,6 +415,35 @@ class MdAppController extends UIController
         $envelopeWkt = null;
         $boundingBoxArray = null;
         $okToValidate = true;
+
+        $data = $form->getData();
+        $file = $data['newMetadataFile'];
+
+        if (null === $file) {
+            $errors[] = 'No file was selected for upload.';
+            $errStr = implode(', ', $errors);
+            $mdappLogger->writeLog('Failed upload attempt on: '
+                . ' unknown UDI '
+                . ' by: '
+                . $this->getUser()->getUsername()
+                . ' Reason: '
+                . $errStr
+                . ' (mdapp msg)');
+
+            return array(
+                'errors' => $errors,
+                'warnings' => null,
+                'dataset' => null,
+                'orig_filename' => null,
+                'geometryWkt' => null,
+                'envelopeWkt' => null,
+                'message' => null,
+                'udi' => null,
+                'isoValid' => null,
+            );
+        }
+
+        $originalFileName = $file->getClientOriginalName();
 
         // Check to see if filename is in correct format.
         if ($this->checkFilenameFormat($originalFileName)) {
@@ -466,9 +494,26 @@ class MdAppController extends UIController
             // otherwise, leave them set to null.
             if (count($gmls) > 0) {
                 $gml = $gmls[0];
-                $geometry = $geoUtil->convertGmlToWkt($gml);
-                $envelopeWkt = $geoUtil->calculateEnvelopeFromGml($gml);
-                $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
+                try {
+                    $geometry = $geoUtil->convertGmlToWkt($gml);
+                } catch (InvalidGmlException $e) {
+                    $errors[] = $e->getMessage() . ' while attempting GML to WKT conversion';
+                    $geometry = null;
+                }
+
+                try {
+                    $envelopeWkt = $geoUtil->calculateEnvelopeFromGml($gml);
+                } catch (InvalidGmlException $e) {
+                    $errors[] = $e->getMessage() . ' while attempting to calculate envelope from gml';
+                    $envelopeWkt = null;
+                }
+
+                try {
+                    $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
+                } catch (InvalidGmlException $e) {
+                    $errors[] = $e->getMessage() . ' while attempting to calculate bonding box from gml';
+                    $boundingBoxArray = array();
+                }
             }
         }
 
