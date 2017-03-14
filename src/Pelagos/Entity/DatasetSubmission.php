@@ -979,6 +979,13 @@ class DatasetSubmission extends Entity
             $this->setDistributionFormatName($entity->getDistributionFormatName());
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
             $this->setPrimaryDatasetContact($entity->getPrimaryDatasetContact());
+            // Copy the original Dataset Submission's dataset contacts.
+            foreach ($entity->getDatasetContacts() as $datasetContact) {
+                $newDatasetContact = new PersonDatasetSubmissionDatasetContact();
+                $newDatasetContact->setRole($datasetContact->getRole());
+                $newDatasetContact->setPerson($datasetContact->getPerson());
+                $this->addDatasetContact($newDatasetContact);
+            }
         } else {
             throw new \Exception('Class constructor requires a DIF or a DatasetSubmission. A ' . get_class($entity) . ' was passed.');
         }
