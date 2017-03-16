@@ -20,6 +20,12 @@ use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
  */
 class DatasetSubmissionType extends AbstractType
 {
+    /**
+     * Constructor for form type.
+     *
+     * @param Entity                                $entity The entity associated with this form.
+     * @param PersonDatasetSubmissionDatasetContact $poc    A point of contact.
+     */
     public function __construct(Entity $entity = null, PersonDatasetSubmissionDatasetContact $poc = null)
     {
         $this->formEntity = $entity;
