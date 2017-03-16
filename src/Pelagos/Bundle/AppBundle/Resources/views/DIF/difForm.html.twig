@@ -1,6 +1,6 @@
-<form id="difForm" 
-      action="{{ path('pelagos_api_difs_post') }}" 
-      method="post" 
+<form id="difForm"
+      action="{{ path('pelagos_api_difs_post') }}"
+      method="post"
       researchgroup="{{ path('pelagos_api_research_groups_get_collection') }}"
       personresearchgroup="{{ path('pelagos_api_person_research_groups_get_collection') }}"
       dataset="{{ path('pelagos_api_datasets_get_collection') }}"
@@ -76,7 +76,7 @@
                             <img class="info" src="{{ asset_url }}">
                             {% endimage %}
                             <div class="tooltiptext">
-                                <p>The secondary point of contact will be contacted if the primary point of contact cannot be reached or is unable to respond to questions about the dataset. Please select the appropriate person from the drop down list.</p>
+                                <p>The additional data point of contact will be contacted if the primary data point of contact cannot be reached or is unable to respond to questions about the dataset. Please select the appropriate person from the drop down list.</p>
                             </div>
                         </span>
                         {{ form_row(form.secondaryPointOfContact) }}
