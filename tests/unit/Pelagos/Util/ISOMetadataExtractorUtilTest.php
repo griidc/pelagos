@@ -123,6 +123,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
             array(
                 'getRole' => array_keys(PersonDatasetSubmission::ROLES)[0],
                 'getPerson' => $this->mockPerson,
+                'getId' => 8675309
             )
         );
 
