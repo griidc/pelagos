@@ -291,7 +291,7 @@ mdapp upload]]></gco:CharacterString>
                 </gmd:EX_Extent>
             </gmd:extent>
             <gmd:supplementalInformation>
-                <gco:CharacterString><![CDATA[test, DIF submission IE, revision in Chrome during approval, mdapp|mdapp|mdapp|mdapp|mdapp|mdapp]]></gco:CharacterString>
+                <gco:CharacterString>test parameter|test method|test instrument|test scale|test error|test provenance</gco:CharacterString>
             </gmd:supplementalInformation>
         </gmd:MD_DataIdentification>
     </gmd:identificationInfo>
