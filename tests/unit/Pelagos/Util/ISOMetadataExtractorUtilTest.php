@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityRepository;
 
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\Person;
+use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Pelagos\Util\ISOMetadataExtractorUtil;
 
 /**
@@ -88,7 +89,9 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
         $this->mockPerson = \Mockery::mock(
             'Pelagos\Entity\Person',
             array(
-                'getEmailAddress' => 'blah@blah.com'
+                'getEmailAddress' => 'blah@blah.com',
+                'getFirstName' => 'Mock',
+                'getLastName' => 'Person',
             )
         );
 
@@ -99,6 +102,18 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
                     EntityRepository::class,
                     array(
                         'findBy' => array($this->mockPerson),
+                    )
+                ),
+            )
+        );
+
+        $this->mockEntityManagerUnknownPerson = \Mockery::mock(
+            EntityManager::class,
+            array(
+                'getRepository' => \Mockery::mock(
+                    EntityRepository::class,
+                    array(
+                        'findBy' => null,
                     )
                 ),
             )
@@ -117,7 +132,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->util = new ISOMetadataExtractorUtil;
-        // I really should be mocking this, but I really need it to remember what it set, so I'm not.
+
         $this->datasetSubmission = new DatasetSubmission;
     }
 
@@ -290,5 +305,48 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($this->datasetSubmission->getDistributionFormatName());
         $this->assertNull($this->datasetSubmission->getFileDecompressionTechnique());
         $this->assertEmpty($this->datasetSubmission->getDatasetContacts());
+    }
+
+    /**
+     * Test the extractPointsOfContact method that extracts PersonDatasetSubmissionDatasetContacts from XML.
+     *
+     * @return void
+     */
+    public function testExtractPointsOfContact()
+    {
+        $this->xml = simplexml_load_file($this->testDataDir . 'test-multi-contacts.xml');
+
+        $contacts = ISOMetadataExtractorUtil::extractPointsOfContact($this->xml, $this->datasetSubmission, $this->mockEntityManager);
+
+        $this->assertInstanceOf(PersonDatasetSubmissionDatasetContact::class, $contacts[0]);
+        $this->assertEquals(
+            'Mock',
+            $contacts[0]->getPerson()->getFirstName()
+        );
+        $this->assertEquals(
+            'Person',
+            $contacts[0]->getPerson()->getLastName()
+        );
+        $this->assertEquals(
+            'principalInvestigator',
+            $contacts[0]->getRole()
+        );
+
+        $this->assertInstanceOf(PersonDatasetSubmissionDatasetContact::class, $contacts[1]);
+        $this->assertEquals(
+            'Mock',
+            $contacts[1]->getPerson()->getFirstName()
+        );
+        $this->assertEquals(
+            'Person',
+            $contacts[1]->getPerson()->getLastName()
+        );
+        $this->assertEquals(
+            'author',
+            $contacts[1]->getRole()
+        );
+
+        $this->assertEmpty(ISOMetadataExtractorUtil::extractPointsOfContact($this->xml, $this->datasetSubmission, $this->mockEntityManagerUnknownPerson));
+
     }
 }
