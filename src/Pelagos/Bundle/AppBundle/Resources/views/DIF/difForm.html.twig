@@ -1,6 +1,6 @@
-<form id="difForm" 
-      action="{{ path('pelagos_api_difs_post') }}" 
-      method="post" 
+<form id="difForm"
+      action="{{ path('pelagos_api_difs_post') }}"
+      method="post"
       researchgroup="{{ path('pelagos_api_research_groups_get_collection') }}"
       personresearchgroup="{{ path('pelagos_api_person_research_groups_get_collection') }}"
       dataset="{{ path('pelagos_api_datasets_get_collection') }}"
@@ -18,7 +18,7 @@
     <input type="hidden" id="isadmin" name="isadmin" value="{{ is_granted('ROLE_DATA_REPOSITORY_MANAGER') }}">
     {% endif %}
     <div id="udidiv" style="display:none;">
-        <h1>Unique Dataset Identifer (UDI):<span class="title" id="udilabel"></span></h1>
+        <h1>Unique Dataset Identifier (UDI):<span class="title" id="udilabel"></span></h1>
     </div>
     {% image '@PelagosAppBundle/Resources/public/images/warning.png' %}
     <div id="imgwarning" src="{{ asset_url }}">
@@ -76,7 +76,7 @@
                             <img class="info" src="{{ asset_url }}">
                             {% endimage %}
                             <div class="tooltiptext">
-                                <p>The secondary point of contact will be contacted if the primary point of contact cannot be reached or is unable to respond to questions about the dataset. Please select the appropriate person from the drop down list.</p>
+                                <p>The additional data point of contact will be contacted if the primary data point of contact cannot be reached or is unable to respond to questions about the dataset. Please select the appropriate person from the drop down list.</p>
                             </div>
                         </span>
                         {{ form_row(form.secondaryPointOfContact) }}
@@ -189,7 +189,7 @@
             <img class="info" src="{{ asset_url }}">
             {% endimage %}
             <div class="tooltiptext">
-                <p>Please expand on information you have provided in the abstract by giving more exact details about all variables or phenomena that you plan to measure, collect or generate. Please separate list items using a comma. </p>
+                <p>Please provide a comma separated list of the data parameters or variables with units that will be included in the dataset.</p>
             </div>
         </span>
         {{ form_row(form.variablesObserved) }}
@@ -307,7 +307,7 @@
                 <img class="info" src="{{ asset_url }}">
                 {% endimage %}
                 <div class="tooltiptext">
-                    <p>All research projects funded by the Gulf of Mexico Research Initiative (GoMRI) are required to make data publically accessible. Datasets can be submitted directly to GRIIDC, however, your dataset may also be submitted to a national data archival center. If your dataset is submitted to a national data archive center you must still register your dataset with the GRIIDC system so that the dataset can be catalogued with other datasets produced by GoMRI research projects. If you will be submitting your dataset to a national data center not on the list provided, please specify the data center and associated URL in the &ldquo;other&rdquo; field.</p>
+                    <p>All research projects funded by the Gulf of Mexico Research Initiative (GoMRI) are required to make data publicly accessible. Datasets can be submitted directly to GRIIDC, however, your dataset may also be submitted to a national data archival center. If your dataset is submitted to a national data archive center you must still register your dataset with the GRIIDC system so that the dataset can be cataloged with other datasets produced by GoMRI research projects. If you will be submitting your dataset to a national data center not on the list provided, please specify the data center and associated URL in the &ldquo;other&rdquo; field.</p>
                 </div>
             </span>
             <label for="difNatRepo"><b>Identify a National Data Archive for your Dataset, if applicable: </b></label>

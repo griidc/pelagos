@@ -95,12 +95,12 @@ class DIFType extends AbstractType
                 'required' => true,
             ))
             ->add('primaryPointOfContact', ChoiceType::class, array(
-                'label' => 'Primary Point of Contact:',
+                'label' => 'Primary Data Point of Contact:',
                 'placeholder' => '[PLEASE SELECT PROJECT FIRST]',
                 'required' => true,
             ))
             ->add('secondaryPointOfContact', ChoiceType::class, array(
-                'label' => 'Secondary Point of Contact:',
+                'label' => 'Additional Data Point of Contact:',
                 'placeholder' => '[PLEASE SELECT PROJECT FIRST]',
                 'required' => false,
             ))
@@ -155,7 +155,7 @@ class DIFType extends AbstractType
             ))
             ->add('variablesObserved', TextareaType::class, array(
                 'attr' => array('rows' => 3),
-                'label' => 'Phenomenon/Variables Observed or Generated:',
+                'label' => 'Data Parameters and Units:',
                 'attr' => array(
                     'placeholder' => 'Examples: wind speed (km/hr), salinity (ppt), temperature (°C), PCB concentrations in eggs from a specified species (ng/g wet weight), Ionic Strength (mM)'
                 ),
