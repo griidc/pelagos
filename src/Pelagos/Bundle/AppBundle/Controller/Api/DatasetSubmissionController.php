@@ -130,6 +130,9 @@ class DatasetSubmissionController extends EntityController
             throw new BadRequestHttpException('This submission has already been submitted');
         }
         $this->handleUpdate(DatasetSubmissionType::class, DatasetSubmission::class, $id, $request, 'PUT');
+        foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+            $this->container->get('pelagos.entity.handler')->update($datasetContact);
+        }
         return $this->makeNoContentResponse();
     }
 
@@ -165,9 +168,6 @@ class DatasetSubmissionController extends EntityController
         $datasetSubmission = $this->handleUpdate(DatasetSubmissionType::class, DatasetSubmission::class, $id, $request, 'PATCH');
         foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
             $entityHandler->update($datasetContact);
-        }
-        foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
-            $entityHandler->update($metadataContact);
         }
         return $this->makeNoContentResponse();
     }

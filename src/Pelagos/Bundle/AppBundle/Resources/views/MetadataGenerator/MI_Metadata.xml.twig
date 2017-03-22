@@ -12,16 +12,16 @@
     <gmd:hierarchyLevel>
         <gmd:MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode" codeListValue="dataset" codeSpace="005">dataset</gmd:MD_ScopeCode>
     </gmd:hierarchyLevel>
-    {% for contact in dataset.datasetSubmission.metadataContacts %}
+    {% if dataset.datasetSubmission.submitter %}
     <gmd:contact>
         {% include "PelagosAppBundle:MetadataGenerator:CI_ResponsibleParty.xml.twig" with
             {
-            "Person" : contact.person,
-            "role" : contact.role,
+                "Person" : dataset.datasetSubmission.submitter,
+                "role" : "pointOfContact",
             }
         %}
     </gmd:contact>
-    {% endfor %}
+    {% endif %}
     <gmd:dateStamp>
         <gco:DateTime>{{ "now" | date("c") }}</gco:DateTime>
     </gmd:dateStamp>

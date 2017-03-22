@@ -63,7 +63,7 @@ services:
 
     pelagos.form.type.dif:
         class: Pelagos\Bundle\AppBundle\Form\DIFType
-        arguments: ["@doctrine.orm.entity_manager", "@security.authorization_checker"]
+        arguments: ["@doctrine.orm.entity_manager", "@security.authorization_checker", "@security.token_storage"]
         tags:
             - { name: form.type }
 

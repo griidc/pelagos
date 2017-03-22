@@ -12,7 +12,6 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
-use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 
 /**
  * A form type for creating a Dataset Submission form.
@@ -214,18 +213,6 @@ class DatasetSubmissionType extends AbstractType
                 'entry_type' => PersonDatasetSubmissionType::class,
                 'entry_options' => array(
                     'data_class' => PersonDatasetSubmissionDatasetContact::class,
-                ),
-                'by_reference' => false,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'delete_empty' => true,
-                'required' => true,
-            ))
-            ->add('metadataContacts', Type\CollectionType::class, array(
-                'label' => 'Metadata Contacts',
-                'entry_type' => PersonDatasetSubmissionType::class,
-                'entry_options' => array(
-                    'data_class' => PersonDatasetSubmissionMetadataContact::class,
                 ),
                 'by_reference' => false,
                 'allow_add' => true,
