@@ -115,7 +115,7 @@ class DatasetSubmissionController extends UIController
 
                     if ($dif->getStatus() == DIF::STATUS_APPROVED) {
                         // This is the first submission, so create a new one based on the DIF.
-                        $datasetSubmission = new DatasetSubmission($dif);
+                        $datasetSubmission = new DatasetSubmission($dif, new PersonDatasetSubmissionDatasetContact);
                         $datasetSubmission->setSequence(1);
 
                         try {

@@ -67,7 +67,7 @@ class ISOMetadataExtractorUtil
      */
     protected static function setIfHas(DatasetSubmission &$ds, $setter, $value)
     {
-        if (null !== $value) {
+        if (!empty($value)) {
             try {
                 $ds->$setter($value);
             } catch (\InvalidArgumentException $e) {
@@ -712,9 +712,14 @@ class ISOMetadataExtractorUtil
         if (null === $list) {
             return null;
         } else {
-            $items = explode('|', $list);
+            if (preg_match('/^.*\|.*\|.*\|.*\|.*$/', $list)) {
+                $items = explode('|', $list);
 
-            if (!array_key_exists($offset, $items)) {
+                if (!array_key_exists($offset, $items)) {
+                    return null;
+                }
+            } else {
+                // cannot parse
                 return null;
             }
 

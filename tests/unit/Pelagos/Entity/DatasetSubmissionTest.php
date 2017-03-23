@@ -30,6 +30,13 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
     protected $mockDataset;
 
     /**
+     * A mock DIF.
+     *
+     * @var DIF
+     */
+    protected $mockDif;
+
+    /**
      * A mock PersonDatasetSubmissionDatasetContact.
      *
      * @var PersonDatasetSubmissionDatasetContact
@@ -72,14 +79,28 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
                 'getEmailAddress' => 'mock.person@test.null',
             )
         );
+        $this->mockDif = \Mockery::mock(
+            DIF::class,
+            array(
+                'getDataset' => $this->mockDataset,
+                'getTitle' => 'Title from DIF',
+                'getAbstract' => 'Abstract from DIF',
+                'getVariablesObserved' => null,
+                'getSpatialExtentGeometry' => null,
+                'getSpatialExtentDescription' => null,
+                'getPrimaryPointOfContact' => $this->mockPerson,
+
+            )
+        );
         $this->mockPersonDatasetSubmissionDatasetContact = \Mockery::mock(
             PersonDatasetSubmissionDatasetContact::class,
             array(
                 'setDatasetSubmission' => null,
                 'getPerson' => $this->mockPerson,
+                'setPerson' => null
             )
         );
-        $this->datasetSubmission = new DatasetSubmission;
+        $this->datasetSubmission = new DatasetSubmission($this->mockDif, $this->mockPersonDatasetSubmissionDatasetContact);
     }
 
     /**
@@ -143,7 +164,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test basic info setters and getters: title, shortTitle, abstract, authors.
+     * Test basic info setters and getters: title, shortTitle, abstract, authors, primary POC.
      *
      * @return void
      */
@@ -173,6 +194,10 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             'test authors',
             $this->datasetSubmission->getAuthors()
         );
+        $this->assertSame(
+            $this->mockPersonDatasetSubmissionDatasetContact,
+            $this->datasetSubmission->getPrimaryDatasetContact()
+        );
     }
 
     /**
@@ -187,11 +212,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             Collection::class,
             $this->datasetSubmission->getDatasetContacts()
         );
-        // datasetContacts should be initially empty.
-        $this->assertTrue($this->datasetSubmission->getDatasetContacts()->isEmpty());
-        // Add a mock contact.
-        $this->datasetSubmission->addDatasetContact($this->mockPersonDatasetSubmissionDatasetContact);
-        // There should be one item in datasetContacts.
+        // datasetContacts should be initially have a single contact, from DIF.
         $this->assertEquals(
             1,
             $this->datasetSubmission->getDatasetContacts()->count()
@@ -201,10 +222,18 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             $this->mockPersonDatasetSubmissionDatasetContact,
             $this->datasetSubmission->getDatasetContacts()->first()
         );
-        // Remove the contact.
+        // Test removeContact.
         $this->datasetSubmission->removeDatasetContact($this->mockPersonDatasetSubmissionDatasetContact);
-        // datasetContacts should now be empty.
-        $this->assertTrue($this->datasetSubmission->getDatasetContacts()->isEmpty());
+        $this->assertEquals(
+            0,
+            $this->datasetSubmission->getDatasetContacts()->count()
+        );
+        // Test addContact method.
+        $this->datasetSubmission->addDatasetContact($this->mockPersonDatasetSubmissionDatasetContact);
+        $this->assertSame(
+            $this->mockPersonDatasetSubmissionDatasetContact,
+            $this->datasetSubmission->getDatasetContacts()->first()
+        );
     }
 
     /**
@@ -214,10 +243,6 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      */
     public function testPointOfContact()
     {
-        $this->assertNull($this->datasetSubmission->getPointOfContactName());
-        $this->assertNull($this->datasetSubmission->getPointOfContactEmail());
-        // Add a mock contact.
-        $this->datasetSubmission->addDatasetContact($this->mockPersonDatasetSubmissionDatasetContact);
         $this->assertEquals(
             'Person, Mock',
             $this->datasetSubmission->getPointOfContactName()
@@ -362,8 +387,6 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetDatasetSubmissionId()
     {
-        $this->assertNull($this->datasetSubmission->getDatasetSubmissionId());
-        $this->datasetSubmission->setDataset($this->mockDataset);
         $this->datasetSubmission->setSequence(1);
         $this->assertEquals(
             'T1.x123.000:0001.001',
