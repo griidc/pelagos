@@ -1,0 +1,54 @@
+#!/bin/bash
+#
+# chkconfig: 35 98 02
+# description: Pelagos RabbitMQ Consumer Supervisor
+#
+
+# Get function from functions library
+. /etc/init.d/functions
+
+prog="pelagos-rabbitmq-consumer-supervisor"
+basecmd="bin/console rabbitmq-supervisor:control"
+runuser=pelagos
+SYMFONY_ENV=drupal_prod
+
+# Start the service
+start() {
+        echo -n $"Starting $prog: "
+        if su - $runuser -c "SYMFONY_ENV=$SYMFONY_ENV $basecmd start" ; then
+            success
+        else
+            failure
+        fi
+        echo
+}
+
+# Stop the service
+stop() {
+        echo -n $"Stopping $prog: "
+        if su - $runuser -c "SYMFONY_ENV=$SYMFONY_ENV $basecmd stop" ; then
+            success
+        else
+            failure
+        fi
+        echo
+}
+ 
+### main logic ###
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart)
+        stop
+        start
+        ;;
+  *)
+        echo $"Usage: $0 {start|stop|restart}"
+        exit 1
+esac
+  
+exit 0
