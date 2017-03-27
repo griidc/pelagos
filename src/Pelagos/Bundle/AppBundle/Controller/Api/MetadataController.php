@@ -65,7 +65,8 @@ class MetadataController extends EntityController
      * @ApiDoc(
      *   section = "Metadata",
      *   parameters = {
-     *     {"name"="someProperty", "dataType"="string", "required"=true, "description"="Filter by someProperty"}
+     *     {"name"="someProperty", "dataType"="string", "required"=true, "description"="Filter by someProperty"},
+     *     {"name"="forceSourceFromSubmission", "dataType"="boolean", "required"=false, "description"="Only generate MD from latest submission."}
      *   },
      *   output = "XML",
      *   statusCodes = {
@@ -86,7 +87,16 @@ class MetadataController extends EntityController
      */
     public function getAction(Request $request)
     {
-        $datasets = $this->container->get('pelagos.entity.handler')->getBy(Dataset::class, $request->query->all());
+        $forceFromMetadata = false;
+        $params = $request->query->all();
+        if (isset($params['forceSourceFromSubmission'])) {
+            if (1 == $params['forceSourceFromSubmission']) {
+                $forceFromMetadata = true;
+            }
+            unset($params['forceSourceFromSubmission']);
+        }
+
+        $datasets = $this->container->get('pelagos.entity.handler')->getBy(Dataset::class, $params);
 
         if (count($datasets) > 1) {
             throw new \Exception('Found more than one Dataset');
@@ -103,7 +113,7 @@ class MetadataController extends EntityController
         $metadata = $dataset->getMetadata();
         $metadataFilename = preg_replace('/:/', '-', $dataset->getUdi()) . '-metadata.xml';
 
-        if ($dataset->getMetadataStatus() == DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+        if (!$forceFromMetadata and $dataset->getMetadataStatus() == DatasetSubmission::METADATA_STATUS_ACCEPTED) {
             if ($dataset->getMetadata() instanceof Metadata and
                 $dataset->getMetadata()->getXml() instanceof \SimpleXMLElement
             ) {
