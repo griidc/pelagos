@@ -23,7 +23,7 @@
     </gmd:contact>
     {% endif %}
     <gmd:dateStamp>
-        <gco:DateTime>{{ "now" | date("c") }}</gco:DateTime>
+        <gco:DateTime>{{ dataset.datasetSubmission.submissionTimeStamp|date("Y-m-d", "UTC") }}</gco:DateTime>
     </gmd:dateStamp>
     <gmd:metadataStandardName>
         <gco:CharacterString>ISO 19115-2 Geographic Information - Metadata - Part 2: Extensions for Imagery and Gridded Data</gco:CharacterString>
