@@ -139,14 +139,30 @@ class LdapClient implements LdapClientInterface
             $filter = array($filter);
         }
 
-        $search = ldap_search($this->connection, $dn, $query, $filter);
-        $infos = ldap_get_entries($this->connection, $search);
+        // LDAP page size for paginated queries.  This is too static to parametarize, imho.
+        $pageSize = 100;
+        // Cookie for state-tracking of LDAP paginated query.
+        $pagingCookie = '';
+        // Array to contain entries from all pages of ldap query.
+        $entries = array();
 
-        if (0 === $infos['count']) {
+        do {
+            ldap_control_paged_result($this->connection, $pageSize, true, $pagingCookie);
+
+            $search = ldap_search($this->connection, $dn, $query, $filter);
+            $pageOfEntries = ldap_get_entries($this->connection, $search);
+
+            $entries = array_merge($entries, $pageOfEntries);
+
+            ldap_control_paged_result_response($this->connection, $search, $pagingCookie);
+
+        } while (null !== $pagingCookie && '' !== $pagingCookie);
+
+        if (0 === $entries['count']) {
             return null;
+        } else {
+            return $entries;
         }
-
-        return $infos;
     }
 
     /**
