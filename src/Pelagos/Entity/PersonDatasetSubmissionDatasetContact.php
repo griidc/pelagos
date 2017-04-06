@@ -26,21 +26,39 @@ class PersonDatasetSubmissionDatasetContact extends PersonDatasetSubmission
     protected $datasetSubmission;
 
     /**
-     * This flag represents whether this entity is deemed primary.
+     * Whether this entity is a primary contact, or not.
      *
      * @var boolean
      *
      * @ORM\Column(type="boolean", nullable=true)
      */
-    protected $primaryFlag;
+    protected $primaryContact;
 
     /**
-     * Getter for primary flag.
+     * Getter for primary contact indicator.
      *
      * @return boolean
      */
-    public function getPrimaryFlag()
+    public function isPrimaryContact()
     {
-        return $this->primaryFlag();
+        return $this->primaryContact;
+    }
+
+    /**
+     * Setter for primary contact indicator. This is intented to be protected.
+     *
+     * @param boolean|null $state Which state to set.
+     *
+     * @throws \Exception If method is called with anything other than a bool or a null.
+     *
+     * @return void
+     */
+    public function setPrimaryContact($state)
+    {
+        if (is_bool($state) or null === $state) {
+            $this->primaryContact = $state;
+        } else {
+            throw new \Exception('setPrimaryContact method called with invalid parameter');
+        }
     }
 }
