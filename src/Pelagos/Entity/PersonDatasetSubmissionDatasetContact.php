@@ -24,4 +24,21 @@ class PersonDatasetSubmissionDatasetContact extends PersonDatasetSubmission
      * @ORM\ManyToOne(targetEntity="DatasetSubmission", inversedBy="datasetContacts")
      */
     protected $datasetSubmission;
+
+    /**
+     * This flag represents whether this entity is deemed primary.
+     *
+     * @var boolean
+     */
+    protected $primaryFlag;
+
+    /**
+     * Getter for primary flag.
+     *
+     * @return boolean
+     */
+    public function getPrimaryFlag()
+    {
+        return $this->primaryFlag();
+    }
 }
