@@ -2252,4 +2252,29 @@ class DatasetSubmission extends Entity
             )
         );
     }
+
+    /**
+     * Designate a Primary PersonDatasetSubmissionDatasetContact.
+     *
+     * @param PersonDatasetSubmissionDatasetContact $primaryPersonDatasetSubmissionDatasetContact Contact to designate as Primary.
+     *
+     * @throws \Exception If $primaryPersonDatasetSubmissionDatasetContact not in collection.
+     *
+     * @return void
+     */
+    public function designatePrimaryPersonDatasetSubmissionDatasetContact(PersonDatasetSubmissionDatasetContact $primaryPersonDatasetSubmissionDatasetContact)
+    {
+        // Make sure $primaryPersonDatasetSubmissionDatasetContact is in collection. Warning: O(n) complexity call.
+        if (false === ($this->datasetContacts->contains($primaryPersonDatasetSubmissionDatasetContact))) {
+            throw new \Exception('designated primany contact not in list of contacts.');
+        }
+
+        // Unset any existing PDSDC primary contact.
+        foreach ($this->datasetContacts as $contact) {
+            $contact->reflectionSetPrimaryContact(false);
+        }
+
+        // Set new PDSDC.
+        $primaryPersonDatasetSubmissionDatasetContact->reflectionsSetPrimaryContact(true);
+    }
 }
