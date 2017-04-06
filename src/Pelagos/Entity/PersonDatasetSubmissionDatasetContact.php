@@ -29,6 +29,8 @@ class PersonDatasetSubmissionDatasetContact extends PersonDatasetSubmission
      * This flag represents whether this entity is deemed primary.
      *
      * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $primaryFlag;
 
