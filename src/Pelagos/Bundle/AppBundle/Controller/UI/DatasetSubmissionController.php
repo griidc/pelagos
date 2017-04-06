@@ -440,6 +440,7 @@ class DatasetSubmissionController extends UIController
                 'temporalExtentEndPosition',
                 'distributionFormatName',
                 'fileDecompressionTechnique',
+                'authors',
             );
             foreach ($clearProperties as $property) {
                 $accessor->setValue($datasetSubmission, $property, null);
