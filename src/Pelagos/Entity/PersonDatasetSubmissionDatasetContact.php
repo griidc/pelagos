@@ -45,20 +45,10 @@ class PersonDatasetSubmissionDatasetContact extends PersonDatasetSubmission
     }
 
     /**
-     * Setter for primary contact indicator. This is intented to be protected.
-     *
-     * @param boolean|null $state Which state to set.
-     *
-     * @throws \Exception If method is called with anything other than a bool or a null.
-     *
-     * @return void
+     * Class constructor.
      */
-    public function setPrimaryContact($state)
+    public function __construct()
     {
-        if (is_bool($state) or null === $state) {
-            $this->primaryContact = $state;
-        } else {
-            throw new \Exception('setPrimaryContact method called with invalid parameter');
-        }
+        $this->primaryContact = false;
     }
 }
