@@ -924,6 +924,7 @@ class DatasetSubmission extends Entity
             // DIF's primaryPointOfContact is required by DIF.
             $datasetPPOc->setPerson($entity->getPrimaryPointOfContact());
             $this->addDatasetContact($datasetPPOc);
+            $this->designatePrimaryPersonDatasetSubmissionDatasetContact($datasetPPOc);
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
             $this->setSequence($entity->getSequence() + 1);
@@ -2262,19 +2263,19 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function designatePrimaryPersonDatasetSubmissionDatasetContact(PersonDatasetSubmissionDatasetContact $primaryPersonDatasetSubmissionDatasetContact)
+    private function designatePrimaryPersonDatasetSubmissionDatasetContact(PersonDatasetSubmissionDatasetContact $primaryPersonDatasetSubmissionDatasetContact)
     {
-        // Make sure $primaryPersonDatasetSubmissionDatasetContact is in collection. Warning: O(n) complexity call.
+        // Make sure $primaryPersonDatasetSubmissionDatasetContact is in collection.
         if (false === ($this->datasetContacts->contains($primaryPersonDatasetSubmissionDatasetContact))) {
             throw new \Exception('designated primany contact not in list of contacts.');
         }
 
-        // Unset any existing PDSDC primary contact.
-        foreach ($this->datasetContacts as $contact) {
-            $contact->reflectionSetPrimaryContact(false);
-        }
+        // Treaspass PDSDC and set flag designating primary status.
+        $reflection = new \ReflectionClass($primaryPersonDatasetSubmissionDatasetContact);
+        $property = $reflection->getProperty('primaryContact');
+        $property->setAccessible(true);
+        $property->setValue($primaryPersonDatasetSubmissionDatasetContact, false);
+        $property->setAccessible(false);
 
-        // Set new PDSDC.
-        $primaryPersonDatasetSubmissionDatasetContact->reflectionsSetPrimaryContact(true);
     }
 }
