@@ -45,6 +45,18 @@ class PersonDatasetSubmissionDatasetContact extends PersonDatasetSubmission
     }
 
     /**
+     * Setter for primary contact indicator.
+     *
+     * @param boolean $state A boolean to be set, true if primary contact, false otherwise.
+     *
+     * @return void
+     */
+    public function setPrimaryContact($state)
+    {
+        $this->primaryContact = $state;
+    }
+
+    /**
      * Class constructor.
      */
     public function __construct()

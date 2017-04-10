@@ -922,6 +922,7 @@ class DatasetSubmission extends Entity
             $this->setSpatialExtentDescription($entity->getSpatialExtentDescription());
             // Add DIF primary point of contact to collection and designate as primary dataset contact.
             // DIF's primaryPointOfContact is required by DIF.
+            $datasetPPOc->setPrimaryContact(true);
             $datasetPPOc->setPerson($entity->getPrimaryPointOfContact());
             $this->addDatasetContact($datasetPPOc);
             $this->designatePrimaryPersonDatasetSubmissionDatasetContact($datasetPPOc);
@@ -2252,23 +2253,5 @@ class DatasetSubmission extends Entity
                 static::TEMPORAL_EXTENT_DESCRIPTIONS
             )
         );
-    }
-
-    /**
-     * Designate a Primary PersonDatasetSubmissionDatasetContact.
-     *
-     * @param PersonDatasetSubmissionDatasetContact $primaryPersonDatasetSubmissionDatasetContact Contact to designate as Primary.
-     *
-     * @return void
-     */
-    private function designatePrimaryPersonDatasetSubmissionDatasetContact(PersonDatasetSubmissionDatasetContact $primaryPersonDatasetSubmissionDatasetContact)
-    {
-        // Trespass PDSDC and set flag designating primary status.
-        $reflection = new \ReflectionClass($primaryPersonDatasetSubmissionDatasetContact);
-        $property = $reflection->getProperty('primaryContact');
-        $property->setAccessible(true);
-        $property->setValue($primaryPersonDatasetSubmissionDatasetContact, true);
-        $property->setAccessible(false);
-
     }
 }
