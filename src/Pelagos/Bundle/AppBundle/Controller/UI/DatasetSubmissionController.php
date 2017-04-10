@@ -115,7 +115,9 @@ class DatasetSubmissionController extends UIController
 
                     if ($dif->getStatus() == DIF::STATUS_APPROVED) {
                         // This is the first submission, so create a new one based on the DIF.
-                        $datasetSubmission = new DatasetSubmission($dif, new PersonDatasetSubmissionDatasetContact);
+                        $personDatasetSubmissionDatasetContact =  new PersonDatasetSubmissionDatasetContact;
+                        $personDatasetSubmissionDatasetContact->setPrimaryContact(true);
+                        $datasetSubmission = new DatasetSubmission($dif, $personDatasetSubmissionDatasetContact);
                         $datasetSubmission->setSequence(1);
 
                         try {
@@ -146,6 +148,7 @@ class DatasetSubmissionController extends UIController
                             $datasetSubmission,
                             $this->get('doctrine.orm.entity_manager')
                         );
+                        $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
                     }
 
                     try {
