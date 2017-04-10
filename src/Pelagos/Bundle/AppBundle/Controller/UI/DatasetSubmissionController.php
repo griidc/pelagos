@@ -109,6 +109,7 @@ class DatasetSubmissionController extends UIController
                         $xmlStatus['errors'] = $e->getErrors();
                         $xmlStatus['success'] = false;
                     }
+                    $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
                 }
 
                 if ($datasetSubmission instanceof DatasetSubmission == false) {

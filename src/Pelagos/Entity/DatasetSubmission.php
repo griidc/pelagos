@@ -923,6 +923,7 @@ class DatasetSubmission extends Entity
             // Add DIF primary point of contact to collection and designate as primary dataset contact.
             // DIF's primaryPointOfContact is required by DIF.
             $datasetPPOc->setPerson($entity->getPrimaryPointOfContact());
+            $datasetPPOc->setRole(PersonDatasetSubmissionDatasetContact::getRoleChoices()['Author']);
             $this->addDatasetContact($datasetPPOc);
             $this->designatePrimaryPersonDatasetSubmissionDatasetContact($datasetPPOc);
         } elseif ($entity instanceof DatasetSubmission) {
