@@ -8,6 +8,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Pelagos\Entity\Person;
@@ -37,6 +39,7 @@ class PersonDatasetSubmissionType extends AbstractType
                 'choices' => PersonDatasetSubmission::getRoleChoices(),
                 'placeholder' => '[Please Select a Role]',
             ))
+            ->add('primaryContact', HiddenType::class)
             ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
                 $event->getForm()->add('person', EntityType::class, array(
                     'label' => 'Person',

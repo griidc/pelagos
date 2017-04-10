@@ -32,6 +32,7 @@
                     </select>
                     <label for="contactperson" class="error"></label>
                     {% include "PelagosAppBundle:DatasetSubmission:contact-information.html.twig" %}
+                    {{ form_widget(contact.primaryContact) }}
                 </td>
             </tr>
             <tr>
