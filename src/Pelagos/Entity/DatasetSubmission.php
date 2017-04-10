@@ -2259,22 +2259,15 @@ class DatasetSubmission extends Entity
      *
      * @param PersonDatasetSubmissionDatasetContact $primaryPersonDatasetSubmissionDatasetContact Contact to designate as Primary.
      *
-     * @throws \Exception If $primaryPersonDatasetSubmissionDatasetContact not in collection.
-     *
      * @return void
      */
     private function designatePrimaryPersonDatasetSubmissionDatasetContact(PersonDatasetSubmissionDatasetContact $primaryPersonDatasetSubmissionDatasetContact)
     {
-        // Make sure $primaryPersonDatasetSubmissionDatasetContact is in collection.
-        if (false === ($this->datasetContacts->contains($primaryPersonDatasetSubmissionDatasetContact))) {
-            throw new \Exception('designated primany contact not in list of contacts.');
-        }
-
-        // Treaspass PDSDC and set flag designating primary status.
+        // Trespass PDSDC and set flag designating primary status.
         $reflection = new \ReflectionClass($primaryPersonDatasetSubmissionDatasetContact);
         $property = $reflection->getProperty('primaryContact');
         $property->setAccessible(true);
-        $property->setValue($primaryPersonDatasetSubmissionDatasetContact, false);
+        $property->setValue($primaryPersonDatasetSubmissionDatasetContact, true);
         $property->setAccessible(false);
 
     }
