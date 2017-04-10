@@ -475,15 +475,6 @@ class DatasetSubmission extends Entity
     protected $datasetContacts;
 
     /**
-     * The Primary Point of Contact for this Dataset Submission.
-     *
-     * @var PersonDatasetSubmissionDatasetContact
-     *
-     * @ORM\OneToOne(targetEntity="PersonDatasetSubmissionDatasetContact")
-     */
-    protected $primaryDatasetContact;
-
-    /**
      * Whether the dataset has any restrictions.
      *
      * Legacy DB column: access_status
@@ -931,9 +922,10 @@ class DatasetSubmission extends Entity
             $this->setSpatialExtentDescription($entity->getSpatialExtentDescription());
             // Add DIF primary point of contact to collection and designate as primary dataset contact.
             // DIF's primaryPointOfContact is required by DIF.
+            $datasetPPOc->setPrimaryContact(true);
             $datasetPPOc->setPerson($entity->getPrimaryPointOfContact());
             $this->addDatasetContact($datasetPPOc);
-            $this->setPrimaryDatasetContact($datasetPPOc);
+            $this->designatePrimaryPersonDatasetSubmissionDatasetContact($datasetPPOc);
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
             $this->setSequence($entity->getSequence() + 1);
@@ -984,9 +976,6 @@ class DatasetSubmission extends Entity
                 $newDatasetContact->setRole($datasetContact->getRole());
                 $newDatasetContact->setPerson($datasetContact->getPerson());
                 $this->addDatasetContact($newDatasetContact);
-                if ($entity->getPrimaryDatasetContact()->getId() === $datasetContact->getId()) {
-                    $this->setPrimaryDatasetContact($newDatasetContact);
-                }
             }
         } else {
             throw new \Exception('Class constructor requires a DIF or a DatasetSubmission. A ' . get_class($entity) . ' was passed.');
@@ -1263,36 +1252,6 @@ class DatasetSubmission extends Entity
     public function getDatasetContacts()
     {
         return $this->datasetContacts;
-    }
-
-    /**
-     * Getter of primaryDatasetContact.
-     *
-     * @access public
-     *
-     * @return PersonDatasetSubmissionDatasetContact
-     */
-    public function getPrimaryDatasetContact()
-    {
-        return $this->primaryDatasetContact;
-    }
-
-    /**
-     * Setter of primaryDatasetContact.
-     *
-     * @param PersonDatasetSubmissionDatasetContact $primaryPoc The primary POC for this dataset.
-     *
-     * @access public
-     *
-     * @return void
-     */
-    public function setPrimaryDatasetContact(PersonDatasetSubmissionDatasetContact $primaryPoc)
-    {
-        if (false === $primaryPoc) {
-            $this->primaryDatasetContact = null;
-        } else {
-            $this->primaryDatasetContact = $primaryPoc;
-        }
     }
 
     /**
