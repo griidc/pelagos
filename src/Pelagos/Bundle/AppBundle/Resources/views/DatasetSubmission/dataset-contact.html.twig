@@ -99,7 +99,7 @@
                 </select>
                 <label for="{{contact.person.vars.full_name}}" class="error"></label>
                 {% include "PelagosAppBundle:DatasetSubmission:contact-information.html.twig" %}
-                {{ form_widget(contact.primaryContact) }}
+                {{ form_widget(contact.primaryContact, {"attr": {"class": "prototype", "disabled": "disabled"}}) }}
             </td>
         </tr>
         <tr>
