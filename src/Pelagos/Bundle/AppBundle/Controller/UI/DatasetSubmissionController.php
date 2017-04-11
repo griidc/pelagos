@@ -109,14 +109,13 @@ class DatasetSubmissionController extends UIController
                         $xmlStatus['errors'] = $e->getErrors();
                         $xmlStatus['success'] = false;
                     }
-                    $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
                 }
 
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
 
                     if ($dif->getStatus() == DIF::STATUS_APPROVED) {
                         // This is the first submission, so create a new one based on the DIF.
-                        $personDatasetSubmissionDatasetContact =  new PersonDatasetSubmissionDatasetContact;
+                        $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact;
                         $datasetSubmission = new DatasetSubmission($dif, $personDatasetSubmissionDatasetContact);
                         $datasetSubmission->setSequence(1);
 
@@ -462,6 +461,7 @@ class DatasetSubmissionController extends UIController
                 $datasetSubmission,
                 $this->get('doctrine.orm.entity_manager')
             );
+            $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
         } else {
             throw new InvalidMetadataException(array('This does not appear to be valid ISO 19115-2 metadata.'));
         }
