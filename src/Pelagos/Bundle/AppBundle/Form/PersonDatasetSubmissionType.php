@@ -41,7 +41,7 @@ class PersonDatasetSubmissionType extends AbstractType
             ->add('primaryContact', CheckboxType::class, array(
                 'label' => 'Is Primary Contact',
                 'required' => false,
-                'attr' => array('style' => 'ddisplay:none;'),
+                'attr' => array('style' => 'display:none;'),
             ))
             ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
                 $event->getForm()->add('person', EntityType::class, array(
