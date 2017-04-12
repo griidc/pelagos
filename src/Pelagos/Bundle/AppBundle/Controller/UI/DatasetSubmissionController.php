@@ -418,9 +418,7 @@ class DatasetSubmissionController extends UIController
         $xml = simplexml_load_file($xmlURI, 'SimpleXMLElement', (LIBXML_NOERROR | LIBXML_NOWARNING));
 
         if ($xml instanceof \SimpleXMLElement and 'MI_Metadata' == $xml->getName()) {
-            foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
-                $datasetSubmission->removeDatasetContact($datasetContact);
-            }
+            $datasetSubmission->getDatasetContacts()->clear();
             $accessor = PropertyAccess::createPropertyAccessor();
             $clearProperties = array(
                 'title',
@@ -461,6 +459,7 @@ class DatasetSubmissionController extends UIController
                 $datasetSubmission,
                 $this->get('doctrine.orm.entity_manager')
             );
+
             $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
         } else {
             throw new InvalidMetadataException(array('This does not appear to be valid ISO 19115-2 metadata.'));
