@@ -51,11 +51,19 @@ $(function() {
         });
     });
 
-    var datasetContactsCount = $("#dataset-contacts table").length;
+    var datasetContactsCount = 0;
+
+    // Count the highest index in dataset contacts.
+    $("table.dataset-contacts[index]").each(function() {
+        var value = parseFloat($(this).attr('index'));
+        datasetContactsCount = (value > datasetContactsCount) ? value : datasetContactsCount;
+    });
 
     $("#addContact")
     .button()
     .click(function(){
+        datasetContactsCount++;
+
         var newContact = $("#contact-prototype table")
         .clone(true)
         .find(":input[id][name]")
@@ -76,8 +84,6 @@ $(function() {
         .fadeIn("slow");
 
         $("#dataset-contacts").append(newContact);
-
-        datasetContactsCount++;
 
         select2ContactPerson();
 
