@@ -97,7 +97,9 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             array(
                 'setDatasetSubmission' => null,
                 'getPerson' => $this->mockPerson,
-                'setPerson' => null
+                'setPerson' => null,
+                'setRole' => null,
+                'setPrimaryContact' => null
             )
         );
         $this->datasetSubmission = new DatasetSubmission($this->mockDif, $this->mockPersonDatasetSubmissionDatasetContact);
@@ -193,10 +195,6 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             'test authors',
             $this->datasetSubmission->getAuthors()
-        );
-        $this->assertSame(
-            $this->mockPersonDatasetSubmissionDatasetContact,
-            $this->datasetSubmission->getPrimaryDatasetContact()
         );
     }
 
