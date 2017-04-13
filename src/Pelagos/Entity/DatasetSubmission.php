@@ -465,7 +465,7 @@ class DatasetSubmission extends Entity
      *
      * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionDatasetContact", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
      *
-     * @ORM\OrderBy({"creationTimeStamp" = "ASC"})
+     * @ORM\OrderBy({"primaryContact" = "DESC", "creationTimeStamp" = "ASC"})
      *
      * @Assert\Count(
      *      min = "1",
