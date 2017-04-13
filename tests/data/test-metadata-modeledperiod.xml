@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <gmi:MI_Metadata xmlns="http://www.isotc211.org/2005/gmi" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gsr="http://www.isotc211.org/2005/gsr" xmlns:gss="http://www.isotc211.org/2005/gss" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.isotc211.org/2005/gmi http://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd">
     <gmd:fileIdentifier>
-        <gco:CharacterString>Y1.x049.000-0010-metadata.xml</gco:CharacterString>
+        <gco:CharacterString>test-metadata.xml</gco:CharacterString>
     </gmd:fileIdentifier>
     <gmd:language>
         <gco:CharacterString>eng; USA</gco:CharacterString>
@@ -15,64 +15,59 @@
     <gmd:contact>
         <gmd:CI_ResponsibleParty>
             <gmd:individualName>
-                <gco:CharacterString>S. Researcher Ellis</gco:CharacterString>
+                <gco:CharacterString>Test Name</gco:CharacterString>
             </gmd:individualName>
             <gmd:organisationName>
-                <gco:CharacterString>TAMUCC</gco:CharacterString>
+                <gco:CharacterString>Test Organization</gco:CharacterString>
             </gmd:organisationName>
             <gmd:positionName>
-                <gco:CharacterString>Research Assistant</gco:CharacterString>
+                <gco:CharacterString>Test Position</gco:CharacterString>
             </gmd:positionName>
             <gmd:contactInfo>
                 <gmd:CI_Contact>
                     <gmd:phone>
                         <gmd:CI_Telephone>
                             <gmd:voice>
-                                <gco:CharacterString>5555555555</gco:CharacterString>
+                                <gco:CharacterString>1 361-825-2048</gco:CharacterString>
                             </gmd:voice>
                             <gmd:facsimile>
-                                <gco:CharacterString></gco:CharacterString>
+                                <gco:CharacterString />
                             </gmd:facsimile>
                         </gmd:CI_Telephone>
                     </gmd:phone>
                     <gmd:address>
                         <gmd:CI_Address>
                             <gmd:deliveryPoint>
-                                <gco:CharacterString><![CDATA[1234 Road Street]]></gco:CharacterString>
+                                <gco:CharacterString>
+                                    <![CDATA[6300 Ocean Dr]]>
+</gco:CharacterString>
                             </gmd:deliveryPoint>
                             <gmd:city>
-                                <gco:CharacterString>Someplace</gco:CharacterString>
+                                <gco:CharacterString>Corpus Christi</gco:CharacterString>
                             </gmd:city>
                             <gmd:administrativeArea>
-                                <gco:CharacterString>Texas</gco:CharacterString>
+                                <gco:CharacterString>TX</gco:CharacterString>
                             </gmd:administrativeArea>
                             <gmd:postalCode>
-                                <gco:CharacterString>00000</gco:CharacterString>
+                                <gco:CharacterString>78412</gco:CharacterString>
                             </gmd:postalCode>
                             <gmd:country>
-                                <gco:CharacterString>United States of America</gco:CharacterString>
+                                <gco:CharacterString>USA</gco:CharacterString>
                             </gmd:country>
                             <gmd:electronicMailAddress>
-                                <gco:CharacterString>sellisresearcher@griidc-test.tamucc.edu</gco:CharacterString>
+                                <gco:CharacterString>griidc@gomri.org</gco:CharacterString>
                             </gmd:electronicMailAddress>
                         </gmd:CI_Address>
                     </gmd:address>
-                    <gmd:onlineResource>
-                        <gmd:CI_OnlineResource>
-                            <gmd:linkage>
-                                <gmd:URL>www.google.com</gmd:URL>
-                            </gmd:linkage>
-                        </gmd:CI_OnlineResource>
-                    </gmd:onlineResource>
                 </gmd:CI_Contact>
             </gmd:contactInfo>
             <gmd:role>
-                <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="author" codeSpace="011">author</gmd:CI_RoleCode>
+                <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="pointOfContact" codeSpace="007">pointOfContact</gmd:CI_RoleCode>
             </gmd:role>
         </gmd:CI_ResponsibleParty>
     </gmd:contact>
     <gmd:dateStamp>
-        <gco:DateTime>2017-01-19T22:15:52+00:00</gco:DateTime>
+        <gco:DateTime>2016-10-21T20:07:59+00:00</gco:DateTime>
     </gmd:dateStamp>
     <gmd:metadataStandardName>
         <gco:CharacterString>ISO 19115-2 Geographic Information - Metadata - Part 2: Extensions for Imagery and Gridded Data</gco:CharacterString>
@@ -80,23 +75,20 @@
     <gmd:metadataStandardVersion>
         <gco:CharacterString>ISO 19115-2:2009(E)</gco:CharacterString>
     </gmd:metadataStandardVersion>
-    <gmd:dataSetURI>
-        <gco:CharacterString>https://data.gulfresearchinitiative.org/metadata/Y1.x049.000:0010</gco:CharacterString>
-    </gmd:dataSetURI>
     <gmd:identificationInfo>
         <gmd:MD_DataIdentification>
             <gmd:citation>
                 <gmd:CI_Citation>
                     <gmd:title>
-                        <gco:CharacterString>This is a &lt;test&gt; title with &lt;em&gt;html&lt;/em&gt; uploaded via mdapp</gco:CharacterString>
+                        <gco:CharacterString>Test title</gco:CharacterString>
                     </gmd:title>
                     <gmd:alternateTitle>
-                        <gco:CharacterString>mdapp upload</gco:CharacterString>
+                        <gco:CharacterString>tst ttl</gco:CharacterString>
                     </gmd:alternateTitle>
                     <gmd:date>
                         <gmd:CI_Date>
                             <gmd:date>
-                                <gco:Date>2017-01-19</gco:Date>
+                                <gco:Date>2016-10-21</gco:Date>
                             </gmd:date>
                             <gmd:dateType>
                                 <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication" codeSpace="002">publication</gmd:CI_DateTypeCode>
@@ -106,15 +98,10 @@
                 </gmd:CI_Citation>
             </gmd:citation>
             <gmd:abstract>
-                <gco:CharacterString><![CDATA[This is a &amp;lt;test&amp;gt; abstract. With &amp;lt;em&amp;gt;html&amp;lt;/em&amp;gt;
-I have submitted this DIF for GRIIDC approval.
-Submitted by sellis2
-I have revised this as a DIF approver
-I have revised this during submission
-mdapp upload]]></gco:CharacterString>
+                <gco:CharacterString>Test abstract</gco:CharacterString>
             </gmd:abstract>
             <gmd:purpose>
-                <gco:CharacterString><![CDATA[this is the purpose provided in the mdapp upload]]></gco:CharacterString>
+                <gco:CharacterString>Test purpose</gco:CharacterString>
             </gmd:purpose>
             <gmd:status>
                 <gmd:MD_ProgressCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ProgressCode" codeListValue="completed" codeSpace="001">completed</gmd:MD_ProgressCode>
@@ -122,55 +109,50 @@ mdapp upload]]></gco:CharacterString>
             <gmd:pointOfContact>
                 <gmd:CI_ResponsibleParty>
                     <gmd:individualName>
-                        <gco:CharacterString>S. Researcher Ellis</gco:CharacterString>
+                        <gco:CharacterString>Test Name</gco:CharacterString>
                     </gmd:individualName>
                     <gmd:organisationName>
-                        <gco:CharacterString>TAMUCC</gco:CharacterString>
+                        <gco:CharacterString>Test Organization</gco:CharacterString>
                     </gmd:organisationName>
                     <gmd:positionName>
-                        <gco:CharacterString>Research Assistant</gco:CharacterString>
+                        <gco:CharacterString>Test Position</gco:CharacterString>
                     </gmd:positionName>
                     <gmd:contactInfo>
                         <gmd:CI_Contact>
                             <gmd:phone>
                                 <gmd:CI_Telephone>
                                     <gmd:voice>
-                                        <gco:CharacterString>5555555555</gco:CharacterString>
+                                        <gco:CharacterString>1 361-824-2048</gco:CharacterString>
                                     </gmd:voice>
                                     <gmd:facsimile>
-                                        <gco:CharacterString></gco:CharacterString>
+                                        <gco:CharacterString />
                                     </gmd:facsimile>
                                 </gmd:CI_Telephone>
                             </gmd:phone>
                             <gmd:address>
                                 <gmd:CI_Address>
                                     <gmd:deliveryPoint>
-                                        <gco:CharacterString><![CDATA[1234 Road Street]]></gco:CharacterString>
+                                        <gco:CharacterString>
+                                            <![CDATA[6300 Ocean Dr]]>
+</gco:CharacterString>
                                     </gmd:deliveryPoint>
                                     <gmd:city>
-                                        <gco:CharacterString>Someplace</gco:CharacterString>
+                                        <gco:CharacterString>Corpus Christi</gco:CharacterString>
                                     </gmd:city>
                                     <gmd:administrativeArea>
-                                        <gco:CharacterString>Texas</gco:CharacterString>
+                                        <gco:CharacterString>TX</gco:CharacterString>
                                     </gmd:administrativeArea>
                                     <gmd:postalCode>
-                                        <gco:CharacterString>00000</gco:CharacterString>
+                                        <gco:CharacterString>78412</gco:CharacterString>
                                     </gmd:postalCode>
                                     <gmd:country>
-                                        <gco:CharacterString>United States of America</gco:CharacterString>
+                                        <gco:CharacterString>USA</gco:CharacterString>
                                     </gmd:country>
                                     <gmd:electronicMailAddress>
-                                        <gco:CharacterString>sellisresearcher@griidc-test.tamucc.edu</gco:CharacterString>
+                                        <gco:CharacterString>griidc@gomri.org</gco:CharacterString>
                                     </gmd:electronicMailAddress>
                                 </gmd:CI_Address>
                             </gmd:address>
-                            <gmd:onlineResource>
-                                <gmd:CI_OnlineResource>
-                                    <gmd:linkage>
-                                        <gmd:URL>www.google.com</gmd:URL>
-                                    </gmd:linkage>
-                                </gmd:CI_OnlineResource>
-                            </gmd:onlineResource>
                         </gmd:CI_Contact>
                     </gmd:contactInfo>
                     <gmd:role>
@@ -178,72 +160,16 @@ mdapp upload]]></gco:CharacterString>
                     </gmd:role>
                 </gmd:CI_ResponsibleParty>
             </gmd:pointOfContact>
-            <gmd:pointOfContact>
-                <gmd:CI_ResponsibleParty>
-                    <gmd:individualName>
-                        <gco:CharacterString>M. Researcher Williamson</gco:CharacterString>
-                    </gmd:individualName>
-                    <gmd:organisationName>
-                        <gco:CharacterString>GRIIDC</gco:CharacterString>
-                    </gmd:organisationName>
-                    <gmd:positionName>
-                        <gco:CharacterString>Software Engineer</gco:CharacterString>
-                    </gmd:positionName>
-                    <gmd:contactInfo>
-                        <gmd:CI_Contact>
-                            <gmd:phone>
-                                <gmd:CI_Telephone>
-                                    <gmd:voice>
-                                        <gco:CharacterString>3618252048</gco:CharacterString>
-                                    </gmd:voice>
-                                    <gmd:facsimile>
-                                        <gco:CharacterString></gco:CharacterString>
-                                    </gmd:facsimile>
-                                </gmd:CI_Telephone>
-                            </gmd:phone>
-                            <gmd:address>
-                                <gmd:CI_Address>
-                                    <gmd:deliveryPoint>
-                                        <gco:CharacterString><![CDATA[1234 Road Street]]></gco:CharacterString>
-                                    </gmd:deliveryPoint>
-                                    <gmd:city>
-                                        <gco:CharacterString>Someplace Else</gco:CharacterString>
-                                    </gmd:city>
-                                    <gmd:administrativeArea>
-                                        <gco:CharacterString>Texas</gco:CharacterString>
-                                    </gmd:administrativeArea>
-                                    <gmd:postalCode>
-                                        <gco:CharacterString>00000</gco:CharacterString>
-                                    </gmd:postalCode>
-                                    <gmd:country>
-                                        <gco:CharacterString>United States of America</gco:CharacterString>
-                                    </gmd:country>
-                                    <gmd:electronicMailAddress>
-                                        <gco:CharacterString>michael.williamson@griidc-test.tamucc.edu</gco:CharacterString>
-                                    </gmd:electronicMailAddress>
-                                </gmd:CI_Address>
-                            </gmd:address>
-                            <gmd:onlineResource>
-                                <gmd:CI_OnlineResource>
-                                    <gmd:linkage>
-                                        <gmd:URL>www.google.com</gmd:URL>
-                                    </gmd:linkage>
-                                </gmd:CI_OnlineResource>
-                            </gmd:onlineResource>
-                        </gmd:CI_Contact>
-                    </gmd:contactInfo>
-                    <gmd:role>
-                        <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="author" codeSpace="011">author</gmd:CI_RoleCode>
-                    </gmd:role>
-                </gmd:CI_ResponsibleParty>
-            </gmd:pointOfContact>
             <gmd:descriptiveKeywords>
                 <gmd:MD_Keywords>
                     <gmd:keyword>
-                        <gco:CharacterString>mdapp</gco:CharacterString>
+                        <gco:CharacterString>test keyword 1</gco:CharacterString>
                     </gmd:keyword>
                     <gmd:keyword>
-                        <gco:CharacterString>8</gco:CharacterString>
+                        <gco:CharacterString>test keyword 2</gco:CharacterString>
+                    </gmd:keyword>
+                    <gmd:keyword>
+                        <gco:CharacterString>test keyword 3</gco:CharacterString>
                     </gmd:keyword>
                     <gmd:type>
                         <gmd:MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="theme" codeSpace="005">theme</gmd:MD_KeywordTypeCode>
@@ -252,15 +178,26 @@ mdapp upload]]></gco:CharacterString>
             </gmd:descriptiveKeywords>
             <gmd:descriptiveKeywords>
                 <gmd:MD_Keywords>
-                    <gmd:keyword gco:nilReason="inapplicable" />
+                    <gmd:keyword>
+                        <gco:CharacterString>test place 1</gco:CharacterString>
+                    </gmd:keyword>
+                    <gmd:keyword>
+                        <gco:CharacterString>test place 2</gco:CharacterString>
+                    </gmd:keyword>
+                    <gmd:keyword>
+                        <gco:CharacterString>test place 3</gco:CharacterString>
+                    </gmd:keyword>
                     <gmd:type>
                         <gmd:MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="place" codeSpace="002">place</gmd:MD_KeywordTypeCode>
                     </gmd:type>
                 </gmd:MD_Keywords>
             </gmd:descriptiveKeywords>
             <gmd:language>
-                <gco:CharacterString>eng; USA</gco:CharacterString>
+                <gco:CharacterString>eng;USA</gco:CharacterString>
             </gmd:language>
+            <gmd:topicCategory>
+                <gmd:MD_TopicCategoryCode>oceans</gmd:MD_TopicCategoryCode>
+            </gmd:topicCategory>
             <gmd:topicCategory>
                 <gmd:MD_TopicCategoryCode>economy</gmd:MD_TopicCategoryCode>
             </gmd:topicCategory>
@@ -269,11 +206,13 @@ mdapp upload]]></gco:CharacterString>
                     <gmd:geographicElement>
                         <gmd:EX_BoundingPolygon>
                             <gmd:polygon>
-                                <gml:Polygon gml:id="Polygon_16877038" srsName="urn:og:def:crs:EPSG::4326">
+                                <gml:Polygon srsName="urn:ogc:def:crs:EPSG::4326" gml:id="Polygon1">
                                     <gml:exterior>
-                                        <gml:LinearRing><gml:posList srsDimension="2">20 30 40 45 40 10 20 30</gml:posList></gml:LinearRing>
+                                        <gml:LinearRing>
+                                            <gml:posList srsDimension="2">27.68408 -97.21986 27.71022 -97.30019 27.72724 -97.34757 27.74973 -97.37366 27.76309 -97.37641 27.77767 -97.39014 27.8044 -97.3922 27.82019 -97.3874 27.84448 -97.36954 27.86269 -97.33384 27.87908 -97.28371 27.87969 -97.26174 27.87301 -97.24938 27.85662 -97.23977 27.85116 -97.23496 27.85055 -97.23084 27.8372 -97.22329 27.82384 -97.21848 27.8208 -97.18896 27.69016 -97.19308 27.68772 -97.20612 27.68651 -97.21505 27.68408 -97.21986</gml:posList>
+                                        </gml:LinearRing>
                                     </gml:exterior>
-                             </gml:Polygon>
+                                </gml:Polygon>
                             </gmd:polygon>
                         </gmd:EX_BoundingPolygon>
                     </gmd:geographicElement>
@@ -281,9 +220,9 @@ mdapp upload]]></gco:CharacterString>
                         <gmd:EX_TemporalExtent>
                             <gmd:extent>
                                 <gml:TimePeriod gml:id="boundingTemporalExtent">
-                                    <gml:description>ground condition</gml:description>
-                                    <gml:beginPosition>2017-01-07</gml:beginPosition>
-                                    <gml:endPosition>2017-01-07</gml:endPosition>
+                                    <gml:description>modeled period</gml:description>
+                                    <gml:beginPosition>2016-10-21</gml:beginPosition>
+                                    <gml:endPosition>2016-10-22</gml:endPosition>
                                 </gml:TimePeriod>
                             </gmd:extent>
                         </gmd:EX_TemporalExtent>
@@ -319,8 +258,10 @@ mdapp upload]]></gco:CharacterString>
                                     <gmd:address>
                                         <gmd:CI_Address>
                                             <gmd:deliveryPoint>
-                                                <gco:CharacterString><![CDATA[6300 Ocean Drive
-Unit 5869]]></gco:CharacterString>
+                                                <gco:CharacterString>
+                                                    <![CDATA[6300 Ocean Drive
+Unit 5869]]>
+</gco:CharacterString>
                                             </gmd:deliveryPoint>
                                             <gmd:city>
                                                 <gco:CharacterString>Corpus Christi</gco:CharacterString>
@@ -342,8 +283,11 @@ Unit 5869]]></gco:CharacterString>
                                     <gmd:onlineResource>
                                         <gmd:CI_OnlineResource>
                                             <gmd:linkage>
-                                                <gmd:URL>https://data.gulfresearchinitiative.org</gmd:URL>
+                                                <gmd:URL>http://data.gulfresearchinitiative.org</gmd:URL>
                                             </gmd:linkage>
+                                            <gmd:protocol>
+                                                <gco:CharacterString />
+                                            </gmd:protocol>
                                         </gmd:CI_OnlineResource>
                                     </gmd:onlineResource>
                                 </gmd:CI_Contact>
@@ -356,26 +300,26 @@ Unit 5869]]></gco:CharacterString>
                     <gmd:distributorFormat>
                         <gmd:MD_Format>
                             <gmd:name>
-                                <gco:CharacterString>test #7</gco:CharacterString>
+                                <gco:CharacterString>test format</gco:CharacterString>
                             </gmd:name>
                             <gmd:version gco:nilReason="inapplicable" />
                             <gmd:fileDecompressionTechnique>
-                                <gco:CharacterString>zip7</gco:CharacterString>
+                                <gco:CharacterString>test compression</gco:CharacterString>
                             </gmd:fileDecompressionTechnique>
                         </gmd:MD_Format>
                     </gmd:distributorFormat>
                     <gmd:distributorTransferOptions>
                         <gmd:MD_DigitalTransferOptions>
                             <gmd:transferSize>
-                                <gco:Real>0.0159</gco:Real>
+                                <gco:Real>1</gco:Real>
                             </gmd:transferSize>
                             <gmd:onLine>
                                 <gmd:CI_OnlineResource>
                                     <gmd:linkage>
-                                        <gmd:URL>https://data.gulfresearchinitiative.org/data/Y1.x049.000:0010</gmd:URL>
+                                        <gmd:URL>http://test.url</gmd:URL>
                                     </gmd:linkage>
                                     <gmd:protocol>
-                                        <gco:CharacterString>https</gco:CharacterString>
+                                        <gco:CharacterString>http</gco:CharacterString>
                                     </gmd:protocol>
                                 </gmd:CI_OnlineResource>
                             </gmd:onLine>
@@ -389,7 +333,7 @@ Unit 5869]]></gco:CharacterString>
         <gmd:MD_MaintenanceInformation>
             <gmd:maintenanceAndUpdateFrequency gco:nilReason="unknown" />
             <gmd:maintenanceNote>
-                <gco:CharacterString>This ISO metadata record was automatically generated from information provided to GRIIDC for dataset: Y1.x049.000:0010 on 2017-01-19T22:15:52+00:00</gco:CharacterString>
+                <gco:CharacterString>This ISO metadata record was created using the 'Check and Save to File' (with form validation) function of the GRIIDC ISO 19115-2 Metadata Editor on 2016-10-21T20:14:48+00:00</gco:CharacterString>
             </gmd:maintenanceNote>
         </gmd:MD_MaintenanceInformation>
     </gmd:metadataMaintenance>

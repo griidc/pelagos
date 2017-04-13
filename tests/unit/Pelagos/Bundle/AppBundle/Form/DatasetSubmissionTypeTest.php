@@ -3,9 +3,12 @@
 namespace Tests\unit\Pelagos\Bundle\AppBundle\Form;
 
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
+use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\DIF;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Symfony\Component\Form\PreloadedExtension;
 
 /**
  * Tests for Form/DatasetSubmissionType.
@@ -47,9 +50,11 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
      */
     public function setUp()
     {
+        $this->testDif = new DIF;
+        $this->testDif->setDataset(new Dataset);
+        $this->testPersonDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact;
+
         parent::setUp();
-        $this->form = $this->factory->create(DatasetSubmissionType::class);
-        $this->datasetSubmission = new DatasetSubmission;
     }
 
     /**
@@ -59,13 +64,18 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
      */
     public function testSubmitNoData()
     {
-        $this->form->submit(array());
+        $datasetSubmission = new DatasetSubmission($this->testDif, $this->testPersonDatasetSubmissionDatasetContact);
+
+        $form = $this->factory->create(DatasetSubmissionType::class);
+        $form->submit(array());
 
         // Set this to null for purposes of this test.
-        $this->datasetSubmission->setRestrictions(null);
+        $datasetSubmission->setRestrictions(null);
+        // Wipe out Dataset Contacts for test against blank form.
+        $datasetSubmission->getDatasetContacts()->clear();
 
         // Make sure an empty form does not change any default values.
-        $this->assertEquals($this->datasetSubmission, $this->form->getData());
+        $this->assertEquals($datasetSubmission, $form->getData());
     }
 
     /**
@@ -75,6 +85,8 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
      */
     public function testSubmitValidData()
     {
+        $form = $this->factory->create(DatasetSubmissionType::class);
+
         // Some form data for testing.
         $formData = array(
             'title' => 'test title',
@@ -111,7 +123,7 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
         );
 
         // Create a form view.
-        $formView = $this->form->createView();
+        $formView = $form->createView();
         // Loop though the form data.
         foreach (array_keys($formData) as $key) {
             // Make sure the form has fields for all the form data.
@@ -119,9 +131,9 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
         }
 
         // Submit the form.
-        $this->form->submit($formData);
+        $form->submit($formData);
         // Make sure the form was able to process the form data.
-        $this->assertTrue($this->form->isSynchronized());
+        $this->assertTrue($form->isSynchronized());
 
         // Convert date strings to DateTimes.
         $formData['referenceDate'] = new \DateTime($formData['referenceDate'], new \DateTimeZone('UTC'));
@@ -134,12 +146,26 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
         $formData['datasetContacts'] = array($personDatasetSubmissionDatasetContact);
 
         // Create a DatasetSubmission.
-        $datasetSubmission = new DatasetSubmission;
+        $datasetSubmission = new DatasetSubmission($this->testDif, $this->testPersonDatasetSubmissionDatasetContact);
         // Set properties to match form data.
         foreach ($formData as $property => $value) {
             $this->propertyAccessor->setValue($datasetSubmission, $property, $value);
         }
         // Compare with the entity created by the form.
-        $this->assertEquals($datasetSubmission, $this->form->getData());
+        $this->assertEquals($datasetSubmission, $form->getData());
+    }
+
+    /**
+     * Override parent's class, include our own PreloadeExtenion.
+     *
+     * @return array
+     */
+    protected function getExtensions()
+    {
+        $type = new DatasetSubmissionType($this->testDif, $this->testPersonDatasetSubmissionDatasetContact);
+
+        return array_merge(parent::getExtensions(), array(
+            new PreLoadedExtension(array($type), array()),
+        ));
     }
 }

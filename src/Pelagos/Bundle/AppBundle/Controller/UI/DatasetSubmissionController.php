@@ -115,7 +115,8 @@ class DatasetSubmissionController extends UIController
 
                     if ($dif->getStatus() == DIF::STATUS_APPROVED) {
                         // This is the first submission, so create a new one based on the DIF.
-                        $datasetSubmission = new DatasetSubmission($dif);
+                        $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact;
+                        $datasetSubmission = new DatasetSubmission($dif, $personDatasetSubmissionDatasetContact);
                         $datasetSubmission->setSequence(1);
 
                         try {
@@ -146,6 +147,7 @@ class DatasetSubmissionController extends UIController
                             $datasetSubmission,
                             $this->get('doctrine.orm.entity_manager')
                         );
+                        $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
                     }
 
                     try {
@@ -416,9 +418,7 @@ class DatasetSubmissionController extends UIController
         $xml = simplexml_load_file($xmlURI, 'SimpleXMLElement', (LIBXML_NOERROR | LIBXML_NOWARNING));
 
         if ($xml instanceof \SimpleXMLElement and 'MI_Metadata' == $xml->getName()) {
-            foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
-                $datasetSubmission->removeDatasetContact($datasetContact);
-            }
+            $datasetSubmission->getDatasetContacts()->clear();
             $accessor = PropertyAccess::createPropertyAccessor();
             $clearProperties = array(
                 'title',
@@ -440,6 +440,7 @@ class DatasetSubmissionController extends UIController
                 'temporalExtentEndPosition',
                 'distributionFormatName',
                 'fileDecompressionTechnique',
+                'authors',
             );
             foreach ($clearProperties as $property) {
                 $accessor->setValue($datasetSubmission, $property, null);
@@ -458,6 +459,8 @@ class DatasetSubmissionController extends UIController
                 $datasetSubmission,
                 $this->get('doctrine.orm.entity_manager')
             );
+
+            $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
         } else {
             throw new InvalidMetadataException(array('This does not appear to be valid ISO 19115-2 metadata.'));
         }

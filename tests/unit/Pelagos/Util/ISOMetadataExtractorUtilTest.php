@@ -1,11 +1,13 @@
 <?php
 namespace Tests\unit\Pelagos\Util;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\Person;
+use Pelagos\Entity\PersonDatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Pelagos\Util\ISOMetadataExtractorUtil;
 
@@ -73,6 +75,27 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
     protected $mockPerson;
 
     /**
+     * Holds a Mock PersonDatasetSubmissionDatasetContact.
+     *
+     * @var PersonDatasetSubmissionDatasetContact
+     */
+    protected $mockPersonDatasetSubmissionDatasetContact;
+
+    /**
+     * Holds a Mock dataset.
+     *
+     * @var Dataset
+     */
+    protected $mockDataset;
+
+    /**
+     * Holds a Datetime for testing.
+     *
+     * @var \DateTime
+     */
+    protected $testingDatetime;
+
+    /**
      * The directory that contains the test data.
      *
      * @var string
@@ -92,6 +115,75 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
                 'getEmailAddress' => 'blah@blah.com',
                 'getFirstName' => 'Mock',
                 'getLastName' => 'Person',
+            )
+        );
+
+        $this->mockPersonDatasetSubmissionDatasetContact = \Mockery::mock(
+            'Pelagos\Entity\PersonDatasetSubmissionDatasetContact',
+            array(
+                'getRole' => array_keys(PersonDatasetSubmission::ROLES)[0],
+                'getPerson' => $this->mockPerson,
+                'getId' => 8675309
+            )
+        );
+
+        $this->mockDataset = \Mockery::mock(
+            'Pelagos\Entity\Dataset',
+            array(
+                'updateAvailabilityStatus' => null,
+                'updateDoi' => null,
+                'setMetadataStatus' => null,
+            )
+        );
+
+        $this->testingDatetime = new \Datetime;
+
+        $this->mockDatasetSubmission = \Mockery::mock(
+            'Pelagos\Entity\DatasetSubmission',
+            array(
+                'getDataset' => $this->mockDataset,
+                'getSequence' => 2012,
+                'getTitle' => 'title from mock dataset submission',
+                'getShortTitle' => 'short title from mock dataset submission',
+                'getAbstract' => 'abstract from mock dataset submission',
+                'getAuthors' => 'authors from mock dataset submission',
+                'getRestrictions' => 'author only',
+                'getDoi' => 'AZ.x012.3456:7890',
+                'getDatasetFileTransferType' => 'transfer type from mock dataset submission',
+                'getDatasetFileUri' => 'uri from mock dataset submission',
+                'getDatasetFileTransferStatus' => 'status from mock dataset submission',
+                'getDatasetFileName' => 'dataset file name from mock dataset submission',
+                'getDatasetFileSize' => '12345',
+                'getDatasetFileMd5Hash' => '69630e4574ec6798239b091cda43dca0',
+                'getDatasetFileSha1Hash' => 'cf8bd9dfddff007f75adf4c2be48005cea317c62',
+                'getDatasetFileSha256Hash' => '131f95c51cc819465fa1797f6ccacf9d494aaaff46fa3eac73ae63ffbdfd8267',
+                'getMetadataFileTransferType' => 'metadataFileTransferType from mock dataset submission',
+                'getMetadataFileUri' => 'metadataFileUri from mock dataset submission',
+                'getMetadataFileTransferStatus' => 'xfer status from mock dataset submission',
+                'getMetadataFileName' => 'metadata file name from mock dataset submission',
+                'getMetadataFileSha256Hash' => 'metadata file sha256 from mock dataset submission',
+                'getMetadataStatus' => 'metadata status from mock dataset submission',
+                'getReferenceDate' => $this->testingDatetime,
+                'getReferenceDateType' => 'creation',
+                'getPurpose' => 'purpose from mock dataset submission',
+                'getSuppParams' => 'SuppParams from mock dataset submission',
+                'getSuppMethods' => 'SuppMethods from mock dataset submission',
+                'getSuppInstruments' => 'SuppInstruments from mock dataset submission',
+                'getSuppSampScalesRates' => 'SuppSampScalesRates from mock dataset submission',
+                'getSuppErrorAnalysis' => 'SuppErrorAnalysis from mock dataset submission',
+                'getSuppProvenance' => 'SuppProvenance from mock dataset submission',
+                'getThemeKeywords' => array('theme', 'keywords', 'from', 'mock', 'dataset'),
+                'getPlaceKeywords' => array('place', 'keywords', 'from', 'mock', 'dataset'),
+                'getTopicKeywords' => array('oceans', 'biota'),
+                'getSpatialExtent' => 'spatial extent from mock dataset submission',
+                'getSpatialExtentDescription' => 'spatial extent description from mock dataset submission',
+                'getTemporalExtentDesc' => 'ground condition and modeled period',
+                'getTemporalExtentBeginPosition' => $this->testingDatetime,
+                'getTemporalExtentEndPosition' => $this->testingDatetime,
+                'getDistributionFormatName' => 'DistributionFormatName from mock dataset submission',
+                'getFileDecompressionTechnique' => 'zip',
+                'getPrimaryDatasetContact' => $this->mockPersonDatasetSubmissionDatasetContact,
+                'getDatasetContacts' => new ArrayCollection(array($this->mockPersonDatasetSubmissionDatasetContact)),
             )
         );
 
@@ -133,7 +225,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
 
         $this->util = new ISOMetadataExtractorUtil;
 
-        $this->datasetSubmission = new DatasetSubmission;
+        $this->datasetSubmission = new DatasetSubmission($this->mockDatasetSubmission);
     }
 
     /**
@@ -171,7 +263,38 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('test format', $this->datasetSubmission->getDistributionFormatName());
         $this->assertEquals('test compression', $this->datasetSubmission->getFileDecompressionTechnique());
         $this->assertEquals($this->mockPerson, $this->datasetSubmission->getDatasetContacts()[0]->getPerson());
-        //$this->assertEquals($this->mockPerson, $this->datasetSubmission->getMetadataContacts()[0]->getPerson());
+
+        $this->util->populateDatasetSubmissionWithXMLValues(
+            simplexml_load_file($this->testDataDir . 'test-metadata-modeledperiod.xml'),
+            $this->datasetSubmission,
+            $this->mockEntityManager
+        );
+
+        $this->assertEquals('modeled period', $this->datasetSubmission->getTemporalExtentDesc());
+
+        $this->util->populateDatasetSubmissionWithXMLValues(
+            simplexml_load_file($this->testDataDir . 'test-metadata-groundcondition-modeledperiod.xml'),
+            $this->datasetSubmission,
+            $this->mockEntityManager
+        );
+
+        $this->assertEquals('ground condition and modeled period', $this->datasetSubmission->getTemporalExtentDesc());
+    }
+
+    /**
+     * Tests testPopulateDatasetSubmission with xml containing an empty GML section.
+     *
+     * @return void
+     */
+    public function testPopulateDatasetSubmissionEmptyGml()
+    {
+        $this->util->populateDatasetSubmissionWithXMLValues(
+            simplexml_load_file($this->testDataDir . 'test-metadata-empty-gml.xml'),
+            $this->datasetSubmission,
+            $this->mockEntityManager
+        );
+
+        $this->assertNull($this->datasetSubmission->getSpatialExtent());
     }
 
     /**
@@ -187,7 +310,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
             $this->mockEntityManagerNoMatch
         );
 
-        $this->assertAllNullOrEmpty();
+        $this->assertInitialValuesOfNewDatasetSubmissionFromSubmission();
     }
 
     /**
@@ -203,15 +326,12 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
             $this->mockEntityManagerNoMatch
         );
 
-        $this->assertEquals(
-            'test parameter,test method,test instrument,test scale,test error,test provenance',
-            $this->datasetSubmission->getSuppParams()
-        );
-        $this->assertNull($this->datasetSubmission->getSuppMethods());
-        $this->assertNull($this->datasetSubmission->getSuppInstruments());
-        $this->assertNull($this->datasetSubmission->getSuppSampScalesRates());
-        $this->assertNull($this->datasetSubmission->getSuppErrorAnalysis());
-        $this->assertNull($this->datasetSubmission->getSuppProvenance());
+        $this->assertEquals('SuppParams from mock dataset submission', $this->datasetSubmission->getSuppParams());
+        $this->assertEquals('SuppMethods from mock dataset submission', $this->datasetSubmission->getSuppMethods());
+        $this->assertEquals('SuppInstruments from mock dataset submission', $this->datasetSubmission->getSuppInstruments());
+        $this->assertEquals('SuppSampScalesRates from mock dataset submission', $this->datasetSubmission->getSuppSampScalesRates());
+        $this->assertEquals('SuppErrorAnalysis from mock dataset submission', $this->datasetSubmission->getSuppErrorAnalysis());
+        $this->assertEquals('SuppProvenance from mock dataset submission', $this->datasetSubmission->getSuppProvenance());
     }
 
     /**
@@ -227,7 +347,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
             $this->mockEntityManagerNoMatch
         );
 
-        $this->assertAllNullOrEmpty();
+        $this->assertInitialValuesOfNewDatasetSubmissionFromSubmission();
     }
 
     /**
@@ -242,38 +362,104 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
             $this->datasetSubmission,
             $this->mockEntityManagerNoMatch
         );
-        $this->assertAllNullOrEmpty();
+        $this->assertInitialValuesOfNewDatasetSubmissionFromSubmission();
     }
 
     /**
-     * Assert that all metadata properties of $this->datasetSubmission are null or empty.
+     * Assert that all metadata properties of $this->datasetSubmission match the values in the mock dataset submission.
      *
      * @return void
      */
-    protected function assertAllNullOrEmpty()
+    protected function assertInitialValuesOfNewDatasetSubmissionFromSubmission()
     {
-        $this->assertNull($this->datasetSubmission->getTitle());
-        $this->assertNull($this->datasetSubmission->getShortTitle());
-        $this->assertNull($this->datasetSubmission->getAbstract());
-        $this->assertNull($this->datasetSubmission->getPurpose());
-        $this->assertNull($this->datasetSubmission->getSuppParams());
-        $this->assertNull($this->datasetSubmission->getSuppMethods());
-        $this->assertNull($this->datasetSubmission->getSuppInstruments());
-        $this->assertNull($this->datasetSubmission->getSuppSampScalesRates());
-        $this->assertNull($this->datasetSubmission->getSuppErrorAnalysis());
-        $this->assertNull($this->datasetSubmission->getSuppProvenance());
-        $this->assertNull($this->datasetSubmission->getReferenceDate());
-        $this->assertNull($this->datasetSubmission->getReferenceDateType());
-        $this->assertEmpty($this->datasetSubmission->getThemeKeywords());
-        $this->assertEmpty($this->datasetSubmission->getPlaceKeywords());
-        $this->assertEmpty($this->datasetSubmission->getTopicKeywords());
-        $this->assertNull($this->datasetSubmission->getSpatialExtent());
-        $this->assertNull($this->datasetSubmission->getTemporalExtentDesc());
-        $this->assertNull($this->datasetSubmission->getTemporalExtentBeginPosition());
-        $this->assertNull($this->datasetSubmission->getTemporalExtentEndPosition());
-        $this->assertNull($this->datasetSubmission->getDistributionFormatName());
-        $this->assertNull($this->datasetSubmission->getFileDecompressionTechnique());
-        $this->assertEmpty($this->datasetSubmission->getDatasetContacts());
+        $this->assertEquals(
+            'title from mock dataset submission',
+            $this->datasetSubmission->getTitle()
+        );
+        $this->assertEquals(
+            'short title from mock dataset submission',
+            $this->datasetSubmission->getShortTitle()
+        );
+        $this->assertEquals(
+            'abstract from mock dataset submission',
+            $this->datasetSubmission->getAbstract()
+        );
+        $this->assertEquals(
+            'purpose from mock dataset submission',
+            $this->datasetSubmission->getPurpose()
+        );
+        $this->assertEquals(
+            'SuppParams from mock dataset submission',
+            $this->datasetSubmission->getSuppParams()
+        );
+        $this->assertEquals(
+            'SuppMethods from mock dataset submission',
+            $this->datasetSubmission->getSuppMethods()
+        );
+        $this->assertEquals(
+            'SuppInstruments from mock dataset submission',
+            $this->datasetSubmission->getSuppInstruments()
+        );
+        $this->assertEquals(
+            'SuppSampScalesRates from mock dataset submission',
+            $this->datasetSubmission->getSuppSampScalesRates()
+        );
+        $this->assertEquals(
+            'SuppErrorAnalysis from mock dataset submission',
+            $this->datasetSubmission->getSuppErrorAnalysis()
+        );
+        $this->assertEquals(
+            'SuppProvenance from mock dataset submission',
+            $this->datasetSubmission->getSuppProvenance()
+        );
+        $this->assertEquals(
+            new \Datetime,
+            $this->datasetSubmission->getReferenceDate()
+        );
+        $this->assertEquals(
+            'creation',
+            $this->datasetSubmission->getReferenceDateType()
+        );
+        $this->assertEquals(
+            array('theme', 'keywords', 'from', 'mock', 'dataset'),
+            $this->datasetSubmission->getThemeKeywords()
+        );
+        $this->assertEquals(
+            array('place', 'keywords', 'from', 'mock', 'dataset'),
+            $this->datasetSubmission->getPlaceKeywords()
+        );
+        $this->assertEquals(
+            array('oceans', 'biota'),
+            $this->datasetSubmission->getTopicKeywords()
+        );
+        $this->assertEquals(
+            'spatial extent from mock dataset submission',
+            $this->datasetSubmission->getSpatialExtent()
+        );
+        $this->assertEquals(
+            'ground condition and modeled period',
+            $this->datasetSubmission->getTemporalExtentDesc()
+        );
+        $this->assertEquals(
+            new \Datetime,
+            $this->datasetSubmission->getTemporalExtentBeginPosition()
+        );
+        $this->assertEquals(
+            new \Datetime,
+            $this->datasetSubmission->getTemporalExtentEndPosition()
+        );
+        $this->assertEquals(
+            'DistributionFormatName from mock dataset submission',
+            $this->datasetSubmission->getDistributionFormatName()
+        );
+        $this->assertEquals(
+            'zip',
+            $this->datasetSubmission->getFileDecompressionTechnique()
+        );
+        $this->assertEquals(
+            $this->mockPersonDatasetSubmissionDatasetContact->getPerson(),
+            $this->datasetSubmission->getDatasetContacts()->first()->getPerson()
+        );
     }
 
     /**
@@ -314,8 +500,6 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
             'author',
             $contacts[1]->getRole()
         );
-
         $this->assertEmpty(ISOMetadataExtractorUtil::extractPointsOfContact($this->xml, $this->datasetSubmission, $this->mockEntityManagerUnknownPerson));
-
     }
 }
