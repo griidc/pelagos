@@ -87,7 +87,7 @@
                     </div>
                 </span>
                 <button class="deletebutton" type="button">Delete Contact</button>
-                <label for="datasetcontact">Additional Person</label>
+                <label for="datasetcontact">Additional Point of Contact</label>
                 <select disabled class="contactperson prototype" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
                     {% if contact.vars.data.person|default %}
                     <option selected value="{{contact.vars.data.person.id}}">
