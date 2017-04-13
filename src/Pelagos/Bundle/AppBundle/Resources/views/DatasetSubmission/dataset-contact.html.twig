@@ -15,13 +15,11 @@
                             is incorrect, please contact griidc@gomri.org.
                         </div>
                     </span>
-                    {% if not loop.first %}
-                        <button class="deletebutton" type="button">Delete Contact</button>
-                    {% endif %}
-                    {% if loop.first %}
-                    <label for="datasetcontact">Primary Point of Contact</label>
+                    {% if contact.vars.data.primaryContact %}
+                        <label for="datasetcontact">Primary Point of Contact</label>
                     {% else %}
-                    <label for="datasetcontact">Additional Point of Contact</label>
+                        <button class="deletebutton" type="button">Delete Contact</button>
+                        <label for="datasetcontact">Additional Point of Contact</label>
                     {% endif %}
                     <select class="contactperson" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
                         {% if contact.vars.data.person|default %}
