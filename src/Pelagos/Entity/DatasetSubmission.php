@@ -975,6 +975,7 @@ class DatasetSubmission extends Entity
                 $newDatasetContact = new PersonDatasetSubmissionDatasetContact();
                 $newDatasetContact->setRole($datasetContact->getRole());
                 $newDatasetContact->setPerson($datasetContact->getPerson());
+                $newDatasetContact->setPrimaryContact($datasetContact->isPrimaryContact());
                 $this->addDatasetContact($newDatasetContact);
             }
         } else {
