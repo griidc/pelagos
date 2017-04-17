@@ -52,7 +52,7 @@ class Dataset extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\OneToOne(targetEntity="DOI")
      */
     protected $doi;
 
