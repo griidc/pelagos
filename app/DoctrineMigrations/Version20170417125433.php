@@ -29,7 +29,7 @@ class Version20170417125433 extends AbstractMigration
         $this->addSql('ALTER TABLE dataset ADD doi_id INT DEFAULT NULL');
         
         // This script will populate the new DOI table with issued/used DOI's.
-        $this->addSql('INSERT INTO doi (id, doi, creator_id, modifier_id, status, public_date, creation_time_stamp, modification_time_stamp) (SELECT nextval(\'doi_id_seq\') as id, (regexp_matches(doi,\'10\..*\'))[1]::text as doi, modifier_id as creator_id, modifier_id, \'public\' as status, modification_time_stamp as public_date, modification_time_stamp as creation_time_stamp, modification_time_stamp FROM dataset WHERE doi LIKE \'%10.7266%\'');
+        $this->addSql('INSERT INTO doi (id, doi, creator_id, modifier_id, status, public_date, creation_time_stamp, modification_time_stamp) (SELECT nextval(\'doi_id_seq\') as id, (regexp_matches(doi,\'10\\\..*\'))[1]::text as doi, modifier_id as creator_id, modifier_id, \'public\' as status, modification_time_stamp as public_date, modification_time_stamp as creation_time_stamp, modification_time_stamp FROM dataset WHERE doi LIKE \'%10.7266%\')');
         
         // Now update dataset with the new ID. ~ is very costly, and will take a few seconds.
         $this->addSql('UPDATE dataset SET doi_id = doisub.id FROM (SELECT id, doi FROM doi) AS doisub WHERE dataset.doi ~ doisub.doi');
