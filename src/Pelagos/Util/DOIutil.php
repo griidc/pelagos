@@ -5,33 +5,65 @@ namespace Pelagos\Util;
 /**
  * A utility to create and issue DOI from EZID API.
  */
-class doiUtil
+class DOIutil
 {
-    
+    /**
+     * The should for the GRIIDC doi.
+     *
+     * @var string
+     */
+    private $doishoulder;
+
+    /**
+     * The username for ezid.
+     *
+     * @var string
+     */
+    private $doiusername;
+
+    /**
+     * The password for ezid.
+     *
+     * @var string
+     */
+    private $doipassword;
+
+    /**
+     * Constructor.
+     *
+     * Sets the ezid username, password, and shoulder.
+     */
+    public function __construct()
+    {
+        $this->doishoulder = $this->getParameter('doi_api_shoulder');
+        $this->doiusername = $this->getParameter('doi_api_user_name');
+        $this->doipassword = $this->getParameter('doi_api_password');
+    }
+
     /**
      * This function will create a DOI.
      *
-     * @param string $url   URL for DOI Request.
-     * @param string $who   Creator for DOI Request.
-     * @param string $what  Title for DOI Request.
-     * @param string $where Publisher for DOI Request.
-     * @param string $date  Published Date for DOI Request.
-     * @param string $type  Type for DOI Request, by default Dataset.
+     * @param string $url             URL for DOI.
+     * @param string $creator         Creator for DOI.
+     * @param string $title           Title for DOI.
+     * @param string $publisher       Publisher for DOI.
+     * @param string $publicationYear Published Date for DOI.
+     * @param string $status          Status of the DOI, by default is reserved.
+     * @param string $resourcetype    Type for DOI Request, by default Dataset.
      *
      * @throws \Exception When there was an error negotiating with EZID.
      *
      * @return string The DOI issued by EZID.
      */
     public function createDOI(
-        $url, 
-        $creator, 
-        $title, 
-        $publisher, 
-        $publicationYear, 
-        $status = 'reserved', 
+        $url,
+        $creator,
+        $title,
+        $publisher,
+        $publicationYear,
+        $status = 'reserved',
         $resourcetype = 'Dataset'
-    )
-    {
+    ) {
         $input = '_target:' . $this->escapeSpecialCharacters($url) . "\n";
         $input .= "_profile:datacite\n";
         $input .= "_status:$status\n";
@@ -40,16 +72,12 @@ class doiUtil
         $input .= 'datacite.publisher:' . $this->escapeSpecialCharacters($publisher) . "\n";
         $input .= "datacite.publicationyear:$publicationYear\n";
         $input .= "datacite.resourcetype:$resourcetype";
-        
-        $doishoulder = $this->getParameter('doi_api_shoulder');
-        $doiusername = $this->getParameter('doi_api_user_name');
-        $doipassword = $this->getParameter('doi_api_password');
-        
+
         utf8_encode($input);
-        
+
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://ezid.cdlib.org/shoulder/$doishoulder");
-        curl_setopt($ch, CURLOPT_USERPWD, "$doiusername:$doipassword");
+        curl_setopt($ch, CURLOPT_URL, 'https://ezid.cdlib.org/shoulder/' . $this->doishoulder);
+        curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt(
             $ch,
@@ -61,17 +89,17 @@ class doiUtil
         $output = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        
+
         //check to see if it worked.
         if (201 != $httpCode) {
-            throw new \Exception("ezid failed with:$httpCode");
+            throw new \Exception("ezid failed with:$httpCode($output)");
         }
-        
+
         $doi = preg_match('/^success: (doi:\S+)/', $output, $matches);
-        
+
         return $matches[1];
     }
-    
+
     /**
      * This function will get the DOI metadata for a DOI.
      *
@@ -81,29 +109,30 @@ class doiUtil
      *
      * @return array Array or metadata variables.
      */
-    public getDOIMetadata($doi)
+    public function getDOIMetadata($doi)
     {
+        // Add doi: to doi is it doesn't exist.
+        $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://ezid.cdlib.org/id/doi:$doi");
+        curl_setopt($ch, CURLOPT_URL, "https://ezid.cdlib.org/id/$doi");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $output = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE) . "\n";
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        
+
         //check to see if it worked.
         if (200 != $httpCode) {
-            throw new \Exception("ezid failed with:$httpCode");
+            throw new \Exception("ezid failed with:$httpCode($output)");
         }
-        
+
         $metadata = array();
-        foreach(explode("\n", $output) as $line)
-        {
-            $metadata[] = preg_split("/:/", $line, 2);
+        foreach (explode("\n", $output) as $line) {
+            $metadata[] = preg_split('/:/', $line, 2);
         }
-        
+
         return $metadata;
     }
-    
+
     /**
      * This function will publish the DOI.
      *
@@ -113,33 +142,35 @@ class doiUtil
      *
      * @return boolean True is published successfully.
      */
-    public publishDOI($doi)
+    public function publishDOI($doi)
     {
-        $doishoulder = $this->getParameter('doi_api_shoulder');
-        $doiusername = $this->getParameter('doi_api_user_name');
-        
-        $input = '_target: public';
-        
+        // Add doi: to doi is it doesn't exist.
+        $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
+        $input = '_status:public';
+
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://ezid.cdlib.org/id/doi:$doi");
-        curl_setopt($ch, CURLOPT_USERPWD, "$doiusername:$doipassword");
+        curl_setopt($ch, CURLOPT_URL, "https://ezid.cdlib.org/id/$doi");
+        curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
         curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER,
-        array('Content-Type: text/plain; charset=UTF-8',
-            'Content-Length: ' . strlen($input)));
+        curl_setopt(
+            $ch,
+            CURLOPT_HTTPHEADER,
+            array('Content-Type: text/plain; charset=UTF-8','Content-Length: ' . strlen($input))
+        );
         curl_setopt($ch, CURLOPT_POSTFIELDS, $input);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $output = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        
+
         //check to see if it worked.
         if (200 != $httpCode) {
-            throw new \Exception("ezid failed with:$httpCode");
+            throw new \Exception("ezid failed with:$httpCode($output)");
         }
-        
+
         return true;
     }
-    
+
     /**
      * This function escape :%\n\r characters, because these are special with EZID.
      *
@@ -150,12 +181,11 @@ class doiUtil
     private function escapeSpecialCharacters($input)
     {
         return preg_replace_callback(
-        '/[%:\r\n]/',
-        function ($matches) {
-            return sprintf('%%%02X', ord($matches[0]));
-        },
-        $input
+            '/[%:\r\n]/',
+            function ($matches) {
+                return sprintf('%%%02X', ord($matches[0]));
+            },
+            $input
         );
     }
-    
 }
