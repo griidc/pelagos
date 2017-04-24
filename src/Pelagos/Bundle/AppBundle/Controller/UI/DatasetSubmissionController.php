@@ -147,9 +147,15 @@ class DatasetSubmissionController extends UIController
                             $datasetSubmission,
                             $this->get('doctrine.orm.entity_manager')
                         );
-                        $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
+                        if ($datasetSubmission->getDatasetContacts()->first() instanceof PersonDatasetSubmissionDatasetContact) {
+                            // Designate the first contact as primary.
+                            $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
+                        } else {
+                            // Create an empty contact and set as primary.
+                            $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact);
+                            $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
+                        }
                     }
-
                     try {
                         $this->entityHandler->create($datasetSubmission);
                     } catch (AccessDeniedException $e) {
@@ -460,7 +466,15 @@ class DatasetSubmissionController extends UIController
                 $this->get('doctrine.orm.entity_manager')
             );
 
-            $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
+            if ($datasetSubmission->getDatasetContacts()->first() instanceof PersonDatasetSubmissionDatasetContact) {
+                // Designate the first contact as primary.
+                $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
+            } else {
+                // Create an empty contact and set as primary.
+                $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact);
+                $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
+            }
+
         } else {
             throw new InvalidMetadataException(array('This does not appear to be valid ISO 19115-2 metadata.'));
         }
