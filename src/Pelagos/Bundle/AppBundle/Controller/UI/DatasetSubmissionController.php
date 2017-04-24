@@ -104,6 +104,11 @@ class DatasetSubmissionController extends UIController
 
                     try {
                         $this->loadFromXml($xmlURI, $datasetSubmission);
+                        if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
+                            $contact = new PersonDatasetSubmissionDatasetContact;
+                            $contact->setPrimaryContact(true);
+                            $datasetSubmission->addDatasetContact($contact);
+                        }
                         $xmlStatus['success'] = true;
                     } catch (InvalidMetadataException $e) {
                         $xmlStatus['errors'] = $e->getErrors();
@@ -149,10 +154,10 @@ class DatasetSubmissionController extends UIController
                         );
 
                         if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
-                            $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact);
+                            $contact = new PersonDatasetSubmissionDatasetContact;
+                            $contact->setPrimaryContact(true);
+                            $datasetSubmission->addDatasetContact($contact);
                         }
-
-                        $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
                     }
                     try {
                         $this->entityHandler->create($datasetSubmission);
@@ -463,12 +468,6 @@ class DatasetSubmissionController extends UIController
                 $datasetSubmission,
                 $this->get('doctrine.orm.entity_manager')
             );
-
-            if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
-                $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact);
-            }
-
-            $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
 
         } else {
             throw new InvalidMetadataException(array('This does not appear to be valid ISO 19115-2 metadata.'));
