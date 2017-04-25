@@ -147,9 +147,13 @@ class DatasetSubmissionController extends UIController
                             $datasetSubmission,
                             $this->get('doctrine.orm.entity_manager')
                         );
+                        // If there are no contacts, add an empty one.
+                        if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
+                            $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
+                        }
+                        // Designate 1st contact as primary.
                         $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
                     }
-
                     try {
                         $this->entityHandler->create($datasetSubmission);
                     } catch (AccessDeniedException $e) {
@@ -460,7 +464,13 @@ class DatasetSubmissionController extends UIController
                 $this->get('doctrine.orm.entity_manager')
             );
 
+            // If there are no contacts, add an empty contact.
+            if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
+                $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
+            }
+            // Designate the first contact is primary.
             $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
+
         } else {
             throw new InvalidMetadataException(array('This does not appear to be valid ISO 19115-2 metadata.'));
         }
