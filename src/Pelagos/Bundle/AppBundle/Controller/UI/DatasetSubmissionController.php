@@ -104,11 +104,6 @@ class DatasetSubmissionController extends UIController
 
                     try {
                         $this->loadFromXml($xmlURI, $datasetSubmission);
-                        if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
-                            $contact = new PersonDatasetSubmissionDatasetContact;
-                            $contact->setPrimaryContact(true);
-                            $datasetSubmission->addDatasetContact($contact);
-                        }
                         $xmlStatus['success'] = true;
                     } catch (InvalidMetadataException $e) {
                         $xmlStatus['errors'] = $e->getErrors();
@@ -152,12 +147,12 @@ class DatasetSubmissionController extends UIController
                             $datasetSubmission,
                             $this->get('doctrine.orm.entity_manager')
                         );
-
+                        // If there are no contacts, add an empty one.
                         if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
-                            $contact = new PersonDatasetSubmissionDatasetContact;
-                            $contact->setPrimaryContact(true);
-                            $datasetSubmission->addDatasetContact($contact);
+                            $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
                         }
+                        // Designate 1st contact as primary.
+                        $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
                     }
                     try {
                         $this->entityHandler->create($datasetSubmission);
@@ -468,6 +463,13 @@ class DatasetSubmissionController extends UIController
                 $datasetSubmission,
                 $this->get('doctrine.orm.entity_manager')
             );
+
+            // If there are no contacts, add an empty contact.
+            if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
+                $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
+            }
+            // Designate the first contact is primary.
+            $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
 
         } else {
             throw new InvalidMetadataException(array('This does not appear to be valid ISO 19115-2 metadata.'));
