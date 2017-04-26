@@ -39,6 +39,8 @@ class Version20170417125433 extends AbstractMigration
         $this->addSql('CREATE UNIQUE INDEX UNIQ_B7A041D0E6EBA8D8 ON dataset (doi_id)');
         $this->addSql('ALTER TABLE dataset_audit ADD doi_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE dataset_audit DROP doi');
+        $this->addSql('ALTER TABLE dataset_submission DROP doi');
+        $this->addSql('ALTER TABLE dataset_submission_audit DROP doi');
     }
 
     /**
@@ -52,6 +54,8 @@ class Version20170417125433 extends AbstractMigration
         $this->addSql('ALTER TABLE dataset DROP CONSTRAINT FK_B7A041D0E6EBA8D8');
         $this->addSql('DROP SEQUENCE doi_id_seq CASCADE');
         $this->addSql('DROP TABLE doi');
+        $this->addSql('ALTER TABLE dataset_submission_audit ADD doi TEXT DEFAULT NULL');
+        $this->addSql('ALTER TABLE dataset_submission ADD doi TEXT DEFAULT NULL');
         $this->addSql('ALTER TABLE dataset_audit ADD doi TEXT DEFAULT NULL');
         $this->addSql('ALTER TABLE dataset_audit DROP doi_id');
         $this->addSql('DROP INDEX UNIQ_B7A041D0E6EBA8D8');
