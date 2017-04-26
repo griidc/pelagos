@@ -61,6 +61,18 @@ class DOI extends Entity
     protected $publicDate;
 
     /**
+     * Constructor.
+     *
+     * Sets to DOI identifier for the DOI entity.
+     */
+    public function __construct($doi)
+    {
+        $this->setDoi($doi);
+        // Initial state for issue is reserved.
+        $this->setStatus($self::STATUS_RESERVED);
+    }
+
+    /**
      * Sets the DOI.
      *
      * @param string $doi The DOI.
