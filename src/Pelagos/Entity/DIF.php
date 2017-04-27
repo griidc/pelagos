@@ -29,7 +29,7 @@ use JMS\Serializer\Annotation as Serializer;
  *     parameters = { "id" = "expr(object.getId())" }
  *   ),
  *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not service('security.authorizationchecker').isGranted(['CAN_EDIT'], object))"
+ *     excludeIf = "expr(not service('security.authorization_checker').isGranted(['CAN_EDIT'], object))"
  *   )
  * )
  * @Hateoas\Relation(
@@ -39,7 +39,7 @@ use JMS\Serializer\Annotation as Serializer;
  *     parameters = { "id" = "expr(object.getId())" }
  *   ),
  *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not object.isSubmittable() or not service('security.authorizationchecker').isGranted(['CAN_SUBMIT'], object))"
+ *     excludeIf = "expr(not object.isSubmittable() or not service('security.authorization_checker').isGranted(['CAN_SUBMIT'], object))"
  *   )
  * )
  * @Hateoas\Relation(
@@ -49,7 +49,7 @@ use JMS\Serializer\Annotation as Serializer;
  *     parameters = { "id" = "expr(object.getId())" }
  *   ),
  *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not object.isApprovable() or not service('security.authorizationchecker').isGranted(['CAN_APPROVE'], object))"
+ *     excludeIf = "expr(not object.isApprovable() or not service('security.authorization_checker').isGranted(['CAN_APPROVE'], object))"
  *   )
  * )
  * @Hateoas\Relation(
@@ -59,7 +59,7 @@ use JMS\Serializer\Annotation as Serializer;
  *     parameters = { "id" = "expr(object.getId())" }
  *   ),
  *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not object.isRejectable() or not service('security.authorizationchecker').isGranted(['CAN_REJECT'], object))"
+ *     excludeIf = "expr(not object.isRejectable() or not service('security.authorization_checker').isGranted(['CAN_REJECT'], object))"
  *   )
  * )
  * @Hateoas\Relation(
@@ -69,7 +69,7 @@ use JMS\Serializer\Annotation as Serializer;
  *     parameters = { "id" = "expr(object.getId())" }
  *   ),
  *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not object.isUnlockable() or not service('security.authorizationchecker').isGranted(['CAN_UNLOCK'], object))"
+ *     excludeIf = "expr(not object.isUnlockable() or not service('security.authorization_checker').isGranted(['CAN_UNLOCK'], object))"
  *   )
  * )
  */

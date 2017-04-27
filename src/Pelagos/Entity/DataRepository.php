@@ -38,7 +38,7 @@ use Pelagos\Exception\NotDeletableException;
  *     parameters = { "id" = "expr(object.getId())" }
  *   ),
  *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not service('security.authorizationchecker').isGranted(['CAN_EDIT'], object))"
+ *     excludeIf = "expr(not service('security.authorization_checker').isGranted(['CAN_EDIT'], object))"
  *   )
  * )
  */
