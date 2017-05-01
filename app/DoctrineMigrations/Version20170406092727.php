@@ -25,7 +25,7 @@ class Version20170406092727 extends AbstractMigration
         $this->addSql('UPDATE person_dataset_submission set primary_contact = true WHERE discr = \'persondatasetsubmissiondatasetcontact\' AND person_dataset_submission.id is not null');
 
         // Allow SimpleThings EntityAudit to store nulls for usernames (new behavior)
-        $this->addSql('ALTER TABLE revision ALTER username DROP NOT NULL');
+        $this->addSql('ALTER TABLE revisions ALTER username DROP NOT NULL');
     }
 
     /**
@@ -40,6 +40,6 @@ class Version20170406092727 extends AbstractMigration
         $this->addSql('ALTER TABLE person_dataset_submission DROP primary_contact');
 
         // Disallow SimpleThings EntityAudit to store nulls for usernames (new behavior)
-        $this->addSql('ALTER TABLE revision ALTER username SET NOT NULL');
+        $this->addSql('ALTER TABLE revisions ALTER username SET NOT NULL');
     }
 }
