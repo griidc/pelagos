@@ -2,8 +2,6 @@
 
 namespace Pelagos\Component\Ldap;
 
-use Symfony\Component\Ldap\LdapClientInterface;
-
 use Symfony\Component\Ldap\Exception\ConnectionException;
 use Symfony\Component\Ldap\Exception\LdapException;
 
@@ -12,7 +10,7 @@ use Symfony\Component\Ldap\Exception\LdapException;
  *
  * @see Symfony\Component\Ldap\LdapClientInterface
  */
-class LdapClient implements LdapClientInterface
+class LdapClient
 {
     /**
      * The hostname to connect to.
