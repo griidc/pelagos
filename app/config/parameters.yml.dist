@@ -35,6 +35,8 @@ parameters:
     account_password_max_age: P180D
     # When to warn account holders of soon to expire passwords (as ISO 8601 durations)
     account_password_expiration_warn: [P7D, P1D]
+    # If to check for 24 hour change and password already used.
+    account_enforce_strict_password_rules: true
 
     rabbit_mq_host: localhost
     rabbit_mq_port: 5672
