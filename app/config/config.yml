@@ -122,6 +122,8 @@ assetic:
     use_controller: '%kernel.debug%'
     filters:
         cssrewrite: ~
+    bundles:
+        - PelagosAppBundle
 
 simple_things_entity_audit:
     audited_entities:
