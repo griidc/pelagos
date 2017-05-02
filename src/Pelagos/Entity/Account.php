@@ -239,19 +239,19 @@ class Account extends Entity implements UserInterface, \Serializable
     /**
      * Set the password attribute with a Password object.
      *
-     * @param Password $password Pelagos password object.
-     * @param boolean  $enforce  If strict password rules are enforced (default true).
+     * @param Password $password   Pelagos password object.
+     * @param boolean  $lessStrict If less strict password rules are allowed.
      *
      * @throws PasswordException When password last changed within 24 hrs.
      * @throws PasswordException When an old password is re-used.
      *
      * @return void
      */
-    public function setPassword(Password $password, $enforce = true)
+    public function setPassword(Password $password, $lessStrict = false)
     {
         $this->password = $password;
 
-        if (true === $enforce) {
+        if (false === $lessStrict) {
             // check for minimum age.
             $interval = new \DateInterval('PT24H');
             $now = new \DateTime();

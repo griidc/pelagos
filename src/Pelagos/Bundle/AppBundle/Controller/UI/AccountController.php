@@ -373,7 +373,7 @@ class AccountController extends UIController
         try {
             $account->setPassword(
                 $password,
-                (bool) $this->container->getParameter('account_enforce_strict_password_rules')
+                (bool) $this->container->getParameter('account_less_strict_password_rules')
             );
         } catch (PasswordException $e) {
             return $this->render(
