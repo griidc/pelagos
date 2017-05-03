@@ -84,6 +84,7 @@ services:
             - { name: monolog.processor, channel: filer }
             - { name: monolog.processor, channel: retriever }
             - { name: monolog.processor, channel: dataset_file_hasher }
+            - { name: monolog.processor, channel: doi_issue }
 
     pelagos.console.listener:
         class: Pelagos\Event\ConsoleListener

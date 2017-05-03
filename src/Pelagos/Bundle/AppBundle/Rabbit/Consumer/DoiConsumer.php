@@ -50,14 +50,14 @@ class DoiConsumer implements ConsumerInterface
     /**
      * Constructor.
      *
-     * @param EntityManager         $entityManager             The entity manager.
-     * @param Logger                $logger                    A Monolog logger.
-     * @param EntityEventDispatcher $entityEventDispatcher     The entity event dispatcher.
+     * @param EntityManager         $entityManager         The entity manager.
+     * @param Logger                $logger                A Monolog logger.
+     * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
      */
     public function __construct(
         EntityManager $entityManager,
         Logger $logger,
-        EntityEventDispatcher $entityEventDispatcher,
+        EntityEventDispatcher $entityEventDispatcher
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -107,14 +107,13 @@ class DoiConsumer implements ConsumerInterface
         return true;
     }
     
-    
     /**
      * Issue a DOI for the dataset.
      *
-     * @param Dataset $dataset           The dataset.
-     * @param array   $loggingContext    The logging context to use when logging.
+     * @param Dataset $dataset        The dataset.
+     * @param array   $loggingContext The logging context to use when logging.
      *
-     * @return void
+     * @return boolean True if success, false otherwise.
      */
     protected function issueDoi(Dataset $dataset, array $loggingContext)
     {
@@ -131,19 +130,19 @@ class DoiConsumer implements ConsumerInterface
         try {
             $doiUtil = new DOIutil();
             $issuedDoi = $doiUtil->createDOI(
-                'https://data.gulfresearchinitiative.org/data/' . $dataset->getUdi();
-                $datasetSubmission->getAuthors();
-                $datasetSubmission->setTitle();
-                'Harte Research Institute';
-                $datasetSubmission->getReferenceDate()->format('Y');
+                'https://data.gulfresearchinitiative.org/data/' . $dataset->getUdi(),
+                $datasetSubmission->getAuthors(),
+                $datasetSubmission->setTitle(),
+                'Harte Research Institute',
+                $datasetSubmission->getReferenceDate()->format('Y')
             );
         } catch (\Exception $exception) {
             $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
             return;
         }
         
-        $Doi = new DOI($issuedDoi);
-        $dataset->setDoi($Doi);
+        $doi = new DOI($issuedDoi);
+        $dataset->setDoi($doi);
         
         $loggingContext['doi'] = $doi;
         // Dispatch entity event.
@@ -152,4 +151,3 @@ class DoiConsumer implements ConsumerInterface
         $this->logger->info('DOI Issued', $loggingContext);
     }
 }
-?>
