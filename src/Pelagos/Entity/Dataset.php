@@ -656,7 +656,7 @@ class Dataset extends Entity
             if (count($datasetContacts) > 0) {
                 return $datasetContacts->first()->getPerson();
             } else {
-                throw new \Exception('A Dataset Submission was found that was missing a contact.');
+                return null;
             }
         // Otherwise, use the POC from an approved dif.
         } elseif ($dif instanceof DIF and DIF::STATUS_APPROVED == $dif->getStatus()) {
