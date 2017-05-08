@@ -81,6 +81,8 @@ class DOI extends Entity
      */
     protected function setDoi($doi)
     {
+        // If the identifier contains doi:, remove it.
+        $doi = preg_replace('/^(?:doi:)?(10.\S+)/', '$1', $doi);
         $this->doi = $doi;
     }
 
