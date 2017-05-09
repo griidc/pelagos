@@ -69,7 +69,7 @@ class DOI extends Entity
     {
         $this->setDoi($doi);
         // Initial state for issue is reserved.
-        $this->setStatus($self::STATUS_RESERVED);
+        $this->setStatus(self::STATUS_RESERVED);
     }
 
     /**
