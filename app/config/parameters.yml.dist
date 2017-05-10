@@ -80,3 +80,6 @@ parameters:
     download_base_url: ~
 
     google_maps_api_key: ~
+
+    # Read-only parameters
+    pelagos_readonly_mode: false
