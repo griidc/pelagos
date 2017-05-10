@@ -655,7 +655,7 @@ class Dataset extends Entity
             ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
                 $this->getMetadata()->getXml(),
                 $datasetSubmission,
-                $entityManager
+                $this->em
             );
         }
 
