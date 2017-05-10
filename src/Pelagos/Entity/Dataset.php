@@ -7,6 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Pelagos\Util\ISOMetadataExtractorUtil;
+
 /**
  * Dataset Entity class.
  *
@@ -648,7 +650,16 @@ class Dataset extends Entity
         $datasetSubmission = $this->getDatasetSubmission();
         $dif = $this->getDif();
 
-        // If we have a complete submission, use its POC.
+        // If we have approved Metadata, load contact into datasetSubmission.
+        if ($this->getDatasetSubmission()->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+            ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
+                $this->getMetadata()->getXml(),
+                $datasetSubmission,
+                $entityManager
+            );
+        }
+
+        // If we have a submission, use its POC.
         if ($datasetSubmission instanceof DatasetSubmission
             and $datasetSubmission->getStatus() == DatasetSubmission::STATUS_COMPLETE) {
 
