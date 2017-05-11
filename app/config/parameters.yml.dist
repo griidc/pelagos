@@ -83,3 +83,8 @@ parameters:
 
     # Read-only parameters
     pelagos_readonly_mode: false
+    pelagos_readonly_message: >
+        Replace this text with read-only
+        mode text. This is read from
+        app/config/parameters.yml and can be set
+        during operation.

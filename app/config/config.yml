@@ -51,6 +51,7 @@ twig:
         "%kernel.root_dir%/../src/Pelagos/Bundle/AppBundle/Resources/views/Email": Email
     globals:
         google_maps_api_key: "%google_maps_api_key%"
+        pelagos_readonly_message: "%pelagos_readonly_message%"
 
 # Doctrine Configuration
 doctrine:
