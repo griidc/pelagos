@@ -19,7 +19,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
  */
-class PersonController extends UIController
+class PersonController extends UIController implements OptionalReadOnlyInterface
 {
     /**
      * The Person Research Group action.

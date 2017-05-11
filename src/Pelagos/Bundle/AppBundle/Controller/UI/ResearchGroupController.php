@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
  */
-class ResearchGroupController extends UIController
+class ResearchGroupController extends UIController implements OptionalReadOnlyInterface
 {
     /**
      * The Research Group action.

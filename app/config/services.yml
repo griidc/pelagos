@@ -11,8 +11,9 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postConnect }
 
-    pelagos_optional_readonly.listener:
-        class: Pelagos\Event\OptionalReadOnlyListener
+    pelagos.readonly.listener:
+        class: Pelagos\Event\ReadOnlyListener
+        arguments: ["%pelagos_readonly_mode%"]
         tags:
             - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
 
