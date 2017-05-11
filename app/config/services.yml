@@ -11,12 +11,6 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postConnect }
 
-    pelagos.readonly.listener:
-        class: Pelagos\Event\ReadOnlyListener
-        arguments: ["%pelagos_readonly_mode%"]
-        tags:
-            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
-
     person_token_user_provider:
         class: Pelagos\Bundle\AppBundle\Security\PersonTokenUserProvider
         arguments: ["@doctrine.orm.entity_manager"]
