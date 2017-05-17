@@ -22,7 +22,7 @@ use Pelagos\Exception\PasswordException;
  *
  * @Route("/account")
  */
-class AccountController extends UIController
+class AccountController extends UIController implements OptionalReadOnlyInterface
 {
     /**
      * The default action.

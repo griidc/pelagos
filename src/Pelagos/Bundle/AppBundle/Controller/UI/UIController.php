@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 use Pelagos\Entity\Entity;
 
@@ -15,7 +16,7 @@ use Pelagos\Entity\Entity;
 abstract class UIController extends Controller
 {
     /**
-     * Proteced entityHandler value instance of entityHandler.
+     * Protected entityHandler value instance of entityHandler.
      *
      * @var entityHandler
      */
@@ -32,6 +33,11 @@ abstract class UIController extends Controller
     {
         $this->container = $container;
         $this->entityHandler = $this->get('pelagos.entity.handler');
+        if ($this->container->hasParameter('pelagos_readonly_mode')
+            and ($this->container->getParameter('pelagos_readonly_mode') == true)
+            and in_array('Pelagos\Bundle\AppBundle\Controller\UI\OptionalReadOnlyInterface', class_implements($this))) {
+            throw new HttpException(503, 'System is in read-only mode');
+        }
     }
 
     /**

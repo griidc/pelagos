@@ -13,7 +13,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
  *
  * @Route("/publink")
  */
-class PublicationDatasetLinkController extends UIController
+class PublicationDatasetLinkController extends UIController implements OptionalReadOnlyInterface
 {
     /**
      * The default action.

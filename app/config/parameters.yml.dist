@@ -80,3 +80,13 @@ parameters:
     download_base_url: ~
 
     google_maps_api_key: ~
+
+    # Read-only parameters
+    pelagos_readonly_mode: false
+    pelagos_readonly_message: >
+        The system is currently running in read-only mode.
+        Although data cannot be accepted at this time
+        nor any changes be made to it, you may still search, monitor
+        and download data. Please contact griidc@gomri.org for any
+        questions on concerns. We apologize for any inconvience this
+        may be causing and will return to normal operating mode soon.

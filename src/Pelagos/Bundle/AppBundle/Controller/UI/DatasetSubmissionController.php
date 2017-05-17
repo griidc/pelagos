@@ -39,7 +39,7 @@ use Pelagos\Util\ISOMetadataExtractorUtil;
  *
  * @Route("/dataset-submission")
  */
-class DatasetSubmissionController extends UIController
+class DatasetSubmissionController extends UIController implements OptionalReadOnlyInterface
 {
     /**
      * A queue of messages to publish to RabbitMQ.
