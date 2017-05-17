@@ -42,6 +42,7 @@ services:
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.metadata_processed, method: onMetadataProcessed }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.html_found, method: onHtmlFound }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.dataset_unprocessable, method: onDatasetUnprocessable }
+            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.approved, method: onApproved }
 
     pelagos.doirequest.listener:
         class: Pelagos\Event\DoiRequestListener
@@ -84,7 +85,7 @@ services:
         arguments: ["@doctrine.orm.entity_manager", "@logger"]
         tags:
             - { name: monolog.logger, channel: create_homedir }
-            
+
     pelagos.rabbit.consumer.dataset_file_hasher:
         class: Pelagos\Bundle\AppBundle\Rabbit\Consumer\DatasetFileHasherConsumer
         arguments: ["@doctrine.orm.entity_manager", "@pelagos.util.data_store", "@logger"]
