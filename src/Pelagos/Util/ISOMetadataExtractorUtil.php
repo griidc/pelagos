@@ -641,6 +641,8 @@ class ISOMetadataExtractorUtil
             if (empty($value)) {
                 return null;
             }
+            // remove new lines
+            $value = trim(preg_replace('/\s+/', ' ', $value));
             return $value;
         } else {
             return null;
