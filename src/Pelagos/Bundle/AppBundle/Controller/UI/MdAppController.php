@@ -166,6 +166,10 @@ class MdAppController extends UIController
                 $mdappLogger->writeLog($this->getUser()->getUsername() .
                     " has changed metadata status for $udi ($from -> $to) (mdapp msg)");
                 $message = "Status for $udi has been changed from $from to $to.";
+                $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
+                    $datasetSubmission,
+                    'approved'
+                );
             } else {
                 $datasetSubmission = $dataset->getDatasetSubmission();
                 $datasetSubmission->setMetadataStatus($to);
