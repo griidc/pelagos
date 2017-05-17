@@ -31,13 +31,21 @@ class DatasetSubmissionListener extends EventListener
             )
         );
 
+        // Publish message requesting DOI generation.
+        // Producer passed in via constructor is that of the doi_issue producer.
+        $this->producer->publish($dataset->getId(), 'issue.doi');
+
         // email User
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
         $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission));
 
         // email DM(s)
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-submitted.email.twig');
-        $this->sendMailMsg($template, array('dataset' => $dataset), $this->getDMs($dataset, $datasetSubmission->getSubmitter()));
+        $this->sendMailMsg(
+            $template,
+            array('dataset' => $dataset),
+            $this->getDMs($dataset, $datasetSubmission->getSubmitter())
+        );
     }
 
     /**
@@ -66,7 +74,11 @@ class DatasetSubmissionListener extends EventListener
 
         // email DM(s)
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-updated.email.twig');
-        $this->sendMailMsg($template, array('dataset' => $dataset), $this->getDMs($dataset, $datasetSubmission->getSubmitter()));
+        $this->sendMailMsg(
+            $template,
+            array('dataset' => $dataset),
+            $this->getDMs($dataset, $datasetSubmission->getSubmitter())
+        );
     }
 
     /**
