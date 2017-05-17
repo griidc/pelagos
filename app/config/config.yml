@@ -248,8 +248,11 @@ fos_elastica:
                                 datasetFileTransferStatus: ~
                                 datasetFileUri: ~
                                 datasetFileSize: ~
-                                doi: { boost: 3 }
                                 restrictions: ~
+                        doi:
+                            type: 'nested'
+                            properties:
+                                doi: { boost: 3 }
                         geometry:
                             type: 'string'
                             property_path: false
