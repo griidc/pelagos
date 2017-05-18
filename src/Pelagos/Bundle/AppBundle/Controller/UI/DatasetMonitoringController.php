@@ -16,6 +16,8 @@ use Pelagos\Entity\FundingCycle;
 use Pelagos\Entity\ResearchGroup;
 use Pelagos\Entity\Person;
 
+use Pelagos\Util\ISOMetadataExtractorUtil;
+
 /**
  * The Dataset Monitoring controller.
  *
@@ -161,6 +163,22 @@ class DatasetMonitoringController extends UIController
     public function datasetDetailsAction($udi)
     {
         $datasets = $this->entityHandler->getBy('Pelagos:Dataset', array('udi' => $udi));
+
+        $dataset = $datasets[0];
+
+        // If there is not primary contact, we'll try to get it form metadata.
+        if ($dataset->getPrimaryPointOfContact() == null) {
+            $datasetSubmission = $dataset->getDatasetSubmission();
+
+            // If we have approved Metadata, load contact into datasetSubmission.
+            if ($dataset->getDatasetSubmission()->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+                ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
+                    $dataset->getMetadata()->getXml(),
+                    $datasetSubmission,
+                    $this->getDoctrine()->getManager()
+                );
+            }
+        }
 
         return $this->render(
             'PelagosAppBundle:DatasetMonitoring:dataset_details.html.twig',
