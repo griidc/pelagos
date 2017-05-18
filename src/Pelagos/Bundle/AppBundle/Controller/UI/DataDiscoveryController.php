@@ -170,6 +170,7 @@ class DataDiscoveryController extends UIController
                 );
             }
         }
+        
         return $this->render(
             'PelagosAppBundle:DataDiscovery:dataset_details.html.twig',
             array(

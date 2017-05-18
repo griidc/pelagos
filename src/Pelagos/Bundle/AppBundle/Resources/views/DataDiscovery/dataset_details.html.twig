@@ -11,7 +11,7 @@
 {% endif %}
 {% if dataset.primaryPointOfContact | default %}
     <div class="attr">
-        <span class="attr">Point of Contact:</span> {{ dataset.primaryPointOfContact.firstName }} {{ dataset.primaryPointOfContact.lastName }}
+        <span class="attr">Point of Contact:</span> {{ dataset.primaryPointOfContact.lastName }}, {{ dataset.primaryPointOfContact.firstName }}
         (<a href="mailto:{{ dataset.primaryPointOfContact.emailAddress }}">{{ dataset.primaryPointOfContact.emailAddress }}</a>)
     </div>
 {% endif %}
