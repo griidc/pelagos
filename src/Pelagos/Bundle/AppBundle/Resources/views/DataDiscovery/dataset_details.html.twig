@@ -9,12 +9,10 @@
 {% if dataset.datasetSubmission.authors | default %}
     <div class="attr"><span class="attr">Dataset Author(s):</span> {{ dataset.datasetSubmission.authors }}</div>
 {% endif %}
-{% if dataset.datasetSubmission.pointOfContactName | default %}
+{% if dataset.primaryPointOfContact | default %}
     <div class="attr">
-        <span class="attr">Point of Contact:</span> {{ dataset.datasetSubmission.pointOfContactName }}
-{% if dataset.datasetSubmission.pointOfContactEmail | default %}
-        (<a href="mailto:{{ dataset.datasetSubmission.pointOfContactEmail }}">{{ dataset.datasetSubmission.pointOfContactEmail }}</a>)
-{% endif %}
+        <span class="attr">Point of Contact:</span> {{ dataset.primaryPointOfContact.firstName }} {{ dataset.primaryPointOfContact.lastName }}
+        (<a href="mailto:{{ dataset.primaryPointOfContact.emailAddress }}">{{ dataset.primaryPointOfContact.emailAddress }}</a>)
     </div>
 {% endif %}
 

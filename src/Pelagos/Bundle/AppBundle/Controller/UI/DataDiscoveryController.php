@@ -12,6 +12,8 @@ use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\DIF;
 
+use Pelagos\Util\ISOMetadataExtractorUtil;
+
 /**
  * The Data Discovery controller.
  *
@@ -153,10 +155,25 @@ class DataDiscoveryController extends UIController
      */
     public function showDetailsAction($id)
     {
+        $dataset = $this->get('pelagos.entity.handler')->get(Dataset::class, $id);
+
+        // If there is not primary contact, we'll try to get it form metadata.
+        if ($dataset->getPrimaryPointOfContact() == null) {
+            $datasetSubmission = $dataset->getDatasetSubmission();
+
+            // If we have approved Metadata, load contact into datasetSubmission.
+            if ($dataset->getDatasetSubmission()->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+                ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
+                    $dataset->getMetadata()->getXml(),
+                    $datasetSubmission,
+                    $this->getDoctrine()->getManager()
+                );
+            }
+        }
         return $this->render(
             'PelagosAppBundle:DataDiscovery:dataset_details.html.twig',
             array(
-                'dataset' => $this->get('pelagos.entity.handler')->get(Dataset::class, $id)
+                'dataset' => $dataset
             )
         );
     }
