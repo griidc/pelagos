@@ -60,17 +60,15 @@ class DatalandController extends UIController
             $wkt = $dataset->getMetadata()->getGeometry();
         }
 
-        if ($dataset->getPrimaryPointOfContact() == null) {
-            $datasetSubmission = $dataset->getDatasetSubmission();
+        $datasetSubmission = $dataset->getDatasetSubmission();
 
-            // If we have approved Metadata, load contact into datasetSubmission.
-            if ($dataset->getDatasetSubmission()->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
-                ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                    $dataset->getMetadata()->getXml(),
-                    $datasetSubmission,
-                    $this->getDoctrine()->getManager()
-                );
-            }
+        // If we have approved Metadata, load contact into datasetSubmission.
+        if ($dataset->getDatasetSubmission()->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+            ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
+                $dataset->getMetadata()->getXml(),
+                $datasetSubmission,
+                $this->getDoctrine()->getManager()
+            );
         }
 
         return $this->render(
