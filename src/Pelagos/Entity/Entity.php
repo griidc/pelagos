@@ -2,9 +2,6 @@
 
 namespace Pelagos\Entity;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectManagerAware;
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -29,32 +26,12 @@ use Pelagos\Entity\Person;
  *     groups = {"unique_id"}
  * )
  */
-abstract class Entity implements ObjectManagerAware
+abstract class Entity
 {
     /**
      * A friendly name for this type of entity.
      */
     const FRIENDLY_NAME = 'Pelagos Entity';
-
-    /**
-     * An enity manager.
-     *
-     * @var EntityManager $em;
-     */
-    protected $em;
-
-    /**
-     * Make entities object aware.
-     *
-     * @param ObjectManager $objectManager The object manager.
-     * @param ClassMetadata $classMetadata The Class metadata.
-     *
-     * @return void
-     */
-    public function injectObjectManager(ObjectManager $objectManager, ClassMetadata $classMetadata)
-    {
-        $this->em = $objectManager;
-    }
 
     /**
      * Entity identifier.
