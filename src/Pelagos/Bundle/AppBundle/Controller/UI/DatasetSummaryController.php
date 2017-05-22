@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * The dataset-summary application controller.
  */
-class DatasetSummaryController extends UIController
+class DatasetSummaryController extends UIController implements OptionalReadOnlyInterface
 {
     /**
      * The default action.
