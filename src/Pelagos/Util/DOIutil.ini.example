@@ -1,0 +1,3 @@
+doi_api_user_name = "username"
+doi_api_password = "password"
+doi_api_shoulder = "doi:10.1234/ABC"

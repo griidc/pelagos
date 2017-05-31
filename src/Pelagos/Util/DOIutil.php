@@ -35,9 +35,16 @@ class DOIutil
      */
     public function __construct()
     {
-        $this->doishoulder = $this->getParameter('doi_api_shoulder');
-        $this->doiusername = $this->getParameter('doi_api_user_name');
-        $this->doipassword = $this->getParameter('doi_api_password');
+        $iniFile = dirname(__FILE__) . '/DOIutil.ini';
+
+        if (!file_exists($iniFile)) {
+            throw new \Exception ("$iniFile file not found!");
+        }
+        $parameters = parse_ini_file($iniFile);
+
+        $this->doishoulder = $parameters['doi_api_shoulder'];
+        $this->doiusername = $parameters['doi_api_user_name'];
+        $this->doipassword = $parameters['doi_api_password'];
     }
 
     /**
