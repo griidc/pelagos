@@ -50,9 +50,9 @@ class Dataset extends Entity
     /**
      * The DOI for this Dataset.
      *
-     * @var string
+     * @var DOI
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\OneToOne(targetEntity="DOI")
      */
     protected $doi;
 
@@ -366,22 +366,19 @@ class Dataset extends Entity
     }
 
     /**
-     * Update the DOI for this Dataset.
+     * Set the DOI for this Dataset.
      *
      * @return void
      */
-    public function updateDoi()
+    public function setDoi(DOI $doi)
     {
-        if ($this->hasDatasetSubmission()) {
-            // Copy DatasetSubmission DOI to Dataset.
-            $this->doi = $this->getDatasetSubmission()->getDoi();
-        }
+        $this->doi = $doi;
     }
 
     /**
      * Get the DOI for this Dataset.
      *
-     * @return string
+     * @return DOI
      */
     public function getDoi()
     {

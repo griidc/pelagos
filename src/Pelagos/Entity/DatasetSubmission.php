@@ -492,17 +492,6 @@ class DatasetSubmission extends Entity
     protected $restrictions = self::RESTRICTION_NONE;
 
     /**
-     * The DOI for this dataset.
-     *
-     * Legacy DB column: doi
-     *
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected $doi;
-
-    /**
      * The dataset file transfer type.
      *
      * Legacy DB column: data_server_type
@@ -1334,31 +1323,6 @@ class DatasetSubmission extends Entity
     public function getRestrictions()
     {
         return $this->restrictions;
-    }
-
-    /**
-     * Set the DOI for this dataset.
-     *
-     * @param string $doi The DOI for this dataset.
-     *
-     * @return void
-     */
-    public function setDoi($doi)
-    {
-        $this->doi = $doi;
-        if ($this->getDataset() instanceof Dataset) {
-            $this->getDataset()->updateDoi();
-        }
-    }
-
-    /**
-     * Get the DOI for this dataset.
-     *
-     * @return string
-     */
-    public function getDoi()
-    {
-        return $this->doi;
     }
 
     /**
