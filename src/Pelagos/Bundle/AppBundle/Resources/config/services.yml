@@ -42,6 +42,7 @@ services:
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.metadata_processed, method: onMetadataProcessed }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.html_found, method: onHtmlFound }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.dataset_unprocessable, method: onDatasetUnprocessable }
+            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.approved, method: onApproved }
 
     pelagos.doirequest.listener:
         class: Pelagos\Event\DoiRequestListener
