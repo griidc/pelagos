@@ -92,6 +92,12 @@ services:
         tags:
             - { name: monolog.logger, channel: dataset_file_hasher }
 
+    pelagos.rabbit.consumer.doi_issue:
+        class: Pelagos\Bundle\AppBundle\Rabbit\Consumer\DoiConsumer
+        arguments: ["@doctrine.orm.entity_manager", "@logger", "@pelagos.event.entity_event_dispatcher"]
+        tags:
+            - { name: monolog.logger, channel: doi_issue }
+
     pelagos.handler.upload:
         class: Pelagos\Bundle\AppBundle\Handler\UploadHandler
         arguments: ["%homedir_prefix%"]
