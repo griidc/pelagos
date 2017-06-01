@@ -56,7 +56,7 @@ class DOI extends Entity
      *
      * @var \DateTime
      *
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      */
     protected $publicDate;
 
