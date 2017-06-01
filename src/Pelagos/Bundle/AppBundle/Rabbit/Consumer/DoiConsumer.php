@@ -5,7 +5,6 @@ namespace Pelagos\Bundle\AppBundle\Rabbit\Consumer;
 use Doctrine\ORM\EntityManager;
 
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
-use OldSound\RabbitMqBundle\RabbitMq\Producer;
 
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -92,12 +91,12 @@ class DoiConsumer implements ConsumerInterface
         // @codingStandardsIgnoreStart
         $routingKey = $message->delivery_info['routing_key'];
         // @codingStandardsIgnoreEnd
-        if (preg_match('/^issue\./', $routingKey)) {
-            $this->issueDoi($datasetSubmission, $loggingContext);
-        } elseif (preg_match('/^publish\./', $routingKey)) {
-            $this->publishDoi($datasetSubmission, $loggingContext);
-        } elseif (preg_match('/^update\./', $routingKey)) {
-            $this->updateDoi($datasetSubmission, $loggingContext);
+        if (preg_match('/^issue/', $routingKey)) {
+            $this->issueDoi($dataset, $loggingContext);
+        } elseif (preg_match('/^publish/', $routingKey)) {
+            //$this->publishDoi($dataset, $loggingContext);
+        } elseif (preg_match('/^update/', $routingKey)) {
+            //$this->updateDoi($dataset, $loggingContext);
         } else {
             $this->logger->warning("Unknown routing key: $routingKey", $loggingContext);
             return true;
@@ -132,7 +131,7 @@ class DoiConsumer implements ConsumerInterface
             $issuedDoi = $doiUtil->createDOI(
                 'https://data.gulfresearchinitiative.org/data/' . $dataset->getUdi(),
                 $datasetSubmission->getAuthors(),
-                $datasetSubmission->setTitle(),
+                $datasetSubmission->getTitle(),
                 'Harte Research Institute',
                 $datasetSubmission->getReferenceDate()->format('Y')
             );
@@ -146,7 +145,7 @@ class DoiConsumer implements ConsumerInterface
         
         $loggingContext['doi'] = $doi;
         // Dispatch entity event.
-        $this->entityEventDispatcher->dispatch($dataset(), 'doi_issued');
+        $this->entityEventDispatcher->dispatch($dataset, 'doi_issued');
         // Log processing complete.
         $this->logger->info('DOI Issued', $loggingContext);
     }
