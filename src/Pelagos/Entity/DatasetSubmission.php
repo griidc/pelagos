@@ -925,7 +925,6 @@ class DatasetSubmission extends Entity
             $this->setAbstract($entity->getAbstract());
             $this->setAuthors($entity->getAuthors());
             $this->setRestrictions($entity->getRestrictions());
-            $this->setDoi($entity->getDoi());
             $this->setDatasetFileTransferType($entity->getDatasetFileTransferType());
             $this->setDatasetFileUri($entity->getDatasetFileUri());
             $this->setDatasetFileTransferStatus($entity->getDatasetFileTransferStatus());

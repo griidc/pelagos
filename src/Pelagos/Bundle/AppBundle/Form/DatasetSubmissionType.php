@@ -67,10 +67,6 @@ class DatasetSubmissionType extends AbstractType
                 'expanded' => true,
                 'multiple' => false,
             ))
-            ->add('doi', Type\TextType::class, array(
-                'label' => 'Digital Object Identifier',
-                'required' => false,
-            ))
             ->add('datasetFileUri', Type\HiddenType::class, array(
                 'required' => true,
                 'attr' => array('data-msg-required' => 'You must provide a dataset file using one of the methods below.'),
