@@ -8,7 +8,7 @@ namespace Pelagos\Util;
 class DOIutil
 {
     /**
-     * The should for the GRIIDC doi.
+     * The shoulder for the GRIIDC doi.
      *
      * @var string
      */
@@ -32,13 +32,15 @@ class DOIutil
      * Constructor.
      *
      * Sets the ezid username, password, and shoulder.
+     *
+     * @throws \Exception When ini file is not found.
      */
     public function __construct()
     {
         $iniFile = dirname(__FILE__) . '/DOIutil.ini';
 
         if (!file_exists($iniFile)) {
-            throw new \Exception ("$iniFile file not found!");
+            throw new \Exception("$iniFile file not found!");
         }
         $parameters = parse_ini_file($iniFile);
 
