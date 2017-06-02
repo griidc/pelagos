@@ -76,6 +76,47 @@ class ISOMetadataExtractorUtil
         }
     }
 
+
+    /**
+     * Get the Contacts as email addresses from XML metadata.
+     *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
+     * @param EntityManager     $em  An entity manager.
+     *
+     * @return Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
+     */
+    public static function extractContactEmailAddresses(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em) {
+
+        $emailAddressColection = array();
+
+        $query = '/gmi:MI_Metadata' .
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:pointOfContact';
+
+        $pointsOfContact = @$xml->xpath($query);
+
+        if (!empty($pointsOfContact)) {
+            foreach ($pointsOfContact as $pointOfContact) {
+
+                // Find Email address stored in the XML
+                $query = './gmd:CI_ResponsibleParty' .
+                    '/gmd:contactInfo' .
+                    '/gmd:CI_Contact' .
+                    '/gmd:address' .
+                    '/gmd:CI_Address' .
+                    '/gmd:electronicMailAddress' .
+                    '/gco:CharacterString';
+
+                $email = self::querySingle($pointOfContact, $query);
+
+                $emailAddressColection[] = $email;
+            }
+        }
+        return $emailAddressColection;
+
+    }
     /**
      * Determines the dataset contact from XML metadata.
      *
