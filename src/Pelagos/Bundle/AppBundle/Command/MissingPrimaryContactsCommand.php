@@ -12,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
-
+use Symfony\Component\Console\Output\StreamOutput;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Util\ISOMetadataExtractorUtil;
@@ -58,8 +58,9 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
-        $this->output = $output;
+        $file   = '/home/jholland/pelagos/scratch/missing-primary-contacts.txt';
+        $handle = fopen($file, 'w');
+        $output = new StreamOutput($handle);
         $this->entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
         /**
          * $datasets = $this->entityManager->getRepository('Pelagos\Entity\Dataset')->findBy(array('udi' => $udi));
@@ -80,17 +81,19 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
         $hasMetadataCount = 0;
         $hasMetadataXmlCount = 0;
         $xmlContactsWithoutMatchingPerson = 0;
-        $acceptedMetadataDatasetsWithoutValidContact = 0;
+        $blankXmlContactsEmail = 0;
         $output->writeln("\nDatasets in which metadata xml email address does not match a person in the system");
-        $output->writeln("\nDataset ID      Metadata XML email address: ");
+        $output->writeln("\nNumber,Dataset ID,Metadata XML email address: ");
+        $badCount = 0;
         foreach ( $datasets as $dataset) {
+            $outputArray = array();
+            $outputArray[] = $dataset->getUdi();
             $status = $dataset->getMetadataStatus();
             $datasetSubmission = $dataset->getDatasetSubmission();
             $metadata = $dataset->getMetadata();
             if( $status == 'Approved' ) {
                 $approvedMetadataStatusCount += 1;
             } elseif ($status == 'Accepted' ) {
-                $validContactFound = False;
                 $acceptedMetadataStatusCount += 1;
                 if($metadata) {
                     $hasMetadataCount += 1;
@@ -103,27 +106,16 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
                                 $datasetSubmission,
                                 $this->entityManager);
                             if(count($emailFromXml) >= 0) {
-                                //$output->writeln("\tContact email address found in xml: " . count($emailFromXml));
                                 foreach ($emailFromXml as $emailAddr) {
-                                    //$output->writeln("\t\txml email address: " . $emailAddr);
-
-                                    //$personArray = $this->entityManager->getRepository(Person::class)->findBy(
-                                    //    array('emailAddress' => strtolower($emailAddr)));
-                                    //$person = null;
-                                    //if (count($personArray) > 0) {
-                                    //    $person =  $personArray[0];
-                                    //}
                                     if(strlen($emailAddr) == 0 || $emailAddr  == '') {
-                                        $output->writeln("\n" . $dataset->getUdi() . "  " . "*** Blank ***" );
+                                        $outputArray[] = "** Blank **" ;
+                                        $blankXmlContactsEmail += 1;
                                     } else {
                                         $person = $this->getPersonEmailContacts($emailAddr);
                                         if ($person == null) {
                                             $xmlContactsWithoutMatchingPerson += 1;
-                                            $output->writeln("\n" . $dataset->getUdi() . "  " . $emailAddr );
-                                        } elseif (!$validContactFound) {
-                                                $validContactFound = True;
+                                            $outputArray[] = $emailAddr;
                                         }
-                                            //$output->writeln("\tContact email address: " . $emailAddr . " belongs to " . $person->getLastName() . ", " . $person->getFirstName())
                                     }
                                 }
                             } else {
@@ -133,9 +125,6 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
                             $output->writeln("NO DatasetSubmission");
                         }
                     }
-                }
-                if(!$validContactFound) {
-                    $acceptedMetadataDatasetsWithoutValidContact += 1;
                 }
             } elseif ( $status == 'BackToSubmitter') {
                 $backToSubmitterMetadataStatusCount += 1;
@@ -148,24 +137,36 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
             } else {
                 $otherMetadataStatusCount += 1;
             }
+
+            if(count($outputArray) >= 2) {
+                $badCount += 1;
+                $stringBuffer = "" . $badCount . ",";
+                for( $n = 0; $n < count($outputArray); $n += 1) {
+                    if($n >= 1 ) {
+                        $stringBuffer .= ",";
+                    }
+                    $stringBuffer .= $outputArray[$n];
+                }
+                $output->writeln($stringBuffer);
+            }
         }
 
-        $output->writeln('*** ' . count($datasets) . " data sets found.");
-        $output->writeln(' approved metadata status count: ' . $approvedMetadataStatusCount);
-        $output->writeln(' accepted metadata status count: ' . $acceptedMetadataStatusCount);
-        $output->writeln("\t" . 'has Metadata count: ' . $hasMetadataCount);
-        $output->writeln("\t" . 'has XML count: ' . $hasMetadataXmlCount);
+        $output->writeln('Datasetsets found: ' . count($datasets));
+        $output->writeln('approved metadata: ' . $approvedMetadataStatusCount);
+        $output->writeln('accepted metadata: ' . $acceptedMetadataStatusCount);
+        //$output->writeln("\t" . 'With Metadata count: ' . $hasMetadataCount);
+        //$output->writeln("\t" . 'With XML count: ' . $hasMetadataXmlCount);
         $output->writeln("\t" . 'Accepted metadata emails that do not match a Person: ' . $xmlContactsWithoutMatchingPerson);
-        $output->writeln("\t" . 'Accepted metadata for which no valid contacts were found: ' . $acceptedMetadataDatasetsWithoutValidContact);
-        $output->writeln(' back to submitter metadata status count: ' . $backToSubmitterMetadataStatusCount);
-        $output->writeln(' None metadata status count: ' . $noneMetadataStatusCount);
-        $output->writeln(' InReview metadata status count ' .$InReviewMetadataStatusCount);
-        $output->writeln(' Submitted metadata status count ' . $SubmittedMetadataStatusCount);
-        $output->writeln(' other metadata status count: ' . $otherMetadataStatusCount);
+        $output->writeln("\t" . 'Blank or empty email addresses for: ' . $blankXmlContactsEmail);
+        $output->writeln('back to submitter metadata: ' . $backToSubmitterMetadataStatusCount);
+        $output->writeln('None metadata: ' . $noneMetadataStatusCount);
+        $output->writeln('InReview metadata ' .$InReviewMetadataStatusCount);
+        $output->writeln('Submitted metadata ' . $SubmittedMetadataStatusCount);
+        $output->writeln('other metadata: ' . $otherMetadataStatusCount);
 
         $total = $approvedMetadataStatusCount + $acceptedMetadataStatusCount + $backToSubmitterMetadataStatusCount +
             $noneMetadataStatusCount + $InReviewMetadataStatusCount + $SubmittedMetadataStatusCount + $otherMetadataStatusCount;
-        $output->writeln(' total metadata status count: ' . $total);
+        // $output->writeln(' total metadata: ' . $total);
 
 
         #$datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
