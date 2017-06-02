@@ -52,9 +52,11 @@
 
 
 <table width="90%" datasetId="{{ dataset.id }}">
-    {% if dataset.datasetSubmission.doi|default %}
-        <tr><td colspan="2"><b>DOI:</b><br/> {{dataset.datasetSubmission.doi}}</td></tr>
-        <tr><td colspan="2">&nbsp;</td></tr>
+    {% if dataset.doi|default %} %}
+        {% if dataset.doi.status == constant('Pelagos\\Entity\\DOI::STATUS_PUBLIC') %} %}
+            <tr><td colspan="2"><b>DOI:</b><br/> {{dataset.doi.doi}}</td></tr>
+            <tr><td colspan="2">&nbsp;</td></tr>
+        {% endif %}
     {% endif %}
     <tr>
         <td><b>UDI:</b><br/><span id="udi">{{dataset.udi}}</span></td>
