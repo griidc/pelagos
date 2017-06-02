@@ -154,8 +154,6 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
         $output->writeln('Datasetsets found: ' . count($datasets));
         $output->writeln('approved metadata: ' . $approvedMetadataStatusCount);
         $output->writeln('accepted metadata: ' . $acceptedMetadataStatusCount);
-        //$output->writeln("\t" . 'With Metadata count: ' . $hasMetadataCount);
-        //$output->writeln("\t" . 'With XML count: ' . $hasMetadataXmlCount);
         $output->writeln("\t" . 'Accepted metadata emails that do not match a Person: ' . $xmlContactsWithoutMatchingPerson);
         $output->writeln("\t" . 'Blank or empty email addresses for: ' . $blankXmlContactsEmail);
         $output->writeln('back to submitter metadata: ' . $backToSubmitterMetadataStatusCount);
@@ -163,15 +161,6 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
         $output->writeln('InReview metadata ' .$InReviewMetadataStatusCount);
         $output->writeln('Submitted metadata ' . $SubmittedMetadataStatusCount);
         $output->writeln('other metadata: ' . $otherMetadataStatusCount);
-
-        $total = $approvedMetadataStatusCount + $acceptedMetadataStatusCount + $backToSubmitterMetadataStatusCount +
-            $noneMetadataStatusCount + $InReviewMetadataStatusCount + $SubmittedMetadataStatusCount + $otherMetadataStatusCount;
-        // $output->writeln(' total metadata: ' . $total);
-
-
-        #$datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
-        #$this->entityManager->persist($datasetSubmission);
-        #$this->entityManager->flush();
 
         return 0;
     }
