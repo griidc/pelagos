@@ -63,6 +63,8 @@ class DOI extends Entity
     /**
      * Constructor.
      *
+     * @param string $doi The doi string.
+     *
      * Sets to DOI identifier for the DOI entity.
      */
     public function __construct($doi)
@@ -142,5 +144,15 @@ class DOI extends Entity
     public function setPublicDate(\DateTime $publicDate)
     {
         $this->publicDate = $publicDate;
+    }
+
+    /**
+     * A Pretty Print sort of formatting in the string context.
+     *
+     * @return string The formatted DOI string.
+     */
+    public function __toString()
+    {
+        return (string) 'doi:' . $this->doi;
     }
 }
