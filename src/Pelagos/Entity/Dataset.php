@@ -52,7 +52,7 @@ class Dataset extends Entity
      *
      * @var DOI
      *
-     * @ORM\OneToOne(targetEntity="DOI")
+     * @ORM\OneToOne(targetEntity="DOI", cascade={"persist"})
      */
     protected $doi;
 

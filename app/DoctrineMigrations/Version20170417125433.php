@@ -19,7 +19,7 @@ class Version20170417125433 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
         $this->addSql('CREATE SEQUENCE doi_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE doi (id INT NOT NULL, creator_id INT DEFAULT NULL, modifier_id INT DEFAULT NULL, doi TEXT NOT NULL, status TEXT NOT NULL, public_date DATE NOT NULL, creation_time_stamp TIMESTAMP(0) WITH TIME ZONE NOT NULL, modification_time_stamp TIMESTAMP(0) WITH TIME ZONE NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE doi (id INT NOT NULL, creator_id INT DEFAULT NULL, modifier_id INT DEFAULT NULL, doi TEXT NOT NULL, status TEXT NOT NULL, public_date DATE DEFAULT NULL, creation_time_stamp TIMESTAMP(0) WITH TIME ZONE NOT NULL, modification_time_stamp TIMESTAMP(0) WITH TIME ZONE NOT NULL, PRIMARY KEY(id))');
         
         
         $this->addSql('CREATE INDEX IDX_6694147A61220EA6 ON doi (creator_id)');

@@ -4,6 +4,8 @@ namespace Pelagos\Event;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+use OldSound\RabbitMqBundle\RabbitMq\Producer;
+
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;

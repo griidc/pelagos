@@ -33,8 +33,8 @@ class DatasetSubmissionListener extends EventListener
 
         // Publish message requesting DOI generation.
         // Producer passed in via constructor is that of the doi_issue producer.
-        $this->producer->publish($dataset->getId(), 'issue.doi');
-
+        $this->producer->publish($dataset->getId(), 'issue');
+   
         // email User
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
         $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission));
@@ -67,6 +67,8 @@ class DatasetSubmissionListener extends EventListener
                 $dataset->getUdi()
             )
         );
+        
+        $this->producer->publish($dataset->getId(), 'update');
 
         // email User
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
