@@ -88,11 +88,9 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
 
 
         $acceptedMetadataStatusCount = 0;
-        $hasMetadataCount = 0;
-        $hasMetadataXmlCount = 0;
         $xmlContactsWithoutMatchingPerson = 0;
         $blankXmlContactsEmail = 0;
-        $this->fileOutput->writeln("\nDatasets in which the first metadata xml email address does not match a person in the system");
+        $this->fileOutput->writeln("\nDatasets in which the 1st email address of the 1st POC does not match a person in the system");
         $this->fileOutput->writeln("\nDataset ID,Metadata XML email address: ");
         $badCount = 0;
         foreach ( $this->datasets as $dataset) {
@@ -104,25 +102,22 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
             if ($status == 'Accepted') {
                 $acceptedMetadataStatusCount += 1;
                 if ($metadata) {
-                    $hasMetadataCount += 1;
                     $simpleXml = $metadata->getXml();
                     if ($simpleXml->asXml()) {
-                        $hasMetadataXmlCount += 1;
                         if ($this->datasetsubmission) {
-                            $allEmailAddressesForAllPOCs = ISOMetadataExtractorUtil::getAllEmailAddressesForAllPointsOfContact(
+                            $firstEmailAddressFrom1stPOC = ISOMetadataExtractorUtil::get1stEmailAddressesFrom1stPointOfContact(
                                 $simpleXml,
                                 $this->datasetsubmission,
                                 $this->entityManager);
-                            if (count($allEmailAddressesForAllPOCs) >= 0) {
-                                $emailAddr = $allEmailAddressesForAllPOCs[0];  //  get the first email address
-                                if (strlen($emailAddr) == 0 || $emailAddr == '') {
+                            if ($firstEmailAddressFrom1stPOC) {
+                                if (strlen($firstEmailAddressFrom1stPOC) == 0 || $firstEmailAddressFrom1stPOC == '') {
                                     $this->fileOutputArray[] = "** Blank **";
                                     $blankXmlContactsEmail += 1;
                                 } else {
-                                    $person = $this->getPersonEmailContacts($emailAddr);
+                                    $person = $this->getPersonEmailContacts($firstEmailAddressFrom1stPOC);
                                     if ($person == null) {
                                         $xmlContactsWithoutMatchingPerson += 1;
-                                        $this->fileOutputArray[] = $emailAddr;
+                                        $this->fileOutputArray[] = $firstEmailAddressFrom1stPOC;
                                     }
                                 }
                             }
@@ -132,7 +127,7 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
                     }
                 }
             }
-            $this->printResults($output);
+            $this->printResults( );
         }
 
         $this->fileOutput->writeln('Datasetsets found: ' . count($this->datasets));
@@ -154,11 +149,9 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
         $noneMetadataStatusCount = 0;
         $InReviewMetadataStatusCount = 0;
         $SubmittedMetadataStatusCount = 0;
-        $hasMetadataCount = 0;
-        $hasMetadataXmlCount = 0;
         $xmlContactsWithoutMatchingPerson = 0;
         $blankXmlContactsEmail = 0;
-        $this->fileOutput->writeln("\nDatasets in which metadata xml email address does not match a person in the system");
+        $this->fileOutput->writeln("\nDatasets in which the any email address of the any POC does not match a person in the system");
         $this->fileOutput->writeln("\nDataset ID,Metadata XML email address: ");
         $badCount = 0;
         foreach ( $this->datasets as $dataset) {
@@ -172,10 +165,8 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
             } elseif ($status == 'Accepted' ) {
                 $acceptedMetadataStatusCount += 1;
                 if($metadata) {
-                    $hasMetadataCount += 1;
                     $simpleXml = $metadata->getXml();
                     if ($simpleXml->asXml()) {
-                        $hasMetadataXmlCount += 1;
                         if ($this->datasetsubmission ) {
                             $allEmailAddressesForAllPOCs = ISOMetadataExtractorUtil::getAllEmailAddressesForAllPointsOfContact(
                                 $simpleXml,
@@ -214,7 +205,7 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
                 $otherMetadataStatusCount += 1;
             }
 
-            $this->printResults($output);
+            $this->printResults( );
 
         }
 
