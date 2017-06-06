@@ -76,9 +76,20 @@ class ISOMetadataExtractorUtil
         }
     }
 
+    protected static $williamNicholesXpath = '/gmi:MI_Metadata' .
+    '/gmd:identificationInfo' .
+    '/gmd:MD_DataIdentification' .
+    '/gmd:pointOfContact[1]' .
+    '/gmd:CI_ResponsibleParty' .
+    '/gmd:contactInfo' .
+    '/gmd:CI_Contact' .
+    '/gmd:address' .
+    '/gmd:CI_Address' .
+    '/gmd:electronicMailAddress' .
+    '/gco:CharacterString';
 
     /**
-     * Get the Contacts as email addresses from XML metadata.
+     * Get the all email addresses from all POCs from XML metadata.
      *
      * @param \SimpleXmlElement $xml The XML to extract from.
      * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
@@ -86,7 +97,7 @@ class ISOMetadataExtractorUtil
      *
      * @return Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
      */
-    public static function extractContactEmailAddresses(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em) {
+    public static function getAllEmailAddressesForAllPointsOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em) {
 
         $emailAddressColection = array();
 
@@ -95,12 +106,13 @@ class ISOMetadataExtractorUtil
             '/gmd:MD_DataIdentification' .
             '/gmd:pointOfContact';
 
+
         $pointsOfContact = @$xml->xpath($query);
 
         if (!empty($pointsOfContact)) {
             foreach ($pointsOfContact as $pointOfContact) {
 
-                // Find Email address stored in the XML
+                // for each POC get all email addresses
                 $query = './gmd:CI_ResponsibleParty' .
                     '/gmd:contactInfo' .
                     '/gmd:CI_Contact' .
@@ -109,9 +121,11 @@ class ISOMetadataExtractorUtil
                     '/gmd:electronicMailAddress' .
                     '/gco:CharacterString';
 
-                $email = self::querySingle($pointOfContact, $query);
-
-                $emailAddressColection[] = $email;
+                $allEmailAddresses = self::queryMultiple($pointOfContact, $query);
+                if(!empty($allEmailAddresses)) {
+                    foreach ($allEmailAddresses as $emailAddress)
+                        $emailAddressColection[] = $emailAddress;
+                }
             }
         }
         return $emailAddressColection;

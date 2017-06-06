@@ -109,12 +109,12 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
                     if ($simpleXml->asXml()) {
                         $hasMetadataXmlCount += 1;
                         if ($this->datasetsubmission) {
-                            $emailFromXml = ISOMetadataExtractorUtil::extractContactEmailAddresses(
+                            $allEmailAddressesForAllPOCs = ISOMetadataExtractorUtil::getAllEmailAddressesForAllPointsOfContact(
                                 $simpleXml,
                                 $this->datasetsubmission,
                                 $this->entityManager);
-                            if (count($emailFromXml) >= 0) {
-                                $emailAddr = $emailFromXml[0];  //  get the first email address
+                            if (count($allEmailAddressesForAllPOCs) >= 0) {
+                                $emailAddr = $allEmailAddressesForAllPOCs[0];  //  get the first email address
                                 if (strlen($emailAddr) == 0 || $emailAddr == '') {
                                     $this->fileOutputArray[] = "** Blank **";
                                     $blankXmlContactsEmail += 1;
@@ -132,7 +132,7 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
                     }
                 }
             }
-            $this->printResults();
+            $this->printResults($output);
         }
 
         $this->fileOutput->writeln('Datasetsets found: ' . count($this->datasets));
@@ -177,12 +177,12 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
                     if ($simpleXml->asXml()) {
                         $hasMetadataXmlCount += 1;
                         if ($this->datasetsubmission ) {
-                            $emailFromXml = ISOMetadataExtractorUtil::extractContactEmailAddresses(
+                            $allEmailAddressesForAllPOCs = ISOMetadataExtractorUtil::getAllEmailAddressesForAllPointsOfContact(
                                 $simpleXml,
                                 $this->datasetsubmission,
                                 $this->entityManager);
-                            if(count($emailFromXml) >= 0) {
-                                foreach ($emailFromXml as $emailAddr) {
+                            if(count($allEmailAddressesForAllPOCs) >= 0) {
+                                foreach ($allEmailAddressesForAllPOCs as $emailAddr) {
                                     if(strlen($emailAddr) == 0 || $emailAddr  == '') {
                                         $this->fileOutputArray[] = "** Blank **" ;
                                         $blankXmlContactsEmail += 1;
@@ -214,7 +214,7 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
                 $otherMetadataStatusCount += 1;
             }
 
-            $this->printResults();
+            $this->printResults($output);
 
         }
 
@@ -232,7 +232,7 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
         return 0;
     }
 
-    private function printResults() {
+    private function printResults(OutputInterface $output = null) {
         if(count($this->fileOutputArray) >= 2) {
             $stringBuffer = "";
             for( $n = 0; $n < count($this->fileOutputArray); $n += 1) {
@@ -240,6 +240,9 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
                     $stringBuffer .= ",";
                 }
                 $stringBuffer .= $this->fileOutputArray[$n];
+            }
+            if($output) {
+                $output->writeln($stringBuffer);
             }
             $this->fileOutput->writeln($stringBuffer);
         }
