@@ -31,21 +31,21 @@ class DoiConsumer implements ConsumerInterface
      * @var EntityManager
      */
     protected $entityManager;
-    
+
     /**
      * A Monolog logger.
      *
      * @var Logger
      */
     protected $logger;
-    
+
     /**
      * The entity event dispatcher.
      *
      * @var EntityEventDispatcher
      */
     protected $entityEventDispatcher;
-    
+
     /**
      * Constructor.
      *
@@ -62,7 +62,7 @@ class DoiConsumer implements ConsumerInterface
         $this->logger = $logger;
         $this->entityEventDispatcher = $entityEventDispatcher;
     }
-    
+
     /**
      * Process a filer message.
      *
@@ -87,14 +87,14 @@ class DoiConsumer implements ConsumerInterface
         if (null !== $dataset->getUdi()) {
             $loggingContext['udi'] = $dataset->getUdi();
         }
-        
+
         // @codingStandardsIgnoreStart
         $routingKey = $message->delivery_info['routing_key'];
         // @codingStandardsIgnoreEnd
         if (preg_match('/^issue/', $routingKey)) {
             $this->issueDoi($dataset, $loggingContext);
         } elseif (preg_match('/^publish/', $routingKey)) {
-            //$this->publishDoi($dataset, $loggingContext);
+            $this->publishDoi($dataset, $loggingContext);
         } elseif (preg_match('/^update/', $routingKey)) {
             //$this->updateDoi($dataset, $loggingContext);
         } else {
@@ -105,7 +105,7 @@ class DoiConsumer implements ConsumerInterface
         $this->entityManager->flush();
         return true;
     }
-    
+
     /**
      * Issue a DOI for the dataset.
      *
@@ -118,14 +118,14 @@ class DoiConsumer implements ConsumerInterface
     {
         // Log processing start.
         $this->logger->info('Attempting to issue DOI', $loggingContext);
-        
+
         $datasetSubmission = $dataset->getDatasetSubmission();
         if (!$datasetSubmission instanceof DatasetSubmission) {
             $this->logger->warning('No submission found for dataset', $loggingContext);
             return true;
         }
         $loggingContext['dataset_submission_id'] = $datasetSubmission->getId();
-        
+
         try {
             $doiUtil = new DOIutil();
             $issuedDoi = $doiUtil->createDOI(
@@ -139,14 +139,58 @@ class DoiConsumer implements ConsumerInterface
             $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
             return;
         }
-        
+
         $doi = new DOI($issuedDoi);
         $dataset->setDoi($doi);
-        
+
         $loggingContext['doi'] = $doi;
         // Dispatch entity event.
         $this->entityEventDispatcher->dispatch($dataset, 'doi_issued');
         // Log processing complete.
         $this->logger->info('DOI Issued', $loggingContext);
+    }
+
+    /**
+     * Mark a DOI public (published) for a dataset.
+     *
+     * @param Dataset $dataset        The dataset.
+     * @param array   $loggingContext The logging context to use when logging.
+     *
+     * @return boolean True if success, false otherwise.
+     */
+    protected function publishDoi(Dataset $dataset, array $loggingContext)
+    {
+        // Log processing start.
+        $this->logger->info('Attempting to mark DOI as published', $loggingContext);
+
+        $doi = $dataset->getDoi();
+        if (!$doi instanceof DOI) {
+            $this->logger->warning('No DOI found for dataset', $loggingContext);
+            return true;
+        }
+
+        $loggingContext['doi'] = $doi->getDoi();
+
+        // Don't attempt to publish an already published DOI to preserve the original pub date.
+        if ($doi->getStatus() == DOI::STATUS_PUBLIC) {
+            $this->logger->warning('DOI for dataset already marked as public.', $loggingContext);
+            return true;
+        }
+
+        try {
+            $doiUtil = new DOIutil();
+            $doiUtil->publishDOI($doi);
+        } catch (\Exception $exception) {
+            $this->logger->error('Error setting DOI to published: ' . $exception->getMessage(), $loggingContext);
+            return;
+        }
+        // Since we've succeeded by this point, mark status/date in the entity.
+        $doi->setStatus(DOI::STATUS_PUBLIC);
+        $doi->setPublicDate(new \DateTime);
+
+        // Dispatch entity event.
+        $this->entityEventDispatcher->dispatch($dataset, 'doi_published');
+        // Log processing complete.
+        $this->logger->info('DOI set to published', $loggingContext);
     }
 }
