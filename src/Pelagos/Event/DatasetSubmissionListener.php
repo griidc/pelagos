@@ -204,6 +204,7 @@ class DatasetSubmissionListener extends EventListener
     public function onApproved(EntityEvent $event)
     {
         $datasetSubmission = $event->getEntity();
-        $this->producer->publish($dataset->getId(), 'publish.doi');
+        $this->producer->publish($datasetSubmission->getDataset()->getId(), 'publish');
+        $this->producer->publish($datasetSubmission->getDataset()->getId(), 'update');
     }
 }
