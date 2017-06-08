@@ -107,7 +107,7 @@ class DOI extends Entity
      *
      * @return void
      */
-    protected function setStatus($status)
+    public function setStatus($status)
     {
         $this->status = $status;
     }
