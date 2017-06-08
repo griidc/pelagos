@@ -146,7 +146,7 @@ class DoiConsumer implements ConsumerInterface
         $doi->setModifier($dataset->getModifier());
         $dataset->setDoi($doi);
 
-        $loggingContext['doi'] = $doi;
+        $loggingContext['doi'] = $doi->getDoi();
         // Dispatch entity event.
         $this->entityEventDispatcher->dispatch($dataset, 'doi_issued');
         // Log processing complete.
@@ -193,7 +193,7 @@ class DoiConsumer implements ConsumerInterface
         
         $doi->setModifier($dataset->getModifier());
 
-        $loggingContext['doi'] = $doi;
+        $loggingContext['doi'] = $doi->getDoi();
         // Dispatch entity event.
         $this->entityEventDispatcher->dispatch($dataset, 'doi_updated');
         // Log processing complete.
