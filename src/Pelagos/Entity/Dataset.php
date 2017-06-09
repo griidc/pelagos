@@ -365,7 +365,37 @@ class Dataset extends Entity
     }
 
     /**
+     * Get authors shortcut, to get Authors from DatasetSubmission.
+     *
+     * @return string|null
+     */
+    public function getAuthors()
+    {
+        if ($this->hasDatasetSubmission()) {
+            return $this->getDatasetSubmission()->getAuthors();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get reference date shortcut, to get Authors from DatasetSubmission.
+     *
+     * @return string|null
+     */
+    public function getReferenceDateYear()
+    {
+        if ($this->hasDatasetSubmission()) {
+            return $this->getDatasetSubmission()->getReferenceDate()->format('Y');
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Set the DOI for this Dataset.
+     *
+     * @param DOI $doi The DOI entity for this Dataset.
      *
      * @return void
      */
