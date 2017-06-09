@@ -239,33 +239,36 @@ class Account extends Entity implements UserInterface, \Serializable
     /**
      * Set the password attribute with a Password object.
      *
-     * @param Password $password Pelagos password object.
+     * @param Password $password   Pelagos password object.
+     * @param boolean  $lessStrict If less strict password rules are allowed.
      *
      * @throws PasswordException When password last changed within 24 hrs.
      * @throws PasswordException When an old password is re-used.
      *
      * @return void
      */
-    public function setPassword(Password $password)
+    public function setPassword(Password $password, $lessStrict = false)
     {
         $this->password = $password;
 
-        // check for minimum age.
-        $interval = new \DateInterval('PT24H');
-        $now = new \DateTime();
-        if (!$this->passwordHistory->isEmpty() and
-            $this->passwordHistory->first()->getModificationTimeStamp()->add($interval) > $now) {
-            throw new PasswordException('This password has already been changed within the last 24 hrs');
-        }
+        if (false === $lessStrict) {
+            // check for minimum age.
+            $interval = new \DateInterval('PT24H');
+            $now = new \DateTime();
+            if (!$this->passwordHistory->isEmpty() and
+                $this->passwordHistory->first()->getModificationTimeStamp()->add($interval) > $now) {
+                throw new PasswordException('This password has already been changed within the last 24 hrs');
+            }
 
-        // Throw exception if this password hash is
-        // found in last 10 of password history.  The subset of history
-        // is provided by a combination of EXTRA_LAZY and the Slice() method.
-        $clearText = $this->password->getClearTextPassword();
-        foreach ($this->passwordHistory->slice(0, 10) as $oldPasswordObject) {
-            $comparisonHash = sha1($clearText . $oldPasswordObject->getSalt(), true);
-            if ($comparisonHash === $oldPasswordObject->getPasswordHash()) {
-                throw new PasswordException('This password has already been used');
+            // Throw exception if this password hash is
+            // found in last 10 of password history.  The subset of history
+            // is provided by a combination of EXTRA_LAZY and the Slice() method.
+            $clearText = $this->password->getClearTextPassword();
+            foreach ($this->passwordHistory->slice(0, 10) as $oldPasswordObject) {
+                $comparisonHash = sha1($clearText . $oldPasswordObject->getSalt(), true);
+                if ($comparisonHash === $oldPasswordObject->getPasswordHash()) {
+                    throw new PasswordException('This password has already been used');
+                }
             }
         }
         $this->password->setAccount($this);

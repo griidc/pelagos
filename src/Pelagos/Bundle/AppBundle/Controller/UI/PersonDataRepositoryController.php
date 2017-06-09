@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
  */
-class PersonDataRepositoryController extends UIController
+class PersonDataRepositoryController extends UIController implements OptionalReadOnlyInterface
 {
     /**
      * The Person Research Group action.

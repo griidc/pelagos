@@ -294,7 +294,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
             $this->mockEntityManager
         );
 
-        $this->assertNull($this->datasetSubmission->getSpatialExtent());
+        $this->assertEquals('spatial extent from mock dataset submission', $this->datasetSubmission->getSpatialExtent());
     }
 
     /**

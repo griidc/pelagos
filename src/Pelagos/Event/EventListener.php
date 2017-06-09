@@ -150,7 +150,7 @@ abstract class EventListener
             }
         }
 
-        foreach (array_unique($peopleObjs) as $person) {
+        foreach (array_unique($peopleObjs, SORT_REGULAR) as $person) {
             $mailData['recipient'] = $person;
             $message = \Swift_Message::newInstance()
                 ->setSubject($twigTemplate->renderBlock('subject', $mailData))
@@ -271,6 +271,6 @@ abstract class EventListener
      */
     protected function getDMs(Dataset $dataset, Person $person)
     {
-        return array_unique(array_merge($this->getDatasetDMs($dataset), $this->getPersonDMs($person)));
+        return array_unique(array_merge($this->getDatasetDMs($dataset), $this->getPersonDMs($person)), SORT_REGULAR);
     }
 }
