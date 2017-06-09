@@ -23,7 +23,7 @@ use Pelagos\Entity\DoiRequest;
  *
  * @Route("/doi-request")
  */
-class DoiRequestController extends UIController
+class DoiRequestController extends UIController implements OptionalReadOnlyInterface
 {
     /**
      * The default action for the DOI Request.

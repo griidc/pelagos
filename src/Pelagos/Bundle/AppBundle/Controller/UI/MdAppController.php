@@ -30,7 +30,7 @@ use Pelagos\Exception\InvalidGmlException;
  *
  * @Route("/mdapp")
  */
-class MdAppController extends UIController
+class MdAppController extends UIController implements OptionalReadOnlyInterface
 {
     /**
      * MDApp UI.

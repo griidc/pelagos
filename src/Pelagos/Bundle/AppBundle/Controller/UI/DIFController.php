@@ -17,7 +17,7 @@ use Pelagos\Entity\DIF;
  *
  * @Route("/dif")
  */
-class DIFController extends UIController
+class DIFController extends UIController implements OptionalReadOnlyInterface
 {
     /**
      * The default action for the DIF.

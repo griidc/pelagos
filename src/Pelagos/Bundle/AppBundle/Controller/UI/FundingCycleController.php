@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
  */
-class FundingCycleController extends UIController
+class FundingCycleController extends UIController implements OptionalReadOnlyInterface
 {
     /**
      * The Funding Cycle action.
@@ -28,24 +28,24 @@ class FundingCycleController extends UIController
     public function defaultAction($id = null)
     {
         $ui = array();
-        
+
         if ($id !== null) {
             $fundingCycle = $this->entityHandler->get('Pelagos:FundingCycle', $id);
-            
+
             if (!$fundingCycle instanceof \Pelagos\Entity\FundingCycle) {
                 throw $this->createNotFoundException('The Funding Cycle was not found');
             }
-            
+
         } else {
             $fundingCycle = new \Pelagos\Entity\FundingCycle;
         }
-        
+
         $form = $this->get('form.factory')->createNamed(null, FundingCycleType::class, $fundingCycle);
-        
+
         $ui['FundingCycle'] = $fundingCycle;
         $ui['form'] = $form->createView();
         $ui['entityService'] = $this->entityHandler;
-        
+
         return $this->render('PelagosAppBundle:template:FundingCycle.html.twig', $ui);
     }
 }

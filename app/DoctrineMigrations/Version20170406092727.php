@@ -23,6 +23,9 @@ class Version20170406092727 extends AbstractMigration
 
         // Set flag since all groups of contacts are currently length 1.
         $this->addSql('UPDATE person_dataset_submission set primary_contact = true WHERE discr = \'persondatasetsubmissiondatasetcontact\' AND person_dataset_submission.id is not null');
+
+        // Allow SimpleThings EntityAudit to store nulls for usernames (new behavior)
+        $this->addSql('ALTER TABLE revisions ALTER username DROP NOT NULL');
     }
 
     /**
@@ -35,5 +38,8 @@ class Version20170406092727 extends AbstractMigration
 
         // Remove boolean column that designates primary member of the collection.
         $this->addSql('ALTER TABLE person_dataset_submission DROP primary_contact');
+
+        // Disallow SimpleThings EntityAudit to store nulls for usernames (new behavior)
+        $this->addSql('ALTER TABLE revisions ALTER username SET NOT NULL');
     }
 }
