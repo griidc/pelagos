@@ -58,8 +58,9 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
      * @return integer Return 0 on success, or an error code otherwise.
      */
 
-    private function openIO(OutputInterface $output) {
-        if($this->fileOutput == null) {
+    private function openIO(OutputInterface $output)
+    {
+        if ($this->fileOutput == null) {
             $handle = fopen($this->outputFileName, 'w');
             $this->fileOutput = new StreamOutput($handle);
             $this->entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
@@ -68,7 +69,8 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
 
         // $this->datasets = $this->entityManager->getRepository('Pelagos\Entity\Dataset')->findAll();
         $this->datasets = array();
-        $this->datasets = $this->entityManager->getRepository('Pelagos\Entity\Dataset')->findBy($this->datasets,array('udi' => 'ASC'));
+        $this->datasets = $this->entityManager->getRepository('Pelagos\Entity\Dataset')
+              ->findBy($this->datasets, array('udi' => 'ASC'));
 
         if (count($this->datasets) == 0) {
             throw new \Exception('Could not find all the datasets');
@@ -79,21 +81,28 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
     {
         $this->outputFileName =$input->getArgument('OutputFileNmae');
         self::openIO($output);
-        $this->reportOne($input, $output);
+        $this->missingPrimaryContactReport($input, $output);
 
-        $this->reportTwo($input, $output);
+        $this->allMissingContactsReport($input, $output);
     }
 
-    protected function reportOne(InputInterface $input, OutputInterface $output) {
-
-
+    /**
+     * Find a report all the Datasets that have a contact list in XML metadata in which the
+     * first email address in the first POC is not found in an existing Person instance.
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
+    protected function missingPrimaryContactReport(InputInterface $input, OutputInterface $output)
+    {
         $acceptedMetadataStatusCount = 0;
         $xmlContactsWithoutMatchingPerson = 0;
         $blankXmlContactsEmail = 0;
-        $this->fileOutput->writeln("\nDatasets in which the 1st email address of the 1st POC does not match a person in the system");
+        $this->fileOutput->writeln("\nDatasets in which the 1st email address of the 1st " .
+            "POC does not match a person in the system");
         $this->fileOutput->writeln("\nDataset ID,Metadata XML email address: ");
         $badCount = 0;
-        foreach ( $this->datasets as $dataset) {
+        foreach ($this->datasets as $dataset) {
             $this->fileOutputArray = array();
             $this->fileOutputArray[] = $dataset->getUdi();
             $status = $dataset->getMetadataStatus();
@@ -105,10 +114,12 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
                     $simpleXml = $metadata->getXml();
                     if ($simpleXml->asXml()) {
                         if ($this->datasetsubmission) {
-                            $firstEmailAddressFrom1stPOC = ISOMetadataExtractorUtil::get1stEmailAddressesFrom1stPointOfContact(
-                                $simpleXml,
-                                $this->datasetsubmission,
-                                $this->entityManager);
+                            $firstEmailAddressFrom1stPOC =
+                                ISOMetadataExtractorUtil::get1stEmailAddressesFrom1stPointOfContact(
+                                    $simpleXml,
+                                    $this->datasetsubmission,
+                                    $this->entityManager
+                                );
                             if ($firstEmailAddressFrom1stPOC) {
                                 if (strlen($firstEmailAddressFrom1stPOC) == 0 || $firstEmailAddressFrom1stPOC == '') {
                                     $this->fileOutputArray[] = "** Blank **";
@@ -127,21 +138,27 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
                     }
                 }
             }
-            $this->printResults( );
+            $this->printResults();
         }
 
         $this->fileOutput->writeln('Datasetsets found: ' . count($this->datasets));
         $this->fileOutput->writeln('accepted metadata: ' . $acceptedMetadataStatusCount);
-        $this->fileOutput->writeln("\t" . 'Accepted metadata emails that do not match a Person: ' . $xmlContactsWithoutMatchingPerson);
+        $this->fileOutput->writeln("\t" . 'Accepted metadata emails that do not match a Person: ' .
+            $xmlContactsWithoutMatchingPerson);
         $this->fileOutput->writeln("\t" . 'Blank or empty email addresses: ' . $blankXmlContactsEmail);
 
         return 0;
     }
 
-
-    protected function reportTwo(InputInterface $input, OutputInterface $output) {
-
-
+    /**
+     * Find all Datasets for which there is an email addresses in a POC that does not refer to an
+     * existing Person instance in the Pelagos model.
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
+    protected function allMissingContactsReport(InputInterface $input, OutputInterface $output)
+    {
         $approvedMetadataStatusCount = 0;
         $acceptedMetadataStatusCount = 0;
         $backToSubmitterMetadataStatusCount = 0;
@@ -151,30 +168,33 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
         $SubmittedMetadataStatusCount = 0;
         $xmlContactsWithoutMatchingPerson = 0;
         $blankXmlContactsEmail = 0;
-        $this->fileOutput->writeln("\nDatasets in which the any email address of the any POC does not match a person in the system");
+        $this->fileOutput->writeln("\nDatasets in which the any email address of the any " .
+            "POC does not match a person in the system");
         $this->fileOutput->writeln("\nDataset ID,Metadata XML email address: ");
         $badCount = 0;
-        foreach ( $this->datasets as $dataset) {
+        foreach ($this->datasets as $dataset) {
             $this->fileOutputArray = array();
             $this->fileOutputArray[] = $dataset->getUdi();
             $status = $dataset->getMetadataStatus();
             $this->datasetsubmission = $dataset->getDatasetSubmission();
             $metadata = $dataset->getMetadata();
-            if( $status == 'Approved' ) {
+            if ($status == 'Approved') {
                 $approvedMetadataStatusCount += 1;
-            } elseif ($status == 'Accepted' ) {
+            } elseif ($status == 'Accepted') {
                 $acceptedMetadataStatusCount += 1;
-                if($metadata) {
+                if ($metadata) {
                     $simpleXml = $metadata->getXml();
                     if ($simpleXml->asXml()) {
-                        if ($this->datasetsubmission ) {
-                            $allEmailAddressesForAllPOCs = ISOMetadataExtractorUtil::getAllEmailAddressesForAllPointsOfContact(
-                                $simpleXml,
-                                $this->datasetsubmission,
-                                $this->entityManager);
-                            if(count($allEmailAddressesForAllPOCs) >= 0) {
+                        if ($this->datasetsubmission) {
+                            $allEmailAddressesForAllPOCs =
+                                ISOMetadataExtractorUtil::getAllEmailAddressesForAllPointsOfContact(
+                                    $simpleXml,
+                                    $this->datasetsubmission,
+                                    $this->entityManager
+                                );
+                            if (count($allEmailAddressesForAllPOCs) >= 0) {
                                 foreach ($allEmailAddressesForAllPOCs as $emailAddr) {
-                                    if(strlen($emailAddr) == 0 || $emailAddr  == '') {
+                                    if (strlen($emailAddr) == 0 || $emailAddr  == '') {
                                         $this->fileOutputArray[] = "** Blank **" ;
                                         $blankXmlContactsEmail += 1;
                                     } else {
@@ -193,26 +213,27 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
                         }
                     }
                 }
-            } elseif ( $status == 'BackToSubmitter') {
+            } elseif ($status == 'BackToSubmitter') {
                 $backToSubmitterMetadataStatusCount += 1;
-            } elseif ( $status == 'None') {
+            } elseif ($status == 'None') {
                 $noneMetadataStatusCount += 1;
-            } elseif ( $status == 'InReview') {
+            } elseif ($status == 'InReview') {
                 $InReviewMetadataStatusCount += 1;
-            }  elseif ( $status == 'Submitted') {
+            } elseif ($status == 'Submitted') {
                 $SubmittedMetadataStatusCount += 1;
             } else {
                 $otherMetadataStatusCount += 1;
             }
 
-            $this->printResults( );
+            $this->printResults();
 
         }
 
         $this->fileOutput->writeln('Datasetsets found: ' . count($this->datasets));
         $this->fileOutput->writeln('approved metadata: ' . $approvedMetadataStatusCount);
         $this->fileOutput->writeln('accepted metadata: ' . $acceptedMetadataStatusCount);
-        $this->fileOutput->writeln("\t" . 'Accepted metadata emails that do not match a Person: ' . $xmlContactsWithoutMatchingPerson);
+        $this->fileOutput->writeln("\t" . 'Accepted metadata emails that do not match a Person: ' .
+            $xmlContactsWithoutMatchingPerson);
         $this->fileOutput->writeln("\t" . 'Blank or empty email addresses found: ' . $blankXmlContactsEmail);
         $this->fileOutput->writeln('back to submitter metadata: ' . $backToSubmitterMetadataStatusCount);
         $this->fileOutput->writeln('None metadata: ' . $noneMetadataStatusCount);
@@ -223,25 +244,27 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
         return 0;
     }
 
-    private function printResults(OutputInterface $output = null) {
-        if(count($this->fileOutputArray) >= 2) {
+    private function printResults(OutputInterface $output = null)
+    {
+        if (count($this->fileOutputArray) >= 2) {
             $stringBuffer = "";
-            for( $n = 0; $n < count($this->fileOutputArray); $n += 1) {
-                if($n >= 1 ) {
+            for ($n = 0; $n < count($this->fileOutputArray); $n += 1) {
+                if ($n >= 1) {
                     $stringBuffer .= ",";
                 }
                 $stringBuffer .= $this->fileOutputArray[$n];
             }
-            if($output) {
+            if ($output) {
                 $output->writeln($stringBuffer);
             }
             $this->fileOutput->writeln($stringBuffer);
         }
     }
 
-    protected function getPersonEmailContacts($emailAddress) {
-        $personArray = $this->entityManager->getRepository(Person::class)->findBy(
-            array('emailAddress' => strtolower($emailAddress)));
+    protected function getPersonEmailContacts($emailAddress)
+    {
+        $personArray = $this->entityManager->getRepository(Person::class)
+            ->findBy(array('emailAddress' => strtolower($emailAddress)));
         $person = null;
         if (count($personArray) > 0) {
             $person =  $personArray[0];
