@@ -91,9 +91,9 @@ class DatasetIndex
                 $text = trim(preg_replace($doiRegEx, '', $text));
                 foreach ($matches[1] as $doi) {
                     $doiQuery = new Query\Nested();
-                    $doiQuery->setPath('datasetSubmission');
+                    $doiQuery->setPath('doi');
                     $doiQuery->setQuery(
-                        new Query\MatchPhrase('datasetSubmission.doi', $doi)
+                        new Query\MatchPhrase('doi.doi', $doi)
                     );
                     $textQuery->addShould($doiQuery);
                     $textQuery->addShould(new Query\MatchPhrase('title', $doi));
