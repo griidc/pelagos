@@ -2,6 +2,7 @@
 #
 #  generate a UML diagram from PHP source model 
 #
+#   this requires phuml from https://github.com/jakobwesthoff/phuml
 if [ $# -eq 2 ]; then
     echo input directory is $1
     echo ouput diagram file is $2.png
