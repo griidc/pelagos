@@ -29,7 +29,6 @@ use Pelagos\Entity\Person;
 use Pelagos\Entity\ResearchGroup;
 use Pelagos\Entity\PersonDatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
-use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 
 use Pelagos\Exception\InvalidMetadataException;
 
@@ -40,7 +39,7 @@ use Pelagos\Util\ISOMetadataExtractorUtil;
  *
  * @Route("/dataset-submission")
  */
-class DatasetSubmissionController extends UIController
+class DatasetSubmissionController extends UIController implements OptionalReadOnlyInterface
 {
     /**
      * A queue of messages to publish to RabbitMQ.
@@ -116,7 +115,8 @@ class DatasetSubmissionController extends UIController
 
                     if ($dif->getStatus() == DIF::STATUS_APPROVED) {
                         // This is the first submission, so create a new one based on the DIF.
-                        $datasetSubmission = new DatasetSubmission($dif);
+                        $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact;
+                        $datasetSubmission = new DatasetSubmission($dif, $personDatasetSubmissionDatasetContact);
                         $datasetSubmission->setSequence(1);
 
                         try {
@@ -141,15 +141,19 @@ class DatasetSubmissionController extends UIController
                             == DatasetSubmission::METADATA_STATUS_ACCEPTED) {
                         // Clear dataset and metadata contacts.
                         $datasetSubmission->getDatasetContacts()->clear();
-                        $datasetSubmission->getMetadataContacts()->clear();
                         // Populate from metadata.
                         ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
                             $datasetSubmission->getDataset()->getMetadata()->getXml(),
                             $datasetSubmission,
                             $this->get('doctrine.orm.entity_manager')
                         );
+                        // If there are no contacts, add an empty one.
+                        if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
+                            $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
+                        }
+                        // Designate 1st contact as primary.
+                        $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
                     }
-
                     try {
                         $this->entityHandler->create($datasetSubmission);
                     } catch (AccessDeniedException $e) {
@@ -219,9 +223,6 @@ class DatasetSubmissionController extends UIController
             $this->entityHandler->update($datasetSubmission);
             foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                 $this->entityHandler->update($datasetContact);
-            }
-            foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
-                $this->entityHandler->update($metadataContact);
             }
 
             $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
@@ -312,10 +313,6 @@ class DatasetSubmissionController extends UIController
         if ($datasetSubmission instanceof DatasetSubmission) {
             if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
                 $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
-            }
-
-            if ($datasetSubmission->getMetadataContacts()->isEmpty()) {
-                $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
             }
 
             $datasetSubmissionId = $datasetSubmission->getId();
@@ -425,12 +422,7 @@ class DatasetSubmissionController extends UIController
         $xml = simplexml_load_file($xmlURI, 'SimpleXMLElement', (LIBXML_NOERROR | LIBXML_NOWARNING));
 
         if ($xml instanceof \SimpleXMLElement and 'MI_Metadata' == $xml->getName()) {
-            foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
-                $datasetSubmission->removeDatasetContact($datasetContact);
-            }
-            foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
-                $datasetSubmission->removeMetadataContact($metadataContact);
-            }
+            $datasetSubmission->getDatasetContacts()->clear();
             $accessor = PropertyAccess::createPropertyAccessor();
             $clearProperties = array(
                 'title',
@@ -452,6 +444,7 @@ class DatasetSubmissionController extends UIController
                 'temporalExtentEndPosition',
                 'distributionFormatName',
                 'fileDecompressionTechnique',
+                'authors',
             );
             foreach ($clearProperties as $property) {
                 $accessor->setValue($datasetSubmission, $property, null);
@@ -470,6 +463,14 @@ class DatasetSubmissionController extends UIController
                 $datasetSubmission,
                 $this->get('doctrine.orm.entity_manager')
             );
+
+            // If there are no contacts, add an empty contact.
+            if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
+                $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
+            }
+            // Designate the first contact is primary.
+            $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
+
         } else {
             throw new InvalidMetadataException(array('This does not appear to be valid ISO 19115-2 metadata.'));
         }

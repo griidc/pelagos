@@ -1,46 +1,59 @@
 <fieldset>
-    <legend>Dataset Contact</legend>
-    <table class="tab-table">
-        {% set contact = form.datasetContacts | first %}
-        <tr>
-            <td>
-				<span class="helpSection">
-					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
-					<img class="info" src="{{ asset_url }}">
-					{% endimage %}
-					<div class="tooltiptext">
-                        Please use the drop down list to select the person who can be contacted
-                        about the dataset. If the person is not listed or their contact information
-                        is incorrect, please contact griidc@gomri.org.
-					</div>
-				</span>
-                <label for="datasetcontact">Person</label>
-                <select class="contactperson" id="contactperson" name="{{contact.person.vars.full_name}}" required="required">
-                    {% if contact.vars.data.person|default %}
-                    <option selected value="{{contact.vars.data.person.id}}">
-                        {{contact.vars.data.person.lastName}}, {{contact.vars.data.person.firstName}}, {{contact.vars.data.person.emailAddress}}
-                    </option>
+    <legend>Dataset Contacts</legend>
+    <div id="dataset-contacts">
+        {% for contact in form.datasetContacts %}
+        <table class="tab-table dataset-contacts" index="{{contact.vars.name}}">
+            <tr>
+                <td>
+                    <span class="helpSection">
+                        {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+                        <img class="info" src="{{ asset_url }}">
+                        {% endimage %}
+                        <div class="tooltiptext">
+                            Please use the drop down list to select the person who can be contacted
+                            about the dataset. If the person is not listed or their contact information
+                            is incorrect, please contact griidc@gomri.org.
+                        </div>
+                    </span>
+                    {% if contact.vars.data.primaryContact %}
+                        <label for="datasetcontact">Primary Point of Contact</label>
+                    {% else %}
+                        <button class="deletebutton" type="button">Delete Contact</button>
+                        <label for="datasetcontact">Additional Point of Contact</label>
                     {% endif %}
-                </select>
-                <label for="contactperson" class="error"></label>
-                {% include "PelagosAppBundle:DatasetSubmission:contact-information.html.twig" %}
-			</td>
-        </tr>
-        <tr>
-            <td>
-				<span class="helpSection">
-					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
-					<img class="info" src="{{ asset_url }}">
-					{% endimage %}
-					<div class="tooltiptext">
-                        Please select the person’s relationship to the dataset from the drop down
-                        list.
-					</div>
-				</span>
-                {{ form_row(contact.role) }}
-            </td>
-        </tr>
+                    <select class="contactperson" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
+                        {% if contact.vars.data.person|default %}
+                        <option selected value="{{contact.vars.data.person.id}}">
+                            {{contact.vars.data.person.lastName}}, {{contact.vars.data.person.firstName}}, {{contact.vars.data.person.emailAddress}}
+                        </option>
+                        {% endif %}
+                    </select>
+                    <label for="contactperson" class="error"></label>
+                    {% include "PelagosAppBundle:DatasetSubmission:contact-information.html.twig" %}
+                    {{ form_widget(contact.primaryContact) }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="helpSection">
+                        {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+                        <img class="info" src="{{ asset_url }}">
+                        {% endimage %}
+                        <div class="tooltiptext">
+                            Please select the person’s relationship to the dataset from the drop down
+                            list.
+                        </div>
+                    </span>
+                    {{ form_row(contact.role) }}
+                </td>
+            </tr>
+        </table>
+        {% endfor %}
+    </div>
 
+    <button id="addContact" type="button">Add Contact</button>
+
+    <table class="tab-table">
         <tr>
             <td>
 				<span class="helpSection">
@@ -57,3 +70,49 @@
         </tr>
     </table>
 </fieldset>
+
+<div id="contact-prototype">
+    {% set contact = form.datasetContacts.vars.prototype %}
+    <table class="tab-table dataset-contacts">
+        <tr>
+            <td>
+                <span class="helpSection">
+                    {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+                    <img class="info" src="{{ asset_url }}">
+                    {% endimage %}
+                    <div class="tooltiptext">
+                        Please use the drop down list to select the person who can be contacted
+                        about the dataset. If the person is not listed or their contact information
+                        is incorrect, please contact griidc@gomri.org.
+                    </div>
+                </span>
+                <button class="deletebutton" type="button">Delete Contact</button>
+                <label for="datasetcontact">Additional Point of Contact</label>
+                <select disabled class="contactperson prototype" id="{{contact.person.vars.full_name}}" name="{{contact.person.vars.full_name}}" required="required">
+                    {% if contact.vars.data.person|default %}
+                    <option selected value="{{contact.vars.data.person.id}}">
+                        {{contact.vars.data.person.lastName}}, {{contact.vars.data.person.firstName}}, {{contact.vars.data.person.emailAddress}}
+                    </option>
+                    {% endif %}
+                </select>
+                <label for="{{contact.person.vars.full_name}}" class="error"></label>
+                {% include "PelagosAppBundle:DatasetSubmission:contact-information.html.twig" %}
+                {{ form_widget(contact.primaryContact, {"attr": {"class": "prototype", "disabled": "disabled"}}) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="helpSection">
+                    {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+                    <img class="info" src="{{ asset_url }}">
+                    {% endimage %}
+                    <div class="tooltiptext">
+                        Please select the person’s relationship to the dataset from the drop down
+                        list.
+                    </div>
+                </span>
+                {{ form_row(contact.role, {"attr": {"class": "prototype", "disabled": "disabled", "data": false}}) }}
+            </td>
+        </tr>
+    </table>
+</div>

@@ -22,7 +22,7 @@ use Pelagos\Exception\PasswordException;
  *
  * @Route("/account")
  */
-class AccountController extends UIController
+class AccountController extends UIController implements OptionalReadOnlyInterface
 {
     /**
      * The default action.
@@ -371,7 +371,12 @@ class AccountController extends UIController
 
         // Attach the password to the account.
         try {
-            $account->setPassword($password);
+            $account->setPassword(
+                $password,
+                ((bool) ($this->container->hasParameter('account_less_strict_password_rules')) and
+                    (bool) ($this->container->getParameter('account_less_strict_password_rules'))
+                )
+            );
         } catch (PasswordException $e) {
             return $this->render(
                 'PelagosAppBundle:template:ErrorMessage.html.twig',

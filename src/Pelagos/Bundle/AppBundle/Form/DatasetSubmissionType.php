@@ -5,20 +5,33 @@ namespace Pelagos\Bundle\AppBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\Entity;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
-use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 
 /**
  * A form type for creating a Dataset Submission form.
  */
 class DatasetSubmissionType extends AbstractType
 {
+    /**
+     * Constructor for form type.
+     *
+     * @param Entity                                $entity The entity associated with this form.
+     * @param PersonDatasetSubmissionDatasetContact $poc    A point of contact.
+     */
+    public function __construct(Entity $entity = null, PersonDatasetSubmissionDatasetContact $poc = null)
+    {
+        $this->formEntity = $entity;
+        $this->formPoc = $poc;
+    }
+
     /**
      * Builds the form.
      *
@@ -221,18 +234,6 @@ class DatasetSubmissionType extends AbstractType
                 'delete_empty' => true,
                 'required' => true,
             ))
-            ->add('metadataContacts', Type\CollectionType::class, array(
-                'label' => 'Metadata Contacts',
-                'entry_type' => PersonDatasetSubmissionType::class,
-                'entry_options' => array(
-                    'data_class' => PersonDatasetSubmissionMetadataContact::class,
-                ),
-                'by_reference' => false,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'delete_empty' => true,
-                'required' => true,
-            ))
             ->add('submitButton', Type\SubmitType::class, array(
                 'label' => 'Submit',
                 'attr'  => array('class' => 'submitButton'),
@@ -248,9 +249,15 @@ class DatasetSubmissionType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        $entity = $this->formEntity;
+        $poc = $this->formPoc;
+
         $resolver->setDefaults(array(
             'data_class' => DatasetSubmission::class,
             'allow_extra_fields' => true,
+            'empty_data' => function (FormInterface $form) use ($entity, $poc) {
+                return new DatasetSubmission($entity, $poc);
+            },
         ));
     }
 }

@@ -465,7 +465,7 @@ class DatasetSubmission extends Entity
      *
      * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionDatasetContact", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
      *
-     * @ORM\OrderBy({"creationTimeStamp" = "ASC"})
+     * @ORM\OrderBy({"primaryContact" = "DESC", "creationTimeStamp" = "ASC"})
      *
      * @Assert\Count(
      *      min = "1",
@@ -473,22 +473,6 @@ class DatasetSubmission extends Entity
      * )
      */
     protected $datasetContacts;
-
-    /**
-     * The Point of Contact for the metadata associated with this submission.
-     *
-     * @var Collection
-     *
-     * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionMetadataContact", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
-     *
-     * @ORM\OrderBy({"creationTimeStamp" = "ASC"})
-     *
-     * @Assert\Count(
-     *      min = "1",
-     *      minMessage="A Metadata contact person is required."
-     * )
-     */
-    protected $metadataContacts;
 
     /**
      * Whether the dataset has any restrictions.
@@ -916,13 +900,19 @@ class DatasetSubmission extends Entity
      *
      * Initializes collections to empty collections.
      *
-     * @param Entity $entity A DIF or DatasetSubmission to base this DatasetSubmission on.
+     * @param Entity                                $entity      A DIF or DatasetSubmission to base this DatasetSubmission on.
+     * @param PersonDatasetSubmissionDatasetContact $datasetPPOc The dataset's Primary P.O.C., used if creating from a DIF.
+     *
+     * @throws \Exception When a DIF is passed without a PersonDatasetSubmissionDatasetContact.
+     * @throws \Exception When an entity is passed that is not a DIF or DatasetSubmission.
      */
-    public function __construct(Entity $entity = null)
+    public function __construct(Entity $entity, PersonDatasetSubmissionDatasetContact $datasetPPOc = null)
     {
         $this->datasetContacts = new ArrayCollection;
-        $this->metadataContacts = new ArrayCollection;
         if ($entity instanceof DIF) {
+            if (null === $datasetPPOc) {
+                throw new \Exception('Constructor requires PersonDatasetSubmissionDatasetContact if passed a DIF entity');
+            }
             // Populate from DIF
             $this->setDataset($entity->getDataset());
             $this->setTitle($entity->getTitle());
@@ -930,16 +920,12 @@ class DatasetSubmission extends Entity
             $this->setSuppParams($entity->getVariablesObserved());
             $this->setSpatialExtent($entity->getSpatialExtentGeometry());
             $this->setSpatialExtentDescription($entity->getSpatialExtentDescription());
-            // Add DIF primary point of contact as dataset contact.
-            $datasetContact = new PersonDatasetSubmissionDatasetContact();
-            $datasetContact->setRole('pointOfContact');
-            $datasetContact->setPerson($entity->getPrimaryPointOfContact());
-            $this->addDatasetContact($datasetContact);
-            // Add DIF primary point of contact as metadata contact.
-            $metadataContact = new PersonDatasetSubmissionMetadataContact();
-            $metadataContact->setRole('pointOfContact');
-            $metadataContact->setPerson($entity->getPrimaryPointOfContact());
-            $this->addMetadataContact($metadataContact);
+            // Add DIF primary point of contact to collection and designate as primary dataset contact.
+            // DIF's primaryPointOfContact is required by DIF.
+            $datasetPPOc->setPerson($entity->getPrimaryPointOfContact());
+            $datasetPPOc->setRole(PersonDatasetSubmissionDatasetContact::getRoleChoices()['Point of Contact']);
+            $datasetPPOc->setPrimaryContact(true);
+            $this->addDatasetContact($datasetPPOc);
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
             $this->setSequence($entity->getSequence() + 1);
@@ -989,15 +975,11 @@ class DatasetSubmission extends Entity
                 $newDatasetContact = new PersonDatasetSubmissionDatasetContact();
                 $newDatasetContact->setRole($datasetContact->getRole());
                 $newDatasetContact->setPerson($datasetContact->getPerson());
+                $newDatasetContact->setPrimaryContact($datasetContact->isPrimaryContact());
                 $this->addDatasetContact($newDatasetContact);
             }
-            // Copy the original Dataset Submission's metadata contacts.
-            foreach ($entity->getMetadataContacts() as $metadataContact) {
-                $newMetadataContact = new PersonDatasetSubmissionMetadataContact();
-                $newMetadataContact->setRole($metadataContact->getRole());
-                $newMetadataContact->setPerson($metadataContact->getPerson());
-                $this->addMetadataContact($newMetadataContact);
-            }
+        } else {
+            throw new \Exception('Class constructor requires a DIF or a DatasetSubmission. A ' . get_class($entity) . ' was passed.');
         }
     }
 
@@ -1327,47 +1309,6 @@ class DatasetSubmission extends Entity
             return null;
         }
         return $contactPerson->getEmailAddress();
-    }
-
-    /**
-     * Adder for metadata contact.
-     *
-     * @param PersonDatasetSubmissionMetadataContact $metadataContact Single object to be added.
-     *
-     * @access public
-     *
-     * @return void
-     */
-    public function addMetadataContact(PersonDatasetSubmissionMetadataContact $metadataContact)
-    {
-        $metadataContact->setDatasetSubmission($this);
-        $this->metadataContacts->add($metadataContact);
-    }
-
-    /**
-     * Remover for metadata contact.
-     *
-     * @param PersonDatasetSubmissionMetadataContact $metadataContact Single object to be removed.
-     *
-     * @access public
-     *
-     * @return void
-     */
-    public function removeMetadataContact(PersonDatasetSubmissionMetadataContact $metadataContact)
-    {
-        $this->metadataContacts->removeElement($metadataContact);
-    }
-
-    /**
-     * Getter of metadataContacts.
-     *
-     * @access public
-     *
-     * @return \Doctrine\Common\Collections\Collection Collection containing PersonDatasetSubmissionMetadataContacts
-     */
-    public function getMetadataContacts()
-    {
-        return $this->metadataContacts;
     }
 
     /**

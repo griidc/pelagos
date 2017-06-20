@@ -83,7 +83,6 @@ class ImportSubmittedMetadataCommand extends ContainerAwareCommand
 
                 if ($xml instanceof \SimpleXMLElement and 'MI_Metadata' == $xml->getName()) {
                     $datasetSubmission->getDatasetContacts()->clear();
-                    $datasetSubmission->getMetadataContacts()->clear();
                     ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
                         $xml,
                         $datasetSubmission,
@@ -93,11 +92,6 @@ class ImportSubmittedMetadataCommand extends ContainerAwareCommand
                     foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                         $datasetContact->setCreator($datasetSubmission->getCreator());
                         $datasetContact->setModifier($datasetSubmission->getModifier());
-                    }
-                    // Copy creator and modifier from submission for imported metadata contacts.
-                    foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
-                        $metadataContact->setCreator($datasetSubmission->getCreator());
-                        $metadataContact->setModifier($datasetSubmission->getModifier());
                     }
                     $output->writeln("  Imported submitted metadata for $udi.");
                     $counts['imported']++;

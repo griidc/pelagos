@@ -14,7 +14,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Dataset extends Entity
 {
-
     /**
      * A friendly name for this type of entity.
      */
@@ -634,5 +633,37 @@ class Dataset extends Entity
                 break;
         }
         $this->setAvailabilityStatus($availabilityStatus);
+    }
+
+    /**
+     * Gets the Dataset's Primary Point of Contact Person.
+     *
+     * @throws \Exception If a Dataset Submission is encountered missing a contact.
+     *
+     * @return Person|null
+     */
+    public function getPrimaryPointOfContact()
+    {
+        $datasetSubmission = $this->getDatasetSubmission();
+        $dif = $this->getDif();
+
+        // If we have a submission, use its POC.
+        if ($datasetSubmission instanceof DatasetSubmission
+            and $datasetSubmission->getStatus() == DatasetSubmission::STATUS_COMPLETE) {
+
+            $datasetContacts = $datasetSubmission->getDatasetContacts();
+            if (count($datasetContacts) > 0) {
+                return $datasetContacts->first()->getPerson();
+            } else {
+                return null;
+            }
+        // Otherwise, use the POC from an approved dif.
+        } elseif ($dif instanceof DIF and DIF::STATUS_APPROVED == $dif->getStatus()) {
+            return $dif->getPrimaryPointOfContact();
+        } else {
+            // And if we don't have an approved DIF, return nothing.
+            return null;
+        }
+
     }
 }

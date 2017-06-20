@@ -43,11 +43,75 @@ $(function() {
     });
 
     // load qTip descriptions
-    $("img.info").each(function() {
+    $("img.info").not("#contact-prototype img.info").each(function() {
         $(this).qtip({
             content: {
-                text: $(this).next(".tooltiptext")
+                text: $(this).next(".tooltiptext").clone()
             }
+        });
+    });
+
+    var datasetContactsCount = 0;
+
+    // Count the highest index in dataset contacts.
+    $("table.dataset-contacts[index]").each(function() {
+        var value = parseFloat($(this).attr('index'));
+        datasetContactsCount = (value > datasetContactsCount) ? value : datasetContactsCount;
+    });
+
+    $("#addContact")
+    .button()
+    .click(function(){
+        datasetContactsCount++;
+
+        var newContact = $("#contact-prototype table")
+        .clone(true)
+        .find(":input[id][name]")
+        .removeClass("prototype error")
+        .removeAttr("disabled")
+        .attr("name", function() {
+            return $(this).attr("name").replace(/__name__/g, datasetContactsCount);
+        })
+        .attr("id", function() {
+            return $(this).attr("id").replace(/__name__/g, datasetContactsCount);
+        })
+        .end()
+        .find("label[for]")
+        .attr("for", function() {
+            return $(this).attr("for").replace(/__name__/g, datasetContactsCount);
+        })
+        .end()
+        .fadeIn("slow");
+
+        $("#dataset-contacts").append(newContact);
+
+        select2ContactPerson();
+
+        $("img.info", newContact).each(function() {
+            $(this).qtip({
+                content: {
+                    text: $(this).next(".tooltiptext").clone()
+                }
+            });
+        });
+    });
+
+    $(".deletebutton")
+    .button()
+    .hover(function() {
+        $(this).parents("table").addClass("delete-contact");
+        }, function() {
+        $(this).parents("table").removeClass("delete-contact");
+    })
+    .click(function(){
+        var deleteTable = this;
+        $(this).parents("#dataset-contacts table").fadeOut("slow", function() {
+            $(deleteTable).parents("#dataset-contacts table")
+            .find(".error").remove()
+            .end()
+            .find(":input").trigger("blur")
+            .end()
+            .remove();
         });
     });
 
@@ -64,7 +128,7 @@ $(function() {
     });
 
     $("#regForm").validate({
-        ignore: ".ignore",
+        ignore: ".ignore,.prototype",
         submitHandler: function(form) {
             if ($(".ignore").valid()) {
                 formHash = $("#regForm").serialize();
@@ -105,7 +169,7 @@ $(function() {
         activeTab--;
         if (activeTab < 0) {activeTab = 0};
         $("#dtabs").tabs({active:activeTab});
-    }).button('disable');
+    }).button("disable");
 
     $("#btn-next").click(function() {
         var activeTab = $("#dtabs").tabs("option","active");
@@ -146,13 +210,6 @@ $(function() {
         var url = Routing.generate("pelagos_api_dataset_submission_put");
 
         var formData = $("form[datasetsubmission]").serialize();
-
-        if ($("#contactperson").val() == null) {
-            formData += "&datasetContacts[0][person]=";
-        }
-        if ($("#metadatacontact").val() == null) {
-            formData += "&metadataContacts[0][person]=";
-        }
 
         $.ajax({
             url: url + "/" + datasetSubmissionId + "?validate=false",
@@ -202,7 +259,7 @@ $(function() {
         autoSize:true
     });
 
-    $("#ds-contact,#ds-metadata-contact").on("active", function() {
+    $("#ds-contact").on("active", function() {
         select2ContactPerson();
     });
 
@@ -227,10 +284,10 @@ $(function() {
                 $(this).find(":input").on("change blur keyup", function() {
                     $("#dtabs .ds-metadata").each(function() {
                         var label = $(this).attr("aria-labelledby");
-                        $(this).find(":input").each(function() {
+                        $(this).find(":input").not(".prototype").each(function() {
                             $(this).valid()
                         });
-                        if ($(this).find(":input").valid()) {
+                        if ($(this).find(":input").not(".prototype").valid()) {
                             $("#" + label).next("img").prop("src", imgCheck);
                         } else {
                             $("#" + label).next("img").prop("src", imgWarning);
@@ -255,10 +312,10 @@ $(function() {
         jQuery.get(url, function(data) {
             $.each(data, function(field, value) {
                 if (null === value) {
-                    value='';
+                    value = "";
                 }
                 if (field == "city" && value) {
-                    selected.parent().find("[field=" + field + "]").text(value + ',')
+                    selected.parent().find("[field=" + field + "]").text(value + ",")
                 } else {
                     selected.parent().find("[field=" + field + "]").text(value);
                 }
@@ -503,7 +560,7 @@ $(function() {
     }
 
     function select2ContactPerson() {
-        $(".contactperson").select2({
+        $(".contactperson").not("#contact-prototype .contactperson").select2({
             placeholder: "[Please Select a Person]",
             allowClear: true,
             ajax: {
@@ -526,7 +583,6 @@ $(function() {
                     }
                 ),
                 processResults: function (data) {
-
                     return {
                         results: $.map(data, function (item) {
                             return {

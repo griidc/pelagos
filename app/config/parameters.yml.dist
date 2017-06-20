@@ -35,6 +35,8 @@ parameters:
     account_password_max_age: P180D
     # When to warn account holders of soon to expire passwords (as ISO 8601 durations)
     account_password_expiration_warn: [P7D, P1D]
+    # If to check for 24 hour change and password already used.
+    account_less_strict_password_rules: false
 
     rabbit_mq_host: localhost
     rabbit_mq_port: 5672
@@ -78,3 +80,13 @@ parameters:
     download_base_url: ~
 
     google_maps_api_key: ~
+
+    # Read-only parameters
+    pelagos_readonly_mode: false
+    pelagos_readonly_message: >
+        The system is currently running in read-only mode.
+        Although data cannot be accepted at this time
+        nor any changes be made to it, you may still search, monitor
+        and download data. Please contact griidc@gomri.org for any
+        questions on concerns. We apologize for any inconvenience this
+        may be causing and will return to normal operating mode soon.
