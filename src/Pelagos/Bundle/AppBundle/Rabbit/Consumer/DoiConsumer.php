@@ -190,7 +190,7 @@ class DoiConsumer implements ConsumerInterface
             $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
             return;
         }
-        
+
         $doi->setModifier($dataset->getModifier());
 
         $loggingContext['doi'] = $doi->getDoi();
@@ -223,21 +223,27 @@ class DoiConsumer implements ConsumerInterface
 
         // Don't attempt to publish an already published DOI to preserve the original pub date.
         if ($doi->getStatus() == DOI::STATUS_PUBLIC) {
-            $this->logger->warning('DOI for dataset already marked as public.', $loggingContext);
-            return true;
+            $this->logger->warning('DOI for dataset already marked as published', $loggingContext);
+        }
+
+        $status = DOI::STATUS_PUBLIC;
+
+        if ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED) {
+            $status = DOI::STATUS_UNAVAILABLE;
+            $this->logger->info('Dataset is restriced, making DOI unavailable.', $loggingContext);
         }
 
         try {
             $doiUtil = new DOIutil();
-            $doiUtil->publishDOI($doi);
+            $doiUtil->publishDOI($doi, $status);
+
+            $doi->setStatus(DOI::STATUS_PUBLIC);
+            $doi->setPublicDate(new \DateTime);
+            $doi->setModifier($dataset->getModifier());
         } catch (\Exception $exception) {
             $this->logger->error('Error setting DOI to published: ' . $exception->getMessage(), $loggingContext);
             return;
         }
-        // Since we've succeeded by this point, mark status/date in the entity.
-        $doi->setStatus(DOI::STATUS_PUBLIC);
-        $doi->setPublicDate(new \DateTime);
-        $doi->setModifier($dataset->getModifier());
 
         // Dispatch entity event.
         $this->entityEventDispatcher->dispatch($dataset, 'doi_published');

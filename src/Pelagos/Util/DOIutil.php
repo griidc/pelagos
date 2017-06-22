@@ -207,11 +207,11 @@ class DOIutil
      *
      * @return boolean True is published successfully.
      */
-    public function publishDOI($doi)
+    public function publishDOI($doi, $status = 'public')
     {
         // Add doi: to doi is it doesn't exist.
         $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
-        $input = '_status:public';
+        $input = "_status:$status";
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "https://ezid.cdlib.org/id/$doi");
