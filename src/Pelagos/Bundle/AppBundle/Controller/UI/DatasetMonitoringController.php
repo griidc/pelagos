@@ -169,7 +169,9 @@ class DatasetMonitoringController extends UIController
         $datasetSubmission = $dataset->getDatasetSubmission();
 
         // If we have approved Metadata, load contact into datasetSubmission.
-        if ($dataset->getDatasetSubmission()->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+        if ($datasetSubmission instanceof DatasetSubmission
+            and $datasetSubmission->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED
+        ) {
             ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
                 $dataset->getMetadata()->getXml(),
                 $datasetSubmission,
