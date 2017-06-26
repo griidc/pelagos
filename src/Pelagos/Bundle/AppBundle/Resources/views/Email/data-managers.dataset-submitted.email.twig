@@ -3,7 +3,7 @@
 {% block body_html %}
     Dear {{ recipient.firstName }} {{ recipient.lastName }},<br>
     <br>
-    A dataset has been submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} for the dataset {{dataset.udi}}. {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} is a member of {{ dataset.datasetSubmission.submitter.researchGroupNames | join(', ') }} and the dataset is associated with {{dataset.researchGroup.name}}.<br>
+    A dataset has been submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} for the dataset {{dataset.udi}}. This dataset has been assigned the doi:{{datasetSubmission.dataset.doi.doi}}. {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} is a member of {{ dataset.datasetSubmission.submitter.researchGroupNames | join(', ') }} and the dataset is associated with {{dataset.researchGroup.name}}.<br>
     <br>
     Thank you,<br>
     <br>
@@ -15,7 +15,7 @@
 {% block body_text %}
 Dear {{ recipient.firstName }} {{ recipient.lastName }},
 
-A dataset has been submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} for the dataset {{dataset.udi}}. {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} is a member of {{ dataset.datasetSubmission.submitter.researchGroupNames | join(', ') }} and the dataset is associated with {{dataset.researchGroup.name}}.
+A dataset has been submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} for the dataset {{dataset.udi}}. This dataset has been assigned the doi:{{datasetSubmission.dataset.doi.doi}}. {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} is a member of {{ dataset.datasetSubmission.submitter.researchGroupNames | join(', ') }} and the dataset is associated with {{dataset.researchGroup.name}}.
 
 Thank you,
 
