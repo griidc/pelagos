@@ -50,15 +50,13 @@ class RabbitUpdateAllAcceptedDatasetDOICommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
-        $difs = $entityManager->getRepository('Pelagos\Entity\DIF')->findBy(array('status' => DIF::STATUS_APPROVED));
+        $datasets = $entityManager->getRepository('Pelagos\Entity\Dataset')->findBy(array(
+            'identifiedStatus' => DIF::STATUS_APPROVED));
 
         $thumper = $this->getContainer()->get('old_sound_rabbit_mq.doi_issue_producer');
-        foreach ($difs as $dif) {
-            $dataset = $dif->getDataset();
-            $datasetId = $dataset->getId();
-            $udi = $dataset->getUdi();
-            $thumper->publish($datasetId, 'update');
-            echo "Requesting DOI update for dataset $datasetId ($udi)\n";
+        foreach ($datasets as $dataset) {
+            $thumper->publish($dataset->getId(), 'update');
+            echo 'Requesting DOI update for dataset ' . $dataset->getId() . ' (' . $dataset->getUdi() . ")\n";
         }
 
         return 0;
