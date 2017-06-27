@@ -21,9 +21,9 @@
         <span class="attr">Restrictions:</span>
         {% if dataset.datasetSubmission.restrictions | default == "Restricted" %}
             {% if dataset.datasetSubmission.datasetFileTransferStatus == 'RemotelyHosted' and not dataset.datasetSubmission.datasetFileUri matches '!^https?://data.gulfresearchinitiative.org!' %}
-                This dataset is restricted for download but is hosted by another website so availability status is not guaranteed to be accurate.
+                This dataset is hosted by an external repository and has been marked as restricted for author use only. Please contact the external repository for access to this dataset.
             {% else %}
-                This dataset is restricted for download.
+                This dataset is restricted for author use only.
             {% endif %}
         {% else %}
             unknown
