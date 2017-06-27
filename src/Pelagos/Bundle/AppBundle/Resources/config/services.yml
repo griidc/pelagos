@@ -24,7 +24,7 @@ services:
 
     pelagos.dif.listener:
         class: Pelagos\Event\DIFListener
-        arguments: ["@twig", "@mailer", "@security.token_storage", "%mailer_from_addr%", "%mailer_from_name%"]
+        arguments: ["@twig", "@mailer", "@security.token_storage", "%mailer_from_addr%", "%mailer_from_name%", "@pelagos.entity.handler", "@old_sound_rabbit_mq.doi_issue_producer"]
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.dif.saved_not_submitted, method: onSavedNotSubmitted }
             - { name: kernel.event_listener, event: pelagos.entity.dif.submitted, method: onSubmitted }
@@ -34,7 +34,7 @@ services:
 
     pelagos.datasetsubmission.listener:
         class: Pelagos\Event\DatasetSubmissionListener
-        arguments: ["@twig", "@mailer", "@security.token_storage", "%mailer_from_addr%", "%mailer_from_name%", "@pelagos.entity.handler", "@pelagos.util.data_store", "@pelagos.util.mdapplogger"]
+        arguments: ["@twig", "@mailer", "@security.token_storage", "%mailer_from_addr%", "%mailer_from_name%", "@pelagos.entity.handler", "@old_sound_rabbit_mq.doi_issue_producer", "@pelagos.util.data_store", "@pelagos.util.mdapplogger"]
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.submitted, method: onSubmitted }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.resubmitted, method: onResubmitted }
@@ -42,6 +42,7 @@ services:
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.metadata_processed, method: onMetadataProcessed }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.html_found, method: onHtmlFound }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.dataset_unprocessable, method: onDatasetUnprocessable }
+            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.approved, method: onApproved }
 
     pelagos.doirequest.listener:
         class: Pelagos\Event\DoiRequestListener
@@ -84,12 +85,18 @@ services:
         arguments: ["@doctrine.orm.entity_manager", "@logger"]
         tags:
             - { name: monolog.logger, channel: create_homedir }
-            
+
     pelagos.rabbit.consumer.dataset_file_hasher:
         class: Pelagos\Bundle\AppBundle\Rabbit\Consumer\DatasetFileHasherConsumer
         arguments: ["@doctrine.orm.entity_manager", "@pelagos.util.data_store", "@logger"]
         tags:
             - { name: monolog.logger, channel: dataset_file_hasher }
+
+    pelagos.rabbit.consumer.doi_issue:
+        class: Pelagos\Bundle\AppBundle\Rabbit\Consumer\DoiConsumer
+        arguments: ["@doctrine.orm.entity_manager", "@logger", "@pelagos.event.entity_event_dispatcher"]
+        tags:
+            - { name: monolog.logger, channel: doi_issue }
 
     pelagos.handler.upload:
         class: Pelagos\Bundle\AppBundle\Handler\UploadHandler

@@ -37,6 +37,10 @@ monolog:
             type:     stream
             path:     "%kernel.logs_dir%/dataset_file_hasher.log"
             channels: ["dataset_file_hasher"]
+        doi_issue:
+            type:     stream
+            path:     "%kernel.logs_dir%/doi_issue.log"
+            channels: ["doi_issue"]
         main:
             type:   stream
             path:   "%kernel.logs_dir%/%kernel.environment%.log"

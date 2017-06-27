@@ -31,13 +31,21 @@ class DatasetSubmissionListener extends EventListener
             )
         );
 
+        // Publish message requesting DOI generation.
+        // Producer passed in via constructor is that of the doi_issue producer.
+        $this->producer->publish($dataset->getId(), 'issue');
+   
         // email User
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
         $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission));
 
         // email DM(s)
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-submitted.email.twig');
-        $this->sendMailMsg($template, array('dataset' => $dataset), $this->getDMs($dataset, $datasetSubmission->getSubmitter()));
+        $this->sendMailMsg(
+            $template,
+            array('dataset' => $dataset),
+            $this->getDMs($dataset, $datasetSubmission->getSubmitter())
+        );
     }
 
     /**
@@ -59,6 +67,8 @@ class DatasetSubmissionListener extends EventListener
                 $dataset->getUdi()
             )
         );
+        
+        $this->producer->publish($dataset->getId(), 'update');
 
         // email User
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
@@ -66,7 +76,11 @@ class DatasetSubmissionListener extends EventListener
 
         // email DM(s)
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-updated.email.twig');
-        $this->sendMailMsg($template, array('dataset' => $dataset), $this->getDMs($dataset, $datasetSubmission->getSubmitter()));
+        $this->sendMailMsg(
+            $template,
+            array('dataset' => $dataset),
+            $this->getDMs($dataset, $datasetSubmission->getSubmitter())
+        );
     }
 
     /**
@@ -178,5 +192,19 @@ class DatasetSubmissionListener extends EventListener
             array('datasetSubmission' => $datasetSubmission),
             $this->getDRPMs($datasetSubmission->getDataset())
         );
+    }
+
+    /**
+     * Method that is called to take appropriate actions when a submission has been approved (mdapp).
+     *
+     * @param EntityEvent $event Event being acted upon.
+     *
+     * @return void
+     */
+    public function onApproved(EntityEvent $event)
+    {
+        $datasetSubmission = $event->getEntity();
+        $this->producer->publish($datasetSubmission->getDataset()->getId(), 'publish');
+        $this->producer->publish($datasetSubmission->getDataset()->getId(), 'update');
     }
 }

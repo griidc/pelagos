@@ -63,8 +63,8 @@ var tabIndex = 0;
                                             {% if dataset.researchGroup %}
                                                 {{ dataset.researchGroup.name | trim }}.
                                             {% endif %}
-                                            {% if dataset.datasetSubmission.doi %}
-                                                DOI: <a href="http://dx.doi.org/{{ dataset.datasetSubmission.doi }}" target="_blank">{{ dataset.datasetSubmission.doi }}</a>
+                                            {% if dataset.doi %}
+                                                DOI: <a href="http://dx.doi.org/{{ dataset.doi.doi }}" target="_blank">{{ dataset.doi.doi }}</a>
                                             {% endif %}
                                             <div class="details" style="display:none;"/>
                                             <div class="attributes">
@@ -139,8 +139,8 @@ var tabIndex = 0;
                                             {% if dataset.researchGroup %}
                                                 {{ dataset.researchGroup.name | trim }}.
                                             {% endif %}
-                                            {% if dataset.datasetSubmission.doi %}
-                                                DOI: <a href="http://dx.doi.org/{{ dataset.datasetSubmission.doi }}" target="_blank">{{ dataset.datasetSubmission.doi }}</a>
+                                            {% if dataset.doi %}
+                                                DOI: <a href="http://dx.doi.org/{{ dataset.doi.doi }}" target="_blank">{{ dataset.doi.doi }}</a>
                                             {% endif %}
                                             <div class="details" style="display:none;"/>
                                             <div class="attributes">
@@ -195,8 +195,8 @@ var tabIndex = 0;
                                             {% if dataset.researchGroup %}
                                                 {{ dataset.researchGroup.name | trim }}.
                                             {% endif %}
-                                            {% if dataset.datasetSubmission.doi %}
-                                                DOI: <a href="http://dx.doi.org/{{ dataset.datasetSubmission.doi }}" target="_blank">{{ dataset.datasetSubmission.doi }}</a>
+                                            {% if dataset.doi %}
+                                                DOI: <a href="http://dx.doi.org/{{ dataset.doi.doi }}" target="_blank">{{ dataset.doi.doi }}</a>
                                             {% endif %}
                                             <div class="details" style="display:none;"/>
                                             <div class="attributes">
@@ -234,8 +234,8 @@ var tabIndex = 0;
                                         <td class="info">
                                             {{ dataset.title }}
                                             {{ dataset.researchGroup.name | trim }}.
-                                            {% if dataset.datasetSubmission and dataset.datasetSubmission.doi %}
-                                                DOI: <a href="http://dx.doi.org/{{ dataset.datasetSubmission.doi }}" target="_blank">{{ dataset.datasetSubmission.doi }}</a>
+                                            {% if dataset.datasetSubmission and dataset.doi %}
+                                                DOI: <a href="http://dx.doi.org/{{ dataset.doi.doi }}" target="_blank">{{ dataset.doi.doi }}</a>
                                             {% endif %}
                                             <div class="details" style="display:none;"/>
                                             <div class="attributes">
