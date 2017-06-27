@@ -72,7 +72,7 @@ var dlmap = new GeoViz();
 
         $("#downloaddsdenrestricted").button().click(function() {
             $("#download_dialog").dialog('option', 'title', 'Dataset Not Available');
-            $("#download_dialog").html('The dataset is restricted for download.');
+            $("#download_dialog").html('This dataset is restricted for author use only.');
             $("#download_dialog").dialog('open');
         });
 
