@@ -49,9 +49,9 @@ class Dataset extends Entity
     /**
      * The DOI for this Dataset.
      *
-     * @var string
+     * @var DOI
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\OneToOne(targetEntity="DOI", cascade={"persist"})
      */
     protected $doi;
 
@@ -365,22 +365,49 @@ class Dataset extends Entity
     }
 
     /**
-     * Update the DOI for this Dataset.
+     * Get authors shortcut, to get Authors from DatasetSubmission.
+     *
+     * @return string|null
+     */
+    public function getAuthors()
+    {
+        if ($this->hasDatasetSubmission()) {
+            return $this->getDatasetSubmission()->getAuthors();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get reference date shortcut, to get Authors from DatasetSubmission.
+     *
+     * @return string|null
+     */
+    public function getReferenceDateYear()
+    {
+        if ($this->hasDatasetSubmission()) {
+            return $this->getDatasetSubmission()->getReferenceDate()->format('Y');
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Set the DOI for this Dataset.
+     *
+     * @param DOI $doi The DOI entity for this Dataset.
      *
      * @return void
      */
-    public function updateDoi()
+    public function setDoi(DOI $doi)
     {
-        if ($this->hasDatasetSubmission()) {
-            // Copy DatasetSubmission DOI to Dataset.
-            $this->doi = $this->getDatasetSubmission()->getDoi();
-        }
+        $this->doi = $doi;
     }
 
     /**
      * Get the DOI for this Dataset.
      *
-     * @return string
+     * @return DOI
      */
     public function getDoi()
     {

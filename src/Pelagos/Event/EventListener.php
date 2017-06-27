@@ -4,6 +4,8 @@ namespace Pelagos\Event;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+use OldSound\RabbitMqBundle\RabbitMq\Producer;
+
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
@@ -64,6 +66,13 @@ abstract class EventListener
     protected $entityHandler;
 
     /**
+     * A variable to hold an instance of an AMQP producer.
+     *
+     * @var Producer
+     */
+    protected $producer;
+
+    /**
      * An instance of the Pelagos Data Store utility service.
      *
      * @var DataStore
@@ -86,6 +95,7 @@ abstract class EventListener
      * @param string             $fromAddress   Sender's email address.
      * @param string             $fromName      Sender's name to include in email.
      * @param EntityHandler|null $entityHandler Pelagos entity handler.
+     * @param Producer           $producer      An AMQP/RabbitMQ Producer.
      * @param DataStore|null     $dataStore     An instance of the Pelagos Data Store utility service.
      * @param MdappLogger|null   $mdappLogger   An MDAPP logger.
      */
@@ -96,6 +106,7 @@ abstract class EventListener
         $fromAddress,
         $fromName,
         EntityHandler $entityHandler = null,
+        Producer $producer = null,
         DataStore $dataStore = null,
         MdappLogger $mdappLogger = null
     ) {
@@ -104,6 +115,7 @@ abstract class EventListener
         $this->tokenStorage = $tokenStorage;
         $this->from = array($fromAddress => $fromName);
         $this->entityHandler = $entityHandler;
+        $this->producer = $producer;
         $this->dataStore = $dataStore;
         $this->mdappLogger = $mdappLogger;
     }
