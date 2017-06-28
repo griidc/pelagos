@@ -385,7 +385,9 @@ class Dataset extends Entity
      */
     public function getReferenceDateYear()
     {
-        if ($this->hasDatasetSubmission()) {
+        if ($this->hasDatasetSubmission()
+            and $this->getDatasetSubmission()->getReferenceDate() instanceof \Datetime
+        ) {
             return $this->getDatasetSubmission()->getReferenceDate()->format('Y');
         } else {
             return null;
@@ -555,31 +557,23 @@ class Dataset extends Entity
      */
     public function getCitation()
     {
-        $datasetSubmission = $this->getDatasetSubmission();
-
         $title = $this->getTitle();
         $title = preg_replace('/\.$/', '', $title);
         $udi = $this->getUdi();
+        $author = $this->getAuthors();
+        $year = $this->getReferenceDateYear();
+        $doi = $this->getDoi();
 
-        if ($datasetSubmission instanceof DatasetSubmission) {
-            $author = $datasetSubmission->getAuthors();
-            $year = $datasetSubmission->getModificationTimeStamp()->format('Y');
-            $doi = $datasetSubmission->getDoi();
+        $citationString = $author . ' (' . $year . ') ' . $title . '.' .
+            ' Distributed by: Gulf of Mexico Research Initiative Information and Data Cooperative '
+            . '(GRIIDC), Harte Research Institute, Texas A&M University-Corpus Christi. ';
 
-            $citationString = $author . ' (' . $year . ') ' . $title . '.' .
-                ' Distributed by: Gulf of Mexico Research Initiative Information and Data Cooperative '
-                . '(GRIIDC), Harte Research Institute, Texas A&M University-Corpus Christi. ';
-
-            if (null !== $doi) {
-                $citationString .= "doi: $doi";
-            } else {
-                $citationString .= "Available from: http://data.gulfresearchinitiative.org/data/$udi";
-            }
-            return $citationString;
+        if ($doi instanceof DOI) {
+            $citationString .= 'doi:' . $doi->getDoi();
         } else {
-            $citationString = "This dataset has no registration: $title ($udi)";
-            return $citationString;
+            $citationString .= "Available from: http://data.gulfresearchinitiative.org/data/$udi";
         }
+        return $citationString;
     }
 
     /**
