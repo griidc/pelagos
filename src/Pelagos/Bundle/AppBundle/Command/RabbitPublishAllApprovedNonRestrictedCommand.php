@@ -9,7 +9,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DIF;
 use Pelagos\Entity\DOI;
 
 /**
@@ -53,7 +52,6 @@ class RabbitPublishAllApprovedNonRestrictedCommand extends ContainerAwareCommand
     {
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
         $datasets = $entityManager->getRepository('Pelagos\Entity\Dataset')->findBy(array(
-            'identifiedStatus' => DIF::STATUS_APPROVED,
             'availabilityStatus' => array(
                 DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
                 DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
