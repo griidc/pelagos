@@ -63,7 +63,7 @@ class RabbitPublishAllApprovedNonRestrictedCommand extends ContainerAwareCommand
         $thumper = $this->getContainer()->get('old_sound_rabbit_mq.doi_issue_producer');
         foreach ($datasets as $dataset) {
             if ($dataset->getDoi()->getStatus() == DOI::STATUS_RESERVED) {
-                #$thumper->publish($dataset->getId(), 'pub');
+                $thumper->publish($dataset->getId(), 'publish');
                 echo 'Requesting DOI publish update for dataset ' . $dataset->getId() . ' (' . $dataset->getUdi() . ")\n";
             }
         }
