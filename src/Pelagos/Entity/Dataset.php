@@ -385,7 +385,9 @@ class Dataset extends Entity
      */
     public function getReferenceDateYear()
     {
-        if ($this->hasDatasetSubmission()) {
+        if ($this->hasDatasetSubmission()
+            and $this->getDatasetSubmission()->getReferenceDate() instanceof \Datetime
+        ) {
             return $this->getDatasetSubmission()->getReferenceDate()->format('Y');
         } else {
             return null;
