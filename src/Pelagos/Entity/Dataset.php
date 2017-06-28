@@ -574,7 +574,6 @@ class Dataset extends Entity
             $citationString .= "Available from: http://data.gulfresearchinitiative.org/data/$udi";
         }
         return $citationString;
-
     }
 
     /**
