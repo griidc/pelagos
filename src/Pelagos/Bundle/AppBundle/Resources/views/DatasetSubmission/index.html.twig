@@ -126,7 +126,12 @@
                 Successfully imported XML.
             </div>
             {% endif %}
-            {% if xmlStatus.success is null %}
+            {% if xmlStatus.success is null and  datasetSubmission.status == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_COMPLETE') %}
+            <div class="messages warning">
+                <h2 class="element-invisible">Status message</h2>
+                Dataset Identifier <b>'{{ udi }}'</b> was found. The latest version has been loaded.                 But it has been locked for review!
+            </div>
+            {% elseif xmlStatus.success is null %}
             <div class="messages status">
                 <h2 class="element-invisible">Status message</h2>
                 Dataset Identifier <b>'{{ udi }}'</b> was found. The latest version has been loaded.

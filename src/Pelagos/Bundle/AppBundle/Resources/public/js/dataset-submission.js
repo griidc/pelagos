@@ -26,6 +26,10 @@ $(function() {
         left: "50%" // Left position relative to parent
     }).spin($("#spinner")[0]);
 
+    if ($("#regForm").attr("datasetSubmissionStatus") == 2) {
+        $("#regForm :input").prop("disabled", true);
+    }
+
     $("html").show();
 
     $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");
@@ -55,7 +59,7 @@ $(function() {
 
     // Count the highest index in dataset contacts.
     $("table.dataset-contacts[index]").each(function() {
-        var value = parseFloat($(this).attr('index'));
+        var value = parseFloat($(this).attr("index"));
         datasetContactsCount = (value > datasetContactsCount) ? value : datasetContactsCount;
     });
 
@@ -354,7 +358,7 @@ $(function() {
             enableAuto: true
         },
         deleteFile: {
-            enabled: true,
+            enabled: $("#submitButton").attr("disabled") != "disabled",
             forceConfirm: true,
             endpoint: Routing.generate("pelagos_api_upload_delete")
         },
@@ -397,6 +401,10 @@ $(function() {
             }
         }
     });
+
+    if ($("#regForm").attr("datasetSubmissionStatus") == 2) {
+        $(".qq-upload-drop-area").css("visibility", "hidden");
+    }
 
     // Request SFTP/GridFTP button
     $("#sftpButton").click(function() {
