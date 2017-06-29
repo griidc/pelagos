@@ -129,7 +129,8 @@
             {% if xmlStatus.success is null and  datasetSubmission.status == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_COMPLETE') %}
             <div class="messages warning">
                 <h2 class="element-invisible">Status message</h2>
-                Dataset Identifier <b>'{{ udi }}'</b> was found. The latest version has been loaded.                 But it has been locked for review!
+                Dataset Identifier <b>'{{ udi }}'</b> was found. The latest version has been loaded.
+                This dataset is locked. Please contact griidc@gomri.org if revisions are required.
             </div>
             {% elseif xmlStatus.success is null %}
             <div class="messages status">
