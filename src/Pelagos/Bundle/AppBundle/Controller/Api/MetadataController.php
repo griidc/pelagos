@@ -15,10 +15,12 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
+use Pelagos\Bundle\AppBundle\Form\MdappType;
+
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\Metadata;
-use Pelagos\Bundle\AppBundle\Form\MdappType;
+use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 
 /**
  * The Metadata api controller.
@@ -106,8 +108,14 @@ class MetadataController extends EntityController
 
         $dataset = $datasets[0];
 
-        if ($dataset->getDatasetSubmissionStatus() == DatasetSubmission::STATUS_UNSUBMITTED) {
-            throw new BadRequestHttpException('Dataset is not submitted');
+        // if ($dataset->getDatasetSubmissionStatus() == DatasetSubmission::STATUS_UNSUBMITTED) {
+        if ($dataset->getDatasetSubmission() instanceof DatasetSubmission == false) {
+            // throw new BadRequestHttpException('Dataset is not submitted');
+            $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact;
+            $dif = $dataset->getDif();
+            $datasetSubmission = new DatasetSubmission($dif, $personDatasetSubmissionDatasetContact);
+            $datasetSubmission->submit($dif->getPrimaryPointOfContact());
+            $dataset->setDatasetSubmission($datasetSubmission);
         }
 
         $metadata = $dataset->getMetadata();
