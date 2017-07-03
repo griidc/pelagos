@@ -333,6 +333,9 @@ function MapWizard(json)
             $("#olmap").on("gmlConverted", function(e, eventObj) {
                 var addedFeature = wizGeoViz.addFeatureFromWKT(eventObj);
                 $("#coordlist").val(wizGeoViz.getCoordinateList(addedFeature.id));
+                // Disable the form if there are multiple features.
+                // Because The Wizard does not know how to save those.
+                $("#mapwiz :input").prop("disabled", addedFeature.length != undefined)
             });
             featureSend = true;
         }
