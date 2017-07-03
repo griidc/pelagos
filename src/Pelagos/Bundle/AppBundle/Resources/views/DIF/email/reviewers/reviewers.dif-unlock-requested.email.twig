@@ -5,6 +5,8 @@
     <br>
     Please unlock DIF: <a href="{{ url('pelagos_app_ui_dif_default') }}?id={{ dif.dataset.udi }}">{{ dif.dataset.udi }}</a>.<br>
     <br>
+    This request was submitted by {{currentUser.firstName}} {{currentUser.lastName}}.<br>
+    <br>
     Thank you,<br>
     The GRIIDC Team<br>
 {% endblock %}
@@ -13,6 +15,8 @@
 Dear DIF Approver(s),
 
 Please unlock DIF: {{ url('pelagos_app_ui_dif_default') }}?id={{ dif.dataset.udi }}
+
+This request was submitted by {{currentUser.firstName}} {{currentUser.lastName}}.
 
 Thank you,
 The GRIIDC Team

@@ -85,14 +85,14 @@ class DIFListener extends EventListener
     public function onUnlockRequested(EntityEvent $event)
     {
         $dif = $this->getDIF($event);
+        $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
 
         // email reviewers
         $template = $this->twig->loadTemplate('@DIFEmail/reviewers/reviewers.dif-unlock-requested.email.twig');
-        $this->sendMailMsg($template, array('dif' => $dif), $this->getDRPMs($dif->getDataset()));
+        $this->sendMailMsg($template, array('dif' => $dif, 'currentUser' => $currentUser), $this->getDRPMs($dif->getDataset()));
 
         // email DM
         $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-unlock-requested.email.twig');
-        $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
         $this->sendMailMsg($template, array('dif' => $dif), $this->getDMs($dif->getDataset(), $dif->getCreator()));
     }
 
