@@ -26,6 +26,7 @@ $(function() {
         left: "50%" // Left position relative to parent
     }).spin($("#spinner")[0]);
 
+    // Check if datasetSubmissionStatus = 2 (STATUS_COMPLETE).
     if ($("#regForm").attr("datasetSubmissionStatus") == 2) {
         $("#regForm :input").prop("disabled", true);
     }
@@ -402,10 +403,6 @@ $(function() {
         }
     });
 
-    if ($("#regForm").attr("datasetSubmissionStatus") == 2) {
-        $(".qq-upload-drop-area").css("visibility", "hidden");
-    }
-
     // Request SFTP/GridFTP button
     $("#sftpButton").click(function() {
         $("#spinner").show();
@@ -638,6 +635,14 @@ $(function() {
         geowizard.flashMap();
         geowizard.haveGML($("#spatialExtent").val());
     });
+
+    // datasetSubmissionStatus = 2 (STATUS_COMPLETE).
+    if ($("#regForm").attr("datasetSubmissionStatus") == 2) {
+        // Disable fineupload Drag and Drop area.
+        $(".qq-upload-drop-area").css("visibility", "hidden");
+        // Disable Spatial Wizard button.
+        $("#geoWizard #geowizBtn").prop("disabled", "true");
+    }
 
     $("select.keywordinput").dblclick(function (event) {
         var element = $(event.currentTarget)
