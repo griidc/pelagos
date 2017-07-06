@@ -629,7 +629,13 @@ function GeoViz()
         if (WKT != "")
         {
             var wktFeature = this.wkt.read(WKT);
-            wktFeature.geometry.transform(map.getProjectionObject(),"EPSG:4326");
+            if (wktFeature.length == undefined) {
+                wktFeature.geometry.transform(map.getProjectionObject(),"EPSG:4326")
+            } else {
+                $.each(wktFeature, function(index, feature) {
+                    feature.geometry.transform(map.getProjectionObject(),"EPSG:4326");
+                });
+            }
             return this.wkt.write(wktFeature);
         }
     }
@@ -639,7 +645,13 @@ function GeoViz()
         if (WKT != "")
         {
             var wktFeature = this.wkt.read(WKT);
-            wktFeature.geometry.transform("EPSG:4326",map.getProjectionObject());
+            if (wktFeature.length == undefined) {
+                wktFeature.geometry.transform("EPSG:4326",map.getProjectionObject());
+            } else {
+                $.each(wktFeature, function(index, feature) {
+                    feature.geometry.transform("EPSG:4326",map.getProjectionObject());
+                });
+            }
             return this.wkt.write(wktFeature);
         }
     }
@@ -816,7 +828,7 @@ function GeoViz()
     {
         var points = "";
 
-        if (typeof Feature != "undefined")
+        if (typeof Feature == "object" && Feature != null)
         {
             var myFeature = Feature.clone();
             myFeature = featureTransformToWGS84(myFeature);

@@ -49,9 +49,9 @@ class Dataset extends Entity
     /**
      * The DOI for this Dataset.
      *
-     * @var string
+     * @var DOI
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\OneToOne(targetEntity="DOI", cascade={"persist"})
      */
     protected $doi;
 
@@ -365,22 +365,51 @@ class Dataset extends Entity
     }
 
     /**
-     * Update the DOI for this Dataset.
+     * Get authors shortcut, to get Authors from DatasetSubmission.
+     *
+     * @return string|null
+     */
+    public function getAuthors()
+    {
+        if ($this->hasDatasetSubmission()) {
+            return $this->getDatasetSubmission()->getAuthors();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get reference date shortcut, to get Authors from DatasetSubmission.
+     *
+     * @return string|null
+     */
+    public function getReferenceDateYear()
+    {
+        if ($this->hasDatasetSubmission()
+            and $this->getDatasetSubmission()->getReferenceDate() instanceof \Datetime
+        ) {
+            return $this->getDatasetSubmission()->getReferenceDate()->format('Y');
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Set the DOI for this Dataset.
+     *
+     * @param DOI $doi The DOI entity for this Dataset.
      *
      * @return void
      */
-    public function updateDoi()
+    public function setDoi(DOI $doi)
     {
-        if ($this->hasDatasetSubmission()) {
-            // Copy DatasetSubmission DOI to Dataset.
-            $this->doi = $this->getDatasetSubmission()->getDoi();
-        }
+        $this->doi = $doi;
     }
 
     /**
      * Get the DOI for this Dataset.
      *
-     * @return string
+     * @return DOI
      */
     public function getDoi()
     {
@@ -528,31 +557,23 @@ class Dataset extends Entity
      */
     public function getCitation()
     {
-        $datasetSubmission = $this->getDatasetSubmission();
-
         $title = $this->getTitle();
         $title = preg_replace('/\.$/', '', $title);
         $udi = $this->getUdi();
+        $author = $this->getAuthors();
+        $year = $this->getReferenceDateYear();
+        $doi = $this->getDoi();
 
-        if ($datasetSubmission instanceof DatasetSubmission) {
-            $author = $datasetSubmission->getAuthors();
-            $year = $datasetSubmission->getModificationTimeStamp()->format('Y');
-            $doi = $datasetSubmission->getDoi();
+        $citationString = $author . ' (' . $year . ') ' . $title . '.' .
+            ' Distributed by: Gulf of Mexico Research Initiative Information and Data Cooperative '
+            . '(GRIIDC), Harte Research Institute, Texas A&M University-Corpus Christi. ';
 
-            $citationString = $author . ' (' . $year . ') ' . $title . '.' .
-                ' Distributed by: Gulf of Mexico Research Initiative Information and Data Cooperative '
-                . '(GRIIDC), Harte Research Institute, Texas A&M University-Corpus Christi. ';
-
-            if (null !== $doi) {
-                $citationString .= "doi: $doi";
-            } else {
-                $citationString .= "Available from: http://data.gulfresearchinitiative.org/data/$udi";
-            }
-            return $citationString;
+        if ($doi instanceof DOI) {
+            $citationString .= 'doi:' . $doi->getDoi();
         } else {
-            $citationString = "This dataset has no registration: $title ($udi)";
-            return $citationString;
+            $citationString .= "Available from: http://data.gulfresearchinitiative.org/data/$udi";
         }
+        return $citationString;
     }
 
     /**

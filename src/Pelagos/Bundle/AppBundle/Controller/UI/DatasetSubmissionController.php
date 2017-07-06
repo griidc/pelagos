@@ -131,6 +131,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                         $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_COMPLETED
                         or $datasetSubmission->getDatasetFileSha256Hash() !== null
                     )
+                    and $datasetSubmission->getMetadataStatus() == DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
                 ) {
                     // The latest submission is complete, so create new one based on it.
                     $datasetSubmission = new DatasetSubmission($datasetSubmission);
@@ -310,6 +311,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;
+        $datasetSubmissionStatus = null;
         if ($datasetSubmission instanceof DatasetSubmission) {
             if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
                 $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
@@ -317,6 +319,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
 
             $datasetSubmissionId = $datasetSubmission->getId();
             $researchGroupId = $dataset->getResearchGroup()->getId();
+            $datasetSubmissionStatus = $datasetSubmission->getStatus();
         }
 
         $form = $this->get('form.factory')->createNamed(
@@ -329,6 +332,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                 'attr' => array(
                     'datasetSubmission' => $datasetSubmissionId,
                     'researchGroup' => $researchGroupId,
+                    'datasetSubmissionStatus' => $datasetSubmissionStatus
                 ),
             )
         );
