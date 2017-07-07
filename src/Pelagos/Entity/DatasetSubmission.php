@@ -198,7 +198,7 @@ class DatasetSubmission extends Entity
     const AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL = 4;
 
     /**
-     * The dataset is marked as restricted to author use only, but is remotely hosted.
+     * The dataset is marked as restricted, but is remotely hosted.
      */
     const AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED = 5;
 
@@ -208,7 +208,7 @@ class DatasetSubmission extends Entity
     const AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED = 7;
 
     /**
-     * The dataset is restricted to author use only.
+     * The dataset is restricted.
      */
     const AVAILABILITY_STATUS_RESTRICTED = 8;
 
