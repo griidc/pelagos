@@ -103,9 +103,9 @@ var tabIndex = 0;
                                             {% if dataset.datasetSubmission.datasetFileTransferStatus == "RemotelyHosted" %}
                                                 <a href="javascript:startDownload({{ dataset.id }});">
                                                 {% if dataset.datasetSubmission.restrictions == "Restricted" %}
-                                                    {% set title = "This dataset is hosted by an external repository and has been marked as restricted for author use only. Please contact the external repository for information on how to access this dataset." %}
+                                                    {% set title = "This dataset is restricted for download but is hosted by another website so availability status is not guaranteed to be accurate. Please contact the external repository for information on how to access this dataset." %}
                                                     {% if dataset.datasetSubmission.datasetFileUri matches '!^https?://data.gulfresearchinitiative.org!' %}
-                                                        {% set title = "This dataset is restricted for author use only." %}
+                                                        {% set title = "This dataset is restricted for download." %}
                                                     {% endif %}
                                                     {% image '@PelagosAppBundle/Resources/public/images/download-package-grey.png' %}
                                                         <img src="{{ asset_url }}" title="{{ title }}">
@@ -119,7 +119,7 @@ var tabIndex = 0;
                                             {% else %}
                                                 {% if dataset.datasetSubmission.restrictions == "Restricted" %}
                                                     {% image '@PelagosAppBundle/Resources/public/images/download-package-grey.png' %}
-                                                        <img src="{{ asset_url }}" title="This dataset is restricted for author use only.">
+                                                        <img src="{{ asset_url }}" title="This dataset is restricted for download.">
                                                     {% endimage %}
                                                 {% else %}
                                                     <a href="{{ path('pelagos_app_ui_dataland_download', {'udi': dataset.udi}) }}">
@@ -150,7 +150,7 @@ var tabIndex = 0;
                                                 {% endif %}
                                                 [Restrictions:
                                                 {% if dataset.datasetSubmission.restrictions == "Restricted" %}
-                                                    Author Use Only]
+                                                    Download Restricted]
                                                 {% else %}
                                                     Unknown]
                                                 {% endif %}
