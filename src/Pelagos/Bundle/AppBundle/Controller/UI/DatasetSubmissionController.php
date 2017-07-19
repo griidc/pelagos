@@ -126,6 +126,34 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                         }
                     }
                 } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
+                    and $datasetSubmission->getMetadataStatus() == DatasetSubmission::METADATA_STATUS_ACCEPTED
+                    and $datasetSubmission->getDataset()->getMetadata() instanceof Metadata
+                ) {
+                    // The latest submission is complete, so create new one based on it.
+                    $datasetSubmission = new DatasetSubmission($datasetSubmission);
+
+                    // Wipe out existing data from the submission.
+                    $this->clearDatasetSubmission($datasetSubmission);
+
+                    // Clear dataset and metadata contacts.
+                    $datasetSubmission->getDatasetContacts()->clear();
+                    // Populate from metadata.
+                    ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
+                        $datasetSubmission->getDataset()->getMetadata()->getXml(),
+                        $datasetSubmission,
+                        $this->get('doctrine.orm.entity_manager')
+                    );
+                    // If there are no contacts, add an empty one.
+                    if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
+                        $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
+                    }
+                    // Designate 1st contact as primary.
+                    $primaryContact = $datasetSubmission->getDatasetContacts()->first();
+                    $primaryContact->setPrimaryContact(true);
+                    // Fake submit, without persisting.
+                    $datasetSubmission->submit($primaryContact->getPerson());
+
+                } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
                     and $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_NONE
                     and (
                         $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_COMPLETED
@@ -424,41 +452,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
         $xml = simplexml_load_file($xmlURI, 'SimpleXMLElement', (LIBXML_NOERROR | LIBXML_NOWARNING));
 
         if ($xml instanceof \SimpleXMLElement and 'MI_Metadata' == $xml->getName()) {
-            $datasetSubmission->getDatasetContacts()->clear();
-            $accessor = PropertyAccess::createPropertyAccessor();
-            $clearProperties = array(
-                'title',
-                'shortTitle',
-                'abstract',
-                'purpose',
-                'suppParams',
-                'suppInstruments',
-                'suppMethods',
-                'suppSampScalesRates',
-                'suppErrorAnalysis',
-                'suppProvenance',
-                'referenceDate',
-                'referenceDateType',
-                'spatialExtent',
-                'spatialExtentDescription',
-                'temporalExtentDesc',
-                'temporalExtentBeginPosition',
-                'temporalExtentEndPosition',
-                'distributionFormatName',
-                'fileDecompressionTechnique',
-                'authors',
-            );
-            foreach ($clearProperties as $property) {
-                $accessor->setValue($datasetSubmission, $property, null);
-            }
-            $emptyProperties = array(
-                'themeKeywords',
-                'placeKeywords',
-                'topicKeywords',
-            );
-            foreach ($emptyProperties as $property) {
-                $accessor->setValue($datasetSubmission, $property, array());
-            }
+            $this->clearDatasetSubmission($datasetSubmission);
 
             ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
                 $xml,
@@ -475,6 +469,52 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
 
         } else {
             throw new InvalidMetadataException(array('This does not appear to be valid ISO 19115-2 metadata.'));
+        }
+    }
+
+    /**
+     * Clears out data properties from a Dataset Submission.
+     *
+     * @param DatasetSubmission $datasetSubmission The dataset submission that will be cleared.
+     *
+     * @return void
+     */
+    private function clearDatasetSubmission(DatasetSubmission &$datasetSubmission)
+    {
+        $datasetSubmission->getDatasetContacts()->clear();
+        $accessor = PropertyAccess::createPropertyAccessor();
+        $clearProperties = array(
+            'title',
+            'shortTitle',
+            'abstract',
+            'purpose',
+            'suppParams',
+            'suppInstruments',
+            'suppMethods',
+            'suppSampScalesRates',
+            'suppErrorAnalysis',
+            'suppProvenance',
+            'referenceDate',
+            'referenceDateType',
+            'spatialExtent',
+            'spatialExtentDescription',
+            'temporalExtentDesc',
+            'temporalExtentBeginPosition',
+            'temporalExtentEndPosition',
+            'distributionFormatName',
+            'fileDecompressionTechnique',
+            'authors',
+        );
+        foreach ($clearProperties as $property) {
+            $accessor->setValue($datasetSubmission, $property, null);
+        }
+        $emptyProperties = array(
+            'themeKeywords',
+            'placeKeywords',
+            'topicKeywords',
+        );
+        foreach ($emptyProperties as $property) {
+            $accessor->setValue($datasetSubmission, $property, array());
         }
     }
 }
