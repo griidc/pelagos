@@ -1,8 +1,20 @@
 <?php
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Doctrine\ORM\Mapping as ORM;
+
+use Pelagos\Bundle\AppBundle\Security\EntityProperty;
+
+use Pelagos\Bundle\AppBundle\Form\DataRepositoryType;
+use Pelagos\Bundle\AppBundle\Form\PersonDataRepositoryType;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
+use Doctrine\ORM\Query;
+use Pelagos\Entity\ResearchGroup;
+
 /**
  * The DIF controller for the Pelagos UI App Bundle.
  *
@@ -23,37 +35,30 @@ class ReportResearchgroupDatasetDifController extends UIController implements Op
     {
 
 
+        $allResearchGroups = $this->get('pelagos.entity.handler')->getAll(ResearchGroup::class,array('name' => 'ASC'));
+        $data = '';
+        foreach ($allResearchGroups as $rg) {
 
-        $entityHandler = $this->get('pelagos.entity.handler');
-         $allResearchGroups = $entityHandler->getAll(
-             ResearchGroup::class,
-             Query::HYDRATE_ARRAY
-         );
-        $data = array();
-        foreach ($allResearchGroups as $researchGroup) {
-            $dataset = $datasetPublication['dataset'];
-            $linkId = $datasetPublication['id'];
-            $fc = $dataset['researchGroup']['fundingCycle']['name'];
-            $proj = $dataset['researchGroup']['name'];
-            $udi = $dataset['udi'];
-            $doi = $datasetPublication['publication']['doi'];
-            $linkCreator = $datasetPublication['creator']['firstName'] .
-                ' ' . $datasetPublication['creator']['lastName'];
-            $createdOn = $datasetPublication['creationTimeStamp']->
-                setTimezone(new \DateTimeZone('America/Chicago'))->format('m/d/y H:i:s') . ' CDT';
-            $data[] = array(
-                'id' => $linkId,
-                'fc' => $fc,
-                'proj' => $proj,
-                'udi' => $udi,
-                'doi' => $doi,
-                'username' => $linkCreator,
-                'created' => $createdOn
-            );
+            $datasets = $rg->getDatasets();
+           // $dsCount = count($datasets);
+            $str = '<h3>' . $rg->getName() . '</h3>' ;
+            $data .= $str;
+            $str = '<ul>';
+            foreach($datasets as $ds) {
+                $str .= '<li>' . 'dataset - udi: ' . $ds->getUdi(). ' - ' . $ds->getTitle() . '<br>';
+                $dif  = $ds->getDif();
+                $str .= 'dif status: ' . $dif->getStatusString() . '<br>';
+                $str .= 'dif title: ' . $dif->getTitle(). '<br>';
+                $ppoc = $dif->getPrimaryPointOfContact();
+                $str .= 'dif PPOC: ' .  $ppoc->getLastName(). ', ' . $ppoc->getFirstName() . '  - ' . $ppoc->getEmailAddress() . '<br>';
+                $str .= '</li>';
+            }
+            $str .= '</ul>';
+            $data .= $str;
         }
-        // $data;
+
         return new Response(
-            'Hello world from ReportResearchGroupDatasetDifController!',
+            $data,
             Response::HTTP_OK,
             array('content-type' => 'text/html')
         );
