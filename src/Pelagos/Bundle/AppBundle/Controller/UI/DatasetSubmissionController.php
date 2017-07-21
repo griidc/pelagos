@@ -166,6 +166,8 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
 
                     // If we have accepted metadata.
                     if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
+                        // Clear out datasetSubmission to make into a blank one.
+                        $this->clearDatasetSubmission($datasetSubmission);
                         // Clear dataset and metadata contacts.
                         $datasetSubmission->getDatasetContacts()->clear();
                         // Populate from metadata.
