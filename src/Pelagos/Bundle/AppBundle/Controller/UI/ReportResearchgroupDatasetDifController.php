@@ -40,10 +40,12 @@ class ReportResearchgroupDatasetDifController extends UIController implements Op
         foreach ($allResearchGroups as $rg) {
 
             $datasets = $rg->getDatasets();
-           // $dsCount = count($datasets);
-            $str = '<h3>' . $rg->getName() . '</h3>' ;
+            $dsCount = count($datasets);
+            $str = '<h3>' . $rg->getName() . '</h3> ';
             $data .= $str;
-            $str = '<ul>';
+            $str = '<h4>' . $dsCount . ' data sets' . '</h4> ' ;
+            $data .= $str;
+            $str = '<ol>';
             foreach($datasets as $ds) {
                 $str .= '<li>' . 'dataset - udi: ' . $ds->getUdi(). ' - ' . $ds->getTitle() . '<br>';
                 $dif  = $ds->getDif();
@@ -53,7 +55,7 @@ class ReportResearchgroupDatasetDifController extends UIController implements Op
                 $str .= 'dif PPOC: ' .  $ppoc->getLastName(). ', ' . $ppoc->getFirstName() . '  - ' . $ppoc->getEmailAddress() . '<br>';
                 $str .= '</li>';
             }
-            $str .= '</ul>';
+            $str .= '</ol>';
             $data .= $str;
         }
 
