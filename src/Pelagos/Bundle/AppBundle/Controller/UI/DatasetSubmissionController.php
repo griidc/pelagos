@@ -126,7 +126,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                         }
                     }
                 } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
-                    and $datasetSubmission->getMetadataStatus() == DatasetSubmission::METADATA_STATUS_ACCEPTED
+                    and $datasetSubmission->getMetadataStatus() != DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
                     and $datasetSubmission->getDataset()->getMetadata() instanceof Metadata
                 ) {
                     // The latest submission is complete, so create new one based on it.
