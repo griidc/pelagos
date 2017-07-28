@@ -56,4 +56,4 @@ pelagos_data_discovery_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\DataDiscoveryController
 
 pelagos_report_researchgroup_dataset_dif_controller_ui:
-    resource: Pelagos\Bundle\AppBundle\Controller\UI\ReportResearchgroupDatasetDifController
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\ReportResearchGroupDatasetDifController
