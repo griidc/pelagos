@@ -150,8 +150,13 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                     // Designate 1st contact as primary.
                     $primaryContact = $datasetSubmission->getDatasetContacts()->first();
                     $primaryContact->setPrimaryContact(true);
+
+                    $submitter = $primaryContact->getPerson();
+                    if (!$submitter instanceof Person) {
+                        $submitter = new Person();
+                    }
                     // Fake submit, without persisting.
-                    $datasetSubmission->submit($primaryContact->getPerson());
+                    $datasetSubmission->submit($submitter);
 
                 } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
                     and $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_NONE
