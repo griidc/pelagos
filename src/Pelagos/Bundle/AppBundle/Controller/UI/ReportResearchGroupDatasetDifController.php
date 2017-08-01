@@ -49,15 +49,6 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
      */
     public function defaultAction(Request $request,  $researchGroupId = null)
     {
-        // dump($_POST);
-
-        $message_type = 'Unknown';
-        if ($request->isMethod('POST')) {
-            $message_type = 'POST message';
-        } elseif ($request->isMethod('GET')) {
-            $message_type = 'GET message ';
-        }
-
         //  fetch all the Research Groups
         $allResearchGroups = $this->get('pelagos.entity.handler')->getAll(ResearchGroup::class, array('name' => 'ASC'));
         //  put all the names in an array with the associated doctrine id
@@ -86,16 +77,13 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
                 'data' => $message_type])
              * *******************************************************/
             ->add('submit', SubmitType::class, array('label' => 'Generate Report'))
-            ->setMethod('POST')
+          //  ->setMethod('POST')
             ->getForm();
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-
+        if ($form->isValid()) {
             var_dump($form->getData());
-
-
         }
 
         return $this->render(
