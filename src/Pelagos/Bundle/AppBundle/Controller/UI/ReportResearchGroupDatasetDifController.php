@@ -44,12 +44,13 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
      *
      * @Route("")
      *
-     * @Method("GET")
      *
      * @return Response A Response instance.
      */
     public function defaultAction(Request $request,  $researchGroupId = null)
     {
+        // dump($_POST);
+
         $message_type = 'Unknown';
         if ($request->isMethod('POST')) {
             $message_type = 'POST message';
@@ -71,30 +72,36 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
         }
         //  for testing the wiring chose the 10th item
         $selectedResearchGroupId = array_values($this->researchGroupNames)[20];
-        $builder = $this->createFormBuilder();
-        //  $builder->add('ResearchGroup'..  causes the label on the text list choice to be 'Research group'
-        $builder->add('ResearchGroupSelector', ChoiceType::class, array(
-            'choices' => $this->researchGroupNames, // the word 'choices' is a reserved word in this context
-            'data' => $selectedResearchGroupId));
-        $builder->add('SelectedResearchGroup', TextType::class, [
-            'label' => 'Your selection',
-            'data' => array_search($selectedResearchGroupId, $this->researchGroupNames)
-        ]);
-        $builder->add('PostOrGet', TextType::class, [
-            'label' => 'request message type',
-            'data' => $message_type
-        ]);
-        $builder->add('submit', SubmitType::class, array('label' => 'submit this form'));
-        $builder->setMethod('POST');
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, array($this, 'researchGroupSelectorListener'));
-        $builder->get('ResearchGroupSelector')->addEventListener(FormEvents::POST_SUBMIT, array($this, 'postSubmit'));
+        $form = $this->createFormBuilder()
+            ->add('ResearchGroupSelector', ChoiceType::class, array(
+                'choices' => $this->researchGroupNames, // the word 'choices' is a reserved word in this context
+                'data' => $selectedResearchGroupId))
+            /****************************************************
+            ->add('SelectedResearchGroup', TextType::class, [
+                'label' => 'Your selection',
+                'data' => array_search($selectedResearchGroupId, $this->researchGroupNames)])
+            ->add('PostOrGet', TextType::class, [
+                'label' => 'request message type',
+                'data' => $message_type])
+             * *******************************************************/
+            ->add('submit', SubmitType::class, array('label' => 'Generate Report'))
+            ->setMethod('POST')
+            ->getForm();
 
-        $form = $builder->getForm();
+        $form->handleRequest($request);
 
-        return $this->render('PelagosAppBundle:template:jvh.html.twig', array(
-            'form' => $form->createView()
-        ));
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            var_dump($form->getData());
+
+
+        }
+
+        return $this->render(
+            'PelagosAppBundle:template:jvh.html.twig',
+            array(
+               'form' => $form->createView(),));
     }
 
     public function researchGroupSelectorListener(FormEvent $event)
@@ -102,6 +109,7 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
         $form = $event->getForm();
         $selectedData = $form->get('ResearchGroupSelector')->getData();
     }
+
 /**********************************************************************************************************************
         $allResearchGroups = $this->get('pelagos.entity.handler')->getAll(ResearchGroup::class,array('name' => 'ASC'));
         $data = '';
