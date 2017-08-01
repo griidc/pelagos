@@ -129,11 +129,11 @@
                 {% set available_icon = yellow_icon %}
             {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED') %}
                 {% set available_yellow = available_yellow + 1 %}
-                {% set available_title = "This dataset is available, but download is restricted to author only." %}
+                {% set available_title = "The dataset is restricted for download." %}
                 {% set available_icon = yellow_icon %}
             {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED') %}
                 {% set available_yellow = available_yellow + 1 %}
-                {% set available_title = "This dataset has been marked as restricted to author only, but is remotely hosted on a non-GRIIDC server, so availability status is not guaranteed to be accurate." %}
+                {% set available_title = "This dataset is restricted for download but is hosted by another website so availability status is not guaranteed to be accurate." %}
                 {% set available_icon = yellow_icon %}
             {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') %}
                 {% set available_green = available_green + 1 %}
