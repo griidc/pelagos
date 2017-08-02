@@ -81,7 +81,6 @@ class MetadataController extends EntityController
      *
      * @throws \Exception              When more than one dataset is found.
      * @throws NotFoundHttpException   When dataset is not found, or no metadata is available.
-     * @throws BadRequestHttpException When the Dataset Submission is Unsubmitted.
      * @throws HttpException           When the XML can not be loaded from a file.
      * @throws NotFoundHttpException   When the metadata file is not found.
      *
@@ -108,9 +107,7 @@ class MetadataController extends EntityController
 
         $dataset = $datasets[0];
 
-        // if ($dataset->getDatasetSubmissionStatus() == DatasetSubmission::STATUS_UNSUBMITTED) {
         if ($dataset->getDatasetSubmission() instanceof DatasetSubmission == false) {
-            // throw new BadRequestHttpException('Dataset is not submitted');
             $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact;
             $dif = $dataset->getDif();
             $datasetSubmission = new DatasetSubmission($dif, $personDatasetSubmissionDatasetContact);
