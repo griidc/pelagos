@@ -67,7 +67,8 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
         $form = $this->createFormBuilder()
             ->add('ResearchGroupSelector', ChoiceType::class, array(
                 'choices' => $this->researchGroupNames, // the word 'choices' is a reserved word in this context
-                'data' => $selectedResearchGroupId))
+                'data' => $selectedResearchGroupId,
+                'method' => 'POST'))
             /****************************************************
             ->add('SelectedResearchGroup', TextType::class, [
                 'label' => 'Your selection',
@@ -83,7 +84,37 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            var_dump($form->getData());
+            $researchGroupId =  $form->getData()['ResearchGroupSelector'];
+            //var_dump($researchGroupId);
+            $rgArray = $this->get('pelagos.entity.handler')->getBy(ResearchGroup::class, array('id' => $researchGroupId));
+            $rg = $rgArray[0];
+            //var_dump($rg);
+            // $rg = array_search((int)$researchGroupId, $allResearchGroups);
+            $datasets = $rg->getDatasets();
+            $dsCount = count($datasets);
+            $str = '<h3>' . $rg->getName() . '</h3> ';
+            $data = '';
+            $data .= $str;
+            $str = '<h4>' . $dsCount . ' data sets' . '</h4> ' ;
+            $data .= $str;
+            $str = '<ol>';
+            foreach($datasets as $ds) {
+                $str .= '<li>' . 'DATASET - UDI: ' . $ds->getUdi(). ', STATUS: ' . $ds->getWorkflowStatusString() . ', TITLE: ' . $ds->getTitle() . '<br>';
+                $dif  = $ds->getDif();
+                $str .= 'DIF - STATUS: ' . $dif->getStatusString();
+                $str .= ', TITLE: ' . $dif->getTitle();
+                $ppoc = $dif->getPrimaryPointOfContact();
+                $str .= ', PPOC: ' .  $ppoc->getLastName(). ', ' . $ppoc->getFirstName() . '  - ' . $ppoc->getEmailAddress() . '<br>';
+                $str .= '</li>';
+            }
+            $str .= '</ol>';
+            $data .= $str;
+
+            return new Response(
+                $data,
+                Response::HTTP_OK,
+                array('content-type' => 'text/html')
+            );
         }
 
         return $this->render(

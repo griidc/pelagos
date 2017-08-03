@@ -687,4 +687,27 @@ class Dataset extends Entity
         }
 
     }
+
+    public function getWorkflowStatusString()
+    {
+        if($this->getMetadataStatus() == DatasetSubmission::METADATA_STATUS_NONE ) {
+            return 'No Status';
+        } elseif ($this->getMetadataStatus() == DatasetSubmission::METADATA_STATUS_SUBMITTED ) {
+            return 'Metadata Submitted';
+        } elseif ($this->getMetadataStatus() == DatasetSubmission::METADATA_STATUS_IN_REVIEW ) {
+            return 'Metadata In Review';
+        } elseif ($this->getMetadataStatus() == DatasetSubmission::METADATA_STATUS_SECOND_CHECK ) {
+            return 'Metadata 2nd Check';
+        } elseif ($this->getMetadataStatus() == DatasetSubmission::METADATA_STATUS_ACCEPTED ) {
+            if ( $this->getDatasetSubmission()->getRestrictions() == DatasetSubmission::RESTRICTION_RESTRICTED) {
+                return "Completed: Restricted availability";
+            } else {
+                return "Completed: Un-restricted availability";
+            }
+        } elseif ($this->getMetadataStatus() == DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
+            return 'Metadata Back to Submitter';
+        } else {
+            return "Metadata Unknown status";
+        }
+    }
 }
