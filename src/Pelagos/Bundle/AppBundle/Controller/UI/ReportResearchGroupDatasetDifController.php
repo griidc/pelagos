@@ -87,9 +87,9 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
             $researchGroupId =  $form->getData()['ResearchGroupSelector'];
             //var_dump($researchGroupId);
             $rgArray = $this->get('pelagos.entity.handler')->getBy(ResearchGroup::class, array('id' => $researchGroupId));
+
+
             $rg = $rgArray[0];
-            //var_dump($rg);
-            // $rg = array_search((int)$researchGroupId, $allResearchGroups);
             $datasets = $rg->getDatasets();
             $dsCount = count($datasets);
             $str = '<h3>' . $rg->getName() . '</h3> ';
@@ -99,12 +99,24 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
             $data .= $str;
             $str = '<ol>';
             foreach($datasets as $ds) {
-                $str .= '<li>' . 'DATASET - UDI: ' . $ds->getUdi(). ', STATUS: ' . $ds->getWorkflowStatusString() . ', TITLE: ' . $ds->getTitle() . '<br>';
+                $timeStampString = 'Unknown';
+                if( $ds->getDatasetSubmission() != null && $ds->getDatasetSubmission()->getSubmissionTimeStamp() != null) {
+                    $timeStampString = $ds->getDatasetSubmission()->getSubmissionTimeStamp()->format('Y-m-d H:i:s');
+                }
+                $str .= '<li>' . 'DATASET - UDI: ' . $ds->getUdi() .
+                                 ', STATUS: ' . $ds->getWorkflowStatusString() .
+                                 ', SUBMITTED: ' . $timeStampString .
+                                 ', TITLE: ' . $ds->getTitle() . '<br>';
                 $dif  = $ds->getDif();
-                $str .= 'DIF - STATUS: ' . $dif->getStatusString();
-                $str .= ', TITLE: ' . $dif->getTitle();
                 $ppoc = $dif->getPrimaryPointOfContact();
-                $str .= ', PPOC: ' .  $ppoc->getLastName(). ', ' . $ppoc->getFirstName() . '  - ' . $ppoc->getEmailAddress() . '<br>';
+                $timeStampString = 'Unknown';
+                if( $dif->getModificationTimeStamp() != null) {
+                    $timeStampString = $dif->getModificationTimeStamp()->format('Y-m-d H:i:s');
+                }
+                $str .= 'DIF - STATUS: ' . $dif->getStatusString() .
+                        ', LAST MODIFIED: ' . $timeStampString .
+                        ', PPOC: ' .  $ppoc->getLastName(). ', ' . $ppoc->getFirstName() . '  - ' . $ppoc->getEmailAddress() . '<br>' .
+                        'TITLE: ' . $dif->getTitle();
                 $str .= '</li>';
             }
             $str .= '</ol>';
@@ -121,6 +133,46 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
             'PelagosAppBundle:template:jvh.html.twig',
             array(
                'form' => $form->createView(),));
+    }
+
+    private function htmlResponse(ResearchGroup $researchGroup) {
+        $datasets = $researchGroup->getDatasets();
+        $dsCount = count($datasets);
+        $str = '<h3>' . $researchGroup->getName() . '</h3> ';
+        $data = '';
+        $data .= $str;
+        $str = '<h4>' . $dsCount . ' data sets' . '</h4> ' ;
+        $data .= $str;
+        $str = '<ol>';
+        foreach($datasets as $ds) {
+            $timeStampString = 'Unknown';
+            if( $ds->getDatasetSubmission() != null && $ds->getDatasetSubmission()->getSubmissionTimeStamp() != null) {
+                $submissionTimeStampString = $ds->getDatasetSubmission()->getSubmissionTimeStamp()->format('Y-m-d H:i:s');
+            }
+            $str .= '<li>' . 'DATASET - UDI: ' . $ds->getUdi() .
+                ', STATUS: ' . $ds->getWorkflowStatusString() .
+                ', SUBMITTED: ' . $submissionTimeStampString .
+                ', TITLE: ' . $ds->getTitle() . '<br>';
+            $dif  = $ds->getDif();
+            $ppoc = $dif->getPrimaryPointOfContact();
+            $timeStampString = 'Unknown';
+            if( $dif->getModificationTimeStamp() != null) {
+                $submissionTimeStampString = $dif->getModificationTimeStamp()->format('Y-m-d H:i:s');
+            }
+            $str .= 'DIF - STATUS: ' . $dif->getStatusString() .
+                ', LAST MODIFIED: ' . $submissionTimeStampString .
+                ', PPOC: ' .  $ppoc->getLastName(). ', ' . $ppoc->getFirstName() . '  - ' . $ppoc->getEmailAddress() . '<br>' .
+                'TITLE: ' . $dif->getTitle();
+            $str .= '</li>';
+        }
+        $str .= '</ol>';
+        $data .= $str;
+
+        return new Response(
+            $data,
+            Response::HTTP_OK,
+            array('content-type' => 'text/html')
+        );
     }
 
     public function researchGroupSelectorListener(FormEvent $event)
