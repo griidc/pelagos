@@ -88,7 +88,7 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
             //var_dump($researchGroupId);
             $rgArray = $this->get('pelagos.entity.handler')->getBy(ResearchGroup::class, array('id' => $researchGroupId));
 
-            return $this->htmlResponse($rgArray[0]);
+            return $this->csvResponse($rgArray[0]);
         }
 
         return $this->render(
@@ -133,7 +133,7 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
         return new Response(
             $data,
             Response::HTTP_OK,
-            array('content-type' => 'text/csv')
+            array('content-type' => 'text/html')
         );
     }
 
@@ -141,40 +141,45 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
     private function csvResponse(ResearchGroup $researchGroup) {
         $datasets = $researchGroup->getDatasets();
         $dsCount = count($datasets);
-        $str = '<h3>' . $researchGroup->getName() . '</h3> ';
-        $data = '';
-        $data .= $str;
-        $str = '<h4>' . $dsCount . ' data sets' . '</h4> ' ;
-        $data .= $str;
-        $str = '<ol>';
+
+        $rows = array();
+        $data = array('Research Group: ',$researchGroup->getName());
+        $rows[] = implode(',', $data);
+        $data = array('Dataset Count: ',$dsCount);
+        $rows[] = implode(',', $data);
+
         foreach($datasets as $ds) {
             $timeStampString = 'Unknown';
             if( $ds->getDatasetSubmission() != null && $ds->getDatasetSubmission()->getSubmissionTimeStamp() != null) {
                 $timeStampString = $ds->getDatasetSubmission()->getSubmissionTimeStamp()->format('Y-m-d H:i:s');
             }
-            $str .= '<li>' . 'DATASET - UDI: ' . $ds->getUdi() .
-                ', STATUS: ' . $ds->getWorkflowStatusString() .
-                ', SUBMITTED: ' . $timeStampString .
-                ', TITLE: ' . $ds->getTitle() . '<br>';
+            $data = array('DATASET - UDI: ',$ds->getUdi() ,
+                'STATUS: ',$ds->getWorkflowStatusString(),
+                'SUBMITTED: ',$timeStampString ,
+                'TITLE: ',$ds->getTitle());
+            $rows[] = implode(',', $data);
+
             $dif  = $ds->getDif();
             $ppoc = $dif->getPrimaryPointOfContact();
+            $ppocString = $ppoc->getLastName() . ', ' . $ppoc->getFirstName() . '  - ' . $ppoc->getEmailAddress();
             $timeStampString = 'Unknown';
             if( $dif->getModificationTimeStamp() != null) {
                 $timeStampString = $dif->getModificationTimeStamp()->format('Y-m-d H:i:s');
             }
-            $str .= 'DIF - STATUS: ' . $dif->getStatusString() .
-                ', LAST MODIFIED: ' . $timeStampString .
-                ', PPOC: ' .  $ppoc->getLastName(). ', ' . $ppoc->getFirstName() . '  - ' . $ppoc->getEmailAddress() . '<br>' .
-                'TITLE: ' . $dif->getTitle();
-            $str .= '</li>';
+            $data = array('DIF - STATUS: ',$dif->getStatusString(),
+                'LAST MODIFIED: ',$timeStampString,
+                'PPOC: ', $ppocString,
+                'TITLE: ',$dif->getTitle());
+            $rows[] = implode(',', $data);
         }
-        $str .= '</ol>';
-        $data .= $str;
 
-        return new Response(
-            $data,
-            Response::HTTP_OK,
-            array('content-type' => 'text/html')
-        );
+        $csvContent = implode("\n",$rows);
+
+        $fileName = "quarterlyReportOne.csv";
+        $response = new Response();
+        $response->setContent($csvContent);
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment; filename="quarterlyReportOne.csv"');
+        return $response;
     }
 }
