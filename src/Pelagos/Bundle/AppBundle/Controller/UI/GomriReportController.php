@@ -6,6 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
@@ -13,43 +14,85 @@ use Pelagos\Entity\DIF;
 
 /**
  * The GOMRI datasets report generator.
+ *
+ * @Route("/gomri")
  */
 class GomriReportController extends UIController
 {
     /**
      * This is a parameterless report, so all is in the default action.
      *
-     * @Route("/gomri")
+     * @Route("")
      *
      * @return Response A Response instance.
      */
-    public function defaultAction($id = null)
+    public function defaultAction(Request $request)
     {
-        // get all datasets Since Sept 2016 (P.O. Decision).
+        $container = $this->container;
+        $response = new StreamedResponse(function() use($container) {
+            // final results array.
+            $stats =  array();
 
-        // create counts hashed by month/year.
-        $data[2016][9] = 109;
-        $data[2016][10] = 110;
-        $data[2016][11] = 111;
-        $data[2016][12] = 112;
-        $data[2017][1] = 201;
-        $data[2017][2] = 202;
-        $data[2017][3] = 203;
-        $data[2017][4] = 204;
-        $data[2017][5] = 205;
-        $data[2017][6] = 206;
-        $data[2017][7] = 207;
-        $data[2017][8] = 208;
+            $entityManager = $container->get('doctrine')->getManager();
 
-        $reportContent = '';
-        // Iterate through hashes and generate CSV.
-        foreach($data as $year) {
-            foreach($year as $month) {
-                $reportContent .= "$month ".key($month);
+            // Query Identified.
+            $queryString = "SELECT dif.creationTimeStamp " .
+                "FROM " . Dataset::class . ' dataset ' .
+                "JOIN dataset.dif dif " .
+                "JOIN dataset.researchGroup researchgroup " .
+                "WHERE researchgroup.fundingCycle < 700 " .
+                "AND dif.status = 2" ;
+            $query = $entityManager->createQuery($queryString);
+            $stats["identified"] = $query->getResult();
+
+            // Query Registered.
+            $queryString = "SELECT datasetsubmission.creationTimeStamp " .
+                "FROM " . DatasetSubmission::class . ' datasetsubmission ' .
+                "JOIN datasetsubmission.dataset dataset " .
+                "JOIN dataset.researchGroup researchgroup " .
+                "WHERE datasetsubmission IN " .
+                "   (SELECT MIN(subdatasetsubmission.id)" .
+                "   FROM " . DatasetSubmission::class . " subdatasetsubmission" .
+                "   WHERE subdatasetsubmission.datasetFileUri IS NOT null " .
+                "   GROUP BY subdatasetsubmission.dataset)" .
+                "AND researchgroup.fundingCycle < 700 ";
+            $query = $entityManager->createQuery($queryString);
+            $stats["registered"] = $query->getResult();
+
+            // Query Available.
+            $queryString = "SELECT datasetsubmission.creationTimeStamp " .
+                "FROM " . DatasetSubmission::class . ' datasetsubmission ' .
+                "JOIN datasetsubmission.dataset dataset " .
+                "JOIN dataset.researchGroup researchgroup " .
+                "WHERE datasetsubmission IN " .
+                "(SELECT MIN(subdatasetsubmission.id) " .
+                "   FROM " . DatasetSubmission::class . " subdatasetsubmission" .
+                "   WHERE subdatasetsubmission.datasetFileUri is not null ".
+                "   AND subdatasetsubmission.metadataStatus = 'Accepted' ".
+                "   AND subdatasetsubmission.restrictions = 'None' ".
+                "   AND (subdatasetsubmission.datasetFileTransferStatus = 'Completed' " .
+                "       OR subdatasetsubmission.datasetFileTransferStatus = 'RemotelyHosted') " .
+                "   GROUP BY subdatasetsubmission.dataset)" .
+                "AND researchgroup.fundingCycle < 700 ";
+            $query = $entityManager->createQuery($queryString);
+            $stats["available"] = $query->getResult();
+
+            var_dump($stats);
+
+            $handle = fopen('php://output', 'r+');
+
+            // Add header to CSV.
+            fputcsv($handle, array('id', 'udi', 'status'));
+
+            foreach($results as $result) {
+                fputcsv($handle, $result);
             }
-        }
 
-        // Spew forth the CSV with mime/type to save as file.
-        return new Response($reportContent);
+            fclose($handle);
+        });
+
+        //$response->headers->set('Content-Type', 'application/force-download');
+        //$response->headers->set('Content-Disposition','attachment; filename="export.csv"');
+        return $response;
     }
 }
