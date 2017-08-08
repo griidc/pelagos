@@ -12,6 +12,11 @@ use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\DIF;
 
+use \DateTime;
+use \DateInterval;
+
+const MONTH_DAY_FORMAT = 'M Y';
+
 /**
  * The GOMRI datasets report generator.
  *
@@ -22,6 +27,8 @@ class GomriReportController extends UIController
     /**
      * This is a parameterless report, so all is in the default action.
      *
+     * @param Request $request The Symfony request object.
+     *
      * @Route("")
      *
      * @return Response A Response instance.
@@ -29,70 +36,130 @@ class GomriReportController extends UIController
     public function defaultAction(Request $request)
     {
         $container = $this->container;
-        $response = new StreamedResponse(function() use($container) {
+        $response = new StreamedResponse(function () use ($container) {
             // final results array.
-            $stats =  array();
+            $stats = array();
 
             $entityManager = $container->get('doctrine')->getManager();
 
+            $dateTime = new DateTime('May 2012');
+
+            $now = new DateTime('now');
+
+            while ($dateTime < $now) {
+                $stats[$dateTime->format(MONTH_DAY_FORMAT)] = array(
+                    'monthly_identified' => 0,
+                    'monthly_registered' => 0,
+                    'monthly_available' => 0,
+                );
+                $dateTime->add(new DateInterval('P1M'));
+            }
+
             // Query Identified.
-            $queryString = "SELECT dif.creationTimeStamp " .
-                "FROM " . Dataset::class . ' dataset ' .
-                "JOIN dataset.dif dif " .
-                "JOIN dataset.researchGroup researchgroup " .
-                "WHERE researchgroup.fundingCycle < 700 " .
-                "AND dif.status = 2" ;
+            $queryString = 'SELECT dif.creationTimeStamp ' .
+                'FROM ' . Dataset::class . ' dataset ' .
+                'JOIN dataset.dif dif ' .
+                'JOIN dataset.researchGroup researchgroup ' .
+                'WHERE researchgroup.fundingCycle < 700 ' .
+                'AND dif.status = 2';
             $query = $entityManager->createQuery($queryString);
-            $stats["identified"] = $query->getResult();
+            $results = $query->getResult();
+
+            foreach ($results as $result) {
+                $monthDay = date(MONTH_DAY_FORMAT, $result['creationTimeStamp']->getTimestamp());
+                $stats[$monthDay]['monthly_identified']++;
+            }
 
             // Query Registered.
-            $queryString = "SELECT datasetsubmission.creationTimeStamp " .
-                "FROM " . DatasetSubmission::class . ' datasetsubmission ' .
-                "JOIN datasetsubmission.dataset dataset " .
-                "JOIN dataset.researchGroup researchgroup " .
-                "WHERE datasetsubmission IN " .
-                "   (SELECT MIN(subdatasetsubmission.id)" .
-                "   FROM " . DatasetSubmission::class . " subdatasetsubmission" .
-                "   WHERE subdatasetsubmission.datasetFileUri IS NOT null " .
-                "   GROUP BY subdatasetsubmission.dataset)" .
-                "AND researchgroup.fundingCycle < 700 ";
+            $queryString = 'SELECT datasetsubmission.creationTimeStamp ' .
+                'FROM ' . DatasetSubmission::class . ' datasetsubmission ' .
+                'JOIN datasetsubmission.dataset dataset ' .
+                'JOIN dataset.researchGroup researchgroup ' .
+                'WHERE datasetsubmission IN ' .
+                '   (SELECT MIN(subdatasetsubmission.id)' .
+                '   FROM ' . DatasetSubmission::class . ' subdatasetsubmission' .
+                '   WHERE subdatasetsubmission.datasetFileUri IS NOT null ' .
+                '   GROUP BY subdatasetsubmission.dataset)' .
+                'AND researchgroup.fundingCycle < 700 ';
             $query = $entityManager->createQuery($queryString);
-            $stats["registered"] = $query->getResult();
+            $results = $query->getResult();
+
+            foreach ($results as $result) {
+                $monthDay = date(MONTH_DAY_FORMAT, $result['creationTimeStamp']->getTimestamp());
+                $stats[$monthDay]['monthly_registered']++;
+            }
 
             // Query Available.
-            $queryString = "SELECT datasetsubmission.creationTimeStamp " .
-                "FROM " . DatasetSubmission::class . ' datasetsubmission ' .
-                "JOIN datasetsubmission.dataset dataset " .
-                "JOIN dataset.researchGroup researchgroup " .
-                "WHERE datasetsubmission IN " .
-                "(SELECT MIN(subdatasetsubmission.id) " .
-                "   FROM " . DatasetSubmission::class . " subdatasetsubmission" .
-                "   WHERE subdatasetsubmission.datasetFileUri is not null ".
-                "   AND subdatasetsubmission.metadataStatus = 'Accepted' ".
-                "   AND subdatasetsubmission.restrictions = 'None' ".
+            $queryString = 'SELECT datasetsubmission.creationTimeStamp ' .
+                'FROM ' . DatasetSubmission::class . ' datasetsubmission ' .
+                'JOIN datasetsubmission.dataset dataset ' .
+                'JOIN dataset.researchGroup researchgroup ' .
+                'WHERE datasetsubmission IN ' .
+                '(SELECT MIN(subdatasetsubmission.id) ' .
+                '   FROM ' . DatasetSubmission::class . ' subdatasetsubmission' .
+                '   WHERE subdatasetsubmission.datasetFileUri is not null ' .
+                "   AND subdatasetsubmission.metadataStatus = 'Accepted' " .
+                "   AND subdatasetsubmission.restrictions = 'None' " .
                 "   AND (subdatasetsubmission.datasetFileTransferStatus = 'Completed' " .
                 "       OR subdatasetsubmission.datasetFileTransferStatus = 'RemotelyHosted') " .
-                "   GROUP BY subdatasetsubmission.dataset)" .
-                "AND researchgroup.fundingCycle < 700 ";
+                '   GROUP BY subdatasetsubmission.dataset)' .
+                'AND researchgroup.fundingCycle < 700 ';
             $query = $entityManager->createQuery($queryString);
-            $stats["available"] = $query->getResult();
+            $results = $query->getResult();
 
-            var_dump($stats);
+            foreach ($results as $result) {
+                $monthDay = date(MONTH_DAY_FORMAT, $result['creationTimeStamp']->getTimestamp());
+                $stats[$monthDay]['monthly_available']++;
+            }
 
             $handle = fopen('php://output', 'r+');
 
             // Add header to CSV.
-            fputcsv($handle, array('id', 'udi', 'status'));
+            fputcsv(
+                $handle,
+                array(
+                    'Month', 'Year',
+                    'Monthly Identified',
+                    'Total Identified',
+                    'Monthly Registered',
+                    'Total Registered',
+                    'Monthly Available',
+                    'Total Available',
+                )
+            );
 
-            foreach($results as $result) {
-                fputcsv($handle, $result);
+            $totalIdentified = 0;
+            $totalRegistered = 0;
+            $totalAvailable = 0;
+
+            foreach ($stats as $monthDay => $stat) {
+                $totalIdentified += $stat['monthly_identified'];
+                $totalRegistered += $stat['monthly_registered'];
+                $totalAvailable += $stat['monthly_available'];
+                $date = new DateTime($monthDay);
+
+                fputcsv(
+                    $handle,
+                    array(
+                        //$monthDay,
+                        $date->format('m'),
+                        $date->format('Y'),
+                        $stat['monthly_identified'],
+                        $totalIdentified,
+                        $stat['monthly_registered'],
+                        $totalRegistered,
+                        $stat['monthly_available'],
+                        $totalAvailable,
+                    )
+                );
             }
 
             fclose($handle);
         });
 
         //$response->headers->set('Content-Type', 'application/force-download');
-        //$response->headers->set('Content-Disposition','attachment; filename="export.csv"');
+        //$response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment; filename="export.csv"');
         return $response;
     }
 }
