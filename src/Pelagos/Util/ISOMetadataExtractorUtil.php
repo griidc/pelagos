@@ -77,6 +77,87 @@ class ISOMetadataExtractorUtil
     }
 
     /**
+     * Get the 1st email addresses from the 1st POC from XML metadata.
+     *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
+     * @param EntityManager     $em  An entity manager.
+     *
+     * @return Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
+     */
+    public static function get1stEmailAddressesFrom1stPointOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em) {
+
+        $targetEmailAddress = null;
+
+        $query = '/gmi:MI_Metadata' .
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:pointOfContact';
+
+
+        $pointsOfContact = @$xml->xpath($query);
+
+        if (!empty($pointsOfContact)) {
+            $pointOfContact = $pointsOfContact[0];
+
+                // for this POC get the 1st email addresses
+                $query = './gmd:CI_ResponsibleParty' .
+                    '/gmd:contactInfo' .
+                    '/gmd:CI_Contact' .
+                    '/gmd:address' .
+                    '/gmd:CI_Address' .
+                    '/gmd:electronicMailAddress' .
+                    '/gco:CharacterString';
+
+            $targetEmailAddress = self::querySingle($pointOfContact, $query);
+        }
+        return $targetEmailAddress;
+
+    }
+    /**
+     * Get the all email addresses from all POCs from XML metadata.
+     *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
+     * @param EntityManager     $em  An entity manager.
+     *
+     * @return Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
+     */
+    public static function getAllEmailAddressesForAllPointsOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em) {
+
+        $emailAddressColection = array();
+
+        $query = '/gmi:MI_Metadata' .
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:pointOfContact';
+
+
+        $pointsOfContact = @$xml->xpath($query);
+
+        if (!empty($pointsOfContact)) {
+            foreach ($pointsOfContact as $pointOfContact) {
+
+                // for each POC get all email addresses
+                $query = './gmd:CI_ResponsibleParty' .
+                    '/gmd:contactInfo' .
+                    '/gmd:CI_Contact' .
+                    '/gmd:address' .
+                    '/gmd:CI_Address' .
+                    '/gmd:electronicMailAddress' .
+                    '/gco:CharacterString';
+
+                $allEmailAddresses = self::queryMultiple($pointOfContact, $query);
+                if(!empty($allEmailAddresses)) {
+                    foreach ($allEmailAddresses as $emailAddress)
+                        $emailAddressColection[] = $emailAddress;
+                }
+            }
+        }
+        return $emailAddressColection;
+
+    }
+    /**
      * Determines the dataset contact from XML metadata.
      *
      * @param \SimpleXmlElement $xml The XML to extract from.

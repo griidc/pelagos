@@ -57,6 +57,14 @@ fi
 
 bin/console rabbitmq-supervisor:control stop
 
+# Safety Dance
+for db in postgres pelagos template0 template1 gomri drupal drupal_db bamboo_db jira confluence stash; do
+    if [ "$parameters__database_name" == "$db" ]; then
+        echo "Refusing to alter database $parameters__database_name!"
+        exit
+    fi
+done
+
 # Drop existing database
 echo "DROP DATABASE $parameters__database_name" | psql -h $parameters__database_host -U postgres || exit
 echo "Database $parameters__database_name dropped"
@@ -77,7 +85,7 @@ echo "Grant permissions to geometry_columns"
 
 # Load Dump
 echo "Importing database dump";
-/usr/bin/psql -h $parameters__database_host -U postgres $parameters__database_name < $1
+/usr/bin/psql -h $parameters__database_host -U $parameters__database_user $parameters__database_name < $1
 
 # Reset spatial Permissions
 echo "GRANT ALL PRIVILEGES ON TABLE spatial_ref_sys TO $parameters__database_user" | psql -h $parameters__database_host -U postgres $parameters__database_name || exit

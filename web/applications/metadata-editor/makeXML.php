@@ -46,7 +46,7 @@ function createBlankXML()
     $root->setAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
     $root->setAttribute(
         'xsi:schemaLocation',
-        'http://www.isotc211.org/2005/gmi http://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd'
+        'http://www.isotc211.org/2005/gmi https://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd'
     );
 
     $doc->normalizeDocument();
