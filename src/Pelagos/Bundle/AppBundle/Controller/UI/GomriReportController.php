@@ -27,13 +27,11 @@ class GomriReportController extends UIController
     /**
      * This is a parameterless report, so all is in the default action.
      *
-     * @param Request $request The Symfony request object.
-     *
      * @Route("")
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(Request $request)
+    public function defaultAction()
     {
         $container = $this->container;
         $response = new StreamedResponse(function () use ($container) {
@@ -141,7 +139,6 @@ class GomriReportController extends UIController
                 fputcsv(
                     $handle,
                     array(
-                        //$monthDay,
                         $date->format('m'),
                         $date->format('Y'),
                         $stat['monthly_identified'],
@@ -157,9 +154,11 @@ class GomriReportController extends UIController
             fclose($handle);
         });
 
-        //$response->headers->set('Content-Type', 'application/force-download');
-        //$response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Disposition', 'attachment; filename="export.csv"');
+        $now = new DateTime('now');
+        $fileName = 'gomriReport-' . $now->format('Y-m-d') . '.csv';
+
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $fileName . '"');
         return $response;
     }
 }
