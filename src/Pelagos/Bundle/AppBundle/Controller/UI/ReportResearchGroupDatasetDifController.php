@@ -91,9 +91,7 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
 
         if ($form->isValid()) {
             $researchGroupId = $form->getData()['ResearchGroupSelector'];
-            //var_dump($researchGroupId);
             $rgArray = $this->get('pelagos.entity.handler')->getBy(ResearchGroup::class, array('id' => $researchGroupId));
-            //return $this->htmlResponse($rgArray[0]);
             return $this->csvResponse($rgArray[0]);
         }
 
@@ -103,54 +101,20 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
                 'form' => $form->createView(),));
     }
 
-    private function htmlResponse(ResearchGroup $researchGroup)
-    {
-        $datasets = $researchGroup->getDatasets();
-        $dsCount = count($datasets);
-        $str = '<h3>' . $researchGroup->getName() . '</h3> ';
-        $data = '';
-        $data .= $str;
-        $str = '<h4>' . $dsCount . ' data sets' . '</h4> ';
-        $data .= $str;
-        $str = '<ol>';
-        foreach ($datasets as $ds) {
-            $timeStampString = 'Unknown';
-            if ($ds->getDatasetSubmission() != null && $ds->getDatasetSubmission()->getSubmissionTimeStamp() != null) {
-                $timeStampString = $ds->getDatasetSubmission()->getSubmissionTimeStamp()->format('Y-m-d H:i:s');
-            }
-            $str .= '<li>' . 'DATASET - UDI: ' . $ds->getUdi() .
-                ', STATUS: ' . $ds->getWorkflowStatusString() .
-                ', SUBMITTED: ' . $timeStampString .
-                ', TITLE: ' . $ds->getTitle() . '<br>';
-            $dif = $ds->getDif();
-            $ppoc = $dif->getPrimaryPointOfContact();
-            $timeStampString = 'Unknown';
-            if ($dif->getModificationTimeStamp() != null) {
-                $timeStampString = $dif->getModificationTimeStamp()->format('Y-m-d H:i:s');
-            }
-            $str .= 'DIF - STATUS: ' . $dif->getStatusString() .
-                ', LAST MODIFIED: ' . $timeStampString .
-                ', PPOC: ' . $ppoc->getLastName() . ', ' . $ppoc->getFirstName() . '  - ' . $ppoc->getEmailAddress() . '<br>' .
-                'TITLE: ' . $dif->getTitle();
-            $str .= '</li>';
-        }
-        $str .= '</ol>';
-        $data .= $str;
-
-        return new Response(
-            $data,
-            Response::HTTP_OK,
-            array('content-type' => 'text/html')
-        );
-    }
-
-
+    /**
+     * Create the StreamedResponse.
+     *
+     * This function creates the StreamedResponse which fetches and processes the Dataset and associated DIF for the  selected Research Group.
+     *
+     * @param ResearchGroup $researchGroup
+     * @return StreamedResponse
+     */
     private function csvResponse(ResearchGroup $researchGroup)
     {
 
         $response = new StreamedResponse(function () use ($researchGroup) {
             $datasets = $researchGroup->getDatasets();
-            $dsCount = (string)(count($datasets));
+            $dsCount = '[ ' . (string)count($datasets) . ' ]';
             $rows = array();
             $data = array('  RESEARCH GROUP  ', $researchGroup->getName());
             $rows[] = implode(ReportResearchGroupDatasetDifController::CSV_DELIMITER, $data);
@@ -195,11 +159,15 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
             echo implode("\n", $rows);
         });
 
-        //$response->headers->set('Content-Type', 'application/force-download');
         $response->headers->set('Content-Disposition', 'attachment; filename=' . $this->fileName);
         return $response;
     }
 
+    /**
+     *
+     * @param $string
+     * @return String
+     */
     private function removeDelimiterFromString($string)
     {
         return str_replace(ReportResearchGroupDatasetDifController::CSV_DELIMITER, ",", $string);
