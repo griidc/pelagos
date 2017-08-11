@@ -32,57 +32,45 @@ use Pelagos\Entity\ResearchGroup;
  */
 class ReportResearchGroupDatasetDifController extends UIController implements OptionalReadOnlyInterface
 {
-    private $selectedResearchGroupId = null;
-    private $associatedDatasetIds = null; // an array of Entity ids for Dataset s linked to the selecteed ResearchGroup
 
-    private $researchGroupNames = null;
+    const FILENAME = 'ReportResearchGroupDatasetDifControlerTempFile.csv';
 
-    private $fileName = 'ResearchGroup-Dataset-Dif-Quarterly-Report.csv';
+    const CSV_DELIMITER = '|';
 
-    const CSV_DELIMITER = "|";
-    const BLANK_LINE = "     ";
-
+    const BLANK_LINE = '     ';
 
     /**
-     * The default action for the DIF.
+     * The default action.
      *
-     * @param Request $request The Symfony request object.
+     * @param Request $request         Message information for this Request.
+     * @param null    $researchGroupId The identifier for the Research Group subject of the report.
      *
      * @Route("")
      *
-     *
-     * @return Response A Response instance.
+     * @return Response|StreamedResponse A Symfony Response instance.
      */
     public function defaultAction(Request $request, $researchGroupId = null)
     {
         //  fetch all the Research Groups
         $allResearchGroups = $this->get('pelagos.entity.handler')->getAll(ResearchGroup::class, array('name' => 'ASC'));
         //  put all the names in an array with the associated doctrine id
-        $this->researchGroupNames = array();
+        $researchGroupNames = array();
         foreach ($allResearchGroups as $rg) {
-            $this->researchGroupNames[$rg->getName()] = $rg->getId();
+            $researchGroupNames[$rg->getName()] = $rg->getId();
         }
         $selectedResearchGroupId = $researchGroupId;
         if ($selectedResearchGroupId == null) {
             //  the default is the first item value in the list
-            $selectedResearchGroupId = array_values($this->researchGroupNames)[0];
+            $selectedResearchGroupId = array_values($researchGroupNames)[0];
         }
-        //  for testing the wiring chose the 10th item
-        $selectedResearchGroupId = array_values($this->researchGroupNames)[20];
+        $selectedResearchGroupId = array_values($researchGroupNames)[20];
 
         $form = $this->createFormBuilder()
             ->add('ResearchGroupSelector', ChoiceType::class, array(
-                'choices' => $this->researchGroupNames, // the word 'choices' is a reserved word in this context
+                // the word 'choices' is a reserved word in this context
+                'choices' => $researchGroupNames,
                 'data' => $selectedResearchGroupId,
                 'method' => 'POST'))
-            /****************************************************
-             * ->add('SelectedResearchGroup', TextType::class, [
-             * 'label' => 'Your selection',
-             * 'data' => array_search($selectedResearchGroupId, $this->researchGroupNames)])
-             * ->add('PostOrGet', TextType::class, [
-             * 'label' => 'request message type',
-             * 'data' => $message_type])
-             * *******************************************************/
             ->add('submit', SubmitType::class, array('label' => 'Generate Report'))
             //  ->setMethod('POST')
             ->getForm();
@@ -91,52 +79,59 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
 
         if ($form->isValid()) {
             $researchGroupId = $form->getData()['ResearchGroupSelector'];
-            $rgArray = $this->get('pelagos.entity.handler')->getBy(ResearchGroup::class, array('id' => $researchGroupId));
+            $rgArray = $this->get('pelagos.entity.handler')
+                ->getBy(ResearchGroup::class, array('id' => $researchGroupId));
             return $this->csvResponse($rgArray[0]);
         }
 
         return $this->render(
             'PelagosAppBundle:template:jvh.html.twig',
-            array(
-                'form' => $form->createView(),));
+            array('form' => $form->createView())
+        );
     }
 
     /**
      * Create the StreamedResponse.
      *
-     * This function creates the StreamedResponse which fetches and processes the Dataset and associated DIF for the  selected Research Group.
+     * This function creates the StreamedResponse which fetches and processes the Dataset and associated DIF
+     * for the selected Research Group.
      *
-     * @param ResearchGroup $researchGroup
+     * @param ResearchGroup $researchGroup A ResearchGroup obuject.
+     *
      * @return StreamedResponse
      */
     private function csvResponse(ResearchGroup $researchGroup)
     {
 
         $response = new StreamedResponse(function () use ($researchGroup) {
+            $now = date('Y-m-d H:i');
             $datasets = $researchGroup->getDatasets();
-            $dsCount = '[ ' . (string)count($datasets) . ' ]';
+            $dsCount = '[ ' . (string) count($datasets) . ' ]';
             $rows = array();
             $data = array('  RESEARCH GROUP  ', $researchGroup->getName());
-            $rows[] = implode(ReportResearchGroupDatasetDifController::CSV_DELIMITER, $data);
+            $rows[] = implode(self::CSV_DELIMITER, $data);
             $data = array('  DATASET COUNT  ', $dsCount);
-            $rows[] = implode(ReportResearchGroupDatasetDifController::CSV_DELIMITER, $data);
-            $rows[] = ReportResearchGroupDatasetDifController::BLANK_LINE;
+            $rows[] = implode(self::CSV_DELIMITER, $data);
+            $data = array('  GENERATED ' , $now);
+            $rows[] = implode(self::CSV_DELIMITER, $data);
+            $rows[] = self::BLANK_LINE;
             //  headers
             $data = array('  DATASET - UDI  ',
                 '  STATUS  ',
                 '  DATE SUBMITTED  ',
-                '  DATASET TITLE  ',
+                '  TITLE  ',
                 '  DIF STATUS  ',
                 '  LAST MODIFIED DATE  ',
-                '  PRIMARY POINT OF CONTACT  ',
-                '  DIF TITLE  ');
-            $rows[] = implode(ReportResearchGroupDatasetDifController::CSV_DELIMITER, $data);
-            $rows[] = ReportResearchGroupDatasetDifController::BLANK_LINE;
+                '  PRIMARY POINT OF CONTACT  ');
+            $rows[] = implode(self::CSV_DELIMITER, $data);
+            $rows[] = self::BLANK_LINE;
             $datasetTimeStampString = 'Unknown';
             foreach ($datasets as $ds) {
                 $datasetTimeStampString = 'Unknown';
-                if ($ds->getDatasetSubmission() != null && $ds->getDatasetSubmission()->getSubmissionTimeStamp() != null) {
-                    $datasetTimeStampString = $ds->getDatasetSubmission()->getSubmissionTimeStamp()->format('Y-m-d H:i:s');
+                if ($ds->getDatasetSubmission() != null &&
+                    $ds->getDatasetSubmission()->getSubmissionTimeStamp() != null) {
+                    $datasetTimeStampString = $ds->getDatasetSubmission()->getSubmissionTimeStamp()
+                         ->format('Y-m-d H:i:s');
                 }
                 $dif = $ds->getDif();
                 $ppoc = $dif->getPrimaryPointOfContact();
@@ -146,30 +141,19 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
                     $difTimeStampString = $dif->getModificationTimeStamp()->format('Y-m-d H:i:s');
                 }
                 $data = array($ds->getUdi(),
-                    $this->removeDelimiterFromString($ds->getWorkflowStatusString()),
-                    $this->removeDelimiterFromString($datasetTimeStampString),
-                    $this->removeDelimiterFromString($ds->getTitle()),
-                    $this->removeDelimiterFromString($dif->getStatusString()),
-                    $this->removeDelimiterFromString($difTimeStampString),
-                    $this->removeDelimiterFromString($ppocString),
-                    $this->removeDelimiterFromString($dif->getTitle()));
-                $rows[] = implode(ReportResearchGroupDatasetDifController::CSV_DELIMITER, $data);
+                    str_replace(self::CSV_DELIMITER, ',', $ds->getWorkflowStatusString()),
+                    str_replace(self::CSV_DELIMITER, ',', $datasetTimeStampString),
+                    str_replace(self::CSV_DELIMITER, ',', $ds->getTitle()),
+                    str_replace(self::CSV_DELIMITER, ',', $dif->getStatusString()),
+                    str_replace(self::CSV_DELIMITER, ',', $difTimeStampString),
+                    str_replace(self::CSV_DELIMITER, ',', $ppocString));
+                $rows[] = implode(self::CSV_DELIMITER, $data);
             }
 
             echo implode("\n", $rows);
         });
 
-        $response->headers->set('Content-Disposition', 'attachment; filename=' . $this->fileName);
+        $response->headers->set('Content-Disposition', 'attachment; filename=' . self::FILENAME);
         return $response;
-    }
-
-    /**
-     *
-     * @param $string
-     * @return String
-     */
-    private function removeDelimiterFromString($string)
-    {
-        return str_replace(ReportResearchGroupDatasetDifController::CSV_DELIMITER, ",", $string);
     }
 }
