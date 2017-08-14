@@ -35,7 +35,7 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
 
     const FILENAME = 'ReportResearchGroupDatasetDifControlerTempFile.csv';
 
-    const CSV_DELIMITER = '|';
+    const CSV_DELIMITER = ',';
 
     const BLANK_LINE = '     ';
 
@@ -85,7 +85,7 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
         }
 
         return $this->render(
-            'PelagosAppBundle:template:jvh.html.twig',
+            'PelagosAppBundle:template:ReportResearchGroupDatasetDif.html.twig',
             array('form' => $form->createView())
         );
     }
@@ -141,12 +141,12 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
                     $difTimeStampString = $dif->getModificationTimeStamp()->format('Y-m-d H:i:s');
                 }
                 $data = array($ds->getUdi(),
-                    str_replace(self::CSV_DELIMITER, ',', $ds->getWorkflowStatusString()),
-                    str_replace(self::CSV_DELIMITER, ',', $datasetTimeStampString),
-                    str_replace(self::CSV_DELIMITER, ',', $ds->getTitle()),
-                    str_replace(self::CSV_DELIMITER, ',', $dif->getStatusString()),
-                    str_replace(self::CSV_DELIMITER, ',', $difTimeStampString),
-                    str_replace(self::CSV_DELIMITER, ',', $ppocString));
+                    $ds->getWorkflowStatusString(),
+                    $datasetTimeStampString,
+                    $this->wrapInDoubleQuotes($ds->getTitle()),
+                    $dif->getStatusString(),
+                    $difTimeStampString,
+                    $this->wrapInDoubleQuotes($ppocString));
                 $rows[] = implode(self::CSV_DELIMITER, $data);
             }
 
@@ -155,5 +155,17 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
 
         $response->headers->set('Content-Disposition', 'attachment; filename=' . self::FILENAME);
         return $response;
+    }
+
+    /**
+     * Enclose a string in double quotes.
+     *
+     * @param string $text The data that may contain one or more commas.
+     *
+     * @return string
+     */
+    private function wrapInDoubleQuotes($text)
+    {
+        return '"' . $text . '"';
     }
 }
