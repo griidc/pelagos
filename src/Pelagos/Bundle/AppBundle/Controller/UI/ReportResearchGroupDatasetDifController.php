@@ -43,7 +43,7 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
      * The default action.
      *
      * @param Request $request         Message information for this Request.
-     * @param null    $researchGroupId The identifier for the Research Group subject of the report.
+     * @param integer $researchGroupId The identifier for the Research Group subject of the report.
      *
      * @Route("")
      *
