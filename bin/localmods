@@ -1,0 +1,30 @@
+#!/bin/bash
+
+parse_yaml() {
+   local prefix=$2
+   local s='[[:space:]]*' w='[a-zA-Z0-9_]*' fs=$(echo @|tr @ '\034')
+   sed -ne "s|^\($s\)\($w\)$s:$s[\"']\(.*\)[\"']$s\$|\1$fs\2$fs\3|p" \
+        -e "s|^\($s\)\($w\)$s:$s\(.*\)$s\$|\1$fs\2$fs\3|p"  $1 |
+   awk -F$fs '{
+      indent = length($1)/2;
+      vname[indent] = $2;
+      for (i in vname) {if (i > indent) {delete vname[i]}}
+      if (length($3) > 0) {
+         vn=""; for (i=0; i<indent; i++) {vn=(vn)(vname[i])("_")}
+         printf("%s%s%s=\"%s\"\n", "'$prefix'",vn, $2, $3);
+      }
+   }'
+}
+
+if [ ! -f app/config/parameters.yml ]; then
+    echo "parameters.yml not found"
+    exit
+fi
+
+eval $(parse_yaml app/config/parameters.yml "")
+
+export PGPASSWORD="$parameters__database_password"
+
+echo "update person_data_repository set role_id = 1 where person_id in (select person_id from account where user_id in ('mvandeneijnden', 'jholland', 'mwilliamson', 'rrossi', 'sellis', 'skrug', 'bsigdel', 'wnichols'))" | psql -h $parameters__database_host -U $parameters__database_user $parameters__database_name || exit
+echo "Bestowed DRPM superpowers to the usual suspects!"
+
