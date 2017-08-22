@@ -1537,16 +1537,21 @@ class DIF extends Entity
         }
     }
 
+    /**
+     * Return a human readable string that represents the DIF status.
+     *
+     * @return string
+     */
     public function getStatusString()
     {
         if ($this->getStatus() == self::STATUS_APPROVED) {
-            return "Approved";
+            return 'Approved';
         } elseif ($this->getStatus() == self::STATUS_SUBMITTED) {
-            return "Submitted";
-        } elseif ( $this->getStatus() == self::STATUS_UNSUBMITTED) {
-            return "Unsubmitted";
+            return 'Submitted';
+        } elseif ($this->getStatus() == self::STATUS_UNSUBMITTED) {
+            return 'Unsubmitted';
         } else {
-            return "Unknown";
+            return 'Unknown';
         }
     }
 }

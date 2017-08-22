@@ -2218,4 +2218,32 @@ class DatasetSubmission extends Entity
             )
         );
     }
+
+    /**
+     * Return a string that describes the status of the Metadata in the work flow.
+     *
+     * @return string
+     */
+    public function getMetadataStatusString()
+    {
+        if ($this->metadataStatus == self::METADATA_STATUS_NONE) {
+            return 'No Status';
+        } elseif ($this->metadataStatus == self::METADATA_STATUS_SUBMITTED) {
+            return 'Metadata Submitted';
+        } elseif ($this->metadataStatus == self::METADATA_STATUS_IN_REVIEW) {
+            return 'Metadata In Review';
+        } elseif ($this->metadataStatus == self::METADATA_STATUS_SECOND_CHECK) {
+            return 'Metadata 2nd Check';
+        } elseif ($this->metadataStatus == self::METADATA_STATUS_ACCEPTED) {
+            if ($this->getRestrictions() == self::RESTRICTION_RESTRICTED) {
+                return 'Completed: Restricted availability';
+            } else {
+                return 'Completed: Un-restricted availability';
+            }
+        } elseif ($this->metadataStatus == self::METADATA_STATUS_BACK_TO_SUBMITTER) {
+            return 'Metadata Back to Submitter';
+        } else {
+            return 'Metadata Unknown status';
+        }
+    }
 }
