@@ -58,17 +58,11 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
         foreach ($allResearchGroups as $rg) {
             $researchGroupNames[$rg->getName()] = $rg->getId();
         }
-        $selectedResearchGroupId = $researchGroupId;
-        if ($selectedResearchGroupId == null) {
-            //  the default is the first item value in the list
-            $selectedResearchGroupId = array_values($researchGroupNames)[0];
-        }
-
         $form = $this->createFormBuilder()
             ->add('ResearchGroupSelector', ChoiceType::class, array(
                 // the word 'choices' is a reserved word in this context
                 'choices' => $researchGroupNames,
-                'data' => $selectedResearchGroupId))
+                'placeholder' => '[select a Research Group]'))
             ->add('submit', SubmitType::class, array('label' => 'Generate Report'))
             ->getForm();
 
