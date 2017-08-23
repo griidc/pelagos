@@ -114,7 +114,7 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
             $rows[] = self::BLANK_LINE;
             //  headers
             $data = array('  DATASET - UDI  ',
-                '  STATUS  ',
+                '  SUBMISSION STATUS  ',
                 '  DATE SUBMITTED  ',
                 '  TITLE  ',
                 '  DIF STATUS  ',
@@ -122,9 +122,8 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
                 '  PRIMARY POINT OF CONTACT  ');
             $rows[] = implode(self::CSV_DELIMITER, $data);
             $rows[] = self::BLANK_LINE;
-            $datasetTimeStampString = 'Unknown';
             foreach ($datasets as $ds) {
-                $datasetTimeStampString = 'Unknown';
+                $datasetTimeStampString = 'N/A';
                 if ($ds->getDatasetSubmission() != null &&
                     $ds->getDatasetSubmission()->getSubmissionTimeStamp() != null) {
                     $datasetTimeStampString = $ds->getDatasetSubmission()->getSubmissionTimeStamp()
@@ -133,7 +132,7 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
                 $dif = $ds->getDif();
                 $ppoc = $dif->getPrimaryPointOfContact();
                 $ppocString = $ppoc->getLastName() . ', ' . $ppoc->getFirstName() . '  - ' . $ppoc->getEmailAddress();
-                $difTimeStampString = 'Unknown';
+                $difTimeStampString = 'N/A';
                 if ($dif->getModificationTimeStamp() != null) {
                     $difTimeStampString = $dif->getModificationTimeStamp()->format('Y-m-d H:i:s');
                 }
