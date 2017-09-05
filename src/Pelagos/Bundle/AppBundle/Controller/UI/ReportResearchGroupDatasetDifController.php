@@ -20,11 +20,22 @@ use Pelagos\Entity\ResearchGroup;
  */
 class ReportResearchGroupDatasetDifController extends UIController implements OptionalReadOnlyInterface
 {
+    // A prefix used on all csv file names produced by this code.
+    const REPORTFILENAMEPREFIX = 'ReportResearchGroupDatasetDif';
 
-    const FILENAME = 'ReportResearchGroupDatasetDifControlerTempFile.csv';
+    // The format used to print the date and time in the report
+    const REPORTDATETIMEFORMAT = 'Y-m-d H:i:s';
 
+    // The format used to put the date and time in the report file name
+    const REPORTFILENAMEDATETIMEFORMAT = 'Y-m-d_H-i-s';
+
+    // Limit the research group name to this to keep filename length at 100.
+    const MAXRESEARCHGROUPLENGTH = 46;
+
+    // This is the delimiter used to make the file comma seperated value (CSV).
     const CSV_DELIMITER = ',';
 
+    // A convenience for putting a blank line in the report
     const BLANK_LINE = '     ';
 
     /**
@@ -109,14 +120,14 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
                 if ($ds->getDatasetSubmission() != null &&
                     $ds->getDatasetSubmission()->getSubmissionTimeStamp() != null) {
                     $datasetTimeStampString = $ds->getDatasetSubmission()->getSubmissionTimeStamp()
-                         ->format('Y-m-d H:i:s');
+                         ->format(self::REPORTDATETIMEFORMAT);
                 }
                 $dif = $ds->getDif();
                 $ppoc = $dif->getPrimaryPointOfContact();
                 $ppocString = $ppoc->getLastName() . ', ' . $ppoc->getFirstName() . '  - ' . $ppoc->getEmailAddress();
                 $difTimeStampString = 'N/A';
                 if ($dif->getModificationTimeStamp() != null) {
-                    $difTimeStampString = $dif->getModificationTimeStamp()->format('Y-m-d H:i:s');
+                    $difTimeStampString = $dif->getModificationTimeStamp()->format(self::REPORTDATETIMEFORMAT);
                 }
                 $data = array($ds->getUdi(),
                     $ds->getWorkflowStatusString(),
@@ -131,8 +142,29 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
             echo implode("\n", $rows);
         });
 
-        $response->headers->set('Content-Disposition', 'attachment; filename=' . self::FILENAME);
+        $reportFileName = $this->createCsvReportFileName($researchGroup->getName());
+        $response->headers->set('Content-Disposition', 'attachment; filename=' . $reportFileName);
         return $response;
+    }
+
+    /**
+     * Create a CSV download filename that contains the truncated research group name and the date/timeto.
+     *
+     * @param string $researchGroupName The name of the Research Group which is the subject of the report.
+     *
+     * @return string
+     */
+    private function createCsvReportFileName($researchGroupName)
+    {
+        $nowDateTimeString = date(self::REPORTFILENAMEDATETIMEFORMAT);
+        $researchGroupNameSubstring = substr($researchGroupName, 0, self::MAXRESEARCHGROUPLENGTH);
+        $tempFileName = self::REPORTFILENAMEPREFIX
+            . '_'
+            . $researchGroupNameSubstring
+            . '_'
+            . $nowDateTimeString
+            . '.csv';
+        return str_replace(' ', '_', $tempFileName);
     }
 
     /**
