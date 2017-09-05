@@ -4,22 +4,10 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormEvent;
-
-use Pelagos\Bundle\AppBundle\Security\EntityProperty;
-
-use Pelagos\Bundle\AppBundle\Form\ReportResearchGroupDatasetDifType;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-
 use Doctrine\ORM\Query;
 use Pelagos\Entity\ResearchGroup;
 
