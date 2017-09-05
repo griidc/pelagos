@@ -36,9 +36,6 @@
             </li>
         </ul>
     {% else %}
-        <div class="messages error">
-            <h2 class="element-invisible">Error message</h2>
-            This page is only accessible by Data Repository Managers.
-        </div>
+        {% include '@templates/AdminOnly.html.twig' %}
     {% endif %}
 {% endblock %}
