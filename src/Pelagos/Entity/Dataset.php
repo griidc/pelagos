@@ -114,7 +114,7 @@ class Dataset extends Entity
     protected $identifiedStatus = DIF::STATUS_UNSUBMITTED;
 
     /**
-     * The dataset submission status of this Dataset.
+     * The latest saved dataset submission status.
      *
      * @var integer
      *
@@ -457,7 +457,7 @@ class Dataset extends Entity
      */
     public function getDatasetSubmissionStatus()
     {
-        return $this->getDatasetSubmission()->getStatus();
+        return $this->datasetSubmissionStatus;
     }
 
     /**
