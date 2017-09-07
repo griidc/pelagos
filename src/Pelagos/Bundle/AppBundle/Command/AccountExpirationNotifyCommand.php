@@ -126,19 +126,19 @@ class AccountExpirationNotifyCommand extends ContainerAwareCommand
     }
 
     /**
-     * Get accounts with passords last modified between $minTimeStamp and $maxTimeStamp.
+     * Get accounts with passwords last modified between $minTimeStamp and $maxTimeStamp.
      *
      * @param \DateTime $minTimeStamp The minimum time stamp for password modification.
      * @param \DateTime $maxTimeStamp The maximum time stamp for password modification.
      *
-     * @return array Array of Accounts with passords last modified between $minTimeStamp and $maxTimeStamp.
+     * @return array Array of Accounts with passwords last modified between $minTimeStamp and $maxTimeStamp.
      */
     protected function getAccounts(\DateTime $minTimeStamp, \DateTime $maxTimeStamp)
     {
         // Create a query builder.
         $queryBuilder = $this->getContainer()->get('doctrine.orm.entity_manager')->createQueryBuilder();
 
-        // Build a query to get all accounts with passords last modified between $minTimeStamp and $maxTimeStamp.
+        // Build a query to get all accounts with passwords last modified between $minTimeStamp and $maxTimeStamp.
         $queryBuilder
             ->select('account')
             ->from(Account::class, 'account')

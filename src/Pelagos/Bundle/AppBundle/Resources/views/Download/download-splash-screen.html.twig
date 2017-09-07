@@ -15,7 +15,8 @@
                     diff = (end - start) / 1000;
                     bytes = msg.length;
                     speed = (bytes / diff);
-                    time = {{ dataset.datasetSubmission.datasetFileSize }} / speed;
+                    filesize = {{ dataset.datasetSubmission.datasetFileSize }}
+                    time = filesize / speed;
                     unit = "second";
                     if (time > 60) {
                         time = time / 60;
@@ -27,6 +28,11 @@
                     }
                     if (Math.round(time) != 1) unit += "s";
                     $('#dl_time').html(Math.round(time) + " " + unit + " (based on your current connection speed)");
+                    if (filesize > 5000000000 && unit == "hours" && time >= 24) {
+                        showDialog('Notice:', 'This dataset will take approximately ' + Math.round(time) +
+                                   ' hours to download. Please contact GRIIDC (<a href=mailto:griidc@gomri.org>griidc@gomri.org</a>) ' +
+                                   ' if you would like to arrange alternative data delivery.');
+                    }
                 }
             });
         }

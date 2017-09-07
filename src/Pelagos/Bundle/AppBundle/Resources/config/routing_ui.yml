@@ -57,3 +57,6 @@ pelagos_data_discovery_ui:
 
 pelagos_report_researchgroup_dataset_dif_controller_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\ReportResearchGroupDatasetDifController
+
+pelagos_gomri_reports_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\GomriReportController
