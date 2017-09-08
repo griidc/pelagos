@@ -78,6 +78,10 @@ services:
         class: Pelagos\Event\EntityEventDispatcher
         arguments: ["@event_dispatcher"]
 
+    pelagos.event.generic_dispatcher:
+        class: Pelagos\Event\GenericDispatcher
+        arguments: ["@event_dispatcher"]
+
     monolog.processor.process_id:
         class: Monolog\Processor\ProcessIdProcessor
         tags:
