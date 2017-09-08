@@ -1,5 +1,4 @@
 <?php
-
 namespace Pelagos\Bundle\AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -93,6 +92,12 @@ class DownloadController extends Controller
         symlink(
             $downloadFileInfo->getRealPath(),
             $downloadDirectory . '/' . $datasetFileName
+        );
+        $this->container->get('pelagos.event.generic_dispatcher')->dispatch(
+            array(
+              'user' => $this->getUser(),
+              'dataset' => $dataset),
+            'file_download'
         );
         $downloadBaseUrl = $this->getParameter('download_base_url');
         return $this->render(
