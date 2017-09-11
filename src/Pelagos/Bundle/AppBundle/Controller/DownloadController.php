@@ -93,12 +93,6 @@ class DownloadController extends Controller
             $downloadFileInfo->getRealPath(),
             $downloadDirectory . '/' . $datasetFileName
         );
-        $this->container->get('pelagos.event.generic_dispatcher')->dispatch(
-            array(
-              'user' => $this->getUser(),
-              'dataset' => $dataset),
-            'file_download'
-        );
         $downloadBaseUrl = $this->getParameter('download_base_url');
         return $this->render(
             'PelagosAppBundle:Download:download-via-http-splash-screen.html.twig',
