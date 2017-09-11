@@ -38,7 +38,7 @@ class GenericDispatcher
     public function dispatch($data, $eventName)
     {
         $this->eventDispatcher->dispatch(
-            'pelagos.event.' . $eventName,
+            $eventName,
             new GenericEvent($data)
         );
     }
