@@ -2272,7 +2272,7 @@ class DatasetSubmission extends Entity
     public static function getMetadataStatusStringByValue($metadataStatus)
     {
         if ($metadataStatus == self::METADATA_STATUS_NONE) {
-            return 'None';
+            return 'Not Set';
         } elseif ($metadataStatus == self::METADATA_STATUS_SUBMITTED) {
             return 'Submitted';
         } elseif ($metadataStatus == self::METADATA_STATUS_IN_REVIEW) {
