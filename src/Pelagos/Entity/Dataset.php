@@ -697,9 +697,6 @@ class Dataset extends Entity
      */
     public function getWorkflowStatusString()
     {
-        if ($this->hasDatasetSubmission()) {
-            return $this->getDatasetSubmission()->getMetadataStatusString();
-        }
-        return 'Not Submitted';
+        return DatasetSubmission::getMetadataStatusStringByValue($this->datasetSubmissionStatus);
     }
 }

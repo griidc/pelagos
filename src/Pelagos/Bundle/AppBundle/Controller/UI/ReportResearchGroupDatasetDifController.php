@@ -1,6 +1,7 @@
 <?php
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
+use Pelagos\Entity\DatasetSubmission;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,9 +11,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Doctrine\ORM\Query;
 use Pelagos\Entity\ResearchGroup;
+use Symfony\Component\VarDumper\Cloner\Data;
 
 /**
- * The DIF controller for the Pelagos UI App Bundle.
+ * A controller for a Report of Research Groups and related Datasets.
  *
  * @Route("report-researchgroup-dataset-dif")
  *
@@ -96,54 +98,65 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
         $response = new StreamedResponse(function () use ($researchGroup) {
             $now = date('Y-m-d H:i');
             $datasets = $researchGroup->getDatasets();
-            $dsCount = '[ ' . (string) count($datasets) . ' ]';
+            $dsCount = count($datasets);
             $rows = array();
+            $data = array('  THIS REPORT GENERATED ' , $now);
+            $rows[] = implode(self::CSV_DELIMITER, $data);
             $data = array('  RESEARCH GROUP  ', $researchGroup->getName());
             $rows[] = implode(self::CSV_DELIMITER, $data);
-            $data = array('  DATASET COUNT  ', $dsCount);
-            $rows[] = implode(self::CSV_DELIMITER, $data);
-            $data = array('  GENERATED ' , $now);
-            $rows[] = implode(self::CSV_DELIMITER, $data);
-            $rows[] = self::BLANK_LINE;
-            //  headers
-            $data = array('  DATASET - UDI  ',
-                '  SUBMISSION STATUS  ',
-                '  DATE SUBMITTED  ',
-                '  TITLE  ',
-                '  DIF STATUS  ',
-                '  LAST MODIFIED DATE  ',
-                '  PRIMARY POINT OF CONTACT  ');
+            $datasetCountString = 'No datasets';
+            if ($dsCount > 0) {
+                $datasetCountString = ' [ ' . (string) count($datasets) . ' ]';
+            }
+            $data = array('  DATASET COUNT  ', $datasetCountString);
             $rows[] = implode(self::CSV_DELIMITER, $data);
             $rows[] = self::BLANK_LINE;
-            foreach ($datasets as $ds) {
-                $datasetTimeStampString = 'N/A';
-                if ($ds->getDatasetSubmission() != null &&
-                    $ds->getDatasetSubmission()->getSubmissionTimeStamp() != null) {
-                    $datasetTimeStampString = $ds->getDatasetSubmission()->getSubmissionTimeStamp()
-                         ->format(self::REPORTDATETIMEFORMAT);
-                }
-                $dif = $ds->getDif();
-                $ppoc = $dif->getPrimaryPointOfContact();
-                $ppocString = $ppoc->getLastName() . ', ' . $ppoc->getFirstName() . '  - ' . $ppoc->getEmailAddress();
-                $difTimeStampString = 'N/A';
-                if ($dif->getModificationTimeStamp() != null) {
-                    $difTimeStampString = $dif->getModificationTimeStamp()->format(self::REPORTDATETIMEFORMAT);
-                }
-                $data = array($ds->getUdi(),
-                    $ds->getWorkflowStatusString(),
-                    $datasetTimeStampString,
-                    $this->wrapInDoubleQuotes($ds->getTitle()),
-                    $dif->getStatusString(),
-                    $difTimeStampString,
-                    $this->wrapInDoubleQuotes($ppocString));
+
+            if ($dsCount > 0) {
+                 //  headers
+                $data = array('  DATASET UDI  ',
+                    '  STATUS  ',
+                    '  AVAILABILITY',
+                    '  DIF STATUS  ',
+                    '  DATE SUBMITTED    ',
+                    '  LAST MODIFIED DATE  ',
+                    '  PRIMARY POINT OF CONTACT  ',
+                    '  TITLE  ');
                 $rows[] = implode(self::CSV_DELIMITER, $data);
+                $rows[] = self::BLANK_LINE;
+                foreach ($datasets as $ds) {
+                    $datasetTimeStampString = 'N/A';
+                    if ($ds->getDatasetSubmission() != null &&
+                        $ds->getDatasetSubmission()->getSubmissionTimeStamp() != null
+                    ) {
+                        $datasetTimeStampString = $ds->getDatasetSubmission()->getSubmissionTimeStamp()
+                            ->format(self::REPORTDATETIMEFORMAT);
+                    }
+                    $dif = $ds->getDif();
+                    $ppoc = $dif->getPrimaryPointOfContact();
+                    $ppocString = $ppoc->getLastName() . ', ' . $ppoc->getFirstName() . '  - ' . $ppoc->getEmailAddress();
+                    $difTimeStampString = 'N/A';
+                    if ($dif->getModificationTimeStamp() != null) {
+                        $difTimeStampString = $dif->getModificationTimeStamp()->format(self::REPORTDATETIMEFORMAT);
+                    }
+                    $data = array($ds->getUdi(),
+                        DatasetSubmission::getMetadataStatusStringByValue($ds->getMetadataStatus()),
+                        DatasetSubmission::getAvailabilityStatusStringByValue($ds->getAvailabilityStatus()),
+                        $dif->getStatusString(),
+                        $datasetTimeStampString,
+                        $difTimeStampString,
+                        $this->wrapInDoubleQuotes($ppocString),
+                        $this->wrapInDoubleQuotes($ds->getTitle()));
+                    $rows[] = implode(self::CSV_DELIMITER, $data);
+                }
             }
 
             echo implode("\n", $rows);
         });
 
         $reportFileName = $this->createCsvReportFileName($researchGroup->getName());
-        $response->headers->set('Content-Disposition', 'attachment; filename=' . $reportFileName);
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $reportFileName . '"');
+        $response->headers->set('Content-type', 'application/pdf', true);
         return $response;
     }
 

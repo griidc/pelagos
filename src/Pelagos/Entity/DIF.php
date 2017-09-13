@@ -1549,7 +1549,7 @@ class DIF extends Entity
         } elseif ($this->getStatus() == self::STATUS_SUBMITTED) {
             return 'Submitted';
         } elseif ($this->getStatus() == self::STATUS_UNSUBMITTED) {
-            return 'Unsubmitted';
+            return 'not submitted';
         } else {
             return 'Unknown';
         }

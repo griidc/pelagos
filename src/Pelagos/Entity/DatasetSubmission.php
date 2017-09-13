@@ -2220,30 +2220,81 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Return a string that describes the this instance's availability.
+     *
+     * @return string
+     */
+    public function getAvailabilityStatusString()
+    {
+        return self::getAvailabilityStatusStringByValue($this->availabilityStatus);
+    }
+
+    /**
+     * Return a string that describes the availibility status represented by the argument $availabilityStatus.
+     *
+     * @param string $availabilityStatus The value indicating the availability of a DatasetSubmission.
+     *
+     * @see Dataset::availabilityStatus
+     * @see Dataset::getAvailabilityStatus()
+     *
+     * @return string
+     */
+    public static function getAvailabilityStatusStringByValue($availabilityStatus)
+    {
+        $string = '** Unknown **';
+        if ($availabilityStatus == self::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) {
+            $string = 'Publicly Available';
+        } elseif ($availabilityStatus == self::AVAILABILITY_STATUS_RESTRICTED) {
+            $string = 'Restricted Availability';
+        } elseif ($availabilityStatus == self::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL) {
+            $string = 'Available Pending Approval';
+        } elseif ($availabilityStatus == self::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION) {
+            $string = 'Available Pending Metadata Submission';
+        } elseif ($availabilityStatus == self::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED) {
+            $string = 'Publicly Available - Remotely Hosted';
+        } elseif ($availabilityStatus == self::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED) {
+            $string = 'Restricted Availability - Remotely Hosted';
+        } elseif ($availabilityStatus == self::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL) {
+            $string = 'Available Pending Metadata Approval';
+        } else {
+            $string = '** Unknown **';
+        }
+        return $string;
+    }
+
+    /**
      * Return a string that describes the status of the Metadata in the work flow.
+     *
+     * @param string $metadataStatus The value indicating the metadata status of a DatasetSubmission.
+     *
+     * @return string
+     */
+    public static function getMetadataStatusStringByValue($metadataStatus)
+    {
+        if ($metadataStatus == self::METADATA_STATUS_NONE) {
+            return 'None';
+        } elseif ($metadataStatus == self::METADATA_STATUS_SUBMITTED) {
+            return 'Submitted';
+        } elseif ($metadataStatus == self::METADATA_STATUS_IN_REVIEW) {
+            return 'In Review';
+        } elseif ($metadataStatus == self::METADATA_STATUS_SECOND_CHECK) {
+            return '2nd Check';
+        } elseif ($metadataStatus == self::METADATA_STATUS_ACCEPTED) {
+            return 'Accepted';
+        } elseif ($metadataStatus == self::METADATA_STATUS_BACK_TO_SUBMITTER) {
+            return 'Back to Submitter';
+        } else {
+            return '** Metadata Unknown status **';
+        }
+    }
+
+    /**
+     * Return a string that describes this instances metadata status.
      *
      * @return string
      */
     public function getMetadataStatusString()
     {
-        if ($this->metadataStatus == self::METADATA_STATUS_NONE) {
-            return 'No Status';
-        } elseif ($this->metadataStatus == self::METADATA_STATUS_SUBMITTED) {
-            return 'Metadata Submitted';
-        } elseif ($this->metadataStatus == self::METADATA_STATUS_IN_REVIEW) {
-            return 'Metadata In Review';
-        } elseif ($this->metadataStatus == self::METADATA_STATUS_SECOND_CHECK) {
-            return 'Metadata 2nd Check';
-        } elseif ($this->metadataStatus == self::METADATA_STATUS_ACCEPTED) {
-            if ($this->getRestrictions() == self::RESTRICTION_RESTRICTED) {
-                return 'Completed: Restricted availability';
-            } else {
-                return 'Completed: Un-restricted availability';
-            }
-        } elseif ($this->metadataStatus == self::METADATA_STATUS_BACK_TO_SUBMITTER) {
-            return 'Metadata Back to Submitter';
-        } else {
-            return 'Metadata Unknown status';
-        }
+        return self::getMetadataStatusStringByValue($this->metadataStatus);
     }
 }
