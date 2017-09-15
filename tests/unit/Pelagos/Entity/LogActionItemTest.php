@@ -23,7 +23,7 @@ class LogActionItemTest extends \PHPUnit_Framework_TestCase
      * Property to hold an Action Name for testing..
      * @var string
      */
-    protected static $testActionName = 'HTTP Download';
+    protected static $testActionName = 'TestAction';
 
     /**
      * Property to hold a Subject Entity Name for testing.
@@ -52,8 +52,7 @@ class LogActionItemTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->logActionItem = new LogActionItem();
-        $this->logActionItem->setActionName(self::$testActionName);
+        $this->logActionItem = new LogActionItem(self::$testActionName);
         $this->logActionItem->setSubjectEntityName(self::$testSubjectEntityName);
         $this->logActionItem->setSubjectEntityId(self::$testSubjectEntityId);
         $this->logActionItem->setPayLoad(self::$testPayLoad);

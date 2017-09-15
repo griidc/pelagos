@@ -73,9 +73,11 @@ class LogActionItem extends Entity
      * @param string     $subjectEntityName The subject entity name for this Log Item.
      * @param integer    $subjectEntityId   The subject entity Id for this Log Item.
      * @param json_array $payLoad           The additional information for this Log Item.
+     *
+     * @throws \Exception When there is no Subject Entity ID for a not-null Subject Entity Name.
      */
     public function __construct(
-        $actionName = null,
+        $actionName,
         $subjectEntityName = null,
         $subjectEntityId = null,
         array $payLoad = null
@@ -87,6 +89,8 @@ class LogActionItem extends Entity
             $this->setSubjectEntityName($subjectEntityName);
             if ($subjectEntityId !== null) {
                 $this->setSubjectEntityId($subjectEntityId);
+            } else {
+                throw new \Exception('Subject Entity Id is required.');
             }
         }
         if ($payLoad !== null) {
