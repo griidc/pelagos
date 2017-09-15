@@ -414,7 +414,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
             $this->datasetSubmission->getSuppProvenance()
         );
         $this->assertEquals(
-            new \Datetime,
+            $this->testingDatetime,
             $this->datasetSubmission->getReferenceDate()
         );
         $this->assertEquals(
@@ -442,11 +442,11 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
             $this->datasetSubmission->getTemporalExtentDesc()
         );
         $this->assertEquals(
-            new \Datetime,
+            $this->testingDatetime,
             $this->datasetSubmission->getTemporalExtentBeginPosition()
         );
         $this->assertEquals(
-            new \Datetime,
+            $this->testingDatetime,
             $this->datasetSubmission->getTemporalExtentEndPosition()
         );
         $this->assertEquals(
