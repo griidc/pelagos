@@ -67,7 +67,6 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
                 'setMetadataStatus' => null,
                 'setAvailabilityStatus' => null,
                 'updateAvailabilityStatus' => null,
-                'updateDoi' => null,
                 'getUdi' => 'T1.x123.000:0001',
             )
         );
@@ -262,22 +261,6 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             DatasetSubmission::RESTRICTION_NONE,
             $this->datasetSubmission->getRestrictions()
-        );
-    }
-
-    /**
-     * Test DOI.
-     *
-     * @return void
-     */
-    public function testDoi()
-    {
-        $this->datasetSubmission->setDoi(null);
-        $this->datasetSubmission->setDataset($this->mockDataset);
-        $this->datasetSubmission->setDoi('doi123');
-        $this->assertEquals(
-            'doi123',
-            $this->datasetSubmission->getDoi()
         );
     }
 
