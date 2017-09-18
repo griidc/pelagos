@@ -2220,6 +2220,15 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Return the coded value representing the this instance's availability.
+     *
+     * @return string
+     */
+    public function getAvailabilityStatus()
+    {
+        return $this->availabilityStatus;
+    }
+    /**
      * Return a string that describes the this instance's availability.
      *
      * @return string

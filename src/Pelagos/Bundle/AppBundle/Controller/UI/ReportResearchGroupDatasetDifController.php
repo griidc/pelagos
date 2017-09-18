@@ -2,6 +2,8 @@
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\DIF;
+use Pelagos\Entity\Dataset;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\Mapping as ORM;
@@ -115,39 +117,40 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
             if ($dsCount > 0) {
                  //  headers
                 $data = array('  DATASET UDI  ',
-                    '  STATUS  ',
-                    '  AVAILABILITY',
-                    '  DIF STATUS  ',
-                    '  DATE SUBMITTED    ',
-                    '  LAST MODIFIED DATE  ',
+                    '  DATASET STATUS  ',
+                    '  DATASET LAST SUBMITTED   ',
+                    '  DIF LAST MODIFIED DATE  ',
                     '  PRIMARY POINT OF CONTACT  ',
                     '  TITLE  ');
                 $rows[] = implode(self::CSV_DELIMITER, $data);
                 $rows[] = self::BLANK_LINE;
                 foreach ($datasets as $ds) {
-                    $datasetTimeStampString = 'N/A';
-                    if ($ds->getDatasetSubmission() != null &&
-                        $ds->getDatasetSubmission()->getSubmissionTimeStamp() != null
-                    ) {
-                        $datasetTimeStampString = $ds->getDatasetSubmission()->getSubmissionTimeStamp()
-                            ->format(self::REPORTDATETIMEFORMAT);
+                    $datasetStatus = $ds->getStatus();
+                    //  exclude datasets that don't have an approved DIF
+                    if( $datasetStatus != 'NoDif' ) {
+                        $datasetTimeStampString = 'N/A';
+                        if ($ds->getDatasetSubmission() != null &&
+                            $ds->getDatasetSubmission()->getSubmissionTimeStamp() != null
+                        ) {
+                            $datasetTimeStampString = $ds->getDatasetSubmission()->getSubmissionTimeStamp()
+                                ->format(self::REPORTDATETIMEFORMAT);
+                        }
+                        $dif = $ds->getDif();
+                        $ppoc = $dif->getPrimaryPointOfContact();
+                        $ppocString = $ppoc->getLastName() . ', ' . $ppoc->getFirstName() . '  - ' . $ppoc->getEmailAddress();
+                        $difTimeStampString = 'N/A';
+                        if ($dif->getModificationTimeStamp() != null) {
+                            $difTimeStampString = $dif->getModificationTimeStamp()->format(self::REPORTDATETIMEFORMAT);
+                        }
+                        $data = array(
+                            $ds->getUdi(),
+                            $datasetStatus,
+                            $datasetTimeStampString,
+                            $difTimeStampString,
+                            $this->wrapInDoubleQuotes($ppocString),
+                            $this->wrapInDoubleQuotes($ds->getTitle()));
+                        $rows[] = implode(self::CSV_DELIMITER, $data);
                     }
-                    $dif = $ds->getDif();
-                    $ppoc = $dif->getPrimaryPointOfContact();
-                    $ppocString = $ppoc->getLastName() . ', ' . $ppoc->getFirstName() . '  - ' . $ppoc->getEmailAddress();
-                    $difTimeStampString = 'N/A';
-                    if ($dif->getModificationTimeStamp() != null) {
-                        $difTimeStampString = $dif->getModificationTimeStamp()->format(self::REPORTDATETIMEFORMAT);
-                    }
-                    $data = array($ds->getUdi(),
-                        DatasetSubmission::getMetadataStatusStringByValue($ds->getMetadataStatus()),
-                        DatasetSubmission::getAvailabilityStatusStringByValue($ds->getAvailabilityStatus()),
-                        $dif->getStatusString(),
-                        $datasetTimeStampString,
-                        $difTimeStampString,
-                        $this->wrapInDoubleQuotes($ppocString),
-                        $this->wrapInDoubleQuotes($ds->getTitle()));
-                    $rows[] = implode(self::CSV_DELIMITER, $data);
                 }
             }
 
@@ -159,6 +162,7 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
         $response->headers->set('Content-type', 'application/pdf', true);
         return $response;
     }
+
 
     /**
      * Create a CSV download filename that contains the truncated research group name and the date/timeto.

@@ -656,6 +656,66 @@ class Dataset extends Entity
         $this->setAvailabilityStatus($availabilityStatus);
     }
 
+
+    /**
+     * logic from Sandra
+
+
+
+    IF dataset only has an approved DIF = “DIF” in status column,
+
+    IF dataset has approved DIF AND dataset is submitted {you can use the submitted tab in mdapp as a proxy} = “Submitted” in status column
+
+    IF dataset has approved DIF AND dataset is submitted AND metadata in review {in the review tab in mdapp} = “In Review” in status column
+
+    IF dataset has approved DIF AND dataset is submitted AND metadata is in back to submitter {in the back to submitter tab in mdapp}  = “Back to Submitter”
+
+    IF dataset has approved DIF AND dataset is submitted AND metadata is accepted AND dataset is restricted for download = “Completed, Restricted”
+
+    IF dataset has approved DIF AND dataset is submitted AND metadata is accepted AND dataset is public = “Completed”
+
+     * @param $dataset
+     * @return string
+     */
+    public function getStatus()
+    {
+        $difStatus = $this->getDif()->getStatus();
+        $datasetSubmissionStatus = $this->getDatasetSubmissionStatus();
+        $metadataStatus = $this->getMetadataStatus();
+        $availabilityStatus = $this->getAvailabilityStatus();
+
+        $statusResult = "NoDif";
+        if ( $difStatus == DIF::STATUS_APPROVED) {
+            $statusResult = 'DIF';
+            if ( $datasetSubmissionStatus == DatasetSubmission::METADATA_STATUS_SUBMITTED ) {
+                if ( $metadataStatus == DatasetSubmission::METADATA_STATUS_IN_REVIEW) {
+                    $statusResult = 'In Review';
+                } elseif ( $metadataStatus == DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
+                    $statusResult = 'Back to Submitter';
+                } elseif ( $metadataStatus == DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+                    if ( $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED ||
+                        $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED) {
+                        $statusResult = 'Completed, Restricted';
+                    } elseif ( $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE ||
+                        $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED) {
+                        $statusResult = 'Completed';
+                    }
+                    else {
+                        $statusResult = 'DIF';
+                    }
+                } else {
+                    $statusResult = 'Submitted';
+                }
+            } else {
+                //  $difStatus == DIF::STATUS_APPROVED
+                $statusResult = 'DIF';
+            }
+        } else {
+            $statusResult = "NoDif";
+        }
+        return $statusResult;
+    }
+
     /**
      * Gets the Dataset's Primary Point of Contact Person.
      *
@@ -686,17 +746,5 @@ class Dataset extends Entity
             return null;
         }
 
-    }
-
-    /**
-     * Return a string that describes the status of the Metadata in the work flow.
-     *
-     * This function delegates to the DatasetSubmission member attribute
-     *
-     * @return string
-     */
-    public function getWorkflowStatusString()
-    {
-        return DatasetSubmission::getMetadataStatusStringByValue($this->datasetSubmissionStatus);
     }
 }
