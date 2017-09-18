@@ -19,6 +19,7 @@ use Pelagos\Bundle\AppBundle\Form\MdappType;
 
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\DIF;
 use Pelagos\Entity\Metadata;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 
@@ -81,6 +82,7 @@ class MetadataController extends EntityController
      *
      * @throws \Exception              When more than one dataset is found.
      * @throws NotFoundHttpException   When dataset is not found, or no metadata is available.
+     * @throws BadRequestHttpException When the DIF is Unsubmitted.
      * @throws HttpException           When the XML can not be loaded from a file.
      * @throws NotFoundHttpException   When the metadata file is not found.
      *
@@ -106,6 +108,10 @@ class MetadataController extends EntityController
         }
 
         $dataset = $datasets[0];
+
+        if ($dataset->getIdentifiedStatus() != DIF::STATUS_APPROVED) {
+            throw new BadRequestHttpException('DIF is not submitted');
+        };
 
         if ($dataset->getDatasetSubmission() instanceof DatasetSubmission == false) {
             $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact;
