@@ -135,6 +135,33 @@ class LogActionItemTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test the constructor with all arguments
+     *
+     * This method should return the Log Action Item that was assigned in setUp.
+     *
+     * @return void
+     */
+    public function testConstructor()
+    {
+      $testInstance = new LogActionItem(self::$testActionName,self::$testSubjectEntityName,self::$testSubjectEntityId,self::$testPayLoad);
+      $this->assertEquals($this->logActionItem,$testInstance);
+    }
+
+  /**
+   * Test the constructor in case of a null Subject Entity Id.
+   *
+   * This method should return the Log Action Item that was assigned in setUp.
+   *
+   * @return void
+   */
+    public function testConstructorWithoutSubjectEntityId()
+    {
+      $this->expectExceptionMessage('Subject Entity Id is required.');
+      $this->logActionItem = new LogActionItem(self::$testActionName,self::$testSubjectEntityName,null,self::$testPayLoad);
+
+    }
+
+    /**
      * Clean up after tests.
      *
      * @return void
