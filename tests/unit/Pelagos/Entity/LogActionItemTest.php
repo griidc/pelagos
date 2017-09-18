@@ -157,7 +157,7 @@ class LogActionItemTest extends \PHPUnit_Framework_TestCase
    *
    * This method should return the Log Action Item that was assigned in setUp.
    *
-   * @expectedException \Exception expect exception when there is a Subject Entity Name but no Subject Entity Id.
+   * @expectedException \Exception
    *
    * @return void
    */
@@ -169,7 +169,7 @@ class LogActionItemTest extends \PHPUnit_Framework_TestCase
             self::$testSubjectEntityName,
             null,
             self::$testPayLoad
-        );
+      );
     }
 
     /**
