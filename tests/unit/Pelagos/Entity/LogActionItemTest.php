@@ -135,7 +135,7 @@ class LogActionItemTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the constructor with all arguments.
+     * Test the constructor with all arguments
      *
      * This method should return the Log Action Item that was assigned in setUp.
      *
@@ -143,13 +143,8 @@ class LogActionItemTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructor()
     {
-        $testInstance = new LogActionItem(
-            self::$testActionName,
-            self::$testSubjectEntityName,
-            self::$testSubjectEntityId,
-            self::$testPayLoad
-        );
-        $this->assertEquals($this->logActionItem, $testInstance);
+      $testInstance = new LogActionItem(self::$testActionName,self::$testSubjectEntityName,self::$testSubjectEntityId,self::$testPayLoad);
+      $this->assertEquals($this->logActionItem,$testInstance);
     }
 
   /**
@@ -157,19 +152,12 @@ class LogActionItemTest extends \PHPUnit_Framework_TestCase
    *
    * This method should return the Log Action Item that was assigned in setUp.
    *
-   * @expectedException \Exception Exception thrown when there is Subject Entity Name but no Subject Entity Id.
-   *
    * @return void
    */
     public function testConstructorWithoutSubjectEntityId()
     {
-        $this->expectExceptionMessage('Subject Entity Id is required.');
-        $this->logActionItem = new LogActionItem(
-            self::$testActionName,
-            self::$testSubjectEntityName,
-            null,
-            self::$testPayLoad
-        );
+      $this->expectExceptionMessage('Subject Entity Id is required.');
+      $this->logActionItem = new LogActionItem(self::$testActionName,self::$testSubjectEntityName,null,self::$testPayLoad);
 
     }
 
