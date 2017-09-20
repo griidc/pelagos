@@ -201,18 +201,4 @@ class LogActionItem extends Entity
     {
         return $this->payLoad;
     }
-
-    /**
-     * Get a single additional info for this log action item referenced by $keyName.
-     *
-     * @param string $keyName The name of the payload key to retrieve.
-     *
-     * @access public
-     *
-     * @return string
-     */
-    public function getPayLoadItemByKey($keyName)
-    {
-        return $this->payLoad[$keyName];
-    }
 }

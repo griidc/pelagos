@@ -119,22 +119,6 @@ class LogActionItemTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the getPayLoadItemByKey method.
-     *
-     * This method should test the key and value of an item in the payload array.
-     *
-     * @return void
-     */
-    public function testGetPayLoadItemByKey()
-    {
-        $keyName = 'keyName';
-        $this->assertEquals(
-            self::$testPayLoad[$keyName],
-            $this->logActionItem->getPayLoadItemByKey($keyName)
-        );
-    }
-
-    /**
      * Test the constructor with all arguments.
      *
      * This method should return the Log Action Item that was assigned in setUp.
@@ -169,7 +153,7 @@ class LogActionItemTest extends \PHPUnit_Framework_TestCase
             self::$testSubjectEntityName,
             null,
             self::$testPayLoad
-      );
+        );
     }
 
     /**
