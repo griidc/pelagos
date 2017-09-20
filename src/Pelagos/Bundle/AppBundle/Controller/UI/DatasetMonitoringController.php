@@ -185,8 +185,6 @@ class DatasetMonitoringController extends UIController
                 $datasetSubmission,
                 $this->getDoctrine()->getManager()
             );
-            $dataset->setDatasetSubmission($datasetSubmission);
-            $datasets = array($dataset);
         }
 
         return $this->render(
