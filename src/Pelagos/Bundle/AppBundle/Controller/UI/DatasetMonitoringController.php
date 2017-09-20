@@ -13,6 +13,7 @@ use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\FundingOrganization;
 use Pelagos\Entity\FundingCycle;
+use Pelagos\Entity\Metadata;
 use Pelagos\Entity\ResearchGroup;
 use Pelagos\Entity\Person;
 
@@ -135,7 +136,10 @@ class DatasetMonitoringController extends UIController
                 array(
                     'researchGroups' => $researchGroups,
                     'header' => $title,
-                    'pdfFilename' => 'Dataset Monitoring - ' . $researcher->getLastName() . ' ' . $researcher->getFirstName()
+                    'pdfFilename' => 'Dataset Monitoring - ' .
+                        $researcher->getLastName() .
+                        ' ' .
+                        $researcher->getFirstName()
                 )
             );
         } else {
@@ -144,7 +148,10 @@ class DatasetMonitoringController extends UIController
                 array(
                     'researchGroups' => $researchGroups,
                     'header' => $title,
-                    'pdfFilename' => 'Dataset Monitoring - ' . $researcher->getLastName() . ' ' . $researcher->getFirstName(),
+                    'pdfFilename' => 'Dataset Monitoring - ' .
+                        $researcher->getLastName() .
+                        ' ' .
+                        $researcher->getFirstName(),
                     'id' => $id,
                 )
             );
@@ -170,13 +177,17 @@ class DatasetMonitoringController extends UIController
 
         // If we have approved Metadata, load contact into datasetSubmission.
         if ($datasetSubmission instanceof DatasetSubmission
-            and $datasetSubmission->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED
+            and $dataset->getMetadata() instanceof Metadata
         ) {
+            $datasetSubmission->getDatasetContacts()->clear();
             ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
                 $dataset->getMetadata()->getXml(),
                 $datasetSubmission,
                 $this->getDoctrine()->getManager()
             );
+            $dataset->setDatasetSubmission($datasetSubmission);
+            $datasets = array($dataset);
+            dump($datasets);
         }
 
         return $this->render(
