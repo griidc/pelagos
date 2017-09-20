@@ -2228,6 +2228,7 @@ class DatasetSubmission extends Entity
     {
         return $this->availabilityStatus;
     }
+    
     /**
      * Return a string that describes the this instance's availability.
      *
@@ -2250,7 +2251,7 @@ class DatasetSubmission extends Entity
      */
     public static function getAvailabilityStatusStringByValue($availabilityStatus)
     {
-        $string = '** Unknown **';
+        $string = 'Not Set';
         if ($availabilityStatus == self::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) {
             $string = 'Publicly Available';
         } elseif ($availabilityStatus == self::AVAILABILITY_STATUS_RESTRICTED) {
@@ -2266,7 +2267,7 @@ class DatasetSubmission extends Entity
         } elseif ($availabilityStatus == self::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL) {
             $string = 'Available Pending Metadata Approval';
         } else {
-            $string = '** Unknown **';
+            $string = 'Not Set';
         }
         return $string;
     }
@@ -2293,7 +2294,7 @@ class DatasetSubmission extends Entity
         } elseif ($metadataStatus == self::METADATA_STATUS_BACK_TO_SUBMITTER) {
             return 'Back to Submitter';
         } else {
-            return '** Metadata Unknown status **';
+            return 'Not Set';
         }
     }
 

@@ -656,62 +656,57 @@ class Dataset extends Entity
         $this->setAvailabilityStatus($availabilityStatus);
     }
 
-
     /**
-     * logic from Sandra
-
-
-
-    IF dataset only has an approved DIF = “DIF” in status column,
-
-    IF dataset has approved DIF AND dataset is submitted {you can use the submitted tab in mdapp as a proxy} = “Submitted” in status column
-
-    IF dataset has approved DIF AND dataset is submitted AND metadata in review {in the review tab in mdapp} = “In Review” in status column
-
-    IF dataset has approved DIF AND dataset is submitted AND metadata is in back to submitter {in the back to submitter tab in mdapp}  = “Back to Submitter”
-
-    IF dataset has approved DIF AND dataset is submitted AND metadata is accepted AND dataset is restricted for download = “Completed, Restricted”
-
-    IF dataset has approved DIF AND dataset is submitted AND metadata is accepted AND dataset is public = “Completed”
-
-     * @param $dataset
-     * @return string
+     * Return a value that represents the status of the Dataset as understood in the work flow.
+     *
+     * @return string The value of the status like that tabulated in MDAPP
      */
     public function getStatus()
     {
+        /*
+            * logic from Sandra
+            * IF dataset only has an approved DIF = “DIF” in status column,
+
+            * IF dataset has approved DIF AND dataset is submitted {you can use the submitted tab in mdapp as a proxy} = “Submitted” in status column
+
+            * IF dataset has approved DIF AND dataset is submitted AND metadata in review {in the review tab in mdapp} = “In Review” in status column
+
+            * IF dataset has approved DIF AND dataset is submitted AND metadata is in back to submitter {in the back to submitter tab in mdapp}  = “Back to Submitter”
+
+            * IF dataset has approved DIF AND dataset is submitted AND metadata is accepted AND dataset is restricted for download = “Completed, Restricted”
+
+            * IF dataset has approved DIF AND dataset is submitted AND metadata is accepted AND dataset is public = “Completed”
+        */
+
         $difStatus = $this->getDif()->getStatus();
-        $datasetSubmissionStatus = $this->getDatasetSubmissionStatus();
         $metadataStatus = $this->getMetadataStatus();
         $availabilityStatus = $this->getAvailabilityStatus();
 
-        $statusResult = "NoDif";
-        if ( $difStatus == DIF::STATUS_APPROVED) {
+        $statusResult = 'NoDif';
+        if ($difStatus == DIF::STATUS_APPROVED) {
             $statusResult = 'DIF';
-            if ( $datasetSubmissionStatus == DatasetSubmission::METADATA_STATUS_SUBMITTED ) {
-                if ( $metadataStatus == DatasetSubmission::METADATA_STATUS_IN_REVIEW) {
-                    $statusResult = 'In Review';
-                } elseif ( $metadataStatus == DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
-                    $statusResult = 'Back to Submitter';
-                } elseif ( $metadataStatus == DatasetSubmission::METADATA_STATUS_ACCEPTED) {
-                    if ( $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED ||
-                        $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED) {
-                        $statusResult = 'Completed, Restricted';
-                    } elseif ( $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE ||
-                        $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED) {
-                        $statusResult = 'Completed';
-                    }
-                    else {
-                        $statusResult = 'DIF';
-                    }
+            if ($metadataStatus == DatasetSubmission::METADATA_STATUS_IN_REVIEW) {
+                $statusResult = 'In Review';
+            } elseif ($metadataStatus == DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
+                $statusResult = 'Back to Submitter';
+            } elseif ($metadataStatus == DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+                if ($availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED ||
+                    $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED) {
+                    $statusResult = 'Completed, Restricted';
+                } elseif ($availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE ||
+                    $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED) {
+                    $statusResult = 'Completed';
                 } else {
-                    $statusResult = 'Submitted';
+                    $statusResult = 'DIF';
                 }
+            } elseif ($metadataStatus == DatasetSubmission::METADATA_STATUS_SUBMITTED) {
+                $statusResult = 'Submitted';
             } else {
                 //  $difStatus == DIF::STATUS_APPROVED
                 $statusResult = 'DIF';
             }
         } else {
-            $statusResult = "NoDif";
+            $statusResult = 'NoDif';
         }
         return $statusResult;
     }
@@ -745,6 +740,5 @@ class Dataset extends Entity
             // And if we don't have an approved DIF, return nothing.
             return null;
         }
-
     }
 }
