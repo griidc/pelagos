@@ -187,7 +187,6 @@ class DatasetMonitoringController extends UIController
             );
             $dataset->setDatasetSubmission($datasetSubmission);
             $datasets = array($dataset);
-            dump($datasets);
         }
 
         return $this->render(
