@@ -127,7 +127,7 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
                 foreach ($datasets as $ds) {
                     $datasetStatus = $ds->getStatus();
                     //  exclude datasets that don't have an approved DIF
-                    if( $datasetStatus != 'NoDif' ) {
+                    if ($datasetStatus != 'NoDif') {
                         $datasetTimeStampString = 'N/A';
                         if ($ds->getDatasetSubmission() != null &&
                             $ds->getDatasetSubmission()->getSubmissionTimeStamp() != null
@@ -137,14 +137,16 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
                         }
                         $dif = $ds->getDif();
                         $ppoc = $dif->getPrimaryPointOfContact();
-                        $ppocString = $ppoc->getLastName() . ', ' . $ppoc->getFirstName() . '  - ' . $ppoc->getEmailAddress();
+                        $ppocString = $ppoc->getLastName() . ', ' .
+                            $ppoc->getFirstName() . '  - ' .
+                            $ppoc->getEmailAddress();
                         $difTimeStampString = 'N/A';
                         if ($dif->getModificationTimeStamp() != null) {
                             $difTimeStampString = $dif->getModificationTimeStamp()->format(self::REPORTDATETIMEFORMAT);
                         }
                         $data = array(
                             $ds->getUdi(),
-                            $datasetStatus,
+                            $this->wrapInDoubleQuotes($datasetStatus),
                             $datasetTimeStampString,
                             $difTimeStampString,
                             $this->wrapInDoubleQuotes($ppocString),
@@ -162,7 +164,6 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
         $response->headers->set('Content-type', 'application/pdf', true);
         return $response;
     }
-
 
     /**
      * Create a CSV download filename that contains the truncated research group name and the date/timeto.
