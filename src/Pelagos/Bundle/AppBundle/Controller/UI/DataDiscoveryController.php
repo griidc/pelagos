@@ -4,6 +4,7 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -177,5 +178,35 @@ class DataDiscoveryController extends UIController
                 'dataset' => $dataset
             )
         );
+    }
+
+    /**
+     * Show details for a dataset.
+     *
+     * @param integer $id The id of the Dataset.
+     *
+     * @Route("/sitemap.xml")
+     * @Method("GET")
+        *
+     * @return Response
+     */
+    public function showSiteMapXml()
+    {
+
+
+        $container = $this->container;
+        $response = new StreamedResponse(function () use ($container) {
+            $datasets = $container->get('pelagos.entity.handler')->getAll(Dataset::class);
+            echo $this->renderView(
+                'PelagosAppBundle::sitemap.xml.twig',
+                array(
+                    'datasets' => $datasets
+                )
+            );
+        });
+
+        $response->headers->set('Content-Type', 'text/xml');
+
+        return $response;
     }
 }
