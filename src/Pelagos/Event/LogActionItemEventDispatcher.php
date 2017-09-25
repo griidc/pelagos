@@ -47,6 +47,5 @@ class LogActionItemEventDispatcher
                 $eventName
             )
         );
-        dump($data);
     }
 }
