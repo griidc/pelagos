@@ -45,18 +45,12 @@ class LogActionItemEvent extends Event
      * @param integer $subjectEntityId   The subject Id if subject entity name exists.
      * @param array   $payLoad           The additional information for the event.
      */
-    public function __construct($actionName, $subjectEntityName = null, $subjectEntityId = null, array $payLoad = null)
+    public function __construct($actionName, $subjectEntityName, $subjectEntityId, array $payLoad)
     {
-        $this->$actionName = $actionName;
-        if ($subjectEntityName != null) {
-            $this->subjectEntityName = $subjectEntityName;
-            if ($subjectEntityId != null) {
-                $this->subjectEntityId = $subjectEntityId;
-            }
-        }
-        if ($payLoad != null) {
-            $this->payLoad = $payLoad;
-        }
+        $this->actionName = $actionName;
+        $this->subjectEntityName = $subjectEntityName;
+        $this->subjectEntityId = $subjectEntityId;
+        $this->payLoad = $payLoad;
     }
 
     /**
