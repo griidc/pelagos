@@ -95,10 +95,14 @@ class DownloadController extends Controller
             $downloadDirectory . '/' . $datasetFileName
         );
         $downloadBaseUrl = $this->getParameter('download_base_url');
-        $this->container->get('pelagos.event.generic_dispatcher')->dispatch(
+        $em = $this->container->get('doctrine')->getManager();
+        $this->container->get('pelagos.event.log_action_item_event_dispatcher')->dispatch(
             array(
-                'user' => $this->getUser(),
-                'dataset' => $dataset),
+                'actionName' => 'File Download',
+                'subjectEntityName' => $em->getClassMetadata(get_class($dataset))->getName(),
+                'subjectEntityId' => $dataset->getId(),
+                'payLoad' => json_encode(array('user' => $this->getUser()))
+            ),
             'file_download'
         );
         return $this->render(
