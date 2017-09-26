@@ -11,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\DIF;
+use Pelagos\Entity\Metadata;
 
 use Pelagos\Util\ISOMetadataExtractorUtil;
 
