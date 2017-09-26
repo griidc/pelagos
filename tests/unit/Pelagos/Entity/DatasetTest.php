@@ -52,6 +52,13 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
     protected $mockSubmittedDif;
 
     /**
+     * Class variable type Dataset containing no DIF used for testing.
+     *
+     * @var mixed mockSubmittedNoDif
+     */
+    protected $mockDifStatusUnsubmitted;
+
+    /**
      * Setup for PHPUnit tests.
      *
      * This instantiates an instance of Dataset and sets (some of) its properties.
@@ -72,7 +79,7 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
                     array(
                         \Mockery::mock(
                             PersonDatasetSubmissionDatasetContact::class,
-                            array (
+                            array(
                                 'getPerson' => \Mockery::mock(
                                     Person::class,
                                     array(
@@ -100,7 +107,7 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
                     array(
                         \Mockery::mock(
                             PersonDatasetSubmissionDatasetContact::class,
-                            array (
+                            array(
                                 'getPerson' => \Mockery::mock(
                                     Person::class,
                                     array(
@@ -161,7 +168,18 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
             )
         );
 
+        $this->mockDifNStatusUnsubmitted = \Mockery::mock(
+            DIF::class,
+            array(
+                'getStatus' => DIF::STATUS_UNSUBMITTED,
+                'setDataset' => null,
+                'getDataset' => $this->dataset,
+            )
+        );
+
+
         $this->dataset = new Dataset;
+
     }
 
     /**
@@ -220,6 +238,99 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
             $this->dataset->getPrimaryPointOfContact()
         );
 
+    }
+
+    /**
+     * Test the Dataset getStatus() function.
+     *
+     * @return void
+     */
+    public function testGetStatus()
+    {
+        // Case: There is not a DIF set for this Dataset.
+
+        $this->dataset->setDif($this->mockDifNStatusUnsubmitted);
+
+        $this->assertEquals(
+            'NoDif',
+            $this->dataset->getStatus()
+        );
+
+        // Case: Dif is approved && metadata statis is not one of the valid process status
+        $this->dataset->setDif($this->mockApprovedDif);
+        $this->dataset->setMetadataStatus(13);
+        $this->assertEquals(
+            'DIF',
+            $this->dataset->getStatus()
+        );
+
+        // Case: Dif is approved && metadata statis is in review
+        $this->dataset->setDif($this->mockApprovedDif);
+        $this->dataset->setMetadataStatus(DatasetSubmission::METADATA_STATUS_IN_REVIEW);
+        $this->assertEquals(
+            'In Review',
+            $this->dataset->getStatus()
+        );
+
+        // Case: Dif is approved && metadata statis is back to submitter
+        $this->dataset->setDif($this->mockApprovedDif);
+        $this->dataset->setMetadataStatus(DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER);
+        $this->assertEquals(
+            'Back to Submitter',
+            $this->dataset->getStatus()
+        );
+
+        // Case: Dif is approved && metadata status is accepted && availability status is restricted distribution
+        $this->dataset->setDif($this->mockApprovedDif);
+        $this->dataset->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
+        $this->dataset->setAvailabilityStatus(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED);
+        $this->assertEquals(
+            'Completed, Restricted',
+            $this->dataset->getStatus()
+        );
+
+        // Case: Dif is approved && metadata status is accepted && availability status is remotelyhosted distribution
+        $this->dataset->setDif($this->mockApprovedDif);
+        $this->dataset->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
+        $this->dataset->setAvailabilityStatus(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED);
+        $this->assertEquals(
+            'Completed, Restricted',
+            $this->dataset->getStatus()
+        );
+
+        // Case: Dif is approved && metadata status is accepted && availability status is publicly available
+        $this->dataset->setDif($this->mockApprovedDif);
+        $this->dataset->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
+        $this->dataset->setAvailabilityStatus(DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE);
+        $this->assertEquals(
+            'Completed',
+            $this->dataset->getStatus()
+        );
+
+        // Case: Dif is approved &&
+        // metadata status is accepted &&
+        // availability status is publicly available remotely hosted
+        $this->dataset->setDif($this->mockApprovedDif);
+        $this->dataset->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
+        $this->dataset->setAvailabilityStatus(
+            DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED
+        );
+        $this->assertEquals(
+            'Completed',
+            $this->dataset->getStatus()
+        );
+
+
+        // Case: Dif is approved &&
+        // metadata status is accepted &&
+        // availability status is something other than expected
+        $this->dataset->setDif($this->mockApprovedDif);
+        $this->dataset->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
+        $this->dataset->setAvailabilityStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
+        $this->assertEquals(
+            'DIF',
+            $this->dataset->getStatus()
+        );
     }
 
     /**
