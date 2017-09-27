@@ -21,14 +21,14 @@ use Pelagos\Entity\ResearchGroup;
 /**
  * A controller for a Report of Research Groups and related Datasets.
  *
- * @Route("report-researchgroup-dataset-dif")
+ * @Route("report-researchgroup-dataset-status")
  *
  * @return Response A Symfony Response instance.
  */
-class ReportResearchGroupDatasetDifController extends UIController implements OptionalReadOnlyInterface
+class ReportResearchGroupDatasetStatusController extends UIController implements OptionalReadOnlyInterface
 {
     // A prefix used on all csv file names produced by this code.
-    const REPORTFILENAMEPREFIX = 'ReportResearchGroupDatasetDif';
+    const REPORTFILENAMEPREFIX = 'ReportResearchGroupDatasetStatus';
 
     // The format used to print the date and time in the report
     const REPORTDATETIMEFORMAT = 'Y-m-d H:i:s';
@@ -82,7 +82,7 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
         }
 
         return $this->render(
-            'PelagosAppBundle:template:ReportResearchGroupDatasetDif.html.twig',
+            'PelagosAppBundle:template:ReportResearchGroupDatasetStatus.html.twig',
             array('form' => $form->createView())
         );
     }
