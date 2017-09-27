@@ -1,19 +1,22 @@
 <?php
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Query;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\VarDumper\Cloner\Data;
+
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\Dataset;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use Doctrine\ORM\Query;
 use Pelagos\Entity\ResearchGroup;
-use Symfony\Component\VarDumper\Cloner\Data;
 
 /**
  * A controller for a Report of Research Groups and related Datasets.
@@ -98,6 +101,8 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
     {
 
         $response = new StreamedResponse(function () use ($researchGroup) {
+            // Byte Order Marker to indicate UTF-8
+            echo chr(0xEF) . chr(0xBB) . chr(0xBF);
             $now = date('Y-m-d H:i');
             $datasets = $researchGroup->getDatasets();
             $dsCount = count($datasets);
@@ -161,7 +166,7 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
 
         $reportFileName = $this->createCsvReportFileName($researchGroup->getName());
         $response->headers->set('Content-Disposition', 'attachment; filename="' . $reportFileName . '"');
-        $response->headers->set('Content-type', 'application/pdf;charset=utf-8', true);
+        $response->headers->set('Content-type', 'text/csv; charset=utf-8', true);
         return $response;
     }
 
