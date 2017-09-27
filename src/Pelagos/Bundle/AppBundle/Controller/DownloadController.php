@@ -113,7 +113,7 @@ class DownloadController extends Controller
                 'actionName' => 'File Download',
                 'subjectEntityName' => $em->getClassMetadata(get_class($dataset))->getName(),
                 'subjectEntityId' => $dataset->getId(),
-                'payLoad' => array('type' => $type, 'id' => $typeId),
+                'payLoad' => array('userType' => $type, 'userId' => $typeId),
             ),
             'file_download'
         );
