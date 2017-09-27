@@ -663,21 +663,6 @@ class Dataset extends Entity
      */
     public function getStatus()
     {
-        /*
-            * logic from Sandra
-            * IF dataset only has an approved DIF = “DIF” in status column,
-
-            * IF dataset has approved DIF AND dataset is submitted {you can use the submitted tab in mdapp as a proxy} = “Submitted” in status column
-
-            * IF dataset has approved DIF AND dataset is submitted AND metadata in review {in the review tab in mdapp} = “In Review” in status column
-
-            * IF dataset has approved DIF AND dataset is submitted AND metadata is in back to submitter {in the back to submitter tab in mdapp}  = “Back to Submitter”
-
-            * IF dataset has approved DIF AND dataset is submitted AND metadata is accepted AND dataset is restricted for download = “Completed, Restricted”
-
-            * IF dataset has approved DIF AND dataset is submitted AND metadata is accepted AND dataset is public = “Completed”
-        */
-
         $difStatus = $this->getDif()->getStatus();
         $metadataStatus = $this->getMetadataStatus();
         $availabilityStatus = $this->getAvailabilityStatus();

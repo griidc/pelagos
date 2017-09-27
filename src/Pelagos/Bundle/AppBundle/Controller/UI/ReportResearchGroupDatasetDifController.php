@@ -161,7 +161,7 @@ class ReportResearchGroupDatasetDifController extends UIController implements Op
 
         $reportFileName = $this->createCsvReportFileName($researchGroup->getName());
         $response->headers->set('Content-Disposition', 'attachment; filename="' . $reportFileName . '"');
-        $response->headers->set('Content-type', 'application/pdf', true);
+        $response->headers->set('Content-type', 'application/pdf;charset=utf-8', true);
         return $response;
     }
 
