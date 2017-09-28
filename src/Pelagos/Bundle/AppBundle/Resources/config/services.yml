@@ -53,7 +53,7 @@ services:
 
     pelagos.logactionitem.listener:
         class: Pelagos\Event\LogActionItemEventListener
-        arguments: ["@twig", "@mailer", "@security.token_storage", "%mailer_from_addr%", "%mailer_from_name%", "@pelagos.entity.handler", "@old_sound_rabbit_mq.doi_issue_producer"]
+        arguments: ["@doctrine.orm.entity_manager"]
         tags:
             - { name: kernel.event_listener, event: pelagos.logactionitem.file_download, method: onNewLogCreated }
 
