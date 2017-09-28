@@ -71,6 +71,7 @@ class DownloadController extends Controller
      * @param string $id The id of the dataset to download.
      *
      * @throws AccessDeniedException When no user is authenticated.
+     * @throws \Exception             When unknown user type is encountered.
      *
      * @Route("/{id}/http")
      *
@@ -95,6 +96,27 @@ class DownloadController extends Controller
             $downloadDirectory . '/' . $datasetFileName
         );
         $downloadBaseUrl = $this->getParameter('download_base_url');
+        $em = $this->container->get('doctrine')->getManager();
+        $type = get_class($this->getUser());
+        if ($type == 'Pelagos\Entity\Account') {
+            $type = 'GoMRI';
+            $typeId = $this->getUser()->getUserId();
+        } elseif ($type == 'HWI\Bundle\OAuthBundle\Security\Core\User\OAuthUser') {
+            $type = 'OAuth';
+            $typeId = $this->getUser()->getUsername();
+        } else {
+            // We have a different type of user that needs to be accounted for. Throw fatal exception.
+            throw new \Exception('Unknown user type encountered.');
+        }
+        $this->container->get('pelagos.event.log_action_item_event_dispatcher')->dispatch(
+            array(
+                'actionName' => 'File Download',
+                'subjectEntityName' => $em->getClassMetadata(get_class($dataset))->getName(),
+                'subjectEntityId' => $dataset->getId(),
+                'payLoad' => array('userType' => $type, 'userId' => $typeId),
+            ),
+            'file_download'
+        );
         return $this->render(
             'PelagosAppBundle:Download:download-via-http-splash-screen.html.twig',
             array(
