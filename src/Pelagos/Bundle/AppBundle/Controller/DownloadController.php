@@ -71,7 +71,6 @@ class DownloadController extends Controller
      * @param string $id The id of the dataset to download.
      *
      * @throws AccessDeniedException When no user is authenticated.
-     * @throws \Exception             When unknown user type is encountered.
      *
      * @Route("/{id}/http")
      *
@@ -101,12 +100,9 @@ class DownloadController extends Controller
         if ($type == 'Pelagos\Entity\Account') {
             $type = 'GoMRI';
             $typeId = $this->getUser()->getUserId();
-        } elseif ($type == 'HWI\Bundle\OAuthBundle\Security\Core\User\OAuthUser') {
-            $type = 'OAuth';
-            $typeId = $this->getUser()->getUsername();
         } else {
-            // We have a different type of user that needs to be accounted for. Throw fatal exception.
-            throw new \Exception('Unknown user type encountered.');
+            $type = 'Non-GoMRI';
+            $typeId = $this->getUser()->getUsername();
         }
         $this->container->get('pelagos.event.log_action_item_event_dispatcher')->dispatch(
             array(
