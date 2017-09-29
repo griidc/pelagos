@@ -30,7 +30,7 @@ class LogActionItemEventDispatcher
   /**
    * Dispatch an event.
    *
-   * @param mixed  $data      The payload the event is for.
+   * @param array  $data      The payload the event is for.
    * @param string $eventName The name of the event.
    *
    * @return void

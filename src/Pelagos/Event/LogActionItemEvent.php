@@ -12,7 +12,7 @@ class LogActionItemEvent extends Event
     /**
      * Name of the Action.
      *
-     * @var Dataset
+     * @var string
      */
     protected $actionName;
 
