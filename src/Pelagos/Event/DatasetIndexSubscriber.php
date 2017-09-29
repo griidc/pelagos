@@ -66,7 +66,7 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
             $geometry = \geoPHP::load($wkt, 'wkt');
             $simpleGeometry = $geometry->simplify(0.1);
             // If the geometry couldn't be simplified.
-            if ($simpleGeometry->isEmpty()) {
+            if (null == $simpleGeometry or $simpleGeometry->isEmpty()) {
                 // Set the original geometry as a GeoJSON array.
                 $document->set('simpleGeometry', json_decode($geometry->out('json'), true));
             } else {

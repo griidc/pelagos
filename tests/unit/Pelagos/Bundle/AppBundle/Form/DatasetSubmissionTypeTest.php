@@ -93,7 +93,6 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
             'abstract' => 'test abstract',
             'authors' => 'test authors',
             'restrictions' => DatasetSubmission::RESTRICTION_NONE,
-            'doi' => 'test doi',
             'datasetFileTransferType' => 'test dataset file transfer type',
             'shortTitle' => 'test short title',
             'referenceDate' => '2000-01-01',
