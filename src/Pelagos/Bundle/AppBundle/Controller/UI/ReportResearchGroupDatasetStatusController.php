@@ -1,21 +1,12 @@
 <?php
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Query;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\VarDumper\Cloner\Data;
-
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DIF;
-use Pelagos\Entity\Dataset;
 use Pelagos\Entity\ResearchGroup;
 
 /**

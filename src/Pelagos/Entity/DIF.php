@@ -1536,22 +1536,4 @@ class DIF extends Entity
             $this->getDataset()->setIdentifiedStatus($this->status);
         }
     }
-
-    /**
-     * Return a human readable string that represents the DIF status.
-     *
-     * @return string
-     */
-    public function getStatusString()
-    {
-        if ($this->getStatus() == self::STATUS_APPROVED) {
-            return 'Approved';
-        } elseif ($this->getStatus() == self::STATUS_SUBMITTED) {
-            return 'Submitted';
-        } elseif ($this->getStatus() == self::STATUS_UNSUBMITTED) {
-            return 'not submitted';
-        } else {
-            return 'Unknown';
-        }
-    }
 }
