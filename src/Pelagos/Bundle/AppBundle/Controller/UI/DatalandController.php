@@ -14,6 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\LogActionItem;
 use Pelagos\Entity\Metadata;
 
 use Pelagos\Util\ISOMetadataExtractorUtil;
@@ -75,10 +76,23 @@ class DatalandController extends UIController
             $dataset->setDatasetSubmission($datasetSubmission);
         }
 
+        $qb = $this->get('doctrine')->getManager()->createQueryBuilder();
+        $qb->select($qb->expr()->count('a'))
+            ->from('\Pelagos\Entity\LogActionItem', 'a')
+            ->where('a.subjectEntityId = ?1')
+            ->andwhere('a.subjectEntityName = ?2')
+            ->andwhere('a.actionName = ?3')
+            ->setParameter(1, $dataset->getId())
+            ->setParameter(2, 'Pelagos\Entity\Dataset')
+            ->setParameter(3, 'File Download');
+        $query = $qb->getQuery();
+        $downloadCount = $query->getSingleScalarResult();
+
         return $this->render(
             'PelagosAppBundle:Dataland:index.html.twig',
             $twigData = array(
                 'dataset' => $dataset,
+                'downloads' => $downloadCount,
                 'rawxml' => $rawXml,
                 'wkt' => $wkt,
             )
