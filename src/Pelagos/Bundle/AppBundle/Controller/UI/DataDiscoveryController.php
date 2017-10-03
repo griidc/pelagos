@@ -11,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\DIF;
+use Pelagos\Entity\Metadata;
 
 use Pelagos\Util\ISOMetadataExtractorUtil;
 
@@ -161,8 +162,9 @@ class DataDiscoveryController extends UIController
 
         // If we have approved Metadata, load contact into datasetSubmission.
         if ($datasetSubmission instanceof DatasetSubmission
-            and $datasetSubmission->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED
+            and $dataset->getMetadata() instanceof Metadata
         ) {
+            $datasetSubmission->getDatasetContacts()->clear();
             ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
                 $dataset->getMetadata()->getXml(),
                 $datasetSubmission,

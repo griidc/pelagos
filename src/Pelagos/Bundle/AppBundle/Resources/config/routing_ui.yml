@@ -54,3 +54,6 @@ pelagos_mdapp_ui:
 
 pelagos_data_discovery_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\DataDiscoveryController
+
+pelagos_gomri_reports_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\GomriReportController

@@ -124,7 +124,7 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
                 'getMetadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED,
                 'getDatasetFileTransferStatus' => null,
                 'getRestrictions' => null,
-                'getDatasetContacts' => null,
+                'getDatasetContacts' => new ArrayCollection(),
             )
         );
 
@@ -225,8 +225,6 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
     /**
      * Test getPrimaryPointOfContact w/bad submission (missing contact).
      *
-     * @expectedException \Exception
-     *
      * @return void
      */
     public function testInvalidSubmissionMissingContact()
@@ -234,6 +232,6 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
         // Case: We have a dataset submission that dosen't have a contact.
         $this->dataset->setDif($this->mockApprovedDif);
         $this->dataset->setDatasetSubmission($this->mockDatasetSubmissionCompleteMissingContact);
-        $nothing = $this->dataset->getPrimaryPointOfContact();
+        $this->assertNull($this->dataset->getPrimaryPointOfContact());
     }
 }
