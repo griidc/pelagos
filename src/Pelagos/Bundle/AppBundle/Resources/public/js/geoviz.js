@@ -597,6 +597,9 @@ function GeoViz()
             if (typeof Attributes == "object")
             {
                 addFeature.attributes = Attributes;
+                for (i=0; i<addFeature.length; i++) {
+                    addFeature[i].attributes = Attributes;
+                }
             }
 
             try {
