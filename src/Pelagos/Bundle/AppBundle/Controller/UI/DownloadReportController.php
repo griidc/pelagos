@@ -45,8 +45,10 @@ class DownloadReportController extends UIController
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
         }
-        $form = $this->createFormBuilder()
-            ->add('startDate', DateType::class, array('label' => 'Start Date:',
+        $form = $this->createFormBuilder()->add(
+            'startDate',
+            DateType::class,
+            array('label' => 'Start Date:',
                 'input' => 'datetime',
                 'widget' => 'single_text',
                 'html5' => false,
@@ -55,19 +57,22 @@ class DownloadReportController extends UIController
                 'attr' => array(
                     'placeholder' => 'yyyy-mm-dd',
                     'class' => 'startDate',
-                    )
                 )
             )
-            ->add('endDate', DateType::class, array('label' => 'Start Date:',
-                'input' => 'datetime',
-                'widget' => 'single_text',
-                'html5' => false,
-                'format' => 'yyyy-MM-dd',
-                'required' => false,
-                'attr' => array(
-                    'placeholder' => 'yyyy-mm-dd',
-                    'class' => 'endDate',
-                    )
+        )
+            ->add(
+                'endDate',
+                DateType::class,
+                array('label' => 'End Date:',
+                    'input' => 'datetime',
+                    'widget' => 'single_text',
+                    'html5' => false,
+                    'format' => 'yyyy-MM-dd',
+                    'required' => false,
+                    'attr' => array(
+                        'placeholder' => 'yyyy-mm-dd',
+                        'class' => 'endDate',
+                        )
                 )
             )
             ->add('submit', SubmitType::class, array('label' => 'Generate Report'))->getForm();
@@ -121,7 +126,7 @@ class DownloadReportController extends UIController
             $results = $query->getResult();
 
             //finalArray: key = "udi",value = [title,primaryPointOfContact,
-            //totalCount,GoMRI,NonGoMRI]
+            //email,totalCount,GoMRI,NonGoMRI]
             $finalArray = [];
             foreach ($results as $result) {
                 //initialize array with key  = udi, set title and primary POC
