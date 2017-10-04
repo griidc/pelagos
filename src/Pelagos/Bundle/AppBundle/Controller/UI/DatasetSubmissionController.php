@@ -207,6 +207,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
      * @param string|null $id      The id of the Dataset Submission to load.
      *
      * @throws BadRequestHttpException When dataset submission has already been submitted.
+     * @throws BadRequestHttpException When DIF has not yet been approved.
      *
      * @Route("/{id}")
      *
@@ -220,6 +221,10 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
 
         if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
             throw new BadRequestHttpException('This submission has already been submitted.');
+        }
+
+        if ($datasetSubmission->getDataset()->getIdentifiedStatus() != DIF::STATUS_APPROVED) {
+            throw new BadRequestHttpException('The DIF has not yet been approved for this dataset.');
         }
 
         $form = $this->get('form.factory')->createNamed(

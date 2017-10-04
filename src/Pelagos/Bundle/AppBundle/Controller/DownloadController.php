@@ -95,6 +95,24 @@ class DownloadController extends Controller
             $downloadDirectory . '/' . $datasetFileName
         );
         $downloadBaseUrl = $this->getParameter('download_base_url');
+        $em = $this->container->get('doctrine')->getManager();
+        $type = get_class($this->getUser());
+        if ($type == 'Pelagos\Entity\Account') {
+            $type = 'GoMRI';
+            $typeId = $this->getUser()->getUserId();
+        } else {
+            $type = 'Non-GoMRI';
+            $typeId = $this->getUser()->getUsername();
+        }
+        $this->container->get('pelagos.event.log_action_item_event_dispatcher')->dispatch(
+            array(
+                'actionName' => 'File Download',
+                'subjectEntityName' => $em->getClassMetadata(get_class($dataset))->getName(),
+                'subjectEntityId' => $dataset->getId(),
+                'payLoad' => array('userType' => $type, 'userId' => $typeId),
+            ),
+            'file_download'
+        );
         return $this->render(
             'PelagosAppBundle:Download:download-via-http-splash-screen.html.twig',
             array(
