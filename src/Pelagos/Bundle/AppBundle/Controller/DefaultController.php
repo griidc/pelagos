@@ -2,6 +2,8 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller;
 
+use Doctrine\ORM\Query;
+
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -41,7 +43,15 @@ class DefaultController extends Controller
     {
         $container = $this->container;
         $response = new StreamedResponse(function () use ($container) {
-            $datasets = $container->get('pelagos.entity.handler')->getAll(Dataset::class);
+            $datasets = $container->get('pelagos.entity.handler')->getBy(
+                Dataset::class,
+                array(),
+                array(),
+                array(
+                    'udi',
+                ),
+                Query::HYDRATE_ARRAY
+            );
             echo $this->renderView(
                 'PelagosAppBundle:Default:sitemap.xml.twig',
                 array(
