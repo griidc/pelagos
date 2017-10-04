@@ -2,7 +2,10 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller;
 
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
+use Pelagos\Entity\Dataset;
 
 /**
  * The default controller for the Pelagos App Bundle.
@@ -27,5 +30,28 @@ class DefaultController extends Controller
     public function adminAction()
     {
         return $this->render('PelagosAppBundle:Default:admin.html.twig');
+    }
+    
+    /**
+     * Get the sitemap.xml containing all dataset urls.
+     *
+     * @return Response
+     */
+    public function showSiteMapXmlAction()
+    {
+        $container = $this->container;
+        $response = new StreamedResponse(function () use ($container) {
+            $datasets = $container->get('pelagos.entity.handler')->getAll(Dataset::class);
+            echo $this->renderView(
+                'PelagosAppBundle:Default:sitemap.xml.twig',
+                array(
+                    'datasets' => $datasets
+                )
+            );
+        });
+        
+        $response->headers->set('Content-Type', 'text/xml');
+        
+        return $response;
     }
 }

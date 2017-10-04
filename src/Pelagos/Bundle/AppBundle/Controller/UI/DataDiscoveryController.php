@@ -180,34 +180,4 @@ class DataDiscoveryController extends UIController
             )
         );
     }
-
-    /**
-     * Show details for a dataset.
-     *
-     * @param integer $id The id of the Dataset.
-     *
-     * @Route("/sitemap.xml")
-     * @Method("GET")
-        *
-     * @return Response
-     */
-    public function showSiteMapXml()
-    {
-
-
-        $container = $this->container;
-        $response = new StreamedResponse(function () use ($container) {
-            $datasets = $container->get('pelagos.entity.handler')->getAll(Dataset::class);
-            echo $this->renderView(
-                'PelagosAppBundle::sitemap.xml.twig',
-                array(
-                    'datasets' => $datasets
-                )
-            );
-        });
-
-        $response->headers->set('Content-Type', 'text/xml');
-
-        return $response;
-    }
 }
