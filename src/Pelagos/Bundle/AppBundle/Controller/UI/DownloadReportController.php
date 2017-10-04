@@ -46,8 +46,30 @@ class DownloadReportController extends UIController
             return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
         }
         $form = $this->createFormBuilder()
-            ->add('startDate', DateType::class, array('widget' => 'choice','years' => range(date('2017'), date('Y'))))
-            ->add('endDate', DateType::class, array('widget' => 'choice','years' => range(date('2017'), date('Y'))))
+            ->add('startDate', DateType::class, array('label' => 'Start Date:',
+                'input' => 'datetime',
+                'widget' => 'single_text',
+                'html5' => false,
+                'format' => 'yyyy-MM-dd',
+                'required' => false,
+                'attr' => array(
+                    'placeholder' => 'yyyy-mm-dd',
+                    'class' => 'startDate',
+                    )
+                )
+            )
+            ->add('endDate', DateType::class, array('label' => 'Start Date:',
+                'input' => 'datetime',
+                'widget' => 'single_text',
+                'html5' => false,
+                'format' => 'yyyy-MM-dd',
+                'required' => false,
+                'attr' => array(
+                    'placeholder' => 'yyyy-mm-dd',
+                    'class' => 'endDate',
+                    )
+                )
+            )
             ->add('submit', SubmitType::class, array('label' => 'Generate Report'))->getForm();
         $form->handleRequest($request);
 
