@@ -146,11 +146,11 @@ class DownloadReportController extends UIController
                             $this->getDoctrine()->getManager()
                         );
                         $dataset->setDatasetSubmission($datasetSubmission);
-                        $primaryPOC = $dataset->getPrimaryPointOfContact();
-                        $finalArray[$result['udi']]['primaryPointOfContact'] = $primaryPOC->getLastName() .
-                            ', ' . $primaryPOC->getFirstName();
+                        $finalArray[$result['udi']]['primaryPointOfContact']
+                            = $dataset->getPrimaryPointOfContact()->getLastName() .
+                            ', ' . $dataset->getPrimaryPointOfContact()->getFirstName();
                         $finalArray[$result['udi']]['primaryPointOfContactEmail']
-                            = $primaryPOC->getEmailAddress();
+                            = $dataset->getPrimaryPointOfContact()->getEmailAddress();
                     }
                 }
                 //count user downloads and total download
