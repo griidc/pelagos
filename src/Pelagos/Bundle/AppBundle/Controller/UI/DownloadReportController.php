@@ -157,7 +157,7 @@ class DownloadReportController extends UIController
                 if ($result['payLoad']['userType'] == 'GoMRI') {
                     $finalArray[$result['udi']]['GoMRI']++;
                 } else {
-                    if ($result['payLoad']['userType'] == 'OAuth') {
+                    if ($result['payLoad']['userType'] == 'Non-GoMRI') {
                         $finalArray[$result['udi']]['NonGoMRI']++;
                     }
                 }
