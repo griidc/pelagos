@@ -22,7 +22,7 @@ use \DateTime;
 /**
  * The dataset download report generator.
  *
- * @Route("/downloadreport")
+ * @Route("/download-report")
  */
 class DownloadReportController extends UIController
 {
