@@ -109,12 +109,12 @@ class DownloadReportController extends UIController
             $endDateInclusively = clone $endDate;
             $endDateInclusively->add(new \DateInterval('P1D'));
             //Query
-            $queryString = 'SELECT d.udi,l.payLoad from ' .
-                LogActionItem::class . ' l join ' . Dataset::class . ' d with
-                l.subjectEntityId = d.id where l.actionName = :actionName and
-                l.subjectEntityName = :subjectEntityName and 
-                l.creationTimeStamp >= :startDate 
-                and l.creationTimeStamp <= :endDate order by d.udi ASC';
+            $queryString = 'SELECT dataset.udi,log.payLoad from ' .
+                LogActionItem::class . ' log join ' . Dataset::class . ' dataset with
+                log.subjectEntityId = dataset.id where log.actionName = :actionName and
+                log.subjectEntityName = :subjectEntityName and 
+                log.creationTimeStamp >= :startDate 
+                and log.creationTimeStamp <= :endDate order by dataset.udi ASC';
 
             $query = $entityManager->createQuery($queryString);
             $query->setParameters([
@@ -125,8 +125,6 @@ class DownloadReportController extends UIController
             ]);
             $results = $query->getResult();
 
-            //finalArray: key = "udi",value = [title,primaryPointOfContact,
-            //email,totalCount,GoMRI,NonGoMRI]
             $finalArray = [];
             foreach ($results as $result) {
                 //initialize array with key  = udi, set title and primary POC
