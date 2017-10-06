@@ -9,7 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-
+use Pelagos\Exception\InvalidDateSelectedException;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\LogActionItem;
@@ -53,7 +53,7 @@ class DownloadReportController extends UIController
                 'widget' => 'single_text',
                 'html5' => false,
                 'format' => 'yyyy-MM-dd',
-                'required' => false,
+                'required' => true,
                 'attr' => array(
                     'placeholder' => 'yyyy-mm-dd',
                     'class' => 'startDate',
@@ -68,7 +68,7 @@ class DownloadReportController extends UIController
                     'widget' => 'single_text',
                     'html5' => false,
                     'format' => 'yyyy-MM-dd',
-                    'required' => false,
+                    'required' => true,
                     'attr' => array(
                         'placeholder' => 'yyyy-mm-dd',
                         'class' => 'endDate',
@@ -81,10 +81,12 @@ class DownloadReportController extends UIController
         if ($form->isValid()) {
             $startDate = $form->getData()['startDate'];
             $endDate = $form->getData()['endDate'];
-            if ($startDate <= $endDate) {
-                return $this->downloadReport($startDate, $endDate);
-            } else {
-                throw new \Exception('Start Date cannot be later than End Date');
+            if ($startDate && $endDate) {
+                if ($startDate <= $endDate) {
+                    return $this->downloadReport($startDate, $endDate);
+                }
+            }else {
+                throw new InvalidDateSelectedException('The dates selected are invalid.');
             }
         }
         return $this->render(
