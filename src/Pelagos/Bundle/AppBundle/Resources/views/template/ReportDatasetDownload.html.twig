@@ -1,0 +1,15 @@
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
+
+{% block head %}
+    {{ parent() }}
+
+    {% javascripts '@PelagosAppBundle/Resources/public/js/downloadReport.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+{% endblock %}
+
+{% block body %}
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
+{% endblock %}
