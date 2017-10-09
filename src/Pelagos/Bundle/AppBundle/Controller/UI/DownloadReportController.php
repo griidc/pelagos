@@ -36,7 +36,7 @@ class DownloadReportController extends UIController
      *
      * @Route("")
      *
-     * @throws \Exception When startDate is later than endDate.
+     * @throws InvalidDateSelectedException Selected Dates are invalid.
      *
      * @return Response|StreamedResponse A Response instance.
      */
