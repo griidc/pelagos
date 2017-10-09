@@ -26,5 +26,3 @@ bin/symfony_requirements
 /web/js
 /app/supervisor
 /src/Pelagos/Util/DOIutil.ini
-coverage/
-.idea/
