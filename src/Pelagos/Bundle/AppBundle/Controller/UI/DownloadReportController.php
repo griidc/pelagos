@@ -85,7 +85,7 @@ class DownloadReportController extends UIController
                 if ($startDate <= $endDate) {
                     return $this->downloadReport($startDate, $endDate);
                 }
-            }else {
+            } else {
                 throw new InvalidDateSelectedException('The dates selected are invalid.');
             }
         }
