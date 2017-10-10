@@ -9,11 +9,11 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use Pelagos\Exception\InvalidDateSelectedException;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\LogActionItem;
 use Pelagos\Entity\Metadata;
+use Pelagos\Exception\InvalidDateSelectedException;
 
 use Pelagos\Util\ISOMetadataExtractorUtil;
 
@@ -40,9 +40,7 @@ class DownloadReportController extends ReportController
      */
     public function defaultAction(Request $request)
     {
-        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
-        }
+        $this->checkAdminRestriction();
         $form = $this->createFormBuilder()->add(
             'startDate',
             DateType::class,
