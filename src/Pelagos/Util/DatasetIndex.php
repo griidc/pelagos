@@ -86,18 +86,31 @@ class DatasetIndex
                     );
                 }
             }
-            $doiRegEx = '!\b(?:[Dd][Oo][Ii]\s*:\s*)?(10.\d{4,9}/[-._;()/:A-Z0-9]+)\b!';
+            $doiRegEx = '!\b(?:[Dd][Oo][Ii]\s*:\s*)?(10.\d{4,9}/[-._;()/:A-Z0-9a-z]+)\b!';
             if (preg_match_all($doiRegEx, $text, $matches)) {
                 $text = trim(preg_replace($doiRegEx, '', $text));
                 foreach ($matches[1] as $doi) {
+
+                    // Query against dataset DOIs.
                     $doiQuery = new Query\Nested();
                     $doiQuery->setPath('doi');
                     $doiQuery->setQuery(
                         new Query\MatchPhrase('doi.doi', $doi)
                     );
+
+                    // Query against DOIs associated with the dataset.
+                    $pubDoiQuery = new Query\Nested();
+                    $pubDoiQuery->setPath('publications');
+                    $pubDoiQuery->setQuery(
+                        new Query\MatchPhrase('publications.doi', $doi)
+                    );
+
                     $textQuery->addShould($doiQuery);
-                    $textQuery->addShould(new Query\MatchPhrase('title', $doi));
-                    $textQuery->addShould(new Query\MatchPhrase('abstract', $doi));
+                    $textQuery->addShould($pubDoiQuery);
+
+                    // Also check the titles and abstracts for mention of the given DOI.
+                    #$textQuery->addShould(new Query\MatchPhrase('title', $doi));
+                    #$textQuery->addShould(new Query\MatchPhrase('abstract', $doi));
                 }
             }
             if (!empty($text)) {
@@ -109,19 +122,19 @@ class DatasetIndex
                         'abstract',
                     )
                 );
-                $textQuery->addShould($datasetQuery);
+                #$textQuery->addShould($datasetQuery);
                 $researchGroupQuery = new Query\Nested();
                 $researchGroupQuery->setPath('researchGroup');
                 $researchGroupQuery->setQuery(
                     new Query\Match('researchGroup.name', $text)
                 );
-                $textQuery->addShould($researchGroupQuery);
+                #$textQuery->addShould($researchGroupQuery);
                 $datasetSubmissionQuery = new Query\Nested();
                 $datasetSubmissionQuery->setPath('datasetSubmission');
                 $datasetSubmissionQuery->setQuery(
                     new Query\Match('datasetSubmission.authors', $text)
                 );
-                $textQuery->addShould($datasetSubmissionQuery);
+                #$textQuery->addShould($datasetSubmissionQuery);
             }
             $mainQuery->addMust($textQuery);
         }
