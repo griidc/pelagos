@@ -1,4 +1,5 @@
 <?php
+
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -22,7 +23,7 @@ class ReportResearchGroupDatasetStatusController extends UIController implements
     const REPORTFILENAMEPREFIX = 'ReportResearchGroupDatasetStatus';
 
     // The format used to print the date and time in the report
-    const REPORTDATETIMEFORMAT = 'Y-m-d H:i:s';
+    const REPORTDATETIMEFORMAT = 'Y-m-d';
 
     // The format used to put the date and time in the report file name
     const REPORTFILENAMEDATETIMEFORMAT = 'Y-m-d_H-i-s';
@@ -39,7 +40,7 @@ class ReportResearchGroupDatasetStatusController extends UIController implements
     /**
      * The default action.
      *
-     * @param Request $request         Message information for this Request.
+     * @param Request $request Message information for this Request.
      * @param integer $researchGroupId The identifier for the Research Group subject of the report.
      *
      * @Route("")
@@ -90,7 +91,6 @@ class ReportResearchGroupDatasetStatusController extends UIController implements
      */
     private function csvResponse(ResearchGroup $researchGroup)
     {
-
         $response = new StreamedResponse(function () use ($researchGroup) {
             // Byte Order Marker to indicate UTF-8
             echo chr(0xEF) . chr(0xBB) . chr(0xBF);
@@ -98,26 +98,26 @@ class ReportResearchGroupDatasetStatusController extends UIController implements
             $datasets = $researchGroup->getDatasets();
             $dsCount = count($datasets);
             $rows = array();
-            $data = array('  THIS REPORT GENERATED ' , $now);
+            $data = array('  THIS REPORT GENERATED ', $now);
             $rows[] = implode(self::CSV_DELIMITER, $data);
             $data = array('  RESEARCH GROUP  ', $researchGroup->getName());
             $rows[] = implode(self::CSV_DELIMITER, $data);
             $datasetCountString = 'No datasets';
             if ($dsCount > 0) {
-                $datasetCountString = ' [ ' . (string) count($datasets) . ' ]';
+                $datasetCountString = ' [ ' . (string)count($datasets) . ' ]';
             }
             $data = array('  DATASET COUNT  ', $datasetCountString);
             $rows[] = implode(self::CSV_DELIMITER, $data);
             $rows[] = self::BLANK_LINE;
 
             if ($dsCount > 0) {
-                 //  headers
+                //  headers
                 $data = array('  DATASET UDI  ',
-                    '  DATASET STATUS  ',
-                    '  DATASET LAST SUBMITTED   ',
-                    '  DIF LAST MODIFIED DATE  ',
-                    '  PRIMARY POINT OF CONTACT  ',
-                    '  TITLE  ');
+                    '  TITLE  ',
+                    '  PRIMARY POINT OF CONTACT   ',
+                    '  STATUS  ',
+                    '  DATE IDENTIFIED  ',
+                    '  DATE REGISTERED  ');
                 $rows[] = implode(self::CSV_DELIMITER, $data);
                 $rows[] = self::BLANK_LINE;
                 foreach ($datasets as $ds) {
@@ -134,19 +134,19 @@ class ReportResearchGroupDatasetStatusController extends UIController implements
                         $dif = $ds->getDif();
                         $ppoc = $dif->getPrimaryPointOfContact();
                         $ppocString = $ppoc->getLastName() . ', ' .
-                            $ppoc->getFirstName() . '  - ' .
-                            $ppoc->getEmailAddress();
+                            $ppoc->getFirstName();
                         $difTimeStampString = 'N/A';
                         if ($dif->getModificationTimeStamp() != null) {
                             $difTimeStampString = $dif->getModificationTimeStamp()->format(self::REPORTDATETIMEFORMAT);
                         }
                         $data = array(
                             $ds->getUdi(),
-                            $this->wrapInDoubleQuotes($datasetStatus),
-                            $datasetTimeStampString,
-                            $difTimeStampString,
+                            $this->wrapInDoubleQuotes($ds->getTitle()),
                             $this->wrapInDoubleQuotes($ppocString),
-                            $this->wrapInDoubleQuotes($ds->getTitle()));
+                            $this->wrapInDoubleQuotes($datasetStatus),
+                            $difTimeStampString,
+                            $datasetTimeStampString
+                        );
                         $rows[] = implode(self::CSV_DELIMITER, $data);
                     }
                 }
