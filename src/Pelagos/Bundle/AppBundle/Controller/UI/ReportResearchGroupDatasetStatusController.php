@@ -19,14 +19,11 @@ use Pelagos\Entity\ResearchGroup;
  */
 class ReportResearchGroupDatasetStatusController extends UIController implements OptionalReadOnlyInterface
 {
-    // A prefix used on all csv file names produced by this code.
-    const REPORTFILENAMEPREFIX = 'ReportResearchGroupDatasetStatus';
-
     // The format used to print the date and time in the report
     const REPORTDATETIMEFORMAT = 'Y-m-d';
 
     // The format used to put the date and time in the report file name
-    const REPORTFILENAMEDATETIMEFORMAT = 'Y-m-d_H-i-s';
+    const REPORTFILENAMEDATETIMEFORMAT = 'Y-m-d';
 
     // Limit the research group name to this to keep filename length at 100.
     const MAXRESEARCHGROUPLENGTH = 46;
@@ -172,9 +169,7 @@ class ReportResearchGroupDatasetStatusController extends UIController implements
     {
         $nowDateTimeString = date(self::REPORTFILENAMEDATETIMEFORMAT);
         $researchGroupNameSubstring = substr($researchGroupName, 0, self::MAXRESEARCHGROUPLENGTH);
-        $tempFileName = self::REPORTFILENAMEPREFIX
-            . '_'
-            . $researchGroupNameSubstring
+        $tempFileName = $researchGroupNameSubstring
             . '_'
             . $nowDateTimeString
             . '.csv';
