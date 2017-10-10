@@ -156,7 +156,7 @@ class ReportResearchGroupDatasetStatusController extends UIController implements
             echo implode("\n", $rows);
         });
 
-        $reportFileName = $this->createCsvReportFileName($researchGroup->getName());
+        $reportFileName = $this->createCsvReportFileName($researchGroup->getName(), $researchGroup->getId());
         $response->headers->set('Content-Disposition', 'attachment; filename="' . $reportFileName . '"');
         $response->headers->set('Content-type', 'text/csv; charset=utf-8', true);
         return $response;
@@ -169,11 +169,11 @@ class ReportResearchGroupDatasetStatusController extends UIController implements
      *
      * @return string
      */
-    private function createCsvReportFileName($researchGroupName)
+    private function createCsvReportFileName($researchGroupName, $researchGroupId)
     {
         $nowDateTimeString = date(self::REPORTFILENAMEDATETIMEFORMAT);
         $researchGroupNameSubstring = substr($researchGroupName, 0, self::MAXRESEARCHGROUPLENGTH);
-        $tempFileName = $researchGroupNameSubstring
+        $tempFileName = $researchGroupNameSubstring . '_' . $researchGroupId
             . '_'
             . $nowDateTimeString
             . '.csv';
