@@ -142,7 +142,7 @@ class ReportResearchGroupDatasetStatusController extends UIController implements
                         }
                         $data = array(
                             $ds->getUdi(),
-                            $this->wrapInDoubleQuotes(str_replace('"','""', $ds->getTitle())),
+                            $this->wrapInDoubleQuotes(str_replace('"', '""', $ds->getTitle())),
                             $this->wrapInDoubleQuotes($ppocString),
                             $this->wrapInDoubleQuotes($datasetStatus),
                             $difTimeStampString,
