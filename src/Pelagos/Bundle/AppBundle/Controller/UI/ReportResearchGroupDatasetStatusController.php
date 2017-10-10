@@ -37,7 +37,7 @@ class ReportResearchGroupDatasetStatusController extends UIController implements
     /**
      * The default action.
      *
-     * @param Request $request Message information for this Request.
+     * @param Request $request         Message information for this Request.
      * @param integer $researchGroupId The identifier for the Research Group subject of the report.
      *
      * @Route("")
@@ -46,6 +46,10 @@ class ReportResearchGroupDatasetStatusController extends UIController implements
      */
     public function defaultAction(Request $request, $researchGroupId = null)
     {
+        // Added authorization check for users to view this page
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
         //  fetch all the Research Groups
         $allResearchGroups = $this->get('pelagos.entity.handler')->getAll(ResearchGroup::class, array('name' => 'ASC'));
         //  put all the names in an array with the associated doctrine id
@@ -101,7 +105,7 @@ class ReportResearchGroupDatasetStatusController extends UIController implements
             $rows[] = implode(self::CSV_DELIMITER, $data);
             $datasetCountString = 'No datasets';
             if ($dsCount > 0) {
-                $datasetCountString = ' [ ' . (string)count($datasets) . ' ]';
+                $datasetCountString = ' [ ' . (string) count($datasets) . ' ]';
             }
             $data = array('  DATASET COUNT  ', $datasetCountString);
             $rows[] = implode(self::CSV_DELIMITER, $data);
