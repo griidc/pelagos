@@ -270,6 +270,10 @@ fos_elastica:
                             type: 'nested'
                             properties:
                                 doi: { boost: 3 }
+                        publications:
+                            type: 'nested'
+                            properties:
+                                doi: { boost: 3 }
                         geometry:
                             type: 'string'
                             property_path: false
