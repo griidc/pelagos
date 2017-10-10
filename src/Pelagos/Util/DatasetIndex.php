@@ -109,8 +109,8 @@ class DatasetIndex
                     $textQuery->addShould($pubDoiQuery);
 
                     // Also check the titles and abstracts for mention of the given DOI.
-                    #$textQuery->addShould(new Query\MatchPhrase('title', $doi));
-                    #$textQuery->addShould(new Query\MatchPhrase('abstract', $doi));
+                    $textQuery->addShould(new Query\MatchPhrase('title', $doi));
+                    $textQuery->addShould(new Query\MatchPhrase('abstract', $doi));
                 }
             }
             if (!empty($text)) {
@@ -122,19 +122,19 @@ class DatasetIndex
                         'abstract',
                     )
                 );
-                #$textQuery->addShould($datasetQuery);
+                $textQuery->addShould($datasetQuery);
                 $researchGroupQuery = new Query\Nested();
                 $researchGroupQuery->setPath('researchGroup');
                 $researchGroupQuery->setQuery(
                     new Query\Match('researchGroup.name', $text)
                 );
-                #$textQuery->addShould($researchGroupQuery);
+                $textQuery->addShould($researchGroupQuery);
                 $datasetSubmissionQuery = new Query\Nested();
                 $datasetSubmissionQuery->setPath('datasetSubmission');
                 $datasetSubmissionQuery->setQuery(
                     new Query\Match('datasetSubmission.authors', $text)
                 );
-                #$textQuery->addShould($datasetSubmissionQuery);
+                $textQuery->addShould($datasetSubmissionQuery);
             }
             $mainQuery->addMust($textQuery);
         }
