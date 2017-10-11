@@ -46,16 +46,18 @@ class GomriReportController extends ReportController
                 'Monthly Available',
                 'Total Available',
             ),
-            $this->queryData()
+            $this->queryData(null)
         );
     }
 
     /**
      * This implements the abstract method from ReportController to get the data.
      *
+     * @param array|NULL $options Additional parameters needed to run the query.
+     *
      * @return array  Return an indexed array.
      */
-    protected function queryData()
+    protected function queryData(array $options = null)
     {
         $container = $this->container;
         // final results array.

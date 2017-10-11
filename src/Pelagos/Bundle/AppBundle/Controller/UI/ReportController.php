@@ -16,6 +16,9 @@ abstract class ReportController extends UIController
     //Timestamp format used to put the date and time in the report
     const INREPORT_TIMESTAMPFORMAT = 'm-d-Y H:i';
 
+    // A convenience for putting a blank line in the report
+    const BLANK_LINE = '     ';
+
     /**
      * This method prevents non-DRPM to access the reports.
      *
@@ -65,14 +68,14 @@ abstract class ReportController extends UIController
             );
             fputcsv($handle, array(
                 'Created at', (new DateTime('now'))->format(self::INREPORT_TIMESTAMPFORMAT)));
-            fputcsv($handle, array());
+            fputcsv($handle, array(self::BLANK_LINE));
 
             // write additional options to the csv.
             if ($optionalHeaders != null) {
                 foreach ($optionalHeaders as $key => $value) {
                     fputcsv($handle, array($key, $value));
                 }
-                fputcsv($handle, array());
+                fputcsv($handle, array(self::BLANK_LINE));
             }
             //write header
             fputcsv($handle, $labels);
