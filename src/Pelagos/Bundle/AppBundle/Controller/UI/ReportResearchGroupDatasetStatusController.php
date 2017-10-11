@@ -41,8 +41,9 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      */
     public function defaultAction(Request $request, $researchGroupId = null)
     {
-        $this->checkAdminRestriction();
-
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
         //  fetch all the Research Groups
         $allResearchGroups = $this->get('pelagos.entity.handler')->getAll(ResearchGroup::class, array('name' => 'ASC'));
         //  put all the names in an array with the associated doctrine id

@@ -40,7 +40,9 @@ class DownloadReportController extends ReportController
      */
     public function defaultAction(Request $request)
     {
-        $this->checkAdminRestriction();
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
         $form = $this->createFormBuilder()->add(
             'startDate',
             DateType::class,

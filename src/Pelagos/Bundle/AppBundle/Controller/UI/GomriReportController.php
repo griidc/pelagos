@@ -33,8 +33,9 @@ class GomriReportController extends ReportController
      */
     public function defaultAction()
     {
-        $this->checkAdminRestriction();
-
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
           // Add header to CSV.
         return $this->writeCsvResponse(
             array(

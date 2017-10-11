@@ -20,18 +20,6 @@ abstract class ReportController extends UIController
     const BLANK_LINE = '     ';
 
     /**
-     * This method prevents non-DRPM to access the reports.
-     *
-     * @return Response
-     */
-    protected function checkAdminRestriction()
-    {
-        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
-        }
-    }
-
-    /**
      * This abstract function is where the data in the csv is generated.
      *
      * @param array|NULL $options Additional parameters needed to run the query.
