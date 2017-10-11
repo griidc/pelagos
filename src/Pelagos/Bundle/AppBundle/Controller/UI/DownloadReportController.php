@@ -187,8 +187,19 @@ class DownloadReportController extends ReportController
                     $finalArray[$currentIndex]['NonGoMRI']++;
                 }
             }
+<<<<<<< HEAD
             $finalArray[$currentIndex]['totalCount']++;
         }
         return $finalArray;
+=======
+            fclose($handle);
+        });
+        //generate report filename
+        $now = new DateTime('now');
+        $fileName = 'DatasetDownloadReport-' . $now->format('Y-m-d') . '.csv';
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+        return $response;
+>>>>>>> develop
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -41,8 +42,15 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      */
     public function defaultAction(Request $request, $researchGroupId = null)
     {
+<<<<<<< HEAD
         $this->checkAdminRestriction();
 
+=======
+        // Added authorization check for users to view this page
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
+>>>>>>> develop
         //  fetch all the Research Groups
         $allResearchGroups = $this->get('pelagos.entity.handler')->getAll(ResearchGroup::class, array('name' => 'ASC'));
         //  put all the names in an array with the associated doctrine id
@@ -103,6 +111,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      */
     protected function queryData(array $options = null)
     {
+<<<<<<< HEAD
         $datasets = $options['researchGroup']->getDatasets();
         $rows = array();
         if ($options['datasetCount'] > 0) {
@@ -123,6 +132,65 @@ class ReportResearchGroupDatasetStatusController extends ReportController
                     $difTimeStampString = 'N/A';
                     if ($dif->getModificationTimeStamp() != null) {
                         $difTimeStampString = $dif->getModificationTimeStamp()->format(self::REPORTDATETIMEFORMAT);
+=======
+        $response = new StreamedResponse(function () use ($researchGroup) {
+            // Byte Order Marker to indicate UTF-8
+            echo chr(0xEF) . chr(0xBB) . chr(0xBF);
+            $now = date('Y-m-d H:i');
+            $datasets = $researchGroup->getDatasets();
+            $dsCount = count($datasets);
+            $rows = array();
+            $data = array('  THIS REPORT GENERATED ', $now);
+            $rows[] = implode(self::CSV_DELIMITER, $data);
+            $data = array('  RESEARCH GROUP  ', $researchGroup->getName());
+            $rows[] = implode(self::CSV_DELIMITER, $data);
+            $datasetCountString = 'No datasets';
+            if ($dsCount > 0) {
+                $datasetCountString = ' [ ' . (string) count($datasets) . ' ]';
+            }
+            $data = array('  DATASET COUNT  ', $datasetCountString);
+            $rows[] = implode(self::CSV_DELIMITER, $data);
+            $rows[] = self::BLANK_LINE;
+
+            if ($dsCount > 0) {
+                //  headers
+                $data = array('  DATASET UDI  ',
+                    '  TITLE  ',
+                    '  PRIMARY POINT OF CONTACT   ',
+                    '  STATUS  ',
+                    '  DATE IDENTIFIED  ',
+                    '  DATE REGISTERED  ');
+                $rows[] = implode(self::CSV_DELIMITER, $data);
+                $rows[] = self::BLANK_LINE;
+                foreach ($datasets as $ds) {
+                    $datasetStatus = $ds->getStatus();
+                    //  exclude datasets that don't have an approved DIF
+                    if ($datasetStatus != 'NoDif') {
+                        $datasetTimeStampString = 'N/A';
+                        if ($ds->getDatasetSubmission() != null &&
+                            $ds->getDatasetSubmission()->getSubmissionTimeStamp() != null
+                        ) {
+                            $datasetTimeStampString = $ds->getDatasetSubmission()->getSubmissionTimeStamp()
+                                ->format(self::REPORTDATETIMEFORMAT);
+                        }
+                        $dif = $ds->getDif();
+                        $ppoc = $dif->getPrimaryPointOfContact();
+                        $ppocString = $ppoc->getLastName() . ', ' .
+                            $ppoc->getFirstName();
+                        $difTimeStampString = 'N/A';
+                        if ($dif->getModificationTimeStamp() != null) {
+                            $difTimeStampString = $dif->getModificationTimeStamp()->format(self::REPORTDATETIMEFORMAT);
+                        }
+                        $data = array(
+                            $ds->getUdi(),
+                            $this->wrapInDoubleQuotes(str_replace('"', '""', $ds->getTitle())),
+                            $this->wrapInDoubleQuotes($ppocString),
+                            $this->wrapInDoubleQuotes($datasetStatus),
+                            $difTimeStampString,
+                            $datasetTimeStampString
+                        );
+                        $rows[] = implode(self::CSV_DELIMITER, $data);
+>>>>>>> develop
                     }
                     $data = array(
                         'udi' => $ds->getUdi(),
@@ -135,8 +203,19 @@ class ReportResearchGroupDatasetStatusController extends ReportController
                     $rows[] = $data;
                 }
             }
+<<<<<<< HEAD
         }
         return $rows;
+=======
+
+            echo implode("\n", $rows);
+        });
+
+        $reportFileName = $this->createCsvReportFileName($researchGroup->getName(), $researchGroup->getId());
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $reportFileName . '"');
+        $response->headers->set('Content-type', 'text/csv; charset=utf-8', true);
+        return $response;
+>>>>>>> develop
     }
 
     /**
