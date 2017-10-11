@@ -22,7 +22,7 @@ use \DateTime;
 /**
  * The dataset download report generator.
  *
- * @Route("/download-report")
+ * @Route("/dataset-download-report")
  */
 class DownloadReportController extends UIController
 {
@@ -204,7 +204,7 @@ class DownloadReportController extends UIController
         });
         //generate report filename
         $now = new DateTime('now');
-        $fileName = 'downloadReport-' . $now->format('Y-m-d') . '.csv';
+        $fileName = 'DatasetDownloadReport-' . $now->format('Y-m-d') . '.csv';
         $response->headers->set('Content-Type', 'text/csv');
         $response->headers->set('Content-Disposition', 'attachment; filename="' . $fileName . '"');
         return $response;
