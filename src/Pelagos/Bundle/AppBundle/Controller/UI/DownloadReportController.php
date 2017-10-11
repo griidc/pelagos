@@ -20,7 +20,7 @@ use Pelagos\Util\ISOMetadataExtractorUtil;
 /**
  * The dataset download report generator.
  *
- * @Route("/download-report")
+ * @Route("/dataset-download-report")
  */
 class DownloadReportController extends ReportController
 {
@@ -96,7 +96,7 @@ class DownloadReportController extends ReportController
                         'startDate' => $startDate,
                         'endDate' => $endDate
                     ]);
-                    return $this->writeCsvResponse($labels, $data, null, $optionalHeaders);
+                    return $this->writeCsvResponse($labels, $data, 'DatasetDownloadReport-' . (new \DateTime('now'))->format(parent::FILENAME_DATETIMEFORMAT) . '.csv' , $optionalHeaders);
                 }
             } else {
                 throw new InvalidDateSelectedException('The dates selected are invalid.');

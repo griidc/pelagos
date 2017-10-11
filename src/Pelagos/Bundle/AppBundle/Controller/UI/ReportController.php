@@ -72,9 +72,9 @@ abstract class ReportController extends UIController
                 foreach ($optionalHeaders as $key => $value) {
                     fputcsv($handle, array($key, $value));
                 }
+                fputcsv($handle, array());
             }
             //write header
-            fputcsv($handle, array());
             fputcsv($handle, $labels);
             //write data
             foreach ($data as $row) {
