@@ -72,7 +72,7 @@ class DownloadReportController extends ReportController
                 )
             )
             ->add('submit', SubmitType::class, array('label' => 'Generate Report'))->getForm();
-            $form->handleRequest($request);
+         $form->handleRequest($request);
 
         if ($form->isValid()) {
             $startDate = $form->getData()['startDate'];
@@ -81,7 +81,7 @@ class DownloadReportController extends ReportController
                 if ($startDate <= $endDate) {
                     $optionalHeaders = [
                         'Start Date' => $startDate->format(self::INREPORT_DATETIMEFORMAT),
-                        'End Date' => $endDate->format(self::INREPORT_DATETIMEFORMAT),
+                        'End Date' => $endDate->format(self::INREPORT_DATETIMEFORMAT)
                     ];
                     $labels = [
                         'UDI',
@@ -96,14 +96,7 @@ class DownloadReportController extends ReportController
                         'startDate' => $startDate,
                         'endDate' => $endDate
                     ]);
-                    return $this->writeCsvResponse(
-                        $labels,
-                        $data,
-                        'DatasetDownloadReport-' .
-                            (new \DateTime('now'))->format(parent::FILENAME_DATETIMEFORMAT) .
-                            '.csv',
-                        $optionalHeaders
-                    );
+                    return $this->writeCsvResponse($labels, $data, 'DatasetDownloadReport-' . (new \DateTime('now'))->format(parent::FILENAME_DATETIMEFORMAT) . '.csv' , $optionalHeaders);
                 }
             } else {
                 throw new InvalidDateSelectedException('The dates selected are invalid.');
@@ -129,10 +122,10 @@ class DownloadReportController extends ReportController
         //Query
         $queryString = 'SELECT dataset.udi,log.payLoad from ' .
             LogActionItem::class . ' log join ' . Dataset::class . ' dataset with
-                log.subjectEntityId = dataset.id where log.actionName = :actionName and
-                log.subjectEntityName = :subjectEntityName and 
-                log.creationTimeStamp >= :startDate 
-                and log.creationTimeStamp <= :endDate order by dataset.udi ASC';
+                  log.subjectEntityId = dataset.id where log.actionName = :actionName and
+                  log.subjectEntityName = :subjectEntityName and 
+                  log.creationTimeStamp >= :startDate 
+                  and log.creationTimeStamp <= :endDate order by dataset.udi ASC';
 
         $query = $entityManager->createQuery($queryString);
         $endDateInclusively = clone $options['endDate'];
@@ -172,21 +165,21 @@ class DownloadReportController extends ReportController
                 $datasetSubmission = $dataset->getDatasetSubmission();
                 if ($datasetSubmission instanceof DatasetSubmission
                     and $dataset->getMetadata() instanceof Metadata) {
-                    $datasetSubmission->getDatasetContacts()->clear();
-                    ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                        $dataset->getMetadata()->getXml(),
-                        $datasetSubmission,
-                        $this->getDoctrine()->getManager()
-                    );
-                    $dataset->setDatasetSubmission($datasetSubmission);
-                    $finalArray[$currentIndex]['primaryPointOfContact']
-                        = $dataset->getPrimaryPointOfContact()->getLastName() .
-                        ', ' . $dataset->getPrimaryPointOfContact()->getFirstName();
-                    $finalArray[$currentIndex]['primaryPointOfContactEmail']
-                        = $dataset->getPrimaryPointOfContact()->getEmailAddress();
+                        $datasetSubmission->getDatasetContacts()->clear();
+                        ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
+                            $dataset->getMetadata()->getXml(),
+                            $datasetSubmission,
+                            $this->getDoctrine()->getManager()
+                        );
+                        $dataset->setDatasetSubmission($datasetSubmission);
+                        $finalArray[$currentIndex]['primaryPointOfContact']
+                            = $dataset->getPrimaryPointOfContact()->getLastName() .
+                            ', ' . $dataset->getPrimaryPointOfContact()->getFirstName();
+                            $finalArray[$currentIndex]['primaryPointOfContactEmail']
+                                = $dataset->getPrimaryPointOfContact()->getEmailAddress();
                 }
             }
-            //count user downloads and total download
+        //count user downloads and total download
             if ($result['payLoad']['userType'] == 'GoMRI') {
                 $finalArray[$currentIndex]['GoMRI']++;
             } else {
@@ -194,8 +187,19 @@ class DownloadReportController extends ReportController
                     $finalArray[$currentIndex]['NonGoMRI']++;
                 }
             }
+<<<<<<< HEAD
             $finalArray[$currentIndex]['totalCount']++;
         }
         return $finalArray;
+=======
+            fclose($handle);
+        });
+        //generate report filename
+        $now = new DateTime('now');
+        $fileName = 'DatasetDownloadReport-' . $now->format('Y-m-d') . '.csv';
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+        return $response;
+>>>>>>> develop
     }
 }
