@@ -60,6 +60,11 @@ abstract class ReportController extends UIController
         $reportNameCamelCase = preg_replace('/Controller$/', '', (new \ReflectionClass($this))->getShortName());
 
         $response = new StreamedResponse(function () use ($labels, $data, $optionalHeaders, $reportNameCamelCase) {
+
+          // Byte Order Marker to indicate UTF-8
+          echo chr(0xEF) . chr(0xBB) . chr(0xBF);
+
+
             $handle = fopen('php://output', 'r+');
             //default headers
             fputcsv(
@@ -70,18 +75,19 @@ abstract class ReportController extends UIController
                 'Created at', (new DateTime('now'))->format(self::INREPORT_TIMESTAMPFORMAT)));
             fputcsv($handle, array(self::BLANK_LINE));
 
-            // write additional options to the csv.
+            // write additional options before the report
             if ($optionalHeaders != null) {
                 foreach ($optionalHeaders as $key => $value) {
                     fputcsv($handle, array($key, $value));
                 }
                 fputcsv($handle, array(self::BLANK_LINE));
             }
-            //write header
+
+            //write headers/labels
             fputcsv($handle, $labels);
             //write data
             foreach ($data as $row) {
-                fputcsv($handle, $row);
+                fputcsv($handle,$row);
             }
             fclose($handle);
         });
@@ -95,6 +101,7 @@ abstract class ReportController extends UIController
             $response->headers->set('Content-Disposition', 'attachment; filename="' . $customFileName . '"');
         }
         $response->headers->set('Content-Type', 'text/csv');
+        
         return $response;
     }
 }
