@@ -166,6 +166,7 @@ class ReportResearchGroupDatasetStatusController extends UIController implements
      * Create a CSV download filename that contains the truncated research group name and the date/timeto.
      *
      * @param string $researchGroupName The name of the Research Group which is the subject of the report.
+     * @param string $researchGroupId   The ID of the Research Group which is the subject of the report.
      *
      * @return string
      */
