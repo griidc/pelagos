@@ -1,4 +1,5 @@
 <?php
+
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -18,14 +19,11 @@ use Pelagos\Entity\ResearchGroup;
  */
 class ReportResearchGroupDatasetStatusController extends UIController implements OptionalReadOnlyInterface
 {
-    // A prefix used on all csv file names produced by this code.
-    const REPORTFILENAMEPREFIX = 'ReportResearchGroupDatasetStatus';
-
     // The format used to print the date and time in the report
-    const REPORTDATETIMEFORMAT = 'Y-m-d H:i:s';
+    const REPORTDATETIMEFORMAT = 'Y-m-d';
 
     // The format used to put the date and time in the report file name
-    const REPORTFILENAMEDATETIMEFORMAT = 'Y-m-d_H-i-s';
+    const REPORTFILENAMEDATETIMEFORMAT = 'Y-m-d';
 
     // Limit the research group name to this to keep filename length at 100.
     const MAXRESEARCHGROUPLENGTH = 46;
@@ -48,6 +46,10 @@ class ReportResearchGroupDatasetStatusController extends UIController implements
      */
     public function defaultAction(Request $request, $researchGroupId = null)
     {
+        // Added authorization check for users to view this page
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
         //  fetch all the Research Groups
         $allResearchGroups = $this->get('pelagos.entity.handler')->getAll(ResearchGroup::class, array('name' => 'ASC'));
         //  put all the names in an array with the associated doctrine id
@@ -90,7 +92,6 @@ class ReportResearchGroupDatasetStatusController extends UIController implements
      */
     private function csvResponse(ResearchGroup $researchGroup)
     {
-
         $response = new StreamedResponse(function () use ($researchGroup) {
             // Byte Order Marker to indicate UTF-8
             echo chr(0xEF) . chr(0xBB) . chr(0xBF);
@@ -98,7 +99,7 @@ class ReportResearchGroupDatasetStatusController extends UIController implements
             $datasets = $researchGroup->getDatasets();
             $dsCount = count($datasets);
             $rows = array();
-            $data = array('  THIS REPORT GENERATED ' , $now);
+            $data = array('  THIS REPORT GENERATED ', $now);
             $rows[] = implode(self::CSV_DELIMITER, $data);
             $data = array('  RESEARCH GROUP  ', $researchGroup->getName());
             $rows[] = implode(self::CSV_DELIMITER, $data);
@@ -111,13 +112,13 @@ class ReportResearchGroupDatasetStatusController extends UIController implements
             $rows[] = self::BLANK_LINE;
 
             if ($dsCount > 0) {
-                 //  headers
+                //  headers
                 $data = array('  DATASET UDI  ',
-                    '  DATASET STATUS  ',
-                    '  DATASET LAST SUBMITTED   ',
-                    '  DIF LAST MODIFIED DATE  ',
-                    '  PRIMARY POINT OF CONTACT  ',
-                    '  TITLE  ');
+                    '  TITLE  ',
+                    '  PRIMARY POINT OF CONTACT   ',
+                    '  STATUS  ',
+                    '  DATE IDENTIFIED  ',
+                    '  DATE REGISTERED  ');
                 $rows[] = implode(self::CSV_DELIMITER, $data);
                 $rows[] = self::BLANK_LINE;
                 foreach ($datasets as $ds) {
@@ -134,19 +135,19 @@ class ReportResearchGroupDatasetStatusController extends UIController implements
                         $dif = $ds->getDif();
                         $ppoc = $dif->getPrimaryPointOfContact();
                         $ppocString = $ppoc->getLastName() . ', ' .
-                            $ppoc->getFirstName() . '  - ' .
-                            $ppoc->getEmailAddress();
+                            $ppoc->getFirstName();
                         $difTimeStampString = 'N/A';
                         if ($dif->getModificationTimeStamp() != null) {
                             $difTimeStampString = $dif->getModificationTimeStamp()->format(self::REPORTDATETIMEFORMAT);
                         }
                         $data = array(
                             $ds->getUdi(),
-                            $this->wrapInDoubleQuotes($datasetStatus),
-                            $datasetTimeStampString,
-                            $difTimeStampString,
+                            $this->wrapInDoubleQuotes(str_replace('"', '""', $ds->getTitle())),
                             $this->wrapInDoubleQuotes($ppocString),
-                            $this->wrapInDoubleQuotes($ds->getTitle()));
+                            $this->wrapInDoubleQuotes($datasetStatus),
+                            $difTimeStampString,
+                            $datasetTimeStampString
+                        );
                         $rows[] = implode(self::CSV_DELIMITER, $data);
                     }
                 }
@@ -155,7 +156,7 @@ class ReportResearchGroupDatasetStatusController extends UIController implements
             echo implode("\n", $rows);
         });
 
-        $reportFileName = $this->createCsvReportFileName($researchGroup->getName());
+        $reportFileName = $this->createCsvReportFileName($researchGroup->getName(), $researchGroup->getId());
         $response->headers->set('Content-Disposition', 'attachment; filename="' . $reportFileName . '"');
         $response->headers->set('Content-type', 'text/csv; charset=utf-8', true);
         return $response;
@@ -165,16 +166,15 @@ class ReportResearchGroupDatasetStatusController extends UIController implements
      * Create a CSV download filename that contains the truncated research group name and the date/timeto.
      *
      * @param string $researchGroupName The name of the Research Group which is the subject of the report.
+     * @param string $researchGroupId   The ID of the Research Group which is the subject of the report.
      *
      * @return string
      */
-    private function createCsvReportFileName($researchGroupName)
+    private function createCsvReportFileName($researchGroupName, $researchGroupId)
     {
         $nowDateTimeString = date(self::REPORTFILENAMEDATETIMEFORMAT);
         $researchGroupNameSubstring = substr($researchGroupName, 0, self::MAXRESEARCHGROUPLENGTH);
-        $tempFileName = self::REPORTFILENAMEPREFIX
-            . '_'
-            . $researchGroupNameSubstring
+        $tempFileName = $researchGroupNameSubstring . '_' . $researchGroupId
             . '_'
             . $nowDateTimeString
             . '.csv';
