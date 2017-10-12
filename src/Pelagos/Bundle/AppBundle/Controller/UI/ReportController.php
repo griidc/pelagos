@@ -45,14 +45,11 @@ abstract class ReportController extends UIController
         array $optionalHeaders = null
     ) {
         //generic report name extracted from the controller's name
-        if (!isset($optionalHeaders['ReportName'])) {
-            $reportNameCamelCase = preg_replace('/Controller$/', '', (new \ReflectionClass($this))->getShortName());
-        }
+        $reportNameCamelCase = preg_replace('/Controller$/', '', (new \ReflectionClass($this))->getShortName());
         $response = new StreamedResponse(function () use ($labels, $data, $optionalHeaders, $reportNameCamelCase) {
 
               // Byte Order Marker to indicate UTF-8
             echo chr(0xEF) . chr(0xBB) . chr(0xBF);
-
 
             $handle = fopen('php://output', 'r+');
             //default headers
