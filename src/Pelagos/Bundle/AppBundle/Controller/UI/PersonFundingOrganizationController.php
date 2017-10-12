@@ -27,6 +27,11 @@ class PersonFundingOrganizationController extends UIController implements Option
      */
     public function defaultAction($id = null)
     {
+        // Added authorization check for users to view this page
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
+
         $ui = array();
 
         if ($id !== null) {
