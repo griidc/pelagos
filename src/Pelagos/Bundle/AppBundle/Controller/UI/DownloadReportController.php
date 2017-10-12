@@ -42,6 +42,7 @@ class DownloadReportController extends UIController
      */
     public function defaultAction(Request $request)
     {
+        // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
         }
