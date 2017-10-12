@@ -41,6 +41,11 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
      */
     public function defaultAction()
     {
+        // Added authorization check for users to view this page
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
+
         return $this->renderUi();
     }
 
