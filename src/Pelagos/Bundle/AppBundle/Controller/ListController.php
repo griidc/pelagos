@@ -19,6 +19,11 @@ class ListController extends Controller
      */
     public function listsAction()
     {
+        // Checks authorization of users
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
+
         $GLOBALS['pelagos']['title'] = 'Lists Available';
         return $this->render('PelagosAppBundle:List:Lists.html.twig');
     }
@@ -28,10 +33,14 @@ class ListController extends Controller
      *
      * @Route("/research-groups")
      *
-     * @return Response A list of Research Groups.
+     * @return Response  List of Research Groups
      */
     public function researchGroupsAction()
     {
+        // Checks authorization of users
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
         $GLOBALS['pelagos']['title'] = 'Research Groups';
         return $this->render('PelagosAppBundle:List:ResearchGroups.html.twig');
     }
@@ -41,10 +50,14 @@ class ListController extends Controller
      *
      * @Route("/people")
      *
-     * @return Response A list of People.
+     * @return Response  List of People
      */
     public function peopleAction()
     {
+        // Checks authorization of users
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
         $GLOBALS['pelagos']['title'] = 'People';
         return $this->render('PelagosAppBundle:List:People.html.twig');
     }
@@ -54,10 +67,14 @@ class ListController extends Controller
      *
      * @Route("/funding-organizations")
      *
-     * @return Response A list of People.
+     * @return Response  List of Funding Organizations
      */
     public function fundingOrganizationsAction()
     {
+        // Checks authorization of users
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
         $GLOBALS['pelagos']['title'] = 'Funding Organizations';
         return $this->render('PelagosAppBundle:List:FundingOrganizations.html.twig');
     }
