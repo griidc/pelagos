@@ -2,7 +2,7 @@
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use \DateTime;
+use DateTime;
 
 /**
  * This abstract controller provide a template for reports.
