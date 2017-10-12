@@ -32,7 +32,7 @@ class ListController extends Controller
      */
     public function researchGroupsAction()
     {
-        // Added authorization check for users to view this page
+        // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
         }
@@ -49,7 +49,7 @@ class ListController extends Controller
      */
     public function peopleAction()
     {
-        // Added authorization check for users to view this page
+        // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
         }
@@ -66,7 +66,7 @@ class ListController extends Controller
      */
     public function fundingOrganizationsAction()
     {
-        // Added authorization check for users to view this page
+        // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
         }

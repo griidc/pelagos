@@ -29,7 +29,7 @@ class FundingOrganizationController extends UIController implements OptionalRead
      */
     public function defaultAction($id = null)
     {
-        // Added authorization check for users to view this page
+        // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
         }
