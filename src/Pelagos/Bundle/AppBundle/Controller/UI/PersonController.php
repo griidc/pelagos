@@ -38,7 +38,7 @@ class PersonController extends UIController implements OptionalReadOnlyInterface
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
         }
-        
+
         $entityHandler = $this->get('pelagos.entity.handler');
 
         $ui = array();

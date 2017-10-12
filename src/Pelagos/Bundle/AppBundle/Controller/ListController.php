@@ -28,7 +28,7 @@ class ListController extends Controller
      *
      * @Route("/research-groups")
      *
-     * @return Response|\Symfony\Component\HttpFoundation\Response
+     * @return Response|\Symfony\Component\HttpFoundation\Response  List of Research Groups
      */
     public function researchGroupsAction()
     {
@@ -45,7 +45,7 @@ class ListController extends Controller
      *
      * @Route("/people")
      *
-     * @return Response|\Symfony\Component\HttpFoundation\Response
+     * @return Response|\Symfony\Component\HttpFoundation\Response  List of People
      */
     public function peopleAction()
     {
@@ -62,7 +62,7 @@ class ListController extends Controller
      *
      * @Route("/funding-organizations")
      *
-     * @return Response|\Symfony\Component\HttpFoundation\Response
+     * @return Response|\Symfony\Component\HttpFoundation\Response  List of Funding Organizations
      */
     public function fundingOrganizationsAction()
     {
