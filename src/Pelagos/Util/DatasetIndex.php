@@ -113,6 +113,7 @@ class DatasetIndex
                     $textQuery->addShould(new Query\MatchPhrase('abstract', $doi));
                 }
             }
+
             if (!empty($text)) {
                 $datasetQuery = new Query\MultiMatch();
                 $datasetQuery->setQuery($text);
@@ -123,18 +124,36 @@ class DatasetIndex
                     )
                 );
                 $textQuery->addShould($datasetQuery);
+
                 $researchGroupQuery = new Query\Nested();
                 $researchGroupQuery->setPath('researchGroup');
                 $researchGroupQuery->setQuery(
                     new Query\Match('researchGroup.name', $text)
                 );
                 $textQuery->addShould($researchGroupQuery);
+
                 $datasetSubmissionQuery = new Query\Nested();
                 $datasetSubmissionQuery->setPath('datasetSubmission');
                 $datasetSubmissionQuery->setQuery(
                     new Query\Match('datasetSubmission.authors', $text)
                 );
                 $textQuery->addShould($datasetSubmissionQuery);
+
+                // Query against DatasetSubmission placeKeywords associated with the dataset.
+                $query = new Query\Nested();
+                $query->setPath('datasetSubmission');
+                $query->setQuery(
+                    new Query\MatchPhrase('datasetSubmission.placeKeywords', $text)
+                );
+                $textQuery->addShould($query);
+
+                // Query against DatasetSubmission themeKeywords associated with the dataset.
+                $query = new Query\Nested();
+                $query->setPath('datasetSubmission');
+                $query->setQuery(
+                    new Query\MatchPhrase('datasetSubmission.themeKeywords', $text)
+                );
+                $textQuery->addShould($query);
             }
             $mainQuery->addMust($textQuery);
         }

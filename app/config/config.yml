@@ -266,6 +266,8 @@ fos_elastica:
                                 datasetFileUri: ~
                                 datasetFileSize: ~
                                 restrictions: ~
+                                placeKeywords: ~
+                                themeKeywords: ~
                         doi:
                             type: 'nested'
                             properties:
