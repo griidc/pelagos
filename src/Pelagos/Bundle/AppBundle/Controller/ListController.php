@@ -28,10 +28,14 @@ class ListController extends Controller
      *
      * @Route("/research-groups")
      *
-     * @return Response A list of Research Groups.
+     * @return Response|\Symfony\Component\HttpFoundation\Response
      */
     public function researchGroupsAction()
     {
+        // Added authorization check for users to view this page
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
         $GLOBALS['pelagos']['title'] = 'Research Groups';
         return $this->render('PelagosAppBundle:List:ResearchGroups.html.twig');
     }
@@ -41,10 +45,14 @@ class ListController extends Controller
      *
      * @Route("/people")
      *
-     * @return Response A list of People.
+     * @return Response|\Symfony\Component\HttpFoundation\Response
      */
     public function peopleAction()
     {
+        // Added authorization check for users to view this page
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
         $GLOBALS['pelagos']['title'] = 'People';
         return $this->render('PelagosAppBundle:List:People.html.twig');
     }
@@ -54,10 +62,14 @@ class ListController extends Controller
      *
      * @Route("/funding-organizations")
      *
-     * @return Response A list of People.
+     * @return Response|\Symfony\Component\HttpFoundation\Response
      */
     public function fundingOrganizationsAction()
     {
+        // Added authorization check for users to view this page
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
         $GLOBALS['pelagos']['title'] = 'Funding Organizations';
         return $this->render('PelagosAppBundle:List:FundingOrganizations.html.twig');
     }
