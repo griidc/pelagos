@@ -180,6 +180,8 @@ class DatasetPublicationController extends EntityController
         $entityHandler = $this->get('pelagos.entity.handler');
         try {
             $entityHandler->create($dataPub);
+            $persister = $this->get('fos_elastica.object_persister.pelagos.dataset');
+            $persister->insertOne($dataPub->getDataset());
         } catch (UniqueConstraintViolationException $e) {
             if (preg_match('/uniq_dataset_publication/', $e->getMessage())) {
                 throw new BadRequestHttpException('Link already exists.');

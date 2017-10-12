@@ -522,8 +522,12 @@ class Dataset extends Entity
     public function getPublications()
     {
         $collection = new ArrayCollection;
-        foreach ($this->getDatasetPublications() as $datasetPublication) {
-            $collection->add($datasetPublication->getPublication());
+        $datasetPublications = $this->getDatasetPublications();
+
+        if (null != $datasetPublications) {
+            foreach ($this->getDatasetPublications() as $datasetPublication) {
+                $collection->add($datasetPublication->getPublication());
+            }
         }
         return $collection;
     }
