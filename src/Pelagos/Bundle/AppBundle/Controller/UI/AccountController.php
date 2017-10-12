@@ -34,11 +34,6 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
      */
     public function defaultAction()
     {
-        // Checks authorization of users
-        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
-        }
-
         return $this->render('PelagosAppBundle:Account:Account.html.twig');
     }
 

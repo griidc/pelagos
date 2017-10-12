@@ -19,6 +19,11 @@ class ListController extends Controller
      */
     public function listsAction()
     {
+        // Checks authorization of users
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
+
         $GLOBALS['pelagos']['title'] = 'Lists Available';
         return $this->render('PelagosAppBundle:List:Lists.html.twig');
     }
