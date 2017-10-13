@@ -143,7 +143,7 @@ class DatasetIndex
                 $query = new Query\Nested();
                 $query->setPath('datasetSubmission');
                 $query->setQuery(
-                    new Query\MatchPhrase('datasetSubmission.placeKeywords', $text)
+                    new Query\Match('datasetSubmission.placeKeywords', $text)
                 );
                 $textQuery->addShould($query);
 
@@ -151,7 +151,7 @@ class DatasetIndex
                 $query = new Query\Nested();
                 $query->setPath('datasetSubmission');
                 $query->setQuery(
-                    new Query\MatchPhrase('datasetSubmission.themeKeywords', $text)
+                    new Query\Match('datasetSubmission.themeKeywords', $text)
                 );
                 $textQuery->addShould($query);
             }
