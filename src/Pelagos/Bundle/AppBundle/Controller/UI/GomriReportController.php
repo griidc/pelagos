@@ -39,13 +39,13 @@ class GomriReportController extends ReportController
           // Add header to CSV.
         return $this->writeCsvResponse(
             array(
-                'Month', 'Year',
-                'Monthly Identified',
-                'Total Identified',
-                'Monthly Registered',
-                'Total Registered',
-                'Monthly Available',
-                'Total Available',
+                'MONTH', 'YEAR',
+                'MONTHLY IDENTIFIED',
+                'TOTAL IDENTIFIED',
+                'MONTHLY REGISTERED',
+                'TOTAL REGISTERED',
+                'MONTHLY AVAILABLE',
+                'TOTAL AVAILABLE',
             ),
             $this->queryData(null)
         );

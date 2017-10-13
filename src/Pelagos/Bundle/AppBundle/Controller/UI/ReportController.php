@@ -58,7 +58,7 @@ abstract class ReportController extends UIController
                 array(strtoupper(preg_replace('/(?<!\ )[A-Z]/', ' $0', $reportNameCamelCase)))
             );
             fputcsv($handle, array(
-                'Created at', (new DateTime('now'))->format(self::INREPORT_TIMESTAMPFORMAT)));
+                'CREATED AT', (new DateTime('now'))->format(self::INREPORT_TIMESTAMPFORMAT)));
             fputcsv($handle, array(self::BLANK_LINE));
 
             // write additional options before the report

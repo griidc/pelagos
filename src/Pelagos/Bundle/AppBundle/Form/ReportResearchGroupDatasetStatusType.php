@@ -26,7 +26,7 @@ class ReportResearchGroupDatasetStatusType extends AbstractType
             ->add('ResearchGroupSelector', ChoiceType::class, array(
                 // the word 'choices' is a reserved word in this context
                 'choices' => $options['data'],
-                'placeholder' => '[select a Research Group]'))
+                'placeholder' => '[Select a Research Group]'))
              ->add('submit', SubmitType::class, array('label' => 'Generate Report'));
     }
 }

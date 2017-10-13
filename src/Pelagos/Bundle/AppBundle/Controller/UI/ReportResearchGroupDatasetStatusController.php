@@ -61,28 +61,28 @@ class ReportResearchGroupDatasetStatusController extends ReportController
 
         if ($form->isValid()) {
             $researchGroupId = $form->getData()['ResearchGroupSelector'];
-            $rgArray = $this->get('pelagos.entity.handler')
-                ->getBy(ResearchGroup::class, array('id' => $researchGroupId));
+            $researchGroup = $this->get('pelagos.entity.handler')
+                ->getBy(ResearchGroup::class, array('id' => $researchGroupId))[0];
 
             $datasetCountString = 'No datasets';
-            $datasets = $rgArray[0]->getDatasets();
-            $dsCount = count($datasets);
-            if ($dsCount > 0) {
+            $datasets = $researchGroup->getDatasets();
+            $datasetCount = count($datasets);
+            if ($datasetCount > 0) {
                 $datasetCountString = ' [ ' . (string) count($datasets) . ' ]';
             }
 
             return $this->writeCsvResponse(
-                array('  DATASET UDI  ',
-                    '  TITLE  ',
-                    '  PRIMARY POINT OF CONTACT   ',
-                    '  STATUS  ',
-                    '  DATE IDENTIFIED  ',
-                    '  DATE REGISTERED  '),
-                $this->queryData(array('researchGroup' => $rgArray[0], 'datasetCount' => $dsCount)),
-                $this->createCsvReportFileName($rgArray[0]->getName(), $researchGroupId),
+                array('DATASET UDI',
+                    'TITLE',
+                    'PRIMARY POINT OF CONTACT',
+                    'STATUS',
+                    'DATE IDENTIFIED',
+                    'DATE REGISTERED'),
+                $this->queryData(array('researchGroup' => $researchGroup, 'datasetCount' => $datasetCount)),
+                $this->createCsvReportFileName($researchGroup->getName(), $researchGroupId),
                 [
-                    '  RESEARCH GROUP  ' => $rgArray[0]->getName(),
-                    '  DATASET COUNT  ' => $datasetCountString
+                    'RESEARCH GROUP' => $researchGroup->getName(),
+                    'DATASET COUNT' => $datasetCountString
                 ]
             );
         }

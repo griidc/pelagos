@@ -62,12 +62,12 @@ class DatasetDownloadReportController extends ReportController
                     ];
                     $labels = [
                         'UDI',
-                        'Title',
-                        'Primary Point Of Contact',
-                        'Primary Point Of Contact Email',
-                        'Total Downloads',
-                        '# of GoMRI downloads',
-                        '# of Google downloads'
+                        'TITLE',
+                        'PRIMARY POINT OF CONTACT',
+                        'PRIMARY POINT OF CONTACT EMAIL',
+                        'TOTAL DOWNLOADS',
+                        '# OF GOMRI DOWNLOADS',
+                        '# OF GOOGLE DOWNLOADS'
                     ];
                     $data = $this->queryData([
                         'startDate' => $startDate,
