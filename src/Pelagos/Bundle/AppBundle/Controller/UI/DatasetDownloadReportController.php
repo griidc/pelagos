@@ -4,11 +4,11 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Pelagos\Bundle\AppBundle\Form\ReportDatasetDownloadType;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\LogActionItem;
@@ -44,38 +44,12 @@ class DatasetDownloadReportController extends ReportController
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
         }
-        $form = $this->createFormBuilder()->add(
-            'startDate',
-            DateType::class,
-            array('label' => 'Start Date:',
-                'input' => 'datetime',
-                'widget' => 'single_text',
-                'html5' => false,
-                'format' => 'yyyy-MM-dd',
-                'required' => true,
-                'attr' => array(
-                    'placeholder' => 'yyyy-mm-dd',
-                    'class' => 'startDate',
-                )
-            )
-        )
-            ->add(
-                'endDate',
-                DateType::class,
-                array('label' => 'End Date:',
-                    'input' => 'datetime',
-                    'widget' => 'single_text',
-                    'html5' => false,
-                    'format' => 'yyyy-MM-dd',
-                    'required' => true,
-                    'attr' => array(
-                        'placeholder' => 'yyyy-mm-dd',
-                        'class' => 'endDate',
-                    )
-                )
-            )
-            ->add('submit', SubmitType::class, array('label' => 'Generate Report'))->getForm();
-            $form->handleRequest($request);
+        $form = $this->get('form.factory')->createNamed(
+            null,
+            ReportDatasetDownloadType::class,
+            null
+        );
+        $form->handleRequest($request);
 
         if ($form->isValid()) {
             $startDate = $form->getData()['startDate'];

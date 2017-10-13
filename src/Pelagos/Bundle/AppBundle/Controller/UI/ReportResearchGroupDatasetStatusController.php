@@ -1,15 +1,14 @@
 <?php
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
+use Pelagos\Bundle\AppBundle\Form\ReportResearchGroupDatasetStatusType;
+use Pelagos\Entity\ResearchGroup;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-
-use Pelagos\Entity\ResearchGroup;
 
 /**
  * A controller for a Report of Research Groups and related Datasets.
@@ -52,13 +51,11 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         foreach ($allResearchGroups as $rg) {
             $researchGroupNames[$rg->getName()] = $rg->getId();
         }
-        $form = $this->createFormBuilder()
-             ->add('ResearchGroupSelector', ChoiceType::class, array(
-               // the word 'choices' is a reserved word in this context
-                 'choices' => $researchGroupNames,
-                 'placeholder' => '[select a Research Group]'))
-             ->add('submit', SubmitType::class, array('label' => 'Generate Report'))
-             ->getForm();
+        $form = $this->get('form.factory')->createNamed(
+            null,
+            ReportResearchGroupDatasetStatusType::class,
+            $researchGroupNames
+        );
 
         $form->handleRequest($request);
 
