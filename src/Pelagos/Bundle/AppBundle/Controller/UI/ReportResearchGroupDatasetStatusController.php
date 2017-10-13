@@ -94,28 +94,28 @@ class ReportResearchGroupDatasetStatusController extends ReportController
     }
 
     /**
-     * This implements the abstract method from ReportController to get the data.
+     * This method queries data for the report.
      *
      * @param array|NULL $options Additional parameters needed to run the query.
      *
-     * @return array  Return an indexed array.
+     * @return array  Return the data array
      */
     protected function queryData(array $options = null)
     {
         $datasets = $options['researchGroup']->getDatasets();
-        $rows = array();
+        $dataArray = array();
         if ($options['datasetCount'] > 0) {
-            foreach ($datasets as $ds) {
-                $datasetStatus = $ds->getStatus();
+            foreach ($datasets as $dataset) {
+                $datasetStatus = $dataset->getStatus();
                 //  exclude datasets that don't have an approved DIF
                 if ($datasetStatus != 'NoDif') {
                     $datasetTimeStampString = 'N/A';
-                    if ($ds->getDatasetSubmission() != null &&
-                        $ds->getDatasetSubmission()->getSubmissionTimeStamp() != null) {
-                        $datasetTimeStampString = $ds->getDatasetSubmission()->getSubmissionTimeStamp()
+                    if ($dataset->getDatasetSubmission() != null &&
+                      $dataset->getDatasetSubmission()->getSubmissionTimeStamp() != null) {
+                        $datasetTimeStampString = $dataset->getDatasetSubmission()->getSubmissionTimeStamp()
                         ->format(self::REPORTDATETIMEFORMAT);
                     }
-                    $dif = $ds->getDif();
+                    $dif = $dataset->getDif();
                     $ppoc = $dif->getPrimaryPointOfContact();
                         $ppocString = $ppoc->getLastName() . ', ' .
                         $ppoc->getFirstName();
@@ -123,19 +123,19 @@ class ReportResearchGroupDatasetStatusController extends ReportController
                     if ($dif->getModificationTimeStamp() != null) {
                         $difTimeStampString = $dif->getModificationTimeStamp()->format(self::REPORTDATETIMEFORMAT);
                     }
-                    $data = array(
-                        'udi' => $ds->getUdi(),
-                        'title' => $ds->getTitle(),
+                    $dataRow = array(
+                        'udi' => $dataset->getUdi(),
+                        'title' => $dataset->getTitle(),
                         'primaryPointOfContact' => $ppocString,
                         'datasetStatus' => $datasetStatus,
                         'dateIdentified' => $difTimeStampString,
                         'dateRegistered' => $datasetTimeStampString
                     );
-                    $rows[] = $data;
+                  $dataArray[] = $dataRow;
                 }
             }
         }
-        return $rows;
+        return $dataArray;
     }
 
     /**

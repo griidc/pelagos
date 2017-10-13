@@ -18,16 +18,7 @@ abstract class ReportController extends UIController
 
     // A convenience for putting a blank line in the report
     const BLANK_LINE = '     ';
-
-    /**
-     * This abstract function is where the data in the csv is generated.
-     *
-     * @param array|NULL $options Additional parameters needed to run the query.
-     *
-     * @return array  Return an indexed array.
-     */
-    abstract protected function queryData(array $options = null);
-
+  
     /**
      * Write headers, labels, data to a csv response with a default or custom filename.
      *

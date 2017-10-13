@@ -52,17 +52,17 @@ class GomriReportController extends ReportController
     }
 
     /**
-     * This implements the abstract method from ReportController to get the data.
+     * This method queries data for the report.
      *
      * @param array|NULL $options Additional parameters needed to run the query.
      *
-     * @return array  Return an indexed array.
+     * @return array  Return the data array
      */
     protected function queryData(array $options = null)
     {
         $container = $this->container;
         // final results array.
-        $stats = array();
+        $dataArray = array();
 
         $entityManager = $container->get('doctrine')->getManager();
 
@@ -71,7 +71,7 @@ class GomriReportController extends ReportController
         $now = new DateTime('now');
 
         while ($dateTime < $now) {
-            $stats[$dateTime->format(MONTH_DAY_FORMAT)] = array(
+            $dataArray[$dateTime->format(MONTH_DAY_FORMAT)] = array(
                 'month' => $dateTime->format('m'),
                 'year' => $dateTime->format('Y'),
                 'monthly_identified' => 0,
@@ -102,7 +102,7 @@ class GomriReportController extends ReportController
 
         foreach ($results as $result) {
             $monthDay = date(MONTH_DAY_FORMAT, $result['creationTimeStamp']->getTimestamp());
-            $stats[$monthDay]['monthly_identified']++;
+            $dataArray[$monthDay]['monthly_identified']++;
         }
 
         // Query Registered.
@@ -124,7 +124,7 @@ class GomriReportController extends ReportController
 
         foreach ($results as $result) {
             $monthDay = date(MONTH_DAY_FORMAT, $result['creationTimeStamp']->getTimestamp());
-            $stats[$monthDay]['monthly_registered']++;
+            $dataArray[$monthDay]['monthly_registered']++;
         }
 
         // Query Available.
@@ -156,20 +156,20 @@ class GomriReportController extends ReportController
 
         foreach ($results as $result) {
             $monthDay = date(MONTH_DAY_FORMAT, $result['creationTimeStamp']->getTimestamp());
-            $stats[$monthDay]['monthly_available']++;
+            $dataArray[$monthDay]['monthly_available']++;
         }
 
         $totalIdentified = 0;
         $totalRegistered = 0;
         $totalAvailable = 0;
-        foreach ($stats as $monthDay => $stat) {
+        foreach ($dataArray as $monthDay => $stat) {
             $totalIdentified += $stat['monthly_identified'];
             $totalRegistered += $stat['monthly_registered'];
             $totalAvailable += $stat['monthly_available'];
-            $stats[$monthDay]['total_identified'] = $totalIdentified;
-            $stats[$monthDay]['total_registered'] = $totalRegistered;
-            $stats[$monthDay]['total_available'] = $totalAvailable;
+            $dataArray[$monthDay]['total_identified'] = $totalIdentified;
+            $dataArray[$monthDay]['total_registered'] = $totalRegistered;
+            $dataArray[$monthDay]['total_available'] = $totalAvailable;
         }
-        return $stats;
+        return $dataArray;
     }
 }
