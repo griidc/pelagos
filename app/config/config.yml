@@ -240,7 +240,9 @@ fos_elastica:
             types:
                 dataset:
                     mappings:
-                        udi: ~
+                        udi:
+                            type : "string"
+                            index : "not_analyzed"
                         title: ~
                         abstract: ~
                         availabilityStatus: ~
@@ -269,11 +271,17 @@ fos_elastica:
                         doi:
                             type: 'nested'
                             properties:
-                                doi: { boost: 3 }
+                                doi:
+                                    boost: 3
+                                    type : "string"
+                                    index : "not_analyzed"
                         publications:
                             type: 'nested'
                             properties:
-                                doi: { boost: 3 }
+                                doi:
+                                    boost: 3
+                                    type : "string"
+                                    index : "not_analyzed"
                         geometry:
                             type: 'string'
                             property_path: false
