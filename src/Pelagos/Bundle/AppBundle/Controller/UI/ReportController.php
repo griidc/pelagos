@@ -57,14 +57,12 @@ abstract class ReportController extends UIController
 
         //set filename: default file name extracted from the controller's name or custom filename
         if ($customFileName == null) {
-            $defaultFileName = $reportNameCamelCase . '-' . (new DateTime('now'))
-                ->format(self::FILENAME_DATETIMEFORMAT) . '.csv';
-            $response->headers->set('Content-Disposition', 'attachment; filename="' . $defaultFileName . '"');
+            $response->headers->set('Content-Disposition', 'attachment; filename="' . $reportNameCamelCase . '-' . (new DateTime('now'))
+                ->format(self::FILENAME_DATETIMEFORMAT) . '.csv' . '"');
         } else {
             $response->headers->set('Content-Disposition', 'attachment; filename="' . $customFileName . '"');
         }
         $response->headers->set('Content-Type', 'text/csv');
-        
         return $response;
     }
 }

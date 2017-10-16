@@ -43,7 +43,7 @@ class GomriReportController extends ReportController
     }
 
     /**
-     * This method queries data for the report.
+     * This method gets data for the report.
      *
      * @param array|NULL $options Additional parameters needed to run the query.
      *
