@@ -140,20 +140,20 @@ class DatasetIndex
                 $textQuery->addShould($datasetSubmissionQuery);
 
                 // Query against DatasetSubmission placeKeywords associated with the dataset.
-                $query = new Query\Nested();
-                $query->setPath('datasetSubmission');
-                $query->setQuery(
+                $placeKeywordsQuery = new Query\Nested();
+                $placeKeywordsQuery->setPath('datasetSubmission');
+                $placeKeywordsQuery->setQuery(
                     new Query\Match('datasetSubmission.placeKeywords', $text)
                 );
-                $textQuery->addShould($query);
+                $textQuery->addShould($placeKeywordsQuery);
 
                 // Query against DatasetSubmission themeKeywords associated with the dataset.
-                $query = new Query\Nested();
-                $query->setPath('datasetSubmission');
-                $query->setQuery(
+                $themeKeywordsQuery = new Query\Nested();
+                $themeKeywordsQuery->setPath('datasetSubmission');
+                $themeKeywordsQuery->setQuery(
                     new Query\Match('datasetSubmission.themeKeywords', $text)
                 );
-                $textQuery->addShould($query);
+                $textQuery->addShould($themeKeywordsQuery);
             }
             $mainQuery->addMust($textQuery);
         }
