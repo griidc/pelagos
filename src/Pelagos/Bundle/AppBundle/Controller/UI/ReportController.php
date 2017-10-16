@@ -22,22 +22,18 @@ abstract class ReportController extends UIController
     /**
      * Write headers, labels, data to a csv response with a default or custom filename.
      *
-     * @param array       $labels          Label row.
-     * @param array       $data            Data rows.
-     * @param string|NULL $customFileName  Non-generic csv output filename if needed.
-     * @param array|NULL  $optionalHeaders Additional information to add in the reports.
+     * @param array       $data           Data rows.
+     * @param string|NULL $customFileName Non-generic csv output filename if needed.
      *
      * @return \StreamedResponse The csv response.
      */
     protected function writeCsvResponse(
-        array $labels,
         array $data,
-        $customFileName = null,
-        array $optionalHeaders = null
+        $customFileName = null
     ) {
         //generic report name extracted from the controller's name
         $reportNameCamelCase = preg_replace('/Controller$/', '', (new \ReflectionClass($this))->getShortName());
-        $response = new StreamedResponse(function () use ($labels, $data, $optionalHeaders, $reportNameCamelCase) {
+        $response = new StreamedResponse(function () use ($data, $reportNameCamelCase) {
 
               // Byte Order Marker to indicate UTF-8
             echo chr(0xEF) . chr(0xBB) . chr(0xBF);
@@ -46,22 +42,12 @@ abstract class ReportController extends UIController
             //default headers
             fputcsv(
                 $handle,
-                array(strtoupper(preg_replace('/(?<!\ )[A-Z]/', ' $0', $reportNameCamelCase)))
+                array(trim(strtoupper(preg_replace('/(?<!\ )[A-Z]/', ' $0', $reportNameCamelCase))))
             );
             fputcsv($handle, array(
                 'CREATED AT', (new DateTime('now'))->format(self::INREPORT_TIMESTAMPFORMAT)));
             fputcsv($handle, array(self::BLANK_LINE));
 
-            // write additional options before the report
-            if ($optionalHeaders != null) {
-                foreach ($optionalHeaders as $key => $value) {
-                    fputcsv($handle, array($key, $value));
-                }
-                fputcsv($handle, array(self::BLANK_LINE));
-            }
-
-            //write headers/labels
-            fputcsv($handle, $labels);
             //write data
             foreach ($data as $row) {
                 fputcsv($handle, $row);

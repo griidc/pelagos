@@ -38,16 +38,7 @@ class GomriReportController extends ReportController
         }
           // Add header to CSV.
         return $this->writeCsvResponse(
-            array(
-                'MONTH', 'YEAR',
-                'MONTHLY IDENTIFIED',
-                'TOTAL IDENTIFIED',
-                'MONTHLY REGISTERED',
-                'TOTAL REGISTERED',
-                'MONTHLY AVAILABLE',
-                'TOTAL AVAILABLE',
-            ),
-            $this->queryData(null)
+            $this->getData(null)
         );
     }
 
@@ -58,12 +49,22 @@ class GomriReportController extends ReportController
      *
      * @return array  Return the data array
      */
-    protected function queryData(array $options = null)
+    protected function getData(array $options = null)
     {
-        $container = $this->container;
-        // final results array.
-        $dataArray = array();
+        //prepare labels
+        $labels = array('labels' => array(
+          'MONTH', 'YEAR',
+          'MONTHLY IDENTIFIED',
+          'TOTAL IDENTIFIED',
+          'MONTHLY REGISTERED',
+          'TOTAL REGISTERED',
+          'MONTHLY AVAILABLE',
+          'TOTAL AVAILABLE')
+        );
 
+        //prepare body's data
+        $dataArray = array();
+        $container = $this->container;
         $entityManager = $container->get('doctrine')->getManager();
 
         $dateTime = new DateTime('May 2012');
@@ -170,6 +171,6 @@ class GomriReportController extends ReportController
             $dataArray[$monthDay]['total_registered'] = $totalRegistered;
             $dataArray[$monthDay]['total_available'] = $totalAvailable;
         }
-        return $dataArray;
+        return array_merge($labels, $dataArray);
     }
 }

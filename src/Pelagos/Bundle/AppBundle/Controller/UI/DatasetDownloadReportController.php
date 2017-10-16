@@ -56,30 +56,15 @@ class DatasetDownloadReportController extends ReportController
             $endDate = $form->getData()['endDate'];
             if ($startDate && $endDate) {
                 if ($startDate <= $endDate) {
-                    $optionalHeaders = [
-                        'START DATE' => $startDate->format(self::INREPORT_DATETIMEFORMAT),
-                        'END DATE' => $endDate->format(self::INREPORT_DATETIMEFORMAT),
-                    ];
-                    $labels = [
-                        'UDI',
-                        'TITLE',
-                        'PRIMARY POINT OF CONTACT',
-                        'PRIMARY POINT OF CONTACT EMAIL',
-                        'TOTAL DOWNLOADS',
-                        '# OF GOMRI DOWNLOADS',
-                        '# OF GOOGLE DOWNLOADS'
-                    ];
-                    $data = $this->queryData([
+                    $data = $this->getData([
                         'startDate' => $startDate,
                         'endDate' => $endDate
                     ]);
                     return $this->writeCsvResponse(
-                        $labels,
                         $data,
                         'DatasetDownloadReport-' .
                             (new \DateTime('now'))->format(parent::FILENAME_DATETIMEFORMAT) .
-                            '.csv',
-                        $optionalHeaders
+                            '.csv'
                     );
                 }
             } else {
@@ -99,8 +84,27 @@ class DatasetDownloadReportController extends ReportController
      *
      * @return array  Return the data array
      */
-    protected function queryData(array $options = null)
+    protected function getData(array $options = null)
     {
+        //prepare extra headers
+        $additionalHeaders = array('additionalHeaders' =>
+            array('START DATE', $options['startDate']->format(self::INREPORT_DATETIMEFORMAT)),
+            array('END DATE', $options['endDate']->format(self::INREPORT_DATETIMEFORMAT)),
+            array());
+
+        //prepare labels
+        $labels = array('labels' => array(
+            'UDI',
+            'TITLE',
+            'PRIMARY POINT OF CONTACT',
+            'PRIMARY POINT OF CONTACT EMAIL',
+            'TOTAL DOWNLOADS',
+            '# OF GOMRI DOWNLOADS',
+            '# OF GOOGLE DOWNLOADS'
+        ));
+
+      //prepare body's data
+        $dataArray = array();
         $container = $this->container;
         $entityManager = $container->get('doctrine')->getManager();
         //Query
@@ -123,7 +127,6 @@ class DatasetDownloadReportController extends ReportController
         $results = $query->getResult();
 
         //process result query into an array with organized data
-        $dataArray = array();
         $currentIndex = 0;
         foreach ($results as $result) {
             //initialize array with key  = udi, set title and primary POC
@@ -173,6 +176,6 @@ class DatasetDownloadReportController extends ReportController
             }
             $dataArray[$currentIndex]['totalCount']++;
         }
-        return $dataArray;
+        return array_merge($additionalHeaders, $labels, $dataArray);
     }
 }

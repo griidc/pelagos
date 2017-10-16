@@ -64,26 +64,9 @@ class ReportResearchGroupDatasetStatusController extends ReportController
             $researchGroup = $this->get('pelagos.entity.handler')
                 ->getBy(ResearchGroup::class, array('id' => $researchGroupId))[0];
 
-            $datasetCountString = 'No datasets';
-            $datasets = $researchGroup->getDatasets();
-            $datasetCount = count($datasets);
-            if ($datasetCount > 0) {
-                $datasetCountString = ' [ ' . (string) count($datasets) . ' ]';
-            }
-
             return $this->writeCsvResponse(
-                array('DATASET UDI',
-                    'TITLE',
-                    'PRIMARY POINT OF CONTACT',
-                    'STATUS',
-                    'DATE IDENTIFIED',
-                    'DATE REGISTERED'),
-                $this->queryData(array('researchGroup' => $researchGroup, 'datasetCount' => $datasetCount)),
-                $this->createCsvReportFileName($researchGroup->getName(), $researchGroupId),
-                [
-                    'RESEARCH GROUP' => $researchGroup->getName(),
-                    'DATASET COUNT' => $datasetCountString
-                ]
+                $this->getData(array('researchGroup' => $researchGroup)),
+                $this->createCsvReportFileName($researchGroup->getName(), $researchGroupId)
             );
         }
 
@@ -100,11 +83,32 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      *
      * @return array  Return the data array
      */
-    protected function queryData(array $options = null)
+    protected function getData(array $options = null)
     {
+        $datasetCountString = 'No datasets';
         $datasets = $options['researchGroup']->getDatasets();
+        $datasetCount = count($datasets);
+        if ($datasetCount > 0) {
+            $datasetCountString = ' [ ' . (string) count($datasets) . ' ]';
+        }
+
+        //extra headers to be put in the report
+        $additionalHeaders = array(
+          array('RESEARCH GROUP',$options['researchGroup']->getName()),
+          array('DATASET COUNT', $datasetCountString),
+          array());
+
+        //prepare label array
+        $labels = array('labels' => array('DATASET UDI',
+          'TITLE',
+          'PRIMARY POINT OF CONTACT',
+          'STATUS',
+          'DATE IDENTIFIED',
+          'DATE REGISTERED'));
+
+        //prepare data array
         $dataArray = array();
-        if ($options['datasetCount'] > 0) {
+        if ($datasetCount > 0) {
             foreach ($datasets as $dataset) {
                 $datasetStatus = $dataset->getStatus();
                 //  exclude datasets that don't have an approved DIF
@@ -131,11 +135,11 @@ class ReportResearchGroupDatasetStatusController extends ReportController
                         'dateIdentified' => $difTimeStampString,
                         'dateRegistered' => $datasetTimeStampString
                     );
-                  $dataArray[] = $dataRow;
+                    $dataArray[] = $dataRow;
                 }
             }
         }
-        return $dataArray;
+        return array_merge($additionalHeaders, $labels, $dataArray);
     }
 
     /**
