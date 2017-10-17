@@ -18,7 +18,7 @@ abstract class ReportController extends UIController
 
     // A convenience for putting a blank line in the report
     const BLANK_LINE = '     ';
-  
+
     /**
      * Write headers, labels, data to a csv response with a default or custom filename.
      *
@@ -57,11 +57,11 @@ abstract class ReportController extends UIController
 
         //set filename: default file name extracted from the controller's name or custom filename
         if ($customFileName === null) {
-            $response->headers->set('Content-Disposition', 'attachment; filename="' . $reportNameCamelCase . '-' . (new DateTime('now'))
-                ->format(self::FILENAME_DATETIMEFORMAT) . '.csv' . '"');
-        } else {
-            $response->headers->set('Content-Disposition', 'attachment; filename="' . $customFileName . '"');
+            $customFileName = $reportNameCamelCase . '-' .
+                (new DateTime('now'))->format(self::FILENAME_DATETIMEFORMAT) .
+                '.csv';
         }
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $customFileName . '"');
         $response->headers->set('Content-Type', 'text/csv');
         return $response;
     }
