@@ -56,7 +56,7 @@ abstract class ReportController extends UIController
         });
 
         //set filename: default file name extracted from the controller's name or custom filename
-        if ($customFileName === null) {
+        if (null === $customFileName) {
             $customFileName = $reportNameCamelCase . '-' .
                 (new DateTime('now'))->format(self::FILENAME_DATETIMEFORMAT) .
                 '.csv';

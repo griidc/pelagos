@@ -51,24 +51,26 @@ class DatasetDownloadReportController extends ReportController
         );
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
-            $startDate = $form->getData()['startDate'];
-            $endDate = $form->getData()['endDate'];
-            if ($startDate && $endDate) {
-                if ($startDate <= $endDate) {
-                    $data = $this->getData([
-                        'startDate' => $startDate,
-                        'endDate' => $endDate
-                    ]);
-                    return $this->writeCsvResponse(
-                        $data,
-                        'DatasetDownloadReport-' .
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $startDate = $form->getData()['startDate'];
+                $endDate = $form->getData()['endDate'];
+                if ($startDate && $endDate) {
+                    if ($startDate <= $endDate) {
+                        $data = $this->getData([
+                            'startDate' => $startDate,
+                            'endDate' => $endDate
+                        ]);
+                        return $this->writeCsvResponse(
+                            $data,
+                            'DatasetDownloadReport-' .
                             (new \DateTime('now'))->format(parent::FILENAME_DATETIMEFORMAT) .
                             '.csv'
-                    );
+                        );
+                    }
+                } else {
+                    throw new InvalidDateSelectedException('The dates selected are invalid.');
                 }
-            } else {
-                throw new InvalidDateSelectedException('The dates selected are invalid.');
             }
         }
         return $this->render(

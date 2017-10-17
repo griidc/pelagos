@@ -58,18 +58,18 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         );
 
         $form->handleRequest($request);
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $researchGroupId = $form->getData()['ResearchGroupSelector'];
+                $researchGroup = $this->get('pelagos.entity.handler')
+                   ->getBy(ResearchGroup::class, ['id' => $researchGroupId])[0];
 
-        if ($form->isValid()) {
-            $researchGroupId = $form->getData()['ResearchGroupSelector'];
-            $researchGroup = $this->get('pelagos.entity.handler')
-                ->getBy(ResearchGroup::class, array('id' => $researchGroupId))[0];
-
-            return $this->writeCsvResponse(
-                $this->getData(array('researchGroup' => $researchGroup)),
-                $this->createCsvReportFileName($researchGroup->getName(), $researchGroupId)
-            );
+                return $this->writeCsvResponse(
+                    $this->getData(['researchGroup' => $researchGroup]),
+                    $this->createCsvReportFileName($researchGroup->getName(), $researchGroupId)
+                );
+            }
         }
-
         return $this->render(
             'PelagosAppBundle:template:ReportResearchGroupDatasetStatus.html.twig',
             array('form' => $form->createView())
