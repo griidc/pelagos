@@ -10,7 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 /**
  * The Dataset Restrictions Modifier controller.
  *
- * @Route("/dataset-restrictions", name="dataset_restriction")
+ * @Route("/dataset-restrictions")
  */
 class DatasetRestrictionsController extends UIController
 {
@@ -29,6 +29,7 @@ class DatasetRestrictionsController extends UIController
         }
 
        // TODO Need to create a new twig for the dataset restrictions and return that twig //
-        return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        $GLOBALS['pelagos']['title'] = 'Dataset Restrictions Modifier';
+        return $this->render('PelagosAppBundle:List:DatasetRestrictions.html.twig');
     }
 }
