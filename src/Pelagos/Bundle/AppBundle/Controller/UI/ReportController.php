@@ -31,22 +31,12 @@ abstract class ReportController extends UIController
         array $data,
         $customFileName = null
     ) {
-        //generic report name extracted from the controller's name
-        $reportNameCamelCase = preg_replace('/Controller$/', '', (new \ReflectionClass($this))->getShortName());
-        $response = new StreamedResponse(function () use ($data, $reportNameCamelCase) {
+        $response = new StreamedResponse(function () use ($data) {
 
               // Byte Order Marker to indicate UTF-8
             echo chr(0xEF) . chr(0xBB) . chr(0xBF);
 
             $handle = fopen('php://output', 'r+');
-            //default headers
-            fputcsv(
-                $handle,
-                array(trim(strtoupper(preg_replace('/(?<!\ )[A-Z]/', ' $0', $reportNameCamelCase))))
-            );
-            fputcsv($handle, array(
-                'CREATED AT', (new DateTime('now'))->format(self::INREPORT_TIMESTAMPFORMAT)));
-            fputcsv($handle, array(self::BLANK_LINE));
 
             //write data
             foreach ($data as $row) {
@@ -57,12 +47,28 @@ abstract class ReportController extends UIController
 
         //set filename: default file name extracted from the controller's name or custom filename
         if (null === $customFileName) {
-            $customFileName = $reportNameCamelCase . '-' .
+            $customFileName = preg_replace('/Controller$/', '', (new \ReflectionClass($this))->getShortName()) . '-' .
                 (new DateTime('now'))->format(self::FILENAME_DATETIMEFORMAT) .
                 '.csv';
         }
         $response->headers->set('Content-Disposition', 'attachment; filename="' . $customFileName . '"');
         $response->headers->set('Content-Type', 'text/csv');
         return $response;
+    }
+
+    /**
+     * This returns the Report name extracted from the controller name and a creation timestamp.
+     *
+     * @return array Report Name to be displayed and a creation time stamp for the csv
+     */
+    protected function getDefaultHeaders()
+    {
+        //generic report name extracted from the controller's name
+        $reportNameCamelCase = preg_replace('/Controller$/', '', (new \ReflectionClass($this))->getShortName());
+        return array(
+            array(trim(strtoupper(preg_replace('/(?<!\ )[A-Z]/', ' $0', $reportNameCamelCase)))),
+            array('CREATED AT', (new DateTime('now'))->format(self::INREPORT_TIMESTAMPFORMAT)),
+            array(self::BLANK_LINE)
+        );
     }
 }

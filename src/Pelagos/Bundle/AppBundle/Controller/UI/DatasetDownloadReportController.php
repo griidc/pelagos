@@ -178,6 +178,6 @@ class DatasetDownloadReportController extends ReportController
             }
             $dataArray[$currentIndex]['totalCount']++;
         }
-        return array_merge($additionalHeaders, $labels, $dataArray);
+        return array_merge($this->getDefaultHeaders(), $additionalHeaders, $labels, $dataArray);
     }
 }

@@ -139,7 +139,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
                 }
             }
         }
-        return array_merge($additionalHeaders, $labels, $dataArray);
+        return array_merge($this->getDefaultHeaders(), $additionalHeaders, $labels, $dataArray);
     }
 
     /**
