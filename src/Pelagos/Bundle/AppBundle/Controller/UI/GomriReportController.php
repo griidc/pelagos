@@ -45,11 +45,9 @@ class GomriReportController extends ReportController
     /**
      * This method gets data for the report.
      *
-     * @param array|NULL $options Additional parameters needed to run the query.
-     *
      * @return array  Return the data array
      */
-    protected function getData(array $options = null)
+    protected function getData()
     {
         //prepare labels
         $labels = array('labels' => array(
