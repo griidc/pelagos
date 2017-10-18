@@ -17,7 +17,7 @@ abstract class ReportController extends UIController
     const INREPORT_TIMESTAMPFORMAT = 'm-d-Y H:i';
 
     // A convenience for putting a blank line in the report
-    const BLANK_LINE = '     ';
+    const BLANK_LINE = '';
 
     /**
      * Write headers, labels, data to a csv response with a default or custom filename.

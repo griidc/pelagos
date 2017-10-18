@@ -96,7 +96,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         $additionalHeaders = array(
           array('RESEARCH GROUP',$options['researchGroup']->getName()),
           array('DATASET COUNT', $datasetCountString),
-          array());
+          array(parent::BLANK_LINE));
 
         //prepare label array
         $labels = array('labels' => array('DATASET UDI',
