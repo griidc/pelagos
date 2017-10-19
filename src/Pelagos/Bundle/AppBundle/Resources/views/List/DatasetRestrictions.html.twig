@@ -43,7 +43,7 @@
             class="entityTable stripe"
             width="100%"
             data-ajax = '{
-                "url": "{{ path('pelagos_api_datasets_get_collection', {"datasetSubmission=*&_properties": properties | join(',')}) }}",
+                "url": "{{ path("pelagos_api_datasets_get_collection", {"datasetSubmission": "*", "_properties": properties | join(',')}) }}",
                 "dataSrc": "",
                 "cache": true
             }'
@@ -58,7 +58,7 @@
             ]'
             data-column-definitions = '[
             {
-                "targets": [ 0 ],
+                "targets": [ 0, 3 ],
                 "visible": false,
                 "searchable": false
             },
