@@ -8,17 +8,31 @@
     ]
     ) }}
 
+    {{
+    add_css (
+    [
+    '//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css',
+    '//cdn.datatables.net/select/1.0.1/css/select.dataTables.min.css'
+    ]
+    )
+    }}
+    
+    {{
+    add_js(
+    [
+    '//cdn.datatables.net/1.10.7/js/jquery.dataTables.js',
+    '//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js'
+    ]
+    )
+    }}
+
     {% stylesheets
-        '@PelagosAppBundle/Resources/public/css/entity.css'
-        '//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css'
-        '//cdn.datatables.net/select/1.0.1/css/select.dataTables.min.css' %}
+        '@PelagosAppBundle/Resources/public/css/entity.css' %}
         {{ add_css(asset_url) }}
     {% endstylesheets %}
 
     {% javascripts
         '@PelagosAppBundle/Resources/public/js/common.js'
-        '//cdn.datatables.net/1.10.7/js/jquery.dataTables.js'
-        '//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js'
         '@PelagosAppBundle/Resources/public/js/entityList.js' %}
         {{ add_js(asset_url) }}
     {% endjavascripts %}
@@ -54,14 +68,14 @@
                 {"data": "datasetSubmission.id"}
             ]'
             data-order = '[
-                [ 2, "asc"]
+                [ 1, "desc"]
             ]'
             data-column-definitions = '[
             {
                 "targets": [ 0, 3 ],
                 "visible": false,
                 "searchable": false
-            },
+            }
             ]'
     >
         <thead>
