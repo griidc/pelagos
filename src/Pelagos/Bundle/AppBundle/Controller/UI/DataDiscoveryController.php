@@ -204,7 +204,8 @@ class DataDiscoveryController extends UIController
         //get logged in user's info
         $clientInfo = array(
             'sessionId' => $request->getSession()->getId(),
-            'clientIp' => $request->getClientIp()
+            'clientIp' => $request->getClientIp(),
+            'userAgent' => $request->headers->get('User-Agent')
         );
         $userType = get_class($this->getUser());
         switch ($userType) {
