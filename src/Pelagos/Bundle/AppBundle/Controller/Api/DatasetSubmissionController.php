@@ -161,7 +161,8 @@ class DatasetSubmissionController extends EntityController
     public function patchAction($id, Request $request)
     {
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
-        if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+
+        if (($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) && (!$request->request->has('restrictions')) && (1==!$request->request->count())) {
             throw new BadRequestHttpException('This submission has already been submitted');
         }
         $entityHandler = $this->container->get('pelagos.entity.handler');
