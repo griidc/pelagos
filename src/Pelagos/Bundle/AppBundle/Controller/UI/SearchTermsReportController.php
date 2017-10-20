@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class SearchTermsReportController extends ReportController
 {
-
+    //this combines with UDI to create http link to the dataland
     const DATASETLINK_PREFIX = 'https://data.gulfresearchinitiave.org/data/';
 
   /**
@@ -72,14 +72,14 @@ class SearchTermsReportController extends ReportController
                 '2ndTitle' => '',
                 '2ndLink' => ''
             );
-
-            if ($result['payLoad']['numResults'] > 1) {
+            $numResults = $result['payLoad']['numResults'];
+            if ($numResults > 1) {
                 $searchResults['1stScore'] = $result['payLoad']['results'][0]['score'];
                 $searchResults['1stUDI'] = $result['payLoad']['results'][0]['udi'];
                 $searchResults['1stTitle'] = $result['payLoad']['results'][0]['udi'];
                 $searchResults['1stLink'] = DATASETLINK_PREFIX . $result['payLoad']['results'][0]['udi'];
             }
-            if ($result['payLoad']['numResults'] > 2) {
+            if ($numResults > 2) {
                 $searchResults['2ndScore'] = $result['payLoad']['results'][1]['score'];
                 $searchResults['2ndUDI'] = $result['payLoad']['results'][1]['udi'];
                 $searchResults['2ndTitle'] = $result['payLoad']['results'][1]['udi'];
@@ -92,7 +92,7 @@ class SearchTermsReportController extends ReportController
                     'sessionID' => $result['payLoad']['clientInfo']['sessionId'],
                     'timeStamp' => $result['creationTimeStamp']->format(parent::INREPORT_TIMESTAMPFORMAT),
                     'searchTerms' => $result['payLoad']['filters']['textFilter'],
-                    'numResults' => $result['payLoad']['numResults']
+                    'numResults' => $numResults
                 ),
                 $searchResults
             );
