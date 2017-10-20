@@ -225,20 +225,20 @@ class DataDiscoveryController extends UIController
         //get the first 2 results (if available)
         $results = array();
         if ($numResults > 0) {
-            $results[] = [
+            $results[0] = [
                 'udi' => $searchResult[0]->getSource()['udi'],
                 'title' => $searchResult[0]->getSource()['title'],
                 'score' => $searchResult[0]->getScore()
             ];
         }
         if ($numResults > 1) {
-            $results[] = [
+            $results[1] = [
                 'udi' => $searchResult[1]->getSource()['udi'],
                 'title' => $searchResult[1]->getSource()['title'],
                 'score' => $searchResult[1]->getScore()
             ];
         }
-      //get filters
+        //get filters
         $filters = array(
             'textFilter' => !empty($request->query->get('filter')) ? $request->query->get('filter') : null ,
             'geoFilter' => !empty($request->query->get('geo_filter')) ? $request->query->get('geo_filter') : null,
