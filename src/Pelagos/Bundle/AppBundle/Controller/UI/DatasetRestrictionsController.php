@@ -6,7 +6,6 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
-
 /**
  * The Dataset Restrictions Modifier controller.
  *
