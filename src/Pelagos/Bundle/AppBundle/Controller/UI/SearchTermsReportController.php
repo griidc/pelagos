@@ -4,7 +4,9 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Pelagos\Entity\LogActionItem;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGenerator;
 
 /**
  * The GOMRI datasets report generator.
@@ -13,9 +15,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class SearchTermsReportController extends ReportController
 {
-    //this combines with UDI to create http link to the dataland
-    const DATASETLINK_PREFIX = 'https://data.gulfresearchinitiave.org/data/';
-
   /**
    * This is a parameterless report, so all is in the default action.
    *
@@ -29,7 +28,7 @@ class SearchTermsReportController extends ReportController
             return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
         }
         // Add header to CSV.
-        return $this->writeCsvResponse($this->getData());
+        return $this->writeCsvResponse($this->getData($request));
     }
 
     /**
@@ -72,18 +71,29 @@ class SearchTermsReportController extends ReportController
                 '2ndTitle' => '',
                 '2ndLink' => ''
             );
+
             $numResults = $result['payLoad']['numResults'];
             if ($numResults > 1) {
                 $searchResults['1stScore'] = $result['payLoad']['results'][0]['score'];
                 $searchResults['1stUDI'] = $result['payLoad']['results'][0]['udi'];
                 $searchResults['1stTitle'] = $result['payLoad']['results'][0]['udi'];
-                $searchResults['1stLink'] = DATASETLINK_PREFIX . $result['payLoad']['results'][0]['udi'];
+                $searchResults['1stLink'] = $this->container->get('router')
+                    ->generate(
+                        'pelagos_dataland',
+                        array('udi' => $searchResults['1stUDI']),
+                        UrlGenerator::ABSOLUTE_URL
+                    );
             }
             if ($numResults > 2) {
                 $searchResults['2ndScore'] = $result['payLoad']['results'][1]['score'];
                 $searchResults['2ndUDI'] = $result['payLoad']['results'][1]['udi'];
                 $searchResults['2ndTitle'] = $result['payLoad']['results'][1]['udi'];
-                $searchResults['2ndLink'] = DATASETLINK_PREFIX . $result['payLoad']['results'][1]['udi'];
+                $searchResults['2ndLink'] = $this->container->get('router')
+                    ->generate(
+                        'pelagos_dataland',
+                        array('udi' => $searchResults['2ndUDI']),
+                        UrlGenerator::ABSOLUTE_URL
+                    );
             }
 
             $dataArray[] = array_merge(

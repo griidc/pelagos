@@ -36,3 +36,7 @@ pelagos_geoviz:
 pelagos_metadata:
     path:     /metadata/{udi}
     defaults: { _controller: PelagosAppBundle:UI/Dataland:metadata }
+
+pelagos_dataland:
+    path: /data/{udi}
+    defaults: { _controller: PelagosAppBundle:UI/Dataland }
