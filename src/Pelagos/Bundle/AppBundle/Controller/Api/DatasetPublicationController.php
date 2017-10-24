@@ -180,6 +180,10 @@ class DatasetPublicationController extends EntityController
         $entityHandler = $this->get('pelagos.entity.handler');
         try {
             $entityHandler->create($dataPub);
+            // When a dataset to publication link is made the related dataset is reindex by Elastica.
+            // This is done because of the way their relationship works, and change is not detected.
+            $persister = $this->get('fos_elastica.object_persister.pelagos.dataset');
+            $persister->insertOne($dataPub->getDataset());
         } catch (UniqueConstraintViolationException $e) {
             if (preg_match('/uniq_dataset_publication/', $e->getMessage())) {
                 throw new BadRequestHttpException('Link already exists.');

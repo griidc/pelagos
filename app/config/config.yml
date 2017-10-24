@@ -241,7 +241,7 @@ fos_elastica:
                 dataset:
                     mappings:
                         udi: ~
-                        title: ~
+                        title: { boost: 3 }
                         abstract: ~
                         availabilityStatus: ~
                         identifiedStatus: ~
@@ -266,7 +266,13 @@ fos_elastica:
                                 datasetFileUri: ~
                                 datasetFileSize: ~
                                 restrictions: ~
+                                placeKeywords: { boost: 3 }
+                                themeKeywords: { boost: 3 }
                         doi:
+                            type: 'nested'
+                            properties:
+                                doi: { boost: 3 }
+                        publications:
                             type: 'nested'
                             properties:
                                 doi: { boost: 3 }

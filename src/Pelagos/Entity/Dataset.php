@@ -114,7 +114,7 @@ class Dataset extends Entity
     protected $identifiedStatus = DIF::STATUS_UNSUBMITTED;
 
     /**
-     * The dataset submission status of this Dataset.
+     * The latest saved dataset submission status.
      *
      * @var integer
      *
@@ -522,8 +522,12 @@ class Dataset extends Entity
     public function getPublications()
     {
         $collection = new ArrayCollection;
-        foreach ($this->getDatasetPublications() as $datasetPublication) {
-            $collection->add($datasetPublication->getPublication());
+        $datasetPublications = $this->getDatasetPublications();
+
+        if (null != $datasetPublications) {
+            foreach ($this->getDatasetPublications() as $datasetPublication) {
+                $collection->add($datasetPublication->getPublication());
+            }
         }
         return $collection;
     }
@@ -657,6 +661,46 @@ class Dataset extends Entity
     }
 
     /**
+     * Return a value that represents the status of the Dataset as understood in the work flow.
+     *
+     * @return string The value of the status like that tabulated in MDAPP
+     */
+    public function getStatus()
+    {
+        $difStatus = $this->getDif()->getStatus();
+        $metadataStatus = $this->getMetadataStatus();
+        $availabilityStatus = $this->getAvailabilityStatus();
+
+        $statusResult = 'NoDif';
+        if ($difStatus == DIF::STATUS_APPROVED) {
+            $statusResult = 'DIF';
+            if ($metadataStatus == DatasetSubmission::METADATA_STATUS_IN_REVIEW) {
+                $statusResult = 'In Review';
+            } elseif ($metadataStatus == DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
+                $statusResult = 'Back to Submitter';
+            } elseif ($metadataStatus == DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+                if ($availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED ||
+                    $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED) {
+                    $statusResult = 'Completed, Restricted';
+                } elseif ($availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE ||
+                    $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED) {
+                    $statusResult = 'Completed';
+                } else {
+                    $statusResult = 'DIF';
+                }
+            } elseif ($metadataStatus == DatasetSubmission::METADATA_STATUS_SUBMITTED) {
+                $statusResult = 'Submitted';
+            } else {
+                //  $difStatus == DIF::STATUS_APPROVED
+                $statusResult = 'DIF';
+            }
+        } else {
+            $statusResult = 'NoDif';
+        }
+        return $statusResult;
+    }
+
+    /**
      * Gets the Dataset's Primary Point of Contact Person.
      *
      * @throws \Exception If a Dataset Submission is encountered missing a contact.
@@ -685,6 +729,5 @@ class Dataset extends Entity
             // And if we don't have an approved DIF, return nothing.
             return null;
         }
-
     }
 }

@@ -136,7 +136,7 @@ class PublicationController extends EntityController
 
                 return $this->makeCreatedResponse('pelagos_api_publications_get', $publication->getId());
             // Does not exist in cache.  Pull from external DOI resolver, cache and return citation.
-            } elseif (count($publications == 0)) {
+            } elseif (count($publications) == 0) {
                 $citationStruct = $pubLinkUtil->fetchCitation($doi);
                 if (200 == $citationStruct['status']) {
                     $entityHandler = $this->get('pelagos.entity.handler');
