@@ -28,7 +28,7 @@ class SearchTermsReportController extends ReportController
             return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
         }
         // Add header to CSV.
-        return $this->writeCsvResponse($this->getData($request));
+        return $this->writeCsvResponse($this->getData());
     }
 
     /**
