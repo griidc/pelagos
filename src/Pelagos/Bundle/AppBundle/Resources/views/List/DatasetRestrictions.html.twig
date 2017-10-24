@@ -14,7 +14,6 @@
     '//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css',
     '//cdn.datatables.net/select/1.2.3/css/select.dataTables.min.css',
     '//cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css',
-    '//editor.datatables.net/extensions/Editor/css/editor.dataTables.min.css'
     ]
     )
     }}
@@ -24,7 +23,6 @@
     [
     '//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js',
     '//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js',
-    '//editor.datatables.net/extensions/Editor/js/dataTables.editor.min.js'
     ]
     )
     }}
@@ -36,9 +34,12 @@
 
     {% javascripts
         '@PelagosAppBundle/Resources/public/js/common.js'
-        '@PelagosAppBundle/Resources/public/js/dataset-restrictions.js' %}
+        '@PelagosAppBundle/Resources/public/js/dataset-restrictions.js'
+        '@FOSJsRoutingBundle/Resources/public/js/router.js'%}
         {{ add_js(asset_url) }}
     {% endjavascripts %}
+
+    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
 
 {% endblock %}
 
@@ -77,7 +78,6 @@
             <th>UDI</th>
             <th>Dataset Restriction</th>
             <th>Dataset Submission Id</th>
-            <th>Change Restriction</th>
         </tr>
         </thead>
         <tbody>

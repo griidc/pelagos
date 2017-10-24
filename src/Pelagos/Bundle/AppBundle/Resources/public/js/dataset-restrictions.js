@@ -4,11 +4,10 @@ $(document).ready(function(){
     $("#datasetRestrictionsTable").pelagosDataTable();
 });
 
-function restrictionChange() {
-
+function restrictionChange(id) {
     $.ajax({
         type: "POST",
-        url: Routing.generate("pelagos_app_ui_datasetrestrictions_post"),
+        url: Routing.generate("pelagos_datasetrestrictions",{"id": id}),
         data: {
             "restrictions": $('#selectRestriction').val()
         },
@@ -54,13 +53,20 @@ function restrictionChange() {
                     },
                     {
                         "render": function ( data, type, row ) {
-                            return "<select id='selectRestriction' onchange='restrictionChange()'>" +
-                                "<option></option>" +
-                                "<option value='Restricted'>Restricted</option>" +
-                                "<option value='None'>None</option>"+
-                                "</select> " ;
+                            if (data === 'Restricted') {
+                                return "<select id='selectRestriction' onchange='restrictionChange(" + row.datasetSubmission.id +")'>" +
+                                    "<option value='Restricted'>" + data + "</option>" +
+                                    "<option value='None'> None </option>"+
+                                    "</select> " ;
+                            } else {
+                                return "<select id='selectRestriction' onchange='restrictionChange(" + row.datasetSubmission.id +")'>" +
+                                    "<option value='None'>"+ data + " </option>"+
+                                    "<option value='Restricted'> Restricted </option>" +
+                                    "</select> " ;
+                            }
+
                         },
-                        "targets": 4
+                        "targets": 2
 
                     }
                 ]
