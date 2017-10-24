@@ -4,6 +4,20 @@ $(document).ready(function(){
     $("#datasetRestrictionsTable").pelagosDataTable();
 });
 
+function restrictionChange() {
+
+    $.ajax({
+        type: "POST",
+        url: Routing.generate("pelagos_app_ui_datasetrestrictions_post"),
+        data: {
+            "restrictions": $('#selectRestriction').val()
+        },
+        success: function () {
+            $("#datasetRestrictionsTable").DataTable().ajax.reload();
+        }
+    });
+}
+
 (function($) {
     "use strict";
     $.fn.pelagosDataTable = function(options) {
@@ -34,16 +48,16 @@ $(document).ready(function(){
                 "select": "single",
                 "columnDefs": [
                     {
-                        "targets": [ 0, 3 ],
+                        "targets": [ 0 ],
                         "visible": false,
                         "searchable": false
                     },
                     {
                         "render": function ( data, type, row ) {
-                            return "<select>" +
+                            return "<select id='selectRestriction' onchange='restrictionChange()'>" +
                                 "<option></option>" +
                                 "<option value='Restricted'>Restricted</option>" +
-                                "<option value='None'>None</option>"
+                                "<option value='None'>None</option>"+
                                 "</select> " ;
                         },
                         "targets": 4
@@ -53,11 +67,6 @@ $(document).ready(function(){
             }, options
             )
         );
-
-        // Activate the bubble editor on click of a table cell
-        $('#datasetRestrictionsTable').on( 'click', 'tbody td:not(:first-child)', function (e) {
-            editor.bubble( this );
-        } );
 
     };
 }(jQuery));

@@ -3,6 +3,7 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
+use Elastica\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
@@ -30,5 +31,27 @@ class DatasetRestrictionsController extends UIController
        // TODO Need to create a new twig for the dataset restrictions and return that twig //
         $GLOBALS['pelagos']['title'] = 'Dataset Restrictions Modifier';
         return $this->render('PelagosAppBundle:List:DatasetRestrictions.html.twig');
+    }
+
+
+    /**
+     *
+     * @Route("/{id}")
+     *
+     * @Method("POST")
+     *
+     * @param Request       $request     Symfony Request object
+     * @param string|null   $id          Dataset Submission ID
+     * @return int                       HTTP Response status code
+     */
+    public function postAction(Request $request, $id)
+    {
+        $entityHandler = $this->container->get('pelagos.entity.handler');
+        $datasetSubmission = $this->handleUpdate(DatasetSubmissionType::class, DatasetSubmission::class, $id, $request, 'POST');
+        foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+            $entityHandler->update($datasetContact);
+        }
+
+        return http_response_code(204);
     }
 }
