@@ -85,13 +85,27 @@ class DataDiscoveryController extends UIController
         //run a query without availability status & log search terms
         if ($textFilter != null || $geoFilter != null) {
             $searchTermsQueryResult = $datasetIndex->search(
-                $criteria,
+                array_merge(
+                    $criteria,
+                    array('availabilityStatus' => array(
+                        DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
+                        DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
+                        DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED,
+                        DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
+                        DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL,
+                        DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE,
+                        DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION,
+                        ),
+                        'identifiedStatus' => array(
+                            DIF::STATUS_APPROVED
+                        )
+                    )
+                ),
                 $textFilter,
                 $geoFilter
             );
             $this->dispatchSearchTermsLogEvent($request, $searchTermsQueryResult);
         }
-
         return $this->render(
             'PelagosAppBundle:DataDiscovery:datasets.html.twig',
             array(
