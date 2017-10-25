@@ -4,9 +4,12 @@
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Pelagos\Bundle\AppBundle\Controller\Api\EntityController;
+use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Exception\PersistenceException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Pelagos\Entity\Entity;
 
 /**
  * The Dataset Restrictions Modifier controller.
@@ -48,9 +51,19 @@ class DatasetRestrictionsController extends EntityController
     public function postAction(Request $request, $id)
     {
         $entityHandler = $this->container->get('pelagos.entity.handler');
-        $datasetSubmission = $this->handleUpdate(DatasetSubmissionType::class, DatasetSubmission::class, $id, $request, 'POST');
-        foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
-            $entityHandler->update($datasetContact);
+        $entityClass = DatasetSubmission::class;
+        $entity = $this->handleGetOne($entityClass, $id);
+
+        if ($request->request->get('restrictions')){
+            $entity->setRestrictions($request->request->get('restrictions'));
+        }
+
+        try {
+
+            $entityHandler->update($entity);
+
+        }catch (PersistenceException $exception){
+            throw new PersistenceException($exception->getMessage());
         }
 
         return http_response_code(204);

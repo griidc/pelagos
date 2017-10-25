@@ -8,12 +8,25 @@ function restrictionChange(value, datasetSubmissionId) {
     $.ajax({
         type: "POST",
         url: Routing.generate("pelagos_datasetrestrictions",{"id": datasetSubmissionId}),
-        contentType: 'application/json; charset=UTF-8',
-        data: {
-            "restrictions": value
-        },
+        dataType: 'json',
+        data: {restrictions: value},
         success: function () {
             $("#datasetRestrictionsTable").DataTable().ajax.reload();
+            var n = noty(
+                {
+                    layout: "top",
+                    theme: "relax",
+                    type: "success",
+                    text: "Restrictions have been updated.",
+                    timeout: 4000,
+                    modal: false,
+                    animation: {
+                        open: "animated fadeIn", // Animate.css class names
+                        close: "animated fadeOut", // Animate.css class names
+                        easing: "swing", // unavailable - no need
+                        speed: 500 // unavailable - no need
+                    }
+                });
         }
     });
 }
