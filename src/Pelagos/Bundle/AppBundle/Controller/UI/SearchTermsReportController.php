@@ -79,7 +79,7 @@ class SearchTermsReportController extends ReportController
                 $searchResults['1stTitle'] = $result['payLoad']['results'][0]['udi'];
                 $searchResults['1stLink'] = $this->container->get('router')
                     ->generate(
-                        'pelagos_dataland',
+                        'pelagos_app_ui_dataland_default',
                         array('udi' => $searchResults['1stUDI']),
                         UrlGenerator::ABSOLUTE_URL
                     );
@@ -90,7 +90,7 @@ class SearchTermsReportController extends ReportController
                 $searchResults['2ndTitle'] = $result['payLoad']['results'][1]['udi'];
                 $searchResults['2ndLink'] = $this->container->get('router')
                     ->generate(
-                        'pelagos_dataland',
+                        'pelagos_app_ui_dataland_default',
                         array('udi' => $searchResults['2ndUDI']),
                         UrlGenerator::ABSOLUTE_URL
                     );
