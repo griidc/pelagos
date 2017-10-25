@@ -173,11 +173,6 @@ class DatasetDownloadReportController extends ReportController
                             = $primaryPointOfContact
                             ->getEmailAddress();
                     }
-                    else
-                    {
-                        $dataArray[$currentIndex]['primaryPointOfContact'] = '';
-                        $dataArray[$currentIndex]['primaryPointOfContactEmail'] = '';
-                    }
                 }
             }
             //count user downloads and total download
