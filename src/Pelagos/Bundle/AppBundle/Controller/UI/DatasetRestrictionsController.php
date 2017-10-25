@@ -42,13 +42,14 @@ class DatasetRestrictionsController extends EntityController
      * This updates the dataset submission restrictions property.Dataset Submission PATCH API exists,
      * but doesn't work with Symfony.
      *
+     * @param Request $request HTTP Symfony Request object.
+     * @param string  $id      Dataset Submission ID.
+     *
      * @Route("/{id}")
      *
      * @Method("POST")
      *
-     * @param  Request $request HTTP Symfony Request object.
-     * @param  string  $id      Dataset Submission ID.
-     * @throws PersistenceException
+     * @throws PersistenceException Exception thrown when update fails.
      * @return int HTTP Response status code.
      */
     public function postAction(Request $request, $id)
