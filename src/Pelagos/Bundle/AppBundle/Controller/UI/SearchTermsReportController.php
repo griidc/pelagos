@@ -76,7 +76,7 @@ class SearchTermsReportController extends ReportController
             if ($numResults > 1) {
                 $searchResults['1stScore'] = $result['payLoad']['results'][0]['score'];
                 $searchResults['1stUDI'] = $result['payLoad']['results'][0]['udi'];
-                $searchResults['1stTitle'] = $result['payLoad']['results'][0]['udi'];
+                $searchResults['1stTitle'] = $result['payLoad']['results'][0]['title'];
                 $searchResults['1stLink'] = $this->container->get('router')
                     ->generate(
                         'pelagos_app_ui_dataland_default',
@@ -87,7 +87,7 @@ class SearchTermsReportController extends ReportController
             if ($numResults > 2) {
                 $searchResults['2ndScore'] = $result['payLoad']['results'][1]['score'];
                 $searchResults['2ndUDI'] = $result['payLoad']['results'][1]['udi'];
-                $searchResults['2ndTitle'] = $result['payLoad']['results'][1]['udi'];
+                $searchResults['2ndTitle'] = $result['payLoad']['results'][1]['title'];
                 $searchResults['2ndLink'] = $this->container->get('router')
                     ->generate(
                         'pelagos_app_ui_dataland_default',
