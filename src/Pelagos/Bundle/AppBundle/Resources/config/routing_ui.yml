@@ -61,8 +61,8 @@ pelagos_report_researchgroup_dataset_dif_controller_ui:
 pelagos_gomri_reports_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\GomriReportController
 
-pelagos_download_report_ui:
-    resource: Pelagos\Bundle\AppBundle\Controller\UI\DownloadReportController
-
 pelagos_dataset_restrictions_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\DatasetRestrictionsController
+
+pelagos_dataset_download_report_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\DatasetDownloadReportController
