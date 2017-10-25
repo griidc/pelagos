@@ -13,6 +13,7 @@ use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\LogActionItem;
 use Pelagos\Entity\Metadata;
+use Pelagos\Entity\Person;
 use Pelagos\Exception\InvalidDateSelectedException;
 
 use Pelagos\Util\ISOMetadataExtractorUtil;
@@ -161,11 +162,17 @@ class DatasetDownloadReportController extends ReportController
                         $this->getDoctrine()->getManager()
                     );
                     $dataset->setDatasetSubmission($datasetSubmission);
-                    $dataArray[$currentIndex]['primaryPointOfContact']
-                        = $dataset->getPrimaryPointOfContact()->getLastName() .
-                        ', ' . $dataset->getPrimaryPointOfContact()->getFirstName();
-                    $dataArray[$currentIndex]['primaryPointOfContactEmail']
-                        = $dataset->getPrimaryPointOfContact()->getEmailAddress();
+                    $primaryPointOfContact = $dataset->getPrimaryPointOfContact();
+
+                    if($primaryPointOfContact instanceof Person) {
+                        $dataArray[$currentIndex]['primaryPointOfContact']
+                            = $primaryPointOfContact->getLastName() .
+                            ', ' . $primaryPointOfContact
+                            ->getFirstName();
+                        $dataArray[$currentIndex]['primaryPointOfContactEmail']
+                            = $primaryPointOfContact
+                            ->getEmailAddress();
+                    }
                 }
             }
             //count user downloads and total download
