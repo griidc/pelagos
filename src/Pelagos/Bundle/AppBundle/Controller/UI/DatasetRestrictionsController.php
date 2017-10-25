@@ -3,10 +3,10 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
-use Elastica\Request;
 use Pelagos\Bundle\AppBundle\Controller\Api\EntityController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * The Dataset Restrictions Modifier controller.
@@ -41,11 +41,11 @@ class DatasetRestrictionsController extends EntityController
      *
      * @Method("POST")
      *
-     * @param Request       $request     Symfony Request object
+     * @param Request       $request     HTTP Symfony Request object
      * @param string|null   $id          Dataset Submission ID
      * @return int                       HTTP Response status code
      */
-    public function postAction($id, Request $request)
+    public function postAction(Request $request, $id)
     {
         $entityHandler = $this->container->get('pelagos.entity.handler');
         $datasetSubmission = $this->handleUpdate(DatasetSubmissionType::class, DatasetSubmission::class, $id, $request, 'POST');

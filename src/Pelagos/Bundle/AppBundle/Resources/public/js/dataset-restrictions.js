@@ -4,12 +4,13 @@ $(document).ready(function(){
     $("#datasetRestrictionsTable").pelagosDataTable();
 });
 
-function restrictionChange(id) {
+function restrictionChange(value, datasetSubmissionId) {
     $.ajax({
         type: "POST",
-        url: Routing.generate("pelagos_datasetrestrictions",{"id": id}),
+        url: Routing.generate("pelagos_datasetrestrictions",{"id": datasetSubmissionId}),
+        contentType: 'application/json; charset=UTF-8',
         data: {
-            "restrictions": $('#selectRestriction').val()
+            "restrictions": value
         },
         success: function () {
             $("#datasetRestrictionsTable").DataTable().ajax.reload();
@@ -54,12 +55,12 @@ function restrictionChange(id) {
                     {
                         "render": function ( data, type, row ) {
                             if (data === 'Restricted') {
-                                return "<select id='selectRestriction' onchange='restrictionChange(" + row.datasetSubmission.id +")'>" +
+                                return "<select id='selectRestriction' onchange='restrictionChange(value," + row.datasetSubmission.id +")'>" +
                                     "<option value='Restricted'>" + data + "</option>" +
                                     "<option value='None'> None </option>"+
                                     "</select> " ;
                             } else {
-                                return "<select id='selectRestriction' onchange='restrictionChange(" + row.datasetSubmission.id +")'>" +
+                                return "<select id='selectRestriction' onchange='restrictionChange(value," + row.datasetSubmission.id +")'>" +
                                     "<option value='None'>"+ data + " </option>"+
                                     "<option value='Restricted'> Restricted </option>" +
                                     "</select> " ;
