@@ -7,7 +7,7 @@ $(document).ready(function(){
 function restrictionChange(value, datasetSubmissionId) {
     $.ajax({
         type: "POST",
-        url: Routing.generate("pelagos_datasetrestrictions",{"id": datasetSubmissionId}),
+        url: Routing.generate("pelagos_app_ui_datasetrestrictions_post",{"id": datasetSubmissionId}),
         dataType: "json",
         data: {restrictions: value},
         success: function () {

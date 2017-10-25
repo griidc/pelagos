@@ -36,7 +36,3 @@ pelagos_geoviz:
 pelagos_metadata:
     path:     /metadata/{udi}
     defaults: { _controller: PelagosAppBundle:UI/Dataland:metadata }
-
-pelagos_datasetrestrictions:
-    path: /dataset-restrictions/{id}
-    defaults: { _controller: PelagosAppBundle:UI/DatasetRestrictions:post}
