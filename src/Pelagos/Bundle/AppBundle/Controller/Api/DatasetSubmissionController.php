@@ -161,7 +161,6 @@ class DatasetSubmissionController extends EntityController
     public function patchAction($id, Request $request)
     {
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
-
         if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
             throw new BadRequestHttpException('This submission has already been submitted');
         }
