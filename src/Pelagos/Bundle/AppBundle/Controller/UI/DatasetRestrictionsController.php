@@ -9,7 +9,6 @@ use Pelagos\Exception\PersistenceException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Pelagos\Entity\Entity;
 
 /**
  * The Dataset Restrictions Modifier controller.
