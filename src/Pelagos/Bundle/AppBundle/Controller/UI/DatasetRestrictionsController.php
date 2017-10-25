@@ -32,21 +32,24 @@ class DatasetRestrictionsController extends EntityController
             return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
         }
 
-       // TODO Need to create a new twig for the dataset restrictions and return that twig //
         $GLOBALS['pelagos']['title'] = 'Dataset Restrictions Modifier';
         return $this->render('PelagosAppBundle:List:DatasetRestrictions.html.twig');
     }
 
-
     /**
+     * Update restrictions for the dataset.
+     *
+     * This updates the dataset submission restrictions property.Dataset Submission PATCH API exists,
+     * but doesn't work with Symfony.
      *
      * @Route("/{id}")
      *
      * @Method("POST")
      *
-     * @param Request       $request     HTTP Symfony Request object
-     * @param string|null   $id          Dataset Submission ID
-     * @return int                       HTTP Response status code
+     * @param  Request $request HTTP Symfony Request object.
+     * @param  string  $id      Dataset Submission ID.
+     * @throws PersistenceException
+     * @return int HTTP Response status code.
      */
     public function postAction(Request $request, $id)
     {
@@ -54,7 +57,7 @@ class DatasetRestrictionsController extends EntityController
         $entityClass = DatasetSubmission::class;
         $entity = $this->handleGetOne($entityClass, $id);
 
-        if ($request->request->get('restrictions')){
+        if ($request->request->get('restrictions')) {
             $entity->setRestrictions($request->request->get('restrictions'));
         }
 
@@ -62,7 +65,7 @@ class DatasetRestrictionsController extends EntityController
 
             $entityHandler->update($entity);
 
-        }catch (PersistenceException $exception){
+        } catch (PersistenceException $exception) {
             throw new PersistenceException($exception->getMessage());
         }
 
