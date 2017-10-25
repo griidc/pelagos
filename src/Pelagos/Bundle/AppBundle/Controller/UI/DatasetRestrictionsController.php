@@ -54,11 +54,11 @@ class DatasetRestrictionsController extends EntityController
     public function postAction(Request $request, $id)
     {
         $entityHandler = $this->container->get('pelagos.entity.handler');
-        $entityClass = DatasetSubmission::class;
-        $entity = $this->handleGetOne($entityClass, $id);
+        $entity = $this->handleGetOne(DatasetSubmission::class, $id);
+        $restrictionKey = $request->request->get('restrictions');
 
-        if ($request->request->get('restrictions')) {
-            $entity->setRestrictions($request->request->get('restrictions'));
+        if ($restrictionKey) {
+            $entity->setRestrictions($restrictionKey);
         }
 
         try {
