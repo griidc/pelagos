@@ -11,7 +11,7 @@ function restrictionChange(value, datasetSubmissionId) {
         dataType: "json",
         data: {restrictions: value},
         success: function () {
-            $("#datasetRestrictionsTable").DataTable().ajax.reload();
+            $("#datasetRestrictionsTable").DataTable().ajax.reload(null, false);
             var n = noty(
                 {
                     layout: "top",
