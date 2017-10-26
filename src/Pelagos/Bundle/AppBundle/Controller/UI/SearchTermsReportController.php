@@ -73,7 +73,7 @@ class SearchTermsReportController extends ReportController
             );
 
             $numResults = $result['payLoad']['numResults'];
-            if ($numResults > 1) {
+            if ($numResults > 0) {
                 $searchResults['1stScore'] = $result['payLoad']['results'][0]['score'];
                 $searchResults['1stUDI'] = $result['payLoad']['results'][0]['udi'];
                 $searchResults['1stTitle'] = $result['payLoad']['results'][0]['title'];
