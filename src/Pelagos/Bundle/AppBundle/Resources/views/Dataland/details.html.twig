@@ -28,7 +28,9 @@
 </div>
 {% endif %}
 
-<h2>Dataset Downloads:</h2>
-<div>
-{{downloads|default}}
-</div>
+{% if downloads is not null %}
+    <h2>Dataset Downloads:</h2>
+    <div>
+        {{downloads}}
+    </div>
+{% endif %}
