@@ -59,16 +59,20 @@ class DatasetRestrictionsController extends EntityController
 
         if ($restrictionKey) {
             $entity->setRestrictions($restrictionKey);
+
+            try {
+
+                $entityHandler->update($entity);
+
+            } catch (PersistenceException $exception) {
+                throw new PersistenceException($exception->getMessage());
+            }
+
+            // Send 204(okay) if the restriction key is not null and updated is successful
+            return http_response_code(204);
         }
+        // Send 500 response code if restriction key is null
 
-        try {
-
-            $entityHandler->update($entity);
-
-        } catch (PersistenceException $exception) {
-            throw new PersistenceException($exception->getMessage());
-        }
-
-        return http_response_code(204);
+        return http_response_code(500);
     }
 }
