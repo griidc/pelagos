@@ -9,6 +9,7 @@ use Pelagos\Exception\PersistenceException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * The Dataset Restrictions Modifier controller.
@@ -49,7 +50,7 @@ class DatasetRestrictionsController extends EntityController
      * @Method("POST")
      *
      * @throws PersistenceException Exception thrown when update fails.
-     * @return int HTTP Response status code.
+     * @return int HTTP Response status code
      */
     public function postAction(Request $request, $id)
     {
@@ -68,11 +69,11 @@ class DatasetRestrictionsController extends EntityController
                 throw new PersistenceException($exception->getMessage());
             }
 
-            // Send 204(okay) if the restriction key is not null and updated is successful
-            return http_response_code(204);
+        } else{
+            // Send 500 response code if restriction key is null
+            throw new BadRequestHttpException('Restiction key is null');
         }
-        // Send 500 response code if restriction key is null
-
-        return http_response_code(500);
+        // Send 204(okay) if the restriction key is not null and updated is successful
+        return http_response_code(204);
     }
 }
