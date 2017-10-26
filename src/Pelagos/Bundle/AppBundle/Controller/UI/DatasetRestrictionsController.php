@@ -50,6 +50,7 @@ class DatasetRestrictionsController extends EntityController
      * @Method("POST")
      *
      * @throws PersistenceException Exception thrown when update fails.
+     * @throws BadRequestHttpException Exception thrown when restriction key is null.
      * @return int HTTP Response status code
      */
     public function postAction(Request $request, $id)
@@ -69,7 +70,7 @@ class DatasetRestrictionsController extends EntityController
                 throw new PersistenceException($exception->getMessage());
             }
 
-        } else{
+        } else {
             // Send 500 response code if restriction key is null
             throw new BadRequestHttpException('Restiction key is null');
         }
