@@ -51,7 +51,7 @@ class DatasetRestrictionsController extends EntityController
      *
      * @throws PersistenceException Exception thrown when update fails.
      * @throws BadRequestHttpException Exception thrown when restriction key is null.
-     * @return int HTTP Response status code
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function postAction(Request $request, $id)
     {
@@ -75,6 +75,6 @@ class DatasetRestrictionsController extends EntityController
             throw new BadRequestHttpException('Restiction key is null');
         }
         // Send 204(okay) if the restriction key is not null and updated is successful
-        return http_response_code(204);
+        return $this->makeNoContentResponse();
     }
 }

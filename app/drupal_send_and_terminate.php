@@ -50,6 +50,7 @@ if (in_array(
         'pelagos_app_gml_towkt',
         'pelagos_app_gml_fromwkt',
         'pelagos_metadata',
+        'pelagos_app_ui_datasetrestrictions_post',
     )
 )) {
     $response->send();
