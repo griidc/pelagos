@@ -189,7 +189,7 @@ $(function() {
         } else {
             $("#btn-previous").button("enable");
         }
-        if (activeTab == 6) {
+        if (activeTab == 5) {
             $("#btn-next").button("disable");
         } else {
             $("#btn-next").button("enable");
