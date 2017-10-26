@@ -984,6 +984,8 @@ $(function() {
             return a-b;
         });
     }
+
+    $("#btn-previous").hide();
 });
 
 function checkSpatial(isNonSpatial) {
@@ -997,3 +999,4 @@ function checkSpatial(isNonSpatial) {
         $("#spatialExtras").show().find(":input").attr("required", "required");
     }
 }
+
