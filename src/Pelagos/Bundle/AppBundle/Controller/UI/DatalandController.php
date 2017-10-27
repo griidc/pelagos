@@ -76,17 +76,28 @@ class DatalandController extends UIController
             $dataset->setDatasetSubmission($datasetSubmission);
         }
 
-        $qb = $this->get('doctrine')->getManager()->createQueryBuilder();
-        $qb->select($qb->expr()->count('a'))
-            ->from('\Pelagos\Entity\LogActionItem', 'a')
-            ->where('a.subjectEntityId = ?1')
-            ->andwhere('a.subjectEntityName = ?2')
-            ->andwhere('a.actionName = ?3')
-            ->setParameter(1, $dataset->getId())
-            ->setParameter(2, 'Pelagos\Entity\Dataset')
-            ->setParameter(3, 'File Download');
-        $query = $qb->getQuery();
-        $downloadCount = $query->getSingleScalarResult();
+        $downloadCount = null;
+        // Remotely hosted datasets are normally also hosted locally anyway, so including.
+        if (in_array(
+            $dataset->getAvailabilityStatus(),
+            array(
+                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
+                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED
+            )
+        )
+        ) {
+            $qb = $this->get('doctrine')->getManager()->createQueryBuilder();
+            $qb->select($qb->expr()->count('a'))
+                ->from('\Pelagos\Entity\LogActionItem', 'a')
+                ->where('a.subjectEntityId = ?1')
+                ->andwhere('a.subjectEntityName = ?2')
+                ->andwhere('a.actionName = ?3')
+                ->setParameter(1, $dataset->getId())
+                ->setParameter(2, 'Pelagos\Entity\Dataset')
+                ->setParameter(3, 'File Download');
+            $query = $qb->getQuery();
+            $downloadCount = $query->getSingleScalarResult();
+        }
 
         return $this->render(
             'PelagosAppBundle:Dataland:index.html.twig',
