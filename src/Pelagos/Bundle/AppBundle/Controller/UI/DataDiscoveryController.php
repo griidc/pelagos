@@ -83,7 +83,7 @@ class DataDiscoveryController extends UIController
         $datasetIndex = $this->get('pelagos.util.dataset_index');
 
         //run a query without availability status & log search terms
-        if ($textFilter != null || $geoFilter != null) {
+        if (($textFilter != null && strlen(trim($textFilter)) > 0) || $geoFilter != null) {
             $searchTermsQueryResult = $datasetIndex->search(
                 array_merge(
                     $criteria,
@@ -241,14 +241,15 @@ class DataDiscoveryController extends UIController
             $results[0] = [
                 'udi' => $searchResult[0]->getSource()['udi'],
                 'title' => $searchResult[0]->getSource()['title'],
-                'score' => $searchResult[0]->getScore()
+                'score' => empty($searchResult[0]->getScore()) ? 0 : $searchResult[0]->getScore()
+                 //search without a search term will return 0 score instead of an empty array
             ];
         }
         if ($numResults > 1) {
             $results[1] = [
                 'udi' => $searchResult[1]->getSource()['udi'],
                 'title' => $searchResult[1]->getSource()['title'],
-                'score' => $searchResult[1]->getScore()
+                'score' => empty($searchResult[1]->getScore()) ? 0 : $searchResult[1]->getScore()
             ];
         }
         //get filters
