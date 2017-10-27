@@ -66,3 +66,6 @@ pelagos_dataset_restrictions_ui:
 
 pelagos_dataset_download_report_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\DatasetDownloadReportController
+
+pelagos_search_terms_report_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\SearchTermsReportController
