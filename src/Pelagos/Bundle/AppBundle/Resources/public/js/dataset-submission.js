@@ -186,12 +186,16 @@ $(function() {
         var activeTab = $("#dtabs").tabs("option","active");
         if (activeTab == 0) {
             $("#btn-previous").button("disable");
+            $("#btn-previous").hide();
         } else {
+            $("#btn-previous").show();
             $("#btn-previous").button("enable");
         }
-        if (activeTab == 6) {
+        if (activeTab == 5) {
             $("#btn-next").button("disable");
+            $("#btn-next").hide();
         } else {
+            $("#btn-next").show();
             $("#btn-next").button("enable");
         }
         saveDatasetSubmission();
@@ -980,6 +984,8 @@ $(function() {
             return a-b;
         });
     }
+
+    $("#btn-previous").hide();
 });
 
 function checkSpatial(isNonSpatial) {
@@ -993,3 +999,4 @@ function checkSpatial(isNonSpatial) {
         $("#spatialExtras").show().find(":input").attr("required", "required");
     }
 }
+
