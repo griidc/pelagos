@@ -52,8 +52,6 @@ function restrictionChange(value, datasetSubmissionId) {
             $.merge(options.columnDefs, columnDefinitions);
         }
 
-        var self = this;
-
         $(this).find(".buttons").attr("colspan", $(this).find("th").length);
 
         var table = $(this).DataTable($.extend(true, {
