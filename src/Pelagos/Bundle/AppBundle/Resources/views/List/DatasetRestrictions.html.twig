@@ -1,0 +1,84 @@
+{% extends "PelagosAppBundle::layout.html.twig" %}
+
+
+{% block head %}
+    {{ add_library (
+        [
+            'ui.dialog'
+        ]
+    ) }}
+
+    {{ add_css (
+        [
+            '//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css',
+            '//cdn.datatables.net/select/1.2.3/css/select.dataTables.min.css',
+            '//cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css',
+            '//cdnjs.cloudflare.com/ajax/libs/animate.css/3.3.0/animate.min.css',
+        ]
+    ) }}
+
+    {{ add_js(
+        [
+            '//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js',
+            '//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js',
+            '//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js',
+        ]
+    ) }}
+
+    {% stylesheets
+        '@PelagosAppBundle/Resources/public/css/entity.css' %}
+            {{ add_css(asset_url) }}
+    {% endstylesheets %}
+
+    {% javascripts
+        '@PelagosAppBundle/Resources/public/js/common.js'
+        '@PelagosAppBundle/Resources/public/js/dataset-restrictions.js'
+        '@FOSJsRoutingBundle/Resources/public/js/router.js' %}
+            {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
+
+{% endblock %}
+
+{% set properties = [
+'id',
+'udi',
+'datasetSubmission.restrictions',
+'datasetSubmission.id',
+] %}
+
+{% block body %}
+    <h2> Dataset Restrictions - Modifier</h2>
+    <table
+            id="datasetRestrictionsTable"
+            class="stripe"
+            width="100%"
+            data-ajax='{
+                "url": "{{ path("pelagos_api_datasets_get_collection", {"datasetSubmission": "*", "_properties": properties | join(',')}) }}",
+                "dataSrc": "",
+                "cache": true
+            }'
+            data-columns='[
+                {"data": "id"},
+                {"data": "udi"},
+                {"data": "datasetSubmission.restrictions"},
+                {"data": "datasetSubmission.id"}
+            ]'
+            data-order='[
+                [ 1, "desc"]
+            ]'
+    >
+        <thead>
+        <tr>
+            <th>Dataset Id</th>
+            <th>UDI</th>
+            <th>Dataset Restriction</th>
+            <th>Dataset Submission Id</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+{% endblock %}
