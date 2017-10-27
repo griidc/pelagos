@@ -2,6 +2,7 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
+use DateTime;
 use Pelagos\Entity\LogActionItem;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +16,9 @@ use Symfony\Component\Routing\Generator\UrlGenerator;
  */
 class SearchTermsReportController extends ReportController
 {
+    //timestamp used in filename
+    const FILENAME_TIMESTAMPFORMAT = 'm-d-Y_Hi';
+
   /**
    * This is a parameterless report, so all is in the default action.
    *
@@ -27,8 +31,15 @@ class SearchTermsReportController extends ReportController
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
         }
+
         // Add header to CSV.
-        return $this->writeCsvResponse($this->getData());
+        return $this->writeCsvResponse(
+            $this->getData(),
+            'SearchTermsReport-' . (
+                new DateTime('now', new \DateTimeZone('UTC'))
+            )
+                ->format(self::FILENAME_TIMESTAMPFORMAT) . '.csv'
+        );
     }
 
     /**
@@ -53,7 +64,7 @@ class SearchTermsReportController extends ReportController
         $entityManager = $container->get('doctrine')->getManager();
         //Query
         $queryString = 'SELECT log.creationTimeStamp, log.payLoad from ' .
-          LogActionItem::class . ' log where log.actionName = :actionName';
+          LogActionItem::class . ' log where log.actionName = :actionName order by log.creationTimeStamp DESC';
         $query = $entityManager->createQuery($queryString);
         $query->setParameters(['actionName' => 'Search']);
         $results = $query->getResult();
@@ -107,6 +118,6 @@ class SearchTermsReportController extends ReportController
                 $searchResults
             );
         }
-        return array_merge($this->getDefaultHeaders(), $labels, $dataArray);
+        return array_merge($labels, $dataArray);
     }
 }
