@@ -241,7 +241,7 @@ class DataDiscoveryController extends UIController
             $results[0] = [
                 'udi' => $searchResult[0]->getSource()['udi'],
                 'title' => $searchResult[0]->getSource()['title'],
-                'score' => is_array($searchResult[0]->getScore()) ? 0 : $searchResult[0]->getScore()
+                'score' => empty($searchResult[0]->getScore()) ? 0 : $searchResult[0]->getScore()
                  //search without a search term will return 0 score instead of an empty array
             ];
         }
@@ -249,7 +249,7 @@ class DataDiscoveryController extends UIController
             $results[1] = [
                 'udi' => $searchResult[1]->getSource()['udi'],
                 'title' => $searchResult[1]->getSource()['title'],
-                'score' => is_array($searchResult[1]->getScore()) ? 0 : $searchResult[1]->getScore()
+                'score' => empty($searchResult[1]->getScore()) ? 0 : $searchResult[1]->getScore()
             ];
         }
         //get filters
