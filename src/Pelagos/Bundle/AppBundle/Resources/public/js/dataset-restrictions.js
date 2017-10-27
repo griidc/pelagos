@@ -5,13 +5,17 @@ $(document).ready(function(){
 });
 
 function restrictionChange(value, datasetSubmissionId) {
+
+    var selectRestrictionId = $("#selectRestriction_" + datasetSubmissionId);
+    selectRestrictionId.hide();
     $.ajax({
         type: "POST",
         url: Routing.generate("pelagos_app_ui_datasetrestrictions_post",{"id": datasetSubmissionId}),
         dataType: "json",
         data: {restrictions: value},
         success: function () {
-            $("#datasetRestrictionsTable").DataTable().ajax.reload(null, false);
+            selectRestrictionId.val(value);
+            selectRestrictionId.fadeIn();
             var n = noty(
                 {
                     layout: "top",
@@ -68,15 +72,15 @@ function restrictionChange(value, datasetSubmissionId) {
                     {
                         "render": function (data, type, row) {
                             if (data === "Restricted") {
-                                return "<select id='selectRestriction' onchange='restrictionChange(value," + row.datasetSubmission.id +")'>" +
+                                return "<div><select id='selectRestriction_" + row.datasetSubmission.id + "' onchange='restrictionChange(value," + row.datasetSubmission.id +")'>" +
                                     "<option value='Restricted'>" + data + "</option>" +
                                     "<option value='None'> None </option>"+
-                                    "</select> " ;
+                                    "</select></div> " ;
                             } else {
-                                return "<select id='selectRestriction' onchange='restrictionChange(value," + row.datasetSubmission.id +")'>" +
+                                return "<div><select id='selectRestriction_" + row.datasetSubmission.id + "' onchange='restrictionChange(value," + row.datasetSubmission.id +")'>" +
                                     "<option value='None'>"+ data + " </option>"+
                                     "<option value='Restricted'> Restricted </option>" +
-                                    "</select> " ;
+                                    "</select></div> " ;
                             }
 
                         },
