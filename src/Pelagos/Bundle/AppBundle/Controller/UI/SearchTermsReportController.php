@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Generator\UrlGenerator;
 class SearchTermsReportController extends ReportController
 {
     //timestamp used in filename
-    const FILENAME_TIMESTAMPFORMAT = 'm-d-Y_Hi';
+    const FILENAME_TIMESTAMPFORMAT = 'Y-m-d_Hi';
 
   /**
    * This is a parameterless report, so all is in the default action.
