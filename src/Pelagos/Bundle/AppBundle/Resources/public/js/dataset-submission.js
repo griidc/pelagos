@@ -669,7 +669,7 @@ $(function() {
         var target = $(event.currentTarget).closest("table").find("select[keyword=target]");
 
         if ($(event.currentTarget).text() == "add") {
-            if (source.is("input")) {
+            if (source.is("input") && source.val() != "") {
                 var optionText = source.val();
                 var option = new Option(optionText, optionText);
                 $(option).html(optionText);
