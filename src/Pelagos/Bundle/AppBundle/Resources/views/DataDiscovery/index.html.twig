@@ -95,14 +95,14 @@
                     <table>
                         <tr>
                             <td valign="top" style="width:100%; padding-right:10px;">
-                                <input id="filter-input" class="textbox" type="text" size="50" value="{{defaultFilter}}">
+                                <input id="filter-input" class="textbox" type="text" size="50" value="{{defaultFilter}}" onkeyup="enableFilterButton();">
                                 <input id="filter-applied" type="hidden" value="{{defaultFilter}}">
                             </td>
                             <td valign="top">
-                                <input type="button" id="filter-button" class="button" value="Filter" onclick="applyFilter();" disabled>
+                                <input type="button" id="filter-button" class="button" value="Filter" onclick="applyFilter();">
                             </td>
                             <td valign="top">
-                                <input type="button" id="clear-button" class="button" value="Clear/Show All" onclick="clearAll();" disabled>
+                                <input type="button" id="clear-button" class="button" value="Clear/Show All" onclick="clearAll();">
                             </td>
                         </tr>
                     </table>
