@@ -46,9 +46,6 @@ pelagos_dataland_ui:
 pelagos_stats_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\StatsController
 
-pelagos_doi_request_ui:
-    resource: Pelagos\Bundle\AppBundle\Controller\UI\DoiRequestController
-
 pelagos_mdapp_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\MdAppController
 
