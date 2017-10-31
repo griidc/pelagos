@@ -57,8 +57,18 @@ $(document).ready(function() {
     $("#show_all_extents_checkbox").button();
     $(".map_button").button();
     $("#filter-button").button();
+    $("#filter-button").button('disable');
+    enableFilterButton();
     $("#clear-button").button();
 });
+// function to enable the Filter button only when the textbox is not empty //
+function enableFilterButton() {
+    if ('' !== $("#filter-input").val()) {
+    $("#filter-button").button('enable');
+    } else {
+    $("#filter-button").button('disable');
+    }
+}
 
 function expand() {
     $('#left').show();
@@ -133,7 +143,7 @@ function showDatasets(by,id) {
                 }
             }
             );
-            $('#filter-button').button('enable');
+            enableFilterButton();
             $('#clear-button').button('enable');
             $('#drawGeoFilterButton').button("enable");
             if (myGeoViz.getFilter()) {
