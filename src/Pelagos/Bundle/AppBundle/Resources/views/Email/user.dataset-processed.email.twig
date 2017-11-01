@@ -19,7 +19,7 @@ Thank you for submitting your dataset to the Gulf of Mexico Research Initiative 
         <td style='border: 1px solid black; padding: 3px; vertical-align: top; width: 400px;'>{{ datasetSubmission.title }}</td>
         <td style='border: 1px solid black; padding: 3px; vertical-align: top;'>{{ type == 'dataset' ? datasetSubmission.datasetFileName : datasetSubmission.metadataFileName }}</td>
         <td style='border: 1px solid black; padding: 3px; vertical-align: top;'>{{ datasetSubmission.dataset.udi }}</td>
-        <td style='border: 1px solid black; padding: 3px; vertical-align: top;'><a href="{{ url('pelagos_app_ui_datasetsubmission_default') }}?regid={{datasetSubmission.dataset.udi}}">{{ url('pelagos_app_ui_datasetsubmission_default') }}?regid={{datasetSubmission.dataset.udi}}</a></td>
+        <td style='border: 1px solid black; padding: 3px; vertical-align: top;'><a href="{{ url('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi}) }}">{{ url('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi}) }}</a></td>
     </tr>
 </table>
 <br>
