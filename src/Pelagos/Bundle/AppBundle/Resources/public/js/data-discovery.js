@@ -58,8 +58,10 @@ $(document).ready(function() {
     $(".map_button").button();
     $("#filter-button").button();
     $("#filter-button").button("disable");
-    enableFilterButton();
     $("#clear-button").button();
+    $('#filter-input').bind('change keyup', function() {
+        enableFilterButton();
+    });
 });
 // function to enable the Filter button only when the textbox is not empty //
 function enableFilterButton() {
