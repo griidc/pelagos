@@ -97,6 +97,8 @@ class DatasetSubmissionController extends EntityController
      */
     public function postAction(Request $request)
     {
+        $this->filterRequestArray($request, array('themeKeywords', 'placeKeywords', 'topicKeywords'));
+
         $datasetSubmission = $this->handlePost(DatasetSubmissionType::class, DatasetSubmission::class, $request);
         return $this->makeCreatedResponse('pelagos_api_dataset_submission_get', $datasetSubmission->getId());
     }
@@ -125,6 +127,8 @@ class DatasetSubmissionController extends EntityController
      */
     public function putAction($id, Request $request)
     {
+        $this->filterRequestArray($request, array('themeKeywords', 'placeKeywords', 'topicKeywords'));
+
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
         if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
             throw new BadRequestHttpException('This submission has already been submitted');
@@ -160,6 +164,8 @@ class DatasetSubmissionController extends EntityController
      */
     public function patchAction($id, Request $request)
     {
+        $this->filterRequestArray($request, array('themeKeywords', 'placeKeywords', 'topicKeywords'));
+
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
         if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
             throw new BadRequestHttpException('This submission has already been submitted');
@@ -239,5 +245,25 @@ class DatasetSubmissionController extends EntityController
             $uuid = $matches[1];
         }
         return array($fileInfo);
+    }
+
+    /**
+     * Remove blanks from specified arrays in a Symfony Request object.
+     *
+     * @param Request $request        The Symfony request being filtered, by reference.
+     * @param array   $parameterNames An array of names of array fields.
+     *
+     * @return void
+     */
+    protected function filterRequestArray(Request $request, array $parameterNames)
+    {
+        $params = $request->request;
+        foreach ($parameterNames as $parameterName) {
+            if ($params->has($parameterName)) {
+                // array_filter() removes blanks, array_values() re-indexes array.
+                $params->set($parameterName, array_values(array_filter($params->get($parameterName))));
+            }
+        }
+
     }
 }
