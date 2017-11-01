@@ -56,10 +56,12 @@ $(document).ready(function() {
 
     $("#show_all_extents_checkbox").button();
     $(".map_button").button();
-    $("#filter-button").button();
-    $("#filter-button").button("disable");
+    // local variable for filter button//
+    var filterButton = $("#filter-button");
+    filterButton.button();
+    filterButton.button("disable");
     $("#clear-button").button();
-    $('#filter-input').bind('change keyup', function() {
+    $('#filter-input').on('change', function() {
         enableFilterButton();
     });
 });
