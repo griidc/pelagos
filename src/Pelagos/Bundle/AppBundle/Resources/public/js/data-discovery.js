@@ -61,16 +61,16 @@ $(document).ready(function() {
     filterButton.button();
     filterButton.button("disable");
     $("#clear-button").button();
-    $('#filter-input').on('change keyup paste', function() {
+    $("#filter-input").on("change keyup paste", function() {
         enableFilterButton();
     });
 });
 // function to enable the Filter button only when the textbox is not empty //
 function enableFilterButton() {
     if ("" !== $("#filter-input").val()) {
-    $("#filter-button").button("enable");
+        $("#filter-button").button("enable");
     } else {
-    $("#filter-button").button("disable");
+        $("#filter-button").button("disable");
     }
 }
 
