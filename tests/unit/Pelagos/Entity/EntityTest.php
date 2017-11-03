@@ -411,4 +411,18 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(method_exists($this->concreteEntity, 'checkDeletable'));
         $this->concreteEntity->checkDeletable();
     }
+
+    /**
+     * Test array filter method.
+     *
+     * @return void
+     */
+    public function testEntityArrayFilter()
+    {
+        $this->assertEquals(['a', 'b', 'c'], $this->concreteEntity->filterArrayBlanks(['a', '', 'b', 'c']));
+        $this->assertEquals(['a', 'b', 'c'], $this->concreteEntity->filterArrayBlanks(['a', false, 'b', 'c']));
+        $this->assertEquals(['a', 'b', 'c'], $this->concreteEntity->filterArrayBlanks(['a', null, 'b', 'c']));
+        $this->assertNotEquals(['a', 'b', 'c'], $this->concreteEntity->filterArrayBlanks(['a', true, 'b', 'c']));
+        $this->assertNotEquals(['a', 'b', 'c'], $this->concreteEntity->filterArrayBlanks(['a', 0, 'b', 'c']));
+    }
 }
