@@ -413,16 +413,21 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test array filter method.
+     * Tests the array blank-filter method.
      *
      * @return void
      */
-    public function testEntityArrayFilter()
+    public function testFilterOutBlanksFromArray()
     {
+        // Filter empty string is filtered out - the typical use case.
         $this->assertEquals(['a', 'b', 'c'], $this->concreteEntity->filterArrayBlanks(['a', '', 'b', 'c']));
+        // Ensure bool false is filtered out.
         $this->assertEquals(['a', 'b', 'c'], $this->concreteEntity->filterArrayBlanks(['a', false, 'b', 'c']));
+        // Ensure a null value is filtered out.
         $this->assertEquals(['a', 'b', 'c'], $this->concreteEntity->filterArrayBlanks(['a', null, 'b', 'c']));
+        // Ensure a boolean true is not filtered out.
         $this->assertNotEquals(['a', 'b', 'c'], $this->concreteEntity->filterArrayBlanks(['a', true, 'b', 'c']));
+        // Ensure the value 0 (zero) is not filtered out.
         $this->assertNotEquals(['a', 'b', 'c'], $this->concreteEntity->filterArrayBlanks(['a', 0, 'b', 'c']));
     }
 }
