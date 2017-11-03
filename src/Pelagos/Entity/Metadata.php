@@ -409,7 +409,7 @@ class Metadata extends Entity
      */
     private function setThemeKeywords(array $themeKeywords)
     {
-        $this->themeKeywords = $themeKeywords;
+        $this->themeKeywords = $this->filterArrayBlanks($themeKeywords);
     }
 
     /**
