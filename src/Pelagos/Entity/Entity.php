@@ -447,4 +447,17 @@ abstract class Entity
     {
         return strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', substr(strrchr(get_class($this), '\\'), 1)));
     }
+
+    /**
+     * Remove blanks from specified arrays.
+     *
+     * @param array $arrayWithBlanks An array that potentially contains blank line entries.
+     *
+     * @return array The same array with blank lines removed, same order, but re-indexed.
+     */
+    public function filterArrayBlanks(array $arrayWithBlanks)
+    {
+        // strlen callback
+        return array_values(array_filter($arrayWithBlanks, 'strlen'));
+    }
 }

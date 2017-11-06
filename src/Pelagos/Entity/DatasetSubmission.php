@@ -1880,7 +1880,7 @@ class DatasetSubmission extends Entity
      */
     public function setThemeKeywords(array $themeKeywords)
     {
-        $this->themeKeywords = $themeKeywords;
+        $this->themeKeywords = $this->filterArrayBlanks($themeKeywords);
     }
 
     /**
@@ -1902,7 +1902,7 @@ class DatasetSubmission extends Entity
      */
     public function setPlaceKeywords(array $placeKeywords)
     {
-        $this->placeKeywords = $placeKeywords;
+        $this->placeKeywords = $this->filterArrayBlanks($placeKeywords);
     }
 
     /**
