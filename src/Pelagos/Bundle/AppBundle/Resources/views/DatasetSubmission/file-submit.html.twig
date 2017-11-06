@@ -40,7 +40,7 @@
                                 </div>
                             </span>
                             <td width="*">
-                                <div class="fine-uploader"></div>
+                                <div class="file-uploader"></div>
                             </td>
                         </tr>
                     </table>
@@ -126,10 +126,11 @@
             </div> <!-- tabs-3 -->
 
             <div id="tabs-4"> <!-- Request External Hard Drive -->
-                Use this method to request an external hard drive to transfer very large datasets (greater than 1 TB) to GRIIDC
-                    <fieldset>
-                        <table class="tab-table">
-                            <tr>
+                Use this method to request an external hard drive to transfer very large datasets (greater than 1 TB) to
+                GRIIDC
+                <fieldset>
+                    <table class="tab-table">
+                        <tr>
                                 <span class="helpSection">
                                 {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
                                     <img class="info" src="{{ asset_url }}">
@@ -139,10 +140,13 @@
                                         {#<p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>#}
                                     </div>
                                 </span>
-                                <label for="deliveryInfo"> Delivery Address Information</label>
-                                <textarea name="text1" id="deliveryInfo" cols="20" rows="5"></textarea>
-                            </tr>
-                            <tr>
+                            {{ form_row(form.harddriveFileSize) }}
+                            {{ form_row(form.harddriveAddresseeName) }}
+                            {{ form_row(form.harddriveAddresseeEmail) }}
+                            {{ form_row(form.harddriveAddresseePhone) }}
+                            {{ form_row(form.harddriveDeliveryAddress) }}
+                        </tr>
+                        <tr>
                             <span class="helpSection">
                                 {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
                                 <img class="info" src="{{ asset_url }}">
@@ -152,15 +156,17 @@
                                     {#<p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>#}
                                 </div>
                             </span>
-                                <p>
-                                    Please provide a file listing or readme file describing what files will be provided on the hard drive. This file should also be provided on the hard drive you receive from GRIIDC
-                                </p>
-                                <td width="*">
-                                    <div class="fine-uploader"></div>
-                                </td>
-                            </tr>
-                        </table>
-                    </fieldset>
+                            <p>
+                                Please provide a file listing or readme file describing what files will be provided on
+                                the hard drive. This file should also be provided on the hard drive you receive from
+                                GRIIDC
+                            </p>
+                            <td width="*">
+                                <div class="file-uploader"></div>
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
             </div> <!-- tabs-4 -->
         </div> <!-- tabs -->
     </fieldset> <!-- Dataset File Transfer Details -->

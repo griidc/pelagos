@@ -18,7 +18,12 @@ input#datasetFilePath,
 input#datasetFileUrl,
 input#metadataFileUpload,
 input#metadataFilePath,
-input#metadataFileUrl
+input#metadataFileUrl,
+input#harddriveFileSize,
+input#harddriveAddresseeName,
+input#harddriveAddresseeEmail,
+input#harddriveAddresseePhone,
+input#harddriveDeliveryAddress
 {
     width:100%;
 }
