@@ -885,15 +885,49 @@ class DatasetSubmission extends Entity
     protected $submitter;
 
     /**
-     * Delivery information for external hard drive.
+     * File size for external hard drive.
      *
-     * @var array
+     * @var string
      *
-     * @access protected
-     *
-     * @ORM\Column(type="json_array", nullable = true)
+     * @ORM\Column(type="text", nullable = true)
      */
-    protected $hardDriveDeliveryInfo = array();
+    protected $harddriveFileSize;
+
+    /**
+     * Addressee name for external hard drive.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable = true)
+     */
+    protected $harddriveAddresseeName;
+
+    /**
+     * Addressee email for external hard drive.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable = true)
+     */
+    protected $harddriveAddresseeEmail;
+
+    /**
+     * Addressee phone number for external hard drive.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable = true)
+     */
+    protected $harddriveAddresseePhone;
+
+    /**
+     * Delivery address for external hard drive.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable = true)
+     */
+    protected $harddriveDeliveryAddress;
 
     /**
      * Constructor.
@@ -2231,28 +2265,132 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * Getter for hard drive delivery info.
+     * Getter for hard drive file size.
      *
      * @access public
      *
-     * @return array Delivery information for the external hard drive(json_array).
+     * @return string File size for the external hard drive.
      */
-    public function getHardDriveDeliveryInfo()
+    public function getHarddriveFileSize()
     {
-        return $this->hardDriveDeliveryInfo;
+        return $this->harddriveFileSize;
     }
 
     /**
-     * Setter for hard drive delivery info.
+     * Setter for hard drive file size.
      *
-     * @param array $hardDriveDeliveryInfo Delivery information for the external hard drive(json_array).
+     * @param string $harddriveFileSize File size for the external hard drive.
      *
      * @access public
      *
      * @return void
      */
-    public function setHardDriveDeliveryInfo(array $hardDriveDeliveryInfo)
+    public function setHarddriveFileSize($harddriveFileSize)
     {
-        $this->hardDriveDeliveryInfo = $hardDriveDeliveryInfo;
+        $this->harddriveFileSize = $harddriveFileSize;
+    }
+
+    /**
+     * Getter for hard drive addressee name.
+     *
+     * @access public
+     *
+     * @return string Addressee name for the external hard drive.
+     */
+    public function getHarddriveAddresseeName()
+    {
+        return $this->harddriveAddresseeName;
+    }
+
+    /**
+     * Setter for hard drive addressee name.
+     *
+     * @param string $harddriveAddresseeName Addressee name for the external hard drive.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setHarddriveAddresseeName($harddriveAddresseeName)
+    {
+        $this->harddriveAddresseeName = $harddriveAddresseeName;
+    }
+
+    /**
+     * Getter for hard drive addressee email.
+     *
+     * @access public
+     *
+     * @return string Addressee email for the external hard drive.
+     */
+    public function getHarddriveAddresseeEmail()
+    {
+        return $this->harddriveAddresseeEmail;
+    }
+
+    /**
+     * Setter for hard drive addressee email.
+     *
+     * @param string $harddriveAddresseeEmail Addressee email for the external hard drive.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setHarddriveAddresseeEmail($harddriveAddresseeEmail)
+    {
+        $this->harddriveAddresseeEmail = $harddriveAddresseeEmail;
+    }
+
+    /**
+     * Getter for hard drive addressee phone.
+     *
+     * @access public
+     *
+     * @return string Addressee phone number for the external hard drive.
+     */
+    public function getHarddriveAddresseePhone()
+    {
+        return $this->harddriveAddresseePhone;
+    }
+
+    /**
+     * Setter for hard drive addressee phone.
+     *
+     * @param string $harddriveAddresseePhone Addressee phone number for the external hard drive.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setHarddriveAddresseePhone($harddriveAddresseePhone)
+    {
+        $this->harddriveAddresseePhone = $harddriveAddresseePhone;
+    }
+
+    /**
+     * Getter for hard drive delivery address.
+     *
+     * @access public
+     *
+     * @return string Delivery address for the external hard drive that needs to be shipped.
+     */
+    public function getHarddriveDeliveryAddress()
+    {
+        return $this->harddriveDeliveryAddress;
+    }
+
+    /**
+     * Setter for hard drive delivery address.
+     *
+     * @param string $harddriveDeliveryAddress Delivery address for the external hard drive that needs to be shipped.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setHarddriveDeliveryAddress($harddriveDeliveryAddress)
+    {
+        $this->harddriveDeliveryAddress = $harddriveDeliveryAddress;
     }
 }
