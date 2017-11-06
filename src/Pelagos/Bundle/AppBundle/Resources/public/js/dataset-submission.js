@@ -337,7 +337,7 @@ $(function() {
     });
 
     // Direct Upload
-    $("#fine-uploader").fineUploader({
+    $(".file-uploader").fineUploader({
         template: "qq-template",
         multiple: false,
         request: {
@@ -370,12 +370,12 @@ $(function() {
         callbacks: {
             onSessionRequestComplete: function (response, success, xhrOrXdr) {
                 if (response.length > 0) {
-                    $("#fine-uploader .qq-upload-button").hide();
+                    $(".file-uploader .qq-upload-button").hide();
                 }
             },
             onSubmit: function (id, name) {
                 setDatasetFileUri("");
-                $("#fine-uploader .qq-upload-button").hide();
+                $(".file-uploader .qq-upload-button").hide();
             },
             onProgress: function (id, name, totalUploadedBytes, totalBytes) {
                 updateSpeedText(totalUploadedBytes, totalBytes);
@@ -401,7 +401,7 @@ $(function() {
                 switch (newStatus) {
                     case qq.status.CANCELED:
                     case qq.status.DELETED:
-                        $("#fine-uploader .qq-upload-button").show();
+                        $(".file-uploader .qq-upload-button").show();
                 }
             }
         }
@@ -451,7 +451,7 @@ $(function() {
             // clear uploaded files list (Direct Upload tab)
             $(".qq-upload-list").html("")
             // show upload button (Direct Upload tab)
-            $("#fine-uploader .qq-upload-button").show();
+            $(".file-uploader .qq-upload-button").show();
         }
         if (datasetFileTransferType != "SFTP") {
             // clear datasetFilePath (Upload via SFTP/GridFTP tab)
