@@ -18,6 +18,7 @@
                 <li datasetFileTransferType="upload"><a href="#tabs-1">Direct Upload</a></li>
                 <li datasetFileTransferType="SFTP"><a href="#tabs-2">Upload via SFTP/GridFTP</a></li>
                 <li datasetFileTransferType="HTTP"><a href="#tabs-3">Request Pull from HTTP/FTP Server</a></li>
+                <li datasetFileTransferType="upload"><a href="#tabs-4">Request External Hard Drive</a></li>
             </ul>
 
             <div id="tabs-1"> <!-- Direct Upload -->
@@ -39,7 +40,7 @@
                                 </div>
                             </span>
                             <td width="*">
-                                <div id="fine-uploader"></div>
+                                <div class="fine-uploader"></div>
                             </td>
                         </tr>
                     </table>
@@ -123,6 +124,44 @@
                     </table>
                 </fieldset>
             </div> <!-- tabs-3 -->
+
+            <div id="tabs-4"> <!-- Request External Hard Drive -->
+                Use this method to request an external hard drive to transfer very large datasets (greater than 1 TB) to GRIIDC
+                    <fieldset>
+                        <table class="tab-table">
+                            <tr>
+                                <span class="helpSection">
+                                {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+                                    <img class="info" src="{{ asset_url }}">
+                                    {% endimage %}
+                                    <div class="tooltiptext">
+                                        <p>Please provide the following details to deliver the hard drive.</p>
+                                        {#<p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>#}
+                                    </div>
+                                </span>
+                                <label for="deliveryInfo"> Delivery Address Information</label>
+                                <textarea name="text1" id="deliveryInfo" cols="20" rows="5"></textarea>
+                            </tr>
+                            <tr>
+                            <span class="helpSection">
+                                {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+                                <img class="info" src="{{ asset_url }}">
+                                {% endimage %}
+                                <div class="tooltiptext">
+                                    <p>Please select from your local machine the README file for the dataset you are submitting.</p>
+                                    {#<p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>#}
+                                </div>
+                            </span>
+                                <p>
+                                    Please provide a file listing or readme file describing what files will be provided on the hard drive. This file should also be provided on the hard drive you receive from GRIIDC
+                                </p>
+                                <td width="*">
+                                    <div class="fine-uploader"></div>
+                                </td>
+                            </tr>
+                        </table>
+                    </fieldset>
+            </div> <!-- tabs-4 -->
         </div> <!-- tabs -->
     </fieldset> <!-- Dataset File Transfer Details -->
     <fieldset>
