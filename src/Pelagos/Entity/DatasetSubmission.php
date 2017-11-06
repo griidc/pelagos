@@ -2229,4 +2229,30 @@ class DatasetSubmission extends Entity
             )
         );
     }
+
+    /**
+     * Getter for hard drive delivery info.
+     *
+     * @access public
+     *
+     * @return array Delivery information for the external hard drive(json_array).
+     */
+    public function getHardDriveDeliveryInfo()
+    {
+        return $this->hardDriveDeliveryInfo;
+    }
+
+    /**
+     * Setter for hard drive delivery info.
+     *
+     * @param array $hardDriveDeliveryInfo Delivery information for the external hard drive(json_array).
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setHardDriveDeliveryInfo(array $hardDriveDeliveryInfo)
+    {
+        $this->hardDriveDeliveryInfo = $hardDriveDeliveryInfo;
+    }
 }
