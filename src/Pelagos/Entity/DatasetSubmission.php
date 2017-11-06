@@ -885,6 +885,17 @@ class DatasetSubmission extends Entity
     protected $submitter;
 
     /**
+     * Delivery information for external hard drive.
+     *
+     * @var array
+     *
+     * @access protected
+     *
+     * @ORM\Column(type="json_array", nullable = true)
+     */
+    protected $hardDriveDeliveryInfo = array();
+
+    /**
      * Constructor.
      *
      * Initializes collections to empty collections.
