@@ -6,11 +6,72 @@ use Pelagos\Entity\Person;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+
+use OldSound\RabbitMqBundle\RabbitMq\Producer;
+
+use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
+
+use Pelagos\Util\DataStore;
+use Pelagos\Util\MdappLogger;
+
+use Symfony\Component\Routing\Generator\UrlGenerator;
+
 /**
  * Listener class for Dataset Submission-related events.
  */
 class DatasetSubmissionListener extends EventListener
 {
+    /**
+     * The Service Container.
+     *
+     * @var Geometry
+     */
+    protected $container;
+
+    /**
+     * This is the class constructor to handle dependency injections.
+     *
+     * @param \Twig_Environment  $twig          Twig engine.
+     * @param \Swift_Mailer      $mailer        Email handling library.
+     * @param TokenStorage       $tokenStorage  Symfony's token object.
+     * @param string             $fromAddress   Sender's email address.
+     * @param string             $fromName      Sender's name to include in email.
+     * @param EntityHandler|null $entityHandler Pelagos entity handler.
+     * @param Producer           $producer      An AMQP/RabbitMQ Producer.
+     * @param DataStore|null     $dataStore     An instance of the Pelagos Data Store utility service.
+     * @param MdappLogger|null   $mdappLogger   An MDAPP logger.
+     * @param ContainerInterface $container     The Service Container.
+     */
+    public function __construct(
+        \Twig_Environment $twig,
+        \Swift_Mailer $mailer,
+        TokenStorage $tokenStorage,
+        $fromAddress,
+        $fromName,
+        EntityHandler $entityHandler = null,
+        Producer $producer = null,
+        DataStore $dataStore = null,
+        MdappLogger $mdappLogger = null,
+        ContainerInterface $container = null
+    ) {
+          parent::__construct(
+              $twig,
+              $mailer,
+              $tokenStorage,
+              $fromAddress,
+              $fromName,
+              $entityHandler,
+              $producer,
+              $dataStore,
+              $mdappLogger
+          );
+          $this->container = $container;
+    }
+
     /**
      * Method to send an email to DMs on a submitted event.
      *
@@ -37,7 +98,18 @@ class DatasetSubmissionListener extends EventListener
    
         // email User
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
-        $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission));
+
+        $this->sendMailMsg(
+            $template,
+            array(
+                'datasetSubmission' => $datasetSubmission,
+                'datalandUri' => $this->container->get('router')->generate(
+                    'pelagos_app_ui_dataland_default',
+                    array('udi' => $dataset->getUdi()),
+                    UrlGenerator::ABSOLUTE_URL
+                )
+            )
+        );
 
         // email DM(s)
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-submitted.email.twig');
@@ -72,7 +144,17 @@ class DatasetSubmissionListener extends EventListener
 
         // email User
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
-        $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission));
+        $this->sendMailMsg(
+            $template,
+            array(
+                'datasetSubmission' => $datasetSubmission,
+                'datalandUri' => $this->container->get('router')->generate(
+                    'pelagos_app_ui_dataland_default',
+                    array('udi' => $dataset->getUdi()),
+                    UrlGenerator::ABSOLUTE_URL
+                )
+            )
+        );
 
         // email DM(s)
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-updated.email.twig');
@@ -101,6 +183,11 @@ class DatasetSubmissionListener extends EventListener
             array(
                 'datasetSubmission' => $datasetSubmission,
                 'type' => 'dataset',
+                'datalandUri' => $this->container->get('router')->generate(
+                    'pelagos_app_ui_dataland_default',
+                    array('udi' => $datasetSubmission->getDataset()->getUdi()),
+                    UrlGenerator::ABSOLUTE_URL
+                )
             ),
             array($datasetSubmission->getSubmitter())
         );
@@ -131,6 +218,11 @@ class DatasetSubmissionListener extends EventListener
             array(
                 'datasetSubmission' => $datasetSubmission,
                 'type' => 'metadata',
+                'datalandUri' => $this->container->get('router')->generate(
+                    'pelagos_app_ui_dataland_default',
+                    array('udi' => $datasetSubmission->getDataset()->getUdi()),
+                    UrlGenerator::ABSOLUTE_URL
+                )
             ),
             array($datasetSubmission->getSubmitter())
         );
