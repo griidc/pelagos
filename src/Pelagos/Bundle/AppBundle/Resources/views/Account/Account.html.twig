@@ -15,7 +15,7 @@
                  <h2>Please provide the email address associated with your funding agreement when requesting an account.</h2>
             </td>
         </tr>
-            <tr>
+        <tr>
             <td width="50%">
                     <form id="accountForm" method="post" action="{{ path('pelagos_app_ui_account_sendverificationemail') }}">
                         <label for="emailAddress">E-mail Address:</label>
@@ -26,6 +26,19 @@
                         </p>
                     </form>
             </td>
+        </tr>
+        <tr>
+            <td width="50%">
+                Accounts are governed by rules of Texas A&M University-Corpus Christi. Accounts are issued to individuals and shall not be shared.</br>
+                <ul>
+                    <li>Unauthorized use is prohibited.</li>
+                    <li>Usage may be subject to security testing and monitoring.</li>
+                    <li>Abuse is subject to criminal prosecution.</li>
+                    <li>No expectation of privacy except as otherwise provided by applicable privacy laws.</li>
+                    <li>These warnings are required in accordance with Texas Administrative Code 202 as administered by the Texas Department of Information Resources. Reference Chapter 33, Texas Penal Code.</li>
+                </ul>
+            </td>
+        </tr>
         </p>
     </table>
 {% endblock %}
