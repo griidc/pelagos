@@ -119,6 +119,11 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
                     'role' => 'pointOfContact',
                 ),
             ),
+            'harddriveFileSize' => '5 TB',
+            'harddriveAddresseeName' => 'Random Name',
+            'harddriveAddresseeEmail' => 'random@griidc.com',
+            'harddriveAddresseePhone' => '123-456-7890',
+            'harddriveDeliveryAddress' => '123 XYZ St, City 00000',
         );
 
         // Create a form view.
