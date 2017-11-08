@@ -19,7 +19,7 @@ Thank you for submitting your dataset to the Gulf of Mexico Research Initiative 
         <td style='border: 1px solid black; padding: 3px; vertical-align: top; width: 400px;'>{{ datasetSubmission.title }}</td>
         <td style='border: 1px solid black; padding: 3px; vertical-align: top;'>{{ type == 'dataset' ? datasetSubmission.datasetFileName : datasetSubmission.metadataFileName }}</td>
         <td style='border: 1px solid black; padding: 3px; vertical-align: top;'>{{ datasetSubmission.dataset.udi }}</td>
-        <td style='border: 1px solid black; padding: 3px; vertical-align: top;'><a href="{{ url('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi}) }}">{{ url('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi}) }}</a></td>
+        <td style='border: 1px solid black; padding: 3px; vertical-align: top;'><a href="{{ datalandUrl }}">{{ datalandUrl }}</a></td>
     </tr>
 </table>
 <br>
@@ -39,7 +39,7 @@ The following {{ type }} file has been processed and can now be viewed:
 Dataset Title: {{ datasetSubmission.title }}
 Dataset Filename: {{ type == 'dataset' ? datasetSubmission.datasetFileName : datasetSubmission.metadataFileName }}
 UDI: {{ datasetSubmission.dataset.udi }}
-Link: {{ url('pelagos_app_ui_datasetsubmission_default') }}?regid={{datasetSubmission.dataset.udi}}
+Link: {{ datalandUrl }}
 
 If you have any questions or concerns please contact GRIIDC at griidc@gomri.org.
 

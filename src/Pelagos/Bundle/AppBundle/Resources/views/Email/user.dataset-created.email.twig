@@ -3,7 +3,7 @@
 {% block body_html %}
     Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},<br>
     <br>
-    The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has received your dataset submission <a href="{{ url('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi}) }}">{{datasetSubmission.dataset.udi}}</a>.<br>
+    The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has received your dataset submission <a href="{{ datalandUrl }}">{{datasetSubmission.dataset.udi}}</a>.<br>
     This dataset has been assigned the doi:{{datasetSubmission.dataset.doi.doi}}.<br>
     If you have any questions regarding this dataset submission please email griidc@gomri.org.<br>
     <br>
@@ -14,7 +14,7 @@
 {% block body_text %}
 Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},
 
-The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has received your dataset submission {{ url('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi}) }}
+The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has received your dataset submission {{ datalandUrl }}
 
 This dataset has been assigned the doi:{{datasetSubmission.dataset.doi.doi}}.
 
