@@ -1,24 +1,21 @@
 <?php
 namespace Pelagos\Event;
 
-use Pelagos\Entity\Account;
-use Pelagos\Entity\Person;
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 
 use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
+use Pelagos\Entity\Account;
+use Pelagos\Entity\Dataset;
+use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\Person;
 
 use Pelagos\Util\DataStore;
 use Pelagos\Util\MdappLogger;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Generator\UrlGenerator;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * Listener class for Dataset Submission-related events.
