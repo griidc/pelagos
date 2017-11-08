@@ -103,7 +103,7 @@ class DatasetSubmissionListener extends EventListener
             $template,
             array(
                 'datasetSubmission' => $datasetSubmission,
-                'datalandUri' => $this->container->get('router')->generate(
+                'datalandUrl' => $this->container->get('router')->generate(
                     'pelagos_app_ui_dataland_default',
                     array('udi' => $dataset->getUdi()),
                     UrlGenerator::ABSOLUTE_URL
@@ -148,7 +148,7 @@ class DatasetSubmissionListener extends EventListener
             $template,
             array(
                 'datasetSubmission' => $datasetSubmission,
-                'datalandUri' => $this->container->get('router')->generate(
+                'datalandUrl' => $this->container->get('router')->generate(
                     'pelagos_app_ui_dataland_default',
                     array('udi' => $dataset->getUdi()),
                     UrlGenerator::ABSOLUTE_URL
@@ -183,11 +183,7 @@ class DatasetSubmissionListener extends EventListener
             array(
                 'datasetSubmission' => $datasetSubmission,
                 'type' => 'dataset',
-                'datalandUri' => $this->container->get('router')->generate(
-                    'pelagos_app_ui_dataland_default',
-                    array('udi' => $datasetSubmission->getDataset()->getUdi()),
-                    UrlGenerator::ABSOLUTE_URL
-                )
+                'datalandUrl' => $this->getDatalandUrl($datasetSubmission->getDataset()->getUdi())
             ),
             array($datasetSubmission->getSubmitter())
         );
@@ -218,11 +214,7 @@ class DatasetSubmissionListener extends EventListener
             array(
                 'datasetSubmission' => $datasetSubmission,
                 'type' => 'metadata',
-                'datalandUri' => $this->container->get('router')->generate(
-                    'pelagos_app_ui_dataland_default',
-                    array('udi' => $datasetSubmission->getDataset()->getUdi()),
-                    UrlGenerator::ABSOLUTE_URL
-                )
+                'datalandUrl' => $this->getDatalandUrl($datasetSubmission->getDataset()->getUdi())
             ),
             array($datasetSubmission->getSubmitter())
         );
@@ -298,5 +290,25 @@ class DatasetSubmissionListener extends EventListener
         $datasetSubmission = $event->getEntity();
         $this->producer->publish($datasetSubmission->getDataset()->getId(), 'publish');
         $this->producer->publish($datasetSubmission->getDataset()->getId(), 'update');
+    }
+
+    /**
+     * Generate a dataland url given the udi for different drupal env.
+     *
+     * @param string $udi Dataset's udi.
+     *
+     * @return string A dataland URL.
+     */
+    protected function getDatalandUrl($udi)
+    {
+        $datalandUrl = $this->container->get('router')->generate(
+            'pelagos_app_ui_dataland_default',
+            array('udi' => $udi),
+            UrlGenerator::ABSOLUTE_URL
+        );
+        if (strcmp('drupal_prod', $this->container->get('kernel')->getEnvironment()) == 0) {
+            return str_replace('pelagos-symfony/', '', $datalandUrl);
+        }
+        return $datalandUrl;
     }
 }
