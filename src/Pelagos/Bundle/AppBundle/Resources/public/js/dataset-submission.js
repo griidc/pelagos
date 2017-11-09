@@ -150,7 +150,9 @@ $(function() {
         }
     });
 
-    $("#filetabs").tabs({
+    var fileTabs = $("#filetabs");
+
+    fileTabs.tabs({
         activate: function(event, ui) {
             var labelEmReq = $("label.emRequired");
 
@@ -165,13 +167,16 @@ $(function() {
 
     switch ($("#datasetFileTransferType").val()) {
         case "upload":
-            $("#filetabs").tabs("option", "active", 0);
+            fileTabs.tabs("option", "active", 0);
             break;
         case "SFTP":
-            $("#filetabs").tabs("option", "active", 1);
+            fileTabs.tabs("option", "active", 1);
             break;
         case "HTTP":
-            $("#filetabs").tabs("option", "active", 2);
+            fileTabs.tabs("option", "active", 2);
+            break;
+        case "hardDrive":
+            fileTabs.tabs("option", "active", 3);
             break;
     }
 
@@ -458,7 +463,7 @@ $(function() {
         datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
         // set the datasetFileTransferType
         $("#datasetFileTransferType").val(datasetFileTransferType);
-        if (datasetFileTransferType != "upload") {
+        if (datasetFileTransferType !== "upload" && datasetFileTransferType !== "hardDrive") {
             // clear uploaded files list (Direct Upload tab)
             $(".qq-upload-list").html("")
             // show upload button (Direct Upload tab)

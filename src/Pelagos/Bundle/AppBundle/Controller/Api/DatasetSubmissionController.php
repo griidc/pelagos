@@ -210,7 +210,7 @@ class DatasetSubmissionController extends EntityController
     {
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
         // If the dataset transfer type is not upload.
-        if ($datasetSubmission->getDatasetFileTransferType() !== DatasetSubmission::TRANSFER_TYPE_UPLOAD) {
+        if (!in_array($datasetSubmission->getDatasetFileTransferType(), [ DatasetSubmission::TRANSFER_TYPE_UPLOAD, DatasetSubmission::TRANSFER_TYPE_HARDDRIVE], true)) {
             // Return empty file list.
             return array();
         }

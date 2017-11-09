@@ -81,12 +81,18 @@ class DatasetSubmission extends Entity
     const TRANSFER_TYPE_HTTP = 'HTTP';
 
     /**
+     * Indicates transfer for external hard drive README file via direct upload.
+     */
+    const TRANSFER_TYPE_HARDDRIVE = 'hardDrive';
+
+    /**
      * Valid values for $datasetFileTransferType and $metadataFileTransferType.
      */
     const TRANSFER_TYPES = array(
         self::TRANSFER_TYPE_UPLOAD => 'Direct Upload',
         self::TRANSFER_TYPE_SFTP => 'Upload via SFTP/GridFTP',
         self::TRANSFER_TYPE_HTTP => 'Request Pull from HTTP/FTP Server',
+        self::TRANSFER_TYPE_HARDDRIVE => 'Hard Drive Readme'
     );
 
     /**
