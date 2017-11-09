@@ -152,8 +152,14 @@ $(function() {
 
     $("#filetabs").tabs({
         activate: function(event, ui) {
-            $(".hardDriveInfo:visible").prop("required", true);
-            $(".hardDriveInfo:hidden").prop("required", "");
+            var labelEmReq = $("label.emRequired");
+
+            labelEmReq
+                .next(":input.ignore:visible")
+                .prop("required", true);
+            labelEmReq
+                .next(":input.ignore:hidden")
+                .removeProp("required");
         }
     });
 

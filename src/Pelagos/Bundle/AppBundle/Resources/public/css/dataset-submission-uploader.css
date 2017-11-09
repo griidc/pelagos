@@ -48,8 +48,3 @@
     margin-left: 10px;
 }
 
-.requiredDeliveryInfo::before{
-    font-weight: bold;
-    color: #FF0000;
-    content: "*";
-}

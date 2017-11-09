@@ -131,6 +131,7 @@
                 <fieldset>
                     <table class="tab-table">
                         <tr>
+                            <td width="*">
                                 <span class="helpSection">
                                 {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
                                     <img class="info" src="{{ asset_url }}">
@@ -140,13 +141,16 @@
                                         {#<p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>#}
                                     </div>
                                 </span>
-                            {{ form_row(form.harddriveFileSize, { attr: { class: 'ignore hardDriveInfo'}, label_attr: { class: 'requiredDeliveryInfo'} }) }}
-                            {{ form_row(form.harddriveAddresseeName, { attr: { class: 'ignore hardDriveInfo'}, label_attr: { class: 'requiredDeliveryInfo'} }) }}
-                            {{ form_row(form.harddriveAddresseeEmail, { attr: { class: 'ignore hardDriveInfo'}, label_attr: { class: 'requiredDeliveryInfo'} }) }}
-                            {{ form_row(form.harddriveAddresseePhone, { attr: { class: 'ignore hardDriveInfo'}, label_attr: { class: 'requiredDeliveryInfo'} }) }}
-                            {{ form_row(form.harddriveDeliveryAddress, { attr: { class: 'ignore hardDriveInfo'}, label_attr: { class: 'requiredDeliveryInfo'} }) }}
+
+                            {{ form_row(form.harddriveFileSize, { attr: { class: 'ignore'}, label_attr: { class: 'emRequired'} }) }}
+                            {{ form_row(form.harddriveAddresseeName, { attr: { class: 'ignore'}, label_attr: { class: 'emRequired'} }) }}
+                            {{ form_row(form.harddriveAddresseeEmail, { attr: { class: 'ignore'}, label_attr: { class: 'emRequired'} }) }}
+                            {{ form_row(form.harddriveAddresseePhone, { attr: { class: 'ignore'}, label_attr: { class: 'emRequired'} }) }}
+                            {{ form_row(form.harddriveDeliveryAddress, { attr: { class: 'ignore'}, label_attr: { class: 'emRequired'} }) }}
+                            </td>
                         </tr>
                         <tr>
+                            <td width="*">
                             <span class="helpSection">
                                 {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
                                 <img class="info" src="{{ asset_url }}">
@@ -161,7 +165,7 @@
                                 the hard drive. This file should also be provided on the hard drive you receive from
                                 GRIIDC
                             </p>
-                            <td width="*">
+
                                 <div class="file-uploader"></div>
                             </td>
                         </tr>
