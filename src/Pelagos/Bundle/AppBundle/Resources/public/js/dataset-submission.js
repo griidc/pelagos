@@ -149,11 +149,11 @@ $(function() {
             $(ui.newTab.context.hash).trigger("active");
         }
     });
-    
+
     $("#filetabs").tabs({
         activate: function(event, ui) {
-            $(".ignore:visible").prop("required", true);
-            $(".ignore:hidden").prop("required", "");
+            $(".hardDriveInfo:visible").prop("required", true);
+            $(".hardDriveInfo:hidden").prop("required", "");
         }
     });
 
