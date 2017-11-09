@@ -149,8 +149,13 @@ $(function() {
             $(ui.newTab.context.hash).trigger("active");
         }
     });
-
-    $("#filetabs").tabs();
+    
+    $("#filetabs").tabs({
+        activate: function(event, ui) {
+            $(".ignore:visible").prop("required", true);
+            $(".ignore:hidden").prop("required", "");
+        }
+    });
 
     switch ($("#datasetFileTransferType").val()) {
         case "upload":

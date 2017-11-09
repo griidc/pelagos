@@ -140,11 +140,11 @@
                                         {#<p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>#}
                                     </div>
                                 </span>
-                            {{ form_row(form.harddriveFileSize, { label_attr: { class: 'requiredDeliveryInfo'}}) }}
-                            {{ form_row(form.harddriveAddresseeName, { label_attr: { class: 'requiredDeliveryInfo'}}) }}
-                            {{ form_row(form.harddriveAddresseeEmail, { label_attr: { class: 'requiredDeliveryInfo'}}) }}
-                            {{ form_row(form.harddriveAddresseePhone, { label_attr: { class: 'requiredDeliveryInfo'}}) }}
-                            {{ form_row(form.harddriveDeliveryAddress, { label_attr: { class: 'requiredDeliveryInfo'}}) }}
+                            {{ form_row(form.harddriveFileSize, { attr: { class: 'ignore'}, label_attr: { class: 'requiredDeliveryInfo'} }) }}
+                            {{ form_row(form.harddriveAddresseeName, { attr: { class: 'ignore'}, label_attr: { class: 'requiredDeliveryInfo'} }) }}
+                            {{ form_row(form.harddriveAddresseeEmail, { attr: { class: 'ignore'}, label_attr: { class: 'requiredDeliveryInfo'} }) }}
+                            {{ form_row(form.harddriveAddresseePhone, { attr: { class: 'ignore'}, label_attr: { class: 'requiredDeliveryInfo'} }) }}
+                            {{ form_row(form.harddriveDeliveryAddress, { attr: { class: 'ignore'}, label_attr: { class: 'requiredDeliveryInfo'} }) }}
                         </tr>
                         <tr>
                             <span class="helpSection">
