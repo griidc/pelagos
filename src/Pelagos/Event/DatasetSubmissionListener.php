@@ -73,8 +73,7 @@ class DatasetSubmissionListener extends EventListener
 
         // email User
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
-        $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission)
-        );
+        $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission));
 
         // email DM(s)
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-updated.email.twig');
@@ -187,5 +186,4 @@ class DatasetSubmissionListener extends EventListener
         $this->producer->publish($datasetSubmission->getDataset()->getId(), 'publish');
         $this->producer->publish($datasetSubmission->getDataset()->getId(), 'update');
     }
-
 }
