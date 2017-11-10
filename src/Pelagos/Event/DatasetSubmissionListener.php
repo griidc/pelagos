@@ -117,11 +117,11 @@ class DatasetSubmissionListener extends EventListener
         );
 
         // email DRPM(s)
-        $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-submitted.email.twig');
+        $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-repository-managers.dataset-submitted.email.twig');
         $this->sendMailMsg(
             $template,
             array('dataset' => $dataset),
-            $this->getAllDRPMs($dataset, $datasetSubmission->getSubmitter())
+            $this->getAllDRPMs()
         );
     }
 
@@ -170,11 +170,11 @@ class DatasetSubmissionListener extends EventListener
         );
 
         // email DRPM(s)
-        $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-submitted.email.twig');
+        $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-repository-managers.dataset-submitted.email.twig');
         $this->sendMailMsg(
             $template,
             array('dataset' => $dataset),
-            $this->getAllDRPMs($dataset, $datasetSubmission->getSubmitter())
+            $this->getAllDRPMs()
         );
     }
 
