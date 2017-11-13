@@ -179,6 +179,7 @@ old_sound_rabbit_mq:
                 name: 'filer'
                 routing_keys:
                     - 'dataset.upload'
+                    - 'dataset.hardDrive'
                     - 'dataset.SFTP'
                     - 'metadata.#'
         retriever:
