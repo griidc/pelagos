@@ -5,33 +5,33 @@ var $ = jQuery.noConflict();
 var myGeoViz = new GeoViz();
 
 $(document).ready(function() {
-    if (typeof($.cookie) == 'function' && $.cookie("expanded") == 1) {
+    if (typeof($.cookie) == "function" && $.cookie("expanded") == 1) {
         expand();
     }
 
-    myGeoViz.initMap('olmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':true,'labelAttr':'udi'});
+    myGeoViz.initMap("olmap",{"onlyOneFeature":false,"allowModify":false,"allowDelete":true,"labelAttr":"udi"});
 
-    $(document).on('overFeature',function(e,eventVariables) {
-        $('table.datasets tr[udi="' + eventVariables.attributes.udi + '"] td').addClass('highlight');
+    $(document).on("overFeature",function(e,eventVariables) {
+        $('table.datasets tr[udi="' + eventVariables.attributes.udi + '"] td').addClass("highlight");
     });
-    $(document).on('outFeature',function(e,eventVariables) {
-        $('table.datasets tr[udi="' + eventVariables.attributes.udi + '"] td').removeClass('highlight');
+    $(document).on("outFeature",function(e,eventVariables) {
+        $('table.datasets tr[udi="' + eventVariables.attributes.udi + '"] td').removeClass("highlight");
     });
 
-    $('#filter-input').bind('keypress', function(e) {
+    $("#filter-input").bind("keypress", function(e) {
         if(e.keyCode==13){
             applyFilter();
         }
     });
 
-    $('#filter-input').focusout(function() {
-        if ($('#filter-applied').val() != $('#filter-input').val()) {
+    $("#filter-input").focusout(function() {
+        if ($("#filter-applied").val() != $("#filter-input").val()) {
             applyFilter();
         }
     });
 
     $("#expand-collapse").click(function(){
-        if ($('#expand-collapse').hasClass('collapsed')) {
+        if ($("#expand-collapse").hasClass("collapsed")) {
             expand();
         }
         else {
@@ -41,103 +41,117 @@ $(document).ready(function() {
 
     expand();
 
-    $('#map_pane').mouseleave(function() {
+    $("#map_pane").mouseleave(function() {
         myGeoViz.unhighlightAll();
     });
 
-    $(document).on('filterDrawn',function() {
-        $('body').css('cursor','');
-        $('#olmap').css('cursor','');
-        $('input').css('cursor','');
-        trees['tree'].geo_filter=myGeoViz.getFilter();
+    $(document).on("filterDrawn",function() {
+        $("body").css("cursor","");
+        $("#olmap").css("cursor","");
+        $("input").css("cursor","");
+        trees["tree"].geo_filter=myGeoViz.getFilter();
         applyFilter();
-        $('#clearGeoFilterButton').button('disable');
+        $("#clearGeoFilterButton").button("disable");
     });
 
     $("#show_all_extents_checkbox").button();
     $(".map_button").button();
-    $("#filter-button").button();
+    // local variable for filter button//
+    var filterButton = $("#filter-button");
+    filterButton.button();
+    filterButton.button("disable");
     $("#clear-button").button();
+    $("#filter-input").on("keyup change paste input propertychange", function(e) {
+        enableFilterButton();
+    });
 });
+// function to enable the Filter button only when the textbox is not empty //
+function enableFilterButton() {
+    if ("" !== $("#filter-input").val()) {
+        $("#filter-button").button("enable");
+    } else {
+        $("#filter-button").button("disable");
+    }
+}
 
 function expand() {
-    $('#left').show();
-    $('#right').animate({'left' : "45%", 'width' : "55%"}, {duration: 'slow'});
-    $('#left').animate({'width' : "45%"}, {duration: 'slow', complete: function() {
-        $('#expand-collapse').removeClass('collapsed');
-        $('.right-panel').removeClass('right-panel-collapsed');
+    $("#left").show();
+    $("#right").animate({"left" : "45%", "width" : "55%"}, {duration: "slow"});
+    $("#left").animate({"width" : "45%"}, {duration: "slow", complete: function() {
+        $("#expand-collapse").removeClass("collapsed");
+        $(".right-panel").removeClass("right-panel-collapsed");
     }});
     $("#expand-collapse > div").css("background-image", "url(" + $("#expand-collapse").attr("collapse-image") + ")");
-    if (typeof($.cookie) == 'function') $.cookie("expanded", 1);
+    if (typeof($.cookie) == "function") $.cookie("expanded", 1);
 }
 
 function collapse() {
-    $('#right').animate({'left' : "0%", 'width' : "100%"}, {duration: 'slow'});
-    $('#left').animate({'width' : "0%"}, {duration: 'slow', complete: function() {
-        $('#expand-collapse').addClass('collapsed');
-        $('#left').hide();
-        $('.right-panel').addClass('right-panel-collapsed');
+    $("#right").animate({"left" : "0%", "width" : "100%"}, {duration: "slow"});
+    $("#left").animate({"width" : "0%"}, {duration: "slow", complete: function() {
+        $("#expand-collapse").addClass("collapsed");
+        $("#left").hide();
+        $(".right-panel").addClass("right-panel-collapsed");
     }});
     $("#expand-collapse > div").css("background-image", "url(" + $("#expand-collapse").attr("expand-image") + ")");
-    if (typeof($.cookie) == 'function') $.cookie("expanded", 0);
+    if (typeof($.cookie) == "function") $.cookie("expanded", 0);
 }
 
 function resizeLeftRight() {
-    $('#left').height(0);
-    $('#right').height(0);
-    rh = $('#main').height() - $('#filter').height() - $('.tabs').height() - 15;
-    lh = $('#main').height() - $('.tabs').height() - 15;
-    $('#left').height(lh);
-    $('#right').height(rh);
+    $("#left").height(0);
+    $("#right").height(0);
+    rh = $("#main").height() - $("#filter").height() - $(".tabs").height() - 15;
+    lh = $("#main").height() - $(".tabs").height() - 15;
+    $("#left").height(lh);
+    $("#right").height(rh);
 }
 
 function showDatasets(by,id) {
     myGeoViz.removeAllFeaturesFromMap();
-    $('#filter-button').button('disable');
-    $('#clear-button').button('disable');
-    $('#drawGeoFilterButton').button('disable');
-    currentlink = $('#packageLink').attr('href');
+    $("#filter-button").button("disable");
+    $("#clear-button").button("disable");
+    $("#drawGeoFilterButton").button("disable");
+    currentlink = $("#packageLink").attr("href");
     if (currentlink) {
-        newlink = currentlink.replace(/\?filter=[^&]*(&|$)/,'');
-        if ($('#filter-applied').val() != '') {
-            newlink += '?filter=' + $('#filter-applied').val();
+        newlink = currentlink.replace(/\?filter=[^&]*(&|$)/,"");
+        if ($("#filter-applied").val() != "") {
+            newlink += "?filter=" + $("#filter-applied").val();
         }
-        $('#packageLink').attr('href',newlink);
+        $("#packageLink").attr("href",newlink);
     }
-    geo_filter = '';
-    if (trees['tree'].geo_filter) {
-        geo_filter = trees['tree'].geo_filter;
+    geo_filter = "";
+    if (trees["tree"].geo_filter) {
+        geo_filter = trees["tree"].geo_filter;
     }
     $.ajax({
-        "url": Routing.generate('pelagos_app_ui_datadiscovery_datasets'),
+        "url": Routing.generate("pelagos_app_ui_datadiscovery_datasets"),
         "data": {
-            "filter": jQuery('#filter-applied').val(),
+            "filter": jQuery("#filter-applied").val(),
             "by": by,
             "id": id,
             "geo_filter": geo_filter
         },
         "success": function(data) {
-            $('#dataset_listing_wrapper .spinner').hide();
-            $('#dataset_listing').html(data);
-            $('#tabs').tabs({
+            $("#dataset_listing_wrapper .spinner").hide();
+            $("#dataset_listing").html(data);
+            $("#tabs").tabs({
                 activate: function(event, ui) {
-                    if ($('#show_all_extents_checkbox').is(':checked')) {
-                        var selectedTab = $("#tabs").tabs('option','active');
+                    if ($("#show_all_extents_checkbox").is(":checked")) {
+                        var selectedTab = $("#tabs").tabs("option","active");
                         myGeoViz.removeAllFeaturesFromMap();
                         if (datasets[selectedTab]) {
                             for (var i=0; i<datasets[selectedTab].length; i++) {
-                                myGeoViz.addFeatureFromWKT(datasets[selectedTab][i].geom,{'udi':datasets[selectedTab][i].udi});
+                                myGeoViz.addFeatureFromWKT(datasets[selectedTab][i].geom,{"udi":datasets[selectedTab][i].udi});
                             }
                         }
                     }
                 }
             }
             );
-            $('#filter-button').button('enable');
-            $('#clear-button').button('enable');
-            $('#drawGeoFilterButton').button("enable");
+            enableFilterButton();
+            $("#clear-button").button("enable");
+            $("#drawGeoFilterButton").button("enable");
             if (myGeoViz.getFilter()) {
-                $('#clearGeoFilterButton').button('enable');
+                $("#clearGeoFilterButton").button("enable");
             }
         },
         "error": function(jqXHR, textStatus, errorThrown) {
@@ -153,61 +167,61 @@ function showDatasetDetails(id) {
             "success": function(data) {
                 $('tr[datasetId="' + id + '"] td.info div.details').html(data);
                 $('tr[datasetId="' + id + '"] td.info div.details').show();
-                $('tr[datasetId="' + id + '"] td.info div.attributes a.details_link').html('Hide Details');
+                $('tr[datasetId="' + id + '"] td.info div.attributes a.details_link').html("Hide Details");
             }
         });
     }
     else {
         if ($('tr[datasetId="' + id + '"] td.info div.details:visible').length == 1) {
             $('tr[datasetId="' + id + '"] td.info div.details').hide();
-            $('tr[datasetId="' + id + '"] td.info div.attributes a.details_link').html('Show Details');
+            $('tr[datasetId="' + id + '"] td.info div.attributes a.details_link').html("Show Details");
         }
         else {
             $('tr[datasetId="' + id + '"] td.info div.details').show();
-            $('tr[datasetId="' + id + '"] td.info div.attributes a.details_link').html('Hide Details');
+            $('tr[datasetId="' + id + '"] td.info div.attributes a.details_link').html("Hide Details");
         }
     }
 }
 
 function applyFilter() {
-    $('#filter-button').button('disable');
-    $('#clear-button').button('disable');
-    $('#drawGeoFilterButton').button('disable');
+    $("#filter-button").button("disable");
+    $("#clear-button").button("disable");
+    $("#drawGeoFilterButton").button("disable");
     myGeoViz.removeAllFeaturesFromMap();
-    $('#dataset_listing').html("");
-    $('#dataset_listing_wrapper .spinner').show();
-    trees['tree'].filter=jQuery('#filter-input').val();
-    jQuery('#filter-applied').val(jQuery('#filter-input').val());
-    updateTree(trees['tree']);
+    $("#dataset_listing").html("");
+    $("#dataset_listing_wrapper .spinner").show();
+    trees["tree"].filter=jQuery("#filter-input").val();
+    jQuery("#filter-applied").val(jQuery("#filter-input").val());
+    updateTree(trees["tree"]);
 }
 
 function clearAll() {
     myGeoViz.goHome();
-    $('#by-input').val('');
-    $('#id-input').val('');
-    $('#filter-input').val('');
-    $('#filter-applied').val('');
-    trees['tree'].selected = null;
+    $("#by-input").val("");
+    $("#id-input").val("");
+    $("#filter-input").val("");
+    $("#filter-applied").val("");
+    trees["tree"].selected = null;
     myGeoViz.clearFilter();
-    $('#clearGeoFilterButton').button('disable');
-    trees['tree'].geo_filter = null;
+    $("#clearGeoFilterButton").button("disable");
+    trees["tree"].geo_filter = null;
     applyFilter();
 }
 
 function showAllExtents() {
-    if ($('#show_all_extents_checkbox').is(':checked')) {
-        $('#show_all_extents_label').html('<span class="ui-button-text">Hide All Extents</span>');
-        var selectedTab = $("#tabs").tabs('option','active');
+    if ($("#show_all_extents_checkbox").is(":checked")) {
+        $("#show_all_extents_label").html('<span class="ui-button-text">Hide All Extents</span>');
+        var selectedTab = $("#tabs").tabs("option","active");
         myGeoViz.removeAllFeaturesFromMap();
         if (datasets[selectedTab]) {
             for (var i=0; i<datasets[selectedTab].length; i++) {
-                myGeoViz.addFeatureFromWKT(datasets[selectedTab][i].geom,{'udi':datasets[selectedTab][i].udi});
+                myGeoViz.addFeatureFromWKT(datasets[selectedTab][i].geom,{"udi":datasets[selectedTab][i].udi});
             }
         }
     }
     else {
-        $('#show_all_extents_label').html('<span class="ui-button-text">Show All Extents</span>');
-        $('table.datasets tr td').removeClass('highlight');
+        $("#show_all_extents_label").html('<span class="ui-button-text">Show All Extents</span>');
+        $("table.datasets tr td").removeClass("highlight");
         myGeoViz.removeAllFeaturesFromMap();
     }
 }
