@@ -231,7 +231,7 @@ class DatasetSubmissionType extends AbstractType
                 'required' => true,
             ))
             ->add('harddriveFileSize', Type\TextType::class, array(
-                'label' => 'External Hard Drive File Size',
+                'label' => 'Total Dataset File Size',
                 'required' => false,
             ))
             ->add('harddriveAddresseeName', Type\TextType::class, array(
