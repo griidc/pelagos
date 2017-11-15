@@ -47,6 +47,17 @@ class DatasetSubmissionListener extends EventListener
             array('dataset' => $dataset),
             $this->getDMs($dataset, $datasetSubmission->getSubmitter())
         );
+
+        // email DRPM(s) if there is a external hard drive request
+        if(datasetSubmission::TRANSFER_TYPE_HARDDRIVE === $datasetSubmission->getDatasetFileTransferType()) {
+            $template = $this->twig
+                ->loadTemplate('PelagosAppBundle:Email:data-repository-managers.external-harddrive-requested.email.twig');
+            $this->sendMailMsg(
+                $template,
+                ['datasetSubmission' => $datasetSubmission],
+                $this->getAllDRPMs()
+        );
+      }
     }
 
     /**
@@ -82,6 +93,19 @@ class DatasetSubmissionListener extends EventListener
             array('dataset' => $dataset),
             $this->getDMs($dataset, $datasetSubmission->getSubmitter())
         );
+
+        // email DRPM(s) if there is a external hard drive request
+        if(datasetSubmission::TRANSFER_TYPE_HARDDRIVE === $datasetSubmission->getDatasetFileTransferType()) {
+            $template = $this->twig
+                ->loadTemplate('PelagosAppBundle:Email:data-repository-managers.external-harddrive-requested.email.twig');
+            $this->sendMailMsg(
+                $template,
+                ['datasetSubmission' => $datasetSubmission],
+                $this->getAllDRPMs()
+            );
+        }
+
+        dump($datasetSubmission);
     }
 
     /**
