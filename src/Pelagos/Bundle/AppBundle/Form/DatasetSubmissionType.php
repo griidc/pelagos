@@ -238,7 +238,7 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Addressee Name',
                 'required' => false,
             ))
-            ->add('harddriveAddresseeEmail', Type\TextType::class, array(
+            ->add('harddriveAddresseeEmail', Type\EmailType::class, array(
                 'label' => 'Addressee Email',
                 'required' => false,
             ))
