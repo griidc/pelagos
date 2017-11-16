@@ -10,7 +10,7 @@ An external hard drive request for dataset {{ datasetSubmission.dataset.udi }} h
     Addressee Phone: {{ datasetSubmission.harddriveAddresseePhone }}<br>
     Addressee Delivery Information:<br>
     {{ datasetSubmission.harddriveAddresseeName }}<br>
-    {{ datasetSubmission.harddriveDeliveryAddress }}
+    {{ datasetSubmission.harddriveDeliveryAddress |nl2br }}
 {% endblock %}
 
 {% block body_text %}
