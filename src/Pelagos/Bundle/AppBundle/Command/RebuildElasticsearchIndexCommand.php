@@ -2,6 +2,7 @@
 
 namespace Pelagos\Bundle\AppBundle\Command;
 
+use FOS\ElasticaBundle\Persister\ObjectPersister;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,7 +25,7 @@ class RebuildElasticsearchIndexCommand extends ContainerAwareCommand
     /**
      * The elastica persister for the pelagos Dataset index.
      *
-     * @var mixed pelagosDatasetIndexPersister
+     * @var ObjectPersister pelagosDatasetIndexPersister
      */
     protected $pelagosDatasetIndexPersister;
 
