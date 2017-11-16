@@ -231,14 +231,14 @@ class DatasetSubmissionType extends AbstractType
                 'required' => true,
             ))
             ->add('harddriveFileSize', Type\TextType::class, array(
-                'label' => 'External Hard Drive File Size',
+                'label' => 'Total Dataset File Size',
                 'required' => false,
             ))
             ->add('harddriveAddresseeName', Type\TextType::class, array(
                 'label' => 'Addressee Name',
                 'required' => false,
             ))
-            ->add('harddriveAddresseeEmail', Type\TextType::class, array(
+            ->add('harddriveAddresseeEmail', Type\EmailType::class, array(
                 'label' => 'Addressee Email',
                 'required' => false,
             ))
@@ -246,9 +246,10 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Addressee Phone number',
                 'required' => false,
             ))
-            ->add('harddriveDeliveryAddress', Type\TextType::class, array(
+            ->add('harddriveDeliveryAddress', Type\TextareaType::class, array(
                 'label' => 'Delivery Address',
                 'required' => false,
+                'attr' => array('rows' => '5'),
             ))
             ->add('submitButton', Type\SubmitType::class, array(
                 'label' => 'Submit',
