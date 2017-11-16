@@ -1,0 +1,28 @@
+{% block subject 'External Hard Drive Request - ' ~ datasetSubmission.dataset.udi %}
+
+{% block body_html %}
+An external hard drive request for dataset {{ datasetSubmission.dataset.udi }} has been submitted:<br><br>
+    Dataset UDI: {{ datasetSubmission.dataset.udi }}<br>
+    Research Group: {{ datasetSubmission.dataset.researchGroup.name }}<br>
+    Total File Size: {{ datasetSubmission.harddriveFileSize }} <br>
+    Submitter Name: {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }}<br>
+    Addressee Email: {{ datasetSubmission.harddriveAddresseeEmail }}<br>
+    Addressee Phone: {{ datasetSubmission.harddriveAddresseePhone }}<br>
+    Addressee Delivery Information:<br>
+    {{ datasetSubmission.harddriveAddresseeName }}<br>
+    {{ datasetSubmission.harddriveDeliveryAddress |nl2br }}
+{% endblock %}
+
+{% block body_text %}
+An external hard drive request for dataset {{ datasetSubmission.dataset.udi }} has been submitted:
+
+    Dataset UDI: {{ datasetSubmission.dataset.udi }}
+    Research Group: {{ datasetSubmission.dataset.researchGroup.name }}
+    Total File Size: {{ datasetSubmission.harddriveFileSize }}
+    Submitter Name: {{ datasetSubmission.submitter.firstName }} {{ datasetSubmission.submitter.lastName }}
+    Addressee Email: {{ datasetSubmission.harddriveAddresseeEmail }}
+    Addressee Phone: {{ datasetSubmission.harddriveAddresseePhone }}
+    Addressee Delivery Address:
+    {{ datasetSubmission.harddriveAddresseeName }}
+    {{ datasetSubmission.harddriveDeliveryAddress }}
+{% endblock %}

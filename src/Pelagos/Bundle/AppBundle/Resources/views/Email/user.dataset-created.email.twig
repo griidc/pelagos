@@ -1,10 +1,14 @@
-{% block subject 'GRIIDC Dataset Submitted' %}
+{% block subject %}
+    GRIIDC Dataset {{ datasetSubmission.dataset.udi }} Submission
+{% endblock %}
 
 {% block body_html %}
     Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},<br>
     <br>
-    The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has received your dataset submission <a href="{{ datalandUrl }}">{{datasetSubmission.dataset.udi}}</a>.<br>
-    This dataset has been assigned the doi:{{datasetSubmission.dataset.doi.doi}}.<br>
+    The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has received your dataset submission {{ datasetSubmission.dataset.udi }}.
+    The dataset landing page is <a href="{{ url('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi}) }}">{{url('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi})}}</a>.<br>
+    This dataset has been assigned the doi: {{datasetSubmission.dataset.doi.doi}}.<br><br>
+    The dataset package will be reviewed by GRIIDC.<br><br>
     If you have any questions regarding this dataset submission please email griidc@gomri.org.<br>
     <br>
     Thank you,<br>
@@ -14,11 +18,12 @@
 {% block body_text %}
 Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},
 
-The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has received your dataset submission {{ datalandUrl }}
+    The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has received your dataset submission {{ datasetSubmission.dataset.udi }}. The dataset landing page is The dataset landing page is {{  url('pelagos_app_ui_dataland_default', { 'udi': datasetSubmission.dataset.udi}) }}.
+    This dataset has been assigned the doi: {{datasetSubmission.dataset.doi.doi}}.
 
-This dataset has been assigned the doi:{{datasetSubmission.dataset.doi.doi}}.
+    The dataset package will be reviewed by GRIIDC.
 
-If you have any questions regarding this dataset submission please email griidc@gomri.org.
+    If you have any questions regarding this dataset submission please email griidc@gomri.org.
 
 Thank you,
 The GRIIDC Team
