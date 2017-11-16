@@ -246,9 +246,10 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Addressee Phone number',
                 'required' => false,
             ))
-            ->add('harddriveDeliveryAddress', Type\TextType::class, array(
+            ->add('harddriveDeliveryAddress', Type\TextareaType::class, array(
                 'label' => 'Delivery Address',
                 'required' => false,
+                'attr' => array('rows' => '5'),
             ))
             ->add('submitButton', Type\SubmitType::class, array(
                 'label' => 'Submit',
