@@ -243,7 +243,7 @@ class DatasetSubmissionType extends AbstractType
                 'required' => false,
             ))
             ->add('harddriveAddresseePhone', Type\TextType::class, array(
-                'label' => 'Addressee Phone number',
+                'label' => 'Addressee Phone Number',
                 'required' => false,
             ))
             ->add('harddriveDeliveryAddress', Type\TextareaType::class, array(
