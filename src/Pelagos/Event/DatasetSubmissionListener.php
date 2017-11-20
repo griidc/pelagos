@@ -96,6 +96,14 @@ class DatasetSubmissionListener extends EventListener
             $this->getDMs($dataset, $datasetSubmission->getSubmitter())
         );
 
+        // email DRPM(s)
+        $template = $this->twig
+            ->loadTemplate('PelagosAppBundle:Email:data-repository-managers.dataset-resubmitted.email.twig');
+        $this->sendMailMsg(
+            $template,
+            array('datasetSubmission' => $datasetSubmission),
+            $this->getAllDRPMs()
+        );
         // email DRPM(s) if there is a external hard drive request
         if (datasetSubmission::TRANSFER_TYPE_HARDDRIVE === $datasetSubmission->getDatasetFileTransferType()) {
             $template = $this->twig
