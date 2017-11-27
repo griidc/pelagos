@@ -132,6 +132,9 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                     // The latest submission is complete, so create new one based on it.
                     $datasetSubmission = new DatasetSubmission($datasetSubmission);
 
+                    // Wipe out existing data from the submission.
+                    $this->clearDatasetSubmission($datasetSubmission);
+
                     // Clear dataset and metadata contacts.
                     $datasetSubmission->getDatasetContacts()->clear();
                     // Populate from metadata.
@@ -168,7 +171,8 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
 
                     // If we have accepted metadata.
                     if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
-
+                        // Clear out datasetSubmission to make into a blank one.
+                        $this->clearDatasetSubmission($datasetSubmission);
                         // Clear dataset and metadata contacts.
                         $datasetSubmission->getDatasetContacts()->clear();
                         // Populate from metadata.
