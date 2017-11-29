@@ -423,6 +423,11 @@ $(function() {
         }
     });
 
+
+    /*The redundant code below for hard drive file uploader (i.e. same as direct upload) is due to the fine uploader JS
+     which creates new buttons and button id keeps changing, which makes it difficult to get the button id to show/hide
+     for different selectors. */
+
     // External Hard Drive
     $("#readmefile-uploader").fineUploader({
         template: "qq-template",
