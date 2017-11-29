@@ -1,0 +1,44 @@
+{%
+set properties = [
+    'researchGroup.name',
+    'udi',
+    'title'
+]
+%}
+<table
+    entityNiceName = "Datasets"
+    entityApi = "{{ path('pelagos_app_ui_datasetreview_default') }}"
+    class = "entityTable stripe"
+    width = "100%"
+    data-ajax = '{
+        "url": "{{ path('pelagos_api_datasets_get_collection') }}",
+        "data": {
+                    "_properties": "{{ properties | join(',') }}",
+                    "datasetSubmission.status": 2
+                    {% if not is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
+                    ,
+                    "researchGroup": "{{ researchGroupList | join(',') }}"
+                    {% endif %}
+                },
+        "dataSrc": "",
+        "cache": true
+    }'
+    data-columns = '[
+        { "data": "researchGroup.name" },
+        { "data": "udi" },
+        { "data": "title" }
+    ]'
+    data-order = '[
+        [ 0, "asc" ],
+        [ 1, "asc" ]
+    ]'
+    >
+    <thead>
+        <tr>
+            <th>Research Group</th>
+            <th>Dataset UDI</th>
+            <th>Dataset Title</th>
+        </tr>
+    </thead>
+</table>
+
