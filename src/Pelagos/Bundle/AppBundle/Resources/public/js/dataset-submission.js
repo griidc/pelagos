@@ -425,7 +425,7 @@ $(function() {
 
     // External Hard Drive
     $("#readmefile-uploader").fineUploader({
-        template: "qq-template-readme",
+        template: "qq-template",
         multiple: false,
         request: {
             endpoint: Routing.generate("pelagos_api_upload_post")
