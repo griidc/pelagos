@@ -14,13 +14,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class DatasetReviewController extends UIController implements OptionalReadOnlyInterface
 {
     /**
-     * A queue of messages to publish to RabbitMQ.
-     *
-     * @var array
-     */
-    protected $messages = array();
-
-    /**
      * The default action for Dataset Review.
      *
      * @Route("")
