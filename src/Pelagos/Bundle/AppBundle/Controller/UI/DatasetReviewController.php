@@ -23,8 +23,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     /**
      * The default action for Dataset Review.
      *
-     * @throws BadRequestHttpException When xmlUploadForm is submitted without a file.
-     *
      * @Route("")
      *
      * @return Response A Response instance.
