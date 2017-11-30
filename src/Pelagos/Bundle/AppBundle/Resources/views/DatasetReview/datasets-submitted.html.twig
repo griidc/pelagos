@@ -15,10 +15,6 @@ set properties = [
         "data": {
                     "_properties": "{{ properties | join(',') }}",
                     "datasetSubmission.status": 2
-                    {% if not is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
-                    ,
-                    "researchGroup": "{{ researchGroupList | join(',') }}"
-                    {% endif %}
                 },
         "dataSrc": "",
         "cache": true
