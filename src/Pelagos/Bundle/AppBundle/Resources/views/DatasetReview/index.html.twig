@@ -4,7 +4,6 @@
     {{
         add_library (
             [
-                'ui.datepicker',
                 'ui.dialog',
                 'ui.tabs',
                 'ui.widget',
@@ -17,7 +16,6 @@
             [
                 '//cdnjs.cloudflare.com/ajax/libs/animate.css/3.3.0/animate.min.css',
                 '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css',
-                '//cdnjs.cloudflare.com/ajax/libs/file-uploader/5.11.8/fine-uploader-new.min.css',
                 '//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css',
                 '//cdn.datatables.net/select/1.0.1/css/select.dataTables.min.css'
             ]
@@ -25,9 +23,7 @@
     }}
 
     {% stylesheets
-        '@PelagosAppBundle/Resources/public/css/fileBrowser.css'
         '@PelagosAppBundle/Resources/public/css/dataset-submission.css'
-        '@PelagosAppBundle/Resources/public/css/dataset-submission-uploader.css'
     %}
         {{ add_css(asset_url) }}
     {% endstylesheets  %}
