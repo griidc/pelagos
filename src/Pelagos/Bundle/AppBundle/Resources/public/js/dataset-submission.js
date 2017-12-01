@@ -660,6 +660,8 @@ $(function() {
     if ($("#regForm").attr("datasetSubmissionStatus") == 2) {
         // Disable fineupload Drag and Drop area.
         $(".qq-upload-drop-area").css("visibility", "hidden");
+        // Disable the upload buttons
+        $(".qq-upload-button :input").prop("disabled", true);
         // Disable Spatial Wizard button.
         $("#geoWizard #geowizBtn").prop("disabled", "true");
     }
