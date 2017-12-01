@@ -353,7 +353,7 @@ $(function() {
     });
 
     // Direct Upload
-    $("#file-uploader").fineUploader({
+    $(".file-uploader").fineUploader({
         template: "qq-template",
         multiple: false,
         request: {
@@ -386,12 +386,12 @@ $(function() {
         callbacks: {
             onSessionRequestComplete: function (response, success, xhrOrXdr) {
                 if (response.length > 0) {
-                    $("#file-uploader .qq-upload-button").hide();
+                    $(".file-uploader .qq-upload-button").hide();
                 }
             },
             onSubmit: function (id, name) {
                 setDatasetFileUri("");
-                $("#file-uploader .qq-upload-button").hide();
+                $(".file-uploader .qq-upload-button").hide();
             },
             onProgress: function (id, name, totalUploadedBytes, totalBytes) {
                 updateSpeedText(totalUploadedBytes, totalBytes);
@@ -417,85 +417,11 @@ $(function() {
                 switch (newStatus) {
                     case qq.status.CANCELED:
                     case qq.status.DELETED:
-                        $("#file-uploader .qq-upload-button").show();
+                        $(".file-uploader .qq-upload-button").show();
                 }
             }
         }
     });
-
-
-    /*The redundant code below for hard drive file uploader (i.e. same as direct upload) is due to the fine uploader JS
-     which creates new buttons and button id keeps changing, which makes it difficult to get the button id to show/hide
-     for different selectors. */
-
-    // External Hard Drive
-    $("#readmefile-uploader").fineUploader({
-        template: "qq-template",
-        multiple: false,
-        request: {
-            endpoint: Routing.generate("pelagos_api_upload_post")
-        },
-        chunking: {
-            enabled: true,
-            partSize: 10000000,
-            concurrent: {
-                enabled: true
-            },
-            success: {
-                endpoint: Routing.generate("pelagos_api_upload_post") + "?done"
-            }
-        },
-        resume: {
-            enabled: true
-        },
-        retry: {
-            enableAuto: true
-        },
-        deleteFile: {
-            enabled: $("#submitButton").attr("disabled") != "disabled",
-            forceConfirm: true,
-            endpoint: Routing.generate("pelagos_api_upload_delete")
-        },
-        callbacks: {
-            onSessionRequestComplete: function (response, success, xhrOrXdr) {
-                if (response.length > 0) {
-                    $("#readmefile-uploader .qq-upload-button").hide();
-                }
-            },
-            onSubmit: function (id, name) {
-                setDatasetFileUri("");
-                $("#readmefile-uploader .qq-upload-button").hide();
-            },
-            onProgress: function (id, name, totalUploadedBytes, totalBytes) {
-                updateSpeedText(totalUploadedBytes, totalBytes);
-            },
-            onComplete: function (id, name, responseJSON, xhr) {
-                if (responseJSON.success) {
-                    setDatasetFileUri(responseJSON.path);
-                    saveDatasetSubmission();
-                }
-            },
-            onDelete: function (id) {
-                setDatasetFileUri("");
-                saveDatasetSubmission();
-            },
-            onStatusChange: function (id, oldStatus, newStatus) {
-                switch (newStatus) {
-                    case qq.status.CANCELED:
-                    case qq.status.DELETED:
-                    case qq.status.PAUSED:
-                    case qq.status.UPLOAD_SUCCESSFUL:
-                        resetSpeedText();
-                }
-                switch (newStatus) {
-                    case qq.status.CANCELED:
-                    case qq.status.DELETED:
-                        $("#readmefile-uploader .qq-upload-button").show();
-                }
-            }
-        }
-    });
-
 
     // Request SFTP/GridFTP button
     $("#sftpButton").click(function() {
@@ -541,7 +467,7 @@ $(function() {
             // clear uploaded files list (Direct Upload tab)
             $(".qq-upload-list").html("")
             // show upload button (Direct Upload tab)
-            $("#file-uploader .qq-upload-button").show();
+            $(".file-uploader .qq-upload-button").show();
         }
         if (datasetFileTransferType != "SFTP") {
             // clear datasetFilePath (Upload via SFTP/GridFTP tab)
