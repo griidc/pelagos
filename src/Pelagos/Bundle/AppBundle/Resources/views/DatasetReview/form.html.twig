@@ -8,7 +8,9 @@
         <form id="udiLoadReviewform">
             <label for="udiReview"><b>Unique Dataset Identifier (UDI): </b></label>
             <input minlength="16" type="text" id="udiReview" name="udiReview" size="60">
-            <button disabled
+            <button onclick="window.location.href='{{ path('pelagos_app_ui_datasetreview_default') }}?udiReview=' +
+                    document.getElementById('udiReview').value.trim();"
+                    disabled
                     name="loadReviewButton" id="loadReviewButton"
                     type="button">Load Dataset
             </button>

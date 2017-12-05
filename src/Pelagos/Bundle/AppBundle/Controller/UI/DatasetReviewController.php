@@ -2,8 +2,11 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
+use Pelagos\Exception\NotFoundException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Pelagos\Entity\Dataset;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
@@ -15,14 +18,28 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     /**
      * The default action for Dataset Review.
      *
+     * @param Request $request The Symfony request object.
+     *
      * @Route("")
      *
      * @return Response A Response instance.
      */
-    public function defaultAction()
+    public function defaultAction(Request $request)
     {
+        $dataset = 0;
+        $udi = $request->query->get('udiReview');
+
+        if ($udi !== null) {
+            $datasets = $this->entityHandler
+                ->getBy(Dataset::class, array('udi' => substr($udi, 0, 16)));
+            if (empty($datasets)) {
+                $dataset = null;
+            }
+        }
+
         return $this->render(
-            'PelagosAppBundle:DatasetReview:index.html.twig'
+            'PelagosAppBundle:DatasetReview:index.html.twig',
+            array('dataset' => $dataset)
         );
     }
 }
