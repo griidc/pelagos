@@ -38,7 +38,10 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
 
         return $this->render(
             'PelagosAppBundle:DatasetReview:index.html.twig',
-            array('dataset' => $dataset)
+            [
+                'dataset' => $dataset,
+                'udi' => $udi
+            ]
         );
     }
 }
