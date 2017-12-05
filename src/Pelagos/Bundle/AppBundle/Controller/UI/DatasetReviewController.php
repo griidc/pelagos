@@ -2,10 +2,9 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
-use Pelagos\Exception\NotFoundException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Pelagos\Entity\Dataset;
 
 /**
