@@ -43,23 +43,16 @@
 {% block body %}
 
 {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
-    {#{% include 'PelagosAppBundle:DatasetReview:form.html.twig' %}#}
-    {% if dataset is null %}
-    <div class="messages warning">
-        <h2 class="element-invisible">Status message</h2>
-        Sorry, the dataset with Unique Dataset Identifier (UDI) {{ udi }} could not be found. Please email <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> if you have any questions.
-    </div>
-        {% include 'PelagosAppBundle:DatasetReview:form.html.twig' %}
-    {% else %}
-                {% include 'PelagosAppBundle:DatasetReview:form.html.twig' %}
-    {% endif %}
     <h1>Dataset Review</h1>
-    <div class="cleair">
-        <fieldset>
-            <b>Submitted Datasets</b>
-            {% include 'PelagosAppBundle:DatasetReview:datasets-submitted.html.twig' %}
-        </fieldset>
-    </div>
+        {% if dataset is null %}
+            <div class="messages warning">
+                <h2 class="element-invisible">Status message</h2>
+                    Sorry, the dataset with Unique Dataset Identifier (UDI) {{ udi }} could not be found. Please email <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> if you have any questions.
+            </div>
+            {% include 'PelagosAppBundle:DatasetReview:form.html.twig' %}
+        {% else %}
+            {% include 'PelagosAppBundle:DatasetReview:form.html.twig' %}
+        {% endif %}
 {% elseif not is_granted('ROLE_DATA_REPOSITORY_MANAGER') and is_granted('IS_AUTHENTICATED_FULLY') %}
     <div class="messages error">
         <h2 class="element-invisible">Error message</h2>
