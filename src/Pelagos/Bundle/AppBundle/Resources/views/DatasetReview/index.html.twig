@@ -1,6 +1,7 @@
 {% extends "PelagosAppBundle::layout.html.twig" %}
 
 {% block head %}
+
     {{
         add_css (
             [
@@ -21,6 +22,8 @@
             [
                 '//cdn.datatables.net/1.10.7/js/jquery.dataTables.js',
                 '//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',
+                '//code.jquery.com/ui/1.12.1/jquery-ui.min.js'
             ]
         )
     }}
@@ -40,6 +43,7 @@
 {% block body %}
 
 {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
+    {% include 'PelagosAppBundle:DatasetReview:form.html.twig' %}
     <h1>Dataset Review</h1>
     <div class="cleair">
         <fieldset>
