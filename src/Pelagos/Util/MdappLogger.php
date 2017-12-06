@@ -9,16 +9,6 @@ use Doctrine\ORM\EntityManager;
 class MdappLogger
 {
     /**
-     * Constant of the number of write attempts made to write to log.
-     */
-    const RETRIES = 5;
-
-    /**
-     * Constant of number fo seconds to sleep inbetween log write attempts.
-     */
-    const SLEEPYTIME = 1;
-
-    /**
      * String of full filepath to logfile.
      *
      * @var string
