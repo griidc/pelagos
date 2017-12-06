@@ -35,7 +35,6 @@ class MdappLogger
     public function writeLog($message)
     {
         $tz = ini_get('date.timezone');
-        $attemptCount = 0;
         $timestamp = new \DateTime('now', new \DateTimeZone($tz));
         $successfulWrite = file_put_contents(
             $this->logfile,
