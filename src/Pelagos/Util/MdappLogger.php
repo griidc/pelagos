@@ -30,8 +30,6 @@ class MdappLogger
      *
      * @param string $message The text to log to file.
      *
-     * @throws \Exception If syslog cannot be written.
-     *
      * @return void
      */
     public function writeLog($message)
