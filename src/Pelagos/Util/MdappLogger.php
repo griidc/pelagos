@@ -39,7 +39,7 @@ class MdappLogger
         $successfulWrite = file_put_contents(
             $this->logfile,
             $timestamp->format('r') . ": $message\n",
-            FILE_APPEND or LOCK_EX
+            FILE_APPEND | LOCK_EX
         );
     }
 }
