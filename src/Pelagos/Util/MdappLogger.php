@@ -49,25 +49,10 @@ class MdappLogger
         $tz = ini_get('date.timezone');
         $attemptCount = 0;
         $timestamp = new \DateTime('now', new \DateTimeZone($tz));
-        $successfulWrite = file_put_contents($this->logfile, $timestamp->format('r') . ": $message\n", FILE_APPEND);
-        while (false === $successfulWrite) {
-            if ($attemptCount < RETRIES) {
-                sleep(SLEEPYTIME);
-                $successfulWrite = file_put_contents(
-                    $this->logfile,
-                    $timestamp->format('r') . ": $message\n",
-                    FILE_APPEND
-                );
-                $attemptCount++;
-            } else {
-                $syslogSuccess = syslog(
-                    LOG_ERR,
-                    'Failed to write to Mdapp log: ' . $timestamp->format('r') . ": $message\n"
-                );
-                if (false == $syslogSuccess) {
-                    throw new \Exception('Could not write to syslog. Something is seriously wrong.');
-                }
-            }
-        }
+        $successfulWrite = file_put_contents(
+            $this->logfile,
+            $timestamp->format('r') . ": $message\n",
+            FILE_APPEND or LOCK_EX
+        );
     }
 }
