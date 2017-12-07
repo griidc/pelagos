@@ -25,15 +25,12 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      */
     public function defaultAction(Request $request)
     {
-        $dataset = 0;
+        $dataset = null;
         $udi = $request->query->get('udiReview');
 
         if ($udi !== null) {
             $datasets = $this->entityHandler
                 ->getBy(Dataset::class, array('udi' => substr($udi, 0, 16)));
-            if (empty($datasets)) {
-                $dataset = null;
-            }
         }
 
         return $this->render(
