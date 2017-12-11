@@ -1,9 +1,11 @@
 var $ = jQuery.noConflict();
 $(document).ready(function(){
   "use strict";
-  if ($(".entityTable").length) {
-    $(".entityTable").pelagosDataTable();
-  }
+
+    var entityTable = $(".entityTable");
+    if (entityTable.length) {
+        entityTable.pelagosDataTable();
+    }
 });
 
 (function($) {

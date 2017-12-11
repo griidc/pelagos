@@ -1,0 +1,25 @@
+<div class="cleair">
+    <fieldset>
+        <p>
+            Please enter the Unique Dataset Identifier (UDI) that GRIIDC assigned to your dataset and select "Load
+            Dataset"
+            to load the most recent information for your dataset.
+        </p>
+        <form id="udiLoadReviewform">
+            <label for="udiReview"><b>Unique Dataset Identifier (UDI): </b></label>
+            <input minlength="16" type="text" id="udiReview" name="udiReview" size="60">
+            <button onclick="window.location.href='{{ path('pelagos_app_ui_datasetreview_default') }}?udiReview=' +
+                    document.getElementById('udiReview').value.trim();"
+                    disabled
+                    name="loadReviewButton" id="loadReviewButton"
+                    type="button">Review Dataset
+            </button>
+            <label class="error" for="udiReview"></label>
+        </form>
+    </fieldset>
+    <fieldset>
+            <b>Submitted Datasets</b>
+            {% include 'PelagosAppBundle:DatasetReview:datasets-submitted.html.twig' %}
+    </fieldset>
+
+</div>
