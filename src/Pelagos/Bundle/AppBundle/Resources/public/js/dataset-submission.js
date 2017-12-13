@@ -152,18 +152,7 @@ $(function() {
 
     var fileTabs = $("#filetabs");
 
-    fileTabs.tabs({
-        activate: function(event, ui) {
-            var labelEmReq = $("label.emRequired");
-
-            labelEmReq
-                .next(":input.ignore:visible")
-                .prop("required", true);
-            labelEmReq
-                .next(":input.ignore:hidden")
-                .removeProp("required");
-        }
-    });
+    fileTabs.tabs();
 
     switch ($("#datasetFileTransferType").val()) {
         case "upload":
@@ -174,9 +163,6 @@ $(function() {
             break;
         case "HTTP":
             fileTabs.tabs("option", "active", 2);
-            break;
-        case "hardDrive":
-            fileTabs.tabs("option", "active", 3);
             break;
     }
 
@@ -353,7 +339,7 @@ $(function() {
     });
 
     // Direct Upload
-    $(".file-uploader").fineUploader({
+    $("#fine-uploader").fineUploader({
         template: "qq-template",
         multiple: false,
         request: {
@@ -386,12 +372,12 @@ $(function() {
         callbacks: {
             onSessionRequestComplete: function (response, success, xhrOrXdr) {
                 if (response.length > 0) {
-                    $(".file-uploader .qq-upload-button").hide();
+                    $("#fine-uploader .qq-upload-button").hide();
                 }
             },
             onSubmit: function (id, name) {
                 setDatasetFileUri("");
-                $(".file-uploader .qq-upload-button").hide();
+                $("#fine-uploader .qq-upload-button").hide();
             },
             onProgress: function (id, name, totalUploadedBytes, totalBytes) {
                 updateSpeedText(totalUploadedBytes, totalBytes);
@@ -417,7 +403,7 @@ $(function() {
                 switch (newStatus) {
                     case qq.status.CANCELED:
                     case qq.status.DELETED:
-                        $(".file-uploader .qq-upload-button").show();
+                        $("#fine-uploader .qq-upload-button").show();
                 }
             }
         }
@@ -463,11 +449,11 @@ $(function() {
         datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
         // set the datasetFileTransferType
         $("#datasetFileTransferType").val(datasetFileTransferType);
-        if (datasetFileTransferType !== "upload" && datasetFileTransferType !== "hardDrive") {
+        if (datasetFileTransferType !== "upload") {
             // clear uploaded files list (Direct Upload tab)
             $(".qq-upload-list").html("")
             // show upload button (Direct Upload tab)
-            $(".file-uploader .qq-upload-button").show();
+            $("#fine-uploader .qq-upload-button").show();
         }
         if (datasetFileTransferType != "SFTP") {
             // clear datasetFilePath (Upload via SFTP/GridFTP tab)
@@ -660,6 +646,8 @@ $(function() {
     if ($("#regForm").attr("datasetSubmissionStatus") == 2) {
         // Disable fineupload Drag and Drop area.
         $(".qq-upload-drop-area").css("visibility", "hidden");
+        // Disable the upload buttons
+        $(".qq-upload-button :input").prop("disabled", true);
         // Disable Spatial Wizard button.
         $("#geoWizard #geowizBtn").prop("disabled", "true");
     }
