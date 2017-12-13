@@ -150,17 +150,19 @@ $(function() {
         }
     });
 
-    $("#filetabs").tabs();
+    var fileTabs = $("#filetabs");
+
+    fileTabs.tabs();
 
     switch ($("#datasetFileTransferType").val()) {
         case "upload":
-            $("#filetabs").tabs("option", "active", 0);
+            fileTabs.tabs("option", "active", 0);
             break;
         case "SFTP":
-            $("#filetabs").tabs("option", "active", 1);
+            fileTabs.tabs("option", "active", 1);
             break;
         case "HTTP":
-            $("#filetabs").tabs("option", "active", 2);
+            fileTabs.tabs("option", "active", 2);
             break;
     }
 
@@ -447,7 +449,7 @@ $(function() {
         datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
         // set the datasetFileTransferType
         $("#datasetFileTransferType").val(datasetFileTransferType);
-        if (datasetFileTransferType != "upload") {
+        if (datasetFileTransferType !== "upload") {
             // clear uploaded files list (Direct Upload tab)
             $(".qq-upload-list").html("")
             // show upload button (Direct Upload tab)
@@ -644,6 +646,8 @@ $(function() {
     if ($("#regForm").attr("datasetSubmissionStatus") == 2) {
         // Disable fineupload Drag and Drop area.
         $(".qq-upload-drop-area").css("visibility", "hidden");
+        // Disable the upload buttons
+        $(".qq-upload-button :input").prop("disabled", true);
         // Disable Spatial Wizard button.
         $("#geoWizard #geowizBtn").prop("disabled", "true");
     }
