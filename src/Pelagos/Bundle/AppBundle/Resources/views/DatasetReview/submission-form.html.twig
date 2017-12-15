@@ -1,0 +1,79 @@
+{{ form_start(xmlForm) }}
+    <div style="display:none;">
+        {{ form_widget(xmlForm.xmlFile) }}
+    </div>
+{{ form_end(xmlForm, {'render_rest': false}) }}
+
+{{ form_start(form, {'attr': {'id': 'regForm'}}) }}
+    <fieldset>
+        <div style="background: transparent;" id="dtabs">
+            <ul>
+                <li>
+                    <a class="dstablink" href="#ds-contact">Dataset Contact</a>
+                    <img class="tabimg">
+                </li>
+                <li>
+                    <a class="dstablink" href="#ds-information">Dataset Information</a>
+                    <img class="tabimg">
+                </li>
+                <li>
+                    <a class="dstablink" href="#ds-keywords">Keywords</a>
+                    <img class="tabimg">
+                </li>
+                <li>
+                    <a class="dstablink" href="#ds-extent">Data Extent</a>
+                    <img class="tabimg">
+                </li>
+                <li>
+                    <a class="dstablink" href="#ds-distribution">Distribution Info</a>
+                    <img class="tabimg">
+                </li>
+                <li>
+                    <a class="dstablink" href="#ds-submit">Submit</a>
+                </li>
+            </ul>
+
+            <fieldset>
+                <i><b>NOTE:</b> Fields with <span class="emRequired"/> are required.</i>
+            </fieldset>
+
+            <div id="ds-contact" class="ds-metadata">
+                {% include 'PelagosAppBundle:DatasetReview:dataset-contact.html.twig' %}
+            </div>
+
+            <div id="ds-information" class="ds-metadata">
+                {% include 'PelagosAppBundle:DatasetReview:dataset-information.html.twig' %}
+            </div>
+
+            <div id="ds-keywords" class="ds-metadata">
+                {% include 'PelagosAppBundle:DatasetReview:keywords.html.twig' %}
+            </div>
+
+            <div id="ds-extent" class="ds-metadata">
+                {% include 'PelagosAppBundle:DatasetReview:extent.html.twig' %}
+            </div>
+
+            <div id="ds-distribution" class="ds-metadata">
+                {% include 'PelagosAppBundle:DatasetReview:distribution-info.html.twig' %}
+            </div>
+
+            <div id="ds-submit">
+                {% include 'PelagosAppBundle:DatasetReview:file-submit.html.twig' %}
+            </div>
+        </div>
+    </fieldset>
+
+{{ form_end(form, {'render_rest': false}) }}
+
+    <div id="navtoolbar" class="ui-widget-header ui-corner-all toolbarbutton">
+        <table width="100%" id="navbuttons">
+            <tr>
+                <td width="50%">
+                    <button type="button" id="btn-previous">Previous</button>
+                </td>
+                <td width="50%">
+                    <button type="button" id="btn-next">Next</button>
+                </td>
+            </tr>
+        </table>
+    </div>
