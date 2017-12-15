@@ -1,12 +1,24 @@
 {% extends "PelagosAppBundle::layout.html.twig" %}
 
 {% block head %}
+    {{
+    add_library (
+        [
+            'ui.datepicker',
+            'ui.dialog',
+            'ui.tabs',
+            'ui.widget',
+        ]
+    )
+    }}
 
     {{
         add_css (
             [
                 '//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css',
-                '//cdn.datatables.net/select/1.0.1/css/select.dataTables.min.css'
+                '//cdn.datatables.net/select/1.0.1/css/select.dataTables.min.css',
+                '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css',
+                '//cdnjs.cloudflare.com/ajax/libs/animate.css/3.3.0/animate.min.css',
             ]
         )
     }}
@@ -55,6 +67,19 @@
                 {% endfor %}
             {% endfor %}
             {% include 'PelagosAppBundle:DatasetReview:form.html.twig' %}
+            {% if dataset is null %}
+                <div class="messages warning">
+                    <h2 class="element-invisible">Status message</h2>
+                        Sorry, the dataset with Unique Dataset Identifier (UDI) {{ udi }} could not be found. Please email <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> if you have any questions.
+                </div>
+                {% include 'PelagosAppBundle:DatasetReview:form.html.twig' %}
+             {% else %}
+                 <div class="messages status">
+                     <h2 class="element-invisible">Status message</h2>
+                     Dataset Identifier <b>'{{ udi }}'</b> was found. The latest version has been loaded.
+                 </div>
+                {% include 'PelagosAppBundle:DatasetReview:submission-form.html.twig' %}
+            {% endif %}
         {% endif %}
 {% elseif not is_granted('ROLE_DATA_REPOSITORY_MANAGER') and is_granted('IS_AUTHENTICATED_FULLY') %}
     <div class="messages error">
