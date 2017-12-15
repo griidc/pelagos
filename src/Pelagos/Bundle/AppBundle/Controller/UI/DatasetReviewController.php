@@ -28,6 +28,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     {
         $dataset = null;
         $udi = $request->query->get('udiReview');
+        $flashBag = $request->getSession()->getFlashBag();
 
         if ($udi !== null) {
             $datasets = $this->entityHandler
@@ -36,23 +37,23 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 $dataset = $datasets[0];
 
                 if ($dataset->getDatasetSubmission() === null) {
-                    $request->getSession()->getFlashBag()->add(
+                   $flashBag->add(
                         'warning',
                         'The dataset ' . $udi . ' has not been submitted and cannot be loaded in review mode.'
                     );
                 } elseif ($dataset->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_INCOMPLETE) {
-                    $request->getSession()->getFlashBag()->add(
+                    $flashBag->add(
                         'warning',
                         'The dataset ' . $udi . ' currently has a draft submission and cannot be loaded in review mode.'
                     );
                 } elseif ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
-                    $request->getSession()->getFlashBag()->add(
+                    $flashBag->add(
                         'warning',
                         'The status of dataset ' . $udi . ' is Back To Submitter and cannot be loaded in review mode.'
                     );
                 }
             } elseif (count($datasets) == 0) {
-                $request->getSession()->getFlashBag()->add(
+                $flashBag->add(
                     'warning',
                     'Sorry, the dataset with Unique Dataset Identifier (UDI) ' .
                     $udi . ' could not be found. Please email 
