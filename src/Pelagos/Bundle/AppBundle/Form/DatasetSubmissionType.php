@@ -230,27 +230,6 @@ class DatasetSubmissionType extends AbstractType
                 'delete_empty' => true,
                 'required' => true,
             ))
-            ->add('harddriveFileSize', Type\TextType::class, array(
-                'label' => 'Total Dataset File Size',
-                'required' => false,
-            ))
-            ->add('harddriveAddresseeName', Type\TextType::class, array(
-                'label' => 'Addressee Name',
-                'required' => false,
-            ))
-            ->add('harddriveAddresseeEmail', Type\EmailType::class, array(
-                'label' => 'Addressee Email',
-                'required' => false,
-            ))
-            ->add('harddriveAddresseePhone', Type\TextType::class, array(
-                'label' => 'Addressee Phone Number',
-                'required' => false,
-            ))
-            ->add('harddriveDeliveryAddress', Type\TextareaType::class, array(
-                'label' => 'Delivery Address',
-                'required' => false,
-                'attr' => array('rows' => '5'),
-            ))
             ->add('submitButton', Type\SubmitType::class, array(
                 'label' => 'Submit',
                 'attr'  => array('class' => 'submitButton'),

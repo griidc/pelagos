@@ -24,12 +24,6 @@ $(document).ready(function() {
         }
     });
 
-    $("#filter-input").focusout(function() {
-        if ($("#filter-applied").val() != $("#filter-input").val()) {
-            applyFilter();
-        }
-    });
-
     $("#expand-collapse").click(function(){
         if ($("#expand-collapse").hasClass("collapsed")) {
             expand();
