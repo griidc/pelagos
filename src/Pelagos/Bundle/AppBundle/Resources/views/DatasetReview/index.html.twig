@@ -36,7 +36,9 @@
                 '//cdn.datatables.net/1.10.7/js/jquery.dataTables.js',
                 '//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js',
                 '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',
-                '//code.jquery.com/ui/1.12.1/jquery-ui.min.js'
+                '//code.jquery.com/ui/1.12.1/jquery-ui.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',
+                '//maps.google.com/maps/api/js?v=3&key=' ~ google_maps_api_key,
             ]
         )
     }}
@@ -46,6 +48,8 @@
         '@FOSJsRoutingBundle/Resources/public/js/router.js'
         '@PelagosAppBundle/Resources/public/js/datasetReviewList.js'
         '@PelagosAppBundle/Resources/public/js/datasetReview.js'
+        '@PelagosAppBundle/Resources/public/js/geoviz.js'
+        '@PelagosAppBundle/Resources/public/js/mapWizard.js'
     %}
         {{ add_js(asset_url) }}
     {% endjavascripts %}

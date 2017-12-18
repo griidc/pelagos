@@ -1,4 +1,6 @@
 var $ = jQuery.noConflict();
+var geowizard;
+
 $(document).ready(function(){
     "use strict";
 
@@ -86,7 +88,8 @@ $(document).ready(function(){
             });
         });
 
-    $("#dtabs").tabs({
+    var dtabs = $("#dtabs");
+    dtabs.tabs({
         heightStyle: "content",
         activate: function(event, ui) {
             $(ui.newTab.context.hash).trigger("active");
@@ -109,35 +112,84 @@ $(document).ready(function(){
             break;
     }
 
-
-    $("#btn-previous").click(function() {
-        var activeTab = $("#dtabs").tabs("option","active");
+    var btnPrevious = $("#btn-previous");
+    var btnNext = $("#btn-next");
+    btnPrevious.click(function() {
+        var activeTab = dtabs.tabs("option","active");
         activeTab--;
         if (activeTab < 0) {activeTab = 0};
-        $("#dtabs").tabs({active:activeTab});
+        dtabs.tabs({active:activeTab});
     }).button("disable");
 
-    $("#btn-next").click(function() {
-        var activeTab = $("#dtabs").tabs("option","active");
+    btnNext.click(function() {
+        var activeTab = dtabs.tabs("option","active");
         activeTab++;
-        $("#dtabs").tabs({active:activeTab});
+        dtabs.tabs({active:activeTab});
     });
 
-    $("#dtabs").on("active", function() {
+    dtabs.on("active", function() {
         var activeTab = $("#dtabs").tabs("option","active");
         if (activeTab == 0) {
-            $("#btn-previous").button("disable");
-            $("#btn-previous").hide();
+            btnPrevious.button("disable");
+            btnPrevious.hide();
         } else {
-            $("#btn-previous").show();
-            $("#btn-previous").button("enable");
+            btnPrevious.show();
+            btnPrevious.button("enable");
         }
         if (activeTab == 5) {
-            $("#btn-next").button("disable");
-            $("#btn-next").hide();
+            btnNext.button("disable");
+            btnNext.hide();
         } else {
-            $("#btn-next").show();
-            $("#btn-next").button("enable");
+            btnNext.show();
+            btnNext.button("enable");
         }
     });
+
+    $(".pelagosNoty").pelagosNoty({timeout: 0, showOnTop:false});
+
+    geowizard = new MapWizard(
+        {
+            "divSmallMap":"smlMDEMap",
+            "divSpatial":"spatial",
+            "divNonSpatial":"nonspatial",
+            "divSpatialWizard":"spatwizbtn",
+            "gmlField":"spatialExtent",
+            "descField":"spatialExtentDescription",
+            "spatialFunction":"checkSpatial"
+        }
+    );
+
+    if ($("#spatialExtent").val() !== ""
+        && (
+            $("#temporalExtentDesc").val() !== ""
+            || $("#temporalExtentBeginPosition").val() !== ""
+            || $("#temporalExtentEndPosition").val() !== ""
+        )
+    ) {
+        // if we have spatial and temporal extents, show spatial and temporal extent
+        geowizard.haveSpatial(false);
+    } else if ($("#spatialExtentDescription").val() !== "") {
+        // else if we have a description, show description
+        geowizard.haveSpatial(true);
+    } else {
+        // otherwise show spatial and temporal extent
+        geowizard.haveSpatial(false);
+    }
+
+    $("#ds-extent").on("active", function() {
+        geowizard.flashMap();
+        geowizard.haveGML($("#spatialExtent").val());
+    });
 });
+
+function checkSpatial(isNonSpatial) {
+    if (isNonSpatial) {
+        $("#nonspatial").find(":input").attr("required", "required");
+        $("#spatial").find(":input").removeAttr("required");
+        $("#spatialExtras").hide().find(":input").removeAttr("required").val("");
+    } else {
+        $("#spatial").find(":input").attr("required", "required");
+        $("#nonspatial").find(":input").removeAttr("required");
+        $("#spatialExtras").show().find(":input").attr("required", "required");
+    }
+}
