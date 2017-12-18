@@ -20,6 +20,7 @@ $(document).ready(function(){
 
     $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");
 
+    $("button").button();
 
     var datasetContactsCount = 0;
 
