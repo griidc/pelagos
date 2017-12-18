@@ -46,15 +46,29 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         if ($udi !== null) {
             $datasets = $this->entityHandler
                 ->getBy(Dataset::class, array('udi' => substr($udi, 0, 16)));
-            if (count($datasets) == 1) {
+            if (count($datasets) === 0) {
+
+                $flashBag->add(
+                    'warning',
+                    'Sorry, the dataset with Unique Dataset Identifier (UDI) ' .
+                    $udi . ' could not be found. Please email 
+                    <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> 
+                    if you have any questions.'
+                );
+
+            } else {
                 $dataset = $datasets[0];
 
-                if ($dataset->getDatasetSubmission() === null) {
-                   $flashBag->add(
+                $datasetSubmission = $dataset->getDatasetSubmission();
+
+                $dif = $dataset->getDif();
+
+                if ($datasetSubmission === null) {
+                    $flashBag->add(
                         'warning',
                         'The dataset ' . $udi . ' has not been submitted and cannot be loaded in review mode.'
                     );
-                } elseif ($dataset->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_INCOMPLETE) {
+                } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_INCOMPLETE) {
                     $flashBag->add(
                         'warning',
                         'The dataset ' . $udi . ' currently has a draft submission and cannot be loaded in review mode.'
@@ -64,52 +78,50 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                         'warning',
                         'The status of dataset ' . $udi . ' is Back To Submitter and cannot be loaded in review mode.'
                     );
-                }
-            } elseif (count($datasets) == 0) {
-                $flashBag->add(
-                    'warning',
-                    'Sorry, the dataset with Unique Dataset Identifier (UDI) ' .
-                    $udi . ' could not be found. Please email 
-                    <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> 
-                    if you have any questions.'
-                );
-                $dif = $dataset->getDif();
-
-                $datasetSubmission = $dataset->getDatasetSubmissionHistory()->first();
-
-                if ($datasetSubmission instanceof DatasetSubmission == false) {
-                    $datasetSubmission = null;
-                }
-
-                $xmlForm = $this->get('form.factory')->createNamed(
-                    null,
-                    DatasetSubmissionXmlFileType::class,
-                    null
-                );
-
-                $xmlForm->handleRequest($request);
-
-                if ($xmlForm->isSubmitted()) {
-                    $xmlFile = $xmlForm['xmlFile']->getData();
-
-                    if ($xmlFile instanceof UploadedFile) {
-                        $xmlURI = $xmlFile->getRealPath();
-                    } else {
-                        throw new BadRequestHttpException('No file provided.');
+                } else {
+                    if ($datasetSubmission instanceof DatasetSubmission == false) {
+                        $datasetSubmission = null;
                     }
 
-                    try {
-                        $this->loadFromXml($xmlURI, $datasetSubmission);
-                        $xmlStatus['success'] = true;
-                    } catch (InvalidMetadataException $e) {
-                        $xmlStatus['errors'] = $e->getErrors();
-                        $xmlStatus['success'] = false;
+                    $xmlForm = $this->get('form.factory')->createNamed(
+                        null,
+                        DatasetSubmissionXmlFileType::class,
+                        null
+                    );
+
+                    $xmlForm->handleRequest($request);
+
+                    if ($xmlForm->isSubmitted()) {
+                        $xmlFile = $xmlForm['xmlFile']->getData();
+
+                        if ($xmlFile instanceof UploadedFile) {
+                            $xmlURI = $xmlFile->getRealPath();
+                        } else {
+                            throw new BadRequestHttpException('No file provided.');
+                        }
+
+                        try {
+                            $this->loadFromXml($xmlURI, $datasetSubmission);
+                            $xmlStatus['success'] = true;
+                        } catch (InvalidMetadataException $e) {
+                            $xmlStatus['errors'] = $e->getErrors();
+                            $xmlStatus['success'] = false;
+                        }
                     }
+                    return $this->makeSubmissionForm($udi, $dataset, $datasetSubmission, $xmlStatus);
                 }
             }
         }
 
-        return $this->makeSubmissionForm($udi, $dataset, $datasetSubmission, $xmlStatus);
+        return $this->render(
+            'PelagosAppBundle:DatasetReview:index.html.twig',
+            array(
+                'udi' => $udi,
+                'xmlStatus' => $xmlStatus,
+                'dataset' => $dataset,
+                'datasetSubmission' => $datasetSubmission,
+            )
+        );
     }
 
     /**
@@ -175,53 +187,54 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             }
         }
 
-        $xmlFormView = $this->get('form.factory')->createNamed(
-            null,
-            DatasetSubmissionXmlFileType::class,
-            null,
-            array(
-                'action' => '',
-                'method' => 'POST',
-                'attr' => array(
-                    'id' => 'xmlUploadForm',
+            $xmlFormView = $this->get('form.factory')->createNamed(
+                null,
+                DatasetSubmissionXmlFileType::class,
+                null,
+                array(
+                    'action' => '',
+                    'method' => 'POST',
+                    'attr' => array(
+                        'id' => 'xmlUploadForm',
+                    )
                 )
-            )
-        )->createView();
+            )->createView();
 
-        $researchGroupList = array();
-        $account = $this->getUser();
-        if (null !== $account) {
-            $user = $account->getPerson();
+            $researchGroupList = array();
+            $account = $this->getUser();
+            if (null !== $account) {
+                $user = $account->getPerson();
 
-            // Find all RG's user has CREATE_DIF_DIF_ON on.
-            $researchGroups = $user->getResearchGroups();
-            $researchGroupList = array_map(
-                function ($researchGroup) {
-                    return $researchGroup->getId();
-                },
-                $researchGroups
-            );
-        }
+                // Find all RG's user has CREATE_DIF_DIF_ON on.
+                $researchGroups = $user->getResearchGroups();
+                $researchGroupList = array_map(
+                    function ($researchGroup) {
+                        return $researchGroup->getId();
+                    },
+                    $researchGroups
+                );
+            }
 
-        // If there are no research groups, substitute in '!*'
-        // to ensure the query sent by datatables does not try and
-        // search for a blank parameter.
-        if (0 === count($researchGroupList)) {
-            $researchGroupList = array('!*');
-        }
+            // If there are no research groups, substitute in '!*'
+            // to ensure the query sent by datatables does not try and
+            // search for a blank parameter.
+            if (0 === count($researchGroupList)) {
+                $researchGroupList = array('!*');
+            }
 
-        return $this->render(
-            'PelagosAppBundle:DatasetReview:index.html.twig',
-            array(
-                'form' => $form->createView(),
-                'xmlForm' => $xmlFormView,
-                'udi'  => $udi,
-                'xmlStatus' => $xmlStatus,
-                'dataset' => $dataset,
-                'datasetSubmission' => $datasetSubmission,
-                'showForceImport' => $showForceImport,
-                'showForceDownload' => $showForceDownload,
-                'researchGroupList' => $researchGroupList,
+
+            return $this->render(
+                'PelagosAppBundle:DatasetReview:index.html.twig',
+                array(
+                    'form' => $form->createView(),
+                    'xmlForm' => $xmlFormView,
+                    'udi' => $udi,
+                    'xmlStatus' => $xmlStatus,
+                    'dataset' => $dataset,
+                    'datasetSubmission' => $datasetSubmission,
+                    'showForceImport' => $showForceImport,
+                    'showForceDownload' => $showForceDownload,
+                    'researchGroupList' => $researchGroupList,
             )
         );
     }
