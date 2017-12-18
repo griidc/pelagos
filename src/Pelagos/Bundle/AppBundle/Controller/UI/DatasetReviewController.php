@@ -172,15 +172,15 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     $form->get('datasetFilePath')->setData(
                         preg_replace('#^file://#', '', $datasetSubmission->getDatasetFileUri())
                     );
-                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
-                        and $datasetSubmission->getDatasetFileUri() == $dataset->getDatasetSubmission()->getDatasetFileUri()) {
+                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission and
+                        $datasetSubmission->getDatasetFileUri() === $dataset->getDatasetSubmission()->getDatasetFileUri()) {
                         $showForceImport = true;
                     }
                     break;
                 case DatasetSubmission::TRANSFER_TYPE_HTTP:
                     $form->get('datasetFileUrl')->setData($datasetSubmission->getDatasetFileUri());
-                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
-                        and $datasetSubmission->getDatasetFileUri() == $dataset->getDatasetSubmission()->getDatasetFileUri()) {
+                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission and
+                        $datasetSubmission->getDatasetFileUri() === $dataset->getDatasetSubmission()->getDatasetFileUri()) {
                         $showForceDownload = true;
                     }
                     break;
