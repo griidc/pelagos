@@ -15,5 +15,5 @@ $(document).ready(function(){
         }
     });
 
-    $(".pelagosNoty").pelagosNoty({timeout: 3000, showOnTop:false});
+    $(".pelagosNoty").pelagosNoty({timeout: 0, showOnTop:false});
 });
