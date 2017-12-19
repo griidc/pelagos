@@ -14,4 +14,6 @@ $(document).ready(function(){
             });
         }
     });
+
+    $(".pelagosNoty").pelagosNoty({timeout: 0, showOnTop:false});
 });
