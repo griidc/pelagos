@@ -65,7 +65,7 @@
         {% if udi is null %}
             {% include 'PelagosAppBundle:DatasetReview:form.html.twig' %}
         {% elseif xmlForm is not null %}
-            <div class="messages status">
+            <div>
                 <h2 class="element-invisible">Status message</h2>
                     <div class="pelagosNoty" text = "Dataset Identifier <b>'{{ udi }}'</b> was found and is in REVIEW mode." type = "success"></div>
             </div>
