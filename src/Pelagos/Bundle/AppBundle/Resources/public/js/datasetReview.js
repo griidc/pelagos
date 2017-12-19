@@ -17,7 +17,6 @@ $(document).ready(function(){
         }
     });
 
-    $(".pelagosNoty").pelagosNoty({timeout: 0, showOnTop:false});
     $("html").show();
 
     $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");

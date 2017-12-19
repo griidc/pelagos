@@ -67,7 +67,7 @@
         {% elseif xmlForm is not null %}
             <div class="messages status">
                 <h2 class="element-invisible">Status message</h2>
-                    Dataset Identifier <b>'{{ udi }}'</b> was found. The latest version has been loaded.
+                    <div class="pelagosNoty" text = "Dataset Identifier <b>'{{ udi }}'</b> was found and is in REVIEW mode." type = "success"></div>
             </div>
             {% include 'PelagosAppBundle:DatasetReview:submission-form.html.twig' %}
         {% else %}
