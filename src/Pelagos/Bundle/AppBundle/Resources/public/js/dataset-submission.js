@@ -282,7 +282,7 @@ $(function() {
         var imgCheck = $("#imgcheck").attr("src");
         var valid = $("#regForm").valid();
 
-        if (false == valid) {
+        if (false === valid) {
             $(".tabimg").show();
             $("#dtabs .ds-metadata").each(function() {
                 var tabLabel = $(this).attr("aria-labelledby");
@@ -307,6 +307,10 @@ $(function() {
                 });
             });
         } else {
+            $("#dtabs .ds-metadata").each(function() {
+                var label = $(this).attr("aria-labelledby");
+                $("#" + label).next("img").prop("src", imgCheck);
+            });
             $(".invaliddsform").hide();
             $(".validdsform").show();
         }
