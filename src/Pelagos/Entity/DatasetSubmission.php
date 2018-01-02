@@ -916,7 +916,7 @@ class DatasetSubmission extends Entity
             $datasetPPOc->setPrimaryContact(true);
             $this->addDatasetContact($datasetPPOc);
             // Add additional point of contact if DIF has secondaryPointOfContact.
-            if ($entity->getSecondaryPointOfContact()){
+            if ($entity->getSecondaryPointOfContact()) {
                 $newDatasetContact = new PersonDatasetSubmissionDatasetContact();
                 $newDatasetContact->setRole(PersonDatasetSubmissionDatasetContact::getRoleChoices()['Point of Contact']);
                 $newDatasetContact->setPerson($entity->getSecondaryPointOfContact());
