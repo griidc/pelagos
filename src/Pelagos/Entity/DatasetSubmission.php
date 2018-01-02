@@ -974,6 +974,14 @@ class DatasetSubmission extends Entity
                 $newDatasetContact->setPrimaryContact($datasetContact->isPrimaryContact());
                 $this->addDatasetContact($newDatasetContact);
             }
+            // Add additional point of contact if DIF has secondaryPointOfContact.
+            if ($entity->getDataset()->getDif()->getSecondaryPointOfContact()) {
+                $newDatasetContact = new PersonDatasetSubmissionDatasetContact();
+                $newDatasetContact->setRole(PersonDatasetSubmissionDatasetContact::getRoleChoices()['Point of Contact']);
+                $newDatasetContact->setPerson($entity->getDataset()->getDif()->getSecondaryPointOfContact());
+                $newDatasetContact->setPrimaryContact(false);
+                $this->addDatasetContact($newDatasetContact);
+            }
         } else {
             throw new \Exception('Class constructor requires a DIF or a DatasetSubmission. A ' . get_class($entity) . ' was passed.');
         }
