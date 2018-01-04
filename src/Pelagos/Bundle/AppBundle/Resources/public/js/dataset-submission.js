@@ -298,7 +298,7 @@ $(function() {
                         $(this).find(":input").not(".prototype").each(function() {
                             $(this).valid()
                         });
-                        if ($(this).find(":input").not(".prototype").valid()) {
+                        if ($(this).find(":input").not(".prototype, :button").valid()) {
                             $("#" + label).next("img").prop("src", imgCheck);
                         } else {
                             $("#" + label).next("img").prop("src", imgWarning);
@@ -307,10 +307,6 @@ $(function() {
                 });
             });
         } else {
-            $("#dtabs .ds-metadata").each(function() {
-                var label = $(this).attr("aria-labelledby");
-                $("#" + label).next("img").prop("src", imgCheck);
-            });
             $(".invaliddsform").hide();
             $(".validdsform").show();
         }
