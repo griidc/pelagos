@@ -282,7 +282,7 @@ $(function() {
         var imgCheck = $("#imgcheck").attr("src");
         var valid = $("#regForm").valid();
 
-        if (false == valid) {
+        if (false === valid) {
             $(".tabimg").show();
             $("#dtabs .ds-metadata").each(function() {
                 var tabLabel = $(this).attr("aria-labelledby");
@@ -298,7 +298,7 @@ $(function() {
                         $(this).find(":input").not(".prototype").each(function() {
                             $(this).valid()
                         });
-                        if ($(this).find(":input").not(".prototype").valid()) {
+                        if ($(this).find(":input").not(".prototype, :button").valid()) {
                             $("#" + label).next("img").prop("src", imgCheck);
                         } else {
                             $("#" + label).next("img").prop("src", imgWarning);
