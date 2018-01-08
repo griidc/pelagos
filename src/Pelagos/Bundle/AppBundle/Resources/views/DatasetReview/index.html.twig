@@ -64,32 +64,19 @@
     <h1>Dataset Review</h1>
         {% if udi is null %}
             {% include 'PelagosAppBundle:DatasetReview:form.html.twig' %}
-        {% elseif xmlForm is not null %}
-            <div>
-                <h2 class="element-invisible">Status message</h2>
-                    <div class="pelagosNoty" text = "Dataset Identifier <b>'{{ udi }}'</b> was found and is in REVIEW mode." type = "success"></div>
-            </div>
-            {% include 'PelagosAppBundle:DatasetReview:submission-form.html.twig' %}
-        {% else %}
+        {% elseif xmlForm is not defined %}
             {% for label, messages in app.session.flashbag.all %}
                 {% for message in messages %}
                     <div class="pelagosNoty" text="{{message}}" type="{{label}}"></div>
                 {% endfor %}
             {% endfor %}
             {% include 'PelagosAppBundle:DatasetReview:form.html.twig' %}
-            {% if dataset is null %}
-                <div class="messages warning">
-                    <h2 class="element-invisible">Status message</h2>
-                        Sorry, the dataset with Unique Dataset Identifier (UDI) {{ udi }} could not be found. Please email <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> if you have any questions.
-                </div>
-                {% include 'PelagosAppBundle:DatasetReview:form.html.twig' %}
-             {% else %}
-                 <div class="messages status">
-                     <h2 class="element-invisible">Status message</h2>
-                     Dataset Identifier <b>'{{ udi }}'</b> was found. The latest version has been loaded.
-                 </div>
-                {% include 'PelagosAppBundle:DatasetReview:submission-form.html.twig' %}
-            {% endif %}
+        {% elseif xmlForm is not null %}
+            <div>
+                <h2 class="element-invisible">Status message</h2>
+                    <div class="pelagosNoty" text = "Dataset Identifier <b>'{{ udi }}'</b> was found and is in REVIEW mode." type = "success"></div>
+            </div>
+            {% include 'PelagosAppBundle:DatasetReview:submission-form.html.twig' %}
         {% endif %}
 {% elseif not is_granted('ROLE_DATA_REPOSITORY_MANAGER') and is_granted('IS_AUTHENTICATED_FULLY') %}
     <div class="messages error">
