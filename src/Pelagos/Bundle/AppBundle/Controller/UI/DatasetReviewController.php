@@ -89,6 +89,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
 
                         // The latest submission is complete, so create new one based on it.
                         $datasetSubmission = new DatasetSubmission($datasetSubmission);
+                        $datasetSubmission->setDatasetSubmissionReviewStatus();
 
                         try {
                             $this->entityHandler->create($datasetSubmission);
