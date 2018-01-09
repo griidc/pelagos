@@ -36,7 +36,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     {
         $dataset = null;
         $udi = $request->query->get('udiReview');
-        $flashBag = $request->getSession()->getFlashBag();
         $datasetSubmission = null;
         $xmlStatus = array(
             'success' => null,
@@ -44,91 +43,9 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         );
 
         if ($udi !== null) {
-            $datasets = $this->entityHandler
-                ->getBy(Dataset::class, array('udi' => substr($udi, 0, 16)));
-
-            if (!empty($datasets)) {
-                $dataset = $datasets[0];
-
-                $datasetSubmission = $dataset->getDatasetSubmissionHistory()->first();
-
-                if ($datasetSubmission instanceof DatasetSubmission) {
-
-                    $dif = $dataset->getDif();
-                    $datasetSubmissionStatus = $datasetSubmission->getStatus();
-                    $datasetSubmissionMetadataStatus = $dataset->getMetadataStatus();
-
-                    if ($datasetSubmissionStatus === DatasetSubmission::STATUS_COMPLETE and
-                        $datasetSubmissionMetadataStatus !== DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
-                        
-                        $xmlForm = $this->get('form.factory')->createNamed(
-                            null,
-                            DatasetSubmissionXmlFileType::class,
-                            null
-                        );
-
-                        $xmlForm->handleRequest($request);
-
-                        if ($xmlForm->isSubmitted()) {
-                            $xmlFile = $xmlForm['xmlFile']->getData();
-
-                            if ($xmlFile instanceof UploadedFile) {
-                                $xmlURI = $xmlFile->getRealPath();
-                            } else {
-                                throw new BadRequestHttpException('No file provided.');
-                            }
-
-                            try {
-                                $this->loadFromXml($xmlURI, $datasetSubmission);
-                                $xmlStatus['success'] = true;
-                            } catch (InvalidMetadataException $e) {
-                                $xmlStatus['errors'] = $e->getErrors();
-                                $xmlStatus['success'] = false;
-                            }
-                        }
-
-                        // The latest submission is complete, so create new one based on it.
-                        $datasetSubmission = new DatasetSubmission($datasetSubmission);
-                        $datasetSubmission->setDatasetSubmissionReviewStatus();
-
-                        try {
-                            $this->entityHandler->create($datasetSubmission);
-                        } catch (AccessDeniedException $e) {
-                                // This is handled in the template.
-                        }
-
-                        // Build the dataset review form.
-                        return $this->makeSubmissionForm($udi, $dataset, $datasetSubmission, $xmlStatus);
-
-                    } else {
-                            if ($datasetSubmissionStatus === DatasetSubmission::STATUS_INCOMPLETE) {
-                                $flashBag->add(
-                                    'warning',
-                                    'The dataset ' . $udi . ' currently has a draft submission and cannot be loaded in review mode.'
-                                );
-                            } elseif ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
-                                $flashBag->add(
-                                    'warning',
-                                    'The status of dataset ' . $udi . ' is Back To Submitter and cannot be loaded in review mode.'
-                                );
-                            }
-                        }
-                } else {
-                    $flashBag->add(
-                                'warning',
-                                'The dataset ' . $udi . ' has not been submitted and cannot be loaded in review mode.'
-                    );
-                }
-            } else {
-                    $flashBag->add(
-                        'warning',
-                        'Sorry, the dataset with Unique Dataset Identifier (UDI) ' .
-                        $udi . ' could not be found. Please email 
-                        <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> 
-                        if you have any questions.'
-                    );
-            }
+            $this->checkEligibleForReview($udi, $request);
         }
+
 
         return $this->render(
             'PelagosAppBundle:DatasetReview:index.html.twig',
@@ -139,6 +56,118 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 'datasetSubmission' => $datasetSubmission,
             )
         );
+    }
+
+    /**
+     * @param $udi
+     * @param Request $request
+     * @return Response
+     */
+    protected function checkEligibleForReview($udi, Request $request)
+    {
+        $xmlStatus = null;
+        $dataset = null;
+        $datasetSubmission = null;
+        $datasets = $this->entityHandler
+            ->getBy(Dataset::class, array('udi' => substr($udi, 0, 16)));
+
+
+        if (!empty($datasets)) {
+            $dataset = $datasets[0];
+
+            $datasetSubmission = $dataset->getDatasetSubmissionHistory()->first();
+            $dif = $dataset->getDif();
+            $datasetSubmissionStatus = $datasetSubmission->getStatus();
+            $datasetSubmissionMetadataStatus = $dataset->getMetadataStatus();
+
+            if ($datasetSubmission instanceof DatasetSubmission) {
+
+                $xmlForm = $this->get('form.factory')->createNamed(
+                    null,
+                    DatasetSubmissionXmlFileType::class,
+                    null
+                );
+
+                $xmlForm->handleRequest($request);
+
+                if ($xmlForm->isSubmitted()) {
+                    $xmlFile = $xmlForm['xmlFile']->getData();
+
+                    if ($xmlFile instanceof UploadedFile) {
+                        $xmlURI = $xmlFile->getRealPath();
+                    } else {
+                        throw new BadRequestHttpException('No file provided.');
+                    }
+
+                    try {
+                        $this->loadFromXml($xmlURI, $datasetSubmission);
+                        $xmlStatus['success'] = true;
+                    } catch (InvalidMetadataException $e) {
+                        $xmlStatus['errors'] = $e->getErrors();
+                        $xmlStatus['success'] = false;
+                    }
+                }
+
+                if ($datasetSubmissionStatus === DatasetSubmission::STATUS_COMPLETE and
+                    $datasetSubmissionMetadataStatus !== DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
+
+                    // The latest submission is complete, so create new one based on it.
+                    $datasetSubmission = new DatasetSubmission($datasetSubmission);
+                    $datasetSubmission->setDatasetSubmissionReviewStatus();
+
+                    try {
+                        $this->entityHandler->create($datasetSubmission);
+                    } catch (AccessDeniedException $e) {
+                        // This is handled in the template.
+                    }
+
+                } elseif ($datasetSubmissionStatus === DatasetSubmission::STATUS_IN_REVIEW) {
+                    //TODO: Create new Entity Review and add attributes to check whether datasetSubmission is in review and locked //
+
+                }
+            }
+
+            if ($datasetSubmissionStatus === DatasetSubmission::STATUS_INCOMPLETE) {
+                $error = 3;
+                $this->addToFlashBag($request, $udi, $error);
+            } elseif ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
+                $error = 4;
+                $this->addToFlashBag($request, $udi, $error);
+            } else {
+                $error = 2;
+                $this->addToFlashBag($request, $udi, $error);
+            }
+        } else {
+            $error = 1;
+            $this->addToFlashBag($request, $udi, $error);
+        }
+
+        return $this->makeSubmissionForm($udi, $dataset, $datasetSubmission, $xmlStatus);
+    }
+
+
+    /**
+     * @param Request $request
+     * @param $udi
+     * @param $error
+     */
+    private function addToFlashBag(Request $request, $udi, $error)
+    {
+        $flashBag = $request->getSession()->getFlashBag();
+
+        $listOfErrors = [
+            1 => 'Sorry, the dataset with Unique Dataset Identifier (UDI) ' .
+                $udi . ' could not be found. Please email 
+                        <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> 
+                        if you have any questions.',
+            2 => 'The dataset ' . $udi . ' has not been submitted and cannot be loaded in review mode.',
+            3 => 'The dataset ' . $udi . ' currently has a draft submission and cannot be loaded in review mode.',
+            4 => 'The status of dataset ' . $udi . ' is Back To Submitter and cannot be loaded in review mode.'
+        ];
+
+        if (array_key_exists($error, $listOfErrors)) {
+            $flashBag->add('warning', $listOfErrors[$error]);
+        }
     }
 
     /**
