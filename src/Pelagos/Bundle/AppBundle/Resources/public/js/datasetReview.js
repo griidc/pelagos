@@ -23,6 +23,17 @@ $(document).ready(function(){
 
     $("button").button();
 
+    $("#regForm").validate({
+        ignore: ".ignore,.prototype",
+        submitHandler: function(form) {
+            if ($(".ignore").valid()) {
+                formHash = $("#regForm").serialize();
+                $("#regForm").prop("unsavedChanges", false);
+                form.submit();
+            }
+        }
+    });
+
     var datasetContactsCount = 0;
 
     // Count the highest index in dataset contacts.
@@ -128,20 +139,63 @@ $(document).ready(function(){
 
     dtabs.on("active", function() {
         var activeTab = $("#dtabs").tabs("option","active");
-        if (activeTab == 0) {
+        if (activeTab === 0) {
             btnPrevious.button("disable");
             btnPrevious.hide();
         } else {
             btnPrevious.show();
             btnPrevious.button("enable");
         }
-        if (activeTab == 5) {
+        if (activeTab === 5) {
             btnNext.button("disable");
             btnNext.hide();
         } else {
             btnNext.show();
             btnNext.button("enable");
         }
+    });
+
+
+    $("#ds-submit").on("active", function() {
+        $(".invaliddsform").show();
+        $(".validdsform").hide();
+        $("#regForm select[keyword=target] option").prop("selected", true);
+        var imgWarning = $("#imgwarning").attr("src");
+        var imgCheck = $("#imgcheck").attr("src");
+        var valid = $("#regForm").valid();
+
+        if (false === valid) {
+            $(".tabimg").show();
+            $("#dtabs .ds-metadata").each(function() {
+                var tabLabel = $(this).attr("aria-labelledby");
+                if ($(this).has(":input.error").length ? true : false) {
+                    $("#" + tabLabel).next("img").prop("src", imgWarning);
+                } else {
+                    $("#" + tabLabel).next("img").prop("src", imgCheck);
+                };
+
+                $(this).find(":input").on("change blur keyup", function() {
+                    $("#dtabs .ds-metadata").each(function() {
+                        var label = $(this).attr("aria-labelledby");
+                        $(this).find(":input").not(".prototype").each(function() {
+                            $(this).valid()
+                        });
+                        if ($(this).find(":input").not(".prototype").valid()) {
+                            $("#" + label).next("img").prop("src", imgCheck);
+                        } else {
+                            $("#" + label).next("img").prop("src", imgWarning);
+                        };
+                    });
+                });
+            });
+        } else {
+            $(".invaliddsform").hide();
+            $(".validdsform").show();
+        }
+
+        $("#submitButton").button({
+            disabled: true
+        });
     });
 
     $(".pelagosNoty").pelagosNoty({timeout: 0, showOnTop:false});
