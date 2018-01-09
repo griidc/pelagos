@@ -1,6 +1,9 @@
 var $ = jQuery.noConflict();
 var geowizard;
 
+//FOUC preventor
+$("html").hide();
+
 $(document).ready(function(){
     "use strict";
 
@@ -233,6 +236,70 @@ $(document).ready(function(){
         geowizard.flashMap();
         geowizard.haveGML($("#spatialExtent").val());
     });
+
+    $("select.keywordinput").dblclick(function (event) {
+        var element = $(event.currentTarget)
+        if (element.filter("[keyword=source]").length > 0) {
+            element.closest("table").find("button:contains(add)").click();
+        } else if (element.filter("[keyword=target]").length > 0) {
+            element.closest("table").find("button:contains(remove)").click();
+        }
+    });
+
+    $("input.keywordinput").keypress(function(event) {
+        if (event.which == 13) {
+            event.preventDefault();
+            $(event.currentTarget).closest("table").find("button:contains(add)").click()
+        }
+    });
+
+    $(".keywordbutton").click(function (event) {
+        var source = $(event.currentTarget).closest("table").find("input[keyword=source],select[keyword=source]");
+        var target = $(event.currentTarget).closest("table").find("select[keyword=target]");
+
+        if ($(event.currentTarget).text() == "add") {
+            if (source.is("input") && source.val() !== "") {
+                var optionText = source.val();
+                var option = new Option(optionText, optionText);
+                $(option).html(optionText);
+                target.append(option);
+                source.val("");
+            } else if (source.is("select")) {
+                var option = source.find("option:selected").detach().prop("selected", false);
+                target.append(option);
+                target.append(sortOptions(target.find("option").detach()));
+            }
+        } else if ($(event.currentTarget).text() == "remove") {
+            var option = target.find("option:selected").detach().prop("selected", false);
+            if (option.attr("order") != undefined) {
+                source.append(option);
+                source.append(sortOptions(source.find("option").detach()));
+            }
+        }
+        buildKeywordLists();
+    });
+
+    // Build list arrays/fake multiselect boxes.
+    function buildKeywordLists()
+    {
+        $("#themeKeywords option").remove();
+        $("#themeKeywords").append($("#theme-keywords").find("option").clone().prop("selected", true)).change();
+
+        $("#placeKeywords option").remove();
+        $("#placeKeywords").append($("#place-keywords").find("option").clone().prop("selected", true)).change();
+
+        $("#topicKeywords option").remove();
+        $("#topicKeywords").append($("#topic-keywords").find("option").clone().prop("selected", true)).change();
+    }
+
+    function sortOptions(options) {
+        return options.sort(function(a,b){
+            a = $(a).attr("order");
+            b = $(b).attr("order");
+
+            return a-b;
+        });
+    }
 });
 
 function checkSpatial(isNonSpatial) {
@@ -246,3 +313,6 @@ function checkSpatial(isNonSpatial) {
         $("#spatialExtras").show().find(":input").attr("required", "required");
     }
 }
+
+
+
