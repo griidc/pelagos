@@ -2226,6 +2226,8 @@ class DatasetSubmission extends Entity
 
     /**
      * Sets the dataset submission status to In Review status.
+     *
+     * @return void
      */
     public function setDatasetSubmissionReviewStatus()
     {
