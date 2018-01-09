@@ -3,14 +3,12 @@
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
-use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionXmlFileType;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Pelagos\Entity\Dataset;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
@@ -23,8 +21,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      * The default action for Dataset Review.
      *
      * @param Request $request The Symfony request object.
-     *
-     * @throws BadRequestHttpException When xmlUploadForm is submitted without a file.
      *
      * @Route("")
      *
@@ -56,8 +52,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      *
      * @param string  $udi     The UDI entered by the user.
      * @param Request $request The Symfony request object.
-     *
-     * @throws BadRequestHttpException When xmlUploadForm is submitted without a file.
      *
      * @return Response A Response instance.
      */
