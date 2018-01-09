@@ -64,14 +64,14 @@
     <h1>Dataset Review</h1>
         {% if udi is null %}
             {% include 'PelagosAppBundle:DatasetReview:form.html.twig' %}
-        {% elseif xmlForm is not defined %}
+        {% elseif app.session.flashbag.has('warning') %}
             {% for label, messages in app.session.flashbag.all %}
                 {% for message in messages %}
                     <div class="pelagosNoty" text="{{message}}" type="{{label}}"></div>
                 {% endfor %}
             {% endfor %}
             {% include 'PelagosAppBundle:DatasetReview:form.html.twig' %}
-        {% elseif xmlForm is not null %}
+        {% else %}
             <div>
                 <h2 class="element-invisible">Status message</h2>
                     <div class="pelagosNoty" text = "Dataset Identifier <b>'{{ udi }}'</b> was found and is in REVIEW mode." type = "success"></div>

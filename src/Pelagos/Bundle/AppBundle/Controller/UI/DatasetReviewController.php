@@ -6,8 +6,6 @@ use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionXmlFileType;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
-use Pelagos\Exception\InvalidMetadataException;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -37,13 +35,9 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         $dataset = null;
         $udi = $request->query->get('udiReview');
         $datasetSubmission = null;
-        $xmlStatus = array(
-            'success' => null,
-            'errors' => null,
-        );
 
         if ($udi !== null) {
-            $this->checkEligibleForReview($udi, $request);
+            return $this->eligibiltyForReview($udi, $request);
         }
 
 
@@ -51,7 +45,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             'PelagosAppBundle:DatasetReview:index.html.twig',
             array(
                 'udi' => $udi,
-                'xmlStatus' => $xmlStatus,
                 'dataset' => $dataset,
                 'datasetSubmission' => $datasetSubmission,
             )
@@ -68,9 +61,8 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      *
      * @return Response A Response instance.
      */
-    protected function checkEligibleForReview($udi, Request $request)
+    protected function eligibiltyForReview($udi, Request $request)
     {
-        $xmlStatus = null;
         $dataset = null;
         $datasetSubmission = null;
         $datasets = $this->entityHandler
@@ -86,32 +78,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             $datasetSubmissionMetadataStatus = $dataset->getMetadataStatus();
 
             if ($datasetSubmission instanceof DatasetSubmission) {
-
-                $xmlForm = $this->get('form.factory')->createNamed(
-                    null,
-                    DatasetSubmissionXmlFileType::class,
-                    null
-                );
-
-                $xmlForm->handleRequest($request);
-
-                if ($xmlForm->isSubmitted()) {
-                    $xmlFile = $xmlForm['xmlFile']->getData();
-
-                    if ($xmlFile instanceof UploadedFile) {
-                        $xmlURI = $xmlFile->getRealPath();
-                    } else {
-                        throw new BadRequestHttpException('No file provided.');
-                    }
-
-                    try {
-                        $this->loadFromXml($xmlURI, $datasetSubmission);
-                        $xmlStatus['success'] = true;
-                    } catch (InvalidMetadataException $e) {
-                        $xmlStatus['errors'] = $e->getErrors();
-                        $xmlStatus['success'] = false;
-                    }
-                }
 
                 if ($datasetSubmissionStatus === DatasetSubmission::STATUS_COMPLETE and
                     $datasetSubmissionMetadataStatus !== DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
@@ -138,7 +104,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             $this->addToFlashBag($request, $udi, $error);
         }
 
-        return $this->makeSubmissionForm($udi, $dataset, $datasetSubmission, $xmlStatus);
+        return $this->makeSubmissionForm($udi, $dataset, $datasetSubmission);
     }
 
     /**
@@ -199,11 +165,10 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      * @param string            $udi               The UDI entered by the user.
      * @param Dataset           $dataset           The Dataset.
      * @param DatasetSubmission $datasetSubmission The Dataset Submission.
-     * @param array             $xmlStatus         Error message when loading XML.
      *
-     * @return Response
+     * @return Response A Response instance.
      */
-    protected function makeSubmissionForm($udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null)
+    protected function makeSubmissionForm($udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null)
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;
@@ -256,19 +221,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             }
         }
 
-        $xmlFormView = $this->get('form.factory')->createNamed(
-            null,
-            DatasetSubmissionXmlFileType::class,
-            null,
-            array(
-                'action' => '',
-                'method' => 'POST',
-                'attr' => array(
-                    'id' => 'xmlUploadForm',
-                )
-            )
-        )->createView();
-
         $researchGroupList = array();
         $account = $this->getUser();
         if (null !== $account) {
@@ -291,14 +243,11 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             $researchGroupList = array('!*');
         }
 
-
         return $this->render(
             'PelagosAppBundle:DatasetReview:index.html.twig',
             array(
                 'form' => $form->createView(),
-                'xmlForm' => $xmlFormView,
                 'udi' => $udi,
-                'xmlStatus' => $xmlStatus,
                 'dataset' => $dataset,
                 'datasetSubmission' => $datasetSubmission,
                 'showForceImport' => $showForceImport,
@@ -306,5 +255,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 'researchGroupList' => $researchGroupList,
             )
         );
+
     }
 }
