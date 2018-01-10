@@ -780,8 +780,10 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
     {
         $this->datasetSubmission->setDatasetSubmissionReviewStatus();
 
-        $this->assertEquals(DatasetSubmission::STATUS_IN_REVIEW,
-            $this->datasetSubmission->getStatus());
+        $this->assertEquals(
+            DatasetSubmission::STATUS_IN_REVIEW,
+            $this->datasetSubmission->getStatus()
+        );
 
     }
 }
