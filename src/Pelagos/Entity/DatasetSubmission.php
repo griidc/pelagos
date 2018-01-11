@@ -181,7 +181,7 @@ class DatasetSubmission extends Entity
      * A dataset submission has been submitted, and a data file URI has been provided.
      */
     const STATUS_COMPLETE = 2;
-    
+
     /**
      * A dataset submission is being reviewed.
      */
@@ -369,26 +369,15 @@ class DatasetSubmission extends Entity
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     protected $dataset;
-    
+
     /**
-     * The most recent Dataset Submission for this dataset.
-        *
-     * @var DatasetSubmission
-        *
-     * @ORM\OneToOne(targetEntity="DatasetSubmissionReview")
+     * The review for this Dataset Submission.
+     *
+     * @var DatasetSubmissionReview
+     *
+     * @ORM\OneToOne(targetEntity="DatasetSubmissionReview", mappedBy="datasetSubmission", cascade={"persist"})
      */
     protected $datasetSubmissionReview;
-    
-    /**
-     * All Dataset Submissions for this dataset.
-        *
-     * @var Collection
-        *
-     * @ORM\OneToMany(targetEntity="DatasetSubmissionReview", mappedBy="datasetSubmission", cascade={"remove"})
-        *
-     * @ORM\OrderBy({"sequence" = "DESC"})
-     */
-    protected $datasetSubmissionReviewHistory;
 
     /**
      * The sequence for this Dataset Submission.
@@ -1089,7 +1078,19 @@ class DatasetSubmission extends Entity
     {
         return $this->status;
     }
-    
+
+    /**
+     * Set the Dataset Submission Review for this Dataset Submission.
+     *
+     * @param DatasetSubmissionReview $datasetSubmissionReview The Review for this Dataset Submission.
+     *
+     * @return void
+     */
+    public function setDatasetSubmissionReview(DatasetSubmissionReview $datasetSubmissionReview)
+    {
+        $this->datasetSubmissionReview = $datasetSubmissionReview;
+    }
+
     /**
      * Get the DataseSubmision review collection.
      *

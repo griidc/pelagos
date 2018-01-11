@@ -18,18 +18,16 @@ class DatasetSubmissionReview extends Entity
      * A friendly name for this type of entity.
      */
     const FRIENDLY_NAME = 'Dataset Submission Review';
-    
+
     /**
      * The DatasetSubmission this Dataset Submission is attached to.
      *
      * @var DatasetSubmission
      *
-     * @ORM\ManyToOne(targetEntity="DatasetSubmission", inversedBy="datasetSubmissionReviewHistory", cascade={"persist"})
-     *
-     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\OneToOne(targetEntity="DatasetSubmission", inversedBy="datasetSubmissionReview")
      */
     protected $datasetSubmission;
-    
+
     /**
      * Review.
      *
@@ -38,25 +36,25 @@ class DatasetSubmissionReview extends Entity
      * @ORM\Column(type="text", nullable=false)
      */
     protected $reviewedBy;
-    
+
     /**
      * Review.
      *
      * @var integer
      *
-     * @ORM\Column(type="date", nullable=false)
+     * @ORM\Column(type="datetimetz", nullable=false)
      */
     protected $reviewStartDateTime;
-    
+
     /**
      * Review.
      *
      * @var integer
      *
-     * @ORM\Column(type="date", nullable=true)
+     * @ORM\Column(type="datetimetz", nullable=true)
      */
     protected $reviewEndDateTime;
-    
+
     /**
      * Review.
      *
@@ -65,24 +63,26 @@ class DatasetSubmissionReview extends Entity
      * @ORM\Column(type="text", nullable=false)
      */
     protected $reviewNotes;
-    
+
     /**
      * Constructor.
      *
      * Created a new datasetSubmissionReview entry.
      *
-     * @param Entity $datasetSubmission   The DatasetSubmission linked to this Review.
-     * @param Person $reviewedBy          The person who started this review.
-     * @param date   $reviewStartDateTime The DateTime the review was started.
-     *
+     * @param DatasetSubmission $datasetSubmission   The DatasetSubmission linked to this Review.
+     * @param Person            $reviewedBy          The person who started this review.
+     * @param \DateTime         $reviewStartDateTime The DateTime the review was started.
      */
-    public function __construct(DatasetSubmission $datasetSubmission, Person $reviewedBy, \DateTime $reviewStartDateTime)
-    {
-       $this->datasetSubmission = $datasetSubmission;
-       $this->reviewedBy = $reviewedBy;
-       $this->reviewStartDateTime = $reviewStartDateTime;
+    public function __construct(
+        DatasetSubmission $datasetSubmission,
+        Person $reviewedBy,
+        \DateTime $reviewStartDateTime
+    ) {
+        $this->datasetSubmission = $datasetSubmission;
+        $this->reviewedBy = $reviewedBy;
+        $this->reviewStartDateTime = $reviewStartDateTime;
     }
-    
+
     /**
      * Gets the text description of the spatial extent.
      *
@@ -92,7 +92,7 @@ class DatasetSubmissionReview extends Entity
     {
         return $this->datasetSubmission;
     }
-    
+
     /**
      * Gets the text description of the spatial extent.
      *
@@ -102,7 +102,7 @@ class DatasetSubmissionReview extends Entity
     {
         return $this->reviewedBy;
     }
-    
+
     /**
      * The end date of the estimated data sampling/generation period.
      *
@@ -112,7 +112,7 @@ class DatasetSubmissionReview extends Entity
     {
         return $this->reviewStartDateTime;
     }
-    
+
     /**
      * Sets the end date of the estimated data sampling/generation period.
      *
@@ -124,7 +124,7 @@ class DatasetSubmissionReview extends Entity
     {
         $this->reviewEndDateTime = $reviewEndDateTime;
     }
-    
+
     /**
      * The end date of the estimated data sampling/generation period.
      *
@@ -134,19 +134,19 @@ class DatasetSubmissionReview extends Entity
     {
         return $this->reviewEndDateTime;
     }
-    
+
     /**
      * Sets a text description of the spatial extent.
-        *
+     *
      * @param string $reviewNotes A text description of the spatial extent.
-        *
+     *
      * @return void
      */
     public function setReviewNotes($reviewNotes)
     {
         $this->reviewNotes = $reviewNotes;
     }
-    
+
     /**
      * Gets the text description of the spatial extent.
      *
