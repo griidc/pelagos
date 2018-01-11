@@ -252,6 +252,7 @@ $(document).ready(function(){
             $(event.currentTarget).closest("table").find("button:contains(add)").click()
         }
     });
+    buildKeywordLists();
 
     $(".keywordbutton").click(function (event) {
         var source = $(event.currentTarget).closest("table").find("input[keyword=source],select[keyword=source]");
