@@ -183,11 +183,6 @@ class DatasetSubmission extends Entity
     const STATUS_COMPLETE = 2;
 
     /**
-     * A dataset submission is being reviewed.
-     */
-    const STATUS_INREVIEW = 3;
-
-    /**
      * The dataset is not available to anyone.
      */
     const AVAILABILITY_STATUS_NOT_AVAILABLE = 0;
