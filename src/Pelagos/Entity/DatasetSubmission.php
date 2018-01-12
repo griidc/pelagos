@@ -371,6 +371,15 @@ class DatasetSubmission extends Entity
     protected $dataset;
 
     /**
+     * The review for this Dataset Submission.
+     *
+     * @var DatasetSubmissionReview
+     *
+     * @ORM\OneToOne(targetEntity="DatasetSubmissionReview", mappedBy="datasetSubmission", cascade={"persist"})
+     */
+    protected $datasetSubmissionReview;
+
+    /**
      * The sequence for this Dataset Submission.
      *
      * This should be incremented for each submission for the same dataset.
@@ -1068,6 +1077,28 @@ class DatasetSubmission extends Entity
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * Set the Dataset Submission Review for this Dataset Submission.
+     *
+     * @param DatasetSubmissionReview $datasetSubmissionReview The Review for this Dataset Submission.
+     *
+     * @return void
+     */
+    public function setDatasetSubmissionReview(DatasetSubmissionReview $datasetSubmissionReview)
+    {
+        $this->datasetSubmissionReview = $datasetSubmissionReview;
+    }
+
+    /**
+     * Get the DataseSubmision review collection.
+     *
+     * @return DatasetSubmissionReview
+     */
+    public function getDatasetSubmissionReview()
+    {
+        return $this->datasetSubmissionReview;
     }
 
     /**
