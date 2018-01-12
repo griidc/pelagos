@@ -127,7 +127,7 @@
             </div>
             {% endif %}
             {% if xmlStatus.success is null and  (datasetSubmission.status == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_COMPLETE') or
-            datasetSubmission.status == constant('IN_REVIEW'))%}
+            datasetSubmission.status == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_IN_REVIEW'))%}
             <div class="messages warning">
                 <h2 class="element-invisible">Status message</h2>
                 Dataset Identifier <b>'{{ udi }}'</b> was found. The latest version has been loaded.
