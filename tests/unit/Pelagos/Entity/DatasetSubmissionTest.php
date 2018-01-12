@@ -807,10 +807,11 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
     {
         $this->mockDatasetSubmissionReview = \Mockery::mock(
             DatasetSubmissionReview::class,
-            array(
+            [
                 'setDatasetSubmission' => $this->datasetSubmission,
                 'getReviewedBy' => $this->mockPerson,
                 'getReviewStartDateTime' => new DateTime('now')
-            )
+            ]
         );
+    }
 }
