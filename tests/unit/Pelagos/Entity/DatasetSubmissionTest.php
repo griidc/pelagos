@@ -770,4 +770,20 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             $this->datasetSubmission->getSubmitter()
         );
     }
+
+    /**
+     * Test to set review status for dataset submission.
+     *
+     * @return void
+     */
+    public function testCanSetReviewStatus()
+    {
+        $this->datasetSubmission->setDatasetSubmissionReviewStatus();
+
+        $this->assertEquals(
+            DatasetSubmission::STATUS_IN_REVIEW,
+            $this->datasetSubmission->getStatus()
+        );
+
+    }
 }
