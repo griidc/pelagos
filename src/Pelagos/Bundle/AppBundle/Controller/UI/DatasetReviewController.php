@@ -81,6 +81,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     // The latest submission is complete, so create new one based on it.
                     $datasetSubmission = new DatasetSubmission($datasetSubmission);
                     $datasetSubmission->setDatasetSubmissionReviewStatus();
+                    $datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_IN_REVIEW);
 
                     try {
                         $this->entityHandler->create($datasetSubmission);
@@ -88,9 +89,12 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                         // This is handled in the template.
                     }
 
-                } elseif ($datasetSubmissionStatus === DatasetSubmission::STATUS_IN_REVIEW) {
+                } elseif ($datasetSubmissionStatus === DatasetSubmission::STATUS_IN_REVIEW and
+                $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_IN_REVIEW) {
                     //TODO: Create new Entity Review and add attributes to check whether it is in review and locked //
 
+                } else {
+                    $this->checkErrors($request, $datasetSubmissionStatus, $datasetSubmissionMetadataStatus, $udi);
                 }
             } else {
                 $this->checkErrors($request, $datasetSubmissionStatus, $datasetSubmissionMetadataStatus, $udi);
