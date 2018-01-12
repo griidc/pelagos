@@ -114,6 +114,11 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             $this->mockDif,
             $this->mockPersonDatasetSubmissionDatasetContact
         );
+
+        $this->datasetSubmission = new DatasetSubmission(
+            $this->mockDif,
+            $this->mockPersonDatasetSubmissionDatasetContact
+        );
     }
 
     /**
@@ -807,11 +812,11 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
     {
         $this->mockDatasetSubmissionReview = \Mockery::mock(
             DatasetSubmissionReview::class,
-            [
+            array(
                 'setDatasetSubmission' => $this->datasetSubmission,
                 'getReviewedBy' => $this->mockPerson,
                 'getReviewStartDateTime' => new DateTime('now')
-            ]
+            )
         );
     }
 }
