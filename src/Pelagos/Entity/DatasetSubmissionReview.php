@@ -20,7 +20,7 @@ class DatasetSubmissionReview extends Entity
     const FRIENDLY_NAME = 'Dataset Submission Review';
 
     /**
-     * The DatasetSubmission this Dataset Submission is attached to.
+     * The DatasetSubmission this Dataset Submission Review is attached to.
      *
      * @var DatasetSubmission
      *
@@ -29,38 +29,38 @@ class DatasetSubmissionReview extends Entity
     protected $datasetSubmission;
 
     /**
-     * Review.
+     * The Person who started this review.
      *
-     * @var integer
+     * @var Person
      *
      * @ORM\Column(type="text", nullable=false)
      */
     protected $reviewedBy;
 
     /**
-     * Review.
+     * The time and date when the review was started.
      *
-     * @var integer
+     * @var \Datetime
      *
      * @ORM\Column(type="datetimetz", nullable=false)
      */
     protected $reviewStartDateTime;
 
     /**
-     * Review.
+     * The time and date when the review ended.
      *
-     * @var integer
+     * @var \Datetime
      *
      * @ORM\Column(type="datetimetz", nullable=true)
      */
     protected $reviewEndDateTime;
 
     /**
-     * Review.
+     * Any notes the reviewer has provided for this review.
      *
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(type="text", nullable=false)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $reviewNotes;
 
@@ -84,9 +84,9 @@ class DatasetSubmissionReview extends Entity
     }
 
     /**
-     * Gets the text description of the spatial extent.
+     * Gets the Dataset Submission for this review.
      *
-     * @return DatasetSubmission The text description of the spatial extent.
+     * @return DatasetSubmission The DatasetSubmission for this rkeview.
      */
     public function getDatasetSubmission()
     {
@@ -94,9 +94,9 @@ class DatasetSubmissionReview extends Entity
     }
 
     /**
-     * Gets the text description of the spatial extent.
+     * Get the Person who started this review.
      *
-     * @return string The text description of the spatial extent.
+     * @return Person The Person who started this review.
      */
     public function getReviewedBy()
     {
@@ -104,9 +104,9 @@ class DatasetSubmissionReview extends Entity
     }
 
     /**
-     * The end date of the estimated data sampling/generation period.
+     * Gets the date time when the review was started.
      *
-     * @return \DateTime The end date of the estimated data sampling/generation period.
+     * @return \DateTime The date time when the review was started.
      */
     public function getReviewStartDateTime()
     {
@@ -114,9 +114,9 @@ class DatasetSubmissionReview extends Entity
     }
 
     /**
-     * Sets the end date of the estimated data sampling/generation period.
+     * Sets the date time when the review was ended.
      *
-     * @param \DateTime|null $reviewEndDateTime The end date of the estimated data sampling/generation period.
+     * @param \DateTime|null $reviewEndDateTime The date time when the review was ended.
      *
      * @return void
      */
@@ -126,9 +126,9 @@ class DatasetSubmissionReview extends Entity
     }
 
     /**
-     * The end date of the estimated data sampling/generation period.
+     * Gets the date time when the review was ended.
      *
-     * @return \DateTime The end date of the estimated data sampling/generation period.
+     * @return \DateTime The date time when the review was ended..
      */
     public function getReviewEndDateTime()
     {
@@ -136,9 +136,9 @@ class DatasetSubmissionReview extends Entity
     }
 
     /**
-     * Sets a text description of the spatial extent.
+     * Sets the text for the review notes or this review.
      *
-     * @param string $reviewNotes A text description of the spatial extent.
+     * @param string $reviewNotes A string with the review notes.
      *
      * @return void
      */
@@ -148,9 +148,9 @@ class DatasetSubmissionReview extends Entity
     }
 
     /**
-     * Gets the text description of the spatial extent.
+     * Gets the text for the review notes or this review.
      *
-     * @return string The text description of the spatial extent.
+     * @return string The review notes for this review.
      */
     public function getReviewNotes()
     {
