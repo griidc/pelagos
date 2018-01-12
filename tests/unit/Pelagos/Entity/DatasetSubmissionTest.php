@@ -3,6 +3,7 @@
 namespace Pelagos\Entity;
 
 use Doctrine\Common\Collections\Collection;
+use \DateTime;
 
 /**
  * Unit tests for Pelagos\Entity\DatasetSubmission.
@@ -49,6 +50,13 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      * @var Person
      */
     protected $mockPerson;
+
+  /**
+   * A mock Dataset Submission Review.
+   *
+   * @var DatasetSubmissionReview
+   */
+    protected $mockDatasetSubmissionReview;
 
     /**
      * Setup for PHPUnit tests.
@@ -101,7 +109,11 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
                 'setPrimaryContact' => null
             )
         );
-        $this->datasetSubmission = new DatasetSubmission($this->mockDif, $this->mockPersonDatasetSubmissionDatasetContact);
+
+        $this->datasetSubmission = new DatasetSubmission(
+            $this->mockDif,
+            $this->mockPersonDatasetSubmissionDatasetContact
+        );
     }
 
     /**
@@ -769,5 +781,24 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             $this->mockPerson,
             $this->datasetSubmission->getSubmitter()
         );
+    }
+
+    /**
+     * Test DatasetSubmissionReview setter and getter.
+     *
+     * @return void
+     */
+    public function testDatasetSubmissionReview()
+    {
+        $this->mockDatasetSubmissionReview = \Mockery::mock(
+            DatasetSubmissionReview::class,
+            array(
+                'setDatasetSubmission' => $this->datasetSubmission,
+                'getReviewedBy' => $this->mockPerson,
+                'getReviewStartDateTime' => new DateTime('now')
+            )
+        );
+        $this->datasetSubmission->setDatasetSubmissionReview($this->mockDatasetSubmissionReview);
+        $this->assertSame($this->mockDatasetSubmissionReview, $this->datasetSubmission->getDatasetSubmissionReview());
     }
 }
