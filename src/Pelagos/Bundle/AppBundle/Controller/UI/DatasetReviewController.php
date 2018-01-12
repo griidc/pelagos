@@ -2,13 +2,16 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
-use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
+use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
+
 use Pelagos\Entity\Dataset;
+use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
@@ -35,7 +38,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         if ($udi !== null) {
             return $this->eligibiltyForReview($udi, $request);
         }
-
 
         return $this->render(
             'PelagosAppBundle:DatasetReview:index.html.twig',
