@@ -195,4 +195,25 @@ class DatasetSubmissionListener extends EventListener
         $this->producer->publish($datasetSubmission->getDataset()->getId(), 'publish');
         $this->producer->publish($datasetSubmission->getDataset()->getId(), 'update');
     }
+
+    /**
+     * Method called when dataset is in review mode.
+     *
+     * @param EntityEvent $event Event being acted upon.
+     *
+     * @return void
+     */
+    public function onInReview(EntityEvent $event)
+    {
+        $datasetSubmission = $event->getEntity();
+        $dataset = $datasetSubmission->getDataset();
+
+        $this->mdappLogger->writeLog(
+            sprintf(
+                '%s is reviewing the dataset-submission %s',
+                $datasetSubmission->getModifier()->getAccount()->getUsername(),
+                $dataset->getUdi()
+            )
+        );
+    }
 }
