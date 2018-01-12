@@ -784,6 +784,21 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test to set review status for dataset submission.
+     *
+     * @return void
+     */
+    public function testCanSetReviewStatus()
+    {
+        $this->datasetSubmission->setDatasetSubmissionReviewStatus();
+
+        $this->assertEquals(
+            DatasetSubmission::STATUS_IN_REVIEW,
+            $this->datasetSubmission->getStatus()
+        );
+    }
+
+    /**
      * Test DatasetSubmissionReview setter and getter.
      *
      * @return void
@@ -798,7 +813,4 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
                 'getReviewStartDateTime' => new DateTime('now')
             )
         );
-        $this->datasetSubmission->setDatasetSubmissionReview($this->mockDatasetSubmissionReview);
-        $this->assertSame($this->mockDatasetSubmissionReview, $this->datasetSubmission->getDatasetSubmissionReview());
-    }
 }

@@ -183,6 +183,11 @@ class DatasetSubmission extends Entity
     const STATUS_COMPLETE = 2;
 
     /**
+     * A dataset submission has been submitted, and it is in dataset-review mode.
+     */
+    const STATUS_IN_REVIEW = 3;
+
+    /**
      * The dataset is not available to anyone.
      */
     const AVAILABILITY_STATUS_NOT_AVAILABLE = 0;
@@ -2248,5 +2253,15 @@ class DatasetSubmission extends Entity
                 static::TEMPORAL_EXTENT_DESCRIPTIONS
             )
         );
+    }
+
+    /**
+     * Sets the dataset submission status to In Review status.
+     *
+     * @return void
+     */
+    public function setDatasetSubmissionReviewStatus()
+    {
+        $this->status = self::STATUS_IN_REVIEW;
     }
 }
