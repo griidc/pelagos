@@ -43,6 +43,9 @@ services:
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.html_found, method: onHtmlFound }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.dataset_unprocessable, method: onDatasetUnprocessable }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.approved, method: onApproved }
+            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.in_review, method: onInReview }
+
+
 
     pelagos.logactionitem.listener:
         class: Pelagos\Event\LogActionItemEventListener

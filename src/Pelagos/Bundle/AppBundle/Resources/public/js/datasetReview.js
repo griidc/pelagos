@@ -158,6 +158,14 @@ $(document).ready(function(){
         }
     });
 
+    $("[placeholder=yyyy-mm-dd]").datepicker({
+        dateFormat: "yy-mm-dd",
+        autoSize:true
+    });
+
+    $("#ds-contact").on("active", function() {
+        select2ContactPerson();
+    });
 
     $("#ds-submit").on("active", function() {
         $(".invaliddsform").show();
@@ -200,6 +208,8 @@ $(document).ready(function(){
             disabled: true
         });
     });
+
+    select2ContactPerson();
 
     $(".pelagosNoty").pelagosNoty({timeout: 0, showOnTop:false});
 
@@ -299,6 +309,43 @@ $(document).ready(function(){
             b = $(b).attr("order");
 
             return a-b;
+        });
+    }
+
+    function select2ContactPerson() {
+        $(".contactperson").not("#contact-prototype .contactperson").select2({
+            placeholder: "[Please Select a Person]",
+            allowClear: true,
+            ajax: {
+                dataType: "json",
+                data: function (params) {
+                    if (params.term != undefined) {
+                        var query = {
+                            "lastName": params.term + "*"
+                        }
+                    } else {
+                        var query = {}
+                    }
+                    return query;
+                },
+                url: Routing.generate("pelagos_api_people_get_collection",
+                    {
+                        "_properties" : "id,firstName,lastName,emailAddress",
+                        "_orderBy" : "lastName,firstName,emailAddress",
+                        "personResearchGroups.researchGroup" : $("[researchGroup]").attr("researchGroup"),
+                    }
+                ),
+                processResults: function (data) {
+                    return {
+                        results: $.map(data, function (item) {
+                            return {
+                                text: item.lastName + ", " +  item.firstName + ", " + item.emailAddress,
+                                id: item.id
+                            }
+                        })
+                    };
+                }
+            }
         });
     }
 });

@@ -78,19 +78,17 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 if ($datasetSubmissionStatus === DatasetSubmission::STATUS_COMPLETE and
                     $datasetSubmissionMetadataStatus !== DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
 
-                    // The latest submission is complete, so create new one based on it.
-                    $datasetSubmission = new DatasetSubmission($datasetSubmission);
-                    $datasetSubmission->setDatasetSubmissionReviewStatus();
+                    $this->createNewDatasetSubmission($datasetSubmission);
 
-                    try {
-                        $this->entityHandler->create($datasetSubmission);
-                    } catch (AccessDeniedException $e) {
-                        // This is handled in the template.
-                    }
-
-                } elseif ($datasetSubmissionStatus === DatasetSubmission::STATUS_IN_REVIEW) {
+                } elseif ($datasetSubmissionStatus === DatasetSubmission::STATUS_IN_REVIEW and
+                $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_IN_REVIEW or
+                $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_SUBMITTED) {
                     //TODO: Create new Entity Review and add attributes to check whether it is in review and locked //
 
+                    $this->createNewDatasetSubmission($datasetSubmission);
+
+                } else {
+                    $this->checkErrors($request, $datasetSubmissionStatus, $datasetSubmissionMetadataStatus, $udi);
                 }
             } else {
                 $this->checkErrors($request, $datasetSubmissionStatus, $datasetSubmissionMetadataStatus, $udi);
@@ -252,5 +250,33 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             )
         );
 
+    }
+
+    /**
+     * Create a new dataset submission in review mode.
+     *
+     * @param DatasetSubmission $datasetSubmission The Dataset Submission.
+     *
+     * @return void
+     */
+    private function createNewDatasetSubmission(DatasetSubmission $datasetSubmission)
+    {
+        // The latest submission is complete, so create new one based on it.
+        $datasetSubmission = new DatasetSubmission($datasetSubmission);
+        $datasetSubmission->setDatasetSubmissionReviewStatus();
+        $datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_IN_REVIEW);
+        $datasetSubmission->setModifier($this->getUser()->getPerson());
+        $eventName = 'in_review';
+
+        $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
+            $datasetSubmission,
+            $eventName
+        );
+
+        try {
+            $this->entityHandler->create($datasetSubmission);
+        } catch (AccessDeniedException $e) {
+            // This is handled in the template.
+        }
     }
 }

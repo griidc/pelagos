@@ -79,7 +79,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
 
                 $dif = $dataset->getDif();
 
-                $datasetSubmission = $dataset->getDatasetSubmissionHistory()->first();
+                $datasetSubmission = $dataset->getDatasetSubmission();
 
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
                     $datasetSubmission = null;
