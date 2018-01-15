@@ -91,8 +91,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     if (empty($datasetSubmissionReview) or (!empty($datasetSubmissionReview) and
                             $datasetSubmissionReview->getReviewEndDateTime() === null) ) {
                         $this->createNewDatasetSubmission($datasetSubmission);
-                        dump($datasetSubmission->getDatasetSubmissionReview());
-                        exit;
                     } else {
                         $error = 5;
                         $this->addToFlashBag($request, $udi, $error);
