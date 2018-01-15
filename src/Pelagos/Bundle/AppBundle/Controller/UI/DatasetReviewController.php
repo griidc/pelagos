@@ -12,6 +12,8 @@ use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\DatasetSubmissionReview;
+use Pelagos\Entity\Entity;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
@@ -84,9 +86,17 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_IN_REVIEW or
                 $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_SUBMITTED) {
                     //TODO: Create new Entity Review and add attributes to check whether it is in review and locked //
+                    $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
 
-                    $this->createNewDatasetSubmission($datasetSubmission);
-
+                    if (empty($datasetSubmissionReview) or (!empty($datasetSubmissionReview) and
+                            $datasetSubmissionReview->getReviewEndDateTime() === null) ) {
+                        $this->createNewDatasetSubmission($datasetSubmission);
+                        dump($datasetSubmission->getDatasetSubmissionReview());
+                        exit;
+                    } else {
+                        $error = 5;
+                        $this->addToFlashBag($request, $udi, $error);
+                    }
                 } else {
                     $this->checkErrors($request, $datasetSubmissionStatus, $datasetSubmissionMetadataStatus, $udi);
                 }
@@ -145,7 +155,8 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                         if you have any questions.',
             2 => 'The dataset ' . $udi . ' has not been submitted and cannot be loaded in review mode.',
             3 => 'The dataset ' . $udi . ' currently has a draft submission and cannot be loaded in review mode.',
-            4 => 'The status of dataset ' . $udi . ' is Back To Submitter and cannot be loaded in review mode.'
+            4 => 'The status of dataset ' . $udi . ' is Back To Submitter and cannot be loaded in review mode.',
+            5 => 'The dataset ' . $udi . 'is locked and under review.'
         ];
 
         if (array_key_exists($error, $listOfErrors)) {
@@ -182,7 +193,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             DatasetSubmissionType::class,
             $datasetSubmission,
             array(
-                'action' => $this->generateUrl('pelagos_app_ui_datasetsubmission_post', array('id' => $datasetSubmissionId)),
+                'action' => $this->generateUrl('pelagos_bundle_app_ui_datasetsubmission_post', array('id' => $datasetSubmissionId)),
                 'method' => 'POST',
                 'attr' => array(
                     'datasetSubmission' => $datasetSubmissionId,
@@ -263,9 +274,12 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     {
         // The latest submission is complete, so create new one based on it.
         $datasetSubmission = new DatasetSubmission($datasetSubmission);
+        $reviewedBy = $this->getUser()->getPerson();
+        $reviewStartTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
+        $datasetSubmissionReview = new DatasetSubmissionReview($datasetSubmission, $reviewedBy, $reviewStartTimeStamp);
         $datasetSubmission->setDatasetSubmissionReviewStatus();
         $datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_IN_REVIEW);
-        $datasetSubmission->setModifier($this->getUser()->getPerson());
+        $datasetSubmission->setModifier($reviewedBy);
         $eventName = 'in_review';
 
         $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
@@ -273,8 +287,26 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             $eventName
         );
 
+        // Create Dataset submission entity.
+
+        $this->createEntity($datasetSubmission);
+
+        // Create Dataset submission Review entity for the datatset submission.
+        $this->createEntity($datasetSubmissionReview);
+
+    }
+
+    /**
+     * Create an entity for each new review.
+     *
+     * @param Entity $entity A DatasetSubmission or DatasetSubmissionReview to base this DatasetSubmission on.
+     *
+     * @return void
+     */
+    private function createEntity(Entity $entity)
+    {
         try {
-            $this->entityHandler->create($datasetSubmission);
+            $this->entityHandler->create($entity);
         } catch (AccessDeniedException $e) {
             // This is handled in the template.
         }
