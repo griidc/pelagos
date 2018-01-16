@@ -92,13 +92,15 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     //TODO: Create new Entity Review and add attributes to check whether it is in review and locked //
                     $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
 
-                    if (empty($datasetSubmissionReview) or (!empty($datasetSubmissionReview) and
-                            $datasetSubmissionReview->getReviewEndDateTime() === null) ) {
+                    $valid = $this->checkLocked($datasetSubmissionReview);
+
+                    if ($valid) {
                         $this->createNewDatasetSubmission($datasetSubmission);
                     } else {
                         $error = 5;
                         $this->addToFlashBag($request, $udi, $error);
                     }
+
                 } else {
                     $this->checkErrors($request, $datasetSubmissionStatus, $datasetSubmissionMetadataStatus, $udi);
                 }
@@ -420,5 +422,27 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             'body' => $datasetSubmission->getDataset()->getId(),
             'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
         );
+    }
+
+    /**
+     * Check whether the dataset-review is locked.
+     *
+     * @param DatasetSubmissionReview $datasetSubmissionReview A datasetsubmission-review instance for a dataset submission.
+     *
+     * @return boolean
+     */
+    private function checkLocked(DatasetSubmissionReview $datasetSubmissionReview)
+    {
+        if (empty($datasetSubmissionReview)) {
+            return true;
+        } else {
+            if ($datasetSubmissionReview->getReviewEndDateTime() !== null) {
+                return true;
+            } elseif ($datasetSubmissionReview->getReviewEndDateTime() === null and
+                $datasetSubmissionReview->getReviewedBy() === $this->getUser()->getPerson()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
