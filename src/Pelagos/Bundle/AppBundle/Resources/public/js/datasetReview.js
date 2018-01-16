@@ -22,6 +22,8 @@ $(document).ready(function(){
 
     $("html").show();
 
+    $("#submitButton").text('End Review');
+
     $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");
 
     $("button").button();

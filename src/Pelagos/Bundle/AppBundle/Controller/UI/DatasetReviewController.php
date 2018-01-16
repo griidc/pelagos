@@ -2,10 +2,14 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 
@@ -191,7 +195,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             DatasetSubmissionType::class,
             $datasetSubmission,
             array(
-                'action' => $this->generateUrl('pelagos_bundle_app_ui_datasetsubmission_post', array('id' => $datasetSubmissionId)),
+                'action' => $this->generateUrl('pelagos_app_ui_datasetreview_post', array('id' => $datasetSubmissionId)),
                 'method' => 'POST',
                 'attr' => array(
                     'datasetSubmission' => $datasetSubmissionId,
@@ -308,5 +312,113 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         } catch (AccessDeniedException $e) {
             // This is handled in the template.
         }
+    }
+
+    /**
+     * The post action for Dataset Review.
+     *
+     * @param Request     $request The Symfony request object.
+     * @param string|null $id      The id of the Dataset Submission to load.
+     *
+     * @throws BadRequestHttpException When dataset submission has already been submitted.
+     * @throws BadRequestHttpException When DIF has not yet been approved.
+     *
+     * @Route("/{id}")
+     *
+     * @Method("POST")
+     *
+     * @return Response A Response instance.
+     */
+    public function postAction(Request $request, $id = null)
+    {
+        $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
+
+        $form = $this->get('form.factory')->createNamed(
+            null,
+            DatasetSubmissionType::class,
+            $datasetSubmission
+        );
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() and $form->isValid()) {
+
+            $this->processDatasetFileTransferDetails($form, $datasetSubmission);
+
+            $datasetSubmission->submit($this->getUser()->getPerson());
+
+            if ($this->getUser()->isPosix()) {
+                $incomingDirectory = $this->getUser()->getHomeDirectory() . '/incoming';
+            } else {
+                $incomingDirectory = $this->getParameter('homedir_prefix') . '/upload/'
+                    . $this->getUser()->getUserName() . '/incoming';
+                if (!file_exists($incomingDirectory)) {
+                    mkdir($incomingDirectory, 0755, true);
+                }
+            }
+
+            $this->entityHandler->update($datasetSubmission);
+
+            foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+                $this->entityHandler->update($datasetContact);
+            }
+
+            return $this->render(
+                'PelagosAppBundle:DatasetReview:submit.html.twig',
+                array('DatasetSubmission' => $datasetSubmission)
+            );
+        }
+        // This should not normally happen.
+        return new Response((string) $form->getErrors(true, false));
+    }
+
+    /**
+     * Process the Dataset File Transfer Details and update the Dataset Submission.
+     *
+     * @param Form              $form              The submitted dataset submission form.
+     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
+     *
+     * @return void
+     */
+    protected function processDatasetFileTransferDetails(
+        Form $form,
+        DatasetSubmission $datasetSubmission
+    ) {
+        // If there was a previous Dataset Submission.
+        if ($datasetSubmission->getDataset()->getDatasetSubmission() instanceof DatasetSubmission) {
+            // Get the previous datasetFileUri.
+            $previousDatasetFileUri = $datasetSubmission->getDataset()->getDatasetSubmission()->getDatasetFileUri();
+            // If the datasetFileUri has changed or the user has requested to force import or download.
+            if ($datasetSubmission->getDatasetFileUri() !== $previousDatasetFileUri
+                or $form['datasetFileForceImport']->getData()
+                or $form['datasetFileForceDownload']->getData()) {
+                // Assume the dataset file is new.
+                $this->newDatasetFile($datasetSubmission);
+            }
+        } else {
+            // This is the first submission so the dataset file is new.
+            $this->newDatasetFile($datasetSubmission);
+        }
+    }
+
+    /**
+     * Take appropriate actions when a new dataset file is submitted.
+     *
+     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
+     *
+     * @return void
+     */
+    protected function newDatasetFile(DatasetSubmission $datasetSubmission)
+    {
+        $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+        $datasetSubmission->setDatasetFileName(null);
+        $datasetSubmission->setDatasetFileSize(null);
+        $datasetSubmission->setDatasetFileMd5Hash(null);
+        $datasetSubmission->setDatasetFileSha1Hash(null);
+        $datasetSubmission->setDatasetFileSha256Hash(null);
+        $this->messages[] = array(
+            'body' => $datasetSubmission->getDataset()->getId(),
+            'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
+        );
     }
 }
