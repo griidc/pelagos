@@ -104,7 +104,7 @@ class DatasetSubmissionReviewTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testGetDatasetSubmission()
+    public function testCanGetDatasetSubmission()
     {
         $this->assertSame(
             $this->mockDatasetSubmission,
@@ -117,7 +117,7 @@ class DatasetSubmissionReviewTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testReviewNotes()
+    public function testCanGetAndSetReviewNotes()
     {
         $this->datasetSubmissionReview->setReviewNotes('This is a review note');
         $this->assertEquals('This is a review note', $this->datasetSubmissionReview->getReviewNotes());
@@ -128,7 +128,7 @@ class DatasetSubmissionReviewTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testReviewEndDateTime()
+    public function testCanGetAndSetReviewEndDateTime()
     {
         $timeStamp = new DateTime('now', new \DateTimeZone('UTC'));
         $this->datasetSubmissionReview->setReviewEndDateTime($timeStamp);
@@ -140,7 +140,7 @@ class DatasetSubmissionReviewTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testReviewStartDateTime()
+    public function testCanGetReviewStartDateTime()
     {
         $this->assertSame(
             $this->testStartDateTime,
@@ -153,7 +153,7 @@ class DatasetSubmissionReviewTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testGetReviewedBy()
+    public function testCanGetReviewedBy()
     {
         $this->assertSame(
             $this->mockPerson,

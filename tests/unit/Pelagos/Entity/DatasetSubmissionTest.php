@@ -808,7 +808,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testDatasetSubmissionReview()
+    public function testCanGetAndSetDatasetSubmissionReview()
     {
         $this->mockDatasetSubmissionReview = \Mockery::mock(
             DatasetSubmissionReview::class,
@@ -818,5 +818,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
                 'getReviewStartDateTime' => new DateTime('now')
             )
         );
+        $this->datasetSubmission->setDatasetSubmissionReview($this->mockDatasetSubmissionReview);
+        $this->assertSame($this->mockDatasetSubmissionReview, $this->datasetSubmission->getDatasetSubmissionReview());
     }
 }
