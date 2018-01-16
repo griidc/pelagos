@@ -160,7 +160,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             2 => 'The dataset ' . $udi . ' has not been submitted and cannot be loaded in review mode.',
             3 => 'The dataset ' . $udi . ' currently has a draft submission and cannot be loaded in review mode.',
             4 => 'The status of dataset ' . $udi . ' is Back To Submitter and cannot be loaded in review mode.',
-            5 => 'The dataset ' . $udi . 'is locked and under review.'
+            5 => 'The dataset ' . $udi . ' is locked and under review. Please wait for the user to End the Review.'
         ];
 
         if (array_key_exists($error, $listOfErrors)) {
