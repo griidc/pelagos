@@ -439,7 +439,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             if ($datasetSubmissionReview->getReviewEndDateTime() !== null) {
                 return true;
             } elseif ($datasetSubmissionReview->getReviewEndDateTime() === null and
-                $datasetSubmissionReview->getReviewedBy() === $this->getUser()->getPerson()) {
+                $datasetSubmissionReview->getReviewedBy() === (string) ($this->getUser()->getPerson()->getId())) {
                 return true;
             }
         }
