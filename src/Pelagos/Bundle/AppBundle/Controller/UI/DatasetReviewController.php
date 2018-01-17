@@ -103,7 +103,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     }
                     if ($valid) {
                         $this->createNewDatasetSubmission($datasetSubmission);
-                    }else {
+                    } else {
                         $error = 5;
                         $this->addToFlashBag($request, $udi, $error);
                     }
