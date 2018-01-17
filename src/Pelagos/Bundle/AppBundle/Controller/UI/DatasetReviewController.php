@@ -95,12 +95,15 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_SUBMITTED) {
                     //TODO: Create new Entity Review and add attributes to check whether it is in review and locked //
                     $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
-
-                    $valid = $this->checkLocked($datasetSubmissionReview);
-
+                    $valid = false;
+                    if (empty($datasetSubmissionReview)) {
+                        $valid = true;
+                    } else {
+                        $valid = $this->checkLocked($datasetSubmissionReview);
+                    }
                     if ($valid) {
                         $this->createNewDatasetSubmission($datasetSubmission);
-                    } else {
+                    }else {
                         $error = 5;
                         $this->addToFlashBag($request, $udi, $error);
                     }
