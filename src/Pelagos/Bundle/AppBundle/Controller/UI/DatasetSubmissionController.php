@@ -79,7 +79,15 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
 
                 $dif = $dataset->getDif();
 
-                $datasetSubmission = $dataset->getDatasetSubmissionHistory()->first();
+                // Added so that it doesn't conflict with dataset review record.
+                $datasetSubmissionCollection = $dataset->getDatasetSubmissionHistory();
+
+                foreach ($datasetSubmissionCollection as $datasetSubmissionRecord) {
+                    if ($datasetSubmissionRecord->getStatus() !== DatasetSubmission::STATUS_IN_REVIEW) {
+                        $datasetSubmission = $datasetSubmissionRecord;
+                        break;
+                    }
+                }
 
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
                     $datasetSubmission = null;
@@ -164,7 +172,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                         $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_COMPLETED
                         or $datasetSubmission->getDatasetFileSha256Hash() !== null
                     )
-                    and $datasetSubmission->getMetadataStatus() == DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
+                    and $datasetSubmission->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
                 ) {
                     // The latest submission is complete, so create new one based on it.
                     $datasetSubmission = new DatasetSubmission($datasetSubmission);
