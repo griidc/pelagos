@@ -7,7 +7,7 @@
 {% block body %}
     <div class="messages status">
         <h2 class="element-invisible">Status message</h2>
-        Thank you for your dataset review-submission.
+        Dataset review ended by {{ DatasetSubmission.getModifier.getFirstName }}  at {{ DatasetSubmission.getSubmissionTimeStamp.format('c') }}
     </div>
 
     <fieldset>
@@ -99,7 +99,7 @@
         </table>
         <br>
         <button type="button" onclick="window.location.href='{{ path('pelagos_app_ui_datasetreview_default') }}';">
-            Fill out another Submission Form
+            Review another Dataset-submission
         </button>
     </fieldset>
 {% endblock %}
