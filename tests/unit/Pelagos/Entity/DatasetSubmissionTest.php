@@ -30,6 +30,13 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
     protected $mockDataset;
 
     /**
+     * A mock Dataset Submission Review
+     *
+     * @var DatasetSubmissionReview
+     */
+    protected $mockDatasetSubmissionReview;
+
+    /**
      * A mock DIF.
      *
      * @var DIF
@@ -68,6 +75,12 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
                 'setAvailabilityStatus' => null,
                 'updateAvailabilityStatus' => null,
                 'getUdi' => 'T1.x123.000:0001',
+            )
+        );
+        $this->mockDatasetSubmissionReview = \Mockery::mock(
+            DatasetSubmissionReview::class,
+            array(
+                'setDatasetSubmission' => $this->datasetSubmission,
             )
         );
         $this->mockPerson = \Mockery::mock(
@@ -134,6 +147,20 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(
             $this->mockDataset,
             $this->datasetSubmission->getDataset()
+        );
+    }
+
+    /**
+     * Test datasetSubmissionReview setter and getter.
+     *
+     * @return void
+     */
+    public function testDatasetSubmissionReview()
+    {
+        $this->datasetSubmission->setDatasetSubmissionReview($this->mockDatasetSubmissionReview);
+        $this->assertSame(
+            $this->mockDatasetSubmissionReview,
+            $this->datasetSubmission->getDatasetSubmissionReview()
         );
     }
 
