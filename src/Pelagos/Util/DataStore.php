@@ -56,6 +56,20 @@ class DataStore
     protected $webServerUser;
 
     /**
+     * Username for anonymous FTP servers.
+     *
+     * @var string
+     */
+    protected $anonFtpUser;
+
+    /**
+     * Password string to use for anonymous FTP servers.
+     *
+     * @var string
+     */
+    protected $anonFtpPass;
+
+    /**
      * Indicates that the type of the file type is a data file, not metadata.
      */
     const DATASET_FILE_TYPE = 'dataset';
@@ -75,6 +89,8 @@ class DataStore
      * @param string $dataDownloadBrowserGroup The POSIX group that contains users that can
      *                                         browse all of the data download directory.
      * @param string $webServerUser            The POSIX user the web server runs under.
+     * @param string $anonFtpUser              The username to use on anonymous ftp servers.
+     * @param string $anonFtpPass              The password (email) to send to anonymous ftp servers.
      */
     public function __construct(
         $dataStoreDirectory,
@@ -82,7 +98,9 @@ class DataStore
         $dataStoreOwner,
         $dataStoreGroup,
         $dataDownloadBrowserGroup,
-        $webServerUser
+        $webServerUser,
+        $anonFtpUser,
+        $anonFtpPass
     ) {
         $this->dataStoreDirectory = $dataStoreDirectory;
         $this->dataDownloadDirectory = $dataDownloadDirectory;
@@ -90,6 +108,8 @@ class DataStore
         $this->dataStoreGroup = $dataStoreGroup;
         $this->dataDownloadBrowserGroup = $dataDownloadBrowserGroup;
         $this->webServerUser = $webServerUser;
+        $this->anonFtpUser = $anonFtpUser;
+        $this->anonFtpPass = $anonFtpPass;
     }
 
     /**
@@ -209,9 +229,9 @@ class DataStore
             }
         }
         // Insert best-practice anonymous FTP credentials, per RFC1635 (https://www.rfc-editor.org/rfc/rfc1635.txt)
-        if (preg_match('/^ftp:\/\//i', $fileUri) {
-            $hostAndFile=preg_replace('/^ftp:\/\//i', '', $fileUri);
-            $fileUri = 'ftp://anonymous:griidc@gomri.org@' . $hostAndFile;
+        if (preg_match('/^ftp:\/\//i', $fileUri)) {
+            $hostAndFile = preg_replace('/^ftp:\/\//i', '', $fileUri);
+            $fileUri = 'ftp://' . $this->anonFtpUser . ':' . $this->anonFtpPass . '@' . $hostAndFile;
         }
         if (!copy($fileUri, $storeFilePath)) {
             throw new \Exception("Could not copy $fileUri to $storeFilePath");
