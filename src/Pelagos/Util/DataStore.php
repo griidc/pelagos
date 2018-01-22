@@ -59,12 +59,12 @@ class DataStore
      * Indicates that the type of the file type is a data file, not metadata.
      */
     const DATASET_FILE_TYPE = 'dataset';
-    
+
     /**
      * Indicates that the type of the file named is metadata.
      */
     const METADATA_FILE_TYPE = 'metadata';
-    
+
     /**
      * Constructor.
      *
@@ -207,6 +207,11 @@ class DataStore
             if (!unlink($storeFilePath)) {
                 throw new \Exception("Could not delete existing file: $storeFilePath");
             }
+        }
+        // Insert best-practice anonymous FTP credentials, per RFC1635 (https://www.rfc-editor.org/rfc/rfc1635.txt)
+        if (preg_match('/^ftp:\/\//i', $fileUri) {
+            $hostAndFile=preg_replace('/^ftp:\/\//i', '', $fileUri);
+            $fileUri = 'ftp://anonymous:griidc@gomri.org@' . $hostAndFile;
         }
         if (!copy($fileUri, $storeFilePath)) {
             throw new \Exception("Could not copy $fileUri to $storeFilePath");
