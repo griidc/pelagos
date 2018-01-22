@@ -78,9 +78,9 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         if (!empty($datasets)) {
             $dataset = $datasets[0];
 
-            $datasetSubmission = $dataset->getDatasetSubmissionHistory()->first();
+            $datasetSubmission = (($dataset->getDatasetSubmissionHistory()->first()) ? $dataset->getDatasetSubmissionHistory()->first() : null);
             $dif = $dataset->getDif();
-            $datasetSubmissionStatus = $datasetSubmission->getStatus();
+            $datasetSubmissionStatus = (($datasetSubmission) ? $datasetSubmission->getStatus() : null);
             $datasetSubmissionMetadataStatus = $dataset->getMetadataStatus();
 
             if ($datasetSubmission instanceof DatasetSubmission) {
@@ -93,7 +93,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 } elseif ($datasetSubmissionStatus === DatasetSubmission::STATUS_IN_REVIEW and
                 $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_IN_REVIEW or
                 $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_SUBMITTED) {
-                    //TODO: Create new Entity Review and add attributes to check whether it is in review and locked //
+                    
                     $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
                     $valid = false;
                     if (empty($datasetSubmissionReview)) {
