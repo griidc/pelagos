@@ -3,7 +3,10 @@
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use DateTime;
+use Pelagos\Entity\Account;
 use Pelagos\Entity\LogActionItem;
+use Pelagos\Entity\Person;
+use Pelagos\Entity\PersonDataRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -69,8 +72,22 @@ class SearchTermsReportController extends ReportController
         $query->setParameters(['actionName' => 'Search']);
         $results = $query->getResult();
 
+        //get user Ids of Griidc Staff to exclude from the report
+        $griidcUserQueryString = 'SELECT account.userId FROM ' . PersonDataRepository::class .
+            ' personDataRepository JOIN ' . Person::class .
+            ' person WITH person.id = personDataRepository.person JOIN ' . Account::class .
+            ' account WITH account.person = person.id';
+        $griidcUserResult = $entityManager->createQuery($griidcUserQueryString)->getScalarResult();
+        $griidcArray = array_column($griidcUserResult, 'userId');
+
         //process result query into an array with organized data
         foreach ($results as $result) {
+            //skip the row if the search is done by a Griidc Staff
+            if (isset($result['payLoad']['clientInfo']['userId']) &&
+                in_array($result['payLoad']['clientInfo']['userId'], $griidcArray)) {
+                continue;
+            }
+
             $searchResults = array
             (
                 '1stScore' => '',
