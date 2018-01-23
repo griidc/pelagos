@@ -203,10 +203,6 @@ $(document).ready(function(){
             $(".invaliddsform").hide();
             $(".validdsform").show();
         }
-
-        $("#submitButton").button({
-            disabled: true
-        });
     });
 
     select2ContactPerson();
