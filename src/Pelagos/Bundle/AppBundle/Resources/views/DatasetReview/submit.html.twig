@@ -1,0 +1,105 @@
+{% extends "PelagosAppBundle::layout.html.twig" %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+    <div class="messages status">
+        <h2 class="element-invisible">Status message</h2>
+        Dataset review ended by {{ DatasetSubmission.getModifier.getFirstName }}  at {{ DatasetSubmission.getSubmissionTimeStamp.format('c') }}
+    </div>
+
+    <fieldset>
+        <table border="1" width="100%" style="background-color:white; color:black;">
+            <tr>
+                <td width="200px" align="top">
+                    <b>Submission Identifier:</b>
+                </td>
+                <td>
+                    <h2>
+                        <a href="{{ path('pelagos_app_ui_datasetreview_default') }}?udi={{ DatasetSubmission.getDatasetSubmissionId }}">
+                            {{ DatasetSubmission.getDatasetSubmissionId }}
+                        </a>
+                    </h2>
+                </td>
+            </tr>
+            <tr rowspan=2>
+                <td>
+                    <b>Dataset Title:</b>
+                </td>
+                <td>
+                    {{ DatasetSubmission.getTitle }}
+                </td>
+            </tr>
+            <tr rowspan=3>
+                <td>
+                    <b>Dataset Abstract:</b>
+                </td>
+                <td>
+                    {{ DatasetSubmission.getAbstract }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Dataset Author(s):</b>
+                </td>
+                <td>
+                    {{ DatasetSubmission.getAuthors }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Point of Contact Name:</b>
+                </td>
+                <td>
+                    {{ DatasetSubmission.getPointOfContactName }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Point of Contact E-Mail:</b>
+                </td>
+                <td>
+                    {{ DatasetSubmission.getPointOfContactEmail }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Restrictions:</b>
+                </td>
+                <td>
+                    {{ DatasetSubmission.getRestrictions }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>DOI:</b>
+                </td>
+                <td>
+                    {{ DatasetSubmission.Dataset.Doi|default }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Data URL:</b>
+                </td>
+                <td>
+                    {{ DatasetSubmission.datasetFileUri }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Submitted On:</b>
+                </td>
+                <td>
+                    {{ DatasetSubmission.getSubmissionTimeStamp.format('c') }}
+                </td>
+            </tr>
+        </table>
+        <br>
+        <button type="button" onclick="window.location.href='{{ path('pelagos_app_ui_datasetreview_default') }}';">
+            Review another Dataset-submission
+        </button>
+    </fieldset>
+{% endblock %}

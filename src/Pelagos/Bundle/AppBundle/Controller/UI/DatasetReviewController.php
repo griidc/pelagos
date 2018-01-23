@@ -2,16 +2,22 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\DatasetSubmissionReview;
+use Pelagos\Entity\Entity;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
@@ -31,6 +37,10 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      */
     public function defaultAction(Request $request)
     {
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
+        
         $dataset = null;
         $udi = $request->query->get('udiReview');
         $datasetSubmission = null;
@@ -68,9 +78,9 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         if (!empty($datasets)) {
             $dataset = $datasets[0];
 
-            $datasetSubmission = $dataset->getDatasetSubmissionHistory()->first();
+            $datasetSubmission = (($dataset->getDatasetSubmissionHistory()->first()) ? $dataset->getDatasetSubmissionHistory()->first() : null);
             $dif = $dataset->getDif();
-            $datasetSubmissionStatus = $datasetSubmission->getStatus();
+            $datasetSubmissionStatus = (($datasetSubmission) ? $datasetSubmission->getStatus() : null);
             $datasetSubmissionMetadataStatus = $dataset->getMetadataStatus();
 
             if ($datasetSubmission instanceof DatasetSubmission) {
@@ -83,9 +93,20 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 } elseif ($datasetSubmissionStatus === DatasetSubmission::STATUS_IN_REVIEW and
                 $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_IN_REVIEW or
                 $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_SUBMITTED) {
-                    //TODO: Create new Entity Review and add attributes to check whether it is in review and locked //
-
-                    $this->createNewDatasetSubmission($datasetSubmission);
+                    
+                    $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
+                    $valid = false;
+                    if (empty($datasetSubmissionReview)) {
+                        $valid = true;
+                    } else {
+                        $valid = $this->checkLocked($datasetSubmissionReview);
+                    }
+                    if ($valid) {
+                        $this->createNewDatasetSubmission($datasetSubmission);
+                    } else {
+                        $error = 5;
+                        $this->addToFlashBag($request, $udi, $error);
+                    }
 
                 } else {
                     $this->checkErrors($request, $datasetSubmissionStatus, $datasetSubmissionMetadataStatus, $udi);
@@ -145,7 +166,8 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                         if you have any questions.',
             2 => 'The dataset ' . $udi . ' has not been submitted and cannot be loaded in review mode.',
             3 => 'The dataset ' . $udi . ' currently has a draft submission and cannot be loaded in review mode.',
-            4 => 'The status of dataset ' . $udi . ' is Back To Submitter and cannot be loaded in review mode.'
+            4 => 'The status of dataset ' . $udi . ' is Back To Submitter and cannot be loaded in review mode.',
+            5 => 'The dataset ' . $udi . ' is locked and under review. Please wait for the user to End the Review.'
         ];
 
         if (array_key_exists($error, $listOfErrors)) {
@@ -182,7 +204,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             DatasetSubmissionType::class,
             $datasetSubmission,
             array(
-                'action' => $this->generateUrl('pelagos_app_ui_datasetsubmission_post', array('id' => $datasetSubmissionId)),
+                'action' => $this->generateUrl('pelagos_app_ui_datasetreview_post', array('id' => $datasetSubmissionId)),
                 'method' => 'POST',
                 'attr' => array(
                     'datasetSubmission' => $datasetSubmissionId,
@@ -263,9 +285,12 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     {
         // The latest submission is complete, so create new one based on it.
         $datasetSubmission = new DatasetSubmission($datasetSubmission);
+        $reviewedBy = $this->getUser()->getPerson();
+        $reviewStartTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
+        $datasetSubmissionReview = new DatasetSubmissionReview($datasetSubmission, $reviewedBy, $reviewStartTimeStamp);
         $datasetSubmission->setDatasetSubmissionReviewStatus();
         $datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_IN_REVIEW);
-        $datasetSubmission->setModifier($this->getUser()->getPerson());
+        $datasetSubmission->setModifier($reviewedBy);
         $eventName = 'in_review';
 
         $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
@@ -273,10 +298,158 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             $eventName
         );
 
+        // Create Dataset submission entity.
+
+        $this->createEntity($datasetSubmission);
+
+        // Create Dataset submission Review entity for the datatset submission.
+        $this->createEntity($datasetSubmissionReview);
+
+    }
+
+    /**
+     * Create an entity for each new review.
+     *
+     * @param Entity $entity A DatasetSubmission or DatasetSubmissionReview to base this DatasetSubmission on.
+     *
+     * @return void
+     */
+    private function createEntity(Entity $entity)
+    {
         try {
-            $this->entityHandler->create($datasetSubmission);
+            $this->entityHandler->create($entity);
         } catch (AccessDeniedException $e) {
             // This is handled in the template.
         }
+    }
+
+    /**
+     * The post action for Dataset Review.
+     *
+     * @param Request     $request The Symfony request object.
+     * @param string|null $id      The id of the Dataset Submission to load.
+     *
+     * @throws BadRequestHttpException When dataset submission has already been submitted.
+     * @throws BadRequestHttpException When DIF has not yet been approved.
+     *
+     * @Route("/{id}")
+     *
+     * @Method("POST")
+     *
+     * @return Response A Response instance.
+     */
+    public function postAction(Request $request, $id = null)
+    {
+        $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
+
+        $form = $this->get('form.factory')->createNamed(
+            null,
+            DatasetSubmissionType::class,
+            $datasetSubmission
+        );
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() and $form->isValid()) {
+
+            $this->processDatasetFileTransferDetails($form, $datasetSubmission);
+
+            $datasetSubmission->submit($this->getUser()->getPerson());
+
+            if ($this->getUser()->isPosix()) {
+                $incomingDirectory = $this->getUser()->getHomeDirectory() . '/incoming';
+            } else {
+                $incomingDirectory = $this->getParameter('homedir_prefix') . '/upload/'
+                    . $this->getUser()->getUserName() . '/incoming';
+                if (!file_exists($incomingDirectory)) {
+                    mkdir($incomingDirectory, 0755, true);
+                }
+            }
+
+            $this->entityHandler->update($datasetSubmission);
+
+            foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+                $this->entityHandler->update($datasetContact);
+            }
+
+            return $this->render(
+                'PelagosAppBundle:DatasetReview:submit.html.twig',
+                array('DatasetSubmission' => $datasetSubmission)
+            );
+        }
+        // This should not normally happen.
+        return new Response((string) $form->getErrors(true, false));
+    }
+
+    /**
+     * Process the Dataset File Transfer Details and update the Dataset Submission.
+     *
+     * @param Form              $form              The submitted dataset submission form.
+     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
+     *
+     * @return void
+     */
+    protected function processDatasetFileTransferDetails(
+        Form $form,
+        DatasetSubmission $datasetSubmission
+    ) {
+        // If there was a previous Dataset Submission.
+        if ($datasetSubmission->getDataset()->getDatasetSubmission() instanceof DatasetSubmission) {
+            // Get the previous datasetFileUri.
+            $previousDatasetFileUri = $datasetSubmission->getDataset()->getDatasetSubmission()->getDatasetFileUri();
+            // If the datasetFileUri has changed or the user has requested to force import or download.
+            if ($datasetSubmission->getDatasetFileUri() !== $previousDatasetFileUri
+                or $form['datasetFileForceImport']->getData()
+                or $form['datasetFileForceDownload']->getData()) {
+                // Assume the dataset file is new.
+                $this->newDatasetFile($datasetSubmission);
+            }
+        } else {
+            // This is the first submission so the dataset file is new.
+            $this->newDatasetFile($datasetSubmission);
+        }
+    }
+
+    /**
+     * Take appropriate actions when a new dataset file is submitted.
+     *
+     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
+     *
+     * @return void
+     */
+    protected function newDatasetFile(DatasetSubmission $datasetSubmission)
+    {
+        $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+        $datasetSubmission->setDatasetFileName(null);
+        $datasetSubmission->setDatasetFileSize(null);
+        $datasetSubmission->setDatasetFileMd5Hash(null);
+        $datasetSubmission->setDatasetFileSha1Hash(null);
+        $datasetSubmission->setDatasetFileSha256Hash(null);
+        $this->messages[] = array(
+            'body' => $datasetSubmission->getDataset()->getId(),
+            'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
+        );
+    }
+
+    /**
+     * Check whether the dataset-review is locked.
+     *
+     * @param DatasetSubmissionReview $datasetSubmissionReview A datasetsubmission-review instance for a dataset submission.
+     *
+     * @return boolean
+     */
+    private function checkLocked(DatasetSubmissionReview $datasetSubmissionReview)
+    {
+        if (empty($datasetSubmissionReview)) {
+            return true;
+        } else {
+            if ($datasetSubmissionReview->getReviewEndDateTime() !== null) {
+                return true;
+            } elseif ($datasetSubmissionReview->getReviewEndDateTime() === null and
+                $datasetSubmissionReview->getReviewedBy() === (string) ($this->getUser()->getPerson()->getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
