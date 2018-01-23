@@ -366,18 +366,18 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 }
             }
 
-            $this->entityHandler->update($datasetSubmission);
-
-            foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
-                $this->entityHandler->update($datasetContact);
-            }
-
             // Update the DatasetSubmissionReview when the user ends the review with end time.
             $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
 
             $datasetSubmissionReview->setReviewEndDateTime(new \DateTime('now', new \DateTimeZone('UTC')));
 
             $this->entityHandler->update($datasetSubmissionReview);
+
+            $this->entityHandler->update($datasetSubmission);
+
+            foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
+                $this->entityHandler->update($datasetContact);
+            }
 
             return $this->render(
                 'PelagosAppBundle:DatasetReview:submit.html.twig',
