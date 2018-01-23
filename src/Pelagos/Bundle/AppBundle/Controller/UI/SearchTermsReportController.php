@@ -72,11 +72,12 @@ class SearchTermsReportController extends ReportController
         $query->setParameters(['actionName' => 'Search']);
         $results = $query->getResult();
 
-        //get user Ids of Griidc Staff to exclude from the report
+        //get user Ids of Griidc Staff to exclude from the report with personDataRepository roles of:
+        //Manager (1), Developer (2), Support (3), Subject Matter Expert (4)
         $griidcUserQueryString = 'SELECT account.userId FROM ' . PersonDataRepository::class .
             ' personDataRepository JOIN ' . Person::class .
             ' person WITH person.id = personDataRepository.person JOIN ' . Account::class .
-            ' account WITH account.person = person.id';
+            ' account WITH account.person = person.id WHERE personDataRepository.role in (1, 2, 3, 4) ';
         $griidcUserResult = $entityManager->createQuery($griidcUserQueryString)->getScalarResult();
         $griidcArray = array_column($griidcUserResult, 'userId');
 
