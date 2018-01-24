@@ -145,14 +145,14 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     /**
      * Add error messages to flash bag to show it to the user.
      *
-     * @param Request $request The Symfony request object.
-     * @param string  $udi     The UDI entered by the user.
-     * @param integer $error   The Error code generated.
-     * @param DatasetSubmissionReview $datasetSubmissionReview Dataset submission review for a dataset-submission
+     * @param Request                 $request                 The Symfony request object.
+     * @param string                  $udi                     The UDI entered by the user.
+     * @param integer                 $error                   The Error code generated.
+     * @param DatasetSubmissionReview $datasetSubmissionReview Dataset submission review for a dataset-submission.
      *
      * @return void
      */
-    private function addToFlashBag(Request $request, $udi, $error, $datasetSubmissionReview = null)
+    private function addToFlashBag(Request $request, $udi, $error, DatasetSubmissionReview $datasetSubmissionReview = null)
     {
         $flashBag = $request->getSession()->getFlashBag();
 
@@ -166,7 +166,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             'notSubmitted' => 'The dataset ' . $udi . ' has not been submitted and cannot be loaded in review mode.',
             'hasDraft' => 'The dataset ' . $udi . ' currently has a draft submission and cannot be loaded in review mode.',
             'backToSub' => 'The status of dataset ' . $udi . ' is Back To Submitter and cannot be loaded in review mode.',
-            'locked' => 'The dataset ' . $udi . ' is in review mode. Username: '. $reviewerUserName,
+            'locked' => 'The dataset ' . $udi . ' is in review mode. Username: ' . $reviewerUserName,
         ];
 
         if (array_key_exists($error, $listOfErrors)) {
