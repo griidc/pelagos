@@ -104,8 +104,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     if ($valid) {
                         $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
                     } else {
-                        $error = 5;
-                        $this->addToFlashBag($request, $udi, $error);
+                        $this->addToFlashBag($request, $udi, 'locked');
                     }
 
                 } else {
@@ -115,8 +114,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 $this->checkErrors($request, $datasetSubmissionStatus, $datasetSubmissionMetadataStatus, $udi);
             }
         } else {
-            $error = 1;
-            $this->addToFlashBag($request, $udi, $error);
+            $this->addToFlashBag($request, $udi, 'notFound');
         }
 
         return $this->makeSubmissionForm($udi, $dataset, $datasetSubmission);
@@ -135,14 +133,11 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     private function checkErrors(Request $request, $datasetSubmissionStatus, $datasetSubmissionMetadataStatus, $udi)
     {
         if ($datasetSubmissionStatus === DatasetSubmission::STATUS_INCOMPLETE) {
-            $error = 3;
-            $this->addToFlashBag($request, $udi, $error);
+            $this->addToFlashBag($request, $udi, 'hasDraft');
         } elseif ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
-            $error = 4;
-            $this->addToFlashBag($request, $udi, $error);
+            $this->addToFlashBag($request, $udi, 'backToSub');
         } else {
-            $error = 2;
-            $this->addToFlashBag($request, $udi, $error);
+            $this->addToFlashBag($request, $udi, 'notSubmitted');
         }
     }
 
@@ -160,14 +155,14 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         $flashBag = $request->getSession()->getFlashBag();
 
         $listOfErrors = [
-            1 => 'Sorry, the dataset with Unique Dataset Identifier (UDI) ' .
+            'notFound' => 'Sorry, the dataset with Unique Dataset Identifier (UDI) ' .
                 $udi . ' could not be found. Please email 
                         <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> 
                         if you have any questions.',
-            2 => 'The dataset ' . $udi . ' has not been submitted and cannot be loaded in review mode.',
-            3 => 'The dataset ' . $udi . ' currently has a draft submission and cannot be loaded in review mode.',
-            4 => 'The status of dataset ' . $udi . ' is Back To Submitter and cannot be loaded in review mode.',
-            5 => 'The dataset ' . $udi . ' is locked and under review. Please wait for the user to End the Review.'
+            'notSubmitted' => 'The dataset ' . $udi . ' has not been submitted and cannot be loaded in review mode.',
+            'hasDraft' => 'The dataset ' . $udi . ' currently has a draft submission and cannot be loaded in review mode.',
+            'backToSub' => 'The status of dataset ' . $udi . ' is Back To Submitter and cannot be loaded in review mode.',
+            'locked' => 'The dataset ' . $udi . ' is locked and under review. Please wait for the user to End the Review.'
         ];
 
         if (array_key_exists($error, $listOfErrors)) {

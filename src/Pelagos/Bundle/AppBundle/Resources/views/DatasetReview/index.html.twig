@@ -19,12 +19,15 @@
                 '//cdn.datatables.net/select/1.0.1/css/select.dataTables.min.css',
                 '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css',
                 '//cdnjs.cloudflare.com/ajax/libs/animate.css/3.3.0/animate.min.css',
+                '//cdnjs.cloudflare.com/ajax/libs/file-uploader/5.11.8/fine-uploader-new.min.css',
             ]
         )
     }}
 
     {% stylesheets
         '@PelagosAppBundle/Resources/public/css/dataset-submission.css'
+        '@PelagosAppBundle/Resources/public/css/fileBrowser.css'
+        '@PelagosAppBundle/Resources/public/css/dataset-submission-uploader.css'
     %}
         {{ add_css(asset_url) }}
     {% endstylesheets  %}
@@ -53,12 +56,15 @@
         '@PelagosAppBundle/Resources/public/js/datasetReview.js'
         '@PelagosAppBundle/Resources/public/js/geoviz.js'
         '@PelagosAppBundle/Resources/public/js/mapWizard.js'
+        '@PelagosAppBundle/Resources/public/js/common.js'
+        '@PelagosAppBundle/Resources/public/js/fileBrowser.js'
     %}
         {{ add_js(asset_url) }}
     {% endjavascripts %}
 
     {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
 
+    {% include 'PelagosAppBundle:DatasetReview:uploader-template.html.twig' %}
 
 {% endblock %}
 
