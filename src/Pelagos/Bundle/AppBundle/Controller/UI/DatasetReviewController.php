@@ -88,7 +88,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 if ($datasetSubmissionStatus === DatasetSubmission::STATUS_COMPLETE and
                     $datasetSubmissionMetadataStatus !== DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
 
-                    $this->createNewDatasetSubmission($datasetSubmission);
+                    $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
 
                 } elseif ($datasetSubmissionStatus === DatasetSubmission::STATUS_IN_REVIEW and
                 $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_IN_REVIEW or
@@ -102,7 +102,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                         $valid = $this->checkLocked($datasetSubmissionReview);
                     }
                     if ($valid) {
-                        $this->createNewDatasetSubmission($datasetSubmission);
+                        $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
                     } else {
                         $error = 5;
                         $this->addToFlashBag($request, $udi, $error);
@@ -279,7 +279,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      *
      * @param DatasetSubmission $datasetSubmission The Dataset Submission.
      *
-     * @return void
+     * @return DatasetSubmission
      */
     private function createNewDatasetSubmission(DatasetSubmission $datasetSubmission)
     {
@@ -304,6 +304,8 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
 
         // Create Dataset submission Review entity for the datatset submission.
         $this->createEntity($datasetSubmissionReview);
+
+        return $datasetSubmission;
 
     }
 
@@ -365,6 +367,13 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     mkdir($incomingDirectory, 0755, true);
                 }
             }
+
+            // Update the DatasetSubmissionReview when the user ends the review with end time.
+            $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
+
+            $datasetSubmissionReview->setReviewEndDateTime(new \DateTime('now', new \DateTimeZone('UTC')));
+
+            $this->entityHandler->update($datasetSubmissionReview);
 
             $this->entityHandler->update($datasetSubmission);
 
@@ -443,10 +452,9 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         if (empty($datasetSubmissionReview)) {
             return true;
         } else {
-            if ($datasetSubmissionReview->getReviewEndDateTime() !== null) {
+            if ($datasetSubmissionReview->getReviewedBy() === (string) ($this->getUser()->getPerson()->getId())) {
                 return true;
-            } elseif ($datasetSubmissionReview->getReviewEndDateTime() === null and
-                $datasetSubmissionReview->getReviewedBy() === (string) ($this->getUser()->getPerson()->getId())) {
+            } elseif (!empty($datasetSubmissionReview->getReviewEndDateTime())) {
                 return true;
             }
         }
