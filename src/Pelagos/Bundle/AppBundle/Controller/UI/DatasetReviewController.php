@@ -2,6 +2,7 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
+use Pelagos\Entity\Person;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -104,7 +105,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     if ($valid) {
                         $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
                     } else {
-                        $this->addToFlashBag($request, $udi, 'locked');
+                        $this->addToFlashBag($request, $udi, 'locked', $datasetSubmissionReview);
                     }
 
                 } else {
@@ -144,15 +145,18 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     /**
      * Add error messages to flash bag to show it to the user.
      *
-     * @param Request $request The Symfony request object.
-     * @param string  $udi     The UDI entered by the user.
-     * @param integer $error   The Error code generated.
+     * @param Request                 $request                 The Symfony request object.
+     * @param string                  $udi                     The UDI entered by the user.
+     * @param integer                 $error                   The Error code generated.
+     * @param DatasetSubmissionReview $datasetSubmissionReview Dataset submission review for a dataset-submission.
      *
      * @return void
      */
-    private function addToFlashBag(Request $request, $udi, $error)
+    private function addToFlashBag(Request $request, $udi, $error, DatasetSubmissionReview $datasetSubmissionReview = null)
     {
         $flashBag = $request->getSession()->getFlashBag();
+
+        $reviewerUserName  = $this->entityHandler->get(Person::class, $datasetSubmissionReview->getReviewedBy())->getAccount()->getUserId();
 
         $listOfErrors = [
             'notFound' => 'Sorry, the dataset with Unique Dataset Identifier (UDI) ' .
@@ -162,7 +166,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             'notSubmitted' => 'The dataset ' . $udi . ' has not been submitted and cannot be loaded in review mode.',
             'hasDraft' => 'The dataset ' . $udi . ' currently has a draft submission and cannot be loaded in review mode.',
             'backToSub' => 'The status of dataset ' . $udi . ' is Back To Submitter and cannot be loaded in review mode.',
-            'locked' => 'The dataset ' . $udi . ' is locked and under review. Please wait for the user to End the Review.'
+            'locked' => 'The dataset ' . $udi . ' is in review mode. Username: ' . $reviewerUserName,
         ];
 
         if (array_key_exists($error, $listOfErrors)) {
