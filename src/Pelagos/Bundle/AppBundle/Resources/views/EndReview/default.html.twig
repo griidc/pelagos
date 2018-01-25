@@ -1,0 +1,12 @@
+{% extends "PelagosAppBundle::layout.html.twig" %}
+
+{% block head %}
+    <h2> End review tool</h2>
+{% endblock %}
+
+
+{% block body %}
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+{% endblock %}
