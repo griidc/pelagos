@@ -22,8 +22,14 @@ class EndReviewType extends abstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('Dataset', TextType::class)
-            ->add('submit', SubmitType::class, array('label' => 'End Review'));
+            ->add('datasetUdi', TextType::class, array(
+                'label' => 'Enter the dataset',
+                'required' => true
+            ))
+            ->add('submit', SubmitType::class, array(
+                'label' => 'End Review',
+                'attr' => array('class' => 'submitButton')
+            ));
 
     }
 
