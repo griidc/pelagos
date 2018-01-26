@@ -2,7 +2,7 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
-use Pelagos\Entity\Person;
+
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +19,7 @@ use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Pelagos\Entity\DatasetSubmissionReview;
 use Pelagos\Entity\Entity;
+use Pelagos\Entity\Account;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
@@ -104,7 +105,8 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     if ($valid) {
                         $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
                     } else {
-                        $this->addToFlashBag($request, $udi, 'locked', $datasetSubmissionReview);
+                        $reviewerUserName  = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
+                        $this->addToFlashBag($request, $udi, 'locked', $reviewerUserName);
                     }
 
                 } else {
@@ -151,11 +153,9 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      *
      * @return void
      */
-    private function addToFlashBag(Request $request, $udi, $error, DatasetSubmissionReview $datasetSubmissionReview = null)
+    private function addToFlashBag(Request $request, $udi, $error, $reviewerUserName = null)
     {
         $flashBag = $request->getSession()->getFlashBag();
-
-        $reviewerUserName  = $this->entityHandler->get(Person::class, $datasetSubmissionReview->getReviewedBy())->getAccount()->getUserId();
 
         $listOfErrors = [
             'notFound' => 'Sorry, the dataset with Unique Dataset Identifier (UDI) ' .
@@ -450,7 +450,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         if (empty($datasetSubmissionReview)) {
             return true;
         } else {
-            if ($datasetSubmissionReview->getReviewedBy() === (string) ($this->getUser()->getPerson()->getId())) {
+            if ($datasetSubmissionReview->getReviewedBy() === $this->getUser()->getPerson()) {
                 return true;
             } elseif (!empty($datasetSubmissionReview->getReviewEndDateTime())) {
                 return true;
