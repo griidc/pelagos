@@ -369,7 +369,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             // Update the DatasetSubmissionReview when the user ends the review with end time.
             $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
 
-            $datasetSubmissionReview->setReviewEndDateTime(new \DateTime('now', new \DateTimeZone('UTC')));
+            $datasetSubmissionReview->endReview();
 
             $this->entityHandler->update($datasetSubmissionReview);
 
