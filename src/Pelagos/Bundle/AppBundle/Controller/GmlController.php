@@ -147,4 +147,38 @@ class GmlController extends Controller
         $gml = $dom->ownerDocument->saveXML($dom->ownerDocument->documentElement);
         return $gml;
     }
+
+  /**
+   * This function validate GML from wkt.
+   *
+   * @param Request $request The Symfony request object.
+   *
+   * @Method("GET")
+   *
+   * @Route("/validategmlfromwkt")
+   *
+   * @throws BadRequestHttpException When no WKT is given.
+   *
+   * @return Response Includes boolean and invalid reason.
+   */
+    public function validateGmlFromWktAction(Request $request)
+    {
+        $params = $request->query->all();
+        if (isset($params['wkt'])) {
+            $query = 'SELECT ST_IsValidReason(ST_GeomFromText(:wkt))';
+            $connection = $this->getDoctrine()->getManager()->getConnection();
+            $statement = $connection->prepare($query);
+            $statement->bindValue('wkt', $params['wkt']);
+            $statement->execute();
+            $results = $statement->fetchAll();
+                return new Response(
+                    $results[0]['st_isvalidreason'],
+                    Response::HTTP_OK,
+                    ['content-type' => 'text/plain']
+                );
+        } else {
+            throw new BadRequestHttpException('No Well Know Text given. (Parameter:wkt)');
+        }
+
+    }
 }
