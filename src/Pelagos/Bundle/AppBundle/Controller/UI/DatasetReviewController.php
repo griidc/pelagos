@@ -2,8 +2,8 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
-
 use Symfony\Component\Form\Form;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -146,10 +146,10 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     /**
      * Add error messages to flash bag to show it to the user.
      *
-     * @param Request                 $request                 The Symfony request object.
-     * @param string                  $udi                     The UDI entered by the user.
-     * @param integer                 $error                   The Error code generated.
-     * @param DatasetSubmissionReview $datasetSubmissionReview Dataset submission review for a dataset-submission.
+     * @param Request $request          The Symfony request object.
+     * @param string  $udi              The UDI entered by the user.
+     * @param integer $error            The Error code generated.
+     * @param string  $reviewerUserName Reviewer Username for the Dataset submission review.
      *
      * @return void
      */

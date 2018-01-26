@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ppondicherry
- * Date: 1/25/18
- * Time: 3:45 PM
- */
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
@@ -44,8 +38,8 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
         $udi = $request->get('datasetUdi');
 
         $form = $this->get('form.factory')->createNamed(
-          null,
-          EndReviewType::class
+            null,
+            EndReviewType::class
         );
 
         $form->handleRequest($request);
@@ -54,11 +48,17 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
             $this->validateAndEndReview($udi, $request);
         }
 
-        return $this->render('PelagosAppBundle:EndReview:default.html.twig',
-            array('form' => $form->createView())
-        );
+        return $this->render('PelagosAppBundle:EndReview:default.html.twig', array('form' => $form->createView()));
     }
-    
+
+    /**
+     * To validate and end the review of a dataset submissionr review.
+     *
+     * @param string  $udi     Dataset UDI identifier.
+     * @param Request $request A Symfony request object.
+     *
+     * @return void
+     */
     private function validateAndEndReview($udi, Request $request)
     {
         $datasets = $this->entityHandler
@@ -89,7 +89,7 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
      *
      * @param Request $request          The Symfony request object.
      * @param string  $udi              The UDI entered by the user.
-     * @param string $flashMessage     The Flashbag message to be showed to the user.
+     * @param string  $flashMessage     The Flashbag message to be showed to the user.
      * @param string  $reviewerUserName Reviewer Username for the Dataset submission review.
      *
      * @return void

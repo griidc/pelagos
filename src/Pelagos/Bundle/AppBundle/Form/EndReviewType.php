@@ -30,7 +30,6 @@ class EndReviewType extends abstractType
                 'label' => 'End Review',
                 'attr' => array('class' => 'submitButton')
             ));
-
     }
 
 }

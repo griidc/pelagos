@@ -15,7 +15,6 @@ class Version20180126152640 extends AbstractMigration
      */
     public function up(Schema $schema)
     {
-        $this->addSql('COMMENT ON COLUMN metadata.geometry IS \'(DC2Type:geometry)\'');
         $this->addSql('ALTER TABLE dataset_submission_review ADD reviewed_by_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE dataset_submission_review DROP reviewed_by');
         $this->addSql('ALTER TABLE dataset_submission_review ADD CONSTRAINT FK_3FA5C62FFC6B21F1 FOREIGN KEY (reviewed_by_id) REFERENCES person (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
@@ -28,7 +27,6 @@ class Version20180126152640 extends AbstractMigration
     public function down(Schema $schema)
     {
         $this->addSql('CREATE SCHEMA public');
-        $this->addSql('COMMENT ON COLUMN metadata.geometry IS \'(DC2Type:geometry)(DC2Type:geometry)\'');
         $this->addSql('ALTER TABLE dataset_submission_review DROP CONSTRAINT FK_3FA5C62FFC6B21F1');
         $this->addSql('DROP INDEX IDX_3FA5C62FFC6B21F1');
         $this->addSql('ALTER TABLE dataset_submission_review ADD reviewed_by TEXT NOT NULL');

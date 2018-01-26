@@ -159,6 +159,8 @@ class DatasetSubmissionReview extends Entity
 
     /**
      * Ends the dataset submission review.
+     *
+     * @return void
      */
     public function endReview()
     {

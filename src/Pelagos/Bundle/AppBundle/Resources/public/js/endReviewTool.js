@@ -9,5 +9,4 @@ $(document).ready(function () {
     $("html").show();
 
     $(".pelagosNoty").pelagosNoty({timeout: 0, showOnTop:false});
-
 });
