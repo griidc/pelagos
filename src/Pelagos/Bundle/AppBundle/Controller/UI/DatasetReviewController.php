@@ -80,7 +80,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             $dataset = $datasets[0];
 
             $datasetSubmission = (($dataset->getDatasetSubmissionHistory()->first()) ? $dataset->getDatasetSubmissionHistory()->first() : null);
-            $dif = $dataset->getDif();
             $datasetSubmissionStatus = (($datasetSubmission) ? $datasetSubmission->getStatus() : null);
             $datasetSubmissionMetadataStatus = $dataset->getMetadataStatus();
 
