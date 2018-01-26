@@ -228,9 +228,8 @@ class DataStore
                 throw new \Exception("Could not delete existing file: $storeFilePath");
             }
         }
-        // Insert best-practice anonymous FTP credentials, per RFC1635 (https://www.rfc-editor.org/rfc/rfc1635.txt),
-        // but only do this if the string doesn't contain a : before the @ host delimiter.
-        if (preg_match('/^ftp:\/\//i', $fileUri) and (preg_match('/^ftp:\/\/.*:.*@.*$/', $fileUri)) === 0) {
+        // Insert best-practice anonymous FTP credentials, per RFC1635 (https://www.rfc-editor.org/rfc/rfc1635.txt)
+        if (preg_match('/^ftp:\/\//i', $fileUri)) {
             $hostAndFile = preg_replace('/^ftp:\/\//i', '', $fileUri);
             $fileUri = 'ftp://' . $this->anonFtpUser . ':' . $this->anonFtpPass . '@' . $hostAndFile;
         }
