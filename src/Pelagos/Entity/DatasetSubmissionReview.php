@@ -33,7 +33,7 @@ class DatasetSubmissionReview extends Entity
      *
      * @var Person
      *
-     * @ORM\Column(type="text", nullable=false)
+     * @ORM\ManyToOne(targetEntity="Person")
      */
     protected $reviewedBy;
 
