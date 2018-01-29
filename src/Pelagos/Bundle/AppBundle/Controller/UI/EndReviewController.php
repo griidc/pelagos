@@ -107,7 +107,7 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
         ];
 
         $success = [
-            'reviewEnded' => 'The review for dataset ' . $udi . ' that was open by ' . $reviewerUserName . ' has been terminated.'
+            'reviewEnded' => 'The review for dataset ' . $udi . ' that was opened by ' . $reviewerUserName . ' has been terminated.'
         ];
 
         switch ($flashMessage) {
