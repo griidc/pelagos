@@ -519,8 +519,13 @@ function MapWizard(json)
         {
             var myWKT = wizGeoViz.getWKT(myWKTid);
             var wgsWKT = wizGeoViz.wktTransformToWGS84(myWKT);
-            validateGmlFromWkt(wgsWKT);
             wizGeoViz.wktToGML(wgsWKT);
+            $("#olmap").on("wktConverted", function(e, eventObj) {
+                $(gmlField).val(eventObj);
+                $(gmlField).trigger("change");
+                $(descField).val("");
+            });
+            validateGmlFromWkt(wgsWKT);
         }
         else
         {
@@ -535,22 +540,15 @@ function MapWizard(json)
         $.ajax({
             url: Routing.generate("pelagos_app_gml_validategmlfromwkt"),
             data: {'wkt': wkt},
-            success: function(data) {
-                    if(data === "Valid Geometry") {
-                        $("#olmap").on("wktConverted", function(e, eventObj) {
-                            $(gmlField).val(eventObj);
-                            $(gmlField).trigger("change");
-                            $(descField).val("");
-                            closeDialog();
-                        });
-                    }
-                    else {
-                        showDialog("Invalid Geometry", data);
-                    }
+            success: function(){
+                closeDialog();
             },
-            error: function(jqXHR, textStatus, errorThrown) {
-                showDialog("Error", errorThrown);
+        }).fail(function(xhr)
+        {
+            if(xhr.status === 400) {
+                showDialog("Invalid Geometry", xhr.responseText);
             }
+            else showDialog("Error " + xhr.status, xhr.statusText);
         });
     }
 
