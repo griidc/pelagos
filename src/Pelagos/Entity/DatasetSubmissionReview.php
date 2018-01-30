@@ -33,7 +33,7 @@ class DatasetSubmissionReview extends Entity
      *
      * @var Person
      *
-     * @ORM\Column(type="text", nullable=false)
+     * @ORM\ManyToOne(targetEntity="Person")
      */
     protected $reviewedBy;
 
@@ -155,5 +155,15 @@ class DatasetSubmissionReview extends Entity
     public function getReviewNotes()
     {
         return $this->reviewNotes;
+    }
+
+    /**
+     * Ends the dataset submission review.
+     *
+     * @return void
+     */
+    public function endReview()
+    {
+        $this->reviewEndDateTime = new \DateTime('now', new \DateTimeZone('UTC'));;
     }
 }

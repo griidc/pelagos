@@ -69,3 +69,6 @@ pelagos_search_terms_report_ui:
 
 pelagos_dataset_review_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\DatasetReviewController
+
+pelagos_end_review_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\EndReviewController

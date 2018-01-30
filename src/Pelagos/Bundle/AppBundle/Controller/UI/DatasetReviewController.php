@@ -2,8 +2,8 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
-use Pelagos\Entity\Person;
 use Symfony\Component\Form\Form;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -19,6 +19,7 @@ use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Pelagos\Entity\DatasetSubmissionReview;
 use Pelagos\Entity\Entity;
+use Pelagos\Entity\Account;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
@@ -80,7 +81,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             $dataset = $datasets[0];
 
             $datasetSubmission = (($dataset->getDatasetSubmissionHistory()->first()) ? $dataset->getDatasetSubmissionHistory()->first() : null);
-            $dif = $dataset->getDif();
             $datasetSubmissionStatus = (($datasetSubmission) ? $datasetSubmission->getStatus() : null);
             $datasetSubmissionMetadataStatus = $dataset->getMetadataStatus();
 
@@ -105,7 +105,8 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     if ($valid) {
                         $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
                     } else {
-                        $this->addToFlashBag($request, $udi, 'locked', $datasetSubmissionReview);
+                        $reviewerUserName  = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
+                        $this->addToFlashBag($request, $udi, 'locked', $reviewerUserName);
                     }
 
                 } else {
@@ -145,18 +146,16 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     /**
      * Add error messages to flash bag to show it to the user.
      *
-     * @param Request                 $request                 The Symfony request object.
-     * @param string                  $udi                     The UDI entered by the user.
-     * @param integer                 $error                   The Error code generated.
-     * @param DatasetSubmissionReview $datasetSubmissionReview Dataset submission review for a dataset-submission.
+     * @param Request $request          The Symfony request object.
+     * @param string  $udi              The UDI entered by the user.
+     * @param integer $error            The Error code generated.
+     * @param string  $reviewerUserName Reviewer Username for the Dataset submission review.
      *
      * @return void
      */
-    private function addToFlashBag(Request $request, $udi, $error, DatasetSubmissionReview $datasetSubmissionReview = null)
+    private function addToFlashBag(Request $request, $udi, $error, $reviewerUserName = null)
     {
         $flashBag = $request->getSession()->getFlashBag();
-
-        $reviewerUserName  = $this->entityHandler->get(Person::class, $datasetSubmissionReview->getReviewedBy())->getAccount()->getUserId();
 
         $listOfErrors = [
             'notFound' => 'Sorry, the dataset with Unique Dataset Identifier (UDI) ' .
@@ -370,7 +369,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             // Update the DatasetSubmissionReview when the user ends the review with end time.
             $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
 
-            $datasetSubmissionReview->setReviewEndDateTime(new \DateTime('now', new \DateTimeZone('UTC')));
+            $datasetSubmissionReview->endReview();
 
             $this->entityHandler->update($datasetSubmissionReview);
 
@@ -451,7 +450,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         if (empty($datasetSubmissionReview)) {
             return true;
         } else {
-            if ($datasetSubmissionReview->getReviewedBy() === (string) ($this->getUser()->getPerson()->getId())) {
+            if ($datasetSubmissionReview->getReviewedBy() === $this->getUser()->getPerson()) {
                 return true;
             } elseif (!empty($datasetSubmissionReview->getReviewEndDateTime())) {
                 return true;
