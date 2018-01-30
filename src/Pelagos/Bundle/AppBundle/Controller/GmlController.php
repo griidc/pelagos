@@ -171,14 +171,19 @@ class GmlController extends Controller
             $statement->bindValue('wkt', $params['wkt']);
             $statement->execute();
             $results = $statement->fetchAll();
+            $response = $results[0]['st_isvalidreason'];
+
+            $returnCode = Response::HTTP_OK;
+            if ($response !== 'Valid Geometry') {
+                $returnCode = Response::HTTP_BAD_REQUEST;
+            }
                 return new Response(
-                    $results[0]['st_isvalidreason'],
-                    Response::HTTP_OK,
+                    $response,
+                    $returnCode,
                     ['content-type' => 'text/plain']
                 );
         } else {
             throw new BadRequestHttpException('No Well Know Text given. (Parameter:wkt)');
         }
-
     }
 }
