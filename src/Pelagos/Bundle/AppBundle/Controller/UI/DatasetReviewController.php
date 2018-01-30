@@ -354,7 +354,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
 
             $this->processDatasetFileTransferDetails($form, $datasetSubmission);
 
-            $datasetSubmission->submit($this->getUser()->getPerson());
+            $datasetSubmission->endReview($this->getUser()->getPerson());
 
             if ($this->getUser()->isPosix()) {
                 $incomingDirectory = $this->getUser()->getHomeDirectory() . '/incoming';
