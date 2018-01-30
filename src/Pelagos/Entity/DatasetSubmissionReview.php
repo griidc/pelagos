@@ -168,16 +168,6 @@ class DatasetSubmissionReview extends Entity
     }
 
     /**
-     * Ends the dataset submission review.
-     *
-     * @return void
-     */
-    public function endReview()
-    {
-        $this->reviewEndDateTime = new \DateTime('now', new \DateTimeZone('UTC'));;
-    }
-
-    /**
      * Get the Person who ended the review.
      *
      * @return Person
