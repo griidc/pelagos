@@ -74,6 +74,7 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
                 empty($datasetSubmissionReview->getReviewEndDateTime())) {
                 $datasetSubmission->endReview($this->getUser()->getPerson());
                 $this->entityHandler->update($datasetSubmissionReview);
+                $this->entityHandler->update($datasetSubmission);
                 $reviewerUserName  = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
                 $this->addToFlashBag($request, $udi, 'reviewEnded', $reviewerUserName);
             } else {
