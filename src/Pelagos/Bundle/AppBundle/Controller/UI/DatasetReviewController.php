@@ -354,8 +354,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
 
             $this->processDatasetFileTransferDetails($form, $datasetSubmission);
 
-            $datasetSubmission->endReview($this->getUser()->getPerson());
-
             if ($this->getUser()->isPosix()) {
                 $incomingDirectory = $this->getUser()->getHomeDirectory() . '/incoming';
             } else {
@@ -366,12 +364,9 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 }
             }
 
-            // Update the DatasetSubmissionReview when the user ends the review with end time.
-            $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
+            $datasetSubmission->endReview($this->getUser()->getPerson());
 
-            $datasetSubmissionReview->endReview();
-
-            $this->entityHandler->update($datasetSubmissionReview);
+            $this->entityHandler->update($datasetSubmission->getDatasetSubmissionReview());
 
             $this->entityHandler->update($datasetSubmission);
 
