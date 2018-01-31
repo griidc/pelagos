@@ -92,21 +92,24 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
 
                 } elseif ($datasetSubmissionStatus === DatasetSubmission::STATUS_IN_REVIEW and
-                $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_IN_REVIEW or
-                $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_SUBMITTED) {
+                    ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_IN_REVIEW or
+                        $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_SUBMITTED)) {
                     
                     $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
-                    $valid = false;
-                    if (empty($datasetSubmissionReview)) {
-                        $valid = true;
-                    } else {
-                        $valid = $this->checkLocked($datasetSubmissionReview);
-                    }
-                    if ($valid) {
-                        $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
-                    } else {
-                        $reviewerUserName  = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
-                        $this->addToFlashBag($request, $udi, 'locked', $reviewerUserName);
+
+                    switch (true) {
+                        case (empty($datasetSubmissionReview)):
+                            $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
+                            break;
+                        case ($datasetSubmissionReview->getReviewEndDateTime()):
+                            $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
+                            break;
+                        case (empty($datasetSubmissionReview->getReviewEndDateTime())):
+                            if ($datasetSubmissionReview->getReviewedBy() !== $this->getUser()->getPerson()) {
+                                $reviewerUserName  = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
+                                $this->addToFlashBag($request, $udi, 'locked', $reviewerUserName);
+                            }
+                            break;
                     }
 
                 } else {
@@ -431,26 +434,5 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             'body' => $datasetSubmission->getDataset()->getId(),
             'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
         );
-    }
-
-    /**
-     * Check whether the dataset-review is locked.
-     *
-     * @param DatasetSubmissionReview $datasetSubmissionReview A datasetsubmission-review instance for a dataset submission.
-     *
-     * @return boolean
-     */
-    private function checkLocked(DatasetSubmissionReview $datasetSubmissionReview)
-    {
-        if (empty($datasetSubmissionReview)) {
-            return true;
-        } else {
-            if ($datasetSubmissionReview->getReviewedBy() === $this->getUser()->getPerson()) {
-                return true;
-            } elseif (!empty($datasetSubmissionReview->getReviewEndDateTime())) {
-                return true;
-            }
-        }
-        return false;
     }
 }
