@@ -165,20 +165,31 @@ class GmlController extends Controller
     {
         $params = $request->query->all();
         if (isset($params['wkt'])) {
+            $wkt = $params['wkt'];
+            try {
+                \geoPHP::load($wkt, 'wkt');
+            } catch (\Exception $exception) {
+                return new Response(
+                    preg_split('/:/', $exception->getMessage(), 2)[1],
+                    response::HTTP_BAD_REQUEST,
+                    ['content-type' => 'text/plain']
+                );
+            }
             $query = 'SELECT ST_IsValidReason(ST_GeomFromText(:wkt))';
             $connection = $this->getDoctrine()->getManager()->getConnection();
             $statement = $connection->prepare($query);
-            $statement->bindValue('wkt', $params['wkt']);
+            $statement->bindValue('wkt', $wkt);
             $statement->execute();
+
             $results = $statement->fetchAll();
-            $response = $results[0]['st_isvalidreason'];
+            $message = $results[0]['st_isvalidreason'];
 
             $returnCode = Response::HTTP_OK;
-            if ($response !== 'Valid Geometry') {
+            if ($message !== 'Valid Geometry') {
                 $returnCode = Response::HTTP_BAD_REQUEST;
             }
                 return new Response(
-                    $response,
+                    $message,
                     $returnCode,
                     ['content-type' => 'text/plain']
                 );

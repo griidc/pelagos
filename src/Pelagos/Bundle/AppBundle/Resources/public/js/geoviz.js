@@ -563,14 +563,14 @@ function GeoViz()
 
     this.wktToGML = function (WKT)
     {
-        jQuery.ajax({
+        return jQuery.ajax({
             url: Routing.generate("pelagos_app_gml_fromwkt"),
             type: "POST",
             data: {wkt: WKT},
             context: document.body
             }).done(function(html) {
                 jQuery(mapDiv).trigger("wktConverted",html);
-            return true;
+            return html;
         });
     }
 
