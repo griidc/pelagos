@@ -1072,11 +1072,11 @@ class DatasetSubmission extends Entity
     /**
      * End Review for the Dataset Submission review.
      *
-     * @param Person $submitter The submitter.
+     * @param Person $reviewer The reviewer.
      *
      * @return void
      */
-    public function endReview(Person $submitter)
+    public function endReview(Person $reviewer)
     {
         //Setting the status to in-review.
         $this->status = self::STATUS_IN_REVIEW;
@@ -1091,8 +1091,8 @@ class DatasetSubmission extends Entity
         $this->submissionTimeStamp = $timeStamp;
 
         // Setting review ended by person.
-        $datasetSubmissionReview->setReviewEndedBy($submitter);
-        $this->submitter = $submitter;
+        $datasetSubmissionReview->setReviewEndedBy($reviewer);
+        $this->submitter = $reviewer;
     }
 
     /**
