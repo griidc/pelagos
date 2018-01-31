@@ -515,7 +515,7 @@ function MapWizard(json)
     function saveFeature()
     {
         var myWKTid = wizGeoViz.getSingleFeature();
-        if (typeof myWKTid != "undefined") {
+        if (typeof myWKTid !== "undefined") {
             var myWKT = wizGeoViz.getWKT(myWKTid);
             var wgsWKT = wizGeoViz.wktTransformToWGS84(myWKT);
             validateGmlFromWkt(wgsWKT)
@@ -538,10 +538,10 @@ function MapWizard(json)
     {
         return $.ajax({
             url: Routing.generate("pelagos_app_gml_validategmlfromwkt"),
-            data: {'wkt': wkt},
+            data: {"wkt": wkt},
             success: function(data, textStatus, jqXHR){
                 return jqXHR;
-            },
+            }
         })
         .fail(function(xhr)
         {
