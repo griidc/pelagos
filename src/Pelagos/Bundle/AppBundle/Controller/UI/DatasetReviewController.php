@@ -81,42 +81,13 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             $dataset = $datasets[0];
 
             $datasetSubmission = (($dataset->getDatasetSubmissionHistory()->first()) ? $dataset->getDatasetSubmissionHistory()->first() : null);
-            $datasetSubmissionStatus = (($datasetSubmission) ? $datasetSubmission->getStatus() : null);
-            $datasetSubmissionMetadataStatus = $dataset->getMetadataStatus();
 
             if ($datasetSubmission instanceof DatasetSubmission) {
 
-                if ($datasetSubmissionStatus === DatasetSubmission::STATUS_COMPLETE and
-                    $datasetSubmissionMetadataStatus !== DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
+                $datasetSubmission = $this->latestDatasetSubmissionForReview($request, $datasetSubmission, $dataset, $udi);
 
-                    $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
-
-                } elseif ($datasetSubmissionStatus === DatasetSubmission::STATUS_IN_REVIEW and
-                    ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_IN_REVIEW or
-                        $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_SUBMITTED)) {
-                    
-                    $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
-
-                    switch (true) {
-                        case (empty($datasetSubmissionReview)):
-                            $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
-                            break;
-                        case ($datasetSubmissionReview->getReviewEndDateTime()):
-                            $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
-                            break;
-                        case (empty($datasetSubmissionReview->getReviewEndDateTime())):
-                            if ($datasetSubmissionReview->getReviewedBy() !== $this->getUser()->getPerson()) {
-                                $reviewerUserName  = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
-                                $this->addToFlashBag($request, $udi, 'locked', $reviewerUserName);
-                            }
-                            break;
-                    }
-
-                } else {
-                    $this->checkErrors($request, $datasetSubmissionStatus, $datasetSubmissionMetadataStatus, $udi);
-                }
             } else {
-                $this->checkErrors($request, $datasetSubmissionStatus, $datasetSubmissionMetadataStatus, $udi);
+                $this->addToFlashBag($request, $udi, 'notSubmitted');
             }
         } else {
             $this->addToFlashBag($request, $udi, 'notFound');
@@ -126,24 +97,52 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     }
 
     /**
-     * Check for errors to add in the flash bag.
+     * Gets Latest dataset submission and checks for errors to add in the flash bag.
      *
-     * @param Request $request                         The Symfony request object.
-     * @param string  $datasetSubmissionStatus         The status of the dataset submission.
-     * @param string  $datasetSubmissionMetadataStatus The metadata status of the dataset.
-     * @param string  $udi                             The UDI entered by the user.
+     * @param Request           $request           The Symfony request object.
+     * @param DatasetSubmission $datasetSubmission A dataset submission instance.
+     * @param Dataset           $dataset           A dataset instance..
+     * @param string            $udi               The UDI entered by the user.
      *
-     * @return void
+     * @return DatasetSubmission  A dataset submission instance.
      */
-    private function checkErrors(Request $request, $datasetSubmissionStatus, $datasetSubmissionMetadataStatus, $udi)
+    private function latestDatasetSubmissionForReview(Request $request, DatasetSubmission $datasetSubmission, Dataset $dataset, $udi)
     {
-        if ($datasetSubmissionStatus === DatasetSubmission::STATUS_INCOMPLETE) {
-            $this->addToFlashBag($request, $udi, 'hasDraft');
-        } elseif ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
-            $this->addToFlashBag($request, $udi, 'backToSub');
-        } else {
-            $this->addToFlashBag($request, $udi, 'notSubmitted');
+        $datasetSubmissionStatus = (($datasetSubmission) ? $datasetSubmission->getStatus() : null);
+        $datasetSubmissionMetadataStatus = $dataset->getMetadataStatus();
+
+        switch (true) {
+
+            case ($datasetSubmissionStatus === DatasetSubmission::STATUS_COMPLETE and $datasetSubmissionMetadataStatus !== DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER):
+                $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
+                break;
+
+            case ($datasetSubmissionStatus === DatasetSubmission::STATUS_IN_REVIEW and ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_IN_REVIEW or $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_SUBMITTED)):
+                $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
+                switch (true) {
+                    case (empty($datasetSubmissionReview)):
+                        $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
+                        break;
+                    case ($datasetSubmissionReview->getReviewEndDateTime()):
+                        $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
+                        break;
+                    case (empty($datasetSubmissionReview->getReviewEndDateTime()) and $datasetSubmissionReview->getReviewedBy() !== $this->getUser()->getPerson()):
+                        $reviewerUserName  = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
+                        $this->addToFlashBag($request, $udi, 'locked', $reviewerUserName);
+                        break;
+                }
+                break;
+
+            case ($datasetSubmissionStatus === DatasetSubmission::STATUS_INCOMPLETE):
+                $this->addToFlashBag($request, $udi, 'hasDraft');
+                break;
+
+            case ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER):
+                $this->addToFlashBag($request, $udi, 'backToSub');
+                break;
         }
+
+        return $datasetSubmission;
     }
 
     /**
