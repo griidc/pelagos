@@ -515,26 +515,41 @@ function MapWizard(json)
     function saveFeature()
     {
         var myWKTid = wizGeoViz.getSingleFeature();
-
-        if (typeof myWKTid != "undefined")
-        {
+        if (typeof myWKTid !== "undefined") {
             var myWKT = wizGeoViz.getWKT(myWKTid);
             var wgsWKT = wizGeoViz.wktTransformToWGS84(myWKT);
-            wizGeoViz.wktToGML(wgsWKT);
-
-            $("#olmap").on("wktConverted", function(e, eventObj) {
-                $(gmlField).val(eventObj);
-                $(gmlField).trigger("change");
-                $(descField).val("");
-                closeDialog();
-            });
-        }
-        else
-        {
+            validateGmlFromWkt(wgsWKT)
+                .then(function(){
+                    wizGeoViz.wktToGML(wgsWKT).then(function(gml){
+                        $(gmlField).val(gml);
+                        $(gmlField).trigger("change");
+                        $(descField).val("");
+                    });
+                    closeDialog();
+                });
+        } else {
             $(gmlField).val("");
             closeDialog();
             $(gmlField).trigger("change");
         }
+    }
+
+    function validateGmlFromWkt(wkt)
+    {
+        return $.ajax({
+            url: Routing.generate("pelagos_app_gml_validategmlfromwkt"),
+            data: {"wkt": wkt},
+            success: function(data, textStatus, jqXHR){
+                return jqXHR;
+            }
+        })
+        .fail(function(xhr)
+        {
+            if(xhr.status === 400) {
+                showDialog("Invalid Geometry", xhr.responseText);
+            }
+            else showDialog("Error " + xhr.status, xhr.statusText);
+        });
     }
 
     function setEvents()
@@ -757,4 +772,5 @@ function MapWizard(json)
         $("#maphelptxt").height((tblHgt*.3));
         $("#coordlist").css("max-width:"+$("#coordlist").width()+"px;")
     }
+
 }

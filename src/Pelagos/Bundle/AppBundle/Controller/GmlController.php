@@ -147,4 +147,54 @@ class GmlController extends Controller
         $gml = $dom->ownerDocument->saveXML($dom->ownerDocument->documentElement);
         return $gml;
     }
+
+  /**
+   * This function validate GML from wkt.
+   *
+   * @param Request $request The Symfony request object.
+   *
+   * @Method("GET")
+   *
+   * @Route("/validategmlfromwkt")
+   *
+   * @throws BadRequestHttpException When no WKT is given.
+   *
+   * @return Response Includes boolean and invalid reason.
+   */
+    public function validateGmlFromWktAction(Request $request)
+    {
+        $params = $request->query->all();
+        if (isset($params['wkt'])) {
+            $wkt = $params['wkt'];
+            try {
+                \geoPHP::load($wkt, 'wkt');
+            } catch (\Exception $exception) {
+                return new Response(
+                    preg_split('/:/', $exception->getMessage(), 2)[1],
+                    response::HTTP_BAD_REQUEST,
+                    ['content-type' => 'text/plain']
+                );
+            }
+            $query = 'SELECT ST_IsValidReason(ST_GeomFromText(:wkt))';
+            $connection = $this->getDoctrine()->getManager()->getConnection();
+            $statement = $connection->prepare($query);
+            $statement->bindValue('wkt', $wkt);
+            $statement->execute();
+
+            $results = $statement->fetchAll();
+            $message = $results[0]['st_isvalidreason'];
+
+            $returnCode = Response::HTTP_OK;
+            if ($message !== 'Valid Geometry') {
+                $returnCode = Response::HTTP_BAD_REQUEST;
+            }
+                return new Response(
+                    $message,
+                    $returnCode,
+                    ['content-type' => 'text/plain']
+                );
+        } else {
+            throw new BadRequestHttpException('No Well Know Text given. (Parameter:wkt)');
+        }
+    }
 }
