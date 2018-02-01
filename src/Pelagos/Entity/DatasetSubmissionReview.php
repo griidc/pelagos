@@ -64,7 +64,6 @@ class DatasetSubmissionReview extends Entity
      */
     protected $reviewNotes;
 
-
     /**
      * The Person who ended this review.
      *
@@ -184,7 +183,7 @@ class DatasetSubmissionReview extends Entity
      *
      * @return void
      */
-    public function setReviewEndedBy($reviewEndedBy)
+    public function setReviewEndedBy(Person $reviewEndedBy)
     {
         $this->reviewEndedBy = $reviewEndedBy;
     }
