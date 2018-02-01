@@ -646,6 +646,8 @@ function MapWizard(json)
             wizGeoViz.stopDrawing();
             wizGeoViz.removeAllFeaturesFromMap();
             $("#coordlist").val("");
+            $("#saveFeature").button("disable");
+            $("#startDrawing").button("enable");
             wizGeoViz.goHome();
             $("#helpinfo").dialog("open");
         })
