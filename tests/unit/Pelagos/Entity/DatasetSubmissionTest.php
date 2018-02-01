@@ -88,7 +88,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
                 'getSpatialExtentGeometry' => null,
                 'getSpatialExtentDescription' => null,
                 'getPrimaryPointOfContact' => $this->mockPerson,
-
+                'getSecondaryPointOfContact' => null,
             )
         );
         $this->mockPersonDatasetSubmissionDatasetContact = \Mockery::mock(
