@@ -9,4 +9,16 @@ $(document).ready(function () {
     $("html").show();
 
     $(".pelagosNoty").pelagosNoty({timeout: 0, showOnTop:false});
+    $("form").submit(function() { showEndReviewConfirm(); });
+    //$("form").submit(function() { alert("pause"); });
+
+    function showEndReviewConfirm () {
+        var msg = $("#confirmationText").text() + " " + datasetUdi.value + "?";
+        showConfirmation({
+            title: "please confirm",
+            message: msg
+        });
+    }
 });
+
+
