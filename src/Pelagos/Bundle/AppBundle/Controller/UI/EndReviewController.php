@@ -35,14 +35,14 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
             return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
         }
 
-        $udi = $request->get('datasetUdi');
-
         $form = $this->get('form.factory')->createNamed(
-            null,
+            'endReview',
             EndReviewType::class
         );
 
         $form->handleRequest($request);
+
+        $udi = $form->getData()['datasetUdi'];
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->validateAndEndReview($udi, $request);
@@ -101,8 +101,8 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
 
         $warning = [
             'notFound' => 'Sorry, the dataset with Unique Dataset Identifier (UDI) ' .
-                $udi . ' could not be found. Please email 
-                        <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> 
+                $udi . ' could not be found. Please email
+                        <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a>
                         if you have any questions.',
             'notInReview' => 'The dataset ' . $udi . ' was not in review.',
         ];
