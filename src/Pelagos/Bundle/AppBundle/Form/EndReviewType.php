@@ -30,9 +30,7 @@ class EndReviewType extends abstractType
             ))
             ->add('submit', SubmitType::class, array(
                 'label' => 'End Review',
-                    'attr' => array('class' => 'submitButton', 'onclick' =>
-                        'return confirm("Are you sure you want to end review for dataset " + datasetUdi.value + "?");'
-                        )
+                    'attr' => array('class' => 'submitButton')
             ));
     }
 }
