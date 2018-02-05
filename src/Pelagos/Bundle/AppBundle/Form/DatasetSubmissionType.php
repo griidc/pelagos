@@ -233,6 +233,10 @@ class DatasetSubmissionType extends AbstractType
             ->add('submitButton', Type\SubmitType::class, array(
                 'label' => 'Submit',
                 'attr'  => array('class' => 'submitButton'),
+            ))
+            ->add('acceptDatasetBtn', Type\SubmitType::class, array(
+                'label' => 'Accept Dataset',
+                'attr'  => array('class' => 'submitButton'),
             ));
     }
 
