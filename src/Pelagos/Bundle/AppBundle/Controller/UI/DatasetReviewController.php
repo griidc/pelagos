@@ -354,9 +354,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
 
         if ($form->isSubmitted() and $form->isValid()) {
 
-            /** @var $acceptDatasetBtn  \Symfony\Component\Form\SubmitButton*/
-            $acceptDatasetBtn = $form->get('acceptDatasetBtn');
-
             $this->processDatasetFileTransferDetails($form, $datasetSubmission);
 
             if ($this->getUser()->isPosix()) {
@@ -369,7 +366,14 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 }
             }
 
-            $datasetSubmission->endReview($this->getUser()->getPerson());
+            switch (true) {
+                case ($form->get('submitButton')->isClicked()):
+                    $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_END_REVIEW);
+                    break;
+                case ($form->get('acceptDatasetBtn')->isClicked()):
+                    $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_ACCEPT_REVIEW);
+                    break;
+            }
 
             $this->entityHandler->update($datasetSubmission->getDatasetSubmissionReview());
 
