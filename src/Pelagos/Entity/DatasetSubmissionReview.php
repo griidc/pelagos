@@ -65,6 +65,15 @@ class DatasetSubmissionReview extends Entity
     protected $reviewNotes;
 
     /**
+     * The Person who ended this review.
+     *
+     * @var Person
+     *
+     * @ORM\ManyToOne(targetEntity="Person")
+     */
+    protected $reviewEndedBy;
+
+    /**
      * Constructor.
      *
      * Created a new datasetSubmissionReview entry.
@@ -158,12 +167,24 @@ class DatasetSubmissionReview extends Entity
     }
 
     /**
-     * Ends the dataset submission review.
+     * Get the Person who ended the review.
+     *
+     * @return Person
+     */
+    public function getReviewEndedBy()
+    {
+        return $this->reviewEndedBy;
+    }
+
+    /**
+     * Sets the person who has ended the review.
+     *
+     * @param Person $reviewEndedBy The Person who ended this review.
      *
      * @return void
      */
-    public function endReview()
+    public function setReviewEndedBy(Person $reviewEndedBy)
     {
-        $this->reviewEndDateTime = new \DateTime('now', new \DateTimeZone('UTC'));;
+        $this->reviewEndedBy = $reviewEndedBy;
     }
 }

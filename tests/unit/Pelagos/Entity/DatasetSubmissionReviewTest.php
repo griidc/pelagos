@@ -160,4 +160,20 @@ class DatasetSubmissionReviewTest extends \PHPUnit_Framework_TestCase
             $this->datasetSubmissionReview->getReviewedBy()
         );
     }
+
+    /**
+     * Test reviewEndedBy getter and setter.
+     *
+     * @return void
+     */
+    public function testCanGetAndSetReviewEndedBy()
+    {
+        $this->datasetSubmissionReview->setReviewEndedBy($this->mockPerson);
+        $this->assertEquals(
+            $this->mockPerson,
+            $this->datasetSubmissionReview->getReviewEndedBy()
+        );
+
+        
+    }
 }

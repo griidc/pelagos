@@ -821,4 +821,29 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
         $this->datasetSubmission->setDatasetSubmissionReview($this->mockDatasetSubmissionReview);
         $this->assertSame($this->mockDatasetSubmissionReview, $this->datasetSubmission->getDatasetSubmissionReview());
     }
+
+    /**
+     * Test the end review functionality.
+     *
+     * @return void
+     */
+    public function testCanEndReview()
+    {
+        $this->datasetSubmission->setDataset($this->mockDataset);
+
+        $testStartDateTime = new DateTime('now');
+
+        $datasetSubmissionReview = new DatasetSubmissionReview(
+            $this->datasetSubmission,
+            $this->mockPerson,
+            $testStartDateTime
+        );
+
+        $this->datasetSubmission->setDatasetSubmissionReview($datasetSubmissionReview);
+
+        // End Review for the dataset submission.
+        $this->datasetSubmission->endReview($this->mockPerson);
+
+        $this->assertEquals(DatasetSubmission::STATUS_IN_REVIEW, $this->datasetSubmission->getStatus());
+    }
 }
