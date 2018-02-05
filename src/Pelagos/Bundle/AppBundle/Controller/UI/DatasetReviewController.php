@@ -354,6 +354,9 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
 
         if ($form->isSubmitted() and $form->isValid()) {
 
+            /** @var $acceptDatasetBtn  \Symfony\Component\Form\SubmitButton*/
+            $acceptDatasetBtn = $form->get('acceptDatasetBtn');
+
             $this->processDatasetFileTransferDetails($form, $datasetSubmission);
 
             if ($this->getUser()->isPosix()) {
