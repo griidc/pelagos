@@ -250,7 +250,8 @@ class Dataset extends Entity
      */
     public function setDatasetSubmission(DatasetSubmission $datasetSubmission)
     {
-        if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+        if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE or
+            $datasetSubmission->getStatus() === DatasetSubmission::STATUS_IN_REVIEW) {
             $this->datasetSubmission = $datasetSubmission;
         } else {
             $this->datasetSubmission = null;
@@ -634,7 +635,8 @@ class Dataset extends Entity
                             $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED;
                             break;
                     }
-                } elseif ($this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+                } elseif ($this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE or
+                    $this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_IN_REVIEW) {
                     $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
                 } else {
                     $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
@@ -650,7 +652,8 @@ class Dataset extends Entity
                             $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED;
                             break;
                     }
-                } elseif ($this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+                } elseif ($this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE or
+                    $this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_IN_REVIEW) {
                     $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
                 } else {
                     $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
