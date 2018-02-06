@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ppondicherry
- * Date: 1/25/18
- * Time: 4:26 PM
- */
-
 namespace Pelagos\Bundle\AppBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
@@ -18,7 +11,16 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class EndReviewType extends abstractType
 {
-
+    /**
+     * Method to build a symfony form.
+     *
+     * @param FormBuilderInterface $builder The Symfony form builder.
+     * @param array                $options The options to pass in.
+     *
+     * @see FormTypeExtensionInterface::buildForm()
+     *
+     * @return void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -28,8 +30,7 @@ class EndReviewType extends abstractType
             ))
             ->add('submit', SubmitType::class, array(
                 'label' => 'End Review',
-                'attr' => array('class' => 'submitButton')
+                    'attr' => array('class' => 'submitButton')
             ));
     }
-
 }
