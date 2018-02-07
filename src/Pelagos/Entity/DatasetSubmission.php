@@ -351,16 +351,6 @@ class DatasetSubmission extends Entity
     ];
 
     /**
-     * Indicates the dataset submission is in endReview state.
-     */
-    const DATASET_END_REVIEW = 'endReview';
-
-    /**
-     * Indicates the dataset submission is in acceptReview state.
-     */
-    const DATASET_ACCEPT_REVIEW = 'acceptReview';
-
-    /**
      * Status of this Dataset Submission.
      *
      * @var integer
@@ -1080,27 +1070,17 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * Triggers the respective event for Dataset Submission Review.
+     * End Review for the Dataset Submission review.
      *
-     * @param Person $reviewer  The person who ends/accepts the review.
-     * @param string $eventName The event which triggers this method ("endReview" or "acceptReview").
+     * @param Person $reviewer The reviewer.
      *
      * @return void
      */
-    public function reviewEvent(Person $reviewer, $eventName)
+    public function endReview(Person $reviewer)
     {
-        switch (true) {
-            case ($eventName === self::DATASET_END_REVIEW):
-                //Setting the status to in-review.
-                $this->status = self::STATUS_IN_REVIEW;
-                $this->metadataStatus = self::METADATA_STATUS_IN_REVIEW;
-                break;
-            case ($eventName === self::DATASET_ACCEPT_REVIEW):
-                //Setting the status to in-review.
-                $this->status = self::STATUS_COMPLETE;
-                $this->metadataStatus = self::METADATA_STATUS_ACCEPTED;
-                break;
-        }
+        //Setting the status to in-review.
+        $this->status = self::STATUS_IN_REVIEW;
+        $this->metadataStatus = self::METADATA_STATUS_IN_REVIEW;
 
         $this->getDataset()->setDatasetSubmission($this);
         $datasetSubmissionReview = $this->getDatasetSubmissionReview();

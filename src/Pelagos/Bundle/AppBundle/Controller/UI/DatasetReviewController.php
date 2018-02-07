@@ -9,8 +9,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
@@ -22,7 +20,6 @@ use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Pelagos\Entity\DatasetSubmissionReview;
 use Pelagos\Entity\Entity;
 use Pelagos\Entity\Account;
-use Pelagos\Entity\Metadata;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
@@ -369,15 +366,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 }
             }
 
-            switch (true) {
-                case ($form->get('submitButton')->isClicked()):
-                    $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_END_REVIEW);
-                    break;
-                case ($form->get('acceptDatasetBtn')->isClicked()):
-                    $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_ACCEPT_REVIEW);
-                    $this->createMetaData($datasetSubmission);
-                    break;
-            }
+            $datasetSubmission->endReview($this->getUser()->getPerson());
 
             $this->entityHandler->update($datasetSubmission->getDatasetSubmissionReview());
 
@@ -444,46 +433,5 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             'body' => $datasetSubmission->getDataset()->getId(),
             'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
         );
-    }
-
-    /**
-     * To create metadata for the dataset when it is accepted.
-     *
-     * @param DatasetSubmission $datasetSubmission A dataset submission instance.
-     *
-     * @throws BadRequestHttpException  When metadata is not generated or fails.
-     *
-     * @return void
-     */
-    private function createMetaData(DatasetSubmission $datasetSubmission)
-    {
-        $udi = $datasetSubmission->getDataset()->getUdi();
-
-        $dataset = $datasetSubmission->getDataset();
-
-        $url = $this->generateUrl(
-            'pelagos_api_metadata_get',
-            array(
-                'udi' => $udi,
-                'forceSourceFromSubmission' => 1),
-            UrlGeneratorInterface::ABSOLUTE_URL
-        );
-
-        try {
-            
-            $fileContent = file_get_contents($url);
-
-            $xml = simplexml_load_string($fileContent);
-
-            if ($dataset->getMetadata() instanceof Metadata) {
-                $metadata = $dataset->getMetadata();
-                $metadata->setXml($xml->asXML());
-            } else {
-                $metadata = new Metadata($dataset, $xml->asXML());
-                $this->entityHandler->create($metadata);
-            }
-        } catch (BadRequestHttpException $exception) {
-            throw new BadRequestHttpException($exception);
-        }
     }
 }
