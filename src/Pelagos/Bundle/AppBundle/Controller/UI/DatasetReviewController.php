@@ -470,10 +470,8 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         );
 
         try {
-
-            $opts = array('http'=>array('header' => "User-Agent:MyAgent/1.0\r\n"));
-            $context = stream_context_create($opts);
-            $fileContent = file_get_contents($url,false,$context);
+            
+            $fileContent = file_get_contents($url);
 
             $xml = simplexml_load_string($fileContent);
 
