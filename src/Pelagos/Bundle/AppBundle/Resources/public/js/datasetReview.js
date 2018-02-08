@@ -576,6 +576,19 @@ $(document).ready(function(){
         uploadSpeeds = [];
         updateSpeeds = true;
     }
+
+    $("#requestRevisionsBtn").button().click(function() {
+        $.ajax({
+            url: Routing.generate('pelagos_app_ui_datasetreview_requestrevisions', {"datasetSubmissionId": $("#regForm").attr("datasetSubmission")}),
+            type: "POST",
+            error: function(jqXHR, textStatus, errorThrown) {
+                showDialog("Problem with your request", jqXHR.responseJSON.message);
+            },
+            success: function(data, textStatus, jqXHR){
+               location.href = Routing.generate('pelagos_app_ui_datasetreview_default');
+            }
+        });
+    });
 });
 
 function checkSpatial(isNonSpatial) {
@@ -589,6 +602,5 @@ function checkSpatial(isNonSpatial) {
         $("#spatialExtras").show().find(":input").attr("required", "required");
     }
 }
-
 
 
