@@ -85,7 +85,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
 
             $datasetSubmission = (($dataset->getDatasetSubmissionHistory()->first()) ? $dataset->getDatasetSubmissionHistory()->first() : null);
 
-            if ($datasetSubmission instanceof DatasetSubmission) {
+            if ($datasetSubmission instanceof DatasetSubmission and $this->filerStatus($datasetSubmission)) {
 
                 $datasetSubmission = $this->latestDatasetSubmissionForReview($request, $datasetSubmission, $dataset, $udi);
 
@@ -167,7 +167,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 $udi . ' could not be found. Please email 
                         <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> 
                         if you have any questions.',
-            'notSubmitted' => 'The dataset ' . $udi . ' has not been submitted and cannot be loaded in review mode.',
+            'notSubmitted' => 'The dataset ' . $udi . ' has not been submitted or under processing and cannot be loaded in review mode.',
             'hasDraft' => 'The dataset ' . $udi . ' currently has a draft submission and cannot be loaded in review mode.',
             'backToSub' => 'The status of dataset ' . $udi . ' is Back To Submitter and cannot be loaded in review mode.',
             'locked' => 'The dataset ' . $udi . ' is in review mode. Username: ' . $reviewerUserName,
@@ -485,5 +485,30 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         } catch (BadRequestHttpException $exception) {
             throw new BadRequestHttpException($exception);
         }
+    }
+
+    /**
+     * To check the filer status of a previous datasetsubmission/review.
+     *
+     * @param DatasetSubmission $datasetSubmission A dataset submission instance.
+     *
+     * @return boolean
+     */
+    private function filerStatus(DatasetSubmission $datasetSubmission)
+    {
+        // List of dataset submission statuses to check.
+        $statuses = [DatasetSubmission::STATUS_COMPLETE, DatasetSubmission::STATUS_IN_REVIEW];
+
+        if (in_array($datasetSubmission->getStatus(), $statuses)) {
+            switch (true) {
+                case ($datasetSubmission->getDatasetFileTransferStatus() === DatasetSubmission::TRANSFER_STATUS_NONE):
+                    return false;
+                    break;
+                case ($datasetSubmission->getDatasetFileTransferStatus() === DatasetSubmission::TRANSFER_STATUS_COMPLETED and empty($datasetSubmission->getDatasetFileSha256Hash())):
+                    return false;
+                    break;
+            }
+        }
+        return true;
     }
 }
