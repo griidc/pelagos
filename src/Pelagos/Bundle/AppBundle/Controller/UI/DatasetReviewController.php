@@ -334,8 +334,9 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      * @param Request     $request The Symfony request object.
      * @param string|null $id      The id of the Dataset Submission to load.
      *
-     * @throws BadRequestHttpException When dataset submission has already been submitted.
-     * @throws BadRequestHttpException When DIF has not yet been approved.
+     * @throws \Exception              When there is no dataset submission with accepted or submitted status.
+     *         BadRequestHttpException When dataset submission has already been submitted.
+     *         BadRequestHttpException When DIF has not yet been approved.
      *
      * @Route("/{id}")
      *
@@ -346,7 +347,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     public function postAction(Request $request, $id = null)
     {
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
-
         $form = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionType::class,
@@ -354,6 +354,35 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         );
 
         $form->handleRequest($request);
+
+        if ($form->get('requestRevisionsBtn')->isClicked()) {
+            $dataset = $datasetSubmission->getDataset();
+            $datasetSubmissionHistory = $dataset->getDatasetSubmissionHistory();
+            $datasetSubmission = null;
+            foreach ($datasetSubmissionHistory as $ds) {
+                if ($ds->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED ||
+                    $ds->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_SUBMITTED) {
+                    $datasetSubmission = $ds;
+                    break;
+                }
+            }
+            if (null === $datasetSubmission) {
+                throw new \Exception('There is no dataset submission with 
+                   Accepted or Submitted metadata status for dataset udi ' . $dataset->getUdi());
+            }
+
+            $dataset->setDatasetSubmission($datasetSubmission);
+            $this->entityHandler->update($dataset);
+
+            return $this->render(
+                'PelagosAppBundle:DatasetReview:index.html.twig',
+                array(
+                    'udi' => null,
+                    'dataset' => null,
+                    'datasetSubmission' => null,
+                )
+            );
+        }
 
         if ($form->isSubmitted() and $form->isValid()) {
 
