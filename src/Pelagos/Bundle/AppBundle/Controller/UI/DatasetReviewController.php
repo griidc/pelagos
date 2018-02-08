@@ -371,6 +371,8 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                    Accepted or Submitted metadata status for dataset udi ' . $dataset->getUdi());
             }
 
+            $datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER);
+            $this->entityHandler->update($datasetSubmission);
             $dataset->setDatasetSubmission($datasetSubmission);
             $this->entityHandler->update($dataset);
 
