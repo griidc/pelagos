@@ -32,6 +32,13 @@ use Pelagos\Entity\Metadata;
 class DatasetReviewController extends UIController implements OptionalReadOnlyInterface
 {
     /**
+     * A queue of messages to publish to RabbitMQ.
+     *
+     * @var array
+     */
+    protected $messages = array();
+    
+    /**
      * The default action for Dataset Review.
      *
      * @param Request $request The Symfony request object.
@@ -385,6 +392,14 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
 
             foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                 $this->entityHandler->update($datasetContact);
+            }
+
+            //use rabbitmq to process dataset file and persist the file details.
+            foreach ($this->messages as $message) {
+                $this->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(
+                    $message['body'],
+                    $message['routing_key']
+                );
             }
 
             return $this->render(
