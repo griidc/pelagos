@@ -167,7 +167,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 $udi . ' could not be found. Please email 
                         <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> 
                         if you have any questions.',
-            'notSubmitted' => 'The dataset ' . $udi . ' has not been submitted or under processing and cannot be loaded in review mode.',
+            'notSubmitted' => 'The dataset ' . $udi . ' cannot be loaded in review mode at this time because it has not been submitted or it is still being processed.',
             'hasDraft' => 'The dataset ' . $udi . ' currently has a draft submission and cannot be loaded in review mode.',
             'backToSub' => 'The status of dataset ' . $udi . ' is Back To Submitter and cannot be loaded in review mode.',
             'locked' => 'The dataset ' . $udi . ' is in review mode. Username: ' . $reviewerUserName,
