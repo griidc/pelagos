@@ -1099,10 +1099,10 @@ class DatasetSubmission extends Entity
                 //Setting the status to in-review.
                 $this->status = self::STATUS_COMPLETE;
                 $this->metadataStatus = self::METADATA_STATUS_ACCEPTED;
+                $this->getDataset()->setDatasetSubmission($this);
                 break;
         }
 
-        $this->getDataset()->setDatasetSubmission($this);
         $datasetSubmissionReview = $this->getDatasetSubmissionReview();
 
         // Setting timestamp when review is ended.
