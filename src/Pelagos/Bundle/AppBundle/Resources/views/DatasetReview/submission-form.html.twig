@@ -28,6 +28,7 @@
                 </li>
                 <li>
                     <a class="dstablink" href="#ds-submit">Files</a>
+                    <img class="tabimg" id="filetabimg">
                 </li>
             </ul>
 
@@ -55,7 +56,7 @@
                 {% include 'PelagosAppBundle:DatasetReview:distribution-info.html.twig' %}
             </div>
 
-            <div id="ds-submit">
+            <div id="ds-submit" class="ds-metadata">
                 {% include 'PelagosAppBundle:DatasetReview:file-submit.html.twig' %}
             </div>
         </div>
