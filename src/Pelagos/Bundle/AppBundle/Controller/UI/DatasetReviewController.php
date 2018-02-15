@@ -376,6 +376,9 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_ACCEPT_REVIEW);
                     $this->createMetaData($datasetSubmission);
                     break;
+                case ($form->get('requestRevisionsBtn')->isClicked()):
+                    $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_REQUEST_REVISIONS);
+                    break;
             }
 
             $this->entityHandler->update($datasetSubmission->getDatasetSubmissionReview());
@@ -484,45 +487,5 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         } catch (BadRequestHttpException $exception) {
             throw new BadRequestHttpException($exception);
         }
-    }
-
-    /**
-     * The request revision action.
-     *
-     * @param Request $request             The Symfony request object.
-     * @param string  $datasetSubmissionId Id of dataset submission to request revision.
-     *
-     * @throws \Exception  When there is no dataset submission with accepted or submitted status.
-     *
-     * @Route("/requestRevisions/{datasetSubmissionId}")
-     *
-     * @Method("POST")
-     *
-     * @return Response A Response instance.
-     */
-    public function requestRevisionsAction(Request $request, $datasetSubmissionId = null)
-    {
-        $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $datasetSubmissionId);
-        $dataset = $datasetSubmission->getDataset();
-        $datasetSubmissionHistory = $dataset->getDatasetSubmissionHistory();
-        $datasetSubmission = null;
-        foreach ($datasetSubmissionHistory as $ds) {
-            if ($ds->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED ||
-                $ds->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_SUBMITTED) {
-                $datasetSubmission = $ds;
-                break;
-            }
-        }
-        if (null === $datasetSubmission) {
-            throw new \Exception('There is no dataset submission with
-                Accepted or Submitted metadata status for dataset udi ' . $dataset->getUdi());
-        }
-
-        $datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER);
-        $this->entityHandler->update($datasetSubmission);
-        $dataset->setDatasetSubmission($datasetSubmission);
-        $this->entityHandler->update($dataset);
-
-        return new Response(null, Response::HTTP_OK);
     }
 }
