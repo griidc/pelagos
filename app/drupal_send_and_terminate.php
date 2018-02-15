@@ -22,6 +22,12 @@ if (get_class($response) == 'Symfony\Component\HttpFoundation\RedirectResponse')
     exit();
 }
 
+if (get_class($response) == 'Pelagos\Response\TerminateResponse') {
+    $response->send();
+    $kernel->terminate($request, $response);
+    exit();
+}
+
 if (preg_match('/^Pelagos\\\\Bundle\\\\AppBundle\\\\Controller\\\\Api\\\\/', $request->attributes->get('_controller'))) {
     $response->send();
     $kernel->terminate($request, $response);

@@ -2,6 +2,7 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\Api;
 
+use Pelagos\Entity\DIF;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormInterface;
@@ -12,6 +13,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Pelagos\Entity\Person;
 use Pelagos\Bundle\AppBundle\Form\PersonType;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * The Person api controller.
@@ -280,11 +282,29 @@ class PersonController extends EntityController
      *   }
      * )
      *
+     * @throws BadRequestHttpException When the person is not deletable due to
+     * association with primary point of contact in DIF.
+     * @throws BadRequestHttpException When the person is not deletable due to
+     * association with secondary point of contact in DIF.
+     *
      * @return Response A response object with an empty body and a "no content" status code.
      */
     public function deleteAction($id)
     {
-        $this->handleDelete(Person::class, $id);
+        $handler = $this->container->get('pelagos.entity.handler');
+        $primaryPointOfContactCount = $handler->count(DIF::class, array('primaryPointOfContact' => $id));
+        $secondaryPointOfContactCount = $handler->count(DIF::class, array('secondaryPointOfContact' => $id));
+        if ($primaryPointOfContactCount > 0) {
+            throw new BadRequestHttpException('This Person is not deletable because 
+                there' . ($primaryPointOfContactCount > 1 ? ' are ' : ' is ') . $primaryPointOfContactCount .
+                ' primary point of contact(s) in DIF');
+        } elseif ($secondaryPointOfContactCount > 0) {
+            throw new BadRequestHttpException('This Person is not deletable because 
+            there' . ($secondaryPointOfContactCount > 1 ? ' are ' : ' is ') . $secondaryPointOfContactCount .
+            ' secondary point of contact(s) in DIF');
+        } else {
+            $this->handleDelete(Person::class, $id);
+        }
         return $this->makeNoContentResponse();
     }
 }
