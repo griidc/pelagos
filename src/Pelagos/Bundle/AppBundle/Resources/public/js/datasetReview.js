@@ -560,7 +560,7 @@ function areTabsValid()
     $("#regForm select[keyword=target] option").prop("selected", true);
     var imgWarning = $("#imgwarning").attr("src");
     var imgCheck = $("#imgcheck").attr("src");
-    var isValid = true;
+    var isValid = $("#regForm").valid();
     $(".tabimg").show();
 
         $("#dtabs .ds-metadata").each(function () {
