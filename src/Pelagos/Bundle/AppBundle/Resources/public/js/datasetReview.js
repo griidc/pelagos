@@ -167,11 +167,10 @@ $(document).ready(function(){
         select2ContactPerson();
     });
 
-    $("#acceptDatasetBtn").on("click", function() {
-        validateTabs();
-    });
-    $("#ds-submit").on("active", function() {
-        validateTabs();
+    $("#acceptDatasetBtn, #endReviewBtn, #requestRevisionsBtn").on("click", function() {
+        if (areTabsValid() === false) {
+            showDialog('Missing required field(s)','Please fill in all the required fields.');
+        }
     });
 
     select2ContactPerson();
@@ -341,7 +340,7 @@ $(document).ready(function(){
             enableAuto: true
         },
         deleteFile: {
-            enabled: $("#submitButton").attr("disabled") != "disabled",
+            enabled: true,
             forceConfirm: true,
             endpoint: Routing.generate("pelagos_api_upload_delete")
         },
@@ -361,7 +360,7 @@ $(document).ready(function(){
             onComplete: function (id, name, responseJSON, xhr) {
                 if (responseJSON.success) {
                     setDatasetFileUri(responseJSON.path);
-                    validateTabs();
+                    areTabsValid();
                 }
             },
             onDelete: function (id) {
@@ -444,7 +443,7 @@ $(document).ready(function(){
         $('label.error[for="datasetFileUri"]').remove();
         // set datasetFileUri
         $("#datasetFileUri").val(datasetFileUri);
-        
+
     }
 
     var uploadSpeeds = [];
@@ -470,7 +469,6 @@ $(document).ready(function(){
                 var progressBytes = lastSample.totalUploadedBytes - firstSample.totalUploadedBytes;
                 var progressTimeMS = lastSample.currentTime - firstSample.currentTime;
                 var bytesPerSecond = progressBytes / (progressTimeMS / 1000);
-                console.log(uploadSpeeds.length);
                 if (bytesPerSecond > 0) {
                     var speedPrecision = 0;
                     var MBps = bytesPerSecond / 1e6;
@@ -556,43 +554,49 @@ function checkSpatial(isNonSpatial) {
     }
 }
 
-function validateTabs()
+function areTabsValid()
 {
     $("#regForm select[keyword=target] option").prop("selected", true);
     var imgWarning = $("#imgwarning").attr("src");
     var imgCheck = $("#imgcheck").attr("src");
+    var isValid = true;
+    $(".tabimg").show();
 
-        $(".tabimg").show();
-        $("#dtabs .ds-metadata").each(function() {
+        $("#dtabs .ds-metadata").each(function () {
             var tabLabel = $(this).attr("aria-labelledby");
             if ($(this).has(":input.error").length ? true : false) {
                 $("#" + tabLabel).next("img").prop("src", imgWarning);
-            } else {
+                isValid = false;
+            }
+            else {
                 $("#" + tabLabel).next("img").prop("src", imgCheck);
-            };
+            }
 
-            $(this).find(":input").on("change blur keyup", function() {
-                $("#dtabs .ds-metadata").each(function() {
+            $(this).find(":input").on("change blur keyup", function () {
+                $("#dtabs .ds-metadata").each(function () {
                     var label = $(this).attr("aria-labelledby");
-                    $(this).find(":input").not(".prototype").each(function() {
+                    $(this).find(":input").not(".prototype").each(function () {
                         $(this).valid()
                     });
                     if ($(this).find(":input").not(".prototype").valid()) {
                         $("#" + label).next("img").prop("src", imgCheck);
                     } else {
                         $("#" + label).next("img").prop("src", imgWarning);
-                    };
+                        isValid = false;
+                    }
                 });
             });
         });
 
-        if ($("#DatasetFileUri").val() === "") {
-            $("#filetabimg").prop("src", imgWarning);
-        } else {
-            $("#filetabimg").prop("src", imgCheck);
+        if (typeof $("#datasetFileUri").val() !== "undefined") {
+            if ($("#datasetFileUri").val() === "") {
+                $("#filetabimg").prop("src", imgWarning);
+                isValid = false;
+            } else {
+                $("#filetabimg").prop("src", imgCheck);
+            }
         }
-
-
+        return isValid;
 }
 
 

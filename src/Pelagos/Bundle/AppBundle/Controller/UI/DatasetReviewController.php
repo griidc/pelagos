@@ -377,7 +377,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             }
 
             switch (true) {
-                case ($form->get('submitButton')->isClicked()):
+                case ($form->get('endReviewBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_END_REVIEW);
                     break;
                 case ($form->get('acceptDatasetBtn')->isClicked()):
