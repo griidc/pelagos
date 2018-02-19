@@ -373,6 +373,7 @@ $(document).ready(function(){
                     case qq.status.PAUSED:
                     case qq.status.UPLOAD_SUCCESSFUL:
                         resetSpeedText();
+                        areTabsValid();
                 }
                 switch (newStatus) {
                     case qq.status.CANCELED:
