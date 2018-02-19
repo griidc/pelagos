@@ -61,21 +61,6 @@ class DatalandController extends UIController
             $wkt = $dataset->getMetadata()->getGeometry();
         }
 
-        $datasetSubmission = $dataset->getDatasetSubmission();
-
-        // If we have approved Metadata, load contact into datasetSubmission.
-        if ($datasetSubmission instanceof DatasetSubmission
-            and $dataset->getMetadata() instanceof Metadata
-        ) {
-            $datasetSubmission->getDatasetContacts()->clear();
-            ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                $dataset->getMetadata()->getXml(),
-                $datasetSubmission,
-                $this->getDoctrine()->getManager()
-            );
-            $dataset->setDatasetSubmission($datasetSubmission);
-        }
-
         $downloadCount = null;
         // Remotely hosted datasets are normally also hosted locally anyway, so including.
         if (in_array(
