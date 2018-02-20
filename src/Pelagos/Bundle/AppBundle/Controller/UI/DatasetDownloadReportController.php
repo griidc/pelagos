@@ -151,29 +151,19 @@ class DatasetDownloadReportController extends ReportController
                     ->findOneBy(array('udi' => $result['udi']));
 
                 $dataArray[$currentIndex]['title'] = $dataset->getTitle();
-                //get Primary point of contact from the XML
-                $datasetSubmission = $dataset->getDatasetSubmission();
-                if ($datasetSubmission instanceof DatasetSubmission
-                    and $dataset->getMetadata() instanceof Metadata) {
-                    $datasetSubmission->getDatasetContacts()->clear();
-                    ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                        $dataset->getMetadata()->getXml(),
-                        $datasetSubmission,
-                        $this->getDoctrine()->getManager()
-                    );
-                    $dataset->setDatasetSubmission($datasetSubmission);
-                    $primaryPointOfContact = $dataset->getPrimaryPointOfContact();
 
-                    if($primaryPointOfContact instanceof Person) {
-                        $dataArray[$currentIndex]['primaryPointOfContact']
-                            = $primaryPointOfContact->getLastName() .
-                            ', ' . $primaryPointOfContact
-                            ->getFirstName();
-                        $dataArray[$currentIndex]['primaryPointOfContactEmail']
-                            = $primaryPointOfContact
-                            ->getEmailAddress();
-                    }
+                $primaryPointOfContact = $dataset->getPrimaryPointOfContact();
+
+                if ($primaryPointOfContact instanceof Person) {
+                    $dataArray[$currentIndex]['primaryPointOfContact']
+                        = $primaryPointOfContact->getLastName() .
+                        ', ' . $primaryPointOfContact
+                        ->getFirstName();
+                    $dataArray[$currentIndex]['primaryPointOfContactEmail']
+                        = $primaryPointOfContact
+                        ->getEmailAddress();
                 }
+
             }
             //count user downloads and total download
             if ($result['payLoad']['userType'] == 'GoMRI') {
