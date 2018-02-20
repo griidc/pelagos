@@ -14,10 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\LogActionItem;
 use Pelagos\Entity\Metadata;
-
-use Pelagos\Util\ISOMetadataExtractorUtil;
 
 /**
  * The Dataset Monitoring controller.
