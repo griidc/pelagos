@@ -1,5 +1,7 @@
 function MapWizard(json)
 {
+
+
     var json;
 
     var seed = Math.round(Math.random()*1e10);
@@ -518,15 +520,26 @@ function MapWizard(json)
         if (typeof myWKTid !== "undefined") {
             var myWKT = wizGeoViz.getWKT(myWKTid);
             var wgsWKT = wizGeoViz.wktTransformToWGS84(myWKT);
-            validateGmlFromWkt(wgsWKT)
-                .then(function(){
-                    wizGeoViz.wktToGML(wgsWKT).then(function(gml){
-                        $(gmlField).val(gml);
-                        $(gmlField).trigger("change");
-                        $(descField).val("");
+            //run GML validation if the SEW is opened with dataset review,
+            if (this.location.pathname === Routing.generate("pelagos_app_ui_datasetreview_default")) {
+                validateGmlFromWkt(wgsWKT)
+                    .then(function () {
+                        wizGeoViz.wktToGML(wgsWKT).then(function (gml) {
+                            $(gmlField).val(gml);
+                            $(gmlField).trigger("change");
+                            $(descField).val("");
+                        });
+                        closeDialog();
                     });
+            } else {
+                wizGeoViz.wktToGML(wgsWKT)
+                $("#olmap").on("wktConverted", function(e, eventObj) {
+                    $(gmlField).val(eventObj);
+                    $(gmlField).trigger("change");
+                    $(descField).val("");
                     closeDialog();
                 });
+            }
         } else {
             $(gmlField).val("");
             closeDialog();
