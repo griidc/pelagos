@@ -20,14 +20,9 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionXmlFileType;
 
-use Pelagos\Entity\Account;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\Metadata;
-use Pelagos\Entity\Person;
-use Pelagos\Entity\ResearchGroup;
-use Pelagos\Entity\PersonDatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 
 use Pelagos\Exception\InvalidMetadataException;
@@ -132,74 +127,6 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                         } catch (AccessDeniedException $e) {
                             // This is handled in the template.
                         }
-                    }
-                } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
-                    and $datasetSubmission->getMetadataStatus() != DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
-                    and $datasetSubmission->getDataset()->getMetadata() instanceof Metadata
-                ) {
-                    // The latest submission is complete, so create new one based on it.
-                    $datasetSubmission = new DatasetSubmission($datasetSubmission);
-
-                    // Wipe out existing data from the submission.
-                    $this->clearDatasetSubmission($datasetSubmission);
-
-                    // Clear dataset and metadata contacts.
-                    $datasetSubmission->getDatasetContacts()->clear();
-                    // Populate from metadata.
-                    ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                        $datasetSubmission->getDataset()->getMetadata()->getXml(),
-                        $datasetSubmission,
-                        $this->get('doctrine.orm.entity_manager')
-                    );
-                    // If there are no contacts, add an empty one.
-                    if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
-                        $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
-                    }
-                    // Designate 1st contact as primary.
-                    $primaryContact = $datasetSubmission->getDatasetContacts()->first();
-                    $primaryContact->setPrimaryContact(true);
-
-                    $submitter = $primaryContact->getPerson();
-                    if (!$submitter instanceof Person) {
-                        $submitter = new Person();
-                    }
-                    // Fake submit, without persisting.
-                    $datasetSubmission->submit($submitter);
-
-                } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
-                    and $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_NONE
-                    and (
-                        $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_COMPLETED
-                        or $datasetSubmission->getDatasetFileSha256Hash() !== null
-                    )
-                    and $datasetSubmission->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
-                ) {
-                    // The latest submission is complete, so create new one based on it.
-                    $datasetSubmission = new DatasetSubmission($datasetSubmission);
-
-                    // If we have accepted metadata.
-                    if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
-                        // Clear out datasetSubmission to make into a blank one.
-                        $this->clearDatasetSubmission($datasetSubmission);
-                        // Clear dataset and metadata contacts.
-                        $datasetSubmission->getDatasetContacts()->clear();
-                        // Populate from metadata.
-                        ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                            $datasetSubmission->getDataset()->getMetadata()->getXml(),
-                            $datasetSubmission,
-                            $this->get('doctrine.orm.entity_manager')
-                        );
-                        // If there are no contacts, add an empty one.
-                        if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
-                            $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
-                        }
-                        // Designate 1st contact as primary.
-                        $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
-                    }
-                    try {
-                        $this->entityHandler->create($datasetSubmission);
-                    } catch (AccessDeniedException $e) {
-                        // This is handled in the template.
                     }
                 }
             }
