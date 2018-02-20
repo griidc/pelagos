@@ -8,17 +8,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DIF;
-use Pelagos\Entity\FundingOrganization;
-use Pelagos\Entity\FundingCycle;
-use Pelagos\Entity\Metadata;
-use Pelagos\Entity\ResearchGroup;
-use Pelagos\Entity\Person;
-
-use Pelagos\Util\ISOMetadataExtractorUtil;
-
 /**
  * The Dataset Monitoring controller.
  *
