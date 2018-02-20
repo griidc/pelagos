@@ -169,7 +169,7 @@ $(document).ready(function(){
 
     $("#acceptDatasetBtn, #endReviewBtn, #requestRevisionsBtn").on("click", function() {
         if (areTabsValid() === false) {
-            showDialog("Missing required field(s)", "Please fill in all the required fields.";
+            showDialog("Missing required field(s)", "Please fill in all the required fields.");
         }
     });
 
