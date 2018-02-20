@@ -171,22 +171,6 @@ class DatasetMonitoringController extends UIController
     {
         $datasets = $this->entityHandler->getBy('Pelagos:Dataset', array('udi' => $udi));
 
-        $dataset = $datasets[0];
-
-        $datasetSubmission = $dataset->getDatasetSubmission();
-
-        // If we have approved Metadata, load contact into datasetSubmission.
-        if ($datasetSubmission instanceof DatasetSubmission
-            and $dataset->getMetadata() instanceof Metadata
-        ) {
-            $datasetSubmission->getDatasetContacts()->clear();
-            ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                $dataset->getMetadata()->getXml(),
-                $datasetSubmission,
-                $this->getDoctrine()->getManager()
-            );
-        }
-
         return $this->render(
             'PelagosAppBundle:DatasetMonitoring:dataset_details.html.twig',
             array(
