@@ -1,7 +1,5 @@
 function MapWizard(json)
 {
-
-
     var json;
 
     var seed = Math.round(Math.random()*1e10);
