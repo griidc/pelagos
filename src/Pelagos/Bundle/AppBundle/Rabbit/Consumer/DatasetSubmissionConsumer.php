@@ -130,8 +130,6 @@ class DatasetSubmissionConsumer implements ConsumerInterface
         // @codingStandardsIgnoreEnd
         if (preg_match('/^dataset\./', $routingKey)) {
             $this->processDataset($datasetSubmission, $loggingContext);
-        } elseif (preg_match('/^metadata\./', $routingKey)) {
-            $this->processMetadata($datasetSubmission, $loggingContext);
         } else {
             $this->logger->warning("Unknown routing key: $routingKey", $loggingContext);
             return true;
@@ -193,75 +191,5 @@ class DatasetSubmissionConsumer implements ConsumerInterface
         $this->logger->info('Dataset file processing complete', $loggingContext);
         // Publish an AMQP message to trigger dataset file hashing.
         $this->datasetFileHasherProducer->publish($datasetSubmission->getDataset()->getId());
-    }
-
-    /**
-     * Process the metadata for a dataset submission.
-     *
-     * @param DatasetSubmission $datasetSubmission The dataset submission to process.
-     * @param array             $loggingContext    The logging context to use when logging.
-     *
-     * @return void
-     */
-    protected function processMetadata(DatasetSubmission $datasetSubmission, array $loggingContext)
-    {
-        // Log processing start.
-        $this->logger->info('Metadata file processing starting', $loggingContext);
-        $metadataFileTransferStatus = $datasetSubmission->getMetadataFileTransferStatus();
-        if ($metadataFileTransferStatus !== DatasetSubmission::TRANSFER_STATUS_NONE) {
-            $this->logger->warning(
-                "Unexpected metadata file transfer status: $metadataFileTransferStatus",
-                $loggingContext
-            );
-            return;
-        }
-        try {
-            $metadataFileUri = $datasetSubmission->getMetadataFileUri();
-            $datasetId = $datasetSubmission->getDataset()->getUdi();
-            $metadataFileName = $this->dataStore->addFile($metadataFileUri, $datasetId, 'metadata');
-            $mdSpiFileInfo = $this->dataStore->getFileInfo($datasetId, 'metadata');
-            $mdSha256Hash = hash('sha256', file_get_contents($mdSpiFileInfo->getRealPath()));
-            $datasetSubmission->setMetadataFileSha256Hash($mdSha256Hash);
-            $datasetSubmission->setMetadataFileName($metadataFileName);
-            $datasetSubmission->setMetadataFileTransferStatus(
-                DatasetSubmission::TRANSFER_STATUS_COMPLETED
-            );
-            $datasetSubmission->setMetadataStatus(
-                DatasetSubmission::METADATA_STATUS_SUBMITTED
-            );
-        } catch (\Exception $exception) {
-            $this->logger->error('Error processing metadata: ' . $exception->getMessage(), $loggingContext);
-            return;
-        }
-
-        $xferString = $datasetSubmission->getMetadataFileTransferType();
-        if (null === $xferString) {
-            $this->logger->error(
-                "Error processing metadata: unexpected null metadatafiletransfertype for dataset: $datasetId.",
-                $loggingContext
-            );
-            return;
-        } elseif (array_key_exists($xferString, DatasetSubmission::TRANSFER_TYPES)) {
-            $xferType = DatasetSubmission::TRANSFER_TYPES[$xferString];
-            $username = $datasetSubmission->getModifier()->getAccount()->getUsername();
-            $mdappMsg = " $username has registered new metadata via $xferType for $datasetId.";
-        } else {
-            $this->logger->error(
-                'Error processing metadata: unexpected metadatafiletransfertype of: '
-                    . "$xferString for dataset: $datesetId.",
-                $loggingContext
-            );
-            return;
-        }
-
-        // Dispatch entity event.
-        $this->entityEventDispatcher->dispatch($datasetSubmission, 'metadata_processed');
-
-        if (isset($mdappMsg) and (null !== $mdappMsg)) {
-            $this->mdappLogger->writeLog($mdappMsg);
-        }
-
-        // Log processing complete.
-        $this->logger->info('Metadata file processing complete', $loggingContext);
     }
 }
