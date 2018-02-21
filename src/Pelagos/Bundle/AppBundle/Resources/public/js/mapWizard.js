@@ -20,6 +20,7 @@ function MapWizard(json)
     var divNonSpatial = "#"+json.divNonSpatial;
     var gmlField = "#"+json.gmlField;
     var descField = "#"+json.descField;
+    var validateGeometry = json.validateGeometry;
 
     var diaWidth = $(window).width()*.8;
     var diaHeight = $(window).height()*.8;
@@ -518,15 +519,26 @@ function MapWizard(json)
         if (typeof myWKTid !== "undefined") {
             var myWKT = wizGeoViz.getWKT(myWKTid);
             var wgsWKT = wizGeoViz.wktTransformToWGS84(myWKT);
-            validateGmlFromWkt(wgsWKT)
-                .then(function(){
-                    wizGeoViz.wktToGML(wgsWKT).then(function(gml){
-                        $(gmlField).val(gml);
-                        $(gmlField).trigger("change");
-                        $(descField).val("");
+            //run GML validation if the SEW is opened with dataset review,
+            if (true === validateGeometry) {
+                validateGmlFromWkt(wgsWKT)
+                    .then(function () {
+                        wizGeoViz.wktToGML(wgsWKT).then(function (gml) {
+                            $(gmlField).val(gml);
+                            $(gmlField).trigger("change");
+                            $(descField).val("");
+                        });
+                        closeDialog();
                     });
+            } else {
+                wizGeoViz.wktToGML(wgsWKT)
+                $("#olmap").on("wktConverted", function(e, eventObj) {
+                    $(gmlField).val(eventObj);
+                    $(gmlField).trigger("change");
+                    $(descField).val("");
                     closeDialog();
                 });
+            }
         } else {
             $(gmlField).val("");
             closeDialog();
