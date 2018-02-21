@@ -493,6 +493,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             if ($dataset->getMetadata() instanceof Metadata) {
                 $metadata = $dataset->getMetadata();
                 $metadata->setXml($xml->asXML());
+                $this->entityHandler->update($metadata);
             } else {
                 $metadata = new Metadata($dataset, $xml->asXML());
                 $this->entityHandler->create($metadata);
