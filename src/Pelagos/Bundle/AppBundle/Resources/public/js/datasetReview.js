@@ -167,41 +167,9 @@ $(document).ready(function(){
         select2ContactPerson();
     });
 
-    $("#ds-submit").on("active", function() {
-        $(".invaliddsform").show();
-        $(".validdsform").hide();
-        $("#regForm select[keyword=target] option").prop("selected", true);
-        var imgWarning = $("#imgwarning").attr("src");
-        var imgCheck = $("#imgcheck").attr("src");
-        var valid = $("#regForm").valid();
-
-        if (false === valid) {
-            $(".tabimg").show();
-            $("#dtabs .ds-metadata").each(function() {
-                var tabLabel = $(this).attr("aria-labelledby");
-                if ($(this).has(":input.error").length ? true : false) {
-                    $("#" + tabLabel).next("img").prop("src", imgWarning);
-                } else {
-                    $("#" + tabLabel).next("img").prop("src", imgCheck);
-                };
-
-                $(this).find(":input").on("change blur keyup", function() {
-                    $("#dtabs .ds-metadata").each(function() {
-                        var label = $(this).attr("aria-labelledby");
-                        $(this).find(":input").not(".prototype").each(function() {
-                            $(this).valid()
-                        });
-                        if ($(this).find(":input").not(".prototype").valid()) {
-                            $("#" + label).next("img").prop("src", imgCheck);
-                        } else {
-                            $("#" + label).next("img").prop("src", imgWarning);
-                        };
-                    });
-                });
-            });
-        } else {
-            $(".invaliddsform").hide();
-            $(".validdsform").show();
+    $("#acceptDatasetBtn, #endReviewBtn, #requestRevisionsBtn").on("click", function() {
+        if (areTabsValid() === false) {
+            showDialog("Missing required field(s)", "Please fill in all the required fields.");
         }
     });
 
@@ -372,7 +340,7 @@ $(document).ready(function(){
             enableAuto: true
         },
         deleteFile: {
-            enabled: $("#submitButton").attr("disabled") != "disabled",
+            enabled: true,
             forceConfirm: true,
             endpoint: Routing.generate("pelagos_api_upload_delete")
         },
@@ -392,12 +360,11 @@ $(document).ready(function(){
             onComplete: function (id, name, responseJSON, xhr) {
                 if (responseJSON.success) {
                     setDatasetFileUri(responseJSON.path);
-                    saveDatasetSubmission();
+                    areTabsValid();
                 }
             },
             onDelete: function (id) {
                 setDatasetFileUri("");
-                saveDatasetSubmission();
             },
             onStatusChange: function (id, oldStatus, newStatus) {
                 switch (newStatus) {
@@ -406,6 +373,7 @@ $(document).ready(function(){
                     case qq.status.PAUSED:
                     case qq.status.UPLOAD_SUCCESSFUL:
                         resetSpeedText();
+                        areTabsValid();
                 }
                 switch (newStatus) {
                     case qq.status.CANCELED:
@@ -446,9 +414,6 @@ $(document).ready(function(){
         $(this).valid();
         setDatasetFileUri($(this).val());
     });
-    $("#datasetFilePath, #datasetFileUrl").change(function() {
-        saveDatasetSubmission();
-    });
 
     // set the datasetFileUri and datasetFileTransferType
     function setDatasetFileUri(datasetFileUri) {
@@ -479,6 +444,7 @@ $(document).ready(function(){
         $('label.error[for="datasetFileUri"]').remove();
         // set datasetFileUri
         $("#datasetFileUri").val(datasetFileUri);
+
     }
 
     var uploadSpeeds = [];
@@ -504,7 +470,6 @@ $(document).ready(function(){
                 var progressBytes = lastSample.totalUploadedBytes - firstSample.totalUploadedBytes;
                 var progressTimeMS = lastSample.currentTime - firstSample.currentTime;
                 var bytesPerSecond = progressBytes / (progressTimeMS / 1000);
-                console.log(uploadSpeeds.length);
                 if (bytesPerSecond > 0) {
                     var speedPrecision = 0;
                     var MBps = bytesPerSecond / 1e6;
@@ -588,6 +553,51 @@ function checkSpatial(isNonSpatial) {
         $("#nonspatial").find(":input").removeAttr("required");
         $("#spatialExtras").show().find(":input").attr("required", "required");
     }
+}
+
+function areTabsValid()
+{
+    $("#regForm select[keyword=target] option").prop("selected", true);
+    var imgWarning = $("#imgwarning").attr("src");
+    var imgCheck = $("#imgcheck").attr("src");
+    var isValid = $("#regForm").valid();
+    $(".tabimg").show();
+
+        $("#dtabs .ds-metadata").each(function () {
+            var tabLabel = $(this).attr("aria-labelledby");
+            if ($(this).has(":input.error").length ? true : false) {
+                $("#" + tabLabel).next("img").prop("src", imgWarning);
+                isValid = false;
+            }
+            else {
+                $("#" + tabLabel).next("img").prop("src", imgCheck);
+            }
+
+            $(this).find(":input").on("change blur keyup", function () {
+                $("#dtabs .ds-metadata").each(function () {
+                    var label = $(this).attr("aria-labelledby");
+                    $(this).find(":input").not(".prototype").each(function () {
+                        $(this).valid()
+                    });
+                    if ($(this).find(":input").not(".prototype").valid()) {
+                        $("#" + label).next("img").prop("src", imgCheck);
+                    } else {
+                        $("#" + label).next("img").prop("src", imgWarning);
+                        isValid = false;
+                    }
+                });
+            });
+        });
+
+        if (typeof $("#datasetFileUri").val() !== "undefined") {
+            if ($("#datasetFileUri").val() === "") {
+                $("#filetabimg").prop("src", imgWarning);
+                isValid = false;
+            } else {
+                $("#filetabimg").prop("src", imgCheck);
+            }
+        }
+        return isValid;
 }
 
 
