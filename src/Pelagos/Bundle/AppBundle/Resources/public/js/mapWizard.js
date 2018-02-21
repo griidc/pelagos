@@ -20,6 +20,7 @@ function MapWizard(json)
     var divNonSpatial = "#"+json.divNonSpatial;
     var gmlField = "#"+json.gmlField;
     var descField = "#"+json.descField;
+    var validateGeometry = json.validateGeometry;
 
     var diaWidth = $(window).width()*.8;
     var diaHeight = $(window).height()*.8;
@@ -519,7 +520,7 @@ function MapWizard(json)
             var myWKT = wizGeoViz.getWKT(myWKTid);
             var wgsWKT = wizGeoViz.wktTransformToWGS84(myWKT);
             //run GML validation if the SEW is opened with dataset review,
-            if (this.location.pathname === Routing.generate("pelagos_app_ui_datasetreview_default")) {
+            if (true === validateGeometry) {
                 validateGmlFromWkt(wgsWKT)
                     .then(function () {
                         wizGeoViz.wktToGML(wgsWKT).then(function (gml) {

@@ -217,7 +217,8 @@ $(document).ready(function(){
             "divSpatialWizard":"spatwizbtn",
             "gmlField":"spatialExtent",
             "descField":"spatialExtentDescription",
-            "spatialFunction":"checkSpatial"
+            "spatialFunction":"checkSpatial",
+            "validateGeometry": true
         }
     );
 
