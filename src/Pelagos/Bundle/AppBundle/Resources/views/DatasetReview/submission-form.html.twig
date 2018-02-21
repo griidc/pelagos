@@ -1,8 +1,14 @@
 {{ form_start(form, {'attr': {'id': 'regForm'}}) }}
+<<<<<<< HEAD
 <div id="metatoolbar" class="ui-widget-header ui-corner-all toolbarbutton" style="text-align: center">
     {{ form_widget(form.acceptDatasetBtn, {'label':'Accept Review'} ) }}
     {{ form_widget(form.submitButton, {'label':'End Review'} ) }}
     {{ form_widget(form.requestRevisionsBtn, {'label':'Request Revisions'} ) }}
+=======
+<div id="metatoolbar" class="ui-widget-header ui-corner-all toolbarbutton">
+    {{ form_widget(form.acceptDatasetBtn) }}
+    {{ form_widget(form.endReviewBtn) }}
+>>>>>>> epic/PELAGOS-2826-dataset-review-workflow
 </div>
     <fieldset>
         <div style="background: transparent;" id="dtabs">
@@ -29,6 +35,7 @@
                 </li>
                 <li>
                     <a class="dstablink" href="#ds-submit">Files</a>
+                    <img class="tabimg" id="filetabimg">
                 </li>
             </ul>
 
@@ -56,7 +63,7 @@
                 {% include 'PelagosAppBundle:DatasetReview:distribution-info.html.twig' %}
             </div>
 
-            <div id="ds-submit">
+            <div id="ds-submit" class="ds-metadata">
                 {% include 'PelagosAppBundle:DatasetReview:file-submit.html.twig' %}
             </div>
         </div>

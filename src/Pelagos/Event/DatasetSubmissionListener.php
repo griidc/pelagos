@@ -34,7 +34,7 @@ class DatasetSubmissionListener extends EventListener
         // Publish message requesting DOI generation.
         // Producer passed in via constructor is that of the doi_issue producer.
         $this->producer->publish($dataset->getId(), 'issue');
-   
+
         // email User
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
 
@@ -68,7 +68,7 @@ class DatasetSubmissionListener extends EventListener
                 $dataset->getUdi()
             )
         );
-        
+
         $this->producer->publish($dataset->getId(), 'update');
 
         // email User
@@ -104,40 +104,17 @@ class DatasetSubmissionListener extends EventListener
     {
         $datasetSubmission = $event->getEntity();
 
-        // email DRMs
-        $this->sendMailMsg(
-            $this->twig->loadTemplate('PelagosAppBundle:Email:data-repository-managers.dataset-processed.email.twig'),
-            array('datasetSubmission' => $datasetSubmission),
-            $this->getDRPMs($datasetSubmission->getDataset())
-        );
-    }
+        // Added if-statement so that emails are sent to data-managers only when a dataset is submitted
+        // and not when a review is ended.
+        if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+            //email DRMs
+            $this->sendMailMsg(
+                $this->twig->loadTemplate('PelagosAppBundle:Email:data-repository-managers.dataset-processed.email.twig'),
+                array('datasetSubmission' => $datasetSubmission),
+                $this->getDRPMs($datasetSubmission->getDataset())
+            );
+        }
 
-    /**
-     * Method to send an email to user on a metadata_processed event.
-     *
-     * @param EntityEvent $event Event being acted upon.
-     *
-     * @return void
-     */
-    public function onMetadataProcessed(EntityEvent $event)
-    {
-        $datasetSubmission = $event->getEntity();
-      
-        $metadataFileInfo = $this->dataStore->getDownloadFileInfo(
-            $datasetSubmission->getDataset()->getUdi(),
-            'metadata'
-        );
-
-        // email DRMs
-        $this->sendMailMsg(
-            $this->twig->loadTemplate('PelagosAppBundle:Email:data-repository-managers.metadata-processed.email.twig'),
-            array('datasetSubmission' => $datasetSubmission),
-            $this->getDRPMs($datasetSubmission->getDataset()),
-            array(
-                \Swift_Attachment::fromPath($metadataFileInfo->getRealPath())
-                    ->setFilename($datasetSubmission->getMetadataFileName())
-            )
-        );
     }
 
     /**
