@@ -3,28 +3,28 @@
     {{dataset.abstract|default}}
 </div>
 
-{% if dataset.metadata.purpose|default %}
+{% if dataset.datasetSubmission.purpose|default %}
 <h2>Purpose:</h2>
 <div>
-    {{dataset.metadata.purpose}}
+    {{dataset.datasetSubmission.purpose}}
 </div>
 {% endif %}
 
-{% if dataset.metadata.themeKeywords|default %}
+{% if dataset.datasetSubmission.themeKeywords|default %}
 <h2>Theme Keywords:</h2>
 <div>
     {% set keywords = [] %}
-    {% for keyword in dataset.metadata.themeKeywords %}
+    {% for keyword in dataset.datasetSubmission.themeKeywords %}
         {% set keywords = keywords|merge([keyword|trim('"')]) %}
     {% endfor %}
     {{keywords|join(', ')}}
 </div>
 {% endif %}
 
-{% if dataset.metadata.fileFormat|default %}
+{% if dataset.datasetSubmission.distributionFormatName|default %}
 <h2>File Format:</h2>
 <div>
-{{dataset.metadata.fileFormat}}
+{{dataset.datasetSubmission.distributionFormatName}}
 </div>
 {% endif %}
 

@@ -100,50 +100,50 @@
         </td>
     </tr>
 
-    {% if dataset.metadata|default %}
+    {% if dataset.datasetSubmission|default %}
 
         {% set showExtent = false %}
         {% set showExtentDescription = false %}
 
-        {# Metadata has an extent description and does not have a temporal extent. Presence of beginPosition or endPosition constitutes a temporal extent. #}
+        {# datasetSubmission has an extent description and does not have a temporal extent. Presence of beginPosition or endPosition constitutes a temporal extent. #}
         {# Display the extent description. #}
-        {% if dataset.metadata.extentDescription|default and not (dataset.metadata.beginPosition|default or dataset.metadata.endPosition|default) %}
+        {% if dataset.datasetSubmission.spatialExtentDescription|default and not (dataset.datasetSubmission.temporalExtentBeginPosition|default or dataset.datasetSubmission.temporalExtentEndPosition|default) %}
             {% set showExtentDescription = true %}
         {% endif %}
 
-        {# Metadata has a temporal extent and does not have at extent description. #}
+        {# datasetSubmission has a temporal extent and does not have at extent description. #}
         {# Display the temporal extent. #}
-        {% if (dataset.metadata.beginPosition|default or dataset.metadata.endPosition|default) and not dataset.metadata.extentDescription|default %}
+        {% if (dataset.datasetSubmission.temporalExtentBeginPosition|default or dataset.datasetSubmission.temporalExtentEndPosition|default) and not dataset.datasetSubmission.spatialExtentDescription|default %}
             {% set showExtent = true %}
         {% endif %}
 
-        {# Metadata has both an extent description and a temporal extent and extent contains a gmd:geograpicElement. #}
+        {# datasetSubmission has both an extent description and a temporal extent and extent contains a gmd:geograpicElement. #}
         {# Display the temporal extent. #}
-        {% if (dataset.metadata.beginPosition|default or dataset.metadata.endPosition|default) and dataset.metadata.extentDescription|default and dataset.metadata.geometry|default %}
+        {% if (dataset.datasetSubmission.temporalExtentBeginPosition|default or dataset.datasetSubmission.temporalExtentEndPosition|default) and dataset.datasetSubmission.spatialExtentDescription|default and dataset.geometry|default %}
             {% set showExtent = true %}
         {% endif %}
 
-        {# Metadata has both an extent description and a temporal extent and extent does not contain a gmd:geograpicElement. #}
+        {# datasetSubmission has both an extent description and a temporal extent and extent does not contain a gmd:geograpicElement. #}
         {# Display the extent description. #}
-        {% if (dataset.metadata.beginPosition|default or dataset.metadata.endPosition|default) and dataset.metadata.extentDescription|default and not dataset.metadata.geometry|default %}
+        {% if (dataset.datasetSubmission.temporalExtentBeginPosition|default or dataset.datasetSubmission.temporalExtentEndPosition|default) and dataset.datasetSubmission.spatialExtentDescription|default and not dataset.geometry|default %}
             {% set showExtentDescription = true %}
         {% endif %}
 
-        {# Metadata has neither extent description nor temporal extent.  #}
+        {# datasetSubmission has neither extent description nor temporal extent.  #}
         {# Display nothing.  This is the default case. #}
 
         {% if showExtent == true %}
 
-            {% if not dataset.metadata.beginPosition|default %}
+            {% if not dataset.datasetSubmission.temporalExtentBeginPosition|date('Y-m-d') |default %}
                 {% set begin = 'N/A' %}
             {% else %}
-                {% set begin = dataset.metadata.beginPosition %}
+                {% set begin = dataset.datasetSubmission.temporalExtentBeginPosition|date('Y-m-d')  %}
             {% endif %}
 
-            {% if not dataset.metadata.endPosition|default %}
+            {% if not dataset.datasetSubmission.temporalExtentEndPosition|date('Y-m-d') |default %}
                 {% set end = 'N/A' %}
             {% else %}
-                {% set end = dataset.metadata.endPosition %}
+                {% set end = dataset.datasetSubmission.temporalExtentEndPosition|date('Y-m-d')  %}
             {% endif %}
 
             <tr>
@@ -160,7 +160,7 @@
             <tr>
                 <td valign="top">
                         <tr><td colspan="2">&nbsp;</td></tr>
-                        <tr><td colspan="2"><b>Extent Description:</b><br/> {{dataset.metadata.extentDescription}}</td></tr>
+                        <tr><td colspan="2"><b>Extent Description:</b><br/> {{dataset.datasetSubmission.spatialExtentDescription}}</td></tr>
                  </td>
             </tr>
         {% endif %}

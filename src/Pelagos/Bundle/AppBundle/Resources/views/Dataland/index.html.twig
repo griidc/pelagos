@@ -53,7 +53,7 @@
 
                     <div id="dlolmap" style="width: 640px;height: 480px;"
                         wkt="{{wkt|default}}"
-                        description="{{dataset.metadata.extentDescription|default}}"
+                        description="{{dataset.datasetSubmission.spatialExtentDescription|default}}"
                     {% image '@PelagosAppBundle/Resources/public/images/labonly.png' %}
                         labimage="{{asset_url}}"/>
                     {% endimage %}
