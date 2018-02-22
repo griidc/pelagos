@@ -19,9 +19,9 @@ class Metadata
     /**
      * Class constructor for dependency injection.
      *
-     * @param mixed $twig The twig rendering engine.
+     * @param \Twig_Environment $twig The twig rendering engine.
      */
-    public function __construct($twig)
+    public function __construct(\Twig_Environment $twig)
     {
         $this->twig = $twig;
     }
