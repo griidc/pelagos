@@ -165,6 +165,15 @@ class Dataset extends Entity
     protected $issueTrackingTicket;
 
     /**
+     * Geometry of the Dataset.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="geometry", options={"srid"=4326}, nullable=true)
+     */
+    protected $geometry;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -260,6 +269,10 @@ class Dataset extends Entity
         $this->setDatasetSubmissionStatus($datasetSubmission->getStatus());
         $this->setMetadataStatus($datasetSubmission->getMetadataStatus());
         $this->updateAvailabilityStatus();
+        //Sets geometry if exists.
+        if ($datasetSubmission->getSpatialExtent()) {
+            $this->setGeometry($datasetSubmission->getSpatialExtent());
+        }
     }
 
     /**
@@ -732,5 +745,27 @@ class Dataset extends Entity
             // And if we don't have an approved DIF, return nothing.
             return null;
         }
+    }
+
+    /**
+     * Get the geometry for this Metadata.
+     *
+     * @return string
+     */
+    public function getGeometry()
+    {
+        return $this->geometry;
+    }
+
+    /**
+     * Sets the geometry extracted from the XML.
+     *
+     * @param string $geometry String representing a PostGreSQL geometry.
+     *
+     * @return void
+     */
+    public function setGeometry($geometry = null)
+    {
+        $this->geometry = $geometry;
     }
 }
