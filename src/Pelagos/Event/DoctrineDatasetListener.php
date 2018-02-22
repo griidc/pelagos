@@ -53,6 +53,7 @@ class DoctrineDatasetListener
             if ($dataset instanceof Dataset) {
                 $dataset->updateTitle();
                 $dataset->updateAbstract();
+                $dataset->updateGeometry();
                 $dataset->setModifier($entity->getModifier());
                 $entityManager->persist($dataset);
                 $classMetadata = $entityManager->getClassMetadata(Dataset::class);

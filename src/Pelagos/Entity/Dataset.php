@@ -237,6 +237,9 @@ class Dataset extends Entity
         $this->dif = $dif;
         if ($this->dif->getDataset() !== $this) {
             $this->dif->setDataset($this);
+            if ($dif->getSpatialExtentGeometry()) {
+                $this->setGeometry($dif->getSpatialExtentGeometry());
+            }
         }
     }
 
@@ -336,6 +339,22 @@ class Dataset extends Entity
         } elseif ($this->hasDif()) {
             // Copy DIF title to Dataset.
             $this->title = $this->getDif()->getTitle();
+        }
+    }
+
+    /**
+     * Update the geometry for this Dataset.
+     *
+     * @return void
+     */
+    public function updateGeometry()
+    {
+        if ($this->hasDatasetSubmission()) {
+            // Copy DatasetSubmission geometry to Dataset.
+            $this->geometry = $this->getDatasetSubmission()->getSpatialExtent();
+        } elseif ($this->hasDif()) {
+            // Copy DIF geometry to Dataset.
+            $this->geometry = $this->getDif()->getSpatialExtentGeometry();
         }
     }
 
