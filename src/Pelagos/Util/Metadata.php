@@ -12,7 +12,7 @@ class Metadata
     /**
      * The twig *ml render.
      *
-     * @var mixed
+     * @var \Twig_Environment
      */
     protected $twig;
 
