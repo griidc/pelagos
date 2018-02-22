@@ -440,8 +440,6 @@ $(document).ready(function(){
                 datasetFileUri = "file://" + datasetFileUri;
             }
         }
-        // remove datasetFileUri error label
-        $('label.error[for="datasetFileUri"]').remove();
         // set datasetFileUri
         $("#datasetFileUri").val(datasetFileUri);
         $("#datasetFileUri").valid();
