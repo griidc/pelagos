@@ -63,6 +63,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
             'success' => null,
             'errors' => null,
             );
+        $createFlag = false;
 
         if ($udi != null) {
             $udi = trim($udi);
@@ -122,11 +123,36 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                         $datasetSubmission = new DatasetSubmission($dif, $personDatasetSubmissionDatasetContact);
                         $datasetSubmission->setSequence(1);
 
-                        try {
-                            $this->entityHandler->create($datasetSubmission);
-                        } catch (AccessDeniedException $e) {
-                            // This is handled in the template.
-                        }
+                        $createFlag = true;
+                    }
+                } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
+                    and $datasetSubmission->getMetadataStatus() != DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
+                    and $datasetSubmission->getDataset()->getMetadata() instanceof Metadata
+                ) {
+                    // The latest submission is complete, so create new one based on it.
+                    $datasetSubmission = new DatasetSubmission($datasetSubmission);
+
+                    $createFlag = true;
+
+                } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
+                    and $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_NONE
+                    and (
+                        $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_COMPLETED
+                        or $datasetSubmission->getDatasetFileSha256Hash() !== null
+                    )
+                    and $datasetSubmission->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
+                ) {
+                    // The latest submission is complete, so create new one based on it.
+                    $datasetSubmission = new DatasetSubmission($datasetSubmission);
+
+                    $createFlag = true;
+                }
+
+                if ($createFlag) {
+                    try {
+                        $this->entityHandler->create($datasetSubmission);
+                    } catch (AccessDeniedException $e) {
+                        // This is handled in the template.
                     }
                 }
             }
