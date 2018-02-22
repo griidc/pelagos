@@ -563,24 +563,28 @@ function areTabsValid()
     var isValid = $("#regForm").valid();
     $(".tabimg").show();
 
-        $("#dtabs .ds-metadata").each(function () {
-            var tabLabel = $(this).attr("aria-labelledby");
-            if ($(this).has(":input.error").length > 0) {
-                $("#" + tabLabel).next("img").prop("src", imgWarning);
-                isValid = false;
-            }
-            else {
-                $("#" + tabLabel).next("img").prop("src", imgCheck);
-            }
+    $("#dtabs .ds-metadata").each(function () {
+        var tabLabel = $(this).attr("aria-labelledby");
+        if ($(this).has(":input.error").length > 0) {
+            $("#" + tabLabel).next("img").prop("src", imgWarning);
+            isValid = false;
+        }
+        else {
+            $("#" + tabLabel).next("img").prop("src", imgCheck);
+        }
 
-            $(this).find(":input").on("change blur keyup", function () {
-                $("#dtabs .ds-metadata").each(function () {
-                    var label = $(this).attr("aria-labelledby");
-                    $(this).find(":input").not(".prototype").each(function () {
-                        $(this).valid()
-                    });
-                    if ($(this).find(":input").not(".prototype").valid()) {
+        $(this).find(":input").on("change blur keyup", function () {
+            $("#dtabs .ds-metadata").each(function () {
+                var label = $(this).attr("aria-labelledby");
+                $(this).find(":input").not(".prototype").each(function () {
+                    $(this).valid()
                 });
+                if ($(this).find(":input").not(".prototype").valid()) {
+                    $("#" + label).next("img").prop("src", imgCheck);
+                } else {
+                    $("#" + label).next("img").prop("src", imgWarning);
+                    isValid = false;
+                }
             });
         });
     });
