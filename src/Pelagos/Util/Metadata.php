@@ -1,7 +1,6 @@
 <?php
 namespace Pelagos\Util;
 
-use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 
@@ -10,13 +9,6 @@ use Pelagos\Entity\DatasetSubmission;
  */
 class Metadata
 {
-    /**
-     * The Pelagos EntityHandler.
-     *
-     * @var EntityHandler
-     */
-    protected $entityHandler;
-
     /**
      * The twig *ml render.
      *
@@ -27,52 +19,47 @@ class Metadata
     /**
      * Class constructor for dependency injection.
      *
-     * @param EntityHandler $entityHandler The Pelagos EntityHandler instance to use.
+     * @param mixed $twig The twig rendering engine.
      */
-    public function __construct(EntityHandler $entityHandler, $twig)
+    public function __construct($twig)
     {
-        $this->entityHandler = $entityHandler;
         $this->twig = $twig;
     }
 
     /**
      * Creates and returns an ISO-19115-2 XML representation of metadata as a string.
      *
-     * @param mixed $datasetId ID of Dataset to generate ISO metadata for.
+     * @param Dataset $dataset The Pelagos Dataset to generate ISO metadata for.
      *
      * @return string||null of generated XML metadata.
      */
-    public function getXmlRepresentation($datasetId)
+    public function getXmlRepresentation(Dataset $dataset)
     {
-        $xmlString = null;
-        $dataset = $this->entityHandler->get('\Pelagos\Entity\Dataset', $datasetId);
-        if ($dataset instanceof Dataset) {
-            $datasetSubmission = $dataset->getDatasetSubmission();
-            if ($datasetSubmission instanceof DatasetSubmission) {
-                $xml = $this->twig->render(
-                    'PelagosAppBundle:MetadataGenerator:MI_Metadata.xml.twig',
-                    array(
-                        'dataset' => $dataset,
-                        'metadataFilename' => preg_replace('/:/', '-', $dataset->getUdi()) . '-metadata.xml',
-                    )
-                );
-                $tidyXml = new \tidy;
-                $tidyXml->parseString(
-                    $xml,
-                    array(
-                        'input-xml' => true,
-                        'output-xml' => true,
-                        'indent' => true,
-                        'indent-spaces' => 4,
-                        'wrap' => 0,
-                    ),
-                    'utf8'
-                );
-                $xml = $tidyXml;
-                // Remove extra whitespace added around CDATA tags by tidy.
-                $xml = preg_replace('/>[\s]+<\!\[CDATA\[/', '><![CDATA[', $xml);
-                $xml = preg_replace('/]]>\s+</', ']]><', $xml);
-            }
+        $xml = null;
+        if ($dataset->getDatasetSubmission() instanceof DatasetSubmission) {
+            $xml = $this->twig->render(
+                'PelagosAppBundle:MetadataGenerator:MI_Metadata.xml.twig',
+                array(
+                    'dataset' => $dataset,
+                    'metadataFilename' => preg_replace('/:/', '-', $dataset->getUdi()) . '-metadata.xml',
+                )
+            );
+            $tidyXml = new \tidy;
+            $tidyXml->parseString(
+                $xml,
+                array(
+                    'input-xml' => true,
+                    'output-xml' => true,
+                    'indent' => true,
+                    'indent-spaces' => 4,
+                    'wrap' => 0,
+                ),
+                'utf8'
+            );
+            $xml = $tidyXml;
+            // Remove extra whitespace added around CDATA tags by tidy.
+            $xml = preg_replace('/>[\s]+<\!\[CDATA\[/', '><![CDATA[', $xml);
+            $xml = preg_replace('/]]>\s+</', ']]><', $xml);
         }
         return $xml;
     }
