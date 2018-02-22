@@ -842,7 +842,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
         $this->datasetSubmission->setDatasetSubmissionReview($datasetSubmissionReview);
 
         // End Review for the dataset submission.
-        $this->datasetSubmission->reviewEvent($this->mockPerson, 'endReview');
+        $this->datasetSubmission->endReview($this->mockPerson);
 
         $this->assertEquals(DatasetSubmission::STATUS_IN_REVIEW, $this->datasetSubmission->getStatus());
     }
