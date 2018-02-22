@@ -444,6 +444,7 @@ $(document).ready(function(){
         $('label.error[for="datasetFileUri"]').remove();
         // set datasetFileUri
         $("#datasetFileUri").val(datasetFileUri);
+        $("#datasetFileUri").valid();
 
     }
 
@@ -565,7 +566,7 @@ function areTabsValid()
 
         $("#dtabs .ds-metadata").each(function () {
             var tabLabel = $(this).attr("aria-labelledby");
-            if ($(this).has(":input.error").length ? true : false) {
+            if ($(this).has(":input.error").length > 0) {
                 $("#" + tabLabel).next("img").prop("src", imgWarning);
                 isValid = false;
             }
