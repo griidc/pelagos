@@ -353,7 +353,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     public function postAction(Request $request, $id = null)
     {
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
-
         $form = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionType::class,
@@ -383,6 +382,9 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 case ($form->get('acceptDatasetBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_ACCEPT_REVIEW);
                     $this->createMetaData($datasetSubmission);
+                    break;
+                case ($form->get('requestRevisionsBtn')->isClicked()):
+                    $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_REQUEST_REVISIONS);
                     break;
             }
 
