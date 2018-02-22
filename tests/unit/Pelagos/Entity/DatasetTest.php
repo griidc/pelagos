@@ -167,6 +167,7 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
                         'getEmailAddress' => 'approved.dif@test.null',
                     )
                 ),
+                'getSpatialExtentGeometry' => $this->mockSpatialExtent,
             )
         );
         $this->mockSubmittedDif = \Mockery::mock(
@@ -183,6 +184,7 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
                         'getEmailAddress' => 'submitted.dif@test.null',
                     )
                 ),
+                'getSpatialExtentGeometry' => $this->mockSpatialExtent,
             )
         );
 
@@ -192,6 +194,7 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
                 'getStatus' => DIF::STATUS_UNSUBMITTED,
                 'setDataset' => null,
                 'getDataset' => $this->dataset,
+                'getSpatialExtentGeometry' => $this->mockSpatialExtent,
             )
         );
 
