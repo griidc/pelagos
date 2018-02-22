@@ -14,10 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\LogActionItem;
 use Pelagos\Entity\Metadata;
-
-use Pelagos\Util\ISOMetadataExtractorUtil;
 
 /**
  * The Dataset Monitoring controller.
@@ -59,21 +56,6 @@ class DatalandController extends UIController
 
         if ($dataset->getMetadata() instanceof Metadata) {
             $wkt = $dataset->getMetadata()->getGeometry();
-        }
-
-        $datasetSubmission = $dataset->getDatasetSubmission();
-
-        // If we have approved Metadata, load contact into datasetSubmission.
-        if ($datasetSubmission instanceof DatasetSubmission
-            and $dataset->getMetadata() instanceof Metadata
-        ) {
-            $datasetSubmission->getDatasetContacts()->clear();
-            ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                $dataset->getMetadata()->getXml(),
-                $datasetSubmission,
-                $this->getDoctrine()->getManager()
-            );
-            $dataset->setDatasetSubmission($datasetSubmission);
         }
 
         $downloadCount = null;
