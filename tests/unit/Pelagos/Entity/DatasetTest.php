@@ -59,6 +59,13 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
     protected $mockDifStatusUnsubmitted;
 
     /**
+     * Spatial extent for the dataset used for testing.
+     *
+     * @var string $mockSpatialExtent
+     */
+    protected $mockSpatialExtent;
+
+    /**
      * Setup for PHPUnit tests.
      *
      * This instantiates an instance of Dataset and sets (some of) its properties.
@@ -67,6 +74,14 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
+        $this->mockSpatialExtent = '<gml:MultiPoint gml:id="multipoint" srsName="urn:ogc:def:crs:EPSG::4326">
+                                        <gml:pointMember>
+                                            <gml:Point gml:id="multipoint1">
+                                                <gml:pos srsDimension="2">27.364840000000 -90.564297000000</gml:pos>
+                                            </gml:Point>
+                                        </gml:pointMember>
+                                       </gml:MultiPoint>';
+
         $this->mockDatasetSubmissionComplete = \Mockery::mock(
             DatasetSubmission::class,
             array(
@@ -92,7 +107,8 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
                         ),
                     )
                 ),
-            )
+                'getSpatialExtent' => $this->mockSpatialExtent,
+                )
         );
 
         $this->mockDatasetSubmissionIncomplete = \Mockery::mock(
@@ -120,6 +136,7 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
                         ),
                     )
                 ),
+                'getSpatialExtent' => $this->mockSpatialExtent,
             )
         );
 
@@ -132,6 +149,7 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
                 'getDatasetFileTransferStatus' => null,
                 'getRestrictions' => null,
                 'getDatasetContacts' => new ArrayCollection(),
+                'getSpatialExtent' => $this->mockSpatialExtent,
             )
         );
 
@@ -344,5 +362,16 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
         $this->dataset->setDif($this->mockApprovedDif);
         $this->dataset->setDatasetSubmission($this->mockDatasetSubmissionCompleteMissingContact);
         $this->assertNull($this->dataset->getPrimaryPointOfContact());
+    }
+
+    /**
+     * Test getter and setter for Geometry.
+     *
+     * @return void
+     */
+    public function testCanSetAndGetGeometry()
+    {
+        $this->dataset->setDatasetSubmission($this->mockDatasetSubmissionComplete);
+        $this->assertEquals($this->mockSpatialExtent, $this->dataset->getGeometry());
     }
 }
