@@ -1,7 +1,8 @@
 {{ form_start(form, {'attr': {'id': 'regForm'}}) }}
-<div id="metatoolbar" class="ui-widget-header ui-corner-all toolbarbutton">
-    {{ form_widget(form.acceptDatasetBtn) }}
-    {{ form_widget(form.endReviewBtn) }}
+<div id="metatoolbar" class="ui-widget-header ui-corner-all toolbarbutton" style="text-align: center">
+    {{ form_widget(form.acceptDatasetBtn, {'label':'Accept Review'} ) }}
+    {{ form_widget(form.endReviewBtn, {'label':'End Review'} ) }}
+    {{ form_widget(form.requestRevisionsBtn, {'label':'Request Revisions'} ) }}
 </div>
     <fieldset>
         <div style="background: transparent;" id="dtabs">

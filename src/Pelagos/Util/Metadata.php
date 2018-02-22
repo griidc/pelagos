@@ -16,7 +16,7 @@ class Metadata
      *
      * @return array of (validity boolean, array of errors, and array of warnings).
      */
-    public function validateIso($xml, $schema = 'http://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd')
+    public function validateIso($xml, $schema = 'https://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd')
     {
         $errorList = array();
         $warningList = array();

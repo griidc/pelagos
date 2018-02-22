@@ -73,6 +73,8 @@ services:
             - "%data_store_group%"
             - "%data_download_browser_group%"
             - "%web_server_user%"
+            - "%anonymous_ftp_user%"
+            - "%anonymous_ftp_pass%"
 
     pelagos.event.entity_event_dispatcher:
         class: Pelagos\Event\EntityEventDispatcher

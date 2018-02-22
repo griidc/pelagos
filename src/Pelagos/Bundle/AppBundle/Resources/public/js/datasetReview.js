@@ -185,7 +185,8 @@ $(document).ready(function(){
             "divSpatialWizard":"spatwizbtn",
             "gmlField":"spatialExtent",
             "descField":"spatialExtentDescription",
-            "spatialFunction":"checkSpatial"
+            "spatialFunction":"checkSpatial",
+            "validateGeometry": true
         }
     );
 
@@ -579,25 +580,18 @@ function areTabsValid()
                         $(this).valid()
                     });
                     if ($(this).find(":input").not(".prototype").valid()) {
-                        $("#" + label).next("img").prop("src", imgCheck);
-                    } else {
-                        $("#" + label).next("img").prop("src", imgWarning);
-                        isValid = false;
-                    }
                 });
             });
         });
+    });
 
-        if (typeof $("#datasetFileUri").val() !== "undefined") {
-            if ($("#datasetFileUri").val() === "") {
-                $("#filetabimg").prop("src", imgWarning);
-                isValid = false;
-            } else {
-                $("#filetabimg").prop("src", imgCheck);
-            }
+    if (typeof $("#datasetFileUri").val() !== "undefined") {
+        if ($("#datasetFileUri").val() === "") {
+            $("#filetabimg").prop("src", imgWarning);
+            isValid = false;
+        } else {
+            $("#filetabimg").prop("src", imgCheck);
         }
-        return isValid;
+    }
+    return isValid;
 }
-
-
-

@@ -96,7 +96,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
                 'getSpatialExtentGeometry' => null,
                 'getSpatialExtentDescription' => null,
                 'getPrimaryPointOfContact' => $this->mockPerson,
-
+                'getSecondaryPointOfContact' => null,
             )
         );
         $this->mockPersonDatasetSubmissionDatasetContact = \Mockery::mock(
@@ -842,7 +842,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
         $this->datasetSubmission->setDatasetSubmissionReview($datasetSubmissionReview);
 
         // End Review for the dataset submission.
-        $this->datasetSubmission->endReview($this->mockPerson);
+        $this->datasetSubmission->reviewEvent($this->mockPerson, DatasetSubmission::DATASET_END_REVIEW);
 
         $this->assertEquals(DatasetSubmission::STATUS_IN_REVIEW, $this->datasetSubmission->getStatus());
     }

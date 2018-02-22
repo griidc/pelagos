@@ -361,6 +361,11 @@ class DatasetSubmission extends Entity
     const DATASET_ACCEPT_REVIEW = 'acceptReview';
 
     /**
+     * Indicates the dataset submission is in request revisions (back to submitter) state.
+     */
+    const DATASET_REQUEST_REVISIONS = 'requestRevisions';
+
+    /**
      * Status of this Dataset Submission.
      *
      * @var integer
@@ -939,6 +944,14 @@ class DatasetSubmission extends Entity
             $datasetPPOc->setRole(PersonDatasetSubmissionDatasetContact::getRoleChoices()['Point of Contact']);
             $datasetPPOc->setPrimaryContact(true);
             $this->addDatasetContact($datasetPPOc);
+            // Add additional point of contact if DIF has secondaryPointOfContact.
+            if ($entity->getSecondaryPointOfContact()) {
+                $newDatasetContact = new PersonDatasetSubmissionDatasetContact();
+                $newDatasetContact->setRole(PersonDatasetSubmissionDatasetContact::getRoleChoices()['Point of Contact']);
+                $newDatasetContact->setPerson($entity->getSecondaryPointOfContact());
+                $newDatasetContact->setPrimaryContact(false);
+                $this->addDatasetContact($newDatasetContact);
+            }
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
             $this->setSequence($entity->getSequence() + 1);
@@ -1099,10 +1112,16 @@ class DatasetSubmission extends Entity
                 //Setting the status to in-review.
                 $this->status = self::STATUS_COMPLETE;
                 $this->metadataStatus = self::METADATA_STATUS_ACCEPTED;
+                $this->getDataset()->setDatasetSubmission($this);
+                break;
+            case ($eventName === self::DATASET_REQUEST_REVISIONS):
+                $this->status = self::STATUS_COMPLETE;
+                $this->metadataStatus = self::METADATA_STATUS_BACK_TO_SUBMITTER;
+                $this->status = self::STATUS_COMPLETE;
+                $this->getDataset()->setDatasetSubmission($this);
                 break;
         }
 
-        $this->getDataset()->setDatasetSubmission($this);
         $datasetSubmissionReview = $this->getDatasetSubmissionReview();
 
         // Setting timestamp when review is ended.
