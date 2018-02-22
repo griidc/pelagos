@@ -1117,6 +1117,8 @@ class DatasetSubmission extends Entity
             case ($eventName === self::DATASET_REQUEST_REVISIONS):
                 $this->status = self::STATUS_COMPLETE;
                 $this->metadataStatus = self::METADATA_STATUS_BACK_TO_SUBMITTER;
+                $this->status = self::STATUS_COMPLETE;
+                $this->getDataset()->setDatasetSubmission($this);
                 break;
         }
 
