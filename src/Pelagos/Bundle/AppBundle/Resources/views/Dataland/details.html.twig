@@ -3,6 +3,8 @@
     {{dataset.abstract|default}}
 </div>
 
+{% if dataset.metadataStatus == constant('Pelagos\\Entity\\DatasetSubmission::METADATA_STATUS_ACCEPTED') %}
+
 {% if dataset.datasetSubmission.purpose|default %}
 <h2>Purpose:</h2>
 <div>
@@ -33,4 +35,6 @@
     <div>
         {{downloads}}
     </div>
+{% endif %}
+
 {% endif %}
