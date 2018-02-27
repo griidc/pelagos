@@ -573,7 +573,7 @@ function areTabsValid()
             $("#" + tabLabel).next("img").prop("src", imgCheck);
         }
 
-        $(this).find(":input").not("button").on("change blur keyup", function () {
+        $(this).find(":input").on("change blur keyup", function () {
             $("#dtabs .ds-metadata").each(function () {
                 var label = $(this).attr("aria-labelledby");
                 $(this).find(":input").not(".prototype, button").each(function () {
