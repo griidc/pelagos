@@ -24,6 +24,7 @@ use Pelagos\Entity\DIF;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\Person;
 
 use Pelagos\Exception\InvalidMetadataException;
 
@@ -121,7 +122,16 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                     // The latest submission is complete, so create new one based on it.
                     $datasetSubmission = new DatasetSubmission($datasetSubmission);
 
-                    $createFlag = true;
+                    // Designate 1st contact as primary.
+                    $primaryContact = $datasetSubmission->getDatasetContacts()->first();
+                    $primaryContact->setPrimaryContact(true);
+
+                    $submitter = $primaryContact->getPerson();
+                    if (!$submitter instanceof Person) {
+                        $submitter = new Person();
+                    }
+                    // Fake submit, without persisting.
+                    $datasetSubmission->submit($submitter);
 
                 } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
                     and $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_NONE
