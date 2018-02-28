@@ -37,7 +37,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      * @var array
      */
     protected $messages = array();
-    
+
     /**
      * The default action for Dataset Review.
      *
@@ -52,7 +52,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
         }
-        
+
         $dataset = null;
         $udi = $request->query->get('udiReview');
         $datasetSubmission = null;
@@ -171,8 +171,8 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
 
         $listOfErrors = [
             'notFound' => 'Sorry, the dataset with Unique Dataset Identifier (UDI) ' .
-                $udi . ' could not be found. Please email 
-                        <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> 
+                $udi . ' could not be found. Please email
+                        <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a>
                         if you have any questions.',
             'notSubmitted' => 'The dataset ' . $udi . ' cannot be loaded in review mode at this time because it has not been submitted or it is still being processed.',
             'hasDraft' => 'The dataset ' . $udi . ' currently has a draft submission and cannot be loaded in review mode.',
@@ -481,13 +481,12 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         $url = $this->generateUrl(
             'pelagos_api_metadata_get',
             array(
-                'udi' => $udi,
-                'forceSourceFromSubmission' => 1),
+                'udi' => $udi),
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
         try {
-            
+
             $fileContent = file_get_contents($url);
 
             $xml = simplexml_load_string($fileContent);
