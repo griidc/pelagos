@@ -165,13 +165,13 @@ class Dataset extends Entity
     protected $issueTrackingTicket;
 
     /**
-     * Geometry of the Dataset.
+     * Spatial Extent Geometry of the Dataset.
      *
      * @var string
      *
-     * @ORM\Column(type="geometry", options={"srid"=4326}, nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
-    protected $geometry;
+    protected $spatialExtentGeometry;
 
     /**
      * Constructor.
@@ -238,7 +238,7 @@ class Dataset extends Entity
         if ($this->dif->getDataset() !== $this) {
             $this->dif->setDataset($this);
             if ($dif->getSpatialExtentGeometry()) {
-                $this->setGeometry($dif->getSpatialExtentGeometry());
+                $this->setSpatialExtentGeometry($dif->getSpatialExtentGeometry());
             }
         }
     }
@@ -274,7 +274,7 @@ class Dataset extends Entity
         $this->updateAvailabilityStatus();
         //Sets geometry if exists.
         if ($datasetSubmission->getSpatialExtent()) {
-            $this->setGeometry($datasetSubmission->getSpatialExtent());
+            $this->setSpatialExtentGeometry($datasetSubmission->getSpatialExtent());
         }
     }
 
@@ -343,18 +343,18 @@ class Dataset extends Entity
     }
 
     /**
-     * Update the geometry for this Dataset.
+     * Update the spatialExtentGeometry for this Dataset.
      *
      * @return void
      */
-    public function updateGeometry()
+    public function updateSpatialExtentGeometry()
     {
         if ($this->hasDatasetSubmission()) {
             // Copy DatasetSubmission geometry to Dataset.
-            $this->geometry = $this->getDatasetSubmission()->getSpatialExtent();
+            $this->spatialExtentGeometry = $this->getDatasetSubmission()->getSpatialExtent();
         } elseif ($this->hasDif()) {
             // Copy DIF geometry to Dataset.
-            $this->geometry = $this->getDif()->getSpatialExtentGeometry();
+            $this->spatialExtentGeometry = $this->getDif()->getSpatialExtentGeometry();
         }
     }
 
@@ -767,24 +767,24 @@ class Dataset extends Entity
     }
 
     /**
-     * Get the geometry for this Metadata.
+     * Get the spatialExtentGeometry for this Metadata.
      *
      * @return string
      */
-    public function getGeometry()
+    public function getSpatialExtentGeometry()
     {
-        return $this->geometry;
+        return $this->spatialExtentGeometry;
     }
 
     /**
-     * Sets the geometry extracted from the XML.
+     * Sets the spatialExtentGeometry extracted from the XML.
      *
-     * @param string $geometry String representing a PostGreSQL geometry.
+     * @param string $spatialExtentGeometry String representing a PostGreSQL spatialExtentGeometry.
      *
      * @return void
      */
-    public function setGeometry($geometry = null)
+    public function setSpatialExtentGeometry($spatialExtentGeometry = null)
     {
-        $this->geometry = $geometry;
+        $this->spatialExtentGeometry = $spatialExtentGeometry;
     }
 }

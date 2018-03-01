@@ -368,13 +368,13 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test getter and setter for Geometry.
+     * Test getter and setter for SpatialExtentGeometry.
      *
      * @return void
      */
-    public function testCanSetAndGetGeometry()
+    public function testCanSetAndGetSpatialExtentSpatialExtentGeometry()
     {
         $this->dataset->setDatasetSubmission($this->mockDatasetSubmissionComplete);
-        $this->assertEquals($this->mockSpatialExtent, $this->dataset->getGeometry());
+        $this->assertEquals($this->mockSpatialExtent, $this->dataset->getSpatialExtentGeometry());
     }
 }
