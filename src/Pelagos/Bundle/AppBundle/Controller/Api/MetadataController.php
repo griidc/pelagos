@@ -88,7 +88,7 @@ class MetadataController extends EntityController
     public function getAction(Request $request)
     {
         // We need this utility service to get the metadata in ISO 19115-2 formatted XML.
-        $metadataUtility = $this->container()->get('pelagos.util.metadata');
+        $metadataUtility = $this->get('pelagos.util.metadata');
 
         $params = $request->query->all();
         $datasets = $this->container->get('pelagos.entity.handler')->getBy(Dataset::class, $params);
