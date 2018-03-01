@@ -18,7 +18,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class GmlController extends Controller
 {
     /**
-     * The List the Lists action.
+     * Converting gml to wkt.
      *
      * @param Request $request The Symfony request object.
      *
@@ -28,7 +28,7 @@ class GmlController extends Controller
      *
      * @throws BadRequestHttpException When no GML is given.
      *
-     * @return Response A list of Lists.
+     * @return Response A response containing converted wkt.
      */
     public function toWktAction(Request $request)
     {
@@ -42,7 +42,6 @@ class GmlController extends Controller
             $statement->execute();
             $results = $statement->fetchAll();
             $wkt = $results[0]['st_astext'];
-
             return new Response(
                 $wkt,
                 Response::HTTP_OK,
@@ -54,7 +53,7 @@ class GmlController extends Controller
     }
 
     /**
-     * The Research Group Generate List action.
+     * Converting wkt to gml.
      *
      * @param Request $request The Symfony request object.
      *
@@ -64,7 +63,7 @@ class GmlController extends Controller
      *
      * @throws BadRequestHttpException When no WKT is given.
      *
-     * @return Response A list of Research Groups.
+     * @return Response A response containing converted gml.
      */
     public function fromWktAction(Request $request)
     {
@@ -153,7 +152,7 @@ class GmlController extends Controller
    *
    * @param Request $request The Symfony request object.
    *
-   * @Method("GET")
+   * @Method("POST")
    *
    * @Route("/validategmlfromwkt")
    *
@@ -163,9 +162,8 @@ class GmlController extends Controller
    */
     public function validateGmlFromWktAction(Request $request)
     {
-        $params = $request->query->all();
-        if (isset($params['wkt'])) {
-            $wkt = $params['wkt'];
+        $wkt = $request->request->get('wkt');
+        if ($wkt !== null && $wkt !== '') {
             try {
                 \geoPHP::load($wkt, 'wkt');
             } catch (\Exception $exception) {

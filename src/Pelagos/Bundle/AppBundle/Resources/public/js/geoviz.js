@@ -550,14 +550,14 @@ function GeoViz()
 
     this.gmlToWKT = function (GML)
     {
-        jQuery.ajax({
+        return jQuery.ajax({
             url: Routing.generate("pelagos_app_gml_towkt"),
             type: "POST",
             data: {gml: GML},
             context: document.body
             }).done(function(html) {
                 jQuery(mapDiv).trigger("gmlConverted",html);
-            return true;
+            return html;
         });
     }
 
