@@ -169,7 +169,6 @@ class Dataset extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
      */
     protected $spatialExtentGeometry;
 
@@ -237,9 +236,6 @@ class Dataset extends Entity
         $this->dif = $dif;
         if ($this->dif->getDataset() !== $this) {
             $this->dif->setDataset($this);
-            if ($dif->getSpatialExtentGeometry()) {
-                $this->setSpatialExtentGeometry($dif->getSpatialExtentGeometry());
-            }
         }
     }
 
@@ -272,10 +268,6 @@ class Dataset extends Entity
         $this->setDatasetSubmissionStatus($datasetSubmission->getStatus());
         $this->setMetadataStatus($datasetSubmission->getMetadataStatus());
         $this->updateAvailabilityStatus();
-        //Sets geometry if exists.
-        if ($datasetSubmission->getSpatialExtent()) {
-            $this->setSpatialExtentGeometry($datasetSubmission->getSpatialExtent());
-        }
     }
 
     /**
@@ -339,22 +331,6 @@ class Dataset extends Entity
         } elseif ($this->hasDif()) {
             // Copy DIF title to Dataset.
             $this->title = $this->getDif()->getTitle();
-        }
-    }
-
-    /**
-     * Update the spatialExtentGeometry for this Dataset.
-     *
-     * @return void
-     */
-    public function updateSpatialExtentGeometry()
-    {
-        if ($this->hasDatasetSubmission()) {
-            // Copy DatasetSubmission geometry to Dataset.
-            $this->spatialExtentGeometry = $this->getDatasetSubmission()->getSpatialExtent();
-        } elseif ($this->hasDif()) {
-            // Copy DIF geometry to Dataset.
-            $this->spatialExtentGeometry = $this->getDif()->getSpatialExtentGeometry();
         }
     }
 
@@ -773,18 +749,22 @@ class Dataset extends Entity
      */
     public function getSpatialExtentGeometry()
     {
-        return $this->spatialExtentGeometry;
-    }
+        $datasetSubmission = $this->getDatasetSubmission();
+        $dif = $this->getDif();
 
-    /**
-     * Sets the spatialExtentGeometry extracted from the XML.
-     *
-     * @param string $spatialExtentGeometry String representing a PostGreSQL spatialExtentGeometry.
-     *
-     * @return void
-     */
-    public function setSpatialExtentGeometry($spatialExtentGeometry = null)
-    {
-        $this->spatialExtentGeometry = $spatialExtentGeometry;
+        // If there is an accepted dataset submission, use its geometry or else use the geometry from DIF.
+        if ($datasetSubmission instanceof DatasetSubmission and $this->metadataStatus === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+            if ($datasetSubmission->getSpatialExtent()) {
+                return $datasetSubmission->getSpatialExtent();
+            } else {
+                return $datasetSubmission->getSpatialExtentDescription();
+            }
+        } elseif ($dif instanceof DIF and $dif->getStatus() === DIF::STATUS_APPROVED) {
+            if ($dif->getSpatialExtentGeometry()) {
+                return $dif->getSpatialExtentGeometry();
+            } else {
+                return $dif->getSpatialExtentDescription();
+            }
+        }
     }
 }
