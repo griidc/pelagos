@@ -568,7 +568,7 @@ function MapWizard(json)
         return $.ajax({
             url: Routing.generate("pelagos_app_gml_validategmlfromwkt"),
             type: "POST",
-            data: {wkt: null},
+            data: {wkt: wkt},
             success: function(data, textStatus, jqXHR){
                 return jqXHR;
             }
@@ -590,6 +590,7 @@ function MapWizard(json)
 
         $("#olmap").on("featureAdded", function(e, eventInfo) {
             $("#coordlist").val(eventInfo);
+            $("#inputGml").val(); //wait
 
             //populate bounding box fields
             bbArray = wizGeoViz.getBBOX(wizGeoViz.getSingleFeature());
