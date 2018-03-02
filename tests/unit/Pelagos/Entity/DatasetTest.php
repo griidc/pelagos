@@ -92,7 +92,7 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
                         ),
                     )
                 ),
-                )
+            )
         );
 
         $this->mockDatasetSubmissionIncomplete = \Mockery::mock(

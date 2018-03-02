@@ -168,7 +168,6 @@ class Dataset extends Entity
      * Spatial Extent Geometry of the Dataset.
      *
      * @var string
-     *
      */
     protected $spatialExtentGeometry;
 
