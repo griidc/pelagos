@@ -167,9 +167,9 @@ function MapWizard(json)
 
         //only show input GML tab on dataset-review
         if (true === inputGmlControl) {
-            $('#coordTabs a[href="#gmlTab"]').parent().show();
+            $("#coordTabs a[href=#gmlTab]").parent().show();
         } else {
-            $('#coordTabs a[href="#gmlTab"]').parent().hide();
+            $("#coordTabs a[href=#gmlTab]").parent().hide();
         }
     }
 
@@ -491,8 +491,7 @@ function MapWizard(json)
 
     function renderInputGml()
     {
-        var inputGmlString = $("#inputGml").val();
-        wizGeoViz.gmlToWKT(inputGmlString).then(function( wkt ){
+        wizGeoViz.gmlToWKT($("#inputGml").val()).then(function(wkt){
             wizGeoViz.addFeatureFromWKT(wkt);
         });
     }
@@ -569,7 +568,7 @@ function MapWizard(json)
         return $.ajax({
             url: Routing.generate("pelagos_app_gml_validategmlfromwkt"),
             type: "POST",
-            data: {wkt: wkt},
+            data: {wkt: null},
             success: function(data, textStatus, jqXHR){
                 return jqXHR;
             }
@@ -780,12 +779,9 @@ function MapWizard(json)
 
     function closeDialog()
     {
-        try
-        {
+        try {
             $("#mapwiz").dialog("destroy").remove();
-        }
-        catch(err)
-        {
+        } catch(err) {
             console.log(err.message);
         }
     }
@@ -803,11 +799,13 @@ function MapWizard(json)
         tblHgt = tblHgt - $("#coordlistLbl").height();
         tblHgt = tblHgt - 50; //padding
 
-        $("#coordlist").height((tblHgt*.3));
+        var coordList = $("#coordlist");
+        coordList.height((tblHgt*.3));
         $("#maphelptxt").height((tblHgt*.3));
-        $("#coordlist").css("max-width:"+$("#coordlist").width()+"px;")
+        coordList.css("max-width:"+coordList.width()+"px;")
 
-        $("#inputGml").height((tblHgt*.3));
-        $("#inputGml").css("max-width:"+$("#inputGml").width()+"px;")
+        var inputGml = $("#inputGml");
+        inputGml.height((tblHgt*.3));
+        inputGml.css("max-width:"+inputGml.width()+"px;")
     }
 }

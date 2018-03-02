@@ -34,7 +34,7 @@ class GmlController extends Controller
     {
         $gml = $request->request->get('gml');
 
-        if ($gml !== null and $gml !== '') {
+        if (!empty($gml)) {
             $query = 'SELECT ST_asText(ST_GeomFromGML(:gml, 4326));';
             $connection = $this->getDoctrine()->getManager()->getConnection();
             $statement = $connection->prepare($query);
@@ -69,7 +69,7 @@ class GmlController extends Controller
     {
         $wkt = $request->request->get('wkt');
 
-        if ($wkt !== null and $wkt !== '') {
+        if (!empty($wkt)) {
             $query = 'SELECT ST_asGML(3,ST_GeomFromText(:wkt,4326),5,17)';
             $connection = $this->getDoctrine()->getManager()->getConnection();
             $statement = $connection->prepare($query);
@@ -163,7 +163,7 @@ class GmlController extends Controller
     public function validateGmlFromWktAction(Request $request)
     {
         $wkt = $request->request->get('wkt');
-        if ($wkt !== null && $wkt !== '') {
+        if (!empty($wkt)) {
             try {
                 \geoPHP::load($wkt, 'wkt');
             } catch (\Exception $exception) {
