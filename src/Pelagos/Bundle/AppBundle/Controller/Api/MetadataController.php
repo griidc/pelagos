@@ -68,8 +68,7 @@ class MetadataController extends EntityController
      * @ApiDoc(
      *   section = "Metadata",
      *   parameters = {
-     *     {"name"="someProperty", "dataType"="string", "required"=true, "description"="Filter by someProperty"},
-     *     {"name"="forceSourceFromSubmission", "dataType"="boolean", "required"=false, "description"="Only generate MD from latest submission."}
+     *     {"name"="someProperty", "dataType"="string", "required"=true, "description"="Filter by someProperty"}
      *   },
      *   output = "XML",
      *   statusCodes = {
@@ -83,22 +82,15 @@ class MetadataController extends EntityController
      * @throws \Exception              When more than one dataset is found.
      * @throws NotFoundHttpException   When dataset is not found, or no metadata is available.
      * @throws BadRequestHttpException When the DIF is Unsubmitted.
-     * @throws HttpException           When the XML can not be loaded from a file.
-     * @throws NotFoundHttpException   When the metadata file is not found.
      *
      * @return Response
      */
     public function getAction(Request $request)
     {
-        $forceFromMetadata = false;
-        $params = $request->query->all();
-        if (isset($params['forceSourceFromSubmission'])) {
-            if (1 == $params['forceSourceFromSubmission']) {
-                $forceFromMetadata = true;
-            }
-            unset($params['forceSourceFromSubmission']);
-        }
+        // We need this utility service to get the metadata in ISO 19115-2 formatted XML.
+        $metadataUtility = $this->container->get('pelagos.util.metadata');
 
+        $params = $request->query->all();
         $datasets = $this->container->get('pelagos.entity.handler')->getBy(Dataset::class, $params);
 
         if (count($datasets) > 1) {
@@ -113,65 +105,10 @@ class MetadataController extends EntityController
             throw new BadRequestHttpException('DIF is not submitted');
         };
 
-        if ($dataset->getDatasetSubmission() instanceof DatasetSubmission == false) {
-            $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact;
-            $dif = $dataset->getDif();
-            $datasetSubmission = new DatasetSubmission($dif, $personDatasetSubmissionDatasetContact);
-            $datasetSubmission->submit($dif->getPrimaryPointOfContact());
-            $dataset->setDatasetSubmission($datasetSubmission);
-        }
-
-        $metadata = $dataset->getMetadata();
+        $generatedXmlMetadata = $metadataUtility->getXmlRepresentation($dataset);
         $metadataFilename = preg_replace('/:/', '-', $dataset->getUdi()) . '-metadata.xml';
 
-        if (!$forceFromMetadata and $dataset->getMetadataStatus() == DatasetSubmission::METADATA_STATUS_ACCEPTED) {
-            if ($dataset->getMetadata() instanceof Metadata and
-                $dataset->getMetadata()->getXml() instanceof \SimpleXMLElement
-            ) {
-                $xml = $metadata->getXml()->asXML();
-            } else {
-                try {
-                    $fileInfo = $this
-                        ->get('pelagos.util.data_store')
-                        ->getDownloadFileInfo($dataset->getUdi(), 'metadata');
-                } catch (FileNotFoundException $e) {
-                    throw new NotFoundHttpException($e->getMessage());
-                }
-                try {
-                    $xmlDoc = new \SimpleXMLElement($fileInfo->getRealPath(), null, true);
-                    $xml = $xmlDoc->asXML();
-                } catch (\Exception $e) {
-                    throw new HttpException(415, $e->getMessage());
-                }
-            }
-        } else {
-            $xml = $this->get('twig')->render(
-                'PelagosAppBundle:MetadataGenerator:MI_Metadata.xml.twig',
-                array(
-                    'dataset' => $dataset,
-                    'metadataFilename' => $metadataFilename,
-                    )
-            );
-        }
-
-        $tidyXml = new \tidy;
-        $tidyXml->parseString(
-            $xml,
-            array(
-                'input-xml' => true,
-                'output-xml' => true,
-                'indent' => true,
-                'indent-spaces' => 4,
-                'wrap' => 0,
-            ),
-            'utf8'
-        );
-
-        // Remove extra whitespace added around CDATA tags by tidy.
-        $outXml = preg_replace('/>[\s]+<\!\[CDATA\[/', '><![CDATA[', $tidyXml);
-        $outXml = preg_replace('/]]>\s+</', ']]><', $outXml);
-
-        $response = new Response($outXml);
+        $response = new Response($generatedXmlMetadata);
         $response->headers->set('Content-Type', 'text/xml');
         $response->headers->set('Content-Disposition', 'attachment; filename="' . $metadataFilename . '"');
 
