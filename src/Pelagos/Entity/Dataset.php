@@ -737,7 +737,7 @@ class Dataset extends Entity
     /**
      * Get the spatialExtentGeometry for this Metadata.
      *
-     * @return string(gml)
+     * @return string  The gml for the dataset.
      */
     public function getSpatialExtentGeometry()
     {
