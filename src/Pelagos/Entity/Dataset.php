@@ -165,13 +165,6 @@ class Dataset extends Entity
     protected $issueTrackingTicket;
 
     /**
-     * Spatial Extent Geometry of the Dataset.
-     *
-     * @var string
-     */
-    protected $spatialExtentGeometry;
-
-    /**
      * Constructor.
      */
     public function __construct()
@@ -744,7 +737,7 @@ class Dataset extends Entity
     /**
      * Get the spatialExtentGeometry for this Metadata.
      *
-     * @return string
+     * @return string(gml)
      */
     public function getSpatialExtentGeometry()
     {
