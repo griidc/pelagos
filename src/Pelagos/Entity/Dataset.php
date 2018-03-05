@@ -733,4 +733,26 @@ class Dataset extends Entity
             return null;
         }
     }
+
+    /**
+     * Get the spatialExtentGeometry for this Metadata.
+     *
+     * @return string|null  The gml for the dataset.
+     */
+    public function getSpatialExtentGeometry()
+    {
+        $datasetSubmission = $this->getDatasetSubmission();
+        $dif = $this->getDif();
+        $spatialExtent = null;
+
+        // If there is an accepted dataset submission, use its geometry or else use the geometry from DIF.
+        if ($datasetSubmission instanceof DatasetSubmission and $this->metadataStatus === DatasetSubmission::METADATA_STATUS_ACCEPTED
+            and $datasetSubmission->getSpatialExtent()) {
+            $spatialExtent = $datasetSubmission->getSpatialExtent();
+        } elseif ($dif instanceof DIF and $dif->getStatus() === DIF::STATUS_APPROVED and $dif->getSpatialExtentGeometry()) {
+            $spatialExtent = $dif->getSpatialExtentGeometry();
+        }
+
+        return $spatialExtent;
+    }
 }
