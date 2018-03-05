@@ -20,15 +20,11 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionXmlFileType;
 
-use Pelagos\Entity\Account;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\Metadata;
-use Pelagos\Entity\Person;
-use Pelagos\Entity\ResearchGroup;
-use Pelagos\Entity\PersonDatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\Person;
 
 use Pelagos\Exception\InvalidMetadataException;
 
@@ -68,6 +64,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
             'success' => null,
             'errors' => null,
             );
+        $createFlag = false;
 
         if ($udi != null) {
             $udi = trim($udi);
@@ -80,18 +77,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                 $dif = $dataset->getDif();
 
                 // Added so that it doesn't conflict with dataset review record.
-                $datasetSubmissionCollection = $dataset->getDatasetSubmissionHistory();
-
-                foreach ($datasetSubmissionCollection as $datasetSubmissionRecord) {
-                    if ($datasetSubmissionRecord->getStatus() !== DatasetSubmission::STATUS_IN_REVIEW) {
-                        $datasetSubmission = $datasetSubmissionRecord;
-                        break;
-                    }
-                }
-
-                if ($datasetSubmission instanceof DatasetSubmission == false) {
-                    $datasetSubmission = null;
-                }
+                $datasetSubmission = $dataset->getDatasetSubmission();
 
                 $xmlForm = $this->get('form.factory')->createNamed(
                     null,
@@ -127,11 +113,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                         $datasetSubmission = new DatasetSubmission($dif, $personDatasetSubmissionDatasetContact);
                         $datasetSubmission->setSequence(1);
 
-                        try {
-                            $this->entityHandler->create($datasetSubmission);
-                        } catch (AccessDeniedException $e) {
-                            // This is handled in the template.
-                        }
+                        $createFlag = true;
                     }
                 } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
                     and $datasetSubmission->getMetadataStatus() != DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
@@ -140,21 +122,6 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                     // The latest submission is complete, so create new one based on it.
                     $datasetSubmission = new DatasetSubmission($datasetSubmission);
 
-                    // Wipe out existing data from the submission.
-                    $this->clearDatasetSubmission($datasetSubmission);
-
-                    // Clear dataset and metadata contacts.
-                    $datasetSubmission->getDatasetContacts()->clear();
-                    // Populate from metadata.
-                    ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                        $datasetSubmission->getDataset()->getMetadata()->getXml(),
-                        $datasetSubmission,
-                        $this->get('doctrine.orm.entity_manager')
-                    );
-                    // If there are no contacts, add an empty one.
-                    if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
-                        $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
-                    }
                     // Designate 1st contact as primary.
                     $primaryContact = $datasetSubmission->getDatasetContacts()->first();
                     $primaryContact->setPrimaryContact(true);
@@ -177,25 +144,10 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                     // The latest submission is complete, so create new one based on it.
                     $datasetSubmission = new DatasetSubmission($datasetSubmission);
 
-                    // If we have accepted metadata.
-                    if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
-                        // Clear out datasetSubmission to make into a blank one.
-                        $this->clearDatasetSubmission($datasetSubmission);
-                        // Clear dataset and metadata contacts.
-                        $datasetSubmission->getDatasetContacts()->clear();
-                        // Populate from metadata.
-                        ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                            $datasetSubmission->getDataset()->getMetadata()->getXml(),
-                            $datasetSubmission,
-                            $this->get('doctrine.orm.entity_manager')
-                        );
-                        // If there are no contacts, add an empty one.
-                        if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
-                            $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
-                        }
-                        // Designate 1st contact as primary.
-                        $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
-                    }
+                    $createFlag = true;
+                }
+
+                if ($createFlag) {
                     try {
                         $this->entityHandler->create($datasetSubmission);
                     } catch (AccessDeniedException $e) {
