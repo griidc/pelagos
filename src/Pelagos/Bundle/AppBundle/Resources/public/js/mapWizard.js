@@ -340,6 +340,7 @@ function MapWizard(json)
             $("#olmap").on("gmlConverted", function(e, eventObj) {
                 var addedFeature = wizGeoViz.addFeatureFromWKT(eventObj);
                 $("#coordlist").val(wizGeoViz.getCoordinateList(addedFeature.id));
+                $("#inputGml").val($(gmlField).val());
                 // Disable the form if there are multiple features.
                 // Because The Wizard does not know how to save those.
                 $("#mapwiz #saveFeature").prop("disabled", addedFeature.length != undefined)
@@ -590,7 +591,12 @@ function MapWizard(json)
 
         $("#olmap").on("featureAdded", function(e, eventInfo) {
             $("#coordlist").val(eventInfo);
-            $("#inputGml").val(); //wait
+
+            //populate gml
+             var wkt = wizGeoViz.getWKT(wizGeoViz.getSingleFeature());
+             wizGeoViz.wktToGML(wkt).then(function (gml) {
+               $("#inputGml").val(gml);
+             });
 
             //populate bounding box fields
             bbArray = wizGeoViz.getBBOX(wizGeoViz.getSingleFeature());
@@ -613,7 +619,6 @@ function MapWizard(json)
 
         $("#olmap").on("modeChange", function(e, eventInfo) {
             $("#wizDrawMode").html(eventInfo);
-
             switch (eventInfo.trim())
             {
                 case "Navigation":
