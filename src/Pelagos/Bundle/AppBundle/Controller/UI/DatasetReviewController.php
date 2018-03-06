@@ -353,6 +353,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     public function postAction(Request $request, $id = null)
     {
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
+        $acceptedDataset = false;
         $form = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionType::class,
@@ -381,7 +382,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     break;
                 case ($form->get('acceptDatasetBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_ACCEPT_REVIEW);
-                    $this->createMetaData($datasetSubmission);
+                    $acceptedDataset = true;
                     break;
                 case ($form->get('requestRevisionsBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_REQUEST_REVISIONS);
@@ -391,6 +392,14 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             $this->entityHandler->update($datasetSubmission->getDatasetSubmissionReview());
 
             $this->entityHandler->update($datasetSubmission);
+
+
+            // Need to create MetaData after datasetSubmission is updated for an ACCEPTED DATASET.
+
+            if ($acceptedDataset) {
+                $datasetSubmissionAccepted = $this->entityHandler->get(DatasetSubmission::class, $id);
+                $this->createMetaData($datasetSubmissionAccepted);
+            }
 
             foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                 $this->entityHandler->update($datasetContact);
