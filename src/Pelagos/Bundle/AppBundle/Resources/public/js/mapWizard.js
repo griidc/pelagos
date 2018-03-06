@@ -598,7 +598,8 @@ function MapWizard(json)
 
             //populate gml
              var wkt = wizGeoViz.getWKT(wizGeoViz.getSingleFeature());
-             wizGeoViz.wktToGML(wkt).then(function (gml) {
+             var wgsWKT = wizGeoViz.wktTransformToWGS84(wkt);
+             wizGeoViz.wktToGML(wgsWKT).then(function (gml) {
                  $("#inputGml").val(gml);
              });
 
