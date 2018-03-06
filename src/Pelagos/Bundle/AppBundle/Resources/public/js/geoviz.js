@@ -555,10 +555,10 @@ function GeoViz()
             type: "POST",
             data: {gml: GML},
             context: document.body
-            }).done(function(html) {
-                jQuery(mapDiv).trigger("gmlConverted",html);
-            return html;
-        });
+            })
+            .done(function(wkt) {
+                return wkt;
+            });
     }
 
     this.wktToGML = function (WKT)
@@ -568,9 +568,9 @@ function GeoViz()
             type: "POST",
             data: {wkt: WKT},
             context: document.body
-            }).done(function(html) {
-                jQuery(mapDiv).trigger("wktConverted",html);
-            return html;
+            })
+            .done(function(gml) {
+                return gml;
         });
     }
 

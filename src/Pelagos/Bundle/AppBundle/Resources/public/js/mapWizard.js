@@ -62,7 +62,13 @@ function MapWizard(json)
         smlGeoViz.goHome();
         smlGeoViz.removeImage();
         smlGeoViz.removeAllFeaturesFromMap();
-        smlGeoViz.gmlToWKT(gml);
+        smlGeoViz.gmlToWKT(gml)
+            .then(function (wkt){
+                smlGeoViz.removeAllFeaturesFromMap();
+                var addedFeature = smlGeoViz.addFeatureFromWKT(wkt);
+                smlGeoViz.gotoAllFeatures();
+                geometryType = smlGeoViz.getSingleFeatureClass();
+            });
     }
 
     function init()
@@ -83,18 +89,17 @@ function MapWizard(json)
             async:   false
         });
 
-        $(divSmallMap).on("gmlConverted", function(e, eventObj) {
-            smlGeoViz.removeAllFeaturesFromMap();
-            var addedFeature = smlGeoViz.addFeatureFromWKT(eventObj);
-            smlGeoViz.gotoAllFeatures();
-            geometryType = smlGeoViz.getSingleFeatureClass();
-        });
-
         $(gmlField).change(function() {
             smlGeoViz.goHome();
             smlGeoViz.removeImage();
             smlGeoViz.removeAllFeaturesFromMap();
-            smlGeoViz.gmlToWKT($(gmlField).val());
+            smlGeoViz.gmlToWKT($(gmlField).val())
+                .then(function (wkt){
+                    smlGeoViz.removeAllFeaturesFromMap();
+                    var addedFeature = smlGeoViz.addFeatureFromWKT(wkt);
+                    smlGeoViz.gotoAllFeatures();
+                    geometryType = smlGeoViz.getSingleFeatureClass();
+                });
         });
 
         $("#geowizBtn").button().click(function()
@@ -594,7 +599,7 @@ function MapWizard(json)
             //populate gml
              var wkt = wizGeoViz.getWKT(wizGeoViz.getSingleFeature());
              wizGeoViz.wktToGML(wkt).then(function (gml) {
-               $("#inputGml").val(gml);
+                 $("#inputGml").val(gml);
              });
 
             //populate bounding box fields
