@@ -342,11 +342,8 @@ function MapWizard(json)
                 $("#coordlist").val(wizGeoViz.getCoordinateList(addedFeature.id));
                 $("#inputGml").val(gml);
                 // Disable the form if there are multiple features.
-              // Because The Wizard does not know how to save those.
-              $("#mapwiz #saveFeature").prop("disabled", addedFeature.length != undefined)
-            });
-            $("#olmap").on("gmlConverted", function(e, eventObj) {
-
+                // Because The Wizard does not know how to save those.
+                $("#mapwiz #saveFeature").prop("disabled", addedFeature.length != undefined)
             });
             featureSend = true;
         }
