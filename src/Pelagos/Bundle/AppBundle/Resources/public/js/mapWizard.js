@@ -334,20 +334,23 @@ function MapWizard(json)
 
     function finalizeMap()
     {
-        if ($(gmlField).val() != "")// && !featureSend)
+        var gml = $(gmlField).val();
+        if (gml != "")// && !featureSend)
         {
-            wizGeoViz.gmlToWKT($(gmlField).val());
-            $("#olmap").on("gmlConverted", function(e, eventObj) {
-                var addedFeature = wizGeoViz.addFeatureFromWKT(eventObj);
+            wizGeoViz.gmlToWKT(gml).then(function (wkt){
+                var addedFeature = wizGeoViz.addFeatureFromWKT(wkt);
                 $("#coordlist").val(wizGeoViz.getCoordinateList(addedFeature.id));
-                $("#inputGml").val($(gmlField).val());
+                $("#inputGml").val(gml);
                 // Disable the form if there are multiple features.
-                // Because The Wizard does not know how to save those.
-                $("#mapwiz #saveFeature").prop("disabled", addedFeature.length != undefined)
+              // Because The Wizard does not know how to save those.
+              $("#mapwiz #saveFeature").prop("disabled", addedFeature.length != undefined)
+            });
+            $("#olmap").on("gmlConverted", function(e, eventObj) {
+
             });
             featureSend = true;
         }
-        else if ($(gmlField).val() == "")
+        else if (gml == "")
         {
             $("#helpinfo").dialog("open");
         }
@@ -539,7 +542,7 @@ function MapWizard(json)
             var wgsWKT = wizGeoViz.wktTransformToWGS84(myWKT);
             //run GML validation if the SEW is opened with dataset review,
             if (true === validateGeometry) {
-                validateGmlFromWkt(wgsWKT)
+                validateGeometryFromWkt(wgsWKT)
                     .then(function () {
                         wizGeoViz.wktToGML(wgsWKT).then(function (gml) {
                             $(gmlField).val(gml);
@@ -549,9 +552,8 @@ function MapWizard(json)
                         closeDialog();
                     });
             } else {
-                wizGeoViz.wktToGML(wgsWKT)
-                $("#olmap").on("wktConverted", function(e, eventObj) {
-                    $(gmlField).val(eventObj);
+                wizGeoViz.wktToGML(wgsWKT).then(function (gml){
+                    $(gmlField).val(gml);
                     $(gmlField).trigger("change");
                     $(descField).val("");
                     closeDialog();
@@ -564,10 +566,10 @@ function MapWizard(json)
         }
     }
 
-    function validateGmlFromWkt(wkt)
+    function validateGeometryFromWkt(wkt)
     {
         return $.ajax({
-            url: Routing.generate("pelagos_app_gml_validategmlfromwkt"),
+            url: Routing.generate("pelagos_app_gml_validategeometryfromwkt"),
             type: "POST",
             data: {wkt: wkt},
             success: function(data, textStatus, jqXHR){

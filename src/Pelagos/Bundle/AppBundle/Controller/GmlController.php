@@ -148,19 +148,19 @@ class GmlController extends Controller
     }
 
   /**
-   * This function validate GML from wkt.
+   * This function validate Geometry from a given wkt.
    *
    * @param Request $request The Symfony request object.
    *
    * @Method("POST")
    *
-   * @Route("/validategmlfromwkt")
+   * @Route("/validategeometryfromwkt")
    *
    * @throws BadRequestHttpException When no WKT is given.
    *
    * @return Response Includes boolean and invalid reason.
    */
-    public function validateGmlFromWktAction(Request $request)
+    public function validateGeometryFromWktAction(Request $request)
     {
         $wkt = $request->request->get('wkt');
         if (!empty($wkt)) {
