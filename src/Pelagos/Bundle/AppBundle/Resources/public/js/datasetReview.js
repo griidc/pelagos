@@ -186,7 +186,8 @@ $(document).ready(function(){
             "gmlField":"spatialExtent",
             "descField":"spatialExtentDescription",
             "spatialFunction":"checkSpatial",
-            "validateGeometry": true
+            "validateGeometry": true,
+            "inputGmlControl": true,
         }
     );
 

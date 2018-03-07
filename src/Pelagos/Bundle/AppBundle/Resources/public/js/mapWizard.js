@@ -21,7 +21,7 @@ function MapWizard(json)
     var gmlField = "#"+json.gmlField;
     var descField = "#"+json.descField;
     var validateGeometry = json.validateGeometry;
-
+    var inputGmlControl = json.inputGmlControl;
     var diaWidth = $(window).width()*.8;
     var diaHeight = $(window).height()*.8;
 
@@ -62,7 +62,13 @@ function MapWizard(json)
         smlGeoViz.goHome();
         smlGeoViz.removeImage();
         smlGeoViz.removeAllFeaturesFromMap();
-        smlGeoViz.gmlToWKT(gml);
+        smlGeoViz.gmlToWKT(gml)
+            .then(function (wkt){
+                smlGeoViz.removeAllFeaturesFromMap();
+                var addedFeature = smlGeoViz.addFeatureFromWKT(wkt);
+                smlGeoViz.gotoAllFeatures();
+                geometryType = smlGeoViz.getSingleFeatureClass();
+            });
     }
 
     function init()
@@ -83,18 +89,17 @@ function MapWizard(json)
             async:   false
         });
 
-        $(divSmallMap).on("gmlConverted", function(e, eventObj) {
-            smlGeoViz.removeAllFeaturesFromMap();
-            var addedFeature = smlGeoViz.addFeatureFromWKT(eventObj);
-            smlGeoViz.gotoAllFeatures();
-            geometryType = smlGeoViz.getSingleFeatureClass();
-        });
-
         $(gmlField).change(function() {
             smlGeoViz.goHome();
             smlGeoViz.removeImage();
             smlGeoViz.removeAllFeaturesFromMap();
-            smlGeoViz.gmlToWKT($(gmlField).val());
+            smlGeoViz.gmlToWKT($(gmlField).val())
+                .then(function (wkt){
+                    smlGeoViz.removeAllFeaturesFromMap();
+                    var addedFeature = smlGeoViz.addFeatureFromWKT(wkt);
+                    smlGeoViz.gotoAllFeatures();
+                    geometryType = smlGeoViz.getSingleFeatureClass();
+                });
         });
 
         $("#geowizBtn").button().click(function()
@@ -164,6 +169,13 @@ function MapWizard(json)
         });
 
         setEvents();
+
+        //only show input GML tab on dataset-review
+        if (true === inputGmlControl) {
+            $("#coordTabs a[href=#gmlTab]").parent().show();
+        } else {
+            $("#coordTabs a[href=#gmlTab]").parent().hide();
+        }
     }
 
     function showWizard()
@@ -327,20 +339,20 @@ function MapWizard(json)
 
     function finalizeMap()
     {
-        if ($(gmlField).val() != "")// && !featureSend)
+        var gml = $(gmlField).val();
+        if (gml != "")// && !featureSend)
         {
-            wizGeoViz.gmlToWKT($(gmlField).val());
-
-            $("#olmap").on("gmlConverted", function(e, eventObj) {
-                var addedFeature = wizGeoViz.addFeatureFromWKT(eventObj);
+            wizGeoViz.gmlToWKT(gml).then(function (wkt){
+                var addedFeature = wizGeoViz.addFeatureFromWKT(wkt);
                 $("#coordlist").val(wizGeoViz.getCoordinateList(addedFeature.id));
+                $("#inputGml").val(gml);
                 // Disable the form if there are multiple features.
                 // Because The Wizard does not know how to save those.
                 $("#mapwiz #saveFeature").prop("disabled", addedFeature.length != undefined)
             });
             featureSend = true;
         }
-        else if ($(gmlField).val() == "")
+        else if (gml == "")
         {
             $("#helpinfo").dialog("open");
         }
@@ -458,25 +470,36 @@ function MapWizard(json)
 
     function renderOnMap()
     {
-        var whichTab = $("#coordTabs").tabs("option", "active");
-
+        var activeTabIndex = $("#coordTabs").tabs("option", "active");
         $("#saveFeature").button("disable");
         wizGeoViz.stopDrawing();
         wizGeoViz.removeAllFeaturesFromMap();
 
-        if (whichTab != 1)
-        {
-            whatIsCoordinateOrder();
+        switch(activeTabIndex) {
+            //coordinate list tab
+            case 0:
+                whatIsCoordinateOrder();
+                break;
+            //bounding box tab
+            case 1:
+                var maxLat = $("#maxLat").val();
+                var minLat = $("#minLat").val();
+                var maxLong = $("#maxLong").val();
+                var minLong = $("#minLong").val();
+                renderBoundingBox(maxLat,minLat,maxLong,minLong);
+                break;
+            //validate gml tab
+            case 2:
+                renderInputGml();
+                break;
         }
-        else
-        {
-            var maxLat = $("#maxLat").val();
-            var minLat = $("#minLat").val();
-            var maxLong = $("#maxLong").val();
-            var minLong = $("#minLong").val();
+    }
 
-            renderBoundingBox(maxLat,minLat,maxLong,minLong);
-        }
+    function renderInputGml()
+    {
+        wizGeoViz.gmlToWKT($("#inputGml").val()).then(function(wkt){
+            wizGeoViz.addFeatureFromWKT(wkt);
+        });
     }
 
     function renderBoundingBox(maxLong,minLong,maxLat,minLat)
@@ -521,7 +544,7 @@ function MapWizard(json)
             var wgsWKT = wizGeoViz.wktTransformToWGS84(myWKT);
             //run GML validation if the SEW is opened with dataset review,
             if (true === validateGeometry) {
-                validateGmlFromWkt(wgsWKT)
+                validateGeometryFromWkt(wgsWKT)
                     .then(function () {
                         wizGeoViz.wktToGML(wgsWKT).then(function (gml) {
                             $(gmlField).val(gml);
@@ -531,9 +554,8 @@ function MapWizard(json)
                         closeDialog();
                     });
             } else {
-                wizGeoViz.wktToGML(wgsWKT)
-                $("#olmap").on("wktConverted", function(e, eventObj) {
-                    $(gmlField).val(eventObj);
+                wizGeoViz.wktToGML(wgsWKT).then(function (gml){
+                    $(gmlField).val(gml);
                     $(gmlField).trigger("change");
                     $(descField).val("");
                     closeDialog();
@@ -546,11 +568,12 @@ function MapWizard(json)
         }
     }
 
-    function validateGmlFromWkt(wkt)
+    function validateGeometryFromWkt(wkt)
     {
         return $.ajax({
-            url: Routing.generate("pelagos_app_gml_validategmlfromwkt"),
-            data: {"wkt": wkt},
+            url: Routing.generate("pelagos_app_gml_validategeometryfromwkt"),
+            type: "POST",
+            data: {wkt: wkt},
             success: function(data, textStatus, jqXHR){
                 return jqXHR;
             }
@@ -573,6 +596,13 @@ function MapWizard(json)
         $("#olmap").on("featureAdded", function(e, eventInfo) {
             $("#coordlist").val(eventInfo);
 
+            //populate gml
+             var wkt = wizGeoViz.getWKT(wizGeoViz.getSingleFeature());
+             var wgsWKT = wizGeoViz.wktTransformToWGS84(wkt);
+             wizGeoViz.wktToGML(wgsWKT).then(function (gml) {
+                 $("#inputGml").val(gml);
+             });
+
             //populate bounding box fields
             bbArray = wizGeoViz.getBBOX(wizGeoViz.getSingleFeature());
             //minLong,minLat,maxLong,maxLat
@@ -594,7 +624,6 @@ function MapWizard(json)
 
         $("#olmap").on("modeChange", function(e, eventInfo) {
             $("#wizDrawMode").html(eventInfo);
-
             switch (eventInfo.trim())
             {
                 case "Navigation":
@@ -661,6 +690,7 @@ function MapWizard(json)
             wizGeoViz.removeAllFeaturesFromMap();
             smlGeoViz.removeAllFeaturesFromMap();
             $("#coordlist").val("");
+            $("#inputGml").val("");
             closeDialog();
             showSpatialDialog();
         })
@@ -673,6 +703,7 @@ function MapWizard(json)
             wizGeoViz.stopDrawing();
             wizGeoViz.removeAllFeaturesFromMap();
             $("#coordlist").val("");
+            $("#inputGml").val("");
             $("#saveFeature").button("disable");
             $("#startDrawing").button("enable");
             wizGeoViz.goHome();
@@ -759,12 +790,9 @@ function MapWizard(json)
 
     function closeDialog()
     {
-        try
-        {
+        try {
             $("#mapwiz").dialog("destroy").remove();
-        }
-        catch(err)
-        {
+        } catch(err) {
             console.log(err.message);
         }
     }
@@ -782,9 +810,13 @@ function MapWizard(json)
         tblHgt = tblHgt - $("#coordlistLbl").height();
         tblHgt = tblHgt - 50; //padding
 
-        $("#coordlist").height((tblHgt*.3));
+        var coordList = $("#coordlist");
+        coordList.height((tblHgt*.3));
         $("#maphelptxt").height((tblHgt*.3));
-        $("#coordlist").css("max-width:"+$("#coordlist").width()+"px;")
-    }
+        coordList.css("max-width:"+coordList.width()+"px;")
 
+        var inputGml = $("#inputGml");
+        inputGml.height((tblHgt*.3));
+        inputGml.css("max-width:"+inputGml.width()+"px;")
+    }
 }
