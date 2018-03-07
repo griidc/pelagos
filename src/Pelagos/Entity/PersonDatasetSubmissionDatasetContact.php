@@ -26,22 +26,11 @@ class PersonDatasetSubmissionDatasetContact extends PersonDatasetSubmission
     protected $datasetSubmission;
 
     /**
-     * Whether this entity is a primary contact, or not.
-     *
-     * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=false)
+     * Class constructor.
      */
-    protected $primaryContact;
-
-    /**
-     * Getter for primary contact indicator.
-     *
-     * @return boolean
-     */
-    public function isPrimaryContact()
+    public function __construct()
     {
-        return $this->primaryContact;
+        $this->primaryContact = false;
     }
 
     /**
@@ -54,13 +43,5 @@ class PersonDatasetSubmissionDatasetContact extends PersonDatasetSubmission
     public function setPrimaryContact($state)
     {
         $this->primaryContact = $state;
-    }
-
-    /**
-     * Class constructor.
-     */
-    public function __construct()
-    {
-        $this->primaryContact = false;
     }
 }

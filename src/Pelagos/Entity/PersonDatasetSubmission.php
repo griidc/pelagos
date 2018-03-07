@@ -143,4 +143,23 @@ abstract class PersonDatasetSubmission extends Entity
     {
         return $this->datasetSubmission;
     }
+
+    /**
+     * Whether this entity is a primary contact, or not.
+     *
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $primaryContact;
+
+    /**
+     * Getter for primary contact indicator.
+     *
+     * @return boolean
+     */
+    public function isPrimaryContact()
+    {
+        return $this->primaryContact;
+    }
 }
