@@ -18,7 +18,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class GmlController extends Controller
 {
     /**
-     * The List the Lists action.
+     * Converting gml to wkt.
      *
      * @param Request $request The Symfony request object.
      *
@@ -28,13 +28,13 @@ class GmlController extends Controller
      *
      * @throws BadRequestHttpException When no GML is given.
      *
-     * @return Response A list of Lists.
+     * @return Response A response containing converted wkt.
      */
     public function toWktAction(Request $request)
     {
         $gml = $request->request->get('gml');
 
-        if ($gml !== null and $gml !== '') {
+        if (!empty($gml)) {
             $query = 'SELECT ST_asText(ST_GeomFromGML(:gml, 4326));';
             $connection = $this->getDoctrine()->getManager()->getConnection();
             $statement = $connection->prepare($query);
@@ -42,7 +42,6 @@ class GmlController extends Controller
             $statement->execute();
             $results = $statement->fetchAll();
             $wkt = $results[0]['st_astext'];
-
             return new Response(
                 $wkt,
                 Response::HTTP_OK,
@@ -54,7 +53,7 @@ class GmlController extends Controller
     }
 
     /**
-     * The Research Group Generate List action.
+     * Converting wkt to gml.
      *
      * @param Request $request The Symfony request object.
      *
@@ -64,13 +63,13 @@ class GmlController extends Controller
      *
      * @throws BadRequestHttpException When no WKT is given.
      *
-     * @return Response A list of Research Groups.
+     * @return Response A response containing converted gml.
      */
     public function fromWktAction(Request $request)
     {
         $wkt = $request->request->get('wkt');
 
-        if ($wkt !== null and $wkt !== '') {
+        if (!empty($wkt)) {
             $query = 'SELECT ST_asGML(3,ST_GeomFromText(:wkt,4326),5,17)';
             $connection = $this->getDoctrine()->getManager()->getConnection();
             $statement = $connection->prepare($query);
@@ -149,23 +148,22 @@ class GmlController extends Controller
     }
 
   /**
-   * This function validate GML from wkt.
+   * This function validate Geometry from a given wkt.
    *
    * @param Request $request The Symfony request object.
    *
-   * @Method("GET")
+   * @Method("POST")
    *
-   * @Route("/validategmlfromwkt")
+   * @Route("/validategeometryfromwkt")
    *
    * @throws BadRequestHttpException When no WKT is given.
    *
    * @return Response Includes boolean and invalid reason.
    */
-    public function validateGmlFromWktAction(Request $request)
+    public function validateGeometryFromWktAction(Request $request)
     {
-        $params = $request->query->all();
-        if (isset($params['wkt'])) {
-            $wkt = $params['wkt'];
+        $wkt = $request->request->get('wkt');
+        if (!empty($wkt)) {
             try {
                 \geoPHP::load($wkt, 'wkt');
             } catch (\Exception $exception) {

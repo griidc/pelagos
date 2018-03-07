@@ -163,7 +163,7 @@ $(document).ready(function(){
         autoSize:true
     });
 
-    $("#ds-contact").on("active", function() {
+    $("#ds-contact,#ds-metadata-contact").on("active", function() {
         select2ContactPerson();
     });
 
@@ -186,7 +186,8 @@ $(document).ready(function(){
             "gmlField":"spatialExtent",
             "descField":"spatialExtentDescription",
             "spatialFunction":"checkSpatial",
-            "validateGeometry": true
+            "validateGeometry": true,
+            "inputGmlControl": true,
         }
     );
 
