@@ -235,7 +235,7 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Metadata Contacts',
                 'entry_type' => PersonDatasetSubmissionType::class,
                 'entry_options' => array(
-                'data_class' => PersonDatasetSubmissionMetadataContact::class,
+                    'data_class' => PersonDatasetSubmissionMetadataContact::class,
                 ),
                 'by_reference' => false,
                 'allow_add' => true,
