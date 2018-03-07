@@ -626,7 +626,7 @@ class Dataset extends Entity
         $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE;
         switch ($this->getDatasetSubmission()->getDatasetFileTransferStatus()) {
             case DatasetSubmission::TRANSFER_STATUS_COMPLETED:
-                if ($this->getDatasetSubmission()->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+                if ($this->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
                     switch ($this->getDatasetSubmission()->getRestrictions()) {
                         case DatasetSubmission::RESTRICTION_NONE:
                             $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE;
@@ -643,7 +643,7 @@ class Dataset extends Entity
                 }
                 break;
             case DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED:
-                if ($this->getDatasetSubmission()->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+                if ($this->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
                     switch ($this->getDatasetSubmission()->getRestrictions()) {
                         case DatasetSubmission::RESTRICTION_NONE:
                             $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED;
