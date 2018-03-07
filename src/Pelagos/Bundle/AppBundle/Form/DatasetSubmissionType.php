@@ -230,6 +230,18 @@ class DatasetSubmissionType extends AbstractType
                 'delete_empty' => true,
                 'required' => true,
             ))
+            ->add('metadataContacts', Type\CollectionType::class, array(
+                'label' => 'Metadata Contacts',
+                'entry_type' => PersonDatasetSubmissionType::class,
+                'entry_options' => array(
+                'data_class' => PersonDatasetSubmissionMetadataContact::class,
+                ),
+                'by_reference' => false,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'delete_empty' => true,
+                'required' => true,
+            ))
             ->add('submitButton', Type\SubmitType::class, array(
                 'label' => 'Submit',
                 'attr'  => array('class' => 'submitButton'),
