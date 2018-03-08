@@ -105,21 +105,15 @@ class DatasetSubmissionConsumer implements ConsumerInterface
      */
     public function execute(AMQPMessage $message)
     {
-        $messageIds = [];
+        $datasetSubmissionId = $message->body;
 
-        // Explode the concatenated string into an array with their appropriate keys.
-        foreach (explode(', ', $message) as $item) {
-            list($key, $value) = explode('=', $item);
-            $messageIds[$key] = $value;
-        }
-
-        $datasetId = $messageIds['datasetId'];
-        $loggingContext = array('dataset_id' => $datasetId);
         // Clear Doctrine's cache to force loading from persistence.
         $this->entityManager->clear();
-        $dataset = $this->entityManager
-                        ->getRepository(Dataset::class)
-                        ->find($datasetId);
+        $datasetSubmission = $this->entityManager
+                        ->getRepository(DatasetSubmission::class)
+                        ->find($datasetSubmissionId);
+        $dataset = $datasetSubmission->getDataset();
+        $loggingContext = array('dataset_id' => $datasetSubmission->getDataset()->getId());
         if (!$dataset instanceof Dataset) {
             $this->logger->warning('No dataset found', $loggingContext);
             return true;
@@ -127,12 +121,6 @@ class DatasetSubmissionConsumer implements ConsumerInterface
         if (null !== $dataset->getUdi()) {
             $loggingContext['udi'] = $dataset->getUdi();
         }
-
-        $datasetSubmissionId = $messageIds['datasetSubmissionId'];
-        $this->entityManager->clear();
-        $datasetSubmission = $this->entityManager
-            ->getRepository(DatasetSubmission::class)
-            ->find($datasetSubmissionId);
 
         if (!$datasetSubmission instanceof DatasetSubmission) {
             $this->logger->warning('No submission found for dataset', $loggingContext);
@@ -149,7 +137,7 @@ class DatasetSubmissionConsumer implements ConsumerInterface
             return true;
         }
         $this->entityManager->persist($datasetSubmission);
-//        $this->entityManager->persist($dataset);
+        $this->entityManager->persist($dataset);
         $this->entityManager->flush();
         return true;
     }

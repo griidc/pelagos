@@ -45,13 +45,6 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
     protected $messages = array();
 
     /**
-     * Routing key sent to publish RabbitMQ.
-     *
-     * @var string
-     */
-    protected $routingKey = '';
-
-    /**
      * The default action for Dataset Submission.
      *
      * @param Request $request The Symfony request object.
@@ -237,21 +230,9 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
             );
 
             foreach ($this->messages as $message) {
-                $messagePublished = implode(', ', array_map(
-                    function ($value, $key) {
-                        if(is_array($value)){
-                            return $key.'[]='.implode('&'.$key.'[]=', $value);
-                        }else{
-                            return $key.'='.$value;
-                        }
-                    },
-                    $message,
-                    array_keys($message)
-                ));
-                // Publish method in RabbitMQ Producer class accepts only the body param as a string.
                 $this->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(
-                    $messagePublished,
-                    $this->routingKey
+                    $message['body'],
+                    $message['routing_key']
                 );
             }
 
@@ -309,10 +290,9 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
         $datasetSubmission->setDatasetFileSha1Hash(null);
         $datasetSubmission->setDatasetFileSha256Hash(null);
         $this->messages[] = array(
-            'datasetId' => $datasetSubmission->getDataset()->getId(),
-            'datasetSubmissionId' => $datasetSubmission->getId(),
+            'body' => $datasetSubmission->getId(),
+            'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
         );
-        $this->routingKey = 'dataset.' . $datasetSubmission->getDatasetFileTransferType();
     }
 
     /**
