@@ -146,7 +146,7 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
         $to = $request->request->get('to');
         $message = null;
         if (null !== $to) {
-            if ('Accepted' == $to and $dataset->getMetadata() instanceof Metadata) {
+            if ('Accepted' == $to) {
                 $datasetSubmission = $dataset->getDatasetSubmission();
                 $datasetSubmission->setMetadataStatus($to);
                 $entityHandler->update($datasetSubmission);
@@ -168,6 +168,7 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
                 $message = "Status for $udi has been changed from $from to $to.";
             }
         }
+
         $this->get('session')->getFlashBag()->add('notice', $message);
         return $this->redirectToRoute('pelagos_app_ui_mdapp_default');
     }
