@@ -41,22 +41,11 @@ class DatalandController extends UIController
         $rawXml = null;
         $wkt = null;
 
-        if ($dataset->getMetadata() instanceof Metadata
-            and $dataset->getMetadata()->getXml() instanceof \SimpleXMLElement) {
-            $rawXml = $dataset->getMetadata()->getXml()->asXml();
+        if ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+            $rawXml = $this->get('pelagos.util.metadata')->getXmlRepresentation($dataset);
         }
-
-        if ($dataset->getDif() instanceof DIF) {
-            $wkt = $geometryUtil->convertGmlToWkt(
-                $dataset
-                ->getDif()
-                ->getSpatialExtentGeometry()
-            );
-        }
-
-        if ($dataset->getMetadata() instanceof Metadata) {
-            $wkt = $dataset->getMetadata()->getGeometry();
-        }
+        //Logic to get DIF or Accepted Dataset is in Dataset Entity.
+        $wkt = $geometryUtil->convertGmlToWkt($dataset->getSpatialExtentGeometry());
 
         $downloadCount = null;
         // Remotely hosted datasets are normally also hosted locally anyway, so including.
