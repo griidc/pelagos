@@ -8,7 +8,6 @@ use FOS\ElasticaBundle\Event\TypePopulateEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 use Pelagos\Entity\Dataset;
-use Pelagos\Entity\Metadata;
 use Pelagos\Util\Geometry;
 
 /**
@@ -51,16 +50,12 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
         $document = $event->getDocument();
 
         $wkt = null;
-        if ($dataset->hasMetadata()) {
-            $wkt = $dataset->getMetadata()->getGeometry();
-            if (preg_match('/^</', $wkt)) {
-                $wkt = $this->geometryUtil->convertGmlToWkt($wkt);
-            }
-        } elseif ($dataset->hasDif() and null !== $dataset->getDif()->getSpatialExtentGeometry()) {
-            $wkt = $this->geometryUtil->convertGmlToWkt(
-                $dataset->getDif()->getSpatialExtentGeometry()
-            );
-        }
+
+        // Logic to get the spatialExtent is in Dataset Entity.
+        $wkt = $this->geometryUtil->convertGmlToWkt(
+            $dataset->getDif()->getSpatialExtentGeometry()
+        );
+
         if (null !== $wkt) {
             $document->set('geometry', $wkt);
             $geometry = \geoPHP::load($wkt, 'wkt');
