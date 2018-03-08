@@ -97,18 +97,13 @@ class DatalandController extends UIController
     {
         $dataset = $this->getDataset($udi);
 
-        if (!$dataset->getMetadata() instanceof Metadata
-            or !$dataset->getMetadata()->getXml() instanceof \SimpleXMLElement) {
-            throw $this->createNotFoundException("No metadata found for dataset with UDI: $udi");
-        }
-
         if ($dataset->getMetadataStatus() !== DatasetSubmission::METADATA_STATUS_ACCEPTED) {
             throw new BadRequestHttpException("The metadata has not yet been accepted for dataset with UDI: $udi");
         }
 
         $filename = str_replace(':', '-', $udi) . '-metadata.xml';
 
-        $response = new Response($dataset->getMetadata()->getXml()->asXml());
+        $response = new Response($this->get('pelagos.util.metadata')->getXmlRepresentation($dataset));
         $response->headers->set('Content-Type', 'text/xml');
         $response->headers->set('Content-Disposition', "attachment; filename=$filename;");
         return $response;
