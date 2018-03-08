@@ -45,6 +45,13 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
     protected $messages = array();
 
     /**
+     * Routing key sent to publish RabbitMQ.
+     *
+     * @var string
+     */
+    protected $routingKey = '';
+
+    /**
      * The default action for Dataset Submission.
      *
      * @param Request $request The Symfony request object.
@@ -230,9 +237,21 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
             );
 
             foreach ($this->messages as $message) {
+                $messagePublished = implode(', ', array_map(
+                    function ($value, $key) {
+                        if(is_array($value)){
+                            return $key.'[]='.implode('&'.$key.'[]=', $value);
+                        }else{
+                            return $key.'='.$value;
+                        }
+                    },
+                    $message,
+                    array_keys($message)
+                ));
+                // Publish method in RabbitMQ Producer class accepts only the body param as a string.
                 $this->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(
-                    $message['body'],
-                    $message['routing_key']
+                    $messagePublished,
+                    $this->routingKey
                 );
             }
 
@@ -290,9 +309,10 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
         $datasetSubmission->setDatasetFileSha1Hash(null);
         $datasetSubmission->setDatasetFileSha256Hash(null);
         $this->messages[] = array(
-            'body' => $datasetSubmission->getDataset()->getId(),
-            'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
+            'datasetId' => $datasetSubmission->getDataset()->getId(),
+            'datasetSubmissionId' => $datasetSubmission->getId(),
         );
+        $this->routingKey = 'dataset.' . $datasetSubmission->getDatasetFileTransferType();
     }
 
     /**

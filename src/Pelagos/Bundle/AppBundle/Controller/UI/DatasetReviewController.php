@@ -39,6 +39,13 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     protected $messages = array();
 
     /**
+     * Routing key sent to publish RabbitMQ.
+     *
+     * @var string
+     */
+    protected $routingKey = '';
+
+    /**
      * The default action for Dataset Review.
      *
      * @param Request $request The Symfony request object.
@@ -407,9 +414,27 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
 
             //use rabbitmq to process dataset file and persist the file details.
             foreach ($this->messages as $message) {
+
+                /* Publish method in RabbitMQ Producer class accepts only the body param as a string and uses it
+                   to create the AMQPMessage object which is used in the Consumer. To access both datasetId and
+                   datasetSubmissionId with their respective keys, it needs to be imploded into a single string with a
+                   delimiter.
+                */
+                $messagePublished = implode(', ', array_map(
+                    function ($value, $key) {
+                        if(is_array($value)){
+                            return $key.'[]='.implode('&'.$key.'[]=', $value);
+                        }else{
+                            return $key.'='.$value;
+                        }
+                    },
+                    $message,
+                    array_keys($message)
+                ));
+
                 $this->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(
-                    $message['body'],
-                    $message['routing_key']
+                    $messagePublished,
+                    $this->routingKey
                 );
             }
 
@@ -467,9 +492,10 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         $datasetSubmission->setDatasetFileSha1Hash(null);
         $datasetSubmission->setDatasetFileSha256Hash(null);
         $this->messages[] = array(
-            'body' => $datasetSubmission->getDataset()->getId(),
-            'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
+            'datasetId' => $datasetSubmission->getDataset()->getId(),
+            'datasetSubmissionId' => $datasetSubmission->getId(),
         );
+        $this->routingKey = 'dataset.' . $datasetSubmission->getDatasetFileTransferType();
     }
 
     /**
