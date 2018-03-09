@@ -290,7 +290,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
         $datasetSubmission->setDatasetFileSha1Hash(null);
         $datasetSubmission->setDatasetFileSha256Hash(null);
         $this->messages[] = array(
-            'body' => $datasetSubmission->getDataset()->getId(),
+            'body' => $datasetSubmission->getId(),
             'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
         );
     }
