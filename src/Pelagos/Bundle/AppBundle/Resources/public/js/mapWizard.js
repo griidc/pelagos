@@ -474,7 +474,6 @@ function MapWizard(json)
         $("#saveFeature").button("disable");
         wizGeoViz.stopDrawing();
         wizGeoViz.removeAllFeaturesFromMap();
-
         switch(activeTabIndex) {
             //coordinate list tab
             case 0:
@@ -540,7 +539,7 @@ function MapWizard(json)
     {
         var myWKTid = wizGeoViz.getSingleFeature();
         if (typeof myWKTid !== "undefined") {
-            var myWKT = wizGeoViz.getWKT(myWKTid);
+            var myWKT = wizGeoViz.getWktFromFeatures();
             var wgsWKT = wizGeoViz.wktTransformToWGS84(myWKT);
             //run GML validation if the SEW is opened with dataset review,
             if (true === validateGeometry) {
@@ -597,7 +596,7 @@ function MapWizard(json)
             $("#coordlist").val(eventInfo);
 
             //populate gml
-             var wkt = wizGeoViz.getWKT(wizGeoViz.getSingleFeature());
+             var wkt = wizGeoViz.getWktFromFeatures();
              var wgsWKT = wizGeoViz.wktTransformToWGS84(wkt);
              wizGeoViz.wktToGML(wgsWKT).then(function (gml) {
                  $("#inputGml").val(gml);

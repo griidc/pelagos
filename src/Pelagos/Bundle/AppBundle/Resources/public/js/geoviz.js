@@ -1065,18 +1065,31 @@ function GeoViz()
         { return false; }
     }
 
+    this.getWktFromFeatures = function ()
+    {   var Features = vlayer.features
+        if (typeof Features == "object" && Features != null)
+        {
+            return this.wkt.write(Features);
+        }
+        else
+        { return false; }
+    }
+
     this.getWKTFromBounds = function(left, bottom, right, top)
     {
         var bounds = new OpenLayers.Bounds.fromArray(Array(left, bottom, right, top));
         var myGeometry = bounds.toGeometry();
         var newFeature = new OpenLayers.Feature.Vector(myGeometry);
         var myWKT = this.wkt.write(newFeature);
-
         return myWKT;
     }
 
     this.getBBOX = function(FeatureID)
     {
+        if (vlayer.features.length > 1) {
+            return "";
+        }
+
         var myWKT = this.getWKT(FeatureID);
 
         var wgs84WKT = this.wktTransformToWGS84(myWKT);
