@@ -1,0 +1,3 @@
+{% set contact = form.metadataContacts | first %}
+<input type="hidden" id="metadatacontact" name="{{contact.person.vars.full_name}}" value="{{contact.vars.data.person.id}}">
+<input type="hidden" id="metadatacontactrole" name="{{contact.role.vars.full_name}}" value="{{contact.vars.data.role}}">
