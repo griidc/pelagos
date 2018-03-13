@@ -116,24 +116,7 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
             return $response;
         }
 
-        // This could also happen via end-user action if manually entering values on URL.
-        $metadata = $dataset->getMetadata();
-        if (null === $metadata) {
-            $response = new Response('This dataset has no Metadata in database.');
-            return $response;
-        }
-
-        // This isn't likely, but included for robustness.
-        $metadataSimpleXml = $metadata->getXml();
-        if (null === $metadataSimpleXml) {
-            throw new \Exception("Could not retrieve SimpleXML object from Metadata for Dataset ID: $id");
-        }
-
-        // This really isn't likely, but included for robustness.
-        $metadataXml = $metadataSimpleXml->asXml();
-        if (false === $metadataXml) {
-            throw new \Exception("Could not convert SimpleXML into string representation for: $id");
-        }
+        $metadataXml = $this->get('pelagos.util.metadata')->getXmlRepresentation($dataset);
 
         $windowsFilenameSafeUdi = str_replace(':', '-', $dataset->getUdi());
         $response = new Response($metadataXml);
@@ -163,7 +146,7 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
         $to = $request->request->get('to');
         $message = null;
         if (null !== $to) {
-            if ('Accepted' == $to and $dataset->getMetadata() instanceof Metadata) {
+            if ('Accepted' == $to) {
                 $datasetSubmission = $dataset->getDatasetSubmission();
                 $datasetSubmission->setMetadataStatus($to);
                 $entityHandler->update($datasetSubmission);
@@ -185,6 +168,7 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
                 $message = "Status for $udi has been changed from $from to $to.";
             }
         }
+
         $this->get('session')->getFlashBag()->add('notice', $message);
         return $this->redirectToRoute('pelagos_app_ui_mdapp_default');
     }
