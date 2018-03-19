@@ -1066,8 +1066,14 @@ function GeoViz()
     }
 
     this.getWktFromFeatures = function ()
-    {   var Features = vlayer.features
-        if (typeof Features == "object" && Features != null)
+    {
+        if (this.hasMultiFeatures() === true) {
+            var Features = vlayer.features;
+        }
+        else {
+            var Features = vlayer.features[0];
+        }
+        if (typeof Features == "object" && null !== Features )
         {
             return this.wkt.write(Features);
         }
@@ -1086,10 +1092,6 @@ function GeoViz()
 
     this.getBBOX = function(FeatureID)
     {
-        if (vlayer.features.length > 1) {
-            return "";
-        }
-
         var myWKT = this.getWKT(FeatureID);
 
         var wgs84WKT = this.wktTransformToWGS84(myWKT);
@@ -1109,5 +1111,13 @@ function GeoViz()
         }
         else
         { return false; }
+    }
+
+    this.hasMultiFeatures = function()
+    {
+      if (vlayer.features.length > 1) {
+          return true;
+      }
+      return false;
     }
 }

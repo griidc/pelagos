@@ -492,6 +492,11 @@ function MapWizard(json)
                 renderInputGml();
                 break;
         }
+
+        if (activeTabIndex !== 2)
+        {
+            $("#inputGml").val("");
+        }
     }
 
     function renderInputGml()
@@ -543,22 +548,33 @@ function MapWizard(json)
             var wgsWKT = wizGeoViz.wktTransformToWGS84(myWKT);
             //run GML validation if the SEW is opened with dataset review,
             if (true === validateGeometry) {
-                validateGeometryFromWkt(wgsWKT)
-                    .then(function () {
-                        wizGeoViz.wktToGML(wgsWKT).then(function (gml) {
-                            $(gmlField).val(gml);
+                validateGeometryFromWkt(wgsWKT).then(function(isValid){
+                    if(isValid === "Valid Geometry") {
+                        if (wizGeoViz.hasMultiFeatures() === false)
+                        {
+                            wizGeoViz.wktToGML(wgsWKT).then(function(gml){
+                                $(gmlField).val(gml);
+                                $(gmlField).trigger("change");
+                                $(descField).val("");
+                            })
+                          closeDialog();
+                        }
+                        else
+                        {
+                            $(gmlField).val($("#inputGml").val());
                             $(gmlField).trigger("change");
                             $(descField).val("");
-                        });
-                        closeDialog();
-                    });
+                            closeDialog();
+                        }
+                    }
+                })
             } else {
-                wizGeoViz.wktToGML(wgsWKT).then(function (gml){
+                wizGeoViz.wktToGML(wgsWKT).then(function(gml){
                     $(gmlField).val(gml);
                     $(gmlField).trigger("change");
                     $(descField).val("");
                     closeDialog();
-                });
+                })
             }
         } else {
             $(gmlField).val("");
@@ -593,24 +609,30 @@ function MapWizard(json)
         });
 
         $("#olmap").on("featureAdded", function(e, eventInfo) {
-            $("#coordlist").val(eventInfo);
-
-            //populate gml
+            //populate
              var wkt = wizGeoViz.getWktFromFeatures();
              var wgsWKT = wizGeoViz.wktTransformToWGS84(wkt);
-             wizGeoViz.wktToGML(wgsWKT).then(function (gml) {
-                 $("#inputGml").val(gml);
-             });
+             if (false === wizGeoViz.hasMultiFeatures())
+             {
+                 $("#coordlist").val(eventInfo);
+                 //populate bounding box fields
+                 bbArray = wizGeoViz.getBBOX(wizGeoViz.getSingleFeature());
+                 //minLong,minLat,maxLong,maxLat
+                 $("#minLong").val(bbArray[0]);
+                 $("#minLat").val(bbArray[1]);
+                 $("#maxLong").val(bbArray[2]);
+                 $("#maxLat").val(bbArray[3]);
+             }
+             else
+             {
+                 $("#coordlist").val("");
+                 $("#minLong").val("");
+                 $("#minLat").val("");
+                 $("#maxLong").val("");
+                 $("#maxLat").val("");
+             }
 
-            //populate bounding box fields
-            bbArray = wizGeoViz.getBBOX(wizGeoViz.getSingleFeature());
-            //minLong,minLat,maxLong,maxLat
-            $("#minLong").val(bbArray[0]);
-            $("#minLat").val(bbArray[1]);
-            $("#maxLong").val(bbArray[2]);
-            $("#maxLat").val(bbArray[3]);
-
-            if (eventInfo.trim() != "")
+            if (eventInfo.trim() !== "" || $("#inputGml").val() !== "")
             { $("#saveFeature").button("enable"); }
             else
             { $("#saveFeature").button("disable"); }
