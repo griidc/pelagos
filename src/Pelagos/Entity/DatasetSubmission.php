@@ -1145,18 +1145,6 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * Sets the status of this dataset submission.
-     *
-     * @param integer $status The status for the dataset submission.
-     *
-     * @return void
-     */
-    public function setStatus($status)
-    {
-        $this->status = $status;
-    }
-
-    /**
      * Set the Dataset Submission Review for this Dataset Submission.
      *
      * @param DatasetSubmissionReview $datasetSubmissionReview The Review for this Dataset Submission.
@@ -2232,30 +2220,6 @@ class DatasetSubmission extends Entity
     public function getSubmissionTimeStamp()
     {
         return $this->submissionTimeStamp;
-    }
-
-    /**
-     * Set the submitter person manually.
-     *
-     * @param Person $submitter The person who submits the dataset.
-     *
-     * @return void
-     */
-    public function setSubmitter(Person $submitter)
-    {
-        $this->submitter = $submitter;
-    }
-
-    /**
-     * Set the submission time stamp.
-     *
-     * @param \DateTime $submissionTimeStamp Time stamp for dataset submission.
-     *
-     * @return void
-     */
-    public function setSubmissionTimeStamp(\DateTime $submissionTimeStamp)
-    {
-        $this->submissionTimeStamp = $submissionTimeStamp;
     }
 
     /**
