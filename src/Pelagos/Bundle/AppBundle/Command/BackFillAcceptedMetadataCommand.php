@@ -44,6 +44,9 @@ class BackFillAcceptedMetadataCommand extends ContainerAwareCommand
         // This command takes no input.
         unset($input);
 
+        // to show no. of datasets migrated.
+        $i = 0;
+
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
 
         $datasets = $entityManager
@@ -62,7 +65,6 @@ class BackFillAcceptedMetadataCommand extends ContainerAwareCommand
             if (!empty($submitterPerson)) {
                 $person = $submitterPerson[0];
             }
-
 
             //Create a new one based on the already existing old one.
             $datasetSubmission = new DatasetSubmission($dataset->getDatasetSubmission());
@@ -96,8 +98,12 @@ class BackFillAcceptedMetadataCommand extends ContainerAwareCommand
             $dataset->setDatasetSubmission($datasetSubmission);
             $entityManager->persist($datasetSubmission);
             $entityManager->persist($dataset);
-            $entityManager->flush($datasetSubmission);
+
+            // Echo text for user to know the count and datasets which have been migrated.
+            $i++;
+            echo "Migration complete for " . $dataset->getUdi() . "(" . $i . ")" ;
         }
+        $entityManager->flush($dataset);
 
         return 0;
     }
