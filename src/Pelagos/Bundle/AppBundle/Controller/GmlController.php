@@ -96,7 +96,7 @@ class GmlController extends Controller
      *
      * @return string
      */
-    private function addGMLid($gmlhhh)
+    private function addGMLid($gml)
     {
         $doc = new \DomDocument('1.0', 'UTF-8');
         $doc->loadXML($gml, LIBXML_NOERROR);
