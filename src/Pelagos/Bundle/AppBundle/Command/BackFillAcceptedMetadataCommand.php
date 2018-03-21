@@ -3,7 +3,6 @@
 namespace Pelagos\Bundle\AppBundle\Command;
 
 use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\Person;
 use Pelagos\Util\ISOMetadataExtractorUtil;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -77,12 +76,22 @@ class BackFillAcceptedMetadataCommand extends ContainerAwareCommand
             );
 
             // Had to set these fields because ISOMetadataExtractor does not set these fields.
-            $datasetSubmission->setStatus(DatasetSubmission::STATUS_COMPLETE);
+
+            // Using reflection class for attributes which do not have setters.
+            $datasetSubmissionReflection = new \ReflectionClass($datasetSubmission);
+            $statusReflection = $datasetSubmissionReflection->getProperty('status');
+            $statusReflection->setAccessible(true);
+            $statusReflection->setValue($datasetSubmission, DatasetSubmission::STATUS_COMPLETE);
+            $submissionTimeStampReflection = $datasetSubmissionReflection->getProperty('submissionTimeStamp');
+            $submissionTimeStampReflection->setAccessible(true);
+            $submissionTimeStampReflection->setValue($datasetSubmission, new \DateTime('now', new \DateTimeZone('UTC')));
+            $submitterReflection = $datasetSubmissionReflection->getProperty('submitter');
+            $submitterReflection->setAccessible(true);
+            $submitterReflection->setValue($datasetSubmission, $person);
+
             $datasetSubmission->setRestrictions($dataset->getDatasetSubmission()->getRestrictions());
             $datasetSubmission->setModifier($person);
             $datasetSubmission->setCreator($person);
-            $datasetSubmission->setSubmitter($person);
-            $datasetSubmission->setSubmissionTimeStamp(new \DateTime('now', new \DateTimeZone('UTC')));
 
             $dataset->setDatasetSubmission($datasetSubmission);
             $entityManager->persist($datasetSubmission);
