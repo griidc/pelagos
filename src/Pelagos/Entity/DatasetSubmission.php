@@ -267,6 +267,19 @@ class DatasetSubmission extends Entity
     ];
 
     /**
+     * Valid values for self::$nilReasonType.
+     *
+     * The array values are the valid values to be set in self::nilReasonType.
+     */
+    const NILREASON_TYPES = [
+        'inapplicable',
+        'missing',
+        'template',
+        'unknown',
+        'withheld'
+    ];
+
+    /**
      * Valid values for self::$topicKeywords.
      *
      * The array keys are the values to be set in self::topicKeywords.
@@ -876,6 +889,17 @@ class DatasetSubmission extends Entity
      * @ORM\Column(type="datetimetz", nullable=true)
      */
     protected $temporalExtentEndPosition;
+
+    /**
+     * Nilreason type for datasets which do not spatial extent.
+     *
+     * @var string
+     *
+     * @see NILREASON_TYPES class constant for valid values.
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $nilReasonType;
 
     /**
      * The name of the format the data is distributed in.
