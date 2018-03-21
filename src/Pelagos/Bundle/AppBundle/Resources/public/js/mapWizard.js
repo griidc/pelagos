@@ -200,7 +200,9 @@ function MapWizard(json)
                     if (startOffDrawing)
                     {wizGeoViz.startDrawing();}
                     else
-                    {$("#coordlist").focus();}
+                    {
+                        $("#coordlist").focus();
+                    }
 
                     if (!$("#drawPolygon:checked").length && !$("#drawLine:checked").length && !$("#drawPoint:checked").length && !$("#drawBox:checked").length && !$("#featDraw:checked").length && !$("#featPaste:checked").length)
                     {alert("Please make a selection!");}
@@ -346,9 +348,6 @@ function MapWizard(json)
                 var addedFeature = wizGeoViz.addFeatureFromWKT(wkt);
                 $("#coordlist").val(wizGeoViz.getCoordinateList(addedFeature.id));
                 $("#inputGml").val(gml);
-                // Disable the form if there are multiple features.
-                // Because The Wizard does not know how to save those.
-                $("#mapwiz #saveFeature").prop("disabled", addedFeature.length != undefined)
             });
             featureSend = true;
         }
@@ -474,7 +473,6 @@ function MapWizard(json)
         $("#saveFeature").button("disable");
         wizGeoViz.stopDrawing();
         wizGeoViz.removeAllFeaturesFromMap();
-
         switch(activeTabIndex) {
             //coordinate list tab
             case 0:
@@ -492,6 +490,11 @@ function MapWizard(json)
             case 2:
                 renderInputGml();
                 break;
+        }
+
+        if (activeTabIndex !== 2)
+        {
+            $("#inputGml").val("");
         }
     }
 
@@ -540,26 +543,37 @@ function MapWizard(json)
     {
         var myWKTid = wizGeoViz.getSingleFeature();
         if (typeof myWKTid !== "undefined") {
-            var myWKT = wizGeoViz.getWKT(myWKTid);
-            var wgsWKT = wizGeoViz.wktTransformToWGS84(myWKT);
-            //run GML validation if the SEW is opened with dataset review,
-            if (true === validateGeometry) {
-                validateGeometryFromWkt(wgsWKT)
-                    .then(function () {
-                        wizGeoViz.wktToGML(wgsWKT).then(function (gml) {
-                            $(gmlField).val(gml);
-                            $(gmlField).trigger("change");
-                            $(descField).val("");
-                        });
+            if (wizGeoViz.hasMultiFeatures() === true)
+            {
+                $(gmlField).val($("#inputGml").val());
+                $(gmlField).trigger("change");
+                $(descField).val("");
+                closeDialog();
+            }
+            else
+            {
+                var myWKT = wizGeoViz.getWKT(myWKTid);
+                var wgsWKT = wizGeoViz.wktTransformToWGS84(myWKT);
+                //run GML validation if the SEW is opened with dataset review,
+                if (true === validateGeometry) {
+                    validateGeometryFromWkt(wgsWKT).then(function(isValid) {
+                        if (isValid === "Valid Geometry") {
+                            wizGeoViz.wktToGML(wgsWKT).then(function(gml){
+                                $(gmlField).val(gml);
+                                $(gmlField).trigger("change");
+                                $(descField).val("");
+                            })
+                            closeDialog();
+                        }
+                    })
+                } else {
+                    wizGeoViz.wktToGML(wgsWKT).then(function(gml){
+                        $(gmlField).val(gml);
+                        $(gmlField).trigger("change");
+                        $(descField).val("");
                         closeDialog();
-                    });
-            } else {
-                wizGeoViz.wktToGML(wgsWKT).then(function (gml){
-                    $(gmlField).val(gml);
-                    $(gmlField).trigger("change");
-                    $(descField).val("");
-                    closeDialog();
-                });
+                    })
+                }
             }
         } else {
             $(gmlField).val("");
@@ -594,24 +608,29 @@ function MapWizard(json)
         });
 
         $("#olmap").on("featureAdded", function(e, eventInfo) {
-            $("#coordlist").val(eventInfo);
-
-            //populate gml
-             var wkt = wizGeoViz.getWKT(wizGeoViz.getSingleFeature());
-             var wgsWKT = wizGeoViz.wktTransformToWGS84(wkt);
-             wizGeoViz.wktToGML(wgsWKT).then(function (gml) {
-                 $("#inputGml").val(gml);
-             });
-
-            //populate bounding box fields
-            bbArray = wizGeoViz.getBBOX(wizGeoViz.getSingleFeature());
-            //minLong,minLat,maxLong,maxLat
-            $("#minLong").val(bbArray[0]);
-            $("#minLat").val(bbArray[1]);
-            $("#maxLong").val(bbArray[2]);
-            $("#maxLat").val(bbArray[3]);
-
-            if (eventInfo.trim() != "")
+            //populate
+            var wkt = wizGeoViz.getWktFromFeatures();
+            var wgsWKT = wizGeoViz.wktTransformToWGS84(wkt);
+            if (false === wizGeoViz.hasMultiFeatures())
+            {
+                $("#coordlist").val(eventInfo);
+                //populate bounding box fields
+                bbArray = wizGeoViz.getBBOX(wizGeoViz.getSingleFeature());
+                //minLong,minLat,maxLong,maxLat
+                $("#minLong").val(bbArray[0]);
+                $("#minLat").val(bbArray[1]);
+                $("#maxLong").val(bbArray[2]);
+                $("#maxLat").val(bbArray[3]);
+            }
+            else
+            {
+                $("#coordlist").val("");
+                $("#minLong").val("");
+                $("#minLat").val("");
+                $("#maxLong").val("");
+                $("#maxLat").val("");
+            }
+            if (eventInfo.trim() !== "" || $("#inputGml").val() !== "")
             { $("#saveFeature").button("enable"); }
             else
             { $("#saveFeature").button("disable"); }
@@ -620,6 +639,7 @@ function MapWizard(json)
             { $("#startDrawing").button("enable"); }
             else
             { $("#startDrawing").button("disable"); }
+
         });
 
         $("#olmap").on("modeChange", function(e, eventInfo) {
@@ -651,7 +671,7 @@ function MapWizard(json)
         {
             saveFeature();
         })
-        .parent()
+        .end()
         .attr("title","Saves extent to the metadata editor and closes wizard")
         .qtip({
             content: $("#saveFeature").attr("title")

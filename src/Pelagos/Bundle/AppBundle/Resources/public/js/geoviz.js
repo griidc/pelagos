@@ -1065,13 +1065,28 @@ function GeoViz()
         { return false; }
     }
 
+    this.getWktFromFeatures = function ()
+    {
+        if (this.hasMultiFeatures() === true) {
+            var Features = vlayer.features;
+        }
+        else {
+            var Features = vlayer.features[0];
+        }
+        if (typeof Features == "object" && null !== Features )
+        {
+            return this.wkt.write(Features);
+        }
+        else
+        { return false; }
+    }
+
     this.getWKTFromBounds = function(left, bottom, right, top)
     {
         var bounds = new OpenLayers.Bounds.fromArray(Array(left, bottom, right, top));
         var myGeometry = bounds.toGeometry();
         var newFeature = new OpenLayers.Feature.Vector(myGeometry);
         var myWKT = this.wkt.write(newFeature);
-
         return myWKT;
     }
 
@@ -1096,5 +1111,13 @@ function GeoViz()
         }
         else
         { return false; }
+    }
+
+    this.hasMultiFeatures = function()
+    {
+      if (vlayer.features.length > 1) {
+          return true;
+      }
+      return false;
     }
 }
