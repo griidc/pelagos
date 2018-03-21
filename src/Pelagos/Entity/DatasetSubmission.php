@@ -2353,4 +2353,28 @@ class DatasetSubmission extends Entity
     {
         $this->status = self::STATUS_IN_REVIEW;
     }
+
+    /**
+     * Gets the nilreason type for the dataset.
+     *
+     * @return string
+     */
+    public function getNilReasonType()
+    {
+        return $this->nilReasonType;
+    }
+
+    /**
+     * Sets the nilreason type for the dataset.
+     *
+     * @param string $nilReasonType
+     *
+     * @return void
+     */
+    public function setNilReasonType($nilReasonType)
+    {
+        $this->nilReasonType = $nilReasonType;
+    }
+
+
 }

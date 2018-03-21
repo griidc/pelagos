@@ -846,4 +846,18 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(DatasetSubmission::STATUS_IN_REVIEW, $this->datasetSubmission->getStatus());
     }
+
+    /**
+     * Test the setter and getter for nil reason type attribute.
+     *
+     * @return void
+     */
+    public function testCanSetAndGetNilReasonType()
+    {
+        $mockNilReasonType = 'unknown';
+
+        $this->datasetSubmission->setNilReasonType($mockNilReasonType);
+
+        $this->assertEquals($mockNilReasonType, $this->datasetSubmission->getNilReasonType());
+    }
 }
