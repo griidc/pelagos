@@ -963,8 +963,6 @@ class DatasetSubmission extends Entity
             $this->addDatasetContact($datasetPPOc);
             // Add DIF primary point of contact as metadata contact.
             $metadataContact = new PersonDatasetSubmissionMetadataContact();
-            $metadataContact->setRole('pointOfContact');
-            $metadataContact->setPerson($entity->getPrimaryPointOfContact());
             $this->addMetadataContact($metadataContact);
             // Add additional point of contact if DIF has secondaryPointOfContact.
             if ($entity->getSecondaryPointOfContact()) {
@@ -1119,6 +1117,9 @@ class DatasetSubmission extends Entity
         $this->getDataset()->setDatasetSubmission($this);
         $this->submissionTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->submitter = $submitter;
+        $metadataContact = $this->getMetadataContacts()->first();
+        $metadataContact->setRole('pointOfContact');
+        $metadataContact->setPerson(submitter);
     }
 
     /**
