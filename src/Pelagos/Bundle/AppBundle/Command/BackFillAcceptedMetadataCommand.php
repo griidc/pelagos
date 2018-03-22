@@ -86,7 +86,7 @@ class BackFillAcceptedMetadataCommand extends ContainerAwareCommand
             $statusReflection->setValue($datasetSubmission, DatasetSubmission::STATUS_COMPLETE);
             $submissionTimeStampReflection = $datasetSubmissionReflection->getProperty('submissionTimeStamp');
             $submissionTimeStampReflection->setAccessible(true);
-            $submissionTimeStampReflection->setValue($datasetSubmission, new \DateTime('now', new \DateTimeZone('UTC')));
+            $submissionTimeStampReflection->setValue($datasetSubmission, $dataset->getDatasetSubmission()->getSubmissionTimeStamp());
             $submitterReflection = $datasetSubmissionReflection->getProperty('submitter');
             $submitterReflection->setAccessible(true);
             $submitterReflection->setValue($datasetSubmission, $person);
