@@ -19,6 +19,7 @@ use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 use Pelagos\Entity\DatasetSubmissionReview;
 use Pelagos\Entity\Entity;
 use Pelagos\Entity\Account;
