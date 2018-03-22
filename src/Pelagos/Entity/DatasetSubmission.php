@@ -1134,6 +1134,10 @@ class DatasetSubmission extends Entity
         return array_flip(static::RESTRICTIONS);
     }
 
+    public static function getNilReasonTypes()
+    {
+        return array_flip(self::NILREASON_TYPES);
+    }
     /**
      * Submit this Dataset Submission.
      *
