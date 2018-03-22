@@ -852,12 +852,12 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testCanSetAndGetNilReasonType()
+    public function testCanSetAndGetTemporalExtentNilReasonType()
     {
-        $mockNilReasonType = 'unknown';
+        $mockTemporalExtentNilReasonType = 'unknown';
 
-        $this->datasetSubmission->setNilReasonType($mockNilReasonType);
+        $this->datasetSubmission->setTemporalExtentNilReasonType($mockTemporalExtentNilReasonType);
 
-        $this->assertEquals($mockNilReasonType, $this->datasetSubmission->getNilReasonType());
+        $this->assertEquals($mockTemporalExtentNilReasonType, $this->datasetSubmission->getTemporalExtentNilReasonType());
     }
 }

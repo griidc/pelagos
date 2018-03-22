@@ -267,11 +267,11 @@ class DatasetSubmission extends Entity
     ];
 
     /**
-     * Valid values for self::$nilReasonType.
+     * Valid values for self::$temporalExtentNilReasonType.
      *
-     * The array values are the valid values to be set in self::nilReasonType.
+     * The array values are the valid values to be set in self::temporalExtentNilReasonType.
      */
-    const NILREASON_TYPES = [
+    const TEMPORAL_EXTENT_NILREASON_TYPES = [
         'inapplicable',
         'missing',
         'template',
@@ -899,7 +899,7 @@ class DatasetSubmission extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      */
-    protected $nilReasonType;
+    protected $temporalExtentNilReasonType;
 
     /**
      * The name of the format the data is distributed in.
@@ -2359,21 +2359,21 @@ class DatasetSubmission extends Entity
      *
      * @return string
      */
-    public function getNilReasonType()
+    public function getTemporalExtentNilReasonType()
     {
-        return $this->nilReasonType;
+        return $this->temporalExtentNilReasonType;
     }
 
     /**
      * Sets the nilreason type for the dataset.
      *
-     * @param string $nilReasonType
+     * @param string $temporalExtentNilReasonType
      *
      * @return void
      */
-    public function setNilReasonType($nilReasonType)
+    public function setTemporalExtentNilReasonType($temporalExtentNilReasonType)
     {
-        $this->nilReasonType = $nilReasonType;
+        $this->temporalExtentNilReasonType = $temporalExtentNilReasonType;
     }
 
 
