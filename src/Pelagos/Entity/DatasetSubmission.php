@@ -997,7 +997,7 @@ class DatasetSubmission extends Entity
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
 
             //Submitter should always be the user who has submitted the dataset.
-            if (in_array($entity->getMetadataStatus(), [ self::METADATA_STATUS_NONE, self::METADATA_STATUS_IN_REVIEW])) {
+            if (!in_array($entity->getMetadataStatus(), [ self::METADATA_STATUS_NONE, self::METADATA_STATUS_BACK_TO_SUBMITTER])) {
                 $this->submitter = $entity->getSubmitter();
                 $this->submissionTimeStamp = $entity->getSubmissionTimeStamp();
             }
