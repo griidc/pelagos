@@ -19,6 +19,7 @@ use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 use Pelagos\Entity\DatasetSubmissionReview;
 use Pelagos\Entity\Entity;
 use Pelagos\Entity\Account;
@@ -201,6 +202,10 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         if ($datasetSubmission instanceof DatasetSubmission) {
             if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
                 $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
+            }
+
+            if ($datasetSubmission->getMetadataContacts()->isEmpty()) {
+                $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
             }
 
             $datasetSubmissionId = $datasetSubmission->getId();

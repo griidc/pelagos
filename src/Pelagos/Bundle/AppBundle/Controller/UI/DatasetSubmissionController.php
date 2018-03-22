@@ -24,6 +24,7 @@ use Pelagos\Entity\DIF;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 use Pelagos\Entity\Person;
 
 use Pelagos\Exception\InvalidMetadataException;
@@ -312,6 +313,10 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
         if ($datasetSubmission instanceof DatasetSubmission) {
             if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
                 $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
+            }
+
+            if ($datasetSubmission->getMetadataContacts()->isEmpty()) {
+                $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
             }
 
             $datasetSubmissionId = $datasetSubmission->getId();

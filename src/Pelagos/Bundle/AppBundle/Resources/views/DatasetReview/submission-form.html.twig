@@ -28,6 +28,10 @@
                     <img class="tabimg">
                 </li>
                 <li>
+                    <a class="dstablink" href="#ds-metadata-contact">Metadata Contact</a>
+                    <img class="tabimg">
+                </li>
+                <li>
                     <a class="dstablink" href="#ds-submit">Files</a>
                     <img class="tabimg" id="filetabimg">
                 </li>
@@ -55,6 +59,10 @@
 
             <div id="ds-distribution" class="ds-metadata">
                 {% include 'PelagosAppBundle:DatasetReview:distribution-info.html.twig' %}
+            </div>
+
+            <div id="ds-metadata-contact" class="ds-metadata">
+                {% include 'PelagosAppBundle:DatasetReview:metadata-contact.html.twig' %}
             </div>
 
             <div id="ds-submit" class="ds-metadata">
