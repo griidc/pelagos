@@ -58,6 +58,7 @@ if (in_array(
         'pelagos_metadata',
         'pelagos_app_ui_datasetrestrictions_post',
         'pelagos_app_gml_validategeometryfromwkt',
+        'pelagos_app_gml_validategml',
     )
 )) {
     $response->send();

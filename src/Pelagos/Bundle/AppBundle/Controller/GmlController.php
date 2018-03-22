@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -147,19 +148,91 @@ class GmlController extends Controller
         return $gml;
     }
 
+    /**
+    * This function add namespace for validation to the given gml.
+    *
+    * @param string $gml GML that needs namespace.
+    * @param array  $namespaces Array of attributes and values
+    *
+    * @return string
+    */
+    private function addNamespace($gml, $namespaces)
+    {
+        $doc = new \DomDocument('1.0', 'UTF-8');
+        $doc->loadXML($gml, LIBXML_NOERROR);
+        $rootNode = $doc->documentElement;
+        foreach($namespaces as $key => $value) {
+            $rootNode->setAttribute($key, $value);
+        }
+
+        $gml = $doc->saveXML();
+        $cleanXML = new \SimpleXMLElement($gml, LIBXML_NOERROR);
+        $dom = dom_import_simplexml($cleanXML);
+        $gml = $dom->ownerDocument->saveXML($dom->ownerDocument->documentElement);
+        return $gml;
+    }
+
+    /**
+     * This function validate Gml against iso schema
+     *
+     * @param Request $request The Symfony request object.
+     * @param String $schema Url to remote schema validation cache.
+     *
+     * @Method("POST")
+     *
+     * @Route("/validategml")
+     *
+     * @throws BadRequestHttpException When no gml is given.
+     *
+     * @return JsonResponse A json array response including a boolean,errors array,warnings array.
+    */
+    public function validateGml(Request $request, $schema = 'http://schemas.opengis.net/gml/3.2.1/gml.xsd')
+    {
+        $gml = $request->request->get('gml');
+        if (empty($gml)) {
+            throw new BadRequestHttpException('No GML given. (Parameter:gml)');
+        } else {
+            $namespaces = array(
+                'xmlns:gml' => 'http://www.opengis.net/gml/3.2',
+                'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
+                'xsi:schemaLocation' => 'http://www.opengis.net/gml/3.2 ' . $schema
+            );
+            $gml = $this->addNamespace($gml, $namespaces);
+
+            $errors = [];
+            $warnings = [];
+            $metadataUtil = $this->get('pelagos.util.metadata');
+            $analysis = $metadataUtil->validateIso($gml, $schema);
+            $errors = array_merge($errors, $analysis['errors']);
+            $warnings = array_merge($warnings, $analysis['warnings']);
+
+            $isValid = false;
+            if (count($analysis['errors']) === 0) {
+                $isValid = true;
+            }
+            return new JsonResponse(
+                array(
+                    $isValid,
+                    $errors,
+                    $warnings
+                ),
+                JsonResponse::HTTP_OK);
+        }
+    }
+
   /**
    * This function validate Geometry from a given wkt.
-   *
-   * @param Request $request The Symfony request object.
-   *
-   * @Method("POST")
-   *
-   * @Route("/validategeometryfromwkt")
-   *
-   * @throws BadRequestHttpException When no WKT is given.
-   *
-   * @return Response Includes boolean and invalid reason.
-   */
+    *
+    * @param Request $request The Symfony request object.
+    *
+    * @Method("POST")
+    *
+    * @Route("/validategeometryfromwkt")
+    *
+    * @throws BadRequestHttpException When no WKT is given.
+    *
+    * @return Response Includes boolean and invalid reason.
+    */
     public function validateGeometryFromWktAction(Request $request)
     {
         $wkt = $request->request->get('wkt');

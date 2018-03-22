@@ -498,10 +498,31 @@ function MapWizard(json)
         }
     }
 
+    function isGmlValid(gml)
+    {
+        return $.ajax({
+            url: Routing.generate("pelagos_app_gml_validategml"),
+            type: "POST",
+            data: {gml: gml},
+        });
+    }
+
     function renderInputGml()
     {
-        wizGeoViz.gmlToWKT($("#inputGml").val()).then(function(wkt){
-            wizGeoViz.addFeatureFromWKT(wkt);
+        var gml = $("#inputGml").val();
+        if (gml.trim() === "") {
+            showDialog("Empty GML", "Input GML is enmpty!");
+            return;
+        }
+        isGmlValid(gml).then(function(data) {
+          if (true === data[0]) {
+              wizGeoViz.gmlToWKT(gml).then(function (wkt) {
+                  wizGeoViz.addFeatureFromWKT(wkt);
+              });
+          }
+          else {
+              showDialog("Invalid GML", data[1]);
+          }
         });
     }
 
