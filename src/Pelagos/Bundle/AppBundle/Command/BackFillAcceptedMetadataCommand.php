@@ -94,6 +94,7 @@ class BackFillAcceptedMetadataCommand extends ContainerAwareCommand
             $i++;
             echo "\n Migration complete for " . $dataset->getUdi() . "(" . $i . ")" ;
         }
+        echo "\n Migration completed. Now Flushing, This might take a few minutes. Please wait.";
         $entityManager->flush($dataset);
 
         return 0;
