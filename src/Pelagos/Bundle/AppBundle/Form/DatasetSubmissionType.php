@@ -183,6 +183,11 @@ class DatasetSubmissionType extends AbstractType
                 'required' => false,
                 'attr' => array('rows' => '5'),
             ))
+            ->add('nilReasonType', Type\ChoiceType::class, array(
+                'label' => 'Nilreason Type',
+                'choices' => DatasetSubmission::getNilReasonTypes(),
+                'required' => 'false'
+            ))
             ->add('temporalExtentDesc', Type\ChoiceType::class, array(
                 'label' => 'Time Period Description',
                 'choices' => DatasetSubmission::getTemporalExtentDescChoices(),
