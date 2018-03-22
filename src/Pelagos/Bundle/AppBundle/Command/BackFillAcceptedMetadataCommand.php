@@ -60,7 +60,7 @@ class BackFillAcceptedMetadataCommand extends ContainerAwareCommand
 
             $submitterPerson = $entityManager
                 ->getRepository('Pelagos\Entity\Person')
-                ->findBy(array('id' => $submitterId));
+                ->findBy(array('id' => 0));
 
             if (!empty($submitterPerson)) {
                 $person = $submitterPerson[0];
@@ -84,17 +84,8 @@ class BackFillAcceptedMetadataCommand extends ContainerAwareCommand
             $statusReflection = $datasetSubmissionReflection->getProperty('status');
             $statusReflection->setAccessible(true);
             $statusReflection->setValue($datasetSubmission, DatasetSubmission::STATUS_COMPLETE);
-            $submissionTimeStampReflection = $datasetSubmissionReflection->getProperty('submissionTimeStamp');
-            $submissionTimeStampReflection->setAccessible(true);
-            $submissionTimeStampReflection->setValue($datasetSubmission, $dataset->getDatasetSubmission()->getSubmissionTimeStamp());
-            $submitterReflection = $datasetSubmissionReflection->getProperty('submitter');
-            $submitterReflection->setAccessible(true);
-            $submitterReflection->setValue($datasetSubmission, $person);
-
             $datasetSubmission->setRestrictions($dataset->getDatasetSubmission()->getRestrictions());
-            $datasetSubmission->setModifier($person);
             $datasetSubmission->setCreator($person);
-
             $dataset->setDatasetSubmission($datasetSubmission);
             $entityManager->persist($datasetSubmission);
             $entityManager->persist($dataset);
