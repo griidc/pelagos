@@ -1118,8 +1118,15 @@ class DatasetSubmission extends Entity
         $this->submissionTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->submitter = $submitter;
         $metadataContact = $this->getMetadataContacts()->first();
-        $metadataContact->setRole('pointOfContact');
-        $metadataContact->setPerson($submitter);
+        if (!$metadataContact instanceof PersonDatasetSubmissionMetadataContact) {
+            $metadataContact = new PersonDatasetSubmissionMetadataContact();
+            $metadataContact->setRole('pointOfContact');
+            $metadataContact->setPerson($submitter);
+            $this->addMetadataContact($newMetadataContact);
+        } else {
+            $metadataContact->setRole('pointOfContact');
+            $metadataContact->setPerson($submitter);
+        }
     }
 
     /**
