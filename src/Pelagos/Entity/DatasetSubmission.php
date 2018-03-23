@@ -1078,27 +1078,27 @@ class DatasetSubmission extends Entity
     public function validate(ExecutionContextInterface $context)
     {
         if (null !== $this->spatialExtent) {
-            if (null === $this->temporalExtentDesc) {
-                $context->buildViolation('Since a spatial extent is present, this submission must ' .
-                    'include a time period description.')
-                    ->atPath('temporalExtentDesc')
-                    ->addViolation();
-            }
+            if (null === $this->temporalExtentNilReasonType) {
+                if (null === $this->temporalExtentDesc) {
+                    $context->buildViolation('Since a spatial extent is present, this submission must ' .
+                        'include a time period description.')
+                        ->atPath('temporalExtentDesc')
+                        ->addViolation();
+                }
+                if (!($this->temporalExtentBeginPosition instanceof \DateTime)) {
+                    $context->buildViolation('Since a spatial extent is present, this submission must ' .
+                        'include a start date.')
+                        ->atPath('temporalExtentBeginPosition')
+                        ->addViolation();
+                }
 
-            if (!($this->temporalExtentBeginPosition instanceof \DateTime)) {
-                $context->buildViolation('Since a spatial extent is present, this submission must ' .
-                    'include a start date.')
-                    ->atPath('temporalExtentBeginPosition')
-                    ->addViolation();
+                if (!($this->temporalExtentEndPosition instanceof \DateTime)) {
+                    $context->buildViolation('Since a spatial extent is present, this submission must ' .
+                        'include a end date.')
+                        ->atPath('temporalExtentEndPosition')
+                        ->addViolation();
+                }
             }
-
-            if (!($this->temporalExtentEndPosition instanceof \DateTime)) {
-                $context->buildViolation('Since a spatial extent is present, this submission must ' .
-                    'include a end date.')
-                    ->atPath('temporalExtentEndPosition')
-                    ->addViolation();
-            }
-
         } else {
             if (null === $this->spatialExtentDescription) {
                 $context->buildViolation('You must provide either a spatial extent or a spatial extent description.')

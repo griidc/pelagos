@@ -31,9 +31,14 @@
             </tr>
             <tr id="temporalInfoQuestion">
                 <td colspan="2">
-                    Do you have all the required information for temporal extent?
-                    <input type="radio" id="checkNilReason" name="temporalChoice" checked> Yes
-                    <input type="radio" id="checkNilReason" name="temporalChoice"> No
+                    <label for="checkNilReason">Do you have all the required information for temporal extent?</label>
+                    {% if datasetSubmission.temporalExtentNilReasonType %}
+                        <input type="radio" id="checkNilReason" name="temporalChoice"> Yes
+                        <input type="radio" id="checkNilReason" name="temporalChoice" checked> No
+                    {% else %}
+                        <input type="radio" id="checkNilReason" name="temporalChoice" checked> Yes
+                        <input type="radio" id="checkNilReason" name="temporalChoice"> No
+                    {% endif %}
                 </td>
             </tr>
             <tr class="spatialExtras">
