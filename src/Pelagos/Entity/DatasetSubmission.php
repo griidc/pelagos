@@ -1122,7 +1122,7 @@ class DatasetSubmission extends Entity
             $metadataContact = new PersonDatasetSubmissionMetadataContact();
             $metadataContact->setRole('pointOfContact');
             $metadataContact->setPerson($submitter);
-            $this->addMetadataContact($newMetadataContact);
+            $this->addMetadataContact($metadataContact);
         } else {
             $metadataContact->setRole('pointOfContact');
             $metadataContact->setPerson($submitter);
