@@ -271,7 +271,7 @@ class DatasetSubmission extends Entity
      *
      * The array values are the valid values to be set in self::temporalExtentNilReasonType.
      */
-    const TEMPORAL_EXTENT_NILREASON_TYPES = [
+    const NILREASON_TYPES = [
         'inapplicable',
         'missing',
         'template',
