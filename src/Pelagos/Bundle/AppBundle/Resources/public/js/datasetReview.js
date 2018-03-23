@@ -561,7 +561,7 @@ function checkSpatial(isNonSpatial) {
         $("#nonspatial").find(":input").removeAttr("required");
         $("#temporalInfoQuestion").show();
         $(".spatialExtras").show().find(":input").attr("required", "required");
-        // checkTemporalNilReason();
+        checkTemporalNilReason();
     }
 }
 
