@@ -462,6 +462,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
     private function clearDatasetSubmission(DatasetSubmission &$datasetSubmission)
     {
         $datasetSubmission->getDatasetContacts()->clear();
+        $datasetSubmission->getMetadataContacts()->clear();
         $accessor = PropertyAccess::createPropertyAccessor();
         $clearProperties = array(
             'title',
