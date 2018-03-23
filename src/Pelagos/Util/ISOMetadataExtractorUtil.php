@@ -60,6 +60,7 @@ class ISOMetadataExtractorUtil
         self::setIfHas($datasetSubmission, 'setTemporalExtentEndPosition', self::extractTemporalExtentEndPosition($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setDistributionFormatName', self::extractDistributionFormatName($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setFileDecompressionTechnique', self::extractFileDecompressionTechnique($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setTemporalExtentNilReasonType', self::extractTemporalExtentNilReasonType($xmlMetadata));
     }
 
     /**
@@ -876,5 +877,34 @@ class ISOMetadataExtractorUtil
                 return $item;
             }
         }
+    }
+
+    /**
+     * Extracts temporal nilReason from XML metadata.
+     *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     *
+     * @return string|null Returns the temporal nilReason as a string, or null.
+     */
+    protected static function extractTemporalExtentNilReasonType(\SimpleXmlElement $xml)
+    {
+        $query = '/gmi:MI_Metadata' .
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:extent' .
+            '/gmd:EX_Extent' .
+            '/gmd:temporalElement' .
+            '/@gco:nilReason';
+
+        $queryXpath = self::querySingleGml($xml, $query);
+
+        //The nilReason value is in the attribute node, so this is required to clean up and get the string.
+        $patterns[0] = '/ gco:nilReason=/';
+        $patterns[1] = '/"/';
+        $replacements[0] = '';
+        $replacements[1] = '';
+        $temporalExtentNilReason = preg_replace($patterns, $replacements, $queryXpath);
+
+        return $temporalExtentNilReason;
     }
 }
