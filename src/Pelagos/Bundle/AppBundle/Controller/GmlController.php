@@ -40,7 +40,15 @@ class GmlController extends Controller
             $connection = $this->getDoctrine()->getManager()->getConnection();
             $statement = $connection->prepare($query);
             $statement->bindValue('gml', $gml);
-            $statement->execute();
+            try {
+                $statement->execute();
+            } catch(\Exception $e) {
+                return new Response(
+                    $e->getMessage(),
+                    Response::HTTP_BAD_REQUEST,
+                    array('content-type' => 'text/plain')
+                );
+            }
             $results = $statement->fetchAll();
             $wkt = $results[0]['st_astext'];
             return new Response(

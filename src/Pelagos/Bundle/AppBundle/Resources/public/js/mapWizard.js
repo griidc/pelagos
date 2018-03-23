@@ -498,7 +498,7 @@ function MapWizard(json)
         }
     }
 
-    function isGmlValid(gml)
+    function validateGml(gml)
     {
         return $.ajax({
             url: Routing.generate("pelagos_app_gml_validategml"),
@@ -511,18 +511,32 @@ function MapWizard(json)
     {
         var gml = $("#inputGml").val();
         if (gml.trim() === "") {
-            showDialog("Empty GML", "Input GML is enmpty!");
+            showDialog("Input GML Validation", "Input GML is empty!");
             return;
         }
-        isGmlValid(gml).then(function(data) {
-          if (true === data[0]) {
-              wizGeoViz.gmlToWKT(gml).then(function (wkt) {
-                  wizGeoViz.addFeatureFromWKT(wkt);
-              });
-          }
-          else {
-              showDialog("Invalid GML", data[1]);
-          }
+
+        validateGml(gml).then(function(data) {
+            if (true === data[0]) {
+                wizGeoViz.gmlToWKT(gml).fail(function(xhr){
+                    if (xhr.status === 400) {
+                        showDialog("WKT Conversion", "Fail to convert GML to WKT due to invalid GML Representation!");
+                    } else {
+                        showDialog("Error " + xhr.status, xhr.statusText);
+                    }
+                }).then(function(wkt){
+                    validateGeometryFromWkt(wkt).then(function (isValid) {
+                        if (isValid === "Valid Geometry") {
+                            wizGeoViz.addFeatureFromWKT(wkt);
+                        } else {
+                            showDialog("Geometry Validation", $isValid);
+                        }
+                    });
+                });
+            }
+            else {
+                console.log(data);
+                showDialog("GML Schema Validation", "The input GML is invalid!");
+            }
         });
     }
 
