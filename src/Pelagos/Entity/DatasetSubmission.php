@@ -1015,6 +1015,12 @@ class DatasetSubmission extends Entity
             $this->setTemporalExtentEndPosition($entity->getTemporalExtentEndPosition());
             $this->setDistributionFormatName($entity->getDistributionFormatName());
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
+
+            //Submitter should always be the user who has submitted the dataset.
+            if (!in_array($entity->getMetadataStatus(), [ self::METADATA_STATUS_NONE, self::METADATA_STATUS_BACK_TO_SUBMITTER])) {
+                $this->submitter = $entity->getSubmitter();
+                $this->submissionTimeStamp = $entity->getSubmissionTimeStamp();
+            }
             // Copy the original Dataset Submission's dataset contacts.
             foreach ($entity->getDatasetContacts() as $datasetContact) {
                 $newDatasetContact = new PersonDatasetSubmissionDatasetContact();
@@ -1155,13 +1161,10 @@ class DatasetSubmission extends Entity
         $datasetSubmissionReview = $this->getDatasetSubmissionReview();
 
         // Setting timestamp when review is ended.
-        $timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
-        $datasetSubmissionReview->setReviewEndDateTime($timeStamp);
-        $this->submissionTimeStamp = $timeStamp;
+        $datasetSubmissionReview->setReviewEndDateTime(new \DateTime('now', new \DateTimeZone('UTC')));
 
         // Setting review ended by person.
         $datasetSubmissionReview->setReviewEndedBy($reviewer);
-        $this->submitter = $reviewer;
     }
 
     /**
