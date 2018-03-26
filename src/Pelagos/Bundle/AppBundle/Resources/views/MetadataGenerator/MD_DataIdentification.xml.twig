@@ -120,6 +120,8 @@
                    </gmd:extent>
                </gmd:EX_TemporalExtent>
             </gmd:temporalElement>
+            {% elseif dataset.datasetSubmission.temporalExtentNilReasonType %}
+                <gmd:temporalElement gco:nilReason="{{ dataset.datasetSubmission.temporalExtentNilReasonType }}"/>
             {% endif %}
         </gmd:EX_Extent>
     </gmd:extent>
