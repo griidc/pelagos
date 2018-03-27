@@ -897,8 +897,14 @@ class ISOMetadataExtractorUtil
 
         $queryXpath = @$xml->xpath($query)[0];
 
-        $temporalExtentNilReason = (string)$queryXpath->attributes('gco', true)['nilReason'][0];
+        if (false === $queryXpath) {
+            // This is a best effort, so null if xpath fails.
+            return null;
+        }
 
-        return $temporalExtentNilReason;
+        $temporalExtentNilReason = (string)$queryXpath->attributes('gco', true)['nilReason'];
+        $value = trim(preg_replace('/\s+/', ' ', $temporalExtentNilReason));
+        
+        return $value;
     }
 }
