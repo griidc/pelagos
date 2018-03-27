@@ -198,6 +198,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
                 'getTemporalExtentDesc' => 'ground condition and modeled period',
                 'getTemporalExtentBeginPosition' => $this->testingDatetime,
                 'getTemporalExtentEndPosition' => $this->testingDatetime,
+                'getTemporalExtentNilReasonType' => 'unknown',
                 'getDistributionFormatName' => 'DistributionFormatName from mock dataset submission',
                 'getFileDecompressionTechnique' => 'zip',
                 'getPrimaryDatasetContact' => $this->mockPersonDatasetSubmissionDatasetContact,
@@ -523,5 +524,18 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
             $contacts[1]->getRole()
         );
         $this->assertEmpty(ISOMetadataExtractorUtil::extractPointsOfContact($this->xml, $this->datasetSubmission, $this->mockEntityManagerUnknownPerson));
+    }
+
+    /**
+     * Test to extract temporal nil reason for dataset submission.
+     *
+     * @return void
+     */
+    public function testCanExtractTemporalNilReasonFromXml()
+    {
+        $mockTemporalNilReason = 'unknown';
+
+        $this->assertEquals($mockTemporalNilReason, $this->datasetSubmission->getTemporalExtentNilReasonType());
+
     }
 }
