@@ -893,17 +893,11 @@ class ISOMetadataExtractorUtil
             '/gmd:MD_DataIdentification' .
             '/gmd:extent' .
             '/gmd:EX_Extent' .
-            '/gmd:temporalElement' .
-            '/@gco:nilReason';
+            '/gmd:temporalElement';
 
-        $queryXpath = self::querySingleGml($xml, $query);
+        $queryXpath = @$xml->xpath($query)[0];
 
-        //The nilReason value is in the attribute node, so this is required to clean up and get the string.
-        $patterns[0] = '/ gco:nilReason=/';
-        $patterns[1] = '/"/';
-        $replacements[0] = '';
-        $replacements[1] = '';
-        $temporalExtentNilReason = preg_replace($patterns, $replacements, $queryXpath);
+        $temporalExtentNilReason = (string)$queryXpath->attributes('gco', true)['nilReason'][0];
 
         return $temporalExtentNilReason;
     }
