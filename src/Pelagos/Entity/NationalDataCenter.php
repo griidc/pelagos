@@ -1,6 +1,7 @@
 <?php
 
 namespace Pelagos\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -29,6 +30,10 @@ class NationalDataCenter extends Entity
      * @var string
      *
      * @ORM\Column(type="text", unique=true)
+     *
+     * @Assert\NotBlank(
+     *     message="Organization URL is required"
+     * )
      *
      * @Assert\NoAngleBrackets(
      *     message="Website URL cannot contain angle brackets (< or >)"
@@ -135,6 +140,8 @@ class NationalDataCenter extends Entity
     protected $emailAddress;
 
     /**
+     * Getter for National Data center organization's name.
+     *
      * @return string
      */
     public function getOrganizationName()
@@ -143,7 +150,9 @@ class NationalDataCenter extends Entity
     }
 
     /**
-     * @param string $organizationName
+     * Setter for National Data center organization's name.
+     *
+     * @param string $organizationName The name of the National Data center.
      *
      * @return void
      */
@@ -153,6 +162,8 @@ class NationalDataCenter extends Entity
     }
 
     /**
+     * Getter for National Data center organization's URL.
+     *
      * @return string
      */
     public function getOrganizationUrl()
@@ -161,7 +172,9 @@ class NationalDataCenter extends Entity
     }
 
     /**
-     * @param string $organizationUrl
+     * Setter for National Data center organization's URL.
+     *
+     * @param string $organizationUrl The website URL for the organization.
      *
      * @return void
      */
@@ -171,6 +184,8 @@ class NationalDataCenter extends Entity
     }
 
     /**
+     * Getter for National Data center's phone number.
+     *
      * @return string
      */
     public function getPhoneNumber()
@@ -179,7 +194,9 @@ class NationalDataCenter extends Entity
     }
 
     /**
-     * @param string $phoneNumber
+     * Setter for National Data center's phone number.
+     *
+     * @param string $phoneNumber Phone number of the organization.
      *
      * @return void
      */
@@ -189,6 +206,8 @@ class NationalDataCenter extends Entity
     }
 
     /**
+     * Getter for National Data center delivery point(street address).
+     *
      * @return string
      */
     public function getDeliveryPoint()
@@ -197,7 +216,9 @@ class NationalDataCenter extends Entity
     }
 
     /**
-     * @param string $deliveryPoint
+     * Setter for National Data center delivery point(street address).
+     *
+     * @param string $deliveryPoint Delivery point(street address) of the organization.
      *
      * @return void
      */
@@ -207,6 +228,8 @@ class NationalDataCenter extends Entity
     }
 
     /**
+     * Getter for National Data center's city.
+     *
      * @return string
      */
     public function getCity()
@@ -215,7 +238,9 @@ class NationalDataCenter extends Entity
     }
 
     /**
-     * @param string $city
+     * Setter for National Data center's city.
+     *
+     * @param string $city City where the organization is located.
      *
      * @return void
      */
@@ -225,6 +250,8 @@ class NationalDataCenter extends Entity
     }
 
     /**
+     * Getter for National Data center's administrative area(state).
+     *
      * @return string
      */
     public function getAdministrativeArea()
@@ -233,7 +260,9 @@ class NationalDataCenter extends Entity
     }
 
     /**
-     * @param string $administrativeArea
+     * Setter for National Data center's administrative area(state).
+     *
+     * @param string $administrativeArea Administrative area(state) where the organization is located.
      *
      * @return void
      */
@@ -243,6 +272,8 @@ class NationalDataCenter extends Entity
     }
 
     /**
+     * Getter for National Data center's postal code.
+     *
      * @return string
      */
     public function getPostalCode()
@@ -251,7 +282,9 @@ class NationalDataCenter extends Entity
     }
 
     /**
-     * @param string $postalCode
+     * Setter for National Data center's postal code.
+     *
+     * @param string $postalCode Postal code for the organization.
      *
      * @return void
      */
@@ -261,6 +294,8 @@ class NationalDataCenter extends Entity
     }
 
     /**
+     * Getter for National Data center's country.
+     *
      * @return string
      */
     public function getCountry()
@@ -269,7 +304,9 @@ class NationalDataCenter extends Entity
     }
 
     /**
-     * @param string $country
+     * Setter for National Data center's country.
+     *
+     * @param string $country Country of the organization.
      *
      * @return void
      */
@@ -281,7 +318,7 @@ class NationalDataCenter extends Entity
     /**
      * Getter for Email address of the organization.
      *
-     * @return string Email address of the organization.
+     * @return string
      */
     public function getEmailAddress()
     {
@@ -290,7 +327,7 @@ class NationalDataCenter extends Entity
 
     /**
      * Setter for Email address of the organization.
-     * 
+     *
      * @param string $emailAddress Email address of the organization.
      *
      * @return void
