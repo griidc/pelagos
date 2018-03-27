@@ -1037,6 +1037,7 @@ class DatasetSubmission extends Entity
             $this->setTemporalExtentDesc($entity->getTemporalExtentDesc());
             $this->setTemporalExtentBeginPosition($entity->getTemporalExtentBeginPosition());
             $this->setTemporalExtentEndPosition($entity->getTemporalExtentEndPosition());
+            $this->setTemporalExtentNilReasonType($entity->getTemporalExtentNilReasonType());
             $this->setDistributionFormatName($entity->getDistributionFormatName());
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
 
@@ -2456,6 +2457,4 @@ class DatasetSubmission extends Entity
     {
         $this->temporalExtentNilReasonType = $temporalExtentNilReasonType;
     }
-
-
 }
