@@ -399,6 +399,10 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 $this->entityHandler->update($datasetContact);
             }
 
+            foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+                $this->entityHandler->update($metadataContact);
+            }
+
             //use rabbitmq to process dataset file and persist the file details.
             foreach ($this->messages as $message) {
                 $this->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(

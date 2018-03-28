@@ -220,8 +220,12 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
             }
 
             $this->entityHandler->update($datasetSubmission);
+
             foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                 $this->entityHandler->update($datasetContact);
+            }
+            foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+                $this->entityHandler->update($metadataContact);
             }
 
             $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
@@ -458,6 +462,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
     private function clearDatasetSubmission(DatasetSubmission &$datasetSubmission)
     {
         $datasetSubmission->getDatasetContacts()->clear();
+        $datasetSubmission->getMetadataContacts()->clear();
         $accessor = PropertyAccess::createPropertyAccessor();
         $clearProperties = array(
             'title',
