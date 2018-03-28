@@ -9,6 +9,7 @@ use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\PersonDatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 use Pelagos\Util\ISOMetadataExtractorUtil;
 
 /**
@@ -82,6 +83,13 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
     protected $mockPersonDatasetSubmissionDatasetContact;
 
     /**
+     * Holds a Mock PersonDatasetSubmissionMetadataContact.
+     *
+     * @var PersonDatasetSubmissionMetadataContact
+     */
+    protected $mockPersonDatasetSubmissionMetadataContact;
+
+    /**
      * Holds a Mock dataset.
      *
      * @var Dataset
@@ -125,6 +133,15 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
                 'getPerson' => $this->mockPerson,
                 'getId' => 8675309,
                 'isPrimaryContact' => true,
+            )
+        );
+
+        $this->mockPersonDatasetSubmissionMetadataContact = \Mockery::mock(
+            'Pelagos\Entity\mockPersonDatasetSubmissionMetadataContact',
+            array(
+                'getRole' => array_keys(PersonDatasetSubmission::ROLES)[0],
+                'getPerson' => $this->mockPerson,
+                'getId' => 8675309,
             )
         );
 
@@ -181,10 +198,15 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
                 'getTemporalExtentDesc' => 'ground condition and modeled period',
                 'getTemporalExtentBeginPosition' => $this->testingDatetime,
                 'getTemporalExtentEndPosition' => $this->testingDatetime,
+                'getTemporalExtentNilReasonType' => 'unknown',
                 'getDistributionFormatName' => 'DistributionFormatName from mock dataset submission',
                 'getFileDecompressionTechnique' => 'zip',
                 'getPrimaryDatasetContact' => $this->mockPersonDatasetSubmissionDatasetContact,
                 'getDatasetContacts' => new ArrayCollection(array($this->mockPersonDatasetSubmissionDatasetContact)),
+                'getSubmitter' => $this->mockPerson,
+                'getSubmissionTimeStamp' => $this->testingDatetime,
+                'getMetadataContacts' => new ArrayCollection(array($this->mockPersonDatasetSubmissionMetadataContact)
+                )
             )
         );
 
@@ -502,5 +524,18 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
             $contacts[1]->getRole()
         );
         $this->assertEmpty(ISOMetadataExtractorUtil::extractPointsOfContact($this->xml, $this->datasetSubmission, $this->mockEntityManagerUnknownPerson));
+    }
+
+    /**
+     * Test to extract temporal nil reason for dataset submission.
+     *
+     * @return void
+     */
+    public function testCanExtractTemporalNilReasonFromXml()
+    {
+        $mockTemporalNilReason = 'unknown';
+
+        $this->assertEquals($mockTemporalNilReason, $this->datasetSubmission->getTemporalExtentNilReasonType());
+
     }
 }
