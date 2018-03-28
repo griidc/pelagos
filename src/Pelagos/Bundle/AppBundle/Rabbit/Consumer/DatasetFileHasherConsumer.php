@@ -73,16 +73,16 @@ class DatasetFileHasherConsumer implements ConsumerInterface
     */
     public function execute(AMQPMessage $message)
     {
-        
-        // find the Dataset instance that has this ID (udi)
-        $datasetId = $message->body;
-        $loggingContext = array('dataset_id' => $datasetId);
-        $this->logger->info('Dataset File Hash start', $loggingContext);
+        $datasetSubmissionId = $message->body;
         // Clear Doctrine's cache to force loading from persistence.
         $this->entityManager->clear();
-        $dataset = $this->entityManager
-                        ->getRepository(Dataset::class)
-                        ->find($datasetId);
+        $datasetSubmission = $this->entityManager
+            ->getRepository(DatasetSubmission::class)
+            ->find($datasetSubmissionId);
+        $dataset = $datasetSubmission->getDataset();
+        $loggingContext = array('dataset_id' => $dataset->getId());
+        $this->logger->info('Dataset File Hash start', $loggingContext);
+
         if (!$dataset instanceof Dataset) {
             $this->logger->warning('No dataset found', $loggingContext);
             return true;
@@ -91,10 +91,7 @@ class DatasetFileHasherConsumer implements ConsumerInterface
         if (null !== $datasetUdi) {
             $loggingContext['udi'] = $datasetUdi;
         }
-        // get the DatasetSubmission referenced in the found Dataset.
-        // This is the instance to which this code writes the calculated
-        // SHA256 hash value
-        $datasetSubmission = $dataset->getDatasetSubmission();
+
         if (!$datasetSubmission instanceof DatasetSubmission) {
             $this->logger->warning('No submission found for dataset', $loggingContext);
             return true;

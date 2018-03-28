@@ -846,4 +846,18 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(DatasetSubmission::STATUS_IN_REVIEW, $this->datasetSubmission->getStatus());
     }
+
+    /**
+     * Test the setter and getter for nil reason type attribute.
+     *
+     * @return void
+     */
+    public function testCanSetAndGetTemporalExtentNilReasonType()
+    {
+        $mockTemporalExtentNilReasonType = 'unknown';
+
+        $this->datasetSubmission->setTemporalExtentNilReasonType($mockTemporalExtentNilReasonType);
+
+        $this->assertEquals($mockTemporalExtentNilReasonType, $this->datasetSubmission->getTemporalExtentNilReasonType());
+    }
 }

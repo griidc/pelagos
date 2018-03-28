@@ -8,6 +8,7 @@ use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 use Symfony\Component\Form\PreloadedExtension;
 
 /**
@@ -38,6 +39,7 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
             array(
                 DatasetSubmission::class,
                 PersonDatasetSubmissionDatasetContact::class,
+                PersonDatasetSubmissionMetadataContact::class,
                 Person::class,
             )
         );
@@ -73,6 +75,7 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
         $datasetSubmission->setRestrictions(null);
         // Wipe out Dataset Contacts for test against blank form.
         $datasetSubmission->getDatasetContacts()->clear();
+        $datasetSubmission->getMetadataContacts()->clear();
 
         // Make sure an empty form does not change any default values.
         $this->assertEquals($datasetSubmission, $form->getData());
@@ -119,6 +122,11 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
                     'role' => 'pointOfContact',
                 ),
             ),
+            'metadataContacts' => array(
+                array(
+                    'role' => 'pointOfContact',
+                ),
+            ),
         );
 
         // Create a form view.
@@ -143,6 +151,11 @@ class DatasetSubmissionTypeTest extends FormTypeTestCase
         $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact();
         $personDatasetSubmissionDatasetContact->setRole($formData['datasetContacts'][0]['role']);
         $formData['datasetContacts'] = array($personDatasetSubmissionDatasetContact);
+        
+        // Convert metadata contacts to PersonDatasetSubmissionMetadataContacts.
+        $personMetadataSubmissionMetadataContact = new PersonDatasetSubmissionMetadataContact();
+        $personMetadataSubmissionMetadataContact->setRole($formData['metadataContacts'][0]['role']);
+        $formData['metadataContacts'] = array($personMetadataSubmissionMetadataContact);
 
         // Create a DatasetSubmission.
         $datasetSubmission = new DatasetSubmission($this->testDif, $this->testPersonDatasetSubmissionDatasetContact);

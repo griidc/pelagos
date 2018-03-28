@@ -24,6 +24,7 @@ use Pelagos\Entity\DIF;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 use Pelagos\Entity\Person;
 
 use Pelagos\Exception\InvalidMetadataException;
@@ -116,8 +117,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                         $createFlag = true;
                     }
                 } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
-                    and $datasetSubmission->getMetadataStatus() != DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
-                    and $datasetSubmission->getDataset()->getMetadata() instanceof Metadata
+                    and $datasetSubmission->getMetadataStatus() !== DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
                 ) {
                     // The latest submission is complete, so create new one based on it.
                     $datasetSubmission = new DatasetSubmission($datasetSubmission);
@@ -220,8 +220,12 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
             }
 
             $this->entityHandler->update($datasetSubmission);
+
             foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                 $this->entityHandler->update($datasetContact);
+            }
+            foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+                $this->entityHandler->update($metadataContact);
             }
 
             $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
@@ -290,7 +294,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
         $datasetSubmission->setDatasetFileSha1Hash(null);
         $datasetSubmission->setDatasetFileSha256Hash(null);
         $this->messages[] = array(
-            'body' => $datasetSubmission->getDataset()->getId(),
+            'body' => $datasetSubmission->getId(),
             'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
         );
     }
@@ -313,6 +317,10 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
         if ($datasetSubmission instanceof DatasetSubmission) {
             if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
                 $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
+            }
+
+            if ($datasetSubmission->getMetadataContacts()->isEmpty()) {
+                $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
             }
 
             $datasetSubmissionId = $datasetSubmission->getId();
@@ -454,6 +462,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
     private function clearDatasetSubmission(DatasetSubmission &$datasetSubmission)
     {
         $datasetSubmission->getDatasetContacts()->clear();
+        $datasetSubmission->getMetadataContacts()->clear();
         $accessor = PropertyAccess::createPropertyAccessor();
         $clearProperties = array(
             'title',
