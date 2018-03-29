@@ -42,7 +42,7 @@ class GmlController extends Controller
             $statement->bindValue('gml', $gml);
             try {
                 $statement->execute();
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 return new Response(
                     $e->getMessage(),
                     Response::HTTP_BAD_REQUEST,
@@ -157,19 +157,23 @@ class GmlController extends Controller
     }
 
     /**
-    * This function add namespace for validation to the given gml.
-    *
-    * @param string $gml GML that needs namespace.
-    * @param array  $namespaces Array of attributes and values
-    *
-    * @return string
-    */
-    private function addNamespace($gml, $namespaces)
+     * This function add namespace for validation to the given gml.
+     *
+     * @param string $gml        Gml that needs namespace.
+     * @param array  $namespaces Array of attributes and values.
+     *
+     * @throws \Exception When Root node is not defined properly.
+     * @return string GML string with namespace.
+     */
+    private function addNamespace($gml, array $namespaces)
     {
         $doc = new \DomDocument('1.0', 'UTF-8');
         $doc->loadXML($gml, LIBXML_NOERROR);
         $rootNode = $doc->documentElement;
-        foreach($namespaces as $key => $value) {
+        if (null === $rootNode) {
+            throw new \Exception('Not a parsable GML!');
+        }
+        foreach ($namespaces as $key => $value) {
             $rootNode->setAttribute($key, $value);
         }
 
@@ -181,10 +185,10 @@ class GmlController extends Controller
     }
 
     /**
-     * This function validate Gml against iso schema
+     * This function validates Gml against OpenGIS schema.
      *
      * @param Request $request The Symfony request object.
-     * @param String $schema Url to remote schema validation cache.
+     * @param string  $schema  Url to remote schema validation cache.
      *
      * @Method("POST")
      *
@@ -193,10 +197,11 @@ class GmlController extends Controller
      * @throws BadRequestHttpException When no gml is given.
      *
      * @return JsonResponse A json array response including a boolean,errors array,warnings array.
-    */
+     */
     public function validateGml(Request $request, $schema = 'http://schemas.opengis.net/gml/3.2.1/gml.xsd')
     {
         $gml = $request->request->get('gml');
+        $isValid = false;
         if (empty($gml)) {
             throw new BadRequestHttpException('No GML given. (Parameter:gml)');
         } else {
@@ -205,8 +210,18 @@ class GmlController extends Controller
                 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
                 'xsi:schemaLocation' => 'http://www.opengis.net/gml/3.2 ' . $schema
             );
-            $gml = $this->addNamespace($gml, $namespaces);
-
+            try {
+                $gml = $this->addNamespace($gml, $namespaces);
+            } catch (\Exception $exception) {
+                return new JsonResponse(
+                    array(
+                        $isValid,
+                        array($exception->getMessage()),
+                        null
+                    ),
+                    JsonResponse::HTTP_OK
+                );
+            }
             $errors = [];
             $warnings = [];
             $metadataUtil = $this->get('pelagos.util.metadata');
@@ -214,7 +229,6 @@ class GmlController extends Controller
             $errors = array_merge($errors, $analysis['errors']);
             $warnings = array_merge($warnings, $analysis['warnings']);
 
-            $isValid = false;
             if (count($analysis['errors']) === 0) {
                 $isValid = true;
             }
@@ -224,23 +238,24 @@ class GmlController extends Controller
                     $errors,
                     $warnings
                 ),
-                JsonResponse::HTTP_OK);
+                JsonResponse::HTTP_OK
+            );
         }
     }
 
-  /**
-   * This function validate Geometry from a given wkt.
-    *
-    * @param Request $request The Symfony request object.
-    *
-    * @Method("POST")
-    *
-    * @Route("/validategeometryfromwkt")
-    *
-    * @throws BadRequestHttpException When no WKT is given.
-    *
-    * @return Response Includes boolean and invalid reason.
-    */
+    /**
+     * This function validate Geometry from a given wkt.
+     *
+     * @param Request $request The Symfony request object.
+     *
+     * @Method("POST")
+     *
+     * @Route("/validategeometryfromwkt")
+     *
+     * @throws BadRequestHttpException When no WKT is given.
+     *
+     * @return Response Includes boolean and invalid reason.
+     */
     public function validateGeometryFromWktAction(Request $request)
     {
         $wkt = $request->request->get('wkt');

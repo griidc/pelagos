@@ -511,31 +511,47 @@ function MapWizard(json)
     {
         var gml = $("#inputGml").val();
         if (gml.trim() === "") {
-            showDialog("Input GML Validation", "Input GML is empty!");
+            showDialog("Warning", "Input GML is empty!");
             return;
         }
 
+        $("#drawOnMap").button("disable");
         validateGml(gml).then(function(data) {
             if (true === data[0]) {
                 wizGeoViz.gmlToWKT(gml).fail(function(xhr){
                     if (xhr.status === 400) {
-                        showDialog("WKT Conversion", "Fail to convert GML to WKT due to invalid GML Representation!");
+                        showDialog("Geometry Validation", "Invalid (Wkt Conversion");
                     } else {
-                        showDialog("Error " + xhr.status, xhr.statusText);
+                        showDialog("Geometry Validation",  xhr.status + ": " + xhr.statusText + " (Wkt Conversion)");
                     }
+                    $("#drawOnMap").button("enable");
                 }).then(function(wkt){
                     validateGeometryFromWkt(wkt).then(function (isValid) {
                         if (isValid === "Valid Geometry") {
                             wizGeoViz.addFeatureFromWKT(wkt);
+                            showDialog("Validation Success", "Geometry & GML are valid!");
                         } else {
                             showDialog("Geometry Validation", $isValid);
                         }
+                        $("#drawOnMap").button("enable");
                     });
                 });
-            }
-            else {
-                console.log(data);
-                showDialog("GML Schema Validation", "The input GML is invalid!");
+            } else {
+                $("<div>"+ data[1].join("").replace(/\n/g, "<br/>") +"</div>").dialog({
+                    height: "auto",
+                    width: "auto",
+                    autoOpen: true,
+                    title: "GML Validation",
+                    buttons: {
+                        OK: function() {
+                            $(this).dialog("close");
+                         }},
+                    modal: true,
+                    close: function (event, ui) {
+                        $(this).dialog("destroy").remove();
+                    }
+                });
+                $("#drawOnMap").button("enable");
             }
         });
     }
