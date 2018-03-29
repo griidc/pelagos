@@ -2,8 +2,12 @@
 
 {% block head %}
     {{ parent () }}
-{% endblock %}
 
+    {% javascripts '@PelagosAppBundle/Resources/public/js/entity/NationalDataCenter.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+{% endblock %}
 
 {% block body %}
 
