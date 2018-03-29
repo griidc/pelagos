@@ -896,7 +896,7 @@ class ISOMetadataExtractorUtil
             '/gmd:temporalElement' .
             '/@gco:nilReason';
 
-        $queryXpath = @$xml->xpath($query);
+        $queryXpath = $xml->xpath($query);
 
         if (empty($queryXpath)) {
             // This is a best effort, so null if xpath fails.
