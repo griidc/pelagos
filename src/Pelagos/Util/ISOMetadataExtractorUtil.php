@@ -895,16 +895,17 @@ class ISOMetadataExtractorUtil
             '/gmd:EX_Extent' .
             '/gmd:temporalElement';
 
-        $queryXpath = @$xml->xpath($query)[0];
+        $queryXpath = @$xml->xpath($query);
 
-        if (false === $queryXpath) {
+        if (empty($queryXpath)) {
             // This is a best effort, so null if xpath fails.
             return null;
+        } elseif (!empty($queryXpath) and is_array($queryXpath)) {
+            $temporalExtentNilReason = (string)$queryXpath[0]->attributes('gco', true)['nilReason'];
+            $value = trim(preg_replace('/\s+/', ' ', $temporalExtentNilReason));
+            return $value;
         }
 
-        $temporalExtentNilReason = (string)$queryXpath->attributes('gco', true)['nilReason'];
-        $value = trim(preg_replace('/\s+/', ' ', $temporalExtentNilReason));
-        
-        return $value;
+        return null;
     }
 }
