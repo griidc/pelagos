@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 
 /**
  * A utility class for extracting information from ISO metadata.
@@ -32,6 +33,11 @@ class ISOMetadataExtractorUtil
         foreach ($pointsOfContact as $poc) {
             self::setIfHas($datasetSubmission, 'addDatasetContact', $poc);
         }
+
+        // This always returns a single POC, not an array of POC.
+        $metadataContact = self::extractMetadataContact($xmlMetadata, $datasetSubmission, $entityManager);
+        self::setIfHas($datasetSubmission, 'addMetadataContact', $metadataContact);
+
         self::setIfHas($datasetSubmission, 'setTitle', self::extractTitle($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setShortTitle', self::extractShortTitle($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setAbstract', self::extractAbstract($xmlMetadata));
@@ -85,8 +91,8 @@ class ISOMetadataExtractorUtil
      *
      * @return Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
      */
-    public static function get1stEmailAddressesFrom1stPointOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em) {
-
+    public static function get1stEmailAddressesFrom1stPointOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
+    {
         $targetEmailAddress = null;
 
         $query = '/gmi:MI_Metadata' .
@@ -112,8 +118,8 @@ class ISOMetadataExtractorUtil
             $targetEmailAddress = self::querySingle($pointOfContact, $query);
         }
         return $targetEmailAddress;
-
     }
+
     /**
      * Get the all email addresses from all POCs from XML metadata.
      *
@@ -123,8 +129,8 @@ class ISOMetadataExtractorUtil
      *
      * @return Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
      */
-    public static function getAllEmailAddressesForAllPointsOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em) {
-
+    public static function getAllEmailAddressesForAllPointsOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
+    {
         $emailAddressColection = array();
 
         $query = '/gmi:MI_Metadata' .
@@ -148,15 +154,16 @@ class ISOMetadataExtractorUtil
                     '/gco:CharacterString';
 
                 $allEmailAddresses = self::queryMultiple($pointOfContact, $query);
-                if(!empty($allEmailAddresses)) {
-                    foreach ($allEmailAddresses as $emailAddress)
+                if (!empty($allEmailAddresses)) {
+                    foreach ($allEmailAddresses as $emailAddress) {
                         $emailAddressColection[] = $emailAddress;
+                    }
                 }
             }
         }
         return $emailAddressColection;
-
     }
+
     /**
      * Determines the dataset contact from XML metadata.
      *
@@ -220,6 +227,61 @@ class ISOMetadataExtractorUtil
             }
         }
         return $personDatasetSubmissionDatasetContacts;
+    }
+
+    /**
+     * Determines the metadata contact from XML metadata.
+     *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
+     * @param EntityManager     $em  An entity manager.
+     *
+     * @return PersonDatasetSubmissionMetadataContact|null Returns the metadata contact, or null.
+     */
+    protected static function extractMetadataContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
+    {
+        $query = '/gmi:MI_Metadata' .
+                 '/gmd:contact[1]' .
+                 '/gmd:CI_ResponsibleParty' .
+                 '/gmd:contactInfo' .
+                 '/gmd:CI_Contact' .
+                 '/gmd:address' .
+                 '/gmd:CI_Address' .
+                 '/gmd:electronicMailAddress' .
+                 '/gco:CharacterString';
+
+        $email = self::querySingle($xml, $query);
+
+        $people = $em->getRepository(Person::class)->findBy(
+            array('emailAddress' => $email)
+        );
+
+        if (count($people) > 0) {
+            $person = $people[0];
+        } else {
+            $person = null;
+        }
+
+        $query = '/gmi:MI_Metadata' .
+                 '/gmd:contact[1]' .
+                 '/gmd:CI_ResponsibleParty' .
+                 '/gmd:role' .
+                 '/gmd:CI_RoleCode';
+
+        $role = self::querySingle($xml, $query);
+
+        if ($person instanceof Person) {
+            $personDatasetSubmissionMetadataContact = new PersonDatasetSubmissionMetadataContact();
+            $personDatasetSubmissionMetadataContact->setPerson($person);
+            // Only set role if it is a valid role, otherwise leave unset.
+            if (null !== $role and array_key_exists($role, PersonDatasetSubmissionMetadataContact::ROLES)) {
+                $personDatasetSubmissionMetadataContact->setRole($role);
+            }
+            $personDatasetSubmissionMetadataContact->setDatasetSubmission($ds);
+            return $personDatasetSubmissionMetadataContact;
+        } else {
+            return null;
+        }
     }
 
     /**
