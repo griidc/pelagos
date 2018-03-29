@@ -893,7 +893,8 @@ class ISOMetadataExtractorUtil
             '/gmd:MD_DataIdentification' .
             '/gmd:extent' .
             '/gmd:EX_Extent' .
-            '/gmd:temporalElement';
+            '/gmd:temporalElement' .
+            '/@gco:nilReason';
 
         $queryXpath = @$xml->xpath($query);
 
@@ -901,9 +902,27 @@ class ISOMetadataExtractorUtil
             // This is a best effort, so null if xpath fails.
             return null;
         } elseif (!empty($queryXpath) and is_array($queryXpath)) {
-            $temporalExtentNilReason = (string)$queryXpath[0]->attributes('gco', true)['nilReason'];
+
+            $temporalExtentNilReason = self::getXmlAttribute($queryXpath[0], 'nilReason');
             $value = trim(preg_replace('/\s+/', ' ', $temporalExtentNilReason));
             return $value;
+        }
+
+        return null;
+    }
+
+    /**
+     * Static function to get the XML attribute from the SimpleXmlElement object.
+     *
+     * @param \SimpleXMLElement $xmlObject The Xml object from the query.
+     * @param string            $attribute The attribute needed to be extracted.
+     *
+     * @return null|string
+     */
+    private static function getXmlAttribute(\SimpleXMLElement $xmlObject, $attribute)
+    {
+        if (isset($xmlObject[$attribute])) {
+            return (string) $xmlObject[$attribute];
         }
 
         return null;
