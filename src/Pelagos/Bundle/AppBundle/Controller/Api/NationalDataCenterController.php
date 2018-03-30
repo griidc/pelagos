@@ -2,12 +2,13 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\Api;
 
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+
 
 use Pelagos\Bundle\AppBundle\Form\NationalDataCenterType;
 
@@ -64,5 +65,31 @@ class NationalDataCenterController extends EntityController
     {
         $nationalDataCenter = $this->handlePost(NationalDataCenterType::class, NationalDataCenter::class, $request);
         return $this->makeCreatedResponse('pelagos_api_national_data_center_get', $nationalDataCenter->getId());
+    }
+
+    /**
+     * Validate a value for a property of a National Data center.
+     *
+     * @param Request $request A Symfony request instance.
+     *
+     * @ApiDoc(
+     *     section = "National Data Center",
+     *   parameters = {{"name"="someProperty", "dataType"="string", "required"="true"}},
+     *   statusCodes = {
+     *     200 = "Validation was performed successfully (regardless of validity).",
+     *     400 = "Bad parameters were passed in the query string.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Get("/validateProperty")
+     *
+     * @Rest\View()
+     *
+     * @return boolean|string True if valid, or a message indicating why the property is invalid.
+     */
+    public function validatePropertyAction(Request $request)
+    {
+        return $this->validateProperty(NationalDataCenterType::class, NationalDataCenter::class, $request);
     }
 }
