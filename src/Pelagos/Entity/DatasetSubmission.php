@@ -1134,10 +1134,16 @@ class DatasetSubmission extends Entity
         return array_flip(static::RESTRICTIONS);
     }
 
-    public static function getTemporalExtentNilReasonTypes()
+    /**
+     * Get the choice list for NilReason types.
+     *
+     * @return array
+     */
+    public static function getNilReasonTypes()
     {
-        return array_flip(self::TEMPORAL_EXTENT_NILREASON_TYPES);
+        return array_flip(self::NILREASON_TYPES);
     }
+
     /**
      * Submit this Dataset Submission.
      *
@@ -2212,7 +2218,8 @@ class DatasetSubmission extends Entity
      */
     public function setTemporalExtentDesc($temporalExtentDesc)
     {
-        if (null !== $temporalExtentDesc and !array_key_exists($temporalExtentDesc, static::TEMPORAL_EXTENT_DESCRIPTIONS)) {
+        if (null !== $temporalExtentDesc and
+            !array_key_exists($temporalExtentDesc, static::TEMPORAL_EXTENT_DESCRIPTIONS)) {
             throw new \InvalidArgumentException("'$temporalExtentDesc' is not a valid value for temporalExtentDesc");
         }
         $this->temporalExtentDesc = $temporalExtentDesc;
@@ -2453,7 +2460,7 @@ class DatasetSubmission extends Entity
     /**
      * Sets the temporal nilreason type for the dataset.
      *
-     * @param string $temporalExtentNilReasonType The nilReason for the temporal extent.
+     * @param string $temporalExtentNilReasonType The type of nilReason for temporal extent.
      *
      * @return void
      */
