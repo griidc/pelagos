@@ -185,7 +185,7 @@ class DatasetSubmissionType extends AbstractType
             ))
             ->add('temporalExtentNilReasonType', Type\ChoiceType::class, array(
                 'label' => 'Nilreason Type',
-                'choices' => DatasetSubmission::getTemporalExtentNilReasonTypes(),
+                'choices' => DatasetSubmission::getNilReasonTypes(),
                 'required' => 'false',
             ))
             ->add('temporalExtentDesc', Type\ChoiceType::class, array(
