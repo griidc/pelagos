@@ -899,7 +899,6 @@ class ISOMetadataExtractorUtil
         $queryXpath = $xml->xpath($query);
 
         if (!empty($queryXpath) and is_array($queryXpath)) {
-
             $temporalExtentNilReason = self::getXmlAttribute($queryXpath[0], 'nilReason');
             $value = trim(preg_replace('/\s+/', ' ', $temporalExtentNilReason));
             return $value;
