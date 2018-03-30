@@ -898,16 +898,13 @@ class ISOMetadataExtractorUtil
 
         $queryXpath = $xml->xpath($query);
 
-        if (empty($queryXpath)) {
-            // This is a best effort, so null if xpath fails.
-            return null;
-        } elseif (!empty($queryXpath) and is_array($queryXpath)) {
+        if (!empty($queryXpath) and is_array($queryXpath)) {
 
             $temporalExtentNilReason = self::getXmlAttribute($queryXpath[0], 'nilReason');
             $value = trim(preg_replace('/\s+/', ' ', $temporalExtentNilReason));
             return $value;
         }
-
+        // This is a best effort, so null if xpath fails.
         return null;
     }
 
