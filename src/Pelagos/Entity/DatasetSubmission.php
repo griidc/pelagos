@@ -2449,12 +2449,16 @@ class DatasetSubmission extends Entity
     /**
      * Sets the temporal nilreason type for the dataset.
      *
-     * @param string $temporalExtentNilReasonType
+     * @param string $temporalExtentNilReasonType The nilReason for the temporal extent.
      *
      * @return void
      */
     public function setTemporalExtentNilReasonType($temporalExtentNilReasonType)
     {
+        $temporalExtentNilReasonType = 'hello';
+        if (!in_array($temporalExtentNilReasonType, self::NILREASON_TYPES)) {
+                throw new \InvalidArgumentException("'$temporalExtentNilReasonType' is not a valid value for nilReason types");
+        }
         $this->temporalExtentNilReasonType = $temporalExtentNilReasonType;
     }
 }
