@@ -60,6 +60,7 @@ class ISOMetadataExtractorUtil
         self::setIfHas($datasetSubmission, 'setTemporalExtentEndPosition', self::extractTemporalExtentEndPosition($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setDistributionFormatName', self::extractDistributionFormatName($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setFileDecompressionTechnique', self::extractFileDecompressionTechnique($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setTemporalExtentNilReasonType', self::extractTemporalExtentNilReasonType($xmlMetadata));
     }
 
     /**
@@ -876,5 +877,50 @@ class ISOMetadataExtractorUtil
                 return $item;
             }
         }
+    }
+
+    /**
+     * Extracts temporal nilReason from XML metadata.
+     *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     *
+     * @return string|null Returns the temporal nilReason as a string, or null.
+     */
+    protected static function extractTemporalExtentNilReasonType(\SimpleXmlElement $xml)
+    {
+        $query = '/gmi:MI_Metadata' .
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:extent' .
+            '/gmd:EX_Extent' .
+            '/gmd:temporalElement' .
+            '/@gco:nilReason';
+
+        $queryXpath = @$xml->xpath($query);
+
+        if (!empty($queryXpath) and is_array($queryXpath)) {
+            $temporalExtentNilReason = self::getXmlAttribute($queryXpath[0], 'nilReason');
+            $value = trim(preg_replace('/\s+/', ' ', $temporalExtentNilReason));
+            return $value;
+        }
+        // This is a best effort, so null if xpath fails.
+        return null;
+    }
+
+    /**
+     * Static function to get the XML attribute from the SimpleXmlElement object.
+     *
+     * @param \SimpleXMLElement $xmlObject The Xml object from the query.
+     * @param string            $attribute The attribute needed to be extracted.
+     *
+     * @return null|string
+     */
+    private static function getXmlAttribute(\SimpleXMLElement $xmlObject, $attribute)
+    {
+        if (isset($xmlObject[$attribute])) {
+            return (string) $xmlObject[$attribute];
+        }
+
+        return null;
     }
 }
