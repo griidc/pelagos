@@ -2460,7 +2460,7 @@ class DatasetSubmission extends Entity
     /**
      * Sets the temporal nilreason type for the dataset.
      *
-     * @param string $temporalExtentNilReasonType The type of nilReason for temporal extent.
+     * @param string $temporalExtentNilReasonType The nilReason for temporal extent.
      *
      * @return void
      */
