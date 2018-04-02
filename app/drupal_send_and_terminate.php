@@ -10,6 +10,12 @@ if (get_class($response) == 'Symfony\Component\HttpFoundation\BinaryFileResponse
     exit();
 }
 
+if (get_class($response) == 'Symfony\Component\HttpFoundation\JsonResponse') {
+  $response->send();
+  $kernel->terminate($request, $response);
+  exit();
+}
+
 if (get_class($response) == 'Symfony\Component\HttpFoundation\StreamedResponse') {
     $response->send();
     $kernel->terminate($request, $response);
@@ -58,7 +64,6 @@ if (in_array(
         'pelagos_metadata',
         'pelagos_app_ui_datasetrestrictions_post',
         'pelagos_app_gml_validategeometryfromwkt',
-        'pelagos_app_gml_validategml',
     )
 )) {
     $response->send();
