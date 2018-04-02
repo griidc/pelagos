@@ -181,11 +181,11 @@ class GmlController extends Controller
         } else {
             //append namespaces to string using regex
             $strNameSpaces = '';
-            foreach($namespaces as $key => $value) {
+            foreach ($namespaces as $key => $value) {
                 $strNameSpaces .= ' ' . $key . '="' . $value . '"';
             }
             $regEx = '/^<gml:\S*/';
-            $gml = preg_replace($regEx,"$0$strNameSpaces",$gml);
+            $gml = preg_replace($regEx, "$0$strNameSpaces", $gml);
         }
         return $gml;
     }
