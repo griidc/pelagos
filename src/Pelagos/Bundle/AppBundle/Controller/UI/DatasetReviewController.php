@@ -19,10 +19,10 @@ use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 use Pelagos\Entity\DatasetSubmissionReview;
 use Pelagos\Entity\Entity;
 use Pelagos\Entity\Account;
-use Pelagos\Entity\Metadata;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
@@ -204,6 +204,10 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
             }
 
+            if ($datasetSubmission->getMetadataContacts()->isEmpty()) {
+                $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
+            }
+
             $datasetSubmissionId = $datasetSubmission->getId();
             $researchGroupId = $dataset->getResearchGroup()->getId();
             $datasetSubmissionStatus = $datasetSubmission->getStatus();
@@ -353,7 +357,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     public function postAction(Request $request, $id = null)
     {
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
-        $acceptedDataset = false;
         $form = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionType::class,
@@ -382,7 +385,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     break;
                 case ($form->get('acceptDatasetBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_ACCEPT_REVIEW);
-                    $acceptedDataset = true;
                     break;
                 case ($form->get('requestRevisionsBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_REQUEST_REVISIONS);
@@ -393,16 +395,12 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
 
             $this->entityHandler->update($datasetSubmission);
 
-
-            // Need to create MetaData after datasetSubmission is updated for an ACCEPTED DATASET.
-
-            if ($acceptedDataset) {
-                $datasetSubmissionAccepted = $this->entityHandler->get(DatasetSubmission::class, $id);
-                $this->createMetaData($datasetSubmissionAccepted);
-            }
-
             foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                 $this->entityHandler->update($datasetContact);
+            }
+
+            foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+                $this->entityHandler->update($metadataContact);
             }
 
             //use rabbitmq to process dataset file and persist the file details.
@@ -467,50 +465,9 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         $datasetSubmission->setDatasetFileSha1Hash(null);
         $datasetSubmission->setDatasetFileSha256Hash(null);
         $this->messages[] = array(
-            'body' => $datasetSubmission->getDataset()->getId(),
+            'body' => $datasetSubmission->getId(),
             'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
         );
-    }
-
-    /**
-     * To create metadata for the dataset when it is accepted.
-     *
-     * @param DatasetSubmission $datasetSubmission A dataset submission instance.
-     *
-     * @throws BadRequestHttpException  When metadata is not generated or fails.
-     *
-     * @return void
-     */
-    private function createMetaData(DatasetSubmission $datasetSubmission)
-    {
-        $udi = $datasetSubmission->getDataset()->getUdi();
-
-        $dataset = $datasetSubmission->getDataset();
-
-        $url = $this->generateUrl(
-            'pelagos_api_metadata_get',
-            array(
-                'udi' => $udi),
-            UrlGeneratorInterface::ABSOLUTE_URL
-        );
-
-        try {
-
-            $fileContent = file_get_contents($url);
-
-            $xml = simplexml_load_string($fileContent);
-
-            if ($dataset->getMetadata() instanceof Metadata) {
-                $metadata = $dataset->getMetadata();
-                $metadata->setXml($xml->asXML());
-                $this->entityHandler->update($metadata);
-            } else {
-                $metadata = new Metadata($dataset, $xml->asXML());
-                $this->entityHandler->create($metadata);
-            }
-        } catch (BadRequestHttpException $exception) {
-            throw new BadRequestHttpException($exception);
-        }
     }
 
     /**

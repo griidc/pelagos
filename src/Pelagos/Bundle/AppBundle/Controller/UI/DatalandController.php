@@ -41,22 +41,11 @@ class DatalandController extends UIController
         $rawXml = null;
         $wkt = null;
 
-        if ($dataset->getMetadata() instanceof Metadata
-            and $dataset->getMetadata()->getXml() instanceof \SimpleXMLElement) {
-            $rawXml = $dataset->getMetadata()->getXml()->asXml();
+        if ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+            $rawXml = $this->get('pelagos.util.metadata')->getXmlRepresentation($dataset);
         }
-
-        if ($dataset->getDif() instanceof DIF) {
-            $wkt = $geometryUtil->convertGmlToWkt(
-                $dataset
-                ->getDif()
-                ->getSpatialExtentGeometry()
-            );
-        }
-
-        if ($dataset->getMetadata() instanceof Metadata) {
-            $wkt = $dataset->getMetadata()->getGeometry();
-        }
+        //Logic to get DIF or Accepted Dataset is in Dataset Entity.
+        $wkt = $geometryUtil->convertGmlToWkt($dataset->getSpatialExtentGeometry());
 
         $downloadCount = null;
         // Remotely hosted datasets are normally also hosted locally anyway, so including.
@@ -97,7 +86,6 @@ class DatalandController extends UIController
      *
      * @param string $udi The UDI of the dataset to return metadata for.
      *
-     * @throws NotFoundHttpException   When the dataset does not have metadata.
      * @throws BadRequestHttpException When the metadata for the dataset has not been accepted.
      *
      * @Route("/{udi}/metadata")
@@ -108,18 +96,13 @@ class DatalandController extends UIController
     {
         $dataset = $this->getDataset($udi);
 
-        if (!$dataset->getMetadata() instanceof Metadata
-            or !$dataset->getMetadata()->getXml() instanceof \SimpleXMLElement) {
-            throw $this->createNotFoundException("No metadata found for dataset with UDI: $udi");
-        }
-
         if ($dataset->getMetadataStatus() !== DatasetSubmission::METADATA_STATUS_ACCEPTED) {
             throw new BadRequestHttpException("The metadata has not yet been accepted for dataset with UDI: $udi");
         }
 
         $filename = str_replace(':', '-', $udi) . '-metadata.xml';
 
-        $response = new Response($dataset->getMetadata()->getXml()->asXml());
+        $response = new Response($this->get('pelagos.util.metadata')->getXmlRepresentation($dataset));
         $response->headers->set('Content-Type', 'text/xml');
         $response->headers->set('Content-Disposition', "attachment; filename=$filename;");
         return $response;
