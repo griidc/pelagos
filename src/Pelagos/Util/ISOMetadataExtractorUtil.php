@@ -896,7 +896,7 @@ class ISOMetadataExtractorUtil
             '/gmd:temporalElement' .
             '/@gco:nilReason';
 
-        $queryXpath = $xml->xpath($query);
+        $queryXpath = @$xml->xpath($query);
 
         if (!empty($queryXpath) and is_array($queryXpath)) {
             $temporalExtentNilReason = self::getXmlAttribute($queryXpath[0], 'nilReason');
