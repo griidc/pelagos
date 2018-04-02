@@ -272,11 +272,26 @@ class DatasetSubmission extends Entity
      * The array values are the valid values to be set in self::temporalExtentNilReasonType.
      */
     const NILREASON_TYPES = [
-        'inapplicable',
-        'missing',
-        'template',
-        'unknown',
-        'withheld'
+        'inapplicable' => [
+            'name' => 'Inapplicable',
+            'description' => 'Inapplicable'
+        ],
+        'missing' => [
+            'name' => 'Missing',
+            'description' => 'Missing'
+        ],
+        'template' => [
+            'name' => 'Template',
+            'description' => 'Template'
+        ],
+        'unknown' => [
+            'name' => 'Unknown',
+            'description' => 'Unknown'
+        ],
+        'withheld' => [
+            'name' => 'Withheld',
+            'description' => 'Withheld'
+        ]
     ];
 
     /**
@@ -1141,7 +1156,14 @@ class DatasetSubmission extends Entity
      */
     public static function getNilReasonTypes()
     {
-        return array_flip(self::NILREASON_TYPES);
+        return array_flip(
+            array_map(
+                function ($type) {
+                    return $type['name'];
+                },
+                static::NILREASON_TYPES
+            )
+        );
     }
 
     /**
@@ -2468,7 +2490,7 @@ class DatasetSubmission extends Entity
      */
     public function setTemporalExtentNilReasonType($temporalExtentNilReasonType)
     {
-        if (null!== $temporalExtentNilReasonType and !in_array($temporalExtentNilReasonType, self::NILREASON_TYPES)) {
+        if (null !== $temporalExtentNilReasonType and !in_array($temporalExtentNilReasonType, self::NILREASON_TYPES)) {
                 throw new \InvalidArgumentException("'$temporalExtentNilReasonType' is not a valid value for nilReason types");
         }
         $this->temporalExtentNilReasonType = $temporalExtentNilReasonType;
