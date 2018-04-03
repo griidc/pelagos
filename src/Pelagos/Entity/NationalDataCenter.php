@@ -184,20 +184,6 @@ class NationalDataCenter extends Entity
      */
     protected $emailAddress;
 
-//    /**
-//     * NationalDataCenter constructor.
-//     *
-//     * Creates a new National data center object.
-//     *
-//     * @param string $organizationName Name for the national data center.
-//     * @param string $organizationUrl  The website URl for the national data center.
-//     */
-//    public function __construct($organizationName, $organizationUrl)
-//    {
-//        $this->organizationName = $organizationName;
-//        $this->organizationUrl = $organizationUrl;
-//    }
-
     /**
      * Getter for National Data center organization's name.
      *
@@ -209,6 +195,18 @@ class NationalDataCenter extends Entity
     }
 
     /**
+     * Setter for National Data center organization's name.
+     *
+     * @param string $organizationName The national data center's name.
+     *
+     * @return void
+     */
+    public function setOrganizationName($organizationName)
+    {
+        $this->organizationName = $organizationName;
+    }
+
+    /**
      * Getter for National Data center organization's URL.
      *
      * @return string
@@ -216,6 +214,18 @@ class NationalDataCenter extends Entity
     public function getOrganizationUrl()
     {
         return $this->organizationUrl;
+    }
+
+    /**
+     * Setter for National Data center organization's URL.
+     *
+     * @param string $organizationUrl The national data center's URL.
+     *
+     * @return void
+     */
+    public function setOrganizationUrl($organizationUrl)
+    {
+        $this->organizationUrl = $organizationUrl;
     }
 
     /**
