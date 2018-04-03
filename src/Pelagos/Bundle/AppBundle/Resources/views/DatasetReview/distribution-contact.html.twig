@@ -1,0 +1,40 @@
+<fieldset>
+    <legend>Distribution Contact</legend>
+    <table class="tab-table distribution-contact">
+        <tr>
+            <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+                        <img class="info" src="{{ asset_url }}">
+                    {% endimage %}
+                    <div class="tooltiptext">
+                        Please use the drop down list to select the distribution contact who can be contacted
+                        about the dataset’s descriptive information. If the contact is not in the
+                        list or their contact information is incorrect, please contact
+                        griidc@gomri.org.
+					</div>
+				</span>
+                <label for="distributioncontact">Distribution Contact</label>
+                <select class="distributioncontact" id="distributioncontact" name="" required="required">
+                        <option selected value="">
+                        </option>
+                </select>
+                <label for="distributioncontact" class="error"></label>
+                {% include "PelagosAppBundle:DatasetSubmission:distribution-contact-information.html.twig" %}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+                        <img class="info" src="{{ asset_url }}">
+                    {% endimage %}
+                    <div class="tooltiptext">
+						Please enter the distribution URL for this dataset.
+					</div>
+				</span>
+                {{ form_row(form.distributionUrl) }}
+            </td>
+        </tr>
+    </table>
+</fieldset>
