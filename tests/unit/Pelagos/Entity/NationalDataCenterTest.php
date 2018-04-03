@@ -41,12 +41,7 @@ class NationalDataCenterTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->organizationName = 'Gulf of Mexico Research Intiative';
-        $this->organizationUrl = 'data.gulfresearchinitiative.org';
-        $this->nationalDataCenter = new NationalDataCenter(
-            $this->organizationName,
-            $this->organizationUrl
-        );
+        $this->nationalDataCenter = new NationalDataCenter();
     }
 
     /**
@@ -64,9 +59,13 @@ class NationalDataCenterTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testCanGetOrganizationName()
+    public function testCanSetAndGetOrganizationName()
     {
-        $this->assertEquals($this->organizationName, $this->nationalDataCenter->getOrganizationName());
+        $mockOrgName = 'GRIIDC';
+
+        $this->nationalDataCenter->setOrganizationName($mockOrgName);
+
+        $this->assertEquals($mockOrgName, $this->nationalDataCenter->getOrganizationName());
     }
 
     /**
@@ -74,9 +73,13 @@ class NationalDataCenterTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testCanGetOrganizationUrl()
+    public function testCanSetAndGetOrganizationUrl()
     {
-        $this->assertEquals($this->organizationUrl, $this->nationalDataCenter->getOrganizationUrl());
+        $mockOrgUrl = 'griidc.org';
+
+        $this->nationalDataCenter->setOrganizationUrl($mockOrgUrl);
+
+        $this->assertEquals($mockOrgUrl, $this->nationalDataCenter->getOrganizationUrl());
     }
 
     /**
