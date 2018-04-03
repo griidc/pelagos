@@ -10,6 +10,12 @@ if (get_class($response) == 'Symfony\Component\HttpFoundation\BinaryFileResponse
     exit();
 }
 
+if (get_class($response) == 'Symfony\Component\HttpFoundation\JsonResponse') {
+    $response->send();
+    $kernel->terminate($request, $response);
+    exit();
+}
+
 if (get_class($response) == 'Symfony\Component\HttpFoundation\StreamedResponse') {
     $response->send();
     $kernel->terminate($request, $response);
