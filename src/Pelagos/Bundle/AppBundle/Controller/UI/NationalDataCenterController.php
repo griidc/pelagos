@@ -30,15 +30,13 @@ class NationalDataCenterController extends UIController
             return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
         }
 
-        $entityHandler = $this->get('pelagos.entity.handler');
-
         if (!empty($id)) {
-            $nationalDataCenter = $entityHandler->get('NationalDataCenter', $id);
+            $nationalDataCenter = $this->entityHandler->get(NationalDataCenter::class, $id);
             if (!$nationalDataCenter instanceof NationalDataCenter) {
                 throw $this->createNotFoundException('The National data center was not found');
             }
         } else {
-            $nationalDataCenter = new NationalDataCenter('', '');
+            $nationalDataCenter = new NationalDataCenter();
         }
 
         $form = $this->get('form.factory')->createNamed(null, NationalDataCenterType::class, $nationalDataCenter);
