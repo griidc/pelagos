@@ -57,7 +57,7 @@ class NationalDataCenterType extends AbstractType
                 'label' => 'Country:',
                 'required' => false,
             ))
-            ->add('emailAddress', EmailType::class, array(
+            ->add('emailAddress', TextType::class, array(
                 'label' => 'Email address:',
                 'required' => false,
             ));
