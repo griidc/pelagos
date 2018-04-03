@@ -272,11 +272,26 @@ class DatasetSubmission extends Entity
      * The array values are the valid values to be set in self::temporalExtentNilReasonType.
      */
     const NILREASON_TYPES = [
-        'inapplicable',
-        'missing',
-        'template',
-        'unknown',
-        'withheld'
+        'inapplicable' => [
+            'name' => 'Inapplicable',
+            'description' => 'Inapplicable'
+        ],
+        'missing' => [
+            'name' => 'Missing',
+            'description' => 'Missing'
+        ],
+        'template' => [
+            'name' => 'Template',
+            'description' => 'Template'
+        ],
+        'unknown' => [
+            'name' => 'Unknown',
+            'description' => 'Unknown'
+        ],
+        'withheld' => [
+            'name' => 'Withheld',
+            'description' => 'Withheld'
+        ]
     ];
 
     /**
@@ -1078,27 +1093,27 @@ class DatasetSubmission extends Entity
     public function validate(ExecutionContextInterface $context)
     {
         if (null !== $this->spatialExtent) {
-            if (null === $this->temporalExtentDesc) {
-                $context->buildViolation('Since a spatial extent is present, this submission must ' .
-                    'include a time period description.')
-                    ->atPath('temporalExtentDesc')
-                    ->addViolation();
-            }
+            if (null === $this->temporalExtentNilReasonType) {
+                if (null === $this->temporalExtentDesc) {
+                    $context->buildViolation('Since a spatial extent is present, this submission must ' .
+                        'include a time period description.')
+                        ->atPath('temporalExtentDesc')
+                        ->addViolation();
+                }
+                if (!($this->temporalExtentBeginPosition instanceof \DateTime)) {
+                    $context->buildViolation('Since a spatial extent is present, this submission must ' .
+                        'include a start date.')
+                        ->atPath('temporalExtentBeginPosition')
+                        ->addViolation();
+                }
 
-            if (!($this->temporalExtentBeginPosition instanceof \DateTime)) {
-                $context->buildViolation('Since a spatial extent is present, this submission must ' .
-                    'include a start date.')
-                    ->atPath('temporalExtentBeginPosition')
-                    ->addViolation();
+                if (!($this->temporalExtentEndPosition instanceof \DateTime)) {
+                    $context->buildViolation('Since a spatial extent is present, this submission must ' .
+                        'include a end date.')
+                        ->atPath('temporalExtentEndPosition')
+                        ->addViolation();
+                }
             }
-
-            if (!($this->temporalExtentEndPosition instanceof \DateTime)) {
-                $context->buildViolation('Since a spatial extent is present, this submission must ' .
-                    'include a end date.')
-                    ->atPath('temporalExtentEndPosition')
-                    ->addViolation();
-            }
-
         } else {
             if (null === $this->spatialExtentDescription) {
                 $context->buildViolation('You must provide either a spatial extent or a spatial extent description.')
@@ -1132,6 +1147,23 @@ class DatasetSubmission extends Entity
     public static function getRestrictionsChoices()
     {
         return array_flip(static::RESTRICTIONS);
+    }
+
+    /**
+     * Get the choice list for NilReason types.
+     *
+     * @return array
+     */
+    public static function getNilReasonTypes()
+    {
+        return array_flip(
+            array_map(
+                function ($type) {
+                    return $type['name'];
+                },
+                static::NILREASON_TYPES
+            )
+        );
     }
 
     /**
@@ -2208,7 +2240,8 @@ class DatasetSubmission extends Entity
      */
     public function setTemporalExtentDesc($temporalExtentDesc)
     {
-        if (null !== $temporalExtentDesc and !array_key_exists($temporalExtentDesc, static::TEMPORAL_EXTENT_DESCRIPTIONS)) {
+        if (null !== $temporalExtentDesc and
+            !array_key_exists($temporalExtentDesc, static::TEMPORAL_EXTENT_DESCRIPTIONS)) {
             throw new \InvalidArgumentException("'$temporalExtentDesc' is not a valid value for temporalExtentDesc");
         }
         $this->temporalExtentDesc = $temporalExtentDesc;
@@ -2449,13 +2482,15 @@ class DatasetSubmission extends Entity
     /**
      * Sets the temporal nilreason type for the dataset.
      *
-     * @param string $temporalExtentNilReasonType The nilReason for the temporal extent.
+     * @param string $temporalExtentNilReasonType The nilReason for temporal extent.
+     *
+     * @throws \InvalidArgumentException If $temporalExtentNilReasonType is not in self::NILREASON_TYPES.
      *
      * @return void
      */
     public function setTemporalExtentNilReasonType($temporalExtentNilReasonType)
     {
-        if (null!== $temporalExtentNilReasonType and !in_array($temporalExtentNilReasonType, self::NILREASON_TYPES)) {
+        if (null !== $temporalExtentNilReasonType and !array_key_exists($temporalExtentNilReasonType, self::NILREASON_TYPES)) {
                 throw new \InvalidArgumentException("'$temporalExtentNilReasonType' is not a valid value for nilReason types");
         }
         $this->temporalExtentNilReasonType = $temporalExtentNilReasonType;

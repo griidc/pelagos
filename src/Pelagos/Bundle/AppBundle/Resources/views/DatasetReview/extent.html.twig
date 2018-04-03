@@ -25,11 +25,23 @@
                 </td>
             </tr>
         </table>
-        <table class="tab-table" id="spatialExtras">
+        <table class="tab-table">
             <tr>
                 <td colspan="2"></td>
             </tr>
-            <tr>
+            <tr id="temporalInfoQuestion">
+                <td colspan="2">
+                    <label for="checkNilReason">Do you have all the required information for temporal extent?</label>
+                    {% if datasetSubmission.temporalExtentNilReasonType %}
+                        <input type="radio" id="checkNilReason" name="temporalChoice"> Yes
+                        <input type="radio" id="checkNilReason" name="temporalChoice" checked> No
+                    {% else %}
+                        <input type="radio" id="checkNilReason" name="temporalChoice" checked> Yes
+                        <input type="radio" id="checkNilReason" name="temporalChoice"> No
+                    {% endif %}
+                </td>
+            </tr>
+            <tr class="spatialExtras">
                 <td colspan="2">
 					<span class="helpSection">
 						{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
@@ -48,7 +60,7 @@
                     {{ form_row(form.temporalExtentDesc) }}
                 </td>
             </tr>
-            <tr>
+            <tr class="spatialExtras">
                 <td colspan="2">
 					<span class="helpSection">
 						{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
@@ -62,7 +74,7 @@
                     {{ form_row(form.temporalExtentBeginPosition) }}
                 </td>
             </tr>
-            <tr>
+            <tr class="spatialExtras">
                 <td colspan="2">
 					<span class="helpSection">
 						{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
@@ -76,6 +88,21 @@
                     {{ form_row(form.temporalExtentEndPosition) }}
                 </td>
 
+            </tr>
+            <tr class="nilReasonTemporal">
+                <td colspan="2">
+					<span class="helpSection">
+						{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+                            <img class="info" src="{{ asset_url }}">
+                        {% endimage %}
+                        <div class="tooltiptext">
+                            'nilReasoning' the temporal extent means the review will leave the temporal
+                            extent empty because the dataset does not have a relevant temporal extent,
+                            and indicate the reason.
+						</div>
+					</span>
+                    {{ form_row(form.temporalExtentNilReasonType) }}
+                </td>
             </tr>
         </table>
     </div>

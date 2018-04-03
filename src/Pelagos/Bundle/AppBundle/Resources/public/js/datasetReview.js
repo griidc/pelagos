@@ -542,17 +542,36 @@ $(document).ready(function(){
         uploadSpeeds = [];
         updateSpeeds = true;
     }
+
+    $("#temporalInfoQuestion").on("change", function (e) {
+        checkTemporalNilReason();
+    })
 });
 
 function checkSpatial(isNonSpatial) {
     if (isNonSpatial) {
         $("#nonspatial").find(":input").attr("required", "required");
         $("#spatial").find(":input").removeAttr("required");
-        $("#spatialExtras").hide().find(":input").removeAttr("required").val("");
+        $(".spatialExtras").hide().find(":input").removeAttr("required").val("");
+        $(".nilReasonTemporal").hide().find(":input").removeAttr("required").val("");
+        $("#temporalInfoQuestion").hide();
+
     } else {
         $("#spatial").find(":input").attr("required", "required");
         $("#nonspatial").find(":input").removeAttr("required");
-        $("#spatialExtras").show().find(":input").attr("required", "required");
+        $("#temporalInfoQuestion").show();
+        $(".spatialExtras").show().find(":input").attr("required", "required");
+        checkTemporalNilReason();
+    }
+}
+
+function checkTemporalNilReason() {
+    if ($("#checkNilReason").prop("checked")) {
+        $(".nilReasonTemporal").hide().find(":input").removeAttr("required").val("");
+        $(".spatialExtras").show().find(":input").attr("required", "required");
+    } else{
+        $(".spatialExtras").hide().find(":input").removeAttr("required").val("");
+        $(".nilReasonTemporal").show().find(":input").attr("required", "required");
     }
 }
 
