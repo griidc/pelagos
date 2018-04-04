@@ -932,6 +932,16 @@ class DatasetSubmission extends Entity
      */
     protected $temporalExtentNilReasonType;
 
+
+    /**
+     * Distribution Url for distribution contact (National Data Centers).
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $distributionUrl;
+
     /**
      * The name of the format the data is distributed in.
      *
@@ -2495,4 +2505,26 @@ class DatasetSubmission extends Entity
         }
         $this->temporalExtentNilReasonType = $temporalExtentNilReasonType;
     }
+
+    /**
+     * Sets the distribution Url for the dataset's distribution contact.
+     *
+     * @return string
+     */
+    public function getDistributionUrl() {
+        return $this->distributionUrl;
+    }
+
+    /**
+     * Gets the distribution Url for the dataset's distribution contact.
+     *
+     * @param string $distributionUrl The distribution Url for the distribution contact.
+     *
+     * @return void
+     */
+    public function setDistributionUrl($distributionUrl) {
+        $this->distributionUrl = $distributionUrl;
+    }
+
+
 }
