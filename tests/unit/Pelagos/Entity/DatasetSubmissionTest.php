@@ -862,10 +862,10 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-    * Test the setter and getter for distribution Url.
-    *
-    * @return void
-    */
+     * Test the setter and getter for distribution Url.
+     *
+     * @return void
+     */
     public function testCanSetAndGetDistributionUrl()
     {
         $mockDistributionUrl = 'https://data.gulfresearchinitiative.org/data/R0.x000.000:0000';
