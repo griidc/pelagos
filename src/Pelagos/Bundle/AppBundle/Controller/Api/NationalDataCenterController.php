@@ -9,12 +9,10 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-
 use Pelagos\Bundle\AppBundle\Form\NationalDataCenterType;
 
 use Pelagos\Entity\NationalDataCenter;
 use Pelagos\Entity\Entity;
-
 
 /**
  * The API Controller Class for NationalDataCenter.
@@ -110,7 +108,7 @@ class NationalDataCenterController extends EntityController
     /**
      * Get a National data center for a given id.
      *
-     * @param $id string The id of the National Data center.
+     * @param string $id The id of the National Data center.
      *
      * @ApiDoc(
      *     section = "National Data Center",
@@ -129,6 +127,7 @@ class NationalDataCenterController extends EntityController
     {
         return $this->handleGetOne(NationalDataCenter::class, $id);
     }
+
     /**
      * Create a new National Data Center.
      *

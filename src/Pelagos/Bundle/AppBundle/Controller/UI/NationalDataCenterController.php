@@ -3,14 +3,17 @@
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Pelagos\Bundle\AppBundle\Form\NationalDataCenterType;
+
 use Pelagos\Entity\NationalDataCenter;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * The National Data Center Controller class.
- *
  */
 class NationalDataCenterController extends UIController
 {
@@ -21,9 +24,11 @@ class NationalDataCenterController extends UIController
      *
      * @Route("/national-data-center/{id}")
      *
+     * @throws NotFoundHttpException When no national data center is found with this id.
+     *
      * @return Response A Response instance.
      */
-    public function defaultAction(Request $request, $id = null)
+    public function defaultAction($id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
