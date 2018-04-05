@@ -10,11 +10,11 @@ $(document).ready(function(){
     $("#udiLoadReviewform").bind("change keyup mouseout", function() {
         var udiTextBox = $("#udiReview");
         if($(this).valid() && udiTextBox.val() !== "" && udiTextBox.is(":disabled") === false) {
-            $("#loadReviewButton").button({
+            $(".reviewButtons").button({
                 disabled: false
             });
         } else {
-            $("#loadReviewButton").button({
+            $(".reviewButtons").button({
                 disabled: true
             });
         }
