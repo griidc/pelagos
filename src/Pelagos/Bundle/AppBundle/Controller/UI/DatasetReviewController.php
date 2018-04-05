@@ -504,7 +504,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         if ($request->query->get('mode') === 'view') {
             $this->mode = 'view';
             return $datasetSubmission;
-        } elseif ($request->query->get('mode' === 'review')) {
+        } elseif ($request->query->get('mode') === 'review') {
             switch (true) {
                 case ($datasetSubmissionStatus === DatasetSubmission::STATUS_COMPLETE and $datasetSubmissionMetadataStatus !== DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER):
                     $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
