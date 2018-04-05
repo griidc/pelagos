@@ -3,12 +3,56 @@
 namespace Pelagos\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
+use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * This class represent National data center entity information.
  *
  * @ORM\Entity
+ *
+ * @UniqueEntity(
+ *     fields={"organizationName"},
+ *     errorPath="organizationName",
+ *     message="A National data center with this name already exists"
+ * )
+ *
+ * @UniqueEntity(
+ *     fields={"organizationUrl"},
+ *     errorPath="organizationUrl",
+ *     message="A National data center with this Url already exists"
+ * )
+ *
+ * @Hateoas\Relation(
+ *   "self",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_national_data_center_get",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   )
+ * )
+ * @Hateoas\Relation(
+ *   "edit",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_national_data_center_put",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   ),
+ *   exclusion = @Hateoas\Exclusion(
+ *     excludeIf = "expr(not service('security.authorization_checker').isGranted(['CAN_EDIT'], object))"
+ *   )
+ * )
+ * @Hateoas\Relation(
+ *   "delete",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_national_data_center_delete",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   ),
+ *   exclusion = @Hateoas\Exclusion(
+ *     excludeIf = "expr(not object.isDeletable() or not service('security.authorization_checker').isGranted(['CAN_DELETE'], object))"
+ *   )
+ * )
  */
 class NationalDataCenter extends Entity
 {
@@ -141,20 +185,6 @@ class NationalDataCenter extends Entity
     protected $emailAddress;
 
     /**
-     * NationalDataCenter constructor.
-     *
-     * Creates a new National data center object.
-     *
-     * @param string $organizationName Name for the national data center.
-     * @param string $organizationUrl  The website URl for the national data center.
-     */
-    public function __construct($organizationName, $organizationUrl)
-    {
-        $this->organizationName = $organizationName;
-        $this->organizationUrl = $organizationUrl;
-    }
-
-    /**
      * Getter for National Data center organization's name.
      *
      * @return string
@@ -165,6 +195,18 @@ class NationalDataCenter extends Entity
     }
 
     /**
+     * Setter for National Data center organization's name.
+     *
+     * @param string $organizationName The national data center's name.
+     *
+     * @return void
+     */
+    public function setOrganizationName($organizationName)
+    {
+        $this->organizationName = $organizationName;
+    }
+
+    /**
      * Getter for National Data center organization's URL.
      *
      * @return string
@@ -172,6 +214,18 @@ class NationalDataCenter extends Entity
     public function getOrganizationUrl()
     {
         return $this->organizationUrl;
+    }
+
+    /**
+     * Setter for National Data center organization's URL.
+     *
+     * @param string $organizationUrl The national data center's URL.
+     *
+     * @return void
+     */
+    public function setOrganizationUrl($organizationUrl)
+    {
+        $this->organizationUrl = $organizationUrl;
     }
 
     /**
