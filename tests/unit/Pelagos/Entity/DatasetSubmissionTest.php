@@ -860,4 +860,18 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($mockTemporalExtentNilReasonType, $this->datasetSubmission->getTemporalExtentNilReasonType());
     }
+
+    /**
+     * Test the setter and getter for distribution Url.
+     *
+     * @return void
+     */
+    public function testCanSetAndGetDistributionUrl()
+    {
+        $mockDistributionUrl = 'https://data.gulfresearchinitiative.org/data/R0.x000.000:0000';
+
+        $this->datasetSubmission->setDistributionUrl($mockDistributionUrl);
+
+        $this->assertEquals($mockDistributionUrl, $this->datasetSubmission->getDistributionUrl());
+    }
 }
