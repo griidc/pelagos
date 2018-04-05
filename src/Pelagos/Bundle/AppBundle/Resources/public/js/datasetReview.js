@@ -569,7 +569,19 @@ $(document).ready(function(){
 
     $("#temporalInfoQuestion").on("change", function (e) {
         checkTemporalNilReason();
-    })
+    });
+
+
+    // Check if mode = view (The if loop here is duplicated at the end because spatialWizard and fineUploader
+    // need to be disabled after they are initialized).
+    if (regForm.attr("mode") === 'view') {
+        // Disable fineupload Drag and Drop area.
+        $(".qq-upload-drop-area").css("visibility", "hidden");
+        // Disable the upload buttons
+        $(".qq-upload-button :input").prop("disabled", true);
+        // Disable Spatial Wizard button.
+        $("#geoWizard #geowizBtn").prop("disabled", "true");
+    }
 });
 
 function checkSpatial(isNonSpatial) {
