@@ -38,18 +38,24 @@ $(document).ready(function(){
         })
     });
 
+    var regForm = $("#regForm");
+    // Check if mode = view (View mode (Unable to edit)).
+    if (regForm.attr("mode") === 'view') {
+        $("#regForm :input").prop("disabled", true);
+    }
+
     $("html").show();
 
     $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");
 
     $("button").button();
 
-    $("#regForm").validate({
+    regForm.validate({
         ignore: ".ignore,.prototype",
         submitHandler: function(form) {
             if ($(".ignore").valid()) {
-                formHash = $("#regForm").serialize();
-                $("#regForm").prop("unsavedChanges", false);
+                formHash = regForm.serialize();
+                regForm.prop("unsavedChanges", false);
                 form.submit();
             }
         }
@@ -360,7 +366,7 @@ $(document).ready(function(){
             enableAuto: true
         },
         deleteFile: {
-            enabled: true,
+            enabled: $(".submitButton").attr("disabled") !== "disabled",
             forceConfirm: true,
             endpoint: Routing.generate("pelagos_api_upload_delete")
         },
