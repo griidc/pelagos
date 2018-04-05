@@ -931,8 +931,7 @@ class DatasetSubmission extends Entity
      * @ORM\Column(type="text", nullable=true)
      */
     protected $temporalExtentNilReasonType;
-
-
+    
     /**
      * Distribution Url for distribution contact (National Data Centers).
      *
