@@ -24,13 +24,13 @@ $(document).ready(function(){
 
         var udi = $("#udiReview").val().trim();
         var mode = this.name;
-        var url = Routing.generate("pelagos_app_ui_datasetreview_default", {"udiReview": udi }) + '&mode=' + mode;
+        var url = Routing.generate("pelagos_app_ui_datasetreview_default", {"udiReview": udi }) + "&mode=" + mode;
 
         $.ajax({
             url: url,
             method : "GET",
             async: false,
-            contentType: 'application/json',
+            contentType: "application/json",
             success: function(textStatus, jqXHR){
                 console.log(jqXHR.status);
                 window.location.href= url;
@@ -40,7 +40,7 @@ $(document).ready(function(){
 
     var regForm = $("#regForm");
     // Check if mode = view (View mode (Unable to edit)).
-    if (regForm.attr("mode") === 'view') {
+    if (regForm.attr("mode") === "view") {
         $("#regForm :input").prop("disabled", true);
     }
 
@@ -574,7 +574,7 @@ $(document).ready(function(){
 
     // Check if mode = view (The if loop here is duplicated at the end because spatialWizard and fineUploader
     // need to be disabled after they are initialized).
-    if (regForm.attr("mode") === 'view') {
+    if (regForm.attr("mode") === "view") {
         // Disable fineupload Drag and Drop area.
         $(".qq-upload-drop-area").css("visibility", "hidden");
         // Disable the upload buttons

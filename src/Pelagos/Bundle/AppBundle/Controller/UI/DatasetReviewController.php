@@ -39,7 +39,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     protected $messages = array();
 
     /**
-     * The mode in which the dataset-review is loaded.(Default mode: "review")
+     * The mode in which the dataset-review is loaded.(Default mode: "review").
      *
      * @var string
      */
