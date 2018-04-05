@@ -199,6 +199,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
                 'getTemporalExtentBeginPosition' => $this->testingDatetime,
                 'getTemporalExtentEndPosition' => $this->testingDatetime,
                 'getTemporalExtentNilReasonType' => 'unknown',
+                'getDistributionUrl' => 'https://data.gulfresearchinitiative.org/data/R0.x000.000:0000',
                 'getDistributionFormatName' => 'DistributionFormatName from mock dataset submission',
                 'getFileDecompressionTechnique' => 'zip',
                 'getPrimaryDatasetContact' => $this->mockPersonDatasetSubmissionDatasetContact,
@@ -283,6 +284,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('ground condition', $this->datasetSubmission->getTemporalExtentDesc());
         $this->assertEquals(new \DateTime('2016-10-21', new \DateTimeZone('UTC')), $this->datasetSubmission->getTemporalExtentBeginPosition());
         $this->assertEquals(new \DateTime('2016-10-22', new \DateTimeZone('UTC')), $this->datasetSubmission->getTemporalExtentEndPosition());
+        $this->assertEquals('https://data.gulfresearchinitiative.org/data/R0.x000.000:0000', $this->datasetSubmission->getDistributionUrl());
         $this->assertEquals('test format', $this->datasetSubmission->getDistributionFormatName());
         $this->assertEquals('test compression', $this->datasetSubmission->getFileDecompressionTechnique());
         $this->assertEquals($this->mockPerson, $this->datasetSubmission->getDatasetContacts()[0]->getPerson());
