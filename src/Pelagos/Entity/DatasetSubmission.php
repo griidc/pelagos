@@ -2512,7 +2512,8 @@ class DatasetSubmission extends Entity
      *
      * @return string
      */
-    public function getDistributionUrl() {
+    public function getDistributionUrl()
+    {
         return $this->distributionUrl;
     }
 
@@ -2523,9 +2524,8 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setDistributionUrl($distributionUrl) {
+    public function setDistributionUrl($distributionUrl)
+    {
         $this->distributionUrl = $distributionUrl;
     }
-
-
 }
