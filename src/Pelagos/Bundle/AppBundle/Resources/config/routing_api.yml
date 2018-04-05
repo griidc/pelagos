@@ -99,3 +99,9 @@ upload:
     resource: Pelagos\Bundle\AppBundle\Controller\Api\UploadController
     name_prefix: upload_
     prefix: upload
+
+national_data_center:
+    type: rest
+    resource: Pelagos\Bundle\AppBundle\Controller\Api\NationalDataCenterController
+    name_prefix: national_data_center_
+    prefix: national-data-center

@@ -72,3 +72,6 @@ pelagos_dataset_review_ui:
 
 pelagos_end_review_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\EndReviewController
+
+pelagos_national_data_center_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\NationalDataCenterController
