@@ -8,16 +8,14 @@
         <form id="udiLoadReviewform">
             <label for="udiReview"><b>Unique Dataset Identifier (UDI): </b></label>
             <input minlength="16" type="text" id="udiReview" name="udiReview" style="width: 80%">
-            <button class="reviewButtons" onclick="window.location.href='{{ path('pelagos_app_ui_datasetreview_default') }}?udiReview=' +
-                    document.getElementById('udiReview').value.trim();"
+            <button class="reviewButtons"
                     disabled
-                    name="loadReviewButton" id="loadReviewButton"
+                    name="review" id="loadReviewButton"
                     type="button">Review Dataset
             </button>
-            <button class="reviewButtons" onclick="window.location.href='{{ path('pelagos_app_ui_datasetreview_default') }}?udiReview=' +
-                    document.getElementById('udiReview').value.trim();"
+            <button class="reviewButtons"
                     disabled
-                    name="viewButton" id="viewButton"
+                    name="view" id="viewButton"
                     type="button">View Dataset
             </button>
             <label class="error" for="udiReview"></label>

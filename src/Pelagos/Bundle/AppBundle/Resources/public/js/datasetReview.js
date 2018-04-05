@@ -20,6 +20,24 @@ $(document).ready(function(){
         }
     });
 
+    $(".reviewButtons").on("click", function () {
+
+        var udi = $("#udiReview").val().trim();
+        var mode = this.name;
+        var url = Routing.generate("pelagos_app_ui_datasetreview_default", {"udiReview": udi }) + '&mode=' + mode;
+
+        $.ajax({
+            url: url,
+            method : "GET",
+            async: false,
+            contentType: 'application/json',
+            success: function(textStatus, jqXHR){
+                console.log(jqXHR.status);
+                window.location.href= url;
+            }
+        })
+    });
+
     $("html").show();
 
     $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");
