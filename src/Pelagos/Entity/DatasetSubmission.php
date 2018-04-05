@@ -931,9 +931,18 @@ class DatasetSubmission extends Entity
      * @ORM\Column(type="text", nullable=true)
      */
     protected $temporalExtentNilReasonType;
-    
+
     /**
-     * Distribution Url for distribution contact (National Data Centers).
+     * The National Data Center where the dataset is hosted.
+     *
+     * @var NationalDataCenter
+     *
+     * @ORM\OneToOne(targetEntity="NationalDataCenter")
+     */
+    protected $distributionContact;
+
+    /**
+     * Distribution Url for distribution contact (National Data Centers) where the data is hosted.
      *
      * @var string
      *
@@ -1065,6 +1074,7 @@ class DatasetSubmission extends Entity
             $this->setDistributionFormatName($entity->getDistributionFormatName());
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
             $this->setDistributionUrl($entity->getDistributionUrl());
+            $this->setDistributionContact($entity->getDistributionContact());
             
             //Submitter should always be the user who has submitted the dataset.
             if (!in_array($entity->getMetadataStatus(), [ self::METADATA_STATUS_NONE, self::METADATA_STATUS_BACK_TO_SUBMITTER])) {
@@ -2504,6 +2514,28 @@ class DatasetSubmission extends Entity
                 throw new \InvalidArgumentException("'$temporalExtentNilReasonType' is not a valid value for nilReason types");
         }
         $this->temporalExtentNilReasonType = $temporalExtentNilReasonType;
+    }
+
+    /**
+     * Sets the distribution contact (National Data Center) for this submission.
+     *
+     * @return NationalDataCenter
+     */
+    public function getDistributionContact()
+    {
+        return $this->distributionContact;
+    }
+
+    /**
+     * Gets the distribution contact (National Data Center) for this submission.
+     *
+     * @param NationalDataCenter $distributionContact The distribution contact (National Data Center) for this submission.
+     *
+     * @return void
+     */
+    public function setDistributionContact(NationalDataCenter $distributionContact)
+    {
+        $this->distributionContact = $distributionContact;
     }
 
     /**

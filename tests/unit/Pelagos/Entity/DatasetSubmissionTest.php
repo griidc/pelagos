@@ -59,6 +59,13 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
     protected $mockDatasetSubmissionReview;
 
     /**
+     * A mock Distribution Contact (National Data Center).
+     *
+     * @var NationalDataCenter
+     */
+     protected $mockDistributionContact;
+
+    /**
      * Setup for PHPUnit tests.
      *
      * This instantiates an instance of DatasetSubmission and sets its properties.
@@ -873,5 +880,31 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
         $this->datasetSubmission->setDistributionUrl($mockDistributionUrl);
 
         $this->assertEquals($mockDistributionUrl, $this->datasetSubmission->getDistributionUrl());
+    }
+
+  /**
+   * Test the setter and getter for distribution contact (National Data Center).
+   *
+   * @return void
+   */
+    public function testCanSetAndGetDistributionContact()
+    {
+        $this->mockDistributionContact = \Mockery::mock(
+            NationalDataCenter::class,
+            array(
+                'getOrganizationName' => 'GRIIDC',
+                'getOrganizationUrl' => 'https://data.gulfresearchinitiative.org/',
+                'getPhoneNumber' => '361-123-45678',
+                'getDeliveryPoint' => '123 ABC Str.',
+                'getCity' => 'Corpus Christi',
+                'getAdministrativeArea' => 'Texas',
+                'getPostalCode' => '78412',
+                'getCountry' => 'USA',
+                'getEmailAddress' => 'a@griidc.org'
+            )
+        );
+
+        $this->datasetSubmission->setDistributionContact($this->mockDistributionContact);
+        $this->assertSame($this->mockDistributionContact, $this->datasetSubmission->getDistributionContact());
     }
 }
