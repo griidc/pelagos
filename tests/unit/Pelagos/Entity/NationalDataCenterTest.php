@@ -179,4 +179,38 @@ class NationalDataCenterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($mockEmailAddress, $this->nationalDataCenter->getEmailAddress());
     }
+
+    /**
+     * Test the setter and getter for Distribution Points.
+     *
+     * @return void
+     */
+    public function testCanSetAndGetDistributionPoint()
+    {
+        $this->nationalDataCenter->setOrganizationName('GRIIDC');
+        $this->nationalDataCenter->setOrganizationUrl('griid.org.com');
+
+        $this->mockDatasetSubmission = \Mockery::mock('\Pelagos\Entity\DatasetSubmission');
+
+        $this->mockDistributionPoints = array(
+            \Mockery::mock(
+                DistributionPoint::class,
+                array(
+                    'setDatasetSubmission' => $this->mockDatasetSubmission,
+                    'setNationalDataCenter' => $this->nationalDataCenter,
+                    'getDistributionUrl' => 'www.org.com',
+                )
+            ),
+            \Mockery::mock(
+                DistributionPoint::class,
+                array(
+                    'setDatasetSubmission' => $this->mockDatasetSubmission,
+                    'setNationalDataCenter' => $this->nationalDataCenter,
+                    'getDistributionUrl' => 'www.org2.com',
+                )
+            )
+        );
+        $this->nationalDataCenter->setDistributionPoints($this->mockDistributionPoints);
+        $this->assertSame($this->nationalDataCenter->getDistributionPoints(), $this->mockDistributionPoints);
+    }
 }

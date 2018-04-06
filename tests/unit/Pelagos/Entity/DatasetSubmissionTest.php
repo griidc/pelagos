@@ -59,13 +59,6 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
     protected $mockDatasetSubmissionReview;
 
     /**
-     * A mock Distribution Contact (National Data Center).
-     *
-     * @var NationalDataCenter
-     */
-     protected $mockDistributionContact;
-
-    /**
      * Setup for PHPUnit tests.
      *
      * This instantiates an instance of DatasetSubmission and sets its properties.
@@ -869,42 +862,39 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the setter and getter for distribution Url.
+     * Test the setter and getter for Distribution Points.
      *
      * @return void
      */
-    public function testCanSetAndGetDistributionUrl()
+    public function testCanSetAndGetDistributionPoint()
     {
-        $mockDistributionUrl = 'https://data.gulfresearchinitiative.org/data/R0.x000.000:0000';
-
-        $this->datasetSubmission->setDistributionUrl($mockDistributionUrl);
-
-        $this->assertEquals($mockDistributionUrl, $this->datasetSubmission->getDistributionUrl());
-    }
-
-  /**
-   * Test the setter and getter for distribution contact (National Data Center).
-   *
-   * @return void
-   */
-    public function testCanSetAndGetDistributionContact()
-    {
-        $this->mockDistributionContact = \Mockery::mock(
+        $this->mockNationalDataCenter = \Mockery::mock(
             NationalDataCenter::class,
             array(
                 'getOrganizationName' => 'GRIIDC',
-                'getOrganizationUrl' => 'https://data.gulfresearchinitiative.org/',
-                'getPhoneNumber' => '361-123-45678',
-                'getDeliveryPoint' => '123 ABC Str.',
-                'getCity' => 'Corpus Christi',
-                'getAdministrativeArea' => 'Texas',
-                'getPostalCode' => '78412',
-                'getCountry' => 'USA',
-                'getEmailAddress' => 'a@griidc.org'
+                'getOrganizationUrl' => 'www.griidc.org'
             )
         );
 
-        $this->datasetSubmission->setDistributionContact($this->mockDistributionContact);
-        $this->assertSame($this->mockDistributionContact, $this->datasetSubmission->getDistributionContact());
+        $this->mockDistributionPoints = array(
+            \Mockery::mock(
+                DistributionPoint::class,
+                array(
+                    'setDatasetSubmission' => $this->datasetSubmission,
+                    'setNationalDataCenter' => $this->mockNationalDataCenter,
+                    'getDistributionUrl' => 'www.org.com',
+                )
+            ),
+            \Mockery::mock(
+                DistributionPoint::class,
+                array(
+                    'setDatasetSubmission' => $this->datasetSubmission,
+                    'setNationalDataCenter' => $this->mockNationalDataCenter,
+                    'getDistributionUrl' => 'www.org2.com',
+                )
+            )
+        );
+        $this->datasetSubmission->setDistributionPoints($this->mockDistributionPoints);
+        $this->assertSame($this->datasetSubmission->getDistributionPoints(), $this->mockDistributionPoints);
     }
 }
