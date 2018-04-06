@@ -121,11 +121,11 @@
                 {% set available_icon = red_icon %}
             {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION') %}
                 {% set available_yellow = available_yellow + 1 %}
-                {% set available_title = "This dataset package is still in review and is not available for download.." %}
+                {% set available_title = "This dataset package is still in review and is not available for download." %}
                 {% set available_icon = yellow_icon %}
             {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL') %}
                 {% set available_yellow = available_yellow + 1 %}
-                {% set available_title = "This dataset package is still in review and is not available for download.." %}
+                {% set available_title = "This dataset package is still in review and is not available for download." %}
                 {% set available_icon = yellow_icon %}
             {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED') %}
                 {% set available_yellow = available_yellow + 1 %}
