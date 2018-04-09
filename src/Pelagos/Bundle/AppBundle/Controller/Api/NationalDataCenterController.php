@@ -106,6 +106,39 @@ class NationalDataCenterController extends EntityController
     }
 
     /**
+     * Get a collection of National Datacenters.
+     *
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "National Data Center",
+     *   input = {
+     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCollectionType",
+     *     "name": "",
+     *     "options": {
+     *       "label": "National Data Center",
+     *       "data_class": "Pelagos\Entity\NationalDataCenter"
+     *     }
+     *   },
+     *   output = "array<Pelagos\Entity\NationalDataCenter>",
+     *   statusCodes = {
+     *     200 = "The requested collection of National Data Centers was successfully retrieved.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Get("")
+     *
+     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     *
+     * @return Response
+     */
+    public function getCollectionAction(Request $request)
+    {
+        return $this->handleGetCollection(NationalDataCenter::class, $request);
+    }
+
+    /**
      * Get a National data center for a given id.
      *
      * @param string $id The id of the National Data center.
