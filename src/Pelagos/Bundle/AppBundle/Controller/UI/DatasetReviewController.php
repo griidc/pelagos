@@ -39,13 +39,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     protected $messages = array();
 
     /**
-     * The mode in which the dataset-review is loaded.(Default mode: "review").
-     *
-     * @var string
-     */
-    protected $mode = '';
-
-    /**
      * The default action for Dataset Review.
      *
      * @param Request $request The Symfony request object.
@@ -58,15 +51,15 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     {
         $dataset = null;
         $udi = $request->query->get('udiReview');
-        $this->mode = $request->query->get('mode');
+        $mode = $request->query->get('mode');
 
-        if ($this->mode === 'review') {
+        if ($mode === 'review') {
             if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
                 return $this->render('PelagosAppBundle:template:CustomAdminOnlyForReview.html.twig', array(
                     'deniedAccess' => 'review'
                 ));
             }
-        } elseif ($this->mode === 'view') {
+        } elseif ($mode === 'view') {
             if (!$this->isGranted(array('ROLE_DATA_REPOSITORY_MANAGER', 'ROLE_SUBJECT_MATTER_EXPERT'))) {
                 return $this->render('PelagosAppBundle:template:CustomAdminOnlyForReview.html.twig', array(
                     'deniedAccess' => 'view'
@@ -513,9 +506,10 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     {
         $datasetSubmissionStatus = (($datasetSubmission) ? $datasetSubmission->getStatus() : null);
         $datasetSubmissionMetadataStatus = $dataset->getMetadataStatus();
-        if ($this->mode === 'view') {
+        $mode = $request->query->get('mode');
+        if ($mode === 'view') {
             return $datasetSubmission;
-        } elseif ($this->mode === 'review') {
+        } elseif ($mode === 'review') {
             switch (true) {
                 case ($datasetSubmissionStatus === DatasetSubmission::STATUS_COMPLETE and $datasetSubmissionMetadataStatus !== DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER):
                     $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
