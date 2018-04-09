@@ -56,13 +56,24 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      */
     public function defaultAction(Request $request)
     {
-        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
-        }
-
         $dataset = null;
         $udi = $request->query->get('udiReview');
         $this->mode = $request->query->get('mode');
+
+        if ($this->mode === 'review') {
+            if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+                return $this->render('PelagosAppBundle:template:CustomAdminOnlyForReview.html.twig', array(
+                    'deniedAccess' => 'review'
+                ));
+            }
+        } elseif ($this->mode === 'view') {
+            if (!$this->isGranted(['ROLE_DATA_REPOSITORY_MANAGER', 'ROLE_SUBJECT_MATTER_EXPERT'])) {
+                return $this->render('PelagosAppBundle:template:CustomAdminOnlyForReview.html.twig', array(
+                    'deniedAccess' => 'view'
+                ));
+            }
+        }
+
         $datasetSubmission = null;
 
         if ($udi !== null) {

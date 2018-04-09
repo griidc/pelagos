@@ -16,6 +16,8 @@ use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
  */
 class DatasetSubmissionVoter extends PelagosEntityVoter
 {
+
+    const CAN_VIEW = 'CAN_VIEW';
     /**
      * Determine if an attribute and subject are supported by this voter.
      *
@@ -54,14 +56,32 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         $user = $token->getUser();
+        $userPerson = $user->getPerson();
 
         // If the user token does not contain an Account, vote false.
         if (!$user instanceof Account) {
             return false;
         }
-
+        $personDataRepositories = $userPerson->getPersonDataRepositories()->filter(
+            function ($personDataRepository) use ($subject) {
+                return (!$personDataRepository->isSameTypeAndId($subject));
+            }
+        );
         // A user with an account can only create or edit dataset submissions
         // associated with research groups that they (the user) are a member of.
+
+        if ($this->doesUserHaveRole(
+                $userPerson,
+                $personDataRepositories,
+                array(DataRepositoryRoles::SME)
+            ) and in_array(
+                $attribute,
+                array(
+                    self::CAN_VIEW,
+                )
+            )) {
+            return true;
+        }
 
         $researchGroups = $user->getPerson()->getResearchGroups();
         if ($subject instanceof DatasetSubmission) {

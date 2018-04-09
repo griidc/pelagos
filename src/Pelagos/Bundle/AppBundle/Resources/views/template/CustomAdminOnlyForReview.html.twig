@@ -1,0 +1,9 @@
+<div class="messages error">
+    {% if deniedAccess == 'review' %}
+        <h2 class="element-invisible">Error message</h2>
+            The Review mode for datasets is accessible by Data Repository Managers only. Please open the dataset in the View mode.
+    {% elseif deniedAccess == 'view' %}
+        <h2 class="element-invisible">Error message</h2>
+            This page is only accessible by Data Repository Managers or Subject Matter Experts.
+    {% endif %}
+</div>
