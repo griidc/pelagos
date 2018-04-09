@@ -170,9 +170,10 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
                 $entityHandler->update($datasetSubmission);
                 $entityHandler->update($dataset);
                 $mdappLogger->writeLog($this->getUser()->getUsername() .
-                    'has changed review status for ' . $udi . '(' . $this->getFlashBagStatus($from) . '->'
+                    'has changed status for ' . $udi . '(' . $this->getFlashBagStatus($from) . '->'
                     . $this->getFlashBagStatus($to) . '(mdapp msg)');
-                $message = "Status for $udi has been changed from $from to $to.";
+                $message = 'Status for $udi has been changed from ' . $this->getFlashBagStatus($from) . ' to '
+                    . $this->getFlashBagStatus($to);
                 $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
                     $datasetSubmission,
                     'approved'
@@ -183,9 +184,10 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
                 $entityHandler->update($datasetSubmission);
                 $entityHandler->update($dataset);
                 $mdappLogger->writeLog($this->getUser()->getUsername() .
-                    'has changed review status for ' . $udi . '(' . $this->getFlashBagStatus($from) . '->'
+                    'has changed status for ' . $udi . '(' . $this->getFlashBagStatus($from) . '->'
                     . $this->getFlashBagStatus($to) . '(mdapp msg)');
-                $message = "Status for $udi has been changed from $from to $to.";
+                $message = 'Status for $udi has been changed from ' . $this->getFlashBagStatus($from) . ' to '
+                    . $this->getFlashBagStatus($to);
             }
         }
         $this->get('session')->getFlashBag()->add('notice', $message);
