@@ -975,7 +975,7 @@ class DatasetSubmission extends Entity
      *
      * @access protected
      *
-     * @ORM\OneToMany(targetEntity="distributionPoint", mappedBy="datasetSubmission")
+     * @ORM\OneToMany(targetEntity="DistributionPoint", mappedBy="datasetSubmission")
      */
     protected $distributionPoints;
 

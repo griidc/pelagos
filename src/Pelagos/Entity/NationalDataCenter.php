@@ -191,7 +191,7 @@ class NationalDataCenter extends Entity
      *
      * @access protected
      *
-     * @ORM\OneToMany(targetEntity="distributionPoint", mappedBy="NationalDataCenter")
+     * @ORM\OneToMany(targetEntity="DistributionPoint", mappedBy="nationalDataCenter")
      *
      * @ORM\OrderBy({"creationTimeStamp" = "ASC"})
      */
