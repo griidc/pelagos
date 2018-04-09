@@ -7,6 +7,8 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Pelagos\Entity\Account;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmission;
+use Pelagos\Entity\PersonDataRepository;
+
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 
 /**
@@ -18,6 +20,7 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
 {
 
     const CAN_VIEW = 'CAN_VIEW';
+
     /**
      * Determine if an attribute and subject are supported by this voter.
      *
@@ -56,32 +59,13 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         $user = $token->getUser();
-        $userPerson = $user->getPerson();
 
         // If the user token does not contain an Account, vote false.
         if (!$user instanceof Account) {
             return false;
         }
-        $personDataRepositories = $userPerson->getPersonDataRepositories()->filter(
-            function ($personDataRepository) use ($subject) {
-                return (!$personDataRepository->isSameTypeAndId($subject));
-            }
-        );
-        // A user with an account can only create or edit dataset submissions
-        // associated with research groups that they (the user) are a member of.
 
-        if ($this->doesUserHaveRole(
-                $userPerson,
-                $personDataRepositories,
-                array(DataRepositoryRoles::SME)
-            ) and in_array(
-                $attribute,
-                array(
-                    self::CAN_VIEW,
-                )
-            )) {
-            return true;
-        }
+        $this->authForSubjectMatterExpert($user, $attribute, $subject);
 
         $researchGroups = $user->getPerson()->getResearchGroups();
         if ($subject instanceof DatasetSubmission) {
@@ -112,5 +96,31 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
             }
         }
         return false;
+    }
+
+    /**
+     * Authorization check for accounts with role as subject matter experts.
+     * @param Account $user      Account instance for the person who is trying to authorize.
+     * @param string  $attribute The action to be considered.
+     * @param mixed   $subject   The subject the action would be performed on.
+     * @return boolean|null
+     */
+    protected function authForSubjectMatterExpert(Account $user, $attribute, $subject)
+    {
+        $userPerson = $user->getPerson();
+
+        $personDataRepositories = $userPerson->getPersonDataRepositories()->filter(
+            function ($personDataRepository) use ($subject) {
+                return (!$personDataRepository->isSameTypeAndId($subject));
+            }
+        );
+        // A user with an account with role(Subject Matter Expert) can only view dataset submission/review.
+
+        if ($this->doesUserHaveRole($userPerson, $personDataRepositories, array(DataRepositoryRoles::SME))
+            and ($attribute === self::CAN_VIEW)) {
+            return true;
+        }
+
+        return null;
     }
 }
