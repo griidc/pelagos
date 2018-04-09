@@ -43,7 +43,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      *
      * @var string
      */
-    protected $mode = 'review';
+    protected $mode = '';
 
     /**
      * The default action for Dataset Review.
@@ -62,6 +62,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
 
         $dataset = null;
         $udi = $request->query->get('udiReview');
+        $this->mode = $request->query->get('mode');
         $datasetSubmission = null;
 
         if ($udi !== null) {
@@ -501,10 +502,9 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     {
         $datasetSubmissionStatus = (($datasetSubmission) ? $datasetSubmission->getStatus() : null);
         $datasetSubmissionMetadataStatus = $dataset->getMetadataStatus();
-        if ($request->query->get('mode') === 'view') {
-            $this->mode = 'view';
+        if ($this->mode === 'view') {
             return $datasetSubmission;
-        } elseif ($request->query->get('mode') === 'review') {
+        } elseif ($this->mode === 'review') {
             switch (true) {
                 case ($datasetSubmissionStatus === DatasetSubmission::STATUS_COMPLETE and $datasetSubmissionMetadataStatus !== DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER):
                     $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
