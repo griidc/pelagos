@@ -161,6 +161,7 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
         $from = $dataset->getMetadataStatus();
         $udi = $dataset->getUdi();
         $to = $request->request->get('to');
+
         $message = null;
         if (null !== $to) {
             if ('Accepted' == $to and $dataset->getMetadata() instanceof Metadata) {
@@ -169,8 +170,10 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
                 $entityHandler->update($datasetSubmission);
                 $entityHandler->update($dataset);
                 $mdappLogger->writeLog($this->getUser()->getUsername() .
-                    " has changed metadata status for $udi ($from -> $to) (mdapp msg)");
-                $message = "Status for $udi has been changed from $from to $to.";
+                    'has changed status for ' . $udi . '(' . $this->getFlashBagStatus($from) . '->'
+                    . $this->getFlashBagStatus($to) . '(mdapp msg))');
+                $message = 'Status for ' . $udi . 'has been changed from ' . $this->getFlashBagStatus($from) . ' to '
+                    . $this->getFlashBagStatus($to);
                 $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
                     $datasetSubmission,
                     'approved'
@@ -181,8 +184,10 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
                 $entityHandler->update($datasetSubmission);
                 $entityHandler->update($dataset);
                 $mdappLogger->writeLog($this->getUser()->getUsername() .
-                    " has changed metadata status for $udi ($from -> $to) (mdapp msg)");
-                $message = "Status for $udi has been changed from $from to $to.";
+                    'has changed status for ' . $udi . '(' . $this->getFlashBagStatus($from) . '->'
+                    . $this->getFlashBagStatus($to) . '(mdapp msg))');
+                $message = 'Status for ' . $udi . ' has been changed from ' . $this->getFlashBagStatus($from) . ' to '
+                    . $this->getFlashBagStatus($to);
             }
         }
         $this->get('session')->getFlashBag()->add('notice', $message);
@@ -702,5 +707,21 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
         } else {
             ${$errorArray}[] = 'Distribution URL is missing or blank.';
         }
+    }
+
+    /**
+     * Get the text need to be displayed as DatasetSubmission changed status.
+     *
+     * @param string $status The datasetSubmission status for the dataset.
+     *
+     * @return string
+     */
+    private function getFlashBagStatus($status)
+    {
+        if (array_key_exists($status, DatasetSubmission::METADATA_STATUSES)) {
+            $status = DatasetSubmission::METADATA_STATUSES[$status];
+        }
+
+        return $status;
     }
 }
