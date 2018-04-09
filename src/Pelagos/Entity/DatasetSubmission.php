@@ -932,16 +932,6 @@ class DatasetSubmission extends Entity
      */
     protected $temporalExtentNilReasonType;
 
-
-    /**
-     * Distribution Url for distribution contact (National Data Centers).
-     *
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected $distributionUrl;
-
     /**
      * The name of the format the data is distributed in.
      *
@@ -979,6 +969,17 @@ class DatasetSubmission extends Entity
     protected $submitter;
 
     /**
+     * DatasetSubmission's Distribution Points.
+     *
+     * @var Collection $distributionPoints
+     *
+     * @access protected
+     *
+     * @ORM\OneToMany(targetEntity="DistributionPoint", mappedBy="datasetSubmission")
+     */
+    protected $distributionPoints;
+
+    /**
      * Constructor.
      *
      * Initializes collections to empty collections.
@@ -993,6 +994,7 @@ class DatasetSubmission extends Entity
     {
         $this->datasetContacts = new ArrayCollection;
         $this->metadataContacts = new ArrayCollection;
+        $this->distributionPoints = new ArrayCollection();
         if ($entity instanceof DIF) {
             if (null === $datasetPPOc) {
                 throw new \Exception('Constructor requires PersonDatasetSubmissionDatasetContact if passed a DIF entity');
@@ -1065,7 +1067,6 @@ class DatasetSubmission extends Entity
             $this->setTemporalExtentNilReasonType($entity->getTemporalExtentNilReasonType());
             $this->setDistributionFormatName($entity->getDistributionFormatName());
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
-            $this->setDistributionUrl($entity->getDistributionUrl());
             
             //Submitter should always be the user who has submitted the dataset.
             if (!in_array($entity->getMetadataStatus(), [ self::METADATA_STATUS_NONE, self::METADATA_STATUS_BACK_TO_SUBMITTER])) {
@@ -2508,24 +2509,43 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * Sets the distribution Url for the dataset's distribution contact.
+     * Setter for disitrbutionPoints.
      *
-     * @return string
-     */
-    public function getDistributionUrl()
-    {
-        return $this->distributionUrl;
-    }
-
-    /**
-     * Gets the distribution Url for the dataset's distribution contact.
+     * @param array|\Traversable $distributionPoints Set of DistributionPoint objects.
      *
-     * @param string $distributionUrl The distribution Url for the distribution contact.
+     * @access public
+     *
+     * @throws \Exception When Non-DistributionPoint found in $distributionPoints.
+     * @throws \Exception When $distributionPoints is not an array or traversable object.
      *
      * @return void
      */
-    public function setDistributionUrl($distributionUrl)
+    public function setDistributionPoints($distributionPoints)
     {
-        $this->distributionUrl = $distributionUrl;
+        if (is_array($distributionPoints) || $distributionPoints instanceof \Traversable) {
+            foreach ($distributionPoints as $distributionPoint) {
+                if (!$distributionPoint instanceof DistributionPoint) {
+                    throw new \Exception('Non-DistributionPoint found in distributionPoints.');
+                }
+            }
+            $this->distributionPoints = $distributionPoints;
+            foreach ($this->distributionPoints as $distributionPoint) {
+                $distributionPoint->setDatasetSubmission($this);
+            }
+        } else {
+            throw new \Exception('distributionPoints must be either array or traversable objects.');
+        }
+    }
+  
+    /**
+     * Getter for distributionPoints.
+     *
+     * @access public
+     *
+     * @return Collection Distribution Point associations for this Dataset Submission.
+     */
+    public function getDistributionPoints()
+    {
+        return $this->distributionPoints;
     }
 }

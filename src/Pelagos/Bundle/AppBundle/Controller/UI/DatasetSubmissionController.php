@@ -484,7 +484,6 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
             'temporalExtentEndPosition',
             'distributionFormatName',
             'fileDecompressionTechnique',
-            'distributionUrl',
         );
         foreach ($clearProperties as $property) {
             $accessor->setValue($datasetSubmission, $property, null);

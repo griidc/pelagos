@@ -862,16 +862,39 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the setter and getter for distribution Url.
+     * Test the setter and getter for Distribution Points.
      *
      * @return void
      */
-    public function testCanSetAndGetDistributionUrl()
+    public function testCanSetAndGetDistributionPoint()
     {
-        $mockDistributionUrl = 'https://data.gulfresearchinitiative.org/data/R0.x000.000:0000';
+        $this->mockNationalDataCenter = \Mockery::mock(
+            NationalDataCenter::class,
+            array(
+                'getOrganizationName' => 'GRIIDC',
+                'getOrganizationUrl' => 'www.griidc.org'
+            )
+        );
 
-        $this->datasetSubmission->setDistributionUrl($mockDistributionUrl);
-
-        $this->assertEquals($mockDistributionUrl, $this->datasetSubmission->getDistributionUrl());
+        $this->mockDistributionPoints = array(
+            \Mockery::mock(
+                DistributionPoint::class,
+                array(
+                    'setDatasetSubmission' => $this->datasetSubmission,
+                    'setNationalDataCenter' => $this->mockNationalDataCenter,
+                    'getDistributionUrl' => 'www.org.com',
+                )
+            ),
+            \Mockery::mock(
+                DistributionPoint::class,
+                array(
+                    'setDatasetSubmission' => $this->datasetSubmission,
+                    'setNationalDataCenter' => $this->mockNationalDataCenter,
+                    'getDistributionUrl' => 'www.org2.com',
+                )
+            )
+        );
+        $this->datasetSubmission->setDistributionPoints($this->mockDistributionPoints);
+        $this->assertSame($this->datasetSubmission->getDistributionPoints(), $this->mockDistributionPoints);
     }
 }
