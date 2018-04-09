@@ -46,7 +46,6 @@ set properties = [
     'id',
     'organizationName',
     'organizationUrl',
-    'city',
     'creationTimeStamp',
     'creator.id',
     'creator.firstName',
@@ -75,24 +74,22 @@ set properties = [
         { "data": "id" },
         { "data": "organizationName" },
         { "data": "organizationUrl" },
-        { "data": "city" },
         { "data": "creationTimeStamp" },
         { "data": "creator" },
         { "data": "modificationTimeStamp" },
         { "data": "modifier" }
     ]'
-    data-order = '[[ 2, "asc" ]]'
-    creatorColumn = "5"
-    modifierColumn = "7"
-    creationTimeStampColumn = "4"
-    modificationTimeStampColumn = "6"
+    data-order = '[[ 1, "asc" ]]'
+    creatorColumn = "4"
+    modifierColumn = "6"
+    creationTimeStampColumn = "3"
+    modificationTimeStampColumn = "5"
 >
     <thead>
         <tr>
             <th>#</th>
             <th>National Data Center Name</th>
             <th>Website</th>
-            <th>City</th>
             <th>Created</th>
             <th>Creator</th>
             <th>Modified</th>
@@ -101,7 +98,7 @@ set properties = [
     </thead>
     <tfoot>
         <tr>
-            <td class="buttons" colspan = "8">
+            <td class="buttons" colspan = "7">
                 <div>
                     <button id="button_detail">View National Data Center Details</button>
                     <button id="button_delete">Delete National Data Center</button>
