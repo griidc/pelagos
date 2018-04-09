@@ -92,7 +92,7 @@ class ListController extends Controller
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
         }
-        $GLOBALS['pelagos']['title'] = 'National Data Repositories';
-        return $this->render('PelagosAppBundle:List:NationalDataRepositories.html.twig');
+        $GLOBALS['pelagos']['title'] = 'National Data Centers';
+        return $this->render('PelagosAppBundle:List:NationalDataCenters.html.twig');
     }
 }
