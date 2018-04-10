@@ -66,11 +66,10 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
 
         if ($udi !== null) {
             if (!empty($mode) and in_array($mode, $reviewModes)) {
-               $this->mode = $mode;
+                $this->mode = $mode;
             } else {
                 $this->mode = 'view';
             }
-
             $userAuthCheck = $this->authForReview();
 
             if (!$userAuthCheck) {
@@ -93,7 +92,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     /**
      * Checks authorization for the user roles to view/review.
      *
-     * @return bool
+     * @return boolean
      */
     private function authForReview()
     {
@@ -216,7 +215,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      *
      * @return Response A Response instance.
      */
-    protected function makeSubmissionForm($udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null, Request $request)
+    protected function makeSubmissionForm($udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null)
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;
