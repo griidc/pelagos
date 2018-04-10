@@ -115,7 +115,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             $this->addToFlashBag($request, $udi, 'notFound');
         }
 
-        return $this->makeSubmissionForm($udi, $dataset, $datasetSubmission);
+        return $this->makeSubmissionForm($udi, $dataset, $datasetSubmission, $request);
     }
 
     /**
@@ -190,11 +190,12 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      *
      * @return Response A Response instance.
      */
-    protected function makeSubmissionForm($udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null)
+    protected function makeSubmissionForm($udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null, Request $request)
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;
         $datasetSubmissionStatus = null;
+        $mode = $request->query->get('mode');
         if ($datasetSubmission instanceof DatasetSubmission) {
             if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
                 $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
@@ -220,7 +221,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     'datasetSubmission' => $datasetSubmissionId,
                     'researchGroup' => $researchGroupId,
                     'datasetSubmissionStatus' => $datasetSubmissionStatus,
-                    'mode' => $this->mode,
+                    'mode' => $mode,
                 ),
             )
         );
