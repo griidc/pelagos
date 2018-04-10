@@ -185,19 +185,6 @@ class NationalDataCenter extends Entity
     protected $emailAddress;
 
     /**
-     * Distribution Point associated with the submission.
-     *
-     * @var \Doctrine\Common\Collections\Collection $distributionPoints
-     *
-     * @access protected
-     *
-     * @ORM\OneToMany(targetEntity="DistributionPoint", mappedBy="nationalDataCenter")
-     *
-     * @ORM\OrderBy({"creationTimeStamp" = "ASC"})
-     */
-    protected $distributionPoints;
-
-    /**
      * Getter for National Data center organization's name.
      *
      * @return string
