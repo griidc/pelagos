@@ -11,14 +11,16 @@
             {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
                 <button class="reviewButtons"
                         disabled
-                        name="review" id="loadReviewButton"
-                        type="button">Review Dataset
+                        type="button"
+                        onclick="window.location.href='{{ path('pelagos_app_ui_datasetreview_default') }}?udiReview=' +
+                                document.getElementById('udiReview').value.trim() + '&mode=reivew';">Review Dataset
                 </button>
             {% endif %}
             <button class="reviewButtons"
                     disabled
-                    name="view" id="viewButton"
-                    type="button">View Dataset
+                    type="button"
+                    onclick="window.location.href='{{ path('pelagos_app_ui_datasetreview_default') }}?udiReview=' +
+                            document.getElementById('udiReview').value.trim() + '&mode=view';">View Dataset
             </button>
             <label class="error" for="udiReview"></label>
         </form>
