@@ -83,7 +83,11 @@
         {% else %}
             <div>
                 <h2 class="element-invisible">Status message</h2>
+                {% if mode ==  'view'%}
+                    <div class="pelagosNoty" text = "Dataset Identifier <b>'{{ udi }}'</b> was found and is in VIEW mode." type = "success"></div>
+                {% elseif mode == 'review' %}
                     <div class="pelagosNoty" text = "Dataset Identifier <b>'{{ udi }}'</b> was found and is in REVIEW mode." type = "success"></div>
+                {% endif %}
             </div>
             {% include 'PelagosAppBundle:DatasetReview:submission-form.html.twig' %}
         {% endif %}

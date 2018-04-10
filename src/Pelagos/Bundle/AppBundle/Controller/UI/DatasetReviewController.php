@@ -306,6 +306,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 'showForceImport' => $showForceImport,
                 'showForceDownload' => $showForceDownload,
                 'researchGroupList' => $researchGroupList,
+                'mode' => $this->mode,
             )
         );
 
