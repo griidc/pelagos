@@ -394,44 +394,4 @@ class NationalDataCenter extends Entity
     {
         $this->emailAddress = $emailAddress;
     }
-
-    /**
-     * Setter for distributionPoints.
-     *
-     * @param array|\Traversable $distributionPoints Set of Distribution points objects.
-     *
-     * @access public
-     *
-     * @throws \Exception When Non-DistributionPoint found in DistributionPoints.
-     * @throws \Exception When $distributionPoints is not an array or traversable object.
-     *
-     * @return void
-     */
-    public function setDistributionPoints($distributionPoints)
-    {
-        if (is_array($distributionPoints) || $distributionPoints instanceof \Traversable) {
-            $this->distributionPoints = $distributionPoints;
-            foreach ($distributionPoints as $distributionPoint) {
-                if (!$distributionPoint instanceof DistributionPoint) {
-                    throw new \Exception('Non-DistributionPoint found in distributionPoints.');
-                }
-                $distributionPoint->setNationalDataCenter($this);
-            }
-        } else {
-            throw new \Exception('distributionPoints must be either array or traversable objects.');
-        }
-    }
-
-    /**
-     * Getter for distributionPoints.
-     *
-     * @access public
-     *
-     * @return \Doctrine\Common\Collections\Collection Collection containing distributionPoints
-     *                                                 listings for this distribution contact (National Data Center).
-     */
-    public function getDistributionPoints()
-    {
-        return $this->distributionPoints;
-    }
 }
