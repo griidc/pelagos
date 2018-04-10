@@ -39,6 +39,13 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     protected $messages = array();
 
     /**
+     * The mode in which the dataset-review is loaded.(Default mode: "review").
+     *
+     * @var string
+     */
+    protected $mode = '';
+
+    /**
      * The default action for Dataset Review.
      *
      * @param Request $request The Symfony request object.
@@ -55,6 +62,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
 
         $dataset = null;
         $udi = $request->query->get('udiReview');
+        $this->mode = $request->query->get('mode');
         $datasetSubmission = null;
 
         if ($udi !== null) {
@@ -123,32 +131,16 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
 
         switch (true) {
 
-            case ($datasetSubmissionStatus === DatasetSubmission::STATUS_COMPLETE and $datasetSubmissionMetadataStatus !== DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER):
-                $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
-                break;
-
-            case ($datasetSubmissionStatus === DatasetSubmission::STATUS_IN_REVIEW and ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_IN_REVIEW or $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_SUBMITTED)):
-                $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
-                switch (true) {
-                    case (empty($datasetSubmissionReview)):
-                        $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
-                        break;
-                    case ($datasetSubmissionReview->getReviewEndDateTime()):
-                        $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
-                        break;
-                    case (empty($datasetSubmissionReview->getReviewEndDateTime()) and $datasetSubmissionReview->getReviewedBy() !== $this->getUser()->getPerson()):
-                        $reviewerUserName  = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
-                        $this->addToFlashBag($request, $udi, 'locked', $reviewerUserName);
-                        break;
-                }
-                break;
-
             case ($datasetSubmissionStatus === DatasetSubmission::STATUS_INCOMPLETE):
                 $this->addToFlashBag($request, $udi, 'hasDraft');
                 break;
 
             case ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER):
                 $this->addToFlashBag($request, $udi, 'backToSub');
+                break;
+
+            default:
+                $datasetSubmission = $this->reviewMode($request, $datasetSubmission, $dataset, $udi);
                 break;
         }
 
@@ -223,7 +215,8 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 'attr' => array(
                     'datasetSubmission' => $datasetSubmissionId,
                     'researchGroup' => $researchGroupId,
-                    'datasetSubmissionStatus' => $datasetSubmissionStatus
+                    'datasetSubmissionStatus' => $datasetSubmissionStatus,
+                    'mode' => $this->mode,
                 ),
             )
         );
@@ -493,5 +486,45 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             }
         }
         return true;
+    }
+
+    /**
+     * Loads the appropriate dataset submission based on which mode is selected.
+     *
+     * @param Request           $request           The Symfony request object.
+     * @param DatasetSubmission $datasetSubmission A dataset submission instance.
+     * @param Dataset           $dataset           A dataset instance..
+     * @param string            $udi               The UDI entered by the user.
+     *
+     * @return DatasetSubmission  A dataset submission instance.
+     */
+    private function reviewMode(Request $request, DatasetSubmission $datasetSubmission, Dataset $dataset, $udi)
+    {
+        $datasetSubmissionStatus = (($datasetSubmission) ? $datasetSubmission->getStatus() : null);
+        $datasetSubmissionMetadataStatus = $dataset->getMetadataStatus();
+        if ($this->mode === 'view') {
+            return $datasetSubmission;
+        } elseif ($this->mode === 'review') {
+            switch (true) {
+                case ($datasetSubmissionStatus === DatasetSubmission::STATUS_COMPLETE and $datasetSubmissionMetadataStatus !== DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER):
+                    $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
+                    break;
+
+                case ($datasetSubmissionStatus === DatasetSubmission::STATUS_IN_REVIEW and ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_IN_REVIEW or $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_SUBMITTED)):
+                    $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
+                    switch (true) {
+                        case (empty($datasetSubmissionReview) || $datasetSubmissionReview->getReviewEndDateTime()):
+                            $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
+                            break;
+                        case (empty($datasetSubmissionReview->getReviewEndDateTime()) and $datasetSubmissionReview->getReviewedBy() !== $this->getUser()->getPerson()):
+                            $reviewerUserName  = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
+                            $this->addToFlashBag($request, $udi, 'locked', $reviewerUserName);
+                            break;
+                    }
+                    break;
+            }
+        }
+
+        return $datasetSubmission;
     }
 }

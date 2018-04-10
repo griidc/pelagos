@@ -10,15 +10,39 @@ $(document).ready(function(){
     $("#udiLoadReviewform").bind("change keyup mouseout", function() {
         var udiTextBox = $("#udiReview");
         if($(this).valid() && udiTextBox.val() !== "" && udiTextBox.is(":disabled") === false) {
-            $("#loadReviewButton").button({
+            $(".reviewButtons").button({
                 disabled: false
             });
         } else {
-            $("#loadReviewButton").button({
+            $(".reviewButtons").button({
                 disabled: true
             });
         }
     });
+
+    $(".reviewButtons").on("click", function () {
+
+        var udi = $("#udiReview").val().trim();
+        var mode = this.name;
+        var url = Routing.generate("pelagos_app_ui_datasetreview_default", {"udiReview": udi }) + "&mode=" + mode;
+
+        $.ajax({
+            url: url,
+            method : "GET",
+            async: false,
+            contentType: "application/json",
+            success: function(textStatus, jqXHR){
+                console.log(jqXHR.status);
+                window.location.href= url;
+            }
+        })
+    });
+
+    var regForm = $("#regForm");
+    // Check if mode = view (View mode (Unable to edit)).
+    if (regForm.attr("mode") === "view") {
+        $("#regForm :input").prop("disabled", true);
+    }
 
     $("html").show();
 
@@ -26,12 +50,12 @@ $(document).ready(function(){
 
     $("button").button();
 
-    $("#regForm").validate({
+    regForm.validate({
         ignore: ".ignore,.prototype",
         submitHandler: function(form) {
             if ($(".ignore").valid()) {
-                formHash = $("#regForm").serialize();
-                $("#regForm").prop("unsavedChanges", false);
+                formHash = regForm.serialize();
+                regForm.prop("unsavedChanges", false);
                 form.submit();
             }
         }
@@ -342,7 +366,7 @@ $(document).ready(function(){
             enableAuto: true
         },
         deleteFile: {
-            enabled: true,
+            enabled: $(".submitButton").attr("disabled") !== "disabled",
             forceConfirm: true,
             endpoint: Routing.generate("pelagos_api_upload_delete")
         },
@@ -545,7 +569,19 @@ $(document).ready(function(){
 
     $("#temporalInfoQuestion").on("change", function (e) {
         checkTemporalNilReason();
-    })
+    });
+
+
+    // Check if mode = view (The if loop here is duplicated at the end because spatialWizard and fineUploader
+    // need to be disabled after they are initialized).
+    if (regForm.attr("mode") === "view") {
+        // Disable fineupload Drag and Drop area.
+        $(".qq-upload-drop-area").css("visibility", "hidden");
+        // Disable the upload buttons
+        $(".qq-upload-button :input").prop("disabled", true);
+        // Disable Spatial Wizard button.
+        $("#geoWizard #geowizBtn").prop("disabled", "true");
+    }
 });
 
 function checkSpatial(isNonSpatial) {

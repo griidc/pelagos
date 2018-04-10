@@ -53,7 +53,7 @@ $(document).ready(function(){
     {
       if (type === "row") {
         var id = table.row(".selected").data().udi;
-        var url = $(self).attr("entityApi") + "?udiReview=" + id;
+        var url = $(self).attr("entityApi") + "?udiReview=" + id + "&mode=review";
         window.location=url;
       }
     });
