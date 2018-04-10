@@ -48,37 +48,6 @@ $(document).ready(function(){
           "select": "single"
         }, options)
     );
-
-    table.on("select", function(e, dt, type, indexes)
-    {
-      if (type === "row") {
-        var id = table.row(".selected").data().udi;
-        var url = $(self).attr('entityApi') + '?udiReview=' + id + '&mode=';
-          $('<div></div>').appendTo('body')
-              .html('<div>Please choose the mode to open the dataset in.</div>')
-              .dialog({
-                  modal: true,
-                  title: 'Mode Selection for Dataset',
-                  width: 'auto',
-                  resizable: false,
-                  buttons: {
-                      Review: function () {
-                          url += 'review';
-                          $(this).dialog("close");
-                          window.location=url;
-                      },
-                      View: function () {
-                          url += 'view';
-                          $(this).dialog("close");
-                          window.location=url;
-                      }
-                  },
-                  close: function (event, ui) {
-                      $(this).remove();
-                  }
-              });
-      }
-    });
     return table;
   };
 }(jQuery));
