@@ -35,7 +35,7 @@ class DistributionPoint extends Entity
      *
      * @var NationalDataCenter
      *
-     * @ORM\ManyToOne(targetEntity="NationalDataCenter", inversedBy="distributionPoint")
+     * @ORM\ManyToOne(targetEntity="NationalDataCenter")
      *
      * @Assert\NotBlank(
      *     message="Distribution Contact (National Data Center) is required")
