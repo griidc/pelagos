@@ -249,9 +249,8 @@ class DatasetSubmissionType extends AbstractType
                 'delete_empty' => true,
                 'required' => true,
             ))
-            ->add('distributionUrl', Type\TextType::class, array(
-                'label' => 'Distribution URL',
-                'required' => false,
+            ->add('distributionPoints', DistributionPointType::class, array(
+                'data_class' => null
             ))
             ->add('submitButton', Type\SubmitType::class, array(
                 'label' => 'Submit',

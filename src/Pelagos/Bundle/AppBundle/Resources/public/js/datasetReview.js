@@ -546,6 +546,24 @@ $(document).ready(function(){
     $("#temporalInfoQuestion").on("change", function (e) {
         checkTemporalNilReason();
     })
+
+    //change info in .distributioncontactinformation according to the selected value from drop-down
+    $("#ddlDistributionContact").change(function() {
+        $.ajax({
+              url: Routing.generate("pelagos_api_national_data_center_get", { "id" : $("#ddlDistributionContact :selected").val() }),
+              success: function(data){
+                    $("#distcontact_address").text(data.deliveryPoint ? data.deliveryPoint : "");
+                    $("#distcontact_city").text(data.city ? data.city : "");
+                    $("#distcontact_state").text(data.administrativeArea ? data.administrativeArea : "");
+                    $("#distcontact_postalcode").text(data.postalCode ? data.postalCode : "");
+                    $("#distcontact_country").text(data.country ? data.country : "");
+                    $("#discontact_phonenumber").text(data.phoneNumber ? data.phoneNumber : "");
+                    $("#discontact_emailaddress").text(data.emailAddress ? data.emailAddress : "");
+                    $("#discontact_url").text(data.organizationUrl ? data.organizationUrl : "");
+              }
+        });
+    });
+    
 });
 
 function checkSpatial(isNonSpatial) {

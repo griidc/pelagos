@@ -3,7 +3,8 @@
     <table class="tab-table distribution-contact">
         <tr>
             <td>
-				<span class="helpSection">
+                {% set distPoint = form.vars.data.distributionPoints.get(0) %}
+                <span class="helpSection">
 					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
                         <img class="info" src="{{ asset_url }}">
                     {% endimage %}
@@ -15,12 +16,22 @@
 					</div>
 				</span>
                 <label for="distributioncontact">Distribution Contact</label>
-                <select class="distributioncontact" id="distributioncontact" name="" required="required">
-                        <option selected value="">
-                        </option>
+                <select class="distributioncontact" id="ddlDistributionContact" name="{{ distPoint.nationalDataCenter.organizationName }}" required="required">
+                    <option value="">[Please select a Distribution Contact]</option>
+                    {% for distContact in form.distributionPoints.nationalDataCenter.vars.choices  %}
+                        {% if distPoint.nationalDataCenter | default and distPoint.nationalDataCenter.id == distContact.value %}
+                            <option selected value="{{ distContact.value }}">
+                                {{ distContact.label }}
+                            </option>
+                        {%  else %}
+                            <option value="{{ distContact.value }}">
+                                {{ distContact.label }}
+                            </option>
+                        {% endif %}
+                    {% endfor %}
                 </select>
                 <label for="distributioncontact" class="error"></label>
-                {% include "PelagosAppBundle:DatasetSubmission:distribution-contact-information.html.twig" %}
+                {% include "PelagosAppBundle:DatasetReview:distribution-contact-information.html.twig"%}
             </td>
         </tr>
         <tr>
@@ -33,7 +44,7 @@
 						Please enter the distribution URL for this dataset.
 					</div>
 				</span>
-                {{ form_row(form.distributionUrl) }}
+                {{ form_row(form.distributionPoints.distributionUrl, {attr: {'value' : distPoint.distributionUrl | default}}) }}
             </td>
         </tr>
     </table>

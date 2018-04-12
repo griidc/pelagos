@@ -1,13 +1,12 @@
 <div class="distributioncontactinformation">
-    <span field="organizationRole"></span><br />
-    <span field="telephoneNumber"></span><br />
-    <span field="faxNumber"></span><br />
-    <span field="address"></span><br />
-    <span field="city"></span><br />
-    <span field="state"></span>
-    <span field="postalCode"></span><br />
-    <span field="country"></span><br />
-    <span field="emailAdress"></span><br />
-    <span field="url"></span> <br />
+    {#<span field="organizationRole"></span><br />#}
+    {#<span field="faxNumber"></span><br />#}
+    <span field="address" id="distcontact_address">{{ distPoint.nationalDataCenter.deliveryPoint|default }}</span><br />
+    <span field="city" id="distcontact_city">{{ distPoint.nationalDataCenter.city|default }}</span><br />
+    <span field="state" id="distcontact_state">{{ distPoint.nationalDataCenter.administrativeArea|default }}</span>
+    <span field="postalCode" id="distcontact_postalcode">{{ distPoint.nationalDataCenter.postalCode|default }}</span><br />
+    <span field="country" id="discontact_country">{{ distPoint.nationalDataCenter.country|default }}</span><br />
+    <span field="telephoneNumber" id="discontact_phonenumber">{{ distPoint.nationalDataCenter.phoneNumber|default }}</span><br />
+    <span field="emailAdress" id="discontact_emailaddress">{{ distPoint.nationalDataCenter.emailAddress|default }}</span><br />
+    <span field="url" id="discontact_url">{{ distPoint.nationalDataCenter.organizationUrl|default }}</span> <br />
 </div>
-
