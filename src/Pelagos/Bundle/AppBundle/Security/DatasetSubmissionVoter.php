@@ -65,8 +65,6 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
             return false;
         }
 
-        $this->authForSubjectMatterExpert($user, $attribute, $subject);
-
         $researchGroups = $user->getPerson()->getResearchGroups();
         if ($subject instanceof DatasetSubmission) {
             $submissionResearchGroup = $subject->getDataset()->getResearchGroup();
@@ -96,31 +94,5 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
             }
         }
         return false;
-    }
-
-    /**
-     * Authorization check for accounts with role as subject matter experts.
-     * @param Account $user      Account instance for the person who is trying to authorize.
-     * @param string  $attribute The action to be considered.
-     * @param mixed   $subject   The subject the action would be performed on.
-     * @return boolean|null
-     */
-    protected function authForSubjectMatterExpert(Account $user, $attribute, $subject)
-    {
-        $userPerson = $user->getPerson();
-
-        $personDataRepositories = $userPerson->getPersonDataRepositories()->filter(
-            function ($personDataRepository) use ($subject) {
-                return (!$personDataRepository->isSameTypeAndId($subject));
-            }
-        );
-        // A user with an account with role(Subject Matter Expert) can only view dataset submission/review.
-
-        if ($this->doesUserHaveRole($userPerson, $personDataRepositories, array(DataRepositoryRoles::SME))
-            and ($attribute === self::CAN_VIEW)) {
-            return true;
-        }
-
-        return null;
     }
 }
