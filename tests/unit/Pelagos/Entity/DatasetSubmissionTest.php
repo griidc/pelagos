@@ -862,12 +862,13 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the setter and getter for Distribution Points.
+     * Test the adder, remover and getter for Distribution Points.
      *
      * @return void
      */
-    public function testCanSetAndGetDistributionPoint()
+    public function testAddRemoveAndGetDistributionPoint()
     {
+        //setup
         $this->mockNationalDataCenter = \Mockery::mock(
             NationalDataCenter::class,
             array(
@@ -876,25 +877,30 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $this->mockDistributionPoints = array(
-            \Mockery::mock(
-                DistributionPoint::class,
-                array(
-                    'setDatasetSubmission' => $this->datasetSubmission,
-                    'setNationalDataCenter' => $this->mockNationalDataCenter,
-                    'getDistributionUrl' => 'www.org.com',
-                )
-            ),
-            \Mockery::mock(
-                DistributionPoint::class,
-                array(
-                    'setDatasetSubmission' => $this->datasetSubmission,
-                    'setNationalDataCenter' => $this->mockNationalDataCenter,
-                    'getDistributionUrl' => 'www.org2.com',
-                )
+        $this->mockDistributionPoint = \Mockery::mock(
+            DistributionPoint::class,
+            array(
+                'setDatasetSubmission' => $this->datasetSubmission,
+                'setNationalDataCenter' => $this->mockNationalDataCenter,
+                'getDistributionUrl' => 'www.org.com',
             )
         );
-        $this->datasetSubmission->setDistributionPoints($this->mockDistributionPoints);
-        $this->assertSame($this->datasetSubmission->getDistributionPoints(), $this->mockDistributionPoints);
+
+        //test adder
+        $this->datasetSubmission->addDistributionPoint($this->mockDistributionPoint);
+        $this->assertEquals(
+            1,
+            $this->datasetSubmission->getDistributionPoints()->count()
+        );
+
+        //test getter
+        $this->assertSame($this->datasetSubmission->getDistributionPoints()->first(), $this->mockDistributionPoint);
+
+        //test remover
+        $this->datasetSubmission->removeDistributionPoint($this->mockDistributionPoint);
+        $this->assertEquals(
+            0,
+            $this->datasetSubmission->getDistributionPoints()->count()
+        );
     }
 }

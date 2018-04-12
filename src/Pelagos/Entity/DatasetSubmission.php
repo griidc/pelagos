@@ -975,7 +975,7 @@ class DatasetSubmission extends Entity
      *
      * @access protected
      *
-     * @ORM\OneToMany(targetEntity="DistributionPoint", mappedBy="datasetSubmission")
+     * @ORM\OneToMany(targetEntity="DistributionPoint", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
      */
     protected $distributionPoints;
 
@@ -1087,6 +1087,14 @@ class DatasetSubmission extends Entity
                 $newMetadataContact->setRole($metadataContact->getRole());
                 $newMetadataContact->setPerson($metadataContact->getPerson());
                 $this->addMetadataContact($newMetadataContact);
+            }
+
+            // Copy the original Dataset Submission's distribution Point(s).
+            foreach ($entity->getDistributionPoints() as $distributionPoint) {
+                $newDistributionPoint = new DistributionPoint();
+                $newDistributionPoint->setDistributionUrl($distributionPoint->getDistributionUrl());
+                $newDistributionPoint->setNationalDataCenter($distributionPoint->getNationalDataCenter());
+                $this->addDistributionPoint($newDistributionPoint);
             }
         } else {
             throw new \Exception('Class constructor requires a DIF or a DatasetSubmission. A ' . get_class($entity) . ' was passed.');
@@ -2509,34 +2517,34 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * Setter for disitrbutionPoints.
+     * Adder for distributionPoint.
      *
-     * @param array|\Traversable $distributionPoints Set of DistributionPoint objects.
+     * @param DistributionPoint $distributionPoint Single object to be added.
      *
      * @access public
      *
-     * @throws \Exception When Non-DistributionPoint found in $distributionPoints.
-     * @throws \Exception When $distributionPoints is not an array or traversable object.
+     * @return void
+     */
+    public function addDistributionPoint(DistributionPoint $distributionPoint)
+    {
+        $distributionPoint->setDatasetSubmission($this);
+        $this->distributionPoints->add($distributionPoint);
+    }
+
+    /**
+     * Remover for Distribution Point.
+     *
+     * @param DistributionPoint $distributionPoint Single object to be removed.
+     *
+     * @access public
      *
      * @return void
      */
-    public function setDistributionPoints($distributionPoints)
+    public function removeDistributionPoint(DistributionPoint $distributionPoint)
     {
-        if (is_array($distributionPoints) || $distributionPoints instanceof \Traversable) {
-            foreach ($distributionPoints as $distributionPoint) {
-                if (!$distributionPoint instanceof DistributionPoint) {
-                    throw new \Exception('Non-DistributionPoint found in distributionPoints.');
-                }
-            }
-            $this->distributionPoints = $distributionPoints;
-            foreach ($this->distributionPoints as $distributionPoint) {
-                $distributionPoint->setDatasetSubmission($this);
-            }
-        } else {
-            throw new \Exception('distributionPoints must be either array or traversable objects.');
-        }
+        $this->distributionPoints->removeElement($distributionPoint);
     }
-  
+
     /**
      * Getter for distributionPoints.
      *
