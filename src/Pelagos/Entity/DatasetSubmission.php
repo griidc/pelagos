@@ -296,79 +296,117 @@ class DatasetSubmission extends Entity
     const TOPIC_KEYWORDS = [
         'oceans' => [
             'name' => 'Oceans',
-            'description' => 'features and characteristics of salt water bodies (excluding inland waters). Examples: tides, tidal waves, coastal information, reefs',
+            'description' => 'features and characteristics of salt water bodies ' .
+            '(excluding inland waters). Examples: tides, tidal waves, coastal information, reefs',
         ],
         'biota' => [
             'name' => 'Biota',
-            'description' => 'flora and/or fauna in natural environment. Examples: wildlife, vegetation, biological sciences, ecology, wilderness, sealife, wetlands, habitat',
+            'description' => 'flora and/or fauna in natural environment. ' .
+            'Examples: wildlife, vegetation, biological sciences, ecology, ' .
+            'wilderness, sealife, wetlands, habitat',
         ],
         'boundaries' => [
             'name' => 'Boundaries',
-            'description' => 'legal land descriptions. Examples: political and administrative boundaries',
+            'description' => 'legal land descriptions. Examples: political ' .
+            'and administrative boundaries',
         ],
         'climatologyMeteorologyAtmosphere' => [
             'name' => 'Climatology/Meteorology/Atmosphere',
-            'description' => 'processes and phenomena of the atmosphere. Examples: cloud cover, weather, climate, atmospheric conditions, climate change, precipitation',
+            'description' => 'processes and phenomena of the atmosphere. ' .
+            'Examples: cloud cover, weather, climate, atmospheric conditions, ' .
+            'climate change, precipitation',
         ],
         'economy' => [
             'name' => 'Economy',
-            'description' => 'economic activities, conditions and employment. Examples: production, labour, revenue, commerce, industry, tourism and ecotourism, forestry, fisheries, commercial or subsistence hunting, exploration and exploitation of resources such as minerals, oil and gas',
+            'description' => 'economic activities, conditions and employment. ' .
+            'Examples: production, labour, revenue, commerce, industry, ' .
+            'tourism and ecotourism, forestry, fisheries, commercial or subsistence ' .
+            'hunting, exploration and exploitation of resources such as minerals, oil and gas',
         ],
         'elevation' => [
             'name' => 'Elevation',
-            'description' => 'height above or below sea level. Examples: altitude, bathymetry, digital elevation models, slope, derived products',
+            'description' => 'height above or below sea level. Examples: altitude, ' .
+            'bathymetry, digital elevation models, slope, derived products',
         ],
         'environment' => [
             'name' => 'Environment',
-            'description' => 'environmental resources, protection and conservation. Examples: environmental pollution, waste storage and treatment, environmental impact assessment, monitoring environmental risk, nature reserves, landscape',
+            'description' => 'environmental resources, protection and conservation. ' .
+            'Examples: environmental pollution, waste storage and treatment, ' .
+            'environmental impact assessment, monitoring environmental risk, ' .
+            'nature reserves, landscape',
         ],
         'farming' => [
             'name' => 'Farming',
-            'description' => 'rearing of animals and/or cultivation of plants. Examples: agriculture, irrigation, aquaculture, plantations, herding, pests and diseases affecting crops and livestock',
+            'description' => 'rearing of animals and/or cultivation of plants. ' .
+            'Examples: agriculture, irrigation, aquaculture, plantations, herding, ' .
+            'pests and diseases affecting crops and livestock',
         ],
         'geoscientificInformation' => [
             'name' => 'Geoscientific Information',
-            'description' => 'information pertaining to earth sciences. Examples: geophysical features and processes, geology, minerals, sciences dealing with the composition, structure and origin of the earth s rocks, risks of earthquakes, volcanic activity, landslides, gravity information, soils, permafrost, hydrogeology, erosion',
+            'description' => 'information pertaining to earth sciences. Examples: ' .
+            'geophysical features and processes, geology, minerals, sciences dealing ' .
+            'with the composition, structure and origin of the earth s rocks, risks ' .
+            'of earthquakes, volcanic activity, landslides, gravity information, soils, ' .
+            'permafrost, hydrogeology, erosion',
         ],
         'health' => [
             'name' => 'Health',
-            'description' => 'health, health services, human ecology, and safety. Examples: disease and illness, factors affecting health, hygiene, substance abuse, mental and physical health, health services',
+            'description' => 'health, health services, human ecology, and safety. ' .
+            'Examples: disease and illness, factors affecting health, hygiene, ' .
+            'substance abuse, mental and physical health, health services',
         ],
         'imageryBaseMapsEarthCover' => [
             'name' => 'Imagery/Base Maps/Earth Cover',
-            'description' => 'base maps. Examples: land cover, topographic maps, imagery, unclassified images, annotations',
+            'description' => 'base maps. Examples: land cover, topographic maps, ' .
+            'imagery, unclassified images, annotations',
         ],
         'inlandWaters' => [
             'name' => 'Inland Waters',
-            'description' => 'inland water features, drainage systems and their characteristics. Examples: rivers and glaciers, salt lakes, water utilization plans, dams, currents, floods, water quality, hydrographic charts',
+            'description' => 'inland water features, drainage systems and their ' .
+            'characteristics. Examples: rivers and glaciers, salt lakes, water ' .
+            'utilization plans, dams, currents, floods, water quality, hydrographic charts',
         ],
         'location' => [
             'name' => 'Location',
-            'description' => 'positional information and services. Examples: addresses, geodetic networks, control points, postal zones and services, place names',
+            'description' => 'positional information and services. Examples: addresses, ' .
+            'geodetic networks, control points, postal zones and services, place names',
         ],
         'intelligenceMilitary' => [
             'name' => 'Military Intelligence',
-            'description' => 'military bases, structures, activities. Examples: barracks, training grounds, military transportation, information collection',
+            'description' => 'military bases, structures, activities. Examples: barracks, ' .
+            'training grounds, military transportation, information collection',
         ],
         'planningCadastre' => [
             'name' => 'Planning/Cadastre',
-            'description' => 'information used for appropriate actions for future use of the land. Examples: land use maps, zoning maps, cadastral surveys, land ownership',
+            'description' => 'information used for appropriate actions for future use of ' .
+            'the land. Examples: land use maps, zoning maps, cadastral surveys, land ownership',
         ],
         'society' => [
             'name' => 'Society',
-            'description' => 'characteristics of society and cultures. Examples: settlements, anthropology, archaeology, education, traditional beliefs, manners and customs, demographic data, recreational areas and activities, social impact assessments, crime and justice, census information',
+            'description' => 'characteristics of society and cultures. ' .
+            'Examples: settlements, anthropology, archaeology, education, ' .
+            'traditional beliefs, manners and customs, demographic data, ' .
+            'recreational areas and activities, social impact assessments, ' .
+            'crime and justice, census information',
         ],
         'structure' => [
             'name' => 'Structure',
-            'description' => 'man-made construction. Examples: buildings, museums, churches, factories, housing, monuments, shops, towers',
+            'description' => 'man-made construction. Examples: buildings, ' .
+            'museums, churches, factories, housing, monuments, shops, towers',
         ],
         'transportation' => [
             'name' => 'Transportation',
-            'description' => 'means and aids for conveying persons and/or goods. Examples: roads, airports/airstrips, shipping routes, tunnels, nautical charts, vehicle or vessel location, aeronautical charts, railways',
+            'description' => 'means and aids for conveying persons and/or goods. ' .
+            'Examples: roads, airports/airstrips, shipping routes, tunnels, ' .
+            'nautical charts, vehicle or vessel location, aeronautical charts, railways',
         ],
         'utilitiesCommunication' => [
             'name' => 'Utilities/Communication',
-            'description' => 'energy, water and waste systems and communications infrastructure and services. Examples: hydroelectricity, geothermal, solar and nuclear sources of energy, water purification and distribution, sewage collection and disposal, electricity and gas distribution, data communication, telecommunication, radio, communication networks',
+            'description' => 'energy, water and waste systems and communications ' .
+            'infrastructure and services. Examples: hydroelectricity, geothermal, ' .
+            'solar and nuclear sources of energy, water purification and distribution, ' .
+            'sewage collection and disposal, electricity and gas distribution, data ' .
+            'communication, telecommunication, radio, communication networks',
         ],
     ];
 
@@ -514,7 +552,8 @@ class DatasetSubmission extends Entity
      *
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionDatasetContact", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionDatasetContact", mappedBy="datasetSubmission",
+     *     cascade={"persist"}, orphanRemoval=true)
      *
      * @ORM\OrderBy({"primaryContact" = "DESC", "creationTimeStamp" = "ASC"})
      *
@@ -530,7 +569,8 @@ class DatasetSubmission extends Entity
      *
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionMetadataContact", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionMetadataContact", mappedBy="datasetSubmission",
+     *     cascade={"persist"}, orphanRemoval=true)
      *
      * @ORM\OrderBy({"creationTimeStamp" = "ASC"})
      *
@@ -1066,7 +1106,11 @@ class DatasetSubmission extends Entity
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
             
             //Submitter should always be the user who has submitted the dataset.
-            if (!in_array($entity->getMetadataStatus(), [ self::METADATA_STATUS_NONE, self::METADATA_STATUS_BACK_TO_SUBMITTER])) {
+            if (!in_array(
+                $entity->getMetadataStatus(),
+                [ self::METADATA_STATUS_NONE, self::METADATA_STATUS_BACK_TO_SUBMITTER]
+            )
+            ) {
                 $this->submitter = $entity->getSubmitter();
                 $this->submissionTimeStamp = $entity->getSubmissionTimeStamp();
             }
@@ -1095,7 +1139,8 @@ class DatasetSubmission extends Entity
                 $this->addDistributionPoint($newDistributionPoint);
             }
         } else {
-            throw new \Exception('Class constructor requires a DIF or a DatasetSubmission. A ' . get_class($entity) . ' was passed.');
+            throw new \Exception('Class constructor requires a DIF or a DatasetSubmission. A ' .
+                get_class($entity) . ' was passed.');
         }
     }
 
@@ -1227,7 +1272,6 @@ class DatasetSubmission extends Entity
                 $this->metadataStatus = self::METADATA_STATUS_IN_REVIEW;
                 break;
             case ($eventName === self::DATASET_ACCEPT_REVIEW):
-                //Setting the status to in-review.
                 $this->status = self::STATUS_COMPLETE;
                 $this->metadataStatus = self::METADATA_STATUS_ACCEPTED;
                 $this->getDataset()->setDatasetSubmission($this);
@@ -1235,7 +1279,6 @@ class DatasetSubmission extends Entity
             case ($eventName === self::DATASET_REQUEST_REVISIONS):
                 $this->status = self::STATUS_COMPLETE;
                 $this->metadataStatus = self::METADATA_STATUS_BACK_TO_SUBMITTER;
-                $this->status = self::STATUS_COMPLETE;
                 $this->getDataset()->setDatasetSubmission($this);
                 break;
         }
@@ -2508,8 +2551,12 @@ class DatasetSubmission extends Entity
      */
     public function setTemporalExtentNilReasonType($temporalExtentNilReasonType)
     {
-        if (null !== $temporalExtentNilReasonType and !array_key_exists($temporalExtentNilReasonType, self::NILREASON_TYPES)) {
-                throw new \InvalidArgumentException("'$temporalExtentNilReasonType' is not a valid value for nilReason types");
+        if (null !== $temporalExtentNilReasonType and
+                !array_key_exists($temporalExtentNilReasonType, self::NILREASON_TYPES)
+        ) {
+                throw new \InvalidArgumentException(
+                    "'$temporalExtentNilReasonType' is not a valid value for nilReason types"
+                );
         }
         $this->temporalExtentNilReasonType = $temporalExtentNilReasonType;
     }
