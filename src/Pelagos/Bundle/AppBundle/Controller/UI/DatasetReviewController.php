@@ -330,6 +330,17 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             $datasetSubmission,
             $eventName
         );
+        $beforeStatus = $datasetSubmission->getDataset()->getStatus();
+        $udi = $datasetSubmission->getDataset()->getUdi();
+        $mdappLogger = $this->get('pelagos.util.mdapplogger');
+        $mdappLogger->writeLog(
+            $mdappLogger->createReviewChangeMessage(
+                $this->getUser()->getUsername(),
+                $beforeStatus,
+                'In Review',
+                $udi
+            )
+        );
 
         // Create Dataset submission entity.
 
@@ -398,15 +409,42 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 }
             }
 
+            $beforeStatus = $datasetSubmission->getDataset()->getStatus();
+            $udi = $datasetSubmission->getDataset()->getUdi();
+            $mdappLogger = $this->get('pelagos.util.mdapplogger');
             switch (true) {
                 case ($form->get('endReviewBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_END_REVIEW);
+                    $mdappLogger->writeLog(
+                        $mdappLogger->createReviewChangeMessage(
+                            $this->getUser()->getUsername(),
+                            $beforeStatus,
+                            'End Review',
+                            $udi
+                        )
+                    );
                     break;
                 case ($form->get('acceptDatasetBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_ACCEPT_REVIEW);
+                    $mdappLogger->writeLog(
+                        $mdappLogger->createReviewChangeMessage(
+                            $this->getUser()->getUsername(),
+                            $beforeStatus,
+                            'Accept Dataset',
+                            $udi
+                        )
+                    );
                     break;
                 case ($form->get('requestRevisionsBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_REQUEST_REVISIONS);
+                    $mdappLogger->writeLog(
+                        $mdappLogger->createReviewChangeMessage(
+                            $this->getUser()->getUsername(),
+                            $beforeStatus,
+                            'Request Revisions',
+                            $udi
+                        )
+                    );
                     break;
             }
 
