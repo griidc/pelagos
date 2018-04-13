@@ -321,6 +321,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         $reviewedBy = $this->getUser()->getPerson();
         $reviewStartTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $datasetSubmissionReview = new DatasetSubmissionReview($datasetSubmission, $reviewedBy, $reviewStartTimeStamp);
+        $beforeStatus = $datasetSubmission->getDataset()->getStatus();
         $datasetSubmission->setDatasetSubmissionReviewStatus();
         $datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_IN_REVIEW);
         $datasetSubmission->setModifier($reviewedBy);
@@ -330,7 +331,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             $datasetSubmission,
             $eventName
         );
-        $beforeStatus = $datasetSubmission->getDataset()->getStatus();
         $udi = $datasetSubmission->getDataset()->getUdi();
         $mdappLogger = $this->get('pelagos.util.mdapplogger');
         $mdappLogger->writeLog(
