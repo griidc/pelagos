@@ -969,6 +969,17 @@ class DatasetSubmission extends Entity
     protected $submitter;
 
     /**
+     * DatasetSubmission's Distribution Points.
+     *
+     * @var Collection $distributionPoints
+     *
+     * @access protected
+     *
+     * @ORM\OneToMany(targetEntity="DistributionPoint", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
+     */
+    protected $distributionPoints;
+
+    /**
      * Constructor.
      *
      * Initializes collections to empty collections.
@@ -983,6 +994,7 @@ class DatasetSubmission extends Entity
     {
         $this->datasetContacts = new ArrayCollection;
         $this->metadataContacts = new ArrayCollection;
+        $this->distributionPoints = new ArrayCollection();
         if ($entity instanceof DIF) {
             if (null === $datasetPPOc) {
                 throw new \Exception('Constructor requires PersonDatasetSubmissionDatasetContact if passed a DIF entity');
@@ -1055,7 +1067,7 @@ class DatasetSubmission extends Entity
             $this->setTemporalExtentNilReasonType($entity->getTemporalExtentNilReasonType());
             $this->setDistributionFormatName($entity->getDistributionFormatName());
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
-
+            
             //Submitter should always be the user who has submitted the dataset.
             if (!in_array($entity->getMetadataStatus(), [ self::METADATA_STATUS_NONE, self::METADATA_STATUS_BACK_TO_SUBMITTER])) {
                 $this->submitter = $entity->getSubmitter();
@@ -1075,6 +1087,14 @@ class DatasetSubmission extends Entity
                 $newMetadataContact->setRole($metadataContact->getRole());
                 $newMetadataContact->setPerson($metadataContact->getPerson());
                 $this->addMetadataContact($newMetadataContact);
+            }
+
+            // Copy the original Dataset Submission's distribution Point(s).
+            foreach ($entity->getDistributionPoints() as $distributionPoint) {
+                $newDistributionPoint = new DistributionPoint();
+                $newDistributionPoint->setDistributionUrl($distributionPoint->getDistributionUrl());
+                $newDistributionPoint->setNationalDataCenter($distributionPoint->getNationalDataCenter());
+                $this->addDistributionPoint($newDistributionPoint);
             }
         } else {
             throw new \Exception('Class constructor requires a DIF or a DatasetSubmission. A ' . get_class($entity) . ' was passed.');
@@ -2494,5 +2514,46 @@ class DatasetSubmission extends Entity
                 throw new \InvalidArgumentException("'$temporalExtentNilReasonType' is not a valid value for nilReason types");
         }
         $this->temporalExtentNilReasonType = $temporalExtentNilReasonType;
+    }
+
+    /**
+     * Adder for distributionPoint.
+     *
+     * @param DistributionPoint $distributionPoint Single object to be added.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function addDistributionPoint(DistributionPoint $distributionPoint)
+    {
+        $distributionPoint->setDatasetSubmission($this);
+        $this->distributionPoints->add($distributionPoint);
+    }
+
+    /**
+     * Remover for Distribution Point.
+     *
+     * @param DistributionPoint $distributionPoint Single object to be removed.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function removeDistributionPoint(DistributionPoint $distributionPoint)
+    {
+        $this->distributionPoints->removeElement($distributionPoint);
+    }
+
+    /**
+     * Getter for distributionPoints.
+     *
+     * @access public
+     *
+     * @return Collection Distribution Point associations for this Dataset Submission.
+     */
+    public function getDistributionPoints()
+    {
+        return $this->distributionPoints;
     }
 }

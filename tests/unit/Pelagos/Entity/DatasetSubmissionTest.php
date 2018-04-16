@@ -860,4 +860,47 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($mockTemporalExtentNilReasonType, $this->datasetSubmission->getTemporalExtentNilReasonType());
     }
+
+    /**
+     * Test the adder, remover and getter for Distribution Points.
+     *
+     * @return void
+     */
+    public function testAddRemoveAndGetDistributionPoint()
+    {
+        //setup
+        $this->mockNationalDataCenter = \Mockery::mock(
+            NationalDataCenter::class,
+            array(
+                'getOrganizationName' => 'GRIIDC',
+                'getOrganizationUrl' => 'www.griidc.org'
+            )
+        );
+
+        $this->mockDistributionPoint = \Mockery::mock(
+            DistributionPoint::class,
+            array(
+                'setDatasetSubmission' => $this->datasetSubmission,
+                'setNationalDataCenter' => $this->mockNationalDataCenter,
+                'getDistributionUrl' => 'www.org.com',
+            )
+        );
+
+        //test adder
+        $this->datasetSubmission->addDistributionPoint($this->mockDistributionPoint);
+        $this->assertEquals(
+            1,
+            $this->datasetSubmission->getDistributionPoints()->count()
+        );
+
+        //test getter
+        $this->assertSame($this->datasetSubmission->getDistributionPoints()->first(), $this->mockDistributionPoint);
+
+        //test remover
+        $this->datasetSubmission->removeDistributionPoint($this->mockDistributionPoint);
+        $this->assertEquals(
+            0,
+            $this->datasetSubmission->getDistributionPoints()->count()
+        );
+    }
 }
