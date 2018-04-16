@@ -7,7 +7,6 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Pelagos\Entity\Account;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmission;
-use Pelagos\Entity\PersonDataRepository;
 
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 
@@ -18,9 +17,6 @@ use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
  */
 class DatasetSubmissionVoter extends PelagosEntityVoter
 {
-
-    const CAN_VIEW = 'CAN_VIEW';
-
     /**
      * Determine if an attribute and subject are supported by this voter.
      *
@@ -65,6 +61,9 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
             return false;
         }
 
+        // A user with an account can only create or edit dataset submissions
+        // associated with research groups that they (the user) are a member of.
+        
         $researchGroups = $user->getPerson()->getResearchGroups();
         if ($subject instanceof DatasetSubmission) {
             $submissionResearchGroup = $subject->getDataset()->getResearchGroup();
