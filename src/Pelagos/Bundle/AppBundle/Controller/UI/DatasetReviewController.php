@@ -2,8 +2,6 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
-use Pelagos\Entity\DistributionPoint;
-use Pelagos\Entity\NationalDataCenter;
 use Symfony\Component\Form\Form;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -18,13 +16,16 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 
+use Pelagos\Entity\Account;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\DatasetSubmissionReview;
+use Pelagos\Entity\DistributionPoint;
+use Pelagos\Entity\Entity;
+use Pelagos\Entity\NationalDataCenter;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
-use Pelagos\Entity\DatasetSubmissionReview;
-use Pelagos\Entity\Entity;
-use Pelagos\Entity\Account;
+
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.

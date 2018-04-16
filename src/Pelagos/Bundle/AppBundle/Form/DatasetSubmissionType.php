@@ -2,7 +2,6 @@
 
 namespace Pelagos\Bundle\AppBundle\Form;
 
-use Pelagos\Entity\DistributionPoint;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -13,6 +12,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\DistributionPoint;
 use Pelagos\Entity\Entity;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
