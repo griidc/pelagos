@@ -549,7 +549,7 @@ $(document).ready(function(){
 
     //change info in .distributioncontactinformation according to the selected value from drop-down
     $("#distributioncontact").change(function() {
-        console.log("OK");
+
         $.ajax({
               url: Routing.generate("pelagos_api_national_data_center_get", { "id" : $("#distributioncontact :selected").val() }),
               success: function(data){
@@ -558,9 +558,9 @@ $(document).ready(function(){
                     $("#distcontact_state").text(data.administrativeArea ? data.administrativeArea : "");
                     $("#distcontact_postalcode").text(data.postalCode ? data.postalCode : "");
                     $("#distcontact_country").text(data.country ? data.country : "");
-                    $("#discontact_phonenumber").text(data.phoneNumber ? data.phoneNumber : "");
-                    $("#discontact_emailaddress").text(data.emailAddress ? data.emailAddress : "");
-                    $("#discontact_url").text(data.organizationUrl ? data.organizationUrl : "");
+                    $("#distcontact_phonenumber").text(data.phoneNumber ? data.phoneNumber : "");
+                    $("#distcontact_emailaddress").text(data.emailAddress ? data.emailAddress : "");
+                    $("#distcontact_url").text(data.organizationUrl ? data.organizationUrl : "");
               }
         });
     });

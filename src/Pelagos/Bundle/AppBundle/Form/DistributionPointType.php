@@ -2,16 +2,18 @@
 
 namespace Pelagos\Bundle\AppBundle\Form;
 
+use Pelagos\Entity\DistributionPoint;
+
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\ChoiceList\View\ChoiceView;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\ChoiceList\View\ChoiceView;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 /**
  * A form for creating Distribution Point.
@@ -44,6 +46,17 @@ class DistributionPointType extends AbstractType
                 'label' => 'Distribution Url:',
                 'required' => true,
                 'mapped' => false,
+            ))
+            ->add('roleCode', ChoiceType::class, array(
+                'label' => 'Role:',
+                'required' => true,
+                'mapped' => false,
+                'choices' => DistributionPoint::getRoleCodeChoices(),
+                'empty_data' => 'Distributor',
+                'expanded' => false,
+                'preferred_choices' => function($role, $value, $index){
+                    return $value === 'Distributor';
+                },
             ));
     }
 

@@ -81,4 +81,21 @@ class DistributionPointTest extends \PHPUnit_Framework_TestCase
             $this->distributionPoint->getDistributionUrl()
         );
     }
+
+    /**
+     * Test the role code setter and getter method.
+     *
+     * This method should return the role code string.
+     *
+     * @return void
+     */
+    public function testCanSetAndGetRoleCode()
+    {
+        $mockRoleCode = 'distributor';
+        $this->distributionPoint->setRoleCode($mockRoleCode);
+        $this->assertEquals(
+            $mockRoleCode,
+            $this->distributionPoint->getRoleCode()
+        );
+    }
 }

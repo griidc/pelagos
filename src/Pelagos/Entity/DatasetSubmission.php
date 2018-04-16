@@ -1093,6 +1093,7 @@ class DatasetSubmission extends Entity
             foreach ($entity->getDistributionPoints() as $distributionPoint) {
                 $newDistributionPoint = new DistributionPoint();
                 $newDistributionPoint->setDistributionUrl($distributionPoint->getDistributionUrl());
+                $newDistributionPoint->setRoleCode($distributionPoint->getRoleCode());
                 $newDistributionPoint->setNationalDataCenter($distributionPoint->getNationalDataCenter());
                 $this->addDistributionPoint($newDistributionPoint);
             }

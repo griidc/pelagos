@@ -393,15 +393,23 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     break;
             }
 
+            $distributionPoint = $datasetSubmission->getDistributionPoints()[0];
+            //Create and persist new distribution Point if none exists in the current datasetSubmission
+            if (null === $distributionPoint) {
+                $distributionPoint = new DistributionPoint();
+                $distributionPoint->setDatasetSubmission($datasetSubmission);
+                $datasetSubmission->addDistributionPoint($distributionPoint);
+            }
+
             $this->entityHandler->update($datasetSubmission->getDatasetSubmissionReview());
             $this->entityHandler->update($datasetSubmission);
 
-            //create new distribution point
+            //update the distribution point
             $formDistributionPoint = $request->get('distributionPoints');
-            $distributionPoint = $datasetSubmission->getDistributionPoints()[0];
             $nationalDataCenter = $this->entityHandler->get(NationalDataCenter::class, $formDistributionPoint['nationalDataCenter']);
             $distributionPoint->setNationalDataCenter($nationalDataCenter);
             $distributionPoint->setDistributionUrl($formDistributionPoint['distributionUrl']);
+            $distributionPoint->setRoleCode($formDistributionPoint['roleCode']);
             $this->entityHandler->update($distributionPoint);
 
             foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
@@ -411,7 +419,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
                 $this->entityHandler->update($metadataContact);
             }
-
 
             //use rabbitmq to process dataset file and persist the file details.
             foreach ($this->messages as $message) {
