@@ -2,8 +2,6 @@
 
 namespace Pelagos\Bundle\AppBundle\Form;
 
-use Pelagos\Entity\DistributionPoint;
-use Pelagos\Entity\Entity;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -12,8 +10,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
@@ -32,22 +28,24 @@ class DistributionPointType extends AbstractType
    *
    * @return void
    */
-  public function buildForm(FormBuilderInterface $builder, array $options)
-  {
-    $builder
-      ->add('nationalDataCenter', EntityType::class, array(
-          'label' => 'Distribution Contact:',
-          'class' => 'Pelagos:NationalDataCenter',
-          'choice_value' => 'id',
-          'choice_label' => 'organizationName',
-          'placeholder' => '[Please Select a Distribution Contact]',
-          'required' => true,
-      ))
-      ->add('distributionUrl', TextType::class, array(
-          'label' => 'Distribution Url:',
-          'required' => true,
-      ));
-  }
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('nationalDataCenter', EntityType::class, array(
+                'label' => 'Distribution Contact:',
+                'class' => 'Pelagos:NationalDataCenter',
+                'choice_value' => 'id',
+                'choice_label' => 'organizationName',
+                'placeholder' => '[Please Select a Distribution Contact]',
+                'required' => true,
+                'mapped' => false,
+            ))
+            ->add('distributionUrl', TextType::class, array(
+                'label' => 'Distribution Url:',
+                'required' => true,
+                'mapped' => false,
+            ));
+    }
 
     /**
      * Configures the options for this type.

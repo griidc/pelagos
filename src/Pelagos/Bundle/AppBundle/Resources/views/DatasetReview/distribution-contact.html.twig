@@ -16,7 +16,7 @@
 					</div>
 				</span>
                 <label for="distributioncontact">Distribution Contact</label>
-                <select class="distributioncontact" id="ddlDistributionContact" name="{{ distPoint.nationalDataCenter.organizationName }}" required="required">
+                <select class="distributioncontact" id="distributioncontact" name="distributionPoints[nationalDataCenter]" required="required">
                     <option value="">[Please select a Distribution Contact]</option>
                     {% for distContact in form.distributionPoints.nationalDataCenter.vars.choices  %}
                         {% if distPoint.nationalDataCenter | default and distPoint.nationalDataCenter.id == distContact.value %}
@@ -31,7 +31,18 @@
                     {% endfor %}
                 </select>
                 <label for="distributioncontact" class="error"></label>
-                {% include "PelagosAppBundle:DatasetReview:distribution-contact-information.html.twig"%}
+                <div class="distributioncontactinformation">
+                    {#<span field="organizationRole"></span><br />#}
+                    {#<span field="faxNumber"></span><br />#}
+                    <span field="address" id="distcontact_address">{{ distPoint.nationalDataCenter.deliveryPoint|default }}</span><br />
+                    <span field="city" id="distcontact_city">{{ distPoint.nationalDataCenter.city|default }}</span><br />
+                    <span field="state" id="distcontact_state">{{ distPoint.nationalDataCenter.administrativeArea|default }}</span>
+                    <span field="postalCode" id="distcontact_postalcode">{{ distPoint.nationalDataCenter.postalCode|default }}</span><br />
+                    <span field="country" id="discontact_country">{{ distPoint.nationalDataCenter.country|default }}</span><br />
+                    <span field="telephoneNumber" id="discontact_phonenumber">{{ distPoint.nationalDataCenter.phoneNumber|default }}</span><br />
+                    <span field="emailAdress" id="discontact_emailaddress">{{ distPoint.nationalDataCenter.emailAddress|default }}</span><br />
+                    <span field="url" id="discontact_url">{{ distPoint.nationalDataCenter.organizationUrl|default }}</span> <br />
+                </div>
             </td>
         </tr>
         <tr>

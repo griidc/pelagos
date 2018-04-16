@@ -548,9 +548,10 @@ $(document).ready(function(){
     })
 
     //change info in .distributioncontactinformation according to the selected value from drop-down
-    $("#ddlDistributionContact").change(function() {
+    $("#distributioncontact").change(function() {
+        console.log("OK");
         $.ajax({
-              url: Routing.generate("pelagos_api_national_data_center_get", { "id" : $("#ddlDistributionContact :selected").val() }),
+              url: Routing.generate("pelagos_api_national_data_center_get", { "id" : $("#distributioncontact :selected").val() }),
               success: function(data){
                     $("#distcontact_address").text(data.deliveryPoint ? data.deliveryPoint : "");
                     $("#distcontact_city").text(data.city ? data.city : "");

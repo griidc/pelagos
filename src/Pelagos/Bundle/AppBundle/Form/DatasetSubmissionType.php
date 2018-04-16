@@ -2,6 +2,7 @@
 
 namespace Pelagos\Bundle\AppBundle\Form;
 
+use Pelagos\Entity\DistributionPoint;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -250,7 +251,7 @@ class DatasetSubmissionType extends AbstractType
                 'required' => true,
             ))
             ->add('distributionPoints', DistributionPointType::class, array(
-                'data_class' => null
+                'data_class' => null,
             ))
             ->add('submitButton', Type\SubmitType::class, array(
                 'label' => 'Submit',

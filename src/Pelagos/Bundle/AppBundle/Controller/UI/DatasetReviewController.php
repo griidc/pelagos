@@ -2,6 +2,8 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
+use Pelagos\Entity\DistributionPoint;
+use Pelagos\Entity\NationalDataCenter;
 use Symfony\Component\Form\Form;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -392,8 +394,15 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             }
 
             $this->entityHandler->update($datasetSubmission->getDatasetSubmissionReview());
-
             $this->entityHandler->update($datasetSubmission);
+
+            //create new distribution point
+            $formDistributionPoint = $request->get('distributionPoints');
+            $distributionPoint = $datasetSubmission->getDistributionPoints()[0];
+            $nationalDataCenter = $this->entityHandler->get(NationalDataCenter::class, $formDistributionPoint['nationalDataCenter']);
+            $distributionPoint->setNationalDataCenter($nationalDataCenter);
+            $distributionPoint->setDistributionUrl($formDistributionPoint['distributionUrl']);
+            $this->entityHandler->update($distributionPoint);
 
             foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                 $this->entityHandler->update($datasetContact);
@@ -403,9 +412,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 $this->entityHandler->update($metadataContact);
             }
 
-            foreach ($datasetSubmission->getDistributionPoints() as $distributionPoint) {
-              $this->entityHandler->update($distributionPoint);
-            }
 
             //use rabbitmq to process dataset file and persist the file details.
             foreach ($this->messages as $message) {
