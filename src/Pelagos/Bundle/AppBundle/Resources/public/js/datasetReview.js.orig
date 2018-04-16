@@ -569,21 +569,12 @@ $(document).ready(function(){
 
     $("#temporalInfoQuestion").on("change", function (e) {
         checkTemporalNilReason();
-    });
+<<<<<<< HEAD
+    })
 
-    // Check if mode = view (The if loop here is duplicated at the end because spatialWizard and fineUploader
-    // need to be disabled after they are initialized).
-    if (regForm.attr("mode") === "view") {
-        // Disable fineupload Drag and Drop area.
-        $(".qq-upload-drop-area").css("visibility", "hidden");
-        // Disable the upload buttons
-        $(".qq-upload-button :input").prop("disabled", true);
-        // Disable Spatial Wizard button.
-        $("#geoWizard #geowizBtn").prop("disabled", "true");
-    }
-
-    //change info in distribution contact information according to the selected value from drop-down
+    //change info in .distributioncontactinformation according to the selected value from drop-down
     $("#distributioncontact").change(function() {
+
         $.ajax({
               url: Routing.generate("pelagos_api_national_data_center_get", { "id" : $("#distributioncontact :selected").val() }),
               success: function(data){
@@ -599,6 +590,21 @@ $(document).ready(function(){
         });
     });
     
+=======
+    });
+
+
+    // Check if mode = view (The if loop here is duplicated at the end because spatialWizard and fineUploader
+    // need to be disabled after they are initialized).
+    if (regForm.attr("mode") === "view") {
+        // Disable fineupload Drag and Drop area.
+        $(".qq-upload-drop-area").css("visibility", "hidden");
+        // Disable the upload buttons
+        $(".qq-upload-button :input").prop("disabled", true);
+        // Disable Spatial Wizard button.
+        $("#geoWizard #geowizBtn").prop("disabled", "true");
+    }
+>>>>>>> epic/PELAGOS-2826-dataset-review-workflow
 });
 
 function checkSpatial(isNonSpatial) {
