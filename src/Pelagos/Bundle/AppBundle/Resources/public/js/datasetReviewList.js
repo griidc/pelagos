@@ -48,15 +48,6 @@ $(document).ready(function(){
           "select": "single"
         }, options)
     );
-
-    table.on("select", function(e, dt, type, indexes)
-    {
-      if (type === "row") {
-        var id = table.row(".selected").data().udi;
-        var url = $(self).attr("entityApi") + "?udiReview=" + id + "&mode=review";
-        window.location=url;
-      }
-    });
     return table;
   };
 }(jQuery));
