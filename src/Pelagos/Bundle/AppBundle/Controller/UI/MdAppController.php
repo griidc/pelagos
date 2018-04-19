@@ -214,13 +214,6 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
                         $objNeeded,
                         Query::HYDRATE_ARRAY
                     ),
-                    'secondcheck' => $entityHandler->getBy(
-                        Dataset::class,
-                        array('metadataStatus' => DatasetSubmission::METADATA_STATUS_SECOND_CHECK),
-                        array(),
-                        $objNeeded,
-                        Query::HYDRATE_ARRAY
-                    ),
                     'accepted' => $entityHandler->getBy(
                         Dataset::class,
                         array('metadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED),
