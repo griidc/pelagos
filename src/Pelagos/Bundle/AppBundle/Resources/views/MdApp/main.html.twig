@@ -57,7 +57,6 @@
         <li style="text-align:center"><a href="#secondcheck" onClick="clearStatusMessages()" >2nd Chk ({{ m_dataset.secondcheck|length }})</a></li>
         <li style="text-align:center"><a href="#accepted" onClick="clearStatusMessages()" >Accepted ({{ m_dataset.accepted|length }})</a></li>
         <li style="text-align:center"><a href="#backtosubmitter" onClick="clearStatusMessages()" >Request Revisions ({{ m_dataset.backtosubmitter|length }})</a></li>
-        <li style="text-align:center"><a href="#uploadnewmetadata" onClick="clearStatusMessages()">Upload New Metadata</a></li>
     </ul>
   </div>
 
@@ -200,37 +199,6 @@
         </div>
        {% endif %}
      {% endfor %}
-
-        <div id="uploadnewmetadata">
-            <div>
-                <!-- The data encoding type, enctype, MUST be specified as below -->
-                <form enctype="multipart/form-data" action="{{ path('pelagos_app_ui_mdapp_uploadmetadatafile') }}" method="POST" id="MdappFileUploadForm">
-                    <!-- MAX_FILE_SIZE must precede the file input field -->
-                    <input type="hidden" name="MAX_FILE_SIZE" value="1000000" />
-                    <!-- Name of input element determines name in $_FILES array -->
-                    <input name="newMetadataFile" type="file" style="width:100%" id="newMetadataFile" />
-                    <hr>
-                    <div>
-                        <h3>Additional Actions</h3>
-                        <input type="checkbox" name="validateSchema" CHECKED>Validate as ISO-19115-2<br />
-                        <input type="checkbox" name="acceptMetadata">Accept Metadata<br />
-                        <input type="checkbox" name="overrideDatestamp" CHECKED>Create/Update gmi:MI_Metadata/gmd:dateStamp with current gco:dateTime<br />
-                    </div>
-                    <hr>
-                    <h3>GRIIDC Metadata Standards Compliance Enforcement</h3>
-                    <p>The following checks help ensure that the UDI references within
-                       a metadata record are consistent. The UDI is determined by reading
-                       the uploaded filename. If checked, failed tests will result in
-                       rejection of the upload. If unchecked, failed tests will result in
-                       a non-blocking warning instead.</p>
-                    <input type="checkbox" name="test1" CHECKED>Filename matches file identifier (/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]) as UDI-metadata.xml (w/dash instead of colon)<br />
-                    <input type="checkbox" name="test2" CHECKED>UDI matches metadata URL (/gmi:MI_Metadata/gmd:dataSetURI/gco:CharacterString)<br />
-                    <input type="checkbox" name="test3" CHECKED>UDI matches distribution URL (/gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1])<br />
-                    <hr>
-                </form>
-                <button id="FileUploadButton">Upload File</button><br />
-            </div>
-        </div>
 </div>
 <div id='log'>
     <div id="log_close">
