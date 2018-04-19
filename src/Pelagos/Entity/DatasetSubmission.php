@@ -164,7 +164,7 @@ class DatasetSubmission extends Entity
         self::METADATA_STATUS_IN_REVIEW => 'In Review',
         self::METADATA_STATUS_SECOND_CHECK => '2nd Check',
         self::METADATA_STATUS_ACCEPTED => 'Accepted',
-        self::METADATA_STATUS_BACK_TO_SUBMITTER => 'Bk To Sub',
+        self::METADATA_STATUS_BACK_TO_SUBMITTER => 'Request Revisions',
     );
 
     /**
