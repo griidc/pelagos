@@ -42,11 +42,11 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     protected $messages = array();
 
     /**
-     * The mode in which the dataset-review is loaded.(Default mode: "review").
+     * The mode in which the dataset-review is opened.
      *
      * @var string
      */
-    protected $mode = '';
+    private $mode;
 
     /**
      * The default action for Dataset Review.
@@ -59,16 +59,26 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      */
     public function defaultAction(Request $request)
     {
-        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
-        }
-
         $dataset = null;
-        $udi = $request->query->get('udiReview');
-        $this->mode = $request->query->get('mode');
         $datasetSubmission = null;
+        $reviewModes = array('view', 'review');
+
+        $udi = $request->query->get('udiReview');
+        $mode = $request->query->get('mode');
+
 
         if ($udi !== null) {
+            if (!empty($mode) and in_array($mode, $reviewModes)) {
+                $this->mode = $mode;
+            } else {
+                $this->mode = 'view';
+            }
+            $userAuthCheck = $this->authForReview();
+
+            if (!$userAuthCheck) {
+                return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            }
+
             return $this->eligibiltyForReview($udi, $request);
         }
 
@@ -80,6 +90,25 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 'datasetSubmission' => $datasetSubmission,
             )
         );
+    }
+
+    /**
+     * Checks authorization for the user roles to view/review.
+     *
+     * @return boolean
+     */
+    private function authForReview()
+    {
+        if ($this->mode === 'review') {
+            if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+                return true;
+            }
+        } else {
+            if ($this->isGranted(array('ROLE_DATA_REPOSITORY_MANAGER', 'ROLE_SUBJECT_MATTER_EXPERT'))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -279,6 +308,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 'showForceImport' => $showForceImport,
                 'showForceDownload' => $showForceDownload,
                 'researchGroupList' => $researchGroupList,
+                'mode' => $this->mode,
             )
         );
 

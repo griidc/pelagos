@@ -20,24 +20,6 @@ $(document).ready(function(){
         }
     });
 
-    $(".reviewButtons").on("click", function () {
-
-        var udi = $("#udiReview").val().trim();
-        var mode = this.name;
-        var url = Routing.generate("pelagos_app_ui_datasetreview_default", {"udiReview": udi }) + "&mode=" + mode;
-
-        $.ajax({
-            url: url,
-            method : "GET",
-            async: false,
-            contentType: "application/json",
-            success: function(textStatus, jqXHR){
-                console.log(jqXHR.status);
-                window.location.href= url;
-            }
-        })
-    });
-
     var regForm = $("#regForm");
     // Check if mode = view (View mode (Unable to edit)).
     if (regForm.attr("mode") === "view") {
@@ -630,45 +612,50 @@ function checkTemporalNilReason() {
 
 function areTabsValid()
 {
-    $("#regForm select[keyword=target] option").prop("selected", true);
-    var imgWarning = $("#imgwarning").attr("src");
-    var imgCheck = $("#imgcheck").attr("src");
-    var isValid = $("#regForm").valid();
-    $(".tabimg").show();
+    var regForm = $("#regForm");
+    if (regForm.attr("mode") === "review") {
+        $("#regForm select[keyword=target] option").prop("selected", true);
+        var imgWarning = $("#imgwarning").attr("src");
+        var imgCheck = $("#imgcheck").attr("src");
+        var isValid = regForm.valid();
+        $(".tabimg").show();
 
-    $("#dtabs .ds-metadata").each(function () {
-        var tabLabel = $(this).attr("aria-labelledby");
-        if ($(this).has(":input.error").not("button").length > 0) {
-            $("#" + tabLabel).next("img").prop("src", imgWarning);
-            isValid = false;
-        }
-        else {
-            $("#" + tabLabel).next("img").prop("src", imgCheck);
-        }
+        $("#dtabs .ds-metadata").each(function () {
+            var tabLabel = $(this).attr("aria-labelledby");
+            if ($(this).has(":input.error").not("button").length > 0) {
+                $("#" + tabLabel).next("img").prop("src", imgWarning);
+                isValid = false;
+            }
+            else {
+                $("#" + tabLabel).next("img").prop("src", imgCheck);
+            }
 
-        $(this).find(":input").on("change blur keyup", function () {
-            $("#dtabs .ds-metadata").each(function () {
-                var label = $(this).attr("aria-labelledby");
-                $(this).find(":input").not(".prototype, button").each(function () {
-                    $(this).valid()
+            $(this).find(":input").on("change blur keyup", function () {
+                $("#dtabs .ds-metadata").each(function () {
+                    var label = $(this).attr("aria-labelledby");
+                    $(this).find(":input").not(".prototype, button").each(function () {
+                        $(this).valid()
+                    });
+                    if ($(this).find(":input").not(".prototype, button").valid()) {
+                        $("#" + label).next("img").prop("src", imgCheck);
+                    } else {
+                        $("#" + label).next("img").prop("src", imgWarning);
+                        isValid = false;
+                    }
                 });
-                if ($(this).find(":input").not(".prototype, button").valid()) {
-                    $("#" + label).next("img").prop("src", imgCheck);
-                } else {
-                    $("#" + label).next("img").prop("src", imgWarning);
-                    isValid = false;
-                }
             });
         });
-    });
 
-    if (typeof $("#datasetFileUri").val() !== "undefined") {
-        if ($("#datasetFileUri").val() === "") {
-            $("#filetabimg").prop("src", imgWarning);
-            isValid = false;
-        } else {
-            $("#filetabimg").prop("src", imgCheck);
+        if (typeof $("#datasetFileUri").val() !== "undefined") {
+            if ($("#datasetFileUri").val() === "") {
+                $("#filetabimg").prop("src", imgWarning);
+                isValid = false;
+            } else {
+                $("#filetabimg").prop("src", imgCheck);
+            }
         }
+        return isValid;
+    } else {
+        return false;
     }
-    return isValid;
 }
