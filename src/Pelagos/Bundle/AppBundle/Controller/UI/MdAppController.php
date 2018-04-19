@@ -17,7 +17,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 
-
 /**
  * The MDApp controller.
  *
