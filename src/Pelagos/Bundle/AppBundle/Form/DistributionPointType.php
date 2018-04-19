@@ -52,7 +52,7 @@ class DistributionPointType extends AbstractType
                 'required' => true,
                 'mapped' => false,
                 'choices' => DistributionPoint::getRoleCodeChoices(),
-                'empty_data' => 'Distributor',
+                'empty_data' => 'distributor',
                 'expanded' => false,
                 'preferred_choices' => function ($role, $value, $index) {
                     return $value === 'Distributor';
