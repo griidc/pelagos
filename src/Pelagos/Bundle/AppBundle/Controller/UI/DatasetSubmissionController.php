@@ -230,9 +230,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
             foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
                 $this->entityHandler->update($metadataContact);
             }
-
-
-
+            
             $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
                 $datasetSubmission,
                 $eventName
