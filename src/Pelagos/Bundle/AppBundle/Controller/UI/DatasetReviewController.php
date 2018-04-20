@@ -417,9 +417,11 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     break;
             }
 
-            $distributionPoint = $datasetSubmission->getDistributionPoints()[0];
-            //Create and persist new distribution Point if none exists in the current datasetSubmission
-            if (null === $distributionPoint) {
+            $distributionPoints  = $datasetSubmission->getDistributionPoints();
+            if (count($distributionPoints) > 0) {
+                $distributionPoint = $distributionPoints[0];
+            } else {
+                //Create and persist new distribution Point if none exists in the current datasetSubmission
                 $distributionPoint = new DistributionPoint();
                 $distributionPoint->setDatasetSubmission($datasetSubmission);
                 $datasetSubmission->addDistributionPoint($distributionPoint);
