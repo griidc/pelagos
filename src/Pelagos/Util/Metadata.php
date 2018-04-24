@@ -34,7 +34,7 @@ class Metadata
      *
      * @return string||null of generated XML metadata.
      */
-    public function getXmlRepresentation(Dataset $dataset, array $boudingBoxArray)
+    public function getXmlRepresentation(Dataset $dataset, array $boundingBoxArray)
     {
         $xml = null;
         if ($dataset->getDatasetSubmission() instanceof DatasetSubmission) {
@@ -42,7 +42,7 @@ class Metadata
                 'PelagosAppBundle:MetadataGenerator:MI_Metadata.xml.twig',
                 array(
                     'dataset' => $dataset,
-                    'boudingBox' => $boudingBoxArray,
+                    'boundingBoxArray' => $boundingBoxArray,
                     'metadataFilename' => preg_replace('/:/', '-', $dataset->getUdi()) . '-metadata.xml',
                 )
             );
