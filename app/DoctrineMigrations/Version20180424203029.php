@@ -40,6 +40,11 @@ class Version20180424203029 extends AbstractMigration
         $this->addSql('ALTER TABLE distribution_point ADD CONSTRAINT FK_7BA1393D416B4FE3 FOREIGN KEY (national_data_center_id) REFERENCES data_center (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE distribution_point ADD CONSTRAINT FK_7BA1393D61220EA6 FOREIGN KEY (creator_id) REFERENCES person (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE distribution_point ADD CONSTRAINT FK_7BA1393DD079F553 FOREIGN KEY (modifier_id) REFERENCES person (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+
+        $this->addSql('INSERT INTO data_center
+        (id, creator_id, modifier_id, organization_name, organization_url, phone_number, delivery_point, city, administrative_area, postal_code, country, email_address, national_center, creation_time_stamp, modification_time_stamp, discr)
+        SELECT NEXTVAL(\'data_center_id_seq\'), 0, 0, repo.name, repo.url, repo.phone_number, repo.delivery_point, repo.city, repo.administrative_area, repo.postal_code, repo.country, repo.email_address, false, NOW(), NOW(), \'datacenter\'
+        FROM data_repository repo WHERE repo.name = \'GRIIDC\' ');
     }
 
     /**
