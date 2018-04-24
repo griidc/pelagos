@@ -134,7 +134,7 @@ class DatasetSubmissionController extends EntityController
             $this->container->get('pelagos.entity.handler')->update($datasetContact);
         }
         foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
-            $entityHandler->update($metadataContact);
+            $this->container->get('pelagos.entity.handler')->update($metadataContact);
         }
         return $this->makeNoContentResponse();
     }
