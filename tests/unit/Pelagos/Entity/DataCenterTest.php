@@ -3,15 +3,15 @@
 namespace Pelagos\Entity;
 
 /**
- * Unit tests for Pelagos\Entity\NationalDataCenter.
+ * Unit tests for Pelagos\Entity\DataCenter.
  *
  * @group Pelagos
  * @group Pelagos\Entity
- * @group Pelagos\Entity\NationalDataCenter
+ * @group Pelagos\Entity\DataCenter
  *
  * @package Pelagos\Entity
  */
-class NationalDataCenterTest extends \PHPUnit_Framework_TestCase
+class DataCenterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * A mock name for the National data center.
@@ -32,7 +32,7 @@ class NationalDataCenterTest extends \PHPUnit_Framework_TestCase
      *
      * @var NationalDataCenter
      */
-    protected $nationalDataCenter;
+    protected $dataCenter;
 
     /**
      * Setup for all the test cases in National Data center entity test.
@@ -41,7 +41,7 @@ class NationalDataCenterTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->nationalDataCenter = new NationalDataCenter();
+        $this->dataCenter = new NationalDataCenter();
     }
 
     /**
@@ -51,7 +51,7 @@ class NationalDataCenterTest extends \PHPUnit_Framework_TestCase
      */
     public function testInstanceOfNationalDataCenter()
     {
-        $this->assertInstanceOf(NationalDataCenter::class, $this->nationalDataCenter);
+        $this->assertInstanceOf(NationalDataCenter::class, $this->dataCenter);
     }
 
     /**
@@ -63,9 +63,9 @@ class NationalDataCenterTest extends \PHPUnit_Framework_TestCase
     {
         $mockOrgName = 'GRIIDC';
 
-        $this->nationalDataCenter->setOrganizationName($mockOrgName);
+        $this->dataCenter->setOrganizationName($mockOrgName);
 
-        $this->assertEquals($mockOrgName, $this->nationalDataCenter->getOrganizationName());
+        $this->assertEquals($mockOrgName, $this->dataCenter->getOrganizationName());
     }
 
     /**
@@ -77,9 +77,9 @@ class NationalDataCenterTest extends \PHPUnit_Framework_TestCase
     {
         $mockOrgUrl = 'griidc.org';
 
-        $this->nationalDataCenter->setOrganizationUrl($mockOrgUrl);
+        $this->dataCenter->setOrganizationUrl($mockOrgUrl);
 
-        $this->assertEquals($mockOrgUrl, $this->nationalDataCenter->getOrganizationUrl());
+        $this->assertEquals($mockOrgUrl, $this->dataCenter->getOrganizationUrl());
     }
 
     /**
@@ -91,9 +91,9 @@ class NationalDataCenterTest extends \PHPUnit_Framework_TestCase
     {
         $mockPhoneNumber = '12345678990';
 
-        $this->nationalDataCenter->setPhoneNumber($mockPhoneNumber);
+        $this->dataCenter->setPhoneNumber($mockPhoneNumber);
 
-        $this->assertEquals($mockPhoneNumber, $this->nationalDataCenter->getPhoneNumber());
+        $this->assertEquals($mockPhoneNumber, $this->dataCenter->getPhoneNumber());
     }
 
     /**
@@ -105,9 +105,9 @@ class NationalDataCenterTest extends \PHPUnit_Framework_TestCase
     {
         $mockDeliveryPoint = '6300 Ocean Dr';
 
-        $this->nationalDataCenter->setDeliveryPoint($mockDeliveryPoint);
+        $this->dataCenter->setDeliveryPoint($mockDeliveryPoint);
 
-        $this->assertEquals($mockDeliveryPoint, $this->nationalDataCenter->getDeliveryPoint());
+        $this->assertEquals($mockDeliveryPoint, $this->dataCenter->getDeliveryPoint());
     }
 
     /**
@@ -119,9 +119,9 @@ class NationalDataCenterTest extends \PHPUnit_Framework_TestCase
     {
         $mockCity = 'Corpus Christi';
 
-        $this->nationalDataCenter->setCity($mockCity);
+        $this->dataCenter->setCity($mockCity);
 
-        $this->assertEquals($mockCity, $this->nationalDataCenter->getCity());
+        $this->assertEquals($mockCity, $this->dataCenter->getCity());
     }
 
     /**
@@ -133,9 +133,9 @@ class NationalDataCenterTest extends \PHPUnit_Framework_TestCase
     {
         $mockAdministrativeArea = 'Texas';
 
-        $this->nationalDataCenter->setAdministrativeArea($mockAdministrativeArea);
+        $this->dataCenter->setAdministrativeArea($mockAdministrativeArea);
 
-        $this->assertEquals($mockAdministrativeArea, $this->nationalDataCenter->getAdministrativeArea());
+        $this->assertEquals($mockAdministrativeArea, $this->dataCenter->getAdministrativeArea());
     }
 
     /**
@@ -147,9 +147,9 @@ class NationalDataCenterTest extends \PHPUnit_Framework_TestCase
     {
         $mockPostalCode = '00000';
 
-        $this->nationalDataCenter->setPostalCode($mockPostalCode);
+        $this->dataCenter->setPostalCode($mockPostalCode);
 
-        $this->assertEquals($mockPostalCode, $this->nationalDataCenter->getPostalCode());
+        $this->assertEquals($mockPostalCode, $this->dataCenter->getPostalCode());
     }
 
     /**
@@ -161,9 +161,9 @@ class NationalDataCenterTest extends \PHPUnit_Framework_TestCase
     {
         $mockCountry = 'United States';
 
-        $this->nationalDataCenter->setCountry($mockCountry);
+        $this->dataCenter->setCountry($mockCountry);
 
-        $this->assertEquals($mockCountry, $this->nationalDataCenter->getCountry());
+        $this->assertEquals($mockCountry, $this->dataCenter->getCountry());
     }
 
     /**
@@ -175,18 +175,19 @@ class NationalDataCenterTest extends \PHPUnit_Framework_TestCase
     {
         $mockEmailAddress = 'griidc@gomri.org';
 
-        $this->nationalDataCenter->setEmailAddress($mockEmailAddress);
+        $this->dataCenter->setEmailAddress($mockEmailAddress);
 
-        $this->assertEquals($mockEmailAddress, $this->nationalDataCenter->getEmailAddress());
+        $this->assertEquals($mockEmailAddress, $this->dataCenter->getEmailAddress());
     }
 
     /**
-     * Test if national data center indicator is true.
+     * Test set and check status of national data center indicator.
      *
      * @return void
      */
-    public function testNationalCenter()
+    public function testCanSetNationalCenter()
     {
-        $this->assertTrue(true, $this->nationalDataCenter->isNationalCenter());
+        $this->dataCenter->setNationalCenter(false);
+        $this->assertFalse(false, $this->dataCenter->isNationalCenter());
     }
 }
