@@ -107,7 +107,7 @@ class MetadataController extends EntityController
         };
         $geoUtil = $this->get('pelagos.util.geometry');
         $boundingBoxArray = array();
-        $gml = $dataset->getDatasetSubmission()->getSpatial();
+        $gml = $dataset->getDatasetSubmission()->getSpatialExtent();
         if ($gml) {
             try {
                 $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);

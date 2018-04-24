@@ -44,7 +44,7 @@ class DatalandController extends UIController
 
         if ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
             $geoUtil = $this->get('pelagos.util.geometry');
-            $gml = $dataset->getDatasetSubmission()->getSpatial();
+            $gml = $dataset->getDatasetSubmission()->getSpatialExtent();
             $boundingBoxArray = array();
             if ($gml) {
                 try {
