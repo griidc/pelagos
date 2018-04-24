@@ -2,7 +2,6 @@
 namespace Pelagos\Util;
 
 use Doctrine\ORM\EntityManager;
-use Pelagos\Entity\Person;
 
 /**
  * This is a Metadata utility class.
