@@ -418,8 +418,9 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     $mdappLogger->writeLog(
                         $mdappLogger->createReviewChangeMessage(
                             $this->getUser()->getUsername(),
-                            $beforeStatus,
                             'End Review',
+                            $beforeStatus,
+                            DatasetSubmission::METADATA_STATUSES[DatasetSubmission::METADATA_STATUS_IN_REVIEW],
                             $udi
                         )
                     );
@@ -429,8 +430,9 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     $mdappLogger->writeLog(
                         $mdappLogger->createReviewChangeMessage(
                             $this->getUser()->getUsername(),
+                            'Accept Review',
                             $beforeStatus,
-                            'Accept Dataset',
+                            DatasetSubmission::METADATA_STATUSES[DatasetSubmission::METADATA_STATUS_ACCEPTED],
                             $udi
                         )
                     );
@@ -440,8 +442,9 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     $mdappLogger->writeLog(
                         $mdappLogger->createReviewChangeMessage(
                             $this->getUser()->getUsername(),
-                            $beforeStatus,
                             'Request Revisions',
+                            $beforeStatus,
+                            DatasetSubmission::METADATA_STATUSES[DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER],
                             $udi
                         )
                     );

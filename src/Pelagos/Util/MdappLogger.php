@@ -54,10 +54,10 @@ class MdappLogger
      *
      * @return string        The formated message to be logged.
      */
-    public function createReviewChangeMessage($userid, $beforeStatus, $afterStatus, $udi)
+    public function createReviewChangeMessage($userid, $action, $beforeStatus, $afterStatus, $udi)
     {
         return
-            $userid . ' changed review status from ' .
+            $userid . ' Action: ' . $action . ', Changed status from ' .
              $beforeStatus . ' to ' . $afterStatus . ' UDI: ' . $udi . ' ';
     }
 }
