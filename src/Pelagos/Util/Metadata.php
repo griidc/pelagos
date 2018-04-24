@@ -29,11 +29,12 @@ class Metadata
     /**
      * Creates and returns an ISO-19115-2 XML representation of metadata as a string.
      *
-     * @param Dataset $dataset The Pelagos Dataset to generate ISO metadata for.
+     * @param Dataset $dataset         The Pelagos Dataset to generate ISO metadata for.
+     * @param array   $boudingBoxArray The bouding box array for the spatial extent.
      *
      * @return string||null of generated XML metadata.
      */
-    public function getXmlRepresentation(Dataset $dataset)
+    public function getXmlRepresentation(Dataset $dataset, array $boudingBoxArray)
     {
         $xml = null;
         if ($dataset->getDatasetSubmission() instanceof DatasetSubmission) {
@@ -41,6 +42,7 @@ class Metadata
                 'PelagosAppBundle:MetadataGenerator:MI_Metadata.xml.twig',
                 array(
                     'dataset' => $dataset,
+                    'boudingBox' => $boudingBoxArray,
                     'metadataFilename' => preg_replace('/:/', '-', $dataset->getUdi()) . '-metadata.xml',
                 )
             );

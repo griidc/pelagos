@@ -2,6 +2,7 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
+use Pelagos\Exception\InvalidGmlException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,7 +43,18 @@ class DatalandController extends UIController
         $wkt = null;
 
         if ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
-            $rawXml = $this->get('pelagos.util.metadata')->getXmlRepresentation($dataset);
+            $geoUtil = $this->get('pelagos.util.geometry');
+            $gml = $dataset->getDatasetSubmission()->getSpatial();
+            $boundingBoxArray = array();
+            if ($gml) {
+                try {
+                    $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
+                } catch (InvalidGmlException $e) {
+                    $errors[] = $e->getMessage() . ' while attempting to calculate bonding box from gml';
+                    $boundingBoxArray = array();
+                }
+            }
+            $rawXml = $this->get('pelagos.util.metadata')->getXmlRepresentation($dataset, $boundingBoxArray);
         }
         //Logic to get DIF or Accepted Dataset is in Dataset Entity.
         $wkt = $geometryUtil->convertGmlToWkt($dataset->getSpatialExtentGeometry());
