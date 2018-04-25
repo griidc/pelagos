@@ -17,13 +17,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @UniqueEntity(
  *     fields={"organizationName"},
  *     errorPath="organizationName",
- *     message="A data center with this name already exists"
+ *     message="A National data center with this name already exists"
  * )
  *
  * @UniqueEntity(
  *     fields={"organizationUrl"},
  *     errorPath="organizationUrl",
- *     message="A data center with this Url already exists"
+ *     message="A National data center with this Url already exists"
  * )
  *
  * @Hateoas\Relation(
