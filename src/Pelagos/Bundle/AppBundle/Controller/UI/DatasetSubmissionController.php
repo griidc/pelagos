@@ -497,19 +497,21 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
         }
     }
 
+    /**
+     * Get the correct dataset submission depending on the state.
+     *
+     * @param Dataset $dataset The dataset for which submission is retrieved.
+     *
+     * @return mixed|null|DatasetSubmission
+     */
     private function getDatasetSubmission(Dataset $dataset)
     {
-        if ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_IN_REVIEW ) {
-            $datasetSubmission = $dataset->getDatasetSubmission();
+        if ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
+            $datasetSubmission = (($dataset->getDatasetSubmissionHistory()->first()) ? $dataset->getDatasetSubmissionHistory()->first() : null);
         } else {
             // Added so that it doesn't conflict with dataset review record.
-            $datasetSubmission = (($dataset->getDatasetSubmissionHistory()->first()) ? $dataset->getDatasetSubmissionHistory()->first() : null);
+            $datasetSubmission = $dataset->getDatasetSubmission();
         }
-
-//        if ($datasetSubmission and $datasetSubmission->getStatus() !== DatasetSubmission::STATUS_INCOMPLETE
-//            and $datasetSubmission->getMetadatStatus() === Dat) {
-//            $datasetSubmission = $dataset->getDatasetSubmission();
-//        }
         return $datasetSubmission;
     }
 }
