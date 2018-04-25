@@ -50,18 +50,18 @@ class DistributionPointTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the National Data Center setter and getter method.
+     * Test the Data Center setter and getter method.
      *
-     * This method should return the NationalDataCenter.
+     * This method should return the DataCenter.
      *
      * @return void
      */
-    public function testCanSetAndGetNationalDataCenter()
+    public function testCanSetAndGetDataCenter()
     {
-        $this->distributionPoint->setNationalDataCenter($this->mockNationalDataCenter);
+        $this->distributionPoint->setDataCenter($this->mockDataCenter);
         $this->assertSame(
-            $this->mockNationalDataCenter,
-            $this->distributionPoint->getNationalDataCenter()
+            $this->mockDataCenter,
+            $this->distributionPoint->getDataCenter()
         );
     }
 

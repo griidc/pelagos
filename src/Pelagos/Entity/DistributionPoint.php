@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * DatasetSubmission to National Data Center association abstract class.
+ * DatasetSubmission to Data Center association abstract class.
  *
  * @ORM\Entity
  */
@@ -16,7 +16,7 @@ class DistributionPoint extends Entity
     /**
      * A friendly name for this type of entity.
      */
-    const FRIENDLY_NAME = 'Dataset Submission to National Data Center Association';
+    const FRIENDLY_NAME = 'Dataset Submission to Data Center Association';
 
     /**
      * Valid values for self::$roleCode.
@@ -132,16 +132,16 @@ class DistributionPoint extends Entity
     protected $datasetSubmission;
 
     /**
-     * The Distribution Contact (National Data Center) for this association.
+     * The Distribution Contact (Data Center) for this association.
      *
-     * @var NationalDataCenter
+     * @var DataCenter
      *
-     * @ORM\ManyToOne(targetEntity="NationalDataCenter")
+     * @ORM\ManyToOne(targetEntity="DataCenter")
      *
      * @Assert\NotBlank(
-     *     message="Distribution Contact (National Data Center) is required")
+     *     message="Distribution Contact is required")
      */
-    protected $nationalDataCenter;
+    protected $dataCenter;
 
     /**
      * The distribution Url for this association.
@@ -186,23 +186,23 @@ class DistributionPoint extends Entity
     /**
      * Setter for distribution contact.
      *
-     * @param NationalDataCenter $nationalDataCenter The distribution contact for this association.
+     * @param DataCenter $dataCenter The distribution contact for this association.
      *
      * @return void
      */
-    public function setNationalDataCenter(NationalDataCenter $nationalDataCenter)
+    public function setDataCenter(DataCenter $dataCenter)
     {
-        $this->nationalDataCenter = $nationalDataCenter;
+        $this->dataCenter = $dataCenter;
     }
 
     /**
      * Getter for distribution contact.
      *
-     * @return NationalDataCenter
+     * @return dataCenter
      */
-    public function getNationalDataCenter()
+    public function getDataCenter()
     {
-        return $this->nationalDataCenter;
+        return $this->dataCenter;
     }
 
     /**

@@ -33,9 +33,9 @@ class DistributionPointType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nationalDataCenter', EntityType::class, array(
+            ->add('dataCenter', EntityType::class, array(
                 'label' => 'Distribution Contact:',
-                'class' => 'Pelagos:NationalDataCenter',
+                'class' => 'Pelagos:DataCenter',
                 'choice_value' => 'id',
                 'choice_label' => 'organizationName',
                 'placeholder' => '[Please Select a Distribution Contact]',
@@ -89,7 +89,7 @@ class DistributionPointType extends AbstractType
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         usort(
-            $view->children['nationalDataCenter']->vars['choices'],
+            $view->children['dataCenter']->vars['choices'],
             function (ChoiceView $a, ChoiceView $b) {
                 return strcasecmp($a->label, $b->label);
             }
