@@ -3,7 +3,8 @@
     <table class="tab-table distribution-contact">
         <tr>
             <td>
-                {% set distPoint = form.vars.data.distributionPoints.get(0) %}
+                {% set distPoint = form.distributionPoints | first %}
+                {% set dataCenterInfo = distPoint.vars.data.dataCenter %}
                 <span class="helpSection">
 					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
                         <img class="info" src="{{ asset_url }}">
@@ -16,10 +17,9 @@
 					</div>
 				</span>
                 <label for="distributioncontact">Distribution Contact</label>
-                <select class="distributioncontact" id="distributioncontact" name="distributionPoints[nationalDataCenter]" required="required">
-                    <option value="">[Please select a Distribution Contact]</option>
-                    {% for distContact in form.distributionPoints.nationalDataCenter.vars.choices  %}
-                        {% if distPoint.nationalDataCenter | default and distPoint.nationalDataCenter.id == distContact.value %}
+                <select class="distributioncontact" id="distributioncontact" name="distributionPoints[dataCenter]" required="required">}
+                    {% for distContact in distPoint.dataCenter.vars.choices  %}
+                        {% if distPoint.dataCenter | default and dataCenterInfo.id == distContact.value %}
                             <option selected value="{{ distContact.value }}">
                                 {{ distContact.label }}
                             </option>
@@ -32,14 +32,14 @@
                 </select>
                 <label for="distributioncontact" class="error"></label>
                 <div class="distributioncontactinformation">
-                    <span field="address" id="distcontact_address">{{ distPoint.nationalDataCenter.deliveryPoint|default }}</span><br />
-                    <span field="city" id="distcontact_city">{{ distPoint.nationalDataCenter.city|default }}</span><br />
-                    <span field="state" id="distcontact_state">{{ distPoint.nationalDataCenter.administrativeArea|default }}</span>
-                    <span field="postalCode" id="distcontact_postalcode">{{ distPoint.nationalDataCenter.postalCode|default }}</span><br />
-                    <span field="country" id="distcontact_country">{{ distPoint.nationalDataCenter.country|default }}</span><br />
-                    <span field="telephoneNumber" id="distcontact_phonenumber">{{ distPoint.nationalDataCenter.phoneNumber|default }}</span><br />
-                    <span field="emailAdress" id="distcontact_emailaddress">{{ distPoint.nationalDataCenter.emailAddress|default }}</span><br />
-                    <span field="url" id="distcontact_url">{{ distPoint.nationalDataCenter.organizationUrl|default }}</span> <br />
+                    <span field="address" id="distcontact_address">{{ dataCenterInfo.deliveryPoint|default }}</span><br />
+                    <span field="city" id="distcontact_city">{{ dataCenterInfo.city|default }}</span><br />
+                    <span field="state" id="distcontact_state">{{ dataCenterInfo.administrativeArea|default }}</span>
+                    <span field="postalCode" id="distcontact_postalcode">{{ dataCenterInfo.postalCode|default }}</span><br />
+                    <span field="country" id="distcontact_country">{{ dataCenterInfo.country|default }}</span><br />
+                    <span field="telephoneNumber" id="distcontact_phonenumber">{{ dataCenterInfo.phoneNumber|default }}</span><br />
+                    <span field="emailAdress" id="distcontact_emailaddress">{{ dataCenterInfo.emailAddress|default }}</span><br />
+                    <span field="url" id="distcontact_url">{{ dataCenterInfo.organizationUrl|default }}</span> <br />
                 </div>
             </td>
         </tr>
@@ -53,7 +53,7 @@
 						CI_RoleCode value associated to this distribution point.
 					</div>
 				</span>
-                {{ form_row(form.distributionPoints.roleCode) }}
+                {{ form_row(distPoint.roleCode) }}
             </td>
         </tr>
         <tr>
@@ -66,7 +66,7 @@
 						Please enter the distribution URL for this dataset.
 					</div>
 				</span>
-                {{ form_row(form.distributionPoints.distributionUrl, {attr: {'value' : distPoint.distributionUrl | default}}) }}
+                {{ form_row(distPoint.distributionUrl) }}
             </td>
         </tr>
     </table>

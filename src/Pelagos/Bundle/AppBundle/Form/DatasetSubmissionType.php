@@ -250,8 +250,17 @@ class DatasetSubmissionType extends AbstractType
                 'delete_empty' => true,
                 'required' => true,
             ))
-            ->add('distributionPoints', DistributionPointType::class, array(
-                'data_class' => null,
+            ->add('distributionPoints', Type\CollectionType::class, array(
+                'label' => 'Distribution Points',
+                'entry_type' => DistributionPointType::class,
+                'entry_options' => array(
+                    'data_class' => DistributionPoint::class,
+                ),
+                'by_reference' => false,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'delete_empty' => true,
+                'required' => true,
             ))
             ->add('submitButton', Type\SubmitType::class, array(
                 'label' => 'Submit',

@@ -45,12 +45,10 @@ class DistributionPointType extends AbstractType
             ->add('distributionUrl', TextType::class, array(
                 'label' => 'Distribution Url:',
                 'required' => true,
-                'mapped' => false,
             ))
             ->add('roleCode', ChoiceType::class, array(
                 'label' => 'Role:',
                 'required' => true,
-                'mapped' => false,
                 'choices' => DistributionPoint::getRoleCodeChoices(),
                 'empty_data' => 'distributor',
                 'expanded' => false,
@@ -74,25 +72,5 @@ class DistributionPointType extends AbstractType
             'allow_extra_fields' => true,
         ));
     }
-
-    /**
-     * Finish the form view.
-     *
-     * This overrides the empty finishView in AbstractType and sorts the dropdown choices.
-     *
-     * @param FormView      $view    The view.
-     * @param FormInterface $form    The form.
-     * @param array         $options The options.
-     *
-     * @return void
-     */
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        usort(
-            $view->children['dataCenter']->vars['choices'],
-            function (ChoiceView $a, ChoiceView $b) {
-                return strcasecmp($a->label, $b->label);
-            }
-        );
-    }
+    
 }
