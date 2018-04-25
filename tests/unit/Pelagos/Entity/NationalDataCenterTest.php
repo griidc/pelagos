@@ -180,13 +180,4 @@ class NationalDataCenterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($mockEmailAddress, $this->nationalDataCenter->getEmailAddress());
     }
 
-    /**
-     * Test if national data center indicator is true.
-     *
-     * @return void
-     */
-    public function testNationalCenter()
-    {
-        $this->assertTrue(true, $this->nationalDataCenter->isNationalCenter());
-    }
 }

@@ -3,56 +3,10 @@
 namespace Pelagos\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-
-use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * This class represent data center entity information.
- *
- * @ORM\Entity
- *
- * @UniqueEntity(
- *     fields={"organizationName"},
- *     errorPath="organizationName",
- *     message="A data center with this name already exists"
- * )
- *
- * @UniqueEntity(
- *     fields={"organizationUrl"},
- *     errorPath="organizationUrl",
- *     message="A data center with this Url already exists"
- * )
- *
- * @Hateoas\Relation(
- *   "self",
- *   href = @Hateoas\Route(
- *     "pelagos_api_data_center_get",
- *     parameters = { "id" = "expr(object.getId())" }
- *   )
- * )
- * @Hateoas\Relation(
- *   "edit",
- *   href = @Hateoas\Route(
- *     "pelagos_api_data_center_put",
- *     parameters = { "id" = "expr(object.getId())" }
- *   ),
- *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not service('security.authorization_checker').isGranted(['CAN_EDIT'], object))"
- *   )
- * )
- * @Hateoas\Relation(
- *   "delete",
- *   href = @Hateoas\Route(
- *     "pelagos_api_data_center_delete",
- *     parameters = { "id" = "expr(object.getId())" }
- *   ),
- *   exclusion = @Hateoas\Exclusion(
- *     excludeIf = "expr(not object.isDeletable() or not service('security.authorization_checker').isGranted(['CAN_DELETE'], object))"
- *   )
- * )
  */
 
 /**
@@ -195,15 +149,6 @@ class DataCenter extends Entity
      * )
      */
     protected $emailAddress;
-
-    /**
-     * Whether this entity is a national data center, or not.
-     *
-     * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $nationalCenter;
 
     /**
      * Getter for Data center organization's name.
@@ -401,27 +346,5 @@ class DataCenter extends Entity
     public function setEmailAddress($emailAddress)
     {
         $this->emailAddress = $emailAddress;
-    }
-
-    /**
-     * Getter for national data center indicator.
-     *
-     * @return boolean
-     */
-    public function isNationalCenter()
-    {
-        return $this->nationalCenter;
-    }
-
-    /**
-     * Setter for national data center indicator.
-     *
-     * @param boolean $state A boolean to be set, true if primary contact, false otherwise.
-     *
-     * @return void
-     */
-    public function setNationalCenter($state)
-    {
-        $this->nationalCenter = $state;
     }
 }
