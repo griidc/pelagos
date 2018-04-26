@@ -506,8 +506,11 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
      */
     private function getDatasetSubmission(Dataset $dataset)
     {
-        if ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
-            $datasetSubmission = (($dataset->getDatasetSubmissionHistory()->first()) ? $dataset->getDatasetSubmissionHistory()->first() : null);
+
+        $datasetSubmission = (($dataset->getDatasetSubmissionHistory()->first()) ? $dataset->getDatasetSubmissionHistory()->first() : null);
+
+        if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_INCOMPLETE) {
+            return $datasetSubmission;
         } else {
             // Added so that it doesn't conflict with dataset review record.
             $datasetSubmission = $dataset->getDatasetSubmission();
