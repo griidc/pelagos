@@ -28,7 +28,7 @@ class DistributionPointTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->mockDatasetSubmission = \Mockery::mock('\Pelagos\Entity\DatasetSubmission');
-        $this->mockNationalDataCenter = \Mockery::mock('\Pelagos\Entity\NationalDataCenter');
+        $this->mockDataCenter = \Mockery::mock('\Pelagos\Entity\DataCenter');
         $this->distributionPoint = new DistributionPoint;
 
     }

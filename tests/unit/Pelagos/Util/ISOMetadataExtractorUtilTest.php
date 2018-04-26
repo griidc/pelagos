@@ -154,8 +154,8 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $this->mockNationalDataCenter = \Mockery::mock(
-            'Pelagos\Entity\NationalDataCenter',
+        $this->mockDataCenter = \Mockery::mock(
+            'Pelagos\Entity\DataCenter',
             array(
                 'getId' => 1234,
                 'getOrganizationName' => 'testOrgName',
@@ -168,7 +168,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
             array(
                 'getId' => 2222,
                 'getRoleCode' => 'distributor',
-                'getNationalDataCenter' => $this->mockNationalDataCenter,
+                'getDataCenter' => $this->mockDataCenter,
                 'getDistributionUrl' => 'testDistributionUrl',
             )
         );
@@ -225,7 +225,7 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
                 'getSubmitter' => $this->mockPerson,
                 'getSubmissionTimeStamp' => $this->testingDatetime,
                 'getMetadataContacts' => new ArrayCollection(array($this->mockPersonDatasetSubmissionMetadataContact)),
-                'getDistributionPoints' => new ArrayCollection(array($this->mockDistributionPoint))
+                'getDistributionPoints' => new ArrayCollection(array($this->mockDistributionPoint)),
             )
         );
 
