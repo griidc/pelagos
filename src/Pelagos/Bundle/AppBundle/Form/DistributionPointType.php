@@ -4,6 +4,7 @@ namespace Pelagos\Bundle\AppBundle\Form;
 
 use Pelagos\Entity\DistributionPoint;
 
+
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
@@ -38,9 +39,7 @@ class DistributionPointType extends AbstractType
                 'class' => 'Pelagos:DataCenter',
                 'choice_value' => 'id',
                 'choice_label' => 'organizationName',
-                'placeholder' => '[Please Select a Distribution Contact]',
                 'required' => true,
-                'mapped' => false,
             ))
             ->add('distributionUrl', TextType::class, array(
                 'label' => 'Distribution Url:',
@@ -72,5 +71,25 @@ class DistributionPointType extends AbstractType
             'allow_extra_fields' => true,
         ));
     }
-    
+
+    /**
+     * Finish the form view.
+     *
+     * This overrides the empty finishView in AbstractType and sorts the dropdown choices.
+     *
+     * @param FormView      $view    The view.
+     * @param FormInterface $form    The form.
+     * @param array         $options The options.
+     *
+     * @return void
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        usort(
+            $view->children['dataCenter']->vars['choices'],
+            function (ChoiceView $a, ChoiceView $b) {
+                return strcasecmp($a->label, $b->label);
+            }
+        );
+    }
 }

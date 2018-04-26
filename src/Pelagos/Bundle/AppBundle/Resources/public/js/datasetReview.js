@@ -567,7 +567,7 @@ $(document).ready(function(){
     //change info in distribution contact information according to the selected value from drop-down
     $("#distributioncontact").change(function() {
         $.ajax({
-              url: Routing.generate("pelagos_api_national_data_center_get", { "id" : $("#distributioncontact :selected").val() }),
+              url: Routing.generate("pelagos_api_data_center_get", { "id" : $("#distributioncontact :selected").val() }),
               success: function(data){
                     $("#distcontact_address").text(data.deliveryPoint ? data.deliveryPoint : "");
                     $("#distcontact_city").text(data.city ? data.city : "");
@@ -577,6 +577,11 @@ $(document).ready(function(){
                     $("#distcontact_phonenumber").text(data.phoneNumber ? data.phoneNumber : "");
                     $("#distcontact_emailaddress").text(data.emailAddress ? data.emailAddress : "");
                     $("#distcontact_url").text(data.organizationUrl ? data.organizationUrl : "");
+
+                    //auto-generate/clear distribution fields
+                    if ("GRIIDC" === data.organizationName) {
+                        $(".distributionurl").val("https://data.gulfresearchinitiative.org/data/" + $("#regForm").attr("udi"));
+                    }
               }
         });
     });

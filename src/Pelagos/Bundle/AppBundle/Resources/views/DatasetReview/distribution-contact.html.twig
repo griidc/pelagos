@@ -4,7 +4,7 @@
         <tr>
             <td>
                 {% set distPoint = form.distributionPoints | first %}
-                {% set dataCenterInfo = distPoint.vars.data.dataCenter %}
+                {% set dataCenterInfo = distPoint.vars.data.dataCenter | default %}
                 <span class="helpSection">
 					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
                         <img class="info" src="{{ asset_url }}">
@@ -17,9 +17,9 @@
 					</div>
 				</span>
                 <label for="distributioncontact">Distribution Contact</label>
-                <select class="distributioncontact" id="distributioncontact" name="distributionPoints[dataCenter]" required="required">}
+                <select class="distributioncontact" id="distributioncontact" name="{{ distPoint.dataCenter.vars.full_name }}" required="required">}
                     {% for distContact in distPoint.dataCenter.vars.choices  %}
-                        {% if distPoint.dataCenter | default and dataCenterInfo.id == distContact.value %}
+                        {% if dataCenterInfo.id == distContact.value %}
                             <option selected value="{{ distContact.value }}">
                                 {{ distContact.label }}
                             </option>
@@ -66,7 +66,7 @@
 						Please enter the distribution URL for this dataset.
 					</div>
 				</span>
-                {{ form_row(distPoint.distributionUrl) }}
+                {{ form_row(distPoint.distributionUrl, {attr: {'class' : 'distributionurl'}}) }}
             </td>
         </tr>
     </table>

@@ -2,30 +2,24 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
-use Symfony\Component\Form\Form;
-
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
-
 use Pelagos\Entity\Account;
+use Pelagos\Entity\DataCenter;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\DatasetSubmissionReview;
 use Pelagos\Entity\DistributionPoint;
 use Pelagos\Entity\Entity;
-use Pelagos\Entity\NationalDataCenter;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
@@ -47,6 +41,21 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      * @var string
      */
     private $mode;
+
+    /**
+     * Name of the default distribution contact.
+     */
+    const DEFAULT_DISTRIBUTION_POINT_CONTACT_NAME = 'GRIIDC';
+
+    /**
+     * Name of the default distribution contact.
+     */
+    const DEFAULT_DISTRIBUTION_POINT_ROLECODE = 'distributor';
+
+    /**
+     * Name of the base url for default distribution url (dataland base url).
+     */
+    const DEFAULT_DISTRIBUTION_POINT_BASE_URL = 'https://data.gulfresearchinitiative.org/data/';
 
     /**
      * The default action for Dataset Review.
@@ -232,6 +241,10 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
             }
 
+            if ($datasetSubmission->getDistributionPoints()->isEmpty()) {
+                $this->addDefaultDistributionPoint($datasetSubmission, $udi);
+            }
+
             $datasetSubmissionId = $datasetSubmission->getId();
             $researchGroupId = $dataset->getResearchGroup()->getId();
             $datasetSubmissionStatus = $datasetSubmission->getStatus();
@@ -245,6 +258,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 'action' => $this->generateUrl('pelagos_app_ui_datasetreview_post', array('id' => $datasetSubmissionId)),
                 'method' => 'POST',
                 'attr' => array(
+                    'udi' => $udi,
                     'datasetSubmission' => $datasetSubmissionId,
                     'researchGroup' => $researchGroupId,
                     'datasetSubmissionStatus' => $datasetSubmissionStatus,
@@ -417,26 +431,12 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     break;
             }
 
-            $distributionPoints  = $datasetSubmission->getDistributionPoints();
-            if (count($distributionPoints) > 0) {
-                $distributionPoint = $distributionPoints[0];
-            } else {
-                //Create and persist new distribution Point if none exists in the current datasetSubmission
-                $distributionPoint = new DistributionPoint();
-                $distributionPoint->setDatasetSubmission($datasetSubmission);
-                $datasetSubmission->addDistributionPoint($distributionPoint);
-            }
-
             $this->entityHandler->update($datasetSubmission->getDatasetSubmissionReview());
             $this->entityHandler->update($datasetSubmission);
 
-            //update the distribution point
-            $formDistributionPoint = $request->get('distributionPoints');
-            $nationalDataCenter = $this->entityHandler->get(NationalDataCenter::class, $formDistributionPoint['nationalDataCenter']);
-            $distributionPoint->setNationalDataCenter($nationalDataCenter);
-            $distributionPoint->setDistributionUrl($formDistributionPoint['distributionUrl']);
-            $distributionPoint->setRoleCode($formDistributionPoint['roleCode']);
-            $this->entityHandler->update($distributionPoint);
+            foreach ($datasetSubmission->getDistributionPoints() as $distributionPoint) {
+                $this->entityHandler->update($distributionPoint);
+            }
 
             foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                 $this->entityHandler->update($datasetContact);
@@ -576,5 +576,38 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         }
 
         return $datasetSubmission;
+    }
+
+    /**
+     * Add a new distribution Point with default distribution values linked to this datasetSubmission.
+     *
+     * @param DatasetSubmission $datasetSubmission A dataset submission instance.
+     * @param string            $udi               The UDI entered by the user to generate distributionUrl.
+     *
+     * @throws \Exception When there is none or more than one defaultDistribution organization with given name.
+     *
+     * @return void
+     */
+    private function addDefaultDistributionPoint(DatasetSubmission $datasetSubmission, $udi)
+    {
+        $defaultDistributionContacts = $this->entityHandler->getBy(
+            DataCenter::class,
+            array('organizationName' => self::DEFAULT_DISTRIBUTION_POINT_CONTACT_NAME)
+        );
+
+        if (count($defaultDistributionContacts) === 1) {
+            $distributionPoint = new DistributionPoint();
+            $distributionPoint->setDatasetSubmission($datasetSubmission);
+            $distributionPoint->setRoleCode(self::DEFAULT_DISTRIBUTION_POINT_ROLECODE);
+            $distributionPoint->setDataCenter($defaultDistributionContacts[0]);
+            $distributionPoint->setDistributionUrl(self::DEFAULT_DISTRIBUTION_POINT_BASE_URL . $udi);
+
+            $this->entityHandler->create($distributionPoint);
+
+            $datasetSubmission->addDistributionPoint($distributionPoint);
+            $this->entityHandler->update($datasetSubmission);
+        } else {
+            throw new \Exception('There is none or more than one default distribution contact(s)');
+        }
     }
 }
