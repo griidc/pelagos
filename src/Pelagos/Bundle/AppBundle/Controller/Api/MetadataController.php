@@ -2,6 +2,7 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\Api;
 
+use Pelagos\Exception\InvalidGmlException;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\HttpFoundation\Request;
@@ -104,8 +105,19 @@ class MetadataController extends EntityController
         if ($dataset->getIdentifiedStatus() != DIF::STATUS_APPROVED) {
             throw new BadRequestHttpException('DIF is not submitted');
         };
+        $geoUtil = $this->get('pelagos.util.geometry');
+        $boundingBoxArray = array();
+        $gml = $dataset->getDatasetSubmission()->getSpatialExtent();
+        if ($gml) {
+            try {
+                $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
+            } catch (InvalidGmlException $e) {
+                $errors[] = $e->getMessage() . ' while attempting to calculate bonding box from gml';
+                $boundingBoxArray = array();
+            }
+        }
 
-        $generatedXmlMetadata = $metadataUtility->getXmlRepresentation($dataset);
+        $generatedXmlMetadata = $metadataUtility->getXmlRepresentation($dataset, $boundingBoxArray);
         $metadataFilename = preg_replace('/:/', '-', $dataset->getUdi()) . '-metadata.xml';
 
         $response = new Response($generatedXmlMetadata);
