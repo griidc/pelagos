@@ -549,10 +549,8 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             switch (true) {
                 case ($datasetSubmission->getDatasetFileTransferStatus() === DatasetSubmission::TRANSFER_STATUS_NONE):
                     return false;
-                    break;
                 case ($datasetSubmission->getDatasetFileTransferStatus() === DatasetSubmission::TRANSFER_STATUS_COMPLETED and empty($datasetSubmission->getDatasetFileSha256Hash())):
                     return false;
-                    break;
             }
         }
         return true;

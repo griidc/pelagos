@@ -48,6 +48,7 @@ class MdappLogger
      * This function standardizes the messaging from review actions as written to the mdapp log.
      *
      * @param string $userid       The operator (DRPM) making the change.
+     * @param string $action       The operation that the user initiated causing change of state.
      * @param string $beforeStatus The review status before the change.
      * @param string $afterStatus  The review status after the change.
      * @param string $udi          The dataset being reviewed.
