@@ -557,11 +557,10 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
         if (count($defaultDistributionContacts) === 1) {
             $distributionPoints = $datasetSubmission->getDistributionPoints();
             if ($distributionPoints->isEmpty()) {
-                $createFlag = true;
                 $distributionPoint = new DistributionPoint();
+                $this->addDistributionPoint($distributionPoint);
             } else {
                 $distributionPoint = $datasetSubmission->getDistributionPoints()->first();
-                $createFlag = false;
             }
 
             //update to default values only when the Distribution Point is new
@@ -570,14 +569,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                 $distributionPoint->setDataCenter($defaultDistributionContacts[0]);
                 $distributionPoint->setDistributionUrl(self::DEFAULT_DISTRIBUTION_POINT_BASE_URL . $udi);
             }
-
-            if ($createFlag) {
-                $this->addDistributionPoint($distributionPoint);
-                $this->entityHandler->create($distributionPoint);
-            } else {
-                $this->entityHandler->update($distributionPoint);
-            }
-
+            
             $this->entityHandler->update($datasetSubmission);
         } else {
             throw new \Exception('There is none or more than one default distribution contact(s)');
