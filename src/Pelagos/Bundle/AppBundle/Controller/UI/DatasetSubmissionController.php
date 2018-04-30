@@ -558,7 +558,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
             $distributionPoints = $datasetSubmission->getDistributionPoints();
             if ($distributionPoints->isEmpty()) {
                 $distributionPoint = new DistributionPoint();
-                $this->addDistributionPoint($distributionPoint);
+                $datasetSubmission->addDistributionPoint($distributionPoint);
             } else {
                 $distributionPoint = $datasetSubmission->getDistributionPoints()->first();
             }
