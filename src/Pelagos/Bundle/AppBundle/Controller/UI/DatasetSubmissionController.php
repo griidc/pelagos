@@ -342,9 +342,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                 $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
             }
 
-            if ($datasetSubmission->getDistributionPoints()->isEmpty()) {
-                $this->addDefaultDistributionPoint($datasetSubmission, $udi);
-            }
+            $this->defaultDistributionPoint($datasetSubmission, $udi);
 
             $datasetSubmissionId = $datasetSubmission->getId();
             $researchGroupId = $dataset->getResearchGroup()->getId();
@@ -540,7 +538,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
     }
 
     /**
-     * Add a new distribution Point with default distribution values linked to this datasetSubmission.
+     * Add/Update distribution Point with default distribution values linked to this datasetSubmission.
      *
      * @param DatasetSubmission $datasetSubmission A dataset submission instance.
      * @param string            $udi               The UDI entered by the user to generate distributionUrl.
@@ -549,7 +547,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
      *
      * @return void
      */
-    private function addDefaultDistributionPoint(DatasetSubmission $datasetSubmission, $udi)
+    private function defaultDistributionPoint(DatasetSubmission $datasetSubmission, $udi)
     {
         $defaultDistributionContacts = $this->entityHandler->getBy(
             DataCenter::class,
@@ -557,15 +555,29 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
         );
 
         if (count($defaultDistributionContacts) === 1) {
-            $distributionPoint = new DistributionPoint();
-            $distributionPoint->setDatasetSubmission($datasetSubmission);
-            $distributionPoint->setRoleCode(self::DEFAULT_DISTRIBUTION_POINT_ROLECODE);
-            $distributionPoint->setDataCenter($defaultDistributionContacts[0]);
-            $distributionPoint->setDistributionUrl(self::DEFAULT_DISTRIBUTION_POINT_BASE_URL . $udi);
+            $distributionPoints = $datasetSubmission->getDistributionPoints();
+            if ($distributionPoints->isEmpty()) {
+                $createFlag = true;
+                $distributionPoint = new DistributionPoint();
+            } else {
+                $distributionPoint = $datasetSubmission->getDistributionPoints()->first();
+                $createFlag = false;
+            }
 
-            $this->entityHandler->create($distributionPoint);
+            //update to default values only when the Distribution Point is new
+            if (null === $distributionPoint->getDataCenter()) {
+                $distributionPoint->setRoleCode(self::DEFAULT_DISTRIBUTION_POINT_ROLECODE);
+                $distributionPoint->setDataCenter($defaultDistributionContacts[0]);
+                $distributionPoint->setDistributionUrl(self::DEFAULT_DISTRIBUTION_POINT_BASE_URL . $udi);
+            }
 
-            $datasetSubmission->addDistributionPoint($distributionPoint);
+            if ($createFlag) {
+                $this->addDistributionPoint($distributionPoint);
+                $this->entityHandler->create($distributionPoint);
+            } else {
+                $this->entityHandler->update($distributionPoint);
+            }
+
             $this->entityHandler->update($datasetSubmission);
         } else {
             throw new \Exception('There is none or more than one default distribution contact(s)');

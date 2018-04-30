@@ -1017,6 +1017,9 @@ class DatasetSubmission extends Entity
                 $newDatasetContact->setPrimaryContact(false);
                 $this->addDatasetContact($newDatasetContact);
             }
+            
+            $this->addDistributionPoint(new DistributionPoint());
+
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
             $this->setSequence($entity->getSequence() + 1);
