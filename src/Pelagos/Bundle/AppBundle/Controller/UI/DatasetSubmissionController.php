@@ -342,7 +342,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                 $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
             }
 
-            $this->defaultDistributionPoint($datasetSubmission, $udi);
+            $datasetSubmission = $this->defaultDistributionPoint($datasetSubmission, $udi);
 
             $datasetSubmissionId = $datasetSubmission->getId();
             $researchGroupId = $dataset->getResearchGroup()->getId();
@@ -545,7 +545,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
      *
      * @throws \Exception When there is none or more than one defaultDistribution organization with given name.
      *
-     * @return void
+     * @return DatasetSubmission A datasetsubmission.
      */
     private function defaultDistributionPoint(DatasetSubmission $datasetSubmission, $udi)
     {
@@ -569,10 +569,10 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                 $distributionPoint->setDataCenter($defaultDistributionContacts[0]);
                 $distributionPoint->setDistributionUrl(self::DEFAULT_DISTRIBUTION_POINT_BASE_URL . $udi);
             }
-            
-            $this->entityHandler->update($datasetSubmission);
+
         } else {
             throw new \Exception('There is none or more than one default distribution contact(s)');
         }
+        return $datasetSubmission;
     }
 }
