@@ -4,11 +4,9 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 use Pelagos\Entity\Account;
-use Pelagos\Entity\DataCenter;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\DatasetSubmissionReview;
-use Pelagos\Entity\DistributionPoint;
 use Pelagos\Entity\Entity;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
@@ -41,21 +39,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      * @var string
      */
     private $mode;
-
-    /**
-     * Name of the default distribution contact.
-     */
-    const DEFAULT_DISTRIBUTION_POINT_CONTACT_NAME = 'GRIIDC';
-
-    /**
-     * Name of the default distribution contact.
-     */
-    const DEFAULT_DISTRIBUTION_POINT_ROLECODE = 'distributor';
-
-    /**
-     * Name of the base url for default distribution url (dataland base url).
-     */
-    const DEFAULT_DISTRIBUTION_POINT_BASE_URL = 'https://data.gulfresearchinitiative.org/data/';
 
     /**
      * The default action for Dataset Review.
@@ -239,10 +222,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
 
             if ($datasetSubmission->getMetadataContacts()->isEmpty()) {
                 $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
-            }
-
-            if ($datasetSubmission->getDistributionPoints()->isEmpty()) {
-                $this->addDefaultDistributionPoint($datasetSubmission, $udi);
             }
 
             $datasetSubmissionId = $datasetSubmission->getId();
@@ -576,38 +555,5 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         }
 
         return $datasetSubmission;
-    }
-
-    /**
-     * Add a new distribution Point with default distribution values linked to this datasetSubmission.
-     *
-     * @param DatasetSubmission $datasetSubmission A dataset submission instance.
-     * @param string            $udi               The UDI entered by the user to generate distributionUrl.
-     *
-     * @throws \Exception When there is none or more than one defaultDistribution organization with given name.
-     *
-     * @return void
-     */
-    private function addDefaultDistributionPoint(DatasetSubmission $datasetSubmission, $udi)
-    {
-        $defaultDistributionContacts = $this->entityHandler->getBy(
-            DataCenter::class,
-            array('organizationName' => self::DEFAULT_DISTRIBUTION_POINT_CONTACT_NAME)
-        );
-
-        if (count($defaultDistributionContacts) === 1) {
-            $distributionPoint = new DistributionPoint();
-            $distributionPoint->setDatasetSubmission($datasetSubmission);
-            $distributionPoint->setRoleCode(self::DEFAULT_DISTRIBUTION_POINT_ROLECODE);
-            $distributionPoint->setDataCenter($defaultDistributionContacts[0]);
-            $distributionPoint->setDistributionUrl(self::DEFAULT_DISTRIBUTION_POINT_BASE_URL . $udi);
-
-            $this->entityHandler->create($distributionPoint);
-
-            $datasetSubmission->addDistributionPoint($distributionPoint);
-            $this->entityHandler->update($datasetSubmission);
-        } else {
-            throw new \Exception('There is none or more than one default distribution contact(s)');
-        }
     }
 }

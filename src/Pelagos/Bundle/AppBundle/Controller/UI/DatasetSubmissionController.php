@@ -20,9 +20,11 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionXmlFileType;
 
+use Pelagos\Entity\DataCenter;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\DistributionPoint;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 use Pelagos\Entity\Person;
@@ -44,6 +46,21 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
      * @var array
      */
     protected $messages = array();
+
+    /**
+     * Name of the default distribution contact.
+     */
+    const DEFAULT_DISTRIBUTION_POINT_CONTACT_NAME = 'GRIIDC';
+
+    /**
+     * Name of the default distribution contact.
+     */
+    const DEFAULT_DISTRIBUTION_POINT_ROLECODE = 'distributor';
+
+    /**
+     * Name of the base url for default distribution url (dataland base url).
+     */
+    const DEFAULT_DISTRIBUTION_POINT_BASE_URL = 'https://data.gulfresearchinitiative.org/data/';
 
     /**
      * The default action for Dataset Submission.
@@ -326,6 +343,10 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                 $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
             }
 
+            if ($datasetSubmission->getDistributionPoints()->isEmpty()) {
+                $this->addDefaultDistributionPoint($datasetSubmission, $udi);
+            }
+
             $datasetSubmissionId = $datasetSubmission->getId();
             $researchGroupId = $dataset->getResearchGroup()->getId();
             $datasetSubmissionStatus = $datasetSubmission->getStatus();
@@ -498,6 +519,39 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
         );
         foreach ($emptyProperties as $property) {
             $accessor->setValue($datasetSubmission, $property, array());
+        }
+    }
+
+    /**
+     * Add a new distribution Point with default distribution values linked to this datasetSubmission.
+     *
+     * @param DatasetSubmission $datasetSubmission A dataset submission instance.
+     * @param string            $udi               The UDI entered by the user to generate distributionUrl.
+     *
+     * @throws \Exception When there is none or more than one defaultDistribution organization with given name.
+     *
+     * @return void
+     */
+    private function addDefaultDistributionPoint(DatasetSubmission $datasetSubmission, $udi)
+    {
+        $defaultDistributionContacts = $this->entityHandler->getBy(
+            DataCenter::class,
+            array('organizationName' => self::DEFAULT_DISTRIBUTION_POINT_CONTACT_NAME)
+        );
+
+        if (count($defaultDistributionContacts) === 1) {
+            $distributionPoint = new DistributionPoint();
+            $distributionPoint->setDatasetSubmission($datasetSubmission);
+            $distributionPoint->setRoleCode(self::DEFAULT_DISTRIBUTION_POINT_ROLECODE);
+            $distributionPoint->setDataCenter($defaultDistributionContacts[0]);
+            $distributionPoint->setDistributionUrl(self::DEFAULT_DISTRIBUTION_POINT_BASE_URL . $udi);
+
+            $this->entityHandler->create($distributionPoint);
+
+            $datasetSubmission->addDistributionPoint($distributionPoint);
+            $this->entityHandler->update($datasetSubmission);
+        } else {
+            throw new \Exception('There is none or more than one default distribution contact(s)');
         }
     }
 }
