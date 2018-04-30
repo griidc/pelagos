@@ -141,11 +141,6 @@ class DatasetSubmission extends Entity
     const METADATA_STATUS_IN_REVIEW = 'InReview';
 
     /**
-     * A value for $metadataStatus that indicates that the metadata is undergoing a second check.
-     */
-    const METADATA_STATUS_SECOND_CHECK = 'SecondCheck';
-
-    /**
      * A value for $metadataStatus that indicates that the metadata has been accepted.
      */
     const METADATA_STATUS_ACCEPTED = 'Accepted';
@@ -162,7 +157,6 @@ class DatasetSubmission extends Entity
         self::METADATA_STATUS_NONE => 'No Status',
         self::METADATA_STATUS_SUBMITTED => 'Submitted',
         self::METADATA_STATUS_IN_REVIEW => 'In Review',
-        self::METADATA_STATUS_SECOND_CHECK => '2nd Check',
         self::METADATA_STATUS_ACCEPTED => 'Accepted',
         self::METADATA_STATUS_BACK_TO_SUBMITTER => 'Request Revisions',
     );

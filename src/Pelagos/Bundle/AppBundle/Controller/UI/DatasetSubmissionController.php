@@ -93,9 +93,8 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                 $dataset = $datasets[0];
 
                 $dif = $dataset->getDif();
-
-                // Added so that it doesn't conflict with dataset review record.
-                $datasetSubmission = $dataset->getDatasetSubmission();
+                
+                $datasetSubmission = $this->getDatasetSubmission($dataset);
 
                 $xmlForm = $this->get('form.factory')->createNamed(
                     null,
@@ -520,6 +519,24 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
         foreach ($emptyProperties as $property) {
             $accessor->setValue($datasetSubmission, $property, array());
         }
+    }
+
+    /**
+     * Get the correct dataset submission depending on the state.
+     *
+     * @param Dataset $dataset The dataset for which submission is retrieved.
+     *
+     * @return mixed|null|DatasetSubmission
+     */
+    private function getDatasetSubmission(Dataset $dataset)
+    {
+        $datasetSubmission = (($dataset->getDatasetSubmissionHistory()->first()) ? $dataset->getDatasetSubmissionHistory()->first() : null);
+
+        if ($datasetSubmission and $datasetSubmission->getStatus() !== DatasetSubmission::STATUS_INCOMPLETE) {
+            // Added so that it doesn't conflict with dataset review record.
+            $datasetSubmission = $dataset->getDatasetSubmission();
+        }
+        return $datasetSubmission;
     }
 
     /**

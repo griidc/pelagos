@@ -2,6 +2,7 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
+use Pelagos\Exception\InvalidGmlException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,7 +43,8 @@ class DatalandController extends UIController
         $wkt = null;
 
         if ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
-            $rawXml = $this->get('pelagos.util.metadata')->getXmlRepresentation($dataset);
+            $boundingBoxArray = $this->getBoundingBox($dataset);
+            $rawXml = $this->get('pelagos.util.metadata')->getXmlRepresentation($dataset, $boundingBoxArray);
         }
         //Logic to get DIF or Accepted Dataset is in Dataset Entity.
         $wkt = $geometryUtil->convertGmlToWkt($dataset->getSpatialExtentGeometry());
@@ -100,9 +102,11 @@ class DatalandController extends UIController
             throw new BadRequestHttpException("The metadata has not yet been accepted for dataset with UDI: $udi");
         }
 
+        $boundingBoxArray = $this->getBoundingBox($dataset);
+
         $filename = str_replace(':', '-', $udi) . '-metadata.xml';
 
-        $response = new Response($this->get('pelagos.util.metadata')->getXmlRepresentation($dataset));
+        $response = new Response($this->get('pelagos.util.metadata')->getXmlRepresentation($dataset, $boundingBoxArray));
         $response->headers->set('Content-Type', 'text/xml');
         $response->headers->set('Content-Disposition', "attachment; filename=$filename;");
         return $response;
@@ -185,5 +189,28 @@ class DatalandController extends UIController
         }
 
         return $datasets[0];
+    }
+
+    /**
+     * Get the bounding box for the dataset.
+     *
+     * @param Dataset $dataset The dataset for which the bounding box is generated.
+     *
+     * @return array
+     */
+    private function getBoundingBox(Dataset $dataset)
+    {
+        $geoUtil = $this->get('pelagos.util.geometry');
+        $gml = $dataset->getDatasetSubmission()->getSpatialExtent();
+        $boundingBoxArray = array();
+        if ($gml) {
+            try {
+                $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
+            } catch (InvalidGmlException $e) {
+                $errors[] = $e->getMessage() . ' while attempting to calculate bonding box from gml';
+                $boundingBoxArray = array();
+            }
+        }
+        return $boundingBoxArray;
     }
 }

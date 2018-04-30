@@ -54,10 +54,8 @@
     <ul class="ui-tabs-nav">
         <li style="text-align:center"><a href="#submitted" onClick="clearStatusMessages()">Submitted ({{ m_dataset.submitted|length }})</a></li>
         <li style="text-align:center"><a href="#inreview" onClick="clearStatusMessages()">In Review ({{ m_dataset.inreview|length }})</a></li>
-        <li style="text-align:center"><a href="#secondcheck" onClick="clearStatusMessages()" >2nd Chk ({{ m_dataset.secondcheck|length }})</a></li>
         <li style="text-align:center"><a href="#accepted" onClick="clearStatusMessages()" >Accepted ({{ m_dataset.accepted|length }})</a></li>
         <li style="text-align:center"><a href="#backtosubmitter" onClick="clearStatusMessages()" >Request Revisions ({{ m_dataset.backtosubmitter|length }})</a></li>
-        <li style="text-align:center"><a href="#uploadnewmetadata" onClick="clearStatusMessages()">Upload New Metadata</a></li>
     </ul>
   </div>
 
@@ -73,7 +71,7 @@
                         <th><div class="title">Jira Link</div></th>
                         <th><div class="title">Action</div></th>
                         <th><div class="title">Timestamp</div></th>
-                        <th><div class="title">Filename</div></th>
+                        <th><div class="title">Log</div></th>
                     </tr>
                 </thead>
                 <tfoot>
@@ -82,7 +80,7 @@
                         <th><div class="title">Jira Link</div></th>
                         <th><div class="title">Action</div></th>
                         <th><div class="title">Timestamp</div></th>
-                        <th><div class="title">Filename</div></th>
+                        <th><div class="title">Log</div></th>
                     </tr>
                 </tfoot>
                 <tbody>
@@ -111,7 +109,6 @@
                                     {% if sname == 'submitted' %}
                                         <option value="Submitted" SELECTED>Submitted</option>
                                         <option value="InReview" style="background-color: yellow;">InReview</option>
-                                        <option value="SecondCheck">SecondCheck</option>
                                         {% if dta.metadata.id|default %}
                                             <option value="Accepted">Accepted</option>
                                         {% endif %}
@@ -119,37 +116,25 @@
                                     {% elseif sname == 'inreview' %}
                                         <option value="Submitted">Submitted</option>
                                         <option value="InReview" SELECTED>InReview</option>
-                                        <option value="SecondCheck" style="background-color: yellow;">SecondCheck</option>
                                         {% if dta.metadata.id|default %}
                                             <option value="Accepted">Accepted</option>
-                                        {% endif %}
-                                        <option value="BackToSubmitter">Request Revisions</option>
-                                    {% elseif sname == 'secondcheck' %}
-                                        <option value="Submitted">Submitted</option>
-                                        <option value="SecondCheck" SELECTED>SecondCheck</option>
-                                        <option value="InReview">InReview</option>
-                                        {% if dta.metadata.id|default %}
-                                            <option value="Accepted" style="background-color: yellow;">Accepted</option>
                                         {% endif %}
                                         <option value="BackToSubmitter">Request Revisions</option>
                                     {% elseif sname == 'accepted' %}
                                         <option value="Submitted">Submitted</option>
                                         <option value="Accepted" SELECTED>Accepted</option>
                                         <option value="InReview">InReview</option>
-                                        <option value="SecondCheck">SecondCheck</option>
                                         <option value="BackToSubmitter">Request Revisions</option>
                                     {% elseif sname == 'backtosubmitter' %}
                                         <option value="Submitted">Submitted</option>
                                         <option value="BackToSubmitter" SELECTED>Request Revisions</option>
                                         <option value="InReview" style="background-color: yellow;">InReview</option>
-                                        <option value="SecondCheck">SecondCheck</option>
                                         {% if dta.metadata.id|default %}
                                             <option value="Accepted">Accepted</option>
                                         {% endif %}
                                     {% else %}
                                         <option value="Submitted">Submitted</option>
                                         <option value="InReview">InReview</option>
-                                        <option value="SecondCheck">SecondCheck</option>
                                         {% if dta.metadata.id|default %}
                                             <option value="Accepted">Accepted</option>
                                         {% endif %}
@@ -165,24 +150,6 @@
                                 <table id="filedisp">
                                     <tr>
                                         <td id="button"><button style="font-size:66%" onclick="javascript:showLogEntries('{{dta.udi}}')" id="log_butt_{{dta.udi}}">Log</button></td>
-                                        <td id="file_dl_icon">
-                                            <a href="{{ path('pelagos_api_metadata_get') }}?udi={{dta.udi}}" id="filedllnk_{{dta.udi}}">
-                                                {% image '@PelagosAppBundle/Resources/public/images/download.png' %}
-                                                    <img src="{{ asset_url }}">
-                                                {% endimage %}
-                                            </a>
-                                        </td>
-                                        <td id="db_dl_icon">
-                                            {% if dta.metadata %}
-                                            <a href="{{ path('pelagos_app_ui_mdapp_downloadmetadatafromdb', {'id': dta.id}) }}" id="dbdllnk_{{dta.id}}">
-                                                    {% image '@PelagosAppBundle/Resources/public/images/download-from-db.png' %}
-                                                        <img src="{{ asset_url }}">
-                                                    {% endimage %}
-                                                </a>
-                                            {% else %}
-                                                &nbsp;
-                                            {% endif %}
-                                        </td>
 
                                         {% if dta.datasetsubmission.MetadataFileName|default %}
                                             <td id="md_filename">{{ dta.udi }}</td>
@@ -200,37 +167,6 @@
         </div>
        {% endif %}
      {% endfor %}
-
-        <div id="uploadnewmetadata">
-            <div>
-                <!-- The data encoding type, enctype, MUST be specified as below -->
-                <form enctype="multipart/form-data" action="{{ path('pelagos_app_ui_mdapp_uploadmetadatafile') }}" method="POST" id="MdappFileUploadForm">
-                    <!-- MAX_FILE_SIZE must precede the file input field -->
-                    <input type="hidden" name="MAX_FILE_SIZE" value="1000000" />
-                    <!-- Name of input element determines name in $_FILES array -->
-                    <input name="newMetadataFile" type="file" style="width:100%" id="newMetadataFile" />
-                    <hr>
-                    <div>
-                        <h3>Additional Actions</h3>
-                        <input type="checkbox" name="validateSchema" CHECKED>Validate as ISO-19115-2<br />
-                        <input type="checkbox" name="acceptMetadata">Accept Metadata<br />
-                        <input type="checkbox" name="overrideDatestamp" CHECKED>Create/Update gmi:MI_Metadata/gmd:dateStamp with current gco:dateTime<br />
-                    </div>
-                    <hr>
-                    <h3>GRIIDC Metadata Standards Compliance Enforcement</h3>
-                    <p>The following checks help ensure that the UDI references within
-                       a metadata record are consistent. The UDI is determined by reading
-                       the uploaded filename. If checked, failed tests will result in
-                       rejection of the upload. If unchecked, failed tests will result in
-                       a non-blocking warning instead.</p>
-                    <input type="checkbox" name="test1" CHECKED>Filename matches file identifier (/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]) as UDI-metadata.xml (w/dash instead of colon)<br />
-                    <input type="checkbox" name="test2" CHECKED>UDI matches metadata URL (/gmi:MI_Metadata/gmd:dataSetURI/gco:CharacterString)<br />
-                    <input type="checkbox" name="test3" CHECKED>UDI matches distribution URL (/gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1])<br />
-                    <hr>
-                </form>
-                <button id="FileUploadButton">Upload File</button><br />
-            </div>
-        </div>
 </div>
 <div id='log'>
     <div id="log_close">

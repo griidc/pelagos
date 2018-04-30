@@ -88,6 +88,22 @@
             </gmd:description>
             {% endif %}
             {% if dataset.datasetSubmission.spatialExtent %}
+                <gmd:geographicElement>
+                    <gmd:EX_GeographicBoundingBox>
+                        <gmd:westBoundLongitude>
+                            <gco:Decimal>{{ boundingBoxArray.westBoundLongitude }}</gco:Decimal>
+                        </gmd:westBoundLongitude>
+                        <gmd:eastBoundLongitude>
+                            <gco:Decimal>{{ boundingBoxArray.eastBoundLongitude }}</gco:Decimal>
+                        </gmd:eastBoundLongitude>
+                        <gmd:southBoundLatitude>
+                            <gco:Decimal>{{ boundingBoxArray.southBoundLatitude }}</gco:Decimal>
+                        </gmd:southBoundLatitude>
+                        <gmd:northBoundLatitude>
+                            <gco:Decimal>{{ boundingBoxArray.northBoundLatitude }}</gco:Decimal>
+                        </gmd:northBoundLatitude>
+                    </gmd:EX_GeographicBoundingBox>
+                </gmd:geographicElement>
             <gmd:geographicElement>
                 <gmd:EX_BoundingPolygon>
                     <gmd:polygon>
