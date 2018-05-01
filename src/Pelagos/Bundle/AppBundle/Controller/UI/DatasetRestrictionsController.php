@@ -6,7 +6,6 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 use Pelagos\Bundle\AppBundle\Controller\Api\EntityController;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Exception\PersistenceException;
-use Pelagos\Util\DOIutil;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -76,7 +75,7 @@ class DatasetRestrictionsController extends EntityController
                 $this->get('old_sound_rabbit_mq.doi_issue_producer')->publish(
                     $rabbitMessage['body'],
                     $rabbitMessage['routing_key']
-                    );
+                );
             } catch (PersistenceException $exception) {
                 throw new PersistenceException($exception->getMessage());
             }
