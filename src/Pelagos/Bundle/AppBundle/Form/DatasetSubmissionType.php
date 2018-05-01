@@ -12,6 +12,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\DistributionPoint;
 use Pelagos\Entity\Entity;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
@@ -242,6 +243,18 @@ class DatasetSubmissionType extends AbstractType
                 'entry_type' => PersonDatasetSubmissionType::class,
                 'entry_options' => array(
                     'data_class' => PersonDatasetSubmissionMetadataContact::class,
+                ),
+                'by_reference' => false,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'delete_empty' => true,
+                'required' => true,
+            ))
+            ->add('distributionPoints', Type\CollectionType::class, array(
+                'label' => 'Distribution Points',
+                'entry_type' => DistributionPointType::class,
+                'entry_options' => array(
+                    'data_class' => DistributionPoint::class,
                 ),
                 'by_reference' => false,
                 'allow_add' => true,

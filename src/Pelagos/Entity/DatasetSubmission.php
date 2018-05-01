@@ -1017,6 +1017,9 @@ class DatasetSubmission extends Entity
                 $newDatasetContact->setPrimaryContact(false);
                 $this->addDatasetContact($newDatasetContact);
             }
+            
+            $this->addDistributionPoint(new DistributionPoint());
+
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
             $this->setSequence($entity->getSequence() + 1);
@@ -1087,7 +1090,8 @@ class DatasetSubmission extends Entity
             foreach ($entity->getDistributionPoints() as $distributionPoint) {
                 $newDistributionPoint = new DistributionPoint();
                 $newDistributionPoint->setDistributionUrl($distributionPoint->getDistributionUrl());
-                $newDistributionPoint->setNationalDataCenter($distributionPoint->getNationalDataCenter());
+                $newDistributionPoint->setRoleCode($distributionPoint->getRoleCode());
+                $newDistributionPoint->setDataCenter($distributionPoint->getDataCenter());
                 $this->addDistributionPoint($newDistributionPoint);
             }
         } else {

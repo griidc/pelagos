@@ -2,27 +2,22 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
-use Symfony\Component\Form\Form;
-
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
+use Pelagos\Entity\Account;
+use Pelagos\Entity\Dataset;
+use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\DatasetSubmissionReview;
+use Pelagos\Entity\Entity;
+use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
-use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
-
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
-use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
-use Pelagos\Entity\DatasetSubmissionReview;
-use Pelagos\Entity\Entity;
-use Pelagos\Entity\Account;
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
@@ -242,6 +237,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 'action' => $this->generateUrl('pelagos_app_ui_datasetreview_post', array('id' => $datasetSubmissionId)),
                 'method' => 'POST',
                 'attr' => array(
+                    'udi' => $udi,
                     'datasetSubmission' => $datasetSubmissionId,
                     'researchGroup' => $researchGroupId,
                     'datasetSubmissionStatus' => $datasetSubmissionStatus,
@@ -415,8 +411,11 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             }
 
             $this->entityHandler->update($datasetSubmission->getDatasetSubmissionReview());
-
             $this->entityHandler->update($datasetSubmission);
+
+            foreach ($datasetSubmission->getDistributionPoints() as $distributionPoint) {
+                $this->entityHandler->update($distributionPoint);
+            }
 
             foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                 $this->entityHandler->update($datasetContact);

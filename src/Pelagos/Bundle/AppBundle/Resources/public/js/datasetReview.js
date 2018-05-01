@@ -553,7 +553,6 @@ $(document).ready(function(){
         checkTemporalNilReason();
     });
 
-
     // Check if mode = view (The if loop here is duplicated at the end because spatialWizard and fineUploader
     // need to be disabled after they are initialized).
     if (regForm.attr("mode") === "view") {
@@ -564,6 +563,29 @@ $(document).ready(function(){
         // Disable Spatial Wizard button.
         $("#geoWizard #geowizBtn").prop("disabled", "true");
     }
+
+    //change info in distribution contact information according to the selected value from drop-down
+    $("#distributioncontact").change(function() {
+        $.ajax({
+              url: Routing.generate("pelagos_api_data_center_get", { "id" : $("#distributioncontact :selected").val() }),
+              success: function(data){
+                    $("#distcontact_address").text(data.deliveryPoint ? data.deliveryPoint : "");
+                    $("#distcontact_city").text(data.city ? data.city : "");
+                    $("#distcontact_state").text(data.administrativeArea ? data.administrativeArea : "");
+                    $("#distcontact_postalcode").text(data.postalCode ? data.postalCode : "");
+                    $("#distcontact_country").text(data.country ? data.country : "");
+                    $("#distcontact_phonenumber").text(data.phoneNumber ? data.phoneNumber : "");
+                    $("#distcontact_emailaddress").text(data.emailAddress ? data.emailAddress : "");
+                    $("#distcontact_url").text(data.organizationUrl ? data.organizationUrl : "");
+
+                    //auto-generate/clear distribution fields
+                    if ("GRIIDC" === data.organizationName) {
+                        $(".distributionurl").val("https://data.gulfresearchinitiative.org/data/" + $("#regForm").attr("udi"));
+                    }
+              }
+        });
+    });
+    
 });
 
 function checkSpatial(isNonSpatial) {

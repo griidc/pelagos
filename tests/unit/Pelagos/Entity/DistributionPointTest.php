@@ -28,7 +28,7 @@ class DistributionPointTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->mockDatasetSubmission = \Mockery::mock('\Pelagos\Entity\DatasetSubmission');
-        $this->mockNationalDataCenter = \Mockery::mock('\Pelagos\Entity\NationalDataCenter');
+        $this->mockDataCenter = \Mockery::mock('\Pelagos\Entity\DataCenter');
         $this->distributionPoint = new DistributionPoint;
 
     }
@@ -50,18 +50,18 @@ class DistributionPointTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the National Data Center setter and getter method.
+     * Test the Data Center setter and getter method.
      *
-     * This method should return the NationalDataCenter.
+     * This method should return the DataCenter.
      *
      * @return void
      */
-    public function testCanSetAndGetNationalDataCenter()
+    public function testCanSetAndGetDataCenter()
     {
-        $this->distributionPoint->setNationalDataCenter($this->mockNationalDataCenter);
+        $this->distributionPoint->setDataCenter($this->mockDataCenter);
         $this->assertSame(
-            $this->mockNationalDataCenter,
-            $this->distributionPoint->getNationalDataCenter()
+            $this->mockDataCenter,
+            $this->distributionPoint->getDataCenter()
         );
     }
 
@@ -79,6 +79,23 @@ class DistributionPointTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             $mockDistributionUrl,
             $this->distributionPoint->getDistributionUrl()
+        );
+    }
+
+    /**
+     * Test the role code setter and getter method.
+     *
+     * This method should return the role code string.
+     *
+     * @return void
+     */
+    public function testCanSetAndGetRoleCode()
+    {
+        $mockRoleCode = 'distributor';
+        $this->distributionPoint->setRoleCode($mockRoleCode);
+        $this->assertEquals(
+            $mockRoleCode,
+            $this->distributionPoint->getRoleCode()
         );
     }
 }
