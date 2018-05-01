@@ -62,7 +62,7 @@ class DatasetRestrictionsController extends EntityController
         // RabbitMQ message to update the DOI for the dataset.
         $rabbitMessage = array(
             'body' => $datasetSubmission->getDataset()->getId(),
-            'routing_key' => 'update'
+            'routing_key' => 'publish'
         );
 
         if ($restrictionKey) {
