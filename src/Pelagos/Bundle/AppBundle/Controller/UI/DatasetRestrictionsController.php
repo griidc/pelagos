@@ -6,6 +6,7 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 use Pelagos\Bundle\AppBundle\Controller\Api\EntityController;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Exception\PersistenceException;
+use Pelagos\Util\DOIutil;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -56,15 +57,30 @@ class DatasetRestrictionsController extends EntityController
     public function postAction(Request $request, $id)
     {
         $entityHandler = $this->container->get('pelagos.entity.handler');
-        $entity = $this->handleGetOne(DatasetSubmission::class, $id);
+        $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
+        $dataset = $datasetSubmission->getDataset();
+        $doi = $dataset->getDoi();
+
+        try {
+            $doiUtil = new DOIutil();
+            $issuedDoi = $doiUtil->updateDOI(
+                $doi->getDoi(),
+                'https://data.gulfresearchinitiative.org/data/' . $dataset->getUdi(),
+                $dataset->getAuthors(),
+                $dataset->getTitle(),
+                'Harte Research Institute',
+                $dataset->getReferenceDateYear());
+        } catch (\Exception $e) {
+            throw new BadRequestHttpException('Unable to update DOI' . $e->getMessage());
+        }
         $restrictionKey = $request->request->get('restrictions');
 
         if ($restrictionKey) {
-            $entity->setRestrictions($restrictionKey);
+            $datasetSubmission->setRestrictions($restrictionKey);
 
             try {
 
-                $entityHandler->update($entity);
+                $entityHandler->update($datasetSubmission);
 
             } catch (PersistenceException $exception) {
                 throw new PersistenceException($exception->getMessage());
