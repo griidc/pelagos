@@ -58,22 +58,13 @@ class DatasetRestrictionsController extends EntityController
     {
         $entityHandler = $this->container->get('pelagos.entity.handler');
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
-        $dataset = $datasetSubmission->getDataset();
-        $doi = $dataset->getDoi();
-
-        try {
-            $doiUtil = new DOIutil();
-            $issuedDoi = $doiUtil->updateDOI(
-                $doi->getDoi(),
-                'https://data.gulfresearchinitiative.org/data/' . $dataset->getUdi(),
-                $dataset->getAuthors(),
-                $dataset->getTitle(),
-                'Harte Research Institute',
-                $dataset->getReferenceDateYear());
-        } catch (\Exception $e) {
-            throw new BadRequestHttpException('Unable to update DOI' . $e->getMessage());
-        }
         $restrictionKey = $request->request->get('restrictions');
+
+        // RabbitMQ message to update the DOI for the dataset.
+        $rabbitMessage = array(
+            'body' => $datasetSubmission->getDataset()->getId(),
+            'routing_key' => 'update'
+        );
 
         if ($restrictionKey) {
             $datasetSubmission->setRestrictions($restrictionKey);
@@ -81,7 +72,11 @@ class DatasetRestrictionsController extends EntityController
             try {
 
                 $entityHandler->update($datasetSubmission);
-
+                // Publish the message to DoiConsumer to update the DOI.
+                $this->get('old_sound_rabbit_mq.doi_issue_producer')->publish(
+                    $rabbitMessage['body'],
+                    $rabbitMessage['routing_key']
+                    );
             } catch (PersistenceException $exception) {
                 throw new PersistenceException($exception->getMessage());
             }
