@@ -3,12 +3,12 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
-use Pelagos\Bundle\AppBundle\Controller\Api\EntityController;
-use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\Dataset;
 use Pelagos\Exception\PersistenceException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  *
  * @Route("/dataset-restrictions")
  */
-class DatasetRestrictionsController extends EntityController
+class DatasetRestrictionsController extends UIController
 {
     /**
      * Dataset Restrictions Modifier UI.
@@ -43,7 +43,7 @@ class DatasetRestrictionsController extends EntityController
      * but doesn't work with Symfony.
      *
      * @param Request $request HTTP Symfony Request object.
-     * @param string  $id      Dataset Submission ID.
+     * @param string $id Dataset Submission ID.
      *
      * @Route("/{id}")
      *
@@ -51,40 +51,48 @@ class DatasetRestrictionsController extends EntityController
      *
      * @throws PersistenceException Exception thrown when update fails.
      * @throws BadRequestHttpException Exception thrown when restriction key is null.
-     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @return Response
      */
     public function postAction(Request $request, $id)
     {
-        $entityHandler = $this->container->get('pelagos.entity.handler');
-        $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
         $restrictionKey = $request->request->get('restrictions');
+
+        $datasets = $this->entityHandler->getBy(Dataset::class, array('id' => $id));
 
         // RabbitMQ message to update the DOI for the dataset.
         $rabbitMessage = array(
-            'body' => $datasetSubmission->getDataset()->getId(),
+            'body' => $id,
             'routing_key' => 'publish'
         );
 
-        if ($restrictionKey) {
-            $datasetSubmission->setRestrictions($restrictionKey);
+        if (!empty($datasets)) {
+            $dataset = $datasets[0];
+            $datasetSubmission = $dataset->getDatasetSubmission();
+            $datasetStatus = $dataset->getMetadataStatus();
 
-            try {
+            if ($restrictionKey) {
+                $datasetSubmission->setRestrictions($restrictionKey);
 
-                $entityHandler->update($datasetSubmission);
+                try {
+                    $this->entityHandler->update($datasetSubmission);
+                } catch (PersistenceException $exception) {
+                    throw new PersistenceException($exception->getMessage());
+                }
+
                 // Publish the message to DoiConsumer to update the DOI.
                 $this->get('old_sound_rabbit_mq.doi_issue_producer')->publish(
                     $rabbitMessage['body'],
                     $rabbitMessage['routing_key']
                 );
-            } catch (PersistenceException $exception) {
-                throw new PersistenceException($exception->getMessage());
-            }
 
-        } else {
-            // Send 500 response code if restriction key is null
-            throw new BadRequestHttpException('Restiction key is null');
+            } else {
+                // Send 500 response code if restriction key is null
+                throw new BadRequestHttpException('Restiction key is null');
+            }
         }
         // Send 204(okay) if the restriction key is not null and updated is successful
-        return $this->makeNoContentResponse();
+
+        return new Response('',204);
     }
 }
