@@ -13,7 +13,7 @@ use Pelagos\Entity\DistributionPoint;
 use Pelagos\Entity\Person;
 
 /**
- * Back fill all the accepted dataset metadata xml to dataset submission.
+ * Back fill all the submitted metadata xml to dataset submission.
  *
  * @see ContainerAwareCommand
  */
@@ -28,7 +28,7 @@ class BackFillDistributionPointCommand extends ContainerAwareCommand
     {
         $this
             ->setName('dataset-submission:back-fill-distribution-point-command')
-            ->setDescription('Back fill distribution points for accepted/submitted dataset submission from dataset hosted by GRIIDC.');
+            ->setDescription('Back fill distribution points for submitted dataset submission.');
     }
 
     /**
@@ -54,14 +54,10 @@ class BackFillDistributionPointCommand extends ContainerAwareCommand
         $queryString = 'SELECT dataset.udi udi, dsubmission datasetSubmission FROM ' .
             DatasetSubmission::class . ' dsubmission JOIN ' . Dataset::class .
             ' dataset WITH dsubmission.dataset = dataset 
-                WHERE dsubmission.datasetFileTransferStatus != :remotelyhosted 
-                AND (dsubmission.metadataStatus = :submittedstatus 
-                OR dsubmission.metadataStatus = :acceptedstatus)';
+                WHERE dsubmission.metadataStatus = :submittedstatus';
         $query = $entityManager->createQuery($queryString);
         $query->setParameters([
-            'remotelyhosted' => DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED,
-            'submittedstatus' => DatasetSubmission::METADATA_STATUS_SUBMITTED,
-            'acceptedstatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED
+            'submittedstatus' => DatasetSubmission::METADATA_STATUS_SUBMITTED
         ]);
         $results = $query->getResult();
 
@@ -90,7 +86,7 @@ class BackFillDistributionPointCommand extends ContainerAwareCommand
         }
 
         if ($i > 0) {
-            echo '\n Flushing...';
+            echo "\n Flushing...";
             $entityManager->flush();
         }
         echo "\n Backfilling completed for " . $i . " entries!\n";
