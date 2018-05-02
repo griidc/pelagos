@@ -67,7 +67,6 @@ class BackFillDistributionPointCommand extends ContainerAwareCommand
         $creatorPerson = $entityManager->getRepository(Person::class)->findOneBy(array('id' => 0));
 
         foreach ($results as $row) {
-
             $datasetSubmission = $row['datasetSubmission'];
             if ($datasetSubmission->getDistributionPoints()->isEmpty()) {
                 $distributionPoint = new DistributionPoint();
