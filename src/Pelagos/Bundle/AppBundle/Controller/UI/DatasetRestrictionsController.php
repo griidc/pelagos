@@ -4,6 +4,7 @@
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Pelagos\Entity\Dataset;
+use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Exception\PersistenceException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -43,7 +44,7 @@ class DatasetRestrictionsController extends UIController
      * but doesn't work with Symfony.
      *
      * @param Request $request HTTP Symfony Request object.
-     * @param string $id Dataset Submission ID.
+     * @param string  $id      Dataset Submission ID.
      *
      * @Route("/{id}")
      *
@@ -80,11 +81,9 @@ class DatasetRestrictionsController extends UIController
                     throw new PersistenceException($exception->getMessage());
                 }
 
-                // Publish the message to DoiConsumer to update the DOI.
-                $this->get('old_sound_rabbit_mq.doi_issue_producer')->publish(
-                    $rabbitMessage['body'],
-                    $rabbitMessage['routing_key']
-                );
+                if ($datasetStatus === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+                    $this->publishDoiForAccepted($rabbitMessage);
+                }
 
             } else {
                 // Send 500 response code if restriction key is null
@@ -93,6 +92,23 @@ class DatasetRestrictionsController extends UIController
         }
         // Send 204(okay) if the restriction key is not null and updated is successful
 
-        return new Response('',204);
+        return new Response('', 204);
+    }
+
+    /**
+     * Method to publish doi for accepted datasets.
+     *
+     * @param array $rabbitMessage The rabbitMq message that needs to be published.
+     *
+     * @return void
+     */
+    private function publishDoiForAccepted(array $rabbitMessage)
+    {
+       // Publish the message to DoiConsumer to update the DOI.
+
+        $this->get('old_sound_rabbit_mq.doi_issue_producer')->publish(
+            $rabbitMessage['body'],
+            $rabbitMessage['routing_key']
+        );
     }
 }
