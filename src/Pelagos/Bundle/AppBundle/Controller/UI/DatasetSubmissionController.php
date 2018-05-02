@@ -50,7 +50,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
     /**
      * Name of the default distribution contact.
      */
-    const DEFAULT_DISTRIBUTION_POINT_CONTACT_NAME = 'GRIIDC';
+    const DEFAULT_DISTRIBUTION_POINT_CONTACT_EMAIL = 'griidc@gomri.org';
 
     /**
      * Name of the default distribution contact.
@@ -551,7 +551,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
     {
         $defaultDistributionContacts = $this->entityHandler->getBy(
             DataCenter::class,
-            array('organizationName' => self::DEFAULT_DISTRIBUTION_POINT_CONTACT_NAME)
+            array('emailAddress' => self::DEFAULT_DISTRIBUTION_POINT_CONTACT_EMAIL)
         );
 
         if (count($defaultDistributionContacts) === 1) {
