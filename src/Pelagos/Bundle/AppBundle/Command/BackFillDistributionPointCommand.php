@@ -61,7 +61,7 @@ class BackFillDistributionPointCommand extends ContainerAwareCommand
         ]);
         $results = $query->getResult();
 
-        $defaultDistributionContact = $entityManager->getRepository(DataCenter::class)->findOneBy(array('organizationName' => 'GRIIDC'));
+        $defaultDistributionContact = $entityManager->getRepository(DataCenter::class)->findOneBy(array('emailAddress' => 'griidc@gomri.org'));
         $defaultRoleCode = 'distributor';
         $defaultBaseDistributionUrl = 'https://data.gulfresearchinitiative.org/data/';
         $creatorPerson = $entityManager->getRepository(Person::class)->findOneBy(array('id' => 0));
