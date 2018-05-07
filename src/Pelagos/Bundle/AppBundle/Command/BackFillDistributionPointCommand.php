@@ -52,9 +52,9 @@ class BackFillDistributionPointCommand extends ContainerAwareCommand
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
 
         $queryString = 'SELECT dataset.udi udi, dsubmission datasetSubmission FROM ' .
-            DatasetSubmission::class . ' dsubmission JOIN ' . Dataset::class .
-            ' dataset WITH dsubmission.dataset = dataset 
-                WHERE dsubmission.metadataStatus = :submittedstatus';
+            Dataset::class . ' dataset JOIN ' . DatasetSubmission::class .
+            ' dsubmission WITH dsubmission.dataset = dataset 
+                WHERE dataset.metadataStatus = :submittedstatus';
         $query = $entityManager->createQuery($queryString);
         $query->setParameters([
             'submittedstatus' => DatasetSubmission::METADATA_STATUS_SUBMITTED
