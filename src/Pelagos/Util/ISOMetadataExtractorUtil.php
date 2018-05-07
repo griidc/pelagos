@@ -4,7 +4,9 @@ namespace Pelagos\Util;
 
 use Doctrine\ORM\EntityManager;
 
+use Pelagos\Entity\DataCenter;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\DistributionPoint;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
 use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
@@ -37,6 +39,11 @@ class ISOMetadataExtractorUtil
         // This always returns a single POC, not an array of POC.
         $metadataContact = self::extractMetadataContact($xmlMetadata, $datasetSubmission, $entityManager);
         self::setIfHas($datasetSubmission, 'addMetadataContact', $metadataContact);
+
+        $distributionPoints = self::extractDistributionPoint($xmlMetadata, $datasetSubmission, $entityManager);
+        foreach ($distributionPoints as $distributionPoint) {
+            self::setIfHas($datasetSubmission, 'addDistributionPoint', $distributionPoint);
+        }
 
         self::setIfHas($datasetSubmission, 'setTitle', self::extractTitle($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setShortTitle', self::extractShortTitle($xmlMetadata));
@@ -283,6 +290,86 @@ class ISOMetadataExtractorUtil
         } else {
             return null;
         }
+    }
+
+    /**
+     * Determines the distribution point from XML metadata.
+     *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
+     * @param EntityManager     $em  An entity manager.
+     *
+     * @return Array of DistributionPoint, or empty array if none.
+     */
+    public static function extractDistributionPoint(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
+    {
+        $distributionPoints = array();
+
+        $query = '/gmi:MI_Metadata' .
+                 '/gmd:distributionInfo' .
+                 '/gmd:MD_Distribution' .
+                 '/gmd:distributor';
+
+        $distributors = @$xml->xpath($query);
+
+        if (!empty($distributors)) {
+            foreach ($distributors as $distributor) {
+                // Find distributor by Email
+                $query = './gmd:MD_Distributor' .
+                         '/gmd:distributorContact' .
+                         '/gmd:CI_ResponsibleParty' .
+                         '/gmd:contactInfo' .
+                         '/gmd:CI_Contact' .
+                         '/gmd:address' .
+                         '/gmd:CI_Address' .
+                         '/gmd:electronicMailAddress' .
+                         '/gco:CharacterString';
+
+                $email = self::querySingle($distributor, $query);
+                $dataCenterArray = $em->getRepository(DataCenter::class)->findBy(
+                    array('emailAddress' => $email)
+                );
+
+                if (count($dataCenterArray) > 0) {
+                    $dataCenter = $dataCenterArray[0];
+                } else {
+                    $dataCenter = null;
+                }
+
+                // Find Role
+                $query = './gmd:MD_Distributor' .
+                         '/gmd:distributorContact' .
+                         '/gmd:CI_ResponsibleParty' .
+                         '/gmd:role' .
+                         '/gmd:CI_RoleCode';
+
+                    $roleCode = self::querySingle($distributor, $query);
+
+                // Find Distribution URL
+                $query = './gmd:MD_Distributor' .
+                         '/gmd:distributorTransferOptions' .
+                         '/gmd:MD_DigitalTransferOptions' .
+                         '/gmd:onLine' .
+                         '/gmd:CI_OnlineResource' .
+                         '/gmd:linkage' .
+                         '/gmd:URL';
+
+                $distributionUrl = self::querySingle($distributor, $query);
+
+                if ($dataCenter instanceof DataCenter) {
+                    $distributionPoint = new DistributionPoint();
+                    $distributionPoint->setDataCenter($dataCenter);
+                    // Only set role if it is a valid role code, otherwise leave unset.
+                    if (null !== $roleCode and array_key_exists($roleCode, DistributionPoint::ROLECODES)) {
+                        $distributionPoint->setRoleCode($roleCode);
+                    }
+                    $distributionPoint->setDistributionUrl($distributionUrl);
+                    $distributionPoint->setDatasetSubmission($ds);
+                    $distributionPoints[] = $distributionPoint;
+                }
+            }
+        }
+        return $distributionPoints;
     }
 
     /**
