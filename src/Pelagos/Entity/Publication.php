@@ -5,6 +5,8 @@ namespace Pelagos\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 
+use JMS\Serializer\Annotation as Serializer;
+
 use Pelagos\HTTPStatus;
 
 /**
@@ -43,6 +45,8 @@ class Publication extends Entity
      * @var Collection
      *
      * @ORM\OneToMany(targetEntity="DatasetPublication", mappedBy="publication")
+     *
+     * @Serializer\MaxDepth(1)
      */
     protected $datasetPublications;
 
