@@ -15,9 +15,7 @@
                                         {% if distPoint.dataCenter.phoneNumber is empty %}
                                             <gco:CharacterString/>
                                         {% else %}
-                                        <gco:CharacterString>
-                                            {{ distPoint.dataCenter.phoneNumber }}
-                                        </gco:CharacterString>
+                                            <gco:CharacterString>{{ distPoint.dataCenter.phoneNumber }}</gco:CharacterString>
                                         {% endif %}
                                     </gmd:voice>
                                 </gmd:CI_Telephone>
@@ -28,54 +26,42 @@
                                         {% if distPoint.dataCenter.deliveryPoint is empty %}
                                             <gco:CharacterString/>
                                         {% else %}
-                                        <gco:CharacterString>
-                                            <![CDATA[{{ distPoint.dataCenter.deliveryPoint }}]]>
-                                        </gco:CharacterString>
+                                            <gco:CharacterString><![CDATA[{{ distPoint.dataCenter.deliveryPoint }}]]></gco:CharacterString>
                                         {% endif %}
                                     </gmd:deliveryPoint>
                                     <gmd:city>
                                         {% if distPoint.dataCenter.city is empty %}
                                             <gco:CharacterString/>
                                         {% else %}
-                                        <gco:CharacterString>
-                                            {{ distPoint.dataCenter.city }}
-                                        </gco:CharacterString>
+                                            <gco:CharacterString>{{ distPoint.dataCenter.city }}</gco:CharacterString>
                                         {% endif %}
                                     </gmd:city>
                                     <gmd:administrativeArea>
                                         {% if distPoint.dataCenter.administrativeArea is empty %}
                                             <gco:CharacterString/>
                                         {% else %}
-                                        <gco:CharacterString>
-                                            {{ distPoint.dataCenter.administrativeArea }}
-                                        </gco:CharacterString>
+                                            <gco:CharacterString>{{ distPoint.dataCenter.administrativeArea }}</gco:CharacterString>
                                         {% endif %}
                                     </gmd:administrativeArea>
                                     <gmd:postalCode>
                                         {% if distPoint.dataCenter.postalCode is empty %}
                                             <gco:CharacterString/>
                                         {% else %}
-                                        <gco:CharacterString>
-                                            {{ distPoint.dataCenter.postalCode }}
-                                        </gco:CharacterString>
+                                            <gco:CharacterString>{{ distPoint.dataCenter.postalCode }}</gco:CharacterString>
                                         {% endif %}
                                     </gmd:postalCode>
                                     <gmd:country>
                                         {% if distPoint.dataCenter.country is empty %}
                                             <gco:CharacterString/>
                                         {% else %}
-                                        <gco:CharacterString>
-                                            {{ distPoint.dataCenter.country }}
-                                        </gco:CharacterString>
+                                            <gco:CharacterString>{{ distPoint.dataCenter.country }}</gco:CharacterString>
                                         {% endif %}
                                     </gmd:country>
                                     <gmd:electronicMailAddress>
                                         {% if distPoint.dataCenter.emailAddress is empty %}
                                             <gco:CharacterString/>
                                         {% else %}
-                                        <gco:CharacterString>
-                                            {{ distPoint.dataCenter.emailAddress }}
-                                        </gco:CharacterString>
+                                            <gco:CharacterString>{{ distPoint.dataCenter.emailAddress }}</gco:CharacterString>
                                         {% endif %}
                                     </gmd:electronicMailAddress>
                                 </gmd:CI_Address>
