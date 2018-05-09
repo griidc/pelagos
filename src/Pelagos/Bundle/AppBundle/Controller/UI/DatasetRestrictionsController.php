@@ -56,16 +56,26 @@ class DatasetRestrictionsController extends EntityController
     public function postAction(Request $request, $id)
     {
         $entityHandler = $this->container->get('pelagos.entity.handler');
-        $entity = $this->handleGetOne(DatasetSubmission::class, $id);
+        $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
         $restrictionKey = $request->request->get('restrictions');
 
+        // RabbitMQ message to update the DOI for the dataset.
+        $rabbitMessage = array(
+            'body' => $datasetSubmission->getDataset()->getId(),
+            'routing_key' => 'publish'
+        );
+
         if ($restrictionKey) {
-            $entity->setRestrictions($restrictionKey);
+            $datasetSubmission->setRestrictions($restrictionKey);
 
             try {
 
-                $entityHandler->update($entity);
-
+                $entityHandler->update($datasetSubmission);
+                // Publish the message to DoiConsumer to update the DOI.
+                $this->get('old_sound_rabbit_mq.doi_issue_producer')->publish(
+                    $rabbitMessage['body'],
+                    $rabbitMessage['routing_key']
+                );
             } catch (PersistenceException $exception) {
                 throw new PersistenceException($exception->getMessage());
             }
