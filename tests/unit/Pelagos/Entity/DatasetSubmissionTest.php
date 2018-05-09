@@ -869,8 +869,8 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
     public function testAddRemoveAndGetDistributionPoint()
     {
         //setup
-        $this->mockNationalDataCenter = \Mockery::mock(
-            NationalDataCenter::class,
+        $this->mockDataCenter = \Mockery::mock(
+            DataCenter::class,
             array(
                 'getOrganizationName' => 'GRIIDC',
                 'getOrganizationUrl' => 'www.griidc.org'
@@ -881,10 +881,16 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             DistributionPoint::class,
             array(
                 'setDatasetSubmission' => $this->datasetSubmission,
-                'setNationalDataCenter' => $this->mockNationalDataCenter,
+                'setDataCenter' => $this->mockDataCenter,
                 'getDistributionUrl' => 'www.org.com',
             )
         );
+
+        //remove default distribution point initially created in dataset submission entity
+        $defaultDistributionPoint = $this->datasetSubmission->getDistributionPoints()->first();
+        if (null !== $defaultDistributionPoint) {
+            $this->datasetSubmission->removeDistributionPoint($defaultDistributionPoint);
+        }
 
         //test adder
         $this->datasetSubmission->addDistributionPoint($this->mockDistributionPoint);
