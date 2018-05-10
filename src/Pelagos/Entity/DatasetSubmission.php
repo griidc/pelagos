@@ -1092,7 +1092,6 @@ class DatasetSubmission extends Entity
                 $newDistributionPoint->setDistributionUrl($distributionPoint->getDistributionUrl());
                 $newDistributionPoint->setRoleCode($distributionPoint->getRoleCode());
                 $newDistributionPoint->setDataCenter($distributionPoint->getDataCenter());
-                $newDistributionPoint->setNationalDataCenter($distributionPoint->getNationalDataCenter());
                 $this->addDistributionPoint($newDistributionPoint);
             }
         } else {

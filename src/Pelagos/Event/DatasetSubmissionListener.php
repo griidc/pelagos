@@ -109,9 +109,7 @@ class DatasetSubmissionListener extends EventListener
         if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
             //email DRMs
             $this->sendMailMsg(
-                $this->twig->loadTemplate(
-                    'PelagosAppBundle:Email:data-repository-managers.dataset-processed.email.twig'
-                ),
+                $this->twig->loadTemplate('PelagosAppBundle:Email:data-repository-managers.dataset-processed.email.twig'),
                 array('datasetSubmission' => $datasetSubmission),
                 $this->getDRPMs($datasetSubmission->getDataset())
             );
