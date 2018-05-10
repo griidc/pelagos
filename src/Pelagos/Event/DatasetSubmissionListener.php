@@ -4,6 +4,7 @@ namespace Pelagos\Event;
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\Entity;
 use Pelagos\Entity\Person;
 
 /**
@@ -180,7 +181,7 @@ class DatasetSubmissionListener extends EventListener
      *
      * @return void
      */
-    public function onInReview(EntityEvent $event)
+    public function onStartReview(EntityEvent $event)
     {
         $datasetSubmission = $event->getEntity();
         $dataset = $datasetSubmission->getDataset();
@@ -188,6 +189,37 @@ class DatasetSubmissionListener extends EventListener
             sprintf(
                 '%s started review for %s',
                 $datasetSubmission->getModifier()->getAccount()->getUsername(),
+                $dataset->getUdi()
+            )
+        );
+    }
+
+    public function onEndReview(EntityEvent $event)
+    {
+        $datasetSubmission = $event->getEntity();
+
+        switch ($event) {
+            case 'endReview':
+                $this->reviewPostActionLog($datasetSubmission, 'ended');
+                break;
+            case 'acceptReview':
+                $this->reviewPostActionLog($datasetSubmission, 'accepted');
+                break;
+            case 'requestReview':
+                $this->reviewPostActionLog($datasetSubmission, 'requested revisions');
+                break;
+        }
+
+    }
+
+    private function reviewPostActionLog($datasetSubmission, $action)
+    {
+        $dataset = $datasetSubmission->getDataset();
+        $this->mdappLogger->writeLog(
+            sprintf(
+                '%s %s review for %s',
+                $datasetSubmission->getModifier()->getAccount()->getUsername(),
+                $action,
                 $dataset->getUdi()
             )
         );

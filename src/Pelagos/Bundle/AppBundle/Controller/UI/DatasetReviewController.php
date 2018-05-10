@@ -375,6 +375,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      */
     public function postAction(Request $request, $id = null)
     {
+        $eventName = '';
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
         $form = $this->get('form.factory')->createNamed(
             null,
@@ -404,39 +405,15 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             switch (true) {
                 case ($form->get('endReviewBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_END_REVIEW);
-                    $mdappLogger->writeLog(
-                        $mdappLogger->createReviewChangeMessage(
-                            $this->getUser()->getUsername(),
-                            'End Review',
-                            $beforeStatus,
-                            DatasetSubmission::METADATA_STATUSES[DatasetSubmission::METADATA_STATUS_IN_REVIEW],
-                            $udi
-                        )
-                    );
+                    $eventName = 'endReview';
                     break;
                 case ($form->get('acceptDatasetBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_ACCEPT_REVIEW);
-                    $mdappLogger->writeLog(
-                        $mdappLogger->createReviewChangeMessage(
-                            $this->getUser()->getUsername(),
-                            'Accept Review',
-                            $beforeStatus,
-                            DatasetSubmission::METADATA_STATUSES[DatasetSubmission::METADATA_STATUS_ACCEPTED],
-                            $udi
-                        )
-                    );
+                    $eventName = 'acceptReview';
                     break;
                 case ($form->get('requestRevisionsBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_REQUEST_REVISIONS);
-                    $mdappLogger->writeLog(
-                        $mdappLogger->createReviewChangeMessage(
-                            $this->getUser()->getUsername(),
-                            'Request Revisions',
-                            $beforeStatus,
-                            DatasetSubmission::METADATA_STATUSES[DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER],
-                            $udi
-                        )
-                    );
+                    $eventName = 'requestReview';
                     break;
             }
 
@@ -454,6 +431,12 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
                 $this->entityHandler->update($metadataContact);
             }
+
+            // update MDAPP logs after action is executed.
+            $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
+                $datasetSubmission,
+                $eventName
+            );
 
             //use rabbitmq to process dataset file and persist the file details.
             foreach ($this->messages as $message) {
