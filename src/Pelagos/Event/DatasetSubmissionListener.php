@@ -197,29 +197,37 @@ class DatasetSubmissionListener extends EventListener
     public function onEndReview(EntityEvent $event)
     {
         $datasetSubmission = $event->getEntity();
-
-        switch ($event) {
-            case 'endReview':
-                $this->reviewPostActionLog($datasetSubmission, 'ended');
-                break;
-            case 'acceptReview':
-                $this->reviewPostActionLog($datasetSubmission, 'accepted');
-                break;
-            case 'requestReview':
-                $this->reviewPostActionLog($datasetSubmission, 'requested revisions');
-                break;
-        }
-
-    }
-
-    private function reviewPostActionLog($datasetSubmission, $action)
-    {
         $dataset = $datasetSubmission->getDataset();
         $this->mdappLogger->writeLog(
             sprintf(
-                '%s %s review for %s',
+                '%s ended review for %s',
                 $datasetSubmission->getModifier()->getAccount()->getUsername(),
-                $action,
+                $dataset->getUdi()
+            )
+        );
+    }
+
+    public function onAcceptReview(EntityEvent $event)
+    {
+        $datasetSubmission = $event->getEntity();
+        $dataset = $datasetSubmission->getDataset();
+        $this->mdappLogger->writeLog(
+            sprintf(
+                '%s accepted dataset %s',
+                $datasetSubmission->getModifier()->getAccount()->getUsername(),
+                $dataset->getUdi()
+            )
+        );
+    }
+
+    public function onRequestRevisions(EntityEvent $event)
+    {
+        $datasetSubmission = $event->getEntity();
+        $dataset = $datasetSubmission->getDataset();
+        $this->mdappLogger->writeLog(
+            sprintf(
+                '%s requested revisions for %s',
+                $datasetSubmission->getModifier()->getAccount()->getUsername(),
                 $dataset->getUdi()
             )
         );

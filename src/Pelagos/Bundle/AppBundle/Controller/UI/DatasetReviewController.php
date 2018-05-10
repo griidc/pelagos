@@ -324,7 +324,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         $datasetSubmission->setDatasetSubmissionReviewStatus();
         $datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_IN_REVIEW);
         $datasetSubmission->setModifier($reviewedBy);
-        $eventName = 'in_review';
+        $eventName = 'start_review';
 
         // Create Dataset submission entity.
 
@@ -399,21 +399,18 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 }
             }
 
-            $beforeStatus = $datasetSubmission->getDataset()->getStatus();
-            $udi = $datasetSubmission->getDataset()->getUdi();
-            $mdappLogger = $this->get('pelagos.util.mdapplogger');
             switch (true) {
                 case ($form->get('endReviewBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_END_REVIEW);
-                    $eventName = 'endReview';
+                    $eventName = 'end_review';
                     break;
                 case ($form->get('acceptDatasetBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_ACCEPT_REVIEW);
-                    $eventName = 'acceptReview';
+                    $eventName = 'accept_review';
                     break;
                 case ($form->get('requestRevisionsBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_REQUEST_REVISIONS);
-                    $eventName = 'requestReview';
+                    $eventName = 'request_revisions';
                     break;
             }
 
