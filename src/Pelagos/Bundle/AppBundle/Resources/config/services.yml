@@ -42,7 +42,11 @@ services:
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.html_found, method: onHtmlFound }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.dataset_unprocessable, method: onDatasetUnprocessable }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.approved, method: onApproved }
-            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.in_review, method: onInReview }
+            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.start_review, method: onStartReview }
+            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.end_review, method: onEndReview }
+            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.accept_review, method: onAcceptReview }
+            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.request_revisions, method: onRequestRevisions }
+
 
 
 
