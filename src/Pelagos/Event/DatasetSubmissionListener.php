@@ -185,12 +185,8 @@ class DatasetSubmissionListener extends EventListener
     {
         $datasetSubmission = $event->getEntity();
         $dataset = $datasetSubmission->getDataset();
-        $this->mdappLogger->writeLog(
-            sprintf(
-                '%s started review for %s',
-                $datasetSubmission->getModifier()->getAccount()->getUsername(),
-                $dataset->getUdi()
-            )
+        $this->mdappLogger->writeLog($datasetSubmission->getModifier()->getAccount()->getUsername() .
+            'started review for' .  $dataset->getUdi()
         );
     }
 
@@ -199,11 +195,8 @@ class DatasetSubmissionListener extends EventListener
         $datasetSubmission = $event->getEntity();
         $dataset = $datasetSubmission->getDataset();
         $this->mdappLogger->writeLog(
-            sprintf(
-                '%s ended review for %s',
-                $datasetSubmission->getModifier()->getAccount()->getUsername(),
-                $dataset->getUdi()
-            )
+            $datasetSubmission->getModifier()->getAccount()->getUsername() .
+            'ended review for' .  $dataset->getUdi()
         );
     }
 
@@ -212,11 +205,8 @@ class DatasetSubmissionListener extends EventListener
         $datasetSubmission = $event->getEntity();
         $dataset = $datasetSubmission->getDataset();
         $this->mdappLogger->writeLog(
-            sprintf(
-                '%s accepted dataset %s',
-                $datasetSubmission->getModifier()->getAccount()->getUsername(),
-                $dataset->getUdi()
-            )
+            $datasetSubmission->getModifier()->getAccount()->getUsername() .
+            'accepted dataset' .  $dataset->getUdi() . ' (In Review->Accepted)'
         );
     }
 
@@ -225,11 +215,8 @@ class DatasetSubmissionListener extends EventListener
         $datasetSubmission = $event->getEntity();
         $dataset = $datasetSubmission->getDataset();
         $this->mdappLogger->writeLog(
-            sprintf(
-                '%s requested revisions for %s',
-                $datasetSubmission->getModifier()->getAccount()->getUsername(),
-                $dataset->getUdi()
-            )
+            $datasetSubmission->getModifier()->getAccount()->getUsername() .
+            'requested revisions for' .  $dataset->getUdi() . ' (In Review->Request Revisions)'
         );
     }
 }
