@@ -184,5 +184,12 @@ class DatasetSubmissionListener extends EventListener
     {
         $datasetSubmission = $event->getEntity();
         $dataset = $datasetSubmission->getDataset();
+        $this->mdappLogger->writeLog(
+            sprintf(
+                '%s started review for %s',
+                $datasetSubmission->getModifier()->getAccount()->getUsername(),
+                $dataset->getUdi()
+            )
+        );
     }
 }
