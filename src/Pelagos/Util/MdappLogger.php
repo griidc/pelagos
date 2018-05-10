@@ -35,11 +35,10 @@ class MdappLogger
     public function writeLog($message)
     {
         $tz = ini_get('date.timezone');
-        $dateTimeFormat = 'F j, Y, g:i:s a';
         $timestamp = new \DateTime('now', new \DateTimeZone($tz));
         $successfulWrite = file_put_contents(
             $this->logfile,
-            $timestamp->format($dateTimeFormat) . ": $message\n",
+            $timestamp->format('r') . ": $message\n",
             (FILE_APPEND | LOCK_EX)
         );
     }
