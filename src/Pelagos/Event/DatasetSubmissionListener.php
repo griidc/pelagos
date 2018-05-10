@@ -185,9 +185,22 @@ class DatasetSubmissionListener extends EventListener
     {
         $datasetSubmission = $event->getEntity();
         $dataset = $datasetSubmission->getDataset();
-        $this->mdappLogger->writeLog($datasetSubmission->getModifier()->getAccount()->getUsername() .
-            ' started review for ' .  $dataset->getUdi()
-        );
+        $datasetSubmissionHistory = $dataset->getDatasetSubmissionHistory();
+        if (!empty($datasetSubmissionHistory)) {
+            $datasetSubmissionPrev = $dataset->getDatasetSubmissionHistory()[1];
+
+            // when there is no state change, should not log the status.
+            if ($datasetSubmissionPrev->getMetadataStatus() === $datasetSubmission->getMetadataStatus()) {
+                $this->mdappLogger->writeLog($datasetSubmission->getModifier()->getAccount()->getUsername() .
+                    ' started review for ' . $dataset->getUdi()
+                );
+            } else {
+                $this->mdappLogger->writeLog($datasetSubmission->getModifier()->getAccount()->getUsername() .
+                    ' started review for ' . $dataset->getUdi() . ' (' . $datasetSubmissionPrev->getMetadataStatus() .
+                    ' ->InReview)'
+                );
+            }
+        }
     }
 
     public function onEndReview(EntityEvent $event)
