@@ -35,7 +35,7 @@ class ChangeMetadataContactToNullCommand extends ContainerAwareCommand
     {
         $this
             ->setName('metadata:change-nullcontact')
-            ->setDescription('Change metadata contact e-mail and dataset contact to .null');
+            ->setDescription('Change metadata contact e-mail and dataset contact email to .null');
     }
 
     /**
@@ -81,6 +81,8 @@ class ChangeMetadataContactToNullCommand extends ContainerAwareCommand
                 '/gco:CharacterString';
 
         foreach ($datasets as $metadata) {
+            $modifiedMetadata = false;
+
             $xml = $metadata->getXml();
 
             if (!$xml instanceof \SimpleXMLElement) {
@@ -92,7 +94,7 @@ class ChangeMetadataContactToNullCommand extends ContainerAwareCommand
             $doc->loadXML($xml->asXml());
 
             $xpathdoc = new \DOMXpath($doc);
-            
+
             foreach ($xpathArray as $xpath) {
                 $elements = $xpathdoc->query($xpath);
 
