@@ -77,6 +77,12 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
                 $this->entityHandler->update($datasetSubmission);
                 $reviewerUserName  = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
                 $this->addToFlashBag($request, $udi, 'reviewEnded', $reviewerUserName);
+
+                // update MDAPP logs after action is executed.
+                $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
+                    $datasetSubmission,
+                    'end_review'
+                );
             } else {
                 $this->addToFlashBag($request, $udi, 'notInReview');
             }
