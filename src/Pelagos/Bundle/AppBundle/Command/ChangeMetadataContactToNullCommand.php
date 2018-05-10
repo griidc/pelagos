@@ -35,7 +35,7 @@ class ChangeMetadataContactToNullCommand extends ContainerAwareCommand
     {
         $this
             ->setName('metadata:change-nullcontact')
-            ->setDescription('Change metadata contact e-mail to .null');
+            ->setDescription('Change metadata contact e-mail and dataset contact to .null');
     }
 
     /**
@@ -55,22 +55,9 @@ class ChangeMetadataContactToNullCommand extends ContainerAwareCommand
             ->getRepository('Pelagos\Entity\Metadata')
             ->findAll();
 
-        foreach ($datasets as $metadata) {
-            $metadataModified = false;
-
-            $xml = $metadata->getXml();
-
-            if (!$xml instanceof \SimpleXMLElement) {
-                // Skip datasets without valid xml metadata.
-                continue;
-            }
-
-            $doc = new \DomDocument('1.0', 'UTF-8');
-            $doc->loadXML($xml->asXml());
-
-            $xpathdoc = new \DOMXpath($doc);
-
-            $xpath = '/gmi:MI_Metadata' .
+        $xpathArray = array();
+        //query for dataset contact
+        $xpathArray['datasetcontact'] = '/gmi:MI_Metadata' .
                 '/gmd:identificationInfo' .
                 '/gmd:MD_DataIdentification' .
                 '/gmd:pointOfContact[1]' .
@@ -82,22 +69,48 @@ class ChangeMetadataContactToNullCommand extends ContainerAwareCommand
                 '/gmd:electronicMailAddress' .
                 '/gco:CharacterString';
 
-            $elements = $xpathdoc->query($xpath);
+        //query for metadata contact
+        $xpathArray['metadatacontact'] = '/gmi:MI_Metadata' .
+                '/gmd:contact' .
+                '/gmd:CI_ResponsibleParty' .
+                '/gmd:contactInfo' .
+                '/gmd:CI_Contact' .
+                '/gmd:address' .
+                '/gmd:CI_Address' .
+                '/gmd:electronicMailAddress' .
+                '/gco:CharacterString';
 
-            if ($elements->length > 0) {
-                $node = $elements->item(0);
-                $nodeValue = (string) $node->nodeValue;
-                echo "E-mail:$nodeValue\n";
-                if (!preg_match('/^.*\@.*\..*\.null/i', $nodeValue)) {
-                    $node->nodeValue = (string) $node->nodeValue . '.null';
-                    $this->numberModified++;
-                    $metadataModified = true;
-                } else {
-                    echo "Skipping, already null\n";
+        foreach ($datasets as $metadata) {
+            $xml = $metadata->getXml();
+
+            if (!$xml instanceof \SimpleXMLElement) {
+                // Skip datasets without valid xml metadata.
+                continue;
+            }
+
+            $doc = new \DomDocument('1.0', 'UTF-8');
+            $doc->loadXML($xml->asXml());
+
+            $xpathdoc = new \DOMXpath($doc);
+            
+            foreach ($xpathArray as $xpath) {
+                $elements = $xpathdoc->query($xpath);
+
+                if ($elements->length > 0) {
+                    $node = $elements->item(0);
+                    $nodeValue = (string) $node->nodeValue;
+                    echo "E-mail:$nodeValue\n";
+                    if (!preg_match('/^.*\@.*\..*\.null/i', $nodeValue)) {
+                        $node->nodeValue = (string) $node->nodeValue . '.null';
+                        $this->numberModified++;
+                        $modifiedMetadata = true;
+                    } else {
+                        echo "Skipping, already null\n";
+                    }
                 }
             }
 
-            if ($metadataModified) {
+            if ($modifiedMetadata) {
                 $doc->formatOutput = true;
                 $doc->normalizeDocument();
 
@@ -110,13 +123,10 @@ class ChangeMetadataContactToNullCommand extends ContainerAwareCommand
                 $metadata->setModifier($modifier);
 
                 $entityManager->persist($metadata);
-
                 echo 'Modified: ' . $metadata->getId() . "\n";
             }
         }
-
         $entityManager->flush();
-
 
         $output->writeln('Modified ' . $this->numberModified . ' roles.');
 
