@@ -175,7 +175,7 @@ class DatasetSubmissionListener extends EventListener
     }
 
     /**
-     * Method called when dataset is in review mode.
+     * Method called when review is started in review mode.
      *
      * @param EntityEvent $event Event being acted upon.
      *
@@ -189,43 +189,62 @@ class DatasetSubmissionListener extends EventListener
         // when there is no state change, should not log the status.
         if ($datasetSubmissionPrev->getMetadataStatus() === $datasetSubmission->getMetadataStatus()) {
             $this->mdappLogger->writeLog($datasetSubmission->getModifier()->getAccount()->getUsername() .
-                ' started review for ' . $dataset->getUdi()
-            );
+                ' started review for ' . $dataset->getUdi());
         } else {
             $this->mdappLogger->writeLog($datasetSubmission->getModifier()->getAccount()->getUsername() .
                 ' started review for ' . $dataset->getUdi() . ' (' . $datasetSubmissionPrev->getMetadataStatus() .
-                ' ->InReview)'
-            );
+                ' ->InReview)');
         }
     }
 
+    /**
+     * Method called when review is ended in review mode.
+     *
+     * @param EntityEvent $event Event being acted upon.
+     *
+     * @return void
+     */
     public function onEndReview(EntityEvent $event)
     {
         $datasetSubmission = $event->getEntity();
         $dataset = $datasetSubmission->getDataset();
         $this->mdappLogger->writeLog(
             $datasetSubmission->getModifier()->getAccount()->getUsername() .
-            ' ended review for ' .  $dataset->getUdi()
+            ' ended review for ' . $dataset->getUdi()
         );
     }
 
+    /**
+     * Method called when review is accepted in review mode.
+     *
+     * @param EntityEvent $event Event being acted upon.
+     *
+     * @return void
+     */
     public function onAcceptReview(EntityEvent $event)
     {
         $datasetSubmission = $event->getEntity();
         $dataset = $datasetSubmission->getDataset();
         $this->mdappLogger->writeLog(
             $datasetSubmission->getModifier()->getAccount()->getUsername() .
-            ' accepted dataset ' .  $dataset->getUdi() . ' (In Review->Accepted)'
+            ' accepted dataset ' . $dataset->getUdi() . ' (In Review->Accepted)'
         );
     }
 
+    /**
+     * Method called when requested revisions for a dataset in review mode.
+     *
+     * @param EntityEvent $event Event being acted upon.
+     *
+     * @return void
+     */
     public function onRequestRevisions(EntityEvent $event)
     {
         $datasetSubmission = $event->getEntity();
         $dataset = $datasetSubmission->getDataset();
         $this->mdappLogger->writeLog(
-            $datasetSubmission->getModifier()->getAccount()->getUsername() .
-            ' requested revisions for ' .  $dataset->getUdi() . ' (In Review->Request Revisions)'
+            $datasetSubmission->getModifier()->getAccount()->getUsername()
+             . ' requested revisions for ' . $dataset->getUdi() . ' (In Review->Request Revisions)'
         );
     }
 }
