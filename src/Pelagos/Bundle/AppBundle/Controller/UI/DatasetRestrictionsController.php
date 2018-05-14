@@ -73,6 +73,11 @@ class DatasetRestrictionsController extends UIController
             $datasetStatus = $dataset->getMetadataStatus();
 
             if ($restrictionKey) {
+                // Record the original state for logging purposes before changing it.
+                $from = $datasetSubmission->getRestrictions();
+                $actor = $this->get('security.token_storage')->getToken()->getUser()->getUserId();
+                $this->dispatchLogRestrictionsEvent($dataset, $actor, $from, $restrictionKey);
+
                 $datasetSubmission->setRestrictions($restrictionKey);
 
                 try {
@@ -109,6 +114,34 @@ class DatasetRestrictionsController extends UIController
         $this->get('old_sound_rabbit_mq.doi_issue_producer')->publish(
             $rabbitMessage['body'],
             $rabbitMessage['routing_key']
+        );
+    }
+
+    /**
+     * Log restriction changes.
+     *
+     * @param Dataset $dataset          The dataset having restrictions modified.
+     * @param string  $actor            The username of the person modifying the restriction.
+     * @param string  $restrictionsFrom The original restriction.
+     * @param mixed   $restrictionsTo   The restriction that was put in place.
+     *
+     * @return void
+     */
+    protected function dispatchLogRestrictionsEvent(Dataset $dataset, $actor, $restrictionsFrom, $restrictionsTo)
+    {
+        $em = $this->container->get('doctrine')->getManager();
+        $this->container->get('pelagos.event.log_action_item_event_dispatcher')->dispatch(
+            array(
+                'actionName' => 'Restriction Change',
+                'subjectEntityName' => $em->getClassMetadata(get_class($dataset))->getName(),
+                'subjectEntityId' => $dataset->getId(),
+                'payLoad' => array(
+                    'userId' => $actor,
+                    'previousRestriction' => $restrictionsFrom,
+                    'newRestriction' => $restrictionsTo,
+                )
+            ),
+            'restrictions_log'
         );
     }
 }
