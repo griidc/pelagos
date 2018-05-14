@@ -10,6 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\DOI;
+use Pelagos\Util\DOIutil;
 
 /**
  * This command publishes a rabbit message for every accepted dataset forcing update of DOI info.
@@ -52,17 +53,34 @@ class RabbitPublishAllApprovedNonRestrictedCommand extends ContainerAwareCommand
     {
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
         $datasets = $entityManager->getRepository('Pelagos\Entity\Dataset')->findBy(array(
-            'availabilityStatus' => array(
-                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
-                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
+            'metadataStatus' => array(
+                DatasetSubmission::METADATA_STATUS_ACCEPTED,
             )
         ));
 
         $thumper = $this->getContainer()->get('old_sound_rabbit_mq.doi_issue_producer');
         foreach ($datasets as $dataset) {
-            if ($dataset->getDoi()->getStatus() == DOI::STATUS_RESERVED) {
-                $thumper->publish($dataset->getId(), 'publish');
-                echo 'Requesting DOI publish update for dataset ' . $dataset->getId() . ' (' . $dataset->getUdi() . ")\n";
+            $doiUtil = new DOIutil;
+            try {
+                $metadata = $doiUtil->getDOIMetadata($dataset->getDoi());
+            } catch (\Exception $e) {
+                 $output->writeln('Did not get a response from EzID for ' . $dataset->getUdi());
+                $metadata = null;
+            }
+
+            $update = true;
+            if ($metadata) {
+                foreach ($metadata as $section) {
+                    if (($section[0] == '_status') and ($section[1] == ' public')) {
+                        $update = false;
+                        echo 'Skipping because EzID already reports dataset ' . $dataset->getId() . ' (' . $dataset->getUdi() . ") is public.\n";
+                    }
+                }
+                if ($update) {
+                    $thumper->publish($dataset->getId(), 'publish');
+                    echo 'Requesting DOI publish update for dataset ' . $dataset->getId() . ' (' . $dataset->getUdi() . ")\n";
+                }
+
             }
         }
 
