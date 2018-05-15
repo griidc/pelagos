@@ -62,25 +62,16 @@ class RabbitPublishAllApprovedNonRestrictedCommand extends ContainerAwareCommand
         foreach ($datasets as $dataset) {
             $doiUtil = new DOIutil;
             try {
-                $metadata = $doiUtil->getDOIMetadata($dataset->getDoi());
+                $doiMetadata = $doiUtil->getDOIMetadata($dataset->getDoi());
             } catch (\Exception $e) {
                  $output->writeln('Did not get a response from EzID for ' . $dataset->getUdi());
-                $metadata = null;
             }
 
-            $update = true;
-            if ($metadata) {
-                foreach ($metadata as $section) {
-                    if (($section[0] == '_status') and ($section[1] == ' public')) {
-                        $update = false;
-                        echo 'Skipping because EzID already reports dataset ' . $dataset->getId() . ' (' . $dataset->getUdi() . ") is public.\n";
-                    }
-                }
-                if ($update) {
-                    $thumper->publish($dataset->getId(), 'publish');
-                    echo 'Requesting DOI publish update for dataset ' . $dataset->getId() . ' (' . $dataset->getUdi() . ")\n";
-                }
-
+            if (array_key_exists('_status', $doiMetadata) and $doiMetadata['_status'] === 'public') {
+                echo 'Skipping because EzID already reports dataset ' . $dataset->getId() . ' (' . $dataset->getUdi() . ") is public.\n";
+            } else {
+                $thumper->publish($dataset->getId(), 'publish');
+                echo 'Requesting DOI publish update for dataset ' . $dataset->getId() . ' (' . $dataset->getUdi() . ")\n";
             }
         }
 
