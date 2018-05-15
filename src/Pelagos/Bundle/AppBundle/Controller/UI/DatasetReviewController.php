@@ -18,6 +18,7 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
@@ -378,6 +379,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         // set to default event
         $eventName = 'end_review';
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
+        $dataset = $datasetSubmission->getDataset();
         $form = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionType::class,
@@ -410,6 +412,8 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     $eventName = 'accept_review';
                     break;
                 case ($form->get('requestRevisionsBtn')->isClicked()):
+                    $this->clearDatasetSubmission($datasetSubmission);
+                    $datasetSubmission = $dataset->getDatasetSubmission();
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_REQUEST_REVISIONS);
                     $eventName = 'request_revisions';
                     break;
@@ -566,5 +570,51 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         }
 
         return $datasetSubmission;
+    }
+
+    /**
+     * Clears out data properties from a Dataset Submission.
+     *
+     * @param DatasetSubmission $datasetSubmission The dataset submission that will be cleared.
+     *
+     * @return void
+     */
+    private function clearDatasetSubmission(DatasetSubmission &$datasetSubmission)
+    {
+        $datasetSubmission->getDatasetContacts()->clear();
+        $datasetSubmission->getMetadataContacts()->clear();
+        $accessor = PropertyAccess::createPropertyAccessor();
+        $clearProperties = array(
+            'title',
+            'shortTitle',
+            'abstract',
+            'purpose',
+            'suppParams',
+            'suppInstruments',
+            'suppMethods',
+            'suppSampScalesRates',
+            'suppErrorAnalysis',
+            'suppProvenance',
+            'referenceDate',
+            'referenceDateType',
+            'spatialExtent',
+            'spatialExtentDescription',
+            'temporalExtentDesc',
+            'temporalExtentBeginPosition',
+            'temporalExtentEndPosition',
+            'distributionFormatName',
+            'fileDecompressionTechnique',
+        );
+        foreach ($clearProperties as $property) {
+            $accessor->setValue($datasetSubmission, $property, null);
+        }
+        $emptyProperties = array(
+            'themeKeywords',
+            'placeKeywords',
+            'topicKeywords',
+        );
+        foreach ($emptyProperties as $property) {
+            $accessor->setValue($datasetSubmission, $property, array());
+        }
     }
 }
