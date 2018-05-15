@@ -48,7 +48,8 @@ services:
         arguments: ["@doctrine.orm.entity_manager"]
         tags:
             - { name: kernel.event_listener, event: pelagos.logactionitem.file_download, method: onNewLogCreated }
-            - { name: kernel.event_listener, event: pelagos.logactionitem.search_terms_log, method: onNewLogCreated}
+            - { name: kernel.event_listener, event: pelagos.logactionitem.search_terms_log, method: onNewLogCreated }
+            - { name: kernel.event_listener, event: pelagos.logactionitem.restrictions_log, method: onNewLogCreated }
 
     pelagos.account.listener:
         class: Pelagos\Event\AccountListener
