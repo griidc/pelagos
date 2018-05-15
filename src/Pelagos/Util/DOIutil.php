@@ -192,7 +192,10 @@ class DOIutil
 
         $metadata = array();
         foreach (explode("\n", $output) as $line) {
-            $metadata[] = preg_split('/:/', $line, 2);
+            $split = preg_split('/:/', $line, 2);
+            if (count($split) > 1) {
+                $metadata[$split[0]] = trim($split[1]);
+            }
         }
 
         return $metadata;
@@ -201,7 +204,8 @@ class DOIutil
     /**
      * This function will publish the DOI.
      *
-     * @param string $doi DOI to publish.
+     * @param string $doi    DOI to publish.
+     * @param string $status The status to set the DOI to (optional).
      *
      * @throws \Exception When there was an error negotiating with EZID.
      *
