@@ -412,8 +412,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     $eventName = 'accept_review';
                     break;
                 case ($form->get('requestRevisionsBtn')->isClicked()):
-                    $this->clearDatasetSubmission($datasetSubmission);
-                    $datasetSubmission = $dataset->getDatasetSubmission();
+                    $this->clearAndFillDatasetSubmission($datasetSubmission);
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_REQUEST_REVISIONS);
                     $eventName = 'request_revisions';
                     break;
@@ -579,11 +578,13 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      *
      * @return void
      */
-    private function clearDatasetSubmission(DatasetSubmission &$datasetSubmission)
+    private function clearAndFillDatasetSubmission(DatasetSubmission &$datasetSubmission)
     {
         $datasetSubmission->getDatasetContacts()->clear();
         $datasetSubmission->getMetadataContacts()->clear();
         $accessor = PropertyAccess::createPropertyAccessor();
+        $dataset = $datasetSubmission->getDataset();
+        $submittedDataset = $dataset->getDatasetSubmission();
         $clearProperties = array(
             'title',
             'shortTitle',
@@ -606,7 +607,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             'fileDecompressionTechnique',
         );
         foreach ($clearProperties as $property) {
-            $accessor->setValue($datasetSubmission, $property, null);
+            $accessor->setValue($datasetSubmission, $property, $accessor->getValue($submittedDataset, $property));
         }
         $emptyProperties = array(
             'themeKeywords',
@@ -614,7 +615,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             'topicKeywords',
         );
         foreach ($emptyProperties as $property) {
-            $accessor->setValue($datasetSubmission, $property, array());
+            $accessor->setValue($datasetSubmission, $property, $accessor->getValue($submittedDataset, $property));
         }
     }
 }
