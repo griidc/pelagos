@@ -585,7 +585,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         $accessor = PropertyAccess::createPropertyAccessor();
         $dataset = $datasetSubmission->getDataset();
         $submittedDataset = $dataset->getDatasetSubmission();
-        $clearProperties = array(
+        $cleaAndFillProperties = array(
             'title',
             'shortTitle',
             'abstract',
@@ -605,16 +605,11 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             'temporalExtentEndPosition',
             'distributionFormatName',
             'fileDecompressionTechnique',
-        );
-        foreach ($clearProperties as $property) {
-            $accessor->setValue($datasetSubmission, $property, $accessor->getValue($submittedDataset, $property));
-        }
-        $emptyProperties = array(
             'themeKeywords',
             'placeKeywords',
             'topicKeywords',
         );
-        foreach ($emptyProperties as $property) {
+        foreach ($cleaAndFillProperties as $property) {
             $accessor->setValue($datasetSubmission, $property, $accessor->getValue($submittedDataset, $property));
         }
     }
