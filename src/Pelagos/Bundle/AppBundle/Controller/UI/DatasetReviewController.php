@@ -407,7 +407,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     break;
                 case ($form->get('acceptDatasetBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_ACCEPT_REVIEW);
-                    $this->publishDoi($datasetSubmission);
                     $eventName = 'accept_review';
                     break;
                 case ($form->get('requestRevisionsBtn')->isClicked()):
@@ -567,22 +566,5 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         }
 
         return $datasetSubmission;
-    }
-
-    /**
-     * Publish DOI for unrestricted datasets which are accepted.
-     *
-     * @param DatasetSubmission $datasetSubmission An instance of Dataset submission.
-     *
-     * @return void
-     */
-    private function publishDoi(DatasetSubmission $datasetSubmission)
-    {
-        if ($datasetSubmission->getRestrictions() === DatasetSubmission::RESTRICTION_NONE) {
-            $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
-                $datasetSubmission,
-                'approved'
-            );
-        }
     }
 }

@@ -229,6 +229,11 @@ class DatasetSubmissionListener extends EventListener
             $datasetSubmission->getModifier()->getAccount()->getUsername() .
             ' accepted dataset ' . $dataset->getUdi() . ' (In Review->Accepted)'
         );
+        // Publish DOI for accepted and unrestricted datasets
+        if ($datasetSubmission->getRestrictions() === DatasetSubmission::RESTRICTION_NONE) {
+            $this->producer->publish($datasetSubmission->getDataset()->getId(), 'publish');
+            $this->producer->publish($datasetSubmission->getDataset()->getId(), 'update');
+        }
     }
 
     /**
