@@ -45,7 +45,7 @@ class ReportMetadataHtmlEscapedCharactersCommand extends ContainerAwareCommand
         $count = 0;
 
         //5 escaped chars: < | & | > | " | '
-        $regex = '/(&lt;|&amp;|&gt;|&quot;|&apos;)/';
+        $regex = '/(&lt;|&amp;|&gt;|&quot;|&apos;|&#39;)/';
 
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
         $metadataObjects = $entityManager
