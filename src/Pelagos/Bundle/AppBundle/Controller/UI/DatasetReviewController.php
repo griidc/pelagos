@@ -378,7 +378,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         // set to default event
         $eventName = 'end_review';
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
-        $dataset = $datasetSubmission->getDataset();
         $form = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionType::class,
