@@ -412,7 +412,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     $eventName = 'accept_review';
                     break;
                 case ($form->get('requestRevisionsBtn')->isClicked()):
-                    $this->clearAndFillDatasetSubmission($datasetSubmission);
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_REQUEST_REVISIONS);
                     $eventName = 'request_revisions';
                     break;
@@ -569,48 +568,5 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         }
 
         return $datasetSubmission;
-    }
-
-    /**
-     * Clears out data properties from a Dataset Submission.
-     *
-     * @param DatasetSubmission $datasetSubmission The dataset submission that will be cleared.
-     *
-     * @return void
-     */
-    private function clearAndFillDatasetSubmission(DatasetSubmission &$datasetSubmission)
-    {
-        $datasetSubmission->getDatasetContacts()->clear();
-        $datasetSubmission->getMetadataContacts()->clear();
-        $accessor = PropertyAccess::createPropertyAccessor();
-        $dataset = $datasetSubmission->getDataset();
-        $submittedDataset = $dataset->getDatasetSubmission();
-        $cleaAndFillProperties = array(
-            'title',
-            'shortTitle',
-            'abstract',
-            'purpose',
-            'suppParams',
-            'suppInstruments',
-            'suppMethods',
-            'suppSampScalesRates',
-            'suppErrorAnalysis',
-            'suppProvenance',
-            'referenceDate',
-            'referenceDateType',
-            'spatialExtent',
-            'spatialExtentDescription',
-            'temporalExtentDesc',
-            'temporalExtentBeginPosition',
-            'temporalExtentEndPosition',
-            'distributionFormatName',
-            'fileDecompressionTechnique',
-            'themeKeywords',
-            'placeKeywords',
-            'topicKeywords',
-        );
-        foreach ($cleaAndFillProperties as $property) {
-            $accessor->setValue($datasetSubmission, $property, $accessor->getValue($submittedDataset, $property));
-        }
     }
 }

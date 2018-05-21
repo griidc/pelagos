@@ -1022,7 +1022,7 @@ class DatasetSubmission extends Entity
 
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
-            $this->setSequence($entity->getSequence() + 1);
+            $this->setSequence($entity->getDataset()->getDatasetSubmissionHistory()->first()->getSequence() + 1);
             // Populate from original Dataset Submission.
             $this->setDataset($entity->getDataset());
             $this->setTitle($entity->getTitle());
@@ -1224,19 +1224,18 @@ class DatasetSubmission extends Entity
             case ($eventName === self::DATASET_END_REVIEW):
                 //Setting the status to in-review.
                 $this->status = self::STATUS_IN_REVIEW;
-                $this->metadataStatus = self::METADATA_STATUS_IN_REVIEW;
+                $this->setMetadataStatus(self::METADATA_STATUS_IN_REVIEW);
                 break;
             case ($eventName === self::DATASET_ACCEPT_REVIEW):
                 //Setting the status to in-review.
                 $this->status = self::STATUS_COMPLETE;
-                $this->metadataStatus = self::METADATA_STATUS_ACCEPTED;
+                $this->setMetadataStatus(self::METADATA_STATUS_ACCEPTED);
                 $this->getDataset()->setDatasetSubmission($this);
                 break;
             case ($eventName === self::DATASET_REQUEST_REVISIONS):
                 $this->status = self::STATUS_COMPLETE;
-                $this->metadataStatus = self::METADATA_STATUS_BACK_TO_SUBMITTER;
+                $this->setMetadataStatus(self::METADATA_STATUS_BACK_TO_SUBMITTER);
                 $this->status = self::STATUS_COMPLETE;
-                $this->getDataset()->setDatasetSubmission($this);
                 break;
         }
 
