@@ -161,20 +161,6 @@ class DatasetSubmissionListener extends EventListener
     }
 
     /**
-     * Method that is called to take appropriate actions when a submission has been approved (mdapp).
-     *
-     * @param EntityEvent $event Event being acted upon.
-     *
-     * @return void
-     */
-    public function onApproved(EntityEvent $event)
-    {
-        $datasetSubmission = $event->getEntity();
-        $this->producer->publish($datasetSubmission->getDataset()->getId(), 'publish');
-        $this->producer->publish($datasetSubmission->getDataset()->getId(), 'update');
-    }
-
-    /**
      * Method called when review is started in review mode.
      *
      * @param EntityEvent $event Event being acted upon.
