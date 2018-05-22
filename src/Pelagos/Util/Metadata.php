@@ -36,17 +36,6 @@ class Metadata
      */
     public function getXmlRepresentation(Dataset $dataset, array $boundingBoxArray)
     {
-        //regex array storing tuple of an escape character and its text value
-        $regexArray = array();
-
-        $regexArray[] = array('/&amp;/', '&');
-        $regexArray[] = array('/&lt;/', '<');
-        $regexArray[] = array('/&gt;/', '>');
-        $regexArray[] = array('/&quot;/', '"');
-        //single quotes
-        $regexArray[] = array('/&apos;/', "'");
-        $regexArray[] = array('/&#039;/', "'");
-
         $xml = null;
         if ($dataset->getDatasetSubmission() instanceof DatasetSubmission) {
             $xml = $this->twig->render(
@@ -70,11 +59,6 @@ class Metadata
                 'utf8'
             );
             $xml = $tidyXml;
-
-            //remove all html escape special chars
-            foreach ($regexArray as $regex) {
-                $xml = preg_replace($regex[0], $regex[1], $xml);
-            }
 
             // Remove extra whitespace added around CDATA tags by tidy.
             $xml = preg_replace('/>[\s]+<\!\[CDATA\[/', '><![CDATA[', $xml);
