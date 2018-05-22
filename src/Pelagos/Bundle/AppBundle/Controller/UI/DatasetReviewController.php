@@ -129,10 +129,10 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 $datasetSubmission = $this->latestDatasetSubmissionForReview($request, $datasetSubmission, $dataset, $udi);
 
             } else {
-                $this->addToFlashBag($request, $udi, 'notSubmitted');
+                $this->addToWarningDisplayQue($request, $udi, 'notSubmitted');
             }
         } else {
-            $this->addToFlashBag($request, $udi, 'notFound');
+            $this->addToWarningDisplayQue($request, $udi, 'notFound');
         }
 
         return $this->makeSubmissionForm($udi, $dataset, $datasetSubmission);
@@ -156,11 +156,11 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         switch (true) {
 
             case ($datasetSubmissionStatus === DatasetSubmission::STATUS_INCOMPLETE):
-                $this->addToFlashBag($request, $udi, 'hasDraft');
+                $this->addToWarningDisplayQue($request, $udi, 'hasDraft');
                 break;
 
             case ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER):
-                $this->addToFlashBag($request, $udi, 'backToSub');
+                $this->addToNoticeDisplayQue($request, $udi, 'backToSub');
                 break;
 
             default:
@@ -172,7 +172,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     }
 
     /**
-     * Add error messages to flash bag to show it to the user.
+     * Add warning messages to flash bag to show it to the user.
      *
      * @param Request $request          The Symfony request object.
      * @param string  $udi              The UDI entered by the user.
@@ -181,7 +181,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      *
      * @return void
      */
-    private function addToFlashBag(Request $request, $udi, $error, $reviewerUserName = null)
+    private function addToWarningDisplayQue(Request $request, $udi, $error, $reviewerUserName = null)
     {
         $flashBag = $request->getSession()->getFlashBag();
 
@@ -198,6 +198,29 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
 
         if (array_key_exists($error, $listOfErrors)) {
             $flashBag->add('warning', $listOfErrors[$error]);
+        }
+    }
+
+    /**
+     * Add informational messages to flash bag to show it to the user.
+     *
+     * @param Request $request          The Symfony request object.
+     * @param string  $udi              The UDI entered by the user.
+     * @param integer $noticeCode       The Notice code generated.
+     * @param string  $reviewerUserName Reviewer Username for the Dataset submission review.
+     *
+     * @return void
+     */
+    private function addToNoticeDisplayQue(Request $request, $udi, $noticeCode, $reviewerUserName = null)
+    {
+        $flashBag = $request->getSession()->getFlashBag();
+
+        $listOfNotices = [
+            'backToSub' => "Because this data is currently marked $udi is Back To Submitter, you are viewing user's latest data submission.",
+        ];
+
+        if (array_key_exists($noticeCode, $listOfNotices)) {
+            $flashBag->add('notice', $listOfNotices[$noticeCode]);
         }
     }
 
@@ -558,7 +581,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                             break;
                         case (empty($datasetSubmissionReview->getReviewEndDateTime()) and $datasetSubmissionReview->getReviewedBy() !== $this->getUser()->getPerson()):
                             $reviewerUserName  = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
-                            $this->addToFlashBag($request, $udi, 'locked', $reviewerUserName);
+                            $this->addToWarningDisplayQue($request, $udi, 'locked', $reviewerUserName);
                             break;
                     }
                     break;
