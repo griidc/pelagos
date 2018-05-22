@@ -48,14 +48,15 @@
     <div class="messages status">{{ flashMessage }}</div>
 {% endfor %}
 
+    <!--  Filtering Tabs at the top of MDAPP -->
 <script type="text/javascript">var issueTrackingBaseUrl="{{ issueTrackingBaseUrl }}";</script>
 <div style="background: #fff2e8; padding:0px;" id="tabs">
   <div class="ui-tabs">
     <ul class="ui-tabs-nav">
-        <li style="text-align:center"><a href="#submitted" onClick="clearStatusMessages()">Submitted ({{ m_dataset.submitted|length }})</a></li>
-        <li style="text-align:center"><a href="#inreview" onClick="clearStatusMessages()">In Review ({{ m_dataset.inreview|length }})</a></li>
-        <li style="text-align:center"><a href="#accepted" onClick="clearStatusMessages()" >Accepted ({{ m_dataset.accepted|length }})</a></li>
-        <li style="text-align:center"><a href="#backtosubmitter" onClick="clearStatusMessages()" >Request Revisions ({{ m_dataset.backtosubmitter|length }})</a></li>
+        <li style="text-align:center"><a href="#submitted" onClick="clearStatusMessages()">Submitted -tab ({{ m_dataset.submitted|length }})</a></li>
+        <li style="text-align:center"><a href="#inreview" onClick="clearStatusMessages()">In Review -tab ({{ m_dataset.inreview|length }})</a></li>
+        <li style="text-align:center"><a href="#accepted" onClick="clearStatusMessages()" >Accepted -tab ({{ m_dataset.accepted|length }})</a></li>
+        <li style="text-align:center"><a href="#backtosubmitter" onClick="clearStatusMessages()" >Request Revisions -tab ({{ m_dataset.backtosubmitter|length }})</a></li>
     </ul>
   </div>
 
@@ -106,43 +107,60 @@
                             </td>
                             <td valign="top"><form name="AcceptedState" action="{{ path('pelagos_app_ui_mdapp_changemetadatastatus', {'id': dta.id}) }}" method="post">
                             <select name="to" id="state_sel_{{dta.udi}}">
+                                   {% if sname == 'backtosubmitter' %}
+                                    <!-- <option value="Submitted">Submitted</option> -->
+                                    <!-- <option value="BackToSubmitter" SELECTED>Request Revisions</option> -->
+                                    <option value="InReview" style="background-color: yellow;">InReview - should be a button</option>
+                                    {#
+                                    {% if dta.metadata.id|default %}
+                                        <option value="Accepted">Accepted</option>
+                                    {% endif %}
+                                    #}
+                                    {#
                                     {% if sname == 'submitted' %}
-                                        <option value="Submitted" SELECTED>Submitted</option>
+                                        <option value="Submitted" SELECTED>N/A submitted</option>
+                                        <!--
                                         <option value="InReview" style="background-color: yellow;">InReview</option>
+                                        -->
+                                        {#
                                         {% if dta.metadata.id|default %}
                                             <option value="Accepted">Accepted</option>
                                         {% endif %}
+                                        #}
+                                        <!--
                                         <option value="BackToSubmitter">Request Revisions</option>
-                                    {% elseif sname == 'inreview' %}
+                                        -->
+                                   {#{% elseif sname == 'inreview' %}#}
+                                        <!--
                                         <option value="Submitted">Submitted</option>
                                         <option value="InReview" SELECTED>InReview</option>
+                                        {#
                                         {% if dta.metadata.id|default %}
                                             <option value="Accepted">Accepted</option>
                                         {% endif %}
+                                        #}
                                         <option value="BackToSubmitter">Request Revisions</option>
-                                    {% elseif sname == 'accepted' %}
+                                        -->
+                                    <!--
+                                    {#{% elseif sname == 'accepted' %} #}
                                         <option value="Submitted">Submitted</option>
                                         <option value="Accepted" SELECTED>Accepted</option>
                                         <option value="InReview">InReview</option>
                                         <option value="BackToSubmitter">Request Revisions</option>
-                                    {% elseif sname == 'backtosubmitter' %}
-                                        <option value="Submitted">Submitted</option>
-                                        <option value="BackToSubmitter" SELECTED>Request Revisions</option>
-                                        <option value="InReview" style="background-color: yellow;">InReview</option>
-                                        {% if dta.metadata.id|default %}
-                                            <option value="Accepted">Accepted</option>
-                                        {% endif %}
+                                    -->
+                                    {#
                                     {% else %}
-                                        <option value="Submitted">Submitted</option>
-                                        <option value="InReview">InReview</option>
+                                        <option value="Submitted">Default Submitted</option>
+                                        <option value="InReview">Default InReview</option>
                                         {% if dta.metadata.id|default %}
-                                            <option value="Accepted">Accepted</option>
+                                            <option value="Accepted">Default Accepted</option>
                                         {% endif %}
-                                        <option value="BackToSubmitter">Request Revisions</option>
+                                        <option value="BackToSubmitter">Default Request Revisions</option>
+                                    #}
                                     {% endif %}
 
                             </select>
-                            <input type="submit" value="->" id="state_sel_sub_{{dta.udi}}">
+                            <input type="submit" value="-> go - do it!" id="state_sel_sub_{{dta.udi}}">
                             </form>
                             </td>
                             <td valign="top">{{ dta.datasetSubmission.submissionTimeStamp is defined and dta.datasetSubmission.submissionTimeStamp is not null ? dta.datasetSubmission.submissionTimeStamp | date("c") }}</td>
