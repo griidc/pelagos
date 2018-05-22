@@ -3,12 +3,13 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
-use Pelagos\Bundle\AppBundle\Controller\Api\EntityController;
+use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Exception\PersistenceException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
@@ -16,7 +17,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  *
  * @Route("/dataset-restrictions")
  */
-class DatasetRestrictionsController extends EntityController
+class DatasetRestrictionsController extends UIController
 {
     /**
      * Dataset Restrictions Modifier UI.
@@ -51,40 +52,96 @@ class DatasetRestrictionsController extends EntityController
      *
      * @throws PersistenceException Exception thrown when update fails.
      * @throws BadRequestHttpException Exception thrown when restriction key is null.
-     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @return Response
      */
     public function postAction(Request $request, $id)
     {
-        $entityHandler = $this->container->get('pelagos.entity.handler');
-        $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
         $restrictionKey = $request->request->get('restrictions');
+
+        $datasets = $this->entityHandler->getBy(Dataset::class, array('id' => $id));
 
         // RabbitMQ message to update the DOI for the dataset.
         $rabbitMessage = array(
-            'body' => $datasetSubmission->getDataset()->getId(),
+            'body' => $id,
             'routing_key' => 'publish'
         );
 
-        if ($restrictionKey) {
-            $datasetSubmission->setRestrictions($restrictionKey);
+        if (!empty($datasets)) {
+            $dataset = $datasets[0];
+            $datasetSubmission = $dataset->getDatasetSubmission();
+            $datasetStatus = $dataset->getMetadataStatus();
 
-            try {
+            if ($restrictionKey) {
+                // Record the original state for logging purposes before changing it.
+                $from = $datasetSubmission->getRestrictions();
+                $actor = $this->get('security.token_storage')->getToken()->getUser()->getUserId();
+                $this->dispatchLogRestrictionsEvent($dataset, $actor, $from, $restrictionKey);
 
-                $entityHandler->update($datasetSubmission);
-                // Publish the message to DoiConsumer to update the DOI.
-                $this->get('old_sound_rabbit_mq.doi_issue_producer')->publish(
-                    $rabbitMessage['body'],
-                    $rabbitMessage['routing_key']
-                );
-            } catch (PersistenceException $exception) {
-                throw new PersistenceException($exception->getMessage());
+                $datasetSubmission->setRestrictions($restrictionKey);
+
+                try {
+                    $this->entityHandler->update($datasetSubmission);
+                } catch (PersistenceException $exception) {
+                    throw new PersistenceException($exception->getMessage());
+                }
+
+                if ($datasetStatus === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+                    $this->publishDoiForAccepted($rabbitMessage);
+                }
+
+            } else {
+                // Send 500 response code if restriction key is null
+                throw new BadRequestHttpException('Restiction key is null');
             }
-
-        } else {
-            // Send 500 response code if restriction key is null
-            throw new BadRequestHttpException('Restiction key is null');
         }
         // Send 204(okay) if the restriction key is not null and updated is successful
-        return $this->makeNoContentResponse();
+
+        return new Response('', 204);
+    }
+
+    /**
+     * Method to publish doi for accepted datasets.
+     *
+     * @param array $rabbitMessage The rabbitMq message that needs to be published.
+     *
+     * @return void
+     */
+    private function publishDoiForAccepted(array $rabbitMessage)
+    {
+       // Publish the message to DoiConsumer to update the DOI.
+
+        $this->get('old_sound_rabbit_mq.doi_issue_producer')->publish(
+            $rabbitMessage['body'],
+            $rabbitMessage['routing_key']
+        );
+    }
+
+    /**
+     * Log restriction changes.
+     *
+     * @param Dataset $dataset          The dataset having restrictions modified.
+     * @param string  $actor            The username of the person modifying the restriction.
+     * @param string  $restrictionsFrom The original restriction.
+     * @param mixed   $restrictionsTo   The restriction that was put in place.
+     *
+     * @return void
+     */
+    protected function dispatchLogRestrictionsEvent(Dataset $dataset, $actor, $restrictionsFrom, $restrictionsTo)
+    {
+        $em = $this->container->get('doctrine')->getManager();
+        $this->container->get('pelagos.event.log_action_item_event_dispatcher')->dispatch(
+            array(
+                'actionName' => 'Restriction Change',
+                'subjectEntityName' => $em->getClassMetadata(get_class($dataset))->getName(),
+                'subjectEntityId' => $dataset->getId(),
+                'payLoad' => array(
+                    'userId' => $actor,
+                    'previousRestriction' => $restrictionsFrom,
+                    'newRestriction' => $restrictionsTo,
+                )
+            ),
+            'restrictions_log'
+        );
     }
 }
