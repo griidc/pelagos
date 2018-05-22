@@ -59,7 +59,6 @@ class Metadata
                 'utf8'
             );
             $xml = $tidyXml;
-
             // Remove extra whitespace added around CDATA tags by tidy.
             $xml = preg_replace('/>[\s]+<\!\[CDATA\[/', '><![CDATA[', $xml);
             $xml = preg_replace('/]]>\s+</', ']]><', $xml);
