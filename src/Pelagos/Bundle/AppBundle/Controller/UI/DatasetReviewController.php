@@ -574,6 +574,10 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
                     break;
 
+                case ($datasetSubmissionMetadataStatus == DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER):
+                    $datasetSubmission = $dataset->getDatasetSubmission();
+                    break;
+
                 case ($datasetSubmissionStatus === DatasetSubmission::STATUS_IN_REVIEW and ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_IN_REVIEW or $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_SUBMITTED)):
                     $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
                     switch (true) {
@@ -588,7 +592,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     break;
             }
         }
-
         return $datasetSubmission;
     }
 }
