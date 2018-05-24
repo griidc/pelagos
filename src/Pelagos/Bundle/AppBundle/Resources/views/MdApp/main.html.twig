@@ -108,59 +108,12 @@
                             <td valign="top"><form name="AcceptedState" action="{{ path('pelagos_app_ui_mdapp_changemetadatastatus', {'id': dta.id}) }}" method="post">
                             <select name="to" id="state_sel_{{dta.udi}}">
                                    {% if sname == 'backtosubmitter' %}
-                                    <!-- <option value="Submitted">Submitted</option> -->
-                                    <!-- <option value="BackToSubmitter" SELECTED>Request Revisions</option> -->
-                                    <option value="InReview" style="background-color: yellow;">InReview - should be a button</option>
-                                    {#
-                                    {% if dta.metadata.id|default %}
-                                        <option value="Accepted">Accepted</option>
-                                    {% endif %}
-                                    #}
-                                    {#
-                                    {% if sname == 'submitted' %}
-                                        <option value="Submitted" SELECTED>N/A submitted</option>
-                                        <!--
-                                        <option value="InReview" style="background-color: yellow;">InReview</option>
-                                        -->
-                                        {#
-                                        {% if dta.metadata.id|default %}
-                                            <option value="Accepted">Accepted</option>
-                                        {% endif %}
-                                        #}
-                                        <!--
-                                        <option value="BackToSubmitter">Request Revisions</option>
-                                        -->
-                                   {#{% elseif sname == 'inreview' %}#}
-                                        <!--
-                                        <option value="Submitted">Submitted</option>
-                                        <option value="InReview" SELECTED>InReview</option>
-                                        {#
-                                        {% if dta.metadata.id|default %}
-                                            <option value="Accepted">Accepted</option>
-                                        {% endif %}
-                                        #}
-                                        <option value="BackToSubmitter">Request Revisions</option>
-                                        -->
-                                    <!--
-                                    {#{% elseif sname == 'accepted' %} #}
-                                        <option value="Submitted">Submitted</option>
-                                        <option value="Accepted" SELECTED>Accepted</option>
-                                        <option value="InReview">InReview</option>
-                                        <option value="BackToSubmitter">Request Revisions</option>
-                                    -->
-                                    {#
+                                      <button name="to" value="In Review BTN" id="state_sel_sub_{{dta.udi}}">change to InReview</button>
                                     {% else %}
-                                        <option value="Submitted">Default Submitted</option>
-                                        <option value="InReview">Default InReview</option>
-                                        {% if dta.metadata.id|default %}
-                                            <option value="Accepted">Default Accepted</option>
-                                        {% endif %}
-                                        <option value="BackToSubmitter">Default Request Revisions</option>
-                                    #}
+                                            <p>no action available</p>
                                     {% endif %}
-
                             </select>
-                            <input type="submit" value="-> go - do it!" id="state_sel_sub_{{dta.udi}}">
+                            <input type="submit" value="->" id="state_sel_sub_{{dta.udi}}">
                             </form>
                             </td>
                             <td valign="top">{{ dta.datasetSubmission.submissionTimeStamp is defined and dta.datasetSubmission.submissionTimeStamp is not null ? dta.datasetSubmission.submissionTimeStamp | date("c") }}</td>
