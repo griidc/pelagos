@@ -64,15 +64,23 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
         $datasets = $this->entityHandler
             ->getBy(Dataset::class, array('udi' => substr($udi, 0, 16)));
 
+        // jvh
+        $userName = $this->getUser()->getUsername();
+        $person = $this->getUser()->getPerson();
+
+        $mdappLogger = $this->get('pelagos.util.mdapplogger');
         if (!empty($datasets)) {
             $dataset = $datasets[0];
             $datasetSubmission = (($dataset->getDatasetSubmissionHistory()->first()) ? $dataset->getDatasetSubmissionHistory()->first() : null);
             $datasetSubmissionMetadataStatus = $dataset->getMetadataStatus();
             $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
+            // jvh
+            $beforeStatus = DatasetSubmission::METADATA_STATUSES[$datasetSubmissionMetadataStatus];
+            $afterStatus = DatasetSubmission::METADATA_STATUSES[DatasetSubmission::DATASET_END_REVIEW];
 
             if ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_IN_REVIEW and
                 empty($datasetSubmissionReview->getReviewEndDateTime())) {
-                $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_END_REVIEW);
+                $datasetSubmission->reviewEvent($person, DatasetSubmission::DATASET_END_REVIEW);
                 $this->entityHandler->update($datasetSubmissionReview);
                 $this->entityHandler->update($datasetSubmission);
                 $reviewerUserName  = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
@@ -83,6 +91,15 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
                     $datasetSubmission,
                     'end_review'
                 );
+                // jvh
+                $mdappLogger->writeLog(
+                    $mdappLogger->createReviewChangeMessage(
+                        $userName,
+                        'End Review',
+                        $beforeStatus,
+                        $afterStatus,
+                        $udi ) );
+                    )
             } else {
                 $this->addToFlashBag($request, $udi, 'notInReview');
             }
