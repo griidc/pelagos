@@ -74,9 +74,6 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
             $datasetSubmission = (($dataset->getDatasetSubmissionHistory()->first()) ? $dataset->getDatasetSubmissionHistory()->first() : null);
             $datasetSubmissionMetadataStatus = $dataset->getMetadataStatus();
             $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
-            // jvh
-            $beforeStatus = DatasetSubmission::METADATA_STATUSES[$datasetSubmissionMetadataStatus];
-            $afterStatus = DatasetSubmission::METADATA_STATUSES[DatasetSubmission::DATASET_END_REVIEW];
 
             if ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_IN_REVIEW and
                 empty($datasetSubmissionReview->getReviewEndDateTime())) {
@@ -91,15 +88,6 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
                     $datasetSubmission,
                     'end_review'
                 );
-                // jvh
-                $mdappLogger->writeLog(
-                    $mdappLogger->createReviewChangeMessage(
-                        $userName,
-                        'End Review',
-                        $beforeStatus,
-                        $afterStatus,
-                        $udi ) );
-                    )
             } else {
                 $this->addToFlashBag($request, $udi, 'notInReview');
             }
