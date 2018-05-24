@@ -56,11 +56,12 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
     {
         $entityHandler = $this->get('pelagos.entity.handler');
         $mdappLogger = $this->get('pelagos.util.mdapplogger');
+        $mdappLogger->writeLog("MdappControll.php. changeMetadataStatusAction(id:" . $id .")");
         $dataset = $entityHandler->get(Dataset::class, $id);
         $from = $dataset->getMetadataStatus();
         $udi = $dataset->getUdi();
         $to = $request->request->get('to');
-
+        $mdappLogger->writeLog("MdappControll.php. changeMetadataStatusAction()\n from: " . $from . "\n to: " . $to );
         $message = null;
         if (null !== $to) {
             if ('Accepted' == $to) {
@@ -83,7 +84,7 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
                 $entityHandler->update($datasetSubmission);
                 $entityHandler->update($dataset);
                 $mdappLogger->writeLog($this->getUser()->getUsername() .
-                    'has changed status for ' . $udi . '(' . $this->getFlashBagStatus($from) . '->'
+                    ' has changed status for ' . $udi . '(' . $this->getFlashBagStatus($from) . '->'
                     . $this->getFlashBagStatus($to) . '(mdapp msg))');
                 $message = 'Status for ' . $udi . ' has been changed from ' . $this->getFlashBagStatus($from) . ' to '
                     . $this->getFlashBagStatus($to);
@@ -101,6 +102,7 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
      */
     protected function renderUi()
     {
+        print("MdappControll.php. renderUI()");
         // If not DRPM, show Access Denied message.  This is simply for
         // display purposes as the security model is enforced on the
         // object by the handler.
@@ -123,7 +125,6 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
             array(
                 'issueTrackingBaseUrl' => $this->getParameter('issue_tracking_base_url'),
                 'm_dataset' => array(
-
                     'submitted' => $entityHandler->getBy(
                         Dataset::class,
                         array('metadataStatus' => DatasetSubmission::METADATA_STATUS_SUBMITTED),
@@ -131,7 +132,6 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
                         $objNeeded,
                         Query::HYDRATE_ARRAY
                     ),
-
                     'inreview' => $entityHandler->getBy(
                         Dataset::class,
                         array('metadataStatus' => DatasetSubmission::METADATA_STATUS_IN_REVIEW),
@@ -139,6 +139,7 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
                         $objNeeded,
                         Query::HYDRATE_ARRAY
                     ),
+
                     'accepted' => $entityHandler->getBy(
                         Dataset::class,
                         array('metadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED),
