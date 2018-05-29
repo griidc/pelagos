@@ -30,7 +30,7 @@ class Metadata
      * Creates and returns an ISO-19115-2 XML representation of metadata as a string.
      *
      * @param Dataset $dataset          The Pelagos Dataset to generate ISO metadata for.
-     * @param array   $boundingBoxArray The bouding box array for the spatial extent.
+     * @param array   $boundingBoxArray The bounding box array for the spatial extent.
      *
      * @return string||null of generated XML metadata.
      */
