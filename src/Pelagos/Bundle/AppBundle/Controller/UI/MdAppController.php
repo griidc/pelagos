@@ -62,13 +62,14 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
         $to = $request->request->get('to');
         $message = null;
         if (null !== $to) {
-            if ( 'InReview' == $to) {
+            if ('InReview' == $to) {
                 $datasetSubmission = $dataset->getDatasetSubmission();
                 $datasetSubmission->setMetadataStatus($to);
                 $entityHandler->update($datasetSubmission);
                 $entityHandler->update($dataset);
-                $mdappLogger->writeLog($this->getUser()->getUsername() .
-                    ' changed status for ' . $udi . '(' . $this->getFlashBagStatus($from) . ' >>> '
+
+                $mdappLogger->writeLog($this->getUser()->getUsername()
+                    . ' changed status for ' . $udi . '(' . $this->getFlashBagStatus($from) . ' >>> '
                     . $this->getFlashBagStatus($to) . ')' );
                 $message = 'Status for ' . $udi . ' has been changed from ' . $this->getFlashBagStatus($from) . ' to '
                     . $this->getFlashBagStatus($to);
@@ -78,7 +79,7 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
         $this->get('session')->getFlashBag()->add('notice', $message);
         return $this->redirectToRoute('pelagos_app_ui_mdapp_default');
     }
-
+    
     /**
      * Render the UI for MDApp.
      *
