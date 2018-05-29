@@ -64,11 +64,6 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
         $datasets = $this->entityHandler
             ->getBy(Dataset::class, array('udi' => substr($udi, 0, 16)));
 
-        // jvh
-        $userName = $this->getUser()->getUsername();
-        $person = $this->getUser()->getPerson();
-
-        $mdappLogger = $this->get('pelagos.util.mdapplogger');
         if (!empty($datasets)) {
             $dataset = $datasets[0];
             $datasetSubmission = (($dataset->getDatasetSubmissionHistory()->first()) ? $dataset->getDatasetSubmissionHistory()->first() : null);
@@ -77,17 +72,11 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
 
             if ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_IN_REVIEW and
                 empty($datasetSubmissionReview->getReviewEndDateTime())) {
-                $datasetSubmission->reviewEvent($person, DatasetSubmission::DATASET_END_REVIEW);
+                $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_END_REVIEW);
                 $this->entityHandler->update($datasetSubmissionReview);
                 $this->entityHandler->update($datasetSubmission);
                 $reviewerUserName  = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
                 $this->addToFlashBag($request, $udi, 'reviewEnded', $reviewerUserName);
-
-                // update MDAPP logs after action is executed.
-                $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
-                    $datasetSubmission,
-                    'end_review'
-                );
             } else {
                 $this->addToFlashBag($request, $udi, 'notInReview');
             }
