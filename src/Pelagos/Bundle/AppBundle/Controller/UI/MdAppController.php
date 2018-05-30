@@ -67,12 +67,10 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
                 $datasetSubmission->setMetadataStatus($to);
                 $entityHandler->update($datasetSubmission);
                 $entityHandler->update($dataset);
-
-                $mdappLogger->writeLog($this->getUser()->getUsername()
-                    . ' changed status for ' . $udi . '(' . $this->getFlashBagStatus($from) . ' >>> '
-                    . $this->getFlashBagStatus($to) . ')' );
-                $message = 'Status for ' . $udi . ' has been changed from ' . $this->getFlashBagStatus($from) . ' to '
-                    . $this->getFlashBagStatus($to);
+                $mdappLogger->writeLog($this->getUser()->getUsername() . ' changed status for ' .
+                    $udi . '(' . $this->getFlashBagStatus($from) . ' >>> ' . $this->getFlashBagStatus($to) . ')');
+                $message = 'Status for ' . $udi . ' has been changed from ' .
+                    $this->getFlashBagStatus($from) . ' to ' . $this->getFlashBagStatus($to);
             }
         }
 
