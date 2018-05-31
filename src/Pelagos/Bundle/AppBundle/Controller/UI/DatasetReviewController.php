@@ -160,8 +160,12 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 break;
 
             case ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER):
-                $this->addToNoticeDisplayQue($request, $udi, 'backToSub');
-                $datasetSubmission = $this->reviewMode($request, $datasetSubmission, $dataset, $udi);
+                if ('view' == $this->mode) {
+                    $this->addToNoticeDisplayQue($request, $udi, 'backToSub');
+                    $datasetSubmission = $this->reviewMode($request, $datasetSubmission, $dataset, $udi);
+                } else {
+                    $this->addToWarningDisplayQue($request, $udi, 'requestRevision');
+                }
                 break;
 
             default:
