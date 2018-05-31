@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Output\StreamOutput;
 
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
@@ -34,7 +35,8 @@ class WriteRawAndGeneratedXmlCommand extends ContainerAwareCommand
     {
         $this
             ->setName('dataset:write-metadata-files')
-            ->setDescription('Write both the raw XML metadata and an entity-source generated XML file for every accepted data.')
+            ->setDescription('Write both the raw XML metadata and an entity-source generated XML file '
+            . 'for every accepted data.')
             ->addArgument('UDI', InputArgument::OPTIONAL, 'UDI of single dataset to write.');
     }
 
@@ -53,35 +55,56 @@ class WriteRawAndGeneratedXmlCommand extends ContainerAwareCommand
 
         $em = $this->getContainer()->get('doctrine.orm.entity_manager');
         if ($udi) {
-            $datasets = $em->getRepository('Pelagos\Entity\Dataset')->findBy(array('udi' => $udi, 'metadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED, 'availabilityStatus' !=> DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED));
+            $datasets = $em->getRepository('Pelagos\Entity\Dataset')->findBy(
+                array(
+                    'udi' => $udi,
+                    'metadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED
+                )
+            );
             $output->writeln("Handling single retrieval for user-provided udi of an accepted dataset: $udi.");
         } else {
-            $datasets = $em->getRepository('Pelagos\Entity\Dataset')->findBy(array('metadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED, 'availabilityStatus' !=> DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED));
+            $datasets = $em->getRepository('Pelagos\Entity\Dataset')->findBy(
+                array(
+                    'metadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED
+                )
+            );
             $output->writeln('Processing all ' . count($datasets) . ' accepted datasets.');
         }
 
 
         foreach ($datasets as $dataset) {
-            $udi = $dataset->getUdi();
-            $output->writeln("Processing $udi.");
-            $metadata = $dataset->getMetadata();
-            #$output->writeln("Writing historical XML for $udi as $udi-raw.xml");
-            #if ($metadata instanceof Metadata) {
-            #    // Write XML from Metadata Entity
-            #} else {
-            #    // write empty file
-            #}
+            // Check to see if dataset has a distribution contact, otherwise don't attempt.
+            if (count($dataset->getDatasetSubmission()->getDistributionPoints()) > 0) {
+                $udi = $dataset->getUdi();
+                $outdir = $_SERVER['HOME'] . '/output';
+                $newXMLOutputFile = "$udi.generated.xml";
+                $oldXMLOutputFile = "$udi.historical.xml";
+                $newXMLOutput = new StreamOutput(fopen("$outdir/$newXMLOutputFile", 'w'));
+                $oldXMLOutput = new StreamOutput(fopen("$outdir/$oldXMLOutputFile", 'w'));
 
-            // Write XML from Generator (Entity sourced).
-            $output->writeln("Writing Generated XML for $udi as $udi-generated.xml");
-            $boundingBoxArray = $this->getBoundingBox($dataset);
-            $xml = $this->getContainer()->get('pelagos.util.metadata')->getXmlRepresentation($dataset, $boundingBoxArray);
-            $output->writeln($xml);
+                $output->writeln("Processing $udi.");
 
+                // Write XML from Generator (Entity sourced).
+                $output->writeln("Writing Generated XML for $udi as: $outdir/$newXMLOutputFile.");
+                $boundingBoxArray = $this->getBoundingBox($dataset);
+                $xml = $this->getContainer()->get('pelagos.util.metadata')->getXmlRepresentation(
+                    $dataset,
+                    $boundingBoxArray
+                );
+                $newXMLOutput->writeln($xml);
+
+                // Write historical XML from Metadata Entity.
+                $output->writeln("Writing historical XML for $udi as $udi-raw.xml");
+                $metadata = $dataset->getMetadata();
+                if ($metadata instanceof Metadata) {
+                    $oldXMLOutput->writeln($metadata->getXml()->asXML());
+                }
+
+            } else {
+                $output->writeln("$udi missing distribution point. Skipping.");
+            }
         }
-
         $this->output = $output;
-
         return 0;
     }
 
@@ -107,6 +130,4 @@ class WriteRawAndGeneratedXmlCommand extends ContainerAwareCommand
         }
         return $boundingBoxArray;
     }
-
-
 }
