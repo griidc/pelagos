@@ -41,7 +41,6 @@ services:
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.dataset_processed, method: onDatasetProcessed }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.html_found, method: onHtmlFound }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.dataset_unprocessable, method: onDatasetUnprocessable }
-            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.approved, method: onApproved }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.start_review, method: onStartReview }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.end_review, method: onEndReview }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.accept_review, method: onAcceptReview }
@@ -55,7 +54,8 @@ services:
         arguments: ["@doctrine.orm.entity_manager"]
         tags:
             - { name: kernel.event_listener, event: pelagos.logactionitem.file_download, method: onNewLogCreated }
-            - { name: kernel.event_listener, event: pelagos.logactionitem.search_terms_log, method: onNewLogCreated}
+            - { name: kernel.event_listener, event: pelagos.logactionitem.search_terms_log, method: onNewLogCreated }
+            - { name: kernel.event_listener, event: pelagos.logactionitem.restrictions_log, method: onNewLogCreated }
 
     pelagos.account.listener:
         class: Pelagos\Event\AccountListener

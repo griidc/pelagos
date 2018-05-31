@@ -151,6 +151,79 @@ class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
                 'updateAvailabilityStatus' => null,
                 'updateDoi' => null,
                 'setMetadataStatus' => null,
+                'getDatasetSubmissionHistory' => \Mockery::mock(
+                    'Pelagos\Entity\DatasetSubmission',
+                    array(
+                        'first' => \Mockery::mock(
+                            'Pelagos\Entity\DatasetSubmission',
+                            array(
+                                'getDataset' => $this->mockDataset,
+                                'getSequence' => 2012,
+                                'getTitle' => 'title from mock dataset submission',
+                                'getShortTitle' => 'short title from mock dataset submission',
+                                'getAbstract' => 'abstract from mock dataset submission',
+                                'getAuthors' => 'authors from mock dataset submission',
+                                'getRestrictions' => 'author only',
+                                'getDoi' => 'AZ.x012.3456:7890',
+                                'getDatasetFileTransferType' => 'transfer type from mock dataset submission',
+                                'getDatasetFileUri' => 'uri from mock dataset submission',
+                                'getDatasetFileTransferStatus' => 'status from mock dataset submission',
+                                'getDatasetFileName' => 'dataset file name from mock dataset submission',
+                                'getDatasetFileSize' => '12345',
+                                'getDatasetFileMd5Hash' => '69630e4574ec6798239b091cda43dca0',
+                                'getDatasetFileSha1Hash' => 'cf8bd9dfddff007f75adf4c2be48005cea317c62',
+                                'getDatasetFileSha256Hash' => '131f95c51cc819465fa1797f6ccacf9d494aaaff46fa3eac73ae63ffbdfd8267',
+                                'getMetadataFileTransferType' => 'metadataFileTransferType from mock dataset submission',
+                                'getMetadataFileUri' => 'metadataFileUri from mock dataset submission',
+                                'getMetadataFileTransferStatus' => 'xfer status from mock dataset submission',
+                                'getMetadataFileName' => 'metadata file name from mock dataset submission',
+                                'getMetadataFileSha256Hash' => 'metadata file sha256 from mock dataset submission',
+                                'getMetadataStatus' => 'metadata status from mock dataset submission',
+                                'getReferenceDate' => $this->testingDatetime,
+                                'getReferenceDateType' => 'creation',
+                                'getPurpose' => 'purpose from mock dataset submission',
+                                'getSuppParams' => 'SuppParams from mock dataset submission',
+                                'getSuppMethods' => 'SuppMethods from mock dataset submission',
+                                'getSuppInstruments' => 'SuppInstruments from mock dataset submission',
+                                'getSuppSampScalesRates' => 'SuppSampScalesRates from mock dataset submission',
+                                'getSuppErrorAnalysis' => 'SuppErrorAnalysis from mock dataset submission',
+                                'getSuppProvenance' => 'SuppProvenance from mock dataset submission',
+                                'getThemeKeywords' => array('theme', 'keywords', 'from', 'mock', 'dataset'),
+                                'getPlaceKeywords' => array('place', 'keywords', 'from', 'mock', 'dataset'),
+                                'getTopicKeywords' => array('oceans', 'biota'),
+                                'getSpatialExtent' => 'spatial extent from mock dataset submission',
+                                'getSpatialExtentDescription' => 'spatial extent description from mock dataset submission',
+                                'getTemporalExtentDesc' => 'ground condition and modeled period',
+                                'getTemporalExtentBeginPosition' => $this->testingDatetime,
+                                'getTemporalExtentEndPosition' => $this->testingDatetime,
+                                'getTemporalExtentNilReasonType' => 'unknown',
+                                'getDistributionFormatName' => 'DistributionFormatName from mock dataset submission',
+                                'getFileDecompressionTechnique' => 'zip',
+                                'getPrimaryDatasetContact' => $this->mockPersonDatasetSubmissionDatasetContact,
+                                'getDatasetContacts' => new ArrayCollection(array($this->mockPersonDatasetSubmissionDatasetContact)),
+                                'getSubmitter' => $this->mockPerson,
+                                'getSubmissionTimeStamp' => $this->testingDatetime,
+                                'getMetadataContacts' => new ArrayCollection(array($this->mockPersonDatasetSubmissionMetadataContact)),
+                                'getDistributionPoints' => new ArrayCollection(array(\Mockery::mock(
+                                    'Pelagos\Entity\DistributionPoint',
+                                    array(
+                                        'getId' => 2222,
+                                        'getRoleCode' => 'distributor',
+                                        'getDataCenter' => \Mockery::mock(
+                                            'Pelagos\Entity\DataCenter',
+                                            array(
+                                                'getId' => 1234,
+                                                'getOrganizationName' => 'testOrgName',
+                                                'getOrganizationUrl' => 'testOrgUrl',
+                                            )
+                                        ),
+                                        'getDistributionUrl' => 'testDistributionUrl',
+                                    )
+                                ))),
+                            )
+                        ),
+                    )
+                )
             )
         );
 

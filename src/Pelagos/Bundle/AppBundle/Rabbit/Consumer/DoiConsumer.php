@@ -210,6 +210,10 @@ class DoiConsumer implements ConsumerInterface
      */
     protected function publishDoi(Dataset $dataset, array $loggingContext)
     {
+        // Additional check for publishing only accepted datasets(unlikely to happen).
+        if ($dataset->getMetadataStatus() !== DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+            return true;
+        }
         // Log processing start.
         $this->logger->info('Attempting to mark DOI as published', $loggingContext);
 
@@ -221,33 +225,70 @@ class DoiConsumer implements ConsumerInterface
 
         $loggingContext['doi'] = $doi->getDoi();
 
-        // Don't attempt to publish an already published DOI to preserve the original pub date.
-        if ($doi->getStatus() == DOI::STATUS_PUBLIC) {
-            $this->logger->warning('DOI for dataset already marked as published', $loggingContext);
-        }
+        $doiStatus = $doi->getStatus();
 
-        $status = DOI::STATUS_PUBLIC;
+        $restriction = $dataset->getDatasetSubmission()->getRestrictions();
 
-        if ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED) {
-            $status = DOI::STATUS_UNAVAILABLE;
-            $this->logger->info('Dataset is restriced, making DOI unavailable.', $loggingContext);
-        }
+        if ($this->validatePublish($dataset, $doiStatus, $loggingContext)) {
+            $status = $this->getDoiStatus($restriction);
+            try {
+                $doiUtil = new DOIutil();
+                $doiUtil->publishDOI($doi, $status);
 
-        try {
-            $doiUtil = new DOIutil();
-            $doiUtil->publishDOI($doi, $status);
-
-            $doi->setStatus(DOI::STATUS_PUBLIC);
-            $doi->setPublicDate(new \DateTime);
-            $doi->setModifier($dataset->getModifier());
-        } catch (\Exception $exception) {
-            $this->logger->error('Error setting DOI to published: ' . $exception->getMessage(), $loggingContext);
-            return;
+                $doi->setStatus($status);
+                $doi->setPublicDate(new \DateTime);
+                $doi->setModifier($dataset->getModifier());
+            } catch (\Exception $exception) {
+                $this->logger->error('Error setting DOI to published: ' . $exception->getMessage(), $loggingContext);
+                return;
+            }
         }
 
         // Dispatch entity event.
         $this->entityEventDispatcher->dispatch($dataset, 'doi_published');
         // Log processing complete.
         $this->logger->info('DOI set to published', $loggingContext);
+    }
+
+    /**
+     * Validate publish for DOI for the dataset.
+     *
+     * @param string $restriction    The restriction for the dataset.
+     * @param string $doiStatus      The status of the DOI for the dataset.
+     * @param array  $loggingContext The logging context to use when logging.
+     *
+     * @return boolean
+     */
+    private function validatePublish($restriction, $doiStatus, array $loggingContext)
+    {
+        if ($doiStatus === DOI::STATUS_PUBLIC and $restriction === DatasetSubmission::RESTRICTION_NONE) {
+            // Don't attempt to publish an already published DOI to preserve the original pub date.
+            $this->logger->warning('DOI for dataset already marked as published', $loggingContext);
+            return false;
+        } elseif ($doiStatus !== DOI::STATUS_PUBLIC and $restriction === DatasetSubmission::RESTRICTION_NONE) {
+            $this->logger->info('DOI for dataset is being published', $loggingContext);
+            return true;
+        } elseif ($doiStatus === DOI::STATUS_PUBLIC and $restriction !== DatasetSubmission::RESTRICTION_NONE) {
+            $this->logger->info('DOI for dataset is being set to unavailable', $loggingContext);
+            return true;
+        }
+        return true;
+    }
+
+    /**
+     * Get the Doi status to be persisted.
+     *
+     * @param string $restriction The restriction status for the dataset.
+     *
+     * @return string
+     */
+    private function getDoiStatus($restriction)
+    {
+        $status = DOI::STATUS_PUBLIC;
+        if ($restriction === DatasetSubmission::RESTRICTION_RESTRICTED) {
+            $status = DOI::STATUS_UNAVAILABLE;
+        }
+
+        return $status;
     }
 }

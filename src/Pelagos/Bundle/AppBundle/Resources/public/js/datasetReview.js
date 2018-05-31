@@ -155,7 +155,7 @@ $(document).ready(function(){
             btnPrevious.show();
             btnPrevious.button("enable");
         }
-        if (activeTab === 5) {
+        if (activeTab === 7) {
             btnNext.button("disable");
             btnNext.hide();
         } else {

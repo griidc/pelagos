@@ -29,7 +29,7 @@ class LogActionItemEventListener extends EventListener
     }
 
     /**
-     * Method to persist a new LogAcionItem object to the database.
+     * Method to persist a new LogActionItem object to the database.
      *
      * @param LogActionItemEvent $event Event being acted upon.
      *
