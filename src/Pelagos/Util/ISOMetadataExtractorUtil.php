@@ -17,6 +17,34 @@ use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 class ISOMetadataExtractorUtil
 {
     /**
+     * This array is used to replace xml escape chars and nested xml escape chars with their corresponding text character.
+     *
+     * @var array $regex Array of escape character's regular expression and its text value.
+     */
+    private static $escapeCharsRegex = [
+        [
+            'expression' => '/(&amp;amp;|&amp;)/',
+            'value'      => '&'
+        ],
+        [
+            'expression' => '/(&lt;lt;|&lt;)/',
+            'value'      => '<'
+        ],
+        [
+            'expression' => '/(&gt;gt;|&gt;)/',
+            'value'      => '>'
+        ],
+        [
+            'expression' => '/(&quot;quot;|&quot;)/',
+            'value'      => '"'
+        ],
+        [
+            'expression' => '/(&apos;apos;|&#039;#039;|&apos;|&#039;)/',
+            'value'      => "'"
+        ]
+    ];
+
+    /**
      * Conditionally populates Dataset Submission object, by reference.
      *
      * Return a DatasetSubmission object populated with values from both
@@ -83,6 +111,11 @@ class ISOMetadataExtractorUtil
     {
         if (!empty($value)) {
             try {
+                if (is_string($value)) {
+                    foreach (self::$escapeCharsRegex as $regEx) {
+                        $value = preg_replace($regEx['expression'], $regEx['value'], $value);
+                    }
+                }
                 $ds->$setter($value);
             } catch (\InvalidArgumentException $e) {
                 // couldn't set.
