@@ -567,15 +567,16 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         $datasetSubmissionStatus = (($datasetSubmission) ? $datasetSubmission->getStatus() : null);
         $datasetSubmissionMetadataStatus = $dataset->getMetadataStatus();
         if ($this->mode === 'view') {
+            // IFF the event we're viewing a BACK_TO_SUBMITTER dataset, use the one pointed referenced by Dataset
+            // as this will be the user's most recent submission, not a possible reviewer's version.
+            if ($datasetSubmissionMetadataStatus == DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
+                $datasetSubmission = $dataset->getDatasetSubmission();
+            }
             return $datasetSubmission;
         } elseif ($this->mode === 'review') {
             switch (true) {
                 case ($datasetSubmissionStatus === DatasetSubmission::STATUS_COMPLETE and $datasetSubmissionMetadataStatus !== DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER):
                     $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
-                    break;
-
-                case ($datasetSubmissionMetadataStatus == DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER):
-                    $datasetSubmission = $dataset->getDatasetSubmission();
                     break;
 
                 case ($datasetSubmissionStatus === DatasetSubmission::STATUS_IN_REVIEW and ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_IN_REVIEW or $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_SUBMITTED)):
