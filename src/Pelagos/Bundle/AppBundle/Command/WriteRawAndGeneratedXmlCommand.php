@@ -94,7 +94,7 @@ class WriteRawAndGeneratedXmlCommand extends ContainerAwareCommand
                 $newXMLOutput->writeln($xml);
 
                 // Write historical XML from Metadata Entity.
-                $output->writeln("Writing historical XML for $udi as $udi-raw.xml");
+                $output->writeln("Writing historical XML for $udi as $outdir/$oldXMLOutputFile");
                 $metadata = $dataset->getMetadata();
                 if ($metadata instanceof Metadata) {
                     $oldXMLOutput->writeln($metadata->getXml()->asXML());
