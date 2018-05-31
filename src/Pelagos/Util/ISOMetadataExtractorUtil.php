@@ -21,7 +21,7 @@ class ISOMetadataExtractorUtil
      *
      * @var array $regex Array of escape character's regular expression and its text value.
      */
-    private static $escapeCharsRegex = [
+    public static $escapeCharsRegex = [
         [
             'expression' => '/(&amp;amp;|&amp;)/',
             'value'      => '&'
