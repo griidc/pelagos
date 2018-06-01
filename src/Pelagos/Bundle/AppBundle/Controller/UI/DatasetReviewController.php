@@ -59,7 +59,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         $mode = $request->query->get('mode');
 
 
-        if ($udi !== null) {
+        if (null !== $udi) {
             if (!empty($mode) and in_array($mode, $reviewModes)) {
                 $this->mode = $mode;
             } else {
@@ -91,7 +91,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      */
     private function authForReview()
     {
-        if ($this->mode === 'review') {
+        if ('review' === $this->mode) {
             if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
                 return true;
             }
@@ -160,7 +160,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 break;
 
             case ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER):
-                if ('view' == $this->mode) {
+                if ('view' === $this->mode) {
                     $this->addToNoticeDisplayQue($request, $udi, 'backToSub');
                     $datasetSubmission = $this->reviewMode($request, $datasetSubmission, $dataset, $udi);
                 } else {
@@ -315,7 +315,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         // If there are no research groups, substitute in '!*'
         // to ensure the query sent by datatables does not try and
         // search for a blank parameter.
-        if (0 === count($researchGroupList)) {
+        if (count($researchGroupList) === 0) {
             $researchGroupList = array('!*');
         }
 
@@ -570,14 +570,14 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     {
         $datasetSubmissionStatus = (($datasetSubmission) ? $datasetSubmission->getStatus() : null);
         $datasetSubmissionMetadataStatus = $dataset->getMetadataStatus();
-        if ($this->mode === 'view') {
+        if ('view' === $this->mode) {
             // IFF the event we're viewing a BACK_TO_SUBMITTER dataset, use the one pointed referenced by Dataset
             // as this will be the user's most recent submission, not a possible reviewer's version.
             if ($datasetSubmissionMetadataStatus == DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
                 $datasetSubmission = $dataset->getDatasetSubmission();
             }
             return $datasetSubmission;
-        } elseif ($this->mode === 'review') {
+        } elseif ('review' === $this->mode) {
             switch (true) {
                 case ($datasetSubmissionStatus === DatasetSubmission::STATUS_COMPLETE and $datasetSubmissionMetadataStatus !== DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER):
                     $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
