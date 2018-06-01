@@ -76,9 +76,10 @@ class WriteRawAndGeneratedXmlCommand extends ContainerAwareCommand
             // Check to see if dataset has a distribution contact, otherwise don't attempt.
             if (count($dataset->getDatasetSubmission()->getDistributionPoints()) > 0) {
                 $udi = $dataset->getUdi();
+                $nudi = preg_replace('/:/', '.', $udi);
                 $outdir = $_SERVER['HOME'] . '/output';
-                $newXMLOutputFile = "$udi.generated.xml";
-                $oldXMLOutputFile = "$udi.historical.xml";
+                $newXMLOutputFile = "$nudi.generated.xml";
+                $oldXMLOutputFile = "$nudi.historical.xml";
                 $newXMLOutput = new StreamOutput(fopen("$outdir/$newXMLOutputFile", 'w'));
                 $oldXMLOutput = new StreamOutput(fopen("$outdir/$oldXMLOutputFile", 'w'));
 
