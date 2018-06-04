@@ -874,6 +874,12 @@ class ISOMetadataExtractorUtil
             }
             // remove new lines
             $value = trim(preg_replace('/\s+/', ' ', $value));
+
+            //replace xml escape chars
+            while (preg_match_all('/\&(amp|quot|lt|gt|#039|apos)\;/', $value)) {
+                $value = htmlspecialchars_decode($value, (ENT_QUOTES | ENT_XML1));
+            }
+
             return $value;
         } else {
             return null;
