@@ -88,6 +88,13 @@
                 {% elseif mode == 'review' %}
                     <div class="pelagosNoty" text = "Dataset Identifier <b>'{{ udi }}'</b> was found and is in REVIEW mode." type = "success"></div>
                 {% endif %}
+                {% if app.session.flashbag.has('notice') %}
+                    {% for label, messages in app.session.flashbag.all %}
+                        {% for message in messages %}
+                        <div class="pelagosNoty" text="{{message}}" type="success"></div>
+                        {% endfor %}
+                    {% endfor %}
+            {% endif %}
             </div>
             {% include 'PelagosAppBundle:DatasetReview:submission-form.html.twig' %}
         {% endif %}
