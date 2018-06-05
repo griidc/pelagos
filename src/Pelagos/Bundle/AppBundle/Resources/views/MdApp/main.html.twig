@@ -107,22 +107,35 @@
                             </td>
                             <td valign="top">
                                 <form name="AcceptedState" action="{{ path('pelagos_app_ui_mdapp_changemetadatastatus', {'id': dta.id}) }}" method="post">
-                            <!--<select name="to" id="state_sel_{{dta.udi}}"> -->
                                    {% if sname == 'backtosubmitter' %}
+                                       <!-- JVH ??? -->
+                                       <!--  this works, submits the form -->
                                        <button name="to" value="InReview" id="state_sel_sub_{{dta.udi}}">change to InReview</button>
-                                       <!-- <input type="submit" value="change to InReview" id="state_sel_sub_{{dta.udi}}"> -->
+                                       <!--  this does NOT work, it does not submit the form  -
+                                       <input type="button" value="InReview"
+                                              name= "to"
+                                              id="state_sel_sub_{{dta.udi}}">
+                                       -->
+                                       <!--  this does NOT submit the form, the call back to js function works
+                                         Change to <input type="button" value="InReview"
+                                                        onclick="javascript:jvhHitInReviewButton('{{dta.udi}}')"
+                                                        id="change_from_request_revisions_to_in_review{{dta.udi}}">
+                                         -->
+                                         <!--  this works and submits the form
+                                       change to <input type="submit" name="to" value="InReview" id="state_sel_sub_{{dta.udi}}">
+                                       -->
                                     {% else %}
                                         <p>no action available</p>
                                     {% endif %}
-                            <!-- </select>  -->
                             </form>
                             </td>
                             <td valign="top">{{ dta.datasetSubmission.submissionTimeStamp is defined and dta.datasetSubmission.submissionTimeStamp is not null ? dta.datasetSubmission.submissionTimeStamp | date("c") }}</td>
                             <td valign="top">
                                 <table id="filedisp">
                                     <tr>
-                                        <td id="button"><button style="font-size:66%" onclick="javascript:showLogEntries('{{dta.udi}}')" id="log_butt_{{dta.udi}}">Log</button></td>
-
+                                        <td id="button"><button style="font-size:66%"
+                                                                onclick="javascript:showLogEntries('{{dta.udi}}')"
+                                                                id="log_butt_{{dta.udi}}">Log</button></td>
                                         {% if dta.datasetsubmission.MetadataFileName|default %}
                                             <td id="md_filename">{{ dta.udi }}</td>
                                         {% else %}

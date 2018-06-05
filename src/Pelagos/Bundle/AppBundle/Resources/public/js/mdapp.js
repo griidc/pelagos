@@ -127,3 +127,7 @@ function showLogEntries(udi){
             }
     });
 }
+
+function jvhHitInReviewButton(udi){
+    alert("Test: Hit the InReview button on Mdapp for UDI " + udi);
+}

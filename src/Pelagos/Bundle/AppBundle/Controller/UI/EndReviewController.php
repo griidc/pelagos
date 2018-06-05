@@ -72,6 +72,7 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
 
             if ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_IN_REVIEW and
                 !empty($datasetSubmissionReview) and
+                $datasetSubmissionReview instanceOf DatasetSubmissionReview and
                 empty($datasetSubmissionReview->getReviewEndDateTime())) {
                 $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_END_REVIEW);
                 $this->entityHandler->update($datasetSubmissionReview);
@@ -84,7 +85,6 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
                     $datasetSubmission,
                     'end_review'
                 );
-
             } else {
                 $this->addToFlashBag($request, $udi, 'notInReview');
             }

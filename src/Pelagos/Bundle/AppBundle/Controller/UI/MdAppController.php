@@ -56,10 +56,12 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
     {
         $entityHandler = $this->get('pelagos.entity.handler');
         $mdappLogger = $this->get('pelagos.util.mdapplogger');
+
         $dataset = $entityHandler->get(Dataset::class, $id);
         $from = $dataset->getMetadataStatus();
         $udi = $dataset->getUdi();
         $to = $request->request->get('to');
+        $mdappLogger->writeLog('Im inside changeMetadataStatusAction() udi: ' . $udi . ', from: ' . $from .', to: ' . $to);
         $message = null;
         if (null !== $to) {
             if ('InReview' == $to) {
@@ -85,6 +87,7 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
      */
     protected function renderUi()
     {
+        print ('Hey Im inside renderUI');
         // If not DRPM, show Access Denied message.  This is simply for
         // display purposes as the security model is enforced on the
         // object by the handler.
@@ -121,7 +124,6 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
                         $objNeeded,
                         Query::HYDRATE_ARRAY
                     ),
-
                     'accepted' => $entityHandler->getBy(
                         Dataset::class,
                         array('metadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED),
