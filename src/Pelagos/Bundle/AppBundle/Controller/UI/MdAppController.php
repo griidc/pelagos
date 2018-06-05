@@ -56,26 +56,25 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
     {
         $entityHandler = $this->get('pelagos.entity.handler');
         $mdappLogger = $this->get('pelagos.util.mdapplogger');
-
         $dataset = $entityHandler->get(Dataset::class, $id);
-        $from = $dataset->getMetadataStatus();
-        $udi = $dataset->getUdi();
-        $to = $request->request->get('to');
-        $mdappLogger->writeLog('Im inside changeMetadataStatusAction() udi: ' . $udi . ', from: ' . $from .', to: ' . $to);
         $message = null;
-        if (null !== $to) {
-            if ('InReview' == $to) {
-                $datasetSubmission = $dataset->getDatasetSubmission();
-                $datasetSubmission->setMetadataStatus($to);
-                $entityHandler->update($datasetSubmission);
-                $entityHandler->update($dataset);
-                $mdappLogger->writeLog($this->getUser()->getUsername() . ' changed status for ' .
-                    $udi . '(' . $this->getFlashBagStatus($from) . ' >>> ' . $this->getFlashBagStatus($to) . ')');
-                $message = 'Status for ' . $udi . ' has been changed from ' .
-                    $this->getFlashBagStatus($from) . ' to ' . $this->getFlashBagStatus($to);
+        if ($dataset instanceof Dataset) {
+            $datasetSubmission = $dataset->getDatasetSubmission();
+            if ($datasetSubmission instanceof DatasetSubmission) {
+                $from = $dataset->getMetadataStatus();
+                $udi = $dataset->getUdi();
+                $to = $request->request->get('to');
+                if (null !== $to and 'InReview' == $to) {
+                    $datasetSubmission->setMetadataStatus($to);
+                    $entityHandler->update($datasetSubmission);
+                    $entityHandler->update($dataset);
+                    $mdappLogger->writeLog($this->getUser()->getUsername() . ' changed status for ' .
+                        $udi . '(' . $this->getFlashBagStatus($from) . ' >>> ' . $this->getFlashBagStatus($to) . ')');
+                    $message = 'Status for ' . $udi . ' has been changed from ' . $this->getFlashBagStatus($from) .
+                        ' to ' . $this->getFlashBagStatus($to);
+                }
             }
         }
-
         $this->get('session')->getFlashBag()->add('notice', $message);
         return $this->redirectToRoute('pelagos_app_ui_mdapp_default');
     }
@@ -87,7 +86,6 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
      */
     protected function renderUi()
     {
-        print ('Hey Im inside renderUI');
         // If not DRPM, show Access Denied message.  This is simply for
         // display purposes as the security model is enforced on the
         // object by the handler.

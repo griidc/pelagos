@@ -63,30 +63,30 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
     {
         $datasets = $this->entityHandler
             ->getBy(Dataset::class, array('udi' => substr($udi, 0, 16)));
-
         if (!empty($datasets)) {
             $dataset = $datasets[0];
-            $datasetSubmission = (($dataset->getDatasetSubmissionHistory()->first()) ? $dataset->getDatasetSubmissionHistory()->first() : null);
-            $datasetSubmissionMetadataStatus = $dataset->getMetadataStatus();
-            $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
-
-            if ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_IN_REVIEW and
-                !empty($datasetSubmissionReview) and
-                $datasetSubmissionReview instanceOf DatasetSubmissionReview and
-                empty($datasetSubmissionReview->getReviewEndDateTime())) {
-                $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_END_REVIEW);
-                $this->entityHandler->update($datasetSubmissionReview);
-                $this->entityHandler->update($datasetSubmission);
-                $reviewerUserName  = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
-                $this->addToFlashBag($request, $udi, 'reviewEnded', $reviewerUserName);
-
-                // update MDAPP logs after action is executed.
-                $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
-                    $datasetSubmission,
-                    'end_review'
-                );
+            if ($dataset instanceof Dataset) {
+                $datasetSubmission = (($dataset->getDatasetSubmissionHistory()->first()) ? $dataset->getDatasetSubmissionHistory()->first() : null);
+                if ($datasetSubmission instanceof DatasetSubmission) {
+                    $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
+                    if ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_IN_REVIEW and
+                        $datasetSubmissionReview instanceof DatasetSubmissionReview and
+                        empty($datasetSubmissionReview->getReviewEndDateTime())) {
+                        $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_END_REVIEW);
+                        $this->entityHandler->update($datasetSubmissionReview);
+                        $this->entityHandler->update($datasetSubmission);
+                        $reviewerUserName = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
+                        $this->addToFlashBag($request, $udi, 'reviewEnded', $reviewerUserName);
+                        // update MDAPP logs after action is executed.
+                        $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch($datasetSubmission, 'end_review');
+                    } else {
+                        $this->addToFlashBag($request, $udi, 'notInReview');
+                    }
+                } else {
+                    $this->addToFlashBag($request, $udi, 'notFound');
+                }
             } else {
-                $this->addToFlashBag($request, $udi, 'notInReview');
+                $this->addToFlashBag($request, $udi, 'notFound');
             }
         } else {
             $this->addToFlashBag($request, $udi, 'notFound');
