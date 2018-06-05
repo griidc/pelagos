@@ -129,10 +129,10 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 $datasetSubmission = $this->latestDatasetSubmissionForReview($request, $datasetSubmission, $dataset, $udi);
 
             } else {
-                $this->addToWarningDisplayQue($request, $udi, 'notSubmitted');
+                $this->addToWarningDisplayQueue($request, $udi, 'notSubmitted');
             }
         } else {
-            $this->addToWarningDisplayQue($request, $udi, 'notFound');
+            $this->addToWarningDisplayQueue($request, $udi, 'notFound');
         }
 
         return $this->makeSubmissionForm($udi, $dataset, $datasetSubmission);
@@ -156,15 +156,15 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         switch (true) {
 
             case ($datasetSubmissionStatus === DatasetSubmission::STATUS_INCOMPLETE):
-                $this->addToWarningDisplayQue($request, $udi, 'hasDraft');
+                $this->addToWarningDisplayQueue($request, $udi, 'hasDraft');
                 break;
 
             case ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER):
                 if ('view' === $this->mode) {
-                    $this->addToNoticeDisplayQue($request, $udi, 'backToSub');
+                    $this->addToNoticeDisplayQueue($request, $udi, 'backToSub');
                     $datasetSubmission = $this->reviewMode($request, $datasetSubmission, $dataset, $udi);
                 } else {
-                    $this->addToWarningDisplayQue($request, $udi, 'requestRevision');
+                    $this->addToWarningDisplayQueue($request, $udi, 'requestRevision');
                 }
                 break;
 
@@ -186,7 +186,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      *
      * @return void
      */
-    private function addToWarningDisplayQue(Request $request, $udi, $error, $reviewerUserName = null)
+    private function addToWarningDisplayQueue(Request $request, $udi, $error, $reviewerUserName = null)
     {
         $flashBag = $request->getSession()->getFlashBag();
 
@@ -216,7 +216,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      *
      * @return void
      */
-    private function addToNoticeDisplayQue(Request $request, $udi, $noticeCode, $reviewerUserName = null)
+    private function addToNoticeDisplayQueue(Request $request, $udi, $noticeCode, $reviewerUserName = null)
     {
         $flashBag = $request->getSession()->getFlashBag();
 
@@ -591,7 +591,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                             break;
                         case (empty($datasetSubmissionReview->getReviewEndDateTime()) and $datasetSubmissionReview->getReviewedBy() !== $this->getUser()->getPerson()):
                             $reviewerUserName  = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
-                            $this->addToWarningDisplayQue($request, $udi, 'locked', $reviewerUserName);
+                            $this->addToWarningDisplayQueue($request, $udi, 'locked', $reviewerUserName);
                             break;
                     }
                     break;
