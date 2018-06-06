@@ -63,12 +63,21 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
     {
         $datasets = $this->entityHandler
             ->getBy(Dataset::class, array('udi' => substr($udi, 0, 16)));
+        //  are there Datasets in the array
         if (!empty($datasets)) {
             $dataset = $datasets[0];
+            //  If the first element in the array is of type Dataset get the DatasetSubmission
             if ($dataset instanceof Dataset) {
                 $datasetSubmission = (($dataset->getDatasetSubmissionHistory()->first()) ? $dataset->getDatasetSubmissionHistory()->first() : null);
+                //  if it is of type DatasetSubmission object get the DatasetSubmissionReview element
                 if ($datasetSubmission instanceof DatasetSubmission) {
                     $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
+                    //  if it's type  is DatasetSubmissionReview object and
+                    //  and the datasetSubmission metadataStatus is "inReview" and
+                    //  the the dataset submission review END date-type has not been set
+                    //  then call the reviewEvent function of datasetSubmission to change it's state to end the review,
+                    //  store / persist the changes
+                    //  and send out the messages
                     if ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_IN_REVIEW and
                         $datasetSubmissionReview instanceof DatasetSubmissionReview and
                         empty($datasetSubmissionReview->getReviewEndDateTime())) {

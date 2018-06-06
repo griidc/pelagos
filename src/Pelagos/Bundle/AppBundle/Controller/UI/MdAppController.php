@@ -44,6 +44,8 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
     /**
      * Change the metadata status.
      *
+     * This function called when Post occurs upon submitt of the MdApp form.
+     *
      * @param Request $request The Symfony request object.
      * @param integer $id      The id of the Dataset to change the metadata status for.
      *
