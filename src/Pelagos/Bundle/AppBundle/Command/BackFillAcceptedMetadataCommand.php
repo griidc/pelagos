@@ -92,10 +92,10 @@ class BackFillAcceptedMetadataCommand extends ContainerAwareCommand
 
             // Echo text for user to know the count and datasets which have been migrated.
             $i++;
-            echo "\n Migration complete for " . $dataset->getUdi() . "(" . $i . ")" ;
+            //flush
+            $entityManager->flush($dataset);
+            echo "\n Migration complete for " . $dataset->getUdi() . '(' . $i . ')';
         }
-        echo "\n Migration completed. Now Flushing, This might take a few minutes. Please wait.";
-        $entityManager->flush($dataset);
 
         return 0;
     }
