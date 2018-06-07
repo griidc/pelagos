@@ -62,21 +62,42 @@ done;
 for nudi in `ls *.generated.xml *.historical.xml | sed 's/.generated.xml\|.historical.xml//' | sort | uniq`
 
     # Write comparison files
-    do git diff --word-diff --unified=0 --color $nudi.historical.canonical.xml $nudi.generated.canonical.xml > $nudi.diff;
+    do git diff --word-diff --unified=0 --color $nudi.historical.canonical.xml $nudi.generated.canonical.xml > "$nudi-diff.txt";
 
     # Remove acceptable differences
-    sed -i "s/@@.*@@//" $nudi.diff;
-    sed -i "/\[-<gco:CharacterString>Texas<\/gco:CharacterString>-\].*\+<gco:CharacterString>TX<\/gco:CharacterString>.*$/d" $nudi.diff;
-    sed -i "/\[-<gco:CharacterString>78412-5869<\/gco:CharacterString>.*<gco:CharacterString>78412<\/gco:CharacterString>.*$/d" $nudi.diff;
-    sed -i "/\[-<gmd:URL>http:\/\/data.gulfresearchinitiative.org<\/gmd:URL>-\].*<gmd:URL>https:\/\/data.gulfresearchinitiative.org<\/gmd:URL>.*$/d" $nudi.diff;
-    sed -i "/\[-http:\/\/www.ngdc.noaa.gov\/metadata\/published\/xsd\/schema.xsd\">-\].*https:\/\/www.ngdc.noaa.gov\/metadata\/published\/xsd\/schema.xsd\">.*$/d" $nudi.diff;
-    sed -i "/^$/d" $nudi.diff;
-    sed -i "/This ISO metadata record was /d" $nudi.diff;
-    sed -i "/Created with GRIIDC Metadata Editor/d" $nudi.diff;
-    sed -i "/Unit 5869/d" $nudi.diff;
-    sed -i "/^<gmd:maintenance/d" $nudi.diff;
-    sed -i "/\[-<gco:DateTime>.*<\/gco:DateTime>-\].*<gco:DateTime>.*<\/gco:DateTime>.*$/d" $nudi.diff;
-    sed -i -e '1,6d' $nudi.diff;
+    sed -i "s/@@.*@@//" $nudi-diff.txt;
+    sed -i "/\[-<gco:CharacterString>Texas<\/gco:CharacterString>-\].*\+<gco:CharacterString>TX<\/gco:CharacterString>.*$/d" $nudi-diff.txt;
+    sed -i "/\[-<gco:CharacterString>78412-5869<\/gco:CharacterString>.*<gco:CharacterString>78412<\/gco:CharacterString>.*$/d" $nudi-diff.txt;
+    sed -i "/\[-<gmd:URL>http:\/\/data.gulfresearchinitiative.org<\/gmd:URL>-\].*<gmd:URL>https:\/\/data.gulfresearchinitiative.org<\/gmd:URL>.*$/d" $nudi-diff.txt;
+    sed -i "/\[-http:\/\/www.ngdc.noaa.gov\/metadata\/published\/xsd\/schema.xsd\">-\].*https:\/\/www.ngdc.noaa.gov\/metadata\/published\/xsd\/schema.xsd\">.*$/d" $nudi-diff.txt;
+    sed -i "/^$/d" $nudi-diff.txt;
+    sed -i "/This ISO metadata record was /d" $nudi-diff.txt;
+    sed -i "/Created with GRIIDC Metadata Editor/d" $nudi-diff.txt;
+    sed -i "/Unit 5869/d" $nudi-diff.txt;
+    sed -i "/^<gmd:maintenance/d" $nudi-diff.txt;
+    sed -i "/\[-<gco:DateTime>.*<\/gco:DateTime>-\].*<gco:DateTime>.*<\/gco:DateTime>.*$/d" $nudi-diff.txt;
+    sed -i -e '1,6d' $nudi-diff.txt;
+
+    # Generate HTML version of this differences file.
+    cat $nudi-diff.txt | ansi2html > $nudi-diff.html
+
+    # Write comparison files again, but with no color.
+    git diff --word-diff --unified=0 $nudi.historical.canonical.xml $nudi.generated.canonical.xml > "$nudi-diff.txt";
+
+    # Remove acceptable differences
+    sed -i "s/@@.*@@//" $nudi-diff.txt;
+    sed -i "/\[-<gco:CharacterString>Texas<\/gco:CharacterString>-\].*\+<gco:CharacterString>TX<\/gco:CharacterString>.*$/d" $nudi-diff.txt;
+    sed -i "/\[-<gco:CharacterString>78412-5869<\/gco:CharacterString>.*<gco:CharacterString>78412<\/gco:CharacterString>.*$/d" $nudi-diff.txt;
+    sed -i "/\[-<gmd:URL>http:\/\/data.gulfresearchinitiative.org<\/gmd:URL>-\].*<gmd:URL>https:\/\/data.gulfresearchinitiative.org<\/gmd:URL>.*$/d" $nudi-diff.txt;
+    sed -i "/\[-http:\/\/www.ngdc.noaa.gov\/metadata\/published\/xsd\/schema.xsd\">-\].*https:\/\/www.ngdc.noaa.gov\/metadata\/published\/xsd\/schema.xsd\">.*$/d" $nudi-diff.txt;
+    sed -i "/^$/d" $nudi-diff.txt;
+    sed -i "/This ISO metadata record was /d" $nudi-diff.txt;
+    sed -i "/Created with GRIIDC Metadata Editor/d" $nudi-diff.txt;
+    sed -i "/Unit 5869/d" $nudi-diff.txt;
+    sed -i "/^<gmd:maintenance/d" $nudi-diff.txt;
+    sed -i "/\[-<gco:DateTime>.*<\/gco:DateTime>-\].*<gco:DateTime>.*<\/gco:DateTime>.*$/d" $nudi-diff.txt;
+    sed -i -e '1,6d' $nudi-diff.txt;
+
 done;
 
 echo "Job Ended";
