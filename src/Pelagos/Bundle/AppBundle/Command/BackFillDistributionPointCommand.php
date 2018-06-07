@@ -79,16 +79,12 @@ class BackFillDistributionPointCommand extends ContainerAwareCommand
                 $datasetSubmission->addDistributionPoint($distributionPoint);
 
                 $entityManager->persist($datasetSubmission);
-
                 $i++;
+                $entityManager->flush($datasetSubmission);
                 echo "\n #" . $i . ' Backfilling completed for dataset submission id ' . $datasetSubmission->getId();
             }
         }
-
-        if ($i > 0) {
-            echo "\n Flushing...";
-            $entityManager->flush();
-        }
+        
         echo "\n Backfilling completed for " . $i . " entries!\n";
 
         return 0;
