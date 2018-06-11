@@ -26,8 +26,8 @@ $(function() {
         left: "50%" // Left position relative to parent
     }).spin($("#spinner")[0]);
 
-    // Check if datasetSubmissionStatus = 2 (STATUS_COMPLETE).
-    if ($("#regForm").attr("datasetSubmissionStatus") == 2) {
+    // Check datasetSubmissionStatus for locked/unlocked.
+    if ($("#regForm").attr("datasetSubmissionStatus") == true) {
         $("#regForm :input").prop("disabled", true);
     }
 
@@ -642,8 +642,8 @@ $(function() {
         geowizard.haveGML($("#spatialExtent").val());
     });
 
-    // datasetSubmissionStatus = 2 (STATUS_COMPLETE).
-    if ($("#regForm").attr("datasetSubmissionStatus") == 2) {
+    // Check datasetSubmissionStatus for locked/unlocked.
+    if ($("#regForm").attr("datasetSubmissionStatus") == true) {
         // Disable fineupload Drag and Drop area.
         $(".qq-upload-drop-area").css("visibility", "hidden");
         // Disable the upload buttons
