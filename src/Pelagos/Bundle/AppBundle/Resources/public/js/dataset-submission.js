@@ -133,6 +133,17 @@ $(function() {
     });
 
     $("#regForm").validate({
+        rules: {
+            referenceDate: {
+                dateISO: true
+            },
+            temporalExtentBeginPosition: {
+                dateISO: true
+            },
+            temporalExtentEndPosition: {
+                dateISO: true
+            }
+        },
         ignore: ".ignore,.prototype",
         submitHandler: function(form) {
             if ($(".ignore").valid()) {
@@ -267,7 +278,8 @@ $(function() {
 
     $("[placeholder=yyyy-mm-dd]").datepicker({
         dateFormat: "yy-mm-dd",
-        autoSize:true
+        autoSize:true,
+        maxDate: "0"
     });
 
     $("#ds-contact").on("active", function() {
