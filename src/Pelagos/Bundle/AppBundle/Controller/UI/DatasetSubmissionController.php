@@ -353,7 +353,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;
-        $datasetSubmissionStatus = null;
+        $datasetSubmissionLockStatus = null;
         if ($datasetSubmission instanceof DatasetSubmission) {
             if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
                 $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
