@@ -14,7 +14,7 @@
             <tr>
                 <td align="center">
                     <div id="griidc-logo">
-                        <a href="/auth/cas?dest={{ refererPath }}">
+                        <a href="/user/login?destination={{ refererPath }}">
                             {% image '@PelagosAppBundle/Resources/public/images/GRIIDC-logo.png' %}
                                 <img src="{{ asset_url }}" alt="GRIIDC logo">
                             {% endimage %}
@@ -22,7 +22,7 @@
                     </div>
                     <div>
                         GoMRI Users, please use your<br />
-                        <a href="/auth/cas?dest={{ refererPath }}">GRIIDC login</a> to download data.
+                        <a href="/user/login?destination={{ refererPath }}">GRIIDC login</a> to download data.
                     </div>
                 </td>
                 <td>
