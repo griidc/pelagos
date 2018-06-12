@@ -361,7 +361,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
 
             $datasetSubmissionId = $datasetSubmission->getId();
             $researchGroupId = $dataset->getResearchGroup()->getId();
-            $datasetSubmissionLockStatus = $this->lockStatus($dataset);
+            $datasetSubmissionLockStatus = $this->isSubmissionLocked($dataset);
         }
 
         $form = $this->get('form.factory')->createNamed(
@@ -540,7 +540,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
      *
      * @return boolean
      */
-    private function lockStatus(Dataset $dataset)
+    private function isSubmissionLocked(Dataset $dataset)
     {
         if (in_array($dataset->getMetadataStatus(), [DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER, DatasetSubmission::METADATA_STATUS_NONE])) {
             return false;
