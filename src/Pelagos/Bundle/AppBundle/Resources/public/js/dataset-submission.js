@@ -304,7 +304,6 @@ $(function() {
         dateFormat: "yy-mm-dd",
         changeMonth: true,
         changeYear: true,
-        stepMonths: 3,
         showButtonPanel: false,
         autoSize:true,
         onClose: function(selectedDate) {
