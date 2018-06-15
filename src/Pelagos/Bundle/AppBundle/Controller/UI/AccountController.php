@@ -186,7 +186,7 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
     }
 
     /**
-     * Redirect GET sent to this route (CAS does this after PW reset).
+     * Redirect GET sent to this route
      *
      * @Route("/create")
      * @Method("GET")

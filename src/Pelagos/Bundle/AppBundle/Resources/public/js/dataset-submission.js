@@ -26,8 +26,8 @@ $(function() {
         left: "50%" // Left position relative to parent
     }).spin($("#spinner")[0]);
 
-    // Check if datasetSubmissionStatus = 2 (STATUS_COMPLETE).
-    if ($("#regForm").attr("datasetSubmissionStatus") == 2) {
+    // Check datasetSubmissionStatus for locked/unlocked.
+    if ($("#regForm").attr("datasetSubmissionStatus") == true) {
         $("#regForm :input").prop("disabled", true);
     }
 
@@ -133,6 +133,21 @@ $(function() {
     });
 
     $("#regForm").validate({
+        rules: {
+            referenceDate: {
+                dateISO: true
+            },
+            temporalExtentBeginPosition: {
+                dateISO: true
+            },
+            temporalExtentEndPosition: {
+                dateISO: true
+            }
+        },
+        messages: {
+            temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
+            temporalExtentEndPosition: "End Date is not a valid ISO date"
+        },
         ignore: ".ignore,.prototype",
         submitHandler: function(form) {
             if ($(".ignore").valid()) {
@@ -265,9 +280,35 @@ $(function() {
 
     }
 
-    $("[placeholder=yyyy-mm-dd]").datepicker({
+    // set up DatePickers
+    $("#referenceDate").datepicker({
         dateFormat: "yy-mm-dd",
-        autoSize:true
+        autoSize:true,
+        maxDate: "0"
+    });
+
+    $("#temporalExtentBeginPosition").datepicker({
+        maxDate: "0",
+        dateFormat: "yy-mm-dd",
+        changeMonth: true,
+        changeYear: true,
+        showButtonPanel: false,
+        autoSize:true,
+        onClose: function(selectedDate) {
+            $("#temporalExtentEndPosition").datepicker("option", "minDate", selectedDate);
+        }
+    });
+
+    $("#temporalExtentEndPosition").datepicker({
+        maxDate: "0",
+        dateFormat: "yy-mm-dd",
+        changeMonth: true,
+        changeYear: true,
+        showButtonPanel: false,
+        autoSize:true,
+        onClose: function(selectedDate) {
+            $("#temporalExtentBeginPosition").datepicker("option", "maxDate", selectedDate);
+        }
     });
 
     $("#ds-contact").on("active", function() {
@@ -642,8 +683,8 @@ $(function() {
         geowizard.haveGML($("#spatialExtent").val());
     });
 
-    // datasetSubmissionStatus = 2 (STATUS_COMPLETE).
-    if ($("#regForm").attr("datasetSubmissionStatus") == 2) {
+    // Check datasetSubmissionStatus for locked/unlocked.
+    if ($("#regForm").attr("datasetSubmissionStatus") == true) {
         // Disable fineupload Drag and Drop area.
         $(".qq-upload-drop-area").css("visibility", "hidden");
         // Disable the upload buttons

@@ -75,6 +75,10 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
      */
     public function defaultAction(Request $request)
     {
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->redirect('/user/login?destination=' . $request->getPathInfo());
+        }
+
         $udi = $request->query->get('regid');
         $datasetSubmission = null;
         $dataset = null;
@@ -93,7 +97,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                 $dataset = $datasets[0];
 
                 $dif = $dataset->getDif();
-                
+
                 $datasetSubmission = $this->getDatasetSubmission($dataset);
 
                 $xmlForm = $this->get('form.factory')->createNamed(
@@ -246,7 +250,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
             foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
                 $this->entityHandler->update($metadataContact);
             }
-            
+
             $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
                 $datasetSubmission,
                 $eventName
@@ -332,7 +336,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;
-        $datasetSubmissionStatus = null;
+        $datasetSubmissionLockStatus = null;
         if ($datasetSubmission instanceof DatasetSubmission) {
             if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
                 $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
@@ -346,7 +350,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
 
             $datasetSubmissionId = $datasetSubmission->getId();
             $researchGroupId = $dataset->getResearchGroup()->getId();
-            $datasetSubmissionStatus = $datasetSubmission->getStatus();
+            $datasetSubmissionLockStatus = $this->isSubmissionLocked($dataset);
         }
 
         $form = $this->get('form.factory')->createNamed(
@@ -359,7 +363,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                 'attr' => array(
                     'datasetSubmission' => $datasetSubmissionId,
                     'researchGroup' => $researchGroupId,
-                    'datasetSubmissionStatus' => $datasetSubmissionStatus
+                    'datasetSubmissionStatus' => $datasetSubmissionLockStatus
                 ),
             )
         );
@@ -517,6 +521,21 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
         foreach ($emptyProperties as $property) {
             $accessor->setValue($datasetSubmission, $property, array());
         }
+    }
+
+    /**
+     * Determines whether the dataset submission is locked or not.
+     *
+     * @param Dataset $dataset An instance of the object Dataset.
+     *
+     * @return boolean
+     */
+    private function isSubmissionLocked(Dataset $dataset)
+    {
+        if (in_array($dataset->getMetadataStatus(), [DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER, DatasetSubmission::METADATA_STATUS_NONE])) {
+            return false;
+        }
+        return true;
     }
 
     /**
