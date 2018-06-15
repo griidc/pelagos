@@ -449,6 +449,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                 'showForceImport' => $showForceImport,
                 'showForceDownload' => $showForceDownload,
                 'researchGroupList' => $researchGroupList,
+                'datasetSubmissionLockStatus' => $datasetSubmissionLockStatus
             )
         );
     }
