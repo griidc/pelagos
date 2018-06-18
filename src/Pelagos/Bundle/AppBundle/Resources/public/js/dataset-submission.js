@@ -132,17 +132,16 @@ $(function() {
         }
     });
 
+    jQuery.validator.addMethod("trueISODate", function(value, element) {
+        var regPattern = /^\d{4}-\d{1,2}-\d{1,2}$/
+        return this.optional(element) || ((Date.parse(value)) && regPattern.test(value));
+    });
+
     $("#regForm").validate({
         rules: {
-            referenceDate: {
-                dateISO: true
-            },
-            temporalExtentBeginPosition: {
-                dateISO: true
-            },
-            temporalExtentEndPosition: {
-                dateISO: true
-            }
+            referenceDate: "trueISODate",
+            temporalExtentBeginPosition: "trueISODate",
+            temporalExtentEndPosition: "trueISODate",
         },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
