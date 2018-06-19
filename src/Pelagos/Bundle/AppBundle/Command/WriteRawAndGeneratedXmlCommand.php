@@ -46,12 +46,21 @@ class WriteRawAndGeneratedXmlCommand extends ContainerAwareCommand
      * @param InputInterface  $input  An InputInterface instance.
      * @param OutputInterface $output An OutputInterface instance.
      *
+     * @throws \Exception If the ~/output directory could not be created.
+     *
      * @return integer Return 0 on success, or an error code otherwise.
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
         $udi = $input->getArgument('UDI');
+        if (!(is_dir($_SERVER['HOME'] . '/output'))) {
+            try {
+                mkdir($_SERVER['HOME'] . '/output');
+            } catch (\Exception $e) {
+                throw new \Exception('Could not create output directory.');
+            }
+        }
 
         $em = $this->getContainer()->get('doctrine.orm.entity_manager');
         if ($udi) {
