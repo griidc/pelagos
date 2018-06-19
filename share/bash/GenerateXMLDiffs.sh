@@ -19,10 +19,6 @@ pelagosdir () {
     cd $pelagosDirectory
 }
 
-refreshdb () {
-    cd $pelagosDirectory
-    printf "Y\n" | bin/loaddump $databaseDump
-}
 echo "Job Starting";
 echo `date`;
 
@@ -30,26 +26,10 @@ echo `date`;
 outdir
 rm *.xml *.diff *.canonical
 
-# Temporarily disable .nulling of email
-pelagosdir
-sed -i 's/echo "UPDATE person SET email_address/#echo "UPDATE person SET email_address/' bin/loaddump
-
-# Load newest dump from production
-refreshdb
-
 # Write generated and historical XML files for All Accepted data.
 # This takes about 20 minutes.
 pelagosdir
-bin/console dataset-submission:back-fill-accepted-metadata-command
-bin/console dataset-submission:back-fill-distribution-point-command
 bin/console dataset:write-metadata-files >> $outputDirectory/XML-Comparison-Tool.log
-
-# Re-Enable .nulling of email
-pelagosdir
-sed -i 's/#echo "UPDATE person SET email_address/echo "UPDATE person SET email_address/' bin/loaddump
-
-# Load newest dump from production for email nulling.
-refreshdb
 
 # Canonicalize XML for easier comparison
 cd ~/output;
