@@ -28,7 +28,7 @@ class BackFillDistributionPointCommand extends ContainerAwareCommand
     {
         $this
             ->setName('dataset-submission:back-fill-distribution-point-command')
-            ->setDescription('Back fill distribution points for submitted dataset submission.');
+            ->setDescription('Back fill distribution points for submitted and backtosubmitter dataset submission.');
     }
 
     /**
@@ -54,10 +54,11 @@ class BackFillDistributionPointCommand extends ContainerAwareCommand
         $queryString = 'SELECT dataset.udi udi, dsubmission datasetSubmission FROM ' .
             Dataset::class . ' dataset JOIN ' . DatasetSubmission::class .
             ' dsubmission WITH dsubmission = dataset.datasetSubmission 
-                WHERE dataset.metadataStatus = :submittedstatus';
+                WHERE dataset.metadataStatus = :submittedstatus OR dataset.metadataStatus = :backtosubmitterstatus';
         $query = $entityManager->createQuery($queryString);
         $query->setParameters([
-            'submittedstatus' => DatasetSubmission::METADATA_STATUS_SUBMITTED
+            'submittedstatus' => DatasetSubmission::METADATA_STATUS_SUBMITTED,
+            'backtosubmitterstatus' => DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
         ]);
         $results = $query->getResult();
 
@@ -78,16 +79,12 @@ class BackFillDistributionPointCommand extends ContainerAwareCommand
                 $datasetSubmission->addDistributionPoint($distributionPoint);
 
                 $entityManager->persist($datasetSubmission);
-
                 $i++;
+                $entityManager->flush($datasetSubmission);
                 echo "\n #" . $i . ' Backfilling completed for dataset submission id ' . $datasetSubmission->getId();
             }
         }
-
-        if ($i > 0) {
-            echo "\n Flushing...";
-            $entityManager->flush();
-        }
+        
         echo "\n Backfilling completed for " . $i . " entries!\n";
 
         return 0;

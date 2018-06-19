@@ -48,6 +48,7 @@
     <div class="messages status">{{ flashMessage }}</div>
 {% endfor %}
 
+    <!--  Filtering Tabs at the top of MDAPP -->
 <script type="text/javascript">var issueTrackingBaseUrl="{{ issueTrackingBaseUrl }}";</script>
 <div style="background: #fff2e8; padding:0px;" id="tabs">
   <div class="ui-tabs">
@@ -104,53 +105,22 @@
                                     </table>
                                 </div>
                             </td>
-                            <td valign="top"><form name="AcceptedState" action="{{ path('pelagos_app_ui_mdapp_changemetadatastatus', {'id': dta.id}) }}" method="post">
-                            <select name="to" id="state_sel_{{dta.udi}}">
-                                    {% if sname == 'submitted' %}
-                                        <option value="Submitted" SELECTED>Submitted</option>
-                                        <option value="InReview" style="background-color: yellow;">InReview</option>
-                                        {% if dta.metadata.id|default %}
-                                            <option value="Accepted">Accepted</option>
-                                        {% endif %}
-                                        <option value="BackToSubmitter">Request Revisions</option>
-                                    {% elseif sname == 'inreview' %}
-                                        <option value="Submitted">Submitted</option>
-                                        <option value="InReview" SELECTED>InReview</option>
-                                        {% if dta.metadata.id|default %}
-                                            <option value="Accepted">Accepted</option>
-                                        {% endif %}
-                                        <option value="BackToSubmitter">Request Revisions</option>
-                                    {% elseif sname == 'accepted' %}
-                                        <option value="Submitted">Submitted</option>
-                                        <option value="Accepted" SELECTED>Accepted</option>
-                                        <option value="InReview">InReview</option>
-                                        <option value="BackToSubmitter">Request Revisions</option>
-                                    {% elseif sname == 'backtosubmitter' %}
-                                        <option value="Submitted">Submitted</option>
-                                        <option value="BackToSubmitter" SELECTED>Request Revisions</option>
-                                        <option value="InReview" style="background-color: yellow;">InReview</option>
-                                        {% if dta.metadata.id|default %}
-                                            <option value="Accepted">Accepted</option>
-                                        {% endif %}
+                            <td valign="top">
+                                <form name="AcceptedState" action="{{ path('pelagos_app_ui_mdapp_changemetadatastatus', {'id': dta.id}) }}" method="post">
+                                   {% if sname == 'backtosubmitter' %}
+                                       change to <input type="submit" name="to" value="InReview" id="state_sel_sub_{{dta.udi}}">
                                     {% else %}
-                                        <option value="Submitted">Submitted</option>
-                                        <option value="InReview">InReview</option>
-                                        {% if dta.metadata.id|default %}
-                                            <option value="Accepted">Accepted</option>
-                                        {% endif %}
-                                        <option value="BackToSubmitter">Request Revisions</option>
+                                        no action available
                                     {% endif %}
-
-                            </select>
-                            <input type="submit" value="->" id="state_sel_sub_{{dta.udi}}">
                             </form>
                             </td>
                             <td valign="top">{{ dta.datasetSubmission.submissionTimeStamp is defined and dta.datasetSubmission.submissionTimeStamp is not null ? dta.datasetSubmission.submissionTimeStamp | date("c") }}</td>
                             <td valign="top">
                                 <table id="filedisp">
                                     <tr>
-                                        <td id="button"><button style="font-size:66%" onclick="javascript:showLogEntries('{{dta.udi}}')" id="log_butt_{{dta.udi}}">Log</button></td>
-
+                                        <td id="button"><button style="font-size:66%"
+                                                                onclick="javascript:showLogEntries('{{dta.udi}}')"
+                                                                id="log_butt_{{dta.udi}}">Log</button></td>
                                         {% if dta.datasetsubmission.MetadataFileName|default %}
                                             <td id="md_filename">{{ dta.udi }}</td>
                                         {% else %}

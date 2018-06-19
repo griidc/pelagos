@@ -44,6 +44,8 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
     /**
      * Change the metadata status.
      *
+     * This function called when Post occurs upon submitt of the MdApp form.
+     *
      * @param Request $request The Symfony request object.
      * @param integer $id      The id of the Dataset to change the metadata status for.
      *
@@ -57,43 +59,28 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
         $entityHandler = $this->get('pelagos.entity.handler');
         $mdappLogger = $this->get('pelagos.util.mdapplogger');
         $dataset = $entityHandler->get(Dataset::class, $id);
-        $from = $dataset->getMetadataStatus();
-        $udi = $dataset->getUdi();
-        $to = $request->request->get('to');
-
         $message = null;
-        if (null !== $to) {
-            if ('Accepted' == $to) {
-                $datasetSubmission = $dataset->getDatasetSubmission();
-                $datasetSubmission->setMetadataStatus($to);
-                $entityHandler->update($datasetSubmission);
-                $entityHandler->update($dataset);
-                $mdappLogger->writeLog($this->getUser()->getUsername() .
-                    'has changed status for ' . $udi . '(' . $this->getFlashBagStatus($from) . '->'
-                    . $this->getFlashBagStatus($to) . '(mdapp msg))');
-                $message = 'Status for ' . $udi . 'has been changed from ' . $this->getFlashBagStatus($from) . ' to '
-                    . $this->getFlashBagStatus($to);
-                $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
-                    $datasetSubmission,
-                    'approved'
-                );
-            } else {
-                $datasetSubmission = $dataset->getDatasetSubmission();
-                $datasetSubmission->setMetadataStatus($to);
-                $entityHandler->update($datasetSubmission);
-                $entityHandler->update($dataset);
-                $mdappLogger->writeLog($this->getUser()->getUsername() .
-                    'has changed status for ' . $udi . '(' . $this->getFlashBagStatus($from) . '->'
-                    . $this->getFlashBagStatus($to) . '(mdapp msg))');
-                $message = 'Status for ' . $udi . ' has been changed from ' . $this->getFlashBagStatus($from) . ' to '
-                    . $this->getFlashBagStatus($to);
+        if ($dataset instanceof Dataset) {
+            $datasetSubmission = $dataset->getDatasetSubmission();
+            if ($datasetSubmission instanceof DatasetSubmission) {
+                $from = $dataset->getMetadataStatus();
+                $udi = $dataset->getUdi();
+                $to = $request->request->get('to');
+                if (null !== $to and 'InReview' == $to) {
+                    $datasetSubmission->setMetadataStatus($to);
+                    $entityHandler->update($datasetSubmission);
+                    $entityHandler->update($dataset);
+                    $mdappLogger->writeLog($this->getUser()->getUsername() . ' changed status for ' .
+                        $udi . '(' . $this->getFlashBagStatus($from) . ' >>> ' . $this->getFlashBagStatus($to) . ')');
+                    $message = 'Status for ' . $udi . ' has been changed from ' . $this->getFlashBagStatus($from) .
+                        ' to ' . $this->getFlashBagStatus($to);
+                }
             }
         }
-
         $this->get('session')->getFlashBag()->add('notice', $message);
         return $this->redirectToRoute('pelagos_app_ui_mdapp_default');
     }
-
+    
     /**
      * Render the UI for MDApp.
      *

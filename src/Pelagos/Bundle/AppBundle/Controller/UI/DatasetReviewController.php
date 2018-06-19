@@ -59,7 +59,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         $mode = $request->query->get('mode');
 
 
-        if ($udi !== null) {
+        if (null !== $udi) {
             if (!empty($mode) and in_array($mode, $reviewModes)) {
                 $this->mode = $mode;
             } else {
@@ -91,7 +91,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      */
     private function authForReview()
     {
-        if ($this->mode === 'review') {
+        if ('review' === $this->mode) {
             if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
                 return true;
             }
@@ -129,10 +129,10 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 $datasetSubmission = $this->latestDatasetSubmissionForReview($request, $datasetSubmission, $dataset, $udi);
 
             } else {
-                $this->addToFlashBag($request, $udi, 'notSubmitted');
+                $this->addToWarningDisplayQueue($request, $udi, 'notSubmitted');
             }
         } else {
-            $this->addToFlashBag($request, $udi, 'notFound');
+            $this->addToWarningDisplayQueue($request, $udi, 'notFound');
         }
 
         return $this->makeSubmissionForm($udi, $dataset, $datasetSubmission);
@@ -156,11 +156,16 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         switch (true) {
 
             case ($datasetSubmissionStatus === DatasetSubmission::STATUS_INCOMPLETE):
-                $this->addToFlashBag($request, $udi, 'hasDraft');
+                $this->addToWarningDisplayQueue($request, $udi, 'hasDraft');
                 break;
 
             case ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER):
-                $this->addToFlashBag($request, $udi, 'requestRevision');
+                if ('view' === $this->mode) {
+                    $this->addToNoticeDisplayQueue($request, $udi, 'backToSub');
+                    $datasetSubmission = $this->reviewMode($request, $datasetSubmission, $dataset, $udi);
+                } else {
+                    $this->addToWarningDisplayQueue($request, $udi, 'requestRevision');
+                }
                 break;
 
             default:
@@ -172,7 +177,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     }
 
     /**
-     * Add error messages to flash bag to show it to the user.
+     * Add warning messages to flash bag to show it to the user.
      *
      * @param Request $request          The Symfony request object.
      * @param string  $udi              The UDI entered by the user.
@@ -181,7 +186,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      *
      * @return void
      */
-    private function addToFlashBag(Request $request, $udi, $error, $reviewerUserName = null)
+    private function addToWarningDisplayQueue(Request $request, $udi, $error, $reviewerUserName = null)
     {
         $flashBag = $request->getSession()->getFlashBag();
 
@@ -198,6 +203,29 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
 
         if (array_key_exists($error, $listOfErrors)) {
             $flashBag->add('warning', $listOfErrors[$error]);
+        }
+    }
+
+    /**
+     * Add informational messages to flash bag to show it to the user.
+     *
+     * @param Request $request          The Symfony request object.
+     * @param string  $udi              The UDI entered by the user.
+     * @param integer $noticeCode       The Notice code generated.
+     * @param string  $reviewerUserName Reviewer Username for the Dataset submission review.
+     *
+     * @return void
+     */
+    private function addToNoticeDisplayQueue(Request $request, $udi, $noticeCode, $reviewerUserName = null)
+    {
+        $flashBag = $request->getSession()->getFlashBag();
+
+        $listOfNotices = [
+            'backToSub' => "Because this data is currently marked $udi is Back To Submitter, you are viewing user's latest data submission.",
+        ];
+
+        if (array_key_exists($noticeCode, $listOfNotices)) {
+            $flashBag->add('notice', $listOfNotices[$noticeCode]);
         }
     }
 
@@ -287,7 +315,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         // If there are no research groups, substitute in '!*'
         // to ensure the query sent by datatables does not try and
         // search for a blank parameter.
-        if (0 === count($researchGroupList)) {
+        if (count($researchGroupList) === 0) {
             $researchGroupList = array('!*');
         }
 
@@ -542,9 +570,14 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     {
         $datasetSubmissionStatus = (($datasetSubmission) ? $datasetSubmission->getStatus() : null);
         $datasetSubmissionMetadataStatus = $dataset->getMetadataStatus();
-        if ($this->mode === 'view') {
+        if ('view' === $this->mode) {
+            // IFF the event we're viewing a BACK_TO_SUBMITTER dataset, use the one pointed referenced by Dataset
+            // as this will be the user's most recent submission, not a possible reviewer's version.
+            if ($datasetSubmissionMetadataStatus == DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
+                $datasetSubmission = $dataset->getDatasetSubmission();
+            }
             return $datasetSubmission;
-        } elseif ($this->mode === 'review') {
+        } elseif ('review' === $this->mode) {
             switch (true) {
                 case ($datasetSubmissionStatus === DatasetSubmission::STATUS_COMPLETE and $datasetSubmissionMetadataStatus !== DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER):
                     $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
@@ -558,13 +591,12 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                             break;
                         case (empty($datasetSubmissionReview->getReviewEndDateTime()) and $datasetSubmissionReview->getReviewedBy() !== $this->getUser()->getPerson()):
                             $reviewerUserName  = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
-                            $this->addToFlashBag($request, $udi, 'locked', $reviewerUserName);
+                            $this->addToWarningDisplayQueue($request, $udi, 'locked', $reviewerUserName);
                             break;
                     }
                     break;
             }
         }
-
         return $datasetSubmission;
     }
 }
