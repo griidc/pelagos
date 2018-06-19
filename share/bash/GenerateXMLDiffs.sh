@@ -4,12 +4,15 @@
 # Prerequsites:
 # Output directory needs to be on a native drive, and not an NFS share, or this will take hours.
 # The dataset:write-metadata-files Symfony Command utitily needs to be available.
-# A current database dump or production is needed.
+#
+# The Pelagos enviroment should contain a fully-refreshed database, including backfilling of
+# accepted metadata and the backfilling of distribution points as this is needed for correct
+# comparision of XML. Also, I recommend not .nulling the email addresses before running this
+# as this may introduce additional artifacts into the historical XML.
 #
 # Configuration ########################################################################################################
 export outputDirectory=~/output;
 export pelagosDirectory=~/pelagos;
-export databaseDump=~/db_dumps/newest-pelagos.sql
 ########################################################################################################################
 
 outdir () {
