@@ -31,10 +31,6 @@
                     <img class="tabimg">
                 </li>
                 <li>
-                    <a class="dstablink" href="#ds-distribution">Distribution Info</a>
-                    <img class="tabimg">
-                </li>
-                <li>
                     <a class="dstablink" href="#ds-submit">Submit</a>
                 </li>
             </ul>
@@ -59,14 +55,10 @@
                 {% include 'PelagosAppBundle:DatasetSubmission:extent.html.twig' %}
             </div>
 
-            <div id="ds-distribution" class="ds-metadata">
-                {% include 'PelagosAppBundle:DatasetSubmission:distribution-info.html.twig' %}
-            </div>
-
             <div id="ds-metadata-contact">
                 {% include 'PelagosAppBundle:DatasetSubmission:distribution-contact.html.twig' %}
             </div>
-            
+
             <div id="ds-metadata-contact">
                 {% include 'PelagosAppBundle:DatasetSubmission:metadata-contact.html.twig' %}
             </div>
