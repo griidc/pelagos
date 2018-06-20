@@ -133,7 +133,7 @@ $(function() {
     });
 
     jQuery.validator.addMethod("trueISODate", function(value, element) {
-        var regPattern = /^\d{4}-\d{1,2}-\d{1,2}$/
+        var regPattern = /^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/
         return this.optional(element) || ((Date.parse(value)) && regPattern.test(value));
     });
 
