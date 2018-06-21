@@ -43,6 +43,7 @@ security:
             remote_user:
                 provider: pelagos_account
             oauth:
+                provider: pelagos_account
                 resource_owners:
                     google:     check_google
                 login_path:     /
