@@ -312,3 +312,13 @@ doctrine_migrations:
     namespace: Pelagos\Migrations
     table_name: migration_versions
     name: Pelagos Migrations
+
+httplug:
+    plugins:
+        logger: ~
+    clients:
+        acme:
+            factory: 'httplug.factory.guzzle6'
+            plugins: ['httplug.plugin.logger']
+            config:
+                timeout: 2
