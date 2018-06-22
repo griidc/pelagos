@@ -29,7 +29,7 @@ class UpdateGMLCommand extends ContainerAwareCommand
      */
     protected $output;
     
-    /*
+    /**
      * Configures the current command.
      *
      * @return void
@@ -139,24 +139,23 @@ class UpdateGMLCommand extends ContainerAwareCommand
         $output->writeln('Update Dataset Subs Lines');
         
         $sql = "
-        /* counting multi's that don't have proper srsname */
-        SELECT
-        dif.id,
-        dataset.udi,
-        ST_asGML(3,ST_GeomFromGML(spatial_extent_geometry),5,17)::TEXT AS gml3
-        FROM dif
-        LEFT JOIN dataset ON dif.id = dataset.dif_id 
-        WHERE spatial_extent_geometry <> ''
-        AND ST_NumGeometries (ST_GeomFromGML(spatial_extent_geometry)) > 1
-        ;
+            /* counting multi's that don't have proper srsname */
+            SELECT
+            dif.id,
+            dataset.udi,
+            ST_asGML(3,ST_GeomFromGML(spatial_extent_geometry),5,17)::TEXT AS gml3
+            FROM dif
+            LEFT JOIN dataset ON dif.id = dataset.dif_id 
+            WHERE spatial_extent_geometry <> ''
+            AND ST_NumGeometries (ST_GeomFromGML(spatial_extent_geometry)) > 1
+            ;
         ";
         $results = $this->executeSQL($sql);
         
-        foreach ($results as $result)
-        {
-            $udi = $result["udi"];
-            $id = $result["id"];
-            $gml3 = $result["gml3"];
+        foreach ($results as $result) {
+            $udi = $result['udi'];
+            $id = $result['id'];
+            $gml3 = $result['gml3'];
             $difs = $this->entityManager
             ->getRepository('Pelagos\Entity\DIF')
             ->findBy(array('id' => $id));
@@ -187,11 +186,10 @@ class UpdateGMLCommand extends ContainerAwareCommand
         ";
         $results = $this->executeSQL($sql);
         
-        foreach ($results as $result)
-        {
-            $udi = $result["udi"];
-            $id = $result["id"];
-            $gml3 = $result["gml3"];
+        foreach ($results as $result) {
+            $udi = $result['udi'];
+            $id = $result['id'];
+            $gml3 = $result['gml3'];
             $datasetSubmissions = $this->entityManager
                 ->getRepository('Pelagos\Entity\DatasetSubmission')
                 ->findBy(array('id' => $id));
@@ -246,38 +244,38 @@ class UpdateGMLCommand extends ContainerAwareCommand
             $topNode = $node->nodeName;
             switch ($topNode) {
                 case 'gml:Polygon':
-                $node->setAttribute('gml:id', 'Polygon1');
-                break;
+                    $node->setAttribute('gml:id', 'Polygon1');
+                    break;
                 case 'gml:Curve':
-                $node->setAttribute('gml:id', 'Curve1');
-                break;
+                    $node->setAttribute('gml:id', 'Curve1');
+                    break;
                 case 'gml:Point':
-                $node->setAttribute('gml:id', 'Point1');
-                break;
+                    $node->setAttribute('gml:id', 'Point1');
+                    break;
                 case 'gml:MultiPoint':
-                $node->setAttribute('gml:id', 'Multipoint1');
-                $i = 0;
-                foreach ($node->childNodes as $child) {
-                    $i++;
-                    $child->firstChild->setAttribute('gml:id', "Point$i");
-                }
-                break;
+                    $node->setAttribute('gml:id', 'Multipoint1');
+                    $i = 0;
+                    foreach ($node->childNodes as $child) {
+                        $i++;
+                        $child->firstChild->setAttribute('gml:id', "Point$i");
+                    }
+                    break;
                 case 'gml:MultiCurve':
-                $node->setAttribute('gml:id', 'MultiCurve1');
-                $i = 0;
-                foreach ($node->childNodes as $child) {
-                    $i++;
-                    $child->firstChild->setAttribute('gml:id', "Curve$i");
-                }
-                break;
+                    $node->setAttribute('gml:id', 'MultiCurve1');
+                    $i = 0;
+                    foreach ($node->childNodes as $child) {
+                        $i++;
+                        $child->firstChild->setAttribute('gml:id', "Curve$i");
+                    }
+                    break;
                 case 'gml:MultiSurface':
-                $node->setAttribute('gml:id', 'MultiSurface');
-                $i = 0;
-                foreach ($node->childNodes as $child) {
-                    $i++;
-                    $child->firstChild->setAttribute('gml:id', "Polygon$i");
-                }
-                break;
+                    $node->setAttribute('gml:id', 'MultiSurface');
+                    $i = 0;
+                    foreach ($node->childNodes as $child) {
+                        $i++;
+                        $child->firstChild->setAttribute('gml:id', "Polygon$i");
+                    }
+                    break;
             }
         }
         
