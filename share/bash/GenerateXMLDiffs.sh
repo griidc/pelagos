@@ -27,7 +27,7 @@ echo `date`;
 
 # Clean previous run
 outdir
-rm *.xml *.diff *.canonical
+rm -f *.xml *.html *.txt
 
 # Write generated and historical XML files for All Accepted data.
 # This takes about 20 minutes.
