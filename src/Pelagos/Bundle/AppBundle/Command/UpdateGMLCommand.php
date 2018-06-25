@@ -147,7 +147,7 @@ class UpdateGMLCommand extends ContainerAwareCommand
             FROM dif
             LEFT JOIN dataset ON dif.id = dataset.dif_id 
             WHERE spatial_extent_geometry <> ''
-            AND ST_NumGeometries (ST_GeomFromGML(spatial_extent_geometry)) > 1
+            AND ST_GeometryType(ST_GeomFromGML(spatial_extent_geometry)) = 'ST_MultiPoint'
             ;
         ";
         $results = $this->executeSQL($sql);
