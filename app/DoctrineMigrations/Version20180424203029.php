@@ -72,7 +72,7 @@ class Version20180424203029 extends AbstractMigration
             ],
             [
                 'orgName' => 'NCEI',
-                'orgUrl' => 'https://www.ncei.noaa.gov/',
+                'orgUrl' => 'https://www.ncei.noaa.gov',
                 'email' => 'ncei.info@noaa.gov',
                 'phone' => '3017133277',
                 'deliveryPoint' => 'Federal Building 151 Patton Avenue ',
