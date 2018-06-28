@@ -335,6 +335,11 @@ class ISOMetadataExtractorUtil
                     case 'nodc.services@noaa.gov':
                         $email = 'ncei.info@noaa.gov';
                         break;
+                    case 'mg-rast@rt.mcs.anl.gov':
+                        $email = 'mg-rast@mcs.anl.gov';
+                        break;
+                    case 'nodc.services@noaa.gov':
+                        $email = 'ncei.info@noaa.gov';
                     default:
                         break;
                 }
