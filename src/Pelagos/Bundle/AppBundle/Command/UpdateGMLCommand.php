@@ -180,7 +180,7 @@ class UpdateGMLCommand extends ContainerAwareCommand
             JOIN dataset ON dataset.id = dataset_submission.dataset_id
             WHERE spatial_extent <> ''
             AND pg_temp.getGML(spatial_extent::text) is not null
-            AND ST_NumGeometries (pg_temp.getGML(spatial_extent)) > 1
+            AND ST_GeometryType(ST_GeomFromGML(spatial_extent)) = 'ST_MultiPoint'
             AND spatial_extent !~ 'srsName=\"urn:ogc:def:crs:EPSG::4326\"'
             ;
         ";
