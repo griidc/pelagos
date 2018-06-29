@@ -325,7 +325,26 @@ class ISOMetadataExtractorUtil
                          '/gmd:electronicMailAddress' .
                          '/gco:CharacterString';
 
-                $email = self::querySingle($distributor, $query);
+                $email = strtolower(self::querySingle($distributor, $query));
+
+                //hard-coding to map outdated metadata's distribution contact to the national data center entity
+                switch ($email) {
+                    case 'gb-admin@ncbi.nlm.nih.gov':
+                    case 'info@ncbi.nml.nih.gov';
+                        $email = 'info@ncbi.nlm.nih.gov';
+                        break;
+                    case 'nodc.services@noaa.gov':
+                        $email = 'ncei.info@noaa.gov';
+                        break;
+                    case 'mg-rast@rt.mcs.anl.gov':
+                        $email = 'mg-rast@mcs.anl.gov';
+                        break;
+                    case 'nodc.services@noaa.gov':
+                        $email = 'ncei.info@noaa.gov';
+                    default:
+                        break;
+                }
+
                 $dataCenterArray = $em->getRepository(DataCenter::class)->findBy(
                     array('emailAddress' => $email)
                 );
