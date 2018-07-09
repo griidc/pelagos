@@ -2,6 +2,7 @@
 
 namespace Pelagos\Bundle\AppBundle\Security;
 
+use Pelagos\Entity\DistributionPoint;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Pelagos\Entity\Account;
@@ -28,7 +29,8 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
     protected function supports($attribute, $subject)
     {
         // Abstain if the subject is not an instance of DatasetSubmission.
-        if (!$subject instanceof DatasetSubmission and !$subject instanceof PersonDatasetSubmission) {
+        if (!$subject instanceof DatasetSubmission and !$subject instanceof PersonDatasetSubmission
+        and !$subject instanceof DistributionPoint) {
             return false;
         }
 
@@ -71,6 +73,8 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
         } elseif ($subject instanceof PersonDatasetSubmission) {
             $submissionResearchGroup = $subject->getDatasetSubmission()->getDataset()->getResearchGroup();
             $submissionStatus = $subject->getDatasetSubmission()->getStatus();
+        } elseif ($subject instanceof DistributionPoint) {
+            return true;
         } else {
             return false;
         }
@@ -92,6 +96,7 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
                 }
             }
         }
+
         return false;
     }
 }
