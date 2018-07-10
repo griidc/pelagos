@@ -63,6 +63,11 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
             return false;
         }
 
+        // Granting permission to DatasetSubmission entity to create/edit Distribution point entity
+        if ($subject instanceof DistributionPoint) {
+            return true;
+        }
+
         // A user with an account can only create or edit dataset submissions
         // associated with research groups that they (the user) are a member of.
         
@@ -73,8 +78,6 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
         } elseif ($subject instanceof PersonDatasetSubmission) {
             $submissionResearchGroup = $subject->getDatasetSubmission()->getDataset()->getResearchGroup();
             $submissionStatus = $subject->getDatasetSubmission()->getStatus();
-        } elseif ($subject instanceof DistributionPoint) {
-            return true;
         } else {
             return false;
         }
