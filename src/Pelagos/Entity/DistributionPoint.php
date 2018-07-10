@@ -80,7 +80,7 @@ class DistributionPoint extends Entity
      *
      * @var DatasetSubmission
      *
-     * @ORM\ManyToOne(targetEntity="DatasetSubmission", inversedBy="distributionPoint", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="DatasetSubmission", inversedBy="distributionPoints")
      *
      * @Assert\NotBlank(
      *     message="Dataset Submission is required")

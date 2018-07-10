@@ -2,6 +2,7 @@
 
 namespace Pelagos\Bundle\AppBundle\Security;
 
+use Pelagos\Entity\DistributionPoint;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Pelagos\Entity\Account;
@@ -28,7 +29,8 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
     protected function supports($attribute, $subject)
     {
         // Abstain if the subject is not an instance of DatasetSubmission.
-        if (!$subject instanceof DatasetSubmission and !$subject instanceof PersonDatasetSubmission) {
+        if (!$subject instanceof DatasetSubmission and !$subject instanceof PersonDatasetSubmission
+        and !$subject instanceof DistributionPoint) {
             return false;
         }
 
@@ -59,6 +61,11 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
         // If the user token does not contain an Account, vote false.
         if (!$user instanceof Account) {
             return false;
+        }
+
+        // Granting permission to DatasetSubmission entity to create/edit Distribution point entity
+        if ($subject instanceof DistributionPoint) {
+            return true;
         }
 
         // A user with an account can only create or edit dataset submissions
@@ -92,6 +99,7 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
                 }
             }
         }
+
         return false;
     }
 }
