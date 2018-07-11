@@ -207,7 +207,7 @@ $(function() {
             $("#btn-previous").show();
             $("#btn-previous").button("enable");
         }
-        if (activeTab == 5) {
+        if (activeTab == 4) {
             $("#btn-next").button("disable");
             $("#btn-next").hide();
         } else {
