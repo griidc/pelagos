@@ -7,6 +7,7 @@ use Pelagos\Bundle\AppBundle\Form\EndReviewType;
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\DatasetSubmissionReview;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
