@@ -163,7 +163,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                 ) {
                     // The latest submission is complete, so create new one based on it.
                     $datasetSubmission = new DatasetSubmission($datasetSubmission);
-
+                    $datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER);
                     $createFlag = true;
                 }
 
