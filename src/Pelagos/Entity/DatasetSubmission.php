@@ -412,7 +412,7 @@ class DatasetSubmission extends Entity
      *
      * @var DatasetSubmissionReview
      *
-     * @ORM\OneToOne(targetEntity="DatasetSubmissionReview", mappedBy="datasetSubmission", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="DatasetSubmissionReview", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
      */
     protected $datasetSubmissionReview;
 
@@ -1017,7 +1017,7 @@ class DatasetSubmission extends Entity
                 $newDatasetContact->setPrimaryContact(false);
                 $this->addDatasetContact($newDatasetContact);
             }
-            
+
             $this->addDistributionPoint(new DistributionPoint());
 
         } elseif ($entity instanceof DatasetSubmission) {
@@ -1064,7 +1064,7 @@ class DatasetSubmission extends Entity
             $this->setTemporalExtentNilReasonType($entity->getTemporalExtentNilReasonType());
             $this->setDistributionFormatName($entity->getDistributionFormatName());
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
-            
+
             //Submitter should always be the user who has submitted the dataset.
             if (!in_array($entity->getMetadataStatus(), [ self::METADATA_STATUS_NONE, self::METADATA_STATUS_BACK_TO_SUBMITTER])) {
                 $this->submitter = $entity->getSubmitter();
