@@ -24,9 +24,7 @@ class DatasetSubmissionReview extends Entity
      *
      * @var DatasetSubmission
      *
-     * @ORM\OneToOne(targetEntity="DatasetSubmission", inversedBy="datasetSubmissionReview", cascade={"persist"})
-     *
-     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\OneToOne(targetEntity="DatasetSubmission", inversedBy="datasetSubmissionReview")
      */
     protected $datasetSubmission;
 
