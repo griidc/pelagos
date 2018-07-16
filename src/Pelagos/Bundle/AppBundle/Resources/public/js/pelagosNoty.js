@@ -14,7 +14,7 @@
             var notyOptions = $.extend(true, {
                 text: notyText,
                 type: notyType,
-                theme: "relax",
+                theme: "defaultTheme",
                 animation: {
                     open: {opacity: "toggle"},  // fadeIn
                     close: {opacity: "toggle"}, // fadeOut
