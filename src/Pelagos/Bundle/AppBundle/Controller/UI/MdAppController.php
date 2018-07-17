@@ -60,12 +60,14 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
         $mdappLogger = $this->get('pelagos.util.mdapplogger');
         $dataset = $entityHandler->get(Dataset::class, $id);
         $message = null;
+        $from = $dataset->getMetadataStatus();
+        $to = $request->request->get('to');
+        $udi = $dataset->getUdi();
         if ($dataset instanceof Dataset) {
-            $datasetSubmission = $dataset->getDatasetSubmission();
-            if ($datasetSubmission instanceof DatasetSubmission) {
-                $from = $dataset->getMetadataStatus();
-                $udi = $dataset->getUdi();
-                $to = $request->request->get('to');
+            $datasetSubmission = (($dataset->getDatasetSubmissionHistory()->first()) ? $dataset->getDatasetSubmissionHistory()->first() : null);
+
+            if ($datasetSubmission instanceof DatasetSubmission and $datasetSubmission->getStatus() !== DatasetSubmission::STATUS_INCOMPLETE) {
+                $datasetSubmission = $dataset->getDatasetSubmission();
                 if (null !== $to and 'InReview' == $to) {
                     $datasetSubmission->setMetadataStatus($to);
                     $entityHandler->update($datasetSubmission);
@@ -74,10 +76,16 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
                         $udi . '(' . $this->getFlashBagStatus($from) . ' >>> ' . $this->getFlashBagStatus($to) . ')');
                     $message = 'Status for ' . $udi . ' has been changed from ' . $this->getFlashBagStatus($from) .
                         ' to ' . $this->getFlashBagStatus($to);
+                    $this->get('session')->getFlashBag()->add('success', $message);
+
                 }
+
+            } else {
+                $message = 'Unable to move the dataset ' . $udi . ' from status Request Revisions to status InReview as it has a unsubmitted draft dataset-submission';
+                $this->get('session')->getFlashBag()->add('error', $message);
             }
         }
-        $this->get('session')->getFlashBag()->add('notice', $message);
+
         return $this->redirectToRoute('pelagos_app_ui_mdapp_default');
     }
     
