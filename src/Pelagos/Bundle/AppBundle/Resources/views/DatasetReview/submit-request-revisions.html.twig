@@ -7,7 +7,7 @@
 {% block body %}
     <div class="messages status">
         <h2 class="element-invisible">Status message</h2>
-        Dataset review ended by {{ DatasetSubmission.getModifier.getFirstName }}  at {{ DatasetSubmission.getSubmissionTimeStamp.format('c') }}
+        Dataset review ended by {{ reviewedBy }}  at {{ 'now'|date('c') }}
     </div>
 
     <fieldset>
