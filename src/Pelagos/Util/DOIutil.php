@@ -241,6 +241,42 @@ class DOIutil
     }
 
     /**
+     * This function will delete the unpublished DOI (i.e. in reserved state).
+     *
+     * @param string $doi DOI to delete.
+     *
+     * @throws \Exception When the curl Delete fails, exception is thrown.
+     *
+     * @return array
+     */
+    public function deleteDOI($doi)
+    {
+        // Add doi: to doi is it doesn't exist.
+        $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://ezid.cdlib.org/id/$doi");
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+        $output = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        //check to see if it worked.
+        if (200 != $httpCode) {
+            throw new \Exception("ezid failed with:$httpCode($output)", $httpCode);
+        }
+
+        $metadata = array();
+        foreach (explode("\n", $output) as $line) {
+            $split = preg_split('/:/', $line, 2);
+            if (count($split) > 1) {
+                $metadata[$split[0]] = trim($split[1]);
+            }
+        }
+
+        return $metadata;
+    }
+    
+    /**
      * This function escape :%\n\r characters, because these are special with EZID.
      *
      * @param string $input Text that needs to be escaped.
