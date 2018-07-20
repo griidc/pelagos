@@ -191,7 +191,20 @@ class DatasetController extends EntityController
     public function deleteAction($id)
     {
         $dif = $this->handleGetOne(Dataset::class, $id)->getDif();
+
+        //Delete doi for reserved datasets.
+        $message = array(
+            'body' => $id,
+            'routing_key' => 'delete'
+        );
+
+        $this->get('old_sound_rabbit_mq.doi_issue_producer')->publish(
+            $message['body'],
+            $message['routing_key']
+        );
+
         $this->handleDelete(Dataset::class, $id);
+
         if ($dif instanceof DIF) {
             $this->handleDelete(DIF::class, $dif->getId());
         }
