@@ -7,7 +7,6 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 
 use Pelagos\Entity\DataCenter;
 use Pelagos\Entity\DataRepository;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 /**
  * Doctrine Listener class for DataRepository update events.
