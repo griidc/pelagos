@@ -97,6 +97,8 @@ class DoiConsumer implements ConsumerInterface
             $this->publishDoi($dataset, $loggingContext);
         } elseif (preg_match('/^update/', $routingKey)) {
             $this->updateDoi($dataset, $loggingContext);
+        } elseif (preg_match('/^delete/', $routingKey)) {
+            $this->deleteDoi($dataset, $loggingContext);
         } else {
             $this->logger->warning("Unknown routing key: $routingKey", $loggingContext);
             return true;
@@ -248,6 +250,39 @@ class DoiConsumer implements ConsumerInterface
         $this->entityEventDispatcher->dispatch($dataset, 'doi_published');
         // Log processing complete.
         $this->logger->info('DOI set to published', $loggingContext);
+    }
+
+    /**
+     * @param Dataset $dataset
+     * @param array $loggingContext
+     */
+    protected function deleteDoi(Dataset $dataset, array $loggingContext)
+    {
+        // Log processing start.
+        $this->logger->info('Attempting to delete DOI', $loggingContext);
+
+        $doi = $dataset->getDoi();
+        if (!$doi instanceof DOI) {
+            $this->logger->warning('No DOI found for dataset', $loggingContext);
+        }
+
+        try {
+            $doiUtil = new DOIutil();
+            $doiUtil->deleteDOI(
+                $doi->getDoi()
+            );
+        } catch (\Exception $exception) {
+            $this->logger->error('Error deleting DOI: ' . $exception->getMessage(), $loggingContext);
+            return;
+        }
+
+//        $doi->setModifier($dataset->getModifier());
+//
+//        $loggingContext['doi'] = $doi->getDoi();
+//        // Dispatch entity event.
+//        $this->entityEventDispatcher->dispatch($dataset, 'doi_updated');
+        // Log processing complete.
+        $this->logger->info('DOI Deleted', $loggingContext);
     }
 
     /**
