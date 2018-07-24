@@ -190,17 +190,13 @@ class DatasetController extends EntityController
      */
     public function deleteAction($id)
     {
-        $dif = $this->handleGetOne(Dataset::class, $id)->getDif();
+        $dataset = $this->handleGetOne(Dataset::class, $id);
 
-        //Delete doi for reserved datasets.
-        $message = array(
-            'body' => $id,
-            'routing_key' => 'delete'
-        );
+        $dif = $dataset->getDif();
 
-        $this->get('old_sound_rabbit_mq.doi_issue_producer')->publish(
-            $message['body'],
-            $message['routing_key']
+        $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
+            $dataset,
+            'deleted'
         );
 
         $this->handleDelete(Dataset::class, $id);
@@ -208,6 +204,7 @@ class DatasetController extends EntityController
         if ($dif instanceof DIF) {
             $this->handleDelete(DIF::class, $dif->getId());
         }
+
         return $this->makeNoContentResponse();
     }
 }

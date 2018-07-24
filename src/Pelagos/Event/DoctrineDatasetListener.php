@@ -13,7 +13,7 @@ use Pelagos\Entity\Metadata;
 /**
  * Doctrine Listener class for Dataset related events.
  */
-class DoctrineDatasetListener
+class DoctrineDatasetListener extends EventListener
 {
     /**
      * On flush pass entity to updateDataset to update the related Dataset, if necessary.
@@ -59,5 +59,14 @@ class DoctrineDatasetListener
                 $entityManager->getUnitOfWork()->recomputeSingleEntityChangeSet($classMetadata, $dataset);
             }
         }
+    }
+
+    /**
+     * @param EntityEvent $event
+     */
+    public function onDeleted(EntityEvent $event)
+    {
+        $dataset =$event->getEntity();
+        $this->producer->publish($dataset->getId(), 'delete');
     }
 }
