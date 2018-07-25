@@ -19,7 +19,7 @@
 
             <p><strong>Author(s):</strong> {{dataset.datasetSubmission.authors}}</p>
 
-            {% if dataset.metadataStatus == constant('Pelagos\\Entity\\DatasetSubmission::METADATA_STATUS_ACCEPTED') %}
+            {% if dataset.metadataStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
                 <p>
                     <strong>Metadata:</strong>
                     <a href="{{ path('pelagos_app_ui_dataland_metadata', {'udi': dataset.udi}) }}">{{ dataset.udi|replace({':': '-'}) }}-metadata.xml</a>

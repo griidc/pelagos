@@ -19,6 +19,42 @@ class Dataset extends Entity
      */
     const FRIENDLY_NAME = 'Dataset';
 
+        /**
+     * A value for $metadataStatus that indicates no status has been set.
+     */
+    const DATASET_STATUS_NONE = 'None';
+
+    /**
+     * A value for $metadataStatus that indicates that metadata has been submitted.
+     */
+    const DATASET_STATUS_SUBMITTED = 'Submitted';
+
+    /**
+     * A value for $metadataStatus that indicates that the metadata is in review.
+     */
+    const DATASET_STATUS_IN_REVIEW = 'InReview';
+
+    /**
+     * A value for $metadataStatus that indicates that the metadata has been accepted.
+     */
+    const DATASET_STATUS_ACCEPTED = 'Accepted';
+
+    /**
+     * A value for $metadataStatus that indicates that the metadata has been sent back to the submitter for revision.
+     */
+    const DATASET_STATUS_BACK_TO_SUBMITTER = 'BackToSubmitter';
+
+    /**
+     * Valid values for $metadataStatus.
+     */
+    const DATASET_STATUSES = array(
+        self::DATASET_STATUS_NONE => 'No Status',
+        self::DATASET_STATUS_SUBMITTED => 'Submitted',
+        self::DATASET_STATUS_IN_REVIEW => 'In Review',
+        self::DATASET_STATUS_ACCEPTED => 'Accepted',
+        self::DATASET_STATUS_BACK_TO_SUBMITTER => 'Request Revisions',
+    );
+
     /**
      * The UDI for this Dataset.
      *
@@ -129,11 +165,11 @@ class Dataset extends Entity
      *
      * @var status
      *
-     * @see DatasetSubmission::METADATA_STATUS_* constants.
+     * @see self::DATASET_STATUS_* constants.
      *
      * @ORM\Column(type="text")
      */
-    protected $metadataStatus = DatasetSubmission::METADATA_STATUS_NONE;
+    protected $metadataStatus = self::DATASET_STATUS_NONE;
 
     /**
      * The availability status of this Dataset.
@@ -622,7 +658,7 @@ class Dataset extends Entity
         $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE;
         switch ($this->getDatasetSubmission()->getDatasetFileTransferStatus()) {
             case DatasetSubmission::TRANSFER_STATUS_COMPLETED:
-                if ($this->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+                if ($this->getMetadataStatus() === self::DATASET_STATUS_ACCEPTED) {
                     switch ($this->getDatasetSubmission()->getRestrictions()) {
                         case DatasetSubmission::RESTRICTION_NONE:
                             $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE;
@@ -639,7 +675,7 @@ class Dataset extends Entity
                 }
                 break;
             case DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED:
-                if ($this->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+                if ($this->getMetadataStatus() === self::DATASET_STATUS_ACCEPTED) {
                     switch ($this->getDatasetSubmission()->getRestrictions()) {
                         case DatasetSubmission::RESTRICTION_NONE:
                             $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED;
@@ -673,11 +709,11 @@ class Dataset extends Entity
         $statusResult = 'NoDif';
         if ($difStatus == DIF::STATUS_APPROVED) {
             $statusResult = 'DIF';
-            if ($metadataStatus == DatasetSubmission::METADATA_STATUS_IN_REVIEW) {
+            if ($metadataStatus == self::DATASET_STATUS_IN_REVIEW) {
                 $statusResult = 'In Review';
-            } elseif ($metadataStatus == DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
+            } elseif ($metadataStatus == self::DATASET_STATUS_BACK_TO_SUBMITTER) {
                 $statusResult = 'Back to Submitter';
-            } elseif ($metadataStatus == DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+            } elseif ($metadataStatus == self::DATASET_STATUS_ACCEPTED) {
                 if ($availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED ||
                     $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED) {
                     $statusResult = 'Completed, Restricted';
@@ -687,7 +723,7 @@ class Dataset extends Entity
                 } else {
                     $statusResult = 'DIF';
                 }
-            } elseif ($metadataStatus == DatasetSubmission::METADATA_STATUS_SUBMITTED) {
+            } elseif ($metadataStatus == self::DATASET_STATUS_SUBMITTED) {
                 $statusResult = 'Submitted';
             } else {
                 //  $difStatus == DIF::STATUS_APPROVED
@@ -742,7 +778,7 @@ class Dataset extends Entity
         $spatialExtent = null;
 
         // If there is an accepted dataset submission, use its geometry or else use the geometry from DIF.
-        if ($datasetSubmission instanceof DatasetSubmission and $this->metadataStatus === DatasetSubmission::METADATA_STATUS_ACCEPTED
+        if ($datasetSubmission instanceof DatasetSubmission and $this->metadataStatus === self::DATASET_STATUS_ACCEPTED
             and $datasetSubmission->getSpatialExtent()) {
             $spatialExtent = $datasetSubmission->getSpatialExtent();
         } elseif ($dif instanceof DIF and $dif->getStatus() === DIF::STATUS_APPROVED and $dif->getSpatialExtentGeometry()) {

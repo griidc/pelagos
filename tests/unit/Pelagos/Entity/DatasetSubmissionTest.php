@@ -371,9 +371,9 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      */
     public function testMetadataStatus()
     {
-        $this->datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
+        $this->datasetSubmission->setMetadataStatus(Dataset::DATASET_STATUS_ACCEPTED);
         $this->assertEquals(
-            DatasetSubmission::METADATA_STATUS_ACCEPTED,
+            Dataset::DATASET_STATUS_ACCEPTED,
             $this->datasetSubmission->getMetadataStatus()
         );
     }
@@ -663,23 +663,23 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
         // datasetFileTransferStatus == TRANSFER_STATUS_COMPLETED
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
         $this->datasetSubmission->setDataset($this->mockDataset);
-        $this->datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
+        $this->datasetSubmission->setMetadataStatus(Dataset::DATASET_STATUS_ACCEPTED);
         $this->datasetSubmission->setRestrictions(DatasetSubmission::RESTRICTION_NONE);
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
         $this->datasetSubmission->setRestrictions(DatasetSubmission::RESTRICTION_RESTRICTED);
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
-        $this->datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_NONE);
+        $this->datasetSubmission->setMetadataStatus(Dataset::DATASET_STATUS_NONE);
         $this->datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
         $this->datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
         // datasetFileTransferStatus == TRANSFER_STATUS_REMOTELY_HOSTED
-        $this->datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
+        $this->datasetSubmission->setMetadataStatus(Dataset::DATASET_STATUS_ACCEPTED);
         $this->datasetSubmission->setRestrictions(DatasetSubmission::RESTRICTION_NONE);
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
         $this->datasetSubmission->setRestrictions(DatasetSubmission::RESTRICTION_RESTRICTED);
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
-        $this->datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_NONE);
+        $this->datasetSubmission->setMetadataStatus(Dataset::DATASET_STATUS_NONE);
         $this->datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
         $this->datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
@@ -759,7 +759,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             $this->datasetSubmission->getStatus()
         );
         $this->assertEquals(
-            DatasetSubmission::METADATA_STATUS_NONE,
+            Dataset::DATASET_STATUS_NONE,
             $this->datasetSubmission->getMetadataStatus()
         );
         $this->assertNull($this->datasetSubmission->getSubmissionTimeStamp());
@@ -775,7 +775,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
             $this->datasetSubmission->getStatus()
         );
         $this->assertEquals(
-            DatasetSubmission::METADATA_STATUS_SUBMITTED,
+            Dataset::DATASET_STATUS_SUBMITTED,
             $this->datasetSubmission->getMetadataStatus()
         );
         $this->assertInstanceOf(

@@ -115,7 +115,7 @@ class StatsController extends UIController
             )')
             ->setParameters(
                 array(
-                    'metadatastatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED,
+                    'metadatastatus' => Dataset::DATASET_STATUS_ACCEPTED,
                     'restrictedstatus' => DatasetSubmission::RESTRICTION_NONE,
                     'transerstatuscompleted' => DatasetSubmission::TRANSFER_STATUS_COMPLETED,
                     'transerstatusremotelyhosted' => DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED,

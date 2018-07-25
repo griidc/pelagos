@@ -137,7 +137,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                         $createFlag = true;
                     }
                 } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
-                    and $dataset->getMetadataStatus() !== DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
+                    and $dataset->getMetadataStatus() !== Dataset::DATASET_STATUS_BACK_TO_SUBMITTER
                 ) {
                     // The latest submission is complete, so create new one based on it.
                     $datasetSubmission = new DatasetSubmission($datasetSubmission);
@@ -159,11 +159,11 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                         $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_COMPLETED
                         or $datasetSubmission->getDatasetFileSha256Hash() !== null
                     )
-                    and $dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
+                    and $dataset->getMetadataStatus() === Dataset::DATASET_STATUS_BACK_TO_SUBMITTER
                 ) {
                     // The latest submission is complete, so create new one based on it.
                     $datasetSubmission = new DatasetSubmission($datasetSubmission);
-                    $datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER);
+                    $datasetSubmission->setMetadataStatus(Dataset::DATASET_STATUS_BACK_TO_SUBMITTER);
                     $createFlag = true;
                 }
 
@@ -219,7 +219,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
 
             $this->processDatasetFileTransferDetails($form, $datasetSubmission);
 
-            $datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_SUBMITTED);
+            $datasetSubmission->setMetadataStatus(Dataset::DATASET_STATUS_SUBMITTED);
 
             $datasetSubmission->submit($this->getUser()->getPerson());
 
@@ -533,7 +533,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
      */
     private function isSubmissionLocked(Dataset $dataset)
     {
-        if (in_array($dataset->getMetadataStatus(), [DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER, DatasetSubmission::METADATA_STATUS_NONE])) {
+        if (in_array($dataset->getMetadataStatus(), [Dataset::DATASET_STATUS_BACK_TO_SUBMITTER, Dataset::DATASET_STATUS_NONE])) {
             return false;
         }
         return true;

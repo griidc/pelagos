@@ -86,7 +86,7 @@ class DatasetRestrictionsController extends UIController
                     throw new PersistenceException($exception->getMessage());
                 }
 
-                if ($datasetStatus === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+                if ($datasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
                     $this->publishDoiForAccepted($rabbitMessage);
                 }
 

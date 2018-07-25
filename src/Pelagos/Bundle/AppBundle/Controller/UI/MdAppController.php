@@ -120,28 +120,28 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
                 'm_dataset' => array(
                     'submitted' => $entityHandler->getBy(
                         Dataset::class,
-                        array('metadataStatus' => DatasetSubmission::METADATA_STATUS_SUBMITTED),
+                        array('metadataStatus' => Dataset::DATASET_STATUS_SUBMITTED),
                         array(),
                         $objNeeded,
                         Query::HYDRATE_ARRAY
                     ),
                     'inreview' => $entityHandler->getBy(
                         Dataset::class,
-                        array('metadataStatus' => DatasetSubmission::METADATA_STATUS_IN_REVIEW),
+                        array('metadataStatus' => Dataset::DATASET_STATUS_IN_REVIEW),
                         array(),
                         $objNeeded,
                         Query::HYDRATE_ARRAY
                     ),
                     'accepted' => $entityHandler->getBy(
                         Dataset::class,
-                        array('metadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED),
+                        array('metadataStatus' => Dataset::DATASET_STATUS_ACCEPTED),
                         array(),
                         $objNeeded,
                         Query::HYDRATE_ARRAY
                     ),
                     'backtosubmitter' => $entityHandler->getBy(
                         Dataset::class,
-                        array('metadataStatus' => DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER),
+                        array('metadataStatus' => Dataset::DATASET_STATUS_BACK_TO_SUBMITTER),
                         array(),
                         $objNeeded,
                         Query::HYDRATE_ARRAY
@@ -188,8 +188,8 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
      */
     private function getFlashBagStatus($status)
     {
-        if (array_key_exists($status, DatasetSubmission::METADATA_STATUSES)) {
-            $status = DatasetSubmission::METADATA_STATUSES[$status];
+        if (array_key_exists($status, Dataset::DATASET_STATUSES)) {
+            $status = Dataset::DATASET_STATUSES[$status];
         }
 
         return $status;

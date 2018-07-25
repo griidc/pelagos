@@ -145,7 +145,7 @@ class GomriReportController extends ReportController
             'AND fundingOrganization.name = :gomri';
         $query = $entityManager->createQuery($queryString);
         $query->setParameters(array(
-            'metadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED,
+            'metadataStatus' => Dataset::DATASET_STATUS_ACCEPTED,
             'restrictions' => DatasetSubmission::RESTRICTION_NONE,
             'fileTransferStatusCompleted' => DatasetSubmission::TRANSFER_STATUS_COMPLETED,
             'fileTransferStatusRemotelyHosted' => DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED,

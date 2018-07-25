@@ -54,7 +54,7 @@ class RabbitPublishAllApprovedNonRestrictedCommand extends ContainerAwareCommand
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
         $datasets = $entityManager->getRepository('Pelagos\Entity\Dataset')->findBy(array(
             'metadataStatus' => array(
-                DatasetSubmission::METADATA_STATUS_ACCEPTED,
+                Dataset::DATASET_STATUS_ACCEPTED,
             )
         ));
 

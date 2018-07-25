@@ -126,42 +126,6 @@ class DatasetSubmission extends Entity
     );
 
     /**
-     * A value for $metadataStatus that indicates no status has been set.
-     */
-    const METADATA_STATUS_NONE = 'None';
-
-    /**
-     * A value for $metadataStatus that indicates that metadata has been submitted.
-     */
-    const METADATA_STATUS_SUBMITTED = 'Submitted';
-
-    /**
-     * A value for $metadataStatus that indicates that the metadata is in review.
-     */
-    const METADATA_STATUS_IN_REVIEW = 'InReview';
-
-    /**
-     * A value for $metadataStatus that indicates that the metadata has been accepted.
-     */
-    const METADATA_STATUS_ACCEPTED = 'Accepted';
-
-    /**
-     * A value for $metadataStatus that indicates that the metadata has been sent back to the submitter for revision.
-     */
-    const METADATA_STATUS_BACK_TO_SUBMITTER = 'BackToSubmitter';
-
-    /**
-     * Valid values for $metadataStatus.
-     */
-    const METADATA_STATUSES = array(
-        self::METADATA_STATUS_NONE => 'No Status',
-        self::METADATA_STATUS_SUBMITTED => 'Submitted',
-        self::METADATA_STATUS_IN_REVIEW => 'In Review',
-        self::METADATA_STATUS_ACCEPTED => 'Accepted',
-        self::METADATA_STATUS_BACK_TO_SUBMITTER => 'Request Revisions',
-    );
-
-    /**
      * No dataset submission has been submitted.
      */
     const STATUS_UNSUBMITTED = 0;
@@ -728,11 +692,11 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @see METADATA_STATUSES class constant for valid values.
+     * @see DATASET_STATUSES class constant for valid values.
      *
      * @ORM\Column(type="text", nullable=false)
      */
-    protected $metadataStatus = self::METADATA_STATUS_NONE;
+    protected $metadataStatus = Dataset::DATASET_STATUS_NONE;
 
     /**
      * The reference date for this dataset.
@@ -1066,7 +1030,7 @@ class DatasetSubmission extends Entity
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
             
             //Submitter should always be the user who has submitted the dataset.
-            if (!in_array($entity->getMetadataStatus(), [ self::METADATA_STATUS_NONE, self::METADATA_STATUS_BACK_TO_SUBMITTER])) {
+            if (!in_array($entity->getMetadataStatus(), [ Dataset::DATASET_STATUS_NONE, Dataset::DATASET_STATUS_BACK_TO_SUBMITTER])) {
                 $this->submitter = $entity->getSubmitter();
                 $this->submissionTimeStamp = $entity->getSubmissionTimeStamp();
             }
@@ -1194,7 +1158,7 @@ class DatasetSubmission extends Entity
     public function submit(Person $submitter)
     {
         $this->status = self::STATUS_COMPLETE;
-        $this->metadataStatus = self::METADATA_STATUS_SUBMITTED;
+        $this->metadataStatus = Dataset::DATASET_STATUS_SUBMITTED;
         $this->getDataset()->setDatasetSubmission($this);
         $this->submissionTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->submitter = $submitter;
@@ -1224,17 +1188,17 @@ class DatasetSubmission extends Entity
             case ($eventName === self::DATASET_END_REVIEW):
                 //Setting the status to in-review.
                 $this->status = self::STATUS_IN_REVIEW;
-                $this->setMetadataStatus(self::METADATA_STATUS_IN_REVIEW);
+                $this->setMetadataStatus(Dataset::DATASET_STATUS_IN_REVIEW);
                 break;
             case ($eventName === self::DATASET_ACCEPT_REVIEW):
                 //Setting the status to in-review.
                 $this->status = self::STATUS_COMPLETE;
-                $this->setMetadataStatus(self::METADATA_STATUS_ACCEPTED);
+                $this->setMetadataStatus(Dataset::DATASET_STATUS_ACCEPTED);
                 $this->getDataset()->setDatasetSubmission($this);
                 break;
             case ($eventName === self::DATASET_REQUEST_REVISIONS):
                 $this->status = self::STATUS_COMPLETE;
-                $this->setMetadataStatus(self::METADATA_STATUS_BACK_TO_SUBMITTER);
+                $this->setMetadataStatus(Dataset::DATASET_STATUS_BACK_TO_SUBMITTER);
                 $this->status = self::STATUS_COMPLETE;
                 break;
         }
