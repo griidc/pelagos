@@ -79,7 +79,7 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
                     //  then call the reviewEvent function of datasetSubmission to change it's state to end the review,
                     //  store / persist the changes
                     //  and send out the messages
-                    if ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_IN_REVIEW and
+                    if ($dataset->getMetadataStatus() === Dataset::DATASET_STATUS_IN_REVIEW and
                         $datasetSubmissionReview instanceof DatasetSubmissionReview and
                         empty($datasetSubmissionReview->getReviewEndDateTime())
                     ) {

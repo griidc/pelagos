@@ -53,5 +53,7 @@ class RabbitPublishAllApprovedNonRestrictedCommand extends ContainerAwareCommand
             $thumper->publish($dataset->getId(), 'publish');
             $output->writeln('Attempting to publish/transition DOI for Dataset ' . $dataset->getId());
         }
+
+        return 0;
     }
 }
