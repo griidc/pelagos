@@ -207,7 +207,7 @@ $(function() {
             $("#btn-previous").show();
             $("#btn-previous").button("enable");
         }
-        if (activeTab == 5) {
+        if (activeTab == 4) {
             $("#btn-next").button("disable");
             $("#btn-next").hide();
         } else {
@@ -283,11 +283,9 @@ $(function() {
     $("#referenceDate").datepicker({
         dateFormat: "yy-mm-dd",
         autoSize:true,
-        maxDate: "0"
     });
 
     $("#temporalExtentBeginPosition").datepicker({
-        maxDate: "0",
         dateFormat: "yy-mm-dd",
         changeMonth: true,
         changeYear: true,
@@ -299,7 +297,6 @@ $(function() {
     });
 
     $("#temporalExtentEndPosition").datepicker({
-        maxDate: "0",
         dateFormat: "yy-mm-dd",
         changeMonth: true,
         changeYear: true,

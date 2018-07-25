@@ -1,59 +1,82 @@
+{% set distPoint = dataset.datasetSubmission.distributionPoints | first %}
 <gmd:MD_Distribution>
     <gmd:distributor>
         <gmd:MD_Distributor>
             <gmd:distributorContact>
                 <gmd:CI_ResponsibleParty>
                     <gmd:organisationName>
-                        <gco:CharacterString>Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)</gco:CharacterString>
+                        <gco:CharacterString> {{ distPoint.dataCenter.organizationName }}</gco:CharacterString>
                     </gmd:organisationName>
                     <gmd:contactInfo>
                         <gmd:CI_Contact>
                             <gmd:phone>
                                 <gmd:CI_Telephone>
                                     <gmd:voice>
-                                        <gco:CharacterString>+1-361-825-3604</gco:CharacterString>
+                                        {% if distPoint.dataCenter.phoneNumber is empty %}
+                                            <gco:CharacterString/>
+                                        {% else %}
+                                            <gco:CharacterString>{{ distPoint.dataCenter.phoneNumber }}</gco:CharacterString>
+                                        {% endif %}
                                     </gmd:voice>
-                                    <gmd:facsimile>
-                                        <gco:CharacterString>+1-361-825-2050</gco:CharacterString>
-                                    </gmd:facsimile>
                                 </gmd:CI_Telephone>
                             </gmd:phone>
                             <gmd:address>
                                 <gmd:CI_Address>
                                     <gmd:deliveryPoint>
-                                        <gco:CharacterString>
-                                            <![CDATA[6300 Ocean Drive
-Unit 5869]]>
-                                        </gco:CharacterString>
+                                        {% if distPoint.dataCenter.deliveryPoint is empty %}
+                                            <gco:CharacterString/>
+                                        {% else %}
+                                            <gco:CharacterString><![CDATA[{{ distPoint.dataCenter.deliveryPoint }}]]></gco:CharacterString>
+                                        {% endif %}
                                     </gmd:deliveryPoint>
                                     <gmd:city>
-                                        <gco:CharacterString>Corpus Christi</gco:CharacterString>
+                                        {% if distPoint.dataCenter.city is empty %}
+                                            <gco:CharacterString/>
+                                        {% else %}
+                                            <gco:CharacterString>{{ distPoint.dataCenter.city }}</gco:CharacterString>
+                                        {% endif %}
                                     </gmd:city>
                                     <gmd:administrativeArea>
-                                        <gco:CharacterString>Texas</gco:CharacterString>
+                                        {% if distPoint.dataCenter.administrativeArea is empty %}
+                                            <gco:CharacterString/>
+                                        {% else %}
+                                            <gco:CharacterString>{{ distPoint.dataCenter.administrativeArea }}</gco:CharacterString>
+                                        {% endif %}
                                     </gmd:administrativeArea>
                                     <gmd:postalCode>
-                                        <gco:CharacterString>78412-5869</gco:CharacterString>
+                                        {% if distPoint.dataCenter.postalCode is empty %}
+                                            <gco:CharacterString/>
+                                        {% else %}
+                                            <gco:CharacterString>{{ distPoint.dataCenter.postalCode }}</gco:CharacterString>
+                                        {% endif %}
                                     </gmd:postalCode>
                                     <gmd:country>
-                                        <gco:CharacterString>USA</gco:CharacterString>
+                                        {% if distPoint.dataCenter.country is empty %}
+                                            <gco:CharacterString/>
+                                        {% else %}
+                                            <gco:CharacterString>{{ distPoint.dataCenter.country }}</gco:CharacterString>
+                                        {% endif %}
                                     </gmd:country>
                                     <gmd:electronicMailAddress>
-                                        <gco:CharacterString>griidc@gomri.org</gco:CharacterString>
+                                        {% if distPoint.dataCenter.emailAddress is empty %}
+                                            <gco:CharacterString/>
+                                        {% else %}
+                                            <gco:CharacterString>{{ distPoint.dataCenter.emailAddress }}</gco:CharacterString>
+                                        {% endif %}
                                     </gmd:electronicMailAddress>
                                 </gmd:CI_Address>
                             </gmd:address>
                             <gmd:onlineResource>
                                 <gmd:CI_OnlineResource>
                                     <gmd:linkage>
-                                        <gmd:URL>https://data.gulfresearchinitiative.org</gmd:URL>
+                                        <gmd:URL>{{ distPoint.dataCenter.organizationUrl }}</gmd:URL>
                                     </gmd:linkage>
                                 </gmd:CI_OnlineResource>
                             </gmd:onlineResource>
                         </gmd:CI_Contact>
                     </gmd:contactInfo>
                     <gmd:role>
-                        <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="distributor" codeSpace="005">distributor</gmd:CI_RoleCode>
+                        {% include "PelagosAppBundle:MetadataGenerator:CI_RoleCode.xml.twig" with {"role" : distPoint.roleCode} %}
                     </gmd:role>
                 </gmd:CI_ResponsibleParty>
             </gmd:distributorContact>
@@ -80,7 +103,7 @@ Unit 5869]]>
                     <gmd:onLine>
                         <gmd:CI_OnlineResource>
                             <gmd:linkage>
-                                <gmd:URL>https://data.gulfresearchinitiative.org/data/{{dataset.udi}}</gmd:URL>
+                                <gmd:URL>{{ distPoint.distributionUrl }}</gmd:URL>
                             </gmd:linkage>
                             <gmd:protocol>
                                 <gco:CharacterString>https</gco:CharacterString>

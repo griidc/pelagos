@@ -45,6 +45,11 @@ class Account extends Entity implements UserInterface, \Serializable
     const ROLE_RESEARCH_GROUP_DATA = 'ROLE_RESEARCH_GROUP_DATA';
 
     /**
+     * A role given only to Subject matter experts.
+     */
+    const ROLE_SUBJECT_MATTER_EXPERT = 'ROLE_SUBJECT_MATTER_EXPERT';
+
+    /**
      * This is defined here to override the base class id.
      *
      * This is not used by the Account Entity because it gets its identity through Person.
@@ -468,6 +473,9 @@ class Account extends Entity implements UserInterface, \Serializable
                 and !in_array(self::ROLE_DATA_REPOSITORY_MANAGER, $roles)
             ) {
                 $roles[] = self::ROLE_DATA_REPOSITORY_MANAGER;
+            } elseif ($personDataRepository->getRole()->getName() === DataRepositoryRoles::SME
+             and !in_array(self::ROLE_SUBJECT_MATTER_EXPERT, $roles)) {
+                $roles[] = self::ROLE_SUBJECT_MATTER_EXPERT;
             }
         }
         foreach ($this->getPerson()->getPersonResearchGroups() as $personResearchGroup) {

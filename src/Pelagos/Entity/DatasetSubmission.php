@@ -141,11 +141,6 @@ class DatasetSubmission extends Entity
     const METADATA_STATUS_IN_REVIEW = 'InReview';
 
     /**
-     * A value for $metadataStatus that indicates that the metadata is undergoing a second check.
-     */
-    const METADATA_STATUS_SECOND_CHECK = 'SecondCheck';
-
-    /**
      * A value for $metadataStatus that indicates that the metadata has been accepted.
      */
     const METADATA_STATUS_ACCEPTED = 'Accepted';
@@ -162,7 +157,6 @@ class DatasetSubmission extends Entity
         self::METADATA_STATUS_NONE => 'No Status',
         self::METADATA_STATUS_SUBMITTED => 'Submitted',
         self::METADATA_STATUS_IN_REVIEW => 'In Review',
-        self::METADATA_STATUS_SECOND_CHECK => '2nd Check',
         self::METADATA_STATUS_ACCEPTED => 'Accepted',
         self::METADATA_STATUS_BACK_TO_SUBMITTER => 'Request Revisions',
     );
@@ -181,6 +175,11 @@ class DatasetSubmission extends Entity
      * A dataset submission has been submitted, and a data file URI has been provided.
      */
     const STATUS_COMPLETE = 2;
+
+    /**
+     * A dataset submission has been submitted, and it is in dataset-review mode.
+     */
+    const STATUS_IN_REVIEW = 3;
 
     /**
      * The dataset is not available to anyone.
@@ -259,6 +258,34 @@ class DatasetSubmission extends Entity
             'name' => 'Ground Condition and Modeled Period',
             'description' => 'Both choices apply.'
         ],
+    ];
+
+    /**
+     * Valid values for self::$temporalExtentNilReasonType.
+     *
+     * The array values are the valid values to be set in self::temporalExtentNilReasonType.
+     */
+    const NILREASON_TYPES = [
+        'inapplicable' => [
+            'name' => 'Inapplicable',
+            'description' => 'Inapplicable'
+        ],
+        'missing' => [
+            'name' => 'Missing',
+            'description' => 'Missing'
+        ],
+        'template' => [
+            'name' => 'Template',
+            'description' => 'Template'
+        ],
+        'unknown' => [
+            'name' => 'Unknown',
+            'description' => 'Unknown'
+        ],
+        'withheld' => [
+            'name' => 'Withheld',
+            'description' => 'Withheld'
+        ]
     ];
 
     /**
@@ -346,6 +373,21 @@ class DatasetSubmission extends Entity
     ];
 
     /**
+     * Indicates the dataset submission is in endReview state.
+     */
+    const DATASET_END_REVIEW = 'endReview';
+
+    /**
+     * Indicates the dataset submission is in acceptReview state.
+     */
+    const DATASET_ACCEPT_REVIEW = 'acceptReview';
+
+    /**
+     * Indicates the dataset submission is in request revisions (back to submitter) state.
+     */
+    const DATASET_REQUEST_REVISIONS = 'requestRevisions';
+
+    /**
      * Status of this Dataset Submission.
      *
      * @var integer
@@ -364,6 +406,15 @@ class DatasetSubmission extends Entity
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     protected $dataset;
+
+    /**
+     * The review for this Dataset Submission.
+     *
+     * @var DatasetSubmissionReview
+     *
+     * @ORM\OneToOne(targetEntity="DatasetSubmissionReview", mappedBy="datasetSubmission", cascade={"persist"})
+     */
+    protected $datasetSubmissionReview;
 
     /**
      * The sequence for this Dataset Submission.
@@ -473,6 +524,22 @@ class DatasetSubmission extends Entity
      * )
      */
     protected $datasetContacts;
+
+    /**
+     * The Point of Contact for the metadata associated with this submission.
+     *
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionMetadataContact", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
+     *
+     * @ORM\OrderBy({"creationTimeStamp" = "ASC"})
+     *
+     * @Assert\Count(
+     *      min = "1",
+     *      minMessage="A Metadata contact person is required."
+     * )
+     */
+    protected $metadataContacts;
 
     /**
      * Whether the dataset has any restrictions.
@@ -849,6 +916,17 @@ class DatasetSubmission extends Entity
     protected $temporalExtentEndPosition;
 
     /**
+     * Nilreason type for datasets which do not spatial extent.
+     *
+     * @var string
+     *
+     * @see NILREASON_TYPES class constant for valid values.
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $temporalExtentNilReasonType;
+
+    /**
      * The name of the format the data is distributed in.
      *
      * @var string
@@ -885,6 +963,17 @@ class DatasetSubmission extends Entity
     protected $submitter;
 
     /**
+     * DatasetSubmission's Distribution Points.
+     *
+     * @var Collection $distributionPoints
+     *
+     * @access protected
+     *
+     * @ORM\OneToMany(targetEntity="DistributionPoint", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
+     */
+    protected $distributionPoints;
+
+    /**
      * Constructor.
      *
      * Initializes collections to empty collections.
@@ -898,6 +987,8 @@ class DatasetSubmission extends Entity
     public function __construct(Entity $entity, PersonDatasetSubmissionDatasetContact $datasetPPOc = null)
     {
         $this->datasetContacts = new ArrayCollection;
+        $this->metadataContacts = new ArrayCollection;
+        $this->distributionPoints = new ArrayCollection();
         if ($entity instanceof DIF) {
             if (null === $datasetPPOc) {
                 throw new \Exception('Constructor requires PersonDatasetSubmissionDatasetContact if passed a DIF entity');
@@ -915,6 +1006,9 @@ class DatasetSubmission extends Entity
             $datasetPPOc->setRole(PersonDatasetSubmissionDatasetContact::getRoleChoices()['Point of Contact']);
             $datasetPPOc->setPrimaryContact(true);
             $this->addDatasetContact($datasetPPOc);
+            // Add metadata contact.
+            $metadataContact = new PersonDatasetSubmissionMetadataContact();
+            $this->addMetadataContact($metadataContact);
             // Add additional point of contact if DIF has secondaryPointOfContact.
             if ($entity->getSecondaryPointOfContact()) {
                 $newDatasetContact = new PersonDatasetSubmissionDatasetContact();
@@ -923,9 +1017,12 @@ class DatasetSubmission extends Entity
                 $newDatasetContact->setPrimaryContact(false);
                 $this->addDatasetContact($newDatasetContact);
             }
+            
+            $this->addDistributionPoint(new DistributionPoint());
+
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
-            $this->setSequence($entity->getSequence() + 1);
+            $this->setSequence($entity->getDataset()->getDatasetSubmissionHistory()->first()->getSequence() + 1);
             // Populate from original Dataset Submission.
             $this->setDataset($entity->getDataset());
             $this->setTitle($entity->getTitle());
@@ -964,8 +1061,15 @@ class DatasetSubmission extends Entity
             $this->setTemporalExtentDesc($entity->getTemporalExtentDesc());
             $this->setTemporalExtentBeginPosition($entity->getTemporalExtentBeginPosition());
             $this->setTemporalExtentEndPosition($entity->getTemporalExtentEndPosition());
+            $this->setTemporalExtentNilReasonType($entity->getTemporalExtentNilReasonType());
             $this->setDistributionFormatName($entity->getDistributionFormatName());
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
+            
+            //Submitter should always be the user who has submitted the dataset.
+            if (!in_array($entity->getMetadataStatus(), [ self::METADATA_STATUS_NONE, self::METADATA_STATUS_BACK_TO_SUBMITTER])) {
+                $this->submitter = $entity->getSubmitter();
+                $this->submissionTimeStamp = $entity->getSubmissionTimeStamp();
+            }
             // Copy the original Dataset Submission's dataset contacts.
             foreach ($entity->getDatasetContacts() as $datasetContact) {
                 $newDatasetContact = new PersonDatasetSubmissionDatasetContact();
@@ -973,6 +1077,22 @@ class DatasetSubmission extends Entity
                 $newDatasetContact->setPerson($datasetContact->getPerson());
                 $newDatasetContact->setPrimaryContact($datasetContact->isPrimaryContact());
                 $this->addDatasetContact($newDatasetContact);
+            }
+            // Copy the original Dataset Submission's metadata contacts.
+            foreach ($entity->getMetadataContacts() as $metadataContact) {
+                $newMetadataContact = new PersonDatasetSubmissionMetadataContact();
+                $newMetadataContact->setRole($metadataContact->getRole());
+                $newMetadataContact->setPerson($metadataContact->getPerson());
+                $this->addMetadataContact($newMetadataContact);
+            }
+
+            // Copy the original Dataset Submission's distribution Point(s).
+            foreach ($entity->getDistributionPoints() as $distributionPoint) {
+                $newDistributionPoint = new DistributionPoint();
+                $newDistributionPoint->setDistributionUrl($distributionPoint->getDistributionUrl());
+                $newDistributionPoint->setRoleCode($distributionPoint->getRoleCode());
+                $newDistributionPoint->setDataCenter($distributionPoint->getDataCenter());
+                $this->addDistributionPoint($newDistributionPoint);
             }
         } else {
             throw new \Exception('Class constructor requires a DIF or a DatasetSubmission. A ' . get_class($entity) . ' was passed.');
@@ -991,27 +1111,27 @@ class DatasetSubmission extends Entity
     public function validate(ExecutionContextInterface $context)
     {
         if (null !== $this->spatialExtent) {
-            if (null === $this->temporalExtentDesc) {
-                $context->buildViolation('Since a spatial extent is present, this submission must ' .
-                    'include a time period description.')
-                    ->atPath('temporalExtentDesc')
-                    ->addViolation();
-            }
+            if (null === $this->temporalExtentNilReasonType) {
+                if (null === $this->temporalExtentDesc) {
+                    $context->buildViolation('Since a spatial extent is present, this submission must ' .
+                        'include a time period description.')
+                        ->atPath('temporalExtentDesc')
+                        ->addViolation();
+                }
+                if (!($this->temporalExtentBeginPosition instanceof \DateTime)) {
+                    $context->buildViolation('Since a spatial extent is present, this submission must ' .
+                        'include a start date.')
+                        ->atPath('temporalExtentBeginPosition')
+                        ->addViolation();
+                }
 
-            if (!($this->temporalExtentBeginPosition instanceof \DateTime)) {
-                $context->buildViolation('Since a spatial extent is present, this submission must ' .
-                    'include a start date.')
-                    ->atPath('temporalExtentBeginPosition')
-                    ->addViolation();
+                if (!($this->temporalExtentEndPosition instanceof \DateTime)) {
+                    $context->buildViolation('Since a spatial extent is present, this submission must ' .
+                        'include a end date.')
+                        ->atPath('temporalExtentEndPosition')
+                        ->addViolation();
+                }
             }
-
-            if (!($this->temporalExtentEndPosition instanceof \DateTime)) {
-                $context->buildViolation('Since a spatial extent is present, this submission must ' .
-                    'include a end date.')
-                    ->atPath('temporalExtentEndPosition')
-                    ->addViolation();
-            }
-
         } else {
             if (null === $this->spatialExtentDescription) {
                 $context->buildViolation('You must provide either a spatial extent or a spatial extent description.')
@@ -1048,6 +1168,23 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Get the choice list for NilReason types.
+     *
+     * @return array
+     */
+    public static function getNilReasonTypes()
+    {
+        return array_flip(
+            array_map(
+                function ($type) {
+                    return $type['name'];
+                },
+                static::NILREASON_TYPES
+            )
+        );
+    }
+
+    /**
      * Submit this Dataset Submission.
      *
      * @param Person $submitter The submitter.
@@ -1061,6 +1198,54 @@ class DatasetSubmission extends Entity
         $this->getDataset()->setDatasetSubmission($this);
         $this->submissionTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->submitter = $submitter;
+        $metadataContact = $this->getMetadataContacts()->first();
+        if (!$metadataContact instanceof PersonDatasetSubmissionMetadataContact) {
+            $metadataContact = new PersonDatasetSubmissionMetadataContact();
+            $metadataContact->setRole('pointOfContact');
+            $metadataContact->setPerson($submitter);
+            $this->addMetadataContact($metadataContact);
+        } else {
+            $metadataContact->setRole('pointOfContact');
+            $metadataContact->setPerson($submitter);
+        }
+    }
+
+    /**
+     * Triggers the respective event for Dataset Submission Review.
+     *
+     * @param Person $reviewer  The person who ends/accepts the review.
+     * @param string $eventName The event which triggers this method ("endReview" or "acceptReview").
+     *
+     * @return void
+     */
+    public function reviewEvent(Person $reviewer, $eventName)
+    {
+        switch (true) {
+            case ($eventName === self::DATASET_END_REVIEW):
+                //Setting the status to in-review.
+                $this->status = self::STATUS_IN_REVIEW;
+                $this->setMetadataStatus(self::METADATA_STATUS_IN_REVIEW);
+                break;
+            case ($eventName === self::DATASET_ACCEPT_REVIEW):
+                //Setting the status to in-review.
+                $this->status = self::STATUS_COMPLETE;
+                $this->setMetadataStatus(self::METADATA_STATUS_ACCEPTED);
+                $this->getDataset()->setDatasetSubmission($this);
+                break;
+            case ($eventName === self::DATASET_REQUEST_REVISIONS):
+                $this->status = self::STATUS_COMPLETE;
+                $this->setMetadataStatus(self::METADATA_STATUS_BACK_TO_SUBMITTER);
+                $this->status = self::STATUS_COMPLETE;
+                break;
+        }
+
+        $datasetSubmissionReview = $this->getDatasetSubmissionReview();
+
+        // Setting timestamp when review is ended.
+        $datasetSubmissionReview->setReviewEndDateTime(new \DateTime('now', new \DateTimeZone('UTC')));
+
+        // Setting review ended by person.
+        $datasetSubmissionReview->setReviewEndedBy($reviewer);
     }
 
     /**
@@ -1071,6 +1256,28 @@ class DatasetSubmission extends Entity
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * Set the Dataset Submission Review for this Dataset Submission.
+     *
+     * @param DatasetSubmissionReview $datasetSubmissionReview The Review for this Dataset Submission.
+     *
+     * @return void
+     */
+    public function setDatasetSubmissionReview(DatasetSubmissionReview $datasetSubmissionReview)
+    {
+        $this->datasetSubmissionReview = $datasetSubmissionReview;
+    }
+
+    /**
+     * Get the DataseSubmision review collection.
+     *
+     * @return DatasetSubmissionReview
+     */
+    public function getDatasetSubmissionReview()
+    {
+        return $this->datasetSubmissionReview;
     }
 
     /**
@@ -1249,6 +1456,47 @@ class DatasetSubmission extends Entity
     public function getDatasetContacts()
     {
         return $this->datasetContacts;
+    }
+
+    /**
+     * Adder for metadata contact.
+     *
+     * @param PersonDatasetSubmissionMetadataContact $metadataContact Single object to be added.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function addMetadataContact(PersonDatasetSubmissionMetadataContact $metadataContact)
+    {
+        $metadataContact->setDatasetSubmission($this);
+        $this->metadataContacts->add($metadataContact);
+    }
+
+    /**
+     * Remover for metadata contact.
+     *
+     * @param PersonDatasetSubmissionMetadataContact $metadataContact Single object to be removed.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function removeMetadataContact(PersonDatasetSubmissionMetadataContact $metadataContact)
+    {
+        $this->metadataContacts->removeElement($metadataContact);
+    }
+
+    /**
+     * Getter of metadataContacts.
+     *
+     * @access public
+     *
+     * @return \Doctrine\Common\Collections\Collection Collection containing PersonDatasetSubmissionMetadataContacts
+     */
+    public function getMetadataContacts()
+    {
+        return $this->metadataContacts;
     }
 
     /**
@@ -2009,7 +2257,8 @@ class DatasetSubmission extends Entity
      */
     public function setTemporalExtentDesc($temporalExtentDesc)
     {
-        if (null !== $temporalExtentDesc and !array_key_exists($temporalExtentDesc, static::TEMPORAL_EXTENT_DESCRIPTIONS)) {
+        if (null !== $temporalExtentDesc and
+            !array_key_exists($temporalExtentDesc, static::TEMPORAL_EXTENT_DESCRIPTIONS)) {
             throw new \InvalidArgumentException("'$temporalExtentDesc' is not a valid value for temporalExtentDesc");
         }
         $this->temporalExtentDesc = $temporalExtentDesc;
@@ -2225,5 +2474,83 @@ class DatasetSubmission extends Entity
                 static::TEMPORAL_EXTENT_DESCRIPTIONS
             )
         );
+    }
+
+    /**
+     * Sets the dataset submission status to In Review status.
+     *
+     * @return void
+     */
+    public function setDatasetSubmissionReviewStatus()
+    {
+        $this->status = self::STATUS_IN_REVIEW;
+    }
+
+    /**
+     * Gets the temporal nilreason type for the dataset.
+     *
+     * @return string
+     */
+    public function getTemporalExtentNilReasonType()
+    {
+        return $this->temporalExtentNilReasonType;
+    }
+
+    /**
+     * Sets the temporal nilreason type for the dataset.
+     *
+     * @param string $temporalExtentNilReasonType The nilReason for temporal extent.
+     *
+     * @throws \InvalidArgumentException If $temporalExtentNilReasonType is not in self::NILREASON_TYPES.
+     *
+     * @return void
+     */
+    public function setTemporalExtentNilReasonType($temporalExtentNilReasonType)
+    {
+        if (null !== $temporalExtentNilReasonType and !array_key_exists($temporalExtentNilReasonType, self::NILREASON_TYPES)) {
+                throw new \InvalidArgumentException("'$temporalExtentNilReasonType' is not a valid value for nilReason types");
+        }
+        $this->temporalExtentNilReasonType = $temporalExtentNilReasonType;
+    }
+
+    /**
+     * Adder for distributionPoint.
+     *
+     * @param DistributionPoint $distributionPoint Single object to be added.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function addDistributionPoint(DistributionPoint $distributionPoint)
+    {
+        $distributionPoint->setDatasetSubmission($this);
+        $this->distributionPoints->add($distributionPoint);
+    }
+
+    /**
+     * Remover for Distribution Point.
+     *
+     * @param DistributionPoint $distributionPoint Single object to be removed.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function removeDistributionPoint(DistributionPoint $distributionPoint)
+    {
+        $this->distributionPoints->removeElement($distributionPoint);
+    }
+
+    /**
+     * Getter for distributionPoints.
+     *
+     * @access public
+     *
+     * @return Collection Distribution Point associations for this Dataset Submission.
+     */
+    public function getDistributionPoints()
+    {
+        return $this->distributionPoints;
     }
 }
