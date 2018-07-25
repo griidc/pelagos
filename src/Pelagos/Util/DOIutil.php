@@ -255,6 +255,7 @@ class DOIutil
         $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "https://ezid.cdlib.org/id/$doi");
+        curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
         $output = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
