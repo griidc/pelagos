@@ -196,7 +196,7 @@ class DatasetController extends EntityController
 
         $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
             $dataset,
-            'deleted'
+            'delete_doi'
         );
 
         $this->handleDelete(Dataset::class, $id);
