@@ -13,7 +13,7 @@ use Pelagos\Entity\Metadata;
 /**
  * Doctrine Listener class for Dataset related events.
  */
-class DoctrineDatasetListener extends EventListener
+class DoctrineDatasetListener
 {
     /**
      * On flush pass entity to updateDataset to update the related Dataset, if necessary.
@@ -59,18 +59,5 @@ class DoctrineDatasetListener extends EventListener
                 $entityManager->getUnitOfWork()->recomputeSingleEntityChangeSet($classMetadata, $dataset);
             }
         }
-    }
-
-    /**
-     * On dataset delete, delete DOI is called.
-     *
-     * @param EntityEvent $event A Doctrine entity.
-     *
-     * @return void
-     */
-    public function onDeleteDoi(EntityEvent $event)
-    {
-        $dataset = $event->getEntity();
-        $this->producer->publish($dataset->getDoi()->getDoi(), 'delete');
     }
 }
