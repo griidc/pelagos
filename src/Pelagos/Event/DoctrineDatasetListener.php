@@ -71,6 +71,6 @@ class DoctrineDatasetListener extends EventListener
     public function onDeleteDoi(EntityEvent $event)
     {
         $dataset = $event->getEntity();
-        $this->producer->publish($dataset->getId(), 'delete');
+        $this->producer->publish($dataset->getDoi()->getDoi(), 'delete');
     }
 }
