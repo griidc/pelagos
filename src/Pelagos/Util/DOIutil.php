@@ -265,9 +265,7 @@ class DOIutil
         curl_close($ch);
         
         //check to see if it worked.
-        if (400 === $httpCode) {
-            throw new \Exception("ezid does not support deletion as it is public:$httpCode($output)", $httpCode);
-        } elseif (200 !== $httpCode) {
+        if (200 != $httpCode) {
             throw new \Exception("ezid failed with:$httpCode($output)", $httpCode);
         }
 
