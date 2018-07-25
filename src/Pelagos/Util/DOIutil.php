@@ -256,13 +256,16 @@ class DOIutil
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "https://ezid.cdlib.org/id/$doi");
         curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
         $output = curl_exec($ch);
+
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-
+        
         //check to see if it worked.
-        if (200 != $httpCode) {
+        if (200 !== $httpCode) {
             throw new \Exception("ezid failed with:$httpCode($output)", $httpCode);
         }
 
