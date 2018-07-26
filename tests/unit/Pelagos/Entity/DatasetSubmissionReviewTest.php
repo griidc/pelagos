@@ -58,7 +58,7 @@ class DatasetSubmissionReviewTest extends \PHPUnit_Framework_TestCase
             array(
                 'getStatus' => DatasetSubmission::STATUS_COMPLETE,
                 'setDataset' => null,
-                'getDatasetStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED,
+                'getDatasetStatus' => Dataset::DATASET_STATUS_ACCEPTED,
                 'getDatasetFileTransferStatus' => null,
                 'getRestrictions' => null,
                 'getDatasetContacts' => new ArrayCollection(
