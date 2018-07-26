@@ -462,7 +462,7 @@ class Dataset extends Entity
     /**
      * Set the dataset status.
      *
-     * @param string datasetStatus The dataset status.
+     * @param string $datasetStatus The dataset status.
      *
      * @return void
      */
