@@ -70,7 +70,7 @@ class DatasetRestrictionsController extends UIController
         if (!empty($datasets)) {
             $dataset = $datasets[0];
             $datasetSubmission = $dataset->getDatasetSubmission();
-            $datasetStatus = $dataset->getMetadataStatus();
+            $datasetStatus = $dataset->getDatasetStatus();
 
             if ($restrictionKey) {
                 // Record the original state for logging purposes before changing it.

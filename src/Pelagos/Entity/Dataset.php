@@ -20,32 +20,32 @@ class Dataset extends Entity
     const FRIENDLY_NAME = 'Dataset';
 
         /**
-     * A value for $metadataStatus that indicates no status has been set.
+     * A value for $datasetStatus that indicates no status has been set.
      */
     const DATASET_STATUS_NONE = 'None';
 
     /**
-     * A value for $metadataStatus that indicates that metadata has been submitted.
+     * A value for $datasetStatus that indicates that metadata has been submitted.
      */
     const DATASET_STATUS_SUBMITTED = 'Submitted';
 
     /**
-     * A value for $metadataStatus that indicates that the metadata is in review.
+     * A value for $datasetStatus that indicates that the metadata is in review.
      */
     const DATASET_STATUS_IN_REVIEW = 'InReview';
 
     /**
-     * A value for $metadataStatus that indicates that the metadata has been accepted.
+     * A value for $datasetStatus that indicates that the metadata has been accepted.
      */
     const DATASET_STATUS_ACCEPTED = 'Accepted';
 
     /**
-     * A value for $metadataStatus that indicates that the metadata has been sent back to the submitter for revision.
+     * A value for $datasetStatus that indicates that the metadata has been sent back to the submitter for revision.
      */
     const DATASET_STATUS_BACK_TO_SUBMITTER = 'BackToSubmitter';
 
     /**
-     * Valid values for $metadataStatus.
+     * Valid values for $datasetStatus.
      */
     const DATASET_STATUSES = array(
         self::DATASET_STATUS_NONE => 'No Status',
@@ -130,15 +130,6 @@ class Dataset extends Entity
     protected $datasetSubmissionHistory;
 
     /**
-     * The metadata for this dataset.
-     *
-     * @var Metadata
-     *
-     * @ORM\OneToOne(targetEntity="Metadata", mappedBy="dataset", cascade={"remove"})
-     */
-    protected $metadata;
-
-    /**
      * The identified status of this Dataset.
      *
      * @var integer
@@ -161,7 +152,7 @@ class Dataset extends Entity
     protected $datasetSubmissionStatus = DatasetSubmission::STATUS_UNSUBMITTED;
 
     /**
-     * The metadata status of this Dataset.
+     * The status of this Dataset.
      *
      * @var status
      *
@@ -169,7 +160,7 @@ class Dataset extends Entity
      *
      * @ORM\Column(type="text")
      */
-    protected $metadataStatus = self::DATASET_STATUS_NONE;
+    protected $datasetStatus = self::DATASET_STATUS_NONE;
 
     /**
      * The availability status of this Dataset.
@@ -294,7 +285,7 @@ class Dataset extends Entity
         }
         $datasetSubmission->setDataset($this);
         $this->setDatasetSubmissionStatus($datasetSubmission->getStatus());
-        $this->setMetadataStatus($datasetSubmission->getMetadataStatus());
+        $this->setDatasetStatus($datasetSubmission->getDatasetStatus());
         $this->updateAvailabilityStatus();
     }
 
@@ -316,31 +307,6 @@ class Dataset extends Entity
     public function getDatasetSubmissionHistory()
     {
         return $this->datasetSubmissionHistory;
-    }
-
-    /**
-     * Get the Metadata.
-     *
-     * @return Collection
-     */
-    public function getMetadata()
-    {
-        return $this->metadata;
-    }
-
-    /**
-     * Set the Metadata.
-     *
-     * @param Metadata $metadata The metadata for this dataset.
-     *
-     * @return void
-     */
-    public function setMetadata(Metadata $metadata)
-    {
-        $this->metadata = $metadata;
-        if ($this->metadata->getDataset() !== $this) {
-            $this->metadata->setDataset($this);
-        }
     }
 
     /**
@@ -494,15 +460,15 @@ class Dataset extends Entity
     }
 
     /**
-     * Set the metadata status.
+     * Set the dataset status.
      *
-     * @param string $metadataStatus The metadata status.
+     * @param string datasetStatus The dataset status.
      *
      * @return void
      */
-    public function setMetadataStatus($metadataStatus)
+    public function setDatasetStatus($datasetStatus)
     {
-        $this->metadataStatus = $metadataStatus;
+        $this->datasetStatus = $datasetStatus;
     }
 
     /**
@@ -510,9 +476,9 @@ class Dataset extends Entity
      *
      * @return string
      */
-    public function getMetadataStatus()
+    public function getDatasetStatus()
     {
-        return $this->metadataStatus;
+        return $this->datasetStatus;
     }
 
     /**
@@ -634,16 +600,6 @@ class Dataset extends Entity
     }
 
     /**
-     * Whether this Dataset has Metadata.
-     *
-     * @return boolean
-     */
-    public function hasMetadata()
-    {
-        return $this->metadata instanceof Metadata;
-    }
-
-    /**
      * Update the availability status based on current dataset submission.
      *
      * @return void
@@ -658,7 +614,7 @@ class Dataset extends Entity
         $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE;
         switch ($this->getDatasetSubmission()->getDatasetFileTransferStatus()) {
             case DatasetSubmission::TRANSFER_STATUS_COMPLETED:
-                if ($this->getMetadataStatus() === self::DATASET_STATUS_ACCEPTED) {
+                if ($this->getDatasetStatus() === self::DATASET_STATUS_ACCEPTED) {
                     switch ($this->getDatasetSubmission()->getRestrictions()) {
                         case DatasetSubmission::RESTRICTION_NONE:
                             $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE;
@@ -675,7 +631,7 @@ class Dataset extends Entity
                 }
                 break;
             case DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED:
-                if ($this->getMetadataStatus() === self::DATASET_STATUS_ACCEPTED) {
+                if ($this->getDatasetStatus() === self::DATASET_STATUS_ACCEPTED) {
                     switch ($this->getDatasetSubmission()->getRestrictions()) {
                         case DatasetSubmission::RESTRICTION_NONE:
                             $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED;
@@ -703,17 +659,17 @@ class Dataset extends Entity
     public function getStatus()
     {
         $difStatus = $this->getDif()->getStatus();
-        $metadataStatus = $this->getMetadataStatus();
+        $datasetStatus = $this->getDatasetStatus();
         $availabilityStatus = $this->getAvailabilityStatus();
 
         $statusResult = 'NoDif';
         if ($difStatus == DIF::STATUS_APPROVED) {
             $statusResult = 'DIF';
-            if ($metadataStatus == self::DATASET_STATUS_IN_REVIEW) {
+            if ($datasetStatus == self::DATASET_STATUS_IN_REVIEW) {
                 $statusResult = 'In Review';
-            } elseif ($metadataStatus == self::DATASET_STATUS_BACK_TO_SUBMITTER) {
+            } elseif ($datasetStatus == self::DATASET_STATUS_BACK_TO_SUBMITTER) {
                 $statusResult = 'Back to Submitter';
-            } elseif ($metadataStatus == self::DATASET_STATUS_ACCEPTED) {
+            } elseif ($datasetStatus == self::DATASET_STATUS_ACCEPTED) {
                 if ($availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED ||
                     $availabilityStatus == DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED) {
                     $statusResult = 'Completed, Restricted';
@@ -723,7 +679,7 @@ class Dataset extends Entity
                 } else {
                     $statusResult = 'DIF';
                 }
-            } elseif ($metadataStatus == self::DATASET_STATUS_SUBMITTED) {
+            } elseif ($datasetStatus == self::DATASET_STATUS_SUBMITTED) {
                 $statusResult = 'Submitted';
             } else {
                 //  $difStatus == DIF::STATUS_APPROVED
@@ -778,7 +734,7 @@ class Dataset extends Entity
         $spatialExtent = null;
 
         // If there is an accepted dataset submission, use its geometry or else use the geometry from DIF.
-        if ($datasetSubmission instanceof DatasetSubmission and $this->metadataStatus === self::DATASET_STATUS_ACCEPTED
+        if ($datasetSubmission instanceof DatasetSubmission and $this->datasetStatus === self::DATASET_STATUS_ACCEPTED
             and $datasetSubmission->getSpatialExtent()) {
             $spatialExtent = $datasetSubmission->getSpatialExtent();
         } elseif ($dif instanceof DIF and $dif->getStatus() === DIF::STATUS_APPROVED and $dif->getSpatialExtentGeometry()) {

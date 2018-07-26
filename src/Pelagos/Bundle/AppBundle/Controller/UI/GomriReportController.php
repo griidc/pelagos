@@ -137,7 +137,7 @@ class GomriReportController extends ReportController
             '(SELECT MIN(subdatasetsubmission.id) ' .
             '   FROM ' . DatasetSubmission::class . ' subdatasetsubmission' .
             '   WHERE subdatasetsubmission.datasetFileUri is not null ' .
-            '   AND subdatasetsubmission.metadataStatus = :metadataStatus ' .
+            '   AND subdatasetsubmission.datasetStatus = :datasetStatus ' .
             '   AND subdatasetsubmission.restrictions = :restrictions ' .
             '   AND (subdatasetsubmission.datasetFileTransferStatus = :fileTransferStatusCompleted ' .
             '       OR subdatasetsubmission.datasetFileTransferStatus = :fileTransferStatusRemotelyHosted) ' .
@@ -145,7 +145,7 @@ class GomriReportController extends ReportController
             'AND fundingOrganization.name = :gomri';
         $query = $entityManager->createQuery($queryString);
         $query->setParameters(array(
-            'metadataStatus' => Dataset::DATASET_STATUS_ACCEPTED,
+            'datasetStatus' => Dataset::DATASET_STATUS_ACCEPTED,
             'restrictions' => DatasetSubmission::RESTRICTION_NONE,
             'fileTransferStatusCompleted' => DatasetSubmission::TRANSFER_STATUS_COMPLETED,
             'fileTransferStatusRemotelyHosted' => DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED,

@@ -93,15 +93,15 @@
                 {% set metadata_na = metadata_na + 1 %}
                 {% set metadata_title = "This dataset has not yet been submitted, and therefore cannot be in review." %}
                 {% set metadata_icon = na_icon %}
-            {% elseif dataset.metadataStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_NONE') %}
+            {% elseif dataset.datasetStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_NONE') %}
                 {% set metadata_red = metadata_red + 1 %}
                 {% set metadata_title = "This dataset package has been submitted and is in review." %}
                 {% set metadata_icon = red_icon %}
-            {% elseif dataset.metadataStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_SUBMITTED') %}
+            {% elseif dataset.datasetStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_SUBMITTED') %}
                 {% set metadata_yellow = metadata_yellow + 1 %}
                 {% set metadata_title = "This dataset package has been submitted and is in review." %}
                 {% set metadata_icon = yellow_icon %}
-            {% elseif dataset.metadataStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
+            {% elseif dataset.datasetStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
                 {% set metadata_green = metadata_green + 1 %}
                 {% set metadata_title = "This dataset package has been reviewed and accepted." %}
                 {% set metadata_icon = green_icon %}

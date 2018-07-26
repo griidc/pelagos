@@ -211,7 +211,7 @@ class DoiConsumer implements ConsumerInterface
     protected function publishDoi(Dataset $dataset, array $loggingContext)
     {
         // Additional check for publishing only accepted datasets(unlikely to happen).
-        if ($dataset->getMetadataStatus() !== Dataset::DATASET_STATUS_ACCEPTED) {
+        if ($dataset->getDatasetStatus() !== Dataset::DATASET_STATUS_ACCEPTED) {
             return true;
         }
         // Log processing start.

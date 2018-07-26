@@ -42,25 +42,25 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
     }
 
     /**
-     * Change the metadata status.
+     * Change the dataset status.
      *
      * This function called when Post occurs upon submitt of the MdApp form.
      *
      * @param Request $request The Symfony request object.
-     * @param integer $id      The id of the Dataset to change the metadata status for.
+     * @param integer $id      The id of the Dataset to change the dataset status for.
      *
-     * @Route("/change-metadata-status/{id}")
+     * @Route("/change-dataset-status/{id}")
      * @Method("POST")
      *
      * @return Response
      */
-    public function changeMetadataStatusAction(Request $request, $id)
+    public function changeDatasetStatusAction(Request $request, $id)
     {
         $entityHandler = $this->get('pelagos.entity.handler');
         $mdappLogger = $this->get('pelagos.util.mdapplogger');
         $dataset = $entityHandler->get(Dataset::class, $id);
         $message = null;
-        $from = $dataset->getMetadataStatus();
+        $from = $dataset->getDatasetStatus();
         $to = $request->request->get('to');
         $udi = $dataset->getUdi();
         if ($dataset instanceof Dataset) {
@@ -69,7 +69,7 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
             if ($datasetSubmission instanceof DatasetSubmission and $datasetSubmission->getStatus() !== DatasetSubmission::STATUS_INCOMPLETE) {
                 $datasetSubmission = $dataset->getDatasetSubmission();
                 if (null !== $to and 'InReview' == $to) {
-                    $datasetSubmission->setMetadataStatus($to);
+                    $datasetSubmission->setDatasetStatus($to);
                     $entityHandler->update($datasetSubmission);
                     $entityHandler->update($dataset);
                     $mdappLogger->writeLog($this->getUser()->getUsername() . ' changed status for ' .
@@ -109,7 +109,6 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
             'udi',
             'issueTrackingTicket',
             'datasetSubmission.submissionTimeStamp',
-            'metadata.id',
             'datasetSubmission.metadataFileName');
 
         $entityHandler = $this->get('pelagos.entity.handler');
@@ -120,28 +119,28 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
                 'm_dataset' => array(
                     'submitted' => $entityHandler->getBy(
                         Dataset::class,
-                        array('metadataStatus' => Dataset::DATASET_STATUS_SUBMITTED),
+                        array('datasetStatus' => Dataset::DATASET_STATUS_SUBMITTED),
                         array(),
                         $objNeeded,
                         Query::HYDRATE_ARRAY
                     ),
                     'inreview' => $entityHandler->getBy(
                         Dataset::class,
-                        array('metadataStatus' => Dataset::DATASET_STATUS_IN_REVIEW),
+                        array('datasetStatus' => Dataset::DATASET_STATUS_IN_REVIEW),
                         array(),
                         $objNeeded,
                         Query::HYDRATE_ARRAY
                     ),
                     'accepted' => $entityHandler->getBy(
                         Dataset::class,
-                        array('metadataStatus' => Dataset::DATASET_STATUS_ACCEPTED),
+                        array('datasetStatus' => Dataset::DATASET_STATUS_ACCEPTED),
                         array(),
                         $objNeeded,
                         Query::HYDRATE_ARRAY
                     ),
                     'backtosubmitter' => $entityHandler->getBy(
                         Dataset::class,
-                        array('metadataStatus' => Dataset::DATASET_STATUS_BACK_TO_SUBMITTER),
+                        array('datasetStatus' => Dataset::DATASET_STATUS_BACK_TO_SUBMITTER),
                         array(),
                         $objNeeded,
                         Query::HYDRATE_ARRAY
