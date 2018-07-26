@@ -686,7 +686,7 @@ class DatasetSubmission extends Entity
     protected $metadataFileSha256Hash;
 
     /**
-     * Status of the metadata.
+     * Status of the dataset.
      *
      * Legacy DB column: metadata_status
      *
@@ -696,7 +696,7 @@ class DatasetSubmission extends Entity
      *
      * @ORM\Column(type="text", nullable=false)
      */
-    protected $metadataStatus = Dataset::DATASET_STATUS_NONE;
+    protected $datasetStatus = Dataset::DATASET_STATUS_NONE;
 
     /**
      * The reference date for this dataset.
@@ -1007,7 +1007,7 @@ class DatasetSubmission extends Entity
             $this->setMetadataFileTransferStatus($entity->getMetadataFileTransferStatus());
             $this->setMetadataFileName($entity->getMetadataFileName());
             $this->setMetadataFileSha256Hash($entity->getMetadataFileSha256Hash());
-            $this->setMetadataStatus($entity->getMetadataStatus());
+            $this->setDatasetStatus($entity->getDatasetStatus());
             $this->setReferenceDate($entity->getReferenceDate());
             $this->setReferenceDateType($entity->getReferenceDateType());
             $this->setPurpose($entity->getPurpose());
@@ -1030,7 +1030,7 @@ class DatasetSubmission extends Entity
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
 
             //Submitter should always be the user who has submitted the dataset.
-            if (!in_array($entity->getMetadataStatus(), [ Dataset::DATASET_STATUS_NONE, Dataset::DATASET_STATUS_BACK_TO_SUBMITTER])) {
+            if (!in_array($entity->getDatasetStatus(), [ Dataset::DATASET_STATUS_NONE, Dataset::DATASET_STATUS_BACK_TO_SUBMITTER])) {
                 $this->submitter = $entity->getSubmitter();
                 $this->submissionTimeStamp = $entity->getSubmissionTimeStamp();
             }
@@ -1158,7 +1158,7 @@ class DatasetSubmission extends Entity
     public function submit(Person $submitter)
     {
         $this->status = self::STATUS_COMPLETE;
-        $this->metadataStatus = Dataset::DATASET_STATUS_SUBMITTED;
+        $this->datasetStatus = Dataset::DATASET_STATUS_SUBMITTED;
         $this->getDataset()->setDatasetSubmission($this);
         $this->submissionTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->submitter = $submitter;
@@ -1188,17 +1188,17 @@ class DatasetSubmission extends Entity
             case ($eventName === self::DATASET_END_REVIEW):
                 //Setting the status to in-review.
                 $this->status = self::STATUS_IN_REVIEW;
-                $this->setMetadataStatus(Dataset::DATASET_STATUS_IN_REVIEW);
+                $this->setDatasetStatus(Dataset::DATASET_STATUS_IN_REVIEW);
                 break;
             case ($eventName === self::DATASET_ACCEPT_REVIEW):
                 //Setting the status to in-review.
                 $this->status = self::STATUS_COMPLETE;
-                $this->setMetadataStatus(Dataset::DATASET_STATUS_ACCEPTED);
+                $this->setDatasetStatus(Dataset::DATASET_STATUS_ACCEPTED);
                 $this->getDataset()->setDatasetSubmission($this);
                 break;
             case ($eventName === self::DATASET_REQUEST_REVISIONS):
                 $this->status = self::STATUS_COMPLETE;
-                $this->setMetadataStatus(Dataset::DATASET_STATUS_BACK_TO_SUBMITTER);
+                $this->setDatasetStatus(Dataset::DATASET_STATUS_BACK_TO_SUBMITTER);
                 $this->status = self::STATUS_COMPLETE;
                 break;
         }
@@ -1842,16 +1842,16 @@ class DatasetSubmission extends Entity
     /**
      * Set the status of the metadata.
      *
-     * @param string $metadataStatus The status of the metadata.
+     * @param string $datasetStatus The status of the metadata.
      *
      * @see METADATA_STATUSES class constant for valid values.
      *
      * @return void
      */
-    public function setMetadataStatus($metadataStatus)
+    public function setDatasetStatus($datasetStatus)
     {
-        $this->metadataStatus = $metadataStatus;
-        $this->updateMetadataStatus();
+        $this->datasetStatus = $datasetStatus;
+        $this->updateDatasetStatus();
         $this->updateAvailabilityStatus();
     }
 
@@ -1860,9 +1860,9 @@ class DatasetSubmission extends Entity
      *
      * @return string
      */
-    public function getMetadataStatus()
+    public function getDatasetStatus()
     {
-        return $this->metadataStatus;
+        return $this->datasetStatus;
     }
 
     /**
@@ -2369,10 +2369,10 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    protected function updateMetadataStatus()
+    protected function updateDatasetStatus()
     {
         if ($this->getDataset() instanceof Dataset) {
-            $this->getDataset()->setMetadataStatus($this->getMetadataStatus());
+            $this->getDataset()->setDatasetStatus($this->getDatasetStatus());
         }
     }
 

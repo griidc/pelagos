@@ -3,7 +3,7 @@
     {{ dataset.abstract|default }}
 </div>
 
-{% if dataset.metadataStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
+{% if dataset.datasetStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
 
     {% if dataset.datasetSubmission.purpose|default %}
         <h2>Purpose:</h2>
