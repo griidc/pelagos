@@ -90,7 +90,7 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
             array(
                 'getStatus' => DatasetSubmission::STATUS_COMPLETE,
                 'setDataset' => null,
-                'getMetadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED,
+                'getDatasetStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED,
                 'getDatasetFileTransferStatus' => null,
                 'getRestrictions' => null,
                 'getDatasetContacts' => new ArrayCollection(
@@ -119,7 +119,7 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
             array(
                 'getStatus' => DatasetSubmission::STATUS_INCOMPLETE,
                 'setDataset' => null,
-                'getMetadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED,
+                'getDatasetStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED,
                 'getDatasetFileTransferStatus' => null,
                 'getRestrictions' => null,
                 'getDatasetContacts' => new ArrayCollection(
@@ -148,7 +148,7 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
             array(
                 'getStatus' => DatasetSubmission::STATUS_COMPLETE,
                 'setDataset' => null,
-                'getMetadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED,
+                'getDatasetStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED,
                 'getDatasetFileTransferStatus' => null,
                 'getRestrictions' => null,
                 'getDatasetContacts' => new ArrayCollection(),
@@ -284,51 +284,51 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
             $this->dataset->getStatus()
         );
 
-        // Case: Dif is approved && metadata statis is not one of the valid process status
+        // Case: Dif is approved && dataset status is not one of the valid process status
         $this->dataset->setDif($this->mockApprovedDif);
-        $this->dataset->setMetadataStatus(13);
+        $this->dataset->setDatasetStatus(13);
         $this->assertEquals(
             'DIF',
             $this->dataset->getStatus()
         );
 
-        // Case: Dif is approved && metadata statis is in review
+        // Case: Dif is approved && dataset statusis in review
         $this->dataset->setDif($this->mockApprovedDif);
-        $this->dataset->setMetadataStatus(DatasetSubmission::METADATA_STATUS_IN_REVIEW);
+        $this->dataset->setDatasetStatus(DatasetSubmission::METADATA_STATUS_IN_REVIEW);
         $this->assertEquals(
             'In Review',
             $this->dataset->getStatus()
         );
 
-        // Case: Dif is approved && metadata statis is back to submitter
+        // Case: Dif is approved && dataset status is back to submitter
         $this->dataset->setDif($this->mockApprovedDif);
-        $this->dataset->setMetadataStatus(DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER);
+        $this->dataset->setDatasetStatus(DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER);
         $this->assertEquals(
             'Back to Submitter',
             $this->dataset->getStatus()
         );
 
-        // Case: Dif is approved && metadata status is accepted && availability status is restricted distribution
+        // Case: Dif is approved && dataset status is accepted && availability status is restricted distribution
         $this->dataset->setDif($this->mockApprovedDif);
-        $this->dataset->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
+        $this->dataset->setDatasetStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
         $this->dataset->setAvailabilityStatus(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED);
         $this->assertEquals(
             'Completed, Restricted',
             $this->dataset->getStatus()
         );
 
-        // Case: Dif is approved && metadata status is accepted && availability status is remotelyhosted distribution
+        // Case: Dif is approved && dataset status is accepted && availability status is remotelyhosted distribution
         $this->dataset->setDif($this->mockApprovedDif);
-        $this->dataset->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
+        $this->dataset->setDatasetStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
         $this->dataset->setAvailabilityStatus(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED);
         $this->assertEquals(
             'Completed, Restricted',
             $this->dataset->getStatus()
         );
 
-        // Case: Dif is approved && metadata status is accepted && availability status is publicly available
+        // Case: Dif is approved && dataset status is accepted && availability status is publicly available
         $this->dataset->setDif($this->mockApprovedDif);
-        $this->dataset->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
+        $this->dataset->setDatasetStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
         $this->dataset->setAvailabilityStatus(DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE);
         $this->assertEquals(
             'Completed',
@@ -336,10 +336,10 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
         );
 
         // Case: Dif is approved &&
-        // metadata status is accepted &&
+        // dataset status is accepted &&
         // availability status is publicly available remotely hosted
         $this->dataset->setDif($this->mockApprovedDif);
-        $this->dataset->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
+        $this->dataset->setDatasetStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
         $this->dataset->setAvailabilityStatus(
             DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED
         );
@@ -350,10 +350,10 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
 
 
         // Case: Dif is approved &&
-        // metadata status is accepted &&
+        // dataset status is accepted &&
         // availability status is something other than expected
         $this->dataset->setDif($this->mockApprovedDif);
-        $this->dataset->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
+        $this->dataset->setDatasetStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
         $this->dataset->setAvailabilityStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
         $this->assertEquals(
             'DIF',
