@@ -31,8 +31,7 @@ class Version20180726174556 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
-
-        $this->addSql('CREATE SCHEMA public');
+        
         $this->addSql('ALTER TABLE dataset_submission RENAME COLUMN dataset_status TO metadata_status');
         $this->addSql('ALTER TABLE dataset RENAME COLUMN dataset_status TO metadata_status');
         $this->addSql('ALTER TABLE dataset_audit RENAME COLUMN dataset_status TO metadata_status');
