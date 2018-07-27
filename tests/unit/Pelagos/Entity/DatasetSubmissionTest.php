@@ -367,7 +367,7 @@ class DatasetSubmissionTest extends TestCase
     }
 
     /**
-     * Test metadata status.
+     * Test dataset status.
      *
      * @return void
      */
