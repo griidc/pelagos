@@ -365,7 +365,7 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test metadata status.
+     * Test dataset status.
      *
      * @return void
      */
