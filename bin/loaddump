@@ -66,6 +66,7 @@ for db in postgres pelagos template0 template1 gomri drupal drupal_db bamboo_db 
 done
 
 # Drop existing database
+echo "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '$parameters__database_name' AND pid <> pg_backend_pid();" | psql -h $parameters__database_host -U postgres || exit
 echo "DROP DATABASE $parameters__database_name" | psql -h $parameters__database_host -U postgres || exit
 echo "Database $parameters__database_name dropped"
 echo "CREATE DATABASE $parameters__database_name" | psql -h $parameters__database_host -U postgres || exit
@@ -92,6 +93,10 @@ echo "GRANT ALL PRIVILEGES ON TABLE spatial_ref_sys TO $parameters__database_use
 echo "Grant permissions to spatial_ref_sys"
 echo "GRANT ALL PRIVILEGES ON TABLE geometry_columns TO $parameters__database_user" | psql -h $parameters__database_host -U postgres $parameters__database_name || exit
 echo "Grant permissions to geometry_columns"
+
+# .null email addresses
+echo "UPDATE person SET email_address = email_address||'.null' WHERE email_address NOT LIKE '%.null'" | psql -h $parameters__database_host -U postgres $parameters__database_name || exit
+echo "adding .null email addresses"
 
 export PGPASSWORD="$parameters__database_password"
 
