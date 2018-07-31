@@ -742,11 +742,14 @@ class Dataset extends Entity
         $spatialExtent = null;
 
         // If there is an accepted dataset submission, use its geometry or else use the geometry from DIF.
-        if ($datasetSubmission instanceof DatasetSubmission and $this->metadataStatus === DatasetSubmission::METADATA_STATUS_ACCEPTED
-            and $datasetSubmission->getSpatialExtent()) {
-            $spatialExtent = $datasetSubmission->getSpatialExtent();
-        } elseif ($dif instanceof DIF and $dif->getStatus() === DIF::STATUS_APPROVED and $dif->getSpatialExtentGeometry()) {
-            $spatialExtent = $dif->getSpatialExtentGeometry();
+        if ($this->metadataStatus !== DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+            if ($dif instanceof DIF and $dif->getStatus() === DIF::STATUS_APPROVED and $dif->getSpatialExtentGeometry()) {
+                $spatialExtent = $dif->getSpatialExtentGeometry();
+            }
+        } else {
+            if ($datasetSubmission instanceof DatasetSubmission and $datasetSubmission->getSpatialExtent()) {
+                $spatialExtent = $datasetSubmission->getSpatialExtent();
+            }
         }
 
         return $spatialExtent;
