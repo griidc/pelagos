@@ -190,11 +190,21 @@ class DatasetController extends EntityController
      */
     public function deleteAction($id)
     {
-        $dif = $this->handleGetOne(Dataset::class, $id)->getDif();
+        $dataset = $this->handleGetOne(Dataset::class, $id);
+
+        $dif = $dataset->getDif();
+
+        $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
+            $dataset,
+            'delete_doi'
+        );
+
         $this->handleDelete(Dataset::class, $id);
+
         if ($dif instanceof DIF) {
             $this->handleDelete(DIF::class, $dif->getId());
         }
+
         return $this->makeNoContentResponse();
     }
 }

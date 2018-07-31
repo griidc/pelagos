@@ -214,6 +214,7 @@ old_sound_rabbit_mq:
                     - 'issue'
                     - 'publish'
                     - 'update'
+                    - 'delete'
 
 hwi_oauth:
     firewall_names: [main]
