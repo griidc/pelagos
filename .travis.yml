@@ -8,6 +8,7 @@ sudo: false
 services:
   - postgresql
   - rabbitmq
+  - docker
 
 # Customize addons
 addons:
@@ -24,11 +25,10 @@ cache:
 # Matrix to test in every php version
 matrix:
   # Fast finish allows to set the build as "finished" even if the "allow_failures" matrix elements are not finished yet.
-  OS_TYPE=centos OS_VERSION=7
+  OS_TYPE=centos OS_VERSION=7 ANSIBLE_VERSION=2.2.3
   fast_finish: true
   include:
     - php: 5.6
-    - php: 7.0
     - php: 7.2
   allow_failures:
     - php: 7.2
@@ -39,11 +39,17 @@ env:
 
 # Update composer
 before-install:
-  - composer self-update
+  - sudo apt-get update
+  - sudo apt-get upgrade lxc-docker
+  - echo 'DOCKER_OPTS="-H tcp://127.0.0.1:2375 -H unix:///var/run/docker.sock -s devicemapper"' | sudo tee /etc/default/docker > /dev/null
+  - sudo service docker restart
+  - sleep 5
+  - sudo docker pull weldpua2008/docker-ansible:${OS_TYPE}${OS_VERSION}_v${ANSIBLE_VERSION}
 
 # Install composer dependencies,
 # Create database, schema and fixtures
 install:
+  - sudo docker run --rm=true -v `pwd`:/ansible-apache:rw weldpua2008/docker-ansible:${OS_TYPE}${OS_VERSION}_v${ANSIBLE_VERSION} /bin/bash -c "/ansible-apache/tests/test-in-docker-image.sh ${OS_TYPE} ${OS_VERSION} ${ANSIBLE_VERSION}"
   - cp app/config/parameters.yml.dist app/config/parameters.yml
   - composer install
   - php bin/console doctrine:database:create --env=test
@@ -58,3 +64,6 @@ before_script:
 # Run script
 script:
   - phpunit
+  
+notifications:
+  email: false
