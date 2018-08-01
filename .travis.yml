@@ -2,7 +2,11 @@
 language: php
 
 # Allows use container-based infrastructure
-sudo: false
+sudo: required
+
+env:
+  #matrix:
+  - OS_TYPE=centos OS_VERSION=7 ANSIBLE_VERSION=2.2.3
 
 # Start services
 services:
@@ -25,7 +29,6 @@ cache:
 # Matrix to test in every php version
 matrix:
   # Fast finish allows to set the build as "finished" even if the "allow_failures" matrix elements are not finished yet.
-  OS_TYPE=centos OS_VERSION=7 ANSIBLE_VERSION=2.2.3
   fast_finish: true
   include:
     - php: 5.6
