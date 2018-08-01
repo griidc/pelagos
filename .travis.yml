@@ -4,6 +4,10 @@ language: php
 # Allows use container-based infrastructure
 sudo: required
 
+env:
+  #matrix:
+  - OS_TYPE=centos OS_VERSION=7 ANSIBLE_VERSION=1.9.4
+
 # Start services
 services:
   - postgresql
