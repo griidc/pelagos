@@ -52,7 +52,7 @@ before-install:
 # Install composer dependencies,
 # Create database, schema and fixtures
 install:
-  - sudo docker run --rm=true -v `pwd`:/ansible-apache:rw weldpua2008/docker-ansible:${OS_TYPE}${OS_VERSION}_v${ANSIBLE_VERSION} /bin/bash -c "/ansible-apache/tests/test-in-docker-image.sh ${OS_TYPE} ${OS_VERSION} ${ANSIBLE_VERSION}"
+  - sudo docker run --rm=true -v `pwd`:/ansible-apache:rw weldpua2008/docker-ansible:`${OS_TYPE}${OS_VERSION}`_v`${ANSIBLE_VERSION}` /bin/bash -c "/ansible-apache/tests/test-in-docker-image.sh ${OS_TYPE} ${OS_VERSION} ${ANSIBLE_VERSION}"
   - cp app/config/parameters.yml.dist app/config/parameters.yml
   - composer install
   - php bin/console doctrine:database:create --env=test
