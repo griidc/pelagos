@@ -67,14 +67,14 @@ doctrine:
                 password: "%database_password%"
                 charset:  UTF8
                 server_version: 1.0.2
+                mapping_types:
+                    _text: text_array
+                    xml: xml
+                    geometry: geometry
         types:
             text_array: "Doctrine\\DBAL\\PostgresTypes\\TextArrayType"
             xml: "Pelagos\\DoctrineExtensions\\DBAL\\Types\\PelagosXmlType"
             geometry: "Pelagos\\DoctrineExtensions\\DBAL\\Types\\GeometryType"
-        mapping_types:
-            _text: text_array
-            xml: xml
-            geometry: geometry
     orm:
         metadata_cache_driver: apc
         query_cache_driver: apc
