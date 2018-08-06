@@ -59,19 +59,14 @@ doctrine:
         default_connection: default
         connections:
             default:
-                dbname: pelagos
-                user: postgres
-                password: null
-                host: localhost
-                driver: pdo_pgsql
+                driver:   pdo_pgsql
+                host:     "%database_host%"
+                port:     "%database_port%"
+                dbname:   "%database_name%"
+                user:     "%database_user%"
+                password: "%database_password%"
+                charset:  UTF8
                 server_version: 1.0.2
-        driver:   pdo_pgsql
-        host:     "%database_host%"
-        port:     "%database_port%"
-        dbname:   "%database_name%"
-        user:     "%database_user%"
-        password: "%database_password%"
-        charset:  UTF8
         types:
             text_array: "Doctrine\\DBAL\\PostgresTypes\\TextArrayType"
             xml: "Pelagos\\DoctrineExtensions\\DBAL\\Types\\PelagosXmlType"
