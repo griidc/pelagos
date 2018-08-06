@@ -4,10 +4,6 @@ language: php
 # Allows use container-based infrastructure
 sudo: required
 
-env:
-  #matrix:
-  - OS_TYPE=centos OS_VERSION=7 ANSIBLE_VERSION=1.9.4
-
 # Start services
 services:
   - postgresql
@@ -43,33 +39,19 @@ env:
 # Update composer
 before-install:
   - sudo apt-get update
-  - sudo apt-get upgrade lxc-docker
-  - sudo docker pull jmeth/travis-centos
+  - psql -c 'create database travis_ci_test;' -U postgres
+  - psql -U postgres -c "create extension postgis"
+
 
 # Install composer dependencies,
 # Create database, schema and fixtures
 install:
-  # Run container in detached state
-  - sudo docker run --detach --privileged --volume="${PWD}":/etc/ansible/roles/role_under_test:ro --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro travispoc /usr/lib/systemd/systemd > /tmp/container_id
-  # Check syntax of ansible playbook
-  - sudo docker exec "$(cat /tmp/container_id)" ansible-playbook /etc/ansible/roles/role_under_test/test.yml --syntax-check
-  # Run ansible playbook
-  - sudo docker exec "$(cat /tmp/container_id)" ansible-playbook /etc/ansible/roles/role_under_test/test.yml
-  # Clean up
-  - sudo docker stop "$(cat /tmp/container_id)"
-
-  - sudo docker run --rm=true -v `pwd`:/ansible-apache:rw weldpua2008/docker-ansible:centos7_v1.9.4 /bin/bash -c "/ansible-apache/tests/test-in-docker-image.sh ${OS_TYPE} ${OS_VERSION} ${ANSIBLE_VERSION}"
   - cp app/config/parameters.yml.dist app/config/parameters.yml
   - composer install
-  - php bin/console doctrine:database:create --env=test
-  - php bin/console doctrine:schema:create --env=test
-  - php bin/console doctrine:fixtures:load -n --env=test
-
-# Create db before running script
-before_script:
-  - psql -c 'create database travis_ci_test;' -U postgres
-  - psql -U postgres -c "create extension postgis"
-
+  - php bin/console doctrine:database:create --env=drupal_dev
+  - php bin/console doctrine:schema:create --env=drupal_dev
+  - php bin/console doctrine:fixtures:load -n --drupal_dev
+  
 # Run script
 script:
   - phpunit
