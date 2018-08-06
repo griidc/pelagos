@@ -47,10 +47,11 @@ before-install:
 # Create database, schema and fixtures
 install:
   - cp app/config/parameters.yml.dist app/config/parameters.yml
-  - composer install
-  - php bin/console doctrine:database:create --env=drupal_dev
-  - php bin/console doctrine:schema:create --env=drupal_dev
-  - php bin/console doctrine:fixtures:load -n --drupal_dev
+  - export SYMFONY_ENV=drupal_dev
+  - composer install 
+  - php bin/console doctrine:database:create 
+  - php bin/console doctrine:schema:create 
+  - php bin/console doctrine:fixtures:load
   
 # Run script
 script:
