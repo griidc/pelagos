@@ -56,6 +56,15 @@ twig:
 # Doctrine Configuration
 doctrine:
     dbal:
+        default_connection: default
+        connections:
+            default:
+                dbname: pelagos
+                user: postgres
+                password: null
+                host: localhost
+                driver: pdo_pgsql
+                server_version: 1.0.2
         driver:   pdo_pgsql
         host:     "%database_host%"
         port:     "%database_port%"
