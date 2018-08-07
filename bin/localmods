@@ -25,5 +25,5 @@ eval $(parse_yaml app/config/parameters.yml "")
 
 export PGPASSWORD="$parameters__database_password"
 
-echo "update person_data_repository set role_id = 1 where person_id in (select person_id from account where user_id in ('mvandeneijnden', 'jholland', 'mwilliamson', 'rrossi', 'sellis', 'skrug', 'bsigdel', 'wnichols', 'snguyen', 'ppondicherry'))" | /usr/bin/psql -h $parameters__database_host -U $parameters__database_user $parameters__database_name || exit
+echo "update person_data_repository set role_id = 1 where person_id in (select person_id from account where user_id in ('mvandeneijnden', 'jholland', 'mwilliamson', 'rrossi', 'sellis', 'skrug', 'bsigdel', 'wnichols', 'snguyen', 'ppondicherry', 'isotoramos'))" | /usr/bin/psql -h $parameters__database_host -U $parameters__database_user $parameters__database_name || exit
 echo "Bestowed DRPM superpowers to the usual suspects!"
