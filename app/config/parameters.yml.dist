@@ -10,7 +10,7 @@ parameters:
 
     database_host:     127.0.0.1
     database_port:     5432
-    database_name:     pelagos
+    database_name:     postgres
     database_user:     postgres
     database_password: ~
     # You should uncomment this if you want use pdo_sqlite
