@@ -309,9 +309,9 @@ $(document).ready(function(){
     // Placed here as timing is too early in previous related section. Enables/Disables
     // the "End View" button depending on usage.
     if (regForm.attr("mode") === "view") {
-        $("#EndViewBtn").button( "enable" );
+        $("#EndViewBtn").button("enable");
     } else {
-        $("#EndViewBtn").button( "disable" );
+        $("#EndViewBtn").button("disable");
     }
 
     // Build list arrays/fake multiselect boxes.
