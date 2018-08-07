@@ -40,9 +40,9 @@ env:
 before-install:
   - sudo apt-get update
   - cp app/config/parameters.yml.dist app/config/parameters.yml
-  - psql -c 'create database postgres;' -U postgres
-  - psql -d postgres -c "CREATE EXTENSION postgis;"
-  - psql -d postgres -c "CREATE EXTENSION postgis_topology;"
+  - psql -c 'create database postgres' -U postgres
+  - psql -c 'create extension postgis' -U postgres -d postgres
+
 
 
 # Install composer dependencies,
@@ -50,8 +50,10 @@ before-install:
 install:
   - export SYMFONY_ENV=drupal_dev
   - composer install 
+ 
+before-script:
   - php bin/console doctrine:schema:create 
-  - php bin/console doctrine:fixtures:load
+  - php bin/console doctrine:fixtures:load 
   
 # Run script
 script:
