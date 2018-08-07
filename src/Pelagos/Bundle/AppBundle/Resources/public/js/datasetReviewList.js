@@ -6,6 +6,9 @@ $(document).ready(function(){
     if (entityTable.length) {
         entityTable.pelagosDataTable();
     }
+
+    // Clear from previous use or back button use.
+    $("#udiReview").val("");
 });
 
 (function($) {
