@@ -41,7 +41,8 @@ before-install:
   - sudo apt-get update
   - cp app/config/parameters.yml.dist app/config/parameters.yml
   - psql -c 'create database postgres;' -U postgres
-  - psql -U postgres -c "create extension postgis"
+  - psql -d postgres -c "CREATE EXTENSION postgis;"
+  - psql -d postgres -c "CREATE EXTENSION postgis_topology;"
 
 
 # Install composer dependencies,
