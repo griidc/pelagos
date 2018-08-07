@@ -39,14 +39,14 @@ env:
 # Update composer
 before-install:
   - sudo apt-get update
-  - psql -c 'create database pelagos;' -U postgres
+  - cp app/config/parameters.yml.dist app/config/parameters.yml
+  - psql -c 'create database postgres;' -U postgres
   - psql -U postgres -c "create extension postgis"
 
 
 # Install composer dependencies,
 # Create database, schema and fixtures
 install:
-  - cp app/config/parameters.yml.dist app/config/parameters.yml
   - export SYMFONY_ENV=drupal_dev
   - composer install 
   - php bin/console doctrine:schema:create 
