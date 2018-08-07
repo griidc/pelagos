@@ -54,6 +54,10 @@ $(document).ready(function(){
         if (type === "row") {
             var datasetUdi = table.rows(indexes).data().pluck("udi")[0];
             $("#udiReview").val(datasetUdi);
+            $(".reviewButtons").button({
+                disabled: false
+            });
+
         }
     });
 
@@ -62,6 +66,9 @@ $(document).ready(function(){
         if (type === "row") {
             $("#udiReview").val("");
         }
+        $(".reviewButtons").button({
+            disabled: true
+        });
     });
 
     return table;
