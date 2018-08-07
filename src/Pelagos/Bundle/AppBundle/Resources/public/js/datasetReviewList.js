@@ -48,6 +48,22 @@ $(document).ready(function(){
           "select": "single"
         }, options)
     );
+
+    // Copy the UDI from the current row selected to the input.
+    table.on( 'select', function ( e, dt, type, indexes ) {
+        if ( type === 'row' ) {
+            var datasetUdi = table.rows( indexes ).data().pluck( 'udi' )[0];
+            $("#udiReview").val(datasetUdi);
+        }
+    } );
+
+    // Feels more intuitive this way, imho.
+    table.on( 'deselect', function ( e, dt, type, indexes ) {
+        if ( type === 'row' ) {
+            $("#udiReview").val('');
+        }
+    } );
+
     return table;
   };
 }(jQuery));
