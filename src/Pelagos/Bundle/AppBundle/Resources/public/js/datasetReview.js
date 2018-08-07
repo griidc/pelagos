@@ -23,8 +23,8 @@ $(document).ready(function(){
     var regForm = $("#regForm");
     // Check if mode = view (View mode (Unable to edit)).
     if (regForm.attr("mode") === "view") {
-        // Disable all input fields except the End View button
-        $("#regForm :input:not(#EndViewBtn)").prop("disabled", true);
+        // Disable all input fields
+        $("#regForm :input").prop("disabled", true);
     }
 
     $("html").show();
@@ -309,11 +309,9 @@ $(document).ready(function(){
     // Placed here as timing is too early in previous related section. Enables/Disables
     // the "End View" button depending on usage.
     if (regForm.attr("mode") === "view") {
-        $("#EndViewBtn").removeAttr("disabled");
-        $("#EndViewBtn").removeClass("ui-button-disabled ui-state-disabled");
+        $("#EndViewBtn").button( "enable" );
     } else {
-        $("#EndViewBtn").addClass("ui-button-disabled ui-state-disabled");
-        $("#EndViewBtn").prop("disabled", true);
+        $("#EndViewBtn").button( "disable" );
     }
 
     // Build list arrays/fake multiselect boxes.
