@@ -23,7 +23,8 @@ $(document).ready(function(){
     var regForm = $("#regForm");
     // Check if mode = view (View mode (Unable to edit)).
     if (regForm.attr("mode") === "view") {
-        $("#regForm :input").prop("disabled", true);
+        // Disable all input fields except the End View button
+        $("#regForm :input:not(#EndViewBtn)").prop("disabled", true);
     }
 
     $("html").show();
@@ -299,6 +300,21 @@ $(document).ready(function(){
         }
         buildKeywordLists();
     });
+
+    // Display admin menu when "End View" button in clicked.
+    $("#EndViewBtn").click(function (event) {
+        window.location = Routing.generate("pelagos_app_ui_datasetreview_default");
+    });
+
+    // Placed here as timing is too early in previous related section. Enables/Disables
+    // the "End View" button depending on usage.
+    if (regForm.attr("mode") === "view") {
+        $("#EndViewBtn").removeAttr("disabled");
+        $("#EndViewBtn").removeClass("ui-button-disabled ui-state-disabled");
+    } else {
+        $("#EndViewBtn").addClass("ui-button-disabled ui-state-disabled");
+        $("#EndViewBtn").prop("disabled", true);
+    }
 
     // Build list arrays/fake multiselect boxes.
     function buildKeywordLists()
@@ -623,7 +639,7 @@ $(document).ready(function(){
               }
         });
     });
-    
+
 });
 
 function checkSpatial(isNonSpatial) {
