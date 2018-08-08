@@ -27,7 +27,7 @@ matrix:
   # Fast finish allows to set the build as "finished" even if the "allow_failures" matrix elements are not finished yet.
   fast_finish: true
   include:
-    - name: "5.6 CentOs7"
+    - name: "5.6 Centos7"
       php: 5.6
       distribution: centos
       version: 7
@@ -36,10 +36,10 @@ matrix:
   # allow_failures:
   #  - php: 7.1
   #  - php: 7.2
-    - name: "5.6 Ubuntu"
-      php: 5.6
-      distribution: ubuntu
-      version: trusty
+    # - name: "5.6 Ubuntu"
+    #   php: 5.6
+    #   distribution: ubuntu
+    #   version: trusty
 
 # Define an environment variable
 env:
@@ -48,10 +48,12 @@ env:
 # Update composer
 before-install:
   - sudo apt-get update
-  
-  - 'sudo docker pull ${distribution}:${version}'
-  - 'sudo docker build --no-cache --rm --file=travis/Dockerfile.${distribution}-${version} --tag=${distribution}-${version}:ansible travis'
-  
+
+  - echo 'DOCKER_OPTS="-H tcp://127.0.0.1:2375 -H unix:///var/run/docker.sock -s devicemapper"' | sudo tee /etc/default/docker > /dev/null
+  - sudo service docker restart
+  - sleep 5
+  - sudo docker pull centos:centos${version}
+
   - cp app/config/parameters.yml.dist app/config/parameters.yml
   - psql -c 'create database postgres' -U postgres
   - psql -c 'create extension postgis' -U postgres -d postgres
@@ -61,9 +63,6 @@ before-install:
 # Install composer dependencies,
 # Create database, schema and fixtures
 install:
-  - container_id=$(mktemp)
-  - 'sudo docker run --detach --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro --volume="${PWD}":/etc/ansible/roles/nginx_role:ro ${distribution}-${version}:ansible > "${container_id}"'
-
   - export SYMFONY_ENV=drupal_dev
   - composer install 
  
