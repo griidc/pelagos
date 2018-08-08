@@ -36,10 +36,15 @@ matrix:
   # allow_failures:
   #  - php: 7.1
   #  - php: 7.2
-    # - name: "5.6 Ubuntu"
-    #   php: 5.6
-    #   distribution: ubuntu
-    #   version: trusty
+    - name: "5.6 Ubuntu"
+      php: 5.6
+      distribution: ubuntu
+      version: trusty
+    allows_failures:
+      - name: "7.2 Centos7"
+        php: 7.2
+        distribution: centos
+        version: 7
 
 # Define an environment variable
 env:
