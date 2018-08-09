@@ -31,7 +31,6 @@ if [ ! -f $1 ]; then
     exit
 fi
 
-
 eval $(parse_yaml app/config/parameters.yml "")
 
 echo "WARNING!!!: This will destroy all data in the $parameters__database_name database on $parameters__database_host!"
@@ -49,6 +48,16 @@ if [[ $response =~ ^[yY]$ ]]; then
 else
     ELASTICA_INDEX=0
     echo "You chose not to re-index elastica. As a result, contents may be stale."
+fi
+
+
+echo "By default, this load script will append .null to Person email addresses."
+read -r -p "Do you want to skip doing this (Dangerous)? [y/N] " response
+if [[ $response =~ ^[yY]$ ]]; then
+    SKIP_EMAILNULLING=1
+    echo "You chose to not add .null to Person emails. Be careful!"
+else
+    SKIP_EMAILNULLING=0
 fi
 
 if [ "$#" -eq 2 ]; then
@@ -95,8 +104,10 @@ echo "GRANT ALL PRIVILEGES ON TABLE geometry_columns TO $parameters__database_us
 echo "Grant permissions to geometry_columns"
 
 # .null email addresses
-echo "UPDATE person SET email_address = email_address||'.null' WHERE email_address NOT LIKE '%.null'" | psql -h $parameters__database_host -U postgres $parameters__database_name || exit
-echo "adding .null email addresses"
+if [ $SKIP_EMAILNULLING -eq 0 ]; then
+    echo "UPDATE person SET email_address = email_address||'.null' WHERE email_address NOT LIKE '%.null'" | psql -h $parameters__database_host -U postgres $parameters__database_name || exit
+    echo "adding .null email addresses"
+fi
 
 export PGPASSWORD="$parameters__database_password"
 

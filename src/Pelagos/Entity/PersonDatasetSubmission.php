@@ -55,6 +55,15 @@ abstract class PersonDatasetSubmission extends Entity
     protected $role;
 
     /**
+     * Whether this entity is a primary contact, or not.
+     *
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $primaryContact;
+
+    /**
      * Get the valid choices for role.
      *
      * @return array
@@ -142,5 +151,27 @@ abstract class PersonDatasetSubmission extends Entity
     public function getDatasetSubmission()
     {
         return $this->datasetSubmission;
+    }
+
+    /**
+     * Getter for primary contact indicator.
+     *
+     * @return boolean
+     */
+    public function isPrimaryContact()
+    {
+        return $this->primaryContact;
+    }
+
+    /**
+     * Setter for primary contact indicator.
+     *
+     * @param boolean $state A boolean to be set, true if primary contact, false otherwise.
+     *
+     * @return void
+     */
+    public function setPrimaryContact($state)
+    {
+        $this->primaryContact = $state;
     }
 }
