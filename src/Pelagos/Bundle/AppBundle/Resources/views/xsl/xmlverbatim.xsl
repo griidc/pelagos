@@ -135,15 +135,15 @@
 
    <!-- attribute nodes -->
    <xsl:template name="xmlverb-attrs">
-        <xsl:text> </xsl:text>
-        <span class="xmlverb-attr-name">
-            <xsl:value-of select="name()"/>
-        </span>
-        <xsl:text>=&quot;</xsl:text>
-        <span class="xmlverb-attr-content">
-            <xsl:value-of select="."/>
-        </span>
-        <xsl:text>&quot;</xsl:text>
+      <xsl:text> </xsl:text>
+      <span class="xmlverb-attr-name">
+          <xsl:value-of select="name()"/>
+      </span>
+      <xsl:text>=&quot;</xsl:text>
+      <span class="xmlverb-attr-content">
+          <xsl:value-of select="."/>
+      </span>
+      <xsl:text>&quot;</xsl:text>
    </xsl:template>
 
    <!-- namespace nodes -->
