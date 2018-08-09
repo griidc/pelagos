@@ -8,7 +8,10 @@ $(document).ready(function(){
     }
 
     // Clear from previous use or back button use.
-    $("#udiReview").val("");
+    // Calling the .change() triggers whatever is watching that
+    // filed for changes, in this case something that enables/disables
+    // the buttons.
+    $("#udiReview").val("").change();
 });
 
 (function($) {
@@ -56,22 +59,15 @@ $(document).ready(function(){
     table.on("select", function (e, dt, type, indexes) {
         if (type === "row") {
             var datasetUdi = table.rows(indexes).data().pluck("udi")[0];
-            $("#udiReview").val(datasetUdi);
-            $(".reviewButtons").button({
-                disabled: false
-            });
-
+            $("#udiReview").val(datasetUdi).change();
         }
     });
 
     // Feels more intuitive this way, imho.
     table.on("deselect", function (e, dt, type, indexes) {
         if (type === "row") {
-            $("#udiReview").val("");
+            $("#udiReview").val("").change();
         }
-        $(".reviewButtons").button({
-            disabled: true
-        });
     });
 
     return table;
