@@ -135,18 +135,15 @@
 
    <!-- attribute nodes -->
    <xsl:template name="xmlverb-attrs">
-      <xsl:text> </xsl:text>
-      <span class="xmlverb-attr-name">
-         <xsl:value-of select="name()"/>
-      </span>
-      <xsl:text>=&quot;</xsl:text>
-      <span class="xmlverb-attr-content">
-         <xsl:call-template name="html-replace-entities">
-            <xsl:with-param name="text" select="normalize-space(.)" />
-            <xsl:with-param name="attrs" select="true()" />
-         </xsl:call-template>
-      </span>
-      <xsl:text>&quot;</xsl:text>
+       <xsl:text> </xsl:text>
+       <span class="xmlverb-attr-name">
+           <xsl:value-of select="name()"/>
+       </span>
+       <xsl:text>=&quot;</xsl:text>
+       <span class="xmlverb-attr-content">
+           <xsl:value-of select="."/>
+       </span>
+       <xsl:text>&quot;</xsl:text>
    </xsl:template>
 
    <!-- namespace nodes -->
