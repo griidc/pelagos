@@ -250,7 +250,8 @@ class Dataset extends Entity
      */
     public function setDatasetSubmission(DatasetSubmission $datasetSubmission)
     {
-        if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+        if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE or
+            $datasetSubmission->getStatus() === DatasetSubmission::STATUS_IN_REVIEW) {
             $this->datasetSubmission = $datasetSubmission;
         } else {
             $this->datasetSubmission = null;
@@ -313,10 +314,8 @@ class Dataset extends Entity
      */
     public function updateTitle()
     {
-        if ($this->hasMetadata()) {
-            // Copy Metadata title to Dataset.
-            $this->title = $this->getMetadata()->getTitle();
-        } elseif ($this->hasDatasetSubmission()) {
+        // After Dataset is accepted, the getDatasetSubmission pointer points to the accepted version.
+        if ($this->hasDatasetSubmission()) {
             // Copy DatasetSubmission title to Dataset.
             $this->title = $this->getDatasetSubmission()->getTitle();
         } elseif ($this->hasDif()) {
@@ -342,10 +341,8 @@ class Dataset extends Entity
      */
     public function updateAbstract()
     {
-        if ($this->hasMetadata()) {
-            // Copy Metadata abstract to Dataset.
-            $this->abstract = $this->getMetadata()->getAbstract();
-        } elseif ($this->hasDatasetSubmission()) {
+        // After Dataset is accepted, the getDatasetSubmission pointer points to the accepted version.
+        if ($this->hasDatasetSubmission()) {
             // Copy DatasetSubmission abstract to Dataset.
             $this->abstract = $this->getDatasetSubmission()->getAbstract();
         } elseif ($this->hasDif()) {
@@ -625,7 +622,7 @@ class Dataset extends Entity
         $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE;
         switch ($this->getDatasetSubmission()->getDatasetFileTransferStatus()) {
             case DatasetSubmission::TRANSFER_STATUS_COMPLETED:
-                if ($this->getDatasetSubmission()->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+                if ($this->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
                     switch ($this->getDatasetSubmission()->getRestrictions()) {
                         case DatasetSubmission::RESTRICTION_NONE:
                             $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE;
@@ -634,14 +631,15 @@ class Dataset extends Entity
                             $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED;
                             break;
                     }
-                } elseif ($this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+                } elseif ($this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE or
+                    $this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_IN_REVIEW) {
                     $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
                 } else {
                     $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
                 }
                 break;
             case DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED:
-                if ($this->getDatasetSubmission()->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+                if ($this->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
                     switch ($this->getDatasetSubmission()->getRestrictions()) {
                         case DatasetSubmission::RESTRICTION_NONE:
                             $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED;
@@ -650,7 +648,8 @@ class Dataset extends Entity
                             $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED;
                             break;
                     }
-                } elseif ($this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+                } elseif ($this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE or
+                    $this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_IN_REVIEW) {
                     $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
                 } else {
                     $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
@@ -729,5 +728,30 @@ class Dataset extends Entity
             // And if we don't have an approved DIF, return nothing.
             return null;
         }
+    }
+
+    /**
+     * Get the spatialExtentGeometry for this Metadata.
+     *
+     * @return string|null  The gml for the dataset.
+     */
+    public function getSpatialExtentGeometry()
+    {
+        $datasetSubmission = $this->getDatasetSubmission();
+        $dif = $this->getDif();
+        $spatialExtent = null;
+
+        // If there is an accepted dataset submission, use its geometry or else use the geometry from DIF.
+        if ($this->metadataStatus !== DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+            if ($dif instanceof DIF and $dif->getStatus() === DIF::STATUS_APPROVED and $dif->getSpatialExtentGeometry()) {
+                $spatialExtent = $dif->getSpatialExtentGeometry();
+            }
+        } else {
+            if ($datasetSubmission instanceof DatasetSubmission and $datasetSubmission->getSpatialExtent()) {
+                $spatialExtent = $datasetSubmission->getSpatialExtent();
+            }
+        }
+
+        return $spatialExtent;
     }
 }

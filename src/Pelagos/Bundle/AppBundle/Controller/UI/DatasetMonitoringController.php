@@ -8,17 +8,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DIF;
-use Pelagos\Entity\FundingOrganization;
-use Pelagos\Entity\FundingCycle;
-use Pelagos\Entity\Metadata;
-use Pelagos\Entity\ResearchGroup;
-use Pelagos\Entity\Person;
-
-use Pelagos\Util\ISOMetadataExtractorUtil;
-
 /**
  * The Dataset Monitoring controller.
  *
@@ -170,22 +159,6 @@ class DatasetMonitoringController extends UIController
     public function datasetDetailsAction($udi)
     {
         $datasets = $this->entityHandler->getBy('Pelagos:Dataset', array('udi' => $udi));
-
-        $dataset = $datasets[0];
-
-        $datasetSubmission = $dataset->getDatasetSubmission();
-
-        // If we have approved Metadata, load contact into datasetSubmission.
-        if ($datasetSubmission instanceof DatasetSubmission
-            and $dataset->getMetadata() instanceof Metadata
-        ) {
-            $datasetSubmission->getDatasetContacts()->clear();
-            ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                $dataset->getMetadata()->getXml(),
-                $datasetSubmission,
-                $this->getDoctrine()->getManager()
-            );
-        }
 
         return $this->render(
             'PelagosAppBundle:DatasetMonitoring:dataset_details.html.twig',

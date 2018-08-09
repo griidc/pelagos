@@ -160,7 +160,7 @@ class DatasetController extends EntityController
 
             $mdappLogger->writeLog(
                 $this->getUser()->getUserName() .
-                'set Jira Link for udi: ' .
+                ' set Jira Link for udi: ' .
                 $entityHandler->get(Dataset::class, $id)->getUdi() .
                 ' to ' .
                 $jiraLinkValue .

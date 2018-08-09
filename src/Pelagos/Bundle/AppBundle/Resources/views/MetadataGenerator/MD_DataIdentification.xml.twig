@@ -2,7 +2,7 @@
     <gmd:citation>
         <gmd:CI_Citation>
             <gmd:title>
-                <gco:CharacterString>{{dataset.datasetSubmission.title}}</gco:CharacterString>
+                <gco:CharacterString><![CDATA[{{dataset.datasetSubmission.title | raw}}]]></gco:CharacterString>
             </gmd:title>
             <gmd:alternateTitle>
                 <gco:CharacterString>{{dataset.datasetSubmission.shortTitle}}</gco:CharacterString>
@@ -27,10 +27,10 @@
         </gmd:CI_Citation>
     </gmd:citation>
     <gmd:abstract>
-        <gco:CharacterString><![CDATA[{{dataset.datasetSubmission.abstract | trim}}]]></gco:CharacterString>
+        <gco:CharacterString><![CDATA[{{dataset.datasetSubmission.abstract | trim | raw}}]]></gco:CharacterString>
     </gmd:abstract>
     <gmd:purpose>
-        <gco:CharacterString><![CDATA[{{dataset.datasetSubmission.purpose}}]]></gco:CharacterString>
+        <gco:CharacterString><![CDATA[{{dataset.datasetSubmission.purpose | raw}}]]></gco:CharacterString>
     </gmd:purpose>
     <gmd:status>
         <gmd:MD_ProgressCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ProgressCode" codeListValue="completed" codeSpace="001">completed</gmd:MD_ProgressCode>
@@ -84,10 +84,26 @@
         {% endif %}
             {% if dataset.datasetSubmission.spatialExtentDescription %}
             <gmd:description>
-                <gco:CharacterString>{{dataset.datasetSubmission.spatialExtentDescription}}</gco:CharacterString>
+                <gco:CharacterString><![CDATA[{{dataset.datasetSubmission.spatialExtentDescription | raw}}]]></gco:CharacterString>
             </gmd:description>
             {% endif %}
             {% if dataset.datasetSubmission.spatialExtent %}
+                <gmd:geographicElement>
+                    <gmd:EX_GeographicBoundingBox>
+                        <gmd:westBoundLongitude>
+                            <gco:Decimal>{{ boundingBoxArray.westBoundLongitude }}</gco:Decimal>
+                        </gmd:westBoundLongitude>
+                        <gmd:eastBoundLongitude>
+                            <gco:Decimal>{{ boundingBoxArray.eastBoundLongitude }}</gco:Decimal>
+                        </gmd:eastBoundLongitude>
+                        <gmd:southBoundLatitude>
+                            <gco:Decimal>{{ boundingBoxArray.southBoundLatitude }}</gco:Decimal>
+                        </gmd:southBoundLatitude>
+                        <gmd:northBoundLatitude>
+                            <gco:Decimal>{{ boundingBoxArray.northBoundLatitude }}</gco:Decimal>
+                        </gmd:northBoundLatitude>
+                    </gmd:EX_GeographicBoundingBox>
+                </gmd:geographicElement>
             <gmd:geographicElement>
                 <gmd:EX_BoundingPolygon>
                     <gmd:polygon>
@@ -120,11 +136,13 @@
                    </gmd:extent>
                </gmd:EX_TemporalExtent>
             </gmd:temporalElement>
+            {% elseif dataset.datasetSubmission.temporalExtentNilReasonType %}
+                <gmd:temporalElement gco:nilReason="{{ dataset.datasetSubmission.temporalExtentNilReasonType }}"/>
             {% endif %}
         </gmd:EX_Extent>
     </gmd:extent>
     {% endif %}
     <gmd:supplementalInformation>
-        <gco:CharacterString><![CDATA[{{dataset.datasetSubmission.suppParams}}|{{dataset.datasetSubmission.suppMethods}}|{{dataset.datasetSubmission.suppInstruments}}|{{dataset.datasetSubmission.suppSampScalesRates}}|{{dataset.datasetSubmission.suppErrorAnalysis}}|{{dataset.datasetSubmission.suppProvenance}}]]></gco:CharacterString>
+        <gco:CharacterString><![CDATA[{{dataset.datasetSubmission.suppParams | raw}}|{{dataset.datasetSubmission.suppMethods | raw}}|{{dataset.datasetSubmission.suppInstruments | raw}}|{{dataset.datasetSubmission.suppSampScalesRates | raw}}|{{dataset.datasetSubmission.suppErrorAnalysis | raw}}|{{dataset.datasetSubmission.suppProvenance | raw}}]]></gco:CharacterString>
     </gmd:supplementalInformation>
 </gmd:MD_DataIdentification>

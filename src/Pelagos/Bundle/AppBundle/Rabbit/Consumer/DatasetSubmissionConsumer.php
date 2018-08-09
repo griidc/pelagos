@@ -105,13 +105,15 @@ class DatasetSubmissionConsumer implements ConsumerInterface
      */
     public function execute(AMQPMessage $message)
     {
-        $datasetId = $message->body;
-        $loggingContext = array('dataset_id' => $datasetId);
+        $datasetSubmissionId = $message->body;
+
         // Clear Doctrine's cache to force loading from persistence.
         $this->entityManager->clear();
-        $dataset = $this->entityManager
-                        ->getRepository(Dataset::class)
-                        ->find($datasetId);
+        $datasetSubmission = $this->entityManager
+                        ->getRepository(DatasetSubmission::class)
+                        ->find($datasetSubmissionId);
+        $dataset = $datasetSubmission->getDataset();
+        $loggingContext = array('dataset_id' => $datasetSubmission->getDataset()->getId());
         if (!$dataset instanceof Dataset) {
             $this->logger->warning('No dataset found', $loggingContext);
             return true;
@@ -119,7 +121,7 @@ class DatasetSubmissionConsumer implements ConsumerInterface
         if (null !== $dataset->getUdi()) {
             $loggingContext['udi'] = $dataset->getUdi();
         }
-        $datasetSubmission = $dataset->getDatasetSubmission();
+
         if (!$datasetSubmission instanceof DatasetSubmission) {
             $this->logger->warning('No submission found for dataset', $loggingContext);
             return true;
@@ -150,6 +152,7 @@ class DatasetSubmissionConsumer implements ConsumerInterface
      */
     protected function processDataset(DatasetSubmission $datasetSubmission, array $loggingContext)
     {
+
         // Log processing start.
         $this->logger->info('Dataset file processing starting', $loggingContext);
         $datasetFileTransferStatus = $datasetSubmission->getDatasetFileTransferStatus();
@@ -190,6 +193,6 @@ class DatasetSubmissionConsumer implements ConsumerInterface
         // Log processing complete.
         $this->logger->info('Dataset file processing complete', $loggingContext);
         // Publish an AMQP message to trigger dataset file hashing.
-        $this->datasetFileHasherProducer->publish($datasetSubmission->getDataset()->getId());
+        $this->datasetFileHasherProducer->publish($datasetSubmission->getId());
     }
 }

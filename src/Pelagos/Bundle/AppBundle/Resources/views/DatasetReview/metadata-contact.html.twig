@@ -1,0 +1,45 @@
+<fieldset>
+    <legend>Metadata Contact</legend>
+    <table class="tab-table">
+        {% set contact = form.metadataContacts | first %}
+        <tr>
+            <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+                        Please use the drop down list to select the person who can be contacted
+                        about the dataset’s descriptive information. If the person is not in the
+                        list or their contact information is incorrect, please contact
+                        griidc@gomri.org.
+					</div>
+				</span>
+                <label for="metadatacontact">Person</label>
+                <select class="contactperson" id="metadatacontact" name="{{contact.person.vars.full_name}}" required="required">
+                    {% if contact.vars.data.person|default %}
+                    <option selected value="{{contact.vars.data.person.id}}">
+                        {{contact.vars.data.person.lastName}}, {{contact.vars.data.person.firstName}}, {{contact.vars.data.person.emailAddress}}
+                    </option>
+                    {% endif %}
+                </select>
+                <label for="metadatacontact" class="error"></label>
+                {% include "PelagosAppBundle:DatasetSubmission:contact-information.html.twig" %}
+            </td>
+        </tr>
+        <tr>
+            <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+                        Please select the person’s relationship to the dataset’s descriptive
+                        information from the drop down list.
+					</div>
+				</span>
+                {{ form_row(contact.role) }}
+            </td>
+        </tr>
+    </table>
+</fieldset>
