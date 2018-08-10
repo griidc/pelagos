@@ -130,11 +130,11 @@
 
                         var url = actionURL;
 
-                        if (!($(thisForm).find("[name=\"id\"]").val() === "")) {
-                            url += "/" + $(thisForm).find("[name=\"id\"]").val();
+                        if ($(thisForm).find("[name=\"id\"]").val()) {
+                            url += "/" + $(thisForm).find("[name=\"id\"]").val() + "/validateProperty";
+                        } else {
+                            url += "/validateProperty";
                         }
-
-                        url += "/validateProperty";
 
                         $("input:visible:text,input:visible[type=number],input:visible[type=email],textarea,select", this).each(function() {
                             $(this).attr("disabled", false);

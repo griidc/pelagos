@@ -78,4 +78,21 @@ class ListController extends Controller
         $GLOBALS['pelagos']['title'] = 'Funding Organizations';
         return $this->render('PelagosAppBundle:List:FundingOrganizations.html.twig');
     }
+
+    /**
+     * The National Data Repository Generate List action.
+     *
+     * @Route("/national-data-centers")
+     *
+     * @return Response  List of Funding Organizations
+     */
+    public function nationalDatacentersAction()
+    {
+        // Checks authorization of users
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
+        $GLOBALS['pelagos']['title'] = 'National Data Centers';
+        return $this->render('PelagosAppBundle:List:NationalDataCenters.html.twig');
+    }
 }

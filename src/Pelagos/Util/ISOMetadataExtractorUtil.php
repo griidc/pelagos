@@ -4,9 +4,12 @@ namespace Pelagos\Util;
 
 use Doctrine\ORM\EntityManager;
 
+use Pelagos\Entity\DataCenter;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\DistributionPoint;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 
 /**
  * A utility class for extracting information from ISO metadata.
@@ -32,6 +35,16 @@ class ISOMetadataExtractorUtil
         foreach ($pointsOfContact as $poc) {
             self::setIfHas($datasetSubmission, 'addDatasetContact', $poc);
         }
+
+        // This always returns a single POC, not an array of POC.
+        $metadataContact = self::extractMetadataContact($xmlMetadata, $datasetSubmission, $entityManager);
+        self::setIfHas($datasetSubmission, 'addMetadataContact', $metadataContact);
+
+        $distributionPoints = self::extractDistributionPoint($xmlMetadata, $datasetSubmission, $entityManager);
+        foreach ($distributionPoints as $distributionPoint) {
+            self::setIfHas($datasetSubmission, 'addDistributionPoint', $distributionPoint);
+        }
+
         self::setIfHas($datasetSubmission, 'setTitle', self::extractTitle($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setShortTitle', self::extractShortTitle($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setAbstract', self::extractAbstract($xmlMetadata));
@@ -54,6 +67,7 @@ class ISOMetadataExtractorUtil
         self::setIfHas($datasetSubmission, 'setTemporalExtentEndPosition', self::extractTemporalExtentEndPosition($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setDistributionFormatName', self::extractDistributionFormatName($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setFileDecompressionTechnique', self::extractFileDecompressionTechnique($xmlMetadata));
+        self::setIfHas($datasetSubmission, 'setTemporalExtentNilReasonType', self::extractTemporalExtentNilReasonType($xmlMetadata));
     }
 
     /**
@@ -85,8 +99,8 @@ class ISOMetadataExtractorUtil
      *
      * @return Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
      */
-    public static function get1stEmailAddressesFrom1stPointOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em) {
-
+    public static function get1stEmailAddressesFrom1stPointOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
+    {
         $targetEmailAddress = null;
 
         $query = '/gmi:MI_Metadata' .
@@ -112,8 +126,8 @@ class ISOMetadataExtractorUtil
             $targetEmailAddress = self::querySingle($pointOfContact, $query);
         }
         return $targetEmailAddress;
-
     }
+
     /**
      * Get the all email addresses from all POCs from XML metadata.
      *
@@ -123,8 +137,8 @@ class ISOMetadataExtractorUtil
      *
      * @return Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
      */
-    public static function getAllEmailAddressesForAllPointsOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em) {
-
+    public static function getAllEmailAddressesForAllPointsOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
+    {
         $emailAddressColection = array();
 
         $query = '/gmi:MI_Metadata' .
@@ -148,15 +162,16 @@ class ISOMetadataExtractorUtil
                     '/gco:CharacterString';
 
                 $allEmailAddresses = self::queryMultiple($pointOfContact, $query);
-                if(!empty($allEmailAddresses)) {
-                    foreach ($allEmailAddresses as $emailAddress)
+                if (!empty($allEmailAddresses)) {
+                    foreach ($allEmailAddresses as $emailAddress) {
                         $emailAddressColection[] = $emailAddress;
+                    }
                 }
             }
         }
         return $emailAddressColection;
-
     }
+
     /**
      * Determines the dataset contact from XML metadata.
      *
@@ -220,6 +235,160 @@ class ISOMetadataExtractorUtil
             }
         }
         return $personDatasetSubmissionDatasetContacts;
+    }
+
+    /**
+     * Determines the metadata contact from XML metadata.
+     *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
+     * @param EntityManager     $em  An entity manager.
+     *
+     * @return PersonDatasetSubmissionMetadataContact|null Returns the metadata contact, or null.
+     */
+    protected static function extractMetadataContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
+    {
+        $query = '/gmi:MI_Metadata' .
+                 '/gmd:contact[1]' .
+                 '/gmd:CI_ResponsibleParty' .
+                 '/gmd:contactInfo' .
+                 '/gmd:CI_Contact' .
+                 '/gmd:address' .
+                 '/gmd:CI_Address' .
+                 '/gmd:electronicMailAddress' .
+                 '/gco:CharacterString';
+
+        $email = self::querySingle($xml, $query);
+
+        $people = $em->getRepository(Person::class)->findBy(
+            array('emailAddress' => $email)
+        );
+
+        if (count($people) > 0) {
+            $person = $people[0];
+        } else {
+            $person = null;
+        }
+
+        $query = '/gmi:MI_Metadata' .
+                 '/gmd:contact[1]' .
+                 '/gmd:CI_ResponsibleParty' .
+                 '/gmd:role' .
+                 '/gmd:CI_RoleCode';
+
+        $role = self::querySingle($xml, $query);
+
+        if ($person instanceof Person) {
+            $personDatasetSubmissionMetadataContact = new PersonDatasetSubmissionMetadataContact();
+            $personDatasetSubmissionMetadataContact->setPerson($person);
+            // Only set role if it is a valid role, otherwise leave unset.
+            if (null !== $role and array_key_exists($role, PersonDatasetSubmissionMetadataContact::ROLES)) {
+                $personDatasetSubmissionMetadataContact->setRole($role);
+            }
+            $personDatasetSubmissionMetadataContact->setDatasetSubmission($ds);
+            return $personDatasetSubmissionMetadataContact;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Determines the distribution point from XML metadata.
+     *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
+     * @param EntityManager     $em  An entity manager.
+     *
+     * @return Array of DistributionPoint, or empty array if none.
+     */
+    public static function extractDistributionPoint(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
+    {
+        $distributionPoints = array();
+
+        $query = '/gmi:MI_Metadata' .
+                 '/gmd:distributionInfo' .
+                 '/gmd:MD_Distribution' .
+                 '/gmd:distributor';
+
+        $distributors = @$xml->xpath($query);
+
+        if (!empty($distributors)) {
+            foreach ($distributors as $distributor) {
+                // Find distributor by Email
+                $query = './gmd:MD_Distributor' .
+                         '/gmd:distributorContact' .
+                         '/gmd:CI_ResponsibleParty' .
+                         '/gmd:contactInfo' .
+                         '/gmd:CI_Contact' .
+                         '/gmd:address' .
+                         '/gmd:CI_Address' .
+                         '/gmd:electronicMailAddress' .
+                         '/gco:CharacterString';
+
+                $email = strtolower(self::querySingle($distributor, $query));
+
+                //hard-coding to map outdated metadata's distribution contact to the national data center entity
+                switch ($email) {
+                    case 'gb-admin@ncbi.nlm.nih.gov':
+                    case 'info@ncbi.nml.nih.gov';
+                        $email = 'info@ncbi.nlm.nih.gov';
+                        break;
+                    case 'nodc.services@noaa.gov':
+                        $email = 'ncei.info@noaa.gov';
+                        break;
+                    case 'mg-rast@rt.mcs.anl.gov':
+                        $email = 'mg-rast@mcs.anl.gov';
+                        break;
+                    case 'nodc.services@noaa.gov':
+                        $email = 'ncei.info@noaa.gov';
+                    default:
+                        break;
+                }
+
+                $dataCenterArray = $em->getRepository(DataCenter::class)->findBy(
+                    array('emailAddress' => $email)
+                );
+
+                if (count($dataCenterArray) > 0) {
+                    $dataCenter = $dataCenterArray[0];
+                } else {
+                    $dataCenter = null;
+                }
+
+                // Find Role
+                $query = './gmd:MD_Distributor' .
+                         '/gmd:distributorContact' .
+                         '/gmd:CI_ResponsibleParty' .
+                         '/gmd:role' .
+                         '/gmd:CI_RoleCode';
+
+                    $roleCode = self::querySingle($distributor, $query);
+
+                // Find Distribution URL
+                $query = './gmd:MD_Distributor' .
+                         '/gmd:distributorTransferOptions' .
+                         '/gmd:MD_DigitalTransferOptions' .
+                         '/gmd:onLine' .
+                         '/gmd:CI_OnlineResource' .
+                         '/gmd:linkage' .
+                         '/gmd:URL';
+
+                $distributionUrl = self::querySingle($distributor, $query);
+
+                if ($dataCenter instanceof DataCenter) {
+                    $distributionPoint = new DistributionPoint();
+                    $distributionPoint->setDataCenter($dataCenter);
+                    // Only set role if it is a valid role code, otherwise leave unset.
+                    if (null !== $roleCode and array_key_exists($roleCode, DistributionPoint::ROLECODES)) {
+                        $distributionPoint->setRoleCode($roleCode);
+                    }
+                    $distributionPoint->setDistributionUrl($distributionUrl);
+                    $distributionPoint->setDatasetSubmission($ds);
+                    $distributionPoints[] = $distributionPoint;
+                }
+            }
+        }
+        return $distributionPoints;
     }
 
     /**
@@ -724,6 +893,12 @@ class ISOMetadataExtractorUtil
             }
             // remove new lines
             $value = trim(preg_replace('/\s+/', ' ', $value));
+
+            //replace xml escape chars
+            while (preg_match_all('/\&(amp|quot|lt|gt|#039|apos)\;/', $value)) {
+                $value = htmlspecialchars_decode($value, (ENT_QUOTES | ENT_XML1));
+            }
+
             return $value;
         } else {
             return null;
@@ -814,5 +989,50 @@ class ISOMetadataExtractorUtil
                 return $item;
             }
         }
+    }
+
+    /**
+     * Extracts temporal nilReason from XML metadata.
+     *
+     * @param \SimpleXmlElement $xml The XML to extract from.
+     *
+     * @return string|null Returns the temporal nilReason as a string, or null.
+     */
+    protected static function extractTemporalExtentNilReasonType(\SimpleXmlElement $xml)
+    {
+        $query = '/gmi:MI_Metadata' .
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:extent' .
+            '/gmd:EX_Extent' .
+            '/gmd:temporalElement' .
+            '/@gco:nilReason';
+
+        $queryXpath = @$xml->xpath($query);
+
+        if (!empty($queryXpath) and is_array($queryXpath)) {
+            $temporalExtentNilReason = self::getXmlAttribute($queryXpath[0], 'nilReason');
+            $value = trim(preg_replace('/\s+/', ' ', $temporalExtentNilReason));
+            return $value;
+        }
+        // This is a best effort, so null if xpath fails.
+        return null;
+    }
+
+    /**
+     * Static function to get the XML attribute from the SimpleXmlElement object.
+     *
+     * @param \SimpleXMLElement $xmlObject The Xml object from the query.
+     * @param string            $attribute The attribute needed to be extracted.
+     *
+     * @return null|string
+     */
+    private static function getXmlAttribute(\SimpleXMLElement $xmlObject, $attribute)
+    {
+        if (isset($xmlObject[$attribute])) {
+            return (string) $xmlObject[$attribute];
+        }
+
+        return null;
     }
 }

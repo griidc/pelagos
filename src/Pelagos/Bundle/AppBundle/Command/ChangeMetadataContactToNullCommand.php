@@ -35,7 +35,7 @@ class ChangeMetadataContactToNullCommand extends ContainerAwareCommand
     {
         $this
             ->setName('metadata:change-nullcontact')
-            ->setDescription('Change metadata contact e-mail to .null');
+            ->setDescription('Change metadata contact e-mail and dataset contact email to .null');
     }
 
     /**
@@ -55,8 +55,33 @@ class ChangeMetadataContactToNullCommand extends ContainerAwareCommand
             ->getRepository('Pelagos\Entity\Metadata')
             ->findAll();
 
+        $xpathArray = array();
+        //query for dataset contact
+        $xpathArray['datasetcontact'] = '/gmi:MI_Metadata' .
+                '/gmd:identificationInfo' .
+                '/gmd:MD_DataIdentification' .
+                '/gmd:pointOfContact[1]' .
+                '/gmd:CI_ResponsibleParty' .
+                '/gmd:contactInfo' .
+                '/gmd:CI_Contact' .
+                '/gmd:address' .
+                '/gmd:CI_Address' .
+                '/gmd:electronicMailAddress' .
+                '/gco:CharacterString';
+
+        //query for metadata contact
+        $xpathArray['metadatacontact'] = '/gmi:MI_Metadata' .
+                '/gmd:contact' .
+                '/gmd:CI_ResponsibleParty' .
+                '/gmd:contactInfo' .
+                '/gmd:CI_Contact' .
+                '/gmd:address' .
+                '/gmd:CI_Address' .
+                '/gmd:electronicMailAddress' .
+                '/gco:CharacterString';
+
         foreach ($datasets as $metadata) {
-            $metadataModified = false;
+            $modifiedMetadata = false;
 
             $xml = $metadata->getXml();
 
@@ -70,34 +95,24 @@ class ChangeMetadataContactToNullCommand extends ContainerAwareCommand
 
             $xpathdoc = new \DOMXpath($doc);
 
-            $xpath = '/gmi:MI_Metadata' .
-                '/gmd:identificationInfo' .
-                '/gmd:MD_DataIdentification' .
-                '/gmd:pointOfContact[1]' .
-                '/gmd:CI_ResponsibleParty' .
-                '/gmd:contactInfo' .
-                '/gmd:CI_Contact' .
-                '/gmd:address' .
-                '/gmd:CI_Address' .
-                '/gmd:electronicMailAddress' .
-                '/gco:CharacterString';
+            foreach ($xpathArray as $xpath) {
+                $elements = $xpathdoc->query($xpath);
 
-            $elements = $xpathdoc->query($xpath);
-
-            if ($elements->length > 0) {
-                $node = $elements->item(0);
-                $nodeValue = (string) $node->nodeValue;
-                echo "E-mail:$nodeValue\n";
-                if (!preg_match('/^.*\@.*\..*\.null/i', $nodeValue)) {
-                    $node->nodeValue = (string) $node->nodeValue . '.null';
-                    $this->numberModified++;
-                    $metadataModified = true;
-                } else {
-                    echo "Skipping, already null\n";
+                if ($elements->length > 0) {
+                    $node = $elements->item(0);
+                    $nodeValue = (string) $node->nodeValue;
+                    echo "E-mail:$nodeValue\n";
+                    if (!preg_match('/^.*\@.*\..*\.null/i', $nodeValue)) {
+                        $node->nodeValue = (string) $node->nodeValue . '.null';
+                        $this->numberModified++;
+                        $modifiedMetadata = true;
+                    } else {
+                        echo "Skipping, already null\n";
+                    }
                 }
             }
 
-            if ($metadataModified) {
+            if ($modifiedMetadata) {
                 $doc->formatOutput = true;
                 $doc->normalizeDocument();
 
@@ -110,13 +125,10 @@ class ChangeMetadataContactToNullCommand extends ContainerAwareCommand
                 $metadata->setModifier($modifier);
 
                 $entityManager->persist($metadata);
-
                 echo 'Modified: ' . $metadata->getId() . "\n";
             }
         }
-
         $entityManager->flush();
-
 
         $output->writeln('Modified ' . $this->numberModified . ' roles.');
 

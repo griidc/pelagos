@@ -550,27 +550,27 @@ function GeoViz()
 
     this.gmlToWKT = function (GML)
     {
-        jQuery.ajax({
+        return jQuery.ajax({
             url: Routing.generate("pelagos_app_gml_towkt"),
             type: "POST",
             data: {gml: GML},
             context: document.body
-            }).done(function(html) {
-                jQuery(mapDiv).trigger("gmlConverted",html);
-            return true;
-        });
+            })
+            .done(function(wkt) {
+                return wkt;
+            });
     }
 
     this.wktToGML = function (WKT)
     {
-        jQuery.ajax({
+        return jQuery.ajax({
             url: Routing.generate("pelagos_app_gml_fromwkt"),
             type: "POST",
             data: {wkt: WKT},
             context: document.body
-            }).done(function(html) {
-                jQuery(mapDiv).trigger("wktConverted",html);
-            return true;
+            })
+            .done(function(gml) {
+                return gml;
         });
     }
 
@@ -1065,13 +1065,28 @@ function GeoViz()
         { return false; }
     }
 
+    this.getWktFromFeatures = function ()
+    {
+        if (this.hasMultiFeatures() === true) {
+            var Features = vlayer.features;
+        }
+        else {
+            var Features = vlayer.features[0];
+        }
+        if (typeof Features == "object" && null !== Features )
+        {
+            return this.wkt.write(Features);
+        }
+        else
+        { return false; }
+    }
+
     this.getWKTFromBounds = function(left, bottom, right, top)
     {
         var bounds = new OpenLayers.Bounds.fromArray(Array(left, bottom, right, top));
         var myGeometry = bounds.toGeometry();
         var newFeature = new OpenLayers.Feature.Vector(myGeometry);
         var myWKT = this.wkt.write(newFeature);
-
         return myWKT;
     }
 
@@ -1096,5 +1111,13 @@ function GeoViz()
         }
         else
         { return false; }
+    }
+
+    this.hasMultiFeatures = function()
+    {
+      if (vlayer.features.length > 1) {
+          return true;
+      }
+      return false;
     }
 }

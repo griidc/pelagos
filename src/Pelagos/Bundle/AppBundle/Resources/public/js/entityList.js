@@ -13,6 +13,8 @@ $(document).ready(function(){
 
         var creatorColumn = $(this).attr("creatorColumn");
 
+        var urlColumn = $(this).attr("urlColumn");
+
         if (typeof options === "undefined") {
             options = {};
         }
@@ -79,6 +81,18 @@ $(document).ready(function(){
                     return "<a href='" + personLink + "' target='_blank'>" + row.modifier.firstName + " " + row.modifier.lastName + "</a>";
                 },
                 "targets": [ parseInt(modifierColumn) ]
+            });
+        }
+
+        if (typeof urlColumn !== "undefined") {
+            options.columnDefs.push({
+                "render": function (data, type, row) {
+                    if (row[parseInt(urlColumn)] === null) {
+                        return "";
+                    }
+                    return "<a href='" + data + "' target='_blank'>" + data + "</a>";
+                },
+                "targets": [ parseInt(urlColumn) ]
             });
         }
 

@@ -2,11 +2,13 @@
 
 namespace Pelagos\Bundle\AppBundle\Security;
 
+use Pelagos\Entity\DistributionPoint;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Pelagos\Entity\Account;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\PersonDatasetSubmission;
+
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 
 /**
@@ -27,7 +29,8 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
     protected function supports($attribute, $subject)
     {
         // Abstain if the subject is not an instance of DatasetSubmission.
-        if (!$subject instanceof DatasetSubmission and !$subject instanceof PersonDatasetSubmission) {
+        if (!$subject instanceof DatasetSubmission and !$subject instanceof PersonDatasetSubmission
+        and !$subject instanceof DistributionPoint) {
             return false;
         }
 
@@ -60,9 +63,14 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
             return false;
         }
 
+        // Granting permission to DatasetSubmission entity to create/edit Distribution point entity
+        if ($subject instanceof DistributionPoint) {
+            return true;
+        }
+
         // A user with an account can only create or edit dataset submissions
         // associated with research groups that they (the user) are a member of.
-
+        
         $researchGroups = $user->getPerson()->getResearchGroups();
         if ($subject instanceof DatasetSubmission) {
             $submissionResearchGroup = $subject->getDataset()->getResearchGroup();
@@ -91,6 +99,7 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
                 }
             }
         }
+
         return false;
     }
 }
