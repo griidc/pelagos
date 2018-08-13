@@ -183,20 +183,6 @@ class DataDiscoveryController extends UIController
     {
         $dataset = $this->get('pelagos.entity.handler')->get(Dataset::class, $id);
 
-        $datasetSubmission = $dataset->getDatasetSubmission();
-
-        // If we have approved Metadata, load contact into datasetSubmission.
-        if ($datasetSubmission instanceof DatasetSubmission
-            and $dataset->getMetadata() instanceof Metadata
-        ) {
-            $datasetSubmission->getDatasetContacts()->clear();
-            ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                $dataset->getMetadata()->getXml(),
-                $datasetSubmission,
-                $this->getDoctrine()->getManager()
-            );
-        }
-
         return $this->render(
             'PelagosAppBundle:DataDiscovery:dataset_details.html.twig',
             array(

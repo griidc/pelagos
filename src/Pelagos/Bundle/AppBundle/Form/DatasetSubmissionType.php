@@ -12,8 +12,10 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\DistributionPoint;
 use Pelagos\Entity\Entity;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 
 /**
  * A form type for creating a Dataset Submission form.
@@ -182,6 +184,12 @@ class DatasetSubmissionType extends AbstractType
                 'required' => false,
                 'attr' => array('rows' => '5'),
             ))
+            ->add('temporalExtentNilReasonType', Type\ChoiceType::class, array(
+                'label' => 'Nilreason Type',
+                'choices' => DatasetSubmission::getNilReasonTypes(),
+                'required' => 'false',
+                'placeholder' => '[Please Select a Reason]',
+            ))
             ->add('temporalExtentDesc', Type\ChoiceType::class, array(
                 'label' => 'Time Period Description',
                 'choices' => DatasetSubmission::getTemporalExtentDescChoices(),
@@ -230,8 +238,44 @@ class DatasetSubmissionType extends AbstractType
                 'delete_empty' => true,
                 'required' => true,
             ))
+            ->add('metadataContacts', Type\CollectionType::class, array(
+                'label' => 'Metadata Contacts',
+                'entry_type' => PersonDatasetSubmissionType::class,
+                'entry_options' => array(
+                    'data_class' => PersonDatasetSubmissionMetadataContact::class,
+                ),
+                'by_reference' => false,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'delete_empty' => true,
+                'required' => true,
+            ))
+            ->add('distributionPoints', Type\CollectionType::class, array(
+                'label' => 'Distribution Points',
+                'entry_type' => DistributionPointType::class,
+                'entry_options' => array(
+                    'data_class' => DistributionPoint::class,
+                ),
+                'by_reference' => false,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'delete_empty' => true,
+                'required' => true,
+            ))
             ->add('submitButton', Type\SubmitType::class, array(
                 'label' => 'Submit',
+                'attr'  => array('class' => 'submitButton'),
+            ))
+            ->add('endReviewBtn', Type\SubmitType::class, array(
+                'label' => 'End Review',
+                'attr'  => array('class' => 'submitButton'),
+             ))
+            ->add('acceptDatasetBtn', Type\SubmitType::class, array(
+                'label' => 'Accept Dataset',
+                'attr'  => array('class' => 'submitButton'),
+            ))
+            ->add('requestRevisionsBtn', Type\SubmitType::class, array(
+                'label' => 'Request Revisions',
                 'attr'  => array('class' => 'submitButton'),
             ));
     }

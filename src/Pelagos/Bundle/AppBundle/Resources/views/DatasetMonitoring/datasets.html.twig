@@ -75,7 +75,7 @@
                 {% set identified_icon = red_icon %}
             {% endif %}
 
-            {% if dataset.datasetSubmissionStatus == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_COMPLETE') %}
+            {% if dataset.datasetSubmissionStatus == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_COMPLETE') or dataset.datasetSubmissionStatus == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_IN_REVIEW') %}
                 {% set registered_green = registered_green + 1 %}
                 {% set registered_title = "This dataset has been submitted successfully." %}
                 {% set registered_icon = green_icon %}

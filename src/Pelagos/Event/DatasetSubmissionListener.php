@@ -4,6 +4,7 @@ namespace Pelagos\Event;
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\Entity;
 use Pelagos\Entity\Person;
 
 /**
@@ -104,12 +105,17 @@ class DatasetSubmissionListener extends EventListener
     {
         $datasetSubmission = $event->getEntity();
 
-        // email DRMs
-        $this->sendMailMsg(
-            $this->twig->loadTemplate('PelagosAppBundle:Email:data-repository-managers.dataset-processed.email.twig'),
-            array('datasetSubmission' => $datasetSubmission),
-            $this->getDRPMs($datasetSubmission->getDataset())
-        );
+        // Added if-statement so that emails are sent to data-managers only when a dataset is submitted
+        // and not when a review is ended.
+        if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
+            //email DRMs
+            $this->sendMailMsg(
+                $this->twig->loadTemplate('PelagosAppBundle:Email:data-repository-managers.dataset-processed.email.twig'),
+                array('datasetSubmission' => $datasetSubmission),
+                $this->getDRPMs($datasetSubmission->getDataset())
+            );
+        }
+
     }
 
     /**
@@ -155,16 +161,80 @@ class DatasetSubmissionListener extends EventListener
     }
 
     /**
-     * Method that is called to take appropriate actions when a submission has been approved (mdapp).
+     * Method called when review is started in review mode.
      *
      * @param EntityEvent $event Event being acted upon.
      *
      * @return void
      */
-    public function onApproved(EntityEvent $event)
+    public function onStartReview(EntityEvent $event)
     {
         $datasetSubmission = $event->getEntity();
+        $dataset = $datasetSubmission->getDataset();
+        $datasetSubmissionPrev = $dataset->getDatasetSubmissionHistory()->first();
+        // when there is no state change, should not log the status.
+        if ($datasetSubmissionPrev->getMetadataStatus() === $datasetSubmission->getMetadataStatus()) {
+            $this->mdappLogger->writeLog($datasetSubmission->getModifier()->getAccount()->getUsername() .
+                ' started review for ' . $dataset->getUdi());
+        } else {
+            $this->mdappLogger->writeLog($datasetSubmission->getModifier()->getAccount()->getUsername() .
+                ' started review for ' . $dataset->getUdi() . ' (' . $datasetSubmissionPrev->getMetadataStatus() .
+                ' ->InReview)');
+        }
+    }
+
+    /**
+     * Method called when review is ended in review mode.
+     *
+     * @param EntityEvent $event Event being acted upon.
+     *
+     * @return void
+     */
+    public function onEndReview(EntityEvent $event)
+    {
+        $datasetSubmission = $event->getEntity();
+        $dataset = $datasetSubmission->getDataset();
+        $this->mdappLogger->writeLog(
+            $datasetSubmission->getModifier()->getAccount()->getUsername() .
+            ' ended review for ' . $dataset->getUdi()
+        );
+    }
+
+    /**
+     * Method called when review is accepted in review mode.
+     *
+     * @param EntityEvent $event Event being acted upon.
+     *
+     * @return void
+     */
+    public function onAcceptReview(EntityEvent $event)
+    {
+        $datasetSubmission = $event->getEntity();
+        $dataset = $datasetSubmission->getDataset();
+        $this->mdappLogger->writeLog(
+            $datasetSubmission->getModifier()->getAccount()->getUsername() .
+            ' accepted dataset ' . $dataset->getUdi() . ' (In Review->Accepted)'
+        );
+        // Publish DOI for accepted and unrestricted datasets
         $this->producer->publish($datasetSubmission->getDataset()->getId(), 'publish');
         $this->producer->publish($datasetSubmission->getDataset()->getId(), 'update');
+
+    }
+
+    /**
+     * Method called when requested revisions for a dataset in review mode.
+     *
+     * @param EntityEvent $event Event being acted upon.
+     *
+     * @return void
+     */
+    public function onRequestRevisions(EntityEvent $event)
+    {
+        $datasetSubmission = $event->getEntity();
+        $dataset = $datasetSubmission->getDataset();
+        $this->mdappLogger->writeLog(
+            $datasetSubmission->getModifier()->getAccount()->getUsername()
+             . ' requested revisions for ' . $dataset->getUdi() . ' (In Review->Request Revisions)'
+        );
     }
 }

@@ -3,6 +3,7 @@
 namespace Pelagos\Entity;
 
 use Doctrine\Common\Collections\Collection;
+use \DateTime;
 
 /**
  * Unit tests for Pelagos\Entity\DatasetSubmission.
@@ -49,6 +50,13 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
      * @var Person
      */
     protected $mockPerson;
+
+  /**
+   * A mock Dataset Submission Review.
+   *
+   * @var DatasetSubmissionReview
+   */
+    protected $mockDatasetSubmissionReview;
 
     /**
      * Setup for PHPUnit tests.
@@ -101,7 +109,16 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
                 'setPrimaryContact' => null
             )
         );
-        $this->datasetSubmission = new DatasetSubmission($this->mockDif, $this->mockPersonDatasetSubmissionDatasetContact);
+
+        $this->datasetSubmission = new DatasetSubmission(
+            $this->mockDif,
+            $this->mockPersonDatasetSubmissionDatasetContact
+        );
+
+        $this->datasetSubmission = new DatasetSubmission(
+            $this->mockDif,
+            $this->mockPersonDatasetSubmissionDatasetContact
+        );
     }
 
     /**
@@ -768,6 +785,128 @@ class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(
             $this->mockPerson,
             $this->datasetSubmission->getSubmitter()
+        );
+    }
+
+    /**
+     * Test to set review status for dataset submission.
+     *
+     * @return void
+     */
+    public function testCanSetReviewStatus()
+    {
+        $this->datasetSubmission->setDatasetSubmissionReviewStatus();
+
+        $this->assertEquals(
+            DatasetSubmission::STATUS_IN_REVIEW,
+            $this->datasetSubmission->getStatus()
+        );
+    }
+
+    /**
+     * Test DatasetSubmissionReview setter and getter.
+     *
+     * @return void
+     */
+    public function testCanGetAndSetDatasetSubmissionReview()
+    {
+        $this->mockDatasetSubmissionReview = \Mockery::mock(
+            DatasetSubmissionReview::class,
+            array(
+                'setDatasetSubmission' => $this->datasetSubmission,
+                'getReviewedBy' => $this->mockPerson,
+                'getReviewStartDateTime' => new DateTime('now')
+            )
+        );
+        $this->datasetSubmission->setDatasetSubmissionReview($this->mockDatasetSubmissionReview);
+        $this->assertSame($this->mockDatasetSubmissionReview, $this->datasetSubmission->getDatasetSubmissionReview());
+    }
+
+    /**
+     * Test the end review functionality.
+     *
+     * @return void
+     */
+    public function testCanEndReview()
+    {
+        $this->datasetSubmission->setDataset($this->mockDataset);
+
+        $testStartDateTime = new DateTime('now');
+
+        $datasetSubmissionReview = new DatasetSubmissionReview(
+            $this->datasetSubmission,
+            $this->mockPerson,
+            $testStartDateTime
+        );
+
+        $this->datasetSubmission->setDatasetSubmissionReview($datasetSubmissionReview);
+
+        // End Review for the dataset submission.
+        $this->datasetSubmission->reviewEvent($this->mockPerson, DatasetSubmission::DATASET_END_REVIEW);
+
+        $this->assertEquals(DatasetSubmission::STATUS_IN_REVIEW, $this->datasetSubmission->getStatus());
+    }
+
+    /**
+     * Test the setter and getter for nil reason type attribute.
+     *
+     * @return void
+     */
+    public function testCanSetAndGetTemporalExtentNilReasonType()
+    {
+        $mockTemporalExtentNilReasonType = 'unknown';
+
+        $this->datasetSubmission->setTemporalExtentNilReasonType($mockTemporalExtentNilReasonType);
+
+        $this->assertEquals($mockTemporalExtentNilReasonType, $this->datasetSubmission->getTemporalExtentNilReasonType());
+    }
+
+    /**
+     * Test the adder, remover and getter for Distribution Points.
+     *
+     * @return void
+     */
+    public function testAddRemoveAndGetDistributionPoint()
+    {
+        //setup
+        $this->mockDataCenter = \Mockery::mock(
+            DataCenter::class,
+            array(
+                'getOrganizationName' => 'GRIIDC',
+                'getOrganizationUrl' => 'www.griidc.org'
+            )
+        );
+
+        $this->mockDistributionPoint = \Mockery::mock(
+            DistributionPoint::class,
+            array(
+                'setDatasetSubmission' => $this->datasetSubmission,
+                'setDataCenter' => $this->mockDataCenter,
+                'getDistributionUrl' => 'www.org.com',
+            )
+        );
+
+        //remove default distribution point initially created in dataset submission entity
+        $defaultDistributionPoint = $this->datasetSubmission->getDistributionPoints()->first();
+        if (null !== $defaultDistributionPoint) {
+            $this->datasetSubmission->removeDistributionPoint($defaultDistributionPoint);
+        }
+
+        //test adder
+        $this->datasetSubmission->addDistributionPoint($this->mockDistributionPoint);
+        $this->assertEquals(
+            1,
+            $this->datasetSubmission->getDistributionPoints()->count()
+        );
+
+        //test getter
+        $this->assertSame($this->datasetSubmission->getDistributionPoints()->first(), $this->mockDistributionPoint);
+
+        //test remover
+        $this->datasetSubmission->removeDistributionPoint($this->mockDistributionPoint);
+        $this->assertEquals(
+            0,
+            $this->datasetSubmission->getDistributionPoints()->count()
         );
     }
 }
