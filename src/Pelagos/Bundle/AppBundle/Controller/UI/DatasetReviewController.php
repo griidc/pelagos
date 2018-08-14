@@ -471,11 +471,22 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     $message['routing_key']
                 );
             }
+            $reviewedBy = $datasetSubmission->getDatasetSubmissionReview()->getReviewEndedBy()->getFirstName();
+
+            //when request revisions is clicked, do not display the changes made in review for the dataset-submission
+            // and get the dataset-submissions which is submitted by the user.
+            if ($eventName === 'request_revisions') {
+                $datasetSubmission = $datasetSubmission->getDataset()->getDatasetSubmission();
+            }
 
             return $this->render(
                 'PelagosAppBundle:DatasetReview:submit.html.twig',
-                array('DatasetSubmission' => $datasetSubmission)
+                array(
+                    'DatasetSubmission' => $datasetSubmission,
+                    'reviewedBy' => $reviewedBy
+                )
             );
+
         }
         // This should not normally happen.
         return new Response((string) $form->getErrors(true, false));

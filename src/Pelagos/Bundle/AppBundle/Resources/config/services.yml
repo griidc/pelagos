@@ -68,6 +68,17 @@ services:
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 
+    pelagos.doctrine.datacenter.listener:
+        class: Pelagos\Event\DoctrineDataCenterListener
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+
+    pelagos.doi.dataset.listener:
+        class: Pelagos\Event\DoiDatasetListener
+        arguments: ["@twig", "@mailer", "@security.token_storage", "%mailer_from_addr%", "%mailer_from_name%", "@pelagos.entity.handler", "@old_sound_rabbit_mq.doi_issue_producer"]
+        tags:
+            - { name: kernel.event_listener, event: pelagos.entity.dataset.delete_doi, method: onDeleteDoi }
+
     pelagos.form.type.dif:
         class: Pelagos\Bundle\AppBundle\Form\DIFType
         arguments: ["@doctrine.orm.entity_manager", "@security.authorization_checker", "@security.token_storage"]
