@@ -39,6 +39,7 @@ class FundingCycleType extends AbstractType
             ))
             ->add('udiPrefix', TextType::class, array(
                 'label' => 'UDI Prefix:',
+                'required' => true,
             ))
             ->add('fundingOrganization', EntityType::class, array(
                 'label' => 'Funding Organization:',
