@@ -79,7 +79,7 @@ class GmlController extends Controller
         $wkt = $request->request->get('wkt');
 
         if (!empty($wkt)) {
-            $query = 'SELECT ST_asGML(3,ST_GeomFromText(:wkt,4326),5,17)';
+            $query = 'SELECT ST_asGML(3,ST_GeomFromText(:wkt,4326),6,17)';
             $connection = $this->getDoctrine()->getManager()->getConnection();
             $statement = $connection->prepare($query);
             $statement->bindValue('wkt', $wkt);
