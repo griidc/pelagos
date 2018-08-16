@@ -85,7 +85,7 @@ class DOIutil
         utf8_encode($input);
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'https://ezid.cdlib.org/shoulder/' . $this->doishoulder);
+        curl_setopt($ch, CURLOPT_URL, 'https://ez.datacite.org/shoulder/' . $this->doishoulder);
         curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt(
@@ -100,7 +100,7 @@ class DOIutil
         curl_close($ch);
 
         //check to see if it worked.
-        if (201 != $httpCode) {
+        if (200 != $httpCode) {
             throw new \Exception("ezid failed with:$httpCode($output)", $httpCode);
         }
 
@@ -143,7 +143,7 @@ class DOIutil
         utf8_encode($input);
         
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'https://ezid.cdlib.org/id/' . $doi);
+        curl_setopt($ch, CURLOPT_URL, 'https://ez.datacite.org/id/' . $doi);
         curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt(
@@ -179,7 +179,7 @@ class DOIutil
         // Add doi: to doi is it doesn't exist.
         $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://ezid.cdlib.org/id/$doi");
+        curl_setopt($ch, CURLOPT_URL, "https://ez.datacite.org/id/$doi");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $output = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -218,7 +218,7 @@ class DOIutil
         $input = "_status:$status";
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://ezid.cdlib.org/id/$doi");
+        curl_setopt($ch, CURLOPT_URL, "https://ez.datacite.org/id/$doi");
         curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt(
@@ -254,7 +254,7 @@ class DOIutil
         // Add doi: to doi is it doesn't exist.
         $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://ezid.cdlib.org/id/$doi");
+        curl_setopt($ch, CURLOPT_URL, "https://ez.datacite.org/id/$doi");
         curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
