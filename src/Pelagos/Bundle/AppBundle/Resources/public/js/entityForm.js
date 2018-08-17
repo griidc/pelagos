@@ -468,7 +468,7 @@
                         $(form).trigger("reset");
                     } else {
                         title = "Error!";
-                        message = "Something went wrong!<br>Didn't receive the correct success message!";
+                        message = "Something went wrong!<br>Please Login and Try Again!";
                     }
                 },
                 error: function(response) {
