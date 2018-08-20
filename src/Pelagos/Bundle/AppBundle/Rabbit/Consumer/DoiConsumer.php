@@ -72,37 +72,46 @@ class DoiConsumer implements ConsumerInterface
      */
     public function execute(AMQPMessage $message)
     {
-        $datasetId = $message->body;
-        $loggingContext = array('dataset_id' => $datasetId);
-        $this->logger->info('DOI Consumer Started', $loggingContext);
-        // Clear Doctrine's cache to force loading from persistence.
-        $this->entityManager->clear();
-        $dataset = $this->entityManager
-            ->getRepository(Dataset::class)
-            ->find($datasetId);
-        if (!$dataset instanceof Dataset) {
-            $this->logger->warning('No dataset found', $loggingContext);
-            return true;
-        }
-        if (null !== $dataset->getUdi()) {
-            $loggingContext['udi'] = $dataset->getUdi();
-        }
-
         // @codingStandardsIgnoreStart
         $routingKey = $message->delivery_info['routing_key'];
-        // @codingStandardsIgnoreEnd
-        if (preg_match('/^issue/', $routingKey)) {
-            $this->issueDoi($dataset, $loggingContext);
-        } elseif (preg_match('/^publish/', $routingKey)) {
-            $this->publishDoi($dataset, $loggingContext);
-        } elseif (preg_match('/^update/', $routingKey)) {
-            $this->updateDoi($dataset, $loggingContext);
+
+        if (preg_match('/^delete/', $routingKey)) {
+            $doi = $message->body;
+            $loggingContext = array('doi' => $doi);
+            $this->logger->info('DOI Consumer Started', $loggingContext);
+            $this->deleteDoi($doi, $loggingContext);
         } else {
-            $this->logger->warning("Unknown routing key: $routingKey", $loggingContext);
-            return true;
+            $datasetId = $message->body;
+            $loggingContext = array('dataset_id' => $datasetId);
+            $this->logger->info('DOI Consumer Started', $loggingContext);
+            // Clear Doctrine's cache to force loading from persistence.
+            $this->entityManager->clear();
+            $dataset = $this->entityManager
+                ->getRepository(Dataset::class)
+                ->find($datasetId);
+            if (!$dataset instanceof Dataset) {
+                $this->logger->warning('No dataset found', $loggingContext);
+                return true;
+            }
+            if (null !== $dataset->getUdi()) {
+                $loggingContext['udi'] = $dataset->getUdi();
+            }
+
+            // @codingStandardsIgnoreEnd
+            if (preg_match('/^issue/', $routingKey)) {
+                $this->issueDoi($dataset, $loggingContext);
+            } elseif (preg_match('/^publish/', $routingKey)) {
+                $this->publishDoi($dataset, $loggingContext);
+            } elseif (preg_match('/^update/', $routingKey)) {
+                $this->updateDoi($dataset, $loggingContext);
+            } else {
+                $this->logger->warning("Unknown routing key: $routingKey", $loggingContext);
+                return true;
+            }
+            $this->entityManager->persist($dataset);
+            $this->entityManager->flush();
         }
-        $this->entityManager->persist($dataset);
-        $this->entityManager->flush();
+
         return true;
     }
 
@@ -248,6 +257,30 @@ class DoiConsumer implements ConsumerInterface
         $this->entityEventDispatcher->dispatch($dataset, 'doi_published');
         // Log processing complete.
         $this->logger->info('DOI set to published', $loggingContext);
+    }
+
+    /**
+     * Delete the doi if dataset is deleted.
+     *
+     * @param string $doi            The DOI which needs to be deleted.
+     * @param array  $loggingContext The logging context to use when logging.
+     *
+     * @return void
+     */
+    protected function deleteDoi($doi, array $loggingContext)
+    {
+        // Log processing start.
+        $this->logger->info('Attempting to delete DOI', $loggingContext);
+
+        try {
+            $doiUtil = new DOIutil();
+            $doiUtil->deleteDOI($doi);
+        } catch (\Exception $exception) {
+            $this->logger->error('Error deleting DOI: ' . $exception->getMessage(), $loggingContext);
+            return;
+        }
+
+        $this->logger->info('DOI Deleted', $loggingContext);
     }
 
     /**
