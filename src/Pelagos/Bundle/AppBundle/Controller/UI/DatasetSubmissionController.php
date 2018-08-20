@@ -137,33 +137,16 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                         $createFlag = true;
                     }
                 } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
-                    and $dataset->getDatasetStatus() !== Dataset::DATASET_STATUS_BACK_TO_SUBMITTER
-                ) {
-                    // The latest submission is complete, so create new one based on it.
-                    $datasetSubmission = new DatasetSubmission($datasetSubmission);
-
-                    // Designate 1st contact as primary.
-                    $primaryContact = $datasetSubmission->getDatasetContacts()->first();
-                    $primaryContact->setPrimaryContact(true);
-
-                    $submitter = $primaryContact->getPerson();
-                    if (!$submitter instanceof Person) {
-                        $submitter = new Person();
-                    }
-                    // Fake submit, without persisting.
-                    $datasetSubmission->submit($submitter);
-
-                } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
                     and $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_NONE
                     and (
                         $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_COMPLETED
                         or $datasetSubmission->getDatasetFileSha256Hash() !== null
                     )
-                    and $dataset->getDatasetStatus() === Dataset::DATASET_STATUS_BACK_TO_SUBMITTER
+                    and $dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
                 ) {
                     // The latest submission is complete, so create new one based on it.
                     $datasetSubmission = new DatasetSubmission($datasetSubmission);
-                    $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_BACK_TO_SUBMITTER);
+                    $datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER);
                     $createFlag = true;
                 }
 
