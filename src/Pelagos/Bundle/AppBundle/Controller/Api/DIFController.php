@@ -281,6 +281,10 @@ class DIFController extends EntityController
             );
         }
         try {
+            // If DIF was saved but not submitted and approval is attempted, submit it first then approve.
+            if ($dif->getStatus() === DIF::STATUS_UNSUBMITTED) {
+                $dif->submit();
+            }
             // Try to approve the DIF.
             $dif->approve();
         } catch (\Exception $exception) {
