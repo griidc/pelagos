@@ -8,12 +8,12 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-* [CENTOS 7] (https://wiki.centos.org/)
-* [PHP 5.6] (http://php.net/docs.php )
+* [CENTOS 7](https://wiki.centos.org/)
+* [PHP 5.6](http://php.net/docs.php )
 * [Symfony 3.4](https://symfony.com/doc/3.4/index.html) - PHP framework for web application
-* [PostgreSQL 9.6] (https://www.postgresql.org/docs/9.6/static/release-9-6.html) - ORDBMS
-* [FOSElasticaBundle] (https://github.com/FriendsOfSymfony/FOSElasticaBundle) - PHP integration for Symfony with ElasticSearch
-* [RabbitMQ] (https://www.rabbitmq.com/documentation.html) - Open source message broker software
+* [PostgreSQL 9.6](https://www.postgresql.org/docs/9.6/static/release-9-6.html) - ORDBMS
+* [FOSElasticaBundle](https://github.com/FriendsOfSymfony/FOSElasticaBundle) - PHP integration for Symfony with ElasticSearch
+* [RabbitMQ](https://www.rabbitmq.com/documentation.html) - Open source message broker software
 
 ### Installation
 
