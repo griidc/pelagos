@@ -1,13 +1,71 @@
 <?php
 namespace Pelagos\Util;
 
-use Doctrine\ORM\EntityManager;
+use Pelagos\Entity\Dataset;
+use Pelagos\Entity\DatasetSubmission;
 
 /**
  * This is a Metadata utility class.
  */
 class Metadata
 {
+    /**
+     * The twig *ml render.
+     *
+     * @var \Twig_Environment
+     */
+    protected $twig;
+
+    /**
+     * Class constructor for dependency injection.
+     *
+     * @param \Twig_Environment $twig The twig rendering engine.
+     */
+    public function __construct(\Twig_Environment $twig)
+    {
+        $this->twig = $twig;
+    }
+
+    /**
+     * Creates and returns an ISO-19115-2 XML representation of metadata as a string.
+     *
+     * @param Dataset $dataset          The Pelagos Dataset to generate ISO metadata for.
+     * @param array   $boundingBoxArray The bounding box array for the spatial extent.
+     *
+     * @return string||null of generated XML metadata.
+     */
+    public function getXmlRepresentation(Dataset $dataset, array $boundingBoxArray)
+    {
+        $xml = null;
+        if ($dataset->getDatasetSubmission() instanceof DatasetSubmission) {
+            $xml = $this->twig->render(
+                'PelagosAppBundle:MetadataGenerator:MI_Metadata.xml.twig',
+                array(
+                    'dataset' => $dataset,
+                    'boundingBoxArray' => $boundingBoxArray,
+                    'metadataFilename' => preg_replace('/:/', '-', $dataset->getUdi()) . '-metadata.xml',
+                )
+            );
+            $tidyXml = new \tidy;
+            $tidyXml->parseString(
+                $xml,
+                array(
+                    'input-xml' => true,
+                    'output-xml' => true,
+                    'indent' => true,
+                    'indent-spaces' => 4,
+                    'wrap' => 0,
+                ),
+                'utf8'
+            );
+            $xml = $tidyXml;
+            // Remove extra whitespace added around CDATA tags by tidy.
+            $xml = preg_replace('/>[\s]+<\!\[CDATA\[/', '><![CDATA[', $xml);
+            $xml = preg_replace('/]]>\s+</', ']]><', $xml);
+        }
+        return $xml;
+    }
+
     /**
      * Validates XML against a schema.
      *

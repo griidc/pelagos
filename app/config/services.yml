@@ -63,6 +63,8 @@ services:
 
     pelagos.util.metadata:
         class: Pelagos\Util\Metadata
+        arguments:
+            - "@twig"
 
     pelagos.util.data_store:
         class: Pelagos\Util\DataStore

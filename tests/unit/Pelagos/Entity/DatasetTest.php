@@ -59,6 +59,20 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
     protected $mockDifStatusUnsubmitted;
 
     /**
+     * Class variable holding WKT to test with.
+     *
+     * @var mixed auxMockSpatialExtentDif
+     */
+    protected $auxMockSpatialExtentDif;
+
+    /**
+     * Class variable holding WKT to test with.
+     *
+     * @var mixed auxMockSpatialExtentDatasetSubmission
+     */
+    protected $auxMockSpatialExtentDatasetSubmission;
+
+    /**
      * Setup for PHPUnit tests.
      *
      * This instantiates an instance of Dataset and sets (some of) its properties.
@@ -67,6 +81,10 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
+        $this->auxMockSpatialExtensionDif = 'LINESTRING (30 10, 10 30, 40 40)';
+
+        $this->auxMockSpatialExtensionDatasetSubmission = 'MULTILINESTRING ((10 10, 20 20, 10 40),(40 40, 30 30, 40 20, 30 10))';
+
         $this->mockDatasetSubmissionComplete = \Mockery::mock(
             DatasetSubmission::class,
             array(
@@ -92,6 +110,7 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
                         ),
                     )
                 ),
+                'getSpatialExtent' => $this->auxMockSpatialExtensionDatasetSubmission,
             )
         );
 
@@ -120,6 +139,7 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
                         ),
                     )
                 ),
+                'getSpatialExtent' => 'gibberish',
             )
         );
 
@@ -149,6 +169,7 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
                         'getEmailAddress' => 'approved.dif@test.null',
                     )
                 ),
+                'getSpatialExtentGeometry' => $this->auxMockSpatialExtensionDif,
             )
         );
         $this->mockSubmittedDif = \Mockery::mock(
@@ -165,6 +186,7 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
                         'getEmailAddress' => 'submitted.dif@test.null',
                     )
                 ),
+                'getSpatialExtentGeometry' => 'gibberish',
             )
         );
 
@@ -177,9 +199,7 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-
         $this->dataset = new Dataset;
-
     }
 
     /**
@@ -196,6 +216,10 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
             'complete-submission.person@test.null',
             $this->dataset->getPrimaryPointOfContact()->getEmailAddress()
         );
+        $this->assertEquals(
+            $this->auxMockSpatialExtensionDatasetSubmission,
+            $this->dataset->getSpatialExtentGeometry()
+        );
 
         // Case: We have an incomplete submission and an approved DIF.
         $this->dataset->setDif($this->mockApprovedDif);
@@ -203,6 +227,10 @@ class DatasetTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             'approved.dif@test.null',
             $this->dataset->getPrimaryPointOfContact()->getEmailAddress()
+        );
+        $this->assertEquals(
+            $this->auxMockSpatialExtensionDif,
+            $this->dataset->getSpatialExtentGeometry()
         );
 
         // Case: We have an incomplete submission and a submitted (but not approved) DIF.

@@ -1,0 +1,34 @@
+<fieldset>
+    <legend>Format</legend>
+    <table class="tab-table">
+        <tr>
+            <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+						A list of all the file types or extensions of all the files included as part
+                        of your dataset. For example: xlsx, csv, tiff, txt, etc.
+					</div>
+				</span>
+                {{ form_row(form.distributionFormatName) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+						If multiple files were packaged together to create a single dataset file, please
+                        provide the method used to package these files together. Common examples include
+                        zip and tar.
+					</div>
+				</span>
+                {{ form_row(form.fileDecompressionTechnique) }}
+            </td>
+        </tr>
+    </table>
+</fieldset>

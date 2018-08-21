@@ -141,10 +141,7 @@
       </span>
       <xsl:text>=&quot;</xsl:text>
       <span class="xmlverb-attr-content">
-         <xsl:call-template name="html-replace-entities">
-            <xsl:with-param name="text" select="normalize-space(.)" />
-            <xsl:with-param name="attrs" select="true()" />
-         </xsl:call-template>
+         <xsl:value-of select="."/>
       </span>
       <xsl:text>&quot;</xsl:text>
    </xsl:template>
@@ -171,11 +168,7 @@
    <xsl:template match="text()" mode="xmlverb">
       <span class="xmlverb-text">
          <xsl:call-template name="preformatted-output">
-            <xsl:with-param name="text">
-               <xsl:call-template name="html-replace-entities">
-                  <xsl:with-param name="text" select="." />
-               </xsl:call-template>
-            </xsl:with-param>
+            <xsl:with-param name="text" select="." />
          </xsl:call-template>
       </span>
    </xsl:template>
@@ -212,55 +205,6 @@
    <!-- =========================================================== -->
    <!--                    Procedures / Functions                   -->
    <!-- =========================================================== -->
-
-   <!-- generate entities by replacing &, ", < and > in $text -->
-   <xsl:template name="html-replace-entities">
-      <xsl:param name="text" />
-      <xsl:param name="attrs" />
-      <xsl:variable name="tmp">
-         <xsl:call-template name="replace-substring">
-            <xsl:with-param name="from" select="'&gt;'" />
-            <xsl:with-param name="to" select="'&amp;gt;'" />
-            <xsl:with-param name="value">
-               <xsl:call-template name="replace-substring">
-                  <xsl:with-param name="from" select="'&lt;'" />
-                  <xsl:with-param name="to" select="'&amp;lt;'" />
-                  <xsl:with-param name="value">
-                     <xsl:call-template name="replace-substring">
-                        <xsl:with-param name="from" 
-                                        select="'&amp;'" />
-                        <xsl:with-param name="to" 
-                                        select="'&amp;amp;'" />
-                        <xsl:with-param name="value" 
-                                        select="$text" />
-                     </xsl:call-template>
-                  </xsl:with-param>
-               </xsl:call-template>
-            </xsl:with-param>
-         </xsl:call-template>
-      </xsl:variable>
-      <xsl:choose>
-         <!-- $text is an attribute value -->
-         <xsl:when test="$attrs">
-            <xsl:call-template name="replace-substring">
-               <xsl:with-param name="from" select="'&#xA;'" />
-               <xsl:with-param name="to" select="'&amp;#xA;'" />
-               <xsl:with-param name="value">
-                  <xsl:call-template name="replace-substring">
-                     <xsl:with-param name="from" 
-                                     select="'&quot;'" />
-                     <xsl:with-param name="to" 
-                                     select="'&amp;quot;'" />
-                     <xsl:with-param name="value" select="$tmp" />
-                  </xsl:call-template>
-               </xsl:with-param>
-            </xsl:call-template>
-         </xsl:when>
-         <xsl:otherwise>
-            <xsl:value-of select="$tmp" />
-         </xsl:otherwise>
-      </xsl:choose>
-   </xsl:template>
 
    <!-- replace in $value substring $from with $to -->
    <xsl:template name="replace-substring">

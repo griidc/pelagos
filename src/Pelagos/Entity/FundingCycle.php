@@ -181,7 +181,11 @@ class FundingCycle extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="text", nullable=false)
+     *
+     * @Assert\NotBlank(
+     *     message="UDI Prefix is required"
+     * )
      *
      * @Assert\Regex(
      *      pattern="/^[A-Z\d]{2}$/",
