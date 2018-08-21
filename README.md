@@ -25,7 +25,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 * **Michael Van Den Eijnden**  - (2012 - present) [Github](https://github.com/mickel1138)
 * **Michael S. Williamson**  - (2013 - present) [Github](https://github.com/fightingtexasaggie)
-* **Son Nguyen**  - (2012 - present) [Github](https://github.com/snguyen1)
+* **Son Nguyen**  - (2017 - present) [Github](https://github.com/snguyen1)
 * **Praneeth Pondicherry Ravendernath**  - (2017 - present) [Github](https://github.com/praneethpr)
 
 See also the list of [contributors](https://github.com/griidc/pelagos/contributors) who participated in this project.
