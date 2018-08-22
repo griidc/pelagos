@@ -5,6 +5,7 @@ namespace Pelagos\Bundle\AppBundle\Command;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use Pelagos\Entity\Dataset;
@@ -35,7 +36,12 @@ class RabbitPublishAllApprovedNonRestrictedCommand extends ContainerAwareCommand
     {
         $this
             ->setName('dataset-doi:pub-all-appr-nonres-datasets')
-            ->setDescription('Make DOI public for all approved, non-restricted datasets.');
+            ->setDescription('Make DOI public for all approved, non-restricted datasets.')
+            ->addArgument(
+                'status',
+                InputArgument::REQUIRED,
+                'Please provide the datasets status which need to be published'
+            );
     }
 
     /**
@@ -51,10 +57,12 @@ class RabbitPublishAllApprovedNonRestrictedCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $datasetStatus = $this->getDatasetStatus($input->getArgument('status'));
+
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
         $datasets = $entityManager->getRepository('Pelagos\Entity\Dataset')->findBy(array(
             'metadataStatus' => array(
-                DatasetSubmission::METADATA_STATUS_ACCEPTED,
+                $datasetStatus,
             )
         ));
 
@@ -76,5 +84,24 @@ class RabbitPublishAllApprovedNonRestrictedCommand extends ContainerAwareCommand
         }
 
         return 0;
+    }
+
+    /**
+     * It gets the dataset status for DOI's which needs to be published.
+     *
+     * @param string $datasetStatus The status of the dataset.
+     *
+     * @return string
+     */
+    private function getDatasetStatus(string $datasetStatus): string
+    {
+        $status = DatasetSubmission::METADATA_STATUS_ACCEPTED;
+        
+        if ($datasetStatus === 'submitted') {
+            $status = DatasetSubmission::METADATA_STATUS_SUBMITTED;
+        }
+
+        return $status;
+
     }
 }
