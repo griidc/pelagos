@@ -29,6 +29,13 @@ class DOIutil
     private $doipassword;
 
     /**
+     * The url for the API.
+     *
+     * @var string
+     */
+    private $url;
+
+    /**
      * Constructor.
      *
      * Sets the ezid username, password, and shoulder.
@@ -47,6 +54,7 @@ class DOIutil
         $this->doishoulder = $parameters['doi_api_shoulder'];
         $this->doiusername = $parameters['doi_api_user_name'];
         $this->doipassword = $parameters['doi_api_password'];
+        $this->url = $parameters['url'];
     }
 
     /**
@@ -85,7 +93,7 @@ class DOIutil
         utf8_encode($input);
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'https://ez.datacite.org/shoulder/' . $this->doishoulder);
+        curl_setopt($ch, CURLOPT_URL, $this->url . '/shoulder/' . $this->doishoulder);
         curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt(
@@ -143,7 +151,7 @@ class DOIutil
         utf8_encode($input);
         
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'https://ez.datacite.org/id/' . $doi);
+        curl_setopt($ch, CURLOPT_URL, $this->url .'/id/' . $doi);
         curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt(
@@ -179,7 +187,7 @@ class DOIutil
         // Add doi: to doi is it doesn't exist.
         $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://ez.datacite.org/id/$doi");
+        curl_setopt($ch, CURLOPT_URL, $this->url . '/id/' . $doi);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $output = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -218,7 +226,7 @@ class DOIutil
         $input = "_status:$status";
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://ez.datacite.org/id/$doi");
+        curl_setopt($ch, CURLOPT_URL, $this->url . '/id/' . $doi);
         curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt(
@@ -254,7 +262,7 @@ class DOIutil
         // Add doi: to doi is it doesn't exist.
         $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://ez.datacite.org/id/$doi");
+        curl_setopt($ch, CURLOPT_URL, $this->url . '/id/' . $doi);
         curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
