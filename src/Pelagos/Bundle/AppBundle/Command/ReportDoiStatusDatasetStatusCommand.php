@@ -3,19 +3,26 @@
 namespace Pelagos\Bundle\AppBundle\Command;
 
 use Exception;
+
 use Pelagos\Entity\Dataset;
+use Pelagos\Entity\DOI;
 use Pelagos\Util\DOIutil;
+
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Output\StreamOutput;
+
+use Doctrine\ORM\EntityManager;
+
 
 /**
  * This Symfony Command generates a report for DOI migration.
  *
- * It produces a CSV file.
+ * @see ContainerAwareCommand
  */
-class ReportDoiStatusDatasetStatus extends ContainerAwareCommand
+class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
 {
     /**
      * A name of the file that will store the results of this report program.
@@ -55,7 +62,7 @@ class ReportDoiStatusDatasetStatus extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('dataset-doi:report-status')
+            ->setName('reports:doi-status-datasets')
             ->setDescription('Report of udi(s) with doi status, dataset status')
             ->addArgument('outputFileName', InputArgument::REQUIRED, 'What is the output file path and name?');
     }
@@ -108,11 +115,11 @@ class ReportDoiStatusDatasetStatus extends ContainerAwareCommand
     /**
      * Generate report for doi migration.
      *
-     * @param Dataset $datasets Collection of datasets.
+     * @param array $datasets Collection of datasets.
      *
      * @return integer Return 0 on success, or an error code otherwise.
      */
-    private function createReportForDoiMigration(Dataset $datasets)
+    private function createReportForDoiMigration(array $datasets)
     {
         $headers = array(
             'udi',
@@ -127,7 +134,7 @@ class ReportDoiStatusDatasetStatus extends ContainerAwareCommand
             $this->fileOutputArray = array();
             $this->fileOutputArray[] = $dataset->getUdi();
             $this->fileOutputArray[] = $dataset->getMetadataStatus();
-            $this->fileOutputArray[] = $dataset->getDoiStatus($dataset);
+            $this->fileOutputArray[] = $this->getDoiStatus($dataset);
         }
 
         return 0;
@@ -147,7 +154,7 @@ class ReportDoiStatusDatasetStatus extends ContainerAwareCommand
     {
         $doiStatus = null;
 
-        if ($dataset->getDoi()->getDoi()) {
+        if ($dataset->getDoi() instanceof DOI) {
             try {
                 $doiUtil = new DOIutil();
                 $doiMetadata = $doiUtil->getDOIMetadata($dataset->getDoi()->getDoi());
