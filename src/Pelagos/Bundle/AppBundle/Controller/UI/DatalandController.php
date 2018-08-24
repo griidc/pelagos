@@ -88,7 +88,7 @@ class DatalandController extends UIController
      *
      * @param string $udi The UDI of the dataset to return metadata for.
      *
-     * @throws BadRequestHttpException When the dataset status is not accepted accepted.
+     * @throws BadRequestHttpException When the dataset status is not accepted.
      *
      * @Route("/{udi}/metadata")
      *
