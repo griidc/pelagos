@@ -242,7 +242,7 @@ class DoiConsumer implements ConsumerInterface
             $status = $this->getDoiStatus($restriction);
             try {
                 $doiUtil = new DOIutil();
-                $doiUtil->publishDOI($doi, $status);
+                $doiUtil->publishDOI($doi->getDoi(), $status);
 
                 $doi->setStatus($status);
                 $doi->setPublicDate(new \DateTime);
