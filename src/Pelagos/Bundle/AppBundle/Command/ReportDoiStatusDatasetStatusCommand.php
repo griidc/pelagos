@@ -16,7 +16,6 @@ use Symfony\Component\Console\Output\StreamOutput;
 
 use Doctrine\ORM\EntityManager;
 
-
 /**
  * This Symfony Command generates a report for DOI migration.
  *
@@ -134,7 +133,10 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
             $this->fileOutputArray = array();
             $this->fileOutputArray[] = $dataset->getUdi();
             $this->fileOutputArray[] = $dataset->getMetadataStatus();
-            $this->fileOutputArray[] = $this->getDoiStatus($dataset);
+            $doi = $this->getDoiStatus($dataset);
+            $this->fileOutputArray[] = $doi['status'];
+            $this->fileOutputArray[] = $doi['id'];
+            $this->printResults();
         }
 
         return 0;
@@ -148,23 +150,47 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
      *
      * @throws Exception Exception thrown when doi metadata method fails.
      *
-     * @return string
+     * @return array
      */
     private function getDoiStatus(Dataset $dataset)
     {
         $doiStatus = null;
+        $doiArray = array();
 
         if ($dataset->getDoi() instanceof DOI) {
             try {
                 $doiUtil = new DOIutil();
                 $doiMetadata = $doiUtil->getDOIMetadata($dataset->getDoi()->getDoi());
-                $doiStatus = $doiMetadata['_status'];
+                $doiArray['status'] = $doiMetadata['_status'];
+                $doiArray['id'] = $dataset->getDoi()->getDoi();
 
             } catch (Exception $e) {
                 throw new Exception('Unable to get DOI metadata' . $e->getMessage());
             }
         }
 
-        return $doiStatus;
+        return $doiArray;
+    }
+
+    /**
+     * Send the results to the printer.
+     *
+     * This also adds the comma delimiter.
+     *
+     * @return integer
+     */
+    private function printResults()
+    {
+        if (count($this->fileOutputArray) >= 2) {
+            $stringBuffer = '';
+            for ($n = 0; $n < count($this->fileOutputArray); $n++) {
+                if ($n >= 1) {
+                    $stringBuffer .= ',';
+                }
+                $stringBuffer .= $this->fileOutputArray[$n];
+            }
+            $this->fileOutput->writeln($stringBuffer);
+        }
+        return 0;
     }
 }
