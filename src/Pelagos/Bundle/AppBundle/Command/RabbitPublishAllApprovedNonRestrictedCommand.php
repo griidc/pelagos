@@ -93,7 +93,7 @@ class RabbitPublishAllApprovedNonRestrictedCommand extends ContainerAwareCommand
      *
      * @return string
      */
-    private function getDatasetStatus(string $datasetStatus): string
+    private function getDatasetStatus($datasetStatus)
     {
         $status = DatasetSubmission::METADATA_STATUS_ACCEPTED;
         
