@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use PHPUnit\Framework\TestCase;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
@@ -14,7 +16,7 @@ use Doctrine\Common\Collections\Collection;
  *
  * @package Pelagos\Entity
  */
-class DatasetTest extends \PHPUnit_Framework_TestCase
+class DatasetTest extends TestCase
 {
     /**
      * Dataset undergoing test.

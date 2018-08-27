@@ -2,13 +2,15 @@
 
 namespace Pelagos;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Unit tests for Pelagos\Component.
  *
  * @group Pelagos
  * @group Pelagos\Component
  */
-class ComponentTest extends \PHPUnit_Framework_TestCase
+class ComponentTest extends TestCase
 {
     /**
      * Class variable to hold an instance of \Pelagos\Component to test against.
