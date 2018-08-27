@@ -1,0 +1,151 @@
+<fieldset>
+    <legend>Theme Keywords</legend>
+    <table class="tab-table">
+        <tr class="oddrowcolor">
+            <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+                        Commonly used words or short phrases that describe themes or subjects
+                        related to the dataset. These may be keywords used to describe the
+                        publication associated with the dataset. Do not include keywords that
+                        describe the location or geography of the data.
+					</div>
+				</span>
+                <table width="80%">
+                    <tr>
+                        <td width="40%">
+                            <label for="theme-keyword-input">Keyword</label>
+                            <input class="keywordinput" type="text" keyword="source" id="theme-keyword-input">
+                        </td>
+                        <td width="20%">
+                            <button class="keywordbutton" type="button">add</button>
+                            <br>
+                            <button class="keywordbutton" type="button">remove</button>
+                        </td>
+                        <td width="40%">
+                            <label><span class="emRequired">Theme Keywords</span></label>
+                            <select class="keywordinput" id="theme-keywords" keyword="target" list="theme-keywords-list" size="5">
+                            {% for keyword in form.themeKeywords %}
+                                <option value="{{keyword.vars.value}}">{{keyword.vars.value}}</option>
+                            {% endfor %}
+                            </select>
+                            <label for="themeKeywords" class="error"></label>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    </fieldset>
+    <select hidden readonly required="required" multiple id="themeKeywords" name="themeKeywords[]"></select>
+    <hr>
+
+    <fieldset>
+        <legend>Place Keywords</legend>
+        <table class="tab-table">
+            <tr>
+                <td>
+					<span class="helpSection">
+						{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+						<img class="info" src="{{ asset_url }}">
+						{% endimage %}
+						<div class="tooltiptext">
+                            Commonly used words or short phrases that describe the geographic areas,
+                            locations, or places associated with the data, if applicable. Leave blank
+                            if the dataset does not have a relevant place keyword (e.g. lab mesocoms).
+						</div>
+					</span>
+                    <table width="80%">
+                        <tr>
+                            <td width="40%">
+                                <label for="place-keyword-input">Keyword</label>
+                                <input class="keywordinput"  keyword="source" type="text" id="place-keyword-input">
+                            </td>
+                            <td width="20%">
+                                <button class="keywordbutton" type="button">add</button>
+                                <br>
+                                <button class="keywordbutton" type="button">remove</button>
+                            </td>
+                            <td width="40%">
+                                <label>Place Keywords</label>
+                                <select class="keywordinput" id="place-keywords" keyword="target" size="5">
+                                {% for keyword in form.placeKeywords %}
+                                    <option value="{{keyword.vars.value}}">{{keyword.vars.value}}</option>
+                                {% endfor %}
+                                </select>
+                                <label for="placeKeywords" class="error"></label>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    <hr>
+    <select hidden readonly multiple id="placeKeywords" name="placeKeywords[]"></select>
+
+    <fieldset>
+        <legend>Topic Category Keywords</legend>
+
+    <table class="tab-table">
+        <tr>
+            <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+                        Broad theme keywords pre-defined by the ISO 19115-2 metadata standard
+                        used by GRIIDC, select those most applicable to the data. Hover over
+                        the keyword to see a definition.
+					</div>
+				</span>
+                <table width="80%">
+                    <tr>
+                        <td width="40%">
+                            <label>Topic Category Keyword List</label>
+                            <select class="keywordinput" size="10" id="topic-keyword-select" keyword="source">
+                                {% set order = 0 %}
+                                {% for keyword in form.topicKeywords.vars.choices %}
+                                    {% set found = false  %}
+                                    {% for keywordValue in form.topicKeywords.vars.value %}
+                                        {% if keyword.value == keywordValue %}
+                                            {% set found = true %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if not found|default %}
+                                        <option value="{{keyword.value}}" order="{{order}}">{{keyword.label}}</option>
+                                    {% endif %}
+                                    {% set order = order + 1 %}
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td  width="20%">
+                            <button class="keywordbutton" type="button">add</button><br>
+                            <button class="keywordbutton" type="button">remove</button>
+                        </td>
+                        <td  width="40%">
+                            <label><span class="emRequired">Selected Topic Category Keywords</span></label>
+                            <select class="keywordinput" keyword="target" size="10" id="topic-keywords">
+                            {% for keywordValue in form.topicKeywords.vars.value %}
+                                {% set order = 0 %}
+                                {% for keyword in form.topicKeywords.vars.choices %}
+                                    {% if keyword.value == keywordValue %}
+                                        <option value="{{keyword.value}}" order={{order}}>{{keyword.label}}</option>
+                                    {% endif %}
+                                    {% set order = order + 1 %}
+                                {% endfor %}
+                            {% endfor %}
+                            </select>
+                            <label for="topicKeywords" class="error"></label>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <select hidden readonly required="required" multiple id="topicKeywords" name="topicKeywords[]"></select>
+</fieldset>

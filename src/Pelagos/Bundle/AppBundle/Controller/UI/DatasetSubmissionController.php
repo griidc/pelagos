@@ -20,15 +20,14 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionXmlFileType;
 
-use Pelagos\Entity\Account;
+use Pelagos\Entity\DataCenter;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\Metadata;
-use Pelagos\Entity\Person;
-use Pelagos\Entity\ResearchGroup;
-use Pelagos\Entity\PersonDatasetSubmission;
+use Pelagos\Entity\DistributionPoint;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
+use Pelagos\Entity\Person;
 
 use Pelagos\Exception\InvalidMetadataException;
 
@@ -49,6 +48,21 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
     protected $messages = array();
 
     /**
+     * Name of the default distribution contact.
+     */
+    const DEFAULT_DISTRIBUTION_POINT_CONTACT_EMAIL = 'griidc@gomri.org';
+
+    /**
+     * Name of the default distribution contact.
+     */
+    const DEFAULT_DISTRIBUTION_POINT_ROLECODE = 'distributor';
+
+    /**
+     * Name of the base url for default distribution url (dataland base url).
+     */
+    const DEFAULT_DISTRIBUTION_POINT_BASE_URL = 'https://data.gulfresearchinitiative.org/data/';
+
+    /**
      * The default action for Dataset Submission.
      *
      * @param Request $request The Symfony request object.
@@ -61,6 +75,10 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
      */
     public function defaultAction(Request $request)
     {
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->redirect('/user/login?destination=' . $request->getPathInfo());
+        }
+
         $udi = $request->query->get('regid');
         $datasetSubmission = null;
         $dataset = null;
@@ -68,6 +86,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
             'success' => null,
             'errors' => null,
             );
+        $createFlag = false;
 
         if ($udi != null) {
             $udi = trim($udi);
@@ -79,11 +98,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
 
                 $dif = $dataset->getDif();
 
-                $datasetSubmission = $dataset->getDatasetSubmissionHistory()->first();
-
-                if ($datasetSubmission instanceof DatasetSubmission == false) {
-                    $datasetSubmission = null;
-                }
+                $datasetSubmission = $this->getDatasetSubmission($dataset);
 
                 $xmlForm = $this->get('form.factory')->createNamed(
                     null,
@@ -119,75 +134,23 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                         $datasetSubmission = new DatasetSubmission($dif, $personDatasetSubmissionDatasetContact);
                         $datasetSubmission->setSequence(1);
 
-                        try {
-                            $this->entityHandler->create($datasetSubmission);
-                        } catch (AccessDeniedException $e) {
-                            // This is handled in the template.
-                        }
+                        $createFlag = true;
                     }
-                } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
-                    and $datasetSubmission->getMetadataStatus() != DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
-                    and $datasetSubmission->getDataset()->getMetadata() instanceof Metadata
-                ) {
-                    // The latest submission is complete, so create new one based on it.
-                    $datasetSubmission = new DatasetSubmission($datasetSubmission);
-
-                    // Wipe out existing data from the submission.
-                    $this->clearDatasetSubmission($datasetSubmission);
-
-                    // Clear dataset and metadata contacts.
-                    $datasetSubmission->getDatasetContacts()->clear();
-                    // Populate from metadata.
-                    ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                        $datasetSubmission->getDataset()->getMetadata()->getXml(),
-                        $datasetSubmission,
-                        $this->get('doctrine.orm.entity_manager')
-                    );
-                    // If there are no contacts, add an empty one.
-                    if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
-                        $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
-                    }
-                    // Designate 1st contact as primary.
-                    $primaryContact = $datasetSubmission->getDatasetContacts()->first();
-                    $primaryContact->setPrimaryContact(true);
-
-                    $submitter = $primaryContact->getPerson();
-                    if (!$submitter instanceof Person) {
-                        $submitter = new Person();
-                    }
-                    // Fake submit, without persisting.
-                    $datasetSubmission->submit($submitter);
-
                 } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
                     and $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_NONE
                     and (
                         $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_COMPLETED
                         or $datasetSubmission->getDatasetFileSha256Hash() !== null
                     )
-                    and $datasetSubmission->getMetadataStatus() == DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
+                    and $dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
                 ) {
                     // The latest submission is complete, so create new one based on it.
                     $datasetSubmission = new DatasetSubmission($datasetSubmission);
+                    $datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER);
+                    $createFlag = true;
+                }
 
-                    // If we have accepted metadata.
-                    if ($datasetSubmission->getDataset()->getMetadata() instanceof Metadata) {
-                        // Clear out datasetSubmission to make into a blank one.
-                        $this->clearDatasetSubmission($datasetSubmission);
-                        // Clear dataset and metadata contacts.
-                        $datasetSubmission->getDatasetContacts()->clear();
-                        // Populate from metadata.
-                        ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                            $datasetSubmission->getDataset()->getMetadata()->getXml(),
-                            $datasetSubmission,
-                            $this->get('doctrine.orm.entity_manager')
-                        );
-                        // If there are no contacts, add an empty one.
-                        if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
-                            $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
-                        }
-                        // Designate 1st contact as primary.
-                        $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
-                    }
+                if ($createFlag) {
                     try {
                         $this->entityHandler->create($datasetSubmission);
                     } catch (AccessDeniedException $e) {
@@ -260,8 +223,15 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
             }
 
             $this->entityHandler->update($datasetSubmission);
+
+            foreach ($datasetSubmission->getDistributionPoints() as $distributionPoint) {
+                $this->entityHandler->update($distributionPoint);
+            }
             foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
                 $this->entityHandler->update($datasetContact);
+            }
+            foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
+                $this->entityHandler->update($metadataContact);
             }
 
             $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
@@ -330,7 +300,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
         $datasetSubmission->setDatasetFileSha1Hash(null);
         $datasetSubmission->setDatasetFileSha256Hash(null);
         $this->messages[] = array(
-            'body' => $datasetSubmission->getDataset()->getId(),
+            'body' => $datasetSubmission->getId(),
             'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
         );
     }
@@ -349,15 +319,21 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;
-        $datasetSubmissionStatus = null;
+        $datasetSubmissionLockStatus = null;
         if ($datasetSubmission instanceof DatasetSubmission) {
             if ($datasetSubmission->getDatasetContacts()->isEmpty()) {
                 $datasetSubmission->addDatasetContact(new PersonDatasetSubmissionDatasetContact());
             }
 
+            if ($datasetSubmission->getMetadataContacts()->isEmpty()) {
+                $datasetSubmission->addMetadataContact(new PersonDatasetSubmissionMetadataContact());
+            }
+
+            $datasetSubmission = $this->defaultDistributionPoint($datasetSubmission, $udi);
+
             $datasetSubmissionId = $datasetSubmission->getId();
             $researchGroupId = $dataset->getResearchGroup()->getId();
-            $datasetSubmissionStatus = $datasetSubmission->getStatus();
+            $datasetSubmissionLockStatus = $this->isSubmissionLocked($dataset);
         }
 
         $form = $this->get('form.factory')->createNamed(
@@ -370,7 +346,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                 'attr' => array(
                     'datasetSubmission' => $datasetSubmissionId,
                     'researchGroup' => $researchGroupId,
-                    'datasetSubmissionStatus' => $datasetSubmissionStatus
+                    'datasetSubmissionStatus' => $datasetSubmissionLockStatus
                 ),
             )
         );
@@ -445,6 +421,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                 'showForceImport' => $showForceImport,
                 'showForceDownload' => $showForceDownload,
                 'researchGroupList' => $researchGroupList,
+                'datasetSubmissionLockStatus' => $datasetSubmissionLockStatus
             )
         );
     }
@@ -494,6 +471,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
     private function clearDatasetSubmission(DatasetSubmission &$datasetSubmission)
     {
         $datasetSubmission->getDatasetContacts()->clear();
+        $datasetSubmission->getMetadataContacts()->clear();
         $accessor = PropertyAccess::createPropertyAccessor();
         $clearProperties = array(
             'title',
@@ -527,5 +505,77 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
         foreach ($emptyProperties as $property) {
             $accessor->setValue($datasetSubmission, $property, array());
         }
+    }
+
+    /**
+     * Determines whether the dataset submission is locked or not.
+     *
+     * @param Dataset $dataset An instance of the object Dataset.
+     *
+     * @return boolean
+     */
+    private function isSubmissionLocked(Dataset $dataset)
+    {
+        if (in_array($dataset->getMetadataStatus(), [DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER, DatasetSubmission::METADATA_STATUS_NONE])) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Get the correct dataset submission depending on the state.
+     *
+     * @param Dataset $dataset The dataset for which submission is retrieved.
+     *
+     * @return mixed|null|DatasetSubmission
+     */
+    private function getDatasetSubmission(Dataset $dataset)
+    {
+        $datasetSubmission = (($dataset->getDatasetSubmissionHistory()->first()) ? $dataset->getDatasetSubmissionHistory()->first() : null);
+
+        if ($datasetSubmission and $datasetSubmission->getStatus() !== DatasetSubmission::STATUS_INCOMPLETE) {
+            // Added so that it doesn't conflict with dataset review record.
+            $datasetSubmission = $dataset->getDatasetSubmission();
+        }
+        return $datasetSubmission;
+    }
+
+    /**
+     * Add/Update distribution Point with default distribution values linked to this datasetSubmission.
+     *
+     * @param DatasetSubmission $datasetSubmission A dataset submission instance.
+     * @param string            $udi               The UDI entered by the user to generate distributionUrl.
+     *
+     * @throws \Exception When there is none or more than one defaultDistribution organization with given name.
+     *
+     * @return DatasetSubmission A datasetsubmission.
+     */
+    private function defaultDistributionPoint(DatasetSubmission $datasetSubmission, $udi)
+    {
+        $defaultDistributionContacts = $this->entityHandler->getBy(
+            DataCenter::class,
+            array('emailAddress' => self::DEFAULT_DISTRIBUTION_POINT_CONTACT_EMAIL)
+        );
+
+        if (count($defaultDistributionContacts) === 1) {
+            $distributionPoints = $datasetSubmission->getDistributionPoints();
+            if ($distributionPoints->isEmpty()) {
+                $distributionPoint = new DistributionPoint();
+                $datasetSubmission->addDistributionPoint($distributionPoint);
+            } else {
+                $distributionPoint = $datasetSubmission->getDistributionPoints()->first();
+            }
+
+            //update to default values only when the Distribution Point is new
+            if (null === $distributionPoint->getDataCenter()) {
+                $distributionPoint->setRoleCode(self::DEFAULT_DISTRIBUTION_POINT_ROLECODE);
+                $distributionPoint->setDataCenter($defaultDistributionContacts[0]);
+                $distributionPoint->setDistributionUrl(self::DEFAULT_DISTRIBUTION_POINT_BASE_URL . $udi);
+            }
+
+        } else {
+            throw new \Exception('There is none or more than one default distribution contact(s)');
+        }
+        return $datasetSubmission;
     }
 }

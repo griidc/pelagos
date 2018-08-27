@@ -2,6 +2,7 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
+use Pelagos\Exception\InvalidGmlException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,10 +15,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\LogActionItem;
 use Pelagos\Entity\Metadata;
-
-use Pelagos\Util\ISOMetadataExtractorUtil;
 
 /**
  * The Dataset Monitoring controller.
@@ -44,37 +42,12 @@ class DatalandController extends UIController
         $rawXml = null;
         $wkt = null;
 
-        if ($dataset->getMetadata() instanceof Metadata
-            and $dataset->getMetadata()->getXml() instanceof \SimpleXMLElement) {
-            $rawXml = $dataset->getMetadata()->getXml()->asXml();
+        if ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+            $boundingBoxArray = $this->getBoundingBox($dataset);
+            $rawXml = $this->get('pelagos.util.metadata')->getXmlRepresentation($dataset, $boundingBoxArray);
         }
-
-        if ($dataset->getDif() instanceof DIF) {
-            $wkt = $geometryUtil->convertGmlToWkt(
-                $dataset
-                ->getDif()
-                ->getSpatialExtentGeometry()
-            );
-        }
-
-        if ($dataset->getMetadata() instanceof Metadata) {
-            $wkt = $dataset->getMetadata()->getGeometry();
-        }
-
-        $datasetSubmission = $dataset->getDatasetSubmission();
-
-        // If we have approved Metadata, load contact into datasetSubmission.
-        if ($datasetSubmission instanceof DatasetSubmission
-            and $dataset->getMetadata() instanceof Metadata
-        ) {
-            $datasetSubmission->getDatasetContacts()->clear();
-            ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
-                $dataset->getMetadata()->getXml(),
-                $datasetSubmission,
-                $this->getDoctrine()->getManager()
-            );
-            $dataset->setDatasetSubmission($datasetSubmission);
-        }
+        //Logic to get DIF or Accepted Dataset is in Dataset Entity.
+        $wkt = $geometryUtil->convertGmlToWkt($dataset->getSpatialExtentGeometry());
 
         $downloadCount = null;
         // Remotely hosted datasets are normally also hosted locally anyway, so including.
@@ -115,7 +88,6 @@ class DatalandController extends UIController
      *
      * @param string $udi The UDI of the dataset to return metadata for.
      *
-     * @throws NotFoundHttpException   When the dataset does not have metadata.
      * @throws BadRequestHttpException When the metadata for the dataset has not been accepted.
      *
      * @Route("/{udi}/metadata")
@@ -126,18 +98,15 @@ class DatalandController extends UIController
     {
         $dataset = $this->getDataset($udi);
 
-        if (!$dataset->getMetadata() instanceof Metadata
-            or !$dataset->getMetadata()->getXml() instanceof \SimpleXMLElement) {
-            throw $this->createNotFoundException("No metadata found for dataset with UDI: $udi");
-        }
-
         if ($dataset->getMetadataStatus() !== DatasetSubmission::METADATA_STATUS_ACCEPTED) {
             throw new BadRequestHttpException("The metadata has not yet been accepted for dataset with UDI: $udi");
         }
 
+        $boundingBoxArray = $this->getBoundingBox($dataset);
+
         $filename = str_replace(':', '-', $udi) . '-metadata.xml';
 
-        $response = new Response($dataset->getMetadata()->getXml()->asXml());
+        $response = new Response($this->get('pelagos.util.metadata')->getXmlRepresentation($dataset, $boundingBoxArray));
         $response->headers->set('Content-Type', 'text/xml');
         $response->headers->set('Content-Disposition', "attachment; filename=$filename;");
         return $response;
@@ -220,5 +189,28 @@ class DatalandController extends UIController
         }
 
         return $datasets[0];
+    }
+
+    /**
+     * Get the bounding box for the dataset.
+     *
+     * @param Dataset $dataset The dataset for which the bounding box is generated.
+     *
+     * @return array
+     */
+    private function getBoundingBox(Dataset $dataset)
+    {
+        $geoUtil = $this->get('pelagos.util.geometry');
+        $gml = $dataset->getDatasetSubmission()->getSpatialExtent();
+        $boundingBoxArray = array();
+        if ($gml) {
+            try {
+                $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
+            } catch (InvalidGmlException $e) {
+                $errors[] = $e->getMessage() . ' while attempting to calculate bonding box from gml';
+                $boundingBoxArray = array();
+            }
+        }
+        return $boundingBoxArray;
     }
 }

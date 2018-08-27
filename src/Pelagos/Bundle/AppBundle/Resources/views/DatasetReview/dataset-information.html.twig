@@ -1,0 +1,172 @@
+<fieldset>
+    <legend>Dataset Information</legend>
+    <table class="tab-table">
+        <tr>
+            <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+                        The dataset title should be unique and describe what data are in the
+                        dataset and, if applicable, the relevant date, date range, and geographical
+                        area. Ex. Fish Fertility Potential Assays, DeSoto Canyon, August 15-29, 2013
+					</div>
+				</span>
+                {{ form_row(form.title) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+						A short name or alternative title for the dataset.
+					</div>
+				</span>
+                {{ form_row(form.shortTitle) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+                        The date that will be used to reference the dataset. This date can represent the
+                        date the dataset was created, published, or revised.
+					</div>
+				</span>
+                {{ form_row(form.referenceDate) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+                        A description of the date provided above if the date refers to the date the dataset
+                        was created, published, or revised.
+					</div>
+				</span>
+                {{ form_row(form.referenceDateType) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+						A brief description of the contents of the dataset including what data are included
+                        in the dataset, how these data were acquired, and if applicable, where and when these
+                        data were acquired. This should not be the same as the publication abstract.
+					</div>
+				</span>
+                {{ form_row(form.abstract) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+						A summary of the reason why the data were collected, generated, or otherwise acquired.
+					</div>
+				</span>
+                {{ form_row(form.purpose) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+						A list of the parameters/variables and units included in the dataset.
+					</div>
+				</span>
+                {{ form_row(form.suppParams) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+						A brief description of methods used to acquire the data included in the
+                        dataset.
+					</div>
+				</span>
+                {{ form_row(form.suppMethods) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+						A list of instruments used to acquire the data included in the dataset.
+					</div>
+				</span>
+                {{ form_row(form.suppInstruments) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+                        A description of spatial and temporal scales and rates that were used to
+                        collect and/or generate the data, if applicable.
+					</div>
+				</span>
+                {{ form_row(form.suppSampScalesRates) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+						A description of any error or uncertainty analysis completed on the final
+                        data and the results of the analysis.
+					</div>
+				</span>
+                {{ form_row(form.suppErrorAnalysis) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+					<img class="info" src="{{ asset_url }}">
+					{% endimage %}
+					<div class="tooltiptext">
+						If existing historical data were used as part of the dataset, please provide
+                        a description of these data, including who created the original dataset (person
+                        and/or organization) and where the historical data can be obtained.
+					</div>
+				</span>
+                {{ form_row(form.suppProvenance) }}
+            </td>
+        </tr>
+    </table>
+</fieldset>

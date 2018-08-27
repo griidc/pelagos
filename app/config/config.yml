@@ -37,6 +37,7 @@ framework:
         # handler_id set to null will use default session handler from php.ini
         handler_id:  ~
         save_path:   "%kernel.root_dir%/../var/sessions/%kernel.environment%"
+        storage_id: session.storage.native
     fragments:       ~
     http_method_override: true
     assets: ~
@@ -143,6 +144,8 @@ simple_things_entity_audit:
         - Pelagos\Entity\Dataset
         - Pelagos\Entity\DIF
         - Pelagos\Entity\DatasetSubmission
+        - Pelagos\Entity\DataCenter
+        - Pelagos\Entity\DistributionPoint
 
 fos_js_routing:
     routes_to_expose: [ .* ]
@@ -218,6 +221,7 @@ old_sound_rabbit_mq:
                     - 'issue'
                     - 'publish'
                     - 'update'
+                    - 'delete'
 
 hwi_oauth:
     firewall_names: [main]
