@@ -302,7 +302,7 @@ class DoiConsumer implements ConsumerInterface
         } elseif ($dataset->getMetadataStatus() !== DatasetSubmission::METADATA_STATUS_ACCEPTED and
             $doiStatus === DOI::STATUS_RESERVED) {
             // Don't attempt to publish not accepted dataset.
-            $this->logger->warning('DOI for dataset already marked as published', $loggingContext);
+            $this->logger->warning('DOI for dataset is not accepted, No action is taken', $loggingContext);
             return false;
         }
 
