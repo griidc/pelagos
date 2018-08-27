@@ -312,8 +312,8 @@ class DoiConsumer implements ConsumerInterface
     /**
      * Get the Doi status to be persisted.
      *
-     * @param Dataset $dataset        The dataset.
-     * @param string  $doiStatus      The status of the DOI for the dataset.
+     * @param Dataset $dataset   The dataset.
+     * @param string  $doiStatus The status of the DOI for the dataset.
      *
      * @return string
      */
