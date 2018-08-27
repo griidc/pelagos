@@ -3,14 +3,20 @@
 namespace Pelagos\Bundle\AppBundle\Rabbit\Consumer;
 
 use Doctrine\ORM\EntityManager;
+
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
+
+use PhpAmqpLib\Message\AMQPMessage;
+
+use Symfony\Bridge\Monolog\Logger;
+
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\DOI;
+
 use Pelagos\Event\EntityEventDispatcher;
+
 use Pelagos\Util\DOIutil;
-use PhpAmqpLib\Message\AMQPMessage;
-use Symfony\Bridge\Monolog\Logger;
 
 /**
  * A consumer of DOI messages.
