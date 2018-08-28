@@ -333,6 +333,7 @@ class ComponentTest extends TestCase
      */
     public function testGetLoggedInUserNotLoggedIn()
     {
+        $GLOBALS['user'] = '';
         $this->component->getLoggedInUser();
     }
 
