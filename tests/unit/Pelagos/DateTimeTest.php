@@ -58,6 +58,7 @@ class DateTimeTest extends TestCase
     public function testSet()
     {
         $oneDateTime = new DateTime();
+        $oneDateTime->setTime('12', '34', '56', false);
         $twoDateTime = new DateTime();
         $twoDateTime->set($oneDateTime);
 

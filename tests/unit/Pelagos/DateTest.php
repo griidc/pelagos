@@ -42,6 +42,7 @@ class DateTest extends TestCase
     public function testSet()
     {
         $oneDate = new Date();
+        $oneDate->setTime('00', '00', '00', false);
         $twoDate = new Date();
         $twoDate->set($oneDate);
 
