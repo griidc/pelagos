@@ -27,14 +27,6 @@ matrix:
   # Fast finish allows to set the build as "finished" even if the "allow_failures" matrix elements are not finished yet.
   fast_finish: true
   include:
-    - name: "5.6 Centos6"
-      php: 5.6
-      distribution: centos
-      version: 6
-    - name: "5.6 Centos7"
-      php: 5.6
-      distribution: centos
-      version: 7
     - name: "7.1 Centos6"
       php: 7.1
       distribution: centos
@@ -61,7 +53,6 @@ before-install:
   - cp app/config/parameters.yml.dist app/config/parameters.yml
   - psql -c 'create database postgres' -U postgres
   - psql -c 'create extension postgis' -U postgres -d postgres
-
 
 
 # Install composer dependencies,
