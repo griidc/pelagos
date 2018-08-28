@@ -23,6 +23,7 @@ $(document).ready(function(){
     var regForm = $("#regForm");
     // Check if mode = view (View mode (Unable to edit)).
     if (regForm.attr("mode") === "view") {
+        // Disable all input fields
         $("#regForm :input").prop("disabled", true);
     }
 
@@ -299,6 +300,19 @@ $(document).ready(function(){
         }
         buildKeywordLists();
     });
+
+    // Display admin menu when "End View" button in clicked.
+    $("#EndViewBtn").click(function (event) {
+        window.location = Routing.generate("pelagos_app_ui_datasetreview_default");
+    });
+
+    // Placed here as timing is too early in previous related section. Enables/Disables
+    // the "End View" button depending on usage.
+    if (regForm.attr("mode") === "view") {
+        $("#EndViewBtn").button("enable");
+    } else {
+        $("#EndViewBtn").button("disable");
+    }
 
     // Build list arrays/fake multiselect boxes.
     function buildKeywordLists()
@@ -623,7 +637,7 @@ $(document).ready(function(){
               }
         });
     });
-    
+
 });
 
 function checkSpatial(isNonSpatial) {
