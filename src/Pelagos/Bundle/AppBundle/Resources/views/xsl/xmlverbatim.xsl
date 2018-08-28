@@ -141,7 +141,7 @@
       </span>
       <xsl:text>=&quot;</xsl:text>
       <span class="xmlverb-attr-content">
-         <xsl:value-of select="text()"/>
+         <xsl:value-of select="."/>
       </span>
       <xsl:text>&quot;</xsl:text>
    </xsl:template>
