@@ -232,7 +232,7 @@ class DatasetTest extends TestCase
         );
         $this->assertEquals(
             $this->auxMockSpatialExtensionDif,
-            $this->dataset->getSpatialExtentGeometry()
+            $this->dataset->getDif()->getSpatialExtentGeometry()
         );
 
         // Case: We have an incomplete submission and a submitted (but not approved) DIF.
