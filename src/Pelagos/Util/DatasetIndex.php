@@ -180,7 +180,13 @@ class DatasetIndex
         $query->setQuery($mainQuery);
 
         //control of what will be returned
-        $query->setSource(array('id', 'udi', 'title', 'year', 'researchGroup', 'datasetSubmission', 'doi'));
+        $query->setSource(
+            array(
+                'id', 'udi', 'title', 'year', 'researchGroup', 'doi', 'datasetSubmission.authors',
+                'datasetSubmission.datasetFileTransferStatus', 'datasetSubmission.datasetFileUri',
+                'datasetSubmission.datasetFileSize', 'datasetSubmission.restrictions'
+            )
+        );
 
         return $query;
     }
