@@ -2,7 +2,10 @@
 
 namespace Pelagos\Entity;
 
+use PHPUnit\Framework\TestCase;
+
 use Symfony\Component\Validator\Validation;
+
 
 /**
  * Unit tests for Pelagos\Entity\Account.
@@ -13,7 +16,7 @@ use Symfony\Component\Validator\Validation;
  *
  * @package Pelagos\Entity
  */
-class AccountTest extends \PHPUnit_Framework_TestCase
+class AccountTest extends TestCase
 {
     /**
      * Property to hold an instance of Account for testing.

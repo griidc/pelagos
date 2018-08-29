@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use PHPUnit\Framework\TestCase;
+
 use Symfony\Component\Validator\Validation;
 
 /**
@@ -11,7 +13,7 @@ use Symfony\Component\Validator\Validation;
  * @group Pelagos\Entity
  * @group Pelagos\Entity\Entity
  */
-class EntityTest extends \PHPUnit_Framework_TestCase
+class EntityTest extends TestCase
 {
     /**
      * Property to hold an instance of ConcreteEntity for testing.
