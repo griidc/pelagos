@@ -178,6 +178,10 @@ class DatasetIndex
         $query = new Query();
         $query->setSize(10000);
         $query->setQuery($mainQuery);
+
+        //control of what will be returned
+        $query->setSource(array('id', 'udi', 'title', 'year', 'researchGroup', 'datasetSubmission', 'doi'));
+
         return $query;
     }
 
