@@ -3,6 +3,7 @@
 namespace Pelagos\Bundle\AppBundle\Command;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMException;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
@@ -12,6 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\DOI;
+use Pelagos\Entity\DIF;
 
 use Pelagos\Util\DOIutil;
 
@@ -50,7 +52,10 @@ class DoiDatacitePreMigrationCommand extends ContainerAwareCommand
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
 
         //Make submitted datasets(Reserved DOI's) to public.
-        $this->makeSubmittedPublic($entityManager);
+        $this->makeSubmittedUnavailable($entityManager);
+
+        //Delete Doi property from Dataset which are DIF approved.
+        $this->deleteDoiDif($entityManager);
 
         return 0;
     }
@@ -64,12 +69,13 @@ class DoiDatacitePreMigrationCommand extends ContainerAwareCommand
      *
      * @return void
      */
-    private function makeSubmittedPublic(EntityManager $entityManager)
+    private function makeSubmittedUnavailable(EntityManager $entityManager)
     {
         $datasets = $entityManager->getRepository(Dataset::class)->findBy(array(
             'metadataStatus' => array(
                 DatasetSubmission::METADATA_STATUS_SUBMITTED,
-                DatasetSubmission::METADATA_STATUS_ACCEPTED
+                DatasetSubmission::METADATA_STATUS_ACCEPTED,
+                DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
             )
         ));
 
@@ -127,7 +133,11 @@ class DoiDatacitePreMigrationCommand extends ContainerAwareCommand
      */
     private function validatePublish(Dataset $dataset, $doiStatus)
     {
-        if ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_SUBMITTED) {
+        if (in_array(
+            $dataset->getMetadataStatus(),
+            [DatasetSubmission::METADATA_STATUS_SUBMITTED, DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER]
+        )
+        ) {
             // Need to publish all the datasets which are submitted and in reserved state
             return true;
         } elseif ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED and
@@ -137,5 +147,49 @@ class DoiDatacitePreMigrationCommand extends ContainerAwareCommand
             return true;
         }
         return false;
+    }
+
+    /**
+     * Deletes DOI property from Dataset and object for DIF approved datasets.
+     *
+     * @param EntityManager $entityManager An instance of EntityManager.
+     *
+     * @throws ORMException        Exception thrown when get DOI fails.
+     * @throws ReflectionException Exception thrown when Reflection class fails.
+     *
+     * @return void
+     */
+    private function deleteDoiDif(EntityManager $entityManager)
+    {
+        $datasets = $entityManager->getRepository(Dataset::class)->findBy(array(
+            'metadataStatus' => array(
+                DatasetSubmission::METADATA_STATUS_NONE
+            )
+        ));
+
+        foreach ($datasets as $dataset) {
+            if ($dataset->getIdentifiedStatus() === DIF::STATUS_APPROVED) {
+                // Using reflection class for attributes which do not have setters.
+                $doi = $dataset->getDoi();
+                try {
+                    $datasetReflection = new \ReflectionClass($dataset);
+                    $doiReflection = $datasetReflection->getProperty('doi');
+                    $doiReflection->setAccessible(true);
+                    $doiReflection->setValue($dataset, null);
+                } catch (\ReflectionException $exception) {
+                    throw new ReflectionException('Reflection class failed ' . $exception->getMessage());
+                }
+
+                try {
+                    $entityManager->persist($dataset);
+                    $entityManager->remove($doi);
+                    $entityManager->flush($dataset);
+                    $entityManager->flush(DOI::class);
+
+                } catch (ORMException $e) {
+                    throw new ORMException('Entity manager failed ' . $e->getMessage());
+                }
+            }
+        }
     }
 }
