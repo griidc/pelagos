@@ -61,8 +61,7 @@ class DoiDatacitePostMigrationCommand extends ContainerAwareCommand
      *
      * @param EntityManager $entityManager An instance of EntityManager.
      *
-     * @throws ORMException        Exception thrown when get DOI fails.
-     * @throws ReflectionException Exception thrown when Reflection class fails.
+     * @throws \Exception Exception thrown when create DOI fails.
      *
      * @return void
      */
@@ -75,9 +74,9 @@ class DoiDatacitePostMigrationCommand extends ContainerAwareCommand
         ));
 
         foreach ($datasets as $dataset) {
+            // Creating DOI's which are DIF approved datasets.
             if ($dataset->getIdentifiedStatus() === DIF::STATUS_SUBMITTED) {
                 $doi = $dataset->getDoi();
-                // Using reflection class for attributes which do not have setters.
                 if (!$doi instanceof DOI) {
                     try {
                         $doiUtil = new DOIutil();
@@ -89,7 +88,7 @@ class DoiDatacitePostMigrationCommand extends ContainerAwareCommand
                             $dataset->getReferenceDateYear()
                         );
                     } catch (\Exception $exception) {
-                        echo ('Error requesting DOI: ' . $exception->getMessage());
+                        echo ('Error creating DOI: ' . $exception->getMessage());
                         return;
                     }
 
