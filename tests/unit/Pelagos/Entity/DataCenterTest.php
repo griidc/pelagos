@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Unit tests for Pelagos\Entity\DataCenter.
  *
@@ -11,7 +13,7 @@ namespace Pelagos\Entity;
  *
  * @package Pelagos\Entity
  */
-class DataCenterTest extends \PHPUnit_Framework_TestCase
+class DataCenterTest extends TestCase
 {
     /**
      * A mock name for the National data center.

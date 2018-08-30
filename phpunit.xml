@@ -1,4 +1,4 @@
-<phpunit bootstrap="tests/bootstrap.php" beStrictAboutOutputDuringTests="true">
+<phpunit bootstrap="tests/bootstrap.php" beStrictAboutOutputDuringTests="true" beStrictAboutTestsThatDoNotTestAnything="false">
     <testsuites>
         <testsuite name="unit">
             <directory>tests/unit</directory>

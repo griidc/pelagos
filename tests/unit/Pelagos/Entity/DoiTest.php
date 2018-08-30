@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Unit tests for Pelagos\Entity\DOI.
  *
@@ -11,7 +13,7 @@ namespace Pelagos\Entity;
  *
  * @package Pelagos\Entity
  */
-class DoiTest extends \PHPUnit_Framework_TestCase
+class DoiTest extends TestCase
 {
     /**
      * Dataset undergoing test.

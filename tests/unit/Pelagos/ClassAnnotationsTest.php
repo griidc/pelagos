@@ -2,12 +2,13 @@
 
 namespace Pelagos;
 
+use PHPUnit\Framework\TestCase;
 /**
  * Unit tests for Pelagos\ClassAnnotations.
  *
  * @group Pelagos
  */
-class ClassAnnotationsTest extends \PHPUnit_Framework_TestCase
+class ClassAnnotationsTest extends TestCase
 {
     /**
      * Variable to hold an instance of ClassAnnotations.
