@@ -2,6 +2,9 @@
 
 namespace Pelagos\Entity;
 
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Error;
+
 use Symfony\Component\Validator\Constraints;
 use Symfony\Component\Validator\Validation;
 
@@ -12,7 +15,7 @@ use Symfony\Component\Validator\Validation;
  * @group Pelagos\Entity
  * @group Pelagos\Entity\Person
  */
-class PersonTest extends \PHPUnit_Framework_TestCase
+class PersonTest extends TestCase
 {
     use \Tests\helpers\ValidationAssertions;
 
@@ -643,7 +646,7 @@ class PersonTest extends \PHPUnit_Framework_TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \Error
      *
      * @return void
      */

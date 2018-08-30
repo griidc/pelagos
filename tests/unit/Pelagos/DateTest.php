@@ -1,12 +1,14 @@
 <?php
 namespace Pelagos;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * DateTest.php A unit test for the Pelagos Date class.
  *
  * @package Pelagos
  */
-class DateTest extends \PHPUnit_Framework_TestCase
+class DateTest extends TestCase
 {
     /**
      * Test the ability to set the format.
@@ -40,6 +42,7 @@ class DateTest extends \PHPUnit_Framework_TestCase
     public function testSet()
     {
         $oneDate = new Date();
+        $oneDate->setTime('00', '00', '00', false);
         $twoDate = new Date();
         $twoDate->set($oneDate);
 

@@ -2,6 +2,8 @@
 
 namespace Pelagos\Exception;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Unit tests for Pelagos\Exception\RecordExistsPersistenceException.
  *
@@ -9,7 +11,7 @@ namespace Pelagos\Exception;
  * @group Pelagos\Exception
  * @group Pelagos\Exception\PersistenceException
  */
-class RecordExistsPersistenceExceptionTest extends \PHPUnit_Framework_TestCase
+class RecordExistsPersistenceExceptionTest extends TestCase
 {
     /**
      * Test that we can throw a RecordExistsPersistenceException.
