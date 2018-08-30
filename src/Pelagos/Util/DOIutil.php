@@ -108,7 +108,9 @@ class DOIutil
         curl_close($ch);
 
         //check to see if it worked.
-        if (200 != $httpCode) {
+        //using in array because EZID API returns 201 and EZDatacite API returns 200.
+        // TODO change in_array to previous statement
+        if (!in_array($httpCode, [200, 201])) {
             throw new \Exception("ezid failed with:$httpCode($output)", $httpCode);
         }
 
