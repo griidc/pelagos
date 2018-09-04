@@ -50,18 +50,17 @@ before-install:
   - sleep 5
   - sudo docker pull centos:centos${version}
 
-  - sudo apt-get install php-pear
   - cp app/config/parameters.yml.dist app/config/parameters.yml
   - psql -c 'create database postgres' -U postgres
   - psql -c 'create extension postgis' -U postgres -d postgres
   
-  - pear install pear/PHP_CodeSniffer
-
-  - phpenv rehash
+ 
 
 # Install composer dependencies,
 # Create schema and fixtures
 install:
+  - pear install pear/PHP_CodeSniffer
+  - phpenv rehash
   - export SYMFONY_ENV=drupal_dev
   - composer install
  
