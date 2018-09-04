@@ -18,7 +18,7 @@
             <severity>0</severity>
         </rule>
         <!-- Ignore Scalar Type Hints, until we go to PHP 7. -->
-        <rule ref="Squiz.Commenting.FunctionComment.ScalarTypeHintMissing">
+        <rule ref="GRIIDC.Commenting.FunctionComment.ScalarTypeHintMissing">
             <severity>0</severity>
         </rule>
         <!-- Rules for variable DocBlocks. -->
