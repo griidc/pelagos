@@ -16,6 +16,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Pelagos\Exception\InvalidGmlException;
 
 use Pelagos\Util\Geometry;
+use Pelagos\Util\GmlUtil;
 
 /**
  * A controller that does GML conversion.
@@ -182,7 +183,7 @@ class GmlController extends Controller
                 'xsi:schemaLocation' => 'http://www.opengis.net/gml/3.2 ' . $schema
             );
 
-            $gml = $this->addNamespace($gml, $namespaces);
+            $gml = GmlUtil::addNamespace($gml, $namespaces);
 
             $errors = [];
             $warnings = [];
