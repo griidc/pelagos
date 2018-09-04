@@ -135,6 +135,8 @@
     <rule ref="Squiz.PHP.DiscouragedFunctions"/>
     <!-- Discourage the use of eval(). -->
     <rule ref="Squiz.PHP.Eval"/>
+    <!-- Don't allow the use of alias functions that are kept in PHP for compatibility with older versions. -->
+    <rule ref="Squiz.PHP.ForbiddenFunctions"/>
     <!-- Don't allow the usage of the "global" keyword. -->
     <rule ref="Squiz.PHP.GlobalKeyword"/>
     <!-- Ensure that functions within functions are never used. -->
