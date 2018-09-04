@@ -65,13 +65,12 @@ install:
 before-script:
   - php bin/console doctrine:schema:create 
   - php bin/console doctrine:fixtures:load
-  - echo "before phpcs"  
   - phpcs --version
   
 # Run script
 script:
   - phpunit
-  - phpcs --standard=ruleset.xml --colors --ignore=bak --extensions=php .
+  - phpcs --standard=Coding-Standards --colors --ignore=bak --extensions=php .
   
 notifications:
   email: false
