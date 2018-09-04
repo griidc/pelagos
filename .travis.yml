@@ -53,7 +53,7 @@ before-install:
 # Install composer dependencies,
 # Create schema and fixtures
 install:
-  - pear install pear/PHP_CodeSniffer-2.5.0
+  - pear install pear/PHP_CodeSniffer-2.5.1
   - export SYMFONY_ENV=drupal_dev
   - composer install
   - phpenv rehash
