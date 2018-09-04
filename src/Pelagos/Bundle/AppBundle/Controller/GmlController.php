@@ -13,6 +13,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
+use Pelagos\Exception\InvalidGmlException;
+
+use Pelagos\Util\Geometry;
+
 /**
  * A controller that does GML conversion.
  */
@@ -36,21 +40,16 @@ class GmlController extends Controller
         $gml = $request->request->get('gml');
 
         if (!empty($gml)) {
-            $query = 'SELECT ST_asText(ST_GeomFromGML(:gml, 4326));';
-            $connection = $this->getDoctrine()->getManager()->getConnection();
-            $statement = $connection->prepare($query);
-            $statement->bindValue('gml', $gml);
+            $geometryUtil = new Geometry($this->getDoctrine()->getManager());
             try {
-                $statement->execute();
-            } catch (\Exception $e) {
+                $wkt = $geometryUtil->convertGmlToWkt($gml);
+            } catch (InvalidGmlException $e) {
                 return new Response(
                     $e->getMessage(),
                     Response::HTTP_BAD_REQUEST,
                     array('content-type' => 'text/plain')
                 );
             }
-            $results = $statement->fetchAll();
-            $wkt = $results[0]['st_astext'];
             return new Response(
                 $wkt,
                 Response::HTTP_OK,
@@ -157,40 +156,6 @@ class GmlController extends Controller
     }
 
     /**
-     * This function add namespace for validation to the given gml.
-     *
-     * @param string $gml        Gml that needs namespace.
-     * @param array  $namespaces Array of attributes and values.
-     *
-     * @return string GML string with namespace.
-     */
-    private function addNamespace($gml, array $namespaces)
-    {
-        $doc = new \DomDocument('1.0', 'UTF-8');
-
-        $doc->loadXML($gml, LIBXML_NOERROR);
-        $rootNode = $doc->documentElement;
-        if (null !== $rootNode) {
-            foreach ($namespaces as $key => $value) {
-                $rootNode->setAttribute($key, $value);
-            }
-            $gml = $doc->saveXML();
-            $cleanXML = new \SimpleXMLElement($gml, LIBXML_NOERROR);
-            $dom = dom_import_simplexml($cleanXML);
-            $gml = $dom->ownerDocument->saveXML($dom->ownerDocument->documentElement);
-        } else {
-            //append namespaces to string using regex
-            $strNameSpaces = '';
-            foreach ($namespaces as $key => $value) {
-                $strNameSpaces .= ' ' . $key . '="' . $value . '"';
-            }
-            $regEx = '/^<gml:\S*/';
-            $gml = preg_replace($regEx, "$0$strNameSpaces", $gml);
-        }
-        return $gml;
-    }
-
-    /**
      * This function validates Gml against OpenGIS schema.
      *
      * @param Request $request The Symfony request object.
@@ -218,7 +183,7 @@ class GmlController extends Controller
             );
 
             $gml = $this->addNamespace($gml, $namespaces);
-            
+
             $errors = [];
             $warnings = [];
             $metadataUtil = $this->get('pelagos.util.metadata');
