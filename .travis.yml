@@ -54,15 +54,13 @@ before-install:
   - psql -c 'create database postgres' -U postgres
   - psql -c 'create extension postgis' -U postgres -d postgres
 
-  - pear install pear/PHP_CodeSniffer 2.5.0
-  - phpenv rehash
- 
-
 # Install composer dependencies,
 # Create schema and fixtures
 install:
+  - pear install pear/PHP_CodeSniffer 2.5.0
   - export SYMFONY_ENV=drupal_dev
   - composer install
+  - phpenv rehash
  
 before-script:
   - php bin/console doctrine:schema:create 
