@@ -50,26 +50,25 @@ before-install:
   - sleep 5
   - sudo docker pull centos:centos${version}
 
+  - sudo apt-get install php-pear
   - cp app/config/parameters.yml.dist app/config/parameters.yml
   - psql -c 'create database postgres' -U postgres
   - psql -c 'create extension postgis' -U postgres -d postgres
   
-  - pyrus install pear/PHP_CodeSniffer
-  - phpenv rehash
+  - pear install pear/PHP_CodeSniffer
 
+  - phpenv rehash
 
 # Install composer dependencies,
 # Create schema and fixtures
 install:
   - export SYMFONY_ENV=drupal_dev
-  - composer global require "squizlabs/php_codesniffer 2.*"
   - composer install
-  # Install PHPCS
-  
  
 before-script:
   - php bin/console doctrine:schema:create 
-  - php bin/console doctrine:fixtures:load 
+  - php bin/console doctrine:fixtures:load
+  - echo "before phpcs"  
   - phpcs --version
   
 # Run script
