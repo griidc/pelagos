@@ -57,7 +57,7 @@ before-install:
 # Install composer dependencies,
 # Create schema and fixtures
 install:
-  - pear install pear/PHP_CodeSniffer 2.5.0
+  - composer global require "squizlabs/php_codesniffer 2.5.0"
   - export SYMFONY_ENV=drupal_dev
   - composer install
   - phpenv rehash
@@ -70,7 +70,7 @@ before-script:
 # Run script
 script:
   - phpunit
-  - phpcs --standard=Coding-Standards --colors --ignore=bak --extensions=php .
+  - phpcs --standard=GRIIDC --colors --ignore=bak --extensions=php .
   
 notifications:
   email: false
