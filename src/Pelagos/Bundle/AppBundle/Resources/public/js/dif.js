@@ -552,7 +552,7 @@ function updateDIF(form)
     var resourceLocation= "";
     var udi = $('[name="udi"]', form).val();
     var resourceId = $('[name="id"]', form).val();
-    var status = 0;
+    var status = { statusCode: 0, message: "success"};
     var submit = false;
     var approve = false;
 
@@ -596,7 +596,8 @@ function updateDIF(form)
                 data: formData,
                 success: function(json, textStatus, jqXHR) {
                     if (jqXHR.status === 204) {
-                        status = 1;
+                        status.statusCode = 1;
+                        status.message = "success";
                     }
                 }
             });
@@ -606,11 +607,17 @@ function updateDIF(form)
                 url: url +"/approve",
                 type: "PATCH",
                 datatype: "json",
-                data: formData,
-                success: function(json, textStatus, jqXHR) {
-                    if (jqXHR.status === 204) {
-                        status = 2;
-                    }
+                data: formData
+            }).success(function(json, textStatus, jqXHR) {
+                if (jqXHR.status === 204) {
+                    status.statusCode = 2;
+                    status.message = "success";
+                }
+            }).error(function (json, text, jqXHR) {
+                var errroMessage = JSON.parse(json.responseText);
+                if (errroMessage.message === "Can only approve a submitted DIF") {
+                    status.statusCode = 3;
+                    status.message = "error";
                 }
             });
         } else {
@@ -618,47 +625,76 @@ function updateDIF(form)
             return $.Deferred().resolve();
         }
     })
-    .then(function() {
-        // Then show the dialog according the how it was saved.
-        if (status == 0) {
-            var title = "DIF Submitted";
-            var message = '<div><img src="' + imgInfo + '"><p>Thank you for saving DIF with ID:  ' + udi
-            + ".<br>Before submitting this dataset you must return to this page and submit the dataset information form.</p></div>";
-        } else if (status == 1) {
-            var title = "DIF Submitted";
-            var message = '<div><img src="' + imgInfo + '">' +
-            "<p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is " + udi + "." +
-            "<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing. To make changes" +
-            "<br>to your DIF, please email GRIIDC at griidc@gomri.org with the UDI for your dataset." +
-            "<br>Please note that you will receive an email notification when your DIF is approved.</p></div>";
-        } else if (status == 2) {
-            var title = "DIF Updated and Approved";
-            var message = '<div><img src="' + imgInfo + '">' +
-            "<p>The application with DIF ID: " + udi + " was successfully updated and approved!" +
-            "<br></p></div>";
+    .always(function() {
+        if (status.message === "success") {
+            // Then show the dialog according the how it was saved.
+            if (status.statusCode == 0) {
+                var title = "DIF Submitted";
+                var message = '<div><img src="' + imgInfo + '"><p>Thank you for saving DIF with ID:  ' + udi
+                    + ".<br>Before submitting this dataset you must return to this page and submit the dataset information form.</p></div>";
+            } else if (statusCode == 1) {
+                var title = "DIF Submitted";
+                var message = '<div><img src="' + imgInfo + '">' +
+                    "<p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is " + udi + "." +
+                    "<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing. To make changes" +
+                    "<br>to your DIF, please email GRIIDC at griidc@gomri.org with the UDI for your dataset." +
+                    "<br>Please note that you will receive an email notification when your DIF is approved.</p></div>";
+            } else if (status.statusCode == 2) {
+                var title = "DIF Updated and Approved";
+                var message = '<div><img src="' + imgInfo + '">' +
+                    "<p>The application with DIF ID: " + udi + " was successfully updated and approved!" +
+                    "<br></p></div>";
+            }
+        } else if (status.message === "error") {
+            if (status.statusCode == 3) {
+                var title = "Unable to approve DIF";
+                var message = '<div><img src="' + imgInfo + '">' +
+                    "<p>The application with DIF ID: " + udi + " cannot be approved as it is already approved!" +
+                    "<br></p></div>";
+            }
         }
 
         hideSpinner();
         formReset(true);
         //loadDIFS();
 
-        $("<div>"+message+"</div>").dialog({
-            autoOpen: true,
-            resizable: false,
-            minWidth: 300,
-            height: "auto",
-            width: "auto",
-            modal: true,
-            title: title,
-            buttons: {
-                OK: function() {
-                    $(this).dialog("close");
-                    scrollToTop();
-                    treeFilter();
-                    return $.Deferred().resolve();
+        if (status.message === "error") {
+            $("<div>" + message + "</div>").dialog({
+                autoOpen: true,
+                resizable: false,
+                minWidth: 300,
+                height: "auto",
+                width: "auto",
+                modal: true,
+                title: title,
+                buttons: {
+                    OK: function () {
+                        $(this).dialog("close");
+                        scrollToTop();
+                        treeFilter();
+                        return $.Deferred().resolve();
+                    }
                 }
-            }
-        });
+            }).parent().addClass("ui-state-error");
+        } else {
+            $("<div>" + message + "</div>").dialog({
+                autoOpen: true,
+                resizable: false,
+                minWidth: 300,
+                height: "auto",
+                width: "auto",
+                modal: true,
+                title: title,
+                buttons: {
+                    OK: function () {
+                        $(this).dialog("close");
+                        scrollToTop();
+                        treeFilter();
+                        return $.Deferred().resolve();
+                    }
+                }
+            });
+        }
     });
 }
 
