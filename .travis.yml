@@ -53,6 +53,9 @@ before-install:
   - cp app/config/parameters.yml.dist app/config/parameters.yml
   - psql -c 'create database postgres' -U postgres
   - psql -c 'create extension postgis' -U postgres -d postgres
+  
+  - pyrus install pear/PHP_CodeSniffer
+  - phpenv rehash
 
 
 # Install composer dependencies,
@@ -68,6 +71,7 @@ before-script:
 # Run script
 script:
   - phpunit
+  - phpcs --standard=ruleset.xml --extensions=php -n -s .
   
 notifications:
   email: false
