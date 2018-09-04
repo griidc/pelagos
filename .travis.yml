@@ -27,8 +27,8 @@ matrix:
   # Fast finish allows to set the build as "finished" even if the "allow_failures" matrix elements are not finished yet.
   fast_finish: true
   include:
-    - name: "7.1 Centos6"
-      php: 7.1
+    - name: "5.6 Centos6"
+      php: 5.6
       distribution: centos
       version: 6
     - name: "7.1 Centos7"
@@ -65,7 +65,6 @@ install:
 before-script:
   - php bin/console doctrine:schema:create 
   - php bin/console doctrine:fixtures:load
-  - phpcs --version
   
 # Run script
 script:
