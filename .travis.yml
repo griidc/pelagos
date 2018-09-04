@@ -69,7 +69,7 @@ before-script:
 # Run script
 script:
   - phpunit
-  - phpcs --standard=GRIIDC --colors --ignore=bak --extensions=php -n -s ./src
+  - phpcs --standard=ruleset.xml --colors --ignore=bak --extensions=php -n -s ./src
   
 notifications:
   email: false
