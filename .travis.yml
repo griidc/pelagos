@@ -71,3 +71,4 @@ script:
   
 notifications:
   email: false
+  slack: griidc:JosH6istHStJ7cm24B8CC58F
