@@ -12,6 +12,7 @@ var imgError;
 var imgFolder;
 var imgFolderGray;
 var imgThrobber;
+var imgCancel;
 
 $(document).ready(function()
 {
@@ -31,6 +32,7 @@ $(document).ready(function()
     imgFolder = $("#imgfolder").attr("src");
     imgFolderGray = $("#imgfoldergray").attr("src");
     imgThrobber = $("#imgthrobber").attr("src");
+    imgCancel = $("#imgCancel").attr("src");
 
     initSpinner();
 
@@ -648,12 +650,12 @@ function updateDIF(form)
         } else if (status.message === "error") {
             if (status.statusCode == 3) {
                 var title = "Unable to approve DIF";
-                var message = '<div><img src="' + imgCross + '">' +
+                var message = '<div><img src="' + imgCancel + '">' +
                     "<p>The application with DIF ID: " + udi + " cannot be approved as it is already approved!" +
                     "<br></p></div>";
             } else {
                 var title = "Unable to perform desired action on DIF";
-                var message = '<div><img src="' + imgCross + '">' +
+                var message = '<div><img src="' + imgCancel + '">' +
                     "<p>The application with DIF ID: " + udi + " failed to complete action!" +
                     "<br></p></div>";
             }
