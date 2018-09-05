@@ -648,12 +648,12 @@ function updateDIF(form)
         } else if (status.message === "error") {
             if (status.statusCode == 3) {
                 var title = "Unable to approve DIF";
-                var message = '<div><img src="' + imgInfo + '">' +
+                var message = '<div><img src="' + imgCross + '">' +
                     "<p>The application with DIF ID: " + udi + " cannot be approved as it is already approved!" +
                     "<br></p></div>";
             } else {
                 var title = "Unable to perform desired action on DIF";
-                var message = '<div><img src="' + imgInfo + '">' +
+                var message = '<div><img src="' + imgCross + '">' +
                     "<p>The application with DIF ID: " + udi + " failed to complete action!" +
                     "<br></p></div>";
             }
@@ -663,43 +663,24 @@ function updateDIF(form)
         formReset(true);
         //loadDIFS();
 
-        if (status.message === "error") {
-            $("<div>" + message + "</div>").dialog({
-                autoOpen: true,
-                resizable: false,
-                minWidth: 300,
-                height: "auto",
-                width: "auto",
-                modal: true,
-                title: title,
-                buttons: {
-                    OK: function () {
-                        $(this).dialog("close");
-                        scrollToTop();
-                        treeFilter();
-                        return $.Deferred().resolve();
-                    }
+        $("<div>" + message + "</div>").dialog({
+            autoOpen: true,
+            resizable: false,
+            minWidth: 300,
+            height: "auto",
+            width: "auto",
+            modal: true,
+            title: title,
+            buttons: {
+                OK: function () {
+                    $(this).dialog("close");
+                    scrollToTop();
+                    treeFilter();
+                    return $.Deferred().resolve();
                 }
-            }).parent().addClass("ui-state-error");
-        } else {
-            $("<div>" + message + "</div>").dialog({
-                autoOpen: true,
-                resizable: false,
-                minWidth: 300,
-                height: "auto",
-                width: "auto",
-                modal: true,
-                title: title,
-                buttons: {
-                    OK: function () {
-                        $(this).dialog("close");
-                        scrollToTop();
-                        treeFilter();
-                        return $.Deferred().resolve();
-                    }
-                }
-            });
-        }
+            }
+        });
+
     });
 }
 
