@@ -615,9 +615,9 @@ function updateDIF(form)
                 }
             }).error(function (json, text, jqXHR) {
                 var errorMessage = JSON.parse(json.responseText);
+                status.message = "error";
                 if (errorMessage.message === "Can only approve a submitted DIF") {
                     status.statusCode = 3;
-                    status.message = "error";
                 }
             });
         } else {
@@ -650,6 +650,11 @@ function updateDIF(form)
                 var title = "Unable to approve DIF";
                 var message = '<div><img src="' + imgInfo + '">' +
                     "<p>The application with DIF ID: " + udi + " cannot be approved as it is already approved!" +
+                    "<br></p></div>";
+            } else {
+                var title = "Unable to perform desired action on DIF";
+                var message = '<div><img src="' + imgInfo + '">' +
+                    "<p>The application with DIF ID: " + udi + " failed to complete action!" +
                     "<br></p></div>";
             }
         }
