@@ -381,7 +381,7 @@ class UploadHandler
      */
     protected function toBytes($str)
     {
-        $val = preg_replace('/\D/', '', $str);;
+        $val = preg_replace('/\D/', '', $str);
         $last = strtolower($str[(strlen($str) - 1)]);
         switch ($last) {
             case 'g':
