@@ -614,8 +614,8 @@ function updateDIF(form)
                     status.message = "success";
                 }
             }).error(function (json, text, jqXHR) {
-                var errroMessage = JSON.parse(json.responseText);
-                if (errroMessage.message === "Can only approve a submitted DIF") {
+                var errorMessage = JSON.parse(json.responseText);
+                if (errorMessage.message === "Can only approve a submitted DIF") {
                     status.statusCode = 3;
                     status.message = "error";
                 }
