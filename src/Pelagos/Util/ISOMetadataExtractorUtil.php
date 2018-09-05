@@ -330,9 +330,7 @@ class ISOMetadataExtractorUtil
                 //hard-coding to map outdated metadata's distribution contact to the national data center entity
                 switch ($email) {
                     case 'gb-admin@ncbi.nlm.nih.gov':
-                        $email = 'info@ncbi.nlm.nih.gov';
-                        break;
-                    case 'info@ncbi.nml.nih.gov';
+                    case 'info@ncbi.nml.nih.gov':
                         $email = 'info@ncbi.nlm.nih.gov';
                         break;
                     case 'nodc.services@noaa.gov':
