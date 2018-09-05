@@ -680,7 +680,6 @@ function updateDIF(form)
                 }
             }
         });
-
     });
 }
 
