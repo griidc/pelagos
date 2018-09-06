@@ -2,6 +2,8 @@
 
 namespace Pelagos\Exception;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Unit tests for Pelagos\Exception\InvalidFormatArgumentException.
  *
@@ -9,7 +11,7 @@ namespace Pelagos\Exception;
  * @group Pelagos\Exception
  * @group Pelagos\Exception\ArgumentException
  */
-class InvalidFormatArgumentExceptionTest extends \PHPUnit_Framework_TestCase
+class InvalidFormatArgumentExceptionTest extends TestCase
 {
     /**
      * Static class variable containing an expected format to use for testing.
