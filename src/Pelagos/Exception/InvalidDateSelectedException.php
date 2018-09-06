@@ -4,9 +4,10 @@
 namespace Pelagos\Exception;
 
 /**
- * Class InvalidDateSelectedException
+ * Class InvalidDateSelectedException.
  *
- * An exception to be thrown on selection of invalid date range
+ * An exception to be thrown on selection of invalid date range.
+ *
  * @package Pelagos\Exception
  */
 class InvalidDateSelectedException extends \Exception

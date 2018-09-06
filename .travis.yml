@@ -27,10 +27,6 @@ matrix:
   # Fast finish allows to set the build as "finished" even if the "allow_failures" matrix elements are not finished yet.
   fast_finish: true
   include:
-    - name: "7.1 Centos6"
-      php: 7.1
-      distribution: centos
-      version: 6
     - name: "7.1 Centos7"
       php: 7.1
       distribution: centos
@@ -54,20 +50,22 @@ before-install:
   - psql -c 'create database postgres' -U postgres
   - psql -c 'create extension postgis' -U postgres -d postgres
 
-
 # Install composer dependencies,
 # Create schema and fixtures
 install:
+  - pear install pear/PHP_CodeSniffer-2.5.1
   - export SYMFONY_ENV=drupal_dev
-  - composer install 
+  - composer install
+  - phpenv rehash
  
 before-script:
   - php bin/console doctrine:schema:create 
-  - php bin/console doctrine:fixtures:load 
+  - php bin/console doctrine:fixtures:load
   
 # Run script
 script:
   - phpunit
+  - phpcs --standard=GRIIDC --colors --ignore=bak --extensions=php -n -s ./src
   
 notifications:
   email: false
