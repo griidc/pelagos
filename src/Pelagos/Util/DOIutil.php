@@ -153,7 +153,7 @@ class DOIutil
         utf8_encode($input);
         
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->url .'/id/' . $doi);
+        curl_setopt($ch, CURLOPT_URL, $this->url . '/id/' . $doi);
         curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt(
