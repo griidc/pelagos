@@ -555,20 +555,11 @@ function updateDIF(form)
     var udi = $('[name="udi"]', form).val();
     var resourceId = $('[name="id"]', form).val();
     var status = { statusCode: 0, message: "success"};
-    var submit = false;
-    var approve = false;
+    var buttonValue = $('[name="button"]', form).val();
 
     if (udi != "") {
         method = "PUT"
         url = url + "/" + resourceId;
-    }
-
-    if ($('[name="button"]', form).val() == "submit") {
-        submit = true;
-    }
-
-    if ($('[name="button"]', form).val() == "approve") {
-        approve = true;
     }
 
     showSpinner();
@@ -589,7 +580,7 @@ function updateDIF(form)
     })
     .then(function() {
         // Update the status if submit was pressed
-        if (submit) {
+        if (buttonValue === "submit") {
             // It was the submit button
             return $.ajax({
                 url: url +"/submit",
@@ -603,7 +594,7 @@ function updateDIF(form)
                     }
                 }
             });
-        } else if (approve) {
+        } else if (buttonValue === "approve") {
             // It was the approve button
             return $.ajax({
                 url: url +"/approve",
