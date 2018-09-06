@@ -2,6 +2,8 @@
 
 namespace Pelagos\Exception;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Unit tests for Pelagos\Exception\PersistenceException.
  *
@@ -9,7 +11,7 @@ namespace Pelagos\Exception;
  * @group Pelagos\Exception
  * @group Pelagos\Exception\PersistenceException
  */
-class PersistenceExceptionTest extends \PHPUnit_Framework_TestCase
+class PersistenceExceptionTest extends TestCase
 {
     /**
      * Static class variable containing a database query.
