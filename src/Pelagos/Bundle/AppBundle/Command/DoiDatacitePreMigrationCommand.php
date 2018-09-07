@@ -39,13 +39,10 @@ class DoiDatacitePreMigrationCommand extends ContainerAwareCommand
     /**
      * Executes the current command.
      *
-     * @param InputInterface  $input  An InputInterface instance.
+     * @param InputInterface $input An InputInterface instance.
      * @param OutputInterface $output An OutputInterface instance.
      *
-     * @throws \Exception When dataset not found.
-     * @throws \Exception When datasetSubmission not found.
-     *
-     * @return integer Return 0 on success, or an error code otherwise.
+     * @return void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -56,8 +53,6 @@ class DoiDatacitePreMigrationCommand extends ContainerAwareCommand
 
         //Delete Doi property from Dataset which are DIF approved.
         $this->deleteDoiDif($entityManager);
-
-        return 0;
     }
 
     /**
