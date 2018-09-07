@@ -86,7 +86,7 @@ class DoiDatacitePreMigrationCommand extends ContainerAwareCommand
                 $doiBeforeMetadata = $doiUtil->getDOIMetadata($doi);
                 $doiBeforeStatus = $doiBeforeMetadata['_status'];
             } catch (\Exception $e) {
-                throw new \Exception('Unable to get DOI Metadata' . $e->getMessage());
+                throw new \Exception('Unable to get DOI Metadata ' . $e->getMessage());
             }
 
             if ($this->validatePublish($dataset, $doiBeforeStatus)) {
