@@ -92,7 +92,7 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
      *
      * @param OutputInterface $output An class that handles output files.
      *
-     * @return Dataset
+     * @return array
      */
     protected function openIO(OutputInterface $output)
     {
