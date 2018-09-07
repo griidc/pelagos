@@ -74,7 +74,7 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
      *
      * @throws Exception Exception thrown when openIO function fails to generate report.
      *
-     * @return integer Return 0 on success, or an error code otherwise.
+     * @return void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -85,7 +85,6 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
         } catch (Exception $e) {
             throw new Exception('Unable to generate report' . $e->getMessage());
         }
-        return 0;
     }
 
     /**
@@ -116,7 +115,7 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
      *
      * @param array $datasets Collection of datasets.
      *
-     * @return integer Return 0 on success, or an error code otherwise.
+     * @return void
      */
     private function createReportForDoiMigration(array $datasets)
     {
@@ -140,9 +139,6 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
             }
             $this->printResults();
         }
-
-        return 0;
-
     }
 
     /**
@@ -179,7 +175,7 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
      *
      * This also adds the comma delimiter.
      *
-     * @return integer
+     * @return void
      */
     private function printResults()
     {
@@ -193,6 +189,5 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
             }
             $this->fileOutput->writeln($stringBuffer);
         }
-        return 0;
     }
 }
