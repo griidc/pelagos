@@ -83,7 +83,7 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
             $datasets = self::openIO($output);
             $this->createReportForDoiMigration($datasets);
         } catch (Exception $e) {
-            throw new Exception('Unable to generate report' . $e->getMessage());
+            throw new Exception('Unable to generate report ' . $e->getMessage());
         }
     }
 
@@ -152,7 +152,6 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
      */
     private function getDoiStatus(Dataset $dataset)
     {
-        $doiStatus = null;
         $doiArray = array();
 
         if ($dataset->getDoi() instanceof DOI) {
@@ -163,7 +162,7 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
                 $doiArray['id'] = $dataset->getDoi()->getDoi();
 
             } catch (Exception $e) {
-                throw new Exception('Unable to get DOI metadata' . $e->getMessage());
+                throw new Exception('Unable to get DOI metadata ' . $e->getMessage());
             }
         }
 
