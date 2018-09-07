@@ -40,13 +40,6 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
     protected $fileOutput = null;
 
     /**
-     * The Doctrine entity manager - ORM critter.
-     *
-     * @var EntityManager entityManager
-     */
-    protected $entityManager;
-
-    /**
      * The file output array which stores the data.
      *
      * @var array
@@ -96,15 +89,16 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
      */
     protected function openIO(OutputInterface $output)
     {
+        $entityManager = null;
         if ($this->fileOutput === null) {
             $handle = fopen($this->outputFileName, 'w');
             $this->fileOutput = new StreamOutput($handle);
-            $this->entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
+            $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
         }
         $output->writeln('The output file is ' . $this->outputFileName);
 
         $datasets = array();
-        $datasets = $this->entityManager->getRepository(Dataset::class)
+        $datasets = $entityManager->getRepository(Dataset::class)
             ->findBy($datasets, array('udi' => 'ASC'));
 
         return $datasets;
