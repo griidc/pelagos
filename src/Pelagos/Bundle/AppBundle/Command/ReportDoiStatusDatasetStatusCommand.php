@@ -2,19 +2,16 @@
 
 namespace Pelagos\Bundle\AppBundle\Command;
 
-use Exception;
-
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DOI;
-use Pelagos\Util\DOIutil;
-
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\StreamOutput;
 
-use Doctrine\ORM\EntityManager;
+use Pelagos\Entity\Dataset;
+use Pelagos\Entity\DOI;
+use Pelagos\Util\DOIutil;
 
 /**
  * This Symfony Command generates a report for DOI migration.
@@ -65,7 +62,7 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
      * @param InputInterface  $input  An InputInterface instance.
      * @param OutputInterface $output An OutputInterface instance.
      *
-     * @throws Exception Exception thrown when openIO function fails to generate report.
+     * @throws \Exception Exception thrown when openIO function fails to generate report.
      *
      * @return void
      */
@@ -75,8 +72,8 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
         try {
             $datasets = self::openIO($output);
             $this->createReportForDoiMigration($datasets);
-        } catch (Exception $e) {
-            throw new Exception('Unable to generate report ' . $e->getMessage());
+        } catch (\Exception $e) {
+            throw new \Exception('Unable to generate report ' . $e->getMessage());
         }
     }
 
@@ -140,7 +137,7 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
      *
      * @param Dataset $dataset The dataset instance.
      *
-     * @throws Exception Exception thrown when doi metadata method fails.
+     * @throws \Exception Exception thrown when doi metadata method fails.
      *
      * @return array
      */
@@ -155,8 +152,8 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
                 $doiArray['status'] = $doiMetadata['_status'];
                 $doiArray['id'] = $dataset->getDoi()->getDoi();
 
-            } catch (Exception $e) {
-                throw new Exception('Unable to get DOI metadata ' . $e->getMessage());
+            } catch (\Exception $e) {
+                throw new \Exception('Unable to get DOI metadata ' . $e->getMessage());
             }
         }
 
