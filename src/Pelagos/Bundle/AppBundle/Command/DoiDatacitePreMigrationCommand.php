@@ -25,6 +25,13 @@ use Pelagos\Util\DOIutil;
 class DoiDatacitePreMigrationCommand extends ContainerAwareCommand
 {
     /**
+     * Output Interface variable.
+     *
+     * @var OutputInterface
+     */
+    protected $output;
+
+    /**
      * Configures the current command.
      *
      * @return void
@@ -39,13 +46,14 @@ class DoiDatacitePreMigrationCommand extends ContainerAwareCommand
     /**
      * Executes the current command.
      *
-     * @param InputInterface $input An InputInterface instance.
+     * @param InputInterface  $input  An InputInterface instance.
      * @param OutputInterface $output An OutputInterface instance.
      *
      * @return void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->output = $output;
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
 
         //Make submitted datasets(Reserved DOI's) to public.
@@ -96,9 +104,9 @@ class DoiDatacitePreMigrationCommand extends ContainerAwareCommand
                     $doi->setStatus($status);
                     $doi->setPublicDate(new \DateTime);
                     $doi->setModifier($dataset->getModifier());
-                    echo 'Setting DOI status ' . $dataset->getId() . ' (' . $dataset->getUdi() . ") to public.\n";
+                    $this->output->writeln('Setting DOI status ' . $dataset->getId() . ' (' . $dataset->getUdi() . ") to public.\n");
                 } else {
-                    echo 'Already in the public state ' . $dataset->getId() . ' (' . $dataset->getUdi() . ")\n";
+                    $this->output->writeln('Already in the public state ' . $dataset->getId() . ' (' . $dataset->getUdi() . ")\n");
                 }
 
                 $doiAfterMetadata = $doiUtil->getDOIMetadata($doi);
@@ -110,9 +118,9 @@ class DoiDatacitePreMigrationCommand extends ContainerAwareCommand
                     $doi->setStatus($status);
                     $doi->setPublicDate(new \DateTime);
                     $doi->setModifier($dataset->getModifier());
-                    echo 'Setting DOI status ' . $dataset->getId() . ' (' . $dataset->getUdi() . ") to public.\n";
+                    $this->output->writeln('Setting DOI status ' . $dataset->getId() . ' (' . $dataset->getUdi() . ") to public.\n");
                 } else {
-                    echo 'Already in the public state ' . $dataset->getId() . ' (' . $dataset->getUdi() . ")\n";
+                    $this->output->writeln('Already in the public state ' . $dataset->getId() . ' (' . $dataset->getUdi() . ")\n");
                 }
             }
         }
