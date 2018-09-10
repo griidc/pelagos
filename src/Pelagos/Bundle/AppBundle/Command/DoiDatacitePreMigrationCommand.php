@@ -179,6 +179,7 @@ class DoiDatacitePreMigrationCommand extends ContainerAwareCommand
                     $doiReflection = $datasetReflection->getProperty('doi');
                     $doiReflection->setAccessible(true);
                     $doiReflection->setValue($dataset, null);
+                    $this->output->writeln('Attempting to Delete Doi for Dataset ' . $dataset->getId());
                 } catch (\ReflectionException $exception) {
                     throw new ReflectionException('Reflection class failed ' . $exception->getMessage());
                 }
@@ -186,9 +187,8 @@ class DoiDatacitePreMigrationCommand extends ContainerAwareCommand
                 try {
                     $entityManager->persist($dataset);
                     $entityManager->remove($doi);
-                    $entityManager->flush($dataset);
-                    $entityManager->flush(DOI::class);
-
+                    $entityManager->flush();
+                    $this->output->writeln('Doi  Deleted for Dataset ' . $dataset->getId());
                 } catch (ORMException $e) {
                     throw new ORMException('Entity manager failed ' . $e->getMessage());
                 }
