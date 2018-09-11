@@ -75,7 +75,7 @@ class DoiDatacitePostMigrationCommand extends ContainerAwareCommand
 
         foreach ($datasets as $dataset) {
             // Creating DOI's which are DIF approved datasets.
-            if ($dataset->getIdentifiedStatus() === DIF::STATUS_SUBMITTED) {
+            if ($dataset->getIdentifiedStatus() === DIF::STATUS_APPROVED) {
                 $doi = $dataset->getDoi();
                 if (!$doi instanceof DOI) {
                     try {
