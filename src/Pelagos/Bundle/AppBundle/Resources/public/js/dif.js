@@ -640,18 +640,18 @@ function updateDIF(form)
     .always(function() {
         if (status.message === "success") {
             // Then show the dialog according the how it was saved.
-            if (status.statusCode == 0) {
+            if (status.statusCode === 0) {
                 var title = "DIF Submitted";
                 var message = '<div><img src="' + imgInfo + '"><p>Thank you for saving DIF with ID:  ' + udi
                     + ".<br>Before submitting this dataset you must return to this page and submit the dataset information form.</p></div>";
-            } else if (statusCode == 1) {
+            } else if (status.statusCode === 1) {
                 var title = "DIF Submitted";
                 var message = '<div><img src="' + imgInfo + '">' +
                     "<p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is " + udi + "." +
                     "<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing. To make changes" +
                     "<br>to your DIF, please email GRIIDC at griidc@gomri.org with the UDI for your dataset." +
                     "<br>Please note that you will receive an email notification when your DIF is approved.</p></div>";
-            } else if (status.statusCode == 2) {
+            } else if (status.statusCode === 2) {
                 var title = "DIF Updated and Approved";
                 var message = '<div><img src="' + imgInfo + '">' +
                     "<p>The application with DIF ID: " + udi + " was successfully updated and approved!" +
