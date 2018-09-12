@@ -101,14 +101,7 @@ class Geometry
      */
     public function convertGmlToWkt($gml)
     {
-        $namespaces = array(
-                'xmlns:gml' => 'http://www.opengis.net/gml/3.2',
-                'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
-                'xsi:schemaLocation' => 'http://www.opengis.net/gml/3.2 ' .
-                'http://schemas.opengis.net/gml/3.2.1/gml.xsd'
-            );
-
-        $gml = GmlUtil::addNamespace($gml, $namespaces);
+        $gml = GmlUtil::addNamespace($gml);
 
         $sql = 'SELECT ST_AsText(ST_GeomFromGML(:gml, :srid))';
         $connection = $this->entityManager->getConnection();
