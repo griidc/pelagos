@@ -488,7 +488,7 @@ function createDIF(form)
     })
     .then(function() {
         // Update the status if submit was pressed
-        if (submit) {
+        if (buttonValue === "submit") {
             // It was the submit button
             return $.ajax({
                 url: resourceLocation +"/submit",
