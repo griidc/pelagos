@@ -1,0 +1,25 @@
+<table hidden>
+<tr id="template-data-row-available" hidden>
+    <td valign="top" class="direct-download">
+        <a href="#" id="dataset-download">
+        {% image '@PelagosAppBundle/Resources/public/images/download-package.png' %}
+            <img src="{{ asset_url }}" title="" id="img-download-package" class="greyout">
+        {% endimage %}
+        </a>
+    </td>
+    <td class="info">
+        <span id="container-dataset-authors"><span id="dataset-authors"></span>. </span>
+        <span id="container-dataset-year"><span id="dataset-year"></span>. </span>
+        <a href="{{ path('pelagos_app_ui_dataland_default', {'udi' : 'placeholder-udi'}) }}" target="_blank" id="dataset-title">
+        </a>.
+        <span id="container-dataset-research-group"><span id="dataset-research-group"></span>. </span>
+        <span id="container-dataset-doi"><span id="label-dataset-doi">DOI: </span><a href="http://dx.doi.org/{{ 'placeholder-doi' }}" target="_blank" id="dataset-doi"></a>. </span>
+        <div class="details" style="display:none;"/>
+        <div class="attributes">
+        [<a href="#" class="details_link">Show Details</a>]
+            <span id="container-dataset-filesize">[Size: <span id="dataset-filesize"></span>]</span>
+            <span id="container-dataset-restrictions" hidden>[Restrictions: <span id="dataset-restrictions"></span>]</span>
+        </div>
+    </td>
+</tr>
+</table>

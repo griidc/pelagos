@@ -42,6 +42,7 @@ class DatasetIndex
         if (empty(trim($text))) {
             $query->addSort(array('updatedDateTime' => array('order' => 'desc')));
         }
+
         return $this->datasetType->search($query);
     }
 

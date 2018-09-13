@@ -60,3 +60,9 @@ div.dataset_header {
     padding: 5px;
     margin-bottom: 1em;
 }
+
+img.greyout {
+    -webkit-filter: grayscale(100%);
+    -webkit-filter: grayscale(1);
+    filter: grayscale(100%);
+}

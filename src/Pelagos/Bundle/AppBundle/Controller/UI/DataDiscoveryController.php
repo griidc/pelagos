@@ -3,6 +3,8 @@
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Elastica\ResultSet;
+use Pelagos\Response\TerminateResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -12,9 +14,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\DIF;
-use Pelagos\Entity\Metadata;
-
-use Pelagos\Util\ISOMetadataExtractorUtil;
 
 /**
  * The Data Discovery controller.
@@ -40,22 +39,22 @@ class DataDiscoveryController extends UIController
             array(
                 'defaultFilter' => $request->query->get('filter'),
                 'pageName' => 'data-discovery',
-                'download' => false,
+                'download' => false
             )
         );
     }
 
     /**
-     * The datasets action.
+     * The dataset counts action.
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("/datasets")
+     * @Route("/dataset-count")
      * @Method("GET")
      *
      * @return Response
      */
-    public function datasetsAction(Request $request)
+    public function countAction(Request $request)
     {
         $criteria = array();
         if (!empty($request->query->get('by')) and !empty($request->query->get('id'))) {
@@ -95,7 +94,7 @@ class DataDiscoveryController extends UIController
                         DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL,
                         DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE,
                         DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION,
-                        ),
+                    ),
                         'identifiedStatus' => array(
                             DIF::STATUS_APPROVED
                         )
@@ -106,11 +105,13 @@ class DataDiscoveryController extends UIController
             );
             $this->dispatchSearchTermsLogEvent($request, $searchTermsQueryResult);
         }
+
+
         return $this->render(
             'PelagosAppBundle:DataDiscovery:datasets.html.twig',
             array(
-                'datasets' => array(
-                    'available' => $datasetIndex->search(
+                'counts' => array(
+                    'available' => $datasetIndex->count(
                         array_merge(
                             $criteria,
                             array(
@@ -123,7 +124,7 @@ class DataDiscoveryController extends UIController
                         $textFilter,
                         $geoFilter
                     ),
-                    'restricted' => $datasetIndex->search(
+                    'restricted' => $datasetIndex->count(
                         array_merge(
                             $criteria,
                             array(
@@ -136,7 +137,7 @@ class DataDiscoveryController extends UIController
                         $textFilter,
                         $geoFilter
                     ),
-                    'inReview' => $datasetIndex->search(
+                    'inReview' => $datasetIndex->count(
                         array_merge(
                             $criteria,
                             array(
@@ -148,7 +149,7 @@ class DataDiscoveryController extends UIController
                         $textFilter,
                         $geoFilter
                     ),
-                    'identified' => $datasetIndex->search(
+                    'identified' => $datasetIndex->count(
                         array_merge(
                             $criteria,
                             array(
@@ -167,6 +168,105 @@ class DataDiscoveryController extends UIController
                 ),
             )
         );
+    }
+
+    /**
+     * The datasets search action.
+     *
+     * @param Request $request The Symfony request object.
+     *
+     * @Route("/dataset-results")
+     * @Method("GET")
+     *
+     * @return JsonResponse
+     */
+    public function searchAction(Request $request)
+    {
+        $criteria = array();
+        if (!empty($request->query->get('by')) and !empty($request->query->get('id'))) {
+            switch ($request->query->get('by')) {
+                case 'fundSrc':
+                    $criteria['researchGroup.fundingCycle.id'] = array(
+                        $request->query->get('id')
+                    );
+                    break;
+                case 'projectId':
+                    $criteria['researchGroup.id'] = array(
+                        $request->query->get('id')
+                    );
+                    break;
+            }
+        }
+        $textFilter = null;
+        if (!empty($request->query->get('filter'))) {
+            $textFilter = $request->query->get('filter');
+        }
+        $geoFilter = null;
+        if (!empty($request->query->get('geo_filter'))) {
+            $geoFilter = $request->query->get('geo_filter');
+        }
+
+        $currentIndex = (int) $request->query->get('current_index');
+        $bulkSize = (int) $request->query->get('bulk_size');
+
+        $datasetIndex = $this->get('pelagos.util.dataset_index');
+
+
+        $activeTabIndex = (int) $request->query->get('active_tab_index');
+        switch ($activeTabIndex) {
+            case 1:
+                //restricted
+                $availabilityStatus = array (
+                    'availabilityStatus' => array(
+                        DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED,
+                        DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
+                    )
+                );
+                break;
+            case 2:
+                // inReview
+                $availabilityStatus = array(
+                        'availabilityStatus' => array(
+                            DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL,
+                        )
+                    );
+                break;
+            case 3:
+                //identified
+                $availabilityStatus = array(
+                    'availabilityStatus' => array(
+                        DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE,
+                        DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION,
+                    ),
+                    'identifiedStatus' => array(
+                        DIF::STATUS_APPROVED,
+                    ),
+                );
+                break;
+            default:
+                //case 0 or default case (available)
+                $availabilityStatus = array(
+                    'availabilityStatus' => array(
+                        DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
+                        DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
+                    )
+                );
+        }
+
+        $results = $datasetIndex->search(
+            array_merge(
+                $criteria,
+                $availabilityStatus
+            ),
+            $textFilter,
+            $geoFilter
+        )->getResponse()->getData()['hits']['hits'];
+
+        if ((count($results) - $currentIndex) >= $bulkSize) {
+            $results = array_slice($results, $currentIndex, $bulkSize);
+        }
+
+        return new JsonResponse(json_encode($results));
     }
 
     /**
