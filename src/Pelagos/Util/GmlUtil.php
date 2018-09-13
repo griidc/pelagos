@@ -24,7 +24,7 @@ class GmlUtil
      */
     public static function addNamespace($gml, array $namespaces = self::GML_NAMESPACES)
     {
-        if (($gml != null) and (1 == preg_match('/gml/', $gml))) {
+        if (($gml != null) and (1 === preg_match('/gml/', $gml))) {
             $doc = new \DomDocument('1.0', 'UTF-8');
 
             $doc->loadXML($gml, LIBXML_NOERROR);
