@@ -181,6 +181,8 @@ class DatasetSubmissionListener extends EventListener
                 ' started review for ' . $dataset->getUdi() . ' (' . $datasetSubmissionPrev->getMetadataStatus() .
                 ' ->InReview)');
         }
+        // Publish DOI for accepted and unrestricted datasets
+        $this->producer->publish($datasetSubmission->getDataset()->getId(), 'publish');
     }
 
     /**

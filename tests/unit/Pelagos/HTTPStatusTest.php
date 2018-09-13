@@ -2,13 +2,15 @@
 
 namespace Pelagos;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Unit tests for Pelagos\HTTPStatus.
  *
  * @group Pelagos
  * @group Pelagos\HTTPStatus
  */
-class HTTPStatusTest extends \PHPUnit_Framework_TestCase
+class HTTPStatusTest extends TestCase
 {
     /**
      * An HTTP status code to use for testing.
