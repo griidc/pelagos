@@ -46,9 +46,7 @@ class GmlUtil
                 $regEx = '/^<gml:\S*/';
                 $gml = preg_replace($regEx, "$0$strNameSpaces", $gml);
             }
-            return $gml;
-        } else {
-            return $gml;
         }
+        return $gml;
     }
 }
