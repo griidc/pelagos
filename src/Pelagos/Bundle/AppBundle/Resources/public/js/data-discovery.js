@@ -2,7 +2,6 @@
 var datasetList = new Array(4);
 
 var currentIndex = 0; //keep track of current Index in the current tab
-var bulkSize = 30; //determine the number of row get back from every new load
 var buffer = []; //temporary buffer array to get new bulk of data
 
 var $ = jQuery.noConflict();
@@ -145,7 +144,7 @@ function loadData(by, id) {
             "geo_filter": geo_filter,
             "active_tab_index": activeTabIndex,
             "current_index": currentIndex,
-            "bulk_size": bulkSize
+            "bulk_size": 30 //determine the number of row get back from every new load
         },
         "dataType": 'json',
         "success": function(response) {
@@ -219,6 +218,7 @@ function createRow(data, row)
                 imgTitle = "Download unavailable"
             break;
         case 3: //identified
+            $(rowContent).find("#img-download-package").hide();
             $(rowContent).find("#container-dataset-restrictions").css("color","grey");
             $(rowContent).find("#dataset-restrictions").text("?");
             $(rowContent).find("#container-dataset-restrictions").show();
@@ -350,6 +350,7 @@ function showDatasets(by,id) {
                         }
                     }
                     var activeTabIndex = getActiveTabIndex();
+                    //set the currentIndex to the newly switched tab's index
                     currentIndex = (datasetList[activeTabIndex].length === 0) ? 0 : datasetList[activeTabIndex].length - 1;
                     loadData(by, id);
                 }

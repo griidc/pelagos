@@ -105,8 +105,7 @@ class DataDiscoveryController extends UIController
             );
             $this->dispatchSearchTermsLogEvent($request, $searchTermsQueryResult);
         }
-
-
+        
         return $this->render(
             'PelagosAppBundle:DataDiscovery:datasets.html.twig',
             array(
