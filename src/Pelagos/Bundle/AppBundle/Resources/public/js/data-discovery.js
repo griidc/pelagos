@@ -177,7 +177,7 @@ function addRows() {
         row.show();
         currentIndex++;
         //add the data to the data array
-        datasetList[activeTabIndex][dataset["udi"]] = dataset;
+        datasetList[activeTabIndex][data["udi"]] = dataset;
     });
     //clear buffer
     buffer = [];
