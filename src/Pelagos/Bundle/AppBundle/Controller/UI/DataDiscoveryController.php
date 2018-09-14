@@ -3,6 +3,7 @@
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Elastica\ResultSet;
+
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,7 +39,7 @@ class DataDiscoveryController extends UIController
             array(
                 'defaultFilter' => $request->query->get('filter'),
                 'pageName' => 'data-discovery',
-                'download' => false
+                'download' => false,
             )
         );
     }
