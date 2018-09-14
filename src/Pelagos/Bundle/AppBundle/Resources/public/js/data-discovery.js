@@ -106,12 +106,12 @@ function resizeLeftRight() {
 }
 
 function formatBytes(bytes,decimals) {
-    if(bytes == 0) return '0 Bytes';
+    if(bytes == 0) return "0 Bytes";
     var k = 1024,
         dm = decimals <= 0 ? 0 : decimals || 2,
-        sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+        sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
         i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
 }
 
 function getActiveTabIndex() {
@@ -146,7 +146,7 @@ function loadData(by, id) {
             "current_index": currentIndex,
             "bulk_size": 30 //determine the number of row get back from every new load
         },
-        "dataType": 'json',
+        "dataType": "json",
         "success": function(response) {
             buffer = JSON.parse(response);
 
@@ -192,7 +192,7 @@ function createRow(data, row)
     var imgTitle = "";
     switch (activeTabIndex) {
         case 0: //available
-            if ("RemotelyHosted" === data["datasetSubmission"]["datasetFileTransferStatus"] && !data["datasetSubmission"]["datasetFileTransferStatus"].match('!^https?://data.gulfresearchinitiative.org!')) {
+            if ("RemotelyHosted" === data["datasetSubmission"]["datasetFileTransferStatus"] && !data["datasetSubmission"]["datasetFileTransferStatus"].match("!^https?://data.gulfresearchinitiative.org!")) {
                 imgTitle = "This dataset can be downloaded from an external repository.";
             } else {
                 imgTitle = ("title", "Download dataset");
@@ -275,20 +275,20 @@ function createRow(data, row)
             $.ajax({
                 "url": Routing.generate("pelagos_app_ui_datadiscovery_showdetails", { "id": datasetId }),
                 "success": function(data) {
-                    $(row).find('.details').html(data);
-                    $(row).find('.details').show();
-                    $(row).find('.details_link').html("Hide Details");
+                    $(row).find(".details").html(data);
+                    $(row).find(".details").show();
+                    $(row).find(".details_link").html("Hide Details");
                 }
             });
         }
         else {
-            if ($(row).find('.details:visible').length == 1) {
-                $(row).find('.details').hide();
-                $(row).find('.details_link').html("Show Details");
+            if ($(row).find(".details:visible").length == 1) {
+                $(row).find(".details").hide();
+                $(row).find(".details_link").html("Show Details");
             }
             else {
-                $(row).find('.details').show();
-                $(row).find('.details_link').html("Hide Details");
+                $(row).find(".details").show();
+                $(row).find(".details_link").html("Hide Details");
             }
         }
     });
