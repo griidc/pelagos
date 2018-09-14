@@ -205,13 +205,13 @@ class DataDiscoveryController extends UIController
             $geoFilter = $request->query->get('geo_filter');
         }
 
-        $currentIndex = (int) $request->query->get('current_index');
-        $bulkSize = (int) $request->query->get('bulk_size');
+        $currentIndex = $request->query->get('current_index');
+        $bulkSize = $request->query->get('bulk_size');
 
         $datasetIndex = $this->get('pelagos.util.dataset_index');
 
 
-        $activeTabIndex = (int) $request->query->get('active_tab_index');
+        $activeTabIndex = $request->query->get('active_tab_index');
         switch ($activeTabIndex) {
             case 1:
                 //restricted

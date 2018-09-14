@@ -1,9 +1,6 @@
 //dataArray stores data for each tab
 var datasetList = new Array(4);
-datasetList[0] = [];
-datasetList[1] = [];
-datasetList[2] = [];
-datasetList[3] = [];
+
 var currentIndex = 0; //keep track of current Index in the current tab
 var bulkSize = 30; //determine the number of row get back from every new load
 var buffer = []; //temporary buffer array to get new bulk of data
