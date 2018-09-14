@@ -66,7 +66,6 @@ $(document).ready(function() {
     $("#filter-input").on("keyup change paste input propertychange", function(e) {
         enableFilterButton();
     });
-
 });
 //end document ready
 
@@ -361,7 +360,7 @@ function showDatasets(by,id) {
             enableFilterButton();
             $("#clear-button").button("enable");
             $("#drawGeoFilterButton").button("enable");
-            //this trigger infinites scrolling
+            //this triggers infinite scrolling
             $(".viewport").has(".datasets").scroll(function(){
                 if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
                     loadData(by, id);

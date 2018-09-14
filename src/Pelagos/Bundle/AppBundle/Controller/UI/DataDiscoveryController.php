@@ -3,7 +3,6 @@
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Elastica\ResultSet;
-use Pelagos\Response\TerminateResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
