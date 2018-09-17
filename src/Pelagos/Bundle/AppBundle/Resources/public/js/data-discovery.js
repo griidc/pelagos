@@ -1,7 +1,5 @@
 //dataArray stores data for each tab
 var datasetList = new Array(4);
-
-var currentIndex = 0; //keep track of current Index in the current tab
 var buffer = []; //temporary buffer array to get new bulk of data
 
 var $ = jQuery.noConflict();
@@ -143,7 +141,7 @@ function loadData(by, id) {
             "id": id,
             "geo_filter": geo_filter,
             "active_tab_index": activeTabIndex,
-            "current_index": currentIndex,
+            "current_index": datasetList[activeTabIndex].length > 0 ? datasetList[activeTabIndex].length - 1 : 0,
             "bulk_size": 30 //determine the number of row get back from every new load
         },
         "dataType": "json",
@@ -163,20 +161,19 @@ function loadData(by, id) {
 //this iterates new bulk of data and render new rows
 function addRows() {
     var activeTabIndex = getActiveTabIndex();
-    var activeTabSelector = "table.datasets[tabIndex=" + activeTabIndex + "]";
 
     buffer.forEach(dataset => {
         var data = dataset["_source"];
-        var row = $(activeTabSelector + " tr:eq(" + currentIndex + ")");
-        row.attr("udi", data["udi"]);
-        row.attr("datasetid", dataset["_id"]);
+        var row = document.createElement("tr");
+        $(row).attr("udi", data["udi"]);
+        $(row).attr("datasetid", dataset["_id"]);
 
         var rowContent = createRow(data, row);
-        row.html(rowContent);
-        row.show();
-        currentIndex++;
+        $(row).html(rowContent);
+        //append row to the table
+        $("table.datasets[tabIndex=" + activeTabIndex + "]").append(row);
         //add the data to the data array
-        datasetList[activeTabIndex][data["udi"]] = dataset;
+        datasetList[activeTabIndex].push(dataset);
     });
     //clear buffer
     buffer = [];
@@ -187,7 +184,7 @@ function createRow(data, row)
 {
     var activeTabIndex = getActiveTabIndex();
     //clone from template row and shove actual data in
-    var rowContent = $("#template-data-row-available").children().clone(true, true);
+    var rowContent = $("#template-data-row-available").children().clone();
 
     var imgTitle = "";
     switch (activeTabIndex) {
@@ -268,7 +265,7 @@ function createRow(data, row)
     }
 
     //this shows the details dataset on Show Details button
-    $(rowContent).find(".details_link").bind("click", function(){
+    $(".details_link").bind("click", function(){
         var row = $(this).closest("tr");
         if ($(row).has(".details:empty").length == 1) {
             var datasetId = $(row).attr("datasetid");
@@ -306,7 +303,6 @@ function showDatasets(by,id) {
     }
 
     //reset existing data to prepare for a new search
-    currentIndex = 0;
     datasetList[0] = [];
     datasetList[1] = [];
     datasetList[2] = [];
@@ -340,19 +336,19 @@ function showDatasets(by,id) {
             $("#dataset_listing").html(data);
             $("#tabs").tabs({
                 activate: function(event, ui) {
-                    if ($("#show_all_extents_checkbox").is(":checked")) {
-                        var selectedTab = $("#tabs").tabs("option","active");
-                        myGeoViz.removeAllFeaturesFromMap();
-                        if (datasets[selectedTab]) {
-                            for (var i=0; i<datasets[selectedTab].length; i++) {
-                                myGeoViz.addFeatureFromWKT(datasets[selectedTab][i].geom,{"udi":datasets[selectedTab][i].udi});
-                            }
-                        }
-                    }
                     var activeTabIndex = getActiveTabIndex();
-                    //set the currentIndex to the newly switched tab's index
-                    currentIndex = (datasetList[activeTabIndex].length === 0) ? 0 : datasetList[activeTabIndex].length - 1;
-                    loadData(by, id);
+                    // if ($("#show_all_extents_checkbox").is(":checked")) {
+                    //     var selectedTab = $("#tabs").tabs("option","active");
+                    //     myGeoViz.removeAllFeaturesFromMap();
+                    //     if (datasets[selectedTab]) {
+                    //         for (var i=0; i<datasets[selectedTab].length; i++) {
+                    //             myGeoViz.addFeatureFromWKT(datasets[selectedTab][i].geom,{"udi":datasets[selectedTab][i].udi});
+                    //         }
+                    //     }
+                    // }
+                    if (datasetList[activeTabIndex].length == 0) {
+                        loadData(by, id);
+                    }
                 }
             });
             enableFilterButton();
