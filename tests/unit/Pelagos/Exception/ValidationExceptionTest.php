@@ -2,6 +2,8 @@
 
 namespace Pelagos\Exception;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Unit tests for Pelagos\Exception\ValidationException.
  *
@@ -9,7 +11,7 @@ namespace Pelagos\Exception;
  * @group Pelagos\Exception
  * @group Pelagos\Exception\ValidationException
  */
-class ValidationExceptionTest extends \PHPUnit_Framework_TestCase
+class ValidationExceptionTest extends TestCase
 {
     /**
      * Static class variable containing a list of violationse to use for testing.

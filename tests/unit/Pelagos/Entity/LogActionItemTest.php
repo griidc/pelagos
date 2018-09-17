@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Unit tests for Pelagos\Entity\LogActionItem.
  *
@@ -11,7 +13,7 @@ namespace Pelagos\Entity;
  *
  * @package Pelagos\Entity
  */
-class LogActionItemTest extends \PHPUnit_Framework_TestCase
+class LogActionItemTest extends TestCase
 {
     /**
      * Property to hold an instance of Log Action Item for testing.

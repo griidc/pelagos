@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Unit tests for Pelagos\Entity\ResearchGroupRole.
  *
@@ -9,7 +11,7 @@ namespace Pelagos\Entity;
  * @group Pelagos\Entity
  * @group Pelagos\Entity\ResearchGroupRole
  */
-class ResearchGroupRoleTest extends \PHPUnit_Framework_TestCase
+class ResearchGroupRoleTest extends TestCase
 {
     /**
      * Property to hold an instance of ResearchGroupRole for testing.

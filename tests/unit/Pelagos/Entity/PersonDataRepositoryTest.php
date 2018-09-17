@@ -2,6 +2,10 @@
 
 namespace Pelagos\Entity;
 
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Error;
+
+
 /**
  * Unit tests for Pelagos\Entity\PersonDataRepository.
  *
@@ -9,7 +13,7 @@ namespace Pelagos\Entity;
  * @group Pelagos\Entity
  * @group Pelagos\Entity\PersonDataRepository
  */
-class PersonDataRepositoryTest extends \PHPUnit_Framework_TestCase
+class PersonDataRepositoryTest extends TestCase
 {
     /**
      * Property to hold an instance of PersonDataRepository for testing.
@@ -79,7 +83,7 @@ class PersonDataRepositoryTest extends \PHPUnit_Framework_TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \Error
      *
      * @return void
      */
@@ -93,7 +97,7 @@ class PersonDataRepositoryTest extends \PHPUnit_Framework_TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \Error
      *
      * @return void
      */
@@ -137,7 +141,7 @@ class PersonDataRepositoryTest extends \PHPUnit_Framework_TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \Error
      *
      * @return void
      */
@@ -151,7 +155,7 @@ class PersonDataRepositoryTest extends \PHPUnit_Framework_TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \Error
      *
      * @return void
      */
@@ -195,7 +199,7 @@ class PersonDataRepositoryTest extends \PHPUnit_Framework_TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \Error
      *
      * @return void
      */
@@ -209,7 +213,7 @@ class PersonDataRepositoryTest extends \PHPUnit_Framework_TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \Error
      *
      * @return void
      */

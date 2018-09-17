@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Unit tests for Pelagos\Entity\FundingOrganization.
  *
@@ -9,7 +11,7 @@ namespace Pelagos\Entity;
  * @group Pelagos\Entity
  * @group Pelagos\Entity\FundingOrganization
  */
-class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
+class FundingOrganizationTest extends TestCase
 {
     /**
      * Property to hold an instance of FundingOrganization for testing.
