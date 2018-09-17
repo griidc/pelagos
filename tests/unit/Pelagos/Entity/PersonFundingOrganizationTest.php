@@ -2,6 +2,9 @@
 
 namespace Pelagos\Entity;
 
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Error;
+
 /**
  * Unit tests for Pelagos\Entity\PersonFundingOrganization.
  *
@@ -9,7 +12,7 @@ namespace Pelagos\Entity;
  * @group Pelagos\Entity
  * @group Pelagos\Entity\PersonFundingOrganization
  */
-class PersonFundingOrganizationTest extends \PHPUnit_Framework_TestCase
+class PersonFundingOrganizationTest extends TestCase
 {
     /**
      * Property to hold an instance of PersonFundingOrganization for testing.
@@ -79,7 +82,7 @@ class PersonFundingOrganizationTest extends \PHPUnit_Framework_TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \Error
      *
      * @return void
      */
@@ -93,7 +96,7 @@ class PersonFundingOrganizationTest extends \PHPUnit_Framework_TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \Error
      *
      * @return void
      */
@@ -137,7 +140,7 @@ class PersonFundingOrganizationTest extends \PHPUnit_Framework_TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \Error
      *
      * @return void
      */
@@ -151,7 +154,7 @@ class PersonFundingOrganizationTest extends \PHPUnit_Framework_TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \Error
      *
      * @return void
      */
@@ -195,7 +198,7 @@ class PersonFundingOrganizationTest extends \PHPUnit_Framework_TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \Error
      *
      * @return void
      */
@@ -209,7 +212,7 @@ class PersonFundingOrganizationTest extends \PHPUnit_Framework_TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \Error
      *
      * @return void
      */

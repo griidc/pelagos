@@ -2,6 +2,8 @@
 
 namespace Pelagos\Exception;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Unit tests for Pelagos\Exception\EmptyRequiredArgumentException.
  *
@@ -9,7 +11,7 @@ namespace Pelagos\Exception;
  * @group Pelagos\Exception
  * @group Pelagos\Exception\ArgumentException
  */
-class EmptyRequiredArgumentExceptionTest extends \PHPUnit_Framework_TestCase
+class EmptyRequiredArgumentExceptionTest extends TestCase
 {
     /**
      * Test that we can throw a EmptyRequiredArgumentException.

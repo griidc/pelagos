@@ -1,6 +1,8 @@
 <?php
 namespace Tests\unit\Pelagos\Util;
 
+use PHPUnit\Framework\TestCase;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -18,7 +20,7 @@ use Pelagos\Util\ISOMetadataExtractorUtil;
  * @group Pelagos
  * @group Pelagos\Util
  */
-class ISOMetadataExtractorUtilTest extends \PHPUnit_Framework_TestCase
+class ISOMetadataExtractorUtilTest extends TestCase
 {
     /**
      * A \SimpleXml object used in testing.
