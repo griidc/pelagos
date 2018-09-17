@@ -219,10 +219,6 @@ class DoiConsumer implements ConsumerInterface
      */
     protected function publishDoi(Dataset $dataset, array $loggingContext)
     {
-        // Additional check for publishing only accepted datasets(unlikely to happen).
-        if ($dataset->getMetadataStatus() !== DatasetSubmission::METADATA_STATUS_ACCEPTED) {
-            return true;
-        }
         // Log processing start.
         $this->logger->info('Attempting to mark DOI as published', $loggingContext);
 
@@ -231,32 +227,41 @@ class DoiConsumer implements ConsumerInterface
             $this->logger->error('No DOI found for dataset', $loggingContext);
             return true;
         }
+        $doiId = $doi->getDoi();
 
-        $loggingContext['doi'] = $doi->getDoi();
+        $loggingContext['doi'] = $doiId;
 
-        $doiStatus = $doi->getStatus();
+        try {
+            $doiUtil = new DOIutil();
 
-        $restriction = $dataset->getDatasetSubmission()->getRestrictions();
+            //Getting the DOI status from the EZ ID API
+            $doiMetaData = $doiUtil->getDOIMetadata($doiId);
+            $doiStatus = $doiMetaData['_status'];
 
-        if ($this->validatePublish($dataset, $doiStatus, $loggingContext)) {
-            $status = $this->getDoiStatus($restriction);
-            try {
-                $doiUtil = new DOIutil();
-                $doiUtil->publishDOI($doi, $status);
+            if ($this->validatePublish($dataset, $doiStatus, $loggingContext)) {
+                $status = $this->getDoiStatus($dataset, $doiStatus);
+
+                try {
+                    $doiUtil->publishDOI($doiId, $status);
+                } catch (\Exception $exception) {
+                    $this->logger->error('Error setting DOI to published: ' . $exception->getMessage(), $loggingContext);
+                    return;
+                }
 
                 $doi->setStatus($status);
                 $doi->setPublicDate(new \DateTime);
                 $doi->setModifier($dataset->getModifier());
-            } catch (\Exception $exception) {
-                $this->logger->error('Error setting DOI to published: ' . $exception->getMessage(), $loggingContext);
-                return;
-            }
-        }
 
-        // Dispatch entity event.
-        $this->entityEventDispatcher->dispatch($dataset, 'doi_published');
-        // Log processing complete.
-        $this->logger->info('DOI set to published', $loggingContext);
+                // Dispatch entity event.
+                $this->entityEventDispatcher->dispatch($dataset, 'doi_published');
+                // Log processing complete.
+                $this->logger->info('DOI set to published', $loggingContext);
+            } else {
+                $this->logger->info('DOI already in the right status, No action is taken', $loggingContext);
+            }
+        } catch (\Exception $e) {
+            $this->logger->error('Error getting DOI metadata: ' . $e->getMessage(), $loggingContext);
+        }
     }
 
     /**
@@ -286,40 +291,55 @@ class DoiConsumer implements ConsumerInterface
     /**
      * Validate publish for DOI for the dataset.
      *
-     * @param string $restriction    The restriction for the dataset.
-     * @param string $doiStatus      The status of the DOI for the dataset.
-     * @param array  $loggingContext The logging context to use when logging.
+     * @param Dataset $dataset        The dataset.
+     * @param string  $doiStatus      The status of the DOI for the dataset.
+     * @param array   $loggingContext The logging context to use when logging.
      *
      * @return boolean
      */
-    private function validatePublish($restriction, $doiStatus, array $loggingContext)
+    private function validatePublish($dataset, $doiStatus, array $loggingContext)
     {
-        if ($doiStatus === DOI::STATUS_PUBLIC and $restriction === DatasetSubmission::RESTRICTION_NONE) {
+        if ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED and
+            $doiStatus === DOI::STATUS_PUBLIC and
+            $dataset->getDatasetSubmission()->getRestrictions() === DatasetSubmission::RESTRICTION_NONE) {
             // Don't attempt to publish an already published DOI to preserve the original pub date.
             $this->logger->warning('DOI for dataset already marked as published', $loggingContext);
             return false;
-        } elseif ($doiStatus !== DOI::STATUS_PUBLIC and $restriction === DatasetSubmission::RESTRICTION_NONE) {
-            $this->logger->info('DOI for dataset is being published', $loggingContext);
-            return true;
-        } elseif ($doiStatus === DOI::STATUS_PUBLIC and $restriction !== DatasetSubmission::RESTRICTION_NONE) {
-            $this->logger->info('DOI for dataset is being set to unavailable', $loggingContext);
-            return true;
+        } elseif ($dataset->getMetadataStatus() !== DatasetSubmission::METADATA_STATUS_ACCEPTED and
+            $doiStatus === DOI::STATUS_RESERVED) {
+            // Don't attempt to publish not accepted dataset.
+            $this->logger->warning('DOI for dataset is not accepted, No action is taken', $loggingContext);
+            return false;
         }
+
         return true;
     }
 
     /**
      * Get the Doi status to be persisted.
      *
-     * @param string $restriction The restriction status for the dataset.
+     * @param Dataset $dataset   The dataset.
+     * @param string  $doiStatus The status of the DOI for the dataset.
      *
      * @return string
      */
-    private function getDoiStatus($restriction)
+    private function getDoiStatus($dataset, $doiStatus)
     {
-        $status = DOI::STATUS_PUBLIC;
-        if ($restriction === DatasetSubmission::RESTRICTION_RESTRICTED) {
+        //declaring it as reserved for defensive purpose
+        $status = DOI::STATUS_RESERVED;
+
+        $restriction = $dataset->getDatasetSubmission()->getRestrictions();
+
+        if ($dataset->getMetadataStatus() !== DatasetSubmission::METADATA_STATUS_ACCEPTED and
+            $doiStatus === DOI::STATUS_PUBLIC ) {
             $status = DOI::STATUS_UNAVAILABLE;
+        } elseif ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED and
+            $doiStatus === DOI::STATUS_PUBLIC and $restriction === DatasetSubmission::RESTRICTION_RESTRICTED) {
+            $status = DOI::STATUS_UNAVAILABLE;
+        } elseif ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED and
+            in_array($doiStatus, [DOI::STATUS_RESERVED, DOI::STATUS_UNAVAILABLE]) and
+            $restriction === DatasetSubmission::RESTRICTION_NONE) {
+            $status = DOI::STATUS_PUBLIC;
         }
 
         return $status;

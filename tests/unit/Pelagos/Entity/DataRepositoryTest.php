@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Unit tests for Pelagos\Entity\DataRepository.
  *
@@ -9,7 +11,7 @@ namespace Pelagos\Entity;
  * @group Pelagos\Entity
  * @group Pelagos\Entity\DataRepository
  */
-class DataRepositoryTest extends \PHPUnit_Framework_TestCase
+class DataRepositoryTest extends TestCase
 {
     /**
      * Property to hold an instance of DataRepository for testing.

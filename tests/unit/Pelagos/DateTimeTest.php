@@ -2,12 +2,14 @@
 
 namespace Pelagos;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class DateTimeTest.
  *
  * A unit test for the DateTime class.
  */
-class DateTimeTest extends \PHPUnit_Framework_TestCase
+class DateTimeTest extends TestCase
 {
     /**
      * Test the ability to set the format.
@@ -56,6 +58,7 @@ class DateTimeTest extends \PHPUnit_Framework_TestCase
     public function testSet()
     {
         $oneDateTime = new DateTime();
+        $oneDateTime->setTime('12', '34', '56', false);
         $twoDateTime = new DateTime();
         $twoDateTime->set($oneDateTime);
 

@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use PHPUnit\Framework\TestCase;
+
 use Doctrine\Common\Collections\Collection;
 use \DateTime;
 
@@ -14,7 +16,7 @@ use \DateTime;
  *
  * @package Pelagos\Entity
  */
-class DatasetSubmissionTest extends \PHPUnit_Framework_TestCase
+class DatasetSubmissionTest extends TestCase
 {
     /**
      * Dataset Submission undergoing test.

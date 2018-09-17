@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Unit tests for Pelagos\Entity\Distributionpoint.
  *
@@ -9,7 +11,7 @@ namespace Pelagos\Entity;
  * @group Pelagos\Entity
  * @group Pelagos\Entity\DistributionPoint
  */
-class DistributionPointTest extends \PHPUnit_Framework_TestCase
+class DistributionPointTest extends TestCase
 {
     /**
      * Property to hold an instance of distributionPoint for testing.

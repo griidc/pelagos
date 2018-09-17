@@ -2,10 +2,12 @@
 
 namespace Pelagos;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Dummy integration test so PHPUnit is happy.
  */
-class DummyTest extends \PHPUnit_Framework_TestCase
+class DummyTest extends TestCase
 {
     /**
      * Test nothing.

@@ -2,6 +2,8 @@
 
 namespace Tests\unit\Pelagos\Bundle\AppBundle\Security;
 
+use PHPUnit\Framework\TestCase;
+
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -18,7 +20,7 @@ use Pelagos\Entity\Entity;
 /**
  * Abstract class containing utility methods and tests shared by all Pelagos Entity voter tests.
  */
-abstract class PelagosEntityVoterTest extends \PHPUnit_Framework_TestCase
+abstract class PelagosEntityVoterTest extends TestCase
 {
     /**
      * An instance of the voter under test.

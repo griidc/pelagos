@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use PHPUnit\Framework\TestCase;
+
 use Symfony\Component\Validator\Validation;
 
 /**
@@ -13,7 +15,7 @@ use Symfony\Component\Validator\Validation;
  *
  * @package Pelagos\Entity
  */
-class PasswordTest extends \PHPUnit_Framework_TestCase
+class PasswordTest extends TestCase
 {
     /**
      * Property to hold an instance of Password for testing.
