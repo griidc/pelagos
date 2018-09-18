@@ -380,9 +380,9 @@ function showDatasets(by,id) {
                     loadData(by, id);
                 }
             });
-            if (myGeoViz.getFilter()) {
+            if (geo_filter) {
                 $("#clearGeoFilterButton").button("enable");
-            }
+             }
         },
         "error": function(jqXHR, textStatus, errorThrown) {
             alert("Fail: " + textStatus + " " + errorThrown + jqXHR.getResponseHeader());
