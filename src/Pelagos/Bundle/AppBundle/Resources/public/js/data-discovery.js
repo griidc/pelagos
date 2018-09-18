@@ -360,7 +360,7 @@ function showDatasets(by,id) {
                     var activeTabIndex = getActiveTabIndex();
                     if ($("#show_all_extents_checkbox").is(":checked")) {
                         myGeoViz.removeAllFeaturesFromMap();
-                        if (datasetList[getActiveTabIndex()]) {
+                        if (datasetList[activeTabIndex]) {
                             for (var i=0; i<datasetList[activeTabIndex].length; i++) {
                                 myGeoViz.addFeatureFromWKT(datasetList[activeTabIndex][i]["_source"]["geometry"],{"udi":datasetList[activeTabIndex][i]["_source"]["udi"]});
                             }
