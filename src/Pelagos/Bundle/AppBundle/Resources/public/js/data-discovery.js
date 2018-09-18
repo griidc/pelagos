@@ -141,7 +141,7 @@ function loadData(by, id) {
             "id": id,
             "geo_filter": geo_filter,
             "active_tab_index": activeTabIndex,
-            "current_index": datasetList[activeTabIndex].length > 0 ? datasetList[activeTabIndex].length - 1 : 0,
+            "current_index": datasetList[activeTabIndex].length > 0 ? datasetList[activeTabIndex].length : 0,
             "bulk_size": 30 //determine the number of row get back from every new load
         },
         "dataType": "json",
