@@ -2,6 +2,9 @@
 
 namespace Pelagos\Entity;
 
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Error;
+
 /**
  * Unit tests for Pelagos\Entity\ResearchGroup.
  *
@@ -9,7 +12,7 @@ namespace Pelagos\Entity;
  * @group Pelagos\Entity
  * @group Pelagos\Entity\ResearchGroup
  */
-class ResearchGroupTest extends \PHPUnit_Framework_TestCase
+class ResearchGroupTest extends TestCase
 {
     /**
      * Property to hold an instance of ResearchGroup for testing.
@@ -235,7 +238,7 @@ class ResearchGroupTest extends \PHPUnit_Framework_TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \Error
      *
      * @return void
      */

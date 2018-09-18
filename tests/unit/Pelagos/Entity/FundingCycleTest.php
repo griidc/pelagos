@@ -2,6 +2,10 @@
 
 namespace Pelagos\Entity;
 
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Error;
+
+
 /**
  * Unit tests for Pelagos\Entity\FundingCycle.
  *
@@ -9,7 +13,7 @@ namespace Pelagos\Entity;
  * @group Pelagos\Entity
  * @group Pelagos\Entity\FundingCycle
  */
-class FundingCycleTest extends \PHPUnit_Framework_TestCase
+class FundingCycleTest extends TestCase
 {
     /**
      * Property to hold an instance of FundingCycle for testing.
@@ -171,7 +175,7 @@ class FundingCycleTest extends \PHPUnit_Framework_TestCase
      *
      * This method should not accept a parameter that is not a \Pelagos\Entity\FundingOrganization.
      *
-     * @expectedException \PHPUnit_Framework_Error
+     * @expectedException \Error
      *
      * @return void
      */
