@@ -360,9 +360,9 @@ function showDatasets(by,id) {
                     loadData(by, id);
                 }
             });
-            // if (myGeoViz.getFilter()) {
-            //     $("#clearGeoFilterButton").button("enable");
-            // }
+            if (myGeoViz.getFilter()) {
+                $("#clearGeoFilterButton").button("enable");
+            }
         },
         "error": function(jqXHR, textStatus, errorThrown) {
             alert("Fail: " + textStatus + " " + errorThrown + jqXHR.getResponseHeader());
