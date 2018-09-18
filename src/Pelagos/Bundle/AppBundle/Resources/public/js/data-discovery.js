@@ -61,6 +61,7 @@ $(document).ready(function() {
         enableFilterButton();
     });
 });
+
 //end document ready
 
 // function to enable the Filter button only when the textbox is not empty //
@@ -167,6 +168,24 @@ function addRows() {
         var row = document.createElement("tr");
         $(row).attr("udi", data["udi"]);
         $(row).attr("datasetid", dataset["_id"]);
+        if (data["geometry"]) {
+            $(row).hover(function () {
+
+                if (!$('#show_all_extents_checkbox').is(':checked')) {
+                    for (var i = 0; i < datasetList[activeTabIndex].length; i++) {
+                        if (datasetList[activeTabIndex][i]["_source"]["udi"] == $(this).attr('udi')) {
+                            myGeoViz.addFeatureFromWKT(datasetList[activeTabIndex][i]["_source"]["geometry"], {'udi': datasetList[activeTabIndex][i]["_source"]["udi"]});
+                        }
+                    }
+                }
+                myGeoViz.highlightFeature('udi', $(this).attr('udi'));
+            }, function () {
+                myGeoViz.unhighlightFeature('udi', $(this).attr('udi'));
+                if (!$('#show_all_extents_checkbox').is(':checked')) {
+                    myGeoViz.removeAllFeaturesFromMap();
+                }
+            });
+        }
 
         var rowContent = createRow(data, row);
         $(row).html(rowContent);
@@ -309,8 +328,10 @@ function showDatasets(by,id) {
     datasetList[3] = [];
     myGeoViz.removeAllFeaturesFromMap();
 
+    $("#show_all_extents_checkbox").button("disable");
     $("#filter-button").button("disable");
     $("#clear-button").button("disable");
+
     $("#drawGeoFilterButton").button("disable");
     currentlink = $("#packageLink").attr("href");
     if (currentlink) {
@@ -337,15 +358,14 @@ function showDatasets(by,id) {
             $("#tabs").tabs({
                 activate: function(event, ui) {
                     var activeTabIndex = getActiveTabIndex();
-                    // if ($("#show_all_extents_checkbox").is(":checked")) {
-                    //     var selectedTab = $("#tabs").tabs("option","active");
-                    //     myGeoViz.removeAllFeaturesFromMap();
-                    //     if (datasets[selectedTab]) {
-                    //         for (var i=0; i<datasets[selectedTab].length; i++) {
-                    //             myGeoViz.addFeatureFromWKT(datasets[selectedTab][i].geom,{"udi":datasets[selectedTab][i].udi});
-                    //         }
-                    //     }
-                    // }
+                    if ($("#show_all_extents_checkbox").is(":checked")) {
+                        myGeoViz.removeAllFeaturesFromMap();
+                        if (datasetList[getActiveTabIndex()]) {
+                            for (var i=0; i<datasetList[activeTabIndex].length; i++) {
+                                myGeoViz.addFeatureFromWKT(datasetList[activeTabIndex][i]["_source"]["geometry"],{"udi":datasetList[activeTabIndex][i]["_source"]["udi"]});
+                            }
+                        }
+                    }
                     if (datasetList[activeTabIndex].length == 0) {
                         loadData(by, id);
                     }
@@ -396,13 +416,14 @@ function clearAll() {
 }
 
 function showAllExtents() {
+    var activeTabIndex = getActiveTabIndex();
     if ($("#show_all_extents_checkbox").is(":checked")) {
         $("#show_all_extents_label").html('<span class="ui-button-text">Hide All Extents</span>');
         var selectedTab = $("#tabs").tabs("option","active");
         myGeoViz.removeAllFeaturesFromMap();
-        if (datasets[selectedTab]) {
-            for (var i=0; i<datasets[selectedTab].length; i++) {
-                myGeoViz.addFeatureFromWKT(datasets[selectedTab][i].geom,{"udi":datasets[selectedTab][i].udi});
+        if (datasetList[activeTabIndex]) {
+            for (var i=0; i<datasetList[activeTabIndex].length; i++) {
+                myGeoViz.addFeatureFromWKT(datasetList[activeTabIndex][i]["_source"]["geometry"],{"udi":datasetList[activeTabIndex][i]["_source"]["udi"]});
             }
         }
     }

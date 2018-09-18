@@ -184,7 +184,7 @@ class DatasetIndex
             array(
                 'id', 'udi', 'title', 'year', 'researchGroup', 'doi', 'datasetSubmission.authors',
                 'datasetSubmission.datasetFileTransferStatus', 'datasetSubmission.datasetFileUri',
-                'datasetSubmission.datasetFileSize', 'datasetSubmission.restrictions'
+                'datasetSubmission.datasetFileSize', 'datasetSubmission.restrictions', 'geometry'
             )
         );
 
