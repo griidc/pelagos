@@ -128,6 +128,8 @@ class DoiConsumer implements ConsumerInterface
         // Log processing start.
         $this->logger->info('Attempting to issue DOI', $loggingContext);
 
+        $doiUtil = new DOIutil();
+
         $doi = $dataset->getDoi();
 
         if ($doi instanceof DOI) {
@@ -146,7 +148,6 @@ class DoiConsumer implements ConsumerInterface
         }
 
         try {
-            $doiUtil = new DOIutil();
             $issuedDoi = $doiUtil->mintDOI(
                 'https://data.gulfresearchinitiative.org/data/' . $dataset->getUdi(),
                 $dataset->getAuthors(),
