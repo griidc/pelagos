@@ -58,7 +58,7 @@ class DOIutil
     }
 
     /**
-     * This function will create a DOI.
+     * This function will mint a DOI.
      *
      * @param string $url             URL for DOI.
      * @param string $creator         Creator for DOI.
@@ -72,7 +72,7 @@ class DOIutil
      *
      * @return string The DOI issued by EZID.
      */
-    public function createDOI(
+    public function mintDOI(
         $url,
         $creator,
         $title,
@@ -109,7 +109,6 @@ class DOIutil
 
         //check to see if it worked.
         //using in array because EZID API returns 201 and EZDatacite API returns 200.
-        // TODO change in_array to previous statement
         if (!in_array($httpCode, [200, 201])) {
             throw new \Exception("ezid failed with:$httpCode($output)", $httpCode);
         }
@@ -118,9 +117,70 @@ class DOIutil
 
         return $matches[1];
     }
-    
+
     /**
      * This function will create a DOI.
+     *
+     * @param string $doi             The DOI identifier to create.
+     * @param string $url             URL for DOI.
+     * @param string $creator         Creator for DOI.
+     * @param string $title           Title for DOI.
+     * @param string $publisher       Publisher for DOI.
+     * @param string $publicationYear Published Date for DOI.
+     * @param string $status          Status of the DOI, by default is reserved.
+     * @param string $resourcetype    Type for DOI Request, by default Dataset.
+     *
+     * @throws \Exception When there was an error negotiating with EZID.
+     *
+     * @return string The DOI issued by EZID.
+     */
+    public function createDOI(
+        $doi,
+        $url,
+        $creator,
+        $title,
+        $publisher,
+        $publicationYear,
+        $status = 'reserved',
+        $resourcetype = 'Dataset'
+    ) {
+        $input = '_target:' . $this->escapeSpecialCharacters($url) . "\n";
+        $input .= "_profile:datacite\n";
+        $input .= "_status:$status\n";
+        $input .= 'datacite.creator:' . $this->escapeSpecialCharacters($creator) . "\n";
+        $input .= 'datacite.title:' . $this->escapeSpecialCharacters($title) . "\n";
+        $input .= 'datacite.publisher:' . $this->escapeSpecialCharacters($publisher) . "\n";
+        $input .= "datacite.publicationyear:$publicationYear\n";
+        $input .= "datacite.resourcetype:$resourcetype";
+
+        utf8_encode($input);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $this->url . '/id/' . $doi);
+        curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+        curl_setopt(
+            $ch,
+            CURLOPT_HTTPHEADER,
+            array('Content-Type: text/plain; charset=UTF-8','Content-Length: ' . strlen($input))
+        );
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $input);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $output = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        //check to see if it worked.
+        //using in array because EZID API returns 201 and EZDatacite API returns 200.
+        if (!in_array($httpCode, [200, 201])) {
+            throw new \Exception("ezid failed with:$httpCode($output)", $httpCode);
+        }
+
+        return true;
+    }
+
+    /**
+     * This function will update a DOI.
      *
      * @param string $doi             The DOI to update.
      * @param string $url             URL for DOI.
@@ -143,15 +203,15 @@ class DOIutil
     ) {
         // Add doi: to doi is it doesn't exist.
         $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
-        
+
         $input = '_target:' . $this->escapeSpecialCharacters($url) . "\n";
         $input .= 'datacite.creator:' . $this->escapeSpecialCharacters($creator) . "\n";
         $input .= 'datacite.title:' . $this->escapeSpecialCharacters($title) . "\n";
         $input .= 'datacite.publisher:' . $this->escapeSpecialCharacters($publisher) . "\n";
         $input .= "datacite.publicationyear:$publicationYear\n";
-        
+
         utf8_encode($input);
-        
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->url . '/id/' . $doi);
         curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
@@ -166,12 +226,12 @@ class DOIutil
         $output = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        
+
         //check to see if it worked.
         if (200 != $httpCode) {
             throw new \Exception("ezid failed with:$httpCode($output)", $httpCode);
         }
-        
+
         return true;
     }
 
@@ -273,7 +333,7 @@ class DOIutil
 
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        
+
         //check to see if it worked.
         if (200 != $httpCode) {
             throw new \Exception("ezid failed with:$httpCode($output)", $httpCode);
@@ -289,7 +349,7 @@ class DOIutil
 
         return $metadata;
     }
-    
+
     /**
      * This function escape :%\n\r characters, because these are special with EZID.
      *
