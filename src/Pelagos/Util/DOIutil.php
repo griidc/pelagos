@@ -203,6 +203,11 @@ class DOIutil
                 $output = curl_exec($ch);
                 $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
                 curl_close($ch);
+
+                // If it fails again, then just throw the error.
+                if (!in_array($httpCode, [200, 201])) {
+                    throw new \Exception("ezid failed with:$httpCode($output)", $httpCode);
+                }
             } else {
                 throw new \Exception("ezid failed with:$httpCode($output)", $httpCode);
             }
