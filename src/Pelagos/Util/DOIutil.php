@@ -173,7 +173,39 @@ class DOIutil
         //check to see if it worked.
         //using in array because EZID API returns 201 and EZDatacite API returns 200.
         if (!in_array($httpCode, [200, 201])) {
-            throw new \Exception("ezid failed with:$httpCode($output)", $httpCode);
+            if ($httpCode == 500) {
+                $input = '_target:' . $this->escapeSpecialCharacters($url) . "\n";
+                $input .= "_profile:datacite\n";
+                $input .= "_status:$status\n";
+                $input .= 'datacite.creator:'
+                    . $this->convertAscii($this->escapeSpecialCharacters($creator))
+                    . "\n";
+                $input .= 'datacite.title:'
+                    . $this->convertAscii($this->escapeSpecialCharacters($title))
+                    . "\n";
+                $input .= 'datacite.publisher:' . $this->escapeSpecialCharacters($publisher) . "\n";
+                $input .= "datacite.publicationyear:$publicationYear\n";
+                $input .= "datacite.resourcetype:$resourcetype";
+
+                utf8_encode($input);
+
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $this->url . '/id/' . $doi);
+                curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+                curl_setopt(
+                    $ch,
+                    CURLOPT_HTTPHEADER,
+                    array('Content-Type: text/plain; charset=UTF-8','Content-Length: ' . strlen($input))
+                );
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $input);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                $output = curl_exec($ch);
+                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+            } else {
+                throw new \Exception("ezid failed with:$httpCode($output)", $httpCode);
+            }
         }
 
         return true;
@@ -366,5 +398,57 @@ class DOIutil
             },
             $input
         );
+    }
+
+    /**
+     * Remove any non-ASCII characters and convert known non-ASCII characters to their ASCII equivalents, if possible.
+     *
+     * @param string $string The to be converted string.
+     *
+     * @author Jay Williams <myd3.com>
+     *
+     * @license MIT License
+     *
+     * @link http://gist.github.com/119517
+     *
+     * @return string $string The output string.
+     */
+    private function convertAscii($string)
+    {
+        // Replace Single Curly Quotes
+        $search[]  = chr(226) . chr(128) . chr(152);
+        $replace[] = "'";
+        $search[]  = chr(226) . chr(128) . chr(153);
+        $replace[] = "'";
+
+        // Replace Smart Double Curly Quotes
+        $search[]  = chr(226) . chr(128) . chr(156);
+        $replace[] = '"';
+        $search[]  = chr(226) . chr(128) . chr(157);
+        $replace[] = '"';
+
+        // Replace En Dash
+        $search[]  = chr(226) . chr(128) . chr(147);
+        $replace[] = '--';
+
+        // Replace Em Dash
+        $search[]  = chr(226) . chr(128) . chr(148);
+        $replace[] = '---';
+
+        // Replace Bullet
+        $search[]  = chr(226) . chr(128) . chr(162);
+        $replace[] = '*';
+
+        // Replace Middle Dot
+        $search[]  = chr(194) . chr(183);
+        $replace[] = '*';
+
+        // Apply Replacements
+        $string = str_replace($search, $replace, $string);
+
+        // Remove any non-ASCII Characters
+        $string = preg_replace("/[^\x01-\x7F]/", '', $string);
+
+        return $string;
     }
 }
