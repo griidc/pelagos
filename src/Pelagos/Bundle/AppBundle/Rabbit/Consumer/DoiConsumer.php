@@ -143,7 +143,7 @@ class DoiConsumer implements ConsumerInterface
                 return $this->createDoi($dataset, $loggingContext);
             }
             //Update a the DOI instead.
-            $this->logger->warning('DOI found, updating the DOI for dataset', $loggingContext);
+            $this->logger->info('DOI found, updating the DOI for dataset', $loggingContext);
             return $this->updateDoi($dataset, $loggingContext);
         }
 
@@ -240,9 +240,11 @@ class DoiConsumer implements ConsumerInterface
             $this->issueDoi($dataset, $loggingContext);
             return true;
         }
-        
-        $doiId = $doi->getDoi();
+
+        $doiUtil = new DOIutil();
+
         try {
+            $doiId = $doi->getDoi();
             $doiMetaData = $doiUtil->getDOIMetadata($doiId);
         } catch (\Exception $exception) {
             //DOI exist, but is not found in EZID/Datacite.
@@ -251,7 +253,6 @@ class DoiConsumer implements ConsumerInterface
         }
 
         try {
-            $doiUtil = new DOIutil();
             $success = $doiUtil->updateDOI(
                 $doi->getDoi(),
                 'https://data.gulfresearchinitiative.org/data/' . $dataset->getUdi(),
