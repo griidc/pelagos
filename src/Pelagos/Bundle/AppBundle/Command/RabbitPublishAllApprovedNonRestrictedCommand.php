@@ -4,13 +4,11 @@ namespace Pelagos\Bundle\AppBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DOI;
-use Pelagos\Util\DOIutil;
+use Pelagos\Entity\DIF;
+
 
 /**
  * This command publishes a rabbit message for every accepted dataset forcing update of DOI info.
