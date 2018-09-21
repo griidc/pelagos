@@ -44,37 +44,23 @@ class RabbitPublishAllApprovedNonRestrictedCommand extends ContainerAwareCommand
      * @param InputInterface  $input  An InputInterface instance.
      * @param OutputInterface $output An OutputInterface instance.
      *
-     * @throws \Exception When dataset not found.
-     * @throws \Exception When datasetSubmission not found.
-     *
-     * @return integer Return 0 on success, or an error code otherwise.
+     * @return void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
         $datasets = $entityManager->getRepository('Pelagos\Entity\Dataset')->findBy(array(
             'metadataStatus' => array(
-                DatasetSubmission::METADATA_STATUS_ACCEPTED,
+                DatasetSubmission::METADATA_STATUS_NONE,
             )
         ));
 
         $thumper = $this->getContainer()->get('old_sound_rabbit_mq.doi_issue_producer');
         foreach ($datasets as $dataset) {
-            $doiUtil = new DOIutil;
-            try {
-                $doiMetadata = $doiUtil->getDOIMetadata($dataset->getDoi());
-            } catch (\Exception $e) {
-                 $output->writeln('Did not get a response from EzID for ' . $dataset->getUdi());
-            }
-
-            if (array_key_exists('_status', $doiMetadata) and $doiMetadata['_status'] === 'public') {
-                echo 'Skipping because EzID already reports dataset ' . $dataset->getId() . ' (' . $dataset->getUdi() . ") is public.\n";
-            } else {
+            if ($dataset->getIdentifiedStatus() === DIF::STATUS_APPROVED) {
                 $thumper->publish($dataset->getId(), 'publish');
-                echo 'Requesting DOI publish update for dataset ' . $dataset->getId() . ' (' . $dataset->getUdi() . ")\n";
+                $output->writeln('Attempting to publish/transition DOI for Dataset ' . $dataset->getId());
             }
         }
-
-        return 0;
     }
 }
