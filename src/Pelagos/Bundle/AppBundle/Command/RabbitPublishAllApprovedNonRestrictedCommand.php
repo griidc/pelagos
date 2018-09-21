@@ -9,7 +9,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\DIF;
 
-
 /**
  * This command publishes a rabbit message for every accepted dataset forcing update of DOI info.
  *
