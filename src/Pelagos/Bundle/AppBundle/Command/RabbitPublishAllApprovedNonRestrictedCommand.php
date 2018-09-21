@@ -6,7 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\DIF;
 
 /**
@@ -47,17 +46,12 @@ class RabbitPublishAllApprovedNonRestrictedCommand extends ContainerAwareCommand
     {
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
         $datasets = $entityManager->getRepository('Pelagos\Entity\Dataset')->findBy(array(
-            'metadataStatus' => array(
-                DatasetSubmission::METADATA_STATUS_NONE,
-            )
-        ));
+            'identifiedStatus' => DIF::STATUS_APPROVED));
 
         $thumper = $this->getContainer()->get('old_sound_rabbit_mq.doi_issue_producer');
         foreach ($datasets as $dataset) {
-            if ($dataset->getIdentifiedStatus() === DIF::STATUS_APPROVED) {
-                $thumper->publish($dataset->getId(), 'publish');
-                $output->writeln('Attempting to publish/transition DOI for Dataset ' . $dataset->getId());
-            }
+            $thumper->publish($dataset->getId(), 'publish');
+            $output->writeln('Attempting to publish/transition DOI for Dataset ' . $dataset->getId());
         }
     }
 }
