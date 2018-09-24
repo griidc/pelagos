@@ -16,6 +16,7 @@ use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\Metadata;
+use Pelagos\Util\GmlUtil;
 
 /**
  * The Dataset Monitoring controller.
@@ -201,7 +202,7 @@ class DatalandController extends UIController
     private function getBoundingBox(Dataset $dataset)
     {
         $geoUtil = $this->get('pelagos.util.geometry');
-        $gml = $dataset->getDatasetSubmission()->getSpatialExtent();
+        $gml = GmlUtil::addNamespace($dataset->getDatasetSubmission()->getSpatialExtent());
         $boundingBoxArray = array();
         if ($gml) {
             try {

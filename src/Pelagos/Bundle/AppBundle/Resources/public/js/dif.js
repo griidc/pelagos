@@ -564,21 +564,12 @@ function updateDIF(form)
     var resourceLocation= "";
     var udi = $('[name="udi"]', form).val();
     var resourceId = $('[name="id"]', form).val();
-    var status = { statusCode: 0, message: "success"};
-    var submit = false;
-    var approve = false;
+    var response   = { status: "", message: ""};
+    var buttonValue = $('[name="button"]', form).val();
 
     if (udi != "") {
         method = "PUT"
         url = url + "/" + resourceId;
-    }
-
-    if ($('[name="button"]', form).val() == "submit") {
-        submit = true;
-    }
-
-    if ($('[name="button"]', form).val() == "approve") {
-        approve = true;
     }
 
     showSpinner();
@@ -595,11 +586,12 @@ function updateDIF(form)
             } else {
                 resourceLocation = url;
             }
+            response.status = "success";
         }
     })
     .then(function() {
         // Update the status if submit was pressed
-        if (submit) {
+        if (buttonValue === "submit") {
             // It was the submit button
             return $.ajax({
                 url: url +"/submit",
@@ -608,12 +600,11 @@ function updateDIF(form)
                 data: formData,
                 success: function(json, textStatus, jqXHR) {
                     if (jqXHR.status === 204) {
-                        status.statusCode = 1;
-                        status.message = "success";
+                        response.status = "success";
                     }
                 }
             });
-        } else if (approve) {
+        } else if (buttonValue === "approve") {
             // It was the approve button
             return $.ajax({
                 url: url +"/approve",
@@ -622,15 +613,12 @@ function updateDIF(form)
                 data: formData
             }).success(function(json, textStatus, jqXHR) {
                 if (jqXHR.status === 204) {
-                    status.statusCode = 2;
-                    status.message = "success";
+                    response.status = "success";
                 }
             }).error(function (json, text, jqXHR) {
                 var errorMessage = JSON.parse(json.responseText);
-                status.message = "error";
-                if (errorMessage.message === "Can only approve a submitted DIF") {
-                    status.statusCode = 3;
-                }
+                response.status = "error";
+                response.message = errorMessage.message;
             });
         } else {
             // Not the submit button, still resolve.
@@ -638,27 +626,30 @@ function updateDIF(form)
         }
     })
     .always(function() {
-        if (status.message === "success") {
+        if (response.status === "success") {
             // Then show the dialog according the how it was saved.
-            if (status.statusCode === 0) {
-                var title = "DIF Submitted";
+            if (buttonValue === "save") {
+                var title = "DIF Saved";
                 var message = '<div><img src="' + imgInfo + '"><p>Thank you for saving DIF with ID:  ' + udi
                     + ".<br>Before submitting this dataset you must return to this page and submit the dataset information form.</p></div>";
-            } else if (status.statusCode === 1) {
+            } else if (buttonValue === "update") {
+                var title = "DIF Updated";
+                var message = '<div><img src="' + imgInfo + '"><p>Thank you for updating DIF with ID:  ' + udi + ".</p></div>";
+            } else if (buttonValue === "submit") {
                 var title = "DIF Submitted";
                 var message = '<div><img src="' + imgInfo + '">' +
                     "<p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is " + udi + "." +
                     "<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing. To make changes" +
                     "<br>to your DIF, please email GRIIDC at griidc@gomri.org with the UDI for your dataset." +
                     "<br>Please note that you will receive an email notification when your DIF is approved.</p></div>";
-            } else if (status.statusCode === 2) {
+            } else if (buttonValue === "approve") {
                 var title = "DIF Updated and Approved";
                 var message = '<div><img src="' + imgInfo + '">' +
                     "<p>The application with DIF ID: " + udi + " was successfully updated and approved!" +
                     "<br></p></div>";
             }
-        } else if (status.message === "error") {
-            if (status.statusCode == 3) {
+        } else if (response.status === "error") {
+            if (response.message === "Can only approve a submitted DIF") {
                 var title = "Unable to approve DIF";
                 var message = '<div><img src="' + imgCancel + '">' +
                     "<p>The application with DIF ID: " + udi + " cannot be approved as it is already approved!" +
