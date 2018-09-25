@@ -27,6 +27,8 @@ abstract class UIController extends Controller
      *
      * @param ContainerInterface $container The container for the UIController.
      *
+     * @throws HttpException When system is in read-only mode.
+     *
      * @return void
      */
     public function setContainer(ContainerInterface $container = null)

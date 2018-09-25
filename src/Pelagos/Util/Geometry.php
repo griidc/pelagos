@@ -101,6 +101,8 @@ class Geometry
      */
     public function convertGmlToWkt($gml)
     {
+        $gml = GmlUtil::addNamespace($gml);
+
         $sql = 'SELECT ST_AsText(ST_GeomFromGML(:gml, :srid))';
         $connection = $this->entityManager->getConnection();
         $sth = $connection->prepare($sql);
