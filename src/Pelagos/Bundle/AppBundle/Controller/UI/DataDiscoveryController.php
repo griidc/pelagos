@@ -263,10 +263,9 @@ class DataDiscoveryController extends UIController
 
         if ((count($results) - $currentIndex) >= $bulkSize) {
             $results = array_slice($results, $currentIndex, $bulkSize);
-        }
-        else {
+        } else {
             //return the last bulk of data (the last bulk is less than bulk size)
-            $results = array_slice($results, $currentIndex, count($results) - $currentIndex);
+            $results = array_slice($results, $currentIndex, (count($results) - $currentIndex));
         }
 
         return new JsonResponse(json_encode($results));
