@@ -76,9 +76,9 @@ class DoiDatacitePreMigrationCommand extends ContainerAwareCommand
     {
         $datasets = $entityManager->getRepository(Dataset::class)->findBy(array(
             'datasetStatus' => array(
-                DatasetSubmission::METADATA_STATUS_SUBMITTED,
+                Dataset::DATASET_STATUS_SUBMITTED,
                 Dataset::DATASET_STATUS_ACCEPTED,
-                DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
+                Dataset::DATASET_STATUS_BACK_TO_SUBMITTER
             )
         ));
 
@@ -138,7 +138,7 @@ class DoiDatacitePreMigrationCommand extends ContainerAwareCommand
     {
         if (in_array(
             $dataset->getDatasetStatus(),
-            [DatasetSubmission::METADATA_STATUS_SUBMITTED, DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER]
+            [Dataset::DATASET_STATUS_SUBMITTED, Dataset::DATASET_STATUS_BACK_TO_SUBMITTER]
         )
         ) {
             // Need to publish all the datasets which are submitted and in reserved state
@@ -166,7 +166,7 @@ class DoiDatacitePreMigrationCommand extends ContainerAwareCommand
     {
         $datasets = $entityManager->getRepository(Dataset::class)->findBy(array(
             'datasetStatus' => array(
-                DatasetSubmission::METADATA_STATUS_NONE
+                Dataset::DATASET_STATUS_NONE
             )
         ));
 

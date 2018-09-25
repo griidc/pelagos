@@ -8,7 +8,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\DIF;
 
 /**
@@ -45,7 +44,7 @@ class DoiDatacitePostMigrationCommand extends ContainerAwareCommand
 
         $datasets = $entityManager->getRepository(Dataset::class)->findBy(array(
             'datasetStatus' => array(
-                DatasetSubmission::METADATA_STATUS_NONE,
+                Dataset::DATASET_STATUS_NONE,
             )
         ));
 

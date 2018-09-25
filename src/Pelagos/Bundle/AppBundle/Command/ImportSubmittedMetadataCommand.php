@@ -121,7 +121,7 @@ class ImportSubmittedMetadataCommand extends ContainerAwareCommand
                     $submitterReflection = $datasetSubmissionReflection->getProperty('submitter');
                     $submitterReflection->setAccessible(true);
                     $submitterReflection->setValue($datasetSubmission, null);
-                    $datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_NONE);
+                    $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_NONE);
                     $output->writeln("  Marked dataset submission for $udi as incomplete.");
                     $counts['incompleted']++;
                 }
