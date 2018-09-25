@@ -122,7 +122,7 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
         foreach ($datasets as $dataset) {
             $this->fileOutputArray = array();
             $this->fileOutputArray[] = $dataset->getUdi();
-            $this->fileOutputArray[] = $dataset->getMetadataStatus();
+            $this->fileOutputArray[] = $dataset->getDatasetStatus();
             $doi = $this->getDoiStatus($dataset);
             if (!empty($doi)) {
                 $this->fileOutputArray[] = $doi['status'];

@@ -51,7 +51,7 @@ class BackFillAcceptedMetadataCommand extends ContainerAwareCommand
 
         $datasets = $entityManager
             ->getRepository('Pelagos\Entity\Dataset')
-            ->findBy(array('metadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED));
+            ->findBy(array('datasetStatus' => Dataset::DATASET_STATUS_ACCEPTED));
 
         foreach ($datasets as $dataset) {
 

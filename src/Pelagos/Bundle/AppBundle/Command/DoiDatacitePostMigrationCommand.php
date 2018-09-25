@@ -44,7 +44,7 @@ class DoiDatacitePostMigrationCommand extends ContainerAwareCommand
         //Recreate the DOIs which we deleted.
 
         $datasets = $entityManager->getRepository(Dataset::class)->findBy(array(
-            'metadataStatus' => array(
+            'datasetStatus' => array(
                 DatasetSubmission::METADATA_STATUS_NONE,
             )
         ));
