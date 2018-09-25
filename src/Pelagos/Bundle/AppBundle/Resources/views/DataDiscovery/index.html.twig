@@ -43,7 +43,6 @@
 
     {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
 {% endblock %}
-
 {% block body %}
     <input id="by-input" type="hidden">
     <input id="id-input" type="hidden">
@@ -131,12 +130,5 @@
                 <div style="height:50px; width:12px"></div>
             </div>
         </div>
-
     </div>
-
-    {% if download %}
-        <script type="text/javascript">
-            showDatasetDownload('{{download}}');
-        </script>
-    {% endif %}
 {% endblock %}
