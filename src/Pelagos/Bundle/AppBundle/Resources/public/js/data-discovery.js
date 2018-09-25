@@ -61,7 +61,6 @@ $(document).ready(function() {
         enableFilterButton();
     });
 });
-
 //end document ready
 
 // function to enable the Filter button only when the textbox is not empty //
@@ -223,8 +222,7 @@ function createRow(data, row)
             if ("RemotelyHosted" === data["datasetSubmission"]["datasetFileTransferStatus"]) {
                 imgTitle = "This dataset is restricted for download but is hosted by another website so availability status is not guaranteed to be accurate. " +
                     "Please contact the external repository for information on how to access this dataset.";
-            }
-            else {
+            } else {
                 imgTitle = "This dataset is restricted for download.";
             }
             $(rowContent).find("#dataset-restrictions").text("Download Restricted");
@@ -296,13 +294,11 @@ function createRow(data, row)
                     $(row).find(".details_link").html("Hide Details");
                 }
             });
-        }
-        else {
+        } else {
             if ($(row).find(".details:visible").length == 1) {
                 $(row).find(".details").hide();
                 $(row).find(".details_link").html("Show Details");
-            }
-            else {
+            } else {
                 $(row).find(".details").show();
                 $(row).find(".details_link").html("Hide Details");
             }
@@ -426,8 +422,7 @@ function showAllExtents() {
                 myGeoViz.addFeatureFromWKT(datasetList[activeTabIndex][i]["_source"]["geometry"],{"udi":datasetList[activeTabIndex][i]["_source"]["udi"]});
             }
         }
-    }
-    else {
+    } else {
         $("#show_all_extents_label").html('<span class="ui-button-text">Show All Extents</span>');
         $("table.datasets tr td").removeClass("highlight");
         myGeoViz.removeAllFeaturesFromMap();
