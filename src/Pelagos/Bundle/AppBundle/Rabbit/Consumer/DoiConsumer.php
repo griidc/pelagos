@@ -128,17 +128,27 @@ class DoiConsumer implements ConsumerInterface
         // Log processing start.
         $this->logger->info('Attempting to issue DOI', $loggingContext);
 
+        $doiUtil = new DOIutil();
+
         $doi = $dataset->getDoi();
+
         if ($doi instanceof DOI) {
             $this->logger->warning('The DOI already exist for dataset', $loggingContext);
+            $doiId = $doi->getDoi();
+            try {
+                $doiMetaData = $doiUtil->getDOIMetadata($doiId);
+            } catch (\Exception $exception) {
+                //DOI exist, but is not found in EZID/Datacite.
+                $this->logger->warning('No DOI metadata found, so create the DOI for dataset', $loggingContext);
+                return $this->createDoi($dataset, $loggingContext);
+            }
             //Update a the DOI instead.
-            $this->updateDoi($dataset, $loggingContext);
-            return true;
+            $this->logger->info('DOI found, updating the DOI for dataset', $loggingContext);
+            return $this->updateDoi($dataset, $loggingContext);
         }
 
         try {
-            $doiUtil = new DOIutil();
-            $issuedDoi = $doiUtil->createDOI(
+            $issuedDoi = $doiUtil->mintDOI(
                 'https://data.gulfresearchinitiative.org/data/' . $dataset->getUdi(),
                 $dataset->getAuthors(),
                 $dataset->getTitle(),
@@ -165,6 +175,52 @@ class DoiConsumer implements ConsumerInterface
     }
 
     /**
+     * Create a DOI with a known DOI from the dataset.
+     *
+     * @param Dataset $dataset        The Dataset.
+     * @param array   $loggingContext The logging context to use when logging.
+     *
+     * @return boolean True if success, false otherwise.
+     */
+    protected function createDoi(Dataset $dataset, array $loggingContext)
+    {
+        // Log processing start.
+        $this->logger->info('Attempting to create DOI', $loggingContext);
+
+        $doi = $dataset->getDoi();
+        if (!$doi instanceof DOI) {
+            // If we can't find a DOI for the dataset, a DOI can not be created.
+            $this->logger->error('No DOI was found to create.', $loggingContext);
+            return false;
+        }
+
+        try {
+            $doiUtil = new DOIutil();
+            $success = $doiUtil->createDOI(
+                $doi->getDoi(),
+                'https://data.gulfresearchinitiative.org/data/' . $dataset->getUdi(),
+                $dataset->getAuthors(),
+                $dataset->getTitle(),
+                'Harte Research Institute',
+                $dataset->getReferenceDateYear()
+            );
+        } catch (\Exception $exception) {
+            $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
+            return false;
+        }
+
+        $doi->setModifier($dataset->getModifier());
+
+        $loggingContext['doi'] = $doi->getDoi();
+        // Dispatch entity event.
+        $this->entityEventDispatcher->dispatch($dataset, 'doi_created');
+        // Log processing complete.
+        $this->logger->info('DOI Created', $loggingContext);
+
+        return $success;
+    }
+
+    /**
      * Update information for the DOI of a dataset.
      *
      * @param Dataset $dataset        The Dataset.
@@ -185,9 +241,19 @@ class DoiConsumer implements ConsumerInterface
             return true;
         }
 
+        $doiUtil = new DOIutil();
+
         try {
-            $doiUtil = new DOIutil();
-            $issuedDoi = $doiUtil->updateDOI(
+            $doiId = $doi->getDoi();
+            $doiMetaData = $doiUtil->getDOIMetadata($doiId);
+        } catch (\Exception $exception) {
+            //DOI exist, but is not found in EZID/Datacite.
+            $this->logger->warning('No DOI metadata found, so create the DOI for dataset', $loggingContext);
+            return $this->createDoi($dataset, $loggingContext);
+        }
+
+        try {
+            $success = $doiUtil->updateDOI(
                 $doi->getDoi(),
                 'https://data.gulfresearchinitiative.org/data/' . $dataset->getUdi(),
                 $dataset->getAuthors(),
@@ -207,6 +273,8 @@ class DoiConsumer implements ConsumerInterface
         $this->entityEventDispatcher->dispatch($dataset, 'doi_updated');
         // Log processing complete.
         $this->logger->info('DOI Updated', $loggingContext);
+
+        return $success;
     }
 
     /**
