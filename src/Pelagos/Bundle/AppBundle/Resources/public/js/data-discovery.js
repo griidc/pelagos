@@ -170,17 +170,17 @@ function addRows() {
         if (data["geometry"]) {
             $(row).hover(function () {
 
-                if (!$('#show_all_extents_checkbox').is(':checked')) {
+                if (!$("#show_all_extents_checkbox").is(":checked")) {
                     for (var i = 0; i < datasetList[activeTabIndex].length; i++) {
-                        if (datasetList[activeTabIndex][i]["_source"]["udi"] == $(this).attr('udi')) {
-                            myGeoViz.addFeatureFromWKT(datasetList[activeTabIndex][i]["_source"]["geometry"], {'udi': datasetList[activeTabIndex][i]["_source"]["udi"]});
+                        if (datasetList[activeTabIndex][i]["_source"]["udi"] == $(this).attr("udi")) {
+                            myGeoViz.addFeatureFromWKT(datasetList[activeTabIndex][i]["_source"]["geometry"], {"udi": datasetList[activeTabIndex][i]["_source"]["udi"]});
                         }
                     }
                 }
-                myGeoViz.highlightFeature('udi', $(this).attr('udi'));
+                myGeoViz.highlightFeature("udi", $(this).attr("udi"));
             }, function () {
-                myGeoViz.unhighlightFeature('udi', $(this).attr('udi'));
-                if (!$('#show_all_extents_checkbox').is(':checked')) {
+                myGeoViz.unhighlightFeature("udi", $(this).attr("udi"));
+                if (!$("#show_all_extents_checkbox").is(":checked")) {
                     myGeoViz.removeAllFeaturesFromMap();
                 }
             });
