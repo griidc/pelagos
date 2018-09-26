@@ -169,11 +169,12 @@ function addRows() {
         $(row).attr("datasetid", dataset["_id"]);
         if (data["geometry"]) {
             $(row).hover(function () {
-
+                //show geometries on the map on hovering on the row
                 if (!$("#show_all_extents_checkbox").is(":checked")) {
                     for (var i = 0; i < datasetList[activeTabIndex].length; i++) {
                         if (datasetList[activeTabIndex][i]["_source"]["udi"] == $(this).attr("udi")) {
                             myGeoViz.addFeatureFromWKT(datasetList[activeTabIndex][i]["_source"]["geometry"], {"udi": datasetList[activeTabIndex][i]["_source"]["udi"]});
+                            break;
                         }
                     }
                 }
@@ -184,6 +185,10 @@ function addRows() {
                     myGeoViz.removeAllFeaturesFromMap();
                 }
             });
+            //add newly rendered geometry if ShowAllExtents is enabled
+            if ($("#show_all_extents_checkbox").is(":checked")) {
+                myGeoViz.addFeatureFromWKT(data["geometry"]);
+            }
         }
 
         var rowContent = createRow(data, row);
@@ -192,6 +197,7 @@ function addRows() {
         $("table.datasets[tabIndex=" + activeTabIndex + "]").append(row);
         //add the data to the data array
         datasetList[activeTabIndex].push(dataset);
+
     });
     //clear buffer
     buffer = [];
@@ -324,7 +330,8 @@ function showDatasets(by,id) {
     datasetList[3] = [];
     myGeoViz.removeAllFeaturesFromMap();
 
-    $("#show_all_extents_checkbox").button("disable");
+    //enable this
+    $("#show_all_extents_checkbox").button();
     $("#filter-button").button("disable");
     $("#clear-button").button("disable");
 
@@ -354,16 +361,12 @@ function showDatasets(by,id) {
             $("#tabs").tabs({
                 activate: function(event, ui) {
                     var activeTabIndex = getActiveTabIndex();
-                    if ($("#show_all_extents_checkbox").is(":checked")) {
-                        myGeoViz.removeAllFeaturesFromMap();
-                        if (datasetList[activeTabIndex]) {
-                            for (var i=0; i<datasetList[activeTabIndex].length; i++) {
-                                myGeoViz.addFeatureFromWKT(datasetList[activeTabIndex][i]["_source"]["geometry"],{"udi":datasetList[activeTabIndex][i]["_source"]["udi"]});
-                            }
-                        }
-                    }
                     if (datasetList[activeTabIndex].length == 0) {
                         loadData(by, id);
+                    }
+
+                    if ($("#show_all_extents_checkbox").is(":checked")) {
+                        displayActiveTabExtents();
                     }
                 }
             });
@@ -411,17 +414,24 @@ function clearAll() {
     applyFilter();
 }
 
-function showAllExtents() {
+//this function adds geometries from rendered data to the map
+function displayActiveTabExtents()
+{
+    myGeoViz.removeAllFeaturesFromMap();
     var activeTabIndex = getActiveTabIndex();
-    if ($("#show_all_extents_checkbox").is(":checked")) {
-        $("#show_all_extents_label").html('<span class="ui-button-text">Hide All Extents</span>');
-        var selectedTab = $("#tabs").tabs("option","active");
-        myGeoViz.removeAllFeaturesFromMap();
-        if (datasetList[activeTabIndex]) {
-            for (var i=0; i<datasetList[activeTabIndex].length; i++) {
-                myGeoViz.addFeatureFromWKT(datasetList[activeTabIndex][i]["_source"]["geometry"],{"udi":datasetList[activeTabIndex][i]["_source"]["udi"]});
+    if (datasetList[activeTabIndex]) {
+        for (var i=0; i<datasetList[activeTabIndex].length; i++) {
+            if (datasetList[activeTabIndex][i]["_source"]["geometry"]) {
+                myGeoViz.addFeatureFromWKT(datasetList[activeTabIndex][i]["_source"]["geometry"], {"udi": datasetList[activeTabIndex][i]["_source"]["udi"]});
             }
         }
+    }
+}
+
+function showAllExtents() {
+    if ($("#show_all_extents_checkbox").is(":checked")) {
+        $("#show_all_extents_label").html('<span class="ui-button-text">Hide All Extents</span>');
+        displayActiveTabExtents();
     } else {
         $("#show_all_extents_label").html('<span class="ui-button-text">Show All Extents</span>');
         $("table.datasets tr td").removeClass("highlight");
