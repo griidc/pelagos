@@ -381,7 +381,7 @@ function showDatasets(by,id) {
             });
             if (geo_filter) {
                 $("#clearGeoFilterButton").button("enable");
-             }
+            }
         },
         "error": function(jqXHR, textStatus, errorThrown) {
             alert("Fail: " + textStatus + " " + errorThrown + jqXHR.getResponseHeader());
