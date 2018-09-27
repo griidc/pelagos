@@ -50,7 +50,7 @@ $(document).ready(function() {
         $("#clearGeoFilterButton").button("disable");
     });
 
-    $("#show_all_extents_checkbox").button();
+    $("#show_extents_checkbox").button();
     $(".map_button").button();
     // local variable for filter button//
     var filterButton = $("#filter-button");
@@ -170,7 +170,7 @@ function addRows() {
         if (data["geometry"]) {
             $(row).hover(function () {
                 //show geometries on the map on hovering on the row
-                if (!$("#show_all_extents_checkbox").is(":checked")) {
+                if (!$("#show_extents_checkbox").is(":checked")) {
                     for (var i = 0; i < datasetList[activeTabIndex].length; i++) {
                         if (datasetList[activeTabIndex][i]["_source"]["udi"] == $(this).attr("udi")) {
                             myGeoViz.addFeatureFromWKT(datasetList[activeTabIndex][i]["_source"]["geometry"], {"udi": datasetList[activeTabIndex][i]["_source"]["udi"]});
@@ -181,12 +181,12 @@ function addRows() {
                 myGeoViz.highlightFeature("udi", $(this).attr("udi"));
             }, function () {
                 myGeoViz.unhighlightFeature("udi", $(this).attr("udi"));
-                if (!$("#show_all_extents_checkbox").is(":checked")) {
+                if (!$("#show_extents_checkbox").is(":checked")) {
                     myGeoViz.removeAllFeaturesFromMap();
                 }
             });
             //add newly rendered geometry if ShowAllExtents is enabled
-            if ($("#show_all_extents_checkbox").is(":checked")) {
+            if ($("#show_extents_checkbox").is(":checked")) {
                 myGeoViz.addFeatureFromWKT(data["geometry"]);
             }
         }
@@ -331,7 +331,7 @@ function showDatasets(by,id) {
     myGeoViz.removeAllFeaturesFromMap();
 
     //enable this
-    $("#show_all_extents_checkbox").button();
+    $("#show_extents_checkbox").button();
     $("#filter-button").button("disable");
     $("#clear-button").button("disable");
 
@@ -365,7 +365,7 @@ function showDatasets(by,id) {
                         loadData(by, id);
                     }
 
-                    if ($("#show_all_extents_checkbox").is(":checked")) {
+                    if ($("#show_extents_checkbox").is(":checked")) {
                         displayActiveTabExtents();
                     }
                 }
@@ -429,11 +429,11 @@ function displayActiveTabExtents()
 }
 
 function showAllExtents() {
-    if ($("#show_all_extents_checkbox").is(":checked")) {
-        $("#show_all_extents_label").html('<span class="ui-button-text">Hide All Extents</span>');
+    if ($("#show_extents_checkbox").is(":checked")) {
+        $("#show_extents_label").html('<span class="ui-button-text">Hide Extents</span>');
         displayActiveTabExtents();
     } else {
-        $("#show_all_extents_label").html('<span class="ui-button-text">Show All Extents</span>');
+        $("#show_extents_label").html('<span class="ui-button-text">Show Extents</span>');
         $("table.datasets tr td").removeClass("highlight");
         myGeoViz.removeAllFeaturesFromMap();
     }
