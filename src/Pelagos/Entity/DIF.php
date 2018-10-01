@@ -445,7 +445,7 @@ class DIF extends Entity
     /**
      * Approved Date Timestamp for DIF.
      *
-     * @var \DateTime $modificationTimeStamp;
+     * @var \DateTime $approvedDate;
      *
      * @ORM\Column(type="datetimetz", nullable=true)
      */
