@@ -43,10 +43,10 @@
     padding: 1px 6px;
 }
 
-#show_all_extents_label {
+#show_extents_label {
     font-weight: normal;
     margin-top: 2px;
-    width: 9em;
+    width: 8em;
     text-align: center;
 }
 
@@ -58,7 +58,7 @@ input.ui-button {
     padding: 0px 6px;
 }
 
-#show_all_extents_checkbox {
+#show_extents_checkbox {
     font-size: 100%;
     vertical-align: middle;
 }
