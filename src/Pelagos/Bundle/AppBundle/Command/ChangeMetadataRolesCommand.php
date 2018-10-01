@@ -66,10 +66,10 @@ class ChangeMetadataRolesCommand extends ContainerAwareCommand
             ->createQueryBuilder('dataset');
 
         $qb
-            ->where('dataset.metadataStatus = :metadataStatus')
+            ->where('dataset.datasetStatus = :datasetStatus')
             ->andWhere('dataset.udi NOT LIKE :udi')
             ->setParameter('udi', 'BP%')
-            ->setParameter('metadataStatus', DatasetSubmission::METADATA_STATUS_ACCEPTED);
+            ->setParameter('datasetStatus', Dataset::DATASET_STATUS_ACCEPTED);
 
         $datasets = $qb->getQuery()->getResult();
 

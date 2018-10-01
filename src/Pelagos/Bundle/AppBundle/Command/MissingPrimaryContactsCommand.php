@@ -126,7 +126,7 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
         foreach ($this->datasets as $dataset) {
             $this->fileOutputArray = array();
             $this->fileOutputArray[] = $dataset->getUdi();
-            $status = $dataset->getMetadataStatus();
+            $status = $dataset->getDatasetStatus();
             $this->datasetsubmission = $dataset->getDatasetSubmission();
             $metadata = $dataset->getMetadata();
             if ($status == 'Accepted') {
@@ -200,7 +200,7 @@ class MissingPrimaryContactsCommand extends ContainerAwareCommand
         foreach ($this->datasets as $dataset) {
             $this->fileOutputArray = array();
             $this->fileOutputArray[] = $dataset->getUdi();
-            $status = $dataset->getMetadataStatus();
+            $status = $dataset->getDatasetStatus();
             $this->datasetsubmission = $dataset->getDatasetSubmission();
             $metadata = $dataset->getMetadata();
             if ($status == 'Approved') {

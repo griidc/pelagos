@@ -472,7 +472,7 @@ class Dataset extends Entity
     }
 
     /**
-     * Get the metadata status.
+     * Get the dataset status.
      *
      * @return string
      */

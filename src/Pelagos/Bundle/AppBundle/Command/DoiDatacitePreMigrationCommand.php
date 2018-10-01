@@ -75,10 +75,10 @@ class DoiDatacitePreMigrationCommand extends ContainerAwareCommand
     private function makeSubmittedUnavailable(EntityManager $entityManager)
     {
         $datasets = $entityManager->getRepository(Dataset::class)->findBy(array(
-            'metadataStatus' => array(
-                DatasetSubmission::METADATA_STATUS_SUBMITTED,
-                DatasetSubmission::METADATA_STATUS_ACCEPTED,
-                DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER
+            'datasetStatus' => array(
+                Dataset::DATASET_STATUS_SUBMITTED,
+                Dataset::DATASET_STATUS_ACCEPTED,
+                Dataset::DATASET_STATUS_BACK_TO_SUBMITTER
             )
         ));
 
@@ -137,13 +137,13 @@ class DoiDatacitePreMigrationCommand extends ContainerAwareCommand
     private function validatePublish(Dataset $dataset, $doiStatus)
     {
         if (in_array(
-            $dataset->getMetadataStatus(),
-            [DatasetSubmission::METADATA_STATUS_SUBMITTED, DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER]
+            $dataset->getDatasetStatus(),
+            [Dataset::DATASET_STATUS_SUBMITTED, Dataset::DATASET_STATUS_BACK_TO_SUBMITTER]
         )
         ) {
             // Need to publish all the datasets which are submitted and in reserved state
             return true;
-        } elseif ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED and
+        } elseif ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED and
             $dataset->getDatasetSubmission()->getRestrictions() === DatasetSubmission::RESTRICTION_RESTRICTED and
             $doiStatus === DOI::STATUS_RESERVED) {
             // Need to publish accepted datasets which are restricted and doi status is reserved.
@@ -165,8 +165,8 @@ class DoiDatacitePreMigrationCommand extends ContainerAwareCommand
     private function deleteDoiDif(EntityManager $entityManager)
     {
         $datasets = $entityManager->getRepository(Dataset::class)->findBy(array(
-            'metadataStatus' => array(
-                DatasetSubmission::METADATA_STATUS_NONE
+            'datasetStatus' => array(
+                Dataset::DATASET_STATUS_NONE
             )
         ));
 

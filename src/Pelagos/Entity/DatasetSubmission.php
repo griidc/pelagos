@@ -1844,7 +1844,7 @@ class DatasetSubmission extends Entity
      *
      * @param string $datasetStatus The status of the metadata.
      *
-     * @see METADATA_STATUSES class constant for valid values.
+     * @see DATASET_STATUSES class constant for valid values.
      *
      * @return void
      */

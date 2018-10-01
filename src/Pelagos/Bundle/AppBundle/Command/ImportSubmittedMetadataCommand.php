@@ -109,7 +109,7 @@ class ImportSubmittedMetadataCommand extends ContainerAwareCommand
                     $output->writeln('    ' . $error->getMessage());
                 }
                 // If we don't have accepted metadata.
-                if ($dataset->getMetadataStatus() !== DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+                if ($dataset->getDatasetStatus() !== Dataset::DATASET_STATUS_ACCEPTED) {
                     // Change status to incomplete.
                     $datasetSubmissionReflection = new \ReflectionClass($datasetSubmission);
                     $statusReflection = $datasetSubmissionReflection->getProperty('status');
@@ -121,7 +121,7 @@ class ImportSubmittedMetadataCommand extends ContainerAwareCommand
                     $submitterReflection = $datasetSubmissionReflection->getProperty('submitter');
                     $submitterReflection->setAccessible(true);
                     $submitterReflection->setValue($datasetSubmission, null);
-                    $datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_NONE);
+                    $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_NONE);
                     $output->writeln("  Marked dataset submission for $udi as incomplete.");
                     $counts['incompleted']++;
                 }

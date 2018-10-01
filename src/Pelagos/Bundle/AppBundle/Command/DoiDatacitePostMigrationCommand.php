@@ -8,7 +8,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\DIF;
 
 /**
@@ -44,8 +43,8 @@ class DoiDatacitePostMigrationCommand extends ContainerAwareCommand
         //Recreate the DOIs which we deleted.
 
         $datasets = $entityManager->getRepository(Dataset::class)->findBy(array(
-            'metadataStatus' => array(
-                DatasetSubmission::METADATA_STATUS_NONE,
+            'datasetStatus' => array(
+                Dataset::DATASET_STATUS_NONE,
             )
         ));
 

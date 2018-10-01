@@ -67,14 +67,14 @@ class WriteRawAndGeneratedXmlCommand extends ContainerAwareCommand
             $datasets = $em->getRepository('Pelagos\Entity\Dataset')->findBy(
                 array(
                     'udi' => $udi,
-                    'metadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED
+                    'datasetStatus' => Dataset::DATASET_STATUS_ACCEPTED
                 )
             );
             $output->writeln("Handling single retrieval for user-provided udi of an accepted dataset: $udi.");
         } else {
             $datasets = $em->getRepository('Pelagos\Entity\Dataset')->findBy(
                 array(
-                    'metadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED
+                    'datasetStatus' => Dataset::DATASET_STATUS_ACCEPTED
                 )
             );
             $output->writeln('Processing all ' . count($datasets) . ' accepted datasets.');
