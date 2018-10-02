@@ -443,6 +443,15 @@ class DIF extends Entity
     protected $remarks;
 
     /**
+     * Approved Date Timestamp for DIF.
+     *
+     * @var \DateTime $approvedDate;
+     *
+     * @ORM\Column(type="datetimetz", nullable=true)
+     */
+    protected $approvedDate;
+
+    /**
      * Constructor.
      *
      * Initializes status to unsubmitted.
@@ -1535,5 +1544,27 @@ class DIF extends Entity
         if ($this->getDataset() instanceof Dataset) {
             $this->getDataset()->setIdentifiedStatus($this->status);
         }
+    }
+
+    /**
+     * Getter to approved date.
+     *
+     * @return \DateTime
+     */
+    public function getApprovedDate()
+    {
+        return $this->approvedDate;
+    }
+
+    /**
+     * Setter to approved date.
+     *
+     * @param \DateTime $approvedDate The approved date for the DIF.
+     *
+     * @return void
+     */
+    public function setApprovedDate(\DateTime $approvedDate)
+    {
+        $this->approvedDate = $approvedDate;
     }
 }
