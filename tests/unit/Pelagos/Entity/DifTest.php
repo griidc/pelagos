@@ -105,7 +105,7 @@ class DifTest extends TestCase
     }
 
     /**
-     * Test getter and setter for primary point of contact.
+     * Test getter and setter for secondary point of contact.
      * 
      * @return void
      */
@@ -223,7 +223,7 @@ class DifTest extends TestCase
      */
     public function testCanGetAndSetEstimatedStartDate()
     {
-        $dateTime = new \DateTime('now');
+        $dateTime = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->dif->setEstimatedStartDate($dateTime);
         $this->assertEquals($dateTime, $this->dif->getEstimatedStartDate());
     }
@@ -235,7 +235,7 @@ class DifTest extends TestCase
      */
     public function testCanGetAndSetEstimatedEndDate()
     {
-        $dateTime = new \DateTime('now');
+        $dateTime = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->dif->setEstimatedEndDate($dateTime);
         $this->assertEquals($dateTime, $this->dif->getEstimatedEndDate());
     }
@@ -321,5 +321,18 @@ class DifTest extends TestCase
     {
         $this->dif->setRemarks('remarks');
         $this->assertEquals('remarks', $this->dif->getRemarks());
+    }
+
+    /**
+     * Test getter and setter for approved date.
+     * 
+     * @return void
+     */
+    public function testCanGetAndSetApprovedDate()
+    {
+        $approvedDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->dif->setApprovedDate($approvedDate);
+        $this->assertEquals($approvedDate, $this->dif->getApprovedDate());
+
     }
 }
