@@ -4,6 +4,15 @@ namespace Pelagos\Entity;
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Unit tests for Pelagos\Entity\DIF.
+ *
+ * @group Pelagos
+ * @group Pelagos\Entity
+ * @group Pelagos\Entity\DIF
+ *
+ * @package Pelagos\Entity
+ */
 class DifTest extends TestCase
 {
 
@@ -18,7 +27,7 @@ class DifTest extends TestCase
     protected $mockResearchGroup;
 
     /**
-     * Setup for all the test cases in National Data center entity test.
+     * Setup for all the test cases in DIF entity test.
      *
      * @return void
      */
