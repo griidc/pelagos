@@ -35,6 +35,8 @@ matrix:
 # Define an environment variable
 env:
   - SYMFONY_VERSION="3.4.*" DB=postgresql
+  global:
+    - CC_TEST_REPORTER_ID=griidc
 
 # Update composer
 # Create database
@@ -61,11 +63,17 @@ install:
 before-script:
   - php bin/console doctrine:schema:create 
   - php bin/console doctrine:fixtures:load
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
   
 # Run script
 script:
   - phpunit
   - phpcs --standard=GRIIDC --colors --ignore=bak --extensions=php -n -s ./src
+  
+after_script:
+- ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
   
 notifications:
   email: false
