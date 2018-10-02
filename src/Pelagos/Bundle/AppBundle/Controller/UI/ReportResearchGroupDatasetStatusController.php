@@ -124,8 +124,8 @@ class ReportResearchGroupDatasetStatusController extends ReportController
                         $ppocString = $ppoc->getLastName() . ', ' .
                         $ppoc->getFirstName();
                     $difTimeStampString = 'N/A';
-                    if ($dif->getModificationTimeStamp() != null) {
-                        $difTimeStampString = $dif->getModificationTimeStamp()->format(self::REPORTDATETIMEFORMAT);
+                    if ($dif->getApprovedDate() != null) {
+                        $difTimeStampString = $dif->getApprovedDate()->format(self::REPORTDATETIMEFORMAT);
                     }
                     $dataRow = array(
                         'udi' => $dataset->getUdi(),
