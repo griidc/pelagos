@@ -43,7 +43,6 @@
 
     {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
 {% endblock %}
-
 {% block body %}
     <input id="by-input" type="hidden">
     <input id="id-input" type="hidden">
@@ -56,8 +55,8 @@
                     <div id="olmap"></div>
                     <div id="map_buttons">
                         <div class="map_button_container">
-                            <label for="show_all_extents_checkbox" id="show_all_extents_label">Show All Extents</label>
-                            <input type="checkbox" id="show_all_extents_checkbox" class="map_button" onclick="showAllExtents();">
+                            <label for="show_extents_checkbox" id="show_extents_label">Show Extents</label>
+                            <input type="checkbox" id="show_extents_checkbox" class="map_button" onclick="showAllExtents();">
                         </div>
                         <div class="map_button_container">
                             <input type="button" id="clearGeoFilterButton" class="map_button" value="Clear Filter" disabled onclick="$(this).button('disable');myGeoViz.clearFilter();trees['tree'].geo_filter = null;applyFilter();">
@@ -131,12 +130,5 @@
                 <div style="height:50px; width:12px"></div>
             </div>
         </div>
-
     </div>
-
-    {% if download %}
-        <script type="text/javascript">
-            showDatasetDownload('{{download}}');
-        </script>
-    {% endif %}
 {% endblock %}
