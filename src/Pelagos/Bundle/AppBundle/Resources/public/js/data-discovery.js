@@ -162,7 +162,8 @@ function loadData(by, id) {
 function addRows() {
     var activeTabIndex = getActiveTabIndex();
 
-    buffer.forEach(dataset => {
+    for (var i = 0; i < buffer.length; i++) {
+        var dataset = buffer[i];
         var data = dataset["_source"];
         var row = document.createElement("tr");
         $(row).attr("udi", data["udi"]);
@@ -198,7 +199,7 @@ function addRows() {
         //add the data to the data array
         datasetList[activeTabIndex].push(dataset);
 
-    });
+    };
     //clear buffer
     buffer = [];
 }
