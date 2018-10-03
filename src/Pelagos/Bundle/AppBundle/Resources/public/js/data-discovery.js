@@ -187,7 +187,7 @@ function addRows() {
             });
             //add newly rendered geometry if ShowAllExtents is enabled
             if ($("#show_extents_checkbox").is(":checked")) {
-                myGeoViz.addFeatureFromWKT(data["geometry"]);
+                myGeoViz.addFeatureFromWKT(data["geometry"], {"udi": data["udi"]});
             }
         }
 
