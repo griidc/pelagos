@@ -103,7 +103,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
           'TITLE',
           'PRIMARY POINT OF CONTACT',
           'STATUS',
-          'DATE IDENTIFIED',
+          'DATE APPROVED',
           'DATE REGISTERED'));
 
         //prepare data array
