@@ -49,10 +49,10 @@ class BackFillApprovedDateDifCommand extends ContainerAwareCommand
                 $dif->setApprovedDate($dif->getModificationTimeStamp());
                 $output->writeln('Approved date back-filled for dataset: ' . $dataset->getId());
                 $entityManager->persist($dataset);
-                $entityManager->flush();
                 $count++;
             }
         }
+        $entityManager->flush();
         $output->writeln('Total number of datasets which got back-filled: ' . $count);
     }
 }
