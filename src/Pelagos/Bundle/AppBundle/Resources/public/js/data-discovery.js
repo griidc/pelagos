@@ -198,7 +198,6 @@ function addRows() {
         $("table.datasets[tabIndex=" + activeTabIndex + "]").append(row);
         //add the data to the data array
         datasetList[activeTabIndex].push(dataset);
-
     };
     //clear buffer
     buffer = [];
@@ -279,6 +278,9 @@ function createRow(data, row)
         $(rowContent).find("#dataset-doi").attr("href", $(rowContent).find("#dataset-doi").attr("href").replace("placeholder-doi", data["doi"]["doi"]));
         $(rowContent).find("#dataset-doi").text(data["doi"]["doi"]);
     }
+
+    $(rowContent).find("#dataset-udi").attr("href", $(rowContent).find("#dataset-udi").attr("href").replace("placeholder-udi", data["udi"]));
+    $(rowContent).find("#dataset-udi").text(data["udi"]);
 
     var filesize = parseInt(data["datasetSubmission"]["datasetFileSize"]);
     if (filesize) {
