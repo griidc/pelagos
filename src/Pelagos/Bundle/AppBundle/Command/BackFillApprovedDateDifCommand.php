@@ -57,28 +57,41 @@ class BackFillApprovedDateDifCommand extends ContainerAwareCommand
                     $dif->getId()
                 );
 
-                for ($i = 0; $i < count($auditRevisionFinder) - 1; $i++) {
+                for ($i = 0; $i < (count($auditRevisionFinder) - 1); $i++) {
                     // The revisions are ordered by latest first.
                     $newRevision = $auditRevisionFinder[$i];
-                    $oldRevision = $auditRevisionFinder[$i + 1];
+                    $oldRevision = $auditRevisionFinder[($i + 1)];
 
                     $articleDiff = $auditReader->diff(
                         'Pelagos\Entity\DIF',
-                        $dif->getId() ,
+                        $dif->getId(),
                         $oldRevision->getRev(),
                         $newRevision->getRev()
                     );
 
                     if ($articleDiff['status']['new'] === DIF::STATUS_APPROVED) {
-                        $approvedDateTimeStamp = $articleDiff['modificationTimeStamp']['new'];
-                        break;
+                        if (!empty($articleDiff['modificationTimeStamp']['new'])) {
+                            $approvedDateTimeStamp = new \DateTime(
+                                $articleDiff['modificationTimeStamp']['new']->format('Y-m-d H:i:s'),
+                                new \DateTimeZone('+00:00')
+                            );
+                        } else {
+                            $approvedDateTimeStamp = new \DateTime(
+                                $articleDiff['modificationTimeStamp']['same']->format('Y-m-d H:i:s'),
+                                new \DateTimeZone('+00:00')
+                            );
+                        }
                     }
                 }
 
-                $dif->setApprovedDate($approvedDateTimeStamp);
-                $output->writeln('Approved date back-filled for dataset: ' . $dataset->getId());
-                $entityManager->persist($dataset);
-                $count++;
+                if ($approvedDateTimeStamp instanceof DateTime) {
+                    $dif->setApprovedDate($approvedDateTimeStamp);
+                    $output->writeln('Approved date back-filled for dataset: ' . $dataset->getId());
+                    $entityManager->persist($dataset);
+                    $count++;
+                } else {
+                    $output->writeln('Modification Time stamp not an instance of DateTime for Dataset Id: ' . $dataset->getId());
+                }
             }
         }
         $entityManager->flush();
