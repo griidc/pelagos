@@ -1449,6 +1449,7 @@ class DIF extends Entity
     {
         if ($this->isApprovable()) {
             $this->setStatus(self::STATUS_APPROVED);
+            $this->setApprovedDate(new \DateTime('now', new \DateTimeZone('UTC')));
         } else {
             throw new \Exception('Can only approve a submitted DIF');
         }
