@@ -7,8 +7,6 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use Pelagos\DateTime;
-
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DIF;
 
@@ -47,7 +45,7 @@ class BackFillApprovedDateDifCommand extends ContainerAwareCommand
 
         $datasets = $entityManager->getRepository(Dataset::class)->findBy(array('identifiedStatus' => DIF::STATUS_APPROVED));
         $count = 0;
-        $approvedDateTimeStamp = new DateTime();
+        $approvedDateTimeStamp = new \DateTime();
         foreach ($datasets as $dataset) {
             $dif = $dataset->getDif();
 
@@ -84,7 +82,7 @@ class BackFillApprovedDateDifCommand extends ContainerAwareCommand
                     }
                 }
 
-                if ($approvedDateTimeStamp instanceof DateTime) {
+                if ($approvedDateTimeStamp instanceof \DateTime) {
                     $dif->setApprovedDate($approvedDateTimeStamp);
                     $output->writeln('Approved date back-filled for dataset: ' . $dataset->getId());
                     $entityManager->persist($dataset);
