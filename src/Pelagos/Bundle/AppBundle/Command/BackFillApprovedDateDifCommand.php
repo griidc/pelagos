@@ -83,9 +83,14 @@ class BackFillApprovedDateDifCommand extends ContainerAwareCommand
                 }
 
                 if ($approvedDateTimeStamp instanceof \DateTime) {
-                    $dif->setApprovedDate($approvedDateTimeStamp);
+                    //This is a workaround used to get a new DIF object from the entityManager with the same Id,
+                    //because of the unknown behavior of auditReader on the previous DIF object.
+                    $entityManager->clear();
+                    $newDif = $entityManager->getRepository(DIF::class)->findOneBy(array('id' => $dif->getId()));
+
+                    $newDif->setApprovedDate($approvedDateTimeStamp);
                     $output->writeln('Approved date back-filled for dataset: ' . $dataset->getId());
-                    $entityManager->persist($dataset);
+                    $entityManager->persist($newDif);
                     $count++;
                 } else {
                     $output->writeln('Modification Time stamp not an instance of DateTime for Dataset Id: ' . $dataset->getId());
