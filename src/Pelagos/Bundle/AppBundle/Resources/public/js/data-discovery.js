@@ -223,6 +223,10 @@ function createRow(data, row)
                 var id = $(this).closest("tr").attr("datasetid");
                 startDownload(id);
             });
+
+            if (!data["datasetSubmission"]["datasetFileSize"]) {
+                $(rowContent).find("#container-dataset-filesize").hide();
+            }
             break;
         case 1: //restricted
             if ("RemotelyHosted" === data["datasetSubmission"]["datasetFileTransferStatus"]) {
