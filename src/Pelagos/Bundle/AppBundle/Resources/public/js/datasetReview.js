@@ -637,6 +637,13 @@ $(document).ready(function(){
               }
         });
     });
+    
+    $("select[keyword=target]").dragOptions({
+        highlight: "MOVING--->>>>",
+        onChange: function(){
+            buildKeywordLists();
+        }
+    });
 
 });
 
