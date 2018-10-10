@@ -237,9 +237,17 @@ function createRow(data, row)
             }
             $(rowContent).find("#dataset-restrictions").text("Download Restricted");
             $(rowContent).find("#container-dataset-restrictions").show();
+
+            if (!data["datasetSubmission"]["datasetFileSize"]) {
+                $(rowContent).find("#container-dataset-filesize").hide();
+            }
             break;
         case 2: //InReview
                 imgTitle = "Download unavailable"
+
+                if (!data["datasetSubmission"]["datasetFileSize"]) {
+                    $(rowContent).find("#container-dataset-filesize").hide();
+                }
             break;
         case 3: //identified
             $(rowContent).find("#img-download-package").hide();
