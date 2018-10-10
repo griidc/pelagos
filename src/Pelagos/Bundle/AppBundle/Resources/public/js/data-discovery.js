@@ -220,7 +220,7 @@ function createRow(data, row)
             }
             $(rowContent).find("#img-download-package").removeClass("greyout");
             $(rowContent).find("#dataset-download").click( function(){
-                var id = $(this).closest("tr").attr("datasetid");
+                var id = $(this).parents("tr").attr("datasetid");
                 startDownload(id);
             });
 
@@ -303,8 +303,8 @@ function createRow(data, row)
     }
 
     //this shows the details dataset on Show Details button
-    $(".details_link").bind("click", function(){
-        var row = $(this).closest("tr");
+    $(".details_link", rowContent).bind("click", function(){
+        var row = $(this).parents("tr");
         if ($(row).has(".details:empty").length == 1) {
             var datasetId = $(row).attr("datasetid");
             $.ajax({
@@ -317,12 +317,11 @@ function createRow(data, row)
             });
         } else {
             if ($(row).find(".details:visible").length == 1) {
-                $(row).find(".details").hide();
                 $(row).find(".details_link").html("Show Details");
             } else {
-                $(row).find(".details").show();
                 $(row).find(".details_link").html("Hide Details");
             }
+            $(row).find(".details").toggle();
         }
     });
 
