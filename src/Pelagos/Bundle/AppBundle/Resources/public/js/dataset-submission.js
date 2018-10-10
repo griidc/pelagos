@@ -709,7 +709,7 @@ $(function() {
         var source = $(event.currentTarget).closest("table.keywords").find("input[keyword=source],select[keyword=source]");
         var target = $(event.currentTarget).closest("table.keywords").find("select[keyword=target]");
 
-        if ($(event.currentTarget).text() == "add") {
+        if ($(event.currentTarget).text() === "add") {
             if (source.is("input") && source.val() !== "") {
                 var optionText = source.val();
                 var option = new Option(optionText, optionText);
@@ -721,19 +721,19 @@ $(function() {
                 target.append(option);
                 target.append(sortOptions(target.find("option").detach()));
             }
-        } else if ($(event.currentTarget).text() == "remove") {
+        } else if ($(event.currentTarget).text() === "remove") {
             var option = target.find("option:selected").detach().prop("selected", false);
             if (option.attr("order") != undefined) {
                 source.append(option);
                 source.append(sortOptions(source.find("option").detach()));
             }
-        } else if ($(event.currentTarget).text() == "up") {
+        } else if ($(event.currentTarget).text() === "up") {
             var selectedOption = target.find("option:selected");
             var prevOption = selectedOption.prev("option");
             if (prevOption.is("option")) {
                 selectedOption.detach().insertBefore(prevOption);
             }
-        } else if ($(event.currentTarget).text() == "down") {
+        } else if ($(event.currentTarget).text() === "down") {
             var selectedOption = target.find("option:selected");
             var nextOption = selectedOption.next("option");
             if (nextOption.is("option")) {
