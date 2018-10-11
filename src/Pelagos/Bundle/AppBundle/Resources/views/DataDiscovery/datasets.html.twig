@@ -4,10 +4,10 @@
         <div id="tablist" class="row">
             <div class="cell">
                 <ul>
-                        <li style="text-align:center" {% if (counts.available == 0) %} hidden {% endif %}><a href="#tab-1">Available<br />({{ counts.available}})</a></li>
-                        <li style="text-align:center" {% if (counts.restricted == 0) %} hidden {% endif %}><a href="#tab-2">Available with<br />Restrictions ({{ counts.restricted }})</a></li>
-                        <li style="text-align:center" {% if (counts.inReview == 0) %} hidden {% endif %}><a href="#tab-3">Unavailable, Pending<br />Review ({{ counts.inReview }})</a></li>
-                        <li style="text-align:center" {% if (counts.identified == 0) %} hidden {% endif %}><a href="#tab-4">Unavailable &amp;<br />Expected Soon ({{ counts.identified }})</a></li>
+                        <li style="text-align:center"><a href="#tab-1">Available<br />({{ counts.available}})</a></li>
+                        <li style="text-align:center"><a href="#tab-2">Available with<br />Restrictions ({{ counts.restricted }})</a></li>
+                        <li style="text-align:center"><a href="#tab-3">Unavailable, Pending<br />Review ({{ counts.inReview }})</a></li>
+                        <li style="text-align:center"><a href="#tab-4">Unavailable &amp;<br />Expected Soon ({{ counts.identified }})</a></li>
                 </ul>
             </div>
         </div>
