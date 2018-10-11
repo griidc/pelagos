@@ -1,0 +1,55 @@
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
+
+{% block head %}
+    {{ parent() }}
+
+    {{
+        add_library (
+            [
+                'ui.dialog',
+                'ui.tabs',
+                'ui.widget',
+            ]
+        )
+    }}
+    
+    {% stylesheets
+        '@PelagosAppBundle/Resources/public/css/sidebyside.css'
+    %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets %}
+
+{% endblock %}
+
+{% block body %}
+<div class="sideheader">
+    <h2>
+    UDI HERE!
+    </h2>
+    
+</div>
+<div class="sidemain">
+    <table class="sidetable">
+        <tr >
+        
+        {% for formy in forms %}
+            <td>
+            <label for="version">Version</label>
+                <select name="version">
+                    <option>version 1</option>
+                    <option>version 2</option>
+                </select>
+            {{ form_start(formy) }}
+            {{ form_widget(formy) }}
+            {{ form_end(formy) }}
+            </td>
+        {% endfor %}
+        </tr>
+        
+    <table>
+    </div>
+
+
+
+
+{% endblock %}
