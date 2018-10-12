@@ -85,10 +85,10 @@ class DOIutil
         $input .= "_profile:datacite\n";
         $input .= "_status:$status\n";
         $input .= 'datacite.creator:'
-            . $this->convertAscii($this->escapeSpecialCharacters($creator))
+            . $this->escapeSpecialCharacters($creator)
             . "\n";
         $input .= 'datacite.title:'
-            . $this->convertAscii($this->escapeSpecialCharacters($title))
+            . $this->escapeSpecialCharacters($title)
             . "\n";
         $input .= 'datacite.publisher:' . $this->escapeSpecialCharacters($publisher) . "\n";
         $input .= "datacite.publicationyear:$publicationYear\n";
@@ -152,10 +152,10 @@ class DOIutil
         $input .= "_profile:datacite\n";
         $input .= "_status:$status\n";
         $input .= 'datacite.creator:'
-            . $this->convertAscii($this->escapeSpecialCharacters($creator))
+            . $this->escapeSpecialCharacters($creator)
             . "\n";
         $input .= 'datacite.title:'
-            . $this->convertAscii($this->escapeSpecialCharacters($title))
+            . $this->escapeSpecialCharacters($title)
             . "\n";
         $input .= 'datacite.publisher:' . $this->escapeSpecialCharacters($publisher) . "\n";
         $input .= "datacite.publicationyear:$publicationYear\n";
@@ -374,57 +374,5 @@ class DOIutil
             },
             $input
         );
-    }
-
-    /**
-     * Remove any non-ASCII characters and convert known non-ASCII characters to their ASCII equivalents, if possible.
-     *
-     * @param string $string The to be converted string.
-     *
-     * @author Jay Williams <myd3.com>
-     *
-     * @license MIT License
-     *
-     * @link http://gist.github.com/119517
-     *
-     * @return string $string The output string.
-     */
-    private function convertAscii($string)
-    {
-        // Replace Single Curly Quotes
-        $search[]  = chr(226) . chr(128) . chr(152);
-        $replace[] = "'";
-        $search[]  = chr(226) . chr(128) . chr(153);
-        $replace[] = "'";
-
-        // Replace Smart Double Curly Quotes
-        $search[]  = chr(226) . chr(128) . chr(156);
-        $replace[] = '"';
-        $search[]  = chr(226) . chr(128) . chr(157);
-        $replace[] = '"';
-
-        // Replace En Dash
-        $search[]  = chr(226) . chr(128) . chr(147);
-        $replace[] = '--';
-
-        // Replace Em Dash
-        $search[]  = chr(226) . chr(128) . chr(148);
-        $replace[] = '---';
-
-        // Replace Bullet
-        $search[]  = chr(226) . chr(128) . chr(162);
-        $replace[] = '*';
-
-        // Replace Middle Dot
-        $search[]  = chr(194) . chr(183);
-        $replace[] = '*';
-
-        // Apply Replacements
-        $string = str_replace($search, $replace, $string);
-
-        // Remove any non-ASCII Characters
-        $string = preg_replace("/[^\x01-\x7F]/", '', $string);
-
-        return $string;
     }
 }
