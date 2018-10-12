@@ -4,52 +4,75 @@
     {{ parent() }}
 
     {{
-        add_library (
+    add_library (
+        [
+            'ui.datepicker',
+            'ui.dialog',
+            'ui.tabs',
+            'ui.widget',
+        ]
+    )
+    }}
+
+    {{
+        add_css (
             [
-                'ui.dialog',
-                'ui.tabs',
-                'ui.widget',
+                '//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css',
+                '//cdn.datatables.net/select/1.0.1/css/select.dataTables.min.css',
+                '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css',
+                '//cdnjs.cloudflare.com/ajax/libs/animate.css/3.3.0/animate.min.css',
+                '//cdnjs.cloudflare.com/ajax/libs/file-uploader/5.11.8/fine-uploader-new.min.css',
             ]
         )
     }}
     
     {% stylesheets
+        '@PelagosAppBundle/Resources/public/css/dataset-submission.css'
+        '@PelagosAppBundle/Resources/public/css/fileBrowser.css'
+        '@PelagosAppBundle/Resources/public/css/dataset-submission-uploader.css'
         '@PelagosAppBundle/Resources/public/css/sidebyside.css'
     %}
         {{ add_css(asset_url) }}
     {% endstylesheets %}
+    
+    {{
+        add_js(
+            [
+                '//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js',
+                '//cdn.datatables.net/1.10.7/js/jquery.dataTables.js',
+                '//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',
+                '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/file-uploader/5.11.8/jquery.fine-uploader/jquery.fine-uploader.min.js',
+                '//maps.google.com/maps/api/js?v=3&key=' ~ google_maps_api_key,
+            ]
+        )
+    }}
+    
+    {% javascripts
+        '@PelagosAppBundle/Resources/public/js/pelagosNoty.js'
+        '@FOSJsRoutingBundle/Resources/public/js/router.js'
+        '@PelagosAppBundle/Resources/public/js/datasetReview.js'
+        '@PelagosAppBundle/Resources/public/js/sidebyside.js'
+        '@PelagosAppBundle/Resources/public/js/geoviz.js'
+        '@PelagosAppBundle/Resources/public/js/mapWizard.js'
+        '@PelagosAppBundle/Resources/public/js/common.js'
+        '@PelagosAppBundle/Resources/public/js/fileBrowser.js'
+    %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
 
+    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
 {% endblock %}
 
 {% block body %}
-<div class="sideheader">
-    <h2>
-    UDI HERE!
-    </h2>
+
     
-</div>
-<div class="sidemain">
-    <table class="sidetable">
-        <tr >
-        
-        {% for formy in forms %}
-            <td>
-            <label for="version">Version</label>
-                <select name="version">
-                    <option>version 1</option>
-                    <option>version 2</option>
-                </select>
-            {{ form_start(formy) }}
-            {{ form_widget(formy) }}
-            {{ form_end(formy) }}
-            </td>
-        {% endfor %}
-        </tr>
-        
-    <table>
+    <div class="flex-container">
+        <div id="left" class="flex-row">left</div>
+        <div id="right" class="flex-row">right</div>
     </div>
-
-
-
-
 {% endblock %}

@@ -1,21 +1,21 @@
-.sideheader {
-    width: 100%;
-    height: 150px;
-    background: #f1f7fb;
-    color: #40626b;
+
+
+.flex-container {
+    display: flex;
 }
 
-.sidemain {
-    overflow: scroll; 
-    height: 100%; 
-    width: 100%;
-    background: #f1f7fb;
-    color: #40626b;
+.flex-row {
+    flex-direction: column;
+    display: flex;
+
 }
 
-.sidetable {
-    width: 100%;
+.ds-metadata {
+    flex-direction: column;
+    display: flex;
+    flex: 1 0;
+    overflow: auto;
+    min-height: fill-available;
+    white-space: nowrap;
 }
-.sidetable td {
-    vertical-align:top
-}
+

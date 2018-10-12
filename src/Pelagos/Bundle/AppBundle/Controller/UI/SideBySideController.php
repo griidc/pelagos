@@ -14,6 +14,8 @@ use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+
+use Pelagos\Response\TerminateResponse;
  
 
 /**
@@ -29,11 +31,37 @@ class SideBySideController extends UIController
      * @param Request     $request The Symfony request object.
      * @param string|null $id      The id of the DIF to load.
      *
-     * @Route("/{udi}")
+     * @Route("/")
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(Request $request, $udi = null)
+    public function defaultAction(Request $request)
+    {
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->redirect('/user/login?destination=' . $request->getPathInfo());
+        }
+
+        return $this->render(
+            'PelagosAppBundle:SideBySide:index.html.twig',
+            array(
+                'udilist' => 'test',
+                
+            )
+        );
+    }
+    
+    /**
+     * The get submission form action for the Side By Side controller.
+     *
+     * @param Request     $request  The Symfony request object.
+     * @param string|null $udi      The UDI of the Dataset to load.
+     * @param string|null $revision The revision number of the Submission to load.
+     *
+     * @Route("/getForm/{udi}/{revision}")
+     *
+     * @return Response A Response instance.
+     */
+    public function getSubmissionFormAction(Request $request, $udi = null, $revision = null)
     {
         // if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             // return $this->redirect('/user/login?destination=' . $request->getPathInfo());
@@ -53,28 +81,45 @@ class SideBySideController extends UIController
 
         $datasetSubmissionHistory = $dataset->getDatasetSubmissionHistory();
         
-        $forms = array();
-        
-        foreach($datasetSubmissionHistory->getIterator() as $i => $datasetSubmission) {
-            $form = $this->get('form.factory')->createNamed(null, DatasetSubmissionType::class, $datasetSubmission);
-            $forms[] = $form->createView();
+        if ($datasetSubmissionHistory->count() <= $revision and $revision !== null) {
+            throw new \Exception("Revision $revision does not exist for UDI: $udi");
         }
         
+        if ($revision !== null) {
+            $datasetSubmission = $datasetSubmissionHistory[$revision];
+        } else {
+            $datasetSubmission = $datasetSubmissionHistory->first();
+        }
         
+        $researchGroupList = array();
+        $account = $this->getUser();
+        if (null !== $account) {
+            $user = $account->getPerson();
+            // Find all RG's user has CREATE_DIF_DIF_ON on.
+            $researchGroups = $user->getResearchGroups();
+            $researchGroupList = array_map(
+                function ($researchGroup) {
+                    return $researchGroup->getId();
+                },
+                $researchGroups
+            );
+        }
         
-        $form = $this->get('form.factory')->createNamed(null, DatasetSubmissionType::class, null);
-        $form2 = $this->get('form.factory')->createNamed(null, DatasetSubmissionType::class, null);
+        $form = $this->get('form.factory')->createNamed(null, DatasetSubmissionType::class, $datasetSubmission);
         
-
-        
+        $terminateResponse = new TerminateResponse();
 
         return $this->render(
-            'PelagosAppBundle:SideBySide:index.html.twig',
+            'PelagosAppBundle:SideBySide:submissionForm.html.twig',
             array(
-                'forms' => $forms,
                 'form' => $form->createView(),
-                'form2' => $form2->createView(),
-            )
+                'datasetSubmission' => $datasetSubmission,
+                'showForceImport' => false,
+                'showForceDownload' => false,
+                'researchGroupList' => $researchGroupList,
+                'mode' => 'view',
+            ), 
+            $terminateResponse
         );
     }
 }
