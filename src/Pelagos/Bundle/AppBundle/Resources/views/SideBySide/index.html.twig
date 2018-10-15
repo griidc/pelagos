@@ -70,9 +70,38 @@
 
 {% block body %}
 
-    
-    <div class="flex-container">
-        <div id="left" class="flex-row">left</div>
-        <div id="right" class="flex-row">right</div>
-    </div>
+<div>
+<h1>UDI: {{ udi | default }} </h1>
+<table class="side-table">
+    <tr>
+        <td>
+            <label>Version:</label>
+            <select id="left-version">
+            {% for submission in submissions %}
+                <option data-version={{submission.version}} data-udi={{submission.udi}} data-status={{submission.status}} {% if loop.first %} selected {% endif %}>{{ submission.sequence }}</option>
+            {% endfor %}
+            </select>
+            <label>Status:</label>
+            <div>{{submissions[0].status}}</div>
+        <td>
+        <td>
+            <label>Version:</label>
+            <select id="right-version">
+                {% for submission in submissions %}
+                <option data-version={{submission.version}} data-udi={{submission.udi}} data-status={{submission.status}} {% if loop.last %} selected {% endif %}>{{ submission.sequence }}</option>
+                {% endfor %}
+            </select>
+            <label>Status:</label>
+            <div>{{submissions[1].status}}</div>
+        <td>
+    </tr>
+</table>
+</div>    
+<hr>
+<div class="grid-container">
+    <div id="left" class="grid-group"><h1>LOADING LEFT PANE</div>
+    <div id="right" class="grid-group"><h1>LOADING RIGHT PANE<h1></div>
+
+</div>
+
 {% endblock %}

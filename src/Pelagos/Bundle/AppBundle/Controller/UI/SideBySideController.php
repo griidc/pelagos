@@ -31,20 +31,51 @@ class SideBySideController extends UIController
      * @param Request     $request The Symfony request object.
      * @param string|null $id      The id of the DIF to load.
      *
-     * @Route("/")
+     * @Route("/{udi}")
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(Request $request)
+    public function defaultAction(Request $request, $udi = null)
     {
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->redirect('/user/login?destination=' . $request->getPathInfo());
+        // if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            // return $this->redirect('/user/login?destination=' . $request->getPathInfo());
+        // }
+        
+        $datasets = $this->entityHandler->getBy(Dataset::class, array('udi' => $udi));
+
+        if (count($datasets) == 0) {
+            throw $this->createNotFoundException("No dataset found for UDI: $udi");
         }
+
+        if (count($datasets) > 1) {
+            throw new \Exception("Got more than one return for UDI: $udi");
+        }
+
+        $dataset = $datasets[0];
+        
+        $datasetSubmissionHistory = $dataset->getDatasetSubmissionHistory();
+        
+        $submissions = array();
+        
+        foreach($datasetSubmissionHistory->getIterator() as $i => $submission) {
+            $data = array();
+            $data["version"] = $i;
+            $data["udi"] = $submission->getDataset()->getUdi();
+            $data["sequence"] = $submission->getSequence();
+            $data["status"] = $submission->getDataset()->getStatus();
+            $data["modifier"] = $submission->getModifier();
+            $data["modificationtimestamp"] = $submission->getModificationTimeStamp();
+            $submissions[] = $data;
+        }
+        
+        dump($submissions);
 
         return $this->render(
             'PelagosAppBundle:SideBySide:index.html.twig',
             array(
-                'udilist' => 'test',
+                'udi' => $dataset->getUdi(),
+                'submissions' => $submissions,
+                
                 
             )
         );
@@ -81,7 +112,7 @@ class SideBySideController extends UIController
 
         $datasetSubmissionHistory = $dataset->getDatasetSubmissionHistory();
         
-        if ($datasetSubmissionHistory->count() <= $revision and $revision !== null) {
+        if ($datasetSubmissionHistory->count() < $revision and $revision !== null) {
             throw new \Exception("Revision $revision does not exist for UDI: $udi");
         }
         
