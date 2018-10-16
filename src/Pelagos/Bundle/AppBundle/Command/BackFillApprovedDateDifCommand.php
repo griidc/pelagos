@@ -43,7 +43,7 @@ class BackFillApprovedDateDifCommand extends ContainerAwareCommand
 
         $auditReader = $this->getContainer()->get('simplethings_entityaudit.reader');
 
-        $datasets = $entityManager->getRepository(Dataset::class)->findBy(array('udi' => 'R4.x267.179:0028'));
+        $datasets = $entityManager->getRepository(Dataset::class)->findBy(array('identifiedStatus' => DIF::STATUS_APPROVED));
         $count = 0;
         $approvedDateTimeStamp = new \DateTime();
         foreach ($datasets as $dataset) {
