@@ -726,6 +726,8 @@ $(function() {
             if (option.attr("order") != undefined) {
                 source.append(option);
                 source.append(sortOptions(source.find("option").detach()));
+            } else {
+                source.val($(option).val()).focus();
             }
         }
         buildKeywordLists();
