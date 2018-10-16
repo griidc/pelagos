@@ -55,31 +55,35 @@ class BackFillApprovedDateDifCommand extends ContainerAwareCommand
                     $dif->getId()
                 );
 
-                for ($i = 0; $i < (count($auditRevisionFinder) - 1); $i++) {
-                    // The revisions are ordered by latest first.
-                    $newRevision = $auditRevisionFinder[$i];
-                    $oldRevision = $auditRevisionFinder[($i + 1)];
+                if (count($auditRevisionFinder) > 1) {
+                    for ($i = 0; $i < (count($auditRevisionFinder) - 1); $i++) {
+                        // The revisions are ordered by latest first.
+                        $newRevision = $auditRevisionFinder[$i];
+                        $oldRevision = $auditRevisionFinder[($i + 1)];
 
-                    $articleDiff = $auditReader->diff(
-                        'Pelagos\Entity\DIF',
-                        $dif->getId(),
-                        $oldRevision->getRev(),
-                        $newRevision->getRev()
-                    );
+                        $articleDiff = $auditReader->diff(
+                            'Pelagos\Entity\DIF',
+                            $dif->getId(),
+                            $oldRevision->getRev(),
+                            $newRevision->getRev()
+                        );
 
-                    if ($articleDiff['status']['new'] === DIF::STATUS_APPROVED) {
-                        if (!empty($articleDiff['modificationTimeStamp']['new'])) {
-                            $approvedDateTimeStamp = new \DateTime(
-                                $articleDiff['modificationTimeStamp']['new']->format('Y-m-d H:i:s'),
-                                new \DateTimeZone('+00:00')
-                            );
-                        } else {
-                            $approvedDateTimeStamp = new \DateTime(
-                                $articleDiff['modificationTimeStamp']['same']->format('Y-m-d H:i:s'),
-                                new \DateTimeZone('+00:00')
-                            );
+                        if ($articleDiff['status']['new'] === DIF::STATUS_APPROVED) {
+                            if (!empty($articleDiff['modificationTimeStamp']['new'])) {
+                                $approvedDateTimeStamp = new \DateTime(
+                                    $articleDiff['modificationTimeStamp']['new']->format('Y-m-d H:i:s'),
+                                    new \DateTimeZone('+00:00')
+                                );
+                            } else {
+                                $approvedDateTimeStamp = new \DateTime(
+                                    $articleDiff['modificationTimeStamp']['same']->format('Y-m-d H:i:s'),
+                                    new \DateTimeZone('+00:00')
+                                );
+                            }
                         }
                     }
+                } else {
+                        $approvedDateTimeStamp = $dif->getModificationTimeStamp();
                 }
 
                 if ($approvedDateTimeStamp instanceof \DateTime) {

@@ -389,7 +389,7 @@ function showDatasets(by,id) {
             $("#drawGeoFilterButton").button("enable");
             //this triggers infinite scrolling
             $(".viewport").has(".datasets").scroll(function(){
-                if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
+                if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight - 1) {
                     loadData(by, id);
                 }
             });
