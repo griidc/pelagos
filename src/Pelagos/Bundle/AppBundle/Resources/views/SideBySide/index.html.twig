@@ -75,24 +75,64 @@
 <table class="side-table">
     <tr>
         <td>
-            <label>Version:</label>
-            <select id="left-version">
-            {% for submission in submissions %}
-                <option data-version={{submission.version}} data-udi={{submission.udi}} data-status={{submission.status}} {% if loop.first %} selected {% endif %}>{{ submission.sequence }}</option>
-            {% endfor %}
-            </select>
-            <label>Status:</label>
-            <div>{{submissions[0].status}}</div>
+            <div class="left-version">
+                <table width="100%">
+                    <tr>
+                        <td colspan="4">
+                            <label>Version:</label>
+                            <select>
+                            {% for submission in submissions %}
+                                <option data-version="{{submission.version}}" data-udi="{{submission.udi}}" data-status="{{submission.status}}" data-modifier="{{submission.modifier}}" data-modificationtimestamp="{{submission.modificationtimestamp}}" {% if loop.first %} selected {% endif %}>{{ submission.sequence }}</option>
+                            {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                            <td>
+                            <label>Status:</label>
+                            <div class="submission-status">STATUS</div>
+                        </td>
+                        <td>
+                            <label>Modified By:</label>
+                            <div class="submission-modifier">MODIFIER</div>
+                        </td>
+                        <td>
+                            <label>Modification Time Stamp:</label>
+                            <div class="submission-modificationtimestamp">TIMESTAMP</div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         <td>
         <td>
-            <label>Version:</label>
-            <select id="right-version">
-                {% for submission in submissions %}
-                <option data-version={{submission.version}} data-udi={{submission.udi}} data-status={{submission.status}} {% if loop.last %} selected {% endif %}>{{ submission.sequence }}</option>
-                {% endfor %}
-            </select>
-            <label>Status:</label>
-            <div>{{submissions[1].status}}</div>
+            <div class="right-version">
+                <table width="100%">
+                    <tr>
+                        <td colspan="4">
+                            <label>Version:</label>
+                            <select id="right-version">
+                                {% for submission in submissions %}
+                                <option data-version="{{submission.version}}" data-udi="{{submission.udi}}" data-status="{{submission.status}}" data-modifier="{{submission.modifier}}" data-modificationtimestamp="{{submission.modificationtimestamp}}" {% if loop.last %} selected {% endif %}>{{ submission.sequence }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Status:</label>
+                            <div class="submission-status">STATUS</div>
+                        </td>
+                        <td>
+                            <label>Modified By:</label>
+                            <div class="submission-modifier">MODIFIER</div>
+                        </td>
+                        <td>
+                            <label>Modification Time Stamp:</label>
+                            <div class="submission-modificationtimestamp">TIMESTAMP</div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         <td>
     </tr>
 </table>
