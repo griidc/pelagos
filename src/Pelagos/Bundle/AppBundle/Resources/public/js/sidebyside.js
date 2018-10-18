@@ -51,7 +51,7 @@ $(document).ready(function()
         var version = $(this).find("option:selected").data("version");
         var udi = $(this).find("option:selected").data("udi");
         
-        $("#left").html("<h1>LOADING</h1>");
+        $("#left").html($(".spinner div").html());
         $(".udi-title").text(udi);
         
         $(this).parents("div.left-version")
@@ -73,7 +73,7 @@ $(document).ready(function()
         var version = $(this).find("option:selected").data("version");
         var udi = $(this).find("option:selected").data("udi");
         
-        $("#right").html("<h1>LOADING</h1>");
+        $("#right").html($(".spinner div").html());
         $(".udi-title").text(udi);
         
         $(this).parents("div.right-version")

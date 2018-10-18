@@ -122,10 +122,17 @@ class SideBySideController extends UIController
             // return $this->redirect('/user/login?destination=' . $request->getPathInfo());
         // }
 
-        $datasetSubmissionHistory = $this->getDatasetSubmissionHistory($udi);
+        try {
+            $datasetSubmissionHistory = $this->getDatasetSubmissionHistory($udi);
 
-        if ($datasetSubmissionHistory->count() < $revision and $revision !== null) {
-            throw new \Exception("Revision $revision does not exist for UDI: $udi");
+            if ($datasetSubmissionHistory->count() < $revision and $revision !== null) {
+                throw new \Exception("Revision $revision does not exist for UDI: $udi");
+            }
+        } catch (\Exception $e) {
+            return new TerminateResponse(
+                $e->getMessage(),
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         if ($revision !== null) {
