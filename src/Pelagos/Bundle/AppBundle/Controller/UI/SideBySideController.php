@@ -46,9 +46,9 @@ class SideBySideController extends UIController
      */
     public function defaultAction(Request $request, $udi = null)
     {
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->redirect('/user/login?destination=' . $request->getPathInfo());
-        }
+        // if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            // return $this->redirect('/user/login?destination=' . $request->getPathInfo());
+        // }
 
         $datasetSubmissionHistory = $this->getDatasetSubmissionHistory($udi);
 
@@ -90,9 +90,9 @@ class SideBySideController extends UIController
      */
     public function getSubmissionFormAction(Request $request, $udi = null, $revision = null)
     {
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->redirect('/user/login?destination=' . $request->getPathInfo());
-        }
+        // if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            // return $this->redirect('/user/login?destination=' . $request->getPathInfo());
+        // }
 
         $datasetSubmissionHistory = $this->getDatasetSubmissionHistory($udi);
 
