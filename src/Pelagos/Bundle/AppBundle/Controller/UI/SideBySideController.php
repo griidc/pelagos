@@ -3,7 +3,9 @@
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -50,6 +52,26 @@ class SideBySideController extends UIController
             // return $this->redirect('/user/login?destination=' . $request->getPathInfo());
         // }
 
+        return $this->render(
+            'PelagosAppBundle:SideBySide:index.html.twig'
+        );
+    }
+
+    /**
+     * The get versions action for Side by Side.
+     *
+     * @param Request $request The Symfony request object.
+     *
+     * @Route("/")
+     *
+     * @Method("POST")
+     *
+     * @return Response A Response instance.
+     */
+    public function getVersions(Request $request)
+    {
+        $udi = $request->request->get('udi');
+
         $datasetSubmissionHistory = $this->getDatasetSubmissionHistory($udi);
 
         $submissions = array();
@@ -66,12 +88,9 @@ class SideBySideController extends UIController
             $submissions[] = $data;
         }
 
-        return $this->render(
-            'PelagosAppBundle:SideBySide:index.html.twig',
-            array(
-                'udi' => $datasetSubmissionHistory->first()->getDataset()->getUdi(),
-                'submissions' => $submissions,
-            )
+        return new JsonResponse(
+            $submissions,
+            JsonResponse::HTTP_OK
         );
     }
 

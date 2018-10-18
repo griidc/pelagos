@@ -3,7 +3,7 @@
     
     $.fn.gMap = function(options) {
         return this.each(function() {
-            var gml = $(this).data('extent');
+            var gml = $(this).data("extent");
             
             var thisMap = this;
             
@@ -12,10 +12,10 @@
                 type: "POST",
                 data: {gml: gml},
                 context: document.body
-                })
-                .done(function(wkt) {
-                    renderMap(thisMap, wkt);
-                });
+            })
+            .done(function(wkt) {
+                renderMap(thisMap, wkt);
+            });
         });
     };
     
@@ -29,13 +29,13 @@
         var googleLayerSatellite = new ol.layer.Tile({
             title: "Google Satellite",
             source: new ol.source.TileImage({ 
-                url: 'https://mt1.google.com/vt/lyrs=s&hl=pl&&x={x}&y={y}&z={z}' 
+                url: "https://mt1.google.com/vt/lyrs=s&hl=pl&&x={x}&y={y}&z={z}" 
             }),
         });
 
         var feature = format.readFeature(wkt, {
-            dataProjection: 'EPSG:4326',
-            featureProjection: 'EPSG:3857'
+            dataProjection: "EPSG:4326",
+            featureProjection: "EPSG:3857"
         });
             
         var vector = new ol.layer.Vector({
