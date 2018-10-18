@@ -12,7 +12,7 @@ $(document).ready(function()
             data: {udi: udi},
             context: document.body
         })
-        .done(function(data) {
+        .success(function(data) {
             var select = $("select.version-select");
             select.find("option").remove();
             
@@ -31,6 +31,19 @@ $(document).ready(function()
                 .next()
                 .prop("selected", "selected");
             select.change();
+        })
+        .error(function() {
+            var n = new noty({
+                text: "UDI:" + udi + " not found!",
+                type: "error",
+                theme: "relax",
+                timeout: 3000,
+                animation: {
+                    open: {opacity: "toggle"},  // fadeIn
+                    close: {opacity: "toggle"}, // fadeOut
+                }
+            });
+            $("input[name=udi]").val("");
         });
     });
     

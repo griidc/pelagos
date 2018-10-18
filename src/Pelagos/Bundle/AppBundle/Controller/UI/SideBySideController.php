@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Symfony\Component\HttpKernel\Exception\HttpException;
+
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 
 use Pelagos\Entity\Account;
@@ -72,7 +74,14 @@ class SideBySideController extends UIController
     {
         $udi = $request->request->get('udi');
 
-        $datasetSubmissionHistory = $this->getDatasetSubmissionHistory($udi);
+        try {
+            $datasetSubmissionHistory = $this->getDatasetSubmissionHistory($udi);
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                null,
+                JsonResponse::HTTP_BAD_REQUEST
+            );
+        }
 
         $submissions = array();
 
@@ -172,7 +181,7 @@ class SideBySideController extends UIController
         $datasets = $this->entityHandler->getBy(Dataset::class, array('udi' => $udi));
 
         if (count($datasets) == 0) {
-            throw \Exception("No dataset found for UDI: $udi");
+            throw new \Exception("No dataset found for UDI: $udi");
         }
 
         if (count($datasets) > 1) {
