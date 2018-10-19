@@ -53,6 +53,10 @@ class SideBySideController extends UIController
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirect('/user/login?destination=' . $request->getPathInfo());
         }
+        
+        if (!$this->isGranted(array('ROLE_DATA_REPOSITORY_MANAGER', 'ROLE_SUBJECT_MATTER_EXPERT'))) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
 
         return $this->render(
             'PelagosAppBundle:SideBySide:index.html.twig'
