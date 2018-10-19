@@ -66,6 +66,7 @@ $(document).ready(function()
         
         $("#left").load("/pelagos-symfony/dev/mvde/sidebyside/getForm/" + udi + "/" + version, function() {
             $(".smallmap", this).gMap();
+            $(".filetabs", this).tabs();
         });
     });
     
@@ -88,6 +89,7 @@ $(document).ready(function()
         
         $("#right").load("/pelagos-symfony/dev/mvde/sidebyside/getForm/" + udi + "/" + version, function() {
             $(".smallmap", this).gMap();
+            $(".filetabs", this).tabs();
         });
     });
 });
