@@ -70,7 +70,7 @@ class DatasetRestrictionsController extends UIController
         if (!empty($datasets)) {
             $dataset = $datasets[0];
             $datasetSubmission = $dataset->getDatasetSubmission();
-            $datasetStatus = $dataset->getMetadataStatus();
+            $datasetStatus = $dataset->getDatasetStatus();
 
             if ($restrictionKey) {
                 // Record the original state for logging purposes before changing it.
@@ -86,7 +86,7 @@ class DatasetRestrictionsController extends UIController
                     throw new PersistenceException($exception->getMessage());
                 }
 
-                if ($datasetStatus === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+                if ($datasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
                     $this->publishDoiForAccepted($rabbitMessage);
                 }
 
