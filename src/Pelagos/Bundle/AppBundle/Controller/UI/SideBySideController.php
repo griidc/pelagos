@@ -50,9 +50,9 @@ class SideBySideController extends UIController
      */
     public function defaultAction(Request $request, $udi = null)
     {
-        // if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            // return $this->redirect('/user/login?destination=' . $request->getPathInfo());
-        // }
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->redirect('/user/login?destination=' . $request->getPathInfo());
+        }
 
         return $this->render(
             'PelagosAppBundle:SideBySide:index.html.twig'
@@ -118,9 +118,9 @@ class SideBySideController extends UIController
      */
     public function getSubmissionFormAction(Request $request, $udi = null, $revision = null)
     {
-        // if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            // return $this->redirect('/user/login?destination=' . $request->getPathInfo());
-        // }
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->redirect('/user/login?destination=' . $request->getPathInfo());
+        }
 
         try {
             $datasetSubmissionHistory = $this->getDatasetSubmissionHistory($udi);
