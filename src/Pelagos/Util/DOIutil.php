@@ -218,6 +218,10 @@ class DOIutil
         $input .= 'datacite.publisher:' . $this->escapeSpecialCharacters($publisher) . "\n";
         $input .= "datacite.publicationyear:$publicationYear\n";
 
+        //Adding status to the update
+        $doiMetadata = $this->getDOIMetadata($doi);
+        $input .= '_status: ' . $doiMetadata['_status'] . "\n";
+
         utf8_encode($input);
 
         $ch = curl_init();
