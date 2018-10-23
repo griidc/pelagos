@@ -105,7 +105,7 @@ class StatsController extends UIController
                 SELECT MIN(subDatasetSubmission.id)
                 FROM ' . DatasetSubmission::class . ' subDatasetSubmission
                 WHERE subDatasetSubmission.datasetFileUri is not null
-                AND subDatasetSubmission.metadataStatus = :metadatastatus
+                AND subDatasetSubmission.datasetStatus = :metadatastatus
                 AND subDatasetSubmission.restrictions = :restrictedstatus
                 AND (
                     subDatasetSubmission.datasetFileTransferStatus = :transerstatuscompleted
@@ -115,7 +115,7 @@ class StatsController extends UIController
             )')
             ->setParameters(
                 array(
-                    'metadatastatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED,
+                    'metadatastatus' => Dataset::DATASET_STATUS_ACCEPTED,
                     'restrictedstatus' => DatasetSubmission::RESTRICTION_NONE,
                     'transerstatuscompleted' => DatasetSubmission::TRANSFER_STATUS_COMPLETED,
                     'transerstatusremotelyhosted' => DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED,

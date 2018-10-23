@@ -74,7 +74,7 @@ class DatasetSubmissionTest extends TestCase
             array(
                 'setDatasetSubmission' => null,
                 'setDatasetSubmissionStatus' => null,
-                'setMetadataStatus' => null,
+                'setDatasetStatus' => null,
                 'setAvailabilityStatus' => null,
                 'updateAvailabilityStatus' => null,
                 'getUdi' => 'T1.x123.000:0001',
@@ -367,16 +367,16 @@ class DatasetSubmissionTest extends TestCase
     }
 
     /**
-     * Test metadata status.
+     * Test dataset status.
      *
      * @return void
      */
-    public function testMetadataStatus()
+    public function testDatasetStatus()
     {
-        $this->datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
+        $this->datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_ACCEPTED);
         $this->assertEquals(
-            DatasetSubmission::METADATA_STATUS_ACCEPTED,
-            $this->datasetSubmission->getMetadataStatus()
+            Dataset::DATASET_STATUS_ACCEPTED,
+            $this->datasetSubmission->getDatasetStatus()
         );
     }
 
@@ -665,23 +665,23 @@ class DatasetSubmissionTest extends TestCase
         // datasetFileTransferStatus == TRANSFER_STATUS_COMPLETED
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
         $this->datasetSubmission->setDataset($this->mockDataset);
-        $this->datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
+        $this->datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_ACCEPTED);
         $this->datasetSubmission->setRestrictions(DatasetSubmission::RESTRICTION_NONE);
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
         $this->datasetSubmission->setRestrictions(DatasetSubmission::RESTRICTION_RESTRICTED);
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
-        $this->datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_NONE);
+        $this->datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_NONE);
         $this->datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
         $this->datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
         // datasetFileTransferStatus == TRANSFER_STATUS_REMOTELY_HOSTED
-        $this->datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
+        $this->datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_ACCEPTED);
         $this->datasetSubmission->setRestrictions(DatasetSubmission::RESTRICTION_NONE);
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
         $this->datasetSubmission->setRestrictions(DatasetSubmission::RESTRICTION_RESTRICTED);
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
-        $this->datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_NONE);
+        $this->datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_NONE);
         $this->datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
         $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
         $this->datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
@@ -761,8 +761,8 @@ class DatasetSubmissionTest extends TestCase
             $this->datasetSubmission->getStatus()
         );
         $this->assertEquals(
-            DatasetSubmission::METADATA_STATUS_NONE,
-            $this->datasetSubmission->getMetadataStatus()
+            Dataset::DATASET_STATUS_NONE,
+            $this->datasetSubmission->getDatasetStatus()
         );
         $this->assertNull($this->datasetSubmission->getSubmissionTimeStamp());
         $this->assertNull($this->datasetSubmission->getSubmitter());
@@ -777,8 +777,8 @@ class DatasetSubmissionTest extends TestCase
             $this->datasetSubmission->getStatus()
         );
         $this->assertEquals(
-            DatasetSubmission::METADATA_STATUS_SUBMITTED,
-            $this->datasetSubmission->getMetadataStatus()
+            Dataset::DATASET_STATUS_SUBMITTED,
+            $this->datasetSubmission->getDatasetStatus()
         );
         $this->assertInstanceOf(
             \DateTime::class,

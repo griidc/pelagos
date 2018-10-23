@@ -151,7 +151,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     private function latestDatasetSubmissionForReview(Request $request, DatasetSubmission $datasetSubmission, Dataset $dataset, $udi)
     {
         $datasetSubmissionStatus = (($datasetSubmission) ? $datasetSubmission->getStatus() : null);
-        $datasetSubmissionMetadataStatus = $dataset->getMetadataStatus();
+        $datasetSubmissionDatasetStatus = $dataset->getDatasetStatus();
 
         switch (true) {
 
@@ -159,7 +159,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 $this->addToWarningDisplayQueue($request, $udi, 'hasDraft');
                 break;
 
-            case ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER):
+            case ($datasetSubmissionDatasetStatus === Dataset::DATASET_STATUS_BACK_TO_SUBMITTER):
                 if ('view' === $this->mode) {
                     $this->addToNoticeDisplayQueue($request, $udi, 'backToSub');
                     $datasetSubmission = $this->reviewMode($request, $datasetSubmission, $dataset, $udi);
@@ -350,7 +350,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         $reviewStartTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $datasetSubmissionReview = new DatasetSubmissionReview($datasetSubmission, $reviewedBy, $reviewStartTimeStamp);
         $datasetSubmission->setDatasetSubmissionReviewStatus();
-        $datasetSubmission->setMetadataStatus(DatasetSubmission::METADATA_STATUS_IN_REVIEW);
+        $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_IN_REVIEW);
         $datasetSubmission->setModifier($reviewedBy);
         $eventName = 'start_review';
 
@@ -580,21 +580,21 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     private function reviewMode(Request $request, DatasetSubmission $datasetSubmission, Dataset $dataset, $udi)
     {
         $datasetSubmissionStatus = (($datasetSubmission) ? $datasetSubmission->getStatus() : null);
-        $datasetSubmissionMetadataStatus = $dataset->getMetadataStatus();
+        $datasetSubmissionDatasetStatus = $dataset->getDatasetStatus();
         if ('view' === $this->mode) {
             // IFF the event we're viewing a BACK_TO_SUBMITTER dataset, use the one pointed referenced by Dataset
             // as this will be the user's most recent submission, not a possible reviewer's version.
-            if ($datasetSubmissionMetadataStatus == DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER) {
+            if ($datasetSubmissionDatasetStatus == Dataset::DATASET_STATUS_BACK_TO_SUBMITTER) {
                 $datasetSubmission = $dataset->getDatasetSubmission();
             }
             return $datasetSubmission;
         } elseif ('review' === $this->mode) {
             switch (true) {
-                case ($datasetSubmissionStatus === DatasetSubmission::STATUS_COMPLETE and $datasetSubmissionMetadataStatus !== DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER):
+                case ($datasetSubmissionStatus === DatasetSubmission::STATUS_COMPLETE and $datasetSubmissionDatasetStatus !== Dataset::DATASET_STATUS_BACK_TO_SUBMITTER):
                     $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
                     break;
 
-                case ($datasetSubmissionStatus === DatasetSubmission::STATUS_IN_REVIEW and ($datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_IN_REVIEW or $datasetSubmissionMetadataStatus === DatasetSubmission::METADATA_STATUS_SUBMITTED)):
+                case ($datasetSubmissionStatus === DatasetSubmission::STATUS_IN_REVIEW and ($datasetSubmissionDatasetStatus === Dataset::DATASET_STATUS_IN_REVIEW or $datasetSubmissionDatasetStatus === Dataset::DATASET_STATUS_SUBMITTED)):
                     $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
                     switch (true) {
                         case (empty($datasetSubmissionReview) || $datasetSubmissionReview->getReviewEndDateTime()):

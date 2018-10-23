@@ -367,13 +367,13 @@ class DoiConsumer implements ConsumerInterface
      */
     private function validatePublish($dataset, $doiStatus, array $loggingContext)
     {
-        if ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED and
+        if ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED and
             $doiStatus === DOI::STATUS_PUBLIC and
             $dataset->getDatasetSubmission()->getRestrictions() === DatasetSubmission::RESTRICTION_NONE) {
             // Don't attempt to publish an already published DOI to preserve the original pub date.
             $this->logger->warning('DOI for dataset already marked as published', $loggingContext);
             return false;
-        } elseif ($dataset->getMetadataStatus() !== DatasetSubmission::METADATA_STATUS_ACCEPTED and
+        } elseif ($dataset->getDatasetStatus() !== Dataset::DATASET_STATUS_ACCEPTED and
             $doiStatus === DOI::STATUS_RESERVED) {
             // Don't attempt to publish not accepted dataset.
             $this->logger->warning('DOI for dataset is not accepted, No action is taken', $loggingContext);
@@ -402,13 +402,13 @@ class DoiConsumer implements ConsumerInterface
             $restriction = $dataset->getDatasetSubmission()->getRestrictions();
         }
 
-        if ($dataset->getMetadataStatus() !== DatasetSubmission::METADATA_STATUS_ACCEPTED and
+        if ($dataset->getDatasetStatus() !== Dataset::DATASET_STATUS_ACCEPTED and
             $doiStatus === DOI::STATUS_PUBLIC ) {
             $status = DOI::STATUS_UNAVAILABLE;
-        } elseif ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED and
+        } elseif ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED and
             $doiStatus === DOI::STATUS_PUBLIC and $restriction === DatasetSubmission::RESTRICTION_RESTRICTED) {
             $status = DOI::STATUS_UNAVAILABLE;
-        } elseif ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED and
+        } elseif ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED and
             in_array($doiStatus, [DOI::STATUS_RESERVED, DOI::STATUS_UNAVAILABLE]) and
             $restriction === DatasetSubmission::RESTRICTION_NONE) {
             $status = DOI::STATUS_PUBLIC;
