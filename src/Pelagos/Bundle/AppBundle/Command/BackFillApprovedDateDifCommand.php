@@ -55,11 +55,12 @@ class BackFillApprovedDateDifCommand extends ContainerAwareCommand
                     $dif->getId()
                 );
 
-                if (count($auditRevisionFinder) > 1) {
-                    for ($i = 0; $i < (count($auditRevisionFinder) - 1); $i++) {
+                $numberOfRevisions = count($auditRevisionFinder);
+                if ($numberOfRevisions > 1) {
+                    for ($i = ($numberOfRevisions - 1); $i > 0; $i --) {
                         // The revisions are ordered by latest first.
-                        $newRevision = $auditRevisionFinder[$i];
-                        $oldRevision = $auditRevisionFinder[($i + 1)];
+                        $oldRevision = $auditRevisionFinder[$i];
+                        $newRevision = $auditRevisionFinder[($i - 1)];
 
                         $articleDiff = $auditReader->diff(
                             'Pelagos\Entity\DIF',
@@ -68,17 +69,16 @@ class BackFillApprovedDateDifCommand extends ContainerAwareCommand
                             $newRevision->getRev()
                         );
 
-                        if ($articleDiff['status']['new'] === DIF::STATUS_APPROVED) {
+                        if ($articleDiff['status']['same'] === DIF::STATUS_APPROVED) {
+                            $approvedDateTimeStamp = $articleDiff['modificationTimeStamp']['old'];
+                            break;
+                        } else if ($articleDiff['status']['new'] === DIF::STATUS_APPROVED) {
                             if (!empty($articleDiff['modificationTimeStamp']['new'])) {
-                                $approvedDateTimeStamp = new \DateTime(
-                                    $articleDiff['modificationTimeStamp']['new']->format('Y-m-d H:i:s'),
-                                    new \DateTimeZone('+00:00')
-                                );
+                                $approvedDateTimeStamp = $articleDiff['modificationTimeStamp']['new'];
+                                break;
                             } else {
-                                $approvedDateTimeStamp = new \DateTime(
-                                    $articleDiff['modificationTimeStamp']['same']->format('Y-m-d H:i:s'),
-                                    new \DateTimeZone('+00:00')
-                                );
+                                $approvedDateTimeStamp = $articleDiff['modificationTimeStamp']['same'];
+                                break;
                             }
                         }
                     }
@@ -100,6 +100,7 @@ class BackFillApprovedDateDifCommand extends ContainerAwareCommand
                 } else {
                     $output->writeln('Modification Time stamp not an instance of DateTime for Dataset Id: ' . $dataset->getId());
                 }
+                $approvedDateTimeStamp = null;
             }
         }
         $output->writeln('Total number of datasets which got back-filled: ' . $count);

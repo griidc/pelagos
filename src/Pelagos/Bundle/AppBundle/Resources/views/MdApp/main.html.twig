@@ -110,7 +110,7 @@
                                 </div>
                             </td>
                             <td valign="top">
-                                <form name="AcceptedState" action="{{ path('pelagos_app_ui_mdapp_changemetadatastatus', {'id': dta.id}) }}" method="post">
+                                <form name="AcceptedState" action="{{ path('pelagos_app_ui_mdapp_changedatasetstatus', {'id': dta.id}) }}" method="post">
                                    {% if sname == 'backtosubmitter' %}
                                        change to <input type="submit" name="to" value="InReview" id="state_sel_sub_{{dta.udi}}">
                                     {% else %}

@@ -43,7 +43,7 @@ class DatalandController extends UIController
         $rawXml = null;
         $wkt = null;
 
-        if ($dataset->getMetadataStatus() === DatasetSubmission::METADATA_STATUS_ACCEPTED) {
+        if ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED) {
             $boundingBoxArray = $this->getBoundingBox($dataset);
             $rawXml = $this->get('pelagos.util.metadata')->getXmlRepresentation($dataset, $boundingBoxArray);
         }
@@ -89,7 +89,7 @@ class DatalandController extends UIController
      *
      * @param string $udi The UDI of the dataset to return metadata for.
      *
-     * @throws BadRequestHttpException When the metadata for the dataset has not been accepted.
+     * @throws BadRequestHttpException When the dataset status is not accepted.
      *
      * @Route("/{udi}/metadata")
      *
@@ -99,8 +99,8 @@ class DatalandController extends UIController
     {
         $dataset = $this->getDataset($udi);
 
-        if ($dataset->getMetadataStatus() !== DatasetSubmission::METADATA_STATUS_ACCEPTED) {
-            throw new BadRequestHttpException("The metadata has not yet been accepted for dataset with UDI: $udi");
+        if ($dataset->getDatasetStatus() !== Dataset::DATASET_STATUS_ACCEPTED) {
+            throw new BadRequestHttpException('The dataset with udi ' . $udi . ' has not yet been accepted.');
         }
 
         $boundingBoxArray = $this->getBoundingBox($dataset);

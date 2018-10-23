@@ -60,7 +60,7 @@ class DatasetSubmissionReviewTest extends TestCase
             array(
                 'getStatus' => DatasetSubmission::STATUS_COMPLETE,
                 'setDataset' => null,
-                'getMetadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED,
+                'getDatasetStatus' => Dataset::DATASET_STATUS_ACCEPTED,
                 'getDatasetFileTransferStatus' => null,
                 'getRestrictions' => null,
                 'getDatasetContacts' => new ArrayCollection(

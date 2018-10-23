@@ -1,7 +1,7 @@
 {% set dl_ok = 0 %}
 {% set dataset_available = 0 %}
 
-{% if dataset.metadataStatus == constant('Pelagos\\Entity\\DatasetSubmission::METADATA_STATUS_ACCEPTED') %}
+{% if dataset.datasetStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
     {% set dl_ok = 1 %}
 {% endif %}
 {% if dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') or dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED') %}
@@ -26,7 +26,7 @@
                             <img width="40px" height="40px" id="downloaddsden" src="{{ asset_url }}">
                         {% endimage %}
                     {% endif %}
-                    {% if dataset.metadataStatus == constant('Pelagos\\Entity\\DatasetSubmission::METADATA_STATUS_ACCEPTED') %}
+                    {% if dataset.datasetStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
                         {% image '@PelagosAppBundle/Resources/public/images/xmlc.png' %}
                             <img title="test" width="40px" height="40px" id="metadatadl" src="{{ asset_url }}">
                         {% endimage %}
