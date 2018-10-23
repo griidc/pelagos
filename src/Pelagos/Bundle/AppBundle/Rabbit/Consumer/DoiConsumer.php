@@ -396,7 +396,11 @@ class DoiConsumer implements ConsumerInterface
         //declaring it as reserved for defensive purpose
         $status = DOI::STATUS_RESERVED;
 
-        $restriction = $dataset->getDatasetSubmission()->getRestrictions();
+        $restriction = DatasetSubmission::RESTRICTION_NONE;
+
+        if ($dataset->getDatasetSubmission() instanceof DatasetSubmission) {
+            $restriction = $dataset->getDatasetSubmission()->getRestrictions();
+        }
 
         if ($dataset->getDatasetStatus() !== Dataset::DATASET_STATUS_ACCEPTED and
             $doiStatus === DOI::STATUS_PUBLIC ) {
