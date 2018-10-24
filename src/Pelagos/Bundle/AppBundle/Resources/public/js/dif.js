@@ -663,7 +663,7 @@ function updateDIF(form)
         } else {
             var title = "Unable to process DIF form";
             var message = "<div><p>There was an error processing your request. Your session might have expired.<br>" +
-                "If the problem still persists after you re-login, please contact the administrator</p></div>";
+                "If the problem still persists after you re-login, please contact the administrator.</p></div>";
         }
 
         hideSpinner();
