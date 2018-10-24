@@ -63,8 +63,8 @@ $(document).ready(function()
         $(this).parents("div.left-version")
             .find(".submission-modifier")
             .text($(this).find("option:selected").data("modifier"));
-        
-        $("#left").load("/pelagos-symfony/dev/mvde/sidebyside/getForm/" + udi + "/" + version, function() {
+        var getFormUrl = Routing.generate("pelagos_app_ui_sidebyside_getsubmissionform");
+        $("#left").load(getFormUrl + "/" + udi + "/" + version, function() {
             $(".smallmap", this).gMap();
             $(".filetabs", this).tabs();
         });
@@ -86,8 +86,8 @@ $(document).ready(function()
         $(this).parents("div.right-version")
             .find(".submission-modifier")
             .text($(this).find("option:selected").data("modifier"));
-        
-        $("#right").load("/pelagos-symfony/dev/mvde/sidebyside/getForm/" + udi + "/" + version, function() {
+        var getFormUrl = Routing.generate("pelagos_app_ui_sidebyside_getsubmissionform");
+        $("#right").load(getFormUrl + "/" + udi + "/" + version, function() {
             $(".smallmap", this).gMap();
             $(".filetabs", this).tabs();
         });
