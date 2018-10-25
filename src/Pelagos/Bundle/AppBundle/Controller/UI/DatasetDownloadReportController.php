@@ -8,12 +8,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Pelagos\Bundle\AppBundle\Form\ReportDatasetDownloadType;
+
+use Pelagos\Exception\InvalidDateSelectedException;
+
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\LogActionItem;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\DatasetSubmission;
-
-use Pelagos\Exception\InvalidDateSelectedException;
 
 /**
  * The dataset download report generator.
