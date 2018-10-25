@@ -154,8 +154,8 @@ $(document).ready(function()
         ignore: ".ignore",
         messages: {
             geoloc: "Click on Spatial Wizard Button!",
-            estimatedStartDate: "Start Date is not a valid ISO date",
-            estimatedEndDate: "End Date is not a valid ISO date"
+            estimatedStartDate: "Start Date is a required field and Please enter a valid ISO date",
+            estimatedEndDate: "End Date is a required field and Please enter a valid ISO date"
         },
         submitHandler: function(form) {
             saveDIF(form);
