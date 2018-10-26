@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormInterface;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
 
@@ -206,7 +206,7 @@ class DIFController extends EntityController
      *
      * @param integer $id The id of the DIF to submit.
      *
-     * @throws AccessDeniedException   When the DIF authenticated user does not have permission to submit the DIF.
+     * @throws AccessDeniedHttpException   When the DIF authenticated user does not have permission to submit the DIF.
      * @throws BadRequestHttpException When the DIF could not be submitted.
      *
      * @ApiDoc(
@@ -229,7 +229,7 @@ class DIFController extends EntityController
         // Check if the user has permission to submit it.
         if (!$this->isGranted(DIFVoter::CAN_SUBMIT, $dif)) {
             // Throw an exception if they don't.
-            throw new AccessDeniedException(
+            throw new AccessDeniedHttpException(
                 'You do not have sufficient privileges to submit this ' . $dif::FRIENDLY_NAME . '.'
             );
         }
@@ -253,7 +253,7 @@ class DIFController extends EntityController
      *
      * @param integer $id The id of the DIF to approve.
      *
-     * @throws AccessDeniedException   When the DIF authenticated user does not have permission to approve the DIF.
+     * @throws AccessDeniedHttpException   When the DIF authenticated user does not have permission to approve the DIF.
      * @throws BadRequestHttpException When the DIF could not be approved.
      *
      * @ApiDoc(
@@ -276,7 +276,7 @@ class DIFController extends EntityController
         // Check if the user has permission to approve it.
         if (!$this->isGranted(DIFVoter::CAN_APPROVE, $dif)) {
             // Throw an exception if they don't.
-            throw new AccessDeniedException(
+            throw new AccessDeniedHttpException(
                 'You do not have sufficient privileges to approve this ' . $dif::FRIENDLY_NAME . '.'
             );
         }
@@ -304,7 +304,7 @@ class DIFController extends EntityController
      *
      * @param integer $id The id of the DIF to reject.
      *
-     * @throws AccessDeniedException   When the DIF authenticated user does not have permission to reject the DIF.
+     * @throws AccessDeniedHttpException   When the DIF authenticated user does not have permission to reject the DIF.
      * @throws BadRequestHttpException When the DIF could not be rejected.
      *
      * @ApiDoc(
@@ -327,7 +327,7 @@ class DIFController extends EntityController
         // Check if the user has permission to reject it.
         if (!$this->isGranted(DIFVoter::CAN_REJECT, $dif)) {
             // Throw an exception if they don't.
-            throw new AccessDeniedException(
+            throw new AccessDeniedHttpException(
                 'You do not have sufficient privileges to reject this ' . $dif::FRIENDLY_NAME . '.'
             );
         }
@@ -351,7 +351,7 @@ class DIFController extends EntityController
      *
      * @param integer $id The id of the DIF to unlock.
      *
-     * @throws AccessDeniedException   When the DIF authenticated user does not have permission to unlock the DIF.
+     * @throws AccessDeniedHttpException   When the DIF authenticated user does not have permission to unlock the DIF.
      * @throws BadRequestHttpException When the DIF could not be unlocked.
      *
      * @ApiDoc(
@@ -374,7 +374,7 @@ class DIFController extends EntityController
         // Check if the user has permission to unlock it.
         if (!$this->isGranted(DIFVoter::CAN_UNLOCK, $dif)) {
             // Throw an exception if they don't.
-            throw new AccessDeniedException(
+            throw new AccessDeniedHttpException(
                 'You do not have sufficient privileges to unlock this ' . $dif::FRIENDLY_NAME . '.'
             );
         }
@@ -398,7 +398,7 @@ class DIFController extends EntityController
      *
      * @param integer $id The id of the DIF to request unlock for.
      *
-     * @throws AccessDeniedException   When the authenticated user does not have
+     * @throws AccessDeniedHttpException   When the authenticated user does not have
      *                                 permission to request unlock for the DIF.
      * @throws BadRequestHttpException When the DIF could not be requested to be unlocked.
      *
@@ -423,7 +423,7 @@ class DIFController extends EntityController
         // Check if the user has permission to request it be unlocked.
         if (!$this->isGranted(DIFVoter::CAN_REQUEST_UNLOCK, $dif)) {
             // Throw an exception if they don't.
-            throw new AccessDeniedException(
+            throw new AccessDeniedHttpException(
                 'You do not have sufficient privileges to request this ' . $dif::FRIENDLY_NAME . ' be unlocked'
             );
         }
