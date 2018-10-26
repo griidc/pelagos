@@ -6,6 +6,10 @@
     width: 100%;
 }
 
+.version-select {
+    height:25px;
+}
+
 .grid-container {
     display:grid;
     grid-template-columns: repeat(2, 1fr);

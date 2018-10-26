@@ -5,7 +5,7 @@ $(document).ready(function()
     "use strict";
     
     $("#get-versions-button").click(function (){
-        var udi = $("input[name=udi]").val();
+        var udi = $("input[name=udi]").val().trim();
         jQuery.ajax({
             url: Routing.generate("pelagos_app_ui_sidebyside_getversions", {udi: udi}),
             type: "POST",
