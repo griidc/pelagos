@@ -220,9 +220,13 @@ function createRow(data, row)
             }
             $(rowContent).find("#img-download-package").removeClass("greyout");
             $(rowContent).find("#dataset-download").click( function(){
-                var id = $(this).closest("tr").attr("datasetid");
+                var id = $(this).parents("tr").attr("datasetid");
                 startDownload(id);
             });
+
+            if (!data["datasetSubmission"]["datasetFileSize"]) {
+                $(rowContent).find("#container-dataset-filesize").hide();
+            }
             break;
         case 1: //restricted
             if ("RemotelyHosted" === data["datasetSubmission"]["datasetFileTransferStatus"]) {
@@ -233,9 +237,17 @@ function createRow(data, row)
             }
             $(rowContent).find("#dataset-restrictions").text("Download Restricted");
             $(rowContent).find("#container-dataset-restrictions").show();
+
+            if (!data["datasetSubmission"]["datasetFileSize"]) {
+                $(rowContent).find("#container-dataset-filesize").hide();
+            }
             break;
         case 2: //InReview
                 imgTitle = "Download unavailable"
+
+                if (!data["datasetSubmission"]["datasetFileSize"]) {
+                    $(rowContent).find("#container-dataset-filesize").hide();
+                }
             break;
         case 3: //identified
             $(rowContent).find("#img-download-package").hide();
@@ -291,8 +303,8 @@ function createRow(data, row)
     }
 
     //this shows the details dataset on Show Details button
-    $(".details_link").bind("click", function(){
-        var row = $(this).closest("tr");
+    $(".details_link", rowContent).bind("click", function(){
+        var row = $(this).parents("tr");
         if ($(row).has(".details:empty").length == 1) {
             var datasetId = $(row).attr("datasetid");
             $.ajax({
@@ -305,12 +317,11 @@ function createRow(data, row)
             });
         } else {
             if ($(row).find(".details:visible").length == 1) {
-                $(row).find(".details").hide();
                 $(row).find(".details_link").html("Show Details");
             } else {
-                $(row).find(".details").show();
                 $(row).find(".details_link").html("Hide Details");
             }
+            $(row).find(".details").toggle();
         }
     });
 
@@ -378,7 +389,7 @@ function showDatasets(by,id) {
             $("#drawGeoFilterButton").button("enable");
             //this triggers infinite scrolling
             $(".viewport").has(".datasets").scroll(function(){
-                if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
+                if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight - 1) {
                     loadData(by, id);
                 }
             });
