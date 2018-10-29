@@ -38,6 +38,8 @@ class Geometry
      */
     public function calculateEnvelopeFromGml($gml)
     {
+        $gml = GmlUtil::addNamespace($gml);
+
         $sql = 'SELECT ST_AsText(ST_Envelope(ST_GeomFromGML(:gml, :srid)))';
         $connection = $this->entityManager->getConnection();
         $sth = $connection->prepare($sql);
@@ -67,6 +69,8 @@ class Geometry
      */
     public function calculateGeographicBoundsFromGml($gml)
     {
+        $gml = GmlUtil::addNamespace($gml);
+
         $sql = 'SELECT
                     ST_XMin(ST_GeomFromGml(:gml)) as "westBoundLongitude",
                     ST_XMax(ST_GeomFromGml(:gml)) as "eastBoundLongitude",
