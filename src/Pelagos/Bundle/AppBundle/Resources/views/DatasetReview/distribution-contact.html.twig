@@ -3,7 +3,8 @@
     <table class="tab-table distribution-contact">
         <tr>
             <td>
-                {% set distPoint = form.distributionPoints | first %}
+                {% set distPoint = form.distributionPoints | first | default %}
+                {% if (distPoint) %}
                 {% set dataCenterInfo = distPoint.vars.data.dataCenter | default %}
                 <span class="helpSection">
 					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
@@ -67,6 +68,7 @@
 					</div>
 				</span>
                 {{ form_row(distPoint.distributionUrl, {attr: {'class' : 'distributionurl'}}) }}
+            {% endif %}
             </td>
         </tr>
     </table>

@@ -27,6 +27,7 @@
 
 .keywordinput {
     width:350px;
+    height:100%;
 }
 
 .dstablink {
@@ -170,3 +171,5 @@ table.dataTable.stripe tbody tr:hover {
 {
     display:none;
 }
+
+

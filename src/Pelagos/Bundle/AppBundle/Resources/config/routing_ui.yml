@@ -75,3 +75,7 @@ pelagos_end_review_ui:
 
 pelagos_national_data_center_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\NationalDataCenterController
+
+pelagos_side_by_side_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\SideBySideController    
+    
