@@ -156,6 +156,12 @@ $(document).ready(function()
         ignore: ".ignore",
         messages: {
             geoloc: "Click on Spatial Wizard Button!",
+            estimatedStartDate: {
+                required: "Start Date is a required field."
+            },
+            estimatedEndDate: {
+                required: "End Date is a required field."
+            }
         },
         submitHandler: function(form) {
             saveDIF(form);
