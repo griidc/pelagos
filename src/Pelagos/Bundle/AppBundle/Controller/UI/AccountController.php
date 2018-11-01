@@ -400,4 +400,18 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
 
         return $this->render('PelagosAppBundle:Account:AccountReset.html.twig');
     }
+
+    /**
+     * Forgot username for users.
+     *
+     * @Route("/forgot-username")
+     * @Method("GET")
+     *
+     * @return Response A Response instance.
+     */
+    public function forgotUsernameAction()
+    {
+        // Send back the set password screen.
+        return $this->render('PelagosAppBundle:Account:forgotUsername.html.twig');
+    }
 }
