@@ -195,7 +195,7 @@ class DatasetDownloadReportController extends ReportController
     {
         if ($fileSizeBytes) {
             // Formats the size to MB
-            $fileSizeBytes = number_format(($fileSizeBytes / 1048576), 6);
+            $fileSizeBytes = number_format(($fileSizeBytes / 1000000), 6);
         }
 
         return $fileSizeBytes;
