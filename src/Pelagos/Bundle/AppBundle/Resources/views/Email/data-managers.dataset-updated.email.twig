@@ -1,9 +1,10 @@
 {% block subject 'GRIIDC Dataset Submission Updated' %}
 
 {% block body_html %}
+    {% set submitterGroupsAndRepos = dataset.datasetSubmission.submitter.dataRepositoryNames | merge(dataset.datasetSubmission.submitter.researchGroupNames) %}
     Dear {{ recipient.firstName }} {{ recipient.lastName }},<br>
     <br>
-    The GRIIDC dataset {{dataset.udi}} has been updated. This update was made by {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}}. {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} is a member of {{ dataset.datasetSubmission.submitter.researchGroupNames | join(', ') }} and the dataset is associated with {{dataset.researchGroup.name}}.<br>
+    The GRIIDC dataset {{dataset.udi}} has been updated. This update was made by {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}}. {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} is a member of {{ submitterGroupsAndRepos | join (', ') }} and the dataset is associated with {{dataset.researchGroup.name}}.<br>
     <br>
     Thank you,<br>
     <br>
@@ -13,9 +14,10 @@
 {% endblock %}
 
 {% block body_text %}
+    {% set submitterGroupsAndRepos = dataset.datasetSubmission.submitter.researchGroupNames | merge(dataset.datasetSubmission.submitter.dataRepositoryNames) %}
 Dear {{ recipient.firstName }} {{ recipient.lastName }},
 
-The GRIIDC dataset {{dataset.udi}} has been updated. This update was made by {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}}. {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} is a member of {{ dataset.datasetSubmission.submitter.researchGroupNames | join(', ') }} and the dataset is associated with {{dataset.researchGroup.name}}.
+The GRIIDC dataset {{dataset.udi}} has been updated. This update was made by {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}}. {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} is a member of {{ submitterGroupsAndRepos | join (', ') }} and the dataset is associated with {{dataset.researchGroup.name}}.
 
 Thank you,
 
