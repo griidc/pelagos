@@ -255,15 +255,15 @@
                 </div>
             </span>
             <label class="emRequired"><b>Estimated Data Sampling/Generation Period: </b></label>
-            <center>
-               <b>Start Date</b>
-               {{ form_widget(form.estimatedStartDate) }}
-               to
-               {{ form_widget(form.estimatedEndDate) }}
-               <b>End Date</b>
-               <label for="estimatedStartDate" class="error"></label>
-               <label for="estimatedEndDate" class="error"/></label>
-          </center>
+            <div align="center">
+                <label for="estimatedStartDate" class="error"></label>
+                <label for="estimatedEndDate" class="error"/></label>
+                <b>Start Date</b>
+                {{ form_widget(form.estimatedStartDate) }}
+                to
+                {{ form_widget(form.estimatedEndDate) }}
+                <b>End Date</b>
+            </div>
         </fieldset>
     </div>
 

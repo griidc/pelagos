@@ -148,14 +148,20 @@ $(document).ready(function()
     jQuery.validator.addMethod("trueISODate", function(value, element) {
         var regPattern = /^\d{4}-\d{1,2}-\d{1,2}$/
         return this.optional(element) || ((Date.parse(value)) && regPattern.test(value));
+    },function (params, element) {
+        return "Please enter a valid ISO Date"
     });
 
     difValidator = $("#difForm").validate({
         ignore: ".ignore",
         messages: {
             geoloc: "Click on Spatial Wizard Button!",
-            estimatedStartDate: "Start Date is a required field and Please enter a valid ISO date",
-            estimatedEndDate: "End Date is a required field and Please enter a valid ISO date"
+            estimatedStartDate: {
+                required: "Start Date is a required field."
+            },
+            estimatedEndDate: {
+                required: "End Date is a required field."
+            }
         },
         submitHandler: function(form) {
             saveDIF(form);
