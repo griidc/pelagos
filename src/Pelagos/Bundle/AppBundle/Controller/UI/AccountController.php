@@ -430,7 +430,7 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
                 $userNameFound = true;
                 $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
                     $person[0]->getAccount(),
-                    'forgotUsername'
+                    'forgot_username'
                 );
             }
         }
