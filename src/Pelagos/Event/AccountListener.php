@@ -88,7 +88,7 @@ class AccountListener extends EventListener
         // email User
         $this->sendMailMsg(
             $this->twig->loadTemplate('@Email/Account/UsernameRetrieval.email.twig'),
-            array('account' => $account),
+            array('person' => $account->getPerson()),
             array($account->getPerson())
         );
     }
