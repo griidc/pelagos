@@ -404,14 +404,21 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
     /**
      * Forgot username for users.
      *
+     * @param Request $request The Symfony request object.
+     *
      * @Route("/forgot-username")
      * @Method("GET")
      *
      * @return Response A Response instance.
      */
-    public function forgotUsernameAction()
+    public function forgotUsernameAction(Request $request)
     {
-        // Send back the set password screen.
-        return $this->render('PelagosAppBundle:Account:forgotUsername.html.twig');
+        // If the user is not authenticated.
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->render('PelagosAppBundle:Account:forgotUsername.html.twig');
+        }
+
+        // If the user is already logged in.
+        return $this->render('PelagosAppBundle:template:AlreadyLoggedIn.html.twig');
     }
 }

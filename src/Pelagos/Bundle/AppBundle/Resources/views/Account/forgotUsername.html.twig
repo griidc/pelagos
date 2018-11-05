@@ -5,5 +5,14 @@
 {% endblock %}
 
 {% block body %}
-    <h1> Forgot Username </h1>
+    <h2> Forgot Username </h2>
+
+    <p style="font-size: 18px; line-height: 25px;"> Please enter your registered email address to retrieve your username</p>
+    <form id="forgotUsernameForm" method="get" action="{{ path('pelagos_app_ui_account_forgotusername') }}">
+        <label for="emailAddress">E-mail Address:</label>
+        <input type="email" size="100" name="emailAddress" id="emailAddress" required>
+        <p>
+            <button type="submit" style="margin-bottom: auto">Submit</button>
+        </p>
+    </form>
 {% endblock %}
