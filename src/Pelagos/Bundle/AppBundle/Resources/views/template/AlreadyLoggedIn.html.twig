@@ -1,0 +1,13 @@
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
+
+{% block head %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="messages error">
+        <h2 class="element-invisible">Error message</h2>
+        You are already logged in to the website. Please look at the right corner of your browser, you should find your username. For any additional help please contact
+        <a href="griidc@gomri.org">griidc@gomri.org</a>.
+    </div>
+{% endblock %}
