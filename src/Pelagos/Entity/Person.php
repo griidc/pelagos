@@ -766,6 +766,20 @@ class Person extends Entity
     }
 
     /**
+     * Get a list of the names of all Data Repositories this person is associated with.
+     *
+     * @return array
+     */
+    public function getDataRepositoryNames()
+    {
+        $dataRepositoryNames = array();
+        foreach ($this->personDataRepositories as $personDataRepository) {
+            $dataRepositoryNames[] = $personDataRepository->getDataRepository()->getName();
+        }
+        return $dataRepositoryNames;
+    }
+
+    /**
      * Setter for account.
      *
      * @param Account|null $account Account to attach to this person.

@@ -69,16 +69,15 @@ class BackFillApprovedDateDifCommand extends ContainerAwareCommand
                             $newRevision->getRev()
                         );
 
-                        if ($articleDiff['status']['same'] === DIF::STATUS_APPROVED) {
+                        if ($i === ($numberOfRevisions - 1) and $articleDiff['status']['same'] === DIF::STATUS_APPROVED) {
                             $approvedDateTimeStamp = $articleDiff['modificationTimeStamp']['old'];
-                            break;
-                        } else if ($articleDiff['status']['new'] === DIF::STATUS_APPROVED) {
+                        }
+
+                        if ($articleDiff['status']['new'] === DIF::STATUS_APPROVED) {
                             if (!empty($articleDiff['modificationTimeStamp']['new'])) {
                                 $approvedDateTimeStamp = $articleDiff['modificationTimeStamp']['new'];
-                                break;
                             } else {
                                 $approvedDateTimeStamp = $articleDiff['modificationTimeStamp']['same'];
-                                break;
                             }
                         }
                     }

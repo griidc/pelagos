@@ -14,12 +14,12 @@ Thank you for your submission. Please email <a href="mailto:griidc@gomri.org?sub
     <table border="1" width="100%" style="background-color:white; color:black;" border="0">
         <tr>
             <td width="200px" align="top">
-                <b>Submission Identifier:</b>
+                <b>Dataset UDI:</b>
             </td>
             <td>
                 <h2>
-                    <a href="{{ path('pelagos_app_ui_datasetsubmission_default') }}?regid={{ DatasetSubmission.getDatasetSubmissionId }}">
-                        {{ DatasetSubmission.getDatasetSubmissionId }}
+                    <a href="{{ path('pelagos_app_ui_dataland_default', {'udi': DatasetSubmission.dataset.udi}) }}">
+                        {{ DatasetSubmission.dataset.udi }}
                     </a>
                 </h2>
             </td>

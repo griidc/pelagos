@@ -4,15 +4,17 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Pelagos\Bundle\AppBundle\Form\ReportDatasetDownloadType;
+
+use Pelagos\Exception\InvalidDateSelectedException;
+
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\LogActionItem;
 use Pelagos\Entity\Person;
-use Pelagos\Exception\InvalidDateSelectedException;
+use Pelagos\Entity\DatasetSubmission;
 
 /**
  * The dataset download report generator.
@@ -99,7 +101,8 @@ class DatasetDownloadReportController extends ReportController
             'PRIMARY POINT OF CONTACT EMAIL',
             'TOTAL DOWNLOADS',
             '# OF GOMRI DOWNLOADS',
-            '# OF GOOGLE DOWNLOADS'
+            '# OF GOOGLE DOWNLOADS',
+            'FILE SIZE(MB)'
         ));
 
       //prepare body's data
@@ -141,6 +144,7 @@ class DatasetDownloadReportController extends ReportController
                     'totalCount' => 0,
                     'GoMRI' => 0,
                     'NonGoMRI' => 0,
+                    'fileSize' => null
                 );
 
                 $dataset = $this->container->get('doctrine')->getRepository(Dataset::class)
@@ -160,6 +164,12 @@ class DatasetDownloadReportController extends ReportController
                         ->getEmailAddress();
                 }
 
+                // get file size from dataset submission
+                $datasetSubmission = $dataset->getDatasetSubmission();
+                if ($datasetSubmission instanceof DatasetSubmission) {
+                    $dataArray[$currentIndex]['fileSize'] = $this->formatSizeUnits($datasetSubmission->getDatasetFileSize());
+                }
+
             }
             //count user downloads and total download
             if ($result['payLoad']['userType'] == 'GoMRI') {
@@ -172,5 +182,22 @@ class DatasetDownloadReportController extends ReportController
             $dataArray[$currentIndex]['totalCount']++;
         }
         return array_merge($this->getDefaultHeaders(), $additionalHeaders, $labels, $dataArray);
+    }
+
+    /**
+     * Used to format the file size units to MB.
+     *
+     * @param integer $fileSizeBytes File size in bytes.
+     *
+     * @return float
+     */
+    private function formatSizeUnits($fileSizeBytes)
+    {
+        if ($fileSizeBytes) {
+            // Formats the size to MB
+            $fileSizeBytes = number_format(($fileSizeBytes / 1000000), 6);
+        }
+
+        return $fileSizeBytes;
     }
 }

@@ -148,14 +148,20 @@ $(document).ready(function()
     jQuery.validator.addMethod("trueISODate", function(value, element) {
         var regPattern = /^\d{4}-\d{1,2}-\d{1,2}$/
         return this.optional(element) || ((Date.parse(value)) && regPattern.test(value));
+    },function (params, element) {
+        return "Please enter a valid ISO Date"
     });
 
     difValidator = $("#difForm").validate({
         ignore: ".ignore",
         messages: {
             geoloc: "Click on Spatial Wizard Button!",
-            estimatedStartDate: "Start Date is not a valid ISO date",
-            estimatedEndDate: "End Date is not a valid ISO date"
+            estimatedStartDate: {
+                required: "Start Date is a required field."
+            },
+            estimatedEndDate: {
+                required: "End Date is a required field."
+            }
         },
         submitHandler: function(form) {
             saveDIF(form);
@@ -611,11 +617,11 @@ function updateDIF(form)
                 type: "PATCH",
                 datatype: "json",
                 data: formData
-            }).success(function(json, textStatus, jqXHR) {
+            }).done(function(json, textStatus, jqXHR) {
                 if (jqXHR.status === 204) {
                     response.status = "success";
                 }
-            }).error(function (json, text, jqXHR) {
+            }).fail(function (json, text, jqXHR) {
                 var errorMessage = JSON.parse(json.responseText);
                 response.status = "error";
                 response.message = errorMessage.message;
@@ -660,6 +666,10 @@ function updateDIF(form)
                     "<p>The application with DIF ID: " + udi + " failed to complete action!" +
                     "<br></p></div>";
             }
+        } else {
+            var title = "Unable to process DIF form";
+            var message = "<div><p>There was an error processing your request. Your session might have expired.<br>" +
+                "If the problem still persists after you re-login, please contact the administrator.</p></div>";
         }
 
         hideSpinner();
