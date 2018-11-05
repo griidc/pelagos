@@ -73,4 +73,23 @@ class AccountListener extends EventListener
         }
         return $account;
     }
+
+    /**
+     * Method to send an email to the user when Forgot Username is requested.
+     *
+     * @param EntityEvent $event Event being acted upon.
+     *
+     * @return void
+     */
+    public function onForgotUsername(EntityEvent $event)
+    {
+        $account = $this->getAccount($event);
+
+        // email User
+        $this->sendMailMsg(
+            $this->twig->loadTemplate('@Email/Account/UsernameRetrieval.email.twig'),
+            array('account' => $account),
+            array($account->getPerson())
+        );
+    }
 }

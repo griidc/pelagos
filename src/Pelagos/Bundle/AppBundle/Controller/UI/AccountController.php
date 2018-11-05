@@ -2,6 +2,7 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
+use Pelagos\Entity\Person;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -413,12 +414,34 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
      */
     public function forgotUsernameAction(Request $request)
     {
-        // If the user is not authenticated.
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->render('PelagosAppBundle:Account:forgotUsername.html.twig');
+        // If the user is already authenticated.
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->render('PelagosAppBundle:template:AlreadyLoggedIn.html.twig');
         }
 
-        // If the user is already logged in.
-        return $this->render('PelagosAppBundle:template:AlreadyLoggedIn.html.twig');
+        $userEmailAddr = $request->query->get('emailAddress');
+
+        $userNameFound = false;
+
+        if ($userEmailAddr) {
+            $person = $this->entityHandler->getBy(Person::class, array('emailAddress' => $userEmailAddr));
+
+            if (!empty($person[0])) {
+                $userNameFound = true;
+                $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
+                    $person[0]->getAccount(),
+                    'forgotUsername'
+                );
+            }
+        }
+
+        return $this->render(
+            'PelagosAppBundle:Account:forgotUsername.html.twig',
+            array(
+                'emailId' => $userEmailAddr,
+                'userNameFound' => $userNameFound
+            )
+        );
+
     }
 }
