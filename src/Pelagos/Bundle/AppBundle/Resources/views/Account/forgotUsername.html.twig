@@ -5,8 +5,9 @@
 {% endblock %}
 
 {% block body %}
-    <h2> Forgot Username </h2>
+    <h2> Forgot Username</h2>
 
+    {% if emailId is null %}
     <p style="font-size: 18px; line-height: 25px;"> Please enter your registered email address to retrieve your username</p>
     <form id="forgotUsernameForm" method="get" action="{{ path('pelagos_app_ui_account_forgotusername') }}">
         <label for="emailAddress">E-mail Address:</label>
@@ -15,4 +16,20 @@
             <button type="submit" style="margin-bottom: auto">Submit</button>
         </p>
     </form>
+    {% else %}
+        {% if userNameFound == true %}
+            <div>
+                <h2 class="element-invisible">Success message</h2>
+                The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has identified your email address exists with
+                an GRIIDC account, and We have emailed you the username to {{ emailId }}.
+                For any additional help please contact<a href="griidc@gomri.org">griidc@gomri.org</a>.
+            </div>
+        {% else %}
+            <div class="messages error">
+                <h2 class="element-invisible">Error message</h2>
+                No account is associated with this email address : {{ emailId }}
+                For any additional help please contact<a href="griidc@gomri.org">griidc@gomri.org</a>.
+            </div>
+        {% endif %}
+    {% endif %}
 {% endblock %}
