@@ -2,7 +2,6 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
-use Pelagos\Entity\Person;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -13,9 +12,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Pelagos\Bundle\AppBundle\Factory\UserIdFactory;
+
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Password;
 use Pelagos\Entity\PersonToken;
+use Pelagos\Entity\Person;
+
 use Pelagos\Exception\PasswordException;
 
 /**
