@@ -7,6 +7,9 @@ $(document).ready(function()
         $("form[entityType=\"Person\"] #id").attr("readonly",true);
     }
 
+    // I didn't want to delete this, we can probably re-use phone number validation in the future.
+
+    /*
     $("#phoneNumber").val($('form[entityType="Person"] input[name="phoneNumber"]').val());
     $("#phoneNumber").mask("(999) 999-9999");
     $("#phoneNumber").prop("defaultValue", $("#phoneNumber").val());
@@ -24,7 +27,8 @@ $(document).ready(function()
             $("#phoneNumber").prop("defaultValue", $("#phoneNumber").val());
         });
     });
-
+    */
+    
     $.ajax({
         url: $("#organization").attr("data-url"),
         dataType: "json",
