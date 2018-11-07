@@ -33,17 +33,6 @@ class DownloadController extends Controller
      */
     public function defaultAction(Request $request, $id)
     {
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->render(
-                'PelagosAppBundle:Download:log-in-to-download-splash-screen.html.twig',
-                array(
-                    'refererPath' => parse_url(
-                        $request->headers->get('referer'),
-                        PHP_URL_PATH
-                    ),
-                )
-            );
-        }
         $dataset = $this->get('pelagos.entity.handler')->get(Dataset::class, $id);
         if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
             and DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED ===
