@@ -130,6 +130,15 @@ class Dataset extends Entity
     protected $datasetSubmissionHistory;
 
     /**
+     * Accepted Date Timestamp for DIF.
+     *
+     * @var \DateTime $acceptedDate;
+     *
+     * @ORM\Column(type="datetimetz", nullable=true)
+     */
+    protected $acceptedDate;
+
+    /**
      * The identified status of this Dataset.
      *
      * @var integer
@@ -742,5 +751,27 @@ class Dataset extends Entity
         }
 
         return $spatialExtent;
+    }
+
+    /**
+     * Getter to accepted date.
+     *
+     * @return \DateTime
+     */
+    public function getAcceptedDate()
+    {
+        return $this->acceptedDate;
+    }
+
+    /**
+     * Setter to accepted date.
+     *
+     * @param \DateTime $acceptedDate
+     *
+     * @return void
+     */
+    public function setAcceptedDate(\DateTime $acceptedDate)
+    {
+        $this->acceptedDate = $acceptedDate;
     }
 }
