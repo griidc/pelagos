@@ -130,7 +130,7 @@ class Dataset extends Entity
     protected $datasetSubmissionHistory;
 
     /**
-     * Accepted Date Timestamp for DIF.
+     * Accepted Date Timestamp for Dataset.
      *
      * @var \DateTime $acceptedDate;
      *
@@ -766,7 +766,7 @@ class Dataset extends Entity
     /**
      * Setter to accepted date.
      *
-     * @param \DateTime $acceptedDate
+     * @param \DateTime $acceptedDate The accepted date for the Dataset.
      *
      * @return void
      */
