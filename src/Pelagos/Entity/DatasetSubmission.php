@@ -2373,6 +2373,9 @@ class DatasetSubmission extends Entity
     {
         if ($this->getDataset() instanceof Dataset) {
             $this->getDataset()->setDatasetStatus($this->getDatasetStatus());
+            if ($this->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED) {
+                $this->getDataset()->setAcceptedDate(new \DateTime('now', new \DateTimeZone('UTC')));
+            }
         }
     }
 
