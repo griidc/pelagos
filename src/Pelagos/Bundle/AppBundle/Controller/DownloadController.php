@@ -153,7 +153,7 @@ class DownloadController extends Controller
     /**
      * Generate random string for url.
      *
-     * @param int $length Length of the random string.
+     * @param integer $length Length of the random string.
      *
      * @return string
      */
@@ -163,7 +163,7 @@ class DownloadController extends Controller
         $charactersLength = strlen($characters);
         $randomString = '';
         for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
+            $randomString .= $characters[rand(0, ($charactersLength - 1))];
         }
         return $randomString;
     }
