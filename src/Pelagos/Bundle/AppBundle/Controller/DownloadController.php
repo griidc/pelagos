@@ -67,9 +67,6 @@ class DownloadController extends Controller
      */
     public function httpAction($id)
     {
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            throw $this->createAccessDeniedException('You must log in to download datasets');
-        }
         $dataset = $this->get('pelagos.entity.handler')->get(Dataset::class, $id);
         $downloadFileInfo = $this->get('pelagos.util.data_store')->getDownloadFileInfo($dataset->getUdi(), 'dataset');
         $uniqueDirectory = uniqid(
@@ -125,9 +122,6 @@ class DownloadController extends Controller
      */
     public function gridFtpAction($id)
     {
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            throw $this->createAccessDeniedException('You must log in to download datasets');
-        }
         $dataset = $this->get('pelagos.entity.handler')->get(Dataset::class, $id);
         if (!$this->getUser() instanceof Account) {
             throw $this->createAccessDeniedException('Only GRIIDC users can use GridFTP');
