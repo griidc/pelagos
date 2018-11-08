@@ -263,7 +263,7 @@ $(document).ready(function()
             if (typeof m.message != "undefined") {
                 message = m.message;}else{message = m;
             }
-            if (x.status == 400 || x.status == 403) {
+            if ((x.status == 400 || x.status == 403) && x.responseJSON) {
                 message = x.responseJSON.message;
             }
             console.log("Error in Ajax:"+t+", Message:"+message)

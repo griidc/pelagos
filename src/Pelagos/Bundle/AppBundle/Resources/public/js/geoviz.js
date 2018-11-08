@@ -550,15 +550,19 @@ function GeoViz()
 
     this.gmlToWKT = function (GML)
     {
-        return jQuery.ajax({
-            url: Routing.generate("pelagos_app_gml_towkt"),
-            type: "POST",
-            data: {gml: GML},
-            context: document.body
+        if (GML) {
+            return jQuery.ajax({
+                url: Routing.generate("pelagos_app_gml_towkt"),
+                type: "POST",
+                data: {gml: GML},
+                context: document.body
             })
-            .done(function(wkt) {
-                return wkt;
-            });
+                .done(function (wkt) {
+                    return wkt;
+                })
+        } else {
+            return Promise.resolve(false);
+        }
     }
 
     this.wktToGML = function (WKT)
