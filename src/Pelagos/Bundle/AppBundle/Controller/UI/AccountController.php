@@ -423,13 +423,10 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
 
         $userEmailAddr = $request->query->get('emailAddress');
 
-        $userNameFound = false;
-
         if ($userEmailAddr) {
             $person = $this->entityHandler->getBy(Person::class, array('emailAddress' => $userEmailAddr));
 
             if (!empty($person[0])) {
-                $userNameFound = true;
                 $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
                     $person[0]->getAccount(),
                     'forgot_username'
@@ -437,13 +434,6 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
             }
         }
 
-        return $this->render(
-            'PelagosAppBundle:Account:forgotUsername.html.twig',
-            array(
-                'emailId' => $userEmailAddr,
-                'userNameFound' => $userNameFound
-            )
-        );
-
+        return $this->render('PelagosAppBundle:Account:forgotUsername.html.twig');
     }
 }
