@@ -59,8 +59,6 @@ class DownloadController extends Controller
      *
      * @param string $id The id of the dataset to download.
      *
-     * @throws AccessDeniedException When no user is authenticated.
-     *
      * @Route("/{id}/http")
      *
      * @return Response
@@ -113,7 +111,6 @@ class DownloadController extends Controller
      *
      * @param string $id The id of the dataset to download.
      *
-     * @throws AccessDeniedException When no user is authenticated.
      * @throws AccessDeniedException When a guest user attempts to download via GridFTP.
      *
      * @Route("/{id}/grid-ftp")
