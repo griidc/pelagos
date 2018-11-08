@@ -1194,6 +1194,7 @@ class DatasetSubmission extends Entity
                 //Setting the status to in-review.
                 $this->status = self::STATUS_COMPLETE;
                 $this->setDatasetStatus(Dataset::DATASET_STATUS_ACCEPTED);
+                $this->getDataset()->setAcceptedDate(new \DateTime('now', new \DateTimeZone('UTC')));
                 $this->getDataset()->setDatasetSubmission($this);
                 break;
             case ($eventName === self::DATASET_REQUEST_REVISIONS):
@@ -2373,9 +2374,6 @@ class DatasetSubmission extends Entity
     {
         if ($this->getDataset() instanceof Dataset) {
             $this->getDataset()->setDatasetStatus($this->getDatasetStatus());
-            if ($this->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED) {
-                $this->getDataset()->setAcceptedDate(new \DateTime('now', new \DateTimeZone('UTC')));
-            }
         }
     }
 
