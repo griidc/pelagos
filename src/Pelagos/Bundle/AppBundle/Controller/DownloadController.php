@@ -68,7 +68,7 @@ class DownloadController extends Controller
         $dataset = $this->get('pelagos.entity.handler')->get(Dataset::class, $id);
         $downloadFileInfo = $this->get('pelagos.util.data_store')->getDownloadFileInfo($dataset->getUdi(), 'dataset');
         $uniqueDirectory = uniqid(
-            preg_replace('/\s/', '_', $this->getUser()->getUsername()) . '_'
+            preg_replace('/\s/', '_', $this->generateRandomString()) . '_'
         );
         $downloadBaseDirectory = $this->getParameter('download_base_directory');
         $downloadDirectory = $downloadBaseDirectory . '/' . $uniqueDirectory;
@@ -80,14 +80,21 @@ class DownloadController extends Controller
         );
         $downloadBaseUrl = $this->getParameter('download_base_url');
         $em = $this->container->get('doctrine')->getManager();
-        $type = get_class($this->getUser());
-        if ($type == 'Pelagos\Entity\Account') {
-            $type = 'GoMRI';
-            $typeId = $this->getUser()->getUserId();
+
+        if ($this->getUser()) {
+            $type = get_class($this->getUser());
+            if ($type == 'Pelagos\Entity\Account') {
+                $type = 'GoMRI';
+                $typeId = $this->getUser()->getUserId();
+            } else {
+                $type = 'Non-GoMRI';
+                $typeId = $this->getUser()->getUsername();
+            }
         } else {
             $type = 'Non-GoMRI';
-            $typeId = $this->getUser()->getUsername();
+            $typeId = 'anonymous';
         }
+
         $this->container->get('pelagos.event.log_action_item_event_dispatcher')->dispatch(
             array(
                 'actionName' => 'File Download',
@@ -141,5 +148,23 @@ class DownloadController extends Controller
                 'dataset' => $dataset,
             )
         );
+    }
+
+    /**
+     * Generate random string for url.
+     *
+     * @param int $length Length of the random string.
+     *
+     * @return string
+     */
+    private function generateRandomString($length = 10)
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyz';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 }
