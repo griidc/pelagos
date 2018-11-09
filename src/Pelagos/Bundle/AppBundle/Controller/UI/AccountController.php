@@ -434,6 +434,11 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
             }
         }
 
-        return $this->render('PelagosAppBundle:Account:forgotUsername.html.twig');
+        return $this->render(
+            'PelagosAppBundle:Account:forgotUsername.html.twig',
+            array(
+                'emailId' => $userEmailAddr
+            )
+        );
     }
 }
