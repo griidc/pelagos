@@ -67,8 +67,14 @@ class DownloadController extends Controller
     {
         $dataset = $this->get('pelagos.entity.handler')->get(Dataset::class, $id);
         $downloadFileInfo = $this->get('pelagos.util.data_store')->getDownloadFileInfo($dataset->getUdi(), 'dataset');
+        $username = null;
+        if ($this->getUser()) {
+            $username = $this->getUser()->getUsername();
+        } else {
+            $username = '';
+        }
         $uniqueDirectory = uniqid(
-            preg_replace('/\s/', '_', $this->generateRandomString()) . '_'
+            preg_replace('/\s/', '_', $username) . '_'
         );
         $downloadBaseDirectory = $this->getParameter('download_base_directory');
         $downloadDirectory = $downloadBaseDirectory . '/' . $uniqueDirectory;
@@ -148,23 +154,5 @@ class DownloadController extends Controller
                 'dataset' => $dataset,
             )
         );
-    }
-
-    /**
-     * Generate random string for url.
-     *
-     * @param integer $length Length of the random string.
-     *
-     * @return string
-     */
-    private function generateRandomString($length = 10)
-    {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyz';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, ($charactersLength - 1))];
-        }
-        return $randomString;
     }
 }
