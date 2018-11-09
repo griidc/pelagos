@@ -8,7 +8,7 @@
     <h2> Forgot Username</h2>
 
     {% if emailId is null %}
-    <p style="font-size: 18px; line-height: 25px;"> Please enter your registered email address to retrieve your username</p>
+    <p style="font-size: 18px; line-height: 25px;"> Please provide the email address associated with your funding agreement to retrieve your username.</p>
     <form id="forgotUsernameForm" method="get" action="{{ path('pelagos_app_ui_account_forgotusername') }}">
         <label for="emailAddress">E-mail Address:</label>
         <input type="email" size="100" name="emailAddress" id="emailAddress" required>
