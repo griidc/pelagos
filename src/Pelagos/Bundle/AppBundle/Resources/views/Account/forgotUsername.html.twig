@@ -1,0 +1,26 @@
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
+
+{% block head %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <h2> Forgot Username</h2>
+
+    {% if emailId is null %}
+    <p style="font-size: 18px; line-height: 25px;"> Please provide the email address associated with your funding agreement to retrieve your username.</p>
+    <form id="forgotUsernameForm" method="get" action="{{ path('pelagos_app_ui_account_forgotusername') }}">
+        <label for="emailAddress">E-mail Address:</label>
+        <input type="email" size="100" name="emailAddress" id="emailAddress" required>
+        <p>
+            <button type="submit" style="margin-bottom: auto">Submit</button>
+        </p>
+    </form>
+    {% else %}
+        <div class="messages status">
+            <h2 class="element-invisible">Success message</h2>
+            If that email address is found in our system, we will send the associated username
+            to the found email address. For any additional help please contact <a href="griidc@gomri.org">griidc@gomri.org</a>.
+        </div>
+    {% endif %}
+{% endblock %}
