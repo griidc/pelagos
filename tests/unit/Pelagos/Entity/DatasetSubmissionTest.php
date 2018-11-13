@@ -78,6 +78,7 @@ class DatasetSubmissionTest extends TestCase
                 'setAvailabilityStatus' => null,
                 'updateAvailabilityStatus' => null,
                 'getUdi' => 'T1.x123.000:0001',
+                'setAcceptedDate' => null,
             )
         );
         $this->mockPerson = \Mockery::mock(
