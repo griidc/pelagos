@@ -102,10 +102,10 @@ function resizeLeftRight() {
     $("#left").height(lh);
     $("#right").height(rh);
 }
-
+//base 10
 function formatBytes(bytes,decimals) {
     if(bytes == 0) return "0 Bytes";
-    var k = 1024,
+    var k = 1000,
         dm = decimals <= 0 ? 0 : decimals || 2,
         sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
         i = Math.floor(Math.log(bytes) / Math.log(k));
