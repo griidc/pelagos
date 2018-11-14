@@ -152,7 +152,7 @@ class ISOMetadataExtractorUtilTest extends TestCase
             array(
                 'updateAvailabilityStatus' => null,
                 'updateDoi' => null,
-                'setMetadataStatus' => null,
+                'setDatasetStatus' => null,
                 'getDatasetSubmissionHistory' => \Mockery::mock(
                     'Pelagos\Entity\DatasetSubmission',
                     array(
@@ -180,7 +180,7 @@ class ISOMetadataExtractorUtilTest extends TestCase
                                 'getMetadataFileTransferStatus' => 'xfer status from mock dataset submission',
                                 'getMetadataFileName' => 'metadata file name from mock dataset submission',
                                 'getMetadataFileSha256Hash' => 'metadata file sha256 from mock dataset submission',
-                                'getMetadataStatus' => 'metadata status from mock dataset submission',
+                                'getDatasetStatus' => 'metadata status from mock dataset submission',
                                 'getReferenceDate' => $this->testingDatetime,
                                 'getReferenceDateType' => 'creation',
                                 'getPurpose' => 'purpose from mock dataset submission',
@@ -274,7 +274,7 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getMetadataFileTransferStatus' => 'xfer status from mock dataset submission',
                 'getMetadataFileName' => 'metadata file name from mock dataset submission',
                 'getMetadataFileSha256Hash' => 'metadata file sha256 from mock dataset submission',
-                'getMetadataStatus' => 'metadata status from mock dataset submission',
+                'getDatasetStatus' => 'metadata status from mock dataset submission',
                 'getReferenceDate' => $this->testingDatetime,
                 'getReferenceDateType' => 'creation',
                 'getPurpose' => 'purpose from mock dataset submission',

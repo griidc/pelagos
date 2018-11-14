@@ -191,7 +191,7 @@ class DIFType extends AbstractType
                 'widget' => 'single_text',
                 'html5' => false,
                 'format' => 'yyyy-MM-dd',
-                'required' => false,
+                'required' => true,
                 'attr' => array(
                     'placeholder' => 'yyyy-mm-dd'
                 ),
@@ -202,7 +202,7 @@ class DIFType extends AbstractType
                 'widget' => 'single_text',
                 'html5' => false,
                 'format' => 'yyyy-MM-dd',
-                'required' => false,
+                'required' => true,
                 'attr' => array(
                     'placeholder' => 'yyyy-mm-dd'
                 ),

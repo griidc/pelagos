@@ -173,14 +173,16 @@ class DatasetSubmissionListener extends EventListener
         $dataset = $datasetSubmission->getDataset();
         $datasetSubmissionPrev = $dataset->getDatasetSubmissionHistory()->first();
         // when there is no state change, should not log the status.
-        if ($datasetSubmissionPrev->getMetadataStatus() === $datasetSubmission->getMetadataStatus()) {
+        if ($datasetSubmissionPrev->getDatasetStatus() === $datasetSubmission->getDatasetStatus()) {
             $this->mdappLogger->writeLog($datasetSubmission->getModifier()->getAccount()->getUsername() .
                 ' started review for ' . $dataset->getUdi());
         } else {
             $this->mdappLogger->writeLog($datasetSubmission->getModifier()->getAccount()->getUsername() .
-                ' started review for ' . $dataset->getUdi() . ' (' . $datasetSubmissionPrev->getMetadataStatus() .
+                ' started review for ' . $dataset->getUdi() . ' (' . $datasetSubmissionPrev->getDatasetStatus() .
                 ' ->InReview)');
         }
+        // Publish DOI for accepted and unrestricted datasets
+        $this->producer->publish($datasetSubmission->getDataset()->getId(), 'publish');
     }
 
     /**

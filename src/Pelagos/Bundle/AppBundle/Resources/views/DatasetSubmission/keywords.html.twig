@@ -14,7 +14,7 @@
                         describe the location or geography of the data.
 					</div>
 				</span>
-                <table width="80%">
+                <table width="80%" class="keywords">
                     <tr>
                         <td width="40%">
                             <label for="theme-keyword-input">Keyword</label>
@@ -25,14 +25,25 @@
                             <br>
                             <button class="keywordbutton" type="button">remove</button>
                         </td>
-                        <td width="40%">
-                            <label><span class="emRequired">Theme Keywords</span></label>
-                            <select class="keywordinput" id="theme-keywords" keyword="target" list="theme-keywords-list" size="5">
-                            {% for keyword in form.themeKeywords %}
-                                <option value="{{keyword.vars.value}}">{{keyword.vars.value}}</option>
-                            {% endfor %}
-                            </select>
-                            <label for="themeKeywords" class="error"></label>
+                        <td width="30%">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <label><span class="emRequired">Theme Keywords</span></label>
+                                        <select class="keywordinput" id="theme-keywords" keyword="target" list="theme-keywords-list" size="5">
+                                        {% for keyword in form.themeKeywords %}
+                                            <option value="{{keyword.vars.value}}">{{keyword.vars.value}}</option>
+                                        {% endfor %}
+                                        </select>
+                                        <label for="themeKeywords" class="error"></label>
+                                    </td>
+                                        <td width="*">
+                                        <button class="keywordbutton" type="button">up</button>
+                                        <br>
+                                        <button class="keywordbutton" type="button">down</button>
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
                 </table>
@@ -58,7 +69,7 @@
                             if the dataset does not have a relevant place keyword (e.g. lab mesocoms).
 						</div>
 					</span>
-                    <table width="80%">
+                    <table width="80%" class="keywords">
                         <tr>
                             <td width="40%">
                                 <label for="place-keyword-input">Keyword</label>
@@ -69,14 +80,25 @@
                                 <br>
                                 <button class="keywordbutton" type="button">remove</button>
                             </td>
-                            <td width="40%">
-                                <label>Place Keywords</label>
-                                <select class="keywordinput" id="place-keywords" keyword="target" size="5">
-                                {% for keyword in form.placeKeywords %}
-                                    <option value="{{keyword.vars.value}}">{{keyword.vars.value}}</option>
-                                {% endfor %}
-                                </select>
-                                <label for="placeKeywords" class="error"></label>
+                            <td width="30%">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <label>Place Keywords</label>
+                                            <select class="keywordinput" id="place-keywords" keyword="target" size="5">
+                                            {% for keyword in form.placeKeywords %}
+                                                <option value="{{keyword.vars.value}}">{{keyword.vars.value}}</option>
+                                            {% endfor %}
+                                            </select>
+                                            <label for="placeKeywords" class="error"></label>
+                                        </td>
+                                            <td width="*">
+                                            <button class="keywordbutton" type="button">up</button>
+                                            <br>
+                                            <button class="keywordbutton" type="button">down</button>
+                                        </td>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                     </table>
@@ -103,7 +125,7 @@
                         the keyword to see a definition.
 					</div>
 				</span>
-                <table width="80%">
+                <table width="80%" class="keywords">
                     <tr>
                         <td width="40%">
                             <label>Topic Category Keyword List</label>

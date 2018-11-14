@@ -1,4 +1,6 @@
-var datasets = new Array();
+//dataArray stores data for each tab
+var datasetList = new Array(4);
+var buffer = []; //temporary buffer array to get new bulk of data
 
 var $ = jQuery.noConflict();
 
@@ -48,7 +50,7 @@ $(document).ready(function() {
         $("#clearGeoFilterButton").button("disable");
     });
 
-    $("#show_all_extents_checkbox").button();
+    $("#show_extents_checkbox").button();
     $(".map_button").button();
     // local variable for filter button//
     var filterButton = $("#filter-button");
@@ -59,6 +61,8 @@ $(document).ready(function() {
         enableFilterButton();
     });
 });
+//end document ready
+
 // function to enable the Filter button only when the textbox is not empty //
 function enableFilterButton() {
     if ("" !== $("#filter-input").val()) {
@@ -98,11 +102,253 @@ function resizeLeftRight() {
     $("#left").height(lh);
     $("#right").height(rh);
 }
+//base 10
+function formatBytes(bytes,decimals) {
+    if(bytes == 0) return "0 Bytes";
+    var k = 1000,
+        dm = decimals <= 0 ? 0 : decimals || 2,
+        sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
+        i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+}
 
+function getActiveTabIndex() {
+    var activeTabIndex = parseInt($("#tabs").tabs("option","active"));
+    if (isNaN(activeTabIndex)) {
+        activeTabIndex = 0;
+    }
+    return activeTabIndex;
+}
+
+//this function gets data from the server-side and parse it to a buffer array
+function loadData(by, id) {
+    var activeTabIndex = getActiveTabIndex();
+    geo_filter = "";
+    if (!by && !id) {
+        by = $("#by-input").val()
+        id = $("#id-input").val()
+    }
+
+    if (trees["tree"].geo_filter) {
+        geo_filter = trees["tree"].geo_filter;
+    }
+    //this gets the data from the search in a bulk based on bulkSize and currentIndex (similar to index for pagination)
+    return jqXHR = $.ajax({
+        "url": Routing.generate("pelagos_app_ui_datadiscovery_search", { "id": id }),
+        "data": {
+            "filter": jQuery("#filter-applied").val(),
+            "by": by,
+            "id": id,
+            "geo_filter": geo_filter,
+            "active_tab_index": activeTabIndex,
+            "current_index": datasetList[activeTabIndex].length > 0 ? datasetList[activeTabIndex].length : 0,
+            "bulk_size": 30 //determine the number of row get back from every new load
+        },
+        "dataType": "json",
+        "success": function(response) {
+            buffer = JSON.parse(response);
+
+        },
+        "error": function(jqXHR, textStatus, errorThrown) {
+            console.log("Fail: " + textStatus + " " + errorThrown + jqXHR.getResponseHeader());
+        }
+
+    }).done(function(){ //addRows to the table
+       addRows();
+    });
+};
+
+//this iterates new bulk of data and render new rows
+function addRows() {
+    var activeTabIndex = getActiveTabIndex();
+
+    for (var i = 0; i < buffer.length; i++) {
+        var dataset = buffer[i];
+        var data = dataset["_source"];
+        var row = document.createElement("tr");
+        $(row).attr("udi", data["udi"]);
+        $(row).attr("datasetid", dataset["_id"]);
+        if (data["geometry"]) {
+            $(row).hover(function () {
+                //show geometries on the map on hovering on the row
+                if (!$("#show_extents_checkbox").is(":checked")) {
+                    for (var i = 0; i < datasetList[activeTabIndex].length; i++) {
+                        if (datasetList[activeTabIndex][i]["_source"]["udi"] == $(this).attr("udi")) {
+                            myGeoViz.addFeatureFromWKT(datasetList[activeTabIndex][i]["_source"]["geometry"], {"udi": datasetList[activeTabIndex][i]["_source"]["udi"]});
+                            break;
+                        }
+                    }
+                }
+                myGeoViz.highlightFeature("udi", $(this).attr("udi"));
+            }, function () {
+                myGeoViz.unhighlightFeature("udi", $(this).attr("udi"));
+                if (!$("#show_extents_checkbox").is(":checked")) {
+                    myGeoViz.removeAllFeaturesFromMap();
+                }
+            });
+            //add newly rendered geometry if ShowAllExtents is enabled
+            if ($("#show_extents_checkbox").is(":checked")) {
+                myGeoViz.addFeatureFromWKT(data["geometry"], {"udi": data["udi"]});
+            }
+        }
+
+        var rowContent = createRow(data, row);
+        $(row).html(rowContent);
+        //append row to the table
+        $("table.datasets[tabIndex=" + activeTabIndex + "]").append(row);
+        //add the data to the data array
+        datasetList[activeTabIndex].push(dataset);
+    };
+    //clear buffer
+    buffer = [];
+}
+
+//This renders row based on the given data and the currently active tab
+function createRow(data, row)
+{
+    var activeTabIndex = getActiveTabIndex();
+    //clone from template row and shove actual data in
+    var rowContent = $("#template-data-row-available").children().clone();
+
+    var imgTitle = "";
+    switch (activeTabIndex) {
+        case 0: //available
+            if ("RemotelyHosted" === data["datasetSubmission"]["datasetFileTransferStatus"] && !data["datasetSubmission"]["datasetFileTransferStatus"].match("!^https?://data.gulfresearchinitiative.org!")) {
+                imgTitle = "This dataset can be downloaded from an external repository.";
+            } else {
+                imgTitle = ("title", "Download dataset");
+            }
+            $(rowContent).find("#img-download-package").removeClass("greyout");
+            $(rowContent).find("#dataset-download").click( function(){
+                var id = $(this).parents("tr").attr("datasetid");
+                startDownload(id);
+            });
+
+            if (!data["datasetSubmission"]["datasetFileSize"]) {
+                $(rowContent).find("#container-dataset-filesize").hide();
+            }
+            break;
+        case 1: //restricted
+            if ("RemotelyHosted" === data["datasetSubmission"]["datasetFileTransferStatus"]) {
+                imgTitle = "This dataset is restricted for download but is hosted by another website so availability status is not guaranteed to be accurate. " +
+                    "Please contact the external repository for information on how to access this dataset.";
+            } else {
+                imgTitle = "This dataset is restricted for download.";
+            }
+            $(rowContent).find("#dataset-restrictions").text("Download Restricted");
+            $(rowContent).find("#container-dataset-restrictions").show();
+
+            if (!data["datasetSubmission"]["datasetFileSize"]) {
+                $(rowContent).find("#container-dataset-filesize").hide();
+            }
+            break;
+        case 2: //InReview
+                imgTitle = "Download unavailable"
+
+                if (!data["datasetSubmission"]["datasetFileSize"]) {
+                    $(rowContent).find("#container-dataset-filesize").hide();
+                }
+            break;
+        case 3: //identified
+            $(rowContent).find("#img-download-package").hide();
+            $(rowContent).find("#container-dataset-restrictions").css("color","grey");
+            $(rowContent).find("#dataset-restrictions").text("?");
+            $(rowContent).find("#container-dataset-restrictions").show();
+            $(rowContent).find("#container-dataset-filesize").css("color","grey");
+            $(rowContent).find("#dataset-filesize").text("?");
+            break;
+        default:
+            break;
+    }
+    $(rowContent).find("#img-download-package").attr("title", imgTitle);
+
+
+    if (!data["datasetSubmission"]["authors"]) {
+        $(rowContent).find("#container-dataset-authors").hide();
+    } else {
+        $(rowContent).find("#dataset-authors").text(data["datasetSubmission"]["authors"]);
+    }
+
+    if (!data["year"]) {
+        $(rowContent).find("#container-dataset-year").hide();
+    } else {
+        $(rowContent).find("#dataset-year").text(data["year"]);
+    }
+
+    $(rowContent).find("#dataset-title").attr("href", $(rowContent).find("#dataset-title").attr("href").replace("placeholder-udi", data["udi"]) );
+    $(rowContent).find("#dataset-title").text(data["title"]);
+
+    if (!data["researchGroup"]["name"]) {
+        $(rowContent).find("#container-dataset-research-group").hide();
+    } else {
+        $(rowContent).find("#dataset-research-group").text(data["researchGroup"]["name"]);
+    }
+
+    if (!data["doi"]["doi"]) {
+        $(rowContent).find("#container-dataset-doi").hide();
+    } else {
+        $(rowContent).find("#dataset-doi").attr("href", $(rowContent).find("#dataset-doi").attr("href").replace("placeholder-doi", data["doi"]["doi"]));
+        $(rowContent).find("#dataset-doi").text(data["doi"]["doi"]);
+    }
+
+    $(rowContent).find("#dataset-udi").attr("href", $(rowContent).find("#dataset-udi").attr("href").replace("placeholder-udi", data["udi"]));
+    $(rowContent).find("#dataset-udi").text(data["udi"]);
+
+    var filesize = parseInt(data["datasetSubmission"]["datasetFileSize"]);
+    if (filesize) {
+        if (filesize > 1073741824) {
+            $(rowContent).find("#dataset-filesize").css("color","red");
+        }
+        $(rowContent).find("#dataset-filesize").text(formatBytes(filesize,0));
+    }
+
+    //this shows the details dataset on Show Details button
+    $(".details_link", rowContent).bind("click", function(){
+        var row = $(this).parents("tr");
+        if ($(row).has(".details:empty").length == 1) {
+            var datasetId = $(row).attr("datasetid");
+            $.ajax({
+                "url": Routing.generate("pelagos_app_ui_datadiscovery_showdetails", { "id": datasetId }),
+                "success": function(data) {
+                    $(row).find(".details").html(data);
+                    $(row).find(".details").show();
+                    $(row).find(".details_link").html("Hide Details");
+                }
+            });
+        } else {
+            if ($(row).find(".details:visible").length == 1) {
+                $(row).find(".details_link").html("Show Details");
+            } else {
+                $(row).find(".details_link").html("Hide Details");
+            }
+            $(row).find(".details").toggle();
+        }
+    });
+
+    return rowContent;
+}
+//end createRow
+
+//this occurs at initial/new search
 function showDatasets(by,id) {
+    var filter = jQuery("#filter-applied").val();
+    geo_filter = "";
+    if (trees["tree"].geo_filter) {
+        geo_filter = trees["tree"].geo_filter;
+    }
+
+    //reset existing data to prepare for a new search
+    datasetList[0] = [];
+    datasetList[1] = [];
+    datasetList[2] = [];
+    datasetList[3] = [];
     myGeoViz.removeAllFeaturesFromMap();
+
+    //enable this
+    $("#show_extents_checkbox").button();
     $("#filter-button").button("disable");
     $("#clear-button").button("disable");
+
     $("#drawGeoFilterButton").button("disable");
     currentlink = $("#packageLink").attr("href");
     if (currentlink) {
@@ -112,39 +358,42 @@ function showDatasets(by,id) {
         }
         $("#packageLink").attr("href",newlink);
     }
-    geo_filter = "";
-    if (trees["tree"].geo_filter) {
-        geo_filter = trees["tree"].geo_filter;
-    }
+
+    //get number of results for each tabs
     $.ajax({
-        "url": Routing.generate("pelagos_app_ui_datadiscovery_datasets"),
+        "url": Routing.generate("pelagos_app_ui_datadiscovery_count"),
         "data": {
-            "filter": jQuery("#filter-applied").val(),
+            "filter": filter,
             "by": by,
             "id": id,
             "geo_filter": geo_filter
         },
         "success": function(data) {
             $("#dataset_listing_wrapper .spinner").hide();
+            loadData(by, id);
             $("#dataset_listing").html(data);
             $("#tabs").tabs({
                 activate: function(event, ui) {
-                    if ($("#show_all_extents_checkbox").is(":checked")) {
-                        var selectedTab = $("#tabs").tabs("option","active");
-                        myGeoViz.removeAllFeaturesFromMap();
-                        if (datasets[selectedTab]) {
-                            for (var i=0; i<datasets[selectedTab].length; i++) {
-                                myGeoViz.addFeatureFromWKT(datasets[selectedTab][i].geom,{"udi":datasets[selectedTab][i].udi});
-                            }
-                        }
+                    var activeTabIndex = getActiveTabIndex();
+                    if (datasetList[activeTabIndex].length == 0) {
+                        loadData(by, id);
+                    }
+
+                    if ($("#show_extents_checkbox").is(":checked")) {
+                        displayActiveTabExtents();
                     }
                 }
-            }
-            );
+            });
             enableFilterButton();
             $("#clear-button").button("enable");
             $("#drawGeoFilterButton").button("enable");
-            if (myGeoViz.getFilter()) {
+            //this triggers infinite scrolling
+            $(".viewport").has(".datasets").scroll(function(){
+                if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight - 1) {
+                    loadData(by, id);
+                }
+            });
+            if (geo_filter) {
                 $("#clearGeoFilterButton").button("enable");
             }
         },
@@ -152,29 +401,6 @@ function showDatasets(by,id) {
             alert("Fail: " + textStatus + " " + errorThrown + jqXHR.getResponseHeader());
         }
     });
-}
-
-function showDatasetDetails(id) {
-    if ($('tr[datasetId="' + id + '"] td.info').has("div.details:empty").length == 1) {
-        $.ajax({
-            "url": Routing.generate("pelagos_app_ui_datadiscovery_showdetails", { "id": id }),
-            "success": function(data) {
-                $('tr[datasetId="' + id + '"] td.info div.details').html(data);
-                $('tr[datasetId="' + id + '"] td.info div.details').show();
-                $('tr[datasetId="' + id + '"] td.info div.attributes a.details_link').html("Hide Details");
-            }
-        });
-    }
-    else {
-        if ($('tr[datasetId="' + id + '"] td.info div.details:visible').length == 1) {
-            $('tr[datasetId="' + id + '"] td.info div.details').hide();
-            $('tr[datasetId="' + id + '"] td.info div.attributes a.details_link').html("Show Details");
-        }
-        else {
-            $('tr[datasetId="' + id + '"] td.info div.details').show();
-            $('tr[datasetId="' + id + '"] td.info div.attributes a.details_link').html("Hide Details");
-        }
-    }
 }
 
 function applyFilter() {
@@ -202,19 +428,26 @@ function clearAll() {
     applyFilter();
 }
 
-function showAllExtents() {
-    if ($("#show_all_extents_checkbox").is(":checked")) {
-        $("#show_all_extents_label").html('<span class="ui-button-text">Hide All Extents</span>');
-        var selectedTab = $("#tabs").tabs("option","active");
-        myGeoViz.removeAllFeaturesFromMap();
-        if (datasets[selectedTab]) {
-            for (var i=0; i<datasets[selectedTab].length; i++) {
-                myGeoViz.addFeatureFromWKT(datasets[selectedTab][i].geom,{"udi":datasets[selectedTab][i].udi});
+//this function adds geometries from rendered data to the map
+function displayActiveTabExtents()
+{
+    myGeoViz.removeAllFeaturesFromMap();
+    var activeTabIndex = getActiveTabIndex();
+    if (datasetList[activeTabIndex]) {
+        for (var i=0; i<datasetList[activeTabIndex].length; i++) {
+            if (datasetList[activeTabIndex][i]["_source"]["geometry"]) {
+                myGeoViz.addFeatureFromWKT(datasetList[activeTabIndex][i]["_source"]["geometry"], {"udi": datasetList[activeTabIndex][i]["_source"]["udi"]});
             }
         }
     }
-    else {
-        $("#show_all_extents_label").html('<span class="ui-button-text">Show All Extents</span>');
+}
+
+function showAllExtents() {
+    if ($("#show_extents_checkbox").is(":checked")) {
+        $("#show_extents_label").html('<span class="ui-button-text">Hide Extents</span>');
+        displayActiveTabExtents();
+    } else {
+        $("#show_extents_label").html('<span class="ui-button-text">Show Extents</span>');
         $("table.datasets tr td").removeClass("highlight");
         myGeoViz.removeAllFeaturesFromMap();
     }

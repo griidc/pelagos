@@ -63,6 +63,7 @@ services:
         arguments: ["@twig", "@mailer", "@security.token_storage", "%mailer_from_addr%", "%mailer_from_name%", "@pelagos.entity.handler"]
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.account.created, method: onCreated }
+            - { name: kernel.event_listener, event: pelagos.entity.account.forgot_username, method: onForgotUsername }
 
     pelagos.doctrine.dataset.listener:
         class: Pelagos\Event\DoctrineDatasetListener

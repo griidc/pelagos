@@ -33,17 +33,6 @@ class DownloadController extends Controller
      */
     public function defaultAction(Request $request, $id)
     {
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->render(
-                'PelagosAppBundle:Download:log-in-to-download-splash-screen.html.twig',
-                array(
-                    'refererPath' => parse_url(
-                        $request->headers->get('referer'),
-                        PHP_URL_PATH
-                    ),
-                )
-            );
-        }
         $dataset = $this->get('pelagos.entity.handler')->get(Dataset::class, $id);
         if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
             and DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED ===
@@ -70,21 +59,22 @@ class DownloadController extends Controller
      *
      * @param string $id The id of the dataset to download.
      *
-     * @throws AccessDeniedException When no user is authenticated.
-     *
      * @Route("/{id}/http")
      *
      * @return Response
      */
     public function httpAction($id)
     {
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            throw $this->createAccessDeniedException('You must log in to download datasets');
-        }
         $dataset = $this->get('pelagos.entity.handler')->get(Dataset::class, $id);
         $downloadFileInfo = $this->get('pelagos.util.data_store')->getDownloadFileInfo($dataset->getUdi(), 'dataset');
+        $username = null;
+        if ($this->getUser()) {
+            $username = $this->getUser()->getUsername();
+        } else {
+            $username = '';
+        }
         $uniqueDirectory = uniqid(
-            preg_replace('/\s/', '_', $this->getUser()->getUsername()) . '_'
+            preg_replace('/\s/', '_', $username) . '_'
         );
         $downloadBaseDirectory = $this->getParameter('download_base_directory');
         $downloadDirectory = $downloadBaseDirectory . '/' . $uniqueDirectory;
@@ -96,14 +86,21 @@ class DownloadController extends Controller
         );
         $downloadBaseUrl = $this->getParameter('download_base_url');
         $em = $this->container->get('doctrine')->getManager();
-        $type = get_class($this->getUser());
-        if ($type == 'Pelagos\Entity\Account') {
-            $type = 'GoMRI';
-            $typeId = $this->getUser()->getUserId();
+
+        if ($this->getUser()) {
+            $type = get_class($this->getUser());
+            if ($type == 'Pelagos\Entity\Account') {
+                $type = 'GoMRI';
+                $typeId = $this->getUser()->getUserId();
+            } else {
+                $type = 'Non-GoMRI';
+                $typeId = $this->getUser()->getUsername();
+            }
         } else {
             $type = 'Non-GoMRI';
-            $typeId = $this->getUser()->getUsername();
+            $typeId = 'anonymous';
         }
+
         $this->container->get('pelagos.event.log_action_item_event_dispatcher')->dispatch(
             array(
                 'actionName' => 'File Download',
@@ -127,7 +124,6 @@ class DownloadController extends Controller
      *
      * @param string $id The id of the dataset to download.
      *
-     * @throws AccessDeniedException When no user is authenticated.
      * @throws AccessDeniedException When a guest user attempts to download via GridFTP.
      *
      * @Route("/{id}/grid-ftp")
@@ -136,9 +132,6 @@ class DownloadController extends Controller
      */
     public function gridFtpAction($id)
     {
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            throw $this->createAccessDeniedException('You must log in to download datasets');
-        }
         $dataset = $this->get('pelagos.entity.handler')->get(Dataset::class, $id);
         if (!$this->getUser() instanceof Account) {
             throw $this->createAccessDeniedException('Only GRIIDC users can use GridFTP');

@@ -692,24 +692,24 @@ $(function() {
     $("select.keywordinput").dblclick(function (event) {
         var element = $(event.currentTarget)
         if (element.filter("[keyword=source]").length > 0) {
-            element.closest("table").find("button:contains(add)").click();
+            element.closest("table.keywords").find("button:contains(add)").click();
         } else if (element.filter("[keyword=target]").length > 0) {
-            element.closest("table").find("button:contains(remove)").click();
+            element.closest("table.keywords").find("button:contains(remove)").click();
         }
     });
 
     $("input.keywordinput").keypress(function(event) {
         if (event.which == 13) {
             event.preventDefault();
-            $(event.currentTarget).closest("table").find("button:contains(add)").click()
+            $(event.currentTarget).closest("table.keywords").find("button:contains(add)").click()
         }
     });
 
     $(".keywordbutton").click(function (event) {
-        var source = $(event.currentTarget).closest("table").find("input[keyword=source],select[keyword=source]");
-        var target = $(event.currentTarget).closest("table").find("select[keyword=target]");
+        var source = $(event.currentTarget).closest("table.keywords").find("input[keyword=source],select[keyword=source]");
+        var target = $(event.currentTarget).closest("table.keywords").find("select[keyword=target]");
 
-        if ($(event.currentTarget).text() == "add") {
+        if ($(event.currentTarget).text() === "add") {
             if (source.is("input") && source.val() !== "") {
                 var optionText = source.val();
                 var option = new Option(optionText, optionText);
@@ -721,11 +721,25 @@ $(function() {
                 target.append(option);
                 target.append(sortOptions(target.find("option").detach()));
             }
-        } else if ($(event.currentTarget).text() == "remove") {
+        } else if ($(event.currentTarget).text() === "remove") {
             var option = target.find("option:selected").detach().prop("selected", false);
             if (option.attr("order") != undefined) {
                 source.append(option);
                 source.append(sortOptions(source.find("option").detach()));
+            } else {
+                source.val($(option).val()).focus();
+            }
+        } else if ($(event.currentTarget).text() === "up") {
+            var selectedOption = target.find("option:selected");
+            var prevOption = selectedOption.prev("option");
+            if (prevOption.is("option")) {
+                selectedOption.detach().insertBefore(prevOption);
+            }
+        } else if ($(event.currentTarget).text() === "down") {
+            var selectedOption = target.find("option:selected");
+            var nextOption = selectedOption.next("option");
+            if (nextOption.is("option")) {
+                selectedOption.detach().insertAfter(nextOption);
             }
         }
         buildKeywordLists();

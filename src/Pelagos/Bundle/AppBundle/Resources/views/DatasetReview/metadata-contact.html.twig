@@ -1,7 +1,8 @@
 <fieldset>
     <legend>Metadata Contact</legend>
     <table class="tab-table">
-        {% set contact = form.metadataContacts | first %}
+        {% set contact = form.metadataContacts | first | default %}
+        {% if (contact) %}
         <tr>
             <td>
 				<span class="helpSection">
@@ -41,5 +42,6 @@
                 {{ form_row(contact.role) }}
             </td>
         </tr>
+        {% endif %}
     </table>
 </fieldset>

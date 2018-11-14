@@ -28,7 +28,7 @@ drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.va
 
 drupal_add_js('//cdn.jsdelivr.net/openlayers/2.13.1/OpenLayers.js',array('type'=>'external'));
 
-drupal_add_js('//maps.google.com/maps/api/js?v=3.21&sensor=false',array('type'=>'external'));
+drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false&key='.$config['google_maps_api_key'],array('type'=>'external'));
 
 drupal_add_js('/includes/geoviz/geoviz.js',array('type'=>'external'));
 drupal_add_js('/includes/geoviz/mapWizard.js',array('type'=>'external'));
@@ -166,7 +166,7 @@ Click OK to download.
 		<td width="100%">
 			<div id="metatoolbar" class="ui-widget-header ui-corner-all toolbarbutton">
 				<button id="upload">Load from File</button>
-				<button id="fromudi">Load from Submitted Dataset</button>
+				<button id="fromudi">Load from GRIIDC Dataset</button>
 				<button id="forcesave">Save to File</button>
 				<button id="startover">Clear Form</button>
 				<button id="generate">Check and Save to File</button>

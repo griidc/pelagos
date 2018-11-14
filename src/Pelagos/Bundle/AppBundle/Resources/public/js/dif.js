@@ -148,14 +148,20 @@ $(document).ready(function()
     jQuery.validator.addMethod("trueISODate", function(value, element) {
         var regPattern = /^\d{4}-\d{1,2}-\d{1,2}$/
         return this.optional(element) || ((Date.parse(value)) && regPattern.test(value));
+    },function (params, element) {
+        return "Please enter a valid ISO Date"
     });
 
     difValidator = $("#difForm").validate({
         ignore: ".ignore",
         messages: {
             geoloc: "Click on Spatial Wizard Button!",
-            estimatedStartDate: "Start Date is not a valid ISO date",
-            estimatedEndDate: "End Date is not a valid ISO date"
+            estimatedStartDate: {
+                required: "Start Date is a required field."
+            },
+            estimatedEndDate: {
+                required: "End Date is a required field."
+            }
         },
         submitHandler: function(form) {
             saveDIF(form);
@@ -257,7 +263,7 @@ $(document).ready(function()
             if (typeof m.message != "undefined") {
                 message = m.message;}else{message = m;
             }
-            if (x.status == 400 || x.status == 403) {
+            if ((x.status == 400 || x.status == 403) && x.responseJSON) {
                 message = x.responseJSON.message;
             }
             console.log("Error in Ajax:"+t+", Message:"+message)
@@ -450,12 +456,8 @@ function createDIF(form)
     var resourceLocation= "";
     var udi = "";
     var resourceId = "";
-    var status = 0;
-    var submit = false;
-
-    if ($('[name="button"]', form).val() == "submit") {
-        submit = true;
-    }
+    var response   = { status: "", message: ""};
+    var buttonValue = $('[name="button"]', form).val();
 
     showSpinner();
     formHash = Form.serialize();
@@ -463,15 +465,19 @@ function createDIF(form)
         url: url,
         type: method,
         datatype: "json",
-        data: formData,
-        success: function(json, textStatus, jqXHR) {
-            // Saving the DIF
-            if (jqXHR.status === 201) {
-                resourceLocation = jqXHR.getResponseHeader("location");
-            } else {
-                resourceLocation = url;
-            }
+        data: formData
+    }).success(function (json, textStatus, jqXHR) {
+        // Saving the DIF
+        if (jqXHR.status === 201) {
+            resourceLocation = jqXHR.getResponseHeader("location");
+        } else {
+            resourceLocation = url;
         }
+        response.status = "success";
+    }).error(function (json, text, jqXHR) {
+        var errorMessage = JSON.parse(json.responseText);
+        response.status = "error";
+        response.message = errorMessage.message;
     })
     .then(function() {
         // Getting the Resource
@@ -488,36 +494,46 @@ function createDIF(form)
     })
     .then(function() {
         // Update the status if submit was pressed
-        if (submit) {
+        if (buttonValue === "submit") {
             // It was the submit button
             return $.ajax({
                 url: resourceLocation +"/submit",
                 type: "PATCH",
                 datatype: "json",
-                data: formData,
-                success: function(json, textStatus, jqXHR) {
-                    if (jqXHR.status === 204) {
-                        status = 1;
-                    }
+                data: formData
+            }).success(function(json, textStatus, jqXHR) {
+                if (jqXHR.status === 204) {
+                    response.status = "success";
                 }
-            })
+            }).error(function (json, text, jqXHR) {
+                var errorMessage = JSON.parse(json.responseText);
+                response.status = "error";
+                response.message = errorMessage.message;
+            });
         } else {
             // Not the submit button, still resolve.
             return $.Deferred().resolve();
         }
     })
-    .then(function() {
-        // Then show the dialog according the how it was saved.
-        if (status == 0) {
-            var title = "New DIF Created";
-            var message = '<div><img src="' + imgInfo + '"><p>You have saved a DIF. This DIF has been given the ID: ' + udi +"<br>In order to submit your dataset to GRIIDC you must return to this page and submit the DIF for review and approval.</p></div>";
-        } else {
-            var title = "New DIF Submitted";
-            var message = '<div><img src="' + imgInfo + '">' +
-            "<p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is " + udi + "." +
-            "<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing. To make changes" +
-            "<br>to your DIF, please email GRIIDC at griidc@gomri.org with the UDI for your dataset." +
-            "<br>Please note that you will receive an email notification when your DIF is approved.</p></div>";
+    .always(function() {
+        if (response.status === "success") {
+            // Then show the dialog according the how it was saved.
+            if (buttonValue === "save") {
+                var title = "New DIF Created";
+                var message = '<div><img src="' + imgInfo + '"><p>You have saved a DIF. This DIF has been given the ID: ' + udi +"<br>In order to submit your dataset to GRIIDC you must return to this page and submit the DIF for review and approval.</p></div>";
+            } else {
+                var title = "New DIF Submitted";
+                var message = '<div><img src="' + imgInfo + '">' +
+                    "<p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is " + udi + "." +
+                    "<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing. To make changes" +
+                    "<br>to your DIF, please email GRIIDC at griidc@gomri.org with the UDI for your dataset." +
+                    "<br>Please note that you will receive an email notification when your DIF is approved.</p></div>";
+            }
+        } else if (response.status === "error") {
+            var title = "Unable to perform desired action on DIF";
+            var message = '<div><img src="' + imgCancel + '">' +
+                    "<p>The application with DIF ID: " + udi + " failed to complete action!" +
+                    "<br>Error message: " + response.message + "</p></div>";
         }
 
         hideSpinner();
@@ -554,21 +570,12 @@ function updateDIF(form)
     var resourceLocation= "";
     var udi = $('[name="udi"]', form).val();
     var resourceId = $('[name="id"]', form).val();
-    var status = { statusCode: 0, message: "success"};
-    var submit = false;
-    var approve = false;
+    var response   = { status: "", message: ""};
+    var buttonValue = $('[name="button"]', form).val();
 
     if (udi != "") {
         method = "PUT"
         url = url + "/" + resourceId;
-    }
-
-    if ($('[name="button"]', form).val() == "submit") {
-        submit = true;
-    }
-
-    if ($('[name="button"]', form).val() == "approve") {
-        approve = true;
     }
 
     showSpinner();
@@ -585,11 +592,12 @@ function updateDIF(form)
             } else {
                 resourceLocation = url;
             }
+            response.status = "success";
         }
     })
     .then(function() {
         // Update the status if submit was pressed
-        if (submit) {
+        if (buttonValue === "submit") {
             // It was the submit button
             return $.ajax({
                 url: url +"/submit",
@@ -598,29 +606,25 @@ function updateDIF(form)
                 data: formData,
                 success: function(json, textStatus, jqXHR) {
                     if (jqXHR.status === 204) {
-                        status.statusCode = 1;
-                        status.message = "success";
+                        response.status = "success";
                     }
                 }
             });
-        } else if (approve) {
+        } else if (buttonValue === "approve") {
             // It was the approve button
             return $.ajax({
                 url: url +"/approve",
                 type: "PATCH",
                 datatype: "json",
                 data: formData
-            }).success(function(json, textStatus, jqXHR) {
+            }).done(function(json, textStatus, jqXHR) {
                 if (jqXHR.status === 204) {
-                    status.statusCode = 2;
-                    status.message = "success";
+                    response.status = "success";
                 }
-            }).error(function (json, text, jqXHR) {
+            }).fail(function (json, text, jqXHR) {
                 var errorMessage = JSON.parse(json.responseText);
-                status.message = "error";
-                if (errorMessage.message === "Can only approve a submitted DIF") {
-                    status.statusCode = 3;
-                }
+                response.status = "error";
+                response.message = errorMessage.message;
             });
         } else {
             // Not the submit button, still resolve.
@@ -628,27 +632,30 @@ function updateDIF(form)
         }
     })
     .always(function() {
-        if (status.message === "success") {
+        if (response.status === "success") {
             // Then show the dialog according the how it was saved.
-            if (status.statusCode == 0) {
-                var title = "DIF Submitted";
+            if (buttonValue === "save") {
+                var title = "DIF Saved";
                 var message = '<div><img src="' + imgInfo + '"><p>Thank you for saving DIF with ID:  ' + udi
                     + ".<br>Before submitting this dataset you must return to this page and submit the dataset information form.</p></div>";
-            } else if (statusCode == 1) {
+            } else if (buttonValue === "update") {
+                var title = "DIF Updated";
+                var message = '<div><img src="' + imgInfo + '"><p>Thank you for updating DIF with ID:  ' + udi + ".</p></div>";
+            } else if (buttonValue === "submit") {
                 var title = "DIF Submitted";
                 var message = '<div><img src="' + imgInfo + '">' +
                     "<p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is " + udi + "." +
                     "<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing. To make changes" +
                     "<br>to your DIF, please email GRIIDC at griidc@gomri.org with the UDI for your dataset." +
                     "<br>Please note that you will receive an email notification when your DIF is approved.</p></div>";
-            } else if (status.statusCode == 2) {
+            } else if (buttonValue === "approve") {
                 var title = "DIF Updated and Approved";
                 var message = '<div><img src="' + imgInfo + '">' +
                     "<p>The application with DIF ID: " + udi + " was successfully updated and approved!" +
                     "<br></p></div>";
             }
-        } else if (status.message === "error") {
-            if (status.statusCode == 3) {
+        } else if (response.status === "error") {
+            if (response.message === "Can only approve a submitted DIF") {
                 var title = "Unable to approve DIF";
                 var message = '<div><img src="' + imgCancel + '">' +
                     "<p>The application with DIF ID: " + udi + " cannot be approved as it is already approved!" +
@@ -659,6 +666,10 @@ function updateDIF(form)
                     "<p>The application with DIF ID: " + udi + " failed to complete action!" +
                     "<br></p></div>";
             }
+        } else {
+            var title = "Unable to process DIF form";
+            var message = "<div><p>There was an error processing your request. Your session might have expired.<br>" +
+                "If the problem still persists after you re-login, please contact the administrator.</p></div>";
         }
 
         hideSpinner();
