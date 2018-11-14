@@ -80,11 +80,29 @@ def generate_tree(filename, short):
             # ASCII-art generation
             last_path = ''
             for path, size in sizes.iteritems():
-                if (path.startswith(last_path)):
-                    print "├──" + path, size
+                if (short):
+                    # Short form, directories only
+                    depth = 0
+                    if (path.startswith(last_path) and last_path != ''):
+                        depth += 1
+                        remaining_path = re.sub(last_path, '', path)
+                        spaces = ''
+                        for s in range (1, len(last_path), 1):
+                            spaces = spaces + ' '
+                        remaining_path = re.sub('/', '\n' + spaces + '└──', path)
+                        for d in range (1, depth, 1):
+                            print "    ",
+                        print(remaining_path)
+                    else:
+                        print path
+                    last_path = path
                 else:
-                    print '└──' + path, size
-                last_path = path
+                    # Long Form
+                    if (path.startswith(last_path)):
+                        print path, size
+                    else:
+                        print path, size
+                    last_path = path
     else:
         print("Error in header. Stopping")
 
