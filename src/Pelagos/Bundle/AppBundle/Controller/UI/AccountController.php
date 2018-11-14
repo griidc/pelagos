@@ -12,9 +12,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Pelagos\Bundle\AppBundle\Factory\UserIdFactory;
+
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Password;
 use Pelagos\Entity\PersonToken;
+use Pelagos\Entity\Person;
+
 use Pelagos\Exception\PasswordException;
 
 /**
@@ -399,5 +402,43 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
         $this->get('pelagos.ldap')->updatePerson($person);
 
         return $this->render('PelagosAppBundle:Account:AccountReset.html.twig');
+    }
+
+    /**
+     * Forgot username for users.
+     *
+     * @param Request $request The Symfony request object.
+     *
+     * @Route("/forgot-username")
+     * @Method("GET")
+     *
+     * @return Response A Response instance.
+     */
+    public function forgotUsernameAction(Request $request)
+    {
+        // If the user is already authenticated.
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->render('PelagosAppBundle:template:AlreadyLoggedIn.html.twig');
+        }
+
+        $userEmailAddr = $request->query->get('emailAddress');
+
+        if ($userEmailAddr) {
+            $person = $this->entityHandler->getBy(Person::class, array('emailAddress' => $userEmailAddr));
+
+            if (!empty($person[0])) {
+                $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
+                    $person[0]->getAccount(),
+                    'forgot_username'
+                );
+            }
+        }
+
+        return $this->render(
+            'PelagosAppBundle:Account:forgotUsername.html.twig',
+            array(
+                'emailId' => $userEmailAddr
+            )
+        );
     }
 }
