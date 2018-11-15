@@ -294,7 +294,7 @@ class Extensions extends \Twig_Extension
     }
 
     /**
-     * Format bytes as a human-readable string.
+     * Format bytes as a human-readable string (base 10).
      *
      * @param integer $bytes     The bytes to format.
      * @param integer $precision The the precision to use (default: 0).
@@ -305,7 +305,7 @@ class Extensions extends \Twig_Extension
     {
         $units = array('B','KB','MB','GB','TB');
         for ($e = (count($units) - 1); $e > 0; $e--) {
-            $one = pow(1024, $e);
+            $one = pow(1000, $e);
             if ($bytes >= $one) {
                 return round(($bytes / $one), $precision) . ' ' . $units[$e];
             }
