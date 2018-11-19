@@ -31,6 +31,7 @@ $(document).ready(function()
                 .next()
                 .prop("selected", "selected");
             select.change();
+            $("#numversions").text(data.length);
         })
         .error(function() {
             var n = new noty({
