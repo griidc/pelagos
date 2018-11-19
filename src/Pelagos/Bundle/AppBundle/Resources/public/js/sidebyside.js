@@ -3,7 +3,7 @@ var $ = jQuery.noConflict();
 $(document).ready(function()
 {
     "use strict";
-    
+
     $("#get-versions-button").click(function (){
         var udi = $("input[name=udi]").val().trim();
         jQuery.ajax({
@@ -15,23 +15,31 @@ $(document).ready(function()
         .success(function(data) {
             var select = $("select.version-select");
             select.find("option").remove();
-            
+
             $.each(data, function(index, item) {
-                var option = new Option(item.sequence, item.sequence);
-                $(option).data("udi", item.udi);
-                $(option).data("modificationtimestamp", item.modificationtimestamp);
-                $(option).data("status", item.status);
-                $(option).data("version", item.version);
-                $(option).data("modifier", item.modifier);
-                select.append(option);
+                if (typeof item === "object") {
+                    var option = new Option(item.sequence, item.sequence);
+                    $(option).data("udi", item.udi);
+                    $(option).data("modificationtimestamp", item.modificationtimestamp);
+                    $(option).data("status", item.status);
+                    $(option).data("version", item.version);
+                    $(option).data("modifier", item.modifier);
+                    $(option).data("datasetstatus", item.datasetstatus);
+                    select.append(option);
+                }
             });
-            
+
             $(".right-version").find("select option:selected")
                 .prop("selected", false)
                 .next()
                 .prop("selected", "selected");
             select.change();
-            $("#numversions").text(data.length);
+
+            // Count the number of options, but divide by 2,
+            // because there are two select boxes (with options).
+            $("#numversions").text(select.find("option").size() / 2);
+            $("#datasetstatus").text(data.datasetstatus);
+            $(".udi-title").text(data.udi);
         })
         .error(function() {
             var n = new noty({
@@ -47,14 +55,16 @@ $(document).ready(function()
             $("input[name=udi]").val("");
         });
     });
-    
+
     $(".left-version").find("select").change(function() {
         var version = $(this).find("option:selected").data("version");
         var udi = $(this).find("option:selected").data("udi");
-        
+
         $("#left").html($(".spinner div").html());
-        $(".udi-title").text(udi);
-        
+
+        $(this).parents("div.left-version")
+            .find(".dataset-status")
+            .text($(this).find("option:selected").data("datasetstatus"));
         $(this).parents("div.left-version")
             .find(".submission-status")
             .text($(this).find("option:selected").data("status"));
@@ -70,14 +80,16 @@ $(document).ready(function()
             $(".filetabs", this).tabs();
         });
     });
-    
+
     $(".right-version").find("select").change(function() {
         var version = $(this).find("option:selected").data("version");
         var udi = $(this).find("option:selected").data("udi");
-        
+
         $("#right").html($(".spinner div").html());
-        $(".udi-title").text(udi);
-        
+
+        $(this).parents("div.right-version")
+            .find(".dataset-status")
+            .text($(this).find("option:selected").data("datasetstatus"));
         $(this).parents("div.right-version")
             .find(".submission-status")
             .text($(this).find("option:selected").data("status"));
