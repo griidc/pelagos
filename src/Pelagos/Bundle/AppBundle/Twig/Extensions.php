@@ -251,9 +251,9 @@ class Extensions extends \Twig_Extension
      */
     protected static function parseString(\Twig_Environment $environment, array $context, $string)
     {
-        $environment->setLoader(new \Twig_Loader_Array($context));
+        $environment->setLoader(new \Twig_Loader_Array());
         $template = $environment->createTemplate($string);
-        return $environment->render($string, $context);
+        return $template->render($context);
     }
 
     /**
