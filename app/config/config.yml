@@ -246,7 +246,7 @@ fos_elastica:
             index_name: "%pelagos_name%"
             types:
                 dataset:
-                    mappings:
+                    properties:
                         udi: ~
                         title: { boost: 3 }
                         abstract: ~
