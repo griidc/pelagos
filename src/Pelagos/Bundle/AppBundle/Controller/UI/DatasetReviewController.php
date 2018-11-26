@@ -594,7 +594,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                     case ($datasetSubmissionStatus === DatasetSubmission::STATUS_COMPLETE and $datasetSubmissionDatasetStatus !== Dataset::DATASET_STATUS_BACK_TO_SUBMITTER):
                         $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
                         break;
-
                     case ($datasetSubmissionStatus === DatasetSubmission::STATUS_IN_REVIEW
                         and ($datasetSubmissionDatasetStatus === Dataset::DATASET_STATUS_IN_REVIEW
                             or $datasetSubmissionDatasetStatus === Dataset::DATASET_STATUS_SUBMITTED)):
