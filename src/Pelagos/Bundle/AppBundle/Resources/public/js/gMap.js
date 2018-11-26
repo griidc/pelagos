@@ -40,19 +40,19 @@
 
         var style = new ol.style.Style({
             fill: new ol.style.Fill({
-              color: 'rgba(255, 255, 255, 0)'
+              color: "rgba(255, 255, 255, 0)"
             }),
             stroke: new ol.style.Stroke({
-              color: 'rgba(255, 165, 0, 0.6)',
+              color: "rgba(255, 165, 0, 0.6)",
               width: 2
             }),
             image: new ol.style.Circle({
                 radius: 8,
                 fill: new ol.style.Fill({
-                    color: 'rgba(255, 255, 255, 0)'
+                    color: "rgba(255, 255, 255, 0)"
                 }),
                 stroke: new ol.style.Stroke({
-                  color: 'rgba(255, 165, 0, 0.6)',
+                  color: "rgba(255, 165, 0, 0.6)",
                   width: 2
                 })
             })
