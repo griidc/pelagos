@@ -98,7 +98,6 @@ class SideBySideController extends UIController
             $data['modifier'] = $submission->getModifier()->getLastName() .
                 ', ' . $submission->getModifier()->getFirstName();
             $data['modificationtimestamp'] = $submission->getModificationTimeStamp()->format('c');
-            $data['datasetstatus'] = Dataset::DATASET_STATUSES[$submission->getDatasetStatus()];
             $submissions[] = $data;
         }
         

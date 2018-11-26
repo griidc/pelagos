@@ -24,7 +24,6 @@ $(document).ready(function()
                     $(option).data("status", item.status);
                     $(option).data("version", item.version);
                     $(option).data("modifier", item.modifier);
-                    $(option).data("datasetstatus", item.datasetstatus);
                     select.append(option);
                 }
             });
@@ -63,9 +62,6 @@ $(document).ready(function()
         $("#left").html($(".spinner div").html());
 
         $(this).parents("div.left-version")
-            .find(".dataset-status")
-            .text($(this).find("option:selected").data("datasetstatus"));
-        $(this).parents("div.left-version")
             .find(".submission-status")
             .text($(this).find("option:selected").data("status"));
         $(this).parents("div.left-version")
@@ -87,9 +83,6 @@ $(document).ready(function()
 
         $("#right").html($(".spinner div").html());
 
-        $(this).parents("div.right-version")
-            .find(".dataset-status")
-            .text($(this).find("option:selected").data("datasetstatus"));
         $(this).parents("div.right-version")
             .find(".submission-status")
             .text($(this).find("option:selected").data("status"));
