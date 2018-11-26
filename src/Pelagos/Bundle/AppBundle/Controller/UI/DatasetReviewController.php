@@ -589,23 +589,33 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             }
             return $datasetSubmission;
         } elseif ('review' === $this->mode) {
-            switch (true) {
-                case ($datasetSubmissionStatus === DatasetSubmission::STATUS_COMPLETE and $datasetSubmissionDatasetStatus !== Dataset::DATASET_STATUS_BACK_TO_SUBMITTER):
-                    $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
-                    break;
-
-                case ($datasetSubmissionStatus === DatasetSubmission::STATUS_IN_REVIEW and ($datasetSubmissionDatasetStatus === Dataset::DATASET_STATUS_IN_REVIEW or $datasetSubmissionDatasetStatus === Dataset::DATASET_STATUS_SUBMITTED)):
-                    $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
-                    switch (true) {
-                        case (empty($datasetSubmissionReview) || $datasetSubmissionReview->getReviewEndDateTime()):
-                            $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
-                            break;
-                        case (empty($datasetSubmissionReview->getReviewEndDateTime()) and $datasetSubmissionReview->getReviewedBy() !== $this->getUser()->getPerson()):
-                            $reviewerUserName  = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
-                            $this->addToWarningDisplayQueue($request, $udi, 'locked', $reviewerUserName);
-                            break;
-                    }
-                    break;
+            if ($datasetSubmissionDatasetStatus === $datasetSubmission->getDatasetStatus()) {
+                switch (true) {
+                    case ($datasetSubmissionStatus === DatasetSubmission::STATUS_COMPLETE and $datasetSubmissionDatasetStatus !== Dataset::DATASET_STATUS_BACK_TO_SUBMITTER):
+                        $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
+                        break;
+                    case ($datasetSubmissionStatus === DatasetSubmission::STATUS_IN_REVIEW
+                        and ($datasetSubmissionDatasetStatus === Dataset::DATASET_STATUS_IN_REVIEW
+                            or $datasetSubmissionDatasetStatus === Dataset::DATASET_STATUS_SUBMITTED)):
+                        $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
+                        switch (true) {
+                            case (empty($datasetSubmissionReview) || $datasetSubmissionReview->getReviewEndDateTime()):
+                                $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
+                                break;
+                            case (empty($datasetSubmissionReview->getReviewEndDateTime())
+                                and $datasetSubmissionReview->getReviewedBy() !== $this->getUser()->getPerson()):
+                                $reviewerUserName  = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
+                                $this->addToWarningDisplayQueue($request, $udi, 'locked', $reviewerUserName);
+                                break;
+                        }
+                        break;
+                }
+            } else {
+                if ($datasetSubmissionDatasetStatus === Dataset::DATASET_STATUS_IN_REVIEW
+                    and $datasetSubmissionDatasetStatus !== $datasetSubmission->getDatasetStatus()
+                    and $datasetSubmission->getDatasetStatus() === Dataset::DATASET_STATUS_BACK_TO_SUBMITTER) {
+                    $datasetSubmission = $this->createNewDatasetSubmission($dataset->getDatasetSubmission());
+                }
             }
         }
         return $datasetSubmission;
