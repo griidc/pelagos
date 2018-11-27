@@ -20,7 +20,7 @@
       ],
       "@type" : "Organization"
    },
-   "datePublished" : "{% if dataset.datasetSubmission %}{{dataset.datasetSubmission.submissionTimeStamp|date('c', 'UTC')}}{% else %}{{ dataset.dif.modificationTimeStamp|date('c', 'UTC') }}{% endif %}",
+   "datePublished" : "{{dataset.acceptedDate|date('c', 'UTC') }}",
    "@context" : "http://schema.org"
 }
 </script>
