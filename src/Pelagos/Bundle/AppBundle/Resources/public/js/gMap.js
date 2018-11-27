@@ -57,11 +57,13 @@
                 })
             })
         });
+        
+        var source = new ol.source.Vector({
+            features: [feature]
+        });
 
         var vector = new ol.layer.Vector({
-            source: new ol.source.Vector({
-                features: [feature]
-            }),
+            source: source,
             style: [style]
         });
 
@@ -69,7 +71,7 @@
           center: ol.proj.fromLonLat([-90.5, 25]),
           zoom: 4,
           maxZoom: 12,
-          minZoom: 1
+          minZoom: 1,
         });
 
         var map = new ol.Map({
@@ -79,6 +81,9 @@
             ],
             view: view
         });
+        
+        var extent = source.getExtent();
+        map.getView().fit(extent, map.getSize());
 
     };
 }(jQuery));
