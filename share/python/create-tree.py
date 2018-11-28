@@ -53,6 +53,19 @@ def splitall(path):
             allparts.insert(0, parts[1])
     return allparts
 
+def intToSize(size):
+    if (size >= 10**12):
+        return(str(size/10**12) + " TB")
+    elif (size >= 10**9):
+        return(str(size/10**9) + " GB")
+    elif (size >= 10**6):
+        return(str(size/10**6) + " MB")
+    elif (size >= 10**3):
+        return(str(size/10**3) + " KB")
+    else:
+        return(str(size) + " Bytes")
+
+
 def generate_tree(filename, short):
     path = check_header(filename)
     if (path is not None):
@@ -67,42 +80,28 @@ def generate_tree(filename, short):
                     object_filename = re.sub(path + '/', '', row[3])
                     object_size = row[0]
                     parts = splitall(object_filename)
-                    for i in range (0, len(parts)-1, 1):
+                    for i in range (0, len(parts), 1):
                         if (i == 0):
                             my_str = parts[i]
-                        else:
+                        elif (i < len(parts)-1):
                             my_str = my_str + '/' + parts[i]
+                        else:
+                            my_str = my_str + '/' + parts[i] + '|EOL:'
                         try:
                             sizes[my_str] += int(object_size)
                         except KeyError:
                             sizes[my_str] = int(object_size)
                 rownum += 1
             # ASCII-art generation
-            last_path = ''
             for path, size in sizes.iteritems():
                 if (short):
                     # Short form, directories only
-                    depth = 0
-                    if (path.startswith(last_path) and last_path != ''):
-                        depth += 1
-                        remaining_path = re.sub(last_path, '', path)
-                        spaces = ''
-                        for s in range (1, len(last_path), 1):
-                            spaces = spaces + ' '
-                        remaining_path = re.sub('/', '\n' + spaces + '└──', path)
-                        for d in range (1, depth, 1):
-                            print "    ",
-                        print(remaining_path)
+                    if(re.search("\|EOL:$", path)):
+                        pass
                     else:
-                        print path
-                    last_path = path
+                        print(path + " (" + intToSize(size) + ")")
                 else:
-                    # Long Form
-                    if (path.startswith(last_path)):
-                        print path, size
-                    else:
-                        print path, size
-                    last_path = path
+                    print(re.sub('\|EOL:', '', path) +  " (" + intToSize(size) + ")")
     else:
         print("Error in header. Stopping")
 
