@@ -81,7 +81,7 @@ class DatalandController extends UIController
                     array(
                         'dataset' => $dataset,
                     )
-                )
+                )->getContent()
             );
             drupal_add_html_head($data, 'json-ld');
         }
