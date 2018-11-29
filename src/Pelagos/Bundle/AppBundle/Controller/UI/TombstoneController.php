@@ -20,6 +20,8 @@ class TombstoneController extends UIController
      *
      * @param string $udi A UDI.
      *
+     * @throws NotFoundHttpException When no non-available dataset is found with this UDI.
+     *
      * @Route("/{udi}")
      *
      * @return Response
