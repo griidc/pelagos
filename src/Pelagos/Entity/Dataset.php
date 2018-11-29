@@ -774,4 +774,22 @@ class Dataset extends Entity
     {
         $this->acceptedDate = $acceptedDate;
     }
+
+    /**
+     * Getter for the latest dataset submission review copy.
+     *
+     * @return DatasetSubmission
+     */
+    public function getLatestDatasetReview()
+    {
+        $datasetSubmission = ($this->getDatasetSubmissionHistory()->first() ? $this->getDatasetSubmissionHistory()->first() : null);
+
+        if ($this->getDatasetStatus() === self::DATASET_STATUS_IN_REVIEW
+            and $this->getDatasetStatus() !== $datasetSubmission->getDatasetStatus()
+            and $datasetSubmission->getDatasetStatus() === self::DATASET_STATUS_BACK_TO_SUBMITTER) {
+            $datasetSubmission = $this->getDatasetSubmission();
+        }
+
+        return $datasetSubmission;
+    }
 }
