@@ -1,13 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 import csv
 import getopt
-from collections import OrderedDict
+import operator
 import os
 import re
 import sys
 import textwrap
+from collections import OrderedDict
 
 def check_header(filename):
     # This function checks for a valid hashdeep header
@@ -54,6 +54,7 @@ def splitall(path):
             allparts.insert(0, parts[1])
     return allparts
 
+# Converts bytes into human-readable form, ex TB/GB/MB/KB/Bytes based on size.
 def intToSize(size):
     if (size >= 10**12):
         return(str(size/10**12) + " TB")
@@ -70,6 +71,11 @@ def intToSize(size):
 def generate_tree(filename, short):
     path = check_header(filename)
     filetypes = {}
+    # Extract the UDI from the passed starting path.
+    udi_pattern = re.compile('([A-Za-z0-9]{2}.x[0-9]{3}.[0-9]{3})[.:]([0-9]{4})')
+    udi_parts = udi_pattern.findall(path)
+    udi = udi_parts[0][0] + ':' + udi_parts[0][1]
+
     if (path is not None):
         sizes = OrderedDict()
         with open(filename, 'rb') as f:
@@ -97,6 +103,8 @@ def generate_tree(filename, short):
                         elif (i < len(parts)-1):
                             my_str = my_str + '/' + parts[i]
                         else:
+                            # Appending '|EOL:' to ends of non-file paths, so this indicates directories.
+                            # elegance-- but works.
                             my_str = my_str + '/' + parts[i] + '|EOL:'
                         try:
                             sizes[my_str] += int(object_size)
@@ -104,29 +112,44 @@ def generate_tree(filename, short):
                             sizes[my_str] = int(object_size)
                 rownum += 1
             # Output Section
+            if (short):
+                print "Dataset Directory Summary for " + udi
+            else:
+                print "Dataset File Manifest for " + udi
+            print textwrap.dedent("""\
 
+                This dataset is greater than 25 GB and therefore too large to be downloaded
+                through direct download. In order to obtain this dataset, please email
+                griidc@gomri.org to make arrangements. If you would like a subset of the
+                dataset files, please indicate which directories and/or files.
+
+                """)
             # Display filetype summary in short mode.
             if (short):
-                print textwrap.dedent("""\
-
-                    GRIIDC LARGE DATASET NOTICE:
-
-                    GRIIDC stores extremely large data offline, but they may be requested by
-                    contacting GRIIDC via email at griidc@gomri.org to make arragements to make
-                    this data temporarily available for direct download, by shipping physical
-                    media or hard drives, or by using other methods best suited to the user's
-                    particular use case and capabilities. Please also understand some of
-                    these datasets are multiple TB in size, so it may take time to ship this
-                    data. GRIIDC will work with users to ensure that they are able to get
-                    these large data.
-                    """)
-                print
+                extensions = []
                 for file_type, type_count in filetypes.iteritems():
-                    if(file_type == ''):
-                        file_type = '(no extension)'
-                    print(str(type_count) + ', ' + file_type)
+                    if (file_type == ''):
+                        file_type = 'no extension'
+                    extensions.append(file_type)
+                print("File Extensions:")
+                extensions.sort()
+                print(','.join(extensions))
                 print
-            print("Directories in dataset file:\n")
+
+                # Sort by count in each type, descending.
+                for file_type, type_count in sorted(filetypes.iteritems(), reverse=True, key=lambda (k,v): (v,k)):
+                    if(file_type == ''):
+                        file_type = '<no extension>'
+                    formatted_line = '%10s  %15s' % (str(type_count), file_type)
+                    print formatted_line
+                print
+                print("Total Files - " + str(rownum-5-1))
+            print
+            if (short):
+                print('Directories Structure:')
+            else:
+                print('File Listing:')
+            print
             for path, size in sizes.iteritems():
                 if (short):
 
@@ -134,7 +157,7 @@ def generate_tree(filename, short):
                     if(re.search("\|EOL:$", path)):
                         pass
                     else:
-                        print(path + " (" + intToSize(size) + ")")
+                        print(path + " [" + intToSize(size) + "]")
                 else:
                     print(re.sub('\|EOL:', '', path) +  " (" + intToSize(size) + ")")
     else:
