@@ -31,8 +31,8 @@ class TombstoneController extends UIController
         $dataset = $this->getDataset($udi);
 
         // Don't allow tombstones on available datasets.
-        if (($dataset->getAvailabilityStatus() == DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) or
-            ($dataset->getAvailabilityStatus() == DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED)) {
+        if (($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) or
+            ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED)) {
             throw $this->createNotFoundException("No pending state placeholder found for UDI: $udi");
         }
 
