@@ -30,7 +30,10 @@ class TombstoneController extends UIController
     {
         $dataset = $this->getDataset($udi);
 
-        if ($dataset->getAvailabilityStatus() !== DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) {
+        if (($dataset->getAvailabilityStatus() == DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) or
+            ($dataset->getAvailabilityStatus() == DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED)) {
+            throw $this->createNotFoundException("No pending state placeholder found for UDI: $udi");
+        } else {
             // Prevent webcrawling.
             $element = array(
                 '#tag' => 'meta',
@@ -46,8 +49,6 @@ class TombstoneController extends UIController
                     'dataset' => $dataset,
                 )
             );
-        } else {
-            throw $this->createNotFoundException("No pending state placeholder found for UDI: $udi");
         }
     }
 
