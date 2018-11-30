@@ -11,7 +11,7 @@ use Pelagos\Entity\DatasetSubmission;
 /**
  * The Dataset Tombstone controller.
  *
- * @Route("/data-ts")
+ * @Route("/tombstone")
  */
 class TombstoneController extends UIController
 {
