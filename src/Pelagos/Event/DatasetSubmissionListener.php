@@ -34,7 +34,7 @@ class DatasetSubmissionListener extends EventListener
 
         // Publish message requesting DOI generation.
         // Producer passed in via constructor is that of the doi_issue producer.
-        $this->producer->publish($dataset->getId(), 'issue');
+        $this->producer->publish($dataset->getId(), 'update');
 
         // email User
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
@@ -182,7 +182,7 @@ class DatasetSubmissionListener extends EventListener
                 ' ->InReview)');
         }
         // Publish DOI for accepted and unrestricted datasets
-        $this->producer->publish($datasetSubmission->getDataset()->getId(), 'publish');
+        $this->producer->publish($datasetSubmission->getDataset()->getId(), 'update');
     }
 
     /**
@@ -218,7 +218,6 @@ class DatasetSubmissionListener extends EventListener
             ' accepted dataset ' . $dataset->getUdi() . ' (In Review->Accepted)'
         );
         // Publish DOI for accepted and unrestricted datasets
-        $this->producer->publish($datasetSubmission->getDataset()->getId(), 'publish');
         $this->producer->publish($datasetSubmission->getDataset()->getId(), 'update');
 
     }
