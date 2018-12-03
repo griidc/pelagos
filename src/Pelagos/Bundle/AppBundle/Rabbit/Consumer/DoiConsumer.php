@@ -100,8 +100,6 @@ class DoiConsumer implements ConsumerInterface
             // @codingStandardsIgnoreEnd
             if (preg_match('/^issue/', $routingKey)) {
                 $this->issueDoi($dataset, $loggingContext);
-            } elseif (preg_match('/^publish/', $routingKey)) {
-                $this->publishDoi($dataset, $loggingContext);
             } elseif (preg_match('/^update/', $routingKey)) {
                 $this->updateDoi($dataset, $loggingContext);
             } else {
@@ -128,48 +126,35 @@ class DoiConsumer implements ConsumerInterface
         // Log processing start.
         $this->logger->info('Attempting to issue DOI', $loggingContext);
 
-        $doiUtil = new DOIutil();
-
-        $doi = $dataset->getDoi();
-
-        if ($doi instanceof DOI) {
-            $this->logger->warning('The DOI already exist for dataset', $loggingContext);
-            $doiId = $doi->getDoi();
+        if (!$this->doiAlreadyExists($dataset)) {
             try {
-                $doiMetaData = $doiUtil->getDOIMetadata($doiId);
+                $doiUtil = new DOIutil();
+                $issuedDoi = $doiUtil->mintDOI(
+                    'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi(),
+                    $dataset->getAuthors(),
+                    $dataset->getTitle(),
+                    'Harte Research Institute',
+                    $dataset->getReferenceDateYear()
+                );
+
+                $doi = new DOI($issuedDoi);
+                $doi->setCreator($dataset->getModifier());
+                $doi->setModifier($dataset->getModifier());
+                $dataset->setDoi($doi);
+
+                $loggingContext['doi'] = $doi->getDoi();
+                // Dispatch entity event.
+                $this->entityEventDispatcher->dispatch($dataset, 'doi_issued');
+                // Log processing complete.
+                $this->logger->info('DOI Issued', $loggingContext);
             } catch (\Exception $exception) {
-                //DOI exist, but is not found in EZID/Datacite.
-                $this->logger->warning('No DOI metadata found, so create the DOI for dataset', $loggingContext);
-                return $this->createDoi($dataset, $loggingContext);
+                $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
+                return false;
             }
-            //Update a the DOI instead.
-            $this->logger->info('DOI found, updating the DOI for dataset', $loggingContext);
-            return $this->updateDoi($dataset, $loggingContext);
+        } else {
+            $this->logger->warning('The DOI already exist for dataset', $loggingContext);
+            $this->createDoi($dataset, $loggingContext);
         }
-
-        try {
-            $issuedDoi = $doiUtil->mintDOI(
-                'https://data.gulfresearchinitiative.org/data/' . $dataset->getUdi(),
-                $dataset->getAuthors(),
-                $dataset->getTitle(),
-                'Harte Research Institute',
-                $dataset->getReferenceDateYear()
-            );
-        } catch (\Exception $exception) {
-            $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
-            return;
-        }
-
-        $doi = new DOI($issuedDoi);
-        $doi->setCreator($dataset->getModifier());
-        $doi->setModifier($dataset->getModifier());
-        $dataset->setDoi($doi);
-
-        $loggingContext['doi'] = $doi->getDoi();
-        // Dispatch entity event.
-        $this->entityEventDispatcher->dispatch($dataset, 'doi_issued');
-        // Log processing complete.
-        $this->logger->info('DOI Issued', $loggingContext);
 
         return true;
     }
@@ -182,40 +167,35 @@ class DoiConsumer implements ConsumerInterface
      *
      * @return boolean True if success, false otherwise.
      */
-    protected function createDoi(Dataset $dataset, array $loggingContext)
+    private function createDoi(Dataset $dataset, array $loggingContext)
     {
         // Log processing start.
         $this->logger->info('Attempting to create DOI', $loggingContext);
 
         $doi = $dataset->getDoi();
-        if (!$doi instanceof DOI) {
-            // If we can't find a DOI for the dataset, a DOI can not be created.
-            $this->logger->error('No DOI was found to create.', $loggingContext);
-            return false;
-        }
 
         try {
             $doiUtil = new DOIutil();
             $success = $doiUtil->createDOI(
                 $doi->getDoi(),
-                'https://data.gulfresearchinitiative.org/data/' . $dataset->getUdi(),
+                'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi(),
                 $dataset->getAuthors(),
                 $dataset->getTitle(),
                 'Harte Research Institute',
                 $dataset->getReferenceDateYear()
             );
+
+            $doi->setModifier($dataset->getModifier());
+
+            $loggingContext['doi'] = $doi->getDoi();
+            // Dispatch entity event.
+            $this->entityEventDispatcher->dispatch($dataset, 'doi_created');
+            // Log processing complete.
+            $this->logger->info('DOI Created', $loggingContext);
         } catch (\Exception $exception) {
             $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
             return false;
         }
-
-        $doi->setModifier($dataset->getModifier());
-
-        $loggingContext['doi'] = $doi->getDoi();
-        // Dispatch entity event.
-        $this->entityEventDispatcher->dispatch($dataset, 'doi_created');
-        // Log processing complete.
-        $this->logger->info('DOI Created', $loggingContext);
 
         return $success;
     }
@@ -416,5 +396,28 @@ class DoiConsumer implements ConsumerInterface
         }
 
         return $status;
+    }
+
+    /**
+     * Check if DOI already exists.
+     *
+     * @param Dataset $dataset The dataset.
+     *
+     * @return boolean
+     */
+    private function doiAlreadyExists(Dataset $dataset): bool
+    {
+        $doi = $dataset->getDoi();
+
+        if ($doi instanceof DOI) {
+            try {
+                $doiUtil = new DOIutil();
+                $doiUtil->getDOIMetadata($doi->getDoi());
+            } catch (\Exception $exception) {
+                //DOI exist, but is not found in EZID/Datacite.
+                return true;
+            }
+        }
+        return false;
     }
 }
