@@ -219,7 +219,7 @@ class DOIutil
         $input .= 'datacite.title:' . $this->escapeSpecialCharacters($title) . "\n";
         $input .= 'datacite.publisher:' . $this->escapeSpecialCharacters($publisher) . "\n";
         $input .= "datacite.publicationyear:$publicationYear\n";
-        $input .= '_status: ' . $status. "\n";
+        $input .= '_status: ' . $status . "\n";
 
         utf8_encode($input);
 
