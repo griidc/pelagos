@@ -15,6 +15,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -273,6 +274,31 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 ),
             )
         );
+
+        // Add file name, hash and filesize.
+        $form->add('datasetFileName', TextType::class, array(
+            'label' => 'Dataset File Name',
+            'required' => false,
+            'attr' => array(
+                'readonly' => 'true'
+            ),
+        ));
+
+        $form->add('datasetFileSize', TextType::class, array(
+            'label' => 'Dataset Filesize',
+            'required' => false,
+            'attr' => array(
+                'readonly' => 'true'
+            ),
+        ));
+
+        $form->add('datasetFileSha256Hash', TextType::class, array(
+            'label' => 'Dataset SHA256 hash',
+            'required' => false,
+            'attr' => array(
+                'readonly' => 'true'
+            ),
+        ));
 
         $showForceImport = false;
         $showForceDownload = false;
