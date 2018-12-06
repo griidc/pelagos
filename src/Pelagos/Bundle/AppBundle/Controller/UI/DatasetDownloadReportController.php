@@ -17,6 +17,8 @@ use Pelagos\Entity\Dataset;
 use Pelagos\Entity\LogActionItem;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\Account;
+use Pelagos\Entity\PersonDataRepository;
 
 /**
  * The dataset download report generator.
@@ -220,9 +222,16 @@ class DatasetDownloadReportController extends ReportController
 
         $results = $query->getResult();
 
+        $griidcArray = $this->excludeGriidcStaff();
+
         //process result query into an array with organized data
         $currentIndex = 0;
         foreach ($results as $result) {
+            //skip the row if the search is done by a Griidc Staff
+            if (isset($result['payLoad']['userId']) &&
+                in_array($result['payLoad']['userId'], $griidcArray)) {
+                continue;
+            }
             //initialize array with key  = dateTimeStamp, set title and primary POC
             if (isset($dataArray[$currentIndex]['dateTimeStamp'])
                 and $result['creationTimeStamp'] !== $dataArray[$currentIndex]['dateTimeStamp']) {
@@ -349,5 +358,26 @@ class DatasetDownloadReportController extends ReportController
         }
 
         return $fileSize;
+    }
+
+    /**
+     * Get the griidc staff user info.
+     *
+     * @return array
+     */
+    private function excludeGriidcStaff(): array
+    {
+        $container = $this->container;
+        $entityManager = $container->get('doctrine')->getManager();
+        //get user Ids of Griidc Staff to exclude from the report with personDataRepository roles of:
+        //Manager (1), Developer (2), Support (3), Subject Matter Expert (4)
+        $griidcUserQueryString = 'SELECT account.userId FROM ' . PersonDataRepository::class .
+            ' personDataRepository JOIN ' . Person::class .
+            ' person WITH person.id = personDataRepository.person JOIN ' . Account::class .
+            ' account WITH account.person = person.id WHERE personDataRepository.role in (1, 2, 3, 4) ';
+        $griidcUserResult = $entityManager->createQuery($griidcUserQueryString)->getScalarResult();
+        $griidcArray = array_column($griidcUserResult, 'userId');
+
+        return $griidcArray;
     }
 }
