@@ -182,7 +182,7 @@ class DatasetDownloadReportController extends ReportController
     }
 
     /**
-     * This defaultAction generates the form to select the date range for the report.
+     * Generates report of dataset downloads based on timestamp.
      *
      * @Route("/timestamp")
      *
