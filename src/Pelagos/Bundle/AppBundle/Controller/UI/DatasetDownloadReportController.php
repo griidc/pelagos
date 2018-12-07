@@ -175,7 +175,7 @@ class DatasetDownloadReportController extends ReportController
     {
         if ($fileSizeBytes) {
             // Formats the size to MB
-            $fileSizeBytes = number_format(floatval($fileSizeBytes / 1000000), 6);
+            $fileSizeBytes = number_format(($fileSizeBytes / 1000000), 6);
         }
 
         return $fileSizeBytes;
@@ -347,14 +347,14 @@ class DatasetDownloadReportController extends ReportController
      *
      * @param Dataset $dataset The dataset instance.
      *
-     * @return float
+     * @return string
      */
-    private function getFileSize(Dataset $dataset): float
+    private function getFileSize(Dataset $dataset): string
     {
-        $fileSize = 0;
+        $fileSize = null;
         $datasetSubmission = $dataset->getDatasetSubmission();
         if ($datasetSubmission instanceof DatasetSubmission) {
-            $fileSize = $this->formatSizeUnits($datasetSubmission->getDatasetFileSize());
+            $fileSize = (string)$this->formatSizeUnits($datasetSubmission->getDatasetFileSize());
         }
 
         return $fileSize;
