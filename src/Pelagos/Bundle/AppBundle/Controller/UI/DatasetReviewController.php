@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -238,6 +239,21 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             $datasetSubmissionStatus = $datasetSubmission->getStatus();
         }
 
+        //Tidy GML.
+        $gml = tidy_parse_string(
+            $datasetSubmission->getSpatialExtent(),
+            array(
+                'input-xml' => true,
+                'output-xml' => true,
+                'indent' => true,
+                'indent-spaces' => 4,
+                'wrap' => 0,
+            ),
+            'utf8'
+        );
+
+        $datasetSubmission->setSpatialExtent($gml);
+
         $form = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionType::class,
@@ -254,6 +270,16 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 ),
             )
         );
+
+        // Overwrite the spatial extent field which is normally a hidden type.
+        $form->add('spatialExtent', TextareaType::class, array(
+            'label' => 'Spatial Extent GML',
+            'required' => false,
+            'attr' => array(
+                'rows' => '10',
+                'readonly' => 'true'
+            ),
+        ));
 
         $showForceImport = false;
         $showForceDownload = false;
