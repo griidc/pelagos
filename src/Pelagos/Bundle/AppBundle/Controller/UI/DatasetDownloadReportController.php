@@ -354,7 +354,7 @@ class DatasetDownloadReportController extends ReportController
         $fileSize = null;
         $datasetSubmission = $dataset->getDatasetSubmission();
         if ($datasetSubmission instanceof DatasetSubmission) {
-            $fileSize = (string)$this->formatSizeUnits($datasetSubmission->getDatasetFileSize());
+            $fileSize = (string) $this->formatSizeUnits($datasetSubmission->getDatasetFileSize());
         }
 
         return $fileSize;
