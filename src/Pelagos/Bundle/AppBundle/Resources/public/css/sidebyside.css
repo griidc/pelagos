@@ -33,7 +33,7 @@
 
 .grid-group > div.ds-metadata:nth-child(1) {
   grid-row: 1;
-  
+
 }
 
 .grid-group > div.ds-metadata:nth-child(2) {
@@ -68,6 +68,33 @@
 .grid-group > div.ds-metadata:nth-child(8) {
   grid-row: 8;
   grid-column: 1;
+}
+
+.contentbox[tagname="TEXTAREA"] {
+    padding: 2px;
+    -moz-appearance: textfield-multiline;
+    -webkit-appearance: textarea;
+    border: 1px solid darkgray;
+    font: medium -moz-fixed;
+    font: -webkit-small-control;
+    font: 15px monospace;
+    overflow: auto;
+    resize: both;
+    background-color: white;
+}
+
+.contentbox[tagname="INPUT"] {
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+    background-color: white;
+    background-color: -moz-field;
+    border: 1px solid darkgray;
+    box-shadow: 1px 1px 1px 0 lightgray inset;
+    font: -moz-field;
+    font: -webkit-small-control;
+    font: 15px Arial;
+    margin-top: 5px;
+    padding: 2px 3px;
 }
 
 

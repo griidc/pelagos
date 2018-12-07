@@ -4,6 +4,16 @@ $(document).ready(function()
 {
     "use strict";
 
+    var loading = $.Deferred();
+    var leftLoaded = false;
+    var rightLoaded = false;
+
+    $.fn.contentEditable = function(options) {
+        return this.each(function() {
+            makecontentEditable(this);
+        });
+    };
+
     $("#get-versions-button").click(function (){
         var udi = $("input[name=udi]").val().trim();
         jQuery.ajax({
@@ -71,9 +81,12 @@ $(document).ready(function()
             .find(".submission-modifier")
             .text($(this).find("option:selected").data("modifier"));
         var getFormUrl = Routing.generate("pelagos_app_ui_sidebyside_getsubmissionform");
+        leftLoaded = false;
         $("#left").load(getFormUrl + "/" + udi + "/" + version, function() {
             $(".smallmap", this).gMap();
             $(".filetabs", this).tabs();
+            leftLoaded = true;
+            loading.notify();
         });
     });
 
@@ -93,9 +106,58 @@ $(document).ready(function()
             .find(".submission-modifier")
             .text($(this).find("option:selected").data("modifier"));
         var getFormUrl = Routing.generate("pelagos_app_ui_sidebyside_getsubmissionform");
+        rightLoaded = false;
         $("#right").load(getFormUrl + "/" + udi + "/" + version, function() {
             $(".smallmap", this).gMap();
             $(".filetabs", this).tabs();
+            rightLoaded = true;
+            loading.notify();
         });
     });
+
+    loading.progress(function() {
+        if (leftLoaded && rightLoaded) {
+            $("#right").find("textarea,input[type=text]").contentEditable();
+            $("#right").find(".contentbox")
+            .each(function(){
+                var thisId = $(this).attr("id");
+                var rightText = $(this).text();
+                var leftText = $("#left").find("#"+thisId).val();
+                var diff = compareInputs(leftText, rightText);
+                $(this).html(diff);
+            });
+        }
+    });
 });
+
+function makecontentEditable(input)
+{
+    var originalInput = $(input);
+    var inputType = originalInput.prop("tagName");
+    var inputHeight = originalInput.height();
+    var inputWidth = originalInput.width();
+    var inputText = originalInput.val();
+    var attrs = input.attributes;
+    var newElement = $("<div>")
+    .attr("tagname", inputType)
+    .css("height", inputHeight)
+    .css("width", inputWidth)
+    .addClass("contentbox")
+    .text(inputText);
+
+    // Set all the attributes (name, id, etc).
+    $.each(attrs, function(index, atribute) {
+        newElement.attr(atribute.name, atribute.value);
+    });
+
+    originalInput.replaceWith(newElement);
+}
+
+function compareInputs(leftText, rightText)
+{
+    var dmp = new diff_match_patch();
+    var d = dmp.diff_main(leftText, rightText);
+    dmp.diff_cleanupSemantic(d);
+
+    return dmp.diff_prettyHtml(d);
+}
