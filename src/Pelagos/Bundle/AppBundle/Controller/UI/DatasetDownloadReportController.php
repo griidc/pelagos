@@ -347,14 +347,14 @@ class DatasetDownloadReportController extends ReportController
      *
      * @param Dataset $dataset The dataset instance.
      *
-     * @return string
+     * @return float
      */
-    private function getFileSize(Dataset $dataset): string
+    private function getFileSize(Dataset $dataset): float
     {
         $fileSize = null;
         $datasetSubmission = $dataset->getDatasetSubmission();
         if ($datasetSubmission instanceof DatasetSubmission) {
-            $fileSize = (string) $this->formatSizeUnits($datasetSubmission->getDatasetFileSize());
+            $fileSize = (float) $this->formatSizeUnits($datasetSubmission->getDatasetFileSize());
         }
 
         return $fileSize;
