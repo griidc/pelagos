@@ -54,10 +54,11 @@ class SearchTermsReportController extends ReportController
     {
         //prepare labels
         $labels = array('labels' => array(
-            'SESSION ID', 'TIMESTAMP', 'SEARCH TERMS', 'NUMBER OF RESULTS',
+            'SESSION ID', 'TIMESTAMP', 'SEARCH TERMS', 'GEOFILTER USED', 'NUMBER OF RESULTS',
             '1ST SCORE', '2ND SCORE',
             '1ST UDI', '1ST TITLE', '1ST LINK',
-            '2ND UDI', '2ND TITLE', '2ND LINK'
+            '2ND UDI', '2ND TITLE', '2ND LINK',
+            'GEOFILTER WKT'
             )
         );
 
@@ -131,9 +132,14 @@ class SearchTermsReportController extends ReportController
                     'sessionID' => $result['payLoad']['clientInfo']['sessionId'],
                     'timeStamp' => $result['creationTimeStamp']->format(parent::INREPORT_TIMESTAMPFORMAT),
                     'searchTerms' => $result['payLoad']['filters']['textFilter'],
+                    'geofilterUsed' => $result['payLoad']['filters']['geoFilter'] !== null ? 1 : 0,
                     'numResults' => $numResults
                 ),
-                $searchResults
+                $searchResults,
+                array
+                (
+                    'geofilterWkt' => $result['payLoad']['filters']['geoFilter'] !== null ? $result['payLoad']['filters']['geoFilter'] : ''
+                )
             );
         }
         return array_merge($labels, $dataArray);

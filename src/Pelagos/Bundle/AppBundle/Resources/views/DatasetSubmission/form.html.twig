@@ -1,29 +1,26 @@
 <div class="cleair">
     <fieldset>
-        <p>
-            <strong>NOTE:</strong> <span style="color:grey">You must have an approved Dataset Information Form (DIF) to fill out and submit a Dataset Submission Form. The red asterisk (<span class="emRequired"/>) is used to indicate required fields. If you need assistance while completing this form, please contact <a href=mailto:griidc@gomri.org>griidc@gomri.org</a>.</span>
-        </p>
+                    <strong>NOTE:
+                       By submitting content to GRIIDC you warrant that you have sufficient rights to make this content available under a <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC0 license</a>.
+                    </strong>
     </fieldset>
 
-        <p> <!-- Registry Identifier -->
-            <fieldset>
-                <p>
-                    Please enter the Unique Dataset Identifier (UDI) that GRIIDC assigned to your dataset and select "Load Dataset" to load the most recent information for your dataset.
-                </p>
-                <form id="regidform">
-                    <label for="regid"><b>Unique Dataset Identifier (UDI): </b></label>
-                    <input minlength="16" type="text" id="regid" name="regid" size="60" value="{{datasetSubmission.getDatasetSubmissionId|default}}">
-                    <button disabled
-                    onclick="window.location.href='{{ path('pelagos_app_ui_datasetsubmission_default') }}?regid=' +
-                    document.getElementById('regid').value.trim();"
-                    name="regbutton" id="regbutton"
-                    type="button">Load Dataset</button>
-                    <label class="error" for="regid"></label>
-                </form>
-            </fieldset>
+    <fieldset>
+        <p>
+            Please enter the Unique Dataset Identifier (UDI) that GRIIDC assigned to your dataset and select "Load Dataset" to load the most recent information for your dataset. You must have an approved Dataset Information Form (DIF) to fill out and submit a Dataset Submission Form.
         </p>
-        <fieldset>
-            <b>Approved Dataset Information Forms</b>
-            {% include "PelagosAppBundle:DatasetSubmission:datasets-approved-difs.html.twig" %}
-        </fieldset>
+        <form id="regidform">
+            <label for="regid"><b>Unique Dataset Identifier (UDI): </b></label>
+            <input minlength="16" type="text" id="regid" name="regid" size="60" value="{{datasetSubmission.getDatasetSubmissionId|default}}">
+            <button disabled
+            onclick="window.location.href='{{ path('pelagos_app_ui_datasetsubmission_default') }}?regid=' +
+            document.getElementById('regid').value.trim();"
+            name="regbutton" id="regbutton"
+            type="button">Load Dataset</button>
+            <label class="error" for="regid"></label>
+        </form>
+        <br>
+        <b>Approved Dataset Information Forms</b>
+        {% include "PelagosAppBundle:DatasetSubmission:datasets-approved-difs.html.twig" %}
+    </fieldset>
 </div>

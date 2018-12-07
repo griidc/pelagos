@@ -77,12 +77,24 @@
 <h1>UDI: <span class="udi-title"></span></h1>
 <table class="side-table">
     <tr>
-        <td colspan="8" width="100%">
-            <label>UDI:</label>
-            <input name="udi" size="100">
-            <button id="get-versions-button" type="button">Get UDI</button>
+        <td width="50%">
+            <span style="white-space:nowrap;">
+                <label>UDI:</label>
+                <input name="udi" size="100">
+                <button id="get-versions-button" type="button">Get UDI</button>
+            </span>
         </td>
-    <tr>
+        <td width="25%">
+            <label>Number of Versions:</label>
+            <div id="numversions">
+        </td>
+        <td width="25%">
+            <label>Dataset State:</label>
+            <div id="datasetstatus">
+        </td>
+    </tr>
+</table>
+<table class="side-table">
     <tr>
         <td>
             <div class="left-version">
@@ -96,8 +108,8 @@
                         </td>
                     </tr>
                     <tr>
-                            <td>
-                            <label>Status:</label>
+                        <td>
+                            <label>Submission Status:</label>
                             <div class="submission-status">STATUS</div>
                         </td>
                         <td>
@@ -125,7 +137,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <label>Status:</label>
+                            <label>Submission Status:</label>
                             <div class="submission-status">STATUS</div>
                         </td>
                         <td>

@@ -40,17 +40,21 @@ class BackFillAcceptedDateDatasetCommand extends ContainerAwareCommand
     {
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
 
-        $auditReader = $this->getContainer()->get('simplethings_entityaudit.reader');
-
         $datasets = $entityManager->getRepository(Dataset::class)->findBy(array('datasetStatus' => Dataset::DATASET_STATUS_ACCEPTED));
         $count = 0;
         $acceptedDateTimeStamp = new \DateTime();
 
         foreach ($datasets as $dataset) {
-            $auditRevisionFinder = $auditReader->findRevisions(
-                'Pelagos\Entity\Dataset',
-                $dataset->getId()
-            );
+
+            $queryString = 'select id, rev, dataset_id, dataset_status, modification_time_stamp 
+                            from dataset_submission_audit where dataset_id = :datasetId order by rev desc, id desc';
+            $params = [
+                'datasetId' => $dataset->getId(),
+            ];
+            $params['datasetId'] = $dataset->getId();
+            $stmt = $entityManager->getConnection()->prepare($queryString);
+            $stmt->execute($params);
+            $auditRevisionFinder = $stmt->fetchAll();
 
             $numberOfRevisions = count($auditRevisionFinder);
             if ($numberOfRevisions > 1) {
@@ -59,22 +63,17 @@ class BackFillAcceptedDateDatasetCommand extends ContainerAwareCommand
                     $oldRevision = $auditRevisionFinder[$i];
                     $newRevision = $auditRevisionFinder[($i - 1)];
 
-                    $articleDiff = $auditReader->diff(
-                        'Pelagos\Entity\Dataset',
-                        $dataset->getId(),
-                        $oldRevision->getRev(),
-                        $newRevision->getRev()
-                    );
+                    $articleDiff = $this->diff($oldRevision, $newRevision);
 
-                    if ($i === ($numberOfRevisions - 1) and $articleDiff['datasetStatus']['same'] === Dataset::DATASET_STATUS_ACCEPTED) {
-                        $acceptedDateTimeStamp = $articleDiff['modificationTimeStamp']['old'];
+                    if ($i === ($numberOfRevisions - 1) and $articleDiff['dataset_status']['same'] === Dataset::DATASET_STATUS_ACCEPTED) {
+                        $acceptedDateTimeStamp = $articleDiff['modification_time_stamp']['old'];
                     }
 
-                    if ($articleDiff['datasetStatus']['new'] === Dataset::DATASET_STATUS_ACCEPTED) {
-                        if (!empty($articleDiff['modificationTimeStamp']['new'])) {
-                            $acceptedDateTimeStamp = $articleDiff['modificationTimeStamp']['new'];
+                    if ($articleDiff['dataset_status']['new'] === Dataset::DATASET_STATUS_ACCEPTED) {
+                        if (!empty($articleDiff['modification_time_stamp']['new'])) {
+                            $acceptedDateTimeStamp = $articleDiff['modification_time_stamp']['new'];
                         } else {
-                            $acceptedDateTimeStamp = $articleDiff['modificationTimeStamp']['same'];
+                            $acceptedDateTimeStamp = $articleDiff['modification_time_stamp']['same'];
                         }
                     }
                 }
@@ -82,10 +81,10 @@ class BackFillAcceptedDateDatasetCommand extends ContainerAwareCommand
                 $acceptedDateTimeStamp = $dataset->getModificationTimeStamp();
             }
 
+            $acceptedDateTimeStamp = new \DateTime($acceptedDateTimeStamp);
+
             if ($acceptedDateTimeStamp instanceof \DateTime) {
 
-                //This is a workaround used to get a new DIF object from the entityManager with the same Id,
-                //because of the unknown behavior of auditReader on the previous DIF object.
                 $entityManager->clear();
                 $newDataset = $entityManager->getRepository(Dataset::class)->findOneBy(array('id' => $dataset->getId()));
 
@@ -101,5 +100,34 @@ class BackFillAcceptedDateDatasetCommand extends ContainerAwareCommand
         }
 
         $output->writeln('Total number of datasets which got back-filled: ' . $count);
+    }
+
+    /**
+     * Creates a diff between 2 arrays.
+     *
+     * @param array $oldData Array which contains the old data.
+     * @param array $newData Array which contains the new data.
+     *
+     * @return array
+     */
+    public function diff($oldData, $newData)
+    {
+        $diff = array();
+
+        $keys = array_keys($oldData + $newData);
+        foreach ($keys as $field) {
+            $old = array_key_exists($field, $oldData) ? $oldData[$field] : null;
+            $new = array_key_exists($field, $newData) ? $newData[$field] : null;
+
+            if ($old == $new) {
+                $row = array('old' => '', 'new' => '', 'same' => $old);
+            } else {
+                $row = array('old' => $old, 'new' => $new, 'same' => '');
+            }
+
+            $diff[$field] = $row;
+        }
+
+        return $diff;
     }
 }

@@ -43,6 +43,9 @@ pelagos_publication_dataset_link_ui:
 pelagos_dataland_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\DatalandController
 
+pelagos_tombstone_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\TombstoneController
+
 pelagos_stats_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\StatsController
 
@@ -77,5 +80,5 @@ pelagos_national_data_center_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\NationalDataCenterController
 
 pelagos_side_by_side_ui:
-    resource: Pelagos\Bundle\AppBundle\Controller\UI\SideBySideController    
-    
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\SideBySideController
+
