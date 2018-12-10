@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -270,13 +271,38 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 ),
             )
         );
-
+        
         // Overwrite the spatial extent field which is normally a hidden type.
         $form->add('spatialExtent', TextareaType::class, array(
             'label' => 'Spatial Extent GML',
             'required' => false,
             'attr' => array(
                 'rows' => '10',
+                'readonly' => 'true'
+            ),
+        ));
+
+        // Add file name, hash and filesize.
+        $form->add('datasetFileName', TextType::class, array(
+            'label' => 'Dataset File Name',
+            'required' => false,
+            'attr' => array(
+                'readonly' => 'true'
+            ),
+        ));
+
+        $form->add('datasetFileSize', TextType::class, array(
+            'label' => 'Dataset Filesize',
+            'required' => false,
+            'attr' => array(
+                'readonly' => 'true'
+            ),
+        ));
+
+        $form->add('datasetFileSha256Hash', TextType::class, array(
+            'label' => 'Dataset SHA256 hash',
+            'required' => false,
+            'attr' => array(
                 'readonly' => 'true'
             ),
         ));
