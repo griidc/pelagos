@@ -22,8 +22,6 @@
                 <td valign="top">Point of Contact:&nbsp;&nbsp;</td>
                 <td>
                     {{ dataset.primarypointofcontact.lastname }}, {{ dataset.primarypointofcontact.firstname }}<br />
-                    <a href="mailto:{{ dataset.primarypointofcontact.emailaddress }}"> {{ dataset.primarypointofcontact.emailaddress }}</a><br />
-                    {% if dataset.primarypointofcontact.phonenumber %} Telephone: {{ dataset.primarypointofcontact.phonenumber }} {% endif %}
                 </td>
             </tr>
         </table>
