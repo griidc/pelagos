@@ -50,7 +50,7 @@ class RabbitPublishAllApprovedNonRestrictedCommand extends ContainerAwareCommand
 
         $thumper = $this->getContainer()->get('old_sound_rabbit_mq.doi_issue_producer');
         foreach ($datasets as $dataset) {
-            $thumper->publish($dataset->getId(), 'publish');
+            $thumper->publish($dataset->getId(), 'update');
             $output->writeln('Attempting to publish/transition DOI for Dataset ' . $dataset->getId());
         }
 
