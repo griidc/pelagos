@@ -81,6 +81,8 @@
     overflow: auto;
     resize: both;
     background-color: white;
+    margin-top: 2px;
+    margin-bottom: 5px;
 }
 
 .contentbox[tagname="INPUT"] {
@@ -93,8 +95,31 @@
     font: -moz-field;
     font: -webkit-small-control;
     font: 15px Arial;
-    margin-top: 5px;
+    margin-top: 0px;
     padding: 2px 3px;
+}
+
+.contentbox[tagname="SELECT"] {
+    padding: 2px;
+    -moz-appearance: textfield-multiline;
+    -webkit-appearance: textfield-multiline;
+    border: 1px solid darkgray;
+    font: medium -moz-fixed;
+    font: -webkit-small-control;
+    font: 15px Arial;
+    overflow: auto;
+    resize: none;
+    background-color: white;
+}
+
+.deloption {
+    background: #ffe6e6;
+    text-decoration: line-through;
+}
+
+.insoption {
+    background: #e6ffe6;
+    text-decoration: underline;
 }
 
 
