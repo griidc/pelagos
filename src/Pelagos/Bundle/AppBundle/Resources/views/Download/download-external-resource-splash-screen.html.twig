@@ -12,38 +12,13 @@
         <h3 style="text-align:center;">The dataset you selected is hosted by an external repository.</h3>
         {% endif %}
 
-        <div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px;">
-            <p style="margin-top:0"><strong>UDI:</strong> {{dataset.udi}}</p>
-
-            <p><strong>Title:</strong> {{dataset.title}}</p>
-
-            <p><strong>Author(s):</strong> {{dataset.datasetSubmission.authors}}</p>
-
-            {% if dataset.datasetStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
-                <p>
-                    <strong>Metadata:</strong>
-                    <a href="{{ path('pelagos_app_ui_dataland_metadata', {'udi': dataset.udi}) }}">{{ dataset.udi|replace({':': '-'}) }}-metadata.xml</a>
-                </p>
-            {% endif %}
-
-            <p>
-                <strong>Location:</strong>
-                <a href="{{dataset.datasetSubmission.datasetFileUri}}" target=_BLANK>
-                    {{dataset.datasetSubmission.datasetFileUri}}
-                </a>
-            </p>
-
-            {% if dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED') %}
-                <p style="color:#A00">This dataset is restricted for download but is hosted by another website so availability status is not guaranteed to be accurate.<br>To obtain access to this dataset, please click the location link above and follow any instructions provided.</p>
-            {% else %}
-                <p>To download this dataset, please use the location link above. Note, this dataset is not hosted at GRIIDC; the site is not under GRIIDC control and GRIIDC is not responsible for the information or links you may find there.</p>
-            {% endif %}
-
-        </div>
-
         <div style="border: 1px solid #aaa; padding: 10px; margin-top: 20px; border-radius: 4px;">
             <p style="margin-top:0">
                 <strong>DISCLAIMER:</strong> The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) aggregates data from researchers funded by the Gulf of Mexico Research Initiative and other scientists working in the region. These data are furnished "as is" for the convenience of all data users. GRIIDC makes no warranties (including no warranties as to merchantability, timeliness or fitness) either expressed or implied with respect to the data or their fitness for any specific application.  This particular dataset is not hosted directly by GRIIDC, so additional terms and conditions may be imposed by the hosting entity.
+            </p>
+            <p style="margin-top:0">
+                This particular dataset is not hosted directly by GRIIDC, so additional terms and conditions may be
+                imposed by the hosting entity.
             </p>
             <div style="text-align:center;">
                 <p>
@@ -54,6 +29,28 @@
                 </p>
             </div>
         </div>
+        &nbsp;
+        <div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px;">
+            <p style="margin-top:0">
+            <strong>UDI:</strong> {{dataset.udi}}<br />
+            <strong>Title:</strong> {{dataset.title}}<br />
+            <strong>Author(s):</strong> {{dataset.datasetSubmission.authors}}<br />
+            {% if dataset.datasetStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
+                    <strong>Metadata:</strong>
+                    <a href="{{ path('pelagos_app_ui_dataland_metadata', {'udi': dataset.udi}) }}">{{ dataset.udi|replace({':': '-'}) }}-metadata.xml</a><br />
+            {% endif %}
+            <strong>Location:</strong>
+            <a href="{{dataset.datasetSubmission.datasetFileUri}}" target=_BLANK>
+                {{dataset.datasetSubmission.datasetFileUri}}
+            </a><br />
+
+            {% if dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED') %}
+                <p style="color:#A00">This dataset is restricted for download but is hosted by another website so availability status is not guaranteed to be accurate.<br>To obtain access to this dataset, please click the location link above and follow any instructions provided.</p>
+            {% else %}
+                <p>To download this dataset, please use the location link above. Note, this dataset is not hosted at GRIIDC; the site is not under GRIIDC control and GRIIDC is not responsible for the information or links you may find there.</p>
+            {% endif %}
+        </div>
+
 
     </div>
 
