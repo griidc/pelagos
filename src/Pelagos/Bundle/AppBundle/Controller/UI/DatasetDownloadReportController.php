@@ -101,7 +101,7 @@ class DatasetDownloadReportController extends ReportController
             'PRIMARY POINT OF CONTACT EMAIL',
             'TOTAL DOWNLOADS',
             '# OF GOMRI DOWNLOADS',
-            '# OF GOOGLE DOWNLOADS',
+            '# OF NON-GOMRI DOWNLOADS',
             'FILE SIZE(MB)'
         ));
 
@@ -113,8 +113,8 @@ class DatasetDownloadReportController extends ReportController
         $queryString = 'SELECT dataset.udi,log.payLoad from ' .
             LogActionItem::class . ' log join ' . Dataset::class . ' dataset with
                 log.subjectEntityId = dataset.id where log.actionName = :actionName and
-                log.subjectEntityName = :subjectEntityName and 
-                log.creationTimeStamp >= :startDate 
+                log.subjectEntityName = :subjectEntityName and
+                log.creationTimeStamp >= :startDate
                 and log.creationTimeStamp <= :endDate order by dataset.udi ASC';
 
         $query = $entityManager->createQuery($queryString);
@@ -175,9 +175,7 @@ class DatasetDownloadReportController extends ReportController
             if ($result['payLoad']['userType'] == 'GoMRI') {
                 $dataArray[$currentIndex]['GoMRI']++;
             } else {
-                if ($result['payLoad']['userType'] == 'Non-GoMRI') {
-                    $dataArray[$currentIndex]['NonGoMRI']++;
-                }
+                $dataArray[$currentIndex]['NonGoMRI']++;
             }
             $dataArray[$currentIndex]['totalCount']++;
         }
