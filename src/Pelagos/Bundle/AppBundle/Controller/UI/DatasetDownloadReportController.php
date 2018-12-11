@@ -169,7 +169,6 @@ class DatasetDownloadReportController extends ReportController
                 if ($datasetSubmission instanceof DatasetSubmission) {
                     $dataArray[$currentIndex]['fileSize'] = $this->formatSizeUnits($datasetSubmission->getDatasetFileSize());
                 }
-
             }
             //count user downloads and total download
             if ($result['payLoad']['userType'] == 'GoMRI') {
