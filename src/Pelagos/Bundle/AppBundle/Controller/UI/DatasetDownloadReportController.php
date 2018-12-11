@@ -7,6 +7,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Doctrine\ORM\Query;
+
 use Pelagos\Bundle\AppBundle\Form\ReportDatasetDownloadType;
 
 use Pelagos\Exception\InvalidDateSelectedException;
@@ -15,6 +17,8 @@ use Pelagos\Entity\Dataset;
 use Pelagos\Entity\LogActionItem;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\Account;
+use Pelagos\Entity\PersonDataRepository;
 
 /**
  * The dataset download report generator.
@@ -25,6 +29,10 @@ class DatasetDownloadReportController extends ReportController
 {
     //DateTime format used for date range
     const INREPORT_DATETIMEFORMAT = 'm-d-Y';
+
+    const TIMESTAMP_REPORT = 'timeStampReport';
+
+    const UDI_REPORT = 'udiReport';
 
     /**
      * This defaultAction generates the form to select the date range for the report.
@@ -94,38 +102,14 @@ class DatasetDownloadReportController extends ReportController
             array());
 
         //prepare labels
-        $labels = array('labels' => array(
-            'UDI',
-            'TITLE',
-            'PRIMARY POINT OF CONTACT',
-            'PRIMARY POINT OF CONTACT EMAIL',
-            'TOTAL DOWNLOADS',
-            '# OF GOMRI DOWNLOADS',
-            '# OF GOOGLE DOWNLOADS',
-            'FILE SIZE(MB)'
-        ));
+        $labels = $this->getLabels(self::UDI_REPORT);
 
-      //prepare body's data
+        //prepare body's data
         $dataArray = array();
-        $container = $this->container;
-        $entityManager = $container->get('doctrine')->getManager();
-        //Query
-        $queryString = 'SELECT dataset.udi,log.payLoad from ' .
-            LogActionItem::class . ' log join ' . Dataset::class . ' dataset with
-                log.subjectEntityId = dataset.id where log.actionName = :actionName and
-                log.subjectEntityName = :subjectEntityName and 
-                log.creationTimeStamp >= :startDate 
-                and log.creationTimeStamp <= :endDate order by dataset.udi ASC';
 
-        $query = $entityManager->createQuery($queryString);
-        $endDateInclusively = clone $options['endDate'];
-        $endDateInclusively = $endDateInclusively->add(new \DateInterval('P1D'));
-        $query->setParameters([
-            'actionName' => 'File Download',
-            'subjectEntityName' => 'Pelagos\Entity\Dataset',
-            'startDate' => $options['startDate'],
-            'endDate' => $endDateInclusively
-        ]);
+        //Query
+        $query = $this->getQuery(self::UDI_REPORT, $options);
+
         $results = $query->getResult();
 
         //process result query into an array with organized data
@@ -165,11 +149,7 @@ class DatasetDownloadReportController extends ReportController
                 }
 
                 // get file size from dataset submission
-                $datasetSubmission = $dataset->getDatasetSubmission();
-                if ($datasetSubmission instanceof DatasetSubmission) {
-                    $dataArray[$currentIndex]['fileSize'] = $this->formatSizeUnits($datasetSubmission->getDatasetFileSize());
-                }
-
+                $dataArray[$currentIndex]['fileSize'] = $this->getFileSize($dataset);
             }
             //count user downloads and total download
             if ($result['payLoad']['userType'] == 'GoMRI') {
@@ -199,5 +179,205 @@ class DatasetDownloadReportController extends ReportController
         }
 
         return $fileSizeBytes;
+    }
+
+    /**
+     * Generates report of dataset downloads based on timestamp.
+     *
+     * @Route("/timestamp")
+     *
+     * @return Response|StreamedResponse A Response instance.
+     */
+    public function timeStampReportAction()
+    {
+        // Checks authorization of users
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
+
+        $data = $this->getDataTimeStamp();
+
+        return $this->writeCsvResponse(
+            $data,
+            'DatasetDownloadTimeStampReport-' .
+            (new \DateTime('now'))->format(parent::FILENAME_DATETIMEFORMAT) .
+            '.csv'
+        );
+    }
+
+    /**
+     * Get data for the time stamp report.
+     *
+     * @return array  Return the data array
+     */
+    protected function getDataTimeStamp()
+    {
+        //prepare labels
+        $labels = $this->getLabels(self::TIMESTAMP_REPORT);
+
+        //prepare body's data
+        $dataArray = array();
+
+        $query = $this->getQuery(self::TIMESTAMP_REPORT);
+
+        $results = $query->getResult();
+
+        $griidcArray = $this->excludeGriidcStaff();
+
+        //process result query into an array with organized data
+        $currentIndex = 0;
+        foreach ($results as $result) {
+            //skip the row if the search is done by a Griidc Staff
+            if (isset($result['payLoad']['userId']) &&
+                in_array($result['payLoad']['userId'], $griidcArray)) {
+                continue;
+            }
+            //initialize array with key  = dateTimeStamp, set title and primary POC
+            if (isset($dataArray[$currentIndex]['dateTimeStamp'])
+                and $result['creationTimeStamp'] !== $dataArray[$currentIndex]['dateTimeStamp']) {
+                $currentIndex++;
+            }
+            if (!isset($dataArray[$currentIndex])) {
+                $dataArray[$currentIndex] = array(
+                    'dateTimeStamp' => $result['creationTimeStamp']->format(parent::INREPORT_TIMESTAMPFORMAT),
+                    'udi' => $result['udi'],
+                    'title' => null,
+                    'fileSize' => null
+                );
+
+                $dataset = $this->container->get('doctrine')->getRepository(Dataset::class)
+                    ->findOneBy(array('udi' => $result['udi']));
+
+                $dataArray[$currentIndex]['title'] = $dataset->getTitle();
+
+
+                // get file size from dataset submission
+                $dataArray[$currentIndex]['fileSize'] = $this->getFileSize($dataset);
+            }
+        }
+
+        return array_merge($this->getDefaultHeaders(), $labels, $dataArray);
+    }
+
+    /**
+     * Get labels for the report.
+     *
+     * @param string $reportName Name of the report.
+     *
+     * @return array
+     */
+    private function getLabels($reportName): array
+    {
+        //prepare labels
+        $labels = array();
+        if ($reportName === self::TIMESTAMP_REPORT) {
+            $labels = array('labels' => array(
+                'DateTime Stamp',
+                'UDI',
+                'TITLE',
+                'FILE SIZE(MB)'
+            ));
+        } else {
+            $labels = array('labels' => array(
+                'UDI',
+                'TITLE',
+                'PRIMARY POINT OF CONTACT',
+                'PRIMARY POINT OF CONTACT EMAIL',
+                'TOTAL DOWNLOADS',
+                '# OF GOMRI DOWNLOADS',
+                '# OF GOOGLE DOWNLOADS',
+                'FILE SIZE(MB)'
+            ));
+        }
+
+        return $labels;
+    }
+
+    /**
+     * Get the correct query for the report.
+     *
+     * @param string     $reportName Name of the report.
+     * @param array|null $options    Additional parameters needed to run the query.
+     *
+     * @return Query
+     */
+    private function getQuery($reportName, array $options = null): Query
+    {
+        $container = $this->container;
+        $entityManager = $container->get('doctrine')->getManager();
+
+        //Query
+        if ($reportName === self::TIMESTAMP_REPORT) {
+            $qb = $entityManager->createQueryBuilder();
+            $query = $qb
+                ->select('log.creationTimeStamp, d.udi, log.payLoad')
+                ->from('\Pelagos\Entity\LogActionItem', 'log')
+                ->join('\Pelagos\Entity\Dataset', 'd')
+                ->where('log.subjectEntityId = d.id')
+                ->andWhere('log.subjectEntityName = ?1')
+                ->andWhere('log.actionName = ?2')
+                ->orderBy('log.creationTimeStamp', 'ASC')
+                ->setParameter(1, 'Pelagos\Entity\Dataset')
+                ->setParameter(2, 'File Download')
+                ->getQuery();
+        } else {
+            $queryString = 'SELECT dataset.udi,log.payLoad from ' .
+                LogActionItem::class . ' log join ' . Dataset::class . ' dataset with
+                log.subjectEntityId = dataset.id where log.actionName = :actionName and
+                log.subjectEntityName = :subjectEntityName and 
+                log.creationTimeStamp >= :startDate 
+                and log.creationTimeStamp <= :endDate order by dataset.udi ASC';
+
+            $query = $entityManager->createQuery($queryString);
+            $endDateInclusively = clone $options['endDate'];
+            $endDateInclusively = $endDateInclusively->add(new \DateInterval('P1D'));
+            $query->setParameters([
+                'actionName' => 'File Download',
+                'subjectEntityName' => 'Pelagos\Entity\Dataset',
+                'startDate' => $options['startDate'],
+                'endDate' => $endDateInclusively
+            ]);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Get the file size for the dataset.
+     *
+     * @param Dataset $dataset The dataset instance.
+     *
+     * @return float
+     */
+    private function getFileSize(Dataset $dataset): float
+    {
+        $fileSize = null;
+        $datasetSubmission = $dataset->getDatasetSubmission();
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            $fileSize = (float) $this->formatSizeUnits($datasetSubmission->getDatasetFileSize());
+        }
+
+        return $fileSize;
+    }
+
+    /**
+     * Get the griidc staff user info.
+     *
+     * @return array
+     */
+    private function excludeGriidcStaff(): array
+    {
+        $container = $this->container;
+        $entityManager = $container->get('doctrine')->getManager();
+        //get user Ids of Griidc Staff to exclude from the report with personDataRepository roles of:
+        //Manager (1), Developer (2), Support (3), Subject Matter Expert (4)
+        $griidcUserQueryString = 'SELECT account.userId FROM ' . PersonDataRepository::class .
+            ' personDataRepository JOIN ' . Person::class .
+            ' person WITH person.id = personDataRepository.person JOIN ' . Account::class .
+            ' account WITH account.person = person.id WHERE personDataRepository.role in (1, 2, 3, 4) ';
+        $griidcUserResult = $entityManager->createQuery($griidcUserQueryString)->getScalarResult();
+        $griidcArray = array_column($griidcUserResult, 'userId');
+
+        return $griidcArray;
     }
 }
