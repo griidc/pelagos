@@ -152,22 +152,6 @@ class SideBySideController extends UIController
             $datasetSubmission = $datasetSubmissionHistory->first();
         }
 
-        /* commented out, this breaks the map, due to bad use of data attribute */
-        //Tidy GML.
-        // $gml = tidy_parse_string(
-            // $datasetSubmission->getSpatialExtent(),
-            // array(
-                // 'input-xml' => true,
-                // 'output-xml' => true,
-                // 'indent' => true,
-                // 'indent-spaces' => 4,
-                // 'wrap' => 0,
-            // ),
-            // 'utf8'
-        // );
-
-        // $datasetSubmission->setSpatialExtent($gml);
-
         $researchGroupList = array();
         $account = $this->getUser();
         if (null !== $account) {
