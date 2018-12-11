@@ -8,7 +8,7 @@ $(document).ready(function()
     var leftLoaded = false;
     var rightLoaded = false;
 
-    $("#get-versions-button").click(function (){
+    $("#get-versions-button").button().click(function (){
         var udi = $("input[name=udi]").val().trim();
         jQuery.ajax({
             url: Routing.generate("pelagos_app_ui_sidebyside_getversions", {udi: udi}),
@@ -64,6 +64,8 @@ $(document).ready(function()
         var udi = $(this).find("option:selected").data("udi");
 
         $("#left").html($(".spinner div").html());
+        leftLoaded = false;
+        loading.notify();
 
         $(this).parents("div.left-version")
             .find(".submission-status")
@@ -75,7 +77,6 @@ $(document).ready(function()
             .find(".submission-modifier")
             .text($(this).find("option:selected").data("modifier"));
         var getFormUrl = Routing.generate("pelagos_app_ui_sidebyside_getsubmissionform");
-        leftLoaded = false;
         $("#left").load(getFormUrl + "/" + udi + "/" + version, function() {
             $(".smallmap", this).gMap();
             $(".filetabs", this).tabs();
@@ -89,6 +90,8 @@ $(document).ready(function()
         var udi = $(this).find("option:selected").data("udi");
 
         $("#right").html($(".spinner div").html());
+        rightLoaded = false;
+        loading.notify();
 
         $(this).parents("div.right-version")
             .find(".submission-status")
@@ -100,7 +103,6 @@ $(document).ready(function()
             .find(".submission-modifier")
             .text($(this).find("option:selected").data("modifier"));
         var getFormUrl = Routing.generate("pelagos_app_ui_sidebyside_getsubmissionform");
-        rightLoaded = false;
         $("#right").load(getFormUrl + "/" + udi + "/" + version, function() {
             $(".smallmap", this).gMap();
             $(".filetabs", this).tabs();
@@ -109,9 +111,15 @@ $(document).ready(function()
         });
     });
 
+    $("#show-diff-button").button("option", "disabled", true).click(function (){
+        showDifferences();
+    });
+
     loading.progress(function() {
         if (leftLoaded && rightLoaded) {
-            showDifferences();
+            $("#show-diff-button").button("enable");
+        } else {
+            $("#show-diff-button").button("disable");
         }
     });
 
