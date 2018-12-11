@@ -135,7 +135,7 @@ $(document).ready(function()
             $(this).html(diff);
         });
 
-        // Compare multiselect.
+        // Compare keyword selects.
         $("#right").find("select.keywordinput").each(function() {
             var thisId = $(this).attr("id");
             var leftSelect = $("#left").find("#"+thisId);
@@ -143,7 +143,7 @@ $(document).ready(function()
             multiSelectCompare(leftSelect, rightSelect);
         });
 
-        // Show differences in single selects
+        // Show differences in other selects.
         $("#right").find("select").not(".keywordinput").each(function() {
             var thisId = $(this).attr("name");
             var leftSelect = $("#left").find('[name="'+thisId+'"]');
