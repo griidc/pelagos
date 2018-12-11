@@ -122,7 +122,25 @@ $(document).ready(function()
         .find("textarea,input[type=text]")
         .not(".keywordinput")
         .each(function() {
-            makecontentEditable(this);
+            var originalInput = $(this);
+            var inputType = originalInput.prop("tagName");
+            var inputHeight = originalInput.height();
+            var inputWidth = originalInput.width();
+            var inputText = originalInput.val();
+            var attrs = this.attributes;
+            var newElement = $("<div>")
+            .attr("tagname", inputType)
+            .height(inputHeight)
+            .width(inputWidth)
+            .text(inputText);
+
+            // Set all the attributes (name, id, etc).
+            $.each(attrs, function(index, atribute) {
+                newElement.attr(atribute.name, atribute.value);
+            });
+
+            newElement.addClass("contentbox");
+            originalInput.replaceWith(newElement);
         });
 
         $("#right").find(".contentbox")
@@ -131,8 +149,15 @@ $(document).ready(function()
             var rightText = $(this).text();
             var leftInput = $("#left").find("#"+thisId);
             var leftText = leftInput.val();
-            var diff = compareInputs(leftText, rightText);
-            $(this).html(diff);
+
+            // Comparing Text
+            var dmp = new diff_match_patch();
+            var d = dmp.diff_main(leftText, rightText);
+            dmp.diff_cleanupSemantic(d);
+            var diffHTML =  dmp.diff_prettyHtml(d);
+
+            // Setting the HTML with diff.
+            $(this).html(diffHTML);
         });
 
         // Compare keyword selects.
@@ -140,7 +165,46 @@ $(document).ready(function()
             var thisId = $(this).attr("id");
             var leftSelect = $("#left").find("#"+thisId);
             var rightSelect = $(this);
-            multiSelectCompare(leftSelect, rightSelect);
+
+            // Convert option list to lines.
+            var leftSelectText = leftSelect
+            .find("option")
+            .map(function(){return this.text;})
+            .get().join("\n");
+            var rightSelectText = rightSelect
+            .find("option")
+            .map(function(){return this.text;})
+            .get().join("\n");
+
+            // Compare in Linemode, put each option on a new line.
+            var dmp = new diff_match_patch();
+            var a = dmp.diff_linesToChars_(leftSelectText, rightSelectText);
+            var lineText1 = a.chars1;
+            var lineText2 = a.chars2;
+            var lineArray = a.lineArray;
+            var diffs = dmp.diff_main(lineText1, lineText2, false);
+            dmp.diff_charsToLines_(diffs, lineArray);
+
+            rightSelect.find("option").remove();
+            $.each(diffs, function() {
+                switch (this[0]) {
+                    case -1:
+                        var optionClass = "deloption";
+                        break;
+                    case 1:
+                        var optionClass = "insoption";
+                        break;
+                    default:
+                        var optionClass;
+                }
+                var options = this[1].trim().split("\n");
+                $.each(options, function() {
+                    var optionText = this;
+                    var option = new Option(optionText, optionText);
+                    $(option).addClass(optionClass);
+                    rightSelect.append(option);
+                });
+            });
         });
 
         // Show differences in other selects.
@@ -161,82 +225,4 @@ $(document).ready(function()
             }
         });
     }
-
-    function multiSelectCompare(leftSelect, rightSelect)
-    {
-        var leftSelectText = optionsToLines(leftSelect);
-        var rightSelectText = optionsToLines(rightSelect);
-
-        // Compare in Linemode, put each option on a new line.
-        var dmp = new diff_match_patch();
-        var a = dmp.diff_linesToChars_(leftSelectText, rightSelectText);
-        var lineText1 = a.chars1;
-        var lineText2 = a.chars2;
-        var lineArray = a.lineArray;
-        var diffs = dmp.diff_main(lineText1, lineText2, false);
-        dmp.diff_charsToLines_(diffs, lineArray);
-
-        rightSelect.find("option").remove();
-        $.each(diffs, function() {
-            switch (this[0]) {
-                case -1:
-                    var optionClass = "deloption";
-                    break;
-                case 1:
-                    var optionClass = "insoption";
-                    break;
-                default:
-                    var optionClass;
-            }
-            var options = this[1].trim().split("\n");
-            $.each(options, function() {
-                var optionText = this;
-                var option = new Option(optionText, optionText);
-                $(option).addClass(optionClass);
-                rightSelect.append(option);
-            });
-        });
-    }
 });
-
-function makecontentEditable(input)
-{
-    var originalInput = $(input);
-    var inputType = originalInput.prop("tagName");
-    var inputHeight = originalInput.height();
-    var inputWidth = originalInput.width();
-    var inputText = originalInput.val();
-    var attrs = input.attributes;
-    var newElement = $("<div>")
-    .attr("tagname", inputType)
-    .height(inputHeight)
-    .width(inputWidth)
-    .text(inputText);
-
-    // Set all the attributes (name, id, etc).
-    $.each(attrs, function(index, atribute) {
-        newElement.attr(atribute.name, atribute.value);
-    });
-
-    newElement.addClass("contentbox");
-
-    originalInput.replaceWith(newElement);
-}
-
-function compareInputs(leftText, rightText)
-{
-    var dmp = new diff_match_patch();
-    var d = dmp.diff_main(leftText, rightText);
-    dmp.diff_cleanupSemantic(d);
-
-    return dmp.diff_prettyHtml(d);
-}
-
-function optionsToLines(input)
-{
-    return input
-    .find("option")
-    .map(function(){return this.text;})
-    .get()
-    .join("\n");
-}
