@@ -99,19 +99,6 @@
     padding: 2px 3px;
 }
 
-.contentbox[tagname="SELECT"] {
-    padding: 2px;
-    -moz-appearance: textfield-multiline;
-    -webkit-appearance: textfield-multiline;
-    border: 1px solid darkgray;
-    font: medium -moz-fixed;
-    font: -webkit-small-control;
-    font: 15px Arial;
-    overflow: auto;
-    resize: none;
-    background-color: white;
-}
-
 .deloption {
     background: #ffe6e6;
     text-decoration: line-through;
