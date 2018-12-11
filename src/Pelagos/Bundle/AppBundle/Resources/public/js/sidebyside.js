@@ -8,12 +8,6 @@ $(document).ready(function()
     var leftLoaded = false;
     var rightLoaded = false;
 
-    $.fn.contentEditable = function(options) {
-        return this.each(function() {
-            makecontentEditable(this);
-        });
-    };
-
     $("#get-versions-button").click(function (){
         var udi = $("input[name=udi]").val().trim();
         jQuery.ajax({
@@ -124,13 +118,19 @@ $(document).ready(function()
     function showDifferences()
     {
         // Change textarea and input to divs that look like them.
-        $("#right").find("textarea,input[type=text]").contentEditable();
+        $("#right")
+        .find("textarea,input[type=text]")
+        .not(".keywordinput")
+        .each(function() {
+            makecontentEditable(this);
+        });
 
         $("#right").find(".contentbox")
         .each(function(){
             var thisId = $(this).attr("id");
             var rightText = $(this).text();
-            var leftText = $("#left").find("#"+thisId).val();
+            var leftInput = $("#left").find("#"+thisId);
+            var leftText = leftInput.val();
             var diff = compareInputs(leftText, rightText);
             $(this).html(diff);
         });
@@ -141,6 +141,24 @@ $(document).ready(function()
             var leftSelect = $("#left").find("#"+thisId);
             var rightSelect = $(this);
             multiSelectCompare(leftSelect, rightSelect);
+        });
+
+        // Show differences in single selects
+        $("#right").find("select").not(".keywordinput").each(function() {
+            var thisId = $(this).attr("name");
+            var leftSelect = $("#left").find('[name="'+thisId+'"]');
+            var rightSelect = $(this);
+            var leftValue = leftSelect.find("option:selected").text();
+            var rightValue = rightSelect.find("option:selected").text();
+
+            var leftValue = leftSelect.val();
+            var rightValue = rightSelect.val();
+
+            if (leftValue != rightValue) {
+                rightSelect.addClass("deloption");
+            } else {
+                rightSelect.addClass("insoption");
+            }
         });
     }
 
