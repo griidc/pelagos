@@ -95,21 +95,8 @@
             <br />
         {% endif %}
         <strong>File name:</strong> {{ dataset.datasetSubmission.datasetFileName }} &nbsp; <strong>File size:</strong> {{ dataset.datasetSubmission.datasetFileSize | formatBytes }}<br />
-        <strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span>
-        <table border='0'>
-        <tr>
-            <th colspan='2'>Datafile Checksums</th>
-        </tr>
-        <tr>
-            <td>md5</td><td>&nbsp; {{ dataset.datasetSubmission.datasetFileMd5Hash }}</td>
-        </tr>
-        <tr>
-            <td>sha1</td><td>&nbsp; {{ dataset.datasetSubmission.datasetFileSha1Hash }}</td>
-        </tr>
-        <tr>
-            <td>sha256</td><td>&nbsp; {{ dataset.datasetSubmission.datasetFileSha256Hash }}</td>
-        </tr>
-        </table>
+        <strong>SHA256 Checksum:</strong> {{ dataset.datasetSubmission.datasetFileSha256Hash|default }}<br />
+        <strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span><br />
     </div>
     <div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px; margin-top: 15px">
     <strong><i>Citation suggestion:</i></strong><br />
