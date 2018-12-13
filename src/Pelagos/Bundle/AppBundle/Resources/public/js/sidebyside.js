@@ -116,10 +116,11 @@ $(document).ready(function()
     });
 
     loading.progress(function() {
+        var showDiffButton = $("#show-diff-button");
         if (leftLoaded && rightLoaded) {
-            $("#show-diff-button").button("enable");
+            showDiffButton.button("enable");
         } else {
-            $("#show-diff-button").button("disable");
+            showDiffButton.button("disable");
         }
     });
 
