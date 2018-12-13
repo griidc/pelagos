@@ -271,7 +271,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 ),
             )
         );
-        
+
         // Overwrite the spatial extent field which is normally a hidden type.
         $form->add('spatialExtent', TextareaType::class, array(
             'label' => 'Spatial Extent GML',
@@ -562,8 +562,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
         $datasetSubmission->setDatasetFileName(null);
         $datasetSubmission->setDatasetFileSize(null);
-        $datasetSubmission->setDatasetFileMd5Hash(null);
-        $datasetSubmission->setDatasetFileSha1Hash(null);
         $datasetSubmission->setDatasetFileSha256Hash(null);
         $this->messages[] = array(
             'body' => $datasetSubmission->getId(),
