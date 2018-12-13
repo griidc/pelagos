@@ -4,6 +4,7 @@ parameters:
 #    parameter_name: value
 
 services:
+    _defaults: { public: true }
     postgres_session_init.listener:
         class: Pelagos\DoctrineExtensions\DBAL\Event\Listeners\PostgresSessionInit
         arguments:
