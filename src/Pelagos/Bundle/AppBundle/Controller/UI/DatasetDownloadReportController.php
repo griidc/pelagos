@@ -101,7 +101,7 @@ class DatasetDownloadReportController extends ReportController
             array('END DATE', $options['endDate']->format(self::INREPORT_DATETIMEFORMAT)),
             array());
 
-        //prepare body's data
+        //prepare labels
         $labels = $this->getLabels(self::UDI_REPORT);
 
         //prepare body's data
@@ -148,7 +148,7 @@ class DatasetDownloadReportController extends ReportController
                         ->getEmailAddress();
                 }
 
-                // get file size from dataset
+                // get file size from dataset submission
                 $dataArray[$currentIndex]['fileSize'] = $this->getFileSize($dataset);
             }
             //count user downloads and total download
