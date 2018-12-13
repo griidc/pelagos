@@ -305,7 +305,7 @@ class DatasetDownloadReportController extends ReportController
                 'PRIMARY POINT OF CONTACT EMAIL',
                 'TOTAL DOWNLOADS',
                 '# OF GOMRI DOWNLOADS',
-                '# OF GOOGLE DOWNLOADS',
+                '# OF NON-GOMRI DOWNLOADS',
                 'FILE SIZE(MB)'
             ));
         }
