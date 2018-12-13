@@ -131,19 +131,14 @@ $(document).ready(function()
         .not(".keywordinput")
         .each(function() {
             var originalInput = $(this);
-            var inputType = originalInput.prop("tagName");
-            var inputHeight = originalInput.height();
-            var inputWidth = originalInput.width();
-            var inputText = originalInput.val();
-            var attrs = this.attributes;
             var newElement = $("<div>")
-            .attr("tagname", inputType)
-            .height(inputHeight)
-            .width(inputWidth)
-            .text(inputText);
+            .attr("tagname", originalInput.prop("tagName"))
+            .height(originalInput.height())
+            .width(originalInput.width())
+            .text(originalInput.val());
 
             // Set all the attributes (name, id, etc).
-            $.each(attrs, function(index, atribute) {
+            $.each(this.attributes, function(index, atribute) {
                 newElement.attr(atribute.name, atribute.value);
             });
 
@@ -153,26 +148,22 @@ $(document).ready(function()
 
         $("#right").find(".contentbox")
         .each(function(){
-            var thisId = $(this).attr("id");
-            var rightText = $(this).text();
-            var leftInput = $("#left").find("#"+thisId);
-            var leftText = leftInput.val();
+            var rightInput = $(this);
+            var leftInput = $("#left").find("#" + rightInput.attr("id"));
 
             // Comparing Text
             var dmp = new diff_match_patch();
-            var d = dmp.diff_main(leftText, rightText);
-            dmp.diff_cleanupSemantic(d);
-            var diffHTML =  dmp.diff_prettyHtml(d);
+            var diffs = dmp.diff_main(leftInput.val(), rightInput.text());
+            dmp.diff_cleanupSemantic(diffs);
 
             // Setting the HTML with diff.
-            $(this).html(diffHTML);
+            $(this).html(dmp.diff_prettyHtml(diffs));
         });
 
         // Compare keyword selects.
         $("#right").find("select.keywordinput").each(function() {
-            var thisId = $(this).attr("id");
-            var leftSelect = $("#left").find("#"+thisId);
             var rightSelect = $(this);
+            var leftSelect = $("#left").find("#" + rightSelect.attr("id"));
 
             // Convert option list to lines.
             var leftSelectText = leftSelect
@@ -186,20 +177,17 @@ $(document).ready(function()
 
             // Compare in Linemode, put each option on a new line.
             var dmp = new diff_match_patch();
-            var a = dmp.diff_linesToChars_(leftSelectText, rightSelectText);
-            var lineText1 = a.chars1;
-            var lineText2 = a.chars2;
-            var lineArray = a.lineArray;
-            var diffs = dmp.diff_main(lineText1, lineText2, false);
-            dmp.diff_charsToLines_(diffs, lineArray);
+            var lineToChars = dmp.diff_linesToChars_(leftSelectText, rightSelectText);
+            var diffs = dmp.diff_main(lineToChars.chars1, lineToChars.chars2, false);
+            dmp.diff_charsToLines_(diffs, lineToChars.lineArray);
 
             rightSelect.find("option").remove();
             $.each(diffs, function() {
                 switch (this[0]) {
-                    case -1:
+                    case -1: // diff_match_patch.DIFF_DELETE
                         var optionClass = "deloption";
                         break;
-                    case 1:
+                    case 1: // diff_match_patch.DIFF_INSERT
                         var optionClass = "insoption";
                         break;
                     default:
@@ -217,16 +205,10 @@ $(document).ready(function()
 
         // Show differences in other selects.
         $("#right").find("select").not(".keywordinput").each(function() {
-            var thisId = $(this).attr("name");
-            var leftSelect = $("#left").find('[name="'+thisId+'"]');
             var rightSelect = $(this);
-            var leftValue = leftSelect.find("option:selected").text();
-            var rightValue = rightSelect.find("option:selected").text();
+            var leftSelect = $("#left").find('[name="' + rightSelect.attr("name") + '"]');
 
-            var leftValue = leftSelect.val();
-            var rightValue = rightSelect.val();
-
-            if (leftValue != rightValue) {
+            if (leftSelect.val() !== rightSelect.val()) {
                 rightSelect.addClass("deloption");
             } else {
                 rightSelect.addClass("insoption");
