@@ -101,31 +101,13 @@ class DatasetDownloadReportController extends ReportController
             array('END DATE', $options['endDate']->format(self::INREPORT_DATETIMEFORMAT)),
             array());
 
-        //prepare labels
-        $labels = array('labels' => array(
-            'UDI',
-            'TITLE',
-            'PRIMARY POINT OF CONTACT',
-            'PRIMARY POINT OF CONTACT EMAIL',
-            'TOTAL DOWNLOADS',
-            '# OF GOMRI DOWNLOADS',
-            '# OF NON-GOMRI DOWNLOADS',
-            'FILE SIZE(MB)'
-        ));
-
-      //prepare body's data
+        //prepare body's data
         $labels = $this->getLabels(self::UDI_REPORT);
 
         //prepare body's data
         $dataArray = array();
 
         //Query
-        $queryString = 'SELECT dataset.udi,log.payLoad from ' .
-            LogActionItem::class . ' log join ' . Dataset::class . ' dataset with
-                log.subjectEntityId = dataset.id where log.actionName = :actionName and
-                log.subjectEntityName = :subjectEntityName and
-                log.creationTimeStamp >= :startDate
-                and log.creationTimeStamp <= :endDate order by dataset.udi ASC';
         $query = $this->getQuery(self::UDI_REPORT, $options);
 
         $results = $query->getResult();
@@ -166,11 +148,7 @@ class DatasetDownloadReportController extends ReportController
                         ->getEmailAddress();
                 }
 
-                // get file size from dataset submission
-                $datasetSubmission = $dataset->getDatasetSubmission();
-                if ($datasetSubmission instanceof DatasetSubmission) {
-                    $dataArray[$currentIndex]['fileSize'] = $this->formatSizeUnits($datasetSubmission->getDatasetFileSize());
-                }
+                // get file size from dataset
                 $dataArray[$currentIndex]['fileSize'] = $this->getFileSize($dataset);
             }
             //count user downloads and total download
