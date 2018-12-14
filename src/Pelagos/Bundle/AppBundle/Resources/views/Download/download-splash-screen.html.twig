@@ -55,12 +55,16 @@
 
         <div style="border: 1px solid #aaa; padding: 10px; margin-top: 15px; border-radius: 4px;">
             <p style="margin-top:0">
-                <strong>DISCLAIMER:</strong> The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) aggregates data from researchers funded by the Gulf of Mexico Research Initiative and other scientists working in the region. These data are furnished "as is" for the convenience of all data users. GRIIDC makes no warranties (including no warranties as to merchantability, timeliness or fitness) either expressed or implied with respect to the data or their fitness for any specific application.
+                All materials on this website are made available to GRIIDC and in turn to you "as-is." There is no
+                warranty (expressed or implied) to these materials, their title, accuracy, non-infringement of third
+                party rights, or fitness for any particular purpose, including the performance or results you may
+                obtain from their use. Use these materials at your own risk. Under no circumstances shall GRIIDC be
+                liable for any direct, incidental, special, consequential, indirect, or punitive damages that result
+                from the use or the inability to use either this website or the materials available via this website.
+                If you are dissatisfied with any website feature, content, or terms of use, your sole and exclusive
+                remedy is to discontinue use.
             </p>
             <div style="text-align:left;">
-                <p>
-                    By downloading data you are expressing agreement with the disclaimer.
-                </p>
                 <div style="width: 100%; display: table; border: 1px solid #aaa; border-radius: 4px;">
                     <div style="display: table-row; margin: 0 auto;">
                         <div style="display: table-cell;">
@@ -95,24 +99,7 @@
             <br />
         {% endif %}
         <strong>File name:</strong> {{ dataset.datasetSubmission.datasetFileName }} &nbsp; <strong>File size:</strong> {{ dataset.datasetSubmission.datasetFileSize | formatBytes }}<br />
-        <strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span>
-        <table border='0'>
-        <tr>
-            <th colspan='2'>Datafile Checksums</th>
-        </tr>
-        <tr>
-            <td>md5</td><td>&nbsp; {{ dataset.datasetSubmission.datasetFileMd5Hash }}</td>
-        </tr>
-        <tr>
-            <td>sha1</td><td>&nbsp; {{ dataset.datasetSubmission.datasetFileSha1Hash }}</td>
-        </tr>
-        <tr>
-            <td>sha256</td><td>&nbsp; {{ dataset.datasetSubmission.datasetFileSha256Hash }}</td>
-        </tr>
-        </table>
-    </div>
-    <div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px; margin-top: 15px">
-    <strong><i>Citation suggestion:</i></strong><br />
-    {{ dataset.citation }}
+        <strong>SHA256 Checksum:</strong> {{ dataset.datasetSubmission.datasetFileSha256Hash|default }}<br />
+        <strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span><br />
     </div>
 </div>

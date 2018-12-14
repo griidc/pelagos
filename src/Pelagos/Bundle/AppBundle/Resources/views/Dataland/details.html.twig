@@ -1,3 +1,8 @@
+<h2>Suggested Citation:</h2>
+<div>
+    {{ dataset.citation|default }}
+</div>
+
 <h2>Abstract:</h2>
 <div>
     {{ dataset.abstract|default }}
@@ -29,6 +34,14 @@
             {{ dataset.datasetSubmission.distributionFormatName }}
         </div>
     {% endif %}
+
+    {% if dataset.datasetSubmission.datasetFilename|default %}
+        <h2>Filename:</h2>
+        <div>
+            {{ dataset.datasetSubmission.datasetFilename|default }} ({{ dataset.datasetSubmission.datasetFileSize|formatBytes }})
+        </div>
+    {% endif %}
+
 
     {% if downloads is not null %}
         <h2>Dataset Downloads:</h2>

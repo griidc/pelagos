@@ -1,0 +1,31 @@
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
+
+{% block head %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    {% if dataset %}
+        <h2>
+            The dataset {{ dataset.udi }} is not available yet for download.
+        </h2>
+        <table border="0">
+            <tr>
+                <td>Title:</td>
+                <td>{{ dataset.title }}</td>
+            </tr>
+            <tr>
+                <td>DOI:</td>
+                <td>{{ dataset.doi }}</td>
+            </tr>
+            <tr>
+                <td valign="top">Point of Contact:&nbsp;&nbsp;</td>
+                <td>
+                    {{ dataset.primarypointofcontact.lastname }}, {{ dataset.primarypointofcontact.firstname }}<br />
+                </td>
+            </tr>
+        </table>
+        <br />
+        For more information, please contact <a href="mailto:griidc@gomri.org">griidc@gomri.org</a>.
+    {% endif %}
+{% endblock %}

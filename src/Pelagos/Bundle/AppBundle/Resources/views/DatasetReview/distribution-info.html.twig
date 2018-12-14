@@ -32,3 +32,27 @@
         </tr>
     </table>
 </fieldset>
+
+<fieldset>
+    <legend>File Information</legend>
+    <table class="tab-table">
+        <tr>
+            <td>
+                {{ form_label(form.datasetFileName) }}
+                {{ form.datasetFileName.vars.value }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_label(form.datasetFileSize) }}
+                {{ form.datasetFileSize.vars.value | formatBytes }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_label(form.datasetFileSha256Hash) }}
+                {{ form.datasetFileSha256Hash.vars.value }}
+            </td>
+        </tr>
+    </table>
+</fieldset>

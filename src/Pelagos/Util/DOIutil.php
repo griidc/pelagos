@@ -196,6 +196,7 @@ class DOIutil
      * @param string $title           Title for DOI.
      * @param string $publisher       Publisher for DOI.
      * @param string $publicationYear Published Date for DOI.
+     * @param string $status          Status of the DOI.
      *
      * @throws \Exception When there was an error negotiating with EZID.
      *
@@ -207,7 +208,8 @@ class DOIutil
         $creator,
         $title,
         $publisher,
-        $publicationYear
+        $publicationYear,
+        $status
     ) {
         // Add doi: to doi is it doesn't exist.
         $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
@@ -217,10 +219,7 @@ class DOIutil
         $input .= 'datacite.title:' . $this->escapeSpecialCharacters($title) . "\n";
         $input .= 'datacite.publisher:' . $this->escapeSpecialCharacters($publisher) . "\n";
         $input .= "datacite.publicationyear:$publicationYear\n";
-
-        //Adding status to the update
-        $doiMetadata = $this->getDOIMetadata($doi);
-        $input .= '_status: ' . $doiMetadata['_status'] . "\n";
+        $input .= '_status: ' . $status . "\n";
 
         utf8_encode($input);
 
@@ -281,45 +280,6 @@ class DOIutil
         }
 
         return $metadata;
-    }
-
-    /**
-     * This function will publish the DOI.
-     *
-     * @param string $doi    DOI to publish.
-     * @param string $status The status to set the DOI to (optional).
-     *
-     * @throws \Exception When there was an error negotiating with EZID.
-     *
-     * @return boolean True is published successfully.
-     */
-    public function publishDOI($doi, $status = 'public')
-    {
-        // Add doi: to doi is it doesn't exist.
-        $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
-        $input = "_status:$status";
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->url . '/id/' . $doi);
-        curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt(
-            $ch,
-            CURLOPT_HTTPHEADER,
-            array('Content-Type: text/plain; charset=UTF-8','Content-Length: ' . strlen($input))
-        );
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $input);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $output = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        //check to see if it worked.
-        if (200 != $httpCode) {
-            throw new \Exception("ezid failed with:$httpCode($output)", $httpCode);
-        }
-
-        return true;
     }
 
     /**
