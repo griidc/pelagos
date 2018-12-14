@@ -152,6 +152,10 @@ $(document).ready(function()
             var rightInput = $(this);
             var leftInput = $("#left").find("#" + rightInput.attr("id"));
 
+            if (leftInput.length === 0) {
+                return;
+            }
+
             // Comparing Text
             var dmp = new diff_match_patch();
             var diffs = dmp.diff_main(leftInput.val(), rightInput.text());
@@ -165,6 +169,10 @@ $(document).ready(function()
         $("#right").find("select.keywordinput").each(function() {
             var rightSelect = $(this);
             var leftSelect = $("#left").find("#" + rightSelect.attr("id"));
+
+            if (leftSelect.length === 0) {
+                return;
+            }
 
             // Convert option list to lines.
             var leftSelectText = leftSelect
@@ -208,6 +216,11 @@ $(document).ready(function()
         $("#right").find("select").not(".keywordinput").each(function() {
             var rightSelect = $(this);
             var leftSelect = $("#left").find('[name="' + rightSelect.attr("name") + '"]');
+
+            if (leftSelect.length === 0) {
+                rightSelect.addClass("insoption");
+                return;
+            }
 
             if (leftSelect.val() !== rightSelect.val()) {
                 rightSelect.addClass("deloption");
