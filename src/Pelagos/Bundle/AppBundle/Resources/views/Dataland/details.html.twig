@@ -35,6 +35,14 @@
         </div>
     {% endif %}
 
+    {% if dataset.datasetSubmission.datasetFilename|default %}
+        <h2>Filename:</h2>
+        <div>
+            {{ dataset.datasetSubmission.datasetFilename|default }} ({{ dataset.datasetSubmission.datasetFileSize|formatBytes }})
+        </div>
+    {% endif %}
+
+
     {% if downloads is not null %}
         <h2>Dataset Downloads:</h2>
         <div>
