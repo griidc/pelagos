@@ -916,6 +916,15 @@ class DatasetSubmission extends Entity
     protected $distributionPoints;
 
     /**
+     * ERDDAPP Url for the dataset.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $erddapUrl;
+
+    /**
      * Constructor.
      *
      * Initializes collections to empty collections.
@@ -2449,5 +2458,27 @@ class DatasetSubmission extends Entity
     public function getDistributionPoints()
     {
         return $this->distributionPoints;
+    }
+
+    /**
+     * Getter for the erddap url.
+     *
+     * @return string
+     */
+    public function getErddapUrl(): ? string
+    {
+        return $this->erddapUrl;
+    }
+
+    /**
+     * Setter for the erddap url.
+     *
+     * @param string $erddapUrl Erddap url.
+     *
+     * @return void
+     */
+    public function setErddapUrl($erddapUrl)
+    {
+        $this->erddapUrl = $erddapUrl;
     }
 }
