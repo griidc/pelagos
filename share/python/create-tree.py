@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import csv
-import getopt
+import argparse
 import operator
 import os
 import re
@@ -164,22 +164,12 @@ def generate_tree(filename, short):
         print("Error in header. Stopping")
 
 def main(argv, script_name):
-    hashfile = ''
-    short_report = False;
-    try:
-        opts, args = getopt.getopt(argv,"hdi:",["ifile=",])
-    except getopt.GetoptError:
-        print script_name + ' -i <hashfile>'
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt == '-h':
-            print script_name + ' -i <hashfile> [-d <show directories only>]'
-            sys.exit()
-        elif opt in ("-i", "--ifile"):
-            hashfile = arg
-        elif opt in ("-d"):
-            short_report = True
-    generate_tree(hashfile, short_report)
+    parser = argparse.ArgumentParser()
+    # Stores args.d boolean, true if -d is set, false otherwise.
+    parser.add_argument('-d', action='store_true', help='Print only directories.')
+    parser.add_argument('hashfile')
+    args = parser.parse_args()
+    generate_tree(args.hashfile, args.d)
 
 if __name__ == "__main__":
     main(sys.argv[1:], sys.argv[0])
