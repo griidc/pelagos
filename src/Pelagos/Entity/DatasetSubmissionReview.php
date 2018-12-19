@@ -69,8 +69,8 @@ class DatasetSubmissionReview extends Entity
      *
      * Created a new datasetSubmissionReview entry.
      *
-     * @param Person            $reviewedBy          The person who started this review.
-     * @param \DateTime         $reviewStartDateTime The DateTime the review was started.
+     * @param Person    $reviewedBy          The person who started this review.
+     * @param \DateTime $reviewStartDateTime The DateTime the review was started.
      */
     public function __construct(
         Person $reviewedBy,
