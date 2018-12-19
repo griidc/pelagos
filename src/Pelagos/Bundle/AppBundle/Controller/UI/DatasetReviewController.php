@@ -380,7 +380,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         $datasetSubmission = new DatasetSubmission($datasetSubmission);
         $reviewedBy = $this->getUser()->getPerson();
         $reviewStartTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
-        $datasetSubmissionReview = new DatasetSubmissionReview($datasetSubmission, $reviewedBy, $reviewStartTimeStamp);
+        $datasetSubmissionReview = new DatasetSubmissionReview($reviewedBy, $reviewStartTimeStamp);
         $datasetSubmission->setDatasetSubmissionReviewStatus();
         $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_IN_REVIEW);
         $datasetSubmission->setModifier($reviewedBy);
