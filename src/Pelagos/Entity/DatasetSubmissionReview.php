@@ -20,15 +20,6 @@ class DatasetSubmissionReview extends Entity
     const FRIENDLY_NAME = 'Dataset Submission Review';
 
     /**
-     * The DatasetSubmission this Dataset Submission Review is attached to.
-     *
-     * @var DatasetSubmission
-     *
-     * @ORM\OneToOne(targetEntity="DatasetSubmission", inversedBy="datasetSubmissionReview")
-     */
-    protected $datasetSubmission;
-
-    /**
      * The Person who started this review.
      *
      * @var Person
@@ -78,28 +69,15 @@ class DatasetSubmissionReview extends Entity
      *
      * Created a new datasetSubmissionReview entry.
      *
-     * @param DatasetSubmission $datasetSubmission   The DatasetSubmission linked to this Review.
      * @param Person            $reviewedBy          The person who started this review.
      * @param \DateTime         $reviewStartDateTime The DateTime the review was started.
      */
     public function __construct(
-        DatasetSubmission $datasetSubmission,
         Person $reviewedBy,
         \DateTime $reviewStartDateTime
     ) {
-        $this->datasetSubmission = $datasetSubmission;
         $this->reviewedBy = $reviewedBy;
         $this->reviewStartDateTime = $reviewStartDateTime;
-    }
-
-    /**
-     * Gets the Dataset Submission for this review.
-     *
-     * @return DatasetSubmission The DatasetSubmission for this rkeview.
-     */
-    public function getDatasetSubmission()
-    {
-        return $this->datasetSubmission;
     }
 
     /**
