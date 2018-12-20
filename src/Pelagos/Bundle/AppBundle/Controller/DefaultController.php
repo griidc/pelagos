@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Pelagos\Entity\Dataset;
+use Pelagos\Entity\DatasetSubmission;
 
 /**
  * The default controller for the Pelagos App Bundle.
@@ -45,7 +46,9 @@ class DefaultController extends Controller
         $response = new StreamedResponse(function () use ($container) {
             $datasets = $container->get('pelagos.entity.handler')->getBy(
                 Dataset::class,
-                array(),
+                array(
+                    'availabilityStatus' => DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE
+                ),
                 array(),
                 array(
                     'udi',
