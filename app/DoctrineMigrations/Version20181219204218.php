@@ -20,11 +20,12 @@ class Version20181219204218 extends AbstractMigration
 
         $this->addSql('ALTER TABLE dataset_submission_review DROP CONSTRAINT fk_3fa5c62f8488ba54');
         $this->addSql('DROP INDEX uniq_3fa5c62f8488ba54');
-        $this->addSql('ALTER TABLE dataset_submission_review DROP dataset_submission_id');
         $this->addSql('ALTER TABLE dataset_submission ADD dataset_submission_review_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE dataset_submission ADD CONSTRAINT FK_FEFE73FC6E4CE37D FOREIGN KEY (dataset_submission_review_id) REFERENCES dataset_submission_review (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_FEFE73FC6E4CE37D ON dataset_submission (dataset_submission_review_id)');
         $this->addSql('ALTER TABLE dataset_submission_audit ADD dataset_submission_review_id INT DEFAULT NULL');
+        $this->addSql('UPDATE dataset_submission SET dataset_submission_review_id = dsrev.id FROM (SELECT id, dataset_submission_id FROM dataset_submission_review) AS dsrev WHERE dataset_submission.id = dsrev.dataset_submission_id');
+        $this->addSql('ALTER TABLE dataset_submission_review DROP dataset_submission_id');
     }
 
     /**
