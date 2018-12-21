@@ -17,6 +17,9 @@ class DoiDatasetListener extends EventListener
     public function onDeleteDoi(EntityEvent $event)
     {
         $dataset = $event->getEntity();
-        $this->producer->publish($dataset->getDoi()->getDoi(), 'delete');
+        $doi = $dataset->getDoi();
+        if ($doi) {
+            $this->producer->publish($doi->getDoi(), 'delete');
+        }
     }
 }
