@@ -150,18 +150,60 @@ def generate_tree(filename, short):
             else:
                 print('File Listing:')
             print
-            for path, size in sizes.iteritems():
-                if (short):
 
+            lineCount = 0
+            lastPath = ''
+            for path, size in sizes.iteritems():
+                lineCount += 1
+                if (short):
                     # Display directories only in short mode.
                     if(re.search("\|EOL:$", path)):
                         pass
                     else:
-                        print(path + " [" + intToSize(size) + "]")
+                        opPath = re.sub('\|EOL:', '', path)
+                        printPath(lastPath, opPath, intToSize(size))
+                        lastPath = opPath
                 else:
-                    print(re.sub('\|EOL:', '', path) +  " (" + intToSize(size) + ")")
+                    opPath = re.sub('\|EOL:', '', path)
+                    #print repr(lineCount).rjust(5)
+                    printPath(lastPath, opPath, intToSize(size))
+                    lastPath = opPath
     else:
         print("Error in header. Stopping")
+
+def printPath(lastPath,path, sizeString):
+    formatString = '{:110s} [{:>6s}]'
+    lastPathParts = lastPath.split('/')
+    pathParts = path.split('/')
+    stringToPrint = ''
+    lastLength = len(lastPathParts)
+    if lastPath == '': lastLength = 0
+    thisLength = len(pathParts)
+    max = min(lastLength, thisLength)
+
+    remainingPathNdx = 0
+    firstChangeFound = False
+    for ndx in range(max):
+        if pathParts[ndx] == lastPathParts[ndx] and not firstChangeFound:
+            for ndx2 in range(len(pathParts[ndx])):
+                stringToPrint = stringToPrint + '-'
+            if ndx < (max - 1):
+                stringToPrint = stringToPrint + '/'
+        else:
+            firstChangeFound = True
+            stringToPrint = stringToPrint + pathParts[ndx]
+            if ndx < (max - 1):
+                stringToPrint = stringToPrint+ '/'
+        remainingPathNdx = ndx + 1
+    #  in the case when this path is longer than the previous path print the rest of the path
+    for ndx in range(remainingPathNdx, thisLength):
+        if ndx < thisLength:
+            stringToPrint = stringToPrint + '/'
+        stringToPrint = stringToPrint + pathParts[ndx]
+
+    print formatString.format(stringToPrint, sizeString)
+
+
 
 def main(argv, script_name):
     parser = argparse.ArgumentParser()
