@@ -27,7 +27,7 @@ class GomriReportController extends ReportController
     /**
      * This is a parameterless report, so all is in the default action.
      *
-     * @Route("")
+     * @Route("/v1")
      *
      * @return Response A Response instance.
      */
@@ -38,6 +38,24 @@ class GomriReportController extends ReportController
         }
           // Add header to CSV.
         return $this->writeCsvResponse(
+            $this->getData('v1')
+        );
+    }
+
+    /**
+     * This is the version 2 Gomri Report.
+     *
+     * @Route("/v2")
+     *
+     * @return Response A Response instance
+     */
+    public function versionTwoReportAction()
+    {
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
+        // Add header to CSV.
+        return $this->writeCsvResponse(
             $this->getData()
         );
     }
@@ -45,9 +63,11 @@ class GomriReportController extends ReportController
     /**
      * This method gets data for the report.
      *
+     * @param string $version The version no. of the report.
+     *
      * @return array  Return the data array
      */
-    protected function getData()
+    protected function getData($version = 'v2')
     {
         //prepare labels
         $labels = array('labels' => array(
@@ -62,9 +82,6 @@ class GomriReportController extends ReportController
 
         //prepare body's data
         $dataArray = array();
-        $container = $this->container;
-        $entityManager = $container->get('doctrine')->getManager();
-
         $dateTime = new DateTime('May 2012');
 
         $now = new DateTime('now');
@@ -83,7 +100,38 @@ class GomriReportController extends ReportController
             $dateTime->add(new DateInterval('P1M'));
         }
 
-      // Query Identified.
+        if ($version === 'v1') {
+            $dataArray = $this->getVersionOneQueryData($dataArray);
+        } else {
+            $dataArray = $this->getVersionTwoQueryData($dataArray);
+        }
+
+        $totalIdentified = 0;
+        $totalRegistered = 0;
+        $totalAvailable = 0;
+        foreach ($dataArray as $monthDay => $stat) {
+            $totalIdentified += $stat['monthly_identified'];
+            $totalRegistered += $stat['monthly_registered'];
+            $totalAvailable += $stat['monthly_available'];
+            $dataArray[$monthDay]['total_identified'] = $totalIdentified;
+            $dataArray[$monthDay]['total_registered'] = $totalRegistered;
+            $dataArray[$monthDay]['total_available'] = $totalAvailable;
+        }
+        return array_merge($labels, $dataArray);
+    }
+
+    /**
+     * Query for version one report.
+     *
+     * @param array $dataArray The data array.
+     *
+     * @return array
+     */
+    private function getVersionOneQueryData($dataArray)
+    {
+        $container = $this->container;
+        $entityManager = $container->get('doctrine')->getManager();
+        // Query Identified.
         $queryString = 'SELECT dif.creationTimeStamp ' .
             'FROM ' . Dataset::class . ' dataset ' .
             'JOIN dataset.dif dif ' .
@@ -158,17 +206,100 @@ class GomriReportController extends ReportController
             $dataArray[$monthDay]['monthly_available']++;
         }
 
-        $totalIdentified = 0;
-        $totalRegistered = 0;
-        $totalAvailable = 0;
-        foreach ($dataArray as $monthDay => $stat) {
-            $totalIdentified += $stat['monthly_identified'];
-            $totalRegistered += $stat['monthly_registered'];
-            $totalAvailable += $stat['monthly_available'];
-            $dataArray[$monthDay]['total_identified'] = $totalIdentified;
-            $dataArray[$monthDay]['total_registered'] = $totalRegistered;
-            $dataArray[$monthDay]['total_available'] = $totalAvailable;
+        return $dataArray;
+    }
+
+    /**
+     * Query for version one report.
+     *
+     * @param array $dataArray The data array.
+     *
+     * @return array
+     */
+    private function getVersionTwoQueryData($dataArray)
+    {
+        $container = $this->container;
+        $entityManager = $container->get('doctrine')->getManager();
+        // Query Identified (i.e. Datasets which have DIF approved).
+        $qb = $entityManager->createQueryBuilder();
+        $query = $qb
+            ->select('dif.approvedDate')
+            ->from('\Pelagos\Entity\Dataset', 'd')
+            ->JOIN('\Pelagos\Entity\Dif', 'dif', 'WITH', 'd.dif = dif.id')
+            ->JOIN('\Pelagos\Entity\ResearchGroup', 'rg', 'WITH', 'd.researchGroup = rg.id')
+            ->JOIN('\Pelagos\Entity\FundingCycle', 'fc', 'WITH', 'rg.fundingCycle = fc.id')
+            ->JOIN('\Pelagos\Entity\FundingOrganization', 'fo', 'WITH', 'fc.fundingOrganization = fo.id')
+            ->where('dif.status = ?1')
+            ->andWhere('fo.name = ?2')
+            ->setParameter(1, DIF::STATUS_APPROVED)
+            ->setParameter(2, GOMRI_STRING)
+            ->getQuery();
+        $results = $query->getResult();
+
+        foreach ($results as $result) {
+            $monthDay = date(MONTH_DAY_FORMAT, $result['approvedDate']->getTimestamp());
+            $dataArray[$monthDay]['monthly_identified']++;
         }
-        return array_merge($labels, $dataArray);
+
+        // Query Registered (i.e. Datasets which are submitted).
+        $qb = $entityManager->createQueryBuilder();
+        $query = $qb
+            ->select('ds.submissionTimeStamp')
+            ->from('\Pelagos\Entity\Dataset', 'd')
+            ->JOIN('\Pelagos\Entity\DatasetSubmission', 'ds', 'WITH', 'd.datasetSubmission = ds.id')
+            ->JOIN('\Pelagos\Entity\ResearchGroup', 'rg', 'WITH', 'd.researchGroup = rg.id')
+            ->JOIN('\Pelagos\Entity\FundingCycle', 'fc', 'WITH', 'rg.fundingCycle = fc.id')
+            ->JOIN('\Pelagos\Entity\FundingOrganization', 'fo', 'WITH', 'fc.fundingOrganization = fo.id')
+            ->where('ds.datasetFileUri IS NOT null')
+            ->andWhere('fo.name = ?1')
+            ->setParameter(1, GOMRI_STRING)
+            ->getQuery();
+        $results = $query->getResult();
+
+        foreach ($results as $result) {
+            $monthDay = date(MONTH_DAY_FORMAT, $result['submissionTimeStamp']->getTimestamp());
+            $dataArray[$monthDay]['monthly_registered']++;
+        }
+
+        // Query Available (i.e. Datasets which are publicly available).
+        $qb = $entityManager->createQueryBuilder();
+
+        $qb2 = $entityManager->createQueryBuilder()
+            ->select('IDENTITY(ds2.dataset)')
+            ->from('\Pelagos\Entity\DatasetSubmission', 'ds2')
+            ->join('\Pelagos\Entity\Dataset', 'd2', 'WITH', 'ds2.dataset = d2.id')
+            ->where('ds2.id = d2.datasetSubmission')
+            ->andWhere('ds2.datasetFileUri is not null ')
+            ->andWhere('ds2.restrictions = ?3')
+            ->andWhere('ds2.datasetFileTransferStatus = ?4')
+            ->orWhere('ds2.datasetFileTransferStatus = ?5')
+            ->getQuery();
+
+        $query = $qb
+            ->select('d.acceptedDate')
+            ->from('\Pelagos\Entity\Dataset', 'd')
+            ->JOIN('\Pelagos\Entity\ResearchGroup', 'rg', 'WITH', 'd.researchGroup = rg.id')
+            ->JOIN('\Pelagos\Entity\FundingCycle', 'fc', 'WITH', 'rg.fundingCycle = fc.id')
+            ->JOIN('\Pelagos\Entity\FundingOrganization', 'fo', 'WITH', 'fc.fundingOrganization = fo.id')
+            ->where(
+                $qb->expr()->in('d.id', $qb2->getDQL())
+            )
+            ->andWhere('fo.name = ?1')
+            ->andWhere('d.datasetStatus = ?2')
+            ->setParameter(1, GOMRI_STRING)
+            ->setParameter(2, Dataset::DATASET_STATUS_ACCEPTED)
+            ->setParameter(3, DatasetSubmission::RESTRICTION_NONE)
+            ->setParameter(4, DatasetSubmission::TRANSFER_STATUS_COMPLETED)
+            ->setParameter(5, DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED)
+            ->getQuery();
+
+        $results = $query->getResult();
+
+        foreach ($results as $result) {
+            $monthDay = date(MONTH_DAY_FORMAT, $result['acceptedDate']->getTimestamp());
+            $dataArray[$monthDay]['monthly_available']++;
+        }
+
+        return $dataArray;
     }
 }
