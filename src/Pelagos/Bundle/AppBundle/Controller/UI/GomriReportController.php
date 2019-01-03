@@ -100,29 +100,27 @@ class GomriReportController extends ReportController
         $results = $query->getResult();
 
         foreach ($results as $result) {
-            $monthDay = date(MONTH_DAY_FORMAT, $result['creationTimeStamp']->getTimestamp());
+            $monthDay = date(MONTH_DAY_FORMAT, $result['approvedDate']->getTimestamp());
             $dataArray[$monthDay]['monthly_identified']++;
         }
 
-        // // Query Registered (i.e. Datasets which are submitted).
-        $queryString = 'SELECT datasetsubmission.creationTimeStamp ' .
-            'FROM ' . DatasetSubmission::class . ' datasetsubmission ' .
-            'JOIN datasetsubmission.dataset dataset ' .
-            'JOIN dataset.researchGroup researchgroup ' .
-            'JOIN researchgroup.fundingCycle fundingCycle ' .
-            'JOIN fundingCycle.fundingOrganization fundingOrganization ' .
-            'WHERE datasetsubmission IN ' .
-            '   (SELECT MIN(subdatasetsubmission.id)' .
-            '   FROM ' . DatasetSubmission::class . ' subdatasetsubmission' .
-            '   WHERE subdatasetsubmission.datasetFileUri IS NOT null ' .
-            '   GROUP BY subdatasetsubmission.dataset)' .
-            'AND fundingOrganization.name = :gomri ';
-        $query = $entityManager->createQuery($queryString);
-        $query->setParameters(array('gomri' => GOMRI_STRING,));
+        // Query Registered (i.e. Datasets which are submitted).
+        $qb = $entityManager->createQueryBuilder();
+        $query = $qb
+            ->select('ds.submissionTimeStamp')
+            ->from('\Pelagos\Entity\Dataset', 'd')
+            ->JOIN('\Pelagos\Entity\DatasetSubmission', 'ds', 'WITH', 'd.datasetSubmission = ds.id')
+            ->JOIN('\Pelagos\Entity\ResearchGroup', 'rg', 'WITH', 'd.researchGroup = rg.id')
+            ->JOIN('\Pelagos\Entity\FundingCycle', 'fc', 'WITH', 'rg.fundingCycle = fc.id')
+            ->JOIN('\Pelagos\Entity\FundingOrganization', 'fo', 'WITH', 'fc.fundingOrganization = fo.id')
+            ->where('ds.datasetFileUri IS NOT null')
+            ->andWhere('fo.name = ?1')
+            ->setParameter(1, GOMRI_STRING)
+            ->getQuery();
         $results = $query->getResult();
 
         foreach ($results as $result) {
-            $monthDay = date(MONTH_DAY_FORMAT, $result['creationTimeStamp']->getTimestamp());
+            $monthDay = date(MONTH_DAY_FORMAT, $result['submissionTimeStamp']->getTimestamp());
             $dataArray[$monthDay]['monthly_registered']++;
         }
 
