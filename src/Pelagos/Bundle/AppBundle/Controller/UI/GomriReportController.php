@@ -125,34 +125,41 @@ class GomriReportController extends ReportController
         }
 
         // Query Available (i.e. Datasets which are publicly available).
-        $queryString = 'SELECT datasetsubmission.creationTimeStamp ' .
-            'FROM ' . DatasetSubmission::class . ' datasetsubmission ' .
-            'JOIN datasetsubmission.dataset dataset ' .
-            'JOIN dataset.researchGroup researchgroup ' .
-            'JOIN researchgroup.fundingCycle fundingCycle ' .
-            'JOIN fundingCycle.fundingOrganization fundingOrganization ' .
-            'WHERE datasetsubmission IN ' .
-            '(SELECT MIN(subdatasetsubmission.id) ' .
-            '   FROM ' . DatasetSubmission::class . ' subdatasetsubmission' .
-            '   WHERE subdatasetsubmission.datasetFileUri is not null ' .
-            '   AND subdatasetsubmission.datasetStatus = :datasetStatus ' .
-            '   AND subdatasetsubmission.restrictions = :restrictions ' .
-            '   AND (subdatasetsubmission.datasetFileTransferStatus = :fileTransferStatusCompleted ' .
-            '       OR subdatasetsubmission.datasetFileTransferStatus = :fileTransferStatusRemotelyHosted) ' .
-            '   GROUP BY subdatasetsubmission.dataset)' .
-            'AND fundingOrganization.name = :gomri';
-        $query = $entityManager->createQuery($queryString);
-        $query->setParameters(array(
-            'datasetStatus' => Dataset::DATASET_STATUS_ACCEPTED,
-            'restrictions' => DatasetSubmission::RESTRICTION_NONE,
-            'fileTransferStatusCompleted' => DatasetSubmission::TRANSFER_STATUS_COMPLETED,
-            'fileTransferStatusRemotelyHosted' => DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED,
-            'gomri' => GOMRI_STRING,
-        ));
+        $qb = $entityManager->createQueryBuilder();
+
+        $qb2 = $entityManager->createQueryBuilder()
+            ->select('IDENTITY(ds2.dataset)')
+            ->from('\Pelagos\Entity\DatasetSubmission', 'ds2')
+            ->join('\Pelagos\Entity\Dataset', 'd2', 'WITH', 'ds2.dataset = d2.id')
+            ->where('ds2.id = d2.datasetSubmission')
+            ->andWhere('ds2.datasetFileUri is not null ')
+            ->andWhere('ds2.restrictions = ?3')
+            ->andWhere('ds2.datasetFileTransferStatus = ?4')
+            ->orWhere('ds2.datasetFileTransferStatus = ?5')
+            ->getQuery();
+
+        $query = $qb
+            ->select('d.acceptedDate')
+            ->from('\Pelagos\Entity\Dataset', 'd')
+            ->JOIN('\Pelagos\Entity\ResearchGroup', 'rg', 'WITH', 'd.researchGroup = rg.id')
+            ->JOIN('\Pelagos\Entity\FundingCycle', 'fc', 'WITH', 'rg.fundingCycle = fc.id')
+            ->JOIN('\Pelagos\Entity\FundingOrganization', 'fo', 'WITH', 'fc.fundingOrganization = fo.id')
+            ->where(
+                $qb->expr()->in('d.id', $qb2->getDQL())
+            )
+            ->andWhere('fo.name = ?1')
+            ->andWhere('d.datasetStatus = ?2')
+            ->setParameter(1, GOMRI_STRING)
+            ->setParameter(2, Dataset::DATASET_STATUS_ACCEPTED)
+            ->setParameter(3, DatasetSubmission::RESTRICTION_NONE)
+            ->setParameter(4, DatasetSubmission::TRANSFER_STATUS_COMPLETED)
+            ->setParameter(5, DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED)
+            ->getQuery();
+
         $results = $query->getResult();
 
         foreach ($results as $result) {
-            $monthDay = date(MONTH_DAY_FORMAT, $result['creationTimeStamp']->getTimestamp());
+            $monthDay = date(MONTH_DAY_FORMAT, $result['acceptedDate']->getTimestamp());
             $dataArray[$monthDay]['monthly_available']++;
         }
 
