@@ -83,20 +83,20 @@ class GomriReportController extends ReportController
             $dateTime->add(new DateInterval('P1M'));
         }
 
-      // Query Identified.
-        $queryString = 'SELECT dif.creationTimeStamp ' .
-            'FROM ' . Dataset::class . ' dataset ' .
-            'JOIN dataset.dif dif ' .
-            'JOIN dataset.researchGroup researchgroup ' .
-            'JOIN researchgroup.fundingCycle fundingCycle ' .
-            'JOIN fundingCycle.fundingOrganization fundingOrganization ' .
-            'WHERE fundingOrganization.name = :gomri ' .
-            'AND dif.status = :difStatusApproved';
-        $query = $entityManager->createQuery($queryString);
-        $query->setParameters(array(
-            'difStatusApproved' => DIF::STATUS_APPROVED,
-            'gomri' => GOMRI_STRING,
-        ));
+      // Query Identified (i.e. Datasets which have DIF approved).
+        $qb = $entityManager->createQueryBuilder();
+        $query = $qb
+            ->select('dif.approvedDate')
+            ->from('\Pelagos\Entity\Dataset', 'd')
+            ->JOIN('\Pelagos\Entity\Dif', 'dif', 'WITH', 'd.dif = dif.id')
+            ->JOIN('\Pelagos\Entity\ResearchGroup', 'rg', 'WITH', 'd.researchGroup = rg.id')
+            ->JOIN('\Pelagos\Entity\FundingCycle', 'fc', 'WITH', 'rg.fundingCycle = fc.id')
+            ->JOIN('\Pelagos\Entity\FundingOrganization', 'fo', 'WITH', 'fc.fundingOrganization = fo.id')
+            ->where('dif.status = ?1')
+            ->andWhere('fo.name = ?2')
+            ->setParameter(1, DIF::STATUS_APPROVED)
+            ->setParameter(2, GOMRI_STRING)
+            ->getQuery();
         $results = $query->getResult();
 
         foreach ($results as $result) {
@@ -104,7 +104,7 @@ class GomriReportController extends ReportController
             $dataArray[$monthDay]['monthly_identified']++;
         }
 
-        // Query Registered.
+        // // Query Registered (i.e. Datasets which are submitted).
         $queryString = 'SELECT datasetsubmission.creationTimeStamp ' .
             'FROM ' . DatasetSubmission::class . ' datasetsubmission ' .
             'JOIN datasetsubmission.dataset dataset ' .
@@ -126,7 +126,7 @@ class GomriReportController extends ReportController
             $dataArray[$monthDay]['monthly_registered']++;
         }
 
-        // Query Available.
+        // Query Available (i.e. Datasets which are publicly available).
         $queryString = 'SELECT datasetsubmission.creationTimeStamp ' .
             'FROM ' . DatasetSubmission::class . ' datasetsubmission ' .
             'JOIN datasetsubmission.dataset dataset ' .
