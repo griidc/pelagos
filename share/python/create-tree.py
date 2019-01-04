@@ -151,10 +151,12 @@ def generate_tree(filename, short):
                 print('File Listing:')
             print
 
-            lineCount = 0
             lastPath = ''
+            lineCount = 0
+            linenumberFormat = '{:>5d}'
             for path, size in sizes.iteritems():
                 lineCount += 1
+                # print linenumberFormat.format(lineCount)
                 if (short):
                     # Display directories only in short mode.
                     if(re.search("\|EOL:$", path)):
@@ -165,19 +167,20 @@ def generate_tree(filename, short):
                         lastPath = opPath
                 else:
                     opPath = re.sub('\|EOL:', '', path)
-                    #print repr(lineCount).rjust(5)
                     printPath(lastPath, opPath, intToSize(size))
                     lastPath = opPath
     else:
         print("Error in header. Stopping")
 
 def printPath(lastPath,path, sizeString):
+    #print path
     formatString = '{:110s} [{:>6s}]'
     lastPathParts = lastPath.split('/')
     pathParts = path.split('/')
     stringToPrint = ''
     lastLength = len(lastPathParts)
-    if lastPath == '': lastLength = 0
+    if lastPath == '':
+        lastLength = 0
     thisLength = len(pathParts)
     max = min(lastLength, thisLength)
 
@@ -197,7 +200,7 @@ def printPath(lastPath,path, sizeString):
         remainingPathNdx = ndx + 1
     #  in the case when this path is longer than the previous path print the rest of the path
     for ndx in range(remainingPathNdx, thisLength):
-        if ndx < thisLength:
+        if ndx < thisLength and lastPath != '':
             stringToPrint = stringToPrint + '/'
         stringToPrint = stringToPrint + pathParts[ndx]
 
