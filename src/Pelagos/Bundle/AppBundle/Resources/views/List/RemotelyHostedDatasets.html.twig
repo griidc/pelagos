@@ -1,0 +1,79 @@
+{% extends "PelagosAppBundle::layout.html.twig" %}
+
+{% block head %}
+    {{ add_library (
+        [
+            'ui.dialog'
+        ]
+    ) }}
+
+    {{ add_css (
+        [
+            '//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css',
+            '//cdn.datatables.net/select/1.2.3/css/select.dataTables.min.css',
+            '//cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css',
+        ]
+    ) }}
+
+    {{ add_js(
+        [
+            '//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js',
+            '//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js',
+        ]
+    ) }}
+
+    {% stylesheets
+        '@PelagosAppBundle/Resources/public/css/entity.css' %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets %}
+
+    {% javascripts
+        '@PelagosAppBundle/Resources/public/js/common.js'
+        '@PelagosAppBundle/Resources/public/js/remotelyHostedDatasets.js'
+    %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+{% endblock %}
+
+{% set properties = [
+    'id',
+    'udi',
+    'datasetSubmission.datasetFileUri',
+    'datasetStatus',
+] %}
+
+{% block body %}
+    <h2> Remotely Hosted Datasets</h2>
+    <table
+            id="remotelyHostedDatasetsTable"
+            class="stripe"
+            width="100%"
+            data-ajax='{
+                "url": "{{ path("pelagos_api_datasets_get_collection", {"availabilityStatus": "5,7", "datasetSubmission": "*", "_properties": properties | join(',')}) }}",
+                "dataSrc": "",
+                "cache": true
+            }'
+            data-columns='[
+                {"data": "id"},
+                {"data": "udi"},
+                {"data": "datasetSubmission.datasetFileUri"},
+                {"data": "datasetStatus"}
+            ]'
+            data-order='[
+                [ 1, "desc"]
+            ]'
+    >
+        <thead>
+        <tr>
+            <th>Dataset ID</th>
+            <th>UDI</th>
+            <th>URL</th>
+            <th>Dataset Status</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+{% endblock %}
