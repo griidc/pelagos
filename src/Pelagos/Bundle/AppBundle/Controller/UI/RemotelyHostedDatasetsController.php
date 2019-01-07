@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -29,5 +28,4 @@ class RemotelyHostedDatasetsController extends UIController
         $GLOBALS['pelagos']['title'] = 'Remotely Hosted Datasets';
         return $this->render('PelagosAppBundle:List:RemotelyHostedDatasets.html.twig');
     }
-
 }
