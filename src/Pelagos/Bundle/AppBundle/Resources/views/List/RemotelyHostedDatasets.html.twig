@@ -50,7 +50,7 @@
             class="stripe"
             width="100%"
             data-ajax='{
-                "url": "{{ path("pelagos_api_datasets_get_collection", {"availabilityStatus": "5,7", "datasetSubmission": "*", "_properties": properties | join(',')}) }}",
+                "url": "{{ path("pelagos_api_datasets_get_collection", {"datasetSubmission.datasetFileTransferStatus": "RemotelyHosted", "_properties": properties | join(',')}) }}",
                 "dataSrc": "",
                 "cache": true
             }'
