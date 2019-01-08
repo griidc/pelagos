@@ -8,6 +8,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -238,6 +240,21 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             $datasetSubmissionStatus = $datasetSubmission->getStatus();
         }
 
+        //Tidy GML.
+        $gml = tidy_parse_string(
+            $datasetSubmission->getSpatialExtent(),
+            array(
+                'input-xml' => true,
+                'output-xml' => true,
+                'indent' => true,
+                'indent-spaces' => 4,
+                'wrap' => 0,
+            ),
+            'utf8'
+        );
+
+        $datasetSubmission->setSpatialExtent($gml);
+
         $form = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionType::class,
@@ -254,6 +271,41 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                 ),
             )
         );
+
+        // Overwrite the spatial extent field which is normally a hidden type.
+        $form->add('spatialExtent', TextareaType::class, array(
+            'label' => 'Spatial Extent GML',
+            'required' => false,
+            'attr' => array(
+                'rows' => '10',
+                'readonly' => 'true'
+            ),
+        ));
+
+        // Add file name, hash and filesize.
+        $form->add('datasetFileName', TextType::class, array(
+            'label' => 'Dataset File Name',
+            'required' => false,
+            'attr' => array(
+                'readonly' => 'true'
+            ),
+        ));
+
+        $form->add('datasetFileSize', TextType::class, array(
+            'label' => 'Dataset Filesize',
+            'required' => false,
+            'attr' => array(
+                'readonly' => 'true'
+            ),
+        ));
+
+        $form->add('datasetFileSha256Hash', TextType::class, array(
+            'label' => 'Dataset SHA256 hash',
+            'required' => false,
+            'attr' => array(
+                'readonly' => 'true'
+            ),
+        ));
 
         $showForceImport = false;
         $showForceDownload = false;
@@ -510,8 +562,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
         $datasetSubmission->setDatasetFileName(null);
         $datasetSubmission->setDatasetFileSize(null);
-        $datasetSubmission->setDatasetFileMd5Hash(null);
-        $datasetSubmission->setDatasetFileSha1Hash(null);
         $datasetSubmission->setDatasetFileSha256Hash(null);
         $this->messages[] = array(
             'body' => $datasetSubmission->getId(),

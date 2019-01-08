@@ -316,16 +316,6 @@ class DatasetSubmissionTest extends TestCase
             1234,
             $this->datasetSubmission->getDatasetFileSize()
         );
-        $this->datasetSubmission->setDatasetFileMd5Hash('deadbeef');
-        $this->assertEquals(
-            'deadbeef',
-            $this->datasetSubmission->getDatasetFileMd5hash()
-        );
-        $this->datasetSubmission->setDatasetFileSha1Hash('decaf');
-        $this->assertEquals(
-            'decaf',
-            $this->datasetSubmission->getDatasetFileSha1hash()
-        );
         $this->datasetSubmission->setDatasetFileSha256Hash('cafe');
         $this->assertEquals(
             'cafe',

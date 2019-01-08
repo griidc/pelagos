@@ -5,6 +5,9 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -53,7 +56,7 @@ class SideBySideController extends UIController
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirect('/user/login?destination=' . $request->getPathInfo());
         }
-        
+
         if (!$this->isGranted(array('ROLE_DATA_REPOSITORY_MANAGER', 'ROLE_SUBJECT_MATTER_EXPERT'))) {
             return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
         }
@@ -100,7 +103,7 @@ class SideBySideController extends UIController
             $data['modificationtimestamp'] = $submission->getModificationTimeStamp()->format('c');
             $submissions[] = $data;
         }
-        
+
         $dataset = $datasetSubmissionHistory->first()->getDataset();
         $submissions['datasetstatus'] = Dataset::DATASET_STATUSES[$dataset->getDatasetStatus()];
         $submissions['udi'] = $dataset->getUdi();
@@ -164,6 +167,41 @@ class SideBySideController extends UIController
         }
 
         $form = $this->get('form.factory')->createNamed(null, DatasetSubmissionType::class, $datasetSubmission);
+
+        //Overwrite the spatial extent field which is normally a hidden type.
+        $form->add('spatialExtent', TextareaType::class, array(
+            'label' => 'Spatial Extent GML',
+            'required' => false,
+            'attr' => array(
+                'rows' => '10',
+                'readonly' => 'true'
+            ),
+        ));
+
+        // Add file name, hash and filesize.
+        $form->add('datasetFileName', TextType::class, array(
+            'label' => 'Dataset File Name',
+            'required' => false,
+            'attr' => array(
+                'readonly' => 'true'
+            ),
+        ));
+
+        $form->add('datasetFileSha256Hash', TextType::class, array(
+            'label' => 'Dataset SHA256 hash',
+            'required' => false,
+            'attr' => array(
+                'readonly' => 'true'
+            ),
+        ));
+
+        $form->add('datasetFileSize', TextType::class, array(
+            'label' => 'Dataset Filesize',
+            'required' => false,
+            'attr' => array(
+                'readonly' => 'true'
+            ),
+        ));
 
         $terminateResponse = new TerminateResponse();
 
