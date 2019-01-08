@@ -652,16 +652,23 @@ $(document).ready(function(){
         });
     });
 
-    $("#erddapUrl").change(function () {
+    var erddapUrl = $("#erddapUrl");
+
+    erddapUrl.change(function () {
         $.ajax({
             url: Routing.generate("pelagos_api_dataset_submission_validate_url", { id: $("form[datasetsubmission]").attr("datasetsubmission") }),
             type: "PUT",
-            data: {"url": $("#erddapUrl").val()},
+            data: {"url": erddapUrl.val()},
             success: function () {
-                // To do //
+                $(this).valid();
+                erddapUrl
+                    .removeClass("error");
             },
             error: function () {
-                // To do //
+                erddapUrl
+                    .addClass("error")
+                    .removeClass("valid")
+                    .after("<label for=\"erddapUrl\" class=\"error\">Please provide a valid URL.</label>");
             }
         });
     });
