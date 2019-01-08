@@ -34,7 +34,7 @@ class DefaultController extends Controller
     {
         return $this->render('PelagosAppBundle:Default:admin.html.twig');
     }
-    
+
     /**
      * Get the sitemap.xml containing all dataset urls.
      *
@@ -44,17 +44,19 @@ class DefaultController extends Controller
     {
         $container = $this->container;
         $response = new StreamedResponse(function () use ($container) {
-            $datasets = $container->get('pelagos.entity.handler')->getBy(
-                Dataset::class,
+
+            $entityManager = $container->get('doctrine.orm.entity_manager');
+
+            $datasets = $entityManager->getRepository(Dataset::class)->findBy(
                 array(
-                    'availabilityStatus' => DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE
-                ),
-                array(),
-                array(
-                    'udi',
-                ),
-                Query::HYDRATE_ARRAY
+                    'availabilityStatus' =>
+                    array(
+                        DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
+                        DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
+                    )
+                )
             );
+
             echo $this->renderView(
                 'PelagosAppBundle:Default:sitemap.xml.twig',
                 array(
@@ -62,9 +64,9 @@ class DefaultController extends Controller
                 )
             );
         });
-        
+
         $response->headers->set('Content-Type', 'text/xml');
-        
+
         return $response;
     }
 }
