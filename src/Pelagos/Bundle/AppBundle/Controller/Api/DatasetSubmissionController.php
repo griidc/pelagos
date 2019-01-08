@@ -249,8 +249,9 @@ class DatasetSubmissionController extends EntityController
 
     /**
      * Validate the url of the attribute.
-     * @param string  $id
-     * @param Request $request
+     *
+     * @param string  $id      The id of the dataset submission.
+     * @param Request $request The request object.
      *
      * @Rest\Put("/validate-url/{id}")
      *
