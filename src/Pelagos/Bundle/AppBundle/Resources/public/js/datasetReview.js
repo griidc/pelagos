@@ -652,6 +652,19 @@ $(document).ready(function(){
         });
     });
 
+    $("#erddapUrl").change(function () {
+        $.ajax({
+            url: Routing.generate("pelagos_api_dataset_submission_validate_url", { id: $("form[datasetsubmission]").attr("datasetsubmission") }),
+            type: "PUT",
+            data: {"url": $("#erddapUrl").val()},
+            success: function () {
+                // To do //
+            },
+            error: function () {
+                // To do //
+            }
+        });
+    });
 });
 
 function checkSpatial(isNonSpatial) {
