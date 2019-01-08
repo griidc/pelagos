@@ -59,7 +59,8 @@ class GomriReportController extends ReportController
             '.csv';
         // Add header to CSV.
         return $this->writeCsvResponse(
-            $this->getData(), $customFileName
+            $this->getData(),
+            $customFileName
         );
     }
 
