@@ -54,9 +54,12 @@ class GomriReportController extends ReportController
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
         }
+        $customFileName = 'GomriReport-v2-' .
+            (new DateTime('now'))->format(self::FILENAME_DATETIMEFORMAT) .
+            '.csv';
         // Add header to CSV.
         return $this->writeCsvResponse(
-            $this->getData()
+            $this->getData(), $customFileName
         );
     }
 
