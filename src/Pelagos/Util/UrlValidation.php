@@ -2,9 +2,9 @@
 
 namespace Pelagos\Util;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
-
+/**
+ * A class for validating the urls.
+ */
 class UrlValidation
 {
 
@@ -13,7 +13,7 @@ class UrlValidation
      *
      * @param string $url The Url that needs to be validated.
      *
-     * @throws \Exception
+     * @throws \Exception When the given url does not return a success.
      *
      * @return boolean
      */
