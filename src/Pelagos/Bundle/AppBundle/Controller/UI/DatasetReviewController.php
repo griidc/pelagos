@@ -379,8 +379,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         // The latest submission is complete, so create new one based on it.
         $datasetSubmission = new DatasetSubmission($datasetSubmission);
         $reviewedBy = $this->getUser()->getPerson();
-        $reviewStartTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
-        $datasetSubmissionReview = new DatasetSubmissionReview($datasetSubmission, $reviewedBy, $reviewStartTimeStamp);
         $datasetSubmission->setDatasetSubmissionReviewStatus();
         $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_IN_REVIEW);
         $datasetSubmission->setModifier($reviewedBy);
@@ -389,9 +387,13 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         // Create Dataset submission entity.
 
         $this->createEntity($datasetSubmission);
-
+        $reviewStartTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
+        $datasetSubmissionReview = new DatasetSubmissionReview($reviewedBy, $reviewStartTimeStamp);
         // Create Dataset submission Review entity for the datatset submission.
         $this->createEntity($datasetSubmissionReview);
+
+        $datasetSubmission->setDatasetSubmissionReview($datasetSubmissionReview);
+        $this->entityHandler->update($datasetSubmission);
 
         $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
             $datasetSubmission,

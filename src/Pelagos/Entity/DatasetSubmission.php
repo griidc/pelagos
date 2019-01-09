@@ -376,7 +376,7 @@ class DatasetSubmission extends Entity
      *
      * @var DatasetSubmissionReview
      *
-     * @ORM\OneToOne(targetEntity="DatasetSubmissionReview", mappedBy="datasetSubmission", cascade={"remove"})
+     * @ORM\OneToOne(targetEntity="DatasetSubmissionReview", cascade={"persist"}, orphanRemoval=true)
      */
     protected $datasetSubmissionReview;
 
