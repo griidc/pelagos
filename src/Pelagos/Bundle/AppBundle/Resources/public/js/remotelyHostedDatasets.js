@@ -31,6 +31,13 @@ $(document).ready(function(){
                     "caseInsensitive": true
                 },
                 "select": "single",
+                "columnDefs": [
+                    {
+                        "targets": 0,
+                        "visible": false,
+                        "searchable": false
+                    }
+                ]
             }, options
             )
         );
