@@ -655,22 +655,24 @@ $(document).ready(function(){
     var erddapUrl = $("#erddapUrl");
 
     erddapUrl.change(function () {
-        $.ajax({
-            url: Routing.generate("pelagos_api_dataset_submission_validate_url", { id: $("form[datasetsubmission]").attr("datasetsubmission") }),
-            type: "PUT",
-            data: {"url": erddapUrl.val()},
-            success: function () {
-                $(this).valid();
-                erddapUrl
-                    .removeClass("error");
-            },
-            error: function () {
-                erddapUrl
-                    .addClass("error")
-                    .removeClass("valid")
-                    .after("<label for=\"erddapUrl\" class=\"error\">Please provide a valid URL.</label>");
-            }
-        });
+        if ($(this).valid()) {
+            $.ajax({
+                url: Routing.generate("pelagos_api_dataset_submission_validate_url", { id: $("form[datasetsubmission]").attr("datasetsubmission") }),
+                type: "PUT",
+                data: {"url": erddapUrl.val()},
+                success: function () {
+                    $(this).valid();
+                    erddapUrl
+                        .removeClass("error");
+                },
+                error: function () {
+                    erddapUrl
+                        .addClass("error")
+                        .removeClass("valid")
+                        .after("<label for=\"erddapUrl\" class=\"error\">Page not found, Please enter a valid URL.</label>");
+                }
+            });
+        }
     });
 });
 
