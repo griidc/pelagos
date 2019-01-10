@@ -1,6 +1,8 @@
 var $ = jQuery.noConflict();
 
 $(document).ready(function() {
+    var datasetSubHistory = [];
+    var datasetSubmissionId = "";
     $("#view-dataset-summary").click(function() {
         var properties = [
             "creator",
@@ -33,6 +35,8 @@ $(document).ready(function() {
                 $("#summary-display").val(JSON.stringify(data, undefined, 4));
                 $("#download-dataset-summary").prop("disabled", false);
                 $("#delete-dataset").attr("datasetId", data[0].id);
+                datasetSubHistory = data[0].datasetSubmissionHistory;
+                datasetSubmissionId = data[0].datasetSubmission.id;
             }
         });
     });
@@ -42,6 +46,25 @@ $(document).ready(function() {
     });
     $("#delete-dataset").click(function() {
         if (confirm("Are you sure you want to delete all records for this dataset?")) {
+            for (var i=0; i< datasetSubHistory.length; i++) {
+                if (datasetSubHistory[i].id !== datasetSubmissionId) {
+                    $.ajax({
+                        url: Routing.generate("pelagos_api_dataset_submission_delete", { id:datasetSubHistory[i].id }),
+                        method: "DELETE",
+                        success: function() {
+                            $("#summary-display").val("Deleting Dataset Submissions");
+                        },
+                        error: function(jqXHR, textStatus) {
+                            if (jqXHR.responseJSON == undefined) {
+                                $("#summary-display").val(jqXHR.statusText);
+                            } else {
+                                $("#summary-display").val(JSON.stringify(jqXHR.responseJSON, undefined, 4));
+                            }
+                        }
+                    });
+                }
+            }
+
             $.ajax({
                 url: Routing.generate("pelagos_api_datasets_delete", { id: $(this).attr("datasetId") }),
                 method: "DELETE",
