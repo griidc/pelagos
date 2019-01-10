@@ -29,7 +29,7 @@ class UrlValidation
         //check to see if it worked.
         if (200 !== $httpCode) {
 
-            return "Could not get URL, returned HTTP code:$httpCode";
+            return "Could not get URL, returned HTTP code $httpCode";
         }
 
         return true;
