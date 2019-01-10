@@ -253,7 +253,7 @@ class DatasetSubmissionController extends EntityController
      * @param string  $id      The id of the dataset submission.
      * @param Request $request The request object.
      *
-     * @Rest\Put("/validate-url/{id}")
+     * @Rest\Get("/validate-url/{id}")
      *
      * @Rest\View()
      *
@@ -263,6 +263,6 @@ class DatasetSubmissionController extends EntityController
     {
         $urlValidationService = $this->get('pelagos.util.url_validation');
 
-        return $urlValidationService->validateUrl($request->get('url'));
+        return $urlValidationService->validateUrl($request->get('erddapUrl'));
     }
 }

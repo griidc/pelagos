@@ -28,7 +28,8 @@ class UrlValidation
 
         //check to see if it worked.
         if (200 !== $httpCode) {
-            throw new \Exception("url failed with:$httpCode($output)", $httpCode);
+
+            return "Could not get URL, returned HTTP code:$httpCode";
         }
 
         return true;

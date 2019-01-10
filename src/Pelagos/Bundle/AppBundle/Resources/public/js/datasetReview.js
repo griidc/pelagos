@@ -38,16 +38,21 @@ $(document).ready(function(){
         return this.optional(element) || ((Date.parse(value)) && regPattern.test(value));
     });
 
+    var remoteURL = Routing.generate("pelagos_api_dataset_submission_validate_url", { id: $("form[datasetsubmission]").attr("datasetsubmission") });
+
     regForm.validate({
         rules: {
             referenceDate: "trueISODate",
             temporalExtentBeginPosition: "trueISODate",
             temporalExtentEndPosition: "trueISODate",
+            erddapUrl: {
+                remote: remoteURL
+            }
         },
         messages: {
             referenceDate: "It is not a valid ISO date",
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
-            temporalExtentEndPosition: "End Date is not a valid ISO date"
+            temporalExtentEndPosition: "End Date is not a valid ISO date",
         },
         ignore: ".ignore,.prototype",
         submitHandler: function(form) {
@@ -650,29 +655,6 @@ $(document).ready(function(){
                     }
               }
         });
-    });
-
-    var erddapUrl = $("#erddapUrl");
-
-    erddapUrl.change(function () {
-        if ($(this).valid()) {
-            $.ajax({
-                url: Routing.generate("pelagos_api_dataset_submission_validate_url", { id: $("form[datasetsubmission]").attr("datasetsubmission") }),
-                type: "PUT",
-                data: {"url": erddapUrl.val()},
-                success: function () {
-                    $(this).valid();
-                    erddapUrl
-                        .removeClass("error");
-                },
-                error: function () {
-                    erddapUrl
-                        .addClass("error")
-                        .removeClass("valid")
-                        .after("<label for=\"erddapUrl\" class=\"error\">Page not found, Please enter a valid URL.</label>");
-                }
-            });
-        }
     });
 });
 
