@@ -28,4 +28,5 @@ class RemotelyHostedDatasetsController extends UIController
         $GLOBALS['pelagos']['title'] = 'Remotely Hosted Datasets';
         return $this->render('PelagosAppBundle:List:RemotelyHostedDatasets.html.twig');
     }
+
 }

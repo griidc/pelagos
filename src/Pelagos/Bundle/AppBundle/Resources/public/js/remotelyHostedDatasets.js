@@ -1,9 +1,18 @@
 var $ = jQuery.noConflict();
+
+//FOUC preventor
+$("html").hide();
+
 $(document).ready(function(){
     "use strict";
     $("#remotelyHostedDatasetsTable").pelagosDataTable();
-});
 
+    $("html").show();
+
+    $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");
+    $("button").button();
+    
+});
 
 (function($) {
     "use strict";
