@@ -46,7 +46,7 @@ class RemotelyHostedDatasetsController extends UIController
      *
      * @Method("POST")
      *
-     * @return TerminateResponse A response.
+     * @return Response A response.
      */
     public function postAction(Request $request)
     {
@@ -54,7 +54,29 @@ class RemotelyHostedDatasetsController extends UIController
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
         }
-        
-        return new TerminateResponse('', 204);
+
+        $udi = $request->attributes->get('udi');
+        $datasets = $this->entityHandler->getBy(Dataset::class, array('udi' => $udi));
+
+        if (!empty($datasets)) {
+            $dataset = $datasets[0];
+            $datasetSubmission = $dataset->getDatasetSubmission();
+            $datasetStatus = $dataset->getDatasetStatus();
+
+            if ($datasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
+                if (DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED !== $datasetSubmission->getDatasetFileTransferStatus()) {
+                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
+                    return new Response('Dataset UDI ' . $udi .' has been successfully set to remotely hosted.' , Response::HTTP_OK);
+                } else {
+                    $message = 'Dataset UDI ' . $udi . ' is already set to remotely hosted.';
+                }
+            } else {
+                $message = 'Unable to set dataset UDI ' . $udi . ' to remotely hosted. Dataset status must be ACCEPTED.';
+            }
+        } else {
+            $message = 'Invalid UDI!';
+        }
+        //return 202 Accepted for accepted but not processed request
+        return new Response($message , Response::HTTP_ACCEPTED);
     }
 }

@@ -15,14 +15,30 @@ $(document).ready(function(){
 
         $.ajax({
             type: "POST",
-            url: Routing.generate("pelagos_app_ui_remotelyhosteddatasets_post"),
-            data: {
-                udi: $("#udiInput").val().trim()
-            },
+            url: Routing.generate("pelagos_app_ui_remotelyhosteddatasets_post", {udi : $("#udiInput").val().trim()}),
         }).done(function(data, textStatus, jqXHR){
-            alert();
-        }).fail(function(jqXHR, textStatus, errorThrown){
-            alert("FAIL");
+            var messageType = "success";
+            //return informative message for 202 code
+            if (202 === jqXHR.status ) {
+                messageType = "warning";
+            } else {
+                //reset table
+            }
+            var n = noty(
+                {
+                    layout: "top",
+                    theme: "relax",
+                    type: messageType,
+                    text: data,
+                    timeout: 4000,
+                    modal: false,
+                    animation: {
+                        open: "animated fadeIn", // Animate.css class names
+                        close: "animated fadeOut", // Animate.css class names
+                        easing: "swing", // unavailable - no need
+                        speed: 500 // unavailable - no need
+                    }
+                });
         });
     });
 
