@@ -55,19 +55,6 @@ def splitall(path):
             allparts.insert(0, parts[1])
     return allparts
 
-# Converts bytes into human-readable form, ex TB/GB/MB/KB/Bytes based on size.
-def intToSize(size):
-    if (size >= 10**12):
-        return(str(size/10**12) + " TB")
-    elif (size >= 10**9):
-        return(str(size/10**9) + " GB")
-    elif (size >= 10**6):
-        return(str(size/10**6) + " MB")
-    elif (size >= 10**3):
-        return(str(size/10**3) + " KB")
-    else:
-        return(str(size) + " Bytes")
-
 
 def generate_tree(filename, short):
     path = check_header(filename)

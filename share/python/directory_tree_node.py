@@ -5,12 +5,20 @@ import platform
 
 '''
 @author: jvh
+This class models a node in a tree of nodes
+representing a node in a file system directory tree.
+Each node has a name and a size in bytes. The name 
+represents the name of the node in the directory/filename
+path.
+
+There are class functions, as opposed to member functions, that
+enable higher level operations like
 '''
 
 
 
 class DirectoryTreeNode(object):
-    def __init__(self, name, size):
+    def __init__(self, name, size=0):
         self.size = size
         self.name = name
         self.children = set()
@@ -47,6 +55,11 @@ class DirectoryTreeNode(object):
     def __str__(self):
         return '\nNode: ' + self.name + ', size: ' + self.size
 
+    # This function searches the tree starting
+    # at this node, for a node with the name supplied.
+    # It recursivly seaches the tree by traversing the children nodes.
+    # The first node matching the targetName is returned.
+    # If the search does not find a matching node None is returned.
     def find(self,targetName):
         if self.name == targetName:
             return self
@@ -57,6 +70,9 @@ class DirectoryTreeNode(object):
                 return foundNode
         return None
 
+    # seach the children of this node
+    # for a node with the targetName name
+    # If a matching node is not found return None
     def findInChildren(self,targetName):
         childrenList = self.getChildren()
         for child in childrenList:
@@ -64,7 +80,10 @@ class DirectoryTreeNode(object):
                 return child
         return None
 
-    def printTree(self,indentations):
+    # Print the tree starting at this node.
+    # This function indents each succesive child
+    # by one additional level.
+    def printTree(self,indentations=0):
         global SPACING
         formatString = '{:75s} [{:>6s}]'
         s = DirectoryTreeNode.getIndentationPrefix(indentations)
@@ -114,6 +133,9 @@ class DirectoryTreeNode(object):
             currentNode = node
         return True
 
+    # return a string that is composed of spaces
+    # and the StructureDelimiter string which
+    # indicates the parent directory.
     @classmethod
     def getIndentationPrefix(cls,indentations):
         if indentations <= 0:
@@ -127,10 +149,14 @@ class DirectoryTreeNode(object):
         s = s + StructureDelimiter
         return s
 
+    # This function is currently only used by main which
+    # which is a unit test.
+    # This takes a collection of directory paths
+    # and using buildTree makes a tree for each path
+    # in filePaths.
     @classmethod
     def buildPathTree(cls,filePaths):
         global pathString
-        print("\nBuild Tree")
         global root
         for path in filePaths:
             print(path)
@@ -157,7 +183,7 @@ class DirectoryTreeNode(object):
 
 
 root = DirectoryTreeNode('root',0)
-StructureDelimiter = '|___'
+StructureDelimiter = '|----'
 SPACING = len(StructureDelimiter)
 def main():
     filePaths = [
