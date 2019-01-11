@@ -38,6 +38,7 @@
         {{ add_js(asset_url) }}
     {% endjavascripts %}
 
+    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
 {% endblock %}
 
 {% set properties = [
@@ -53,14 +54,13 @@
     <div class="cleair">
         <fieldset>
             <form id="updateForm">
-                <label for="udi"><b>Unique Dataset Identifier (UDI): </b></label>
-                <input minlength="16" type="text" id="udi" name="udi" style="width: 80%" required>
-                <button name="updatebutton" id="updatebutton"
-                        type="button"
-                        onclick="window.location.href='{{ path('pelagos_app_ui_remotelyhosteddatasets_default') }}?udi=' +
-                                document.getElementById('udi').value.trim();">Mark as Remotely Hosted
+                <label for="udiInput"><b>Unique Dataset Identifier (UDI): </b></label>
+                <input minlength="16" type="text" id="udiInput" name="udiInput" style="width: 80%" required>
+                <button name="updateButton" id="updateButton"
+                        type="button" disabled>
+                    Mark as Remotely Hosted
                 </button>
-                <label class="error" for="udi"></label>
+                <label class="error" for="udiInput"></label>
             </form>
         </fieldset>
         <fieldset>

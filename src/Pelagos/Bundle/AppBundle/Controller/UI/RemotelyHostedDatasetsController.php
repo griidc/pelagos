@@ -2,7 +2,15 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
+use Pelagos\Entity\Dataset;
+use Pelagos\Entity\DatasetSubmission;
+
+use Pelagos\Response\TerminateResponse;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * The Remotely Hosted Datasets list controller.
@@ -12,11 +20,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 class RemotelyHostedDatasetsController extends UIController
 {
     /**
-     * Remotely Hosted Datasets UI.
+     * Default action of Remotely Hosted Datasets.
      *
      * @Route("")
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response A response instance.
      */
     public function defaultAction()
     {
@@ -29,4 +37,24 @@ class RemotelyHostedDatasetsController extends UIController
         return $this->render('PelagosAppBundle:List:RemotelyHostedDatasets.html.twig');
     }
 
+    /**
+     * Mark as Remotely Hosted Dataset.
+     *
+     * @param Request $request The Symfony request object.
+     *
+     * @Route("/{udi}")
+     *
+     * @Method("POST")
+     *
+     * @return TerminateResponse A response.
+     */
+    public function postAction(Request $request)
+    {
+        // Checks authorization of users
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
+        
+        return new TerminateResponse('', 204);
+    }
 }

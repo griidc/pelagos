@@ -10,9 +10,37 @@ $(document).ready(function(){
     $("html").show();
 
     $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");
-    $("button").button();
-    
+
+    $("#updateButton").button().click(function(){
+
+        $.ajax({
+            type: "POST",
+            url: Routing.generate("pelagos_app_ui_remotelyhosteddatasets_post"),
+            data: {
+                udi: $("#udiInput").val().trim()
+            },
+        }).done(function(data, textStatus, jqXHR){
+            alert();
+        }).fail(function(jqXHR, textStatus, errorThrown){
+            alert("FAIL");
+        });
+    });
+
+    //enable/disable button on field input
+    $("#udiInput").on("input", function() {
+       if ("" === $(this).val().trim()) {
+           $("#updateButton").button({
+              disabled : true
+           });
+       } else {
+           $("#updateButton").button({
+              disabled : false
+           });
+       }
+    });
+
 });
+
 
 (function($) {
     "use strict";
