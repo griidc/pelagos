@@ -161,7 +161,6 @@ def generate_tree(filename, short):
 
 directoryTreeNodeRoot = DirectoryTreeNode('root',0)
 
-StructureDelimiter = '|___'
 def main(argv, script_name):
     parser = argparse.ArgumentParser()
     # Stores args.d boolean, true if -d is set, false otherwise.
