@@ -66,6 +66,9 @@ class RemotelyHostedDatasetsController extends UIController
             if ($datasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
                 if (DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED !== $datasetSubmission->getDatasetFileTransferStatus()) {
                     $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
+
+                    $actor = $this->get('security.token_storage')->getToken()->getUser()->getUserId();
+                    $this->dispatchLogEvent($dataset, $actor);
                     return new Response('Dataset UDI ' . $udi .' has been successfully set to remotely hosted.' , Response::HTTP_OK);
                 } else {
                     $message = 'Dataset UDI ' . $udi . ' is already set to remotely hosted.';
@@ -78,5 +81,29 @@ class RemotelyHostedDatasetsController extends UIController
         }
         //return 202 Accepted for accepted but not processed request
         return new Response($message , Response::HTTP_ACCEPTED);
+    }
+
+    /**
+     * Log Mark as Remotely Hosted changes.
+     *
+     * @param Dataset $dataset          The dataset having restrictions modified.
+     * @param string  $actor            The username of the person modifying the restriction.
+     *
+     * @return void
+     */
+    private function dispatchLogEvent(Dataset $dataset, $actor)
+    {
+        $em = $this->container->get('doctrine')->getManager();
+        $this->container->get('pelagos.event.log_action_item_event_dispatcher')->dispatch(
+            array(
+                'actionName' => 'Mark as Remotely Hosted',
+                'subjectEntityName' => $em->getClassMetadata(get_class($dataset))->getName(),
+                'subjectEntityId' => $dataset->getId(),
+                'payLoad' => array(
+                    'userId' => $actor,
+                )
+            ),
+            'restrictions_log'
+        );
     }
 }
