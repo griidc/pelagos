@@ -3,6 +3,7 @@ var $ = jQuery.noConflict();
 $(document).ready(function() {
     var datasetSubHistory = [];
     var datasetSubmissionId = "";
+    var deleteDataset = $("#delete-dataset");
     $("#view-dataset-summary").click(function() {
         var properties = [
             "creator",
@@ -34,7 +35,7 @@ $(document).ready(function() {
             } else {
                 $("#summary-display").val(JSON.stringify(data, undefined, 4));
                 $("#download-dataset-summary").prop("disabled", false);
-                $("#delete-dataset").attr("datasetId", data[0].id);
+                deleteDataset.attr("datasetId", data[0].id);
                 datasetSubHistory = data[0].datasetSubmissionHistory;
                 datasetSubmissionId = data[0].datasetSubmission.id;
             }
@@ -42,47 +43,52 @@ $(document).ready(function() {
     });
     $("#download-dataset-summary").click(function() {
         saveTextAsFile($("#summary-display").val(),  $("#udi").val() + ".json")
-        $("#delete-dataset").prop("disabled", false);
+        deleteDataset.prop("disabled", false);
     });
-    $("#delete-dataset").click(function() {
+    deleteDataset.click(function() {
         if (confirm("Are you sure you want to delete all records for this dataset?")) {
-            for (var i=0; i< datasetSubHistory.length; i++) {
-                if (datasetSubHistory[i].id !== datasetSubmissionId) {
-                    $.ajax({
-                        url: Routing.generate("pelagos_api_dataset_submission_delete", { id:datasetSubHistory[i].id }),
-                        method: "DELETE",
-                        success: function() {
-                            $("#summary-display").val("Deleting Dataset Submissions");
-                        },
-                        error: function(jqXHR, textStatus) {
-                            if (jqXHR.responseJSON == undefined) {
-                                $("#summary-display").val(jqXHR.statusText);
-                            } else {
-                                $("#summary-display").val(JSON.stringify(jqXHR.responseJSON, undefined, 4));
-                            }
+            $.when(
+                $.Deferred(function () {
+                    for (var i=0; i< datasetSubHistory.length; i++) {
+                        if (datasetSubHistory[i].id !== datasetSubmissionId) {
+                            $.ajax({
+                                url: Routing.generate("pelagos_api_dataset_submission_delete", { id:datasetSubHistory[i].id }),
+                                method: "DELETE",
+                                success: function() {
+                                    $("#summary-display").val("Deleting Dataset Submissions");
+                                },
+                                error: function(jqXHR, textStatus) {
+                                    if (jqXHR.responseJSON == undefined) {
+                                        $("#summary-display").val(jqXHR.statusText);
+                                    } else {
+                                        $("#summary-display").val(JSON.stringify(jqXHR.responseJSON, undefined, 4));
+                                    }
+                                }
+                            });
                         }
-                    });
-                }
-            }
-
-            $.ajax({
-                url: Routing.generate("pelagos_api_datasets_delete", { id: $(this).attr("datasetId") }),
-                method: "DELETE",
-                success: function() {
-                    $("#summary-display").val("Dataset deleted!");
-                },
-                error: function(jqXHR, textStatus) {
-                    if (jqXHR.responseJSON == undefined) {
-                        $("#summary-display").val(jqXHR.statusText);
-                    } else {
-                        $("#summary-display").val(JSON.stringify(jqXHR.responseJSON, undefined, 4));
                     }
-                }
+                    this.resolve();
+                })
+            ).then(function () {
+                $.ajax({
+                    url: Routing.generate("pelagos_api_datasets_delete", { id: deleteDataset.attr("datasetId") }),
+                    method: "DELETE",
+                    success: function() {
+                        $("#summary-display").val("Dataset deleted!");
+                    },
+                    error: function(jqXHR, textStatus) {
+                        if (jqXHR.responseJSON == undefined) {
+                            $("#summary-display").val(jqXHR.statusText);
+                        } else {
+                            $("#summary-display").val(JSON.stringify(jqXHR.responseJSON, undefined, 4));
+                        }
+                    }
+                });
             });
         }
     });
     $("#udi").on("input", function() {
-        $("#delete-dataset").prop("disabled", true);
+        deleteDataset.prop("disabled", true);
         $("#download-dataset-summary").prop("disabled", true);
         $("#summary-display").val("");
     });
