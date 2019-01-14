@@ -69,7 +69,7 @@ class RemotelyHostedDatasetsController extends UIController
 
                     $actor = $this->get('security.token_storage')->getToken()->getUser()->getUserId();
                     $this->dispatchLogEvent($dataset, $actor);
-                    return new Response('Dataset UDI ' . $udi . ' has been successfully set to remotely hosted.',Response::HTTP_OK);
+                    return new Response('Dataset UDI ' . $udi . ' has been successfully set to remotely hosted.', Response::HTTP_OK);
                 } else {
                     $message = 'Dataset UDI ' . $udi . ' is already set to remotely hosted.';
                 }
