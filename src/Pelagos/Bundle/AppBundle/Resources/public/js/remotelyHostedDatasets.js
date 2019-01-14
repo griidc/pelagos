@@ -45,13 +45,22 @@ $(document).ready(function(){
 
     //enable/disable button on field input
     $("#udiInput").on("input", function() {
-       if ("" === $(this).val().trim()) {
+        //16 is the length of an UDI
+       if (16 !== $(this).val().trim().length) {
+           $("#urlDiv").hide();
            $("#updateButton").button({
               disabled : true
            });
        } else {
            $("#updateButton").button({
               disabled : false
+           });
+            //get Dataset URL
+           $.ajax({
+               url: Routing.generate("pelagos_app_ui_remotelyhosteddatasets_geturl", {udi: $("#udiInput").val().trim()}),
+           }).done(function(data, textStatus, jqXHR){
+               $("#urlDiv").show();
+               $("#urlText").text(data);
            });
        }
     });

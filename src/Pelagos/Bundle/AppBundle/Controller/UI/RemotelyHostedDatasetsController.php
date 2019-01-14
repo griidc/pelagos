@@ -46,7 +46,7 @@ class RemotelyHostedDatasetsController extends UIController
      *
      * @Method("POST")
      *
-     * @return Response A response.
+     * @return TerminateResponse A response.
      */
     public function postAction(Request $request)
     {
@@ -69,7 +69,7 @@ class RemotelyHostedDatasetsController extends UIController
 
                     $actor = $this->get('security.token_storage')->getToken()->getUser()->getUserId();
                     $this->dispatchLogEvent($dataset, $actor);
-                    return new Response('Dataset UDI ' . $udi . ' has been successfully set to remotely hosted.', Response::HTTP_OK);
+                    return new TerminateResponse('Dataset UDI ' . $udi . ' has been successfully set to remotely hosted.', Response::HTTP_OK);
                 } else {
                     $message = 'Dataset UDI ' . $udi . ' is already set to remotely hosted.';
                 }
@@ -80,7 +80,34 @@ class RemotelyHostedDatasetsController extends UIController
             $message = 'Invalid UDI!';
         }
         //return 202 Accepted for accepted but not processed request
-        return new Response($message, Response::HTTP_ACCEPTED);
+        return new TerminateResponse($message, Response::HTTP_ACCEPTED);
+    }
+
+    /**
+     * Get the Dataset Url from a given udi.
+     *
+     * @param Request $request The Symfony request object.
+     *
+     * @Route("/{udi}")
+     *
+     * @Method("GET")
+     *
+     * @return TerminateResponse A response.
+     */
+    public function getUrlAction(Request $request)
+    {
+        $udi = $request->attributes->get('udi');
+        $datasets = $this->entityHandler->getBy(Dataset::class, array('udi' => $udi));
+
+        if (!empty($datasets)) {
+            $dataset = $datasets[0];
+            $datasetSubmission = $dataset->getDatasetSubmission();
+        } else {
+            //return without content
+            return new TerminateResponse('', 204);
+        }
+
+        return new TerminateResponse($datasetSubmission->getDatasetFileUri(), Response::HTTP_OK);
     }
 
     /**
@@ -101,6 +128,7 @@ class RemotelyHostedDatasetsController extends UIController
                 'subjectEntityId' => $dataset->getId(),
                 'payLoad' => array(
                     'userId' => $actor,
+                    'datasetSubmissionId' => $dataset->getDatasetSubmission()->getId()
                 )
             ),
             'restrictions_log'
