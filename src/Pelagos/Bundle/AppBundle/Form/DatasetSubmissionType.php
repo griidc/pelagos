@@ -262,6 +262,11 @@ class DatasetSubmissionType extends AbstractType
                 'delete_empty' => true,
                 'required' => true,
             ))
+            ->add('erddapUrl', Type\TextType::class, array(
+                'label' => 'ERDDAP Url',
+                'required' => false,
+                'attr' => array('data-rule-url' => true),
+            ))
             ->add('submitButton', Type\SubmitType::class, array(
                 'label' => 'Submit',
                 'attr'  => array('class' => 'submitButton'),

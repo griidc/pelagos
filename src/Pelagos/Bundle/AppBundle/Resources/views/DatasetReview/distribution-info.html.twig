@@ -32,3 +32,46 @@
         </tr>
     </table>
 </fieldset>
+
+<fieldset>
+    <legend>ERDDAP Info</legend>
+    <table class="tab-table">
+        <tr>
+            <td>
+				<span class="helpSection">
+					{% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
+                        <img class="info" src="{{ asset_url }}">
+                    {% endimage %}
+                    <div class="tooltiptext">
+						Please provide the ERDDAP Url.
+					</div>
+				</span>
+                {{ form_row(form.erddapUrl) }}
+            </td>
+        </tr>
+    </table>
+</fieldset>
+
+<fieldset>
+    <legend>File Information</legend>
+    <table class="tab-table">
+        <tr>
+            <td>
+                {{ form_label(form.datasetFileName) }}
+                {{ form.datasetFileName.vars.value }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_label(form.datasetFileSize) }}
+                {{ form.datasetFileSize.vars.value | formatBytes }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_label(form.datasetFileSha256Hash) }}
+                {{ form.datasetFileSha256Hash.vars.value }}
+            </td>
+        </tr>
+    </table>
+</fieldset>
