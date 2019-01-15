@@ -64,7 +64,7 @@ class DatasetRestrictionsController extends UIController
         // RabbitMQ message to update the DOI for the dataset.
         $rabbitMessage = array(
             'body' => $id,
-            'routing_key' => 'publish'
+            'routing_key' => 'update'
         );
 
         if (!empty($datasets)) {

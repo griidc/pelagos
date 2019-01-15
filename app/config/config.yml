@@ -219,7 +219,6 @@ old_sound_rabbit_mq:
                 name: 'doi_issue'
                 routing_keys:
                     - 'issue'
-                    - 'publish'
                     - 'update'
                     - 'delete'
 

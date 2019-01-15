@@ -376,7 +376,7 @@ class DatasetSubmission extends Entity
      *
      * @var DatasetSubmissionReview
      *
-     * @ORM\OneToOne(targetEntity="DatasetSubmissionReview", mappedBy="datasetSubmission", cascade={"remove"})
+     * @ORM\OneToOne(targetEntity="DatasetSubmissionReview", cascade={"persist"}, orphanRemoval=true)
      */
     protected $datasetSubmissionReview;
 
@@ -590,28 +590,6 @@ class DatasetSubmission extends Entity
      * @ORM\Column(type="bigint", nullable=true)
      */
     protected $datasetFileSize;
-
-    /**
-     * The dataset file md5 hash.
-     *
-     * Legacy DB column: fs_md5_hash
-     *
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected $datasetFileMd5Hash;
-
-    /**
-     * The dataset file sha1 hash.
-     *
-     * Legacy DB column: fs_sha1_hash
-     *
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected $datasetFileSha1Hash;
 
     /**
      * The dataset file sha256 hash.
@@ -938,6 +916,15 @@ class DatasetSubmission extends Entity
     protected $distributionPoints;
 
     /**
+     * ERDDAPP Url for the dataset.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $erddapUrl;
+
+    /**
      * Constructor.
      *
      * Initializes collections to empty collections.
@@ -999,8 +986,6 @@ class DatasetSubmission extends Entity
             $this->setDatasetFileTransferStatus($entity->getDatasetFileTransferStatus());
             $this->setDatasetFileName($entity->getDatasetFileName());
             $this->setDatasetFileSize($entity->getDatasetFileSize());
-            $this->setDatasetFileMd5Hash($entity->getDatasetFileMd5Hash());
-            $this->setDatasetFileSha1Hash($entity->getDatasetFileSha1Hash());
             $this->setDatasetFileSha256Hash($entity->getDatasetFileSha256Hash());
             $this->setMetadataFileTransferType($entity->getMetadataFileTransferType());
             $this->setMetadataFileUri($entity->getMetadataFileUri());
@@ -1028,6 +1013,7 @@ class DatasetSubmission extends Entity
             $this->setTemporalExtentNilReasonType($entity->getTemporalExtentNilReasonType());
             $this->setDistributionFormatName($entity->getDistributionFormatName());
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
+            $this->setErddapUrl($entity->getErddapUrl());
 
             //Submitter should always be the user who has submitted the dataset.
             if (!in_array($entity->getDatasetStatus(), [ Dataset::DATASET_STATUS_NONE, Dataset::DATASET_STATUS_BACK_TO_SUBMITTER])) {
@@ -1658,50 +1644,6 @@ class DatasetSubmission extends Entity
     public function getDatasetFileSize()
     {
         return $this->datasetFileSize;
-    }
-
-    /**
-     * Set the dataset file md5 hash.
-     *
-     * @param string $datasetFileMd5Hash The dataset file md5 hash.
-     *
-     * @return void
-     */
-    public function setDatasetFileMd5Hash($datasetFileMd5Hash)
-    {
-        $this->datasetFileMd5Hash = $datasetFileMd5Hash;
-    }
-
-    /**
-     * Set the dataset file md5 hash.
-     *
-     * @return string
-     */
-    public function getDatasetFileMd5Hash()
-    {
-        return $this->datasetFileMd5Hash;
-    }
-
-    /**
-     * Set the dataset file sha1 hash.
-     *
-     * @param string $datasetFileSha1Hash The dataset file sha1 hash.
-     *
-     * @return void
-     */
-    public function setDatasetFileSha1Hash($datasetFileSha1Hash)
-    {
-        $this->datasetFileSha1Hash = $datasetFileSha1Hash;
-    }
-
-    /**
-     * Get the dataset file sha1 hash.
-     *
-     * @return string
-     */
-    public function getDatasetFileSha1Hash()
-    {
-        return $this->datasetFileSha1Hash;
     }
 
     /**
@@ -2517,5 +2459,27 @@ class DatasetSubmission extends Entity
     public function getDistributionPoints()
     {
         return $this->distributionPoints;
+    }
+
+    /**
+     * Getter for the erddap url.
+     *
+     * @return string
+     */
+    public function getErddapUrl(): ? string
+    {
+        return $this->erddapUrl;
+    }
+
+    /**
+     * Setter for the erddap url.
+     *
+     * @param string $erddapUrl Erddap url.
+     *
+     * @return void
+     */
+    public function setErddapUrl($erddapUrl)
+    {
+        $this->erddapUrl = $erddapUrl;
     }
 }

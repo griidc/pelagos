@@ -172,8 +172,6 @@ class ISOMetadataExtractorUtilTest extends TestCase
                                 'getDatasetFileTransferStatus' => 'status from mock dataset submission',
                                 'getDatasetFileName' => 'dataset file name from mock dataset submission',
                                 'getDatasetFileSize' => '12345',
-                                'getDatasetFileMd5Hash' => '69630e4574ec6798239b091cda43dca0',
-                                'getDatasetFileSha1Hash' => 'cf8bd9dfddff007f75adf4c2be48005cea317c62',
                                 'getDatasetFileSha256Hash' => '131f95c51cc819465fa1797f6ccacf9d494aaaff46fa3eac73ae63ffbdfd8267',
                                 'getMetadataFileTransferType' => 'metadataFileTransferType from mock dataset submission',
                                 'getMetadataFileUri' => 'metadataFileUri from mock dataset submission',
@@ -222,6 +220,7 @@ class ISOMetadataExtractorUtilTest extends TestCase
                                         'getDistributionUrl' => 'testDistributionUrl',
                                     )
                                 ))),
+                                'getErddapUrl' => 'https://xyz',
                             )
                         ),
                     )
@@ -266,8 +265,6 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getDatasetFileTransferStatus' => 'status from mock dataset submission',
                 'getDatasetFileName' => 'dataset file name from mock dataset submission',
                 'getDatasetFileSize' => '12345',
-                'getDatasetFileMd5Hash' => '69630e4574ec6798239b091cda43dca0',
-                'getDatasetFileSha1Hash' => 'cf8bd9dfddff007f75adf4c2be48005cea317c62',
                 'getDatasetFileSha256Hash' => '131f95c51cc819465fa1797f6ccacf9d494aaaff46fa3eac73ae63ffbdfd8267',
                 'getMetadataFileTransferType' => 'metadataFileTransferType from mock dataset submission',
                 'getMetadataFileUri' => 'metadataFileUri from mock dataset submission',
@@ -301,6 +298,7 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getSubmissionTimeStamp' => $this->testingDatetime,
                 'getMetadataContacts' => new ArrayCollection(array($this->mockPersonDatasetSubmissionMetadataContact)),
                 'getDistributionPoints' => new ArrayCollection(array($this->mockDistributionPoint)),
+                'getErddapUrl' => 'https://xyz',
             )
         );
 
@@ -631,5 +629,17 @@ class ISOMetadataExtractorUtilTest extends TestCase
 
         $this->assertEquals($mockTemporalNilReason, $this->datasetSubmission->getTemporalExtentNilReasonType());
 
+    }
+
+    /**
+     * Test for erddap attribute setter and getter.
+     * 
+     * @return void
+     */
+    public function testCanGetAndSetErddapUrl(): void
+    {
+        $erddapUrl = 'https://xyz';
+        $this->datasetSubmission->setErddapUrl($erddapUrl);
+        $this->assertEquals($erddapUrl, $this->datasetSubmission->getErddapUrl());
     }
 }

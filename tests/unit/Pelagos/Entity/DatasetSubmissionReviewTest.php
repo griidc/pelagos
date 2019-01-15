@@ -26,13 +26,6 @@ class DatasetSubmissionReviewTest extends TestCase
     protected $datasetSubmissionReview;
 
     /**
-     * A mock DatasetSubmission.
-     *
-     * @var DatasetSubmission
-     */
-    protected $mockDatasetSubmission;
-
-    /**
      * A mock Person.
      *
      * @var Person
@@ -55,34 +48,6 @@ class DatasetSubmissionReviewTest extends TestCase
      */
     public function setUp()
     {
-        $this->mockDatasetSubmission = \Mockery::mock(
-            DatasetSubmission::class,
-            array(
-                'getStatus' => DatasetSubmission::STATUS_COMPLETE,
-                'setDataset' => null,
-                'getDatasetStatus' => Dataset::DATASET_STATUS_ACCEPTED,
-                'getDatasetFileTransferStatus' => null,
-                'getRestrictions' => null,
-                'getDatasetContacts' => new ArrayCollection(
-                    array(
-                        \Mockery::mock(
-                            PersonDatasetSubmissionDatasetContact::class,
-                            array(
-                                'getPerson' => \Mockery::mock(
-                                    Person::class,
-                                    array(
-                                        'getLastName' => 'Person',
-                                        'getFirstName' => 'Complete-Submission',
-                                        'getEmailAddress' => 'complete-submission.person@test.null',
-                                    )
-                                ),
-                            )
-                        ),
-                    )
-                ),
-            )
-        );
-
         $this->mockPerson = \Mockery::mock(
             Person::class,
             array(
@@ -95,22 +60,8 @@ class DatasetSubmissionReviewTest extends TestCase
         $this->testStartDateTime = new DateTime('now');
 
         $this->datasetSubmissionReview = new DatasetSubmissionReview(
-            $this->mockDatasetSubmission,
             $this->mockPerson,
             $this->testStartDateTime
-        );
-    }
-
-    /**
-     * Test datasetSubmission getter.
-     *
-     * @return void
-     */
-    public function testCanGetDatasetSubmission()
-    {
-        $this->assertSame(
-            $this->mockDatasetSubmission,
-            $this->datasetSubmissionReview->getDatasetSubmission()
         );
     }
 

@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Pelagos\Entity\Dataset;
+use Pelagos\Entity\DatasetSubmission;
 
 /**
  * The default controller for the Pelagos App Bundle.
@@ -33,7 +34,7 @@ class DefaultController extends Controller
     {
         return $this->render('PelagosAppBundle:Default:admin.html.twig');
     }
-    
+
     /**
      * Get the sitemap.xml containing all dataset urls.
      *
@@ -43,15 +44,19 @@ class DefaultController extends Controller
     {
         $container = $this->container;
         $response = new StreamedResponse(function () use ($container) {
-            $datasets = $container->get('pelagos.entity.handler')->getBy(
-                Dataset::class,
-                array(),
-                array(),
+
+            $entityManager = $container->get('doctrine.orm.entity_manager');
+
+            $datasets = $entityManager->getRepository(Dataset::class)->findBy(
                 array(
-                    'udi',
-                ),
-                Query::HYDRATE_ARRAY
+                    'availabilityStatus' =>
+                    array(
+                        DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
+                        DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
+                    )
+                )
             );
+
             echo $this->renderView(
                 'PelagosAppBundle:Default:sitemap.xml.twig',
                 array(
@@ -59,9 +64,9 @@ class DefaultController extends Controller
                 )
             );
         });
-        
+
         $response->headers->set('Content-Type', 'text/xml');
-        
+
         return $response;
     }
 }
