@@ -2,15 +2,16 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-
-use Pelagos\Response\TerminateResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+
+use Pelagos\Entity\Dataset;
+use Pelagos\Entity\DatasetSubmission;
+
+use Pelagos\Response\TerminateResponse;
 
 /**
  * The Remotely Hosted Datasets list controller.
@@ -67,8 +68,7 @@ class RemotelyHostedDatasetsController extends UIController
                 if (DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED !== $datasetSubmission->getDatasetFileTransferStatus()) {
                     $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
 
-                    $actor = $this->get('security.token_storage')->getToken()->getUser()->getUserId();
-                    $this->dispatchLogEvent($dataset, $actor);
+                    $this->dispatchLogEvent($dataset, $this->getUser()->getUserId());
                     return new TerminateResponse('Dataset UDI ' . $udi . ' has been successfully set to remotely hosted.', Response::HTTP_OK);
                 } else {
                     $message = 'Dataset UDI ' . $udi . ' is already set to remotely hosted.';
@@ -99,15 +99,15 @@ class RemotelyHostedDatasetsController extends UIController
         $udi = $request->attributes->get('udi');
         $datasets = $this->entityHandler->getBy(Dataset::class, array('udi' => $udi));
 
+        $responseMsg = '';
         if (!empty($datasets)) {
             $dataset = $datasets[0];
             $datasetSubmission = $dataset->getDatasetSubmission();
-        } else {
-            //return without content
-            return new TerminateResponse('', 204);
+            if (null !== $datasetSubmission) {
+                $responseMsg = $datasetSubmission->getDatasetFileUrl();
+            }
         }
-
-        return new TerminateResponse($datasetSubmission->getDatasetFileUri(), Response::HTTP_OK);
+        return new TerminateResponse($responseMsg, $responseMsg === '' ? 204 : Response::HTTP_OK);
     }
 
     /**
@@ -131,7 +131,7 @@ class RemotelyHostedDatasetsController extends UIController
                     'datasetSubmissionId' => $dataset->getDatasetSubmission()->getId()
                 )
             ),
-            'restrictions_log'
+            'remotelyhosted_update_log'
         );
     }
 }
