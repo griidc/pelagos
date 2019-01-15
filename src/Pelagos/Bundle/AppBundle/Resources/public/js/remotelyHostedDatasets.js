@@ -45,6 +45,7 @@ $(document).ready(function(){
 
     //enable/disable button on field input
     $("#udiInput").on("input", function() {
+        $("#urlText").text("");
         //16 is the length of an UDI
        if (16 !== $(this).val().trim().length) {
            $("#urlDiv").hide();
