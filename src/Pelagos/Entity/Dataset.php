@@ -640,7 +640,7 @@ class Dataset extends Entity
                 }
                 break;
             case DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED:
-                    if ($this->getDatasetStatus() === self::DATASET_STATUS_ACCEPTED) {
+                if ($this->getDatasetStatus() === self::DATASET_STATUS_ACCEPTED) {
                     switch ($this->getDatasetSubmission()->getRestrictions()) {
                         case DatasetSubmission::RESTRICTION_NONE:
                             $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED;
