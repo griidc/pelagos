@@ -104,7 +104,7 @@ class RemotelyHostedDatasetsController extends UIController
             $dataset = $datasets[0];
             $datasetSubmission = $dataset->getDatasetSubmission();
             if (null !== $datasetSubmission) {
-                $responseMsg = $datasetSubmission->getDatasetFileUrl();
+                $responseMsg = $datasetSubmission->getDatasetFileUri();
             }
         }
         return new TerminateResponse($responseMsg, $responseMsg === '' ? 204 : Response::HTTP_OK);
