@@ -19,7 +19,6 @@
     box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
 }
 
-fieldset
-{
+fieldset {
     border: 1px dotted #AAA;
 }
