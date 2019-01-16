@@ -307,7 +307,7 @@ class DoiConsumer implements ConsumerInterface
             $status = DOI::STATUS_UNAVAILABLE;
         } elseif ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED
             and $restriction === DatasetSubmission::RESTRICTION_NONE) {
-            if ($doiStatus === DOI::STATUS_RESERVED or (preg_match('/^unavailable/', $doiStatus) === 1)) {
+            if (in_array($doiStatus, [DOI::STATUS_RESERVED, DOI::STATUS_PUBLIC]) or (preg_match('/^unavailable/', $doiStatus) === 1)) {
                 $status = DOI::STATUS_PUBLIC;
             }
         }
