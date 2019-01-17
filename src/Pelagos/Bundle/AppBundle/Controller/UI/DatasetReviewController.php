@@ -166,8 +166,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
                             $reviewerUserName = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
                             $this->addToFlashDisplayQueue($request, $udi, 'locked', $reviewerUserName);
                             break;
-                        default:
-                            $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
                     }
                 }
             } else {
