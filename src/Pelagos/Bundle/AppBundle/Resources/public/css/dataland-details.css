@@ -166,6 +166,10 @@ span.attr {
     vertical-align: middle;
 }
 
+#erddaplink {
+    padding-top: 5px;
+}
+
 #tabs li.ui-state-disabled {
     opacity: .5;
 }

@@ -35,6 +35,11 @@
                             <img title="test" width="40px" height="40px" id="metadatadl-dis" src="{{ asset_url }}">
                         {% endimage %}
                     {% endif %}
+                    {% if dataset.datasetSubmission.ErddapUrl %}
+                        {% image '@PelagosAppBundle/Resources/public/images/button_erddap.png' %}
+                            <br /><a href="{{ dataset.datasetSubmission.ErddapUrl }}" border="0" target="_blank"><img src="{{ asset_url }}" id="erddaplink"></a>
+                        {% endimage %}
+                    {% endif %}
                 {% else %}
                     {% image '@PelagosAppBundle/Resources/public/images/download-package-grey.png' %}
                         <img width="40px" height="40px" id="downloaddsdenmd" src="{{ asset_url }}">
