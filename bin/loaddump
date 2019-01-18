@@ -42,9 +42,14 @@ fi
 
 echo "This can also re-index your elastica database."
 read -r -p "Are you sure you want to do this? [y/N] " response
+ELASTICA_CLEAR=0
 if [[ $response =~ ^[yY]$ ]]; then
     ELASTICA_INDEX=1
     echo "You chose to re-index elastica. This will take some additional time."
+    read -r -p "By default, the existing index is not cleared. Would you like to clear it? [y/N] " response
+    if [[ $response =~ ^[yY]$ ]]; then
+        ELASTICA_CLEAR=1
+    fi
 else
     ELASTICA_INDEX=0
     echo "You chose not to re-index elastica. As a result, contents may be stale."
@@ -52,6 +57,7 @@ fi
 
 
 echo "By default, this load script will append .null to Person email addresses."
+
 read -r -p "Do you want to skip doing this (Dangerous)? [y/N] " response
 if [[ $response =~ ^[yY]$ ]]; then
     SKIP_EMAILNULLING=1
@@ -113,6 +119,11 @@ export PGPASSWORD="$parameters__database_password"
 
 bin/console doctrine:migrations:migrate -n
 echo "Migrated DB schema"
+
+if [ $ELASTICA_CLEAR -eq 1 ]; then
+    bin/console fos:elastica:reset
+    echo "Cleared existing elastic index."
+fi
 
 if [ $ELASTICA_INDEX -eq 1 ]; then
     bin/console elasticsearch:reindex-datasets
