@@ -115,7 +115,7 @@ bin/console doctrine:migrations:migrate -n
 echo "Migrated DB schema"
 
 if [ $ELASTICA_INDEX -eq 1 ]; then
-    bin/console fos:elastica:populate
+    bin/console elasticsearch:reindex-datasets
     echo "Populated Elasticsearch index"
 fi
 
