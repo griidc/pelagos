@@ -84,6 +84,12 @@ class DatalandController extends UIController
                 )->getContent()
             );
             drupal_add_html_head($data, 'json-ld');
+        } else {
+            $data = array(
+                '#type' => 'markup',
+                '#markup' => '<meta name="robots" content="noindex" />' . "\n",
+            );
+            drupal_add_html_head($data, 'meta');
         }
 
         return $this->render(
