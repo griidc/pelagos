@@ -297,11 +297,11 @@ class Extensions extends \Twig_Extension
      * Format bytes as a human-readable string (base 10).
      *
      * @param integer $bytes     The bytes to format.
-     * @param integer $precision The the precision to use (default: 0).
+     * @param integer $precision The the precision to use (default: 2).
      *
      * @return string
      */
-    public static function formatBytes($bytes, $precision = 0)
+    public static function formatBytes($bytes, $precision = 2)
     {
         $units = array('B','KB','MB','GB','TB');
         for ($e = (count($units) - 1); $e > 0; $e--) {
