@@ -256,6 +256,7 @@ function createRow(data, row)
             $(rowContent).find("#container-dataset-restrictions").show();
             $(rowContent).find("#container-dataset-filesize").css("color","grey");
             $(rowContent).find("#dataset-filesize").text("?");
+            $(rowContent).find("#container-dataset-doi").hide();
             break;
         default:
             break;
