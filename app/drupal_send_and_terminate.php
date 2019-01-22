@@ -71,6 +71,9 @@ if (in_array(
     exit();
 }
 
+// Make drupal return the response code we specify.
+drupal_add_http_header('status', $response->getStatusCode());
+
 if (preg_match('/^Pelagos\\\\/', $request->attributes->get('_controller'))
     or $request->attributes->get('_route') === null
     or $request->attributes->get('_route') === '_twig_error_test'
