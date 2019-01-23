@@ -64,8 +64,8 @@ before-script:
 # Run script
 script:
   - phpunit
-  - git clone -b 3.0 https://github.com/squizlabs/PHP_CodeSniffer.git
-  - ./PHP_CodeSniffer/bin/phpcs --standard=GRIIDC --colors --ignore=bak --extensions=php -i -n -s ./src/
+  - git clone https://github.com/squizlabs/PHP_CodeSniffer.git
+  - ./PHP_CodeSniffer/bin/phpcs --standard=GRIIDC --colors --ignore=bak --extensions=php -n -s ./src/
   
 notifications:
   email: false
