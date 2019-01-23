@@ -246,4 +246,23 @@ class DatasetSubmissionController extends EntityController
         }
         return array($fileInfo);
     }
+
+    /**
+     * Validate the url of the attribute.
+     *
+     * @param string  $id      The id of the dataset submission.
+     * @param Request $request The request object.
+     *
+     * @Rest\Get("/validate-url/{id}")
+     *
+     * @Rest\View()
+     *
+     * @return boolean|string
+     */
+    public function validateUrlAction($id, Request $request)
+    {
+        $urlValidationService = $this->get('pelagos.util.url_validation');
+
+        return $urlValidationService->validateUrl($request->get('erddapUrl'));
+    }
 }

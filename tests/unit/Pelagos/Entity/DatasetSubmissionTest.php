@@ -827,7 +827,6 @@ class DatasetSubmissionTest extends TestCase
         $testStartDateTime = new DateTime('now');
 
         $datasetSubmissionReview = new DatasetSubmissionReview(
-            $this->datasetSubmission,
             $this->mockPerson,
             $testStartDateTime
         );

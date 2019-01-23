@@ -2,6 +2,9 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\Api;
 
+use Pelagos\Entity\DistributionPoint;
+use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
+use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -193,6 +196,26 @@ class DatasetController extends EntityController
         $dataset = $this->handleGetOne(Dataset::class, $id);
 
         $dif = $dataset->getDif();
+
+        $datasetSubmissionHistory = $dataset->getDatasetSubmissionHistory();
+
+        foreach ($datasetSubmissionHistory as $datasetSub) {
+            $datasetContacts = $datasetSub->getDatasetContacts();
+            foreach ($datasetContacts as $datasetContact) {
+                $datasetContactId = $datasetContact->getId();
+                $this->handleDelete(PersonDatasetSubmissionDatasetContact::class, $datasetContactId);
+            }
+            $metadataContacts = $datasetSub->getMetadataContacts();
+            foreach ($metadataContacts as $metadataContact) {
+                $metadataContactId = $metadataContact->getId();
+                $this->handleDelete(PersonDatasetSubmissionMetadataContact::class, $metadataContactId);
+            }
+            $distributionPoints = $datasetSub->getDistributionPoints();
+            foreach ($distributionPoints as $distributionPoint) {
+                $distributionPointId = $distributionPoint->getId();
+                $this->handleDelete(DistributionPoint::class, $distributionPointId);
+            }
+        }
 
         $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
             $dataset,

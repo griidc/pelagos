@@ -114,3 +114,6 @@ services:
     pelagos.util.dataset_index:
         class: Pelagos\Util\DatasetIndex
         arguments: ["@fos_elastica.index.pelagos.dataset"]
+
+    pelagos.util.url_validation:
+        class: Pelagos\Util\UrlValidation
