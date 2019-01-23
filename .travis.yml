@@ -68,15 +68,15 @@ script:
   # phpunit
   - pwd
   - ls -a
-  - cd vendor
+  - cd vendor/bin
   - ls -a
-  - cd ~./
+  - cd /home/travis/.composer
   - pwd
   - ls -a
-  - cd ./home
+  - cd vendor/bin
   - pwd
   - ls -a
-  - ./vendor/phpcs/bin/ --standard=GRIIDC --colors --ignore=bak --extensions=php -n -s ./src
+  # ./vendor/phpcs/bin/ --standard=GRIIDC --colors --ignore=bak --extensions=php -n -s ./src
 
   
 notifications:
