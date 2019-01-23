@@ -66,6 +66,8 @@ before-script:
 script:
   - phpunit
   - cd /home/travis/.composer/vendor/bin
+  - pwd
+  - ls -a
   - phpcs --standard=GRIIDC --colors --ignore=bak --extensions=php -n -s /home/travis/build/griidc/pelagos/src/
 
   
