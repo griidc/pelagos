@@ -54,8 +54,7 @@
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
         "symfony/phpunit-bridge": "^2.7",
-        "mockery/mockery": "dev-master",
-        "squizlabs/php_codesniffer" : "^2.5"
+        "mockery/mockery": "dev-master"
     },
     "scripts": {
         "post-install-cmd": [
