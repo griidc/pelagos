@@ -38,16 +38,21 @@ $(document).ready(function(){
         return this.optional(element) || ((Date.parse(value)) && regPattern.test(value));
     });
 
+    var remoteURL = Routing.generate("pelagos_api_dataset_submission_validate_url", { id: $("form[datasetsubmission]").attr("datasetsubmission") });
+
     regForm.validate({
         rules: {
             referenceDate: "trueISODate",
             temporalExtentBeginPosition: "trueISODate",
             temporalExtentEndPosition: "trueISODate",
+            erddapUrl: {
+                remote: remoteURL
+            }
         },
         messages: {
             referenceDate: "It is not a valid ISO date",
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
-            temporalExtentEndPosition: "End Date is not a valid ISO date"
+            temporalExtentEndPosition: "End Date is not a valid ISO date",
         },
         ignore: ".ignore,.prototype",
         submitHandler: function(form) {
@@ -651,7 +656,6 @@ $(document).ready(function(){
               }
         });
     });
-
 });
 
 function checkSpatial(isNonSpatial) {

@@ -1,7 +1,9 @@
-<h2>Suggested Citation:</h2>
-<div>
-    {{ dataset.citation|default }}
-</div>
+{% if dataset.datasetStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
+    <h2>Suggested Citation:</h2>
+    <div>
+        {{ dataset.citation|default }}
+    </div>
+{% endif %}
 
 <h2>Abstract:</h2>
 <div>

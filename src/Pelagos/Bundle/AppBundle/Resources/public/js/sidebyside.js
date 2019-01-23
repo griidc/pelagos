@@ -32,9 +32,9 @@ $(document).ready(function()
                 }
             });
 
-            $(".right-version").find("select option:selected")
-                .prop("selected", false)
-                .next()
+            // Select the very first version in left-hand view. By default
+            // latest version is otherwise selected.
+            $(".left-version").find("select option:last")
                 .prop("selected", "selected");
             select.change();
 
