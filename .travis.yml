@@ -67,7 +67,10 @@ before-script:
 script:
   # phpunit
   - pwd
-  - ./vendor/bin/phpcs --standard=GRIIDC --colors --ignore=bak --extensions=php -n -s ./src
+  - cd
+  - cd vendor
+  - pwd
+  - ./home/travis/build/griidc/pelagos/vendor/bin/phpcs --standard=GRIIDC --colors --ignore=bak --extensions=php -n -s ./src
 
   
 notifications:
