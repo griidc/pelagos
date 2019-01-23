@@ -65,7 +65,7 @@ before-script:
 script:
   - phpunit
   - git clone https://github.com/squizlabs/PHP_CodeSniffer.git
-  - ./PHP_CodeSniffer/bin/phpcs --standard=GRIIDC --colors --ignore=bak --extensions=php -n -s ./src/
+  - ./PHP_CodeSniffer/bin/phpcs --config-set installed_paths ./src/GRIIDC/ --colors --ignore=bak --extensions=php -i -n -s ./src/
   
 notifications:
   email: false
