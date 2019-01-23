@@ -66,7 +66,7 @@ before-script:
 # Run script
 script:
   - phpunit
-  - home/travis/.composer/bin/phpcs --standard=GRIIDC --colors --ignore=bak --extensions=php -n -s home/travis/build/griidc/pelagos/src/
+  - ./home/travis/.composer/bin/phpcs --standard=GRIIDC --colors --ignore=bak --extensions=php -n -s home/travis/build/griidc/pelagos/src/
 
   
 notifications:
