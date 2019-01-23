@@ -55,7 +55,6 @@ before-install:
 install:
   - export SYMFONY_ENV=drupal_dev
   - composer install
-  - composer global require "squizlabs/php_codesniffer=2.5.1"
   - phpenv rehash
  
 before-script:
@@ -64,12 +63,15 @@ before-script:
   
 # Run script
 script:
-  - phpunit
-  - cd /home/travis/.composer/vendor/bin
+  # phpunit
   - pwd
   - ls -a
-  - phpcs --standard=GRIIDC --colors --ignore=bak --extensions=php -n -s /home/travis/build/griidc/pelagos/src/
-
+  - git clone -b 2.9 https://github.com/squizlabs/PHP_CodeSniffer.git
+  - pwd
+  - ls -a
+  - ./PHP_CodeSniffer/scripts/phpcs --standard=GRIIDC --colors --ignore=bak --extensions=php -n -s ./src/
+  - pwd
+  - ls -a
   
 notifications:
   email: false
