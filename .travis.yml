@@ -53,10 +53,9 @@ before-install:
 # Install composer dependencies,
 # Create schema and fixtures
 install:
-  # pear install pear/PHP_CodeSniffer-2.5.1
   - export SYMFONY_ENV=drupal_dev
   - composer install
-  - composer global require "squizlabs/php_codesniffer=2.5.*"
+  - composer global require "squizlabs/php_codesniffer=2.5.1"
   - phpenv rehash
  
 before-script:
@@ -66,7 +65,7 @@ before-script:
 # Run script
 script:
   - phpunit
-  - ./home/travis/.composer/bin/phpcs --standard=GRIIDC --colors --ignore=bak --extensions=php -n -s home/travis/build/griidc/pelagos/src/
+  - home/travis/.composer/vendor/bin/phpcs --standard=GRIIDC --colors --ignore=bak --extensions=php -n -s /home/travis/build/griidc/pelagos/src/
 
   
 notifications:
