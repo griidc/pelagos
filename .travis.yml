@@ -68,10 +68,11 @@ script:
   # phpunit
   - pwd
   - ls -a
-  - cd ./home/travis/build/griidc/pelagos
-  - pwd
+  - cd vendor
   - ls -a
-  - ./vendor/bin/phpcs --standard=GRIIDC --colors --ignore=bak --extensions=php -n -s ./src
+  - cd phpcs
+  - ls -a
+  - ./vendor/phpcs/bin/ --standard=GRIIDC --colors --ignore=bak --extensions=php -n -s ./src
 
   
 notifications:
