@@ -156,17 +156,17 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         } else {
             if ($datasetSubmission instanceof DatasetSubmission and $this->filerStatus($datasetSubmission)) {
                 $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
-                switch (!in_array($datasetStatus, [Dataset::DATASET_STATUS_BACK_TO_SUBMITTER, Dataset::DATASET_STATUS_NONE])) {
-                    case (empty($datasetSubmissionReview) || $datasetSubmissionReview->getReviewEndDateTime()):
-                        $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
-                        break;
-                    case (empty($datasetSubmissionReview->getReviewEndDateTime())
-                        and $datasetSubmissionReview->getReviewedBy() !== $this->getUser()->getPerson()):
-                        $reviewerUserName = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
-                        $this->addToFlashDisplayQueue($request, $udi, 'locked', $reviewerUserName);
-                        break;
-                    default:
-                        $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
+                if ('review' === $this->mode) {
+                    switch (!in_array($datasetStatus, [Dataset::DATASET_STATUS_BACK_TO_SUBMITTER, Dataset::DATASET_STATUS_NONE])) {
+                        case (empty($datasetSubmissionReview) || $datasetSubmissionReview->getReviewEndDateTime()):
+                            $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
+                            break;
+                        case (empty($datasetSubmissionReview->getReviewEndDateTime())
+                            and $datasetSubmissionReview->getReviewedBy() !== $this->getUser()->getPerson()):
+                            $reviewerUserName = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
+                            $this->addToFlashDisplayQueue($request, $udi, 'locked', $reviewerUserName);
+                            break;
+                    }
                 }
             } else {
                 $this->addToFlashDisplayQueue($request, $udi, 'notSubmitted');
