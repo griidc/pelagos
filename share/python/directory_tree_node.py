@@ -1,10 +1,4 @@
-from __future__ import print_function
-import sys
-import os
-import platform
-
 '''
-@author: jvh
 This class models a node in a tree of nodes
 representing a node in a file system directory tree.
 Each node has a name and a size in bytes. The name 
@@ -12,10 +6,16 @@ represents the name of the node in the directory/filename
 path.
 
 There are class functions, as opposed to member functions, that
-enable higher level operations like
+enable higher level operations.
 '''
 
+from __future__ import print_function
+import sys
+import os
+import platform
 
+StructureDelimiter = '|----'
+SPACING = len(StructureDelimiter)
 
 class DirectoryTreeNode(object):
     def __init__(self, name, size=0):
@@ -180,36 +180,3 @@ class DirectoryTreeNode(object):
                 parent.addChild(child)
             lastNode = parent = child
         lastNode.setSize(size)
-
-
-root = DirectoryTreeNode('root',0)
-StructureDelimiter = '|----'
-SPACING = len(StructureDelimiter)
-def main():
-    filePaths = [
-        'Aaaaa/Bbbbb/Ccccc/x1.txt',
-        'Aaaaa/Bbbbb/Ccccc/x2.txt',
-        'Aaaaa/Bbbbb/Ccccc/x3.txt',
-        'Aaaaa/Bbbbb/Ccccc/x4.txt',
-        'Aaaaa/Bbbbb/Ccccc/y1.txt',
-        'Aaaaa/Bbbbb/y2.txt',
-        'Aaaaa/Bbbbb/y3.txt',
-        'Aaaaa/Bbbbb/y4.txt',
-        'Aaaaa/Bbbbb/Ccccc/Bbbbb/w1.txt',
-        'Aaaaa/Bbbbb/Ccccc/Bbbbb/w2.txt',
-        'Aaaaa/Bbbbb/Ccccc/Bbbbb/w3.txt',
-        'Aaaaa/Bbbbb/Ddddd/Fffff',
-        'Aaaaa/Ccccc/z1.txt',
-        'Aaaaa/Ccccc/z2.txt',
-        'Aaaaa/Ccccc/z3.txt',
-        'Aaaaa/Ccccc/z4.txt',
-        'Aaaaa/Ooooo']
-
-    DirectoryTreeNode.buildPathTree(filePaths)
-    root.printTree(0)
-
-if __name__ == "__main__":
-    print('Python ' + platform.python_version())
-    if sys.version_info[0] != 2:
-        sys.exit('This script ' + os.path.basename(sys.argv[0]) + ' must be run with Python 2')
-    sys.exit(main())
