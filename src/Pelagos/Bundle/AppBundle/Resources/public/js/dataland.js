@@ -179,6 +179,20 @@ var dlmap = new GeoViz();
             }
         });
 
+        $("#erddaplink").qtip({
+            position: {
+                adjust: {
+                    method: "flip flip"
+                },
+                my: "top left",
+                at: "bottom left",
+                viewport: $(window)
+            },
+            content: {
+                text: 'View associated ERDDAP data.'
+            }
+        });
+
         $('td[title]').qtip({
             position: {
                 my: 'right bottom',
