@@ -88,7 +88,7 @@ class DirectoryTreeNode(object):
         formatString = '{:75s} [{:>6s}]'
         s = DirectoryTreeNode.getIndentationPrefix(indentations)
         s = s + self.getName()
-        DirectoryTreeNode.intToSize(self.getSize())
+
         print (formatString.format(s,DirectoryTreeNode.intToSize(self.getSize())))
         childrenList = self.getChildren()
         for child in childrenList:
@@ -97,17 +97,14 @@ class DirectoryTreeNode(object):
 
     # Converts bytes into human-readable form, ex TB/GB/MB/KB/Bytes based on size.
     @classmethod
-    def intToSize(cls,size):
-        if (size >= 10**12):
-            return(str(size/10**12) + " TB")
-        elif (size >= 10**9):
-            return(str(size/10**9) + " GB")
-        elif (size >= 10**6):
-            return(str(size/10**6) + " MB")
-        elif (size >= 10**3):
-            return(str(size/10**3) + " KB")
-        else:
-            return(str(size) + " Bytes")
+    def intToSize(cls,size, suffix='Bytes'):
+        size = float(size)
+        for unit in ['Bytes','KB','MB','GB','TB']:
+            if abs(size) < 1000:
+                return '%3.2f %s' % (size, unit)
+            if unit != 'TB':
+                size /= 1000
+        return '%.2f %s' % (size, 'TB')
 
     #
     #  find this directory path in the tree.
