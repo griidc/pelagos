@@ -100,10 +100,10 @@ class DirectoryTreeNode(object):
     def intToSize(cls,size, suffix='Bytes'):
         for unit in ['Bytes','KB','MB','GB','TB']:
             if abs(size) < 1000:
-                return "%3.2f %s" % (size, unit)
+                return '%3.2f %s' % (size, unit)
             if unit != 'TB':
                 size /= 1000
-        return "%.2f %s" % (size, 'TB')
+        return '%.2f %s' % (size, 'TB')
 
     #
     #  find this directory path in the tree.
