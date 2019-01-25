@@ -286,10 +286,9 @@ function createRow(data, row)
 
     if (!data["doi"]["doi"]) {
         $(rowContent).find("#container-dataset-doi").hide();
-    } else if (activeTabIndex == 2) {
+    } else if (activeTabIndex === 2) {
         // Remove the hyperlink, but keep text for this tab.
-        $(rowContent).find("#dataset-doi").attr("href", $(rowContent).find("#dataset-doi").attr("href")).removeAttr("href");
-        $(rowContent).find("#dataset-doi").text(data["doi"]["doi"]);
+        $(rowContent).find("#dataset-doi").replaceWith(data["doi"]["doi"]);
     } else {
         $(rowContent).find("#dataset-doi").attr("href", $(rowContent).find("#dataset-doi").attr("href").replace("placeholder-doi", data["doi"]["doi"]));
         $(rowContent).find("#dataset-doi").text(data["doi"]["doi"]);
