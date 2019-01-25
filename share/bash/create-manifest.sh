@@ -26,11 +26,11 @@ manifestfile="$udi-file-manifest.txt"
 zipfile="$udi-manifest.zip"
 
 echo "Generating file: $path/$udi-ReadMe.txt"
-python share/python/create-tree.py -d $path/$1 > $readmefile
+python share/python/create-tree.py -d $1 > $readmefile
 unix2dos $readmefile
 
 echo "Generating file: $path/$udi-file-manifest.txt"
-python share/python/create-tree.py $path/$1 > $manifestfile
+python share/python/create-tree.py $1 > $manifestfile
 unix2dos $manifestfile
 
 zip $zipfile $1
