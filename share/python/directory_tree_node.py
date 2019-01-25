@@ -1,7 +1,7 @@
 '''
 This class models a node in a tree of nodes
 representing a node in a file system directory tree.
-Each node has a name and a size in bytes. The name
+Each node has a name and a size in bytes. The name 
 represents the name of the node in the directory/filename
 path.
 
