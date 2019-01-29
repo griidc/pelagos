@@ -2,25 +2,21 @@
 
 Pelagos is a system for maintaining a repository of scientific research data.
 Developed and maintained by the The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC).
-[URL] (https://data.gulfresearchinitiative.org/)
+URL: https://data.gulfresearchinitiative.org/
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
 ### Prerequisites
 
-* [CENTOS 7](https://wiki.centos.org/)
-* [PHP 5.6](http://php.net/docs.php )
+* [CENTOS 6/7](https://wiki.centos.org/)
+* [PHP 7.1](http://php.net/docs.php )
 * [Symfony 3.4](https://symfony.com/doc/3.4/index.html) - PHP framework for web application
 * [PostgreSQL 9.6](https://www.postgresql.org/docs/9.6/static/release-9-6.html) - ORDBMS
 * [FOSElasticaBundle](https://github.com/FriendsOfSymfony/FOSElasticaBundle) - PHP integration for Symfony with ElasticSearch
 * [RabbitMQ](https://www.rabbitmq.com/documentation.html) - Open source message broker software
 
 ### Installation
-
-## Documentation
-
-## Roadmap
 
 ## Contributors
 

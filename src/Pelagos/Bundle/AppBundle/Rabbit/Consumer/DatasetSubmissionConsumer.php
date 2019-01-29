@@ -132,6 +132,7 @@ class DatasetSubmissionConsumer implements ConsumerInterface
         // @codingStandardsIgnoreEnd
         if (preg_match('/^dataset\./', $routingKey)) {
             $this->processDataset($datasetSubmission, $loggingContext);
+            $dataset->updateAvailabilityStatus();
         } else {
             $this->logger->warning("Unknown routing key: $routingKey", $loggingContext);
             return true;
