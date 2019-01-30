@@ -602,6 +602,24 @@ class DatasetSubmission extends Entity
      */
     protected $datasetFileSha256Hash;
 
+     /**
+     * The date the file link was last checked.
+     *
+     * @var \DateTime
+     *
+     * @ORM\Column(type="datetimetz")
+     */
+    protected $datasetFileUrlLastCheckedDate;
+
+     /**
+     * The status code returned when the file link was checked.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $datasetFileUrlStatusCode;
+
     /**
      * The metadata file transfer type.
      *
@@ -1666,6 +1684,50 @@ class DatasetSubmission extends Entity
     public function getDatasetFileSha256Hash()
     {
         return $this->datasetFileSha256Hash;
+    }
+
+    /**
+     * Set the date when the dataset file link was last checked.
+     *
+     * @param string $datasetFileUrlLastCheckedDate The last check date.
+     *
+     * @return void
+     */
+    public function setDatasetFileUrlLastCheckedDate(\DateTime $datasetFileUrlLastCheckedDate)
+    {
+        $this->datasetFileUrlLastCheckedDate = $datasetFileUrlLastCheckedDate;
+    }
+
+    /**
+     * Get the date when the dataset file link was last checked.
+     *
+     * @return string
+     */
+    public function getDatasetFileUrlLastCheckedDate()
+    {
+        return $this->datasetFileUrlLastCheckedDate;
+    }
+
+    /**
+     * Set the dataset file url status code.
+     *
+     * @param string $datasetFileUrlStatusCode The dataset dataset file url status code.
+     *
+     * @return void
+     */
+    public function setDatasetFileUrlStatusCode($datasetFileUrlStatusCode)
+    {
+        $this->datasetFileUrlStatusCode = $datasetFileUrlStatusCode;
+    }
+
+    /**
+     * Get the dataset file url status code.
+     *
+     * @return string
+     */
+    public function getDatasetFileUrlStatusCode()
+    {
+        return $this->datasetFileUrlStatusCode;
     }
 
     /**
