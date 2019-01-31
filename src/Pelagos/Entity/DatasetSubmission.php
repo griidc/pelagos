@@ -1692,11 +1692,11 @@ class DatasetSubmission extends Entity
     /**
      * Set the date when the dataset file link was last checked.
      *
-     * @param string $datasetFileUrlLastCheckedDate The last check date.
+     * @param \DateTime $datasetFileUrlLastCheckedDate The last check date.
      *
      * @return void
      */
-    public function setDatasetFileUrlLastCheckedDate(\DateTime $datasetFileUrlLastCheckedDate)
+    public function setDatasetFileUrlLastCheckedDate(\DateTime $datasetFileUrlLastCheckedDate = null)
     {
         $this->datasetFileUrlLastCheckedDate = $datasetFileUrlLastCheckedDate;
     }
@@ -1704,7 +1704,7 @@ class DatasetSubmission extends Entity
     /**
      * Get the date when the dataset file link was last checked.
      *
-     * @return string
+     * @return \DateTime
      */
     public function getDatasetFileUrlLastCheckedDate()
     {
