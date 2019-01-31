@@ -901,4 +901,33 @@ class DatasetSubmissionTest extends TestCase
             $this->datasetSubmission->getDistributionPoints()->count()
         );
     }
+
+    /**
+     * Test the setter and getter for dataset file url last checked date
+     *
+     * @return void
+     */
+    public function testCanSetAndGetDatasetFileUrlLastCheckedDate()
+    {
+        $dateTime = new \DateTime('now', new \DateTimeZone('UTC'));
+
+        $this->datasetSubmission->setDatasetFileUrlLastCheckedDate($dateTime);
+
+        $this->assertEquals($dateTime, $this->datasetSubmission->getDatasetFileUrlLastCheckedDate());
+    }
+
+    /**
+     * Test the setter and getter for dataset file url status code
+     *
+     * @return void
+     */
+    public function testCanSetAndGetDatasetFileUrlStatusCode()
+    {
+        $statusCode = '200';
+
+        $this->datasetSubmission->setDatasetFileUrlStatusCode($statusCode);
+
+        $this->assertEquals($statusCode, $this->datasetSubmission->getDatasetFileUrlStatusCode());
+    }
+
 }

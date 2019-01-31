@@ -299,6 +299,8 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getMetadataContacts' => new ArrayCollection(array($this->mockPersonDatasetSubmissionMetadataContact)),
                 'getDistributionPoints' => new ArrayCollection(array($this->mockDistributionPoint)),
                 'getErddapUrl' => 'https://xyz',
+                'getDatasetFileUrlLastCheckedDate' => new \DateTime('now', new \DateTimeZone('UTC')),
+                'getDatasetFileUrlStatusCode' => '200'
             )
         );
 

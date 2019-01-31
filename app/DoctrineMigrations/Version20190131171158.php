@@ -31,8 +31,7 @@ class Version20190131171158 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
-
-        $this->addSql('CREATE SCHEMA public');
+        
         $this->addSql('ALTER TABLE dataset_submission DROP dataset_file_url_last_checked_date');
         $this->addSql('ALTER TABLE dataset_submission DROP dataset_file_url_status_code');
         $this->addSql('ALTER TABLE dataset_submission_audit DROP dataset_file_url_last_checked_date');
