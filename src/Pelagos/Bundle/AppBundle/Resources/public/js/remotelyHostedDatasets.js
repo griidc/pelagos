@@ -5,7 +5,14 @@ $("html").hide();
 
 $(document).ready(function(){
     "use strict";
-    $("#remotelyHostedDatasetsTable").pelagosDataTable();
+    $("#remotelyHostedDatasetsTable").pelagosDataTable({
+        "createdRow": function(row, data, dataIndex) {
+            // Color all 4xx and 5xx errors rows red.
+            if (/[45][0-9]{2}/.test(data.datasetSubmission.datasetFileUrlStatusCode)) {
+                $(row).addClass("red");
+            }
+        }
+    });
 
     $("html").show();
 
@@ -19,7 +26,7 @@ $(document).ready(function(){
         }).done(function(data, textStatus, jqXHR){
             var messageType = "success";
             //return informative message for 202 code
-            if (202 === jqXHR.status ) {
+            if (202 === jqXHR.status) {
                 messageType = "warning";
             } else {
                 //reset table
@@ -102,6 +109,17 @@ $(document).ready(function(){
                         "targets": 0,
                         "visible": false,
                         "searchable": false
+                    },
+                    {
+                        "render": function (data, type, row) {
+                            if (data) {
+                                return data.date.replace(/\.\d+$/,"") + data.timezone;
+                            } else {
+                                return null;
+                            }
+                        },
+                        "targets": 5
+
                     }
                 ]
             }, options
