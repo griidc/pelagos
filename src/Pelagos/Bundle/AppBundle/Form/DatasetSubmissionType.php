@@ -262,24 +262,6 @@ class DatasetSubmissionType extends AbstractType
                 'delete_empty' => true,
                 'required' => true,
             ))
-            ->add('datasetFileUrlLastCheckedDate', Type\DateTimeType::class, array(
-                'label' => 'Cold Storage URL Last Checked Date',
-                'required' => false,
-                'attr' => array(
-                    'allow_add' => true,
-                    'allow_delete' => true,
-                    'delete_empty' => true,
-                    'required' => false),
-            ))
-            ->add('datasetFileUrlStatusCode', Type\TextType::class, array(
-                'label' => 'Cold Storage URL Status Code',
-                'required' => false,
-                'attr' => array(
-                    'allow_add' => true,
-                    'allow_delete' => true,
-                    'delete_empty' => true,
-                    'required' => false),
-            ))
             ->add('erddapUrl', Type\TextType::class, array(
                 'label' => 'ERDDAP Url',
                 'required' => false,
