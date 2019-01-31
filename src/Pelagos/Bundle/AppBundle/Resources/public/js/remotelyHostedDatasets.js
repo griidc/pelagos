@@ -9,7 +9,7 @@ $(document).ready(function(){
         "createdRow": function(row, data, dataIndex) {
             // Color all 4xx and 5xx errors rows red.
             if (/[45][0-9]{2}/.test(data.datasetSubmission.datasetFileUrlStatusCode)) {
-                $(row).addClass("red");
+                $(row).addClass("error-row");
             }
         }
     });
