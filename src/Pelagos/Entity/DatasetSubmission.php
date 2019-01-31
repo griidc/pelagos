@@ -607,7 +607,11 @@ class DatasetSubmission extends Entity
      *
      * @var \DateTime
      *
+<<<<<<< HEAD
      * @ORM\Column(type="datetimetz, nullable=true")
+=======
+     * @ORM\Column(type="datetimetz", nullable=true)
+>>>>>>> 01c1a8cb24366077e178edaa0e256d6300f0ff52
      */
     protected $datasetFileUrlLastCheckedDate;
 
