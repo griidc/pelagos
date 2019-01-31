@@ -602,6 +602,24 @@ class DatasetSubmission extends Entity
      */
     protected $datasetFileSha256Hash;
 
+     /**
+     * The date the file link was last checked.
+     *
+     * @var \DateTime
+     *
+     * @ORM\Column(type="datetimetz", nullable=true)
+     */
+    protected $datasetFileUrlLastCheckedDate;
+
+     /**
+     * The status code returned when the file link was checked.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $datasetFileUrlStatusCode;
+
     /**
      * The metadata file transfer type.
      *
@@ -1014,6 +1032,9 @@ class DatasetSubmission extends Entity
             $this->setDistributionFormatName($entity->getDistributionFormatName());
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
             $this->setErddapUrl($entity->getErddapUrl());
+            $this->setDatasetFileUrlLastCheckedDate($entity->getDatasetFileUrlLastCheckedDate());
+            $this->setDatasetFileUrlStatusCode($entity->getDatasetFileUrlStatusCode());
+
 
             //Submitter should always be the user who has submitted the dataset.
             if (!in_array($entity->getDatasetStatus(), [ Dataset::DATASET_STATUS_NONE, Dataset::DATASET_STATUS_BACK_TO_SUBMITTER])) {
@@ -1666,6 +1687,50 @@ class DatasetSubmission extends Entity
     public function getDatasetFileSha256Hash()
     {
         return $this->datasetFileSha256Hash;
+    }
+
+    /**
+     * Set the date when the dataset file link was last checked.
+     *
+     * @param \DateTime $datasetFileUrlLastCheckedDate The last check date.
+     *
+     * @return void
+     */
+    public function setDatasetFileUrlLastCheckedDate(\DateTime $datasetFileUrlLastCheckedDate = null)
+    {
+        $this->datasetFileUrlLastCheckedDate = $datasetFileUrlLastCheckedDate;
+    }
+
+    /**
+     * Get the date when the dataset file link was last checked.
+     *
+     * @return \DateTime
+     */
+    public function getDatasetFileUrlLastCheckedDate()
+    {
+        return $this->datasetFileUrlLastCheckedDate;
+    }
+
+    /**
+     * Set the dataset file url status code.
+     *
+     * @param string $datasetFileUrlStatusCode The dataset dataset file url status code.
+     *
+     * @return void
+     */
+    public function setDatasetFileUrlStatusCode($datasetFileUrlStatusCode)
+    {
+        $this->datasetFileUrlStatusCode = $datasetFileUrlStatusCode;
+    }
+
+    /**
+     * Get the dataset file url status code.
+     *
+     * @return string
+     */
+    public function getDatasetFileUrlStatusCode()
+    {
+        return $this->datasetFileUrlStatusCode;
     }
 
     /**
