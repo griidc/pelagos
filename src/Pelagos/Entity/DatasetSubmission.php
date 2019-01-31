@@ -602,7 +602,25 @@ class DatasetSubmission extends Entity
      */
     protected $datasetFileSha256Hash;
 
-     /**
+    /**
+     * The dataset file cold storage archive size.
+     *
+     * @var integer
+     *
+     * @ORM\Column(type="bigint", nullable=true)
+     */
+    protected $datasetFileColdStorageArchiveSize;
+
+    /**
+     * The dataset file cold storage archive sha256 hash.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $datasetFileColdStorageArchiveSha256Hash;
+
+    /**
      * The date the file link was last checked.
      *
      * @var \DateTime
@@ -611,7 +629,7 @@ class DatasetSubmission extends Entity
      */
     protected $datasetFileUrlLastCheckedDate;
 
-     /**
+    /**
      * The status code returned when the file link was checked.
      *
      * @var string
@@ -988,7 +1006,6 @@ class DatasetSubmission extends Entity
             }
 
             $this->addDistributionPoint(new DistributionPoint());
-
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
             $this->setSequence($entity->getDataset()->getDatasetSubmissionHistory()->first()->getSequence() + 1);
@@ -1687,6 +1704,50 @@ class DatasetSubmission extends Entity
     public function getDatasetFileSha256Hash()
     {
         return $this->datasetFileSha256Hash;
+    }
+
+    /**
+     * Set the hash of the single archive file to be stored in cold storage.
+     *
+     * @param string $datasetFileColdStorageArchiveSha256Hash Hash of the archive to be put into cold storage.
+     *
+     * @return void
+     */
+    public function setDatasetFileColdStorageArchiveSha256Hash($datasetFileColdStorageArchiveSha256Hash)
+    {
+        $this->datasetFileColdStorageArchiveSha256Hash = $datasetFileColdStorageArchiveSha256Hash;
+    }
+
+    /**
+     * Get the hash of the single archive file to be stored in cold storage.
+     *
+     * @return string
+     */
+    public function getDatasetFileColdStorageArchiveSha256Hash()
+    {
+        return $this->datasetFileColdStorageArchiveSha256Hash;
+    }
+
+    /**
+     * Set the size of the single archive file to be stored in cold storage.
+     *
+     * @param integer $datasetFileColdStorageArchiveSize The archive size, in bytes.
+     *
+     * @return void
+     */
+    public function setDatasetFileColdStorageArchiveSize($datasetFileColdStorageArchiveSize)
+    {
+        $this->datasetFileColdStorageArchiveSize = $datasetFileColdStorageArchiveSize;
+    }
+
+    /**
+     * Get the size of the single archive file to be stored in cold storage, in bytes.
+     *
+     * @return integer
+     */
+    public function getDatasetFileColdStorageArchiveSize()
+    {
+        return $this->datasetFileColdStorageArchiveSize;
     }
 
     /**
