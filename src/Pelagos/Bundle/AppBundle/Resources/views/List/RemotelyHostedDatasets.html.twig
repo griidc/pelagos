@@ -48,6 +48,8 @@
     'udi',
     'datasetSubmission.datasetFileUri',
     'datasetStatus',
+    'datasetSubmission.datasetFileUrlStatusCode',
+    'datasetSubmission.datasetFileUrlLastCheckedDate',
 ] %}
 
 {% block body %}
@@ -79,7 +81,9 @@
                         {"data": "id"},
                         {"data": "udi"},
                         {"data": "datasetSubmission.datasetFileUri"},
-                        {"data": "datasetStatus"}
+                        {"data": "datasetStatus"},
+                        {"data": "datasetSubmission.datasetFileUrlStatusCode"},
+                        {"data": "datasetSubmission.datasetFileUrlLastCheckedDate"}
                     ]'
                     data-order='[
                         [ 1, "desc"]
@@ -91,6 +95,8 @@
                     <th>UDI</th>
                     <th>URL</th>
                     <th>Dataset Status</th>
+                    <th>Url Status Code</th>
+                    <th>Url Last Test</th>
                 </tr>
                 </thead>
                 <tbody>
