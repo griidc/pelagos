@@ -42,26 +42,35 @@ class ValidateRemotelyHostedLinksCommand extends ContainerAwareCommand
             array(
                 'availabilityStatus' =>
                     array(
-                        DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
                         DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
                     )
             )
         );
         $urlValidationService = new UrlValidation();
+        $errorUdi = array();
 
         foreach ($datasets as $dataset) {
             $datasetSubmission = $dataset->getDatasetSubmission();
 
             if ($datasetSubmission instanceof DatasetSubmission) {
+
                 try {
-                    $result = $urlValidationService->validateUrl($datasetSubmission->getDatasetFileUri());
+                    $httpResponse = $urlValidationService->validateUrl($datasetSubmission->getDatasetFileUri());
+                    if ($httpResponse === true) {
+                        $httpCode = 200;
+                    } else {
+                        $httpCode = (trim(str_replace('Could not get URL, returned HTTP code','',$httpResponse)));
+                        array_push($errorUdi,$dataset->getUdi());
+                    }
+                    $datasetSubmission->setDatasetFileUrlStatusCode($httpCode);
                 } catch (\Exception $e) {
-                    $this->getContainer()->get('pelagos.event.entity_event_dispatcher')->dispatch(
-                        $datasetSubmission,
-                        'submitted'
-                    );
+                    $output->writeln('Unable to process curl command, Error response: ' . $e->getMessage());
                 }
+
             }
+            $datasetSubmission->setDatasetFileUrlLastCheckedDate(new \DateTime('now', new \DateTimeZone('UTC')));
+            $entityManager->persist($datasetSubmission);
+            $entityManager->flush();
         }
     }
 }
