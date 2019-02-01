@@ -1732,7 +1732,7 @@ class DatasetSubmission extends Entity
     /**
      * Set the size of the single archive file to be stored in cold storage.
      *
-     * @param integer $datasetFileColdStorageArchiveSize The archive size, in bytes.
+     * @param integer|null $datasetFileColdStorageArchiveSize The archive size, in bytes.
      *
      * @return void
      */
