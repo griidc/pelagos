@@ -32,7 +32,6 @@ class Version20190201165954 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('ALTER TABLE dataset_submission DROP dataset_file_cold_storage_archive_size');
         $this->addSql('ALTER TABLE dataset_submission DROP dataset_file_cold_storage_archive_sha256hash');
         $this->addSql('ALTER TABLE dataset_submission_audit DROP dataset_file_cold_storage_archive_size');
