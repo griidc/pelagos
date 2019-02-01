@@ -328,7 +328,7 @@ class DatasetSubmissionTest extends TestCase
      *
      * @return void
      */
-    public function testDatasetFileColdStorageAttributes()
+    public function testCanSetAndGetDatasetFileColdStorageAttributes()
     {
         $this->datasetSubmission->setDatasetFileColdStorageArchiveSha256Hash('66a045b452102c59d840ec097d59d9467e13a3f34f6494e539ffd32c1bb35f18');
         $this->assertEquals(
