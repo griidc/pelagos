@@ -13,15 +13,13 @@ class UrlValidation
      *
      * @param string $url The Url that needs to be validated.
      *
-     * @throws \Exception When the given url does not return a success.
-     *
      * @return boolean
      */
     public function validateUrl($url)
     {
         $ch = curl_init();
         //php://memory is a read-write streams that allow temporary data to be stored in a file-like wrapper.
-        $cookies = tempnam('/tmp','php://memory');
+        $cookies = tempnam('/tmp', 'php://memory');
         curl_setopt($ch, CURLOPT_COOKIEJAR, $cookies);
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HEADER, true);

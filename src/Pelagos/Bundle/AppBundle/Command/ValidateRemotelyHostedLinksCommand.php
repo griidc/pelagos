@@ -62,19 +62,14 @@ class ValidateRemotelyHostedLinksCommand extends ContainerAwareCommand
             $datasetSubmission = $dataset->getDatasetSubmission();
 
             if ($datasetSubmission instanceof DatasetSubmission) {
-                try {
-                    $httpResponse = $urlValidationService->validateUrl($datasetSubmission->getDatasetFileUri());
-                    if ($httpResponse === true) {
-                        $httpCode = 200;
-                    } else {
-                        $httpCode = (trim(str_replace('Could not get URL, returned HTTP code', '', $httpResponse)));
-                        array_push($errorUdi, $dataset->getUdi());
-                    }
-                    $datasetSubmission->setDatasetFileUrlStatusCode($httpCode);
-                } catch (\Exception $e) {
-                    $output->writeln('Unable to process curl command, Error response: ' . $e->getMessage());
-                    continue;
+                $httpResponse = $urlValidationService->validateUrl($datasetSubmission->getDatasetFileUri());
+                if ($httpResponse === true) {
+                    $httpCode = 200;
+                } else {
+                    $httpCode = (trim(str_replace('Could not get URL, returned HTTP code', '', $httpResponse)));
+                    array_push($errorUdi, $dataset->getUdi());
                 }
+                $datasetSubmission->setDatasetFileUrlStatusCode($httpCode);
                 $datasetSubmission->setDatasetFileUrlLastCheckedDate(new \DateTime('now', new \DateTimeZone('UTC')));
             }
             $entityManager->persist($datasetSubmission);
