@@ -621,15 +621,6 @@ class DatasetSubmission extends Entity
     protected $datasetFileColdStorageArchiveSha256Hash;
 
     /**
-     * The dataset file cold storage status.
-     *
-     * @var boolean
-     *
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $datasetFileIsInColdStorage;
-
-    /**
      * The date the file link was last checked.
      *
      * @var \DateTime
@@ -1062,7 +1053,6 @@ class DatasetSubmission extends Entity
             $this->setDatasetFileUrlStatusCode($entity->getDatasetFileUrlStatusCode());
             $this->setDatasetFileColdStorageArchiveSha256Hash($entity->getDatasetFileColdStorageArchiveSha256Hash());
             $this->setDatasetFileColdStorageArchiveSize($entity->getDatasetFileColdStorageArchiveSize());
-            $this->setDatasetFileIsInColdStorage($entity->getDatasetFileIsInColdStorage());
 
             //Submitter should always be the user who has submitted the dataset.
             if (!in_array($entity->getDatasetStatus(), [ Dataset::DATASET_STATUS_NONE, Dataset::DATASET_STATUS_BACK_TO_SUBMITTER])) {
@@ -1759,29 +1749,6 @@ class DatasetSubmission extends Entity
     public function getDatasetFileColdStorageArchiveSize()
     {
         return $this->datasetFileColdStorageArchiveSize;
-    }
-
-
-    /**
-     * Set the cold storage status of the dataset.
-     *
-     * @param boolean|null $datasetFileIsInColdStorage The dataset status on Cold Storage
-     *
-     * @return void
-     */
-    public function setDatasetFileIsInColdStorage($datasetFileIsInColdStorage)
-    {
-        $this->datasetFileIsInColdStorage = $datasetFileIsInColdStorage;
-    }
-
-    /**
-     * Get the cold storage status of the dataset.
-     *
-     * @return boolean
-     */
-    public function getDatasetFileIsInColdStorage()
-    {
-        return $this->datasetFileIsInColdStorage;
     }
 
     /**
