@@ -22,7 +22,6 @@ class UrlValidation
         $cookies = tempnam('/tmp', 'php://memory');
         curl_setopt($ch, CURLOPT_COOKIEJAR, $cookies);
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_NOBODY, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
