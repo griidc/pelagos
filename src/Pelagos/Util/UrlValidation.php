@@ -20,6 +20,9 @@ class UrlValidation
     public function validateUrl($url)
     {
         $ch = curl_init();
+        $cookies = tempnam('/tmp','cookie.txt');
+        curl_setopt($ch, CURLOPT_COOKIEJAR, $cookies);
+        curl_setopt($ch, CURLOPT_COOKIEFILE, $cookies);
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
