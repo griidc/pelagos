@@ -625,7 +625,7 @@ class DatasetSubmission extends Entity
      *
      * @var boolean
      *
-     * @ORM\Column(type="bool", nullable=true)
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $datasetFileIsInColdStorage;
 
