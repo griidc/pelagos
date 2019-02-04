@@ -58,7 +58,6 @@ class ValidateRemotelyHostedLinksCommand extends ContainerAwareCommand
         $urlValidationService = new UrlValidation();
         $errorUdi = array();
 
-
         foreach ($datasets as $dataset) {
             $datasetSubmission = $dataset->getDatasetSubmission();
 
@@ -74,9 +73,10 @@ class ValidateRemotelyHostedLinksCommand extends ContainerAwareCommand
                     $datasetSubmission->setDatasetFileUrlStatusCode($httpCode);
                 } catch (\Exception $e) {
                     $output->writeln('Unable to process curl command, Error response: ' . $e->getMessage());
+                    continue;
                 }
+                $datasetSubmission->setDatasetFileUrlLastCheckedDate(new \DateTime('now', new \DateTimeZone('UTC')));
             }
-            $datasetSubmission->setDatasetFileUrlLastCheckedDate(new \DateTime('now', new \DateTimeZone('UTC')));
             $entityManager->persist($datasetSubmission);
             $entityManager->flush();
         }
