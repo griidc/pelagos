@@ -229,10 +229,11 @@ class DoiConsumer implements ConsumerInterface
                 $doiUrl = 'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi();
             }
 
+            $creator = ($dataset->getAuthors()) ? $dataset->getAuthors() : 'tba';
             $doiUtil->updateDOI(
                 $doi->getDoi(),
                 $doiUrl,
-                $dataset->getAuthors(),
+                $creator,
                 $dataset->getTitle(),
                 'Harte Research Institute',
                 $dataset->getReferenceDateYear(),
