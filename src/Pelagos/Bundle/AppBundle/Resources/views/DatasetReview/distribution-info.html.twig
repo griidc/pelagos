@@ -53,6 +53,23 @@
 </fieldset>
 
 <fieldset>
+    <legend>Cold Storage File Information</legend>
+    <table class="tab-table">
+        <tr>
+            <td>
+                {{ form_label(form.datasetFileColdStorageArchiveSize) }}
+                {{ form_widget(form.datasetFileColdStorageArchiveSize) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_row(form.datasetFileColdStorageArchiveSha256Hash) }}
+            </td>
+        </tr>
+    </table>
+</fieldset>
+
+<fieldset>
     <legend>File Information</legend>
     <table class="tab-table">
         <tr>
