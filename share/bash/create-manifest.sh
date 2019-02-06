@@ -42,3 +42,5 @@ unix2dos $hashfile
 mv $hashfile $udi
 zip -r $zipfile $udi/
 unzip -l $zipfile
+
+rm -rf $udi
