@@ -307,14 +307,6 @@ class DatasetSubmissionType extends AbstractType
                 $form->get('isDatasetFileInColdStorage')->setData(true);
             }
         });
-        //make sure cold storage attributes are null if the checkbox is disabled
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-            $form = $event->getForm();
-            if ($form->get('isDatasetFileInColdStorage')->getData() === false) {
-                $form->get('datasetFileColdStorageArchiveSha256Hash')->setData(null);
-                $form->get('datasetFileColdStorageArchiveSize')->setData(null);
-            }
-        });
     }
 
     /**

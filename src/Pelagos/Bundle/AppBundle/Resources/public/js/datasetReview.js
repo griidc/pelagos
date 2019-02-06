@@ -660,7 +660,12 @@ $(document).ready(function(){
     checkColdStorageCheckBoxState();
     //coldstorage checkbox - distribution info tab
     $(".coldstorage-checkbox").change(function (){
-        checkColdStorageCheckBoxState();
+        if (!$(this).is(":checked") &&
+            ($("#datasetFileColdStorageArchiveSha256Hash").val().trim() !== "" || $("#datasetFileColdStorageArchiveSize").val() !== "") ) {
+            $(this).prop("checked", true); //re-check because stop propagation doesn't work
+            showDialog("Cold Storage Information", "Please make sure the Cold Storage Archive Size and Hash values are empty before disabling In Cold Storage option.");
+        }
+        else checkColdStorageCheckBoxState();
     });
 });
 
