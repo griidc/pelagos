@@ -6,6 +6,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -267,6 +269,20 @@ class DatasetSubmissionType extends AbstractType
                 'required' => false,
                 'attr' => array('data-rule-url' => true),
             ))
+            ->add('isDatasetFileInColdStorage', Type\CheckboxType::class, array(
+                'label' => 'In Cold Storage',
+                'mapped' => false,
+                'required' => false,
+            ))
+            ->add('datasetFileColdStorageArchiveSize', Type\IntegerType::class, array(
+                'label' => 'Cold Storage Archive Size (Bytes)',
+                'required' => false,
+
+            ))
+            ->add('datasetFileColdStorageArchiveSha256Hash', Type\TextType::class, array(
+                'label' => 'Cold Storage Archive Sha256 Hash',
+                'required' => false,
+            ))
             ->add('submitButton', Type\SubmitType::class, array(
                 'label' => 'Submit',
                 'attr'  => array('class' => 'submitButton'),
@@ -283,6 +299,14 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Request Revisions',
                 'attr'  => array('class' => 'submitButton'),
             ));
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+            $data = $event->getData();
+            $form = $event->getForm();
+            if ($data->isDatasetFileInColdStorage() === true) {
+                $form->get('isDatasetFileInColdStorage')->setData(true);
+            }
+        });
     }
 
     /**
