@@ -656,7 +656,27 @@ $(document).ready(function(){
               }
         });
     });
+
+    checkColdStorageCheckBoxState();
+    //coldstorage checkbox - distribution info tab
+    $(".coldstorage-checkbox").change(function (){
+        checkColdStorageCheckBoxState();
+    });
 });
+
+function checkColdStorageCheckBoxState() {
+    if ($(".coldstorage-checkbox").is(":checked")) {
+        $(".row-coldstorage-filesize").show();
+        $(".row-coldstorage-sha256hash").show();
+        $("#datasetFileColdStorageArchiveSize").attr("required", "required");
+        $("#datasetFileColdStorageArchiveSha256Hash").attr("required", "required");
+    } else {
+        $(".row-coldstorage-filesize").hide();
+        $(".row-coldstorage-sha256hash").hide();
+        $("#datasetFileColdStorageArchiveSize").removeAttr("required");
+        $("#datasetFileColdStorageArchiveSha256Hash").removeAttr("required");
+    }
+}
 
 function checkSpatial(isNonSpatial) {
     if (isNonSpatial) {

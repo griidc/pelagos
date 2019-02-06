@@ -57,11 +57,16 @@
     <table class="tab-table">
         <tr>
             <td>
-                {{ form_label(form.datasetFileColdStorageArchiveSize) }}
-                {{ form_widget(form.datasetFileColdStorageArchiveSize) }}
+                {{ form_label(form.isDatasetFileInColdStorage) }}
+                {{ form_widget(form.isDatasetFileInColdStorage, { 'attr': {'class': 'coldstorage-checkbox'} }) }}
             </td>
         </tr>
-        <tr>
+        <tr class="row-coldstorage-filesize">
+            <td>
+                {{ form_row(form.datasetFileColdStorageArchiveSize) }}
+            </td>
+        </tr>
+        <tr class="row-coldstorage-sha256hash">
             <td>
                 {{ form_row(form.datasetFileColdStorageArchiveSha256Hash) }}
             </td>

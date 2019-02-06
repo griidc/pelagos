@@ -1128,6 +1128,19 @@ class DatasetSubmission extends Entity
                     ->addViolation();
             }
         }
+
+        $coldStorageViolationMsg = 'You must provide both File Size and Sha256 Hash value for Cold Storage Information.';
+        if (null !== $this->datasetFileColdStorageArchiveSize && null === $this->datasetFileColdStorageArchiveSha256Hash) {
+                $context->buildViolation($coldStorageViolationMsg)
+                    ->atPath('datasetFileColdStorageArchiveSha256Hash')
+                    ->addViolation();
+        }
+
+        if (null === $this->datasetFileColdStorageArchiveSize && null !== $this->datasetFileColdStorageArchiveSha256Hash) {
+            $context->buildViolation($coldStorageViolationMsg)
+                ->atPath('datasetFileColdStorageArchiveSize')
+                ->addViolation();
+        }
     }
 
     /**
@@ -1749,6 +1762,19 @@ class DatasetSubmission extends Entity
     public function getDatasetFileColdStorageArchiveSize()
     {
         return $this->datasetFileColdStorageArchiveSize;
+    }
+
+    /**
+     * Check if the file is stored in cold storage based on the values of Sha256Hash and FileSize.
+     *
+     * @return boolean
+     */
+    public function isDatasetFileInColdStorage()
+    {
+        if (null !== $this->datasetFileColdStorageArchiveSize && null !== $this->datasetFileColdStorageArchiveSha256Hash) {
+            return true;
+        }
+        return false;
     }
 
     /**
