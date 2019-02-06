@@ -275,7 +275,7 @@ class DatasetSubmissionType extends AbstractType
                 'required' => false,
             ))
             ->add('datasetFileColdStorageArchiveSize', Type\IntegerType::class, array(
-                'label' => 'Cold Storage Archive Size',
+                'label' => 'Cold Storage Archive Size (Bytes)',
                 'required' => false,
 
             ))
