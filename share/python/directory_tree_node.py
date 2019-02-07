@@ -1,7 +1,7 @@
 '''
 This class models a node in a tree of nodes
 representing a node in a file system directory tree.
-Each node has a name and a size in bytes. The name 
+Each node has a name and a size in bytes. The name
 represents the name of the node in the directory/filename
 path.
 
@@ -90,8 +90,12 @@ class DirectoryTreeNode(object):
         s = s + self.getName()
 
         print (formatString.format(s,DirectoryTreeNode.intToSize(self.getSize())))
+        # Custom sorter for use in sorting childrenList below.
+        def mysorter(elem):
+            return elem.getName()
+
         childrenList = self.getChildren()
-        for child in childrenList:
+        for child in sorted(childrenList, key=mysorter):
             child.printTree(indentations + 1)
         return
 
