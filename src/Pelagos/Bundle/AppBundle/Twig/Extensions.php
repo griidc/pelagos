@@ -184,7 +184,7 @@ class Extensions extends \Twig_Extension
             if ($drupal) {
                 drupal_add_library('system', $libraryName);
             } else {
-                $return .= "$libraryName\n";
+                $return .= "<!-- drupal_library:$libraryName -->";
             }
         }
         return $return;
