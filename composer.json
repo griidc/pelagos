@@ -49,7 +49,8 @@
         "ruflin/elastica": "3.2.2 as 2.99.0",
         "phayes/geophp": "^1.2",
         "doctrine/doctrine-migrations-bundle": "^1.2",
-        "egulias/email-validator": "^1.2"
+        "egulias/email-validator": "^1.2",
+        "symfony/webpack-encore-bundle": "^1.1"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
