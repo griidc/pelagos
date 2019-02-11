@@ -324,6 +324,26 @@ class DatasetSubmissionTest extends TestCase
     }
 
     /**
+     * Test dataset cold-storage related file attributes.
+     *
+     * @return void
+     */
+    public function testCanSetAndGetDatasetFileColdStorageAttributes()
+    {
+        $this->datasetSubmission->setDatasetFileColdStorageArchiveSha256Hash('66a045b452102c59d840ec097d59d9467e13a3f34f6494e539ffd32c1bb35f18');
+
+        $this->assertEquals(
+            '66a045b452102c59d840ec097d59d9467e13a3f34f6494e539ffd32c1bb35f18',
+            $this->datasetSubmission->getDatasetFileColdStorageArchiveSha256Hash()
+        );
+        $this->datasetSubmission->setDatasetFileColdStorageArchiveSize(42);
+        $this->assertEquals(
+            42,
+            $this->datasetSubmission->getDatasetFileColdStorageArchiveSize()
+        );
+    }
+
+    /**
      * Test metadata file attributes.
      *
      * @return void
@@ -901,4 +921,33 @@ class DatasetSubmissionTest extends TestCase
             $this->datasetSubmission->getDistributionPoints()->count()
         );
     }
+
+    /**
+     * Test the setter and getter for dataset file url last checked date
+     *
+     * @return void
+     */
+    public function testCanSetAndGetDatasetFileUrlLastCheckedDate()
+    {
+        $dateTime = new \DateTime('now', new \DateTimeZone('UTC'));
+
+        $this->datasetSubmission->setDatasetFileUrlLastCheckedDate($dateTime);
+
+        $this->assertEquals($dateTime, $this->datasetSubmission->getDatasetFileUrlLastCheckedDate());
+    }
+
+    /**
+     * Test the setter and getter for dataset file url status code
+     *
+     * @return void
+     */
+    public function testCanSetAndGetDatasetFileUrlStatusCode()
+    {
+        $statusCode = '200';
+
+        $this->datasetSubmission->setDatasetFileUrlStatusCode($statusCode);
+
+        $this->assertEquals($statusCode, $this->datasetSubmission->getDatasetFileUrlStatusCode());
+    }
+
 }

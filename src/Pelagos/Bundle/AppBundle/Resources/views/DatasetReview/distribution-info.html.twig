@@ -53,6 +53,28 @@
 </fieldset>
 
 <fieldset>
+    <legend>Cold Storage File Information</legend>
+    <table class="tab-table">
+        <tr>
+            <td>
+                {{ form_label(form.isDatasetFileInColdStorage) }}
+                {{ form_widget(form.isDatasetFileInColdStorage, { 'attr': {'class': 'coldstorage-checkbox'} }) }}
+            </td>
+        </tr>
+        <tr class="row-coldstorage-filesize">
+            <td>
+                {{ form_row(form.datasetFileColdStorageArchiveSize) }}
+            </td>
+        </tr>
+        <tr class="row-coldstorage-sha256hash">
+            <td>
+                {{ form_row(form.datasetFileColdStorageArchiveSha256Hash) }}
+            </td>
+        </tr>
+    </table>
+</fieldset>
+
+<fieldset>
     <legend>File Information</legend>
     <table class="tab-table">
         <tr>

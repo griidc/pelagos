@@ -229,10 +229,11 @@ class DoiConsumer implements ConsumerInterface
                 $doiUrl = 'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi();
             }
 
+            $creator = ($dataset->getAuthors()) ? $dataset->getAuthors() : '(:tba)';
             $doiUtil->updateDOI(
                 $doi->getDoi(),
                 $doiUrl,
-                $dataset->getAuthors(),
+                $creator,
                 $dataset->getTitle(),
                 'Harte Research Institute',
                 $dataset->getReferenceDateYear(),
@@ -307,9 +308,7 @@ class DoiConsumer implements ConsumerInterface
             $status = DOI::STATUS_UNAVAILABLE;
         } elseif ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED
             and $restriction === DatasetSubmission::RESTRICTION_NONE) {
-            if ($doiStatus === DOI::STATUS_RESERVED or (preg_match('/^unavailable/', $doiStatus) === 1)) {
-                $status = DOI::STATUS_PUBLIC;
-            }
+            $status = DOI::STATUS_PUBLIC;
         }
 
         return $status;

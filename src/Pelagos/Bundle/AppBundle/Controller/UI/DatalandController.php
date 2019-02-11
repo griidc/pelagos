@@ -84,6 +84,12 @@ class DatalandController extends UIController
                 )->getContent()
             );
             drupal_add_html_head($data, 'json-ld');
+        } else {
+            $data = array(
+                '#type' => 'markup',
+                '#markup' => '<meta name="robots" content="noindex" />' . "\n",
+            );
+            drupal_add_html_head($data, 'meta');
         }
 
         return $this->render(
@@ -120,7 +126,8 @@ class DatalandController extends UIController
 
         $filename = str_replace(':', '-', $udi) . '-metadata.xml';
 
-        $response = new Response($this->get('pelagos.util.metadata')->getXmlRepresentation($dataset, $boundingBoxArray));
+        $response = new Response($this->get('pelagos.util.metadata')
+            ->getXmlRepresentation($dataset, $boundingBoxArray));
         $response->headers->set('Content-Type', 'text/xml');
         $response->headers->set('Content-Disposition', "attachment; filename=$filename;");
         return $response;
