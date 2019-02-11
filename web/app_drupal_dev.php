@@ -20,4 +20,8 @@ $kernel = new AppKernel('drupal_dev', true);
 $request = Request::createFromGlobals();
 $response = $kernel->handle($request);
 
-require_once __DIR__ . '/../app/drupal_send_and_terminate.php';
+//require_once __DIR__ . '/../app/drupal_send_and_terminate.php';
+
+$response->send();
+$kernel->terminate($request, $response);
+exit();
