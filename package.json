@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "@symfony/webpack-encore": "^0.23.0"
+  },
+  "dependencies": {
+    "jquery": "1.12",
+    "jquery-ui": "1.10",
+    "jquery.cookie": "^1.4.1",
+    "qtip2": "2.2.0"
+  }
+}
