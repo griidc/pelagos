@@ -77,12 +77,11 @@ class ValidateRemotelyHostedLinksCommand extends ContainerAwareCommand
         }
 
         if (!empty($errorUdi)) {
-            $drpmEmailAddresses = $this->getAllDRPMs();
 
             $message = \Swift_Message::newInstance()
                 ->setSubject('Error Log - List of Remotely Hosted Datasets links failed')
                 ->setFrom(array('griidc@gomri.org' => 'GRIIDC'))
-                ->setTo($drpmEmailAddresses)
+                ->setTo(array('griidc@gomri.org' => 'GRIIDC'))
                 ->setCharset('UTF-8')
                 ->setBody($this->getContainer()->get('templating')->render(
                     'PelagosAppBundle:Email:data-repository-managers.error-remotely-hosted.email.twig',
@@ -90,30 +89,5 @@ class ValidateRemotelyHostedLinksCommand extends ContainerAwareCommand
                 ), 'text/html');
             $this->getContainer()->get('mailer')->send($message);
         }
-    }
-
-    /**
-     * Internal method to get _all_ DRPMs.
-     *
-     * @throws \Exception On more than one DataRepositoryRole found for MANAGER.
-     *
-     * @return array of Persons having DRPM status.
-     */
-    protected function getAllDRPMs()
-    {
-        $recipientEmailAddresses = array();
-        $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
-
-        $drpmRole = $entityManager->getRepository(DataRepositoryRole::class)->findBy(array('name' => DataRepositoryRoles::MANAGER));
-        if (1 !== count($drpmRole)) {
-            throw new \Exception('More than one role found for manager role.');
-        }
-        $personDataRepositories = $entityManager->getRepository(PersonDataRepository::class)->findBy(array('role' => $drpmRole[0] ));
-
-        foreach ($personDataRepositories as $pdr) {
-            $recipientEmailAddresses[] = $pdr->getPerson()->getEmailAddress();
-        }
-
-        return $recipientEmailAddresses;
     }
 }
