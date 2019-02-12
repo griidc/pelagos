@@ -28,3 +28,7 @@ bin/symfony_requirements
 /src/Pelagos/Util/DOIutil.ini
 coverage
 /.idea
+!node_modules
+/node_modules/*
+!web/build
+/web/build/*
