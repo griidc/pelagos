@@ -34,7 +34,11 @@ if (get_class($response) == 'Pelagos\Response\TerminateResponse') {
     exit();
 }
 
-if (preg_match('/^Pelagos\\\\Bundle\\\\AppBundle\\\\Controller\\\\Api\\\\/', $request->attributes->get('_controller'))) {
+if (preg_match(
+    '/^Pelagos\\\\Bundle\\\\AppBundle\\\\Controller\\\\Api\\\\/',
+    $request->attributes->get('_controller')
+)
+    ) {
     $response->send();
     $kernel->terminate($request, $response);
     exit();
@@ -70,6 +74,9 @@ if (in_array(
     $kernel->terminate($request, $response);
     exit();
 }
+
+// Make drupal return the response code we specify.
+drupal_add_http_header('status', $response->getStatusCode());
 
 if (preg_match('/^Pelagos\\\\/', $request->attributes->get('_controller'))
     or $request->attributes->get('_route') === null
