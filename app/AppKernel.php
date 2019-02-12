@@ -36,7 +36,6 @@ class AppKernel extends Kernel
             new \FOS\JsRoutingBundle\FOSJsRoutingBundle(),
             new \OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
             new \Phobetor\RabbitMqSupervisorBundle\RabbitMqSupervisorBundle(),
-            new \HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
             new \FOS\ElasticaBundle\FOSElasticaBundle(),
             new \Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new \Pelagos\Bundle\LegacyBundle\PelagosLegacyBundle(),

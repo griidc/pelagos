@@ -222,16 +222,6 @@ old_sound_rabbit_mq:
                     - 'update'
                     - 'delete'
 
-hwi_oauth:
-    firewall_names: [main]
-    resource_owners:
-        google:
-            type:           google
-            client_id:      "%google_oauth_client_id%"
-            client_secret:  "%google_oauth_client_secret%"
-            scope:          "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
-    use_referer: true
-
 rabbit_mq_supervisor:
     supervisor_instance_identifier: "%pelagos_name%"
     commands:
