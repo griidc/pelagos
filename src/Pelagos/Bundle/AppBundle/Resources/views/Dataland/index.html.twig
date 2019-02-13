@@ -6,9 +6,6 @@
     {{
         add_library (
             [
-                'ui.dialog',
-                'ui.tabs',
-                'ui.widget',
                 'jquery.cookie',
             ]
         )
@@ -41,6 +38,13 @@
     {% endjavascripts %}
 
     {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
+
+    {% if dataset.availabilityStatus == 10 %}
+        {% include 'PelagosAppBundle:Dataland:metadata.markup.twig' %}
+    {% else %}
+        <meta name="robots" content="noindex" />
+    {% endif %}
+
 
 {% endblock %}
 
