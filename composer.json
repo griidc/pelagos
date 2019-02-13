@@ -56,7 +56,7 @@
         "sensio/generator-bundle": "^3.0",
         "symfony/phpunit-bridge": "^2.7",
         "mockery/mockery": "dev-master",
-        "symfony/web-server-bundle": "^4.2"
+        "symfony/web-server-bundle": "3.4.*"
     },
     "scripts": {
         "post-install-cmd": [
