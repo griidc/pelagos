@@ -24,7 +24,9 @@ bin/symfony_requirements
 /web/css
 /web/images
 /web/js
+/web/build
 /app/supervisor
 /src/Pelagos/Util/DOIutil.ini
 coverage
 /.idea
+/node_modules/*
