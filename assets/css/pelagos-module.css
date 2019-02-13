@@ -1,0 +1,82 @@
+#pelagos-container {
+    display: table;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+}
+
+#pelagos-container-row {
+    display: table-row;
+}
+
+#pelagos-container-cell {
+    display: table-cell;
+    height: 100%;
+    padding: 10px;
+}
+
+#pelagos-wrapper {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+
+#pelagos-wrapper-row {
+    display: table-row;
+}
+
+#pelagos-content {
+    display: table-cell;
+    height: 100%;
+    font-family: "Times New Roman", Times, serif;
+}
+
+#pelagos-content table {
+    border-collapse: separate;
+}
+
+#pelagos-dev-toolbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10000;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 2px;
+    margin: 0;
+}
+
+
+/* hacks */
+
+#main {
+    width: 100% !important;
+}
+
+.pelagos-full {
+    display: none !important;
+}
+
+#page-title {
+    margin-top: 12px !important;
+    margin-right: 10px !important;
+    margin-bottom: 0px !important;
+    margin-left: 10px !important;
+}
+
+#pelagos-content #summary {
+    background-color: white;
+}
+
+#noresults {
+    display: none;
+}
+
+.ui-dialog {
+    z-index: 1000;
+}
+
+.ui-front {
+    z-index: 1000;
+}
