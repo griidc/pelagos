@@ -3,20 +3,7 @@
 {% block head %}
     
     <link rel="stylesheet" href="{{ asset('/build/layout.css') }}">
-    <script src="{{ asset('/build/layout.js') }}"></script>
-
-    {{
-        add_library (
-            [
-                'ui.datepicker',
-                'ui.dialog',
-                'ui.tabs',
-                'ui.widget',
-                'ui.autocomplete'
-            ]
-        )
-    }}
-
+    
     {{
         add_css (
             [
@@ -29,6 +16,8 @@
     {% stylesheets  '@PelagosAppBundle/Resources/public/css/entity.css' %}
         {{ add_css(asset_url) }}
     {% endstylesheets  %}
+    
+    <script src="{{ asset('/build/layout.js') }}"></script>
 
     {{
         add_js(
