@@ -4,7 +4,7 @@
 {% block head %}
 
     {%block stylesheets %}
-            <link href="{{ asset('/build/common.css') }}" rel="stylesheet" />
+        <link href="{{ asset('/build/common.css') }}" rel="stylesheet" />
 
     {%endblock stylesheets  %}
 
@@ -12,15 +12,16 @@
 
     {% block javascripts %}
         <script src="{{ asset('/build/common.js') }}"></script>
+        
+        <script type="text/javascript" src="https://griidc.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-2rfjj7/b/26/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=57fbecdf"></script>
+        
+        <script type="text/javascript" src="https://griidc.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-2rfjj7/b/26/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=736d9b7b"></script>
     {% endblock %}
 {% endblock %}
 </head>
 {% block htmlbody %}
     <body class="html page-pelagos-full">
-    <ul id="atlassian-btns">
-        <li><a href="#" id="atlwdg-trigger" class="issue-btn atlwdg-trigger atlwdg-TOP" style="">Report Issue</a></li>
-        <li><a href="#" id="atlwdg-trigger" class="improvement-btn atlwdg-trigger atlwdg-TOP">Suggest Improvement</a></li>
-    </ul>
+
     <div id="page-wrapper">
         <div id="page">
             {#Header + Menu #}
