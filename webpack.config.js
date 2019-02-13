@@ -12,9 +12,9 @@ Encore
     .setPublicPath('/build')
 
     // will create web/build/app.js and web/build/app.css
+    .createSharedEntry('common', './assets/js/common.js')
     .addEntry('layout', './assets/js/layout.js')
-
-    .addEntry('common', './assets/js/common.js')
+    
 
     // allow sass/scss files to be processed
     //.enableSassLoader()
