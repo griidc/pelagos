@@ -1,48 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head>
-{% block head %}
-
-    {%block stylesheets %}
-        <link href="{{ asset('/build/common.css') }}" rel="stylesheet" />
-
-    {%endblock stylesheets  %}
-
-    <title>{% block title %}{% endblock %}</title>
-
-    {% block javascripts %}
-        <script src="{{ asset('/build/common.js') }}"></script>
-
-        <script type="text/javascript" src="https://griidc.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-2rfjj7/b/29/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=8b54034b"></script>
-
-        <script type="text/javascript" src="https://griidc.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-2rfjj7/b/29/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=a5e3f887"></script>
-
-        <script type="text/javascript">
-        $(document).ready(function() {
-            window.ATL_JQ_PAGE_PROPS =  {
-                "8b54034b" : {
-                    "triggerFunction": function(showCollectorDialog) {
-                        $("#atlwdg-issue").click(function(e) {
-                            e.preventDefault();
-                            showCollectorDialog();
-                        });
-                    }
-                },
-                "a5e3f887" : {
-                    "triggerFunction": function(showCollectorDialog) {
-                        $("#atlwdg-suggest").click(function(e) {
-                            e.preventDefault();
-                            showCollectorDialog();
-                        });
-                    }
-                },
-            };
-        });
-        </script>
-
-    {% endblock %}
-{% endblock %}
-</head>
+    {% include "PelagosAppBundle::layout-head.html.twig" %}
 <body class="html page-pelagos-full">
 {% block htmlbody %}
     <ul class="atlassian-btns">
@@ -57,18 +15,14 @@
             </a>
         </li>
     </ul>
-
     <div id="page-wrapper">
         <div id="page">
-            {#Header + Menu #}
             <div id="header"><div class="section clearfix">
 
                     <div class="region region-header">
                         <div id="block-pelagos-pelagos-login-logout-links" class="block block-pelagos">
-
-
                             <div class="content">
-                                <a href="/user/login?destination=pageUrl">Log In</a>  </div>
+                                <a href="/user/login?destination=">Log In</a>  </div>
                         </div>
                     </div>
 
@@ -83,7 +37,6 @@
 
                             <div id="site-slogan">Investigating the effect of oil spills <br> on the environment and public health.</div>
                         </div>
-                        {#/#name-and-slogan #}
 
                         <div id="griidc-logo-wrapper">
                             <a href="/" title="Home" rel="home" id="logo">
@@ -93,62 +46,7 @@
                     </div>
                 </div>
             </div>
-            <div id="navigation">
-                <div class="region region-navigation">
-                    <div id="block-pelagos-menu-1" class="block block-superfish">
-                        <div class="content">
-                            <ul id="pelagos-menu-1" class="menu sf-menu sf-main-menu sf-horizontal sf-style-none sf-js-enabled sf-shadow">
-                                <li class="first odd "><a href="https://data.gulfresearchinitiative.org/" >Home</a></li>
-                                <li class="middle even menuparent"><span class="nav-chart menuparent nolink sf-with-ul">Search Data<span class="sf-sub-indicator"> »</span>
-                                            <span class="sf-sub-indicator"> »</span></span><ul class="sf-hidden" style="float: none; width: 13.1111em;">
-                                        <li class="first odd "><a href="https://data.gulfresearchinitiative.org/data-discovery">Search GRIIDC Data</a></li>
-                                        <li class="middle even "><a href="https://data.gulfresearchinitiative.org/additional-gulf-mexico-data-resources">Gulf of Mexico Data Sources</a></li>
-                                        <li class="last odd "><a href="https://erddap.griidc.org/erddap" target="_top">GRIIDC ERDDAP</a></li>
-                                    </ul></li>
-                                <li class="middle odd menuparent"><span class="nav-chart menuparent nolink sf-with-ul">Submit Data<span class="sf-sub-indicator"> »</span>
-                                        <span class="sf-sub-indicator"> »</span></span>
-                                    <ul class="sf-hidden" style="float: none; width: 12.2222em;">
-                                        <li class="first odd "><a href="https://data.gulfresearchinitiative.org/how-submit-data-griidc">How to Submit Data</a></li>
-                                        <li class="middle even "><a href="https://data.gulfresearchinitiative.org/dif">Dataset Information Form</a></li>
-                                        <li class="last odd "><a href="https://data.gulfresearchinitiative.org/dataset-submission">Dataset Submission</a></li></ul></li>
-                                <li class="middle even menuparent"><span class="nav-chart menuparent nolink sf-with-ul">Tracking &amp; Stats<span class="sf-sub-indicator"> »</span><span class="sf-sub-indicator"> »</span></span>
-                                    <ul class="sf-hidden" style="float: none; width: 12em;">
-                                        <li class="first odd "><a href="https://data.gulfresearchinitiative.org/dataset-monitoring">Dataset monitoring</a></li>
-                                        <li class="last even "><a href="https://data.gulfresearchinitiative.org/stats">GRIIDC system statistics</a></li>
-                                    </ul>
-                                </li>
-                                <li class="middle odd menuparent"><span class="menuparent nolink sf-with-ul">About Us<span class="sf-sub-indicator"> »</span><span class="sf-sub-indicator"> »</span></span>
-                                    <ul class="sf-hidden" style="float: none; width: 12em;">
-                                        <li class="first odd "><a href="https://data.gulfresearchinitiative.org/about-griidc">About GRIIDC</a></li>
-                                        <li class="middle even "><a href="https://data.gulfresearchinitiative.org/about-gomri">About GoMRI</a></li>
-                                        <li class="middle odd sf-depth-2"><a href="https://data.gulfresearchinitiative.org/meet-the-team">Meet the team</a></li>
-                                        <li class="middle even "><a href="https://data.gulfresearchinitiative.org/griidc-services">GRIIDC Services</a></li>
-                                        <li class="last odd "><a href="https://data.gulfresearchinitiative.org/terms-and-conditions">Terms &amp; Conditions</a></li>
-                                    </ul></li>
-                                <li class="middle even"><span class="menuparent nolink sf-with-ul">Help<span class="sf-sub-indicator"> »</span>
-                                            <span class="sf-sub-indicator"> »</span></span>
-                                    <ul class="sf-hidden" style="float: none; width: 13.5em;">
-                                        <li class="first odd "><a href="https://data.gulfresearchinitiative.org/account/new">Account Request</a></li>
-                                        <li class="middle even "><a href="https://data.gulfresearchinitiative.org/account/password">Password Reset</a></li>
-                                        <li class="middle odd "><a href="https://data.gulfresearchinitiative.org/account/forgot-username">Forgot Username</a></li>
-                                        <li class="middle even "><a href="https://data.gulfresearchinitiative.org/frequently-asked-questions">FAQs</a></li>
-                                        <li class="middle odd "><a href="https://data.gulfresearchinitiative.org/data-management-planning">Data Management Planning</a></li>
-                                        <li class="middle even "><a href="https://data.gulfresearchinitiative.org/training-user-guides">Training &amp; User Guides</a></li>
-                                        <li class="middle odd "><a href="https://data.gulfresearchinitiative.org/video-tutorials">Video Tutorials</a></li>
-                                        <li class="middle even "><a href="https://data.gulfresearchinitiative.org/data-file-transfer-methods">Data File Transfer Methods</a></li>
-                                        <li class="middle odd "><a href="https://data.gulfresearchinitiative.org/metadata-editor-start">ISO 19115-2 Metadata Editor</a></li>
-                                        <li class="middle even "><a href="https://triton.tamucc.edu/issues"> Issue Tracking in JIRA</a></li>
-                                        <li class="last odd "><a href="https://data.gulfresearchinitiative.org/RB-data-compliance">Data Compliance Information</a></li>
-                                    </ul>
-                                </li>
-                                <li class="last odd "><a href="http://research.gulfresearchinitiative.org/" title="GoMRI Research Information" name="GoMRI Research" target="_top" >Research</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {#End Header + Menu #}
-            {#Main content#}
+            {% include "PelagosAppBundle::layout-menu.html.twig" %}
             <div id="pelagos-container">
                 <div id="pelagos-container-row">
                     <div id="pelagos-container-cell">
@@ -157,7 +55,6 @@
                                 <div id="pelagos-content">
                                     <h1 style="margin: 0 auto;">{% block pagetitle %}{% endblock %}</h1>
                                     {% block body %}{% endblock %}
-
                                 </div>
                             </div>
                         </div>
