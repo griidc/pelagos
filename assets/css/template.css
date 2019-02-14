@@ -517,10 +517,7 @@ div#header #griidc-logo-wrapper {
     font-weight: normal;
     padding: 0 5px 0 5px;
     border-width: 0px 1px 1px;
-    border-top-style: initial;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
+    border-style: solid;
     border-top-color: initial;
     border-right-color: rgb(0, 66, 80);
     border-bottom-color: rgb(0, 66, 80);
