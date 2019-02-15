@@ -1,7 +1,10 @@
 // webpack.config.js
 var Encore = require('@symfony/webpack-encore');
 
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 Encore
+
     // the project directory where all compiled assets will be stored
     .setOutputPath('web/build/')
 
@@ -9,7 +12,9 @@ Encore
     .setPublicPath('/build')
 
     // will create web/build/app.js and web/build/app.css
+    .createSharedEntry('common', './assets/js/common.js')
     .addEntry('layout', './assets/js/layout.js')
+    
 
     // allow sass/scss files to be processed
     //.enableSassLoader()
@@ -30,6 +35,11 @@ Encore
     
     // No runtime.js needed.
     .disableSingleRuntimeChunk()
+
+    .addPlugin(new CopyWebpackPlugin([
+        // copies to {output}/static
+        { from: './assets/images', to: 'images' }
+    ]))
 ;
 
 // export the final configuration

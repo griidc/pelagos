@@ -1,0 +1,535 @@
+
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
+@import url(https://fonts.googleapis.com/css?family=Merriweather:400,700,400italic,700italic);
+
+body {height:100%}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: "Merriweather", Arial, serif;
+    font-size: 15px;
+    font-weight: 400;
+    color: #000;
+    line-height: 23px;
+    margin: 0 8px;
+}
+
+#page-wrapper {
+    margin-left: auto;
+    margin-right: auto;
+    width: 980px;
+}
+
+#logo-wrapper {
+    display: inline;
+    float: left;
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 225px;
+}
+
+#name-and-slogan {
+    display: inline;
+    float: left;
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 388.33333px;
+}
+
+#griidc-logo-wrapper {
+    padding-left: 81.66667px;
+    display: inline;
+    float: left;
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 225px;
+}
+
+#content-wrapper {
+    display: inline;
+    float: left;
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 960px;
+}
+
+.container, .block.footer_links .content {
+    margin-left: auto;
+    margin-right: auto;
+    width: 980px;
+}
+
+h1 {
+    font-family: inherit;
+    font-size: 1.733em;
+    font-weight: 400;
+    color: #252525;
+}
+
+h2 {
+    font-family: "Lato", Arial, sans-serif;
+    font-size: 1.467em;
+    font-weight: 400;
+    color: #004250;
+    margin-top: 1.25em;
+    margin-bottom: 1em;
+}
+
+p {
+    margin-bottom: 1.5em;
+}
+
+a.extlink:after {
+    background-image: url('../images/extlink.png');
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    background-size: contain;
+    content: '';
+    display: inline-block;
+    height: 1em;
+    margin-left: 3px;
+    width: 1em;
+}
+
+#page-wrapper {
+    background-color: #fff;
+    overflow-x: hidden;
+}
+
+div#header {
+    height: 110px;
+}
+div#header .region-header {
+    background-color: #becacd;
+    height: 18px;
+    text-align: right;
+    padding: 2px 10px 8px;
+}
+div#header .region-header a {
+    font-family: 'Lato';
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #004250;
+}
+div#header #logo-wrapper {
+    position: relative;
+    top: -11px;
+}
+div#header #name-and-slogan {
+    font-family: 'Lato';
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.25em;
+    margin-left: 0;
+    padding: 20px 0;
+}
+div#header #griidc-logo-wrapper {
+    padding-top: 14px;
+    margin-right: 0;
+    text-align: right;
+    padding-left: 84px;
+}
+
+#navigation {
+    width: 100%;
+    background-color: #004250;
+}
+#navigation:before {
+    background-color: #3f626a;
+    content: '';
+    display: block;
+    height: 18px;
+}
+#navigation:after {
+    display: block;
+    height: 0;
+    content: '';
+    clear: both;
+}
+
+#breadcrumb {
+    display: none;
+}
+
+#main-wrapper {
+    background-color: #ebebeb;
+}
+
+#content-wrapper {
+    margin-top: 34px;
+    padding-bottom: 45px;
+}
+#content-wrapper > .column {
+    padding: 0 34px;
+}
+
+#content-bottom {
+    background-color: #ebebeb;
+}
+#content-bottom .leading-by-example {
+    padding: 30px 20px;
+    height: 100px;
+}
+#content-bottom .leading-by-example h2 {
+    margin-top: 12px;
+    font-family: 'Merriweather';
+    font-weight: 100;
+    text-align: center;
+    font-size: 26px;
+    line-height: 1em;
+    margin-bottom: 12px;
+}
+#content-bottom .leading-by-example .content {
+    padding-left: 245px;
+    padding-right: 245px;
+    display: inline;
+    float: left;
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 470px;
+    text-align: center;
+}
+#content-bottom .leading-by-example .content p {
+    margin: 0;
+}
+
+.sidebar-first #main-wrapper {
+    background-image: url('../images/bg-interior.gif');
+    background-repeat: repeat-y;
+    background-position: 4px top;
+    background-color: white;
+}
+
+#block-pelagos-menu-1 .content {
+    position: relative;
+    float: left;
+    left: 50%;
+}
+#block-pelagos-menu-1 .content #pelagos-menu-1 {
+    position: relative;
+    left: -50%;
+}
+
+#outer-container {
+    display: table;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+#outer-container > div {
+    display: table-row;
+}
+
+#outer-container > div > div {
+    display: table-cell;
+}
+
+#page-content {
+    display: table;
+    width: 100%;
+}
+
+#page-content > div {
+    display: table-row;
+}
+
+#page-content > div > div {
+    display: table-cell;
+}
+
+#main-content {
+    display: table;
+    margin: 0 auto;
+    width: 100%;
+}
+
+#main-content > div {
+    display: table-row;
+}
+
+#main-content > div > div {
+    display: table-cell;
+}
+
+#filter input {
+    font-size: 16px;
+}
+
+.ui-tabs .ui-tabs-nav li a {
+    font-size: 12px;
+}
+
+.ui-widget {
+    font-size: 12px;
+    line-height: 18px;
+}
+
+.page-pelagos-full {
+    /* Full Window */
+    /* layout */
+    /* main area */
+}
+.page-pelagos-full div#content-main,
+.page-pelagos-full div#content-main .section,
+.page-pelagos-full div#content-wrapper,
+.page-pelagos-full div#main,
+.page-pelagos-full div#main-wrapper,
+.page-pelagos-full div#page,
+.page-pelagos-full div#page-wrapper {
+    height: 100%;
+}
+.page-pelagos-full div#page-wrapper {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+}
+.page-pelagos-full #main-wrapper {
+    background: #fff;
+}
+.page-pelagos-full #content-main {
+    height: 100%;
+}
+.page-pelagos-full #content-wrapper {
+    margin: 0;
+    padding: 0px;
+    width: 100%;
+    display: block;
+    float: none;
+}
+.page-pelagos-full #content-wrapper > .column {
+    padding: 0px;
+}
+.page-pelagos-full #main-wrapper {
+    width: 100%;
+}
+.page-pelagos-full #main-wrapper.opened {
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-bottom: 15px;
+    height: 98% !important;
+    z-index: 1000;
+}
+.page-pelagos-full #main-wrapper.opened .pelagos-full .open,
+.page-pelagos-full #main-wrapper .pelagos-full .close {
+    display: none;
+}
+.page-pelagos-full #main-wrapper.opened .pelagos-full .close,
+.page-pelagos-full #main-wrapper .pelagos-full .open {
+    display: block;
+}
+.page-pelagos-full #main-wrapper .pelagos-full {
+    text-align: center;
+    font-weight: 600;
+    cursor: pointer;
+    color: #004250;
+    font-size: 0.875em;
+    width: 100%;
+    margin-bottom: -22px;
+}
+
+.page-pelagos-full #outer-container {
+    height: 100%;
+}
+.page-pelagos-full #main-cell,
+.page-pelagos-full #main-content,
+.page-pelagos-full .region-content,
+.page-pelagos-full #block-system-main,
+.page-pelagos-full #block-system-main > div,
+.page-pelagos-full #page-outer-wrapper,
+.page-pelagos-full #page-inner-wrapper,
+.page-pelagos-full #page-content {
+    height: 100%;
+}
+
+#pelagos-menu-1 a, #pelagos-menu-1 span.nolink {
+    background: #004250;
+    color: #fff;
+    display: block;
+    padding: 6px 21px;
+    text-decoration: none;
+    font-weight: 100;
+    font-family: 'Lato';
+    font-size: 14px;
+    text-transform: uppercase;
+    border: none;
+}
+
+#pelagos-menu-1 ul.menu li li a:link, #pelagos-menu-1 ul.menu li li a:visited, #pelagos-menu-1 ul.menu li li span {
+    color: #fff;
+    border-right: 0;
+    font-weight: normal;
+    line-height: 24px;
+}
+
+#pelagos-menu-1 {
+    float: left;
+    line-height: 28px;
+    background: #004250;
+    margin-bottom: 0;
+}
+#pelagos-menu-1 .block {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    padding: 0;
+}
+#pelagos-menu-1 .box {
+    padding: 0;
+}
+#pelagos-menu-1 h2 {
+    display: none;
+}
+
+#pelagos-menu-1 a > .sf-sub-indicator, #pelagos-menu-1 span.nolink > .sf-sub-indicator {
+    top: 1em;
+}
+#pelagos-menu-1 span {
+    cursor: default;
+}
+#pelagos-menu-1 span:active {
+    background: #004250;
+}
+#pelagos-menu-1 li {
+    display: inline;
+    float: left;
+    margin: 0;
+    padding: 0;
+    height: 1%;
+}
+#pelagos-menu-1 li > ul > li {
+    border-top: 1px solid #c2deea;
+}
+#pelagos-menu-1 li > ul > li a {
+    text-transform: capitalize;
+}
+#pelagos-menu-1 > li.menuparent > a, #pelagos-menu-1 > li.menuparent > span {
+    padding-right: 25px;
+}
+#pelagos-menu-1 .separator hr {
+    height: 0;
+    margin: 1px 0 0;
+    border: 0;
+}
+#pelagos-menu-1 ul.menu {
+    padding: 0;
+    list-style: none;
+    z-index: 3;
+    display: inline;
+}
+#pelagos-menu-1 ul.menu ul {
+    padding: 0;
+    list-style: none;
+    background: #004250;
+}
+#pelagos-menu-1 ul.menu li ul {
+    position: absolute;
+    width: 230px;
+    left: -999em;
+}
+#pelagos-menu-1 ul.menu li li {
+    float: left;
+    width: 230px;
+}
+#pelagos-menu-1 ul.menu li li a {
+    text-transform: capitalize;
+}
+
+#pelagos-menu-1 ul.menu li li span:hover,
+#pelagos-menu-1 ul.menu li li span:active,
+#pelagos-menu-1 ul.menu li li a:active,
+#pelagos-menu-1 ul.menu li li a:hover {
+    background: #c2deea;
+    text-decoration: none;
+}
+
+#pelagos-menu-1 ul.menu li li.expanded ul {
+    margin: -25px 0 0 230px;
+}
+
+#pelagos-menu-1 a:active, #pelagos-menu-1 span.nolink:active,
+#pelagos-menu-1 ul.menu li li.expanded ul.menu a,
+#pelagos-menu-1 ul.menu li li.expanded ul.menu span {
+    background: #004250;
+}
+
+#pelagos-menu-1 ul.menu li li.expanded ul.menu span:active,
+#pelagos-menu-1 ul.menu li li.expanded ul.menu span:hover,
+#pelagos-menu-1 ul.menu li li.expanded ul.menu a:hover,
+#pelagos-menu-1 ul.menu li li.expanded ul.menu a:active,
+#pelagos-menu-1 a:hover, #pelagos-menu-1 span.nolink:hover {
+    background: #c2deea;
+}
+
+#pelagos-menu-1 ul.menu li li.expanded ul.menu li.expanded a,
+#pelagos-menu-1 ul.menu li li.expanded ul.menu li.expanded span,
+#pelagos-menu-1 ul.menu li li.expanded a,
+#pelagos-menu-1 ul.menu li li.expanded span {
+    background: #004250 url("/build/images/menu_arrow.png") 100% 50% no-repeat;
+}
+#pelagos-menu-1 ul.menu li li.expanded ul.menu li.expanded a:active,
+#pelagos-menu-1 ul.menu li li.expanded ul.menu li.expanded a:hover,
+#pelagos-menu-1 ul.menu li li.expanded ul.menu li.expanded span:active,
+#pelagos-menu-1 ul.menu li li.expanded ul.menu li.expanded span:hover,
+#pelagos-menu-1 ul.menu li li.expanded span:active,
+#pelagos-menu-1 ul.menu li li.expanded span:hover,
+#pelagos-menu-1 ul.menu li li.expanded a:active,
+#pelagos-menu-1 ul.menu li li.expanded a:hover {
+    background: #c2deea url("/build/images/menu_arrow.png") 100% 50% no-repeat;
+}
+
+#pelagos-menu-1 ul.menu li li li:hover ul,
+#pelagos-menu-1 ul.menu li li li.sfhover ul,
+#pelagos-menu-1 ul.menu li li:hover ul,
+#pelagos-menu-1 ul.menu li li.sfhover ul {
+    left: auto;
+}
+
+#pelagos-menu-1 ul.menu li:hover ul ul,
+#pelagos-menu-1 ul.menu li:hover ul ul ul,
+#pelagos-menu-1 ul.menu li.sfhover ul ul,
+#pelagos-menu-1 ul.menu li.sfhover ul ul ul {
+    left: -999em;
+}
+
+/* Jira buttons */
+.atlassian-btns {
+    z-index: 10000;
+    position: fixed;
+    width: 500px;
+    height: 50px;
+    top: 0%;
+    left: 50%;
+    margin-top: -2px;
+    margin-left: -122px;
+}
+
+.atlassian-btns li {
+    display: inline-block;
+}
+
+.atlassian-btns li a {
+    color: white !important;
+    font-size: 9pt;
+    font-family: sans-serif;
+    font-weight: normal;
+    padding: 0 5px 0 5px;
+    border-width: 0px 1px 1px;
+    border-style: solid;
+    border-top-color: initial;
+    border-right-color: rgb(0, 66, 80);
+    border-bottom-color: rgb(0, 66, 80);
+    border-left-color: rgb(0, 66, 80);
+    border-image: initial;
+    background-color: rgb(63, 98, 106);
+    white-space: nowrap;
+    text-decoration: none !important;
+    -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    border-radius: 0 0 5px 5px;
+    top: 0px;
+    position: relative !important;
+}
