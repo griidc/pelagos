@@ -55,8 +55,10 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         $username = $credentials['_username'];
-        return $this->entityManager->getRepository('Pelagos:Account')
+        $theUser = $this->entityManager->getRepository('Pelagos:Account')
             ->findOneBy(['userId' => $username]);
+        dump ($theUser);
+        return $theUser;
     }
     
     public function checkCredentials($credentials, UserInterface $user)
