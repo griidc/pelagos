@@ -508,6 +508,7 @@ class Account extends Entity implements UserInterface, \Serializable
      */
     public function serialize()
     {
+        dump($this->getId());
         return serialize(
             array(
             $this->getId(),

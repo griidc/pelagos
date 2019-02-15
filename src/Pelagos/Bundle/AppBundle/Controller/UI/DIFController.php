@@ -32,7 +32,7 @@ class DIFController extends UIController implements OptionalReadOnlyInterface
     public function defaultAction(Request $request, $id = null)
     {
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->redirect('/user/login?destination=' . $request->getPathInfo());
+            return $this->render('PelagosAppBundle:template:NotLoggedIn.html.twig');
         }
 
         $dif = new DIF;

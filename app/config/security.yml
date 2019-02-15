@@ -27,9 +27,6 @@ security:
             stateless: true
             # allow anonymous access
             anonymous: ~
-            # use REMOTE_USER environment variable if set
-            remote_user:
-                provider: pelagos_account
             # use a Person Token, if present
             simple_preauth:
                 authenticator: person_token_authenticator
@@ -38,9 +35,15 @@ security:
         main:
             # allow anonymous access
             anonymous: ~
-            # use REMOTE_USER environment variable if set
-            remote_user:
-                provider: pelagos_account
+            
+            guard:
+                authenticators:
+                    - pelagos.security.login_form_authenticator
+            logout:
+                path: security_logout
+            #form_login:
+            #    login_path: security_login
+            #    check_path: security_login
             oauth:
                 resource_owners:
                     google:     check_google
