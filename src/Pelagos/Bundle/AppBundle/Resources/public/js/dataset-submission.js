@@ -137,15 +137,34 @@ $(function() {
         return this.optional(element) || ((Date.parse(value)) && regPattern.test(value));
     });
 
+    jQuery.validator.addMethod("gmlToWktValidate", function (value, element) {
+        var isSuccess = true;
+        if ($("#spatialExtentDescription").val() === "") {
+            isSuccess = false;
+            $.ajax({
+                url: Routing.generate("pelagos_app_gml_towkt"),
+                type: "POST",
+                async: false,
+                data: {gml: value},
+                success: function () {
+                    isSuccess = "true";
+                }
+            });
+        }
+        return isSuccess;
+    });
+
     $("#regForm").validate({
         rules: {
             referenceDate: "trueISODate",
             temporalExtentBeginPosition: "trueISODate",
             temporalExtentEndPosition: "trueISODate",
+            spatialExtent: "gmlToWktValidate"
         },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
-            temporalExtentEndPosition: "End Date is not a valid ISO date"
+            temporalExtentEndPosition: "End Date is not a valid ISO date",
+            spatialExtent: "Spatial extent is not a valid geometry"
         },
         ignore: ".ignore,.prototype",
         submitHandler: function(form) {
