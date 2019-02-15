@@ -6,12 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
-use Pelagos\Entity\DataCenter;
-use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DistributionPoint;
-use Pelagos\Entity\Person;
 
 /**
  * Back fill all the submitted metadata xml to dataset submission.
