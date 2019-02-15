@@ -34,7 +34,7 @@ class HandleSubmissionWithBadGMLCommand extends ContainerAwareCommand
     }
 
     /**
-     * Script to generate dataset-submissions for already accepted metadata.
+     * Script to nullify spatial extents and remove distribution point tied to the dataset submission of a dataset
      *
      * @param InputInterface  $input  An InputInterface instance.
      * @param OutputInterface $output An OutputInterface instance.
@@ -66,7 +66,7 @@ class HandleSubmissionWithBadGMLCommand extends ContainerAwareCommand
 
         $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
 
-//        //clear distribution points if there is one that has no Data Center
+        //clear distribution points if there is one that has no Data Center
         if (count($datasetSubmission->getDistributionPoints()) === 1 ) {
             if (null === $datasetSubmission->getDistributionPoints()[0]->getDataCenter()) {
                 $datasetSubmission->removeDistributionPoint($datasetSubmission->getDistributionPoints()[0]);
@@ -77,8 +77,7 @@ class HandleSubmissionWithBadGMLCommand extends ContainerAwareCommand
         $entityManager->flush();
 
         $output->writeln('Success: submission ID:' . $datasetSubmission->getId() . ' - Dataset udi: ' . $udi);
-
-
+        
         return 0;
     }
 }
