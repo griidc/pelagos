@@ -22,6 +22,7 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
+        dump($this->get('security.token_storage')->getToken());
         return $this->render('PelagosAppBundle:Default:index.html.twig');
     }
 
