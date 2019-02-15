@@ -3,13 +3,11 @@
 {% block head %}
     {{ parent() }}
 
-    {{
-        add_library (
-            [
-                'jquery.cookie',
-            ]
-        )
-    }}
+    {% if dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') %}
+        {% include 'PelagosAppBundle:Dataland:metadata.markup.twig' %}
+    {% else %}
+        <meta name="robots" content="noindex" />
+    {% endif %}
 
     {% stylesheets
         '@PelagosAppBundle/Resources/public/css/dataland-details.css'
@@ -38,13 +36,6 @@
     {% endjavascripts %}
 
     {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
-
-    {% if dataset.availabilityStatus == 10 %}
-        {% include 'PelagosAppBundle:Dataland:metadata.markup.twig' %}
-    {% else %}
-        <meta name="robots" content="noindex" />
-    {% endif %}
-
 
 {% endblock %}
 
