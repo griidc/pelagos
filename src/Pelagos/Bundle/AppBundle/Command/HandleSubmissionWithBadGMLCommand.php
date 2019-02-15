@@ -77,7 +77,7 @@ class HandleSubmissionWithBadGMLCommand extends ContainerAwareCommand
         $entityManager->flush();
 
         $output->writeln('Success: submission ID:' . $datasetSubmission->getId() . ' - Dataset udi: ' . $udi);
-        
+
         return 0;
     }
 }
