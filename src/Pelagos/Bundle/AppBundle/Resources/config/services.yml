@@ -120,4 +120,3 @@ services:
     pelagos.handler.upload:
         class: Pelagos\Bundle\AppBundle\Handler\UploadHandler
         arguments: ["%homedir_prefix%"]
-        
