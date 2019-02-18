@@ -26,6 +26,7 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
+        $entityEventDispatcher = $this->getContainer()->get('pelagos.event.entity_event_dispatcher');
         $systemPerson = $entityManager->find(Person::class, 0);
 
         $infoFileName = $input->getArgument('infofile');
@@ -64,18 +65,30 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
                     $output->writeln("Submission Found.");
                     // Create a new submission using latest via constructor.
                     $newDatasetSubmission = new DatasetSubmission($datasetSubmission);
+                    if ($entityManager->contains($newDatasetSubmission)) {
+                        throw new \Exception('Attempted to create a dataset submission that is already tracked');
+                    }
+                    $output->writeln("original submission ID is: " . $dataset->getDatasetSubmission()->getId());
+                    $output->writeln("new submission ID is initially: " . $newDatasetSubmission->getId());
+
+                    // This method sets submission status to: DatasetSubmission::STATUS_IN_REVIEW (3).
+                    $newDatasetSubmission->setDatasetSubmissionReviewStatus();
                     // Set filesize of original file in new submission.
                     $newDatasetSubmission->setDatasetFileColdStorageArchiveSize($size);
                     // Set hash of original file in new submission.
                     $newDatasetSubmission->setDatasetFileColdStorageArchiveSha256Hash($hash);
-
-                    // Persist into new dataset. This would have been a one line call
-                    // to entityHandler, if we'd of been able to use it, but not usable in
-                    // commands.
-                    if ($entityManager->contains($newDatasetSubmission)) {
-                        throw new \Exception('Attempted to create a dataset submission that is already tracked');
-                    }
+                    // Set the creator of this entity to the user known as 'system'.
                     $newDatasetSubmission->setCreator($systemPerson);
+
+                    // Set options for a new replacement datafile of the supplied Cold-Storage stubfile.
+                    $newDatasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+                    $newDatasetSubmission->setDatasetFileName(null);
+                    $newDatasetSubmission->setDatasetFileSize(null);
+                    $newDatasetSubmission->setDatasetFileSha256Hash(null);
+                    $newDatasetSubmission->setDatasetFileTransferType(DatasetSubmission::TRANSFER_TYPE_SFTP);
+                    $newDatasetSubmission->setDatasetFileUri($stubFileName);
+
+                    // This is normally null, unless manually set. Handle that gracefully.
                     $newDatasetSubmissionId = $newDatasetSubmission->getId();
                     $metadata = $entityManager->getClassMetaData(get_class($newDatasetSubmission));
                     $newDatasetSubmissionIdGenerator = $metadata->idGenerator;
@@ -83,17 +96,43 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
                         // Temporarily change the ID generator to AssignedGenerator.
                         $metadata->setIdGenerator(new AssignedGenerator());
                     }
+
                     $entityManager->persist($newDatasetSubmission);
                     $entityManager->flush($newDatasetSubmission);
+
                     if ($newDatasetSubmissionId !== null) {
                         $metadata->setIdGenerator($newDatasetSubmissionIdGenerator);
                     }
+
                     $dataset->setDatasetSubmission($newDatasetSubmission);
                     $entityManager->persist($dataset);
                     $entityManager->flush($dataset);
-                    //$this->entityEventDispatcher->dispatch($entity, $entityEventName);
 
-                    // Trigger filer against stubfile.
+                    // This is an ugly hack, having to re-persist, but there seems not to be a cleaner way...
+                    // Reset original status.
+                    try {
+                        $newDatasetSubmissionReflection = new \ReflectionClass($newDatasetSubmission);
+                        $statusReflection = $newDatasetSubmissionReflection->getProperty('status');
+                        $statusReflection->setACcessible(true);
+                        $statusReflection->setValue($newDatasetSubmission, $datasetSubmission->getStatus());
+                    } catch (\ReflectionException $exception) {
+                        throw new \ReflectionException('Reflection class failed ' . $exception->getMessage());
+                    }
+                    $entityManager->persist($newDatasetSubmission);
+                    $entityManager->flush($newDatasetSubmission);
+
+                    $output->writeln("Original DatasetSubmission Status: " . $datasetSubmission->getStatus());
+                    $output->writeln("New submission ID is now: " . $newDatasetSubmission->getId());
+
+                    $output->writeln("New DatasetSubmission Status referenced in dataset: " . $dataset->getDatasetSubmission()->getStatus());
+                    $output->writeln("New submission ID in dataset is now: " . $dataset->getDatasetSubmission()->getId());
+
+                    //Use rabbitmq to process dataset file and persist the file details. This will
+                    //Trigger filer and hasher (via filer) to complete the process.
+                    $this->getContainer()->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(
+                        $dataset->getDatasetSubmission()->getId(),
+                        'dataset.SFTP'
+                    );
                 }
 
             } else {
