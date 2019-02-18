@@ -59,8 +59,6 @@ class HandleSubmissionWithBadGMLCommand extends ContainerAwareCommand
 
         $datasetSubmission->setSpatialExtent(null);
 
-        $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-
         //clear distribution points if there is one that has no Data Center
         if (count($datasetSubmission->getDistributionPoints()) === 1 ) {
             if (null === $datasetSubmission->getDistributionPoints()[0]->getDataCenter()) {
