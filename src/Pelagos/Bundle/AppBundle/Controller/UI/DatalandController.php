@@ -73,25 +73,6 @@ class DatalandController extends UIController
             $downloadCount = $query->getSingleScalarResult();
         }
 
-        if ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) {
-            $data = array(
-                '#type' => 'markup',
-                '#markup' => $this->render(
-                    'PelagosAppBundle:Dataland:metadata.markup.twig',
-                    array(
-                        'dataset' => $dataset,
-                    )
-                )->getContent()
-            );
-            drupal_add_html_head($data, 'json-ld');
-        } else {
-            $data = array(
-                '#type' => 'markup',
-                '#markup' => '<meta name="robots" content="noindex" />' . "\n",
-            );
-            drupal_add_html_head($data, 'meta');
-        }
-
         return $this->render(
             'PelagosAppBundle:Dataland:index.html.twig',
             $twigData = array(

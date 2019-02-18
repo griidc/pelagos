@@ -3,16 +3,11 @@
 {% block head %}
     {{ parent() }}
 
-    {{
-        add_library (
-            [
-                'ui.dialog',
-                'ui.tabs',
-                'ui.widget',
-                'jquery.cookie',
-            ]
-        )
-    }}
+    {% if dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') %}
+        {% include 'PelagosAppBundle:Dataland:metadata.markup.twig' %}
+    {% else %}
+        <meta name="robots" content="noindex" />
+    {% endif %}
 
     {% stylesheets
         '@PelagosAppBundle/Resources/public/css/dataland-details.css'
