@@ -19,18 +19,18 @@ use Pelagos\Bundle\AppBundle\Form\LoginForm;
 class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 {
     private $formFactory;
-    
+
     private $entityManager;
-    
+
     private $router;
-    
+
     public function __construct(FormFactoryInterface $formFactory, EntityManager $entityManager, RouterInterface $router)
     {
         $this->formFactory = $formFactory;
         $this->entityManager = $entityManager;
         $this->router = $router;
     }
-    
+
     public function getCredentials(Request $request)
     {
         $isLoginSubmit = $request->attributes->get('_route') === 'security_login' && $request->isMethod('POST');
@@ -38,20 +38,20 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
             // skip authentication
             return;
         }
-        
+
         $form = $this->formFactory->createNamed(null, LoginForm::class);
         $form->handleRequest($request);
-        
+
         $data = $form->getData();
-        
+
         $request->getSession()->set(
             Security::LAST_USERNAME,
             $data['_username']
         );
-       
+
         return $data;
     }
-    
+
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         $username = $credentials['_username'];
@@ -60,7 +60,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         dump ($theUser);
         return $theUser;
     }
-    
+
     public function checkCredentials($credentials, UserInterface $user)
     {
         $password = $credentials['_password'];
@@ -69,14 +69,19 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         }
         return true; //Normally false, be this is TEST!
     }
-    
+
     protected function getLoginUrl()
     {
         return $this->router->generate('security_login');
     }
-    
-    protected function getDefaultSuccessRedirectUrl()
+
+    // protected function getDefaultSuccessRedirectUrl()
+    // {
+        // return $this->router->generate('pelagos_homepage');
+    // }
+
+     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        return $this->router->generate('pelagos_homepage');
+        return new RedirectResponse($this->router->generate('pelagos_homepage'));
     }
 }
