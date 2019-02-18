@@ -102,8 +102,6 @@ class DatasetFileHasherConsumer implements ConsumerInterface
             $datasetFileInfo = $this->dataStore->getFileInfo($datasetUdi, DataStore::DATASET_FILE_TYPE);
         } catch (FileNotFoundException $ex) {
             $this->logger->warning('Can not hash dataset file. File not found ', $loggingContext);
-            $this->logger->warning('URI: ' . $datasetSubmission->getDatasetFileUri(), $loggingContext);
-            $this->logger->warning($this->dataStore->getFileInfo($datasetUdi, DataStore::DATASET_FILE_TYPE), $loggingContext);
             return true;
         }
         $filePath = $datasetFileInfo->getRealPath();

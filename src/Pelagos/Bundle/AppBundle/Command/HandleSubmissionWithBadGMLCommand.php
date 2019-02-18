@@ -24,7 +24,7 @@ class HandleSubmissionWithBadGMLCommand extends ContainerAwareCommand
     {
         $this
             ->setName('onetime:handle-bad-gml-submission')
-            ->setDescription('Make the submission accessible in Dataset Review and Submission tool.')
+            ->setDescription('Make the submission accessible in Dataset Review and Submission tool and retrigger filer/hasher.')
             ->addArgument('udi', InputArgument::REQUIRED, 'What is the UDI of the dataset?');
     }
 
@@ -70,6 +70,12 @@ class HandleSubmissionWithBadGMLCommand extends ContainerAwareCommand
 
         $entityManager->persist($datasetSubmission);
         $entityManager->flush();
+
+        //re-trigger dataset submission producer
+        $this->getContainer()->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(
+            $datasetSubmission->getId(),
+            'dataset.' . $datasetSubmission->getDatasetFileTransferType()
+        );
 
         $output->writeln('Success: submission ID:' . $datasetSubmission->getId() . ' - Dataset udi: ' . $udi);
 
