@@ -37,7 +37,7 @@ class HandleSubmissionWithBadGMLCommand extends ContainerAwareCommand
      * @throws \Exception When dataset not found.
      * @throws \Exception When datasetSubmission not found.
      *
-     * @return integer Return 0 on success, or an error code otherwise.
+     * @return void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
