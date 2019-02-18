@@ -120,7 +120,4 @@ services:
     pelagos.handler.upload:
         class: Pelagos\Bundle\AppBundle\Handler\UploadHandler
         arguments: ["%homedir_prefix%"]
-
-    pelagos.command.handle_submission_with_bad_gml:
-        class: Pelagos\Bundle\AppBundle\Command\HandleSubmissionWithBadGmlCommand
-        arguments: ["@old_sound_rabbit_mq.dataset_file_hasher_producer"]
+        
