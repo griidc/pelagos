@@ -36,16 +36,6 @@ class TombstoneController extends UIController
             throw $this->createNotFoundException("No pending state placeholder found for UDI: $udi");
         }
 
-        // Prevent webcrawling.
-        $element = array(
-            '#tag' => 'meta',
-            '#attributes' => array(
-                'name' => 'robots',
-                'content' => 'noindex'
-            )
-        );
-        drupal_add_html_head($element, 'meta');
-
         return $this->render(
             'PelagosAppBundle:Tombstone:index.html.twig',
             $twigData = array(
