@@ -6,7 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\Person;
 
@@ -58,7 +57,6 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
-        $entityEventDispatcher = $this->getContainer()->get('pelagos.event.entity_event_dispatcher');
         $systemPerson = $entityManager->find(Person::class, 0);
 
         $infoFileName = $input->getArgument('infofile');
