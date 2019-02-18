@@ -8,8 +8,6 @@ require('../css/superfish-navbar.css');
 require('../css/superfish.css');
 require('../css/pelagos-module.css');
 
-
-
 $( document ).ready(function() {
     $("#pelagos-menu-1").hoverIntent(hoverIn, hoverOut, 'li');
 });
