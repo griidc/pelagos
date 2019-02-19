@@ -25,14 +25,22 @@ readmefile="$udi-ReadMe.txt"
 manifestfile="$udi-file-manifest.txt"
 zipfile="$udi-manifest.zip"
 
+echo "Generating temporary directory $udi"
+mkdir "$udi"
+
 echo "Generating file: $path/$udi-ReadMe.txt"
-python share/python/create-tree.py -d $1 > $readmefile
-unix2dos $readmefile
+python share/python/create-tree.py -d $1 > $udi/$readmefile
+unix2dos $udi/$readmefile
 
-echo "Generating file: $path/$udi-file-manifest.txt"
-python share/python/create-tree.py $1 > $manifestfile
-unix2dos $manifestfile
+echo "Generating file: $path/$udi/$udi-file-manifest.txt"
+python share/python/create-tree.py $1 > $udi/$manifestfile
+unix2dos $udi/$manifestfile
 
-zip $zipfile $1
-zip $zipfile -m $manifestfile $readmefile
+cp $1 .
+hashfile=$(basename $1)
+unix2dos $hashfile
+mv $hashfile $udi
+zip -r $zipfile $udi/
 unzip -l $zipfile
+
+rm -rf $udi

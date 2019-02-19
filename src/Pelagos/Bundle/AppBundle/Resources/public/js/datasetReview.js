@@ -656,7 +656,32 @@ $(document).ready(function(){
               }
         });
     });
+
+    checkColdStorageCheckBoxState();
+    //coldstorage checkbox - distribution info tab
+    $(".coldstorage-checkbox").change(function (){
+        if (!$(this).is(":checked") &&
+            ($("#datasetFileColdStorageArchiveSha256Hash").val().trim() !== "" || $("#datasetFileColdStorageArchiveSize").val() !== "") ) {
+            $(this).prop("checked", true); //re-check because stop propagation doesn't work
+            showDialog("Cold Storage Information", "Please make sure the Cold Storage Archive Size and Hash values are empty before disabling In Cold Storage option.");
+        }
+        else checkColdStorageCheckBoxState();
+    });
 });
+
+function checkColdStorageCheckBoxState() {
+    if ($(".coldstorage-checkbox").is(":checked")) {
+        $(".row-coldstorage-filesize").show();
+        $(".row-coldstorage-sha256hash").show();
+        $("#datasetFileColdStorageArchiveSize").attr("required", "required");
+        $("#datasetFileColdStorageArchiveSha256Hash").attr("required", "required");
+    } else {
+        $(".row-coldstorage-filesize").hide();
+        $(".row-coldstorage-sha256hash").hide();
+        $("#datasetFileColdStorageArchiveSize").removeAttr("required");
+        $("#datasetFileColdStorageArchiveSha256Hash").removeAttr("required");
+    }
+}
 
 function checkSpatial(isNonSpatial) {
     if (isNonSpatial) {

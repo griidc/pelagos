@@ -217,11 +217,11 @@ class StatsController extends UIController
             $qb->join('d.datasetSubmission', 'ds');
 
             if (array_key_exists('range0', $range)) {
-                $qb->andWhere('ds.datasetFileSize > :range0');
+                $qb->andWhere('COALESCE(ds.datasetFileColdStorageArchiveSize, ds.datasetFileSize) > :range0');
                 $qb->setParameter('range0', $range['range0']);
             }
             if (array_key_exists('range1', $range)) {
-                $qb->andWhere('ds.datasetFileSize <= :range1');
+                $qb->andWhere('COALESCE(ds.datasetFileColdStorageArchiveSize, ds.datasetFileSize) <= :range1');
                 $qb->setParameter('range1', $range['range1']);
             }
 
