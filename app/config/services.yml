@@ -116,7 +116,10 @@ services:
 
     pelagos.util.url_validation:
         class: Pelagos\Util\UrlValidation
-        
+
     pelagos.security.login_form_authenticator:
         class: Pelagos\Bundle\AppBundle\Security\LoginFormAuthenticator
         autowire: true
+
+    pelagos.security.encoder:
+        class: Pelagos\Bundle\AppBundle\Security\PelagosEncoder
