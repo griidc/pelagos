@@ -1,10 +1,10 @@
-parameters:
-    hwi_oauth.user.provider.class: Pelagos\Bundle\AppBundle\Security\OAuthUserProvider
-
 security:
-
     # leave session alone
     session_fixation_strategy: none
+
+    encoders:
+        Pelagos\Entity\Account:
+            id: pelagos.security.encoder
 
     providers:
         pelagos_account:
@@ -13,8 +13,6 @@ security:
                 property: userId
         person_token:
             id: person_token_user_provider
-        hwi_outh:
-            id: hwi_oauth.user.provider
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -35,21 +33,17 @@ security:
         main:
             # allow anonymous access
             anonymous: ~
-            
-            guard:
-                authenticators:
-                    - pelagos.security.login_form_authenticator
+
+            #guard:
+            #    authenticators:
+            #        - pelagos.security.login_form_authenticator
             logout:
                 path: security_logout
-            #form_login:
-            #    login_path: security_login
-            #    check_path: security_login
-            oauth:
-                resource_owners:
-                    google:     check_google
-                login_path:     /
-                oauth_user_provider:
-                    oauth:
+                target: pelagos_homepage
+            form_login:
+                login_path: security_login
+                check_path: security_login
+                default_target_path: pelagos_homepage
 
 services:
     super_user_voter:
