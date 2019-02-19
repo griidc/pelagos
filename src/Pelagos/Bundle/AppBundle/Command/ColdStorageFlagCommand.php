@@ -20,13 +20,6 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
 {
 
     /**
-     * Doctrine EntityManager, as provided in container.
-     *
-     * @var mixed entityManager
-     */
-    protected $entityManager;
-
-    /**
      * Symfony command config section.
      *
      * @return void
@@ -101,8 +94,6 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
                     $output->writeln('original submission ID is: ' . $dataset->getDatasetSubmission()->getId());
                     $output->writeln('new submission ID is initially: ' . $newDatasetSubmission->getId());
 
-                    // This method sets submission status to: DatasetSubmission::STATUS_IN_REVIEW (3).
-                    $newDatasetSubmission->setDatasetSubmissionReviewStatus();
                     // Set filesize of original file in new submission.
                     $newDatasetSubmission->setDatasetFileColdStorageArchiveSize($size);
                     // Set hash of original file in new submission.
@@ -145,7 +136,7 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
                     try {
                         $newDatasetSubmissionReflection = new \ReflectionClass($newDatasetSubmission);
                         $statusReflection = $newDatasetSubmissionReflection->getProperty('status');
-                        $statusReflection->setACcessible(true);
+                        $statusReflection->setAccessible(true);
                         $statusReflection->setValue($newDatasetSubmission, $datasetSubmission->getStatus());
                     } catch (\ReflectionException $exception) {
                         throw new \ReflectionException('Reflection class failed ' . $exception->getMessage());
