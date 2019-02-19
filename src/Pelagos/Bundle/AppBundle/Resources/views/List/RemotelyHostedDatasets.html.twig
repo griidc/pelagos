@@ -1,6 +1,7 @@
-{% extends "PelagosAppBundle::layout.html.twig" %}
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
 
 {% block head %}
+    {{ parent() }}
     {{ add_library (
         [
             'ui.dialog',
