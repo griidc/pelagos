@@ -57,7 +57,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         $username = $credentials['_username'];
         $theUser = $this->entityManager->getRepository('Pelagos:Account')
             ->findOneBy(['userId' => $username]);
-        dump ($theUser);
         return $theUser;
     }
 
@@ -75,13 +74,8 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         return $this->router->generate('security_login');
     }
 
-    // protected function getDefaultSuccessRedirectUrl()
-    // {
-        // return $this->router->generate('pelagos_homepage');
-    // }
-
-     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    protected function getDefaultSuccessRedirectUrl()
     {
-        return new RedirectResponse($this->router->generate('pelagos_homepage'));
+        return $this->router->generate('pelagos_homepage');
     }
 }
