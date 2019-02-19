@@ -65,10 +65,9 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
 
             if (file_exists($stubFileName)) {
                 $output->writeln("UDI: ($udi)");
-                $output->writeln("Size: ($size)");
-                $output->writeln("Hash: ($hash)");
+                $output->writeln("Original Size: ($size)");
+                $output->writeln("Original Hash: ($hash)");
                 $output->writeln("stubFileName: ($stubFileName)");
-
                 $output->writeln("Attempting to flag $udi as Cold Stored.");
 
                 $datasets = $entityManager->getRepository('Pelagos\Entity\Dataset')->findBy(array('udi' => $udi));
@@ -78,7 +77,6 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
                 } else {
                     $output->writeln('Dataset Found.');
                 }
-
                 $dataset = $datasets[0];
 
                 $datasetSubmission = $dataset->getDatasetSubmission();
@@ -92,7 +90,6 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
                         throw new \Exception('Attempted to create a dataset submission that is already tracked');
                     }
                     $output->writeln('original submission ID is: ' . $dataset->getDatasetSubmission()->getId());
-                    $output->writeln('new submission ID is initially: ' . $newDatasetSubmission->getId());
 
                     // Set filesize of original file in new submission.
                     $newDatasetSubmission->setDatasetFileColdStorageArchiveSize($size);
@@ -111,41 +108,16 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
                     $newDatasetSubmission->setDistributionFormatName('Cold Storage archive - ' .
                         $datasetSubmission->getDistributionFormatName());
 
-                    // This is normally null, unless manually set. Handle that gracefully.
-                    $newDatasetSubmissionId = $newDatasetSubmission->getId();
-                    $metadata = $entityManager->getClassMetaData(get_class($newDatasetSubmission));
-                    $newDatasetSubmissionIdGenerator = $metadata->idGenerator;
-                    if ($newDatasetSubmissionId !== null) {
-                        // Temporarily change the ID generator to AssignedGenerator.
-                        $metadata->setIdGenerator(new AssignedGenerator());
-                    }
+                    $newDatasetSubmission->submit($systemPerson);
 
                     $entityManager->persist($newDatasetSubmission);
                     $entityManager->flush($newDatasetSubmission);
 
-                    if ($newDatasetSubmissionId !== null) {
-                        $metadata->setIdGenerator($newDatasetSubmissionIdGenerator);
-                    }
 
-                    $dataset->setDatasetSubmission($newDatasetSubmission);
                     $entityManager->persist($dataset);
                     $entityManager->flush($dataset);
 
-                    // This is an ugly hack, having to re-persist, but there seems not to be a cleaner way...
-                    // Reset original status.
-                    try {
-                        $newDatasetSubmissionReflection = new \ReflectionClass($newDatasetSubmission);
-                        $statusReflection = $newDatasetSubmissionReflection->getProperty('status');
-                        $statusReflection->setAccessible(true);
-                        $statusReflection->setValue($newDatasetSubmission, $datasetSubmission->getStatus());
-                    } catch (\ReflectionException $exception) {
-                        throw new \ReflectionException('Reflection class failed ' . $exception->getMessage());
-                    }
-                    $entityManager->persist($newDatasetSubmission);
-                    $entityManager->flush($newDatasetSubmission);
-
-                    $output->writeln('Original DatasetSubmission Status: ' . $datasetSubmission->getStatus());
-                    $output->writeln('New submission ID is now: ' . $newDatasetSubmission->getId());
+                    $output->writeln('Submission ID is now: ' . $newDatasetSubmission->getId());
 
                     $output->writeln('New DatasetSubmission Status referenced in dataset: '
                         . $dataset->getDatasetSubmission()->getStatus());
