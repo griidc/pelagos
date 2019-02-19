@@ -508,12 +508,12 @@ class Account extends Entity implements UserInterface, \Serializable
      */
     public function serialize()
     {
-        // return serialize(
-            // array(
-            // //$this->getId(),
-            // $this->userId,
-            // )
-        // );
+        return serialize(
+            array(
+            $this->getId(),
+            $this->userId,
+            )
+        );
     }
 
     /**
@@ -527,11 +527,10 @@ class Account extends Entity implements UserInterface, \Serializable
      */
     public function unserialize($serialized)
     {
-        dump($serialized);
-        // list (
-            // $this->person,
-            // $this->userId,
-        // ) = unserialize($serialized);
+        list (
+            $this->person,
+            $this->userId,
+        ) = unserialize($serialized);
     }
 
     /**
