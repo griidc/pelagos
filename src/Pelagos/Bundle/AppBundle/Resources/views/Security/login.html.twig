@@ -20,29 +20,36 @@
         <div id="main" class="clearfix">
             <!-- CONTENT -->
             <div class="row">
+            <form action="{{ path('security_login') }}" method="post">
                 <div class="box fl-panel" id="login">
-                 {{ form_start(form) }}
                     <h2>Enter your Username and Password</h2>
                     <div class="row fl-controls-left">
-
-                    {{ form_row(form._username) }}
-
                     </div>
                     <div class="row fl-controls-left">
-                        {{ form_row(form._password) }}
+                        <label for="username">Username:</label>
+                        <input class="form-control" required autofocus type="text" id="username" name="_username" value="{{ last_username }}" placeholder="Username"/>
 
-                        <label for="rememberMe" style="display:inline; float:none; vertical-align:15%;">
-                            <a href="https://data.gulfresearchinitiative.org/account/reset-password">Forgot Your Password or Password Expired?</a>
-                        </label>
-                        <label for="rememberUsername" style="display:inline; float:none; vertical-align:15%;">
+                        <label for="password">Password:</label>
+                        <input class="form-control" required type="password" id="password" name="_password" placeholder="Password"/>
+
+                        <div class="checkbox mb-3">
+                            <label>
+                                <input type="checkbox" name="_remember_me"> Remember me
+                            </label>
+                        </div>
+                        <span style="display:inline; float:none; vertical-align:15%;">
+                        <a href="https://data.gulfresearchinitiative.org/account/reset-password">Forgot Your Password or Password Expired?</a>
+                        </span>
+                        <span style="display:inline; float:none; vertical-align:15%;">
                             <a href="https://data.gulfresearchinitiative.org/account/forgot-username">Forgot Your Username?</a>
-                        </label>
+                        </span>
                     </div>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
                     <div class="row btn-row">
-                    <input class="btn-submit form-submit" id="edit-submit" name="op" accesskey="l" value="LOGIN" type="submit">
+                    <input class="btn-submit form-submit" id="edit-submit" name="op" accesskey="l" type="submit">
                     <input class="btn-reset" name="reset" accesskey="c" value="CLEAR" type="reset">
                     </div>
-                {{ form_end(form) }}
+                </form>
                 </div>
                 <div id="sidebar">
                     <p class="fl-panel fl-note fl-bevel-white fl-font-size-80">You have reached the Gulf of Mexico Research Initiative Data and Information Cooperative (GRIIDC) site.</p>

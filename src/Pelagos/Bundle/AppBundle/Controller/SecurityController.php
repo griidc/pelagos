@@ -6,8 +6,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-use Pelagos\Bundle\AppBundle\Form\LoginForm;
-
 /**
  * This is the controller for the login form.
  */
@@ -28,14 +26,10 @@ class SecurityController extends Controller
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        $form = $this->get('form.factory')->createNamed(null, LoginForm::class, [
-            '_username' => $lastUsername,
-        ]);
-
         return $this->render(
             'PelagosAppBundle:Security:login.html.twig',
             array(
-                'form' => $form->createView(),
+                'last_username' => $lastUsername,
                 'error'         => $error,
             )
         );

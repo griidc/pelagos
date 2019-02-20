@@ -41,6 +41,9 @@ security:
             logout:
                 path: security_logout
                 target: pelagos_homepage
+            remember_me:
+                secret:   '%kernel.secret%'
+                lifetime: 604800
 
 services:
     super_user_voter:
