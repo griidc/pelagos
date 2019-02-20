@@ -120,7 +120,6 @@ $(document).ready(function()
             $(this).addClass(".show-diffs");
             showDifferences();
         }
-
     });
 
     loading.progress(function() {
