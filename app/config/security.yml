@@ -33,17 +33,14 @@ security:
         main:
             # allow anonymous access
             anonymous: ~
-
-            #guard:
-            #    authenticators:
-            #        - pelagos.security.login_form_authenticator
-            logout:
-                path: security_logout
-                target: pelagos_homepage
+            # Symfony login_form
             form_login:
                 login_path: security_login
                 check_path: security_login
                 default_target_path: pelagos_homepage
+            logout:
+                path: security_logout
+                target: pelagos_homepage
 
 services:
     super_user_voter:
