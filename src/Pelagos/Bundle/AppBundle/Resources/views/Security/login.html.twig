@@ -2,7 +2,7 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    
+
     {% stylesheets
         '@PelagosAppBundle/Resources/public/css/login.css'
     %}
@@ -20,18 +20,15 @@
         <div id="main" class="clearfix">
             <!-- CONTENT -->
             <div class="row">
-            <form action="{{ path('security_login') }}" method="post">
+            <!-- form action="{{ path('security_login') }}" method="post" -->
+            {{ form_start(form) }}
                 <div class="box fl-panel" id="login">
                     <h2>Enter your Username and Password</h2>
                     <div class="row fl-controls-left">
                     </div>
                     <div class="row fl-controls-left">
-                        <label for="username">Username:</label>
-                        <input class="form-control" required autofocus type="text" id="username" name="_username" value="{{ last_username }}" placeholder="Username"/>
-
-                        <label for="password">Password:</label>
-                        <input class="form-control" required type="password" id="password" name="_password" placeholder="Password"/>
-
+                        {{ form_row(form._username) }}
+                        {{ form_row(form._password) }}
                         <div class="checkbox mb-3">
                             <label>
                                 <input type="checkbox" name="_remember_me"> Remember me

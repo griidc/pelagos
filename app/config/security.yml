@@ -2,9 +2,9 @@ security:
     # leave session alone
     session_fixation_strategy: none
 
-    encoders:
-        Pelagos\Entity\Account:
-            id: pelagos.security.encoder
+    # encoders:
+        # Pelagos\Entity\Account:
+            # id: pelagos.security.encoder
 
     providers:
         pelagos_account:
@@ -33,17 +33,13 @@ security:
         main:
             # allow anonymous access
             anonymous: ~
-            # Symfony login_form
-            form_login:
-                login_path: security_login
-                check_path: security_login
-                default_target_path: pelagos_homepage
+            
+            guard:
+               authenticators:
+                   - pelagos.security.login_form_authenticator
             logout:
                 path: security_logout
                 target: pelagos_homepage
-            remember_me:
-                secret:   '%kernel.secret%'
-                lifetime: 604800
 
 services:
     super_user_voter:
