@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html style="height:100%;">
 <head>
 {% block head %}
     <title>{% block title %}{% endblock %}</title>
@@ -92,7 +92,9 @@
                     </div>
                 </div>
             </div>
-            {% include "PelagosAppBundle::layout-menu.html.twig" %}
+            {% block menu %}
+                {% include "PelagosAppBundle:Menus:main.html.twig" %}
+            {% endblock menu %}
             <div id="pelagos-container">
                 <div id="pelagos-container-row">
                     <div id="pelagos-container-cell">
