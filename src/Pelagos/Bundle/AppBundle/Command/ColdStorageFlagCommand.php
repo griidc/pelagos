@@ -84,45 +84,24 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
                     throw new \Exception('Could not find Dataset Submission.');
                 } else {
                     $output->writeln('Submission Found.');
-                    // Create a new submission using latest via constructor.
-                    $newDatasetSubmission = new DatasetSubmission($datasetSubmission);
-                    if ($entityManager->contains($newDatasetSubmission)) {
-                        throw new \Exception('Attempted to create a dataset submission that is already tracked');
-                    }
-                    $output->writeln('original submission ID is: ' . $dataset->getDatasetSubmission()->getId());
 
-                    // Set filesize of original file in new submission.
-                    $newDatasetSubmission->setDatasetFileColdStorageArchiveSize($size);
-                    // Set hash of original file in new submission.
-                    $newDatasetSubmission->setDatasetFileColdStorageArchiveSha256Hash($hash);
-                    // Set the creator of this entity to the user known as 'system'.
-                    $newDatasetSubmission->setCreator($systemPerson);
+                    // Set filesize of original file.
+                    $datasetSubmission->setDatasetFileColdStorageArchiveSize($size);
+                    // Set hash of original file.
+                    $datasetSubmission->setDatasetFileColdStorageArchiveSha256Hash($hash);
 
                     // Set options for a new replacement datafile of the supplied Cold-Storage stubfile.
-                    $newDatasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $newDatasetSubmission->setDatasetFileName(null);
-                    $newDatasetSubmission->setDatasetFileSize(null);
-                    $newDatasetSubmission->setDatasetFileSha256Hash(null);
-                    $newDatasetSubmission->setDatasetFileTransferType(DatasetSubmission::TRANSFER_TYPE_SFTP);
-                    $newDatasetSubmission->setDatasetFileUri($stubFileName);
-                    $newDatasetSubmission->setDistributionFormatName('Cold Storage archive - ' .
+                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+                    $datasetSubmission->setDatasetFileName(null);
+                    $datasetSubmission->setDatasetFileSize(null);
+                    $datasetSubmission->setDatasetFileSha256Hash(null);
+                    $datasetSubmission->setDatasetFileTransferType(DatasetSubmission::TRANSFER_TYPE_SFTP);
+                    $datasetSubmission->setDatasetFileUri($stubFileName);
+                    $datasetSubmission->setDistributionFormatName('Cold Storage archive - ' .
                         $datasetSubmission->getDistributionFormatName());
 
-                    $newDatasetSubmission->submit($systemPerson);
-
-                    $entityManager->persist($newDatasetSubmission);
-                    $entityManager->flush($newDatasetSubmission);
-
-
-                    $entityManager->persist($dataset);
-                    $entityManager->flush($dataset);
-
-                    $output->writeln('Submission ID is now: ' . $newDatasetSubmission->getId());
-
-                    $output->writeln('New DatasetSubmission Status referenced in dataset: '
-                        . $dataset->getDatasetSubmission()->getStatus());
-                    $output->writeln('New submission ID in dataset is now: '
-                        . $dataset->getDatasetSubmission()->getId());
+                    $entityManager->persist($datasetSubmission);
+                    $entityManager->flush($datasetSubmission);
 
                     //Use rabbitmq to process dataset file and persist the file details. This will
                     //Trigger filer and hasher (via filer) to complete the process.
