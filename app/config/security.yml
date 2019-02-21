@@ -2,10 +2,6 @@ security:
     # leave session alone
     session_fixation_strategy: none
 
-    # encoders:
-        # Pelagos\Entity\Account:
-            # id: pelagos.security.encoder
-
     providers:
         pelagos_account:
             entity:
