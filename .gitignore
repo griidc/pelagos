@@ -30,3 +30,6 @@ bin/symfony_requirements
 coverage
 /.idea
 /node_modules/*
+.vscode/*
+npm-debug.log
+yarn-error.log
