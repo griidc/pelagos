@@ -10,11 +10,26 @@
     {% endstylesheets %}
 {% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+
+    {% javascripts
+        '//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js'
+        '@PelagosAppBundle/Resources/public/js/pelagosNoty.js'
+    %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $(".pelagosNoty").pelagosNoty({timeout: 6000, showOnTop:false});
+        });
+    </script>
+{% endblock %}
+
 {% block body %}
     {% if error %}
-        <div class="alert alert-danger">
-            {{ error.messageKey|trans(error.messageData, 'security') }}
-        </div>
+        <div class="pelagosNoty" text="{{ error.messageKey|trans(error.messageData, 'security') }}" type="error"></div>
     {% endif %}
     <div id="main-wrapper">
         <div id="main" class="clearfix">
@@ -29,16 +44,18 @@
                     <div class="row fl-controls-left">
                         {{ form_row(form._username) }}
                         {{ form_row(form._password) }}
+                        {#
                         <div class="checkbox mb-3">
                             <label>
                                 <input type="checkbox" name="_remember_me"> Remember me
                             </label>
                         </div>
+                        #}
                         <span style="display:inline; float:none; vertical-align:15%;">
-                        <a href="https://data.gulfresearchinitiative.org/account/reset-password">Forgot Your Password or Password Expired?</a>
+                        <a href="{{ path('pelagos_app_ui_account_passwordreset') }}">Forgot Your Password or Password Expired?</a>
                         </span>
                         <span style="display:inline; float:none; vertical-align:15%;">
-                            <a href="https://data.gulfresearchinitiative.org/account/forgot-username">Forgot Your Username?</a>
+                            <a href="{{ path('pelagos_app_ui_account_forgotusername') }}">Forgot Your Username?</a>
                         </span>
                     </div>
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
