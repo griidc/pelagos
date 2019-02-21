@@ -172,7 +172,7 @@ class DoiConsumer implements ConsumerInterface
      * @param Dataset $dataset        The Dataset.
      * @param array   $loggingContext The logging context to use when logging.
      *
-     * @return boolean True if success, false otherwise.
+     * @return integer
      */
     private function createDoi(Dataset $dataset, array $loggingContext)
     {
