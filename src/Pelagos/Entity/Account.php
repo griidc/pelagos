@@ -23,7 +23,7 @@ use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
  *
  * @ORM\Entity
  */
-class Account extends Entity implements UserInterface, \Serializable, EquatableInterface 
+class Account extends Entity implements UserInterface, \Serializable, EquatableInterface
 {
     /**
      * A friendly name for this type of entity.
@@ -548,7 +548,14 @@ class Account extends Entity implements UserInterface, \Serializable, EquatableI
         }
         return $this->password->getSalt();
     }
-    
+
+    /**
+     * Returns the passwordHashSalt for this Account.
+     *
+     * @param UserInterface $user The user class.
+     *
+     * @return bool True to tell the EquatableInterface we are a real user class.
+     */
     public function isEqualTo(UserInterface $user)
     {
         return true;
