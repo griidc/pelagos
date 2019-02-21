@@ -2,7 +2,7 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    
+
     {% stylesheets
         '@PelagosAppBundle/Resources/public/css/login.css'
     %}
@@ -10,39 +10,58 @@
     {% endstylesheets %}
 {% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+
+    {% javascripts
+        '//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js'
+        '@PelagosAppBundle/Resources/public/js/pelagosNoty.js'
+    %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $(".pelagosNoty").pelagosNoty({timeout: 6000, showOnTop:false});
+        });
+    </script>
+{% endblock %}
+
 {% block body %}
     {% if error %}
-        <div class="alert alert-danger">
-            {{ error.messageKey|trans(error.messageData, 'security') }}
-        </div>
+        <div class="pelagosNoty" text="{{ error.messageKey|trans(error.messageData, 'security') }}" type="error"></div>
     {% endif %}
     <div id="main-wrapper">
         <div id="main" class="clearfix">
             <!-- CONTENT -->
             <div class="row">
+            <!-- form action="{{ path('security_login') }}" method="post" -->
+            {{ form_start(form) }}
                 <div class="box fl-panel" id="login">
-                 {{ form_start(form) }}
                     <h2>Enter your Username and Password</h2>
                     <div class="row fl-controls-left">
-
-                    {{ form_row(form._username) }}
-
-                    </div>
-                    <div class="row fl-controls-left">
+                        {{ form_row(form._username) }}
                         {{ form_row(form._password) }}
-
-                        <label for="rememberMe" style="display:inline; float:none; vertical-align:15%;">
-                            <a href="https://data.gulfresearchinitiative.org/account/reset-password">Forgot Your Password or Password Expired?</a>
-                        </label>
-                        <label for="rememberUsername" style="display:inline; float:none; vertical-align:15%;">
-                            <a href="https://data.gulfresearchinitiative.org/account/forgot-username">Forgot Your Username?</a>
-                        </label>
+                        {#
+                        <div class="checkbox mb-3">
+                            <label>
+                                <input type="checkbox" name="_remember_me"> Remember me
+                            </label>
+                        </div>
+                        #}
+                        <span style="display:inline; float:none; vertical-align:15%;">
+                        <a href="{{ path('pelagos_app_ui_account_passwordreset') }}">Forgot Your Password or Password Expired?</a>
+                        </span>
+                        <span style="display:inline; float:none; vertical-align:15%;">
+                            <a href="{{ path('pelagos_app_ui_account_forgotusername') }}">Forgot Your Username?</a>
+                        </span>
                     </div>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
                     <div class="row btn-row">
-                    <input class="btn-submit form-submit" id="edit-submit" name="op" accesskey="l" value="LOGIN" type="submit">
+                    <input class="btn-submit form-submit" id="edit-submit" name="op" value="LOGIN" accesskey="l" type="submit">
                     <input class="btn-reset" name="reset" accesskey="c" value="CLEAR" type="reset">
                     </div>
-                {{ form_end(form) }}
+                </form>
                 </div>
                 <div id="sidebar">
                     <p class="fl-panel fl-note fl-bevel-white fl-font-size-80">You have reached the Gulf of Mexico Research Initiative Data and Information Cooperative (GRIIDC) site.</p>

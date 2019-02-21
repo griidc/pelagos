@@ -10,6 +10,8 @@
 
     {% block javascripts %}
         <script src="{{ asset('/build/common.js') }}"></script>
+        
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.hoverintent/1.9.0/jquery.hoverIntent.min.js"></script>
 
         <script type="text/javascript" src="https://griidc.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-2rfjj7/b/29/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=8b54034b"></script>
 
@@ -61,7 +63,12 @@
                     <div class="region region-header">
                         <div id="block-pelagos-pelagos-login-logout-links" class="block block-pelagos">
                             <div class="content">
-                                <a href="/user/login?destination=">Log In</a>  </div>
+                            {% if is_granted('ROLE_USER') %}
+                            <a href="{{ path('security_logout') }}">Logout</a>
+                                {% else %}
+                            <a href="{{ path('security_login') }}">Login</a>
+                            {% endif %}
+                            </div>
                         </div>
                     </div>
 
