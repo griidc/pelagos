@@ -40,8 +40,6 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
      *
      * @throws \Exception If cannot find dataset with provided UDI.
      * @throws \Exception If cannot find dataset submission in dataset.
-     * @throws \Exception If new submission already somehow exists.
-     * @throws \ReflectionException If reflection class fails.
      * @throws \Exception If stubfile not readable/accessible.
      * @throws \Exception If infofile not readable/accessible.
      *
