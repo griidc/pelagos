@@ -55,6 +55,15 @@ class RemoveAccountCommand extends ContainerAwareCommand
         }
         $account = $accounts[0];
 
+        // Attempt to remove from LDAP, give warning if cannot, but continue with userdel.
+        try {
+            $output->writeln("Attempting to remove LDAP account for $username.");
+            $ldap = $this->getcontainer()->get('pelagos.ldap');
+            $ldap->deletePerson($account->getPerson());
+        } catch (\Exception $exception) {
+            $output->writeln("WARNING: Could not remove $username from LDAP. - " . $exception->getMessage());
+        }
+
         $passwords = $entityManager->getRepository(Password::class)->findBy(array('account' => $account));
 
         // Remove reference in Account to Password by nulling via Reflections. Because of a circular reference,
@@ -86,22 +95,8 @@ class RemoveAccountCommand extends ContainerAwareCommand
             $entityManager->remove($password);
         }
 
+
         $entityManager->remove($account);
         $entityManager->flush();
-    }
-
-    /**
-     * Removes LDAP entry for username.
-     *
-     * @param mixed $ldap     LDAP mechanism.
-     * @param mixed $username The Username of the LDAP entry to delete.
-     *
-     * @return void
-     */
-    protected function removeLdap($ldap, $username)
-    {
-        $ldap = $this->getContainer()->get('pelagos.ldap');
-        $person = $this->entityManager->getRepository(Account::class)
-            ->findby(array('userId' => $username))[0]->getPerson();
     }
 }
