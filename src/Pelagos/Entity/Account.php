@@ -191,7 +191,7 @@ class Account extends Entity implements UserInterface, \Serializable
      */
     public function getId()
     {
-        return $this->getPerson()->getId();
+        return $this->getPerson();
     }
 
     /**

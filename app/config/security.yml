@@ -36,12 +36,14 @@ security:
                 provider: person_token
 
         main:
+            logout_on_user_change: true
             # allow anonymous access
             anonymous: ~
             # use REMOTE_USER environment variable if set
             remote_user:
                 provider: pelagos_account
             oauth:
+                provider: pelagos_account
                 resource_owners:
                     google:     check_google
                 login_path:     /
