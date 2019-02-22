@@ -120,3 +120,7 @@ services:
     pelagos.handler.upload:
         class: Pelagos\Bundle\AppBundle\Handler\UploadHandler
         arguments: ["%homedir_prefix%"]
+
+    pelagos.login.attempt.hander:
+        class: Pelagos\Bundle\AppBundle\Security\LoginAttemptHandler
+        autowire: true

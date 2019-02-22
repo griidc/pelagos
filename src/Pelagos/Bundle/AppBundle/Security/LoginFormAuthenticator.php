@@ -9,12 +9,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
 
 use Pelagos\Bundle\AppBundle\Form\LoginForm;
+use Pelagos\Entity\Logins;
+use Pelagos\Entity\Person;
 
 /**
  * The login form authenticator.
@@ -43,19 +46,28 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      * @var RouterInterface
      */
     private $router;
+    
+    /**
+     * The Login Attempt Handler.
+     *
+     * @var LoginAttemptHandler
+     */
+    private $loginAttemptHandler;
 
     /**
      * Class constructor for Dependency Injection.
      *
-     * @param FormFactoryInterface $formFactory   A Form Factory.
-     * @param EntityManager        $entityManager An Entity Manager.
-     * @param RouterInterface      $router        A Router.
+     * @param FormFactoryInterface $formFactory         A Form Factory.
+     * @param EntityManager        $entityManager       An Entity Manager.
+     * @param RouterInterface      $router              A Router.
+     * @param LoginAttemptHandler  $loginAttemptHandler The Login Attempt Handler.
      */
-    public function __construct(FormFactoryInterface $formFactory, EntityManager $entityManager, RouterInterface $router)
+    public function __construct(FormFactoryInterface $formFactory, EntityManager $entityManager, RouterInterface $router, LoginAttemptHandler $loginAttemptHandler)
     {
         $this->formFactory = $formFactory;
         $this->entityManager = $entityManager;
         $this->router = $router;
+        $this->loginAttemptHandler = $loginAttemptHandler;
     }
     
     /**
@@ -83,7 +95,9 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         $form->handleRequest($request);
 
         $data = $form->getData();
-
+        
+        $this->loginAttemptHandler->log($request);
+        
         $request->getSession()->set(
             Security::LAST_USERNAME,
             $data['_username']
@@ -103,8 +117,11 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         $username = $credentials['_username'];
-        $theUser = $this->entityManager->getRepository('Pelagos:Account')
-            ->findOneBy(['userId' => $username]);
+        $theUser = $userProvider->loadUserByUsername($username);
+            
+        if (null == $theUser) {
+            throw new AuthenticationException('Invalid Login');
+        }
         return $theUser;
     }
 
@@ -119,7 +136,11 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     public function checkCredentials($credentials, UserInterface $user)
     {
         $password = $credentials['_password'];
-        return $user->getPasswordEntity()->comparePassword($password);
+        if ($user->getPasswordEntity()->comparePassword($password)) {
+            return true;
+        } else {
+            throw new AuthenticationException('Your password is:"BadPassw0d!"');
+        }
     }
 
     /**

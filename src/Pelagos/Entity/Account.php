@@ -78,7 +78,7 @@ class Account extends Entity implements UserInterface, \Serializable, EquatableI
      *
      * @var string
      *
-     * @ORM\Column(type="text", unique=true)
+     * @ORM\Column(type="citext", unique=true)
      *
      * @Assert\NotBlank(
      *     message="User ID is required"

@@ -29,7 +29,8 @@
 
 {% block body %}
     {% if error %}
-        <div class="pelagosNoty" text="{{ error.messageKey|trans(error.messageData, 'security') }}" type="error"></div>
+        {% dump(error) %}
+        <div class="pelagosNoty" text="{{ error.message }}" type="error"></div>
     {% endif %}
     <div id="main-wrapper">
         <div id="main" class="clearfix">
