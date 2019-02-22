@@ -43,10 +43,11 @@ class SetPrimaryPointOfContactCommand extends ContainerAwareCommand
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
 
         $datasets = $entityManager->getRepository(Dataset::class)
-            ->findBy(array('datasetStatus' => Dataset::DATASET_STATUS_ACCEPTED));
+            ->findBy(array('datasetSubmissionStatus' => [DatasetSubmission::STATUS_COMPLETE, DatasetSubmission::STATUS_IN_REVIEW]));
         $count = 0;
         foreach ($datasets as $dataset) {
-            $datasetSubmission = $dataset->getDatasetSubmission();
+            // Using this getter so that irrespective of the dataset status, it would get the right Dataset Submission
+            $datasetSubmission = $dataset->getLatestDatasetReview();
             $udi = $dataset->getUdi();
             $output->writeln('Checking primary contact for udi: ' . $udi);
 
