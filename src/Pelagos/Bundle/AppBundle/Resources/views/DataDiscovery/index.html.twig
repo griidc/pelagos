@@ -1,15 +1,7 @@
-{% extends "PelagosAppBundle::layout.html.twig" %}
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
 
 {% block head %}
     {{ parent() }}
-
-    {{
-        add_library (
-            [
-                'jquery.cookie',
-            ]
-        )
-    }}
 
     {% stylesheets
         '@PelagosAppBundle/Resources/public/css/data-discovery.css'
