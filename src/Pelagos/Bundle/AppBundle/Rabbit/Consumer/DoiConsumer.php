@@ -78,7 +78,7 @@ class DoiConsumer implements ConsumerInterface
         // @codingStandardsIgnoreStart
         $routingKey = $message->delivery_info['routing_key'];
 
-        $msgStatus = self::MSG_ACK;
+        $msgStatus = ConsumerInterface::MSG_ACK;
 
         if (preg_match('/^delete/', $routingKey)) {
             $doi = $message->body;
@@ -130,7 +130,7 @@ class DoiConsumer implements ConsumerInterface
         // Log processing start.
         $this->logger->info('Attempting to issue DOI', $loggingContext);
 
-        $issueMsg = self::MSG_ACK;
+        $issueMsg = ConsumerInterface::MSG_ACK;
 
         if (!$this->doiAlreadyExists($dataset, $loggingContext)) {
             try {
@@ -153,12 +153,12 @@ class DoiConsumer implements ConsumerInterface
                 $this->logger->info('DOI Issued', $loggingContext);
             } catch (HttpClientErrorException $exception) {
                 $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
-                $issueMsg = self::MSG_REJECT;
+                $issueMsg = ConsumerInterface::MSG_REJECT;
             } catch (HttpServerErrorException $exception) {
                 $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
                 //server down. wait for 10 minutes and retry.
                 sleep(600);
-                $issueMsg = self::MSG_REJECT_REQUEUE;
+                $issueMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
             }
         } else {
             $this->logger->warning('The DOI already exist for dataset', $loggingContext);
@@ -181,7 +181,7 @@ class DoiConsumer implements ConsumerInterface
         // Log processing start.
         $this->logger->info('Attempting to create DOI', $loggingContext);
 
-        $createMsg = self::MSG_ACK;
+        $createMsg = ConsumerInterface::MSG_ACK;
 
         $doi = $dataset->getDoi();
 
@@ -203,12 +203,12 @@ class DoiConsumer implements ConsumerInterface
             $this->logger->info('DOI Created', $loggingContext);
         } catch (HttpClientErrorException $exception) {
             $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
-            $createMsg = self::MSG_REJECT;
+            $createMsg = ConsumerInterface::MSG_REJECT;
         } catch (HttpServerErrorException $exception) {
             $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
             //server down. wait for 10 minutes and retry.
             sleep(600);
-            $createMsg = self::MSG_REJECT_REQUEUE;
+            $createMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
         }
 
         return $createMsg;
@@ -226,7 +226,7 @@ class DoiConsumer implements ConsumerInterface
     {
         // Log processing start.
         $this->logger->info('Attempting to update DOI', $loggingContext);
-        $updateMsg = self::MSG_ACK;
+        $updateMsg = ConsumerInterface::MSG_ACK;
         $doi = $dataset->getDoi();
 
         $doiUtil = new DOIutil();
@@ -269,12 +269,12 @@ class DoiConsumer implements ConsumerInterface
             $this->logger->info('DOI set to status: ' . $status, $loggingContext);
         } catch (HttpClientErrorException $exception) {
             $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
-            $updateMsg = self::MSG_REJECT;
+            $updateMsg = ConsumerInterface::MSG_REJECT;
         } catch (HttpServerErrorException $exception) {
             $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
             //server down. wait for 10 minutes and retry.
             sleep(600);
-            $updateMsg = self::MSG_REJECT_REQUEUE;
+            $updateMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
         }
 
         return $updateMsg;
@@ -292,18 +292,18 @@ class DoiConsumer implements ConsumerInterface
     {
         // Log processing start.
         $this->logger->info('Attempting to delete DOI', $loggingContext);
-        $deleteMsg = self::MSG_ACK;
+        $deleteMsg = ConsumerInterface::MSG_ACK;
         try {
             $doiUtil = new DOIutil();
             $doiUtil->deleteDOI($doi);
         } catch (HttpClientErrorException $exception) {
             $this->logger->error('Error deleting DOI: ' . $exception->getMessage(), $loggingContext);
-            $deleteMsg = self::MSG_REJECT;
+            $deleteMsg = ConsumerInterface::MSG_REJECT;
         } catch (HttpServerErrorException $exception) {
             $this->logger->error('Error deleting DOI: ' . $exception->getMessage(), $loggingContext);
             //server down. wait for 10 minutes and retry.
             sleep(600);
-            $deleteMsg = self::MSG_REJECT_REQUEUE;
+            $deleteMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
         }
 
         return $deleteMsg;
