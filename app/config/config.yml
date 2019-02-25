@@ -20,7 +20,7 @@ parameters:
 framework:
     #esi:             ~
     #translator:      { fallbacks: ["%locale%"] }
-    csrf_protection: ~
+    #csrf_protection: ~
     secret:          "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
@@ -302,13 +302,3 @@ doctrine_migrations:
     namespace: Pelagos\Migrations
     table_name: migration_versions
     name: Pelagos Migrations
-
-httplug:
-    plugins:
-        logger: ~
-    clients:
-        acme:
-            factory: 'httplug.factory.guzzle6'
-            plugins: ['httplug.plugin.logger']
-            config:
-                timeout: 2
