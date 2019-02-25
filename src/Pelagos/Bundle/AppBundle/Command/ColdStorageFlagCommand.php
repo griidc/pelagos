@@ -43,7 +43,7 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
      * @throws \Exception If stubfile not readable/accessible.
      * @throws \Exception If infofile not readable/accessible.
      *
-     * @return integer
+     * @return void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -105,7 +105,7 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
                     //Trigger filer and hasher (via filer) to complete the process.
                     $this->getContainer()->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(
                         $dataset->getDatasetSubmission()->getId(),
-                        'dataset.SFTP'
+                        'dataset.' . DatasetSubmission::TRANSFER_TYPE_SFTP
                     );
                 }
             } else {
