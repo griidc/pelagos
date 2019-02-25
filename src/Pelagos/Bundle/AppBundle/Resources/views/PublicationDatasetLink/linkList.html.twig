@@ -1,13 +1,7 @@
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
+
 {% block head %}
-    {{
-        add_library (
-            [
-                'ui.dialog',
-                'ui.tooltip',
-                'ui.button'
-            ]
-        )
-    }}
+    {{ parent() }}
 
     {{
         add_css (

@@ -1,11 +1,10 @@
 {% extends "PelagosAppBundle::layout.html.twig" %}
 
-{% block head %}
-
+{%block stylesheets %}
     {{ parent() }}
-    
+
     <link rel="stylesheet" href="{{ asset('/build/layout.css') }}">
-    
+
     {{
         add_css (
             [
@@ -18,7 +17,12 @@
     {% stylesheets  '@PelagosAppBundle/Resources/public/css/entity.css' %}
         {{ add_css(asset_url) }}
     {% endstylesheets  %}
-    
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
     <script src="{{ asset('/build/layout.js') }}"></script>
 
     {{
@@ -33,15 +37,11 @@
         )
     }}
 
-    {% javascripts '@PelagosAppBundle/Resources/public/js/common.js' %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
-
-    {% javascripts '@PelagosAppBundle/Resources/public/js/entityForm.js' %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
-
-    {% javascripts '@PelagosAppBundle/Resources/public/js/ui.js' %}
+    {% javascripts
+        '@PelagosAppBundle/Resources/public/js/common.js'
+        '@PelagosAppBundle/Resources/public/js/entityForm.js'
+        '@PelagosAppBundle/Resources/public/js/ui.js'
+    %}
         {{ add_js(asset_url) }}
     {% endjavascripts %}
 {% endblock %}

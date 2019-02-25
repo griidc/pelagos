@@ -24,6 +24,7 @@
 }
 #page #login label {
     font-size:11px;
+    display: block;
 }
 #page #login label span.accesskey {
     text-decoration:underline;
@@ -197,15 +198,12 @@ input.error {
     color:#b00;
 }
 
-/* mark as required */
-.required {
-    background:#ffd;
-}
 .error {
     background:#ffefef;
 }
-input.required {
+input[required] {
     border-width:1px;
+    background:#ffd;
 }
 
 #list-languages {

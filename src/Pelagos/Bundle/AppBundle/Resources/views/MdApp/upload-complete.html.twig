@@ -1,16 +1,7 @@
-{% extends "PelagosAppBundle::layout.html.twig" %}
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
 
 {% block head %}
     {{ parent() }}
-
-    {{
-        add_library (
-            [
-                'ui.tabs',
-                'jquery.cookie',
-            ]
-        )
-    }}
 
     {% stylesheets
         '@PelagosAppBundle/Resources/public/css/dataland-details.css'
