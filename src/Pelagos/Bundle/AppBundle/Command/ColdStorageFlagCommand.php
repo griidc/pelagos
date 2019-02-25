@@ -114,6 +114,5 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
         } else {
             throw new \Exception("Error: Could not open $infoFileName.");
         }
-        return 0;
     }
 }
