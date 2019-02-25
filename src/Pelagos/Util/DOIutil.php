@@ -272,7 +272,8 @@ class DOIutil
      *
      * @param string $doi DOI to get metadata for.
      *
-     * @throws \Exception When there was an error negotiating with EZID.
+     * @throws HttpClientErrorException When there was an 4xx error negotiating with EZID.
+     * @throws HttpServerErrorException When there was an 5xx error negotiating with EZID.
      *
      * @return array Array or metadata variables.
      */
@@ -289,7 +290,12 @@ class DOIutil
 
         //check to see if it worked.
         if (200 != $httpCode) {
-            throw new \Exception("ezid failed with:$httpCode($output)", $httpCode);
+            $expMsg = "ezid failed with:$httpCode($output)";
+            if ($httpCode >= 400) {
+                throw new HttpClientErrorException($expMsg, $httpCode);
+            } elseif ($httpCode >= 500) {
+                throw new HttpServerErrorException($expMsg, $httpCode);
+            }
         }
 
         $metadata = array();

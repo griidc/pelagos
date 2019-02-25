@@ -156,6 +156,8 @@ class DoiConsumer implements ConsumerInterface
                 $issueMsg = self::MSG_REJECT;
             } catch (HttpServerErrorException $exception) {
                 $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
+                //server down. wait for 10 minutes and retry.
+                sleep(600);
                 $issueMsg = self::MSG_REJECT_REQUEUE;
             }
         } else {
@@ -204,6 +206,8 @@ class DoiConsumer implements ConsumerInterface
             $createMsg = self::MSG_REJECT;
         } catch (HttpServerErrorException $exception) {
             $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
+            //server down. wait for 10 minutes and retry.
+            sleep(600);
             $createMsg = self::MSG_REJECT_REQUEUE;
         }
 
@@ -268,6 +272,8 @@ class DoiConsumer implements ConsumerInterface
             $updateMsg = self::MSG_REJECT;
         } catch (HttpServerErrorException $exception) {
             $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
+            //server down. wait for 10 minutes and retry.
+            sleep(600);
             $updateMsg = self::MSG_REJECT_REQUEUE;
         }
 
@@ -295,6 +301,8 @@ class DoiConsumer implements ConsumerInterface
             $deleteMsg = self::MSG_REJECT;
         } catch (HttpServerErrorException $exception) {
             $this->logger->error('Error deleting DOI: ' . $exception->getMessage(), $loggingContext);
+            //server down. wait for 10 minutes and retry.
+            sleep(600);
             $deleteMsg = self::MSG_REJECT_REQUEUE;
         }
 
@@ -345,15 +353,27 @@ class DoiConsumer implements ConsumerInterface
     private function doiAlreadyExists(Dataset $dataset, $loggingContext): bool
     {
         $doi = $dataset->getDoi();
+        $exceptionType = null;
 
         if ($doi instanceof DOI) {
-            try {
-                $doiUtil = new DOIutil();
-                $doiUtil->getDOIMetadata($doi->getDoi());
-            } catch (\Exception $exception) {
-                //DOI exist, but is not found in EZID/Datacite.
-                $this->createDoi($dataset, $loggingContext);
-            }
+            do {
+                try {
+                    $doiUtil = new DOIutil();
+                    $doiUtil->getDOIMetadata($doi->getDoi());
+                } catch (HttpClientErrorException $exception) {
+                    //DOI exist, but is not found in EZID/Datacite.
+                    $this->logger->error('Error getting DOI: ' . $exception->getMessage(), $loggingContext);
+                    $exceptionType = get_class($exception);
+                    $this->createDoi($dataset, $loggingContext);
+                } catch (HttpServerErrorException $exception) {
+                    //server down. wait for 10 minutes and retry.
+                    $this->logger->error('Error getting DOI: ' . $exception->getMessage(), $loggingContext);
+                    sleep(600);
+                    $exceptionType = get_class($exception);
+                    continue;
+                }
+            } while (get_class($exceptionType) === HttpServerErrorException::class);
+
             return true;
         }
         return false;
