@@ -50,6 +50,11 @@ class DoiConsumer implements ConsumerInterface
     protected $entityEventDispatcher;
 
     /**
+     * Delay time in seconds for API.
+     */
+    const DELAY_TIME = 600;
+
+    /**
      * Constructor.
      *
      * @param EntityManager         $entityManager         The entity manager.
@@ -157,7 +162,7 @@ class DoiConsumer implements ConsumerInterface
             } catch (HttpServerErrorException $exception) {
                 $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
                 //server down. wait for 10 minutes and retry.
-                sleep(600);
+                sleep(self::DELAY_TIME);
                 $issueMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
             }
         } else {
@@ -207,7 +212,7 @@ class DoiConsumer implements ConsumerInterface
         } catch (HttpServerErrorException $exception) {
             $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
             //server down. wait for 10 minutes and retry.
-            sleep(600);
+            sleep(self::DELAY_TIME);
             $createMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
         }
 
@@ -273,7 +278,7 @@ class DoiConsumer implements ConsumerInterface
         } catch (HttpServerErrorException $exception) {
             $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
             //server down. wait for 10 minutes and retry.
-            sleep(600);
+            sleep(self::DELAY_TIME);
             $updateMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
         }
 
@@ -302,7 +307,7 @@ class DoiConsumer implements ConsumerInterface
         } catch (HttpServerErrorException $exception) {
             $this->logger->error('Error deleting DOI: ' . $exception->getMessage(), $loggingContext);
             //server down. wait for 10 minutes and retry.
-            sleep(600);
+            sleep(self::DELAY_TIME);
             $deleteMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
         }
 
@@ -368,7 +373,7 @@ class DoiConsumer implements ConsumerInterface
                 } catch (HttpServerErrorException $exception) {
                     //server down. wait for 10 minutes and retry.
                     $this->logger->error('Error getting DOI: ' . $exception->getMessage(), $loggingContext);
-                    sleep(600);
+                    sleep(self::DELAY_TIME);
                     $exceptionType = get_class($exception);
                     continue;
                 }
