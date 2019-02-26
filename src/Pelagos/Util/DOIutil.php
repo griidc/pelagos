@@ -121,7 +121,7 @@ class DOIutil
             $expMsg = "ezid failed with:$httpCode($output)";
             if ($httpCode >= 400 and $httpCode <= 499) {
                 throw new HttpClientErrorException($expMsg, $httpCode);
-            } elseif ($httpCode >= 500 and $httpCode == 0) {
+            } elseif ($httpCode >= 500 or $httpCode == 0) {
                 throw new HttpServerErrorException($expMsg, $httpCode);
             }
         }
@@ -194,7 +194,7 @@ class DOIutil
             $expMsg = "ezid failed with:$httpCode($output)";
             if ($httpCode >= 400 and $httpCode <= 499) {
                 throw new HttpClientErrorException($expMsg, $httpCode);
-            } elseif ($httpCode >= 500 and $httpCode == 0) {
+            } elseif ($httpCode >= 500 or $httpCode == 0) {
                 throw new HttpServerErrorException($expMsg, $httpCode);
             }
         }
@@ -259,7 +259,7 @@ class DOIutil
             $expMsg = "ezid failed with:$httpCode($output)";
             if ($httpCode >= 400 and $httpCode <= 499) {
                 throw new HttpClientErrorException($expMsg, $httpCode);
-            } elseif ($httpCode >= 500 and $httpCode == 0) {
+            } elseif ($httpCode >= 500 or $httpCode == 0) {
                 throw new HttpServerErrorException($expMsg, $httpCode);
             }
         }
@@ -293,7 +293,7 @@ class DOIutil
             $expMsg = "ezid failed with:$httpCode($output)";
             if ($httpCode >= 400 and $httpCode <= 499) {
                 throw new HttpClientErrorException($expMsg, $httpCode);
-            } elseif ($httpCode >= 500 and $httpCode == 0) {
+            } elseif ($httpCode >= 500 or $httpCode == 0) {
                 throw new HttpServerErrorException($expMsg, $httpCode);
             }
         }
@@ -339,7 +339,7 @@ class DOIutil
             $expMsg = "ezid failed with:$httpCode($output)";
             if ($httpCode >= 400 and $httpCode <= 499) {
                 throw new HttpClientErrorException($expMsg, $httpCode);
-            } elseif ($httpCode >= 500 and $httpCode == 0) {
+            } elseif ($httpCode >= 500 or $httpCode == 0) {
                 throw new HttpServerErrorException($expMsg, $httpCode);
             }
         }
