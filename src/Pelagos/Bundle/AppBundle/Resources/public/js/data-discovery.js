@@ -263,11 +263,20 @@ function createRow(data, row)
     }
     $(rowContent).find("#img-download-package").attr("title", imgTitle);
 
+    if (data["datasetSubmission"]) {
+        if (data["datasetSubmission"]["authors"]) {
+            $(rowContent).find("#dataset-authors").text(data["datasetSubmission"]["authors"]);
+        }
 
-    if (!data["datasetSubmission"]["authors"]) {
-        $(rowContent).find("#container-dataset-authors").hide();
+        var filesize = parseInt(data["datasetSubmission"]["datasetFileSize"]);
+        if (filesize) {
+            if (filesize > 1073741824) {
+                $(rowContent).find("#dataset-filesize").css("color","red");
+            }
+            $(rowContent).find("#dataset-filesize").text(formatBytes(filesize,0));
+        }
     } else {
-        $(rowContent).find("#dataset-authors").text(data["datasetSubmission"]["authors"]);
+        $(rowContent).find("#container-dataset-authors").hide();
     }
 
     if (!data["year"]) {
@@ -298,13 +307,7 @@ function createRow(data, row)
     $(rowContent).find("#dataset-udi").attr("href", $(rowContent).find("#dataset-udi").attr("href").replace("placeholder-udi", data["udi"]));
     $(rowContent).find("#dataset-udi").text(data["udi"]);
 
-    var filesize = parseInt(data["datasetSubmission"]["datasetFileSize"]);
-    if (filesize) {
-        if (filesize > 1073741824) {
-            $(rowContent).find("#dataset-filesize").css("color","red");
-        }
-        $(rowContent).find("#dataset-filesize").text(formatBytes(filesize,0));
-    }
+
 
     //this shows the details dataset on Show Details button
     $(".details_link", rowContent).bind("click", function(){

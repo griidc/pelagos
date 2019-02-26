@@ -266,6 +266,8 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getDatasetFileName' => 'dataset file name from mock dataset submission',
                 'getDatasetFileSize' => '12345',
                 'getDatasetFileSha256Hash' => '131f95c51cc819465fa1797f6ccacf9d494aaaff46fa3eac73ae63ffbdfd8267',
+                'getDatasetFileColdStorageArchiveSize' => 42,
+                'getDatasetFileColdStorageArchiveSha256Hash' => '231f95c51cc819465fa1797f6ccacf9d494aaaff46fa3eac73ae63ffbdfd8268',
                 'getMetadataFileTransferType' => 'metadataFileTransferType from mock dataset submission',
                 'getMetadataFileUri' => 'metadataFileUri from mock dataset submission',
                 'getMetadataFileTransferStatus' => 'xfer status from mock dataset submission',

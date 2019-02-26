@@ -112,7 +112,14 @@ $(document).ready(function()
     });
 
     $("#show-diff-button").button("option", "disabled", true).click(function (){
-        showDifferences();
+        if ($(this).hasClass("show-diffs")) { //hide
+            $(this).removeClass("show-diffs");
+            //trigger change event to reload right panel
+            $(".right-version").find("select").change();
+        } else { //show
+            $(this).addClass("show-diffs");
+            showDifferences();
+        }
     });
 
     loading.progress(function() {

@@ -1,16 +1,8 @@
-{% extends "PelagosAppBundle::layout.html.twig" %}
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
 
 {% block head %}
-    {{
-    add_library (
-        [
-            'ui.datepicker',
-            'ui.dialog',
-            'ui.tabs',
-            'ui.widget',
-        ]
-    )
-    }}
+    {{ parent() }}
+    
 
     {{
         add_css (

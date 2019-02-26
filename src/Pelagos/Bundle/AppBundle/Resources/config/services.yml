@@ -1,4 +1,5 @@
 services:
+    _defaults: { public: true }
     pelagos.entity.handler:
         class: Pelagos\Bundle\AppBundle\Handler\EntityHandler
         arguments: ["@doctrine.orm.entity_manager", "@security.token_storage", "@security.authorization_checker", "@pelagos.event.entity_event_dispatcher"]
