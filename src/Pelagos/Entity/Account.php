@@ -23,7 +23,7 @@ use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
  *
  * @ORM\Entity
  */
-class Account extends Entity implements UserInterface, \Serializable, EquatableInterface
+class Account extends Entity implements UserInterface, EquatableInterface
 {
     /**
      * A friendly name for this type of entity.
@@ -192,7 +192,7 @@ class Account extends Entity implements UserInterface, \Serializable, EquatableI
      */
     public function getId()
     {
-        return $this->getPerson();
+        return $this->getPerson()->getId();
     }
 
     /**
@@ -501,40 +501,6 @@ class Account extends Entity implements UserInterface, \Serializable, EquatableI
     }
 
     /**
-     * Serialize this Account.
-     *
-     * This is required by \Serializable.
-     *
-     * @return string Serialized Account string.
-     */
-    public function serialize()
-    {
-        return serialize(
-            array(
-            $this->getId(),
-            $this->userId,
-            )
-        );
-    }
-
-    /**
-     * Unserialize this Account.
-     *
-     * This is required by \Serializable.
-     *
-     * @param string $serialized Serialized Account string.
-     *
-     * @return void
-     */
-    public function unserialize($serialized)
-    {
-        list (
-            $this->person,
-            $this->userId,
-        ) = unserialize($serialized);
-    }
-
-    /**
      * Returns the passwordHashSalt for this Account.
      *
      * This is required by \Symfony\Component\Security\Core\User\UserInterface
@@ -558,6 +524,16 @@ class Account extends Entity implements UserInterface, \Serializable, EquatableI
      */
     public function isEqualTo(UserInterface $user)
     {
-        return true;
+        if (
+            $this->getUsername() === $user->getUsername() and
+            $this->getSalt() === $user->getSalt() and
+            $this->getPassword() === $user->getPassword()
+        ) {
+            dump('the same');
+            return true;
+        }
+        
+        dump('NOT! the same');
+        return false;
     }
 }
