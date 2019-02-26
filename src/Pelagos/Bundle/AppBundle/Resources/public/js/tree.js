@@ -63,9 +63,9 @@ function insertTree(tree) {
     document.write('</div>');
 
     $(document).ready(function() {
-        $.getScript("/includes/jstree/jquery.jstree.js", function (data, textStatus, jqxhr) {
+        //$.getScript("/includes/jstree/jquery.jstree.js", function (data, textStatus, jqxhr) {
             updateTree(tree);
-        });
+        //});
     });
 }
 
@@ -76,7 +76,6 @@ function updateTree(tree) {
             init_open.push(tree.init_open[i]);
         }
     }
-
 
     if (tree.selected) {
         selected_node = $("#" + tree.name).jstree('get_selected');
@@ -96,7 +95,19 @@ function updateTree(tree) {
         "core": {
             "html_titles": true,
             "initially_open": init_open,
-            "animation": 0
+            "animation": 0,
+            "check_callback" : true,
+            "data" : {
+              "url" : Routing.generate("pelagos_api_tree_get_funding_organizations"),
+              "data" : function (data) {
+                  console.log(data);
+                return data;
+              }
+            },
+            "themes":{
+                "icons" : false,
+                "dots" : true,
+            },
         },
         "themes": {
             "theme": tree.theme,

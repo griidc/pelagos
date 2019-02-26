@@ -1,12 +1,10 @@
 [
     {% for fundingOrg in fundingOrgs %}
         {
-            "data": {
-                "title": "{{fundingOrg.getName}}",
-                "attr": {
-                    "style": "color:{{tree.rfp_color}}"
-                }
-             },
+            "text": "{{fundingOrg.getName}}",
+            "li_attr": {
+                "style": "color:{{tree.rfp_color}}"
+            },
             "children": [
                 {% set fundingCycles = [] %}
                 {% for fundingCycle in fundingOrg.getFundingCycles if fundingCycleIds|length == 0 or fundingCycle.id in fundingCycleIds %}
@@ -14,22 +12,20 @@
                 {% endfor %}
                 {% for fundSrc in fundingCycles %}
                     {
-                        "data": {
-                            "title": "{{fundSrc.getName}}",
-                            "attr": {
-                                "style": "color:{{tree.rfp_color}}"
-                            }
+                        "text": "{{fundSrc.getName}}",
+                        "li_attr": {
+                            "style": "color:{{tree.rfp_color}}"
                         },
-                        "attr": {
+                        "a_attr": {
                             "id": "projects_funding-cycle_{{fundSrc.getId}}",
                             "action": "{{tree.rfp_action | evaluate}}"
                         }
                         {% if tree.max_depth > 1 %}
                             ,
                             {% if tree.expand_to_depth > 1 %}
-                                "state": "open"
+                                "opened": "true"
                             {% else %}
-                                "state": "closed"
+                                "opened": "false"
                             {% endif %}
                         {% endif %}
                     }
@@ -40,7 +36,7 @@
             ]
             {% if tree.max_depth > 0 %}
                 ,
-                "state": "open"
+                "opened": "true"
             {% endif %}
         }
         {% if not loop.last %}
@@ -49,13 +45,11 @@
     {% endfor %}
     {% if not fundingOrgs %}
         {
-            "data": {
-                "title": "no datasets found",
-                "attr": {
-                    "style": "color:red"
-                }
+            "text": "no datasets found",
+            "li_attr": {
+                "style": "color:red"
             },
-            "attr": {
+            "a_attr": {
                 "id": "noDatasetsFound"
             }
         }
