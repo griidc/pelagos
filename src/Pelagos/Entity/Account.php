@@ -524,16 +524,10 @@ class Account extends Entity implements UserInterface, EquatableInterface
      */
     public function isEqualTo(UserInterface $user)
     {
-        if (
-            $this->getUsername() === $user->getUsername() and
-            $this->getSalt() === $user->getSalt() and
-            $this->getPassword() === $user->getPassword()
-        ) {
-            dump('the same');
+        if ($this->getUsername() === $user->getUsername()) {
             return true;
         }
         
-        dump('NOT! the same');
         return false;
     }
 }
