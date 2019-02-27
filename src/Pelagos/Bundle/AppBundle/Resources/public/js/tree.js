@@ -98,15 +98,45 @@ function updateTree(tree) {
             "animation": 0,
             "check_callback" : true,
             "data" : {
-              "url" : Routing.generate("pelagos_api_tree_get_funding_organizations"),
+              "url" : function (node) {
+                    var nodeId = "";
+                    var url = "";
+                    if (node.children.length == 0) {
+                        if (tree.type == 'ra') {
+                            url = Routing.generate("pelagos_api_tree_get_funding_organizations");
+                        } else {
+                            url = Routing.generate("pelagos_api_tree_get_letters");
+                        }
+                    }
+                    else {
+                        nodeId = node.attr('id');
+                        if (tree.type == 'ra') {
+                            var matchFundingCycleId = nodeId.match(/^projects_funding-cycle_(\d+)$/);
+                            if (null !== matchFundingCycleId) {
+                                url = Routing.generate("pelagos_api_tree_get_research_groups_by_funding_cycle", {"fundingCycle": matchFundingCycleId[1]});
+                            }
+                        } else {
+                            var matchLetter = nodeId.match(/^(\D)$/);
+                            if (null !== matchLetter) {
+                                url = Routing.generate("pelagos_api_tree_get_people", {"letter": matchLetter[1]});
+                            } else {
+                                var matchPeopleId = nodeId.match(/^projects_peopleId_(\d+)$/);
+                                if (null !== matchPeopleId) {
+                                    url = Routing.generate("pelagos_api_tree_get_research_groups_by_person", {"personId": matchPeopleId[1]})
+                                }
+                            }
+                        }
+                    }
+                    return url + "?tree=" + encodeURIComponent(JSON.stringify(tree));
+                },
               "data" : function (data) {
                   console.log(data);
                 return data;
               }
             },
             "themes":{
-                "icons" : false,
-                "dots" : true,
+                "icons" : tree.icons,
+                "dots" : tree.dots,
             },
         },
         "themes": {
@@ -196,8 +226,8 @@ function updateTree(tree) {
     });
 
     $("#" + tree.name).bind("select_node.jstree", function(event, data) {
-        trees[tree.name].selected = $('#' + tree.name).jstree('get_selected').attr('id');
-        eval($('#' + tree.name).jstree('get_selected').attr('action'));
+        trees[tree.name].selected = data.node.id;
+        eval(data.node.a_attr.action);
     });
 
     $("#" + tree.name).bind("deselect_node.jstree", function(event, data) {
