@@ -1,13 +1,11 @@
 [
 {% for project in projects %}
     {
-        "data": {
-            "title": "{{project.getName | raw}}",
-            "attr": {
-                "style": "color:{{tree.project_color}}"
-            }
+        "text": "{{project.getName | raw}}",
+        "li_attr": {
+            "style": "color:{{tree.project_color}}"
         },
-        "attr": {
+        "a_attr": {
             "id": "datasets_projectId_{{project.ID}}"
             ,
             "action": "{{tree.project_action | evaluate}}"

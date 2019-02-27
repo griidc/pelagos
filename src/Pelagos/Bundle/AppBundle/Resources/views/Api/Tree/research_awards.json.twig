@@ -12,6 +12,7 @@
                 {% endfor %}
                 {% for fundSrc in fundingCycles %}
                     {
+                        "id" : "projects_funding-cycle_{{fundSrc.getId}}",
                         "text": "{{fundSrc.getName}}",
                         "li_attr": {
                             "style": "color:{{tree.rfp_color}}"

@@ -1,13 +1,11 @@
 [
 {% for letter in letters %}
     {
-        "data": {
-            "title": "{{letter}}",
-            "attr": {
-                "style": "color:black"
-            }
+        "text": "{{letter}}",
+        "li_attr": {
+            "style": "color:black"
         },
-        "attr": {
+        "a_attr": {
             "id": "{{letter}}"
         },
         {% if tree.expand_to_depth > 0 %}
