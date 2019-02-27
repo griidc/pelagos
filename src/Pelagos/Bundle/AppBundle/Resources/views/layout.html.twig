@@ -2,7 +2,9 @@
 <html style="height:100%;">
 <head>
 {% block head %}
-    <title>{% block title %}{% endblock %}</title>
+    <title>GRIIDC | {% block title %}Pelagos{% endblock %}</title>
+
+    <link rel="icon" type="image/x-icon" href="{{ asset('/build/images/griidc_fav.png') }}" />
 
     {%block stylesheets %}
         <link href="{{ asset('/build/common.css') }}" rel="stylesheet" />
