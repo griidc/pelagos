@@ -2,7 +2,7 @@
 
 namespace Pelagos\Bundle\AppBundle\Security;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Component\HttpFoundation\Request;
 
@@ -21,9 +21,9 @@ class LoginAttemptHandler
      /**
      * Class constructor for Dependency Injection.
      *
-     * @param EntityManager        $entityManager An Entity Manager.
+     * @param EntityManagerInterface $entityManager An Entity Manager.
      */
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }

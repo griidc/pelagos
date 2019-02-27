@@ -2,7 +2,7 @@
 
 namespace Pelagos\Bundle\AppBundle\Security;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -57,12 +57,12 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     /**
      * Class constructor for Dependency Injection.
      *
-     * @param FormFactoryInterface $formFactory         A Form Factory.
-     * @param EntityManager        $entityManager       An Entity Manager.
-     * @param RouterInterface      $router              A Router.
-     * @param LoginAttemptHandler  $loginAttemptHandler The Login Attempt Handler.
+     * @param FormFactoryInterface   $formFactory         A Form Factory.
+     * @param EntityManagerInterface $entityManager       An Entity Manager.
+     * @param RouterInterface        $router              A Router.
+     * @param LoginAttemptHandler    $loginAttemptHandler The Login Attempt Handler.
      */
-    public function __construct(FormFactoryInterface $formFactory, EntityManager $entityManager, RouterInterface $router, LoginAttemptHandler $loginAttemptHandler)
+    public function __construct(FormFactoryInterface $formFactory, EntityManagerInterface $entityManager, RouterInterface $router, LoginAttemptHandler $loginAttemptHandler)
     {
         $this->formFactory = $formFactory;
         $this->entityManager = $entityManager;
