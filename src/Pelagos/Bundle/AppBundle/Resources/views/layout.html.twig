@@ -95,20 +95,51 @@
                 </div>
             </div>
             {% include "PelagosAppBundle::layout-menu.html.twig" %}
-            <div id="pelagos-container">
-                <div id="pelagos-container-row">
-                    <div id="pelagos-container-cell">
-                        <div id="pelagos-wrapper">
-                            <div id="pelagos-wrapper-row">
-                                <div id="pelagos-content">
-                                    <h1 style="margin: 0 auto;">{% block pagetitle %}{% endblock %}</h1>
-                                    {% block body %}{% endblock %}
+            <div id="main-wrapper"><div id="main">
+
+                    <div id="content-wrapper">
+                        <div id="content-main" class="column">
+                            <div class="section">
+                                <div id="outer-container">
+                                    <div>
+                                        <div id="page-outer-wrapper">
+                                            <div id="page-inner-wrapper">
+                                                <div id="page-content">
+                                                    <div id="main-row">
+                                                        <div id="main-cell">
+                                                            <div id="main-content">
+                                                                <div class="row">
+                                                                    <div class="region region-content">
+                                                                        <div id="block-system-main" class="block block-system">
+                                                                            <div id="pelagos-container">
+                                                                                <div id="pelagos-container-row">
+                                                                                    <div id="pelagos-container-cell">
+                                                                                        <div id="pelagos-wrapper">
+                                                                                            <div id="pelagos-wrapper-row">
+                                                                                                <div id="pelagos-content">
+                                                                                                    <h1 style="margin: 0 auto;">{% block pagetitle %}{% endblock %}</h1>
+                                                                                                    {% block body %}{% endblock %}
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+
             {#END Main Content #}
         </div>{#End div page#}
     </div> {#End div wrapper#}
