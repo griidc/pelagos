@@ -83,6 +83,9 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
                 } else {
                     $output->writeln('Submission Found.');
 
+                    // Set Modifier
+                    $datasetSubmission->setModifier($systemPerson);
+
                     // Set filesize of original file.
                     $datasetSubmission->setDatasetFileColdStorageArchiveSize($size);
                     // Set hash of original file.
@@ -95,8 +98,6 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
                     $datasetSubmission->setDatasetFileSha256Hash(null);
                     $datasetSubmission->setDatasetFileTransferType(DatasetSubmission::TRANSFER_TYPE_SFTP);
                     $datasetSubmission->setDatasetFileUri($stubFileName);
-                    $datasetSubmission->setDistributionFormatName('Cold Storage archive - ' .
-                        $datasetSubmission->getDistributionFormatName());
 
                     $entityManager->persist($datasetSubmission);
                     $entityManager->flush($datasetSubmission);
