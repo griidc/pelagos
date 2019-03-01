@@ -101,6 +101,7 @@ function updateTree(tree) {
               "url" : function (node) {
                     var nodeId = "";
                     var url = "";
+                    console.log(node);
                     if (node.children.length == 0) {
                         if (tree.type == 'ra') {
                             url = Routing.generate("pelagos_api_tree_get_funding_organizations");
@@ -109,7 +110,8 @@ function updateTree(tree) {
                         }
                     }
                     else {
-                        nodeId = node.attr('id');
+                        console.log('else');
+                        nodeId = node.id;
                         if (tree.type == 'ra') {
                             var matchFundingCycleId = nodeId.match(/^projects_funding-cycle_(\d+)$/);
                             if (null !== matchFundingCycleId) {
@@ -188,9 +190,10 @@ function updateTree(tree) {
     });
 
     $("#" + tree.name).bind("after_open.jstree", function(event, data) {
+        console.log('after open');
         childrenLoading--;
-        loadOpenChildren(data.inst,data.rslt.obj);
-        var settings = data.inst._get_settings();
+        loadOpenChildren(data.instance,data.node);
+        var settings = data.instance.settings;
         if (childrenLoading < 1) {
             settings.core.animation = tree.animation;
             if (typeof tree.afteropen !== 'undefined') {
@@ -208,11 +211,12 @@ function updateTree(tree) {
     });
 
     $("#" + tree.name).bind("loaded.jstree", function(event, data) {
+        console.log('loaded');
         if (typeof tree.onload !== 'undefined') {
             eval(tree.onload);
         }
-        loadOpenChildren(data.inst,-1);
-        var root_nodes=data.inst._get_children(-1);
+        loadOpenChildren(data.instance,-1);
+        var root_nodes=data.instance.get_children_dom(-1);
         var root_node_ids=[];
         for (var i = 0; i < root_nodes.length; i++) { root_node_ids.push(root_nodes[i].id); }
 
@@ -237,14 +241,15 @@ function updateTree(tree) {
 }
 
 function loadOpenChildren(tree,node) {
-    children = tree._get_children(node);
-    for (var i = 0; i < children.length; i++) {
-        var childId = '#' + children[i].id;
-        if (tree.is_open(childId)) {
-            tree.close_node(childId);
-            childrenLoading++;
-            tree.open_node(childId);
+    if (tree !== 'undefined') {
+        children = tree.get_children_dom(node);
+        for (var i = 0; i < children.length; i++) {
+            var childId = '#' + children[i].id;
+            if (tree.is_open(childId)) {
+                tree.close_node(childId);
+                childrenLoading++;
+                tree.open_node(childId);
+            }
         }
     }
-
 }

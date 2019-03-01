@@ -5,6 +5,9 @@
             "li_attr": {
                 "style": "color:{{tree.rfp_color}}"
             },
+            "state" : {
+                "opened": "true"
+            },
             "children": [
                 {% set fundingCycles = [] %}
                 {% for fundingCycle in fundingOrg.getFundingCycles if fundingCycleIds|length == 0 or fundingCycle.id in fundingCycleIds %}
@@ -23,11 +26,13 @@
                         }
                         {% if tree.max_depth > 1 %}
                             ,
+                            "state" : {
                             {% if tree.expand_to_depth > 1 %}
                                 "opened": "true"
                             {% else %}
                                 "opened": "false"
                             {% endif %}
+                            }
                         {% endif %}
                     }
                     {% if not loop.last %}
@@ -37,7 +42,9 @@
             ]
             {% if tree.max_depth > 0 %}
                 ,
-                "opened": "true"
+                "state" : {
+                    "opened": "true"
+                }
             {% endif %}
         }
         {% if not loop.last %}

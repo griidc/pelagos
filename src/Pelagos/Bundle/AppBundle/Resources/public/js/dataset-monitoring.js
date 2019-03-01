@@ -8,16 +8,18 @@ $(document).ready(function() {
     // But we have to wait with opening nodes until js Tree is fully loaded.
     $("#tree").bind('loaded.jstree', function(e, data) {
         if (window.location.hash != "") {
-            $(window).hashchange();
+            console.log('hash change?');
+            //$(window).hashchange();
         }
     });
 
-    $(window).hashchange( function(){
+    $(window).on('hashchange', function(){
         var m = location.hash.match(/^#([^\/]+)\/?([^\/]+)?/);
+        console.log(m);
         if (m) {
             if (typeof m[1] !== 'undefined') {
                 if (typeof m[2] === 'undefined') {
-                    if ($('#projects_funding-cycle_' + m[1]).length && $('#tree').jstree('get_selected').attr('id') != 'projects_funding-cycle_' + m[1]) {
+                    if ($('#projects_funding-cycle_' + m[1]).length && $('#tree').jstree('get_selected')[0] != 'projects_funding-cycle_' + m[1]) {
                         $("#tree").jstree("deselect_all");
                         $("#tree").jstree("select_node", ('#projects_funding-cycle_' + m[1]));
                     }
@@ -52,6 +54,7 @@ function showProjects(by,id) {
             var url = Routing.generate("pelagos_app_ui_datasetmonitoring_researcher", {"id": id, "renderer": "browser"});
             break;
     }
+    console.log('show stuff');
     $.ajax({
         "url": url,
         "success": function(data) {
