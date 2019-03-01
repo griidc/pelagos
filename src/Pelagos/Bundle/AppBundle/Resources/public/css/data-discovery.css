@@ -3,6 +3,7 @@
     height: 100%;
     padding: 0;
     margin: 0;
+    position: relative;
 }
 
 #left {
@@ -223,7 +224,6 @@ input.ui-button {
 
 .ui-tabs .ui-tabs-nav li a {
     padding: .3em;
-    font-size: 85%;
 }
 
 
