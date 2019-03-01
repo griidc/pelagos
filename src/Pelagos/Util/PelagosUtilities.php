@@ -17,11 +17,12 @@ class PelagosUtilities
      */
     public static function nullOrNone(array $items)
     {
+        $nullCount = 0;
         foreach ($items as $item) {
             if (null === $item) {
                 $nullCount++;
             }
-            return ($nullCount == count($items) or $nullCount == 0);
         }
+        return ($nullCount === 0 or $nullCount === count($items));
     }
 }
