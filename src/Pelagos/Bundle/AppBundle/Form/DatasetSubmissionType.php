@@ -277,10 +277,13 @@ class DatasetSubmissionType extends AbstractType
             ->add('datasetFileColdStorageArchiveSize', Type\IntegerType::class, array(
                 'label' => 'Cold Storage Archive Size (Bytes)',
                 'required' => false,
-
             ))
             ->add('datasetFileColdStorageArchiveSha256Hash', Type\TextType::class, array(
                 'label' => 'Cold Storage Archive Sha256 Hash',
+                'required' => false,
+            ))
+            ->add('datasetFileColdStorageOriginalFilename', Type\TextType::class, array(
+                'label' => 'Cold Storage Archive Original Filename',
                 'required' => false,
             ))
             ->add('submitButton', Type\SubmitType::class, array(
