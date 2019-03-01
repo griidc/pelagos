@@ -950,4 +950,24 @@ class DatasetSubmissionTest extends TestCase
         $this->assertEquals($statusCode, $this->datasetSubmission->getDatasetFileUrlStatusCode());
     }
 
+    /**
+     * Test the setter and getters for Cold Storage attributes
+     *
+     * @return void
+     */
+    public function testCanSetAndGetDatasetSubmissionColdStorageAttributes()
+    {
+        $testHash = '03ba204e50d126e4674c005e04d82e84c21366780af1f43bd54a37816b6ab340';
+        $testSize = 1024;
+        $testFilename = 'test datafile.dat';
+
+        $this->datasetSubmission->setDatasetFileColdStorageArchiveSha256Hash($testHash);
+        $this->datasetSubmission->setDatasetFileColdStorageArchiveSize($testSize);
+        $this->datasetSubmission->setDatasetFileColdStorageOriginalFilename($testFilename);
+
+        $this->assertEquals($testHash, $this->datasetSubmission->getDatasetFileColdStorageArchiveSha256Hash());
+        $this->assertEquals($testSize, $this->datasetSubmission->getDatasetFileColdStorageArchiveSize());
+        $this->assertEquals($testFilename, $this->datasetSubmission->getDatasetFileColdStorageOriginalFilename());
+    }
+
 }
