@@ -241,11 +241,9 @@ class DoiConsumer implements ConsumerInterface
         }
 
         try {
-            //Getting the DOI status from the EZ ID API
-            $doiMetaData = $doiUtil->getDOIMetadata($doi->getDoi());
-            $doiStatus = $doiMetaData['_status'];
-            $status = $this->getDoiStatus($dataset, $doiStatus);
-            if ($status === DOI::STATUS_PUBLIC) {
+            // Set dataland pages for available datasets and tombstone pages for unavailable datasets.
+            if (($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) or
+                ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED)) {
                 $doiUrl = 'https://data.gulfresearchinitiative.org/data/' . $dataset->getUdi();
                 $doi->setPublicDate(new \DateTime);
             } else {
@@ -259,19 +257,17 @@ class DoiConsumer implements ConsumerInterface
                 $creator,
                 $dataset->getTitle(),
                 'Harte Research Institute',
-                $dataset->getReferenceDateYear(),
-                $status
+                $dataset->getReferenceDateYear()
             );
 
             $doi->setModifier($dataset->getModifier());
-            $doi->setStatus($status);
+            $doi->setStatus('public');
             $doi->setModifier($dataset->getModifier());
 
             $loggingContext['doi'] = $doi->getDoi();
 
             // Log processing complete.
             $this->logger->info('DOI Updated', $loggingContext);
-            $this->logger->info('DOI set to status: ' . $status, $loggingContext);
         } catch (HttpClientErrorException $exception) {
             $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
             $updateMsg = ConsumerInterface::MSG_REJECT;
@@ -312,39 +308,6 @@ class DoiConsumer implements ConsumerInterface
         }
 
         return $deleteMsg;
-    }
-
-    /**
-     * Get the Doi status to be persisted.
-     *
-     * @param Dataset $dataset   The dataset.
-     * @param string  $doiStatus The status of the DOI for the dataset.
-     *
-     * @return string
-     */
-    private function getDoiStatus($dataset, $doiStatus)
-    {
-        //declaring it as reserved for defensive purpose
-        $status = DOI::STATUS_RESERVED;
-
-        $restriction = DatasetSubmission::RESTRICTION_NONE;
-
-        if ($dataset->getDatasetSubmission() instanceof DatasetSubmission) {
-            $restriction = $dataset->getDatasetSubmission()->getRestrictions();
-        }
-
-        if ($dataset->getDatasetStatus() !== Dataset::DATASET_STATUS_ACCEPTED and
-            $doiStatus === DOI::STATUS_PUBLIC ) {
-            $status = DOI::STATUS_UNAVAILABLE;
-        } elseif ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED and
-            $doiStatus === DOI::STATUS_PUBLIC and $restriction === DatasetSubmission::RESTRICTION_RESTRICTED) {
-            $status = DOI::STATUS_UNAVAILABLE;
-        } elseif ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED
-            and $restriction === DatasetSubmission::RESTRICTION_NONE) {
-            $status = DOI::STATUS_PUBLIC;
-        }
-
-        return $status;
     }
 
     /**
