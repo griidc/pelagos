@@ -3,7 +3,7 @@
 namespace Pelagos\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
+use Pelagos\Util\PelagosUtilities;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Doctrine\Common\Collections\Collection;
@@ -1141,31 +1141,12 @@ class DatasetSubmission extends Entity
 
         $coldStorageViolationMsg = 'You must provide file size, sha256 hash, and original '
         . 'filename for Cold Storage Information.';
-        if (false === ($this->nullOrNone(array($this->this->datasetFileColdStorageArchiveSize,
+        if (false === (PelagosUtilities::nullOrNone(array($this->this->datasetFileColdStorageArchiveSize,
             $this->datasetFileColdStorageArchiveSha256Hash,
             $this->datasetFileColdStorageOriginalFilename)))) {
             $context->buildViolation($coldStorageViolationMsg)
                 ->atPath('datasetSubmission')
                 ->addViolation();
-        }
-    }
-
-    /**
-     * This function returns a boolean true when all items are null, or all not null.
-     *
-     * The function returns false when at least one item is not null but not all are not null.
-     *
-     * @param array $items The array of items that potentially have a null subset.
-     *
-     * @return boolean
-     */
-    public function nullOrNone(array $items)
-    {
-        foreach ($items as $item) {
-            if (null === $item) {
-                $nullCount++;
-            }
-            return ($nullCount == count($items) or $nullCount == 0);
         }
     }
 
