@@ -621,6 +621,15 @@ class DatasetSubmission extends Entity
     protected $datasetFileColdStorageArchiveSha256Hash;
 
     /**
+     * The dataset file cold storage archive original filename.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $datasetFileColdStorageOriginalFilename;
+
+    /**
      * The date the file link was last checked.
      *
      * @var \DateTime
@@ -1053,6 +1062,7 @@ class DatasetSubmission extends Entity
             $this->setDatasetFileUrlStatusCode($entity->getDatasetFileUrlStatusCode());
             $this->setDatasetFileColdStorageArchiveSha256Hash($entity->getDatasetFileColdStorageArchiveSha256Hash());
             $this->setDatasetFileColdStorageArchiveSize($entity->getDatasetFileColdStorageArchiveSize());
+            $this->setDatasetFileColdStorageOriginalFilename($entity->getDatasetFileColdStorageOriginalFilename());
 
             //Submitter should always be the user who has submitted the dataset.
             if (!in_array($entity->getDatasetStatus(), [ Dataset::DATASET_STATUS_NONE, Dataset::DATASET_STATUS_BACK_TO_SUBMITTER])) {
@@ -1129,17 +1139,33 @@ class DatasetSubmission extends Entity
             }
         }
 
-        $coldStorageViolationMsg = 'You must provide both File Size and Sha256 Hash value for Cold Storage Information.';
-        if (null !== $this->datasetFileColdStorageArchiveSize && null === $this->datasetFileColdStorageArchiveSha256Hash) {
-                $context->buildViolation($coldStorageViolationMsg)
-                    ->atPath('datasetFileColdStorageArchiveSha256Hash')
-                    ->addViolation();
-        }
-
-        if (null === $this->datasetFileColdStorageArchiveSize && null !== $this->datasetFileColdStorageArchiveSha256Hash) {
+        $coldStorageViolationMsg = 'You must provide file size, sha256 hash, and original '
+        . 'filename for Cold Storage Information.';
+        if (false === ($this->nullOrNone(array($this->this->datasetFileColdStorageArchiveSize,
+            $this->datasetFileColdStorageArchiveSha256Hash,
+            $this->datasetFileColdStorageOriginalFilename)))) {
             $context->buildViolation($coldStorageViolationMsg)
-                ->atPath('datasetFileColdStorageArchiveSize')
+                ->atPath('datasetSubmission')
                 ->addViolation();
+        }
+    }
+
+    /**
+     * This function returns a boolean true when all items are null, or all not null.
+     *
+     * The function returns false when at least one item is not null but not all are not null.
+     *
+     * @param array $items The array of items that potentially have a null subset.
+     *
+     * @return boolean
+     */
+    public function nullOrNone(array $items)
+    {
+        foreach ($items as $item) {
+            if (null === $item) {
+                $nullCount++;
+            }
+            return ($nullCount == count($items) or $nullCount == 0);
         }
     }
 
@@ -1765,13 +1791,37 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Set the original filename of the archive file to be stored in cold storage.
+     *
+     * @param string|null $datasetFileColdStorageOriginalFilename The original filename to be preserved.
+     *
+     * @return void
+     */
+    public function setDatasetFileColdStorageOriginalFilename($datasetFileColdStorageOriginalFilename)
+    {
+        $this->datasetFileColdStorageOriginalFilename = $datasetFileColdStorageOriginalFilename;
+    }
+
+    /**
+     * Get the original filename of the archive file stored in cold storage.
+     *
+     * @return string|null
+     */
+    public function getDatasetFileColdStorageOriginalFilename()
+    {
+        return $this->datasetFileColdStorageOriginalFilename;
+    }
+
+    /**
      * Check if the file is stored in cold storage based on the values of Sha256Hash and FileSize.
      *
      * @return boolean
      */
     public function isDatasetFileInColdStorage()
     {
-        if (null !== $this->datasetFileColdStorageArchiveSize && null !== $this->datasetFileColdStorageArchiveSha256Hash) {
+        if (null !== $this->datasetFileColdStorageArchiveSize &&
+            null !== $this->datasetFileColdStorageArchiveSha256Hash &&
+            null !== $this->datasetFileColdStorageOriginalFilename) {
             return true;
         }
         return false;
