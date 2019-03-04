@@ -2,12 +2,12 @@
 
 namespace Pelagos\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Pelagos\Util\PelagosUtilities;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Dataset Submission Entity class.
@@ -1141,7 +1141,7 @@ class DatasetSubmission extends Entity
 
         $coldStorageViolationMsg = 'You must provide file size, sha256 hash, and original '
         . 'filename for Cold Storage Information.';
-        if (false === (PelagosUtilities::nullOrNone(array($this->this->datasetFileColdStorageArchiveSize,
+        if (false === (PelagosUtilities::nullOrNone(array($this->datasetFileColdStorageArchiveSize,
             $this->datasetFileColdStorageArchiveSha256Hash,
             $this->datasetFileColdStorageOriginalFilename)))) {
             $context->buildViolation($coldStorageViolationMsg)
