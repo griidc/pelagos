@@ -1,5 +1,5 @@
 {% extends "PelagosAppBundle::layout.html.twig" %}
-
+{% block title %}Admin{% endblock %}
 {% block body %}
     {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
         <ul>

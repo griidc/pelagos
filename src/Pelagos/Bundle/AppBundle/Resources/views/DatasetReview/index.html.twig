@@ -1,8 +1,9 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
-
+{% block title %}
+    Dataset Review {{ ' | ' ~ datasetSubmission.dataset.udi | default }}
+{% endblock %}
 {% block head %}
     {{ parent() }}
-    
 
     {{
         add_css (

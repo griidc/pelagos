@@ -2,7 +2,9 @@
 <html style="height:100%;">
 <head>
 {% block head %}
-    <title>{% block title %}{% endblock %}</title>
+    <title>GRIIDC | {% block title %}Pelagos{% endblock %}</title>
+
+    <link rel="icon" type="image/x-icon" href="{{ asset('/build/images/griidc_fav.png') }}" />
 
     {%block stylesheets %}
         <link href="{{ asset('/build/common.css') }}" rel="stylesheet" />
@@ -95,20 +97,23 @@
             {% block menu %}
                 {% include "PelagosAppBundle:Menus:main.html.twig" %}
             {% endblock menu %}
-            <div id="pelagos-container">
-                <div id="pelagos-container-row">
-                    <div id="pelagos-container-cell">
-                        <div id="pelagos-wrapper">
-                            <div id="pelagos-wrapper-row">
-                                <div id="pelagos-content">
-                                    <h1 style="margin: 0 auto;">{% block pagetitle %}{% endblock %}</h1>
-                                    {% block body %}{% endblock %}
+            <div id="main-wrapper">
+                <div id="pelagos-container">
+                    <div id="pelagos-container-row">
+                        <div id="pelagos-container-cell">
+                            <div id="pelagos-wrapper">
+                                <div id="pelagos-wrapper-row">
+                                    <div id="pelagos-content">
+                                        <h1 style="margin: 0 auto;">{% block pagetitle %}{% endblock %}</h1>
+                                        {% block body %}{% endblock %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
             {#END Main Content #}
         </div>{#End div page#}
     </div> {#End div wrapper#}
