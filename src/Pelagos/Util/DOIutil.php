@@ -2,6 +2,9 @@
 
 namespace Pelagos\Util;
 
+use Pelagos\Exception\HttpClientErrorException;
+use Pelagos\Exception\HttpServerErrorException;
+
 /**
  * A utility to create and issue DOI from EZID API.
  */
@@ -68,7 +71,8 @@ class DOIutil
      * @param string $status          Status of the DOI, by default is reserved.
      * @param string $resourcetype    Type for DOI Request, by default Dataset.
      *
-     * @throws \Exception When there was an error negotiating with EZID.
+     * @throws HttpClientErrorException When there was an 4xx error negotiating with EZID.
+     * @throws HttpServerErrorException When there was an 5xx error negotiating with EZID.
      *
      * @return string The DOI issued by EZID.
      */
@@ -112,9 +116,14 @@ class DOIutil
         curl_close($ch);
 
         //check to see if it worked.
-        //using in array because EZID API returns 201 and EZDatacite API returns 200.
+        //using in array because EZID API returns 201 and EZ Datacite API returns 200.
         if (!in_array($httpCode, [200, 201])) {
-            throw new \Exception("ezid failed with:$httpCode($output)", $httpCode);
+            $expMsg = "ezid failed with:$httpCode($output)";
+            if ($httpCode >= 400 and $httpCode <= 499) {
+                throw new HttpClientErrorException($expMsg, $httpCode);
+            } elseif ($httpCode >= 500 or $httpCode == 0) {
+                throw new HttpServerErrorException($expMsg, $httpCode);
+            }
         }
 
         $doi = preg_match('/^success: (doi:\S+)/', $output, $matches);
@@ -134,7 +143,8 @@ class DOIutil
      * @param string $status          Status of the DOI, by default is reserved.
      * @param string $resourcetype    Type for DOI Request, by default Dataset.
      *
-     * @throws \Exception When there was an error negotiating with EZID.
+     * @throws HttpClientErrorException When there was an 4xx error negotiating with EZID.
+     * @throws HttpServerErrorException When there was an 5xx error negotiating with EZID.
      *
      * @return string The DOI issued by EZID.
      */
@@ -181,7 +191,12 @@ class DOIutil
         //check to see if it worked.
         //using in array because EZID API returns 201 and EZDatacite API returns 200.
         if (!in_array($httpCode, [200, 201])) {
-            throw new \Exception("ezid failed with:$httpCode($output)", $httpCode);
+            $expMsg = "ezid failed with:$httpCode($output)";
+            if ($httpCode >= 400 and $httpCode <= 499) {
+                throw new HttpClientErrorException($expMsg, $httpCode);
+            } elseif ($httpCode >= 500 or $httpCode == 0) {
+                throw new HttpServerErrorException($expMsg, $httpCode);
+            }
         }
 
         return true;
@@ -198,7 +213,8 @@ class DOIutil
      * @param string $publicationYear Published Date for DOI.
      * @param string $status          Status of the DOI.
      *
-     * @throws \Exception When there was an error negotiating with EZID.
+     * @throws HttpClientErrorException When there was an 4xx error negotiating with EZID.
+     * @throws HttpServerErrorException When there was an 5xx error negotiating with EZID.
      *
      * @return boolean True if updated successfully.
      */
@@ -240,7 +256,12 @@ class DOIutil
 
         //check to see if it worked.
         if (200 != $httpCode) {
-            throw new \Exception("ezid failed with:$httpCode($output)", $httpCode);
+            $expMsg = "ezid failed with:$httpCode($output)";
+            if ($httpCode >= 400 and $httpCode <= 499) {
+                throw new HttpClientErrorException($expMsg, $httpCode);
+            } elseif ($httpCode >= 500 or $httpCode == 0) {
+                throw new HttpServerErrorException($expMsg, $httpCode);
+            }
         }
 
         return true;
@@ -251,7 +272,8 @@ class DOIutil
      *
      * @param string $doi DOI to get metadata for.
      *
-     * @throws \Exception When there was an error negotiating with EZID.
+     * @throws HttpClientErrorException When there was an 4xx error negotiating with EZID.
+     * @throws HttpServerErrorException When there was an 5xx error negotiating with EZID.
      *
      * @return array Array or metadata variables.
      */
@@ -268,7 +290,12 @@ class DOIutil
 
         //check to see if it worked.
         if (200 != $httpCode) {
-            throw new \Exception("ezid failed with:$httpCode($output)", $httpCode);
+            $expMsg = "ezid failed with:$httpCode($output)";
+            if ($httpCode >= 400 and $httpCode <= 499) {
+                throw new HttpClientErrorException($expMsg, $httpCode);
+            } elseif ($httpCode >= 500 or $httpCode == 0) {
+                throw new HttpServerErrorException($expMsg, $httpCode);
+            }
         }
 
         $metadata = array();
@@ -287,7 +314,8 @@ class DOIutil
      *
      * @param string $doi DOI to delete.
      *
-     * @throws \Exception When the curl Delete fails, exception is thrown.
+     * @throws HttpClientErrorException When there was an 4xx error negotiating with EZID.
+     * @throws HttpServerErrorException When there was an 5xx error negotiating with EZID.
      *
      * @return array
      */
@@ -308,7 +336,12 @@ class DOIutil
 
         //check to see if it worked.
         if (200 != $httpCode) {
-            throw new \Exception("ezid failed with:$httpCode($output)", $httpCode);
+            $expMsg = "ezid failed with:$httpCode($output)";
+            if ($httpCode >= 400 and $httpCode <= 499) {
+                throw new HttpClientErrorException($expMsg, $httpCode);
+            } elseif ($httpCode >= 500 or $httpCode == 0) {
+                throw new HttpServerErrorException($expMsg, $httpCode);
+            }
         }
 
         $metadata = array();
