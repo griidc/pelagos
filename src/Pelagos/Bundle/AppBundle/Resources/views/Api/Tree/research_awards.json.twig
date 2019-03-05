@@ -5,20 +5,40 @@
             "li_attr": {
                 "style": "color:{{tree.rfp_color}}"
             },
-            "state" : {
-                "opened": "true"
-            },
             "children": [
                 {% set fundingCycles = [] %}
                 {% for fundingCycle in fundingOrg.getFundingCycles if fundingCycleIds|length == 0 or fundingCycle.id in fundingCycleIds %}
                     {% set fundingCycles = fundingCycles|merge([fundingCycle]) %}
                 {% endfor %}
                 {% for fundSrc in fundingCycles %}
+                {% set projects = fundSrc.getResearchGroups %}
                     {
                         "id" : "projects_funding-cycle_{{fundSrc.getId}}",
                         "text": "{{fundSrc.getName}}",
+                        "children": [
+                        {% for project in projects %}
+                            {
+                                "id": "datasets_projectId_{{project.ID}}",
+                                "text": "{{project.getName | raw}}",
+                                "li_attr": {
+                                    "style": "color:{{tree.project_color}}"
+                                },
+                                "a_attr": {
+                                    "id": "datasets_projectId_{{project.ID}}"
+                                    ,
+                                    "action": "{{tree.project_action | evaluate}}"
+                                }
+                            }
+                            {% if not loop.last %}
+                            ,
+                            {% endif %}
+                        {% endfor %}
+                        ]
+,
                         "li_attr": {
-                            "style": "color:{{tree.rfp_color}}"
+                            "style": "color:{{tree.rfp_color}}",
+                            "id": "projects_funding-cycle_{{fundSrc.getId}}",
+                            "action": "{{tree.rfp_action | evaluate}}"
                         },
                         "a_attr": {
                             "id": "projects_funding-cycle_{{fundSrc.getId}}",
@@ -28,9 +48,9 @@
                             ,
                             "state" : {
                             {% if tree.expand_to_depth > 1 %}
-                                "opened": "true"
+                                "opened": true
                             {% else %}
-                                "opened": "false"
+                                "opened": false
                             {% endif %}
                             }
                         {% endif %}
@@ -43,7 +63,7 @@
             {% if tree.max_depth > 0 %}
                 ,
                 "state" : {
-                    "opened": "true"
+                    "opened": true
                 }
             {% endif %}
         }
