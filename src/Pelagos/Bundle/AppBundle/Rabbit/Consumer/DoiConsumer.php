@@ -18,6 +18,9 @@ use Pelagos\Event\EntityEventDispatcher;
 
 use Pelagos\Util\DOIutil;
 
+use Pelagos\Exception\HttpClientErrorException;
+use Pelagos\Exception\HttpServerErrorException;
+
 /**
  * A consumer of DOI messages.
  *
@@ -47,6 +50,11 @@ class DoiConsumer implements ConsumerInterface
     protected $entityEventDispatcher;
 
     /**
+     * Delay time in seconds for API.
+     */
+    const DELAY_TIME = 600;
+
+    /**
      * Constructor.
      *
      * @param EntityManager         $entityManager         The entity manager.
@@ -68,18 +76,20 @@ class DoiConsumer implements ConsumerInterface
      *
      * @param AMQPMessage $message A filer message.
      *
-     * @return boolean True if success, false otherwise.
+     * @return integer
      */
     public function execute(AMQPMessage $message)
     {
         // @codingStandardsIgnoreStart
         $routingKey = $message->delivery_info['routing_key'];
 
+        $msgStatus = ConsumerInterface::MSG_ACK;
+
         if (preg_match('/^delete/', $routingKey)) {
             $doi = $message->body;
             $loggingContext = array('doi' => $doi);
             $this->logger->info('DOI Consumer Started', $loggingContext);
-            $this->deleteDoi($doi, $loggingContext);
+            $msgStatus = $this->deleteDoi($doi, $loggingContext);
         } else {
             $datasetId = $message->body;
             $loggingContext = array('dataset_id' => $datasetId);
@@ -99,18 +109,17 @@ class DoiConsumer implements ConsumerInterface
 
             // @codingStandardsIgnoreEnd
             if (preg_match('/^issue/', $routingKey)) {
-                $this->issueDoi($dataset, $loggingContext);
+                $msgStatus = $this->issueDoi($dataset, $loggingContext);
             } elseif (preg_match('/^update/', $routingKey)) {
-                $this->updateDoi($dataset, $loggingContext);
+                $msgStatus = $this->updateDoi($dataset, $loggingContext);
             } else {
                 $this->logger->warning("Unknown routing key: $routingKey", $loggingContext);
-                return true;
             }
             $this->entityManager->persist($dataset);
             $this->entityManager->flush();
         }
 
-        return true;
+        return $msgStatus;
     }
 
     /**
@@ -119,12 +128,14 @@ class DoiConsumer implements ConsumerInterface
      * @param Dataset $dataset        The dataset.
      * @param array   $loggingContext The logging context to use when logging.
      *
-     * @return boolean True if success, false otherwise.
+     * @return integer
      */
     protected function issueDoi(Dataset $dataset, array $loggingContext)
     {
         // Log processing start.
         $this->logger->info('Attempting to issue DOI', $loggingContext);
+
+        $issueMsg = ConsumerInterface::MSG_ACK;
 
         if (!$this->doiAlreadyExists($dataset, $loggingContext)) {
             try {
@@ -145,16 +156,21 @@ class DoiConsumer implements ConsumerInterface
                 $loggingContext['doi'] = $doi->getDoi();
                 // Log processing complete.
                 $this->logger->info('DOI Issued', $loggingContext);
-            } catch (\Exception $exception) {
+            } catch (HttpClientErrorException $exception) {
                 $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
-                return false;
+                $issueMsg = ConsumerInterface::MSG_REJECT;
+            } catch (HttpServerErrorException $exception) {
+                $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
+                //server down. wait for 10 minutes and retry.
+                sleep(self::DELAY_TIME);
+                $issueMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
             }
         } else {
             $this->logger->warning('The DOI already exist for dataset', $loggingContext);
-            $this->createDoi($dataset, $loggingContext);
+            $issueMsg = $this->createDoi($dataset, $loggingContext);
         }
 
-        return true;
+        return $issueMsg;
     }
 
     /**
@@ -163,18 +179,20 @@ class DoiConsumer implements ConsumerInterface
      * @param Dataset $dataset        The Dataset.
      * @param array   $loggingContext The logging context to use when logging.
      *
-     * @return boolean True if success, false otherwise.
+     * @return integer
      */
     private function createDoi(Dataset $dataset, array $loggingContext)
     {
         // Log processing start.
         $this->logger->info('Attempting to create DOI', $loggingContext);
 
+        $createMsg = ConsumerInterface::MSG_ACK;
+
         $doi = $dataset->getDoi();
 
         try {
             $doiUtil = new DOIutil();
-            $success = $doiUtil->createDOI(
+            $doiUtil->createDOI(
                 $doi->getDoi(),
                 'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi(),
                 $dataset->getAuthors(),
@@ -188,12 +206,17 @@ class DoiConsumer implements ConsumerInterface
             $loggingContext['doi'] = $doi->getDoi();
             // Log processing complete.
             $this->logger->info('DOI Created', $loggingContext);
-        } catch (\Exception $exception) {
+        } catch (HttpClientErrorException $exception) {
             $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
-            return false;
+            $createMsg = ConsumerInterface::MSG_REJECT;
+        } catch (HttpServerErrorException $exception) {
+            $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
+            //server down. wait for 10 minutes and retry.
+            sleep(self::DELAY_TIME);
+            $createMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
         }
 
-        return $success;
+        return $createMsg;
     }
 
     /**
@@ -202,13 +225,13 @@ class DoiConsumer implements ConsumerInterface
      * @param Dataset $dataset        The Dataset.
      * @param array   $loggingContext The logging context to use when logging.
      *
-     * @return boolean True if success, false otherwise.
+     * @return integer
      */
     protected function updateDoi(Dataset $dataset, array $loggingContext)
     {
         // Log processing start.
         $this->logger->info('Attempting to update DOI', $loggingContext);
-
+        $updateMsg = ConsumerInterface::MSG_ACK;
         $doi = $dataset->getDoi();
 
         $doiUtil = new DOIutil();
@@ -249,12 +272,17 @@ class DoiConsumer implements ConsumerInterface
             // Log processing complete.
             $this->logger->info('DOI Updated', $loggingContext);
             $this->logger->info('DOI set to status: ' . $status, $loggingContext);
-        } catch (\Exception $exception) {
+        } catch (HttpClientErrorException $exception) {
             $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
-            return false;
+            $updateMsg = ConsumerInterface::MSG_REJECT;
+        } catch (HttpServerErrorException $exception) {
+            $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
+            //server down. wait for 10 minutes and retry.
+            sleep(self::DELAY_TIME);
+            $updateMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
         }
 
-        return true;
+        return $updateMsg;
     }
 
     /**
@@ -263,22 +291,27 @@ class DoiConsumer implements ConsumerInterface
      * @param string $doi            The DOI which needs to be deleted.
      * @param array  $loggingContext The logging context to use when logging.
      *
-     * @return void
+     * @return integer
      */
     protected function deleteDoi($doi, array $loggingContext)
     {
         // Log processing start.
         $this->logger->info('Attempting to delete DOI', $loggingContext);
-
+        $deleteMsg = ConsumerInterface::MSG_ACK;
         try {
             $doiUtil = new DOIutil();
             $doiUtil->deleteDOI($doi);
-        } catch (\Exception $exception) {
+        } catch (HttpClientErrorException $exception) {
             $this->logger->error('Error deleting DOI: ' . $exception->getMessage(), $loggingContext);
-            return;
+            $deleteMsg = ConsumerInterface::MSG_REJECT;
+        } catch (HttpServerErrorException $exception) {
+            $this->logger->error('Error deleting DOI: ' . $exception->getMessage(), $loggingContext);
+            //server down. wait for 10 minutes and retry.
+            sleep(self::DELAY_TIME);
+            $deleteMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
         }
 
-        $this->logger->info('DOI Deleted', $loggingContext);
+        return $deleteMsg;
     }
 
     /**
@@ -325,15 +358,27 @@ class DoiConsumer implements ConsumerInterface
     private function doiAlreadyExists(Dataset $dataset, $loggingContext): bool
     {
         $doi = $dataset->getDoi();
+        $exceptionType = null;
 
         if ($doi instanceof DOI) {
-            try {
-                $doiUtil = new DOIutil();
-                $doiUtil->getDOIMetadata($doi->getDoi());
-            } catch (\Exception $exception) {
-                //DOI exist, but is not found in EZID/Datacite.
-                $this->createDoi($dataset, $loggingContext);
-            }
+            do {
+                try {
+                    $doiUtil = new DOIutil();
+                    $doiUtil->getDOIMetadata($doi->getDoi());
+                } catch (HttpClientErrorException $exception) {
+                    //DOI exist, but is not found in EZID/Datacite.
+                    $this->logger->error('Error getting DOI: ' . $exception->getMessage(), $loggingContext);
+                    $exceptionType = get_class($exception);
+                    $this->createDoi($dataset, $loggingContext);
+                } catch (HttpServerErrorException $exception) {
+                    //server down. wait for 10 minutes and retry.
+                    $this->logger->error('Error getting DOI: ' . $exception->getMessage(), $loggingContext);
+                    sleep(self::DELAY_TIME);
+                    $exceptionType = get_class($exception);
+                    continue;
+                }
+            } while (get_class($exceptionType) === HttpServerErrorException::class);
+
             return true;
         }
         return false;
