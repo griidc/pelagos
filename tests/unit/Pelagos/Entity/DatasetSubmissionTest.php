@@ -330,16 +330,25 @@ class DatasetSubmissionTest extends TestCase
      */
     public function testCanSetAndGetDatasetFileColdStorageAttributes()
     {
-        $this->datasetSubmission->setDatasetFileColdStorageArchiveSha256Hash('66a045b452102c59d840ec097d59d9467e13a3f34f6494e539ffd32c1bb35f18');
+        // values used for testing
+        $testHash = '66a045b452102c59d840ec097d59d9467e13a3f34f6494e539ffd32c1bb35f18';
+        $testSize = 42;
+        $testName = 'test.dat';
+
+        // This public setting internally calls protected individual setters in the entity, for coverage.
+        $this->datasetSubmission->setDatasetFileColdStorageAttributes($testSize, $testHash, $testName);
 
         $this->assertEquals(
-            '66a045b452102c59d840ec097d59d9467e13a3f34f6494e539ffd32c1bb35f18',
+            $testHash,
             $this->datasetSubmission->getDatasetFileColdStorageArchiveSha256Hash()
         );
-        $this->datasetSubmission->setDatasetFileColdStorageArchiveSize(42);
         $this->assertEquals(
-            42,
+            $testSize,
             $this->datasetSubmission->getDatasetFileColdStorageArchiveSize()
+        );
+        $this->assertEquals(
+            $testName,
+            $this->datasetSubmission->getDatasetFileColdStorageOriginalFilename()
         );
     }
 
@@ -961,9 +970,7 @@ class DatasetSubmissionTest extends TestCase
         $testSize = 1024;
         $testFilename = 'test datafile.dat';
 
-        $this->datasetSubmission->setDatasetFileColdStorageArchiveSha256Hash($testHash);
-        $this->datasetSubmission->setDatasetFileColdStorageArchiveSize($testSize);
-        $this->datasetSubmission->setDatasetFileColdStorageOriginalFilename($testFilename);
+        $this->datasetSubmission->setDatasetFileColdStorageAttributes($testSize, $testHash, $testFilename);
 
         $this->assertEquals($testHash, $this->datasetSubmission->getDatasetFileColdStorageArchiveSha256Hash());
         $this->assertEquals($testSize, $this->datasetSubmission->getDatasetFileColdStorageArchiveSize());

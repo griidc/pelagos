@@ -1138,16 +1138,6 @@ class DatasetSubmission extends Entity
                     ->addViolation();
             }
         }
-
-        $coldStorageViolationMsg = 'You must provide file size, sha256 hash, and original '
-        . 'filename for Cold Storage Information.';
-        if (false === (PelagosUtilities::nullOrNone(array($this->datasetFileColdStorageArchiveSize,
-            $this->datasetFileColdStorageArchiveSha256Hash,
-            $this->datasetFileColdStorageOriginalFilename)))) {
-            $context->buildViolation($coldStorageViolationMsg)
-                ->atPath('datasetSubmission')
-                ->addViolation();
-        }
     }
 
     /**
@@ -1734,7 +1724,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setDatasetFileColdStorageArchiveSha256Hash($datasetFileColdStorageArchiveSha256Hash)
+    protected function setDatasetFileColdStorageArchiveSha256Hash($datasetFileColdStorageArchiveSha256Hash)
     {
         $this->datasetFileColdStorageArchiveSha256Hash = $datasetFileColdStorageArchiveSha256Hash;
     }
@@ -1756,7 +1746,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setDatasetFileColdStorageArchiveSize($datasetFileColdStorageArchiveSize)
+    protected function setDatasetFileColdStorageArchiveSize($datasetFileColdStorageArchiveSize)
     {
         $this->datasetFileColdStorageArchiveSize = $datasetFileColdStorageArchiveSize;
     }
@@ -1778,7 +1768,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setDatasetFileColdStorageOriginalFilename($datasetFileColdStorageOriginalFilename)
+    protected function setDatasetFileColdStorageOriginalFilename($datasetFileColdStorageOriginalFilename)
     {
         $this->datasetFileColdStorageOriginalFilename = $datasetFileColdStorageOriginalFilename;
     }
@@ -1792,6 +1782,23 @@ class DatasetSubmission extends Entity
     {
         return $this->datasetFileColdStorageOriginalFilename;
     }
+
+    /**
+     * Set the cold storage attributes, as one action, no nulls allowed.
+     *
+     * @param integer $filesize The original file size, in bytes, to be preserved.
+     * @param string  $hash     The original file sha256 hash to be preserved.
+     * @param string  $filename The original file name to be preserved.
+     *
+     * @return void
+     */
+    public function setDatasetFileColdStorageAttributes(int $filesize, string $hash, string $filename)
+    {
+        $this->setDatasetFileColdStorageOriginalFilename($filename);
+        $this->setDatasetFileColdStorageArchiveSha256Hash($hash);
+        $this->setDatasetFileColdStorageArchiveSize($filesize);
+    }
+
 
     /**
      * Check if the file is stored in cold storage based on the values of Sha256Hash and FileSize.
