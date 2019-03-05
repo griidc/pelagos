@@ -21,7 +21,8 @@
                                 "id": "datasets_projectId_{{project.ID}}",
                                 "text": "{{project.getName | raw}}",
                                 "li_attr": {
-                                    "style": "color:{{tree.project_color}}"
+                                    "style": "color:{{tree.project_color}}",
+                                    "action": "{{tree.project_action | evaluate}}"
                                 },
                                 "a_attr": {
                                     "id": "datasets_projectId_{{project.ID}}"

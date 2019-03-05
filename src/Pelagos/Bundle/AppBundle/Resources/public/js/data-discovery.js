@@ -419,6 +419,7 @@ function applyFilter() {
     $("#dataset_listing_wrapper .spinner").show();
     trees["tree"].filter=jQuery("#filter-input").val();
     jQuery("#filter-applied").val(jQuery("#filter-input").val());
+    $("#" + trees["tree"].name).jstree("destroy");
     updateTree(trees["tree"]);
 }
 
@@ -432,6 +433,7 @@ function clearAll() {
     myGeoViz.clearFilter();
     $("#clearGeoFilterButton").button("disable");
     trees["tree"].geo_filter = null;
+    $("#" + trees["tree"].name).jstree("destroy");
     applyFilter();
 }
 

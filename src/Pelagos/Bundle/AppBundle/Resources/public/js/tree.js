@@ -79,7 +79,7 @@ function updateTree(tree) {
 
     if (tree.selected) {
         selected_node = $("#" + tree.name).jstree('get_selected');
-        if (typeof(selected_node) != 'undefined' && typeof(selected_node.attr('id')) != 'undefined' && selected_node.id != 'tree') {
+        if (typeof(selected_node) != 'undefined' && typeof(selected_node.id) != 'undefined' && selected_node.id != 'tree') {
             selected_node.parents("li").each(function () {
                 var this_id = $(this).attr("id");
                 if ($.inArray(this_id,init_open) == -1) {
@@ -101,6 +101,7 @@ function updateTree(tree) {
               "url" : function (node) {
                     var nodeId = "";
                     var url = "";
+                    console.log(tree.filter);
                     console.log(node);
                     if (node.children.length == 0) {
                         if (tree.type == 'ra') {
