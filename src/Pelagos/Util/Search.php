@@ -34,10 +34,23 @@ class Search
     public function findDatasets(string $queryTerm): array
     {
         $boolQuery = new \Elastica\Query\BoolQuery();
+
         $titleQuery = new \Elastica\Query\Match();
         $titleQuery->setFieldQuery('title', $queryTerm);
         $boolQuery->addShould($titleQuery);
-        $results = $this->finder->find($boolQuery, '20');
+
+        $udiQuery = new \Elastica\Query\Match();
+        $udiQuery->setFieldQuery('udi', $queryTerm);
+        $boolQuery->addShould($udiQuery);
+
+        $datasetSubmissionQuery = new \Elastica\Query\Nested();
+        $datasetSubmissionQuery->setPath('datasetSubmission');
+        $authorQuery = new \Elastica\Query\Match();
+        $authorQuery->setFieldQuery('datasetSubmission.authors', $queryTerm);
+        $datasetSubmissionQuery->setQuery($authorQuery);
+        $boolQuery->addShould($datasetSubmissionQuery);
+
+        $results = $this->finder->find($boolQuery, '1000');
 
         return $results;
     }

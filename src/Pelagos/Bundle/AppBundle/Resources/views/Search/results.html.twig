@@ -1,5 +1,12 @@
 {% for result in results %}
     <li>
         {{ result.title }}
+        {% if result.datasetSubmission.authors | default %}
+            <div class="attr"><span class="attr">Dataset Author(s):</span> {{ result.datasetSubmission.authors }}</div>
+        {% endif %}
+        <br>
+        <b>
+            ({{ result.udi }})
+        </b>
     </li>
 {% endfor %}
