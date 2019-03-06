@@ -1,6 +1,7 @@
 [
 {% for project in projects %}
     {
+        "id": "datasets_projectId_{{project.ID}}",
         "text": "{{project.getName | raw}}",
         "li_attr": {
             "style": "color:{{tree.project_color}}"

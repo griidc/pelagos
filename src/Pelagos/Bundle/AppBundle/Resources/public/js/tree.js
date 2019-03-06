@@ -101,9 +101,7 @@ function updateTree(tree) {
               "url" : function (node) {
                     var nodeId = "";
                     var url = "";
-                    console.log(tree.filter);
-                    console.log(node);
-                    if (node.children.length == 0) {
+                    if (node.parents.length == 0) {
                         if (tree.type == 'ra') {
                             url = Routing.generate("pelagos_api_tree_get_funding_organizations");
                         } else {
@@ -111,7 +109,6 @@ function updateTree(tree) {
                         }
                     }
                     else {
-                        console.log('else');
                         nodeId = node.id;
                         if (tree.type == 'ra') {
                             var matchFundingCycleId = nodeId.match(/^projects_funding-cycle_(\d+)$/);
@@ -133,7 +130,6 @@ function updateTree(tree) {
                     return url + "?tree=" + encodeURIComponent(JSON.stringify(tree));
                 },
               "data" : function (data) {
-                  console.log(data);
                 return data;
               }
             },
@@ -141,12 +137,6 @@ function updateTree(tree) {
                 "icons" : tree.icons,
                 "dots" : tree.dots,
             },
-        },
-        "themes": {
-            "theme": tree.theme,
-            "url": "/includes/jstree/themes/" + tree.theme + "/style.css",
-            "dots": tree.dots,
-            "icons": tree.icons
         },
         "json_data": {
             "ajax": {
@@ -187,7 +177,7 @@ function updateTree(tree) {
             }
         },
         "ui": { "select_limit": 1, "initially_select": [ trees[tree.name].selected ] },
-        "plugins": [ "json_data", "types", "themes", "ui" ]
+        "plugins": [ "json_data", "types", "themes", "massload", "state" ]
     });
 
     $("#" + tree.name).bind("after_open.jstree", function(event, data) {

@@ -15,34 +15,12 @@
                     {
                         "id" : "projects_funding-cycle_{{fundSrc.getId}}",
                         "text": "{{fundSrc.getName}}",
-                        "children": [
-                        {% for project in projects %}
-                            {
-                                "id": "datasets_projectId_{{project.ID}}",
-                                "text": "{{project.getName | raw}}",
-                                "li_attr": {
-                                    "style": "color:{{tree.project_color}}",
-                                    "action": "{{tree.project_action | evaluate}}"
-                                },
-                                "a_attr": {
-                                    "id": "datasets_projectId_{{project.ID}}"
-                                    ,
-                                    "action": "{{tree.project_action | evaluate}}"
-                                }
-                            }
-                            {% if not loop.last %}
-                            ,
-                            {% endif %}
-                        {% endfor %}
-                        ]
-,
+                        "children": true
+                        ,
                         "li_attr": {
-                            "style": "color:{{tree.rfp_color}}",
-                            "id": "projects_funding-cycle_{{fundSrc.getId}}",
-                            "action": "{{tree.rfp_action | evaluate}}"
+                            "style": "color:{{tree.rfp_color}}"
                         },
                         "a_attr": {
-                            "id": "projects_funding-cycle_{{fundSrc.getId}}",
                             "action": "{{tree.rfp_action | evaluate}}"
                         }
                         {% if tree.max_depth > 1 %}
