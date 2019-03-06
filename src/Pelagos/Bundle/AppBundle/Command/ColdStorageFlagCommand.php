@@ -88,12 +88,8 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
                     // Set Modifier
                     $datasetSubmission->setModifier($systemPerson);
 
-                    // Set filesize of original file.
-                    $datasetSubmission->setDatasetFileColdStorageArchiveSize($size);
-                    // Set hash of original file.
-                    $datasetSubmission->setDatasetFileColdStorageArchiveSha256Hash($hash);
-                    // Set name of original file.
-                    $datasetSubmission->setDatasetFileColdStorageOriginalFilename($originalFilename);
+                    // Set filesize, hash, and original filename. (Cold Storage attributes).
+                    $datasetSubmission->setDatasetFileColdStorageAttributes($size, $hash, $originalFilename);
 
                     // Set options for a new replacement datafile of the supplied Cold-Storage stubfile.
                     $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
