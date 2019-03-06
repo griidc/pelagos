@@ -312,6 +312,18 @@ class DatasetSubmissionType extends AbstractType
                 }
             }
         });
+
+        $builder->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) {
+                $entity = $event->getForm()->getData();
+                $entity->setDatasetFileColdStorageAttributes(
+                    $event->getForm()->get('datasetFileColdStorageArchiveSize')->getData(),
+                    $event->getForm()->get('datasetFileColdStorageArchiveSha256Hash')->getData(),
+                    $event->getForm()->get('datasetFileColdStorageOriginalFilename')->getData()
+                );
+            }
+        );
     }
 
     /**
