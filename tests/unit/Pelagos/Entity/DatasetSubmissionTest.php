@@ -879,7 +879,10 @@ class DatasetSubmissionTest extends TestCase
 
         $this->datasetSubmission->setTemporalExtentNilReasonType($mockTemporalExtentNilReasonType);
 
-        $this->assertEquals($mockTemporalExtentNilReasonType, $this->datasetSubmission->getTemporalExtentNilReasonType());
+        $this->assertEquals(
+            $mockTemporalExtentNilReasonType,
+            $this->datasetSubmission->getTemporalExtentNilReasonType()
+        );
     }
 
     /**
@@ -932,7 +935,7 @@ class DatasetSubmissionTest extends TestCase
     }
 
     /**
-     * Test the setter and getter for dataset file url last checked date
+     * Test the setter and getter for dataset file url last checked date.
      *
      * @return void
      */
@@ -946,7 +949,7 @@ class DatasetSubmissionTest extends TestCase
     }
 
     /**
-     * Test the setter and getter for dataset file url status code
+     * Test the setter and getter for dataset file url status code.
      *
      * @return void
      */
