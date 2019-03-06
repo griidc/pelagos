@@ -28,8 +28,14 @@ class SearchPageController extends UIController
     public function defaultAction(Request $request)
     {
         $queryTerm = $request->get('query');
-        $finder = $this->get('fos_elastica.finder.pelagos.dataset');
-        $results = $finder->find($queryTerm);
+        $results = array();
+
+        if ($queryTerm) {
+            $searchUtil = $this->get('pelagos.util.search');
+
+            $results = $searchUtil->findDatasets($queryTerm);
+        }
+
 
         return $this->render('PelagosAppBundle:Search:default.html.twig', array(
             'query' => $queryTerm,
@@ -37,3 +43,4 @@ class SearchPageController extends UIController
         ));
     }
 }
+
