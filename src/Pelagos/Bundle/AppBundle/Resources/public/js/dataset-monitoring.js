@@ -3,13 +3,9 @@ var $ = jQuery.noConflict();
 $(document).ready(function() {
     $('#menu .overview').width($('#menu .viewport').width() - 15);
 
-    // Due to a bug in hashChange (old version, no newer compatible with current jQuery),
-    // manualy detect the hash on load, and force hash change.
-    // But we have to wait with opening nodes until js Tree is fully loaded.
     $("#tree").bind('loaded.jstree', function(e, data) {
         if (window.location.hash != "") {
-            console.log('hash change?');
-            //$(window).hashchange();
+            $(window).trigger("hashchange");
         }
     });
 
@@ -54,7 +50,6 @@ function showProjects(by,id) {
             var url = Routing.generate("pelagos_app_ui_datasetmonitoring_researcher", {"id": id, "renderer": "browser"});
             break;
     }
-    console.log('show stuff');
     $.ajax({
         "url": url,
         "success": function(data) {

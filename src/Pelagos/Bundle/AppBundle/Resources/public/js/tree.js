@@ -63,9 +63,7 @@ function insertTree(tree) {
     document.write('</div>');
 
     $(document).ready(function() {
-        //$.getScript("/includes/jstree/jquery.jstree.js", function (data, textStatus, jqxhr) {
-            updateTree(tree);
-        //});
+        updateTree(tree);
     });
 }
 
@@ -138,46 +136,6 @@ function updateTree(tree) {
                 "dots" : tree.dots,
             },
         },
-        "json_data": {
-            "ajax": {
-                "url": function (node) {
-                    var nodeId = "";
-                    var url = "";
-                    if (node == -1) {
-                        if (tree.type == 'ra') {
-                            url = Routing.generate("pelagos_api_tree_get_funding_organizations");
-                        } else {
-                            url = Routing.generate("pelagos_api_tree_get_letters");
-                        }
-                    }
-                    else {
-                        nodeId = node.attr('id');
-                        if (tree.type == 'ra') {
-                            var matchFundingCycleId = nodeId.match(/^projects_funding-cycle_(\d+)$/);
-                            if (null !== matchFundingCycleId) {
-                                url = Routing.generate("pelagos_api_tree_get_research_groups_by_funding_cycle", {"fundingCycle": matchFundingCycleId[1]});
-                            }
-                        } else {
-                            var matchLetter = nodeId.match(/^(\D)$/);
-                            if (null !== matchLetter) {
-                                url = Routing.generate("pelagos_api_tree_get_people", {"letter": matchLetter[1]});
-                            } else {
-                                var matchPeopleId = nodeId.match(/^projects_peopleId_(\d+)$/);
-                                if (null !== matchPeopleId) {
-                                    url = Routing.generate("pelagos_api_tree_get_research_groups_by_person", {"personId": matchPeopleId[1]})
-                                }
-                            }
-                        }
-                    }
-                    return url + "?tree=" + encodeURIComponent(JSON.stringify(tree));
-                },
-                "success": function (new_data) {
-                    return new_data;
-                }
-            }
-        },
-        "ui": { "select_limit": 1, "initially_select": [ trees[tree.name].selected ] },
-        "plugins": [ "json_data", "types", "themes", "massload", "state" ]
     });
 
     $("#" + tree.name).bind("after_open.jstree", function(event, data) {
