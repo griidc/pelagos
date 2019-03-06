@@ -5,6 +5,8 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
@@ -19,11 +21,19 @@ class SearchPageController extends UIController
      *
      * @Route("")
      *
-     * @return Response A Response instance.
+     * @param Request $request The Symfony request object.
+     *
+     * @return Response
      */
-    public function defaultAction()
+    public function defaultAction(Request $request)
     {
-        return $this->render('PelagosAppBundle:Search:default.html.twig');
-    }
+        $queryTerm = $request->get('query');
+        $finder = $this->get('fos_elastica.finder.pelagos.dataset');
+        $results = $finder->find($queryTerm);
 
+        return $this->render('PelagosAppBundle:Search:default.html.twig', array(
+            'query' => $queryTerm,
+            'results' => $results
+        ));
+    }
 }
