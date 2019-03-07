@@ -950,4 +950,17 @@ class DatasetSubmissionTest extends TestCase
         $this->assertEquals($statusCode, $this->datasetSubmission->getDatasetFileUrlStatusCode());
     }
 
+    /**
+     * Test the setter and getter for ErddapUrl and generated ErddapUrlProtocol.
+     *
+     * @return void
+     */
+    public function testCanSetAndGetErddapUrl()
+    {
+        $testProtocol = 'abcd';
+        $testUrl = "$testProtocol://hostname.site.tld";
+        $this->datasetSubmission->setErddapUrl($testUrl);
+        $this->assertEquals($testUrl, $this->datasetSubmission->getErddapUrl());
+        $this->assertEquals($testProtocol, $this->datasetSubmission->getErddapUrlProtocol());
+    }
 }
