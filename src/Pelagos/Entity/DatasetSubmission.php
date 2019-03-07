@@ -2617,7 +2617,7 @@ class DatasetSubmission extends Entity
     /**
      * Getter for the erddap url.
      *
-     * @return string
+     * @return string|null
      */
     public function getErddapUrl(): ? string
     {
@@ -2627,7 +2627,7 @@ class DatasetSubmission extends Entity
     /**
      * Setter for the erddap url.
      *
-     * @param string $erddapUrl Erddap url.
+     * @param string|null $erddapUrl Erddap url.
      *
      * @return void
      */
