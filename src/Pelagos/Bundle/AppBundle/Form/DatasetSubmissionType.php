@@ -73,7 +73,9 @@ class DatasetSubmissionType extends AbstractType
             ))
             ->add('datasetFileUri', Type\HiddenType::class, array(
                 'required' => true,
-                'attr' => array('data-msg-required' => 'You must provide a dataset file using one of the methods below.'),
+                'attr' => array(
+                    'data-msg-required' => 'You must provide a dataset file using one of the methods below.'
+                ),
             ))
             ->add('datasetFileTransferType', Type\HiddenType::class, array(
                 'required' => false,
@@ -276,11 +278,17 @@ class DatasetSubmissionType extends AbstractType
             ))
             ->add('datasetFileColdStorageArchiveSize', Type\IntegerType::class, array(
                 'label' => 'Cold Storage Archive Size (Bytes)',
+                'mapped' => false,
                 'required' => false,
-
             ))
             ->add('datasetFileColdStorageArchiveSha256Hash', Type\TextType::class, array(
                 'label' => 'Cold Storage Archive Sha256 Hash',
+                'mapped' => false,
+                'required' => false,
+            ))
+            ->add('datasetFileColdStorageOriginalFilename', Type\TextType::class, array(
+                'label' => 'Cold Storage Archive Original Filename',
+                'mapped' => false,
                 'required' => false,
             ))
             ->add('submitButton', Type\SubmitType::class, array(
@@ -306,9 +314,30 @@ class DatasetSubmissionType extends AbstractType
             if ($data) {
                 if ($data->isDatasetFileInColdStorage() === true) {
                     $form->get('isDatasetFileInColdStorage')->setData(true);
+                    $form->get('datasetFileColdStorageArchiveSize')->setData(
+                        $data->getDatasetFileColdStorageArchiveSize()
+                    );
+                    $form->get('datasetFileColdStorageArchiveSha256Hash')->setData(
+                        $data->getDatasetFileColdStorageArchiveSha256Hash()
+                    );
+                    $form->get('datasetFileColdStorageOriginalFilename')->setData(
+                        $data->getDatasetFileColdStorageOriginalFilename()
+                    );
                 }
             }
         });
+
+        $builder->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) {
+                $entity = $event->getForm()->getData();
+                $entity->setDatasetFileColdStorageAttributes(
+                    $event->getForm()->get('datasetFileColdStorageArchiveSize')->getData(),
+                    $event->getForm()->get('datasetFileColdStorageArchiveSha256Hash')->getData(),
+                    $event->getForm()->get('datasetFileColdStorageOriginalFilename')->getData()
+                );
+            }
+        );
     }
 
     /**
