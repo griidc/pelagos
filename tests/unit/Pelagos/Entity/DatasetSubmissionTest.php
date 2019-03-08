@@ -350,6 +350,11 @@ class DatasetSubmissionTest extends TestCase
             $testName,
             $this->datasetSubmission->getDatasetFileColdStorageOriginalFilename()
         );
+
+        $this->datasetSubmission->clearDatasetFileColdStorageAttributes();
+        $this->assertNull($this->datasetSubmission->getDatasetFileColdStorageArchiveSha256Hash());
+        $this->assertNull($this->datasetSubmission->getDatasetFileColdStorageArchiveSize());
+        $this->assertNull($this->datasetSubmission->getDatasetFileColdStorageOriginalFilename());
     }
 
     /**
