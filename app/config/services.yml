@@ -120,4 +120,4 @@ services:
 
     pelagos.util.search:
         class: Pelagos\Util\Search
-        arguments: ["@fos_elastica.finder.pelagos.dataset"]
+        arguments: ["@fos_elastica.finder.search_pelagos.dataset"]
