@@ -38,7 +38,6 @@ class SearchPageController extends UIController
             $count = $searchUtil->countDatasets($queryTerm);
         }
 
-
         return $this->render('PelagosAppBundle:Search:default.html.twig', array(
             'query' => $queryTerm,
             'results' => $results,
