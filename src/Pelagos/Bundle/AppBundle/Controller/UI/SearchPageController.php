@@ -29,17 +29,20 @@ class SearchPageController extends UIController
     {
         $queryTerm = $request->get('query');
         $results = array();
+        $count = 0;
 
         if ($queryTerm) {
             $searchUtil = $this->get('pelagos.util.search');
 
             $results = $searchUtil->findDatasets($queryTerm);
+            $count = $searchUtil->countDatasets($queryTerm);
         }
 
 
         return $this->render('PelagosAppBundle:Search:default.html.twig', array(
             'query' => $queryTerm,
-            'results' => $results
+            'results' => $results,
+            'count' => $count
         ));
     }
 }

@@ -25,13 +25,47 @@ class Search
     }
 
     /**
-     * Search Query using Fos Elastic search.
+     * Find datasets using Fos Elastic search.
      *
      * @param string $queryTerm Query string.
      *
      * @return array
      */
     public function findDatasets(string $queryTerm): array
+    {
+        $query = $this->buildQuery($queryTerm);
+
+        $results = $this->finder->find($query);
+
+        return $results;
+    }
+
+    /**
+     * Get number of results.
+     *
+     * @param string $queryTerm Query string.
+     *
+     * @return integer
+     */
+    public function countDatasets(string $queryTerm): int
+    {
+        $query = $this->buildQuery($queryTerm);
+
+        /** var Pagerfanta\Pagerfanta */
+        $userPaginator = $this->finder->findPaginated($query);
+        $countResults = $userPaginator->getNbResults();
+
+        return $countResults;
+    }
+
+    /**
+     * Build Query using Fos Elastic search.
+     *
+     * @param string $queryTerm Query string.
+     *
+     * @return \Elastica\Query\BoolQuery
+     */
+    private function buildQuery(string $queryTerm): \Elastica\Query\BoolQuery
     {
         $boolQuery = new \Elastica\Query\BoolQuery();
 
@@ -50,8 +84,6 @@ class Search
         $datasetSubmissionQuery->setQuery($authorQuery);
         $boolQuery->addShould($datasetSubmissionQuery);
 
-        $results = $this->finder->find($boolQuery, '1000');
-
-        return $results;
+        return $boolQuery;
     }
 }
