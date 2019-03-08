@@ -5,6 +5,9 @@ namespace Pelagos\Util;
 use Doctrine\ORM\EntityManager;
 use FOS\ElasticaBundle\Finder\FinderInterface;
 
+/**
+ * Util class for FOS Elastic Search.
+ */
 class Search
 {
     /**
@@ -51,7 +54,6 @@ class Search
     {
         $query = $this->buildQuery($queryTerm);
 
-        /** var Pagerfanta\Pagerfanta */
         $userPaginator = $this->finder->findPaginated($query);
         $countResults = $userPaginator->getNbResults();
 

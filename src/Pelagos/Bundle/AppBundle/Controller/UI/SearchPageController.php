@@ -19,9 +19,9 @@ class SearchPageController extends UIController
     /**
      * The default action for Dataset Review.
      *
-     * @Route("")
-     *
      * @param Request $request The Symfony request object.
+     *
+     * @Route("")
      *
      * @return Response
      */
@@ -46,4 +46,3 @@ class SearchPageController extends UIController
         ));
     }
 }
-
