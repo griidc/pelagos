@@ -330,12 +330,15 @@ class DatasetSubmissionType extends AbstractType
         $builder->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) {
+                $size = $event->getForm()->get('datasetFileColdStorageArchiveSize')->getData();
+                $hash = $event->getForm()->get('datasetFileColdStorageArchiveSha256Hash')->getData();
+                $name = $event->getForm()->get('datasetFileColdStorageOriginalFilename')->getData();
                 $entity = $event->getForm()->getData();
-                $entity->setDatasetFileColdStorageAttributes(
-                    $event->getForm()->get('datasetFileColdStorageArchiveSize')->getData(),
-                    $event->getForm()->get('datasetFileColdStorageArchiveSha256Hash')->getData(),
-                    $event->getForm()->get('datasetFileColdStorageOriginalFilename')->getData()
-                );
+                if ( null !== $size and null !== $hash and null !== $name) {
+                    $entity->setDatasetFileColdStorageAttributes($size, $hash, $name);
+                } else {
+                    $entity->clearDatasetFileColdStorageAttributes();
+                }
             }
         );
     }

@@ -1798,6 +1798,18 @@ class DatasetSubmission extends Entity
         $this->setDatasetFileColdStorageArchiveSize($filesize);
     }
 
+    /**
+     * Clear all cold storage attributes.
+     *
+     * @return void
+     */
+    public function clearDatasetFileColdStorageAttributes()
+    {
+        $this->setDatasetFileColdStorageOriginalFilename(null);
+        $this->setDatasetFileColdStorageArchiveSha256Hash(null);
+        $this->setDatasetFileColdStorageArchiveSize(null);
+    }
+
 
     /**
      * Check if the file is stored in cold storage based on the values of Sha256Hash and FileSize.
