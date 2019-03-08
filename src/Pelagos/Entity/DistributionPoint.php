@@ -184,6 +184,21 @@ class DistributionPoint extends Entity
     }
 
     /**
+     * Getter for distribution url protocol.
+     *
+     * @return string
+     */
+    public function getDistributionUrlProtocol()
+    {
+        if ($this->distributionUrl !== null) {
+            preg_match('/^((.*?):).*$/', $this->distributionUrl, $matches);
+            return $matches[2];
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Setter for role code.
      *
      * @param string $roleCode The CI_ROLECODE for this association.
