@@ -94,7 +94,9 @@
                     </div>
                 </div>
             </div>
-            {% include "PelagosAppBundle::layout-menu.html.twig" %}
+            {% block menu %}
+                {% include "PelagosAppBundle:Menus:main.html.twig" %}
+            {% endblock menu %}
             <div id="main-wrapper">
                 <div id="pelagos-container">
                     <div id="pelagos-container-row">
