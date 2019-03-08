@@ -76,8 +76,10 @@ function updateTree(tree) {
     }
 
     if (tree.selected) {
+        console.log('tree selected');
         selected_node = $("#" + tree.name).jstree('get_selected');
-        if (typeof(selected_node) != 'undefined' && typeof(selected_node.id) != 'undefined' && selected_node.id != 'tree') {
+        console.log(selected_node);
+        if (typeof(selected_node) != 'undefined' && typeof(selected_node.attr('id')) != 'undefined' && selected_node.attr('id') != 'tree') {
             selected_node.parents("li").each(function () {
                 var this_id = $(this).attr("id");
                 if ($.inArray(this_id,init_open) == -1) {
@@ -139,7 +141,6 @@ function updateTree(tree) {
     });
 
     $("#" + tree.name).bind("after_open.jstree", function(event, data) {
-        console.log('after open');
         childrenLoading--;
         loadOpenChildren(data.instance,data.node);
         var settings = data.instance.settings;
@@ -147,6 +148,7 @@ function updateTree(tree) {
             settings.core.animation = tree.animation;
             if (typeof tree.afteropen !== 'undefined') {
                 eval(tree.afteropen);
+                console.log('run after open');
             }
         }
         if (left_to_open > 0) {
@@ -154,6 +156,7 @@ function updateTree(tree) {
             if (left_to_open == 0) {
                 if (typeof tree.onload !== 'undefined') {
                     eval(tree.onload);
+                    console.log('onload js');
                 }
             }
         }
@@ -161,8 +164,14 @@ function updateTree(tree) {
 
     $("#" + tree.name).bind("loaded.jstree", function(event, data) {
         console.log('loaded');
+        console.log(data);
+        console.log(tree);
+        if (data.element === null) {
+            return;
+        }
         if (typeof tree.onload !== 'undefined') {
             eval(tree.onload);
+            console.log('run onload js');
         }
         loadOpenChildren(data.instance,-1);
         var root_nodes=data.instance.get_children_dom(-1);
@@ -173,7 +182,9 @@ function updateTree(tree) {
         left_to_open=init_open.length;
         if ($("#" + tree.name + " > ul > li:first").attr("id") == 'noDatasetsFound' || left_to_open == 0) {
             if (typeof tree.onload !== 'undefined') {
-                eval(tree.onload);
+                //eval(tree.onload);
+                console.log(left_to_open);
+                console.log('run onload js again?');
             }
         }
     });

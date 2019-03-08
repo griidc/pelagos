@@ -338,6 +338,7 @@ function createRow(data, row)
 
 //this occurs at initial/new search
 function showDatasets(by,id) {
+    console.log("show");
     var filter = jQuery("#filter-applied").val();
     geo_filter = "";
     if (trees["tree"].geo_filter) {
@@ -419,7 +420,7 @@ function applyFilter() {
     $("#dataset_listing_wrapper .spinner").show();
     trees["tree"].filter=jQuery("#filter-input").val();
     jQuery("#filter-applied").val(jQuery("#filter-input").val());
-    $("#" + trees["tree"].name).jstree("destroy");
+    $("#" + trees["tree"].name).jstree("destroy").empty();
     updateTree(trees["tree"]);
 }
 
@@ -433,7 +434,7 @@ function clearAll() {
     myGeoViz.clearFilter();
     $("#clearGeoFilterButton").button("disable");
     trees["tree"].geo_filter = null;
-    $("#" + trees["tree"].name).jstree("destroy");
+    $("#" + trees["tree"].name).jstree("destroy").empty();
     applyFilter();
 }
 
