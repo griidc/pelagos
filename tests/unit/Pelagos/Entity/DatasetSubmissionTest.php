@@ -962,5 +962,8 @@ class DatasetSubmissionTest extends TestCase
         $this->datasetSubmission->setErddapUrl($testUrl);
         $this->assertEquals($testUrl, $this->datasetSubmission->getErddapUrl());
         $this->assertEquals($testProtocol, $this->datasetSubmission->getErddapUrlProtocol());
+
+        $this->datasetSubmission->setErddapUrl(null);
+        $this->assertNull($this->datasetSubmission->getErddapUrlProtocol());
     }
 }
