@@ -302,7 +302,10 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getDistributionPoints' => new ArrayCollection(array($this->mockDistributionPoint)),
                 'getErddapUrl' => 'https://xyz',
                 'getDatasetFileUrlLastCheckedDate' => new \DateTime('now', new \DateTimeZone('UTC')),
-                'getDatasetFileUrlStatusCode' => '200'
+                'getDatasetFileUrlStatusCode' => '200',
+                'getDatasetFileColdStorageArchiveSha256Hash' => 'abc123',
+                'getDatasetFileColdStorageArchiveSize' => '100',
+                'getDatasetFileColdStorageOriginalFilename' => 'filename.txt',
             )
         );
 
@@ -637,7 +640,7 @@ class ISOMetadataExtractorUtilTest extends TestCase
 
     /**
      * Test for erddap attribute setter and getter.
-     * 
+     *
      * @return void
      */
     public function testCanGetAndSetErddapUrl(): void
