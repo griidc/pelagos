@@ -340,7 +340,7 @@ class DoiConsumer implements ConsumerInterface
                     $exceptionType = get_class($exception);
                     continue;
                 }
-            } while (get_class($exceptionType) === HttpServerErrorException::class);
+            } while ($exceptionType === HttpServerErrorException::class);
 
             return true;
         }
