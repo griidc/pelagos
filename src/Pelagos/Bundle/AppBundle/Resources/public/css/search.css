@@ -77,9 +77,9 @@ container-4{
 
 a {
     color: #2e6da4;
-    font-family: helvetica;
+    font-family: 'Raleway', "Helvetica", Arial, sans-serif;
     text-decoration: none;
-    text-transform: uppercase;
+    -webkit-font-smoothing: antialiased;
 }
 
 a:hover {
