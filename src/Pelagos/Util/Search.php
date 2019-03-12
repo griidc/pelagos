@@ -75,10 +75,6 @@ class Search
         $titleQuery->setFieldQuery('title', $queryTerm);
         $boolQuery->addShould($titleQuery);
 
-        $udiQuery = new \Elastica\Query\Match();
-        $udiQuery->setFieldQuery('udi', $queryTerm);
-        $boolQuery->addShould($udiQuery);
-
         $datasetSubmissionQuery = new \Elastica\Query\Nested();
         $datasetSubmissionQuery->setPath('datasetSubmission');
         $authorQuery = new \Elastica\Query\Match();
