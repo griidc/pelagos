@@ -125,11 +125,25 @@ class DatasetIndex
                 );
                 $textQuery->addShould($datasetQuery);
 
-                $researchGroupQuery = new Query\Nested();
-                $researchGroupQuery->setPath('researchGroup');
-                $researchGroupQuery->setQuery(
+                $researchGroupNameQuery = new Query\Nested();
+                $researchGroupNameQuery->setPath('researchGroup');
+                $researchGroupNameQuery->setQuery(
                     new Query\Match('researchGroup.name', $text)
                 );
+                $textQuery->addShould($researchGroupNameQuery);
+
+                $fundingOrgQuery = new Query\Nested();
+                $fundingOrgQuery->setPath('researchGroup.fundingCycle.fundingOrganization');
+
+                $fundingOrgQuery->setQuery(
+                    new Query\MatchPhrase('researchGroup.fundingCycle.fundingOrganization.name', $text)
+                );
+                $fundingCycleQuery = new Query\Nested();
+                $fundingCycleQuery->setPath('researchGroup.fundingCycle');
+                $fundingCycleQuery->setQuery($fundingOrgQuery);
+                $researchGroupQuery = new Query\Nested();
+                $researchGroupQuery->setPath('researchGroup');
+                $researchGroupQuery->setQuery($fundingCycleQuery);
                 $textQuery->addShould($researchGroupQuery);
 
                 $datasetSubmissionQuery = new Query\Nested();
@@ -184,7 +198,8 @@ class DatasetIndex
             array(
                 'id', 'udi', 'title', 'year', 'researchGroup', 'doi', 'datasetSubmission.authors',
                 'datasetSubmission.datasetFileTransferStatus', 'datasetSubmission.datasetFileUri',
-                'datasetSubmission.datasetFileSize', 'datasetSubmission.restrictions', 'geometry'
+                'datasetSubmission.datasetFileSize', 'datasetSubmission.restrictions', 'geometry',
+                'researchGroup.fundingCycle.fundingOrganization.name'
             )
         );
 
