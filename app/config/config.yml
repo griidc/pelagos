@@ -264,6 +264,7 @@ fos_elastica:
                                             type: 'nested'
                                             properties:
                                                 id: ~
+                                                name: ~
                         datasetSubmission:
                             type: 'nested'
                             properties:

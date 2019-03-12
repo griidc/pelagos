@@ -225,7 +225,7 @@ class DOIutil
         $title,
         $publisher,
         $publicationYear,
-        $status
+        $status = 'public'
     ) {
         // Add doi: to doi is it doesn't exist.
         $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);

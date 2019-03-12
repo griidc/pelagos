@@ -59,12 +59,14 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
             $infoPath = pathinfo($infoFileName)['dirname'];
             $size = preg_replace('/size \(bytes\): /', '', trim($infoFileContents[1]));
             $hash = preg_replace('/orig sha256: /', '', trim($infoFileContents[2]));
+            $originalFilename = preg_replace('/original filename: /', '', trim($infoFileContents[3]));
             $stubFileName = "$infoPath/$nudi-manifest.zip";
 
             if (file_exists($stubFileName)) {
                 $output->writeln("UDI: ($udi)");
                 $output->writeln("Original Size: ($size)");
                 $output->writeln("Original Hash: ($hash)");
+                $output->writeln("Original Filename: ($originalFilename)");
                 $output->writeln("stubFileName: ($stubFileName)");
                 $output->writeln("Attempting to flag $udi as Cold Stored.");
 
@@ -86,10 +88,8 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
                     // Set Modifier
                     $datasetSubmission->setModifier($systemPerson);
 
-                    // Set filesize of original file.
-                    $datasetSubmission->setDatasetFileColdStorageArchiveSize($size);
-                    // Set hash of original file.
-                    $datasetSubmission->setDatasetFileColdStorageArchiveSha256Hash($hash);
+                    // Set filesize, hash, and original filename. (Cold Storage attributes).
+                    $datasetSubmission->setDatasetFileColdStorageAttributes($size, $hash, $originalFilename);
 
                     // Set options for a new replacement datafile of the supplied Cold-Storage stubfile.
                     $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
