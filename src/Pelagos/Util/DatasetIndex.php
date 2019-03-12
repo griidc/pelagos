@@ -136,7 +136,7 @@ class DatasetIndex
                 $fundingOrgQuery->setPath('researchGroup.fundingCycle.fundingOrganization');
 
                 $fundingOrgQuery->setQuery(
-                    new Query\MatchPhrase('researchGroup.fundingCycle.fundingOrganization.name', $text)
+                    new Query\Match('researchGroup.fundingCycle.fundingOrganization.name', $text)
                 );
                 $fundingCycleQuery = new Query\Nested();
                 $fundingCycleQuery->setPath('researchGroup.fundingCycle');
