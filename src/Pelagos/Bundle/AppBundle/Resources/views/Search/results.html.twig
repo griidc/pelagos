@@ -31,7 +31,7 @@
                                     {{ result.year |default }}
                                     {{ result.title }}
                                     {{ result.researchGroup.name }}.
-                                    DOI: {{ result.doi.doi }}
+                                    DOI: {{ result.doi.doi |default }}
                                     UDI: {{ result.udi }}
                                 </a></h3>
                         </div>
