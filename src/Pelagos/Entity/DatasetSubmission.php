@@ -505,8 +505,7 @@ class DatasetSubmission extends Entity
      *
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionDatasetContact", mappedBy="datasetSubmission",
-     *     cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionDatasetContact", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
      *
      * @ORM\OrderBy({"primaryContact" = "DESC", "creationTimeStamp" = "ASC"})
      *
@@ -522,8 +521,7 @@ class DatasetSubmission extends Entity
      *
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionMetadataContact", mappedBy="datasetSubmission",
-     *     cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="PersonDatasetSubmissionMetadataContact", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
      *
      * @ORM\OrderBy({"creationTimeStamp" = "ASC"})
      *
@@ -976,8 +974,7 @@ class DatasetSubmission extends Entity
      *
      * @access protected
      *
-     * @ORM\OneToMany(targetEntity="DistributionPoint", mappedBy="datasetSubmission",
-     *     cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="DistributionPoint", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
      */
     protected $distributionPoints;
 
@@ -995,10 +992,8 @@ class DatasetSubmission extends Entity
      *
      * Initializes collections to empty collections.
      *
-     * @param Entity                                $entity      A DIF or DatasetSubmission
-     * to base this DatasetSubmission on.
-     * @param PersonDatasetSubmissionDatasetContact $datasetPPOc The dataset's Primary P.O.C.,
-     * used if creating from a DIF.
+     * @param Entity                                $entity      A DIF or DatasetSubmission to base this DatasetSubmission on.
+     * @param PersonDatasetSubmissionDatasetContact $datasetPPOc The dataset's Primary P.O.C., used if creating from a DIF.
      *
      * @throws \Exception When a DIF is passed without a PersonDatasetSubmissionDatasetContact.
      * @throws \Exception When an entity is passed that is not a DIF or DatasetSubmission.
