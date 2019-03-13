@@ -192,7 +192,7 @@ class DistributionPoint extends Entity
     {
         if ($this->distributionUrl !== null) {
             preg_match('/^(.*?):.*$/', $this->distributionUrl, $matches);
-            return $matches[2];
+            return $matches[1];
         } else {
             return null;
         }
