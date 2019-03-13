@@ -34,12 +34,12 @@ class DistributionPoint extends Entity
         ],
         'custodian' => [
             'name' => 'Custodian',
-            'description' => 'The individual/organization that has 
+            'description' => 'The individual/organization that has
                 accountability and responsibility for the data.',
         ],
         'originator' => [
             'name' => 'Originator',
-            'description' => 'the name of the individual or organization who is responsible 
+            'description' => 'the name of the individual or organization who is responsible
                   for the data at the point when the data was first created.',
         ],
         'owner' => [
@@ -57,7 +57,7 @@ class DistributionPoint extends Entity
         ],
         'processor' => [
             'name' => 'Processor',
-            'description' => 'The name of the individual or organization who 
+            'description' => 'The name of the individual or organization who
                 has processed the data in a manner such that the resource has been modified.',
         ],
         'publisher' => [
@@ -66,7 +66,7 @@ class DistributionPoint extends Entity
         ],
         'resourceProvider' => [
             'name' => 'Resource Provider',
-            'description' => 'The individual or organization that supplies 
+            'description' => 'The individual or organization that supplies
                 or allocates the resource for another entity.',
         ],
         'user' => [
@@ -191,7 +191,7 @@ class DistributionPoint extends Entity
     public function getDistributionUrlProtocol()
     {
         if ($this->distributionUrl !== null) {
-            preg_match('/^((.*?):).*$/', $this->distributionUrl, $matches);
+            preg_match('/^(.*?):.*$/', $this->distributionUrl, $matches);
             return $matches[2];
         } else {
             return null;
