@@ -84,3 +84,6 @@ pelagos_side_by_side_ui:
 
 pelagos_remotelyhosted_datasets_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\RemotelyHostedDatasetsController
+
+pelagos_search_page_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\SearchPageController

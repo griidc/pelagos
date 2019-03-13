@@ -1,0 +1,21 @@
+{% extends "PelagosAppBundle::layout.html.twig" %}
+
+{% block head %}
+    {{ add_css (
+        [
+            '//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'
+        ]
+    ) }}
+    {% stylesheets
+        '@PelagosAppBundle/Resources/public/css/search.css' %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets %}
+{% endblock %}
+
+{% block body %}
+    {% if query is null %}
+        {% include 'PelagosAppBundle:Search:form.html.twig' %}
+    {% else %}
+        {% include 'PelagosAppBundle:Search:results.html.twig' %}
+    {% endif %}
+{% endblock %}
