@@ -67,12 +67,14 @@ class Search
      *
      * @return \Elastica\Query\BoolQuery
      */
-    private function buildQuery(string $queryTerm): \Elastica\Query\BoolQuery
+    private function buildQuery(string $queryTerm): \Elastica\Query
     {
+        $mainQuery = new \Elastica\Query();
         $boolQuery = new \Elastica\Query\BoolQuery();
 
         $titleQuery = new \Elastica\Query\Match();
         $titleQuery->setFieldQuery('title', $queryTerm);
+        $titleQuery->setFieldOperator('title', 'and');
         $boolQuery->addShould($titleQuery);
 
         $datasetSubmissionQuery = new \Elastica\Query\Nested();
@@ -80,8 +82,10 @@ class Search
         $authorQuery = new \Elastica\Query\Match();
         $authorQuery->setFieldQuery('datasetSubmission.authors', $queryTerm);
         $datasetSubmissionQuery->setQuery($authorQuery);
-        $boolQuery->addShould($datasetSubmissionQuery);
 
-        return $boolQuery;
+        $boolQuery->addShould($datasetSubmissionQuery);
+        $mainQuery->setQuery($boolQuery);
+
+        return $mainQuery;
     }
 }
