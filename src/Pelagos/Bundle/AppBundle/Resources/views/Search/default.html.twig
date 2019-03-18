@@ -17,6 +17,10 @@
             '//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js'
         ]
     ) }}
+    {% javascripts
+        '@PelagosAppBundle/Resources/public/js/search.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
 
 {% endblock %}
 
