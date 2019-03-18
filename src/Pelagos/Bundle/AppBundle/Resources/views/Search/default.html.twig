@@ -3,13 +3,21 @@
 {% block head %}
     {{ add_css (
         [
-            '//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'
+            '//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css'
         ]
     ) }}
     {% stylesheets
         '@PelagosAppBundle/Resources/public/css/search.css' %}
         {{ add_css(asset_url) }}
     {% endstylesheets %}
+
+    {{ add_js (
+        [
+            '///code.jquery.com/jquery-1.11.1.min.js',
+            '//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js'
+        ]
+    ) }}
+
 {% endblock %}
 
 {% block body %}
