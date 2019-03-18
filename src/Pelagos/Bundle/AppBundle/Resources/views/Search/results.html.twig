@@ -23,18 +23,7 @@
                         </form>
                     </div>
                     {% for result in results %}
-                        <div class="hr-line-dashed"></div>
-                        <div class="search-result">
-                            <h3><a class="search-results"
-                                   href="{{ path('pelagos_app_ui_dataland_default', {'udi' : result.udi } ) }}">
-                                    {{ result.datasetSubmission.authors | default }}
-                                    {{ result.year |default }}
-                                    {{ result.title }}
-                                    {{ result.researchGroup.name }}.
-                                    DOI: {{ result.doi.doi |default }}
-                                    UDI: {{ result.udi }}
-                                </a></h3>
-                        </div>
+                        {% include 'PelagosAppBundle:Search:dataset-row.html.twig'  %}
                     {% endfor %}
 
                     <div class="text-center">
