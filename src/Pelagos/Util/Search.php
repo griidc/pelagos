@@ -65,7 +65,7 @@ class Search
      *
      * @param string $queryTerm Query string.
      *
-     * @return \Elastica\Query\BoolQuery
+     * @return \Elastica\Query
      */
     private function buildQuery(string $queryTerm): \Elastica\Query
     {
