@@ -139,7 +139,6 @@ function updateTree(tree) {
     });
 
     $("#" + tree.name).bind("after_open.jstree", function(event, data) {
-        console.log('after open');
         childrenLoading--;
         loadOpenChildren(data.instance,data.node);
         var settings = data.instance.settings;
@@ -160,7 +159,6 @@ function updateTree(tree) {
     });
 
     $("#" + tree.name).bind("loaded.jstree", function(event, data) {
-        console.log('loaded');
         if (typeof tree.onload !== 'undefined') {
             eval(tree.onload);
         }
@@ -173,7 +171,8 @@ function updateTree(tree) {
         left_to_open=init_open.length;
         if ($("#" + tree.name + " > ul > li:first").attr("id") == 'noDatasetsFound' || left_to_open == 0) {
             if (typeof tree.onload !== 'undefined') {
-                eval(tree.onload);
+                // Unsure why this is needed.
+                //eval(tree.onload);
             }
         }
     });
