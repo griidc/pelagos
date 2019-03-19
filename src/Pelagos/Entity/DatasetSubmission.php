@@ -2681,8 +2681,8 @@ class DatasetSubmission extends Entity
     public function getErddapUrlProtocol()
     {
         if ($this->erddapUrl !== null) {
-            preg_match('/^((.*?):).*$/', $this->erddapUrl, $matches);
-            return $matches[2];
+            preg_match('/^(.*?):.*$/', $this->erddapUrl, $matches);
+            return $matches[1];
         } else {
             return null;
         }
