@@ -30,13 +30,14 @@ class Search
     /**
      * Find datasets using Fos Elastic search.
      *
-     * @param string $queryTerm Query string.
+     * @param string  $queryTerm Query string.
+     * @param integer $page      Page number of the search page.
      *
      * @return array
      */
-    public function findDatasets(string $queryTerm): array
+    public function findDatasets(string $queryTerm, int $page): array
     {
-        $query = $this->buildQuery($queryTerm);
+        $query = $this->buildQuery($queryTerm, $page);
 
         $results = $this->finder->find($query);
 
@@ -63,11 +64,12 @@ class Search
     /**
      * Build Query using Fos Elastic search.
      *
-     * @param string $queryTerm Query string.
+     * @param string  $queryTerm Query string.
+     * @param integer $page      Page start value for the search query.
      *
      * @return \Elastica\Query
      */
-    private function buildQuery(string $queryTerm): \Elastica\Query
+    private function buildQuery(string $queryTerm, int $page = 0): \Elastica\Query
     {
         $mainQuery = new \Elastica\Query();
         $boolQuery = new \Elastica\Query\BoolQuery();
@@ -85,6 +87,7 @@ class Search
 
         $boolQuery->addShould($datasetSubmissionQuery);
         $mainQuery->setQuery($boolQuery);
+        $mainQuery->setFrom(($page - 1) * 10);
 
         return $mainQuery;
     }
