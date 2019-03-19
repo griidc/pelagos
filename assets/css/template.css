@@ -1,4 +1,3 @@
-
 @import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
 @import url(https://fonts.googleapis.com/css?family=Merriweather:400,700,400italic,700italic);
 
@@ -76,6 +75,15 @@ h2 {
     color: #004250;
     margin-top: 1.25em;
     margin-bottom: 1em;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+}
+
+div.error, .error {
+    color: #8c2e0b;
 }
 
 p {
@@ -264,8 +272,8 @@ div#header #griidc-logo-wrapper {
 }
 
 .ui-widget {
-    font-size: 12px;
-    line-height: 18px;
+    font-size: 12px !important;
+    line-height: 18px !important;
 }
 
 .page-pelagos-full {
