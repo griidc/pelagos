@@ -19,5 +19,10 @@ $(document).ready(function () {
         }
 
         $("#paginate").append('<li class="page-item"><a class="page-link" href="#">Next</a></li>');
+
+        $("#paginate li a").click(function() {
+            $("#paginate li").removeClass("active");
+            $(this).parent().addClass("active");
+        });
     }
 });
