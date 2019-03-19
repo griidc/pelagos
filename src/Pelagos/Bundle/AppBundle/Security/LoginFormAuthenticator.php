@@ -16,7 +16,7 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
 
 use Pelagos\Bundle\AppBundle\Form\LoginForm;
-use Pelagos\Entity\Logins;
+use Pelagos\Entity\LoginAttempts;
 use Pelagos\Entity\Person;
 
 /**
@@ -46,13 +46,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      * @var RouterInterface
      */
     private $router;
-    
-    /**
-     * The Login Attempt Handler.
-     *
-     * @var LoginAttemptHandler
-     */
-    private $loginAttemptHandler;
 
     /**
      * Class constructor for Dependency Injection.
@@ -62,7 +55,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      * @param RouterInterface        $router              A Router.
      * @param LoginAttemptHandler    $loginAttemptHandler The Login Attempt Handler.
      */
-    public function __construct(FormFactoryInterface $formFactory, EntityManagerInterface $entityManager, RouterInterface $router, LoginAttemptHandler $loginAttemptHandler)
+    public function __construct(FormFactoryInterface $formFactory, EntityManagerInterface $entityManager, RouterInterface $router)
     {
         $this->formFactory = $formFactory;
         $this->entityManager = $entityManager;
@@ -96,7 +89,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
         $data = $form->getData();
         
-        $this->loginAttemptHandler->log($request);
+        $this->logAttempt($request);
         
         $request->getSession()->set(
             Security::LAST_USERNAME,
@@ -161,5 +154,17 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     protected function getDefaultSuccessRedirectUrl()
     {
         return $this->router->generate('pelagos_homepage');
+    }
+    
+    private function logAttempt(Request $request)
+    {
+        $ipAddress = $request->getClientIp();
+        $userName = $request->request->get('_username');
+        $anonymousPerson = $this->entityManager->find(Person::class, -1);
+        
+        $loginAttempt = new LoginAttempts();
+        $loginAttempt->setCreator($anonymousPerson);
+        $this->entityManager->persist($loginAttempt);
+        $this->entityManager->flush($loginAttempt);
     }
 }

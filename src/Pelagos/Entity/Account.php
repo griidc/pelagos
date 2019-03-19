@@ -109,6 +109,17 @@ class Account extends Entity implements UserInterface, EquatableInterface
      * @ORM\OrderBy({"modificationTimeStamp"="DESC"})
      */
     protected $passwordHistory;
+    
+    /**
+     * Login attempts for this account.
+     *
+     * @var LoginAttempts
+     *
+     * @ORM\OneToOne(targetEntity="LoginAttempts")
+     *
+     * @ORM\OrderBy({"timeStamp"="DESC"})
+     */
+    protected $loginAttempts;
 
     /**
      * Whether this Account is a POSIX account.
