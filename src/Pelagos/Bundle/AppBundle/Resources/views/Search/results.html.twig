@@ -8,21 +8,7 @@
                     </h2>
 
                     <div class="search-form">
-                        <form id="searchForm" name="searchForm">
-                            <div id="custom-search-input" align="center">
-                                <div class="input-group col-md-12">
-                                    <input type="text" class="search-query form-control" placeholder="Search..."/>
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-danger"
-                                                type="button"
-                                                onclick="window.location.href='{{ path('pelagos_app_ui_searchpage_default') }}?query=' +
-                                                        document.getElementById('search').value.trim()">
-                                            <span class=" glyphicon glyphicon-search"></span>
-                                        </button>
-                                    </span>
-                                </div>
-                            </div>
-                        </form>
+                        {% include 'PelagosAppBundle:Search:form.html.twig' %}
                     </div>
                     {% for result in results %}
                         {% include 'PelagosAppBundle:Search:dataset-row.html.twig'  %}
@@ -30,10 +16,17 @@
 
                     <div class="text-center">
                         <div class="btn-group">
-                            <nav aria-label="Search results pages">
-                                <ul class="pagination" id="paginate">
-                                </ul>
-                            </nav>
+                            <div class="wrapper">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <nav aria-label="Search results pages">
+                                                <ul id="search-pagination" class="pagination"></ul>
+                                            </nav>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -41,3 +34,5 @@
         </div>
     </div>
 </div>
+
+

@@ -104,3 +104,26 @@ h2 {
 .search-query:focus + button {
     z-index: 3;
 }
+
+.wrapper{
+    margin: 60px auto;
+    text-align: center;
+}
+h1{
+    margin-bottom: 1.25em;
+}
+#pagination-demo{
+    display: inline-block;
+    margin-bottom: 1.75em;
+}
+#pagination-demo li{
+    display: inline-block;
+}
+
+.page-content{
+    background: #eee;
+    display: inline-block;
+    padding: 10px;
+    width: 100%;
+    max-width: 660px;
+}

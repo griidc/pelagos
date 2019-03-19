@@ -1,23 +1,13 @@
-<div class="container header">
-    <div class="row">
-        <h2>{% image '@PelagosAppBundle/Resources/public/images/search-logo.png' %}
-                <img src="{{ asset_url }}">
-            {% endimage %}
-        </h2>
-        <form id="searchForm" name="searchForm">
-            <div id="custom-search-input" align="center">
-                <div class="input-group col-md-12">
-                    <input type="search" id="search" name="query" class="search-query form-control" placeholder="Search..."/>
-                    <span class="input-group-btn">
-                        <button class="btn btn-danger"
-                                type="button"
-                                onclick="window.location.href='{{ path('pelagos_app_ui_searchpage_default') }}?query=' +
-                                document.getElementById('search').value.trim()">
-                            <span class=" glyphicon glyphicon-search"></span>
-                        </button>
-                    </span>
-                </div>
-            </div>
-        </form>
+<form id="searchForm" name="searchForm" action="{{ path('pelagos_app_ui_searchpage_default') }}" method="get">
+    <div id="custom-search-input" align="center">
+        <div class="input-group col-md-12">
+            <input type="search" id="search" name="query" class="search-query form-control" placeholder="Search..."/
+                    value = {{ query|default }}>
+            <span class="input-group-btn">
+                <button class="btn btn-danger" type="submit">
+                    <span class=" glyphicon glyphicon-search"></span>
+                </button>
+            </span>
+        </div>
     </div>
-</div>
+</form>

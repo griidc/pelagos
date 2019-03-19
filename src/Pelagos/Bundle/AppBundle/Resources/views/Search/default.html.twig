@@ -14,19 +14,32 @@
     {{ add_js (
         [
             '///code.jquery.com/jquery-1.11.1.min.js',
-            '//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js'
+            '//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js',
+            '//cdnjs.cloudflare.com/ajax/libs/twbs-pagination/1.4.2/jquery.twbsPagination.min.js'
         ]
     ) }}
     {% javascripts
-        '@PelagosAppBundle/Resources/public/js/search.js' %}
+        '@PelagosAppBundle/Resources/public/js/search.js'
+        '@FOSJsRoutingBundle/Resources/public/js/router.js'
+    %}
         {{ add_js(asset_url) }}
     {% endjavascripts %}
+
+    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
 
 {% endblock %}
 
 {% block body %}
     {% if query is null %}
-        {% include 'PelagosAppBundle:Search:form.html.twig' %}
+        <div class="container header">
+            <div class="row">
+                <h2>{% image '@PelagosAppBundle/Resources/public/images/search-logo.png' %}
+                        <img src="{{ asset_url }}">
+                    {% endimage %}
+                </h2>
+                {% include 'PelagosAppBundle:Search:form.html.twig' %}
+            </div>
+        </div>
     {% else %}
         {% include 'PelagosAppBundle:Search:results.html.twig' %}
     {% endif %}
