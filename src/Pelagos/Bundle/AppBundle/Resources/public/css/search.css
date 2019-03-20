@@ -112,18 +112,10 @@ h2 {
 h1{
     margin-bottom: 1.25em;
 }
-#pagination-demo{
+#search-pagination{
     display: inline-block;
     margin-bottom: 1.75em;
 }
-#pagination-demo li{
+#search-pagination li{
     display: inline-block;
-}
-
-.page-content{
-    background: #eee;
-    display: inline-block;
-    padding: 10px;
-    width: 100%;
-    max-width: 660px;
 }
