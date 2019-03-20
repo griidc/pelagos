@@ -346,8 +346,8 @@ class Account extends Entity implements UserInterface, EquatableInterface
      */
     public function isLockedOut()
     {
-        $lockoutTimeSeconds = 60;
-        $maxAttempts = 10;
+        $lockoutTimeSeconds = 600;
+        $maxAttempts = 100;
 
         $tooManyAttemps = false;
         $timeHasPasssed = false;
