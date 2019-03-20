@@ -108,7 +108,7 @@
                             <gmd:protocol>
                                 <gco:CharacterString>https</gco:CharacterString>
                             </gmd:protocol>
-                            {%  if dataset.datasetsubmission.datasetFileTransferStatus != constant('\Pelagos\\Entity\\DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED') %}
+                            {%  if dataset.availabilityStatus != constant('\Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED') and dataset.availabilityStatus != constant('\Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED') %}
                                 <gmd:name>
                                     <gco:CharacterString>Data Landing Page</gco:CharacterString>
                                 </gmd:name>
