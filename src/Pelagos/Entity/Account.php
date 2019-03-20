@@ -109,15 +109,15 @@ class Account extends Entity implements UserInterface, EquatableInterface
      * @ORM\OrderBy({"modificationTimeStamp"="DESC"})
      */
     protected $passwordHistory;
-    
+
     /**
      * Login attempts for this account.
      *
-     * @var LoginAttempts
+     * @var Collection
      *
-     * @ORM\OneToOne(targetEntity="LoginAttempts")
+     * @ORM\OneToMany(targetEntity="LoginAttempts", mappedBy="account", fetch="EXTRA_LAZY")
      *
-     * @ORM\OrderBy({"timeStamp"="DESC"})
+     * @ORM\OrderBy({"creationTimeStamp"="DESC"})
      */
     protected $loginAttempts;
 
@@ -185,6 +185,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
     public function __construct(Person $person = null, $userId = null, Password $password = null)
     {
         $this->passwordHistory = new ArrayCollection();
+        $this->loginAttempts = new ArrayCollection();
         if ($person !== null) {
             $this->setPerson($person);
         }
@@ -326,6 +327,71 @@ class Account extends Entity implements UserInterface, EquatableInterface
     public function getPasswordEntity()
     {
         return $this->password;
+    }
+
+    /**
+     * Returns the LoginAttempts Collection for this Account.
+     *
+     * @return LoginAttempts The LoginAttempts entity attached to this Account.
+     */
+    public function getLoginAttempts()
+    {
+        return $this->loginAttempts;
+    }
+
+    /**
+     * Whether or not this account is locked out.
+     *
+     * @return boolean
+     */
+    public function isLockedOut()
+    {
+        $lockoutTimeSeconds = 60;
+        $maxAttempts = 10;
+
+        $tooManyAttemps = false;
+        $timeHasPasssed = false;
+
+        $lastAttempt = $this->loginAttempts->first();
+
+        // No previous attemps have been made.
+        if (!$lastAttempt instanceof LoginAttempts) {
+            return false;
+        }
+
+        $lastTimeStamp = $lastAttempt->getCreationTimeStamp()->getTimestamp();
+
+        // Filter only attempts 10 minutes from last attempt.
+        $attempts = $this->loginAttempts->filter(
+            function ($attempt) use ($lastTimeStamp, $lockoutTimeSeconds) {
+                $timeStamp = $attempt->getCreationTimeStamp()->getTimestamp();
+                $seconds = ($lastTimeStamp - $timeStamp);
+
+                if ($seconds < $lockoutTimeSeconds) {
+                    return true;
+                }
+            }
+        );
+
+        // Check to see if maximum attemps have been exceeded.
+        if (count($attempts) >= $maxAttempts) {
+            $tooManyAttemps = true;
+        }
+
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        $nowTimeStamp = $now->getTimestamp();
+
+        // If lockout time has passed.
+        if (($nowTimeStamp - $lastTimeStamp) > $lockoutTimeSeconds) {
+            $timeHasPasssed = true;
+        }
+
+        // If there have been too many attempts, and time has not passed.
+        if ($tooManyAttemps and !$timeHasPasssed) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -538,7 +604,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
         if ($this->getUsername() === $user->getUsername()) {
             return true;
         }
-        
+
         return false;
     }
 }

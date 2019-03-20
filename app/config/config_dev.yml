@@ -38,6 +38,10 @@ monolog:
             type:     stream
             path:     "%kernel.logs_dir%/doi_issue.log"
             channels: ["doi_issue"]
+        login_attempts:
+            type:     stream
+            path:     "%kernel.logs_dir%/login_attempts.log"
+            channels: ["login_attempts"]
         main:
             type:   stream
             path:   "%kernel.logs_dir%/%kernel.environment%.log"
