@@ -6,6 +6,12 @@ $(document).ready(function () {
     var count = $("#count").attr("data-content");
     var urlParts = window.location.search.split("page=");
     var startPage = Number(urlParts[1]);
+
+    //Setting value of page number to 1, for new search
+    $("#searchForm").submit(function () {
+        $("#pageNo").val("1");
+    });
+
     if (count > pageSize) {
         var pageCount = Math.ceil(count / pageSize);
         var url = Routing.generate("pelagos_app_ui_searchpage_default") + "?query=" + $("#search").val() + "&page=";
