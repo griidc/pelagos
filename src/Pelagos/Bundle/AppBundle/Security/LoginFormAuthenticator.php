@@ -160,7 +160,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
         $password = $credentials['_password'];
         if ($user->getPasswordEntity()->comparePassword($password)) {
-            $this->clearAttempts($user);
             return true;
         } else {
             throw new AuthenticationException('Invalid Credentials');
