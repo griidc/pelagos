@@ -8,6 +8,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Pelagos\Entity\ResearchGroup;
+
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
  *
@@ -35,7 +37,11 @@ class SearchPageController extends UIController
         if ($queryTerm) {
             $searchUtil = $this->get('pelagos.util.search');
             $results = $searchUtil->findDatasets($queryTerm, $page);
-            $count = $searchUtil->countDatasets($queryTerm);
+            $count = $searchUtil->getCount($queryTerm);
+//            $aggregations = $searchUtil->getAggregations($queryTerm);
+//            $this->getResearchGroupNames($aggregations);
+//            dump($aggregations);
+//            exit;
         }
 
         return $this->render('PelagosAppBundle:Search:default.html.twig', array(
@@ -44,5 +50,14 @@ class SearchPageController extends UIController
             'count' => $count,
             'page' => $page
         ));
+    }
+
+    private function getResearchGroupNames(array $aggregations)
+    {
+
+        $researchGroups = $this->entityHandler->getMultiple(ResearchGroup::class, array('id' => array_keys($aggregations)));
+
+        dump($researchGroups);
+        exit;
     }
 }

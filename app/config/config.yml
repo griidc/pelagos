@@ -320,7 +320,8 @@ fos_elastica:
                                 researchGroup:
                                     type: 'nested'
                                     properties:
-                                        id: ~
+                                        id:
+                                            type: 'keyword'
                                         name: ~
                                         fundingCycle:
                                             type: 'nested'

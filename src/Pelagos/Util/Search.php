@@ -51,11 +51,10 @@ class Search
      *
      * @return integer
      */
-    public function countDatasets(string $queryTerm): int
+    public function getCount(string $queryTerm): int
     {
-        $query = $this->buildQuery($queryTerm);
+        $userPaginator = $this->getPagiantor($queryTerm);
 
-        $userPaginator = $this->finder->findPaginated($query);
         $countResults = $userPaginator->getNbResults();
 
         return $countResults;
@@ -69,7 +68,7 @@ class Search
      *
      * @return \Elastica\Query
      */
-    private function buildQuery(string $queryTerm, int $page = 0): \Elastica\Query
+    private function buildQuery(string $queryTerm, int $page = 1): \Elastica\Query
     {
         $mainQuery = new \Elastica\Query();
         $boolQuery = new \Elastica\Query\BoolQuery();
@@ -89,6 +88,37 @@ class Search
         $mainQuery->setQuery($boolQuery);
         $mainQuery->setFrom(($page - 1) * 10);
 
+        $agg = new \Elastica\Aggregation\Terms('researchGrpId');
+        $nestedAgg = new \Elastica\Aggregation\Nested('nested', 'researchGroup');
+        $agg->setField('researchGroup.id');
+        $nestedAgg->addAggregation($agg);
+        $mainQuery->addAggregation($nestedAgg);
+
         return $mainQuery;
+    }
+
+    /**
+     * Get the paginator adapter for the query.
+     *
+     * @param string $queryTerm
+     *
+     * @return \Pagerfanta\Pagerfanta
+     */
+    private function getPagiantor(string $queryTerm): \Pagerfanta\Pagerfanta
+    {
+        $query = $this->buildQuery($queryTerm);
+
+        $userPaginator = $this->finder->findPaginated($query);
+
+        return $userPaginator;
+    }
+
+    public function getAggregations(string $queryTerm): array
+    {
+        $userPaginator = $this->getPagiantor($queryTerm);
+
+        $aggs = array_column($userPaginator->getAdapter()->getAggregations()['nested']['researchGrpId']['buckets'], 'doc_count', 'key');
+
+        return $aggs;
     }
 }
