@@ -31,6 +31,7 @@ class SearchPageController extends UIController
     {
         $queryTerm = $request->get('query');
         $results = array();
+        $researchGroupInfo = array();
         $count = 0;
         $page = ($request->get('page')) ? $request->get('page') : 1;
 
@@ -38,26 +39,35 @@ class SearchPageController extends UIController
             $searchUtil = $this->get('pelagos.util.search');
             $results = $searchUtil->findDatasets($queryTerm, $page);
             $count = $searchUtil->getCount($queryTerm);
-//            $aggregations = $searchUtil->getAggregations($queryTerm);
-//            $this->getResearchGroupNames($aggregations);
-//            dump($aggregations);
-//            exit;
+            $aggregations = $searchUtil->getAggregations($queryTerm);
+            $researchGroupsInfo = $this->getResearchGroupsInfo($aggregations);
         }
 
         return $this->render('PelagosAppBundle:Search:default.html.twig', array(
             'query' => $queryTerm,
             'results' => $results,
             'count' => $count,
-            'page' => $page
+            'page' => $page,
+            'researchGroupsInfo' => $researchGroupsInfo
         ));
     }
 
-    private function getResearchGroupNames(array $aggregations)
+    /**
+     * Get research group information for the aggregations.
+     *
+     * @param array $aggregations Aggregations for each research id.
+     *
+     * @return array
+     */
+    private function getResearchGroupsInfo(array $aggregations): array
     {
-
+        $researchGroupsInfo = array();
         $researchGroups = $this->entityHandler->getMultiple(ResearchGroup::class, array('id' => array_keys($aggregations)));
 
-        dump($researchGroups);
-        exit;
+        foreach ($researchGroups as $researchGroup) {
+            $researchGroupsInfo[$researchGroup->getId()] = array('name' => $researchGroup->getName(), 'count' => $aggregations[$researchGroup->getId()]);
+        }
+
+        return $researchGroupsInfo;
     }
 }

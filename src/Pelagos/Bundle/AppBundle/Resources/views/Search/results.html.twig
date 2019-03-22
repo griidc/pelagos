@@ -1,6 +1,19 @@
-<div class="container bootstrap snippet">
+<div class="container-fluid bootstrap snippet">
     <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-3">
+            <div class="ibox float-e-margins">
+                <div>
+                    <h3>Research Groups</h3>
+                    {% for group in researchGroupsInfo %}
+                        <div class="b">
+                            <input type="checkbox" name="{{ group.name }}" >
+                            <label style="font-weight: lighter" for="{{ group.name }}">({{ group.count }}) {{ group.name }} </label><br />
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-9">
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
                     <h2 data-content="{{ count }}" id="count">

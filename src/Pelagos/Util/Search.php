@@ -100,7 +100,7 @@ class Search
     /**
      * Get the paginator adapter for the query.
      *
-     * @param string $queryTerm
+     * @param string $queryTerm Query string.
      *
      * @return \Pagerfanta\Pagerfanta
      */
@@ -113,6 +113,13 @@ class Search
         return $userPaginator;
     }
 
+    /**
+     * Get the aggregations for the query.
+     *
+     * @param string $queryTerm Query string.
+     *
+     * @return array
+     */
     public function getAggregations(string $queryTerm): array
     {
         $userPaginator = $this->getPagiantor($queryTerm);
