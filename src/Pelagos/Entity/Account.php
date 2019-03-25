@@ -204,7 +204,9 @@ class Account extends Entity implements UserInterface, EquatableInterface
      */
     public function getId()
     {
-        return $this->getPerson()->getId();
+        if ($this->getPerson() instanceof Person) {
+            return $this->getPerson()->getId();
+        }
     }
 
     /**
@@ -332,7 +334,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
     /**
      * Returns the LoginAttempts Collection for this Account.
      *
-     * @return LoginAttempts The LoginAttempts entity attached to this Account.
+     * @return Collection The LoginAttempts entity attached to this Account.
      */
     public function getLoginAttempts()
     {
@@ -349,8 +351,8 @@ class Account extends Entity implements UserInterface, EquatableInterface
         $lockoutTimeSeconds = 600;
         $maxAttempts = 100;
 
-        $tooManyAttemps = false;
-        $timeHasPasssed = false;
+        $tooManyAttempts = false;
+        $timeHasPassed = false;
 
         $lastAttempt = $this->loginAttempts->first();
 
@@ -375,7 +377,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
 
         // Check to see if maximum attemps have been exceeded.
         if (count($attempts) >= $maxAttempts) {
-            $tooManyAttemps = true;
+            $tooManyAttempts = true;
         }
 
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -383,11 +385,11 @@ class Account extends Entity implements UserInterface, EquatableInterface
 
         // If lockout time has passed.
         if (($nowTimeStamp - $lastTimeStamp) > $lockoutTimeSeconds) {
-            $timeHasPasssed = true;
+            $timeHasPassed = true;
         }
 
         // If there have been too many attempts, and time has not passed.
-        if ($tooManyAttemps and !$timeHasPasssed) {
+        if ($tooManyAttempts and !$timeHasPassed) {
             return true;
         }
 

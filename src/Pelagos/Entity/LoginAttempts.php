@@ -30,17 +30,10 @@ class LoginAttempts extends Entity
     /**
      * Constructor for Logins Attempt.
      *
-     * @param Account   $account   The account to attach to this attempt.
-     * @param \DateTime $timeStamp The time stamp for the attempt.
+     * @param Account $account The account to attach to this attempt.
      */
-    public function __construct(Account $account, \DateTime $timeStamp = null)
+    public function __construct(Account $account)
     {
-        if (isset($timeStamp)) {
-            $this->attemptTimeStamp = $timeStamp;
-        } else {
-            $this->attemptTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
-        }
-
         $this->account = $account;
     }
 }
