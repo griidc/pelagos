@@ -1,0 +1,45 @@
+{% extends "PelagosAppBundle::layout.html.twig" %}
+
+{% block head %}
+    {{ add_css (
+        [
+            '//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css'
+        ]
+    ) }}
+    {% stylesheets
+        '@PelagosAppBundle/Resources/public/css/search.css' %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets %}
+
+    {{ add_js (
+        [
+            '//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js',
+            '//cdnjs.cloudflare.com/ajax/libs/bootpag/1.0.7/jquery.bootpag.min.js'
+        ]
+    ) }}
+    {% javascripts
+        '@PelagosAppBundle/Resources/public/js/search.js'
+        '@FOSJsRoutingBundle/Resources/public/js/router.js'
+    %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
+
+{% endblock %}
+
+{% block body %}
+    {% if query is null %}
+        <div class="container header">
+            <div class="row">
+                <h2>{% image '@PelagosAppBundle/Resources/public/images/search-logo.png' %}
+                        <img src="{{ asset_url }}">
+                    {% endimage %}
+                </h2>
+                {% include 'PelagosAppBundle:Search:form.html.twig' %}
+            </div>
+        </div>
+    {% else %}
+        {% include 'PelagosAppBundle:Search:results.html.twig' %}
+    {% endif %}
+{% endblock %}

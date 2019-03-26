@@ -2666,7 +2666,7 @@ class DatasetSubmission extends Entity
     /**
      * Getter for the erddap url.
      *
-     * @return string
+     * @return string|null
      */
     public function getErddapUrl(): ? string
     {
@@ -2674,9 +2674,24 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Getter for the erddap url protocol.
+     *
+     * @return string|null
+     */
+    public function getErddapUrlProtocol()
+    {
+        if ($this->erddapUrl !== null) {
+            preg_match('/^(.*?):.*$/', $this->erddapUrl, $matches);
+            return $matches[1];
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Setter for the erddap url.
      *
-     * @param string $erddapUrl Erddap url.
+     * @param string|null $erddapUrl Erddap url.
      *
      * @return void
      */
