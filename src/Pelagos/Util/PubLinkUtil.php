@@ -34,7 +34,14 @@ class PubLinkUtil
      */
     public function fetchCitation($doi, $style = PublicationCitation::CITATION_STYLE_APA, $locale = 'en-US')
     {
-        $curlCitation = $this->curlCitation($doi);
+        try {
+            // Try using doi.dx first
+            $curlCitation = $this->curlCitation($doi);
+        } catch (\Exception $e) {
+            // Try using CrossRef direct.
+            $curlCitation = $this->curlCitation($doi, $style, $locale, true);
+        }
+        
         $curlResponse = $curlCitation['curlResponse'];
         $status = $curlCitation['status'];
         $errorText = $curlCitation['errorText'];
@@ -51,6 +58,8 @@ class PubLinkUtil
      * @param string|null  $style       The textual style desired.
      * @param string|null  $locale      The character representation desired.
      * @param boolean|null $useCrossRef Use the alternative way to retrieve the citation.
+     *
+     * @throws \Exception When CONTENT TYPE is not text/bibliography.
      *
      * @return array
      */
@@ -80,9 +89,9 @@ class PubLinkUtil
         curl_close($ch);
         $status = $curlInfo['http_code'];
         $contentType = $curlInfo['content_type'];
-
-        if ($status == 200 and !preg_match('/text\/bibliography/', $contentType) and !$useCrossRef) {
-            return $this->curlCitation($doi, $style, $locale, true);
+        
+        if (!preg_match('/text\/bibliography/', $contentType) and !$useCrossRef) {
+            throw new \Exception('The citation is not in text\bibliography format');
         }
 
         return array('curlResponse' => $curlResponse, 'status' => $status, 'errorText' => $errorText);
