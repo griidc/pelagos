@@ -117,3 +117,7 @@ services:
 
     pelagos.util.url_validation:
         class: Pelagos\Util\UrlValidation
+
+    pelagos.util.search:
+        class: Pelagos\Util\Search
+        arguments: ["@fos_elastica.finder.search_pelagos.dataset"]
