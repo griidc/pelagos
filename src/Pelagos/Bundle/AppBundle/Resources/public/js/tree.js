@@ -169,6 +169,7 @@ function updateTree(tree) {
         if (data.element === null) {
             return;
         }
+
         if (typeof tree.onload !== 'undefined') {
             eval(tree.onload);
             console.log('run onload js');
@@ -182,9 +183,8 @@ function updateTree(tree) {
         left_to_open=init_open.length;
         if ($("#" + tree.name + " > ul > li:first").attr("id") == 'noDatasetsFound' || left_to_open == 0) {
             if (typeof tree.onload !== 'undefined') {
+                // Unsure why this is needed.
                 //eval(tree.onload);
-                console.log(left_to_open);
-                console.log('run onload js again?');
             }
         }
     });

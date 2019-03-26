@@ -3,19 +3,21 @@ var $ = jQuery.noConflict();
 $(document).ready(function() {
     $('#menu .overview').width($('#menu .viewport').width() - 15);
 
+    // Due to a bug in hashChange (old version, no newer compatible with current jQuery),
+    // manualy detect the hash on load, and force hash change.
+    // But we have to wait with opening nodes until js Tree is fully loaded.
     $("#tree").bind('loaded.jstree', function(e, data) {
         if (window.location.hash != "") {
-            $(window).trigger("hashchange");
+            $(window).hashchange();
         }
     });
 
-    $(window).on('hashchange', function(){
+    $(window).hashchange( function(){
         var m = location.hash.match(/^#([^\/]+)\/?([^\/]+)?/);
-        console.log(m);
         if (m) {
             if (typeof m[1] !== 'undefined') {
                 if (typeof m[2] === 'undefined') {
-                    if ($('#projects_funding-cycle_' + m[1]).length && $('#tree').jstree('get_selected')[0] != 'projects_funding-cycle_' + m[1]) {
+                    if ($('#projects_funding-cycle_' + m[1]).length && $('#tree').jstree('get_selected').attr('id') != 'projects_funding-cycle_' + m[1]) {
                         $("#tree").jstree("deselect_all");
                         $("#tree").jstree("select_node", ('#projects_funding-cycle_' + m[1]));
                     }
