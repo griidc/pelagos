@@ -34,6 +34,7 @@ security:
             guard:
                authenticators:
                    - pelagos.security.login_form_authenticator
+               provider: pelagos_account
             #logout
             logout:
                 path: security_logout

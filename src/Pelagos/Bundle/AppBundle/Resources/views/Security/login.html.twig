@@ -22,14 +22,14 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
-            $(".pelagosNoty").pelagosNoty({timeout: 6000, showOnTop:false});
+            $(".pelagosNoty").pelagosNoty({timeout: 10000, showOnTop:false});
         });
     </script>
 {% endblock %}
 
 {% block body %}
     {% if error %}
-        <div class="pelagosNoty" text="{{ error.messageKey|trans(error.messageData, 'security') }}" type="error"></div>
+        <div class="pelagosNoty" text="{{ error.message }}" type="error"></div>
     {% endif %}
     <div id="main-wrapper">
         <div id="main" class="clearfix">

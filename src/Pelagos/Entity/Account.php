@@ -23,7 +23,7 @@ use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
  *
  * @ORM\Entity
  */
-class Account extends Entity implements UserInterface, \Serializable, EquatableInterface
+class Account extends Entity implements UserInterface, EquatableInterface
 {
     /**
      * A friendly name for this type of entity.
@@ -78,7 +78,7 @@ class Account extends Entity implements UserInterface, \Serializable, EquatableI
      *
      * @var string
      *
-     * @ORM\Column(type="text", unique=true)
+     * @ORM\Column(type="citext", unique=true)
      *
      * @Assert\NotBlank(
      *     message="User ID is required"
@@ -109,6 +109,17 @@ class Account extends Entity implements UserInterface, \Serializable, EquatableI
      * @ORM\OrderBy({"modificationTimeStamp"="DESC"})
      */
     protected $passwordHistory;
+
+    /**
+     * Login attempts for this account.
+     *
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="LoginAttempts", mappedBy="account", fetch="EXTRA_LAZY")
+     *
+     * @ORM\OrderBy({"creationTimeStamp"="DESC"})
+     */
+    protected $loginAttempts;
 
     /**
      * Whether this Account is a POSIX account.
@@ -174,6 +185,7 @@ class Account extends Entity implements UserInterface, \Serializable, EquatableI
     public function __construct(Person $person = null, $userId = null, Password $password = null)
     {
         $this->passwordHistory = new ArrayCollection();
+        $this->loginAttempts = new ArrayCollection();
         if ($person !== null) {
             $this->setPerson($person);
         }
@@ -192,7 +204,9 @@ class Account extends Entity implements UserInterface, \Serializable, EquatableI
      */
     public function getId()
     {
-        return $this->getPerson();
+        if ($this->getPerson() instanceof Person) {
+            return $this->getPerson()->getId();
+        }
     }
 
     /**
@@ -315,6 +329,71 @@ class Account extends Entity implements UserInterface, \Serializable, EquatableI
     public function getPasswordEntity()
     {
         return $this->password;
+    }
+
+    /**
+     * Returns the LoginAttempts Collection for this Account.
+     *
+     * @return Collection The LoginAttempts entity attached to this Account.
+     */
+    public function getLoginAttempts()
+    {
+        return $this->loginAttempts;
+    }
+
+    /**
+     * Whether or not this account is locked out.
+     *
+     * @return boolean
+     */
+    public function isLockedOut()
+    {
+        $lockoutTimeSeconds = 600;
+        $maxAttempts = 100;
+
+        $tooManyAttempts = false;
+        $timeHasPassed = false;
+
+        $lastAttempt = $this->loginAttempts->first();
+
+        // No previous attemps have been made.
+        if (!$lastAttempt instanceof LoginAttempts) {
+            return false;
+        }
+
+        $lastTimeStamp = $lastAttempt->getCreationTimeStamp()->getTimestamp();
+
+        // Filter only attempts 10 minutes from last attempt.
+        $attempts = $this->loginAttempts->filter(
+            function ($attempt) use ($lastTimeStamp, $lockoutTimeSeconds) {
+                $timeStamp = $attempt->getCreationTimeStamp()->getTimestamp();
+                $seconds = ($lastTimeStamp - $timeStamp);
+
+                if ($seconds < $lockoutTimeSeconds) {
+                    return true;
+                }
+            }
+        );
+
+        // Check to see if maximum attemps have been exceeded.
+        if (count($attempts) >= $maxAttempts) {
+            $tooManyAttempts = true;
+        }
+
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        $nowTimeStamp = $now->getTimestamp();
+
+        // If lockout time has passed.
+        if (($nowTimeStamp - $lastTimeStamp) > $lockoutTimeSeconds) {
+            $timeHasPassed = true;
+        }
+
+        // If there have been too many attempts, and time has not passed.
+        if ($tooManyAttempts and !$timeHasPassed) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -501,40 +580,6 @@ class Account extends Entity implements UserInterface, \Serializable, EquatableI
     }
 
     /**
-     * Serialize this Account.
-     *
-     * This is required by \Serializable.
-     *
-     * @return string Serialized Account string.
-     */
-    public function serialize()
-    {
-        return serialize(
-            array(
-            $this->getId(),
-            $this->userId,
-            )
-        );
-    }
-
-    /**
-     * Unserialize this Account.
-     *
-     * This is required by \Serializable.
-     *
-     * @param string $serialized Serialized Account string.
-     *
-     * @return void
-     */
-    public function unserialize($serialized)
-    {
-        list (
-            $this->person,
-            $this->userId,
-        ) = unserialize($serialized);
-    }
-
-    /**
      * Returns the passwordHashSalt for this Account.
      *
      * This is required by \Symfony\Component\Security\Core\User\UserInterface
@@ -558,6 +603,10 @@ class Account extends Entity implements UserInterface, \Serializable, EquatableI
      */
     public function isEqualTo(UserInterface $user)
     {
-        return true;
+        if ($this->getUsername() === $user->getUsername()) {
+            return true;
+        }
+
+        return false;
     }
 }

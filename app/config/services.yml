@@ -94,6 +94,7 @@ services:
             - { name: monolog.processor, channel: retriever }
             - { name: monolog.processor, channel: dataset_file_hasher }
             - { name: monolog.processor, channel: doi_issue }
+            - { name: monolog.processor, channel: login_attempts }
 
     pelagos.console.listener:
         class: Pelagos\Event\ConsoleListener
@@ -121,8 +122,9 @@ services:
     pelagos.security.login_form_authenticator:
         class: Pelagos\Bundle\AppBundle\Security\LoginFormAuthenticator
         autowire: true
-
+        tags:
+            - { name: monolog.logger, channel: login_attempts }
+ 
     pelagos.util.search:
         class: Pelagos\Util\Search
         arguments: ["@fos_elastica.finder.search_pelagos.dataset"]
-
