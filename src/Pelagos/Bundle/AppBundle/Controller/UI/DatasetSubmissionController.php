@@ -344,7 +344,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                 'attr' => array(
                     'datasetSubmission' => $datasetSubmissionId,
                     'researchGroup' => $researchGroupId,
-                    'datasetSubmissionStatus' => $datasetSubmissionLockStatus
+                    'datasetSubmissionStatus' => (int) $datasetSubmissionLockStatus
                 ),
             )
         );

@@ -63,9 +63,7 @@ function insertTree(tree) {
     document.write('</div>');
 
     $(document).ready(function() {
-        $.getScript("/includes/jstree/jquery.jstree.js", function (data, textStatus, jqxhr) {
-            updateTree(tree);
-        });
+        updateTree(tree);
     });
 }
 
@@ -77,10 +75,9 @@ function updateTree(tree) {
         }
     }
 
-
     if (tree.selected) {
         selected_node = $("#" + tree.name).jstree('get_selected');
-        if (typeof(selected_node) != 'undefined' && typeof(selected_node.attr('id')) != 'undefined' && selected_node.attr('id') != 'tree') {
+        if (typeof(selected_node) != 'undefined' && typeof(selected_node.id) != 'undefined' && selected_node.id != 'tree') {
             selected_node.parents("li").each(function () {
                 var this_id = $(this).attr("id");
                 if ($.inArray(this_id,init_open) == -1) {
@@ -96,20 +93,13 @@ function updateTree(tree) {
         "core": {
             "html_titles": true,
             "initially_open": init_open,
-            "animation": 0
-        },
-        "themes": {
-            "theme": tree.theme,
-            "url": "/includes/jstree/themes/" + tree.theme + "/style.css",
-            "dots": tree.dots,
-            "icons": tree.icons
-        },
-        "json_data": {
-            "ajax": {
-                "url": function (node) {
+            "animation": 0,
+            "check_callback" : true,
+            "data" : {
+              "url" : function (node) {
                     var nodeId = "";
                     var url = "";
-                    if (node == -1) {
+                    if (node.parents.length == 0) {
                         if (tree.type == 'ra') {
                             url = Routing.generate("pelagos_api_tree_get_funding_organizations");
                         } else {
@@ -117,7 +107,7 @@ function updateTree(tree) {
                         }
                     }
                     else {
-                        nodeId = node.attr('id');
+                        nodeId = node.id;
                         if (tree.type == 'ra') {
                             var matchFundingCycleId = nodeId.match(/^projects_funding-cycle_(\d+)$/);
                             if (null !== matchFundingCycleId) {
@@ -137,19 +127,21 @@ function updateTree(tree) {
                     }
                     return url + "?tree=" + encodeURIComponent(JSON.stringify(tree));
                 },
-                "success": function (new_data) {
-                    return new_data;
-                }
-            }
+              "data" : function (data) {
+                return data;
+              }
+            },
+            "themes":{
+                "icons" : tree.icons,
+                "dots" : tree.dots,
+            },
         },
-        "ui": { "select_limit": 1, "initially_select": [ trees[tree.name].selected ] },
-        "plugins": [ "json_data", "types", "themes", "ui" ]
     });
 
     $("#" + tree.name).bind("after_open.jstree", function(event, data) {
         childrenLoading--;
-        loadOpenChildren(data.inst,data.rslt.obj);
-        var settings = data.inst._get_settings();
+        loadOpenChildren(data.instance,data.node);
+        var settings = data.instance.settings;
         if (childrenLoading < 1) {
             settings.core.animation = tree.animation;
             if (typeof tree.afteropen !== 'undefined') {
@@ -170,8 +162,8 @@ function updateTree(tree) {
         if (typeof tree.onload !== 'undefined') {
             eval(tree.onload);
         }
-        loadOpenChildren(data.inst,-1);
-        var root_nodes=data.inst._get_children(-1);
+        loadOpenChildren(data.instance,-1);
+        var root_nodes=data.instance.get_children_dom(-1);
         var root_node_ids=[];
         for (var i = 0; i < root_nodes.length; i++) { root_node_ids.push(root_nodes[i].id); }
 
@@ -179,14 +171,15 @@ function updateTree(tree) {
         left_to_open=init_open.length;
         if ($("#" + tree.name + " > ul > li:first").attr("id") == 'noDatasetsFound' || left_to_open == 0) {
             if (typeof tree.onload !== 'undefined') {
-                eval(tree.onload);
+                // Unsure why this is needed.
+                //eval(tree.onload);
             }
         }
     });
 
     $("#" + tree.name).bind("select_node.jstree", function(event, data) {
-        trees[tree.name].selected = $('#' + tree.name).jstree('get_selected').attr('id');
-        eval($('#' + tree.name).jstree('get_selected').attr('action'));
+        trees[tree.name].selected = data.node.id;
+        eval(data.node.a_attr.action);
     });
 
     $("#" + tree.name).bind("deselect_node.jstree", function(event, data) {
@@ -196,14 +189,15 @@ function updateTree(tree) {
 }
 
 function loadOpenChildren(tree,node) {
-    children = tree._get_children(node);
-    for (var i = 0; i < children.length; i++) {
-        var childId = '#' + children[i].id;
-        if (tree.is_open(childId)) {
-            tree.close_node(childId);
-            childrenLoading++;
-            tree.open_node(childId);
+    if (tree !== 'undefined') {
+        children = tree.get_children_dom(node);
+        for (var i = 0; i < children.length; i++) {
+            var childId = '#' + children[i].id;
+            if (tree.is_open(childId)) {
+                tree.close_node(childId);
+                childrenLoading++;
+                tree.open_node(childId);
+            }
         }
     }
-
 }

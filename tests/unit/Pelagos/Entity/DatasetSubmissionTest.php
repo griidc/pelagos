@@ -330,17 +330,31 @@ class DatasetSubmissionTest extends TestCase
      */
     public function testCanSetAndGetDatasetFileColdStorageAttributes()
     {
-        $this->datasetSubmission->setDatasetFileColdStorageArchiveSha256Hash('66a045b452102c59d840ec097d59d9467e13a3f34f6494e539ffd32c1bb35f18');
+        // values used for testing
+        $testHash = '66a045b452102c59d840ec097d59d9467e13a3f34f6494e539ffd32c1bb35f18';
+        $testSize = 42;
+        $testName = 'test.dat';
+
+        // This public setting internally calls protected individual setters in the entity, for coverage.
+        $this->datasetSubmission->setDatasetFileColdStorageAttributes($testSize, $testHash, $testName);
 
         $this->assertEquals(
-            '66a045b452102c59d840ec097d59d9467e13a3f34f6494e539ffd32c1bb35f18',
+            $testHash,
             $this->datasetSubmission->getDatasetFileColdStorageArchiveSha256Hash()
         );
-        $this->datasetSubmission->setDatasetFileColdStorageArchiveSize(42);
         $this->assertEquals(
-            42,
+            $testSize,
             $this->datasetSubmission->getDatasetFileColdStorageArchiveSize()
         );
+        $this->assertEquals(
+            $testName,
+            $this->datasetSubmission->getDatasetFileColdStorageOriginalFilename()
+        );
+
+        $this->datasetSubmission->clearDatasetFileColdStorageAttributes();
+        $this->assertNull($this->datasetSubmission->getDatasetFileColdStorageArchiveSha256Hash());
+        $this->assertNull($this->datasetSubmission->getDatasetFileColdStorageArchiveSize());
+        $this->assertNull($this->datasetSubmission->getDatasetFileColdStorageOriginalFilename());
     }
 
     /**
@@ -870,7 +884,10 @@ class DatasetSubmissionTest extends TestCase
 
         $this->datasetSubmission->setTemporalExtentNilReasonType($mockTemporalExtentNilReasonType);
 
-        $this->assertEquals($mockTemporalExtentNilReasonType, $this->datasetSubmission->getTemporalExtentNilReasonType());
+        $this->assertEquals(
+            $mockTemporalExtentNilReasonType,
+            $this->datasetSubmission->getTemporalExtentNilReasonType()
+        );
     }
 
     /**
@@ -923,7 +940,7 @@ class DatasetSubmissionTest extends TestCase
     }
 
     /**
-     * Test the setter and getter for dataset file url last checked date
+     * Test the setter and getter for dataset file url last checked date.
      *
      * @return void
      */
@@ -937,7 +954,7 @@ class DatasetSubmissionTest extends TestCase
     }
 
     /**
-     * Test the setter and getter for dataset file url status code
+     * Test the setter and getter for dataset file url status code.
      *
      * @return void
      */
@@ -950,4 +967,20 @@ class DatasetSubmissionTest extends TestCase
         $this->assertEquals($statusCode, $this->datasetSubmission->getDatasetFileUrlStatusCode());
     }
 
+    /**
+     * Test the setter and getter for ErddapUrl and generated ErddapUrlProtocol.
+     *
+     * @return void
+     */
+    public function testCanSetAndGetErddapUrl()
+    {
+        $testProtocol = 'abcd';
+        $testUrl = "$testProtocol://hostname.site.tld";
+        $this->datasetSubmission->setErddapUrl($testUrl);
+        $this->assertEquals($testUrl, $this->datasetSubmission->getErddapUrl());
+        $this->assertEquals($testProtocol, $this->datasetSubmission->getErddapUrlProtocol());
+
+        $this->datasetSubmission->setErddapUrl(null);
+        $this->assertNull($this->datasetSubmission->getErddapUrlProtocol());
+    }
 }

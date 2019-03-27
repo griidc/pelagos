@@ -1,22 +1,20 @@
 [
 {% for person in people %}
     {
-        "data": {
-            "title": "{{person.lastName | raw}}, {{person.firstName | raw}}",
-            "attr": {
-                "style": "color:{{tree.researcher_color}}"
-            }
+        "text": "{{person.lastName | raw}}, {{person.firstName | raw}}",
+        "li_attr": {
+            "style": "color:{{tree.researcher_color}}"
         },
-        "attr": {
+        "a_attr": {
             "id": "projects_peopleId_{{person.id}}",
             "action": "{{tree.researcher_action | evaluate}}"
         }
         {% if tree.max_depth > 0 %}
         ,
             {% if tree.expand_to_depth > 0 %}
-                "state": "open"
+                "opened": "true"
             {% else %}
-                "state": "closed"
+                "opened": "false"
             {% endif %}
         {% endif %}
     }
@@ -26,13 +24,11 @@
 {% endfor %}
 {% if not people %}
     {
-        "data": {
-            "title": "no datasets found",
-            "attr": {
-                "style": "color:red"
-            }
+        "text": "no datasets found",
+        "li_attr": {
+            "style": "color:red"
         },
-        "attr": {
+        "a_attr": {
             "id": "noDatasetsFound"
         }
     }

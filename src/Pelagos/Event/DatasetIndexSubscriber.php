@@ -10,6 +10,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Pelagos\Entity\Dataset;
 use Pelagos\Util\Geometry;
 
+use Pelagos\Exception\InvalidGmlException;
+
 /**
  * An event subscriber for events related to the dataset index.
  */
@@ -52,9 +54,14 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
         $wkt = null;
 
         // Logic to get the spatialExtent is in Dataset Entity.
-        $wkt = $this->geometryUtil->convertGmlToWkt(
-            $dataset->getSpatialExtentGeometry()
-        );
+        try {
+            $wkt = $this->geometryUtil->convertGmlToWkt(
+                $dataset->getSpatialExtentGeometry()
+            );
+        } catch (InvalidGmlException $exception) {
+            $wkt = null;
+        }
+
 
         if (null !== $wkt) {
             $document->set('geometry', $wkt);

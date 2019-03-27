@@ -91,16 +91,16 @@
                 <gmd:geographicElement>
                     <gmd:EX_GeographicBoundingBox>
                         <gmd:westBoundLongitude>
-                            <gco:Decimal>{{ boundingBoxArray.westBoundLongitude }}</gco:Decimal>
+                            <gco:Decimal>{{ boundingBoxArray.westBoundLongitude | default }}</gco:Decimal>
                         </gmd:westBoundLongitude>
                         <gmd:eastBoundLongitude>
-                            <gco:Decimal>{{ boundingBoxArray.eastBoundLongitude }}</gco:Decimal>
+                            <gco:Decimal>{{ boundingBoxArray.eastBoundLongitude | default}}</gco:Decimal>
                         </gmd:eastBoundLongitude>
                         <gmd:southBoundLatitude>
-                            <gco:Decimal>{{ boundingBoxArray.southBoundLatitude }}</gco:Decimal>
+                            <gco:Decimal>{{ boundingBoxArray.southBoundLatitude | default}}</gco:Decimal>
                         </gmd:southBoundLatitude>
                         <gmd:northBoundLatitude>
-                            <gco:Decimal>{{ boundingBoxArray.northBoundLatitude }}</gco:Decimal>
+                            <gco:Decimal>{{ boundingBoxArray.northBoundLatitude | default }}</gco:Decimal>
                         </gmd:northBoundLatitude>
                     </gmd:EX_GeographicBoundingBox>
                 </gmd:geographicElement>

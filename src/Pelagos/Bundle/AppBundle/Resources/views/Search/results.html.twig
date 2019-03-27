@@ -1,0 +1,36 @@
+<div class="container bootstrap snippet">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <h2 data-content="{{ count }}" id="count">
+                        {{ count }} results found for: <span class="text-navy">"{{ query }}"</span>
+                    </h2>
+
+                    <div class="search-form">
+                        {% include 'PelagosAppBundle:Search:form.html.twig' %}
+                    </div>
+                    {% for result in results %}
+                        {% include 'PelagosAppBundle:Search:dataset-row.html.twig'  %}
+                    {% endfor %}
+
+                    <div class="text-center">
+                        <div class="btn-group">
+                            <div class="wrapper">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <nav aria-label="Search results pages">
+                                                <ul id="search-pagination" class="pagination"></ul>
+                                            </nav>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

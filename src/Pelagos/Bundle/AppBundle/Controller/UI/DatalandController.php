@@ -48,7 +48,11 @@ class DatalandController extends UIController
             $rawXml = $this->get('pelagos.util.metadata')->getXmlRepresentation($dataset, $boundingBoxArray);
         }
         //Logic to get DIF or Accepted Dataset is in Dataset Entity.
-        $wkt = $geometryUtil->convertGmlToWkt($dataset->getSpatialExtentGeometry());
+        try {
+            $wkt = $geometryUtil->convertGmlToWkt($dataset->getSpatialExtentGeometry());
+        } catch (InvalidGmlException $exception) {
+            $wkt = null;
+        }
 
         $downloadCount = null;
         // Remotely hosted datasets are normally also hosted locally anyway, so including.
