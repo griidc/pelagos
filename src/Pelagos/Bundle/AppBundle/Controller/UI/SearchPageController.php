@@ -31,7 +31,7 @@ class SearchPageController extends UIController
     {
         $queryTerm = $request->get('query');
         $results = array();
-        $researchGroupInfo = array();
+        $researchGroupsInfo = array();
         $count = 0;
         $page = ($request->get('page')) ? $request->get('page') : 1;
 
