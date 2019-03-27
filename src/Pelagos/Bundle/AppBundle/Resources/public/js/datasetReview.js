@@ -661,9 +661,9 @@ $(document).ready(function(){
     //coldstorage checkbox - distribution info tab
     $(".coldstorage-checkbox").change(function (){
         if (!$(this).is(":checked") &&
-            ($("#datasetFileColdStorageArchiveSha256Hash").val().trim() !== "" || $("#datasetFileColdStorageArchiveSize").val() !== "") ) {
+            ($("#datasetFileColdStorageArchiveSha256Hash").val().trim() !== "" || $("#datasetFileColdStorageArchiveSize").val() !== "" || $("#datasetFileColdStorageOriginalFilename").val() !== ""  ) ) {
             $(this).prop("checked", true); //re-check because stop propagation doesn't work
-            showDialog("Cold Storage Information", "Please make sure the Cold Storage Archive Size and Hash values are empty before disabling In Cold Storage option.");
+            showDialog("Cold Storage Information", "Please make sure the cold storage properties are all empty before unchecking.");
         }
         else checkColdStorageCheckBoxState();
     });
@@ -673,13 +673,17 @@ function checkColdStorageCheckBoxState() {
     if ($(".coldstorage-checkbox").is(":checked")) {
         $(".row-coldstorage-filesize").show();
         $(".row-coldstorage-sha256hash").show();
+        $(".row-coldstorage-original-filename").show();
         $("#datasetFileColdStorageArchiveSize").attr("required", "required");
         $("#datasetFileColdStorageArchiveSha256Hash").attr("required", "required");
+        $("#datasetFileColdStorageOriginalFilename").attr("required", "required");
     } else {
         $(".row-coldstorage-filesize").hide();
         $(".row-coldstorage-sha256hash").hide();
+        $(".row-coldstorage-original-filename").hide();
         $("#datasetFileColdStorageArchiveSize").removeAttr("required");
         $("#datasetFileColdStorageArchiveSha256Hash").removeAttr("required");
+        $("#datasetFileColdStorageOriginalFilename").removeAttr("required");
     }
 }
 
