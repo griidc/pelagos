@@ -1,11 +1,12 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
 
-{% block head %}
+{%block stylesheets %}
     {{ parent() }}
-{% endblock %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+{%endblock stylesheets  %}
 
 {% block body %}
-    <div class="messages status">
+    <div class="messages status alert alert-success">
         <h2 class="element-invisible">Status message</h2>
         {% if reset == true %}
             The email address you have entered has been located in the GRIIDC system. An email will be sent to this address with additional information on how to reset your the account password.

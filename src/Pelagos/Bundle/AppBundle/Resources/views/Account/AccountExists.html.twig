@@ -5,9 +5,9 @@
 {% endblock %}
 
 {% block body %}
-    <div class="messages error">
+    <div class="messages error alert alert-danger">
         <h2 class="element-invisible">Error message</h2>
-        The email address you have entered is already associated with a GRIIDC account. If you have forgotten your password or would like to create a new password please visit <a href="{{ path('pelagos_app_ui_account_passwordreset') }}">password reset</a>. For any additional questions please contact <a href=
-            "griidc@gomri.org">griidc@gomri.org</a>.
+        The email address you have entered is already associated with a GRIIDC account. If you have forgotten your password or would like to create a new password please visit <a href="{{ path('pelagos_app_ui_account_passwordreset') }}" class="alert-link">password reset</a>. For any additional questions please contact <a href=
+            "griidc@gomri.org" class="alert-link">griidc@gomri.org</a>.
     </div>
 {% endblock %}
