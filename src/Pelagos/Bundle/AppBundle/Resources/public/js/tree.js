@@ -148,7 +148,6 @@ function updateTree(tree) {
             settings.core.animation = tree.animation;
             if (typeof tree.afteropen !== 'undefined') {
                 eval(tree.afteropen);
-                console.log('run after open');
             }
         }
         if (left_to_open > 0) {
@@ -156,16 +155,12 @@ function updateTree(tree) {
             if (left_to_open == 0) {
                 if (typeof tree.onload !== 'undefined') {
                     eval(tree.onload);
-                    console.log('onload js');
                 }
             }
         }
     });
 
     $("#" + tree.name).bind("loaded.jstree", function(event, data) {
-        console.log('loaded');
-        console.log(data);
-        console.log(tree);
         if (data.element === null) {
             return;
         }
@@ -184,7 +179,7 @@ function updateTree(tree) {
         if ($("#" + tree.name + " > ul > li:first").attr("id") == 'noDatasetsFound' || left_to_open == 0) {
             if (typeof tree.onload !== 'undefined') {
                 // Unsure why this is needed.
-                //eval(tree.onload);
+                eval(tree.onload);
             }
         }
     });
