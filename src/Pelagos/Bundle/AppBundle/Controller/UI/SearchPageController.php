@@ -34,12 +34,16 @@ class SearchPageController extends UIController
         $researchGroupsInfo = array();
         $count = 0;
         $page = ($request->get('page')) ? $request->get('page') : 1;
-
+        $rgId = $request->get('rgId');
+        $options = array();
         if ($queryTerm) {
+            if ($rgId) {
+                $options = array('rgId' => $rgId);
+            }
             $searchUtil = $this->get('pelagos.util.search');
-            $results = $searchUtil->findDatasets($queryTerm, $page);
-            $count = $searchUtil->getCount($queryTerm);
-            $aggregations = $searchUtil->getAggregations($queryTerm);
+            $results = $searchUtil->findDatasets($queryTerm, $page, $options);
+            $count = $searchUtil->getCount($queryTerm, $options);
+            $aggregations = $searchUtil->getAggregations($queryTerm, $options);
             $researchGroupsInfo = $this->getResearchGroupsInfo($aggregations);
         }
 

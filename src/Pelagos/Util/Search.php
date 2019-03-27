@@ -35,9 +35,9 @@ class Search
      *
      * @return array
      */
-    public function findDatasets(string $queryTerm, int $page): array
+    public function findDatasets(string $queryTerm, int $page, array $options = []): array
     {
-        $query = $this->buildQuery($queryTerm, $page);
+        $query = $this->buildQuery($queryTerm, $page, $options);
 
         $results = $this->finder->find($query);
 
@@ -51,9 +51,9 @@ class Search
      *
      * @return integer
      */
-    public function getCount(string $queryTerm): int
+    public function getCount(string $queryTerm, array $options = []): int
     {
-        $userPaginator = $this->getPagiantor($queryTerm);
+        $userPaginator = $this->getPagiantor($queryTerm, $options);
 
         $countResults = $userPaginator->getNbResults();
 
@@ -68,7 +68,7 @@ class Search
      *
      * @return \Elastica\Query
      */
-    private function buildQuery(string $queryTerm, int $page = 1): \Elastica\Query
+    private function buildQuery(string $queryTerm, int $page = 1, array $options = []): \Elastica\Query
     {
         $mainQuery = new \Elastica\Query();
         $boolQuery = new \Elastica\Query\BoolQuery();
@@ -85,8 +85,6 @@ class Search
         $datasetSubmissionQuery->setQuery($authorQuery);
 
         $boolQuery->addShould($datasetSubmissionQuery);
-        $mainQuery->setQuery($boolQuery);
-        $mainQuery->setFrom(($page - 1) * 10);
 
         $agg = new \Elastica\Aggregation\Terms('researchGrpId');
         $nestedAgg = new \Elastica\Aggregation\Nested('nested', 'researchGroup');
@@ -94,6 +92,17 @@ class Search
         $agg->setSize(500);
         $nestedAgg->addAggregation($agg);
         $mainQuery->addAggregation($nestedAgg);
+        if (isset($options['rgId'])) {
+            $researchGroupNameQuery = new \Elastica\Query\Nested();
+            $researchGroupNameQuery->setPath('researchGroup');
+            $rgNamequery = new \Elastica\Query\Terms();
+            $rgNamequery->setTerms('researchGroup.id', [$options['rgId']]);
+            $researchGroupNameQuery->setQuery($rgNamequery);
+            $boolQuery->addFilter($researchGroupNameQuery);
+        }
+
+        $mainQuery->setQuery($boolQuery);
+        $mainQuery->setFrom(($page - 1) * 10);
 
         return $mainQuery;
     }
@@ -105,9 +114,9 @@ class Search
      *
      * @return \Pagerfanta\Pagerfanta
      */
-    private function getPagiantor(string $queryTerm): \Pagerfanta\Pagerfanta
+    private function getPagiantor(string $queryTerm, array $options = []): \Pagerfanta\Pagerfanta
     {
-        $query = $this->buildQuery($queryTerm);
+        $query = $this->buildQuery($queryTerm, 1, $options);
 
         $userPaginator = $this->finder->findPaginated($query);
 
@@ -121,9 +130,9 @@ class Search
      *
      * @return array
      */
-    public function getAggregations(string $queryTerm): array
+    public function getAggregations(string $queryTerm, array $options = []): array
     {
-        $userPaginator = $this->getPagiantor($queryTerm);
+        $userPaginator = $this->getPagiantor($queryTerm, $options);
 
         $aggs = array_column($userPaginator->getAdapter()->getAggregations()['nested']['researchGrpId']['buckets'], 'doc_count', 'key');
 
