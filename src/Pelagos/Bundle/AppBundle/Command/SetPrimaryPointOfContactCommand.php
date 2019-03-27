@@ -43,34 +43,54 @@ class SetPrimaryPointOfContactCommand extends ContainerAwareCommand
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
 
         $datasets = $entityManager->getRepository(Dataset::class)
-            ->findBy(array('datasetStatus' => Dataset::DATASET_STATUS_ACCEPTED));
+            ->findBy(array('datasetSubmissionStatus' => [DatasetSubmission::STATUS_COMPLETE, DatasetSubmission::STATUS_IN_REVIEW]));
         $count = 0;
         foreach ($datasets as $dataset) {
-            $datasetSubmission = $dataset->getDatasetSubmission();
             $udi = $dataset->getUdi();
             $output->writeln('Checking primary contact for udi: ' . $udi);
 
-            if ($datasetSubmission instanceof DatasetSubmission) {
-                $datasetContacts = $datasetSubmission->getDatasetContacts();
-                $primaryContact = array();
-
-                foreach ($datasetContacts as $datasetContact) {
-                    if ($datasetContact->isPrimaryContact()) {
-                        continue 2;
-                    }
-                }
-                if (empty($primaryContact)) {
-                    $firstDatasetContact = $datasetContacts->first();
-                    if ($firstDatasetContact instanceof PersonDatasetSubmission) {
-                        $firstDatasetContact->setPrimaryContact(true);
-                        $output->writeln('Set primary contact for the dataset ' . $udi);
-                        $count++;
-                    }
-                }
-                $entityManager->persist($datasetSubmission);
-                $entityManager->flush();
+            // Using this getter so that irrespective of the dataset status, it would get the right Dataset Submission
+            $datasetSubmissionLatest = $dataset->getLatestDatasetReview();
+            $datasetSubmission = $dataset->getDatasetSubmission();
+            //To fix edge case scenarios, where drafts are present
+            if ($datasetSubmission !== $datasetSubmissionLatest) {
+                $this->setPrimary($datasetSubmission, $output);
             }
+            $this->setPrimary($datasetSubmissionLatest, $output);
+            $count++;
+            $entityManager->persist($dataset);
+            $entityManager->flush();
         }
         $output->writeln('No. of datasets whose primary contacts have been updated: ' . $count);
+    }
+
+    /**
+     * Sets primary point of contact for dataset submission if not present.
+     *
+     * @param DatasetSubmission $datasetSubmission An instance of Dataset Submission.
+     * @param OutputInterface   $output            An OutputInterface instance.
+     *
+     * @return void
+     */
+    private function setPrimary(DatasetSubmission $datasetSubmission, OutputInterface $output)
+    {
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            $datasetContacts = $datasetSubmission->getDatasetContacts();
+            $primaryContact = array();
+
+            foreach ($datasetContacts as $datasetContact) {
+                if ($datasetContact->isPrimaryContact()) {
+                    continue 1;
+                }
+            }
+            if (empty($primaryContact)) {
+                $firstDatasetContact = $datasetContacts->first();
+                if ($firstDatasetContact instanceof PersonDatasetSubmission) {
+                    $firstDatasetContact->setPrimaryContact(true);
+                    $output->writeln('Set primary contact for the dataset ' .
+                        $datasetSubmission->getDataset()->getUdi());
+                }
+            }
+        }
     }
 }

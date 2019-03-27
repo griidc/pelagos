@@ -121,3 +121,8 @@ services:
     pelagos.security.login_form_authenticator:
         class: Pelagos\Bundle\AppBundle\Security\LoginFormAuthenticator
         autowire: true
+
+    pelagos.util.search:
+        class: Pelagos\Util\Search
+        arguments: ["@fos_elastica.finder.search_pelagos.dataset"]
+

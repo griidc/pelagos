@@ -37,10 +37,25 @@
         </div>
     {% endif %}
 
+    {% if dataset.datasetSubmission.isDatasetFileInColdStorage %}
+        <h2>Cold Storage:</h2>
+        <div>
+            NOTE: Due to the large size of this dataset it has been archived
+            to cold storage. The dataset file has been replaced by a manifest
+            file with instructions on how to request this data:
+            {{ dataset.datasetSubmission.datasetFilename|default }} ({{ dataset.datasetSubmission.datasetFileSize|formatBytes }}).
+        </div>
+    {% endif %}
+
     {% if dataset.datasetSubmission.datasetFilename|default %}
         <h2>Filename:</h2>
         <div>
-            {{ dataset.datasetSubmission.datasetFilename|default }} ({{ dataset.datasetSubmission.datasetFileSize|formatBytes }})
+            {% if dataset.datasetSubmission.isDatasetFileInColdStorage %}
+                {{ dataset.datasetSubmission.datasetFileColdStorageOriginalFilename|default }}
+                ({{ dataset.datasetSubmission.datasetFileColdStorageArchivesize|formatBytes }})
+            {% else %}
+                    {{ dataset.datasetSubmission.datasetFilename|default }} ({{ dataset.datasetSubmission.datasetFileSize|formatBytes }})
+            {% endif %}
         </div>
     {% endif %}
 

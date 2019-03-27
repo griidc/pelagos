@@ -32,7 +32,6 @@ class DistributionPointTest extends TestCase
         $this->mockDatasetSubmission = \Mockery::mock('\Pelagos\Entity\DatasetSubmission');
         $this->mockDataCenter = \Mockery::mock('\Pelagos\Entity\DataCenter');
         $this->distributionPoint = new DistributionPoint;
-
     }
 
     /**
@@ -82,6 +81,27 @@ class DistributionPointTest extends TestCase
             $mockDistributionUrl,
             $this->distributionPoint->getDistributionUrl()
         );
+    }
+
+    /**
+     * Test the Distribution Url Protocol getter method.
+     *
+     * This method should test the Distribution Url's protocol string.
+     *
+     * @return void
+     */
+    public function testCanGetDistributionUrlProtocol()
+    {
+        $mockDistributionUrlProtocol = 'ftps';
+        $mockDistributionUrl = "$mockDistributionUrlProtocol://hostname.site.tld";
+        $this->distributionPoint->setDistributionUrl($mockDistributionUrl);
+        $this->assertEquals(
+            $mockDistributionUrlProtocol,
+            $this->distributionPoint->getDistributionUrlProtocol()
+        );
+        // Also try it if URL is null.
+        $this->distributionPoint->setDistributionUrl(null);
+        $this->assertNull($this->distributionPoint->getDistributionUrlProtocol());
     }
 
     /**
