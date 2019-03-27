@@ -338,7 +338,6 @@ function createRow(data, row)
 
 //this occurs at initial/new search
 function showDatasets(by,id) {
-    console.log("show");
     var filter = jQuery("#filter-applied").val();
     geo_filter = "";
     if (trees["tree"].geo_filter) {

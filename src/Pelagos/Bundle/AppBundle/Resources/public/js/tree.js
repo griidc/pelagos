@@ -76,9 +76,7 @@ function updateTree(tree) {
     }
 
     if (tree.selected) {
-        console.log('tree selected');
         selected_node = $("#" + tree.name).jstree('get_selected');
-        console.log(selected_node);
         if (typeof(selected_node) != 'undefined' && typeof(selected_node.attr('id')) != 'undefined' && selected_node.attr('id') != 'tree') {
             selected_node.parents("li").each(function () {
                 var this_id = $(this).attr("id");
@@ -167,7 +165,6 @@ function updateTree(tree) {
 
         if (typeof tree.onload !== 'undefined') {
             eval(tree.onload);
-            console.log('run onload js');
         }
         loadOpenChildren(data.instance,-1);
         var root_nodes=data.instance.get_children_dom(-1);
