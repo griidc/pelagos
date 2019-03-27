@@ -54,18 +54,11 @@ a:visited {
     margin-top: 5px;
 }
 
-.hr-line-dashed {
-    border-top: 1px dashed #E7EAEC;
-    color: #ffffff;
-    background-color: #ffffff;
-    height: 1px;
-    margin: 20px 0;
-}
-
 h2 {
     font-size: 24px;
     font-weight: 100;
 }
+
 #custom-search-input {
     margin:0;
     margin-top: 10px;
@@ -118,10 +111,4 @@ h1{
 }
 #search-pagination li{
     display: inline-block;
-}
-
-div.b {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }

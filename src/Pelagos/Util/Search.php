@@ -91,6 +91,7 @@ class Search
         $agg = new \Elastica\Aggregation\Terms('researchGrpId');
         $nestedAgg = new \Elastica\Aggregation\Nested('nested', 'researchGroup');
         $agg->setField('researchGroup.id');
+        $agg->setSize(500);
         $nestedAgg->addAggregation($agg);
         $mainQuery->addAggregation($nestedAgg);
 

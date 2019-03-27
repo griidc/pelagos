@@ -1,49 +1,67 @@
-<div class="container-fluid bootstrap snippet">
+<div class="container-fluid" style="margin-top: 50px;">
+    <div class="col-md-offset-4">
+        <h2 data-content="{{ count }}" id="count">
+            {{ count }} results found for: <span class="text-navy">"{{ query }}"</span>
+        </h2>
+    </div>
+
     <div class="row">
-        <div class="col-lg-3">
-            <div class="ibox float-e-margins">
-                <div>
-                    <h3>Research Groups</h3>
-                    {% for group in researchGroupsInfo %}
-                        <div class="b">
-                            <input type="checkbox" name="{{ group.name }}" >
-                            <label style="font-weight: lighter" for="{{ group.name }}">({{ group.count }}) {{ group.name }} </label><br />
+        <div class="search-form">
+            {% include 'PelagosAppBundle:Search:form.html.twig' %}
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-2 col-xs-2">
+
+            <div class="aggregations">
+                <h5 style="margin-bottom: 5px;"><strong style="color: #337ab7;">Research Groups</strong></h5>
+
+                {% for group in researchGroupsInfo %}
+
+                <ul class="browse-list list-unstyled long-list" style="margin-bottom: 0;">
+                    <li for="{{ group.id }}">
+                        <div class="checkbox block" style="margin-top: 0; margin-bottom: 0;">
+                            <label>
+                                <input class="checkbox" type="checkbox" id="{{ group.id }}">
+                                {{ group.name }} ({{ group.count }})
+                            </label>
                         </div>
-                    {% endfor %}
-                </div>
+                    </li>
+                </ul>
+                {% endfor %}
             </div>
         </div>
-        <div class="col-lg-9">
-            <div class="ibox float-e-margins">
-                <div class="ibox-content">
-                    <h2 data-content="{{ count }}" id="count">
-                        {{ count }} results found for: <span class="text-navy">"{{ query }}"</span>
-                    </h2>
 
-                    <div class="search-form">
-                        {% include 'PelagosAppBundle:Search:form.html.twig' %}
-                    </div>
-                    {% for result in results %}
-                        {% include 'PelagosAppBundle:Search:dataset-row.html.twig'  %}
-                    {% endfor %}
+        <div class="col-md-10 col-xs-10">
+            <div class="breadcrumbs"></div>
+            <div class="clearfix"></div>
+            <table class="table">
+                <tbody>
+                {% for result in results %}
+                    {% include 'PelagosAppBundle:Search:dataset-row.html.twig'  %}
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="clearfix"></div>
+        </div>
 
-                    <div class="text-center">
-                        <div class="btn-group">
-                            <div class="wrapper">
-                                <div class="container">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <nav aria-label="Search results pages">
-                                                <ul id="search-pagination" class="pagination"></ul>
-                                            </nav>
-                                        </div>
-                                    </div>
-                                </div>
+        <div class="text-center">
+            <div class="btn-group">
+                <div class="wrapper">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <nav aria-label="Search results pages">
+                                    <ul id="search-pagination" class="pagination"></ul>
+                                </nav>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="clearfix" style="margin-bottom: 100px;"></div>
     </div>
 </div>

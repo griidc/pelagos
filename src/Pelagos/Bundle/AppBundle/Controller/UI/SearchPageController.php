@@ -65,7 +65,11 @@ class SearchPageController extends UIController
         $researchGroups = $this->entityHandler->getMultiple(ResearchGroup::class, array('id' => array_keys($aggregations)));
 
         foreach ($researchGroups as $researchGroup) {
-            $researchGroupsInfo[$researchGroup->getId()] = array('name' => $researchGroup->getName(), 'count' => $aggregations[$researchGroup->getId()]);
+            $researchGroupsInfo[$researchGroup->getId()] = array(
+                'id' => $researchGroup->getId(),
+                'name' => $researchGroup->getName(),
+                'count' => $aggregations[$researchGroup->getId()]
+            );
         }
 
         return $researchGroupsInfo;

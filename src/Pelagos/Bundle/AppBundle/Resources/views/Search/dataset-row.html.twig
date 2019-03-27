@@ -1,20 +1,21 @@
-<div class="hr-line-dashed"></div>
-<div class="search-result">
-    <h4>
-        <a class="search-results"
-           href="{{ path('pelagos_app_ui_dataland_default', {'udi' : result.udi } ) }}" target="_blank">
+<tr id="{{ result.id }}" >
+    <td></td>
+    <td>
+        <a class="search-result"
+            href="{{ path('pelagos_app_ui_dataland_default', {'udi' : result.udi } ) }}" target="_blank">
             {% if result.datasetSubmission.authors is defined and result.datasetSubmission.authors is not null %}
-                {{ result.datasetSubmission.authors }}.
+            {{ result.datasetSubmission.authors }}.
             {% endif %}
             {% if result.referenceDateYear is defined and result.referenceDateYear is not null%}
-                {{ result.referenceDateYear }}.
+            {{ result.referenceDateYear }}.
             {% endif %}
             {{ result.title }}.
             {{ result.researchGroup.name }}.
             {% if result.doi.doi is defined and result.doi.doi is not null %}
-                DOI: {{ result.doi.doi }}.
+            DOI: {{ result.doi.doi }}.
             {% endif %}
             UDI: {{ result.udi }}
         </a>
-    </h4>
-</div>
+    </td>
+    <td></td>
+</tr>

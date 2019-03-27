@@ -1,6 +1,7 @@
-<form id="searchForm" name="searchForm" action="{{ path('pelagos_app_ui_searchpage_default') }}" method="get">
-    <div id="custom-search-input" align="center">
-        <div class="input-group col-md-12">
+<form id="searchForm" name="searchForm" action="{{ path('pelagos_app_ui_searchpage_default') }}" method="get" class="search-form">
+    <div id="custom-search-input">
+        <div class="col-md-4"></div>
+        <div class="input-group col-md-4">
             <input type="search" id="searchBox" name="query" class="search-query form-control" placeholder="Search..."
                    value = "{{ query|default }}">
             <input type="hidden" id="pageNo" name="page" value="{{ page | default }}">
@@ -10,5 +11,6 @@
                 </button>
             </span>
         </div>
+        <div class="col-md-4"></div>
     </div>
 </form>
