@@ -71,12 +71,14 @@ class Search
     private function buildQuery(string $queryTerm, int $page = 1, array $options = []): \Elastica\Query
     {
         $mainQuery = new \Elastica\Query();
-        $boolQuery = new \Elastica\Query\BoolQuery();
+        $subMainQuery = new \Elastica\Query\BoolQuery();
+        $filterBoolQuery = new \Elastica\Query\BoolQuery();
+        $fieldsBoolQuery = new \Elastica\Query\BoolQuery();
 
         $titleQuery = new \Elastica\Query\Match();
         $titleQuery->setFieldQuery('title', $queryTerm);
         $titleQuery->setFieldOperator('title', 'and');
-        $boolQuery->addShould($titleQuery);
+        $fieldsBoolQuery->addShould($titleQuery);
 
         $datasetSubmissionQuery = new \Elastica\Query\Nested();
         $datasetSubmissionQuery->setPath('datasetSubmission');
@@ -84,7 +86,7 @@ class Search
         $authorQuery->setFieldQuery('datasetSubmission.authors', $queryTerm);
         $datasetSubmissionQuery->setQuery($authorQuery);
 
-        $boolQuery->addShould($datasetSubmissionQuery);
+        $fieldsBoolQuery->addShould($datasetSubmissionQuery);
 
         $agg = new \Elastica\Aggregation\Terms('researchGrpId');
         $nestedAgg = new \Elastica\Aggregation\Nested('nested', 'researchGroup');
@@ -98,10 +100,13 @@ class Search
             $rgNamequery = new \Elastica\Query\Terms();
             $rgNamequery->setTerms('researchGroup.id', [$options['rgId']]);
             $researchGroupNameQuery->setQuery($rgNamequery);
-            $boolQuery->addFilter($researchGroupNameQuery);
+            $filterBoolQuery->addFilter($researchGroupNameQuery);
         }
 
-        $mainQuery->setQuery($boolQuery);
+        $subMainQuery->addMust($fieldsBoolQuery);
+        $subMainQuery->addMust($filterBoolQuery);
+
+        $mainQuery->setQuery($subMainQuery);
         $mainQuery->setFrom(($page - 1) * 10);
 
         return $mainQuery;
