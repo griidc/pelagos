@@ -1,8 +1,4 @@
-{% extends "PelagosAppBundle:template:UI.html.twig" %}
-
-{% block head %}
-    {{ parent() }}
-{% endblock %}
+{% extends "PelagosAppBundle::layout.ui.html.twig" %}
 
 {% block body %}
     <h2> Forgot Username</h2>
@@ -17,7 +13,7 @@
         </p>
     </form>
     {% else %}
-        <div class="messages status">
+        <div class="messages status alert alert-success">
             <h2 class="element-invisible">Success message</h2>
             If that email address is found in our system, we will send the associated username
             to the found email address. For any additional help please contact <a href="griidc@gomri.org">griidc@gomri.org</a>.
