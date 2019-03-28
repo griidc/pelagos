@@ -25,7 +25,10 @@
                         <div class="checkbox block" style="margin-top: 0; margin-bottom: 0;">
                             <label>
                                 <input class="checkbox" type="checkbox" id="{{ group.id }}">
-                                {{ group.name }} ({{ group.count }})
+                                    <span class="groupName">{{ group.name }} </span> ({{ group.count }})
+                                    <div class="tooltiptext">
+                                        <p>{{ group.name }}</p>
+                                    </div>
                             </label>
                         </div>
                     </li>

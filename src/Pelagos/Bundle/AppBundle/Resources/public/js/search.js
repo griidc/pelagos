@@ -53,4 +53,13 @@ $(document).ready(function () {
             href: url + "{{number}}"
         });
     }
+
+    // load qTip descriptions
+    $(".groupName").hover().each(function() {
+        $(this).qtip({
+            content: {
+                text: $.trim($(this).next().text())
+            }
+        });
+    });
 });

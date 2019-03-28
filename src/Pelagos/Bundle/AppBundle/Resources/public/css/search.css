@@ -112,3 +112,15 @@ h1{
 #search-pagination li{
     display: inline-block;
 }
+
+.tooltiptext {
+    display: none;
+}
+
+.groupName{
+    overflow: hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    width:150px;
+    display:inline-block;
+}
