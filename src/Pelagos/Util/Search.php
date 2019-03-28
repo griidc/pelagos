@@ -32,6 +32,7 @@ class Search
      *
      * @param string  $queryTerm Query string.
      * @param integer $page      Page number of the search page.
+     * @param array   $options   Options for the query.
      *
      * @return array
      */
@@ -48,6 +49,7 @@ class Search
      * Get number of results.
      *
      * @param string $queryTerm Query string.
+     * @param array  $options   Options for the query.
      *
      * @return integer
      */
@@ -65,6 +67,7 @@ class Search
      *
      * @param string  $queryTerm Query string.
      * @param integer $page      Page start value for the search query.
+     * @param array   $options   Options for the query.
      *
      * @return \Elastica\Query
      */
@@ -116,6 +119,7 @@ class Search
      * Get the paginator adapter for the query.
      *
      * @param string $queryTerm Query string.
+     * @param array  $options   Options for the query.
      *
      * @return \Pagerfanta\Pagerfanta
      */
@@ -132,6 +136,7 @@ class Search
      * Get the aggregations for the query.
      *
      * @param string $queryTerm Query string.
+     * @param array  $options   Options for the query.
      *
      * @return array
      */
