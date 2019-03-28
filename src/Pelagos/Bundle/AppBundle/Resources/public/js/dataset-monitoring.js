@@ -1,36 +1,36 @@
 var $ = jQuery.noConflict();
 
 $(document).ready(function() {
-    $('#menu .overview').width($('#menu .viewport').width() - 15);
+    $("#menu .overview").width($("#menu .viewport").width() - 15);
 
     // Due to a bug in hashChange (old version, no newer compatible with current jQuery),
     // manualy detect the hash on load, and force hash change.
     // But we have to wait with opening nodes until js Tree is fully loaded.
-    $("#tree").bind('loaded.jstree', function(e, data) {
+    $("#tree").bind("loaded.jstree", function(e, data) {
         if (window.location.hash != "") {
             $(window).trigger("hashchange");
         }
     });
 
-    $(window).on('hashchange', function(){
+    $(window).on("hashchange", function(){
         var m = location.hash.match(/^#([^\/]+)\/?([^\/]+)?/);
         if (m) {
-            if (typeof m[1] !== 'undefined') {
-                if (typeof m[2] === 'undefined') {
-                    if ($('#projects_funding-cycle_' + m[1]).length && $('#tree').jstree('get_selected')[0] != 'projects_funding-cycle_' + m[1]) {
+            if (typeof m[1] !== "undefined") {
+                if (typeof m[2] === "undefined") {
+                    if ($("#projects_funding-cycle_" + m[1]).length && $("#tree").jstree("get_selected")[0] != "projects_funding-cycle_" + m[1]) {
                         $("#tree").jstree("deselect_all");
-                        $("#tree").jstree("select_node", ('#projects_funding-cycle_' + m[1]));
+                        $("#tree").jstree("select_node", ("#projects_funding-cycle_" + m[1]));
                     }
                 }
                 else {
-                    $("#tree").jstree("open_node", $('#projects_funding-cycle_' + m[1]));
-                    if ($('#datasets_projectId_' + m[2]).length && $('#tree').jstree('get_selected')[0] != 'datasets_projectId_' + m[2]) {
+                    $("#tree").jstree("open_node", $("#projects_funding-cycle_" + m[1]));
+                    if ($("#datasets_projectId_" + m[2]).length && $("#tree").jstree("get_selected")[0] != "datasets_projectId_" + m[2]) {
                         $("#tree").jstree("deselect_all");
-                        $("#tree").jstree("select_node", $('#datasets_projectId_' + m[2]), true);
+                        $("#tree").jstree("select_node", $("#datasets_projectId_" + m[2]), true);
                     }
-                    else if ($('#tasks_projectId_' + m[2]).length && $('#tree').jstree('get_selected')[0] != 'tasks_projectId_' + m[2]) {
+                    else if ($("#tasks_projectId_" + m[2]).length && $("#tree").jstree("get_selected")[0] != "tasks_projectId_" + m[2]) {
                         $("#tree").jstree("deselect_all");
-                        $("#tree").jstree("select_node", $('#tasks_projectId_' + m[2]), true);
+                        $("#tree").jstree("select_node", $("#tasks_projectId_" + m[2]), true);
                     }
                 }
             }
@@ -39,7 +39,7 @@ $(document).ready(function() {
 });
 
 function showProjects(by,id) {
-    $('#content .overview').html("");
+    $("#content .overview").html("");
     $("#right .spinner").show();
     switch(by) {
         case "fundSrc":
@@ -55,11 +55,11 @@ function showProjects(by,id) {
     $.ajax({
         "url": url,
         "success": function(data) {
-            $('#content .overview').html(data);
-            $('#content .overview td[title]').qtip({
+            $("#content .overview").html(data);
+            $("#content .overview td[title]").qtip({
                 position: {
-                    my: 'right bottom',
-                    at: 'center',
+                    my: "right bottom",
+                    at: "center",
                     adjust: {
                         x: -8
                     },
@@ -77,10 +77,10 @@ function showProjects(by,id) {
                     classes: "qtip-default qtip-tipped"
                 }
             });
-            $('#content .overview th[title]').qtip({
+            $("#content .overview th[title]").qtip({
                 position: {
-                    my: 'bottom center',
-                    at: 'top center',
+                    my: "bottom center",
+                    at: "top center",
                     viewport: $(window)
                 },
                 show: {
@@ -95,8 +95,8 @@ function showProjects(by,id) {
                     classes: "qtip-default qtip-tipped"
                 }
             });
-            $('#content .overview td.details').each(function() {
-                var udi = $(this).parent().attr('udi');
+            $("#content .overview td.details").each(function() {
+                var udi = $(this).parent().attr("udi");
                 $(this).qtip({
                     content: {
                         text: "loading...",
@@ -106,8 +106,8 @@ function showProjects(by,id) {
                         }
                     },
                     position: {
-                        my: 'right bottom',
-                        at: 'middle left',
+                        my: "right bottom",
+                        at: "middle left",
                         viewport: $(window),
                         effect: false,
                         target: $(this).parent()
@@ -126,10 +126,10 @@ function showProjects(by,id) {
                 });
             });
 
-            $('#content .overview table.tablesorter').tablesorter({
+            $("#content .overview table.tablesorter").tablesorter({
                 sortList: [[0,0]],
                 sortRestart : true,
-                sortInitialOrder: 'asc'
+                sortInitialOrder: "asc"
             });
 
             graphDatasetStatus();
@@ -142,8 +142,8 @@ function showProjects(by,id) {
 
 function updateHash(fund_src,project_id) {
     if (typeof(project_id) != "undefined") {
-        location.href = '#' + fund_src + '/' + project_id;
+        location.href = "#" + fund_src + "/" + project_id;
     } else {
-        location.href = '#' + fund_src;
+        location.href = "#" + fund_src;
     }
 }
