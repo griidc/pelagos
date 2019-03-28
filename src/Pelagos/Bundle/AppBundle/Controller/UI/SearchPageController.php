@@ -69,12 +69,14 @@ class SearchPageController extends UIController
         $researchGroups = $this->entityHandler->getMultiple(ResearchGroup::class, array('id' => array_keys($aggregations)));
 
         foreach ($researchGroups as $researchGroup) {
-            $researchGroupsInfo[$researchGroup->getId()] = array(
+            $researchGroupsInfo[(string)$researchGroup->getId()] = array(
                 'id' => $researchGroup->getId(),
                 'name' => $researchGroup->getName(),
                 'count' => $aggregations[$researchGroup->getId()]
             );
         }
+        //Sorting based on highest count
+        array_multisort(array_column($researchGroupsInfo,  'count'), SORT_DESC, $researchGroupsInfo);
 
         return $researchGroupsInfo;
     }
