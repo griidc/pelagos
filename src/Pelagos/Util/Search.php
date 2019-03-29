@@ -2,8 +2,12 @@
 
 namespace Pelagos\Util;
 
-use Doctrine\ORM\EntityManager;
-use FOS\ElasticaBundle\Finder\FinderInterface;
+use Elastica\Aggregation;
+use Elastica\Query;
+
+use FOS\ElasticaBundle\Finder\TransformedFinder;
+
+use Pagerfanta\Pagerfanta;
 
 /**
  * Util class for FOS Elastic Search.
@@ -11,18 +15,18 @@ use FOS\ElasticaBundle\Finder\FinderInterface;
 class Search
 {
     /**
-     * The entity manager to use.
+     * FOS Elastica Object to find elastica documents.
      *
-     * @var EntityManager
+     * @var TransformedFinder
      */
     protected $finder;
 
     /**
      * Constructor.
      *
-     * @param FinderInterface $finder The finder interface object.
+     * @param TransformedFinder $finder The finder interface object.
      */
-    public function __construct(FinderInterface $finder)
+    public function __construct(TransformedFinder $finder)
     {
         $this->finder = $finder;
     }
@@ -69,38 +73,38 @@ class Search
      * @param integer $page      Page start value for the search query.
      * @param array   $options   Options for the query.
      *
-     * @return \Elastica\Query
+     * @return Query
      */
-    private function buildQuery(string $queryTerm, int $page = 1, array $options = []): \Elastica\Query
+    private function buildQuery(string $queryTerm, int $page = 1, array $options = []): Query
     {
-        $mainQuery = new \Elastica\Query();
-        $subMainQuery = new \Elastica\Query\BoolQuery();
-        $filterBoolQuery = new \Elastica\Query\BoolQuery();
-        $fieldsBoolQuery = new \Elastica\Query\BoolQuery();
+        $mainQuery = new Query();
+        $subMainQuery = new Query\BoolQuery();
+        $filterBoolQuery = new Query\BoolQuery();
+        $fieldsBoolQuery = new Query\BoolQuery();
 
-        $titleQuery = new \Elastica\Query\Match();
+        $titleQuery = new Query\Match();
         $titleQuery->setFieldQuery('title', $queryTerm);
         $titleQuery->setFieldOperator('title', 'and');
         $fieldsBoolQuery->addShould($titleQuery);
 
-        $datasetSubmissionQuery = new \Elastica\Query\Nested();
+        $datasetSubmissionQuery = new Query\Nested();
         $datasetSubmissionQuery->setPath('datasetSubmission');
-        $authorQuery = new \Elastica\Query\Match();
+        $authorQuery = new Query\Match();
         $authorQuery->setFieldQuery('datasetSubmission.authors', $queryTerm);
         $datasetSubmissionQuery->setQuery($authorQuery);
 
         $fieldsBoolQuery->addShould($datasetSubmissionQuery);
 
-        $agg = new \Elastica\Aggregation\Terms('researchGrpId');
-        $nestedAgg = new \Elastica\Aggregation\Nested('nested', 'researchGroup');
+        $agg = new Aggregation\Terms('researchGrpId');
+        $nestedAgg = new Aggregation\Nested('nested', 'researchGroup');
         $agg->setField('researchGroup.id');
         $agg->setSize(500);
         $nestedAgg->addAggregation($agg);
         $mainQuery->addAggregation($nestedAgg);
         if (isset($options['rgId'])) {
-            $researchGroupNameQuery = new \Elastica\Query\Nested();
+            $researchGroupNameQuery = new Query\Nested();
             $researchGroupNameQuery->setPath('researchGroup');
-            $rgNamequery = new \Elastica\Query\Terms();
+            $rgNamequery = new Query\Terms();
             $rgNamequery->setTerms('researchGroup.id', [$options['rgId']]);
             $researchGroupNameQuery->setQuery($rgNamequery);
             $filterBoolQuery->addFilter($researchGroupNameQuery);
@@ -121,9 +125,9 @@ class Search
      * @param string $queryTerm Query string.
      * @param array  $options   Options for the query.
      *
-     * @return \Pagerfanta\Pagerfanta
+     * @return Pagerfanta
      */
-    private function getPagiantor(string $queryTerm, array $options = []): \Pagerfanta\Pagerfanta
+    private function getPagiantor(string $queryTerm, array $options = []): Pagerfanta
     {
         $query = $this->buildQuery($queryTerm, 1, $options);
 
@@ -144,7 +148,11 @@ class Search
     {
         $userPaginator = $this->getPagiantor($queryTerm, $options);
 
-        $aggs = array_column($userPaginator->getAdapter()->getAggregations()['nested']['researchGrpId']['buckets'], 'doc_count', 'key');
+        $aggs = array_column(
+            $userPaginator->getAdapter()->getAggregations()['nested']['researchGrpId']['buckets'],
+            'doc_count',
+            'key'
+        );
 
         return $aggs;
     }
