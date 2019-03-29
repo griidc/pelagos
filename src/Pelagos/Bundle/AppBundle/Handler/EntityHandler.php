@@ -106,21 +106,6 @@ class EntityHandler
     }
 
     /**
-     * Return array of entities of $entityClass identified by $ids.
-     *
-     * @param string $entityClass The type of entity to retrieve.
-     * @param array  $idArray     The id array of the entities to retrieve.
-     *
-     * @return array|null Array of entities.
-     */
-    public function getMultiple($entityClass, $idArray)
-    {
-        return $this->entityManager
-            ->getRepository($entityClass)
-            ->findBy($idArray);
-    }
-
-    /**
      * Return all entities of $entityClass.
      *
      * @param string       $entityClass The type of entity to retrieve.

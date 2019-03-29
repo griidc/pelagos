@@ -66,7 +66,11 @@ class SearchPageController extends UIController
     private function getResearchGroupsInfo(array $aggregations): array
     {
         $researchGroupsInfo = array();
-        $researchGroups = $this->entityHandler->getMultiple(ResearchGroup::class, array('id' => array_keys($aggregations)));
+        $container = $this->container;
+        $entityManager = $container->get('doctrine')->getManager();
+        $researchGroups = $entityManager
+            ->getRepository(ResearchGroup::class)
+            ->findBy(array('id' => array_keys($aggregations)));
 
         foreach ($researchGroups as $researchGroup) {
             $researchGroupsInfo[$researchGroup->getId()] = array(
