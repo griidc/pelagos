@@ -32,7 +32,7 @@ class SearchPageController extends UIController
         $requestParams = $this->getRequestParams($request);
         $researchGroupsInfo = array();
 
-        if (!empty($request)) {
+        if (!empty($requestParams['query'])) {
             $searchUtil = $this->get('pelagos.util.search');
             $buildQuery = $searchUtil->buildQuery($requestParams);
             $results = $searchUtil->findDatasets($buildQuery);
