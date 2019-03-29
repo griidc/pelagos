@@ -8,8 +8,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use Pelagos\Entity\ResearchGroup;
-
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
  *
@@ -29,59 +27,44 @@ class SearchPageController extends UIController
      */
     public function defaultAction(Request $request)
     {
-        $queryTerm = $request->get('query');
         $results = array();
-        $researchGroupsInfo = array();
         $count = 0;
-        $page = ($request->get('page')) ? $request->get('page') : 1;
-        $rgId = $request->get('rgId');
-        $options = array();
-        if ($queryTerm) {
-            if ($rgId) {
-                $options = array('rgId' => $rgId);
-            }
+        $requestParams = $this->getRequestParams($request);
+        $researchGroupsInfo = array();
+
+        if (!empty($request)) {
             $searchUtil = $this->get('pelagos.util.search');
-            $results = $searchUtil->findDatasets($queryTerm, $page, $options);
-            $count = $searchUtil->getCount($queryTerm, $options);
-            $aggregations = $searchUtil->getAggregations($queryTerm, $options);
-            $researchGroupsInfo = $this->getResearchGroupsInfo($aggregations);
+            $buildQuery = $searchUtil->buildQuery($requestParams);
+            $results = $searchUtil->findDatasets($buildQuery);
+            $count = $searchUtil->getCount($buildQuery);
+            $researchGroupsInfo = $searchUtil->getResearchGroupAggregations($buildQuery);
         }
 
         return $this->render('PelagosAppBundle:Search:default.html.twig', array(
-            'query' => $queryTerm,
+            'query' => $requestParams['query'],
             'results' => $results,
             'count' => $count,
-            'page' => $page,
+            'page' => $requestParams['page'],
             'researchGroupsInfo' => $researchGroupsInfo
         ));
     }
 
     /**
-     * Get research group information for the aggregations.
+     * Gets the request parameters from the request.
      *
-     * @param array $aggregations Aggregations for each research id.
+     * @param Request $request The Symfony request object.
      *
      * @return array
      */
-    private function getResearchGroupsInfo(array $aggregations): array
+    private function getRequestParams(Request $request): array
     {
-        $researchGroupsInfo = array();
-        $container = $this->container;
-        $entityManager = $container->get('doctrine')->getManager();
-        $researchGroups = $entityManager
-            ->getRepository(ResearchGroup::class)
-            ->findBy(array('id' => array_keys($aggregations)));
 
-        foreach ($researchGroups as $researchGroup) {
-            $researchGroupsInfo[$researchGroup->getId()] = array(
-                'id' => $researchGroup->getId(),
-                'name' => $researchGroup->getName(),
-                'count' => $aggregations[$researchGroup->getId()]
-            );
-        }
-        //Sorting based on highest count
-        array_multisort(array_column($researchGroupsInfo, 'count'), SORT_DESC, $researchGroupsInfo);
-
-        return $researchGroupsInfo;
+        return array(
+            'query' => $request->get('query'),
+            'page' => $request->get('page'),
+            'options' => array(
+                'rgId' => $request->get('rgId')
+            )
+        );
     }
 }
