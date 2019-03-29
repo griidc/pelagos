@@ -77,7 +77,7 @@ function updateTree(tree) {
 
     if (tree.selected) {
         selected_node = $("#" + tree.name).jstree('get_selected');
-        if (typeof(selected_node) != 'undefined' && typeof(selected_node.id) != 'undefined' && selected_node.id != 'tree') {
+        if (typeof(selected_node) != 'undefined' && typeof(selected_node.attr('id')) != 'undefined' && selected_node.attr('id') != 'tree') {
             selected_node.parents("li").each(function () {
                 var this_id = $(this).attr("id");
                 if ($.inArray(this_id,init_open) == -1) {
@@ -159,6 +159,10 @@ function updateTree(tree) {
     });
 
     $("#" + tree.name).bind("loaded.jstree", function(event, data) {
+        if (data.element === null) {
+            return;
+        }
+
         if (typeof tree.onload !== 'undefined') {
             eval(tree.onload);
         }
@@ -172,7 +176,7 @@ function updateTree(tree) {
         if ($("#" + tree.name + " > ul > li:first").attr("id") == 'noDatasetsFound' || left_to_open == 0) {
             if (typeof tree.onload !== 'undefined') {
                 // Unsure why this is needed.
-                //eval(tree.onload);
+                eval(tree.onload);
             }
         }
     });
