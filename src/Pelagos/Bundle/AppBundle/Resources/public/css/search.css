@@ -113,10 +113,6 @@ h1{
     display: inline-block;
 }
 
-.tooltiptext {
-    display: none;
-}
-
 .groupName{
     overflow: hidden;
     white-space:nowrap;

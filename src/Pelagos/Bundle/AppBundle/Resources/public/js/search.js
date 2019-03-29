@@ -58,7 +58,7 @@ $(document).ready(function () {
     $(".groupName").hover().each(function() {
         $(this).qtip({
             content: {
-                text: $.trim($(this).next().text())
+                text: $.trim($(this).next(".tooltiptext").text())
             }
         });
     });
