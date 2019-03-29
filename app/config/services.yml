@@ -121,3 +121,4 @@ services:
     pelagos.util.search:
         class: Pelagos\Util\Search
         arguments: ["@fos_elastica.finder.search_pelagos.dataset", "@doctrine.orm.entity_manager"]
+
