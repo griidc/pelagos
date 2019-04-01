@@ -5,17 +5,16 @@ $(document).ready(function () {
     var pageSize = 10;
     var count = $("#count").attr("data-content");
     var urlParts = window.location.search.split("&");
-    var startPage = Number(urlParts[1].split("page=")[1]);
+    var startPage = getPageNo(urlParts);
     if (urlParts[2]) {
         var rgId = urlParts[2].split("rgId=")[1];
-
     }
     var url = Routing.generate("pelagos_app_ui_searchpage_default") + "?query=" + $("#searchBox").val() + "&page=";
 
 
     //Setting value of page number to 1, for new search
     $("#searchForm").submit(function () {
-        $("#pageNo").val("1");
+        $("#pageNo").attr("disabled", true);
     });
 
     if ($(":input[type='checkbox']").attr("id") === rgId) {
@@ -63,3 +62,11 @@ $(document).ready(function () {
         });
     });
 });
+
+function getPageNo(urlParts) {
+    var pageNo = 1;
+    if (urlParts[1]){
+        pageNo = Number(urlParts[1].split("page=")[1]);
+    }
+    return pageNo;
+}

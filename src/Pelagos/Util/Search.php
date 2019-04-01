@@ -77,7 +77,7 @@ class Search
      */
     public function buildQuery(array $requestTerms): Query
     {
-
+        $page = ($requestTerms['page'])? $requestTerms['page']:1;
         $mainQuery = new Query();
         $subMainQuery = new Query\BoolQuery();
         $filterBoolQuery = new Query\BoolQuery();
@@ -115,7 +115,7 @@ class Search
         $subMainQuery->addMust($filterBoolQuery);
 
         $mainQuery->setQuery($subMainQuery);
-        $mainQuery->setFrom(($requestTerms['page'] - 1) * 10);
+        $mainQuery->setFrom(($page - 1) * 10);
 
         return $mainQuery;
     }
