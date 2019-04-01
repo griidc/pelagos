@@ -18,7 +18,7 @@ $(document).ready(function () {
     });
 
     if ($(":input[type='checkbox']").attr("id") === rgId) {
-        $(":input[type='checkbox']").attr('checked', true);
+        $(":input[type='checkbox']").attr("checked", true);
     }
 
 
@@ -32,9 +32,8 @@ $(document).ready(function () {
 
     if (count > pageSize) {
         var pageCount = Math.ceil(count / pageSize);
-        var url = Routing.generate("pelagos_app_ui_searchpage_default") + "?query=" + $("#searchBox").val() + "&page=";
 
-        $('#search-pagination').bootpag({
+        $("#search-pagination").bootpag({
             total: pageCount,
             page: startPage,
             maxVisible: 5,
