@@ -302,7 +302,8 @@ fos_elastica:
                     persistence:
                         driver: orm
                         model: Pelagos\Entity\Dataset
-                        provider: ~
+                        provider:
+                            query_builder_method: createSortedQueryBuilder
                         listener:
                             logger: true
                         finder: ~
@@ -326,7 +327,8 @@ fos_elastica:
                             persistence:
                                 driver: orm
                                 model: Pelagos\Entity\Dataset
-                                provider: ~
+                                provider:
+                                    query_builder_method: createSortedQueryBuilder
                                 listener:
                                     logger: true
                                 finder: ~

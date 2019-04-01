@@ -115,4 +115,20 @@ class DatasetRepository extends EntityRepository
         $query = $qb->getQuery();
         return $query->getResult($hydrator);
     }
+
+    /**
+     * Creates a new QueryBuilder instance that is prepopulated for this entity and provides a sorted result.
+     *
+     * @param string $alias   The Entity alias.
+     * @param string $indexBy The index for the from.
+     *
+     * @return QueryBuilder
+     */
+    public function createSortedQueryBuilder($alias, $indexBy = null)
+    {
+        return $this->_em->createQueryBuilder()
+            ->select($alias)
+            ->from($this->_entityName, $alias, $indexBy)
+            ->orderBy($alias . '.id');
+    }
 }
