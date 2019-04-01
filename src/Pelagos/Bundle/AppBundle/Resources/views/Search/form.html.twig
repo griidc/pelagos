@@ -1,14 +1,18 @@
-<form id="searchForm" name="searchForm" action="{{ path('pelagos_app_ui_searchpage_default') }}" method="get">
-    <div id="custom-search-input" align="center">
-        <div class="input-group col-md-12">
-            <input type="search" id="search" name="query" class="search-query form-control" placeholder="Search..."
+<form id="searchForm" name="searchForm" action="{{ path('pelagos_app_ui_searchpage_default') }}" method="get" class="search-form">
+    <div id="custom-search-input">
+        <div class="col-md-4"></div>
+        <div class="input-group col-md-4">
+            <input type="search" id="searchBox" name="query" class="search-query form-control" placeholder="Search..."
                    value = "{{ query|default }}">
-            <input type="hidden" id="pageNo" name="page" value="{{ page | default }}">
+            {% if page is defined and page is not null%}
+                <input type="hidden" id="pageNo" name="page" value="{{ page | default }}">
+            {% endif %}
             <span class="input-group-btn">
-                <button class="btn btn-danger" type="submit">
+                <button id="searchSubmit" class="btn btn-danger" type="submit">
                     <span class=" glyphicon glyphicon-search"></span>
                 </button>
             </span>
         </div>
+        <div class="col-md-4"></div>
     </div>
 </form>

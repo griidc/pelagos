@@ -308,62 +308,21 @@ fos_elastica:
                         finder: ~
         search_pelagos:
                     client: default
-                    index_name: "%pelagos_name%"
+                    index_name: "%search_tool_index%"
                     types:
                         dataset:
                             properties:
-                                udi: ~
                                 title: ~
-                                abstract: ~
-                                availabilityStatus: ~
-                                identifiedStatus: ~
                                 researchGroup:
                                     type: 'nested'
                                     properties:
-                                        id: ~
+                                        id:
+                                            type: 'keyword'
                                         name: ~
-                                        fundingCycle:
-                                            type: 'nested'
-                                            properties:
-                                                id: ~
-                                                fundingOrganization:
-                                                    type: 'nested'
-                                                    properties:
-                                                        id: ~
                                 datasetSubmission:
                                     type: 'nested'
                                     properties:
                                         authors: ~
-                                        datasetFileTransferStatus: ~
-                                        datasetFileUri: ~
-                                        datasetFileSize: ~
-                                        restrictions: ~
-                                        placeKeywords: { boost: 3 }
-                                        themeKeywords: { boost: 3 }
-                                doi:
-                                    type: 'nested'
-                                    properties:
-                                        doi: ~
-                                publications:
-                                    type: 'nested'
-                                    properties:
-                                        doi: ~
-                                geometry:
-                                    type: 'text'
-                                    property_path: false
-                                simpleGeometry:
-                                    type: 'geo_shape'
-                                    property_path: false
-                                year:
-                                    property_path: false
-                                estimatedStartDate:
-                                    property_path: false
-                                estimatedEndDate:
-                                    property_path: false
-                                updatedDateTime:
-                                    type: 'date'
-                                    format: 'basic_date_time_no_millis'
-                                    property_path: false
                             persistence:
                                 driver: orm
                                 model: Pelagos\Entity\Dataset
