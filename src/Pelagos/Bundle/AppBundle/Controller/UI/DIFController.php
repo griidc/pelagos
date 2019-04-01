@@ -31,9 +31,7 @@ class DIFController extends UIController implements OptionalReadOnlyInterface
      */
     public function defaultAction(Request $request, $id = null)
     {
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->render('PelagosAppBundle:template:NotLoggedIn.html.twig');
-        }
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $dif = new DIF;
         $form = $this->get('form.factory')->createNamed(null, DIFType::class, $dif);

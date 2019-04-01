@@ -75,9 +75,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
      */
     public function defaultAction(Request $request)
     {
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->redirect('/user/login?destination=' . $request->getPathInfo());
-        }
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $udi = $request->query->get('regid');
         $datasetSubmission = null;
