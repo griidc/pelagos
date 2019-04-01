@@ -65,7 +65,7 @@ class Search
      */
     public function getCount(Query $query): int
     {
-        return $this->getPagiantor($query)->getNbResults();
+        return $this->getPaginator($query)->getNbResults();
     }
 
     /**
@@ -127,7 +127,7 @@ class Search
      *
      * @return Pagerfanta
      */
-    private function getPagiantor(Query $query): Pagerfanta
+    private function getPaginator(Query $query): Pagerfanta
     {
         return $this->finder->findPaginated($query);
     }
@@ -141,8 +141,7 @@ class Search
      */
     public function getResearchGroupAggregations(Query $query): array
     {
-
-        $userPaginator = $this->getPagiantor($query);
+        $userPaginator = $this->getPaginator($query);
 
         $reseachGroupBucket = array_column(
             $userPaginator->getAdapter()->getAggregations()['nested']['researchGrpId']['buckets'],

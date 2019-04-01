@@ -58,7 +58,6 @@ class SearchPageController extends UIController
      */
     private function getRequestParams(Request $request): array
     {
-
         return array(
             'query' => $request->get('query'),
             'page' => $request->get('page'),
