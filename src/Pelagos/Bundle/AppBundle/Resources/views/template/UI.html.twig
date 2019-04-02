@@ -3,7 +3,7 @@
 {%block stylesheets %}
     {{ parent() }}
 
-    <link rel="stylesheet" href="{{ asset('/build/layout.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/layout.css') }}">
 
     {{
         add_css (
@@ -23,7 +23,7 @@
 {% block javascripts %}
     {{ parent() }}
 
-    <script src="{{ asset('/build/layout.js') }}"></script>
+    <script src="{{ asset('build/layout.js') }}"></script>
 
     {{
         add_js(
