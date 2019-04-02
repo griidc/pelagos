@@ -1,0 +1,24 @@
+{% extends "PelagosAppBundle::layout.html.twig" %}
+
+{%block stylesheets %}
+    {{ parent() }}
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="{{ asset('/build/layout.css') }}">
+{%endblock stylesheets  %}
+
+{% block javascripts %}
+    {{ parent() }}
+    
+    <script src="{{ asset('/build/layout.js') }}"></script>
+
+    {{
+        add_js(
+            [
+                '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js',
+            ]
+        )
+    }}
+{% endblock %}

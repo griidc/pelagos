@@ -4,6 +4,8 @@ const $ = require('jquery');
 
 global.$ = global.jQuery = $;
 
+require('@fortawesome/fontawesome-free/css/all.min.css');
+
 require('jquery-ui/themes/base/minified/jquery-ui.min.css');
 
 require('jquery-ui/autocomplete');
