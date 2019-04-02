@@ -1,12 +1,9 @@
-{% extends "PelagosAppBundle:template:UI.html.twig" %}
-
-{% block head %}
-    {{ parent() }}
-{% endblock %}
+{% extends "PelagosAppBundle::layout.ui.html.twig" %}
 
 {% block body %}
-    <div class="messages status">
+    <div class="messages status alert alert-success">
         <h2 class="element-invisible">Status message</h2>
+        <i class="fas fa-check-circle"></i>
         You have successfully created a GRIIDC account.
     </div>
     Your user name is: <strong>{{Account.getUserId}}</strong><br>

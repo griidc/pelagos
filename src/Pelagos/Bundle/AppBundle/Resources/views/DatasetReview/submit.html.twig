@@ -1,11 +1,7 @@
-{% extends "PelagosAppBundle::layout.html.twig" %}
-
-{% block head %}
-
-{% endblock %}
+{% extends "PelagosAppBundle::layout.ui.html.twig" %}
 
 {% block body %}
-    <div class="messages status">
+    <div class="messages status alert alert-success">
         <h2 class="element-invisible">Status message</h2>
         Dataset review ended by {{ reviewedBy }}  at {{ 'now'|date('c') }}
     </div>

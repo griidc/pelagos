@@ -2,6 +2,8 @@
 
 {% block head %}
     {{ parent() }}
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     {% stylesheets
         '@PelagosAppBundle/Resources/public/css/dataland-details.css'
@@ -34,8 +36,9 @@
 
 {% block body %}
     {% if warnings|length > 0 %}
-    <div class="messages warning">
+    <div class="messages warning alert alert-warning">
         <h2 class="element-invisible">Warning message</h2>
+        <i class="fas fa-exclamation-triangle"></i>
         <ul>
         {% for warning in warnings %}
             <li>{{ warning }}</li>
@@ -44,8 +47,9 @@
     </div>
     {% endif %}
     {% if errors|length > 0 %}
-    <div class="messages error">
+    <div class="messages error alert alert-danger">
         <h2 class="element-invisible">Error message</h2>
+        <i class="fas fa-exclamation-circle"></i>
         <ul>
         {% for error in errors %}
             <li>{{ error }}</li>
