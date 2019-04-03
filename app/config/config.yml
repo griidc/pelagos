@@ -313,8 +313,10 @@ fos_elastica:
                     types:
                         dataset:
                             properties:
-                                title: ~
-                                abstract: ~
+                                title:
+                                    type: 'text'
+                                abstract:
+                                    type: 'text'
                                 researchGroup:
                                     type: 'nested'
                                     properties:
@@ -324,7 +326,10 @@ fos_elastica:
                                 datasetSubmission:
                                     type: 'nested'
                                     properties:
-                                        authors: ~
+                                        authors:
+                                            type: 'text'
+                                        themeKeywords:
+                                            type: 'text'
                             persistence:
                                 driver: orm
                                 model: Pelagos\Entity\Dataset

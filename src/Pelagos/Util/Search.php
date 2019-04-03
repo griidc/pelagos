@@ -48,6 +48,11 @@ class Search
     const INDEX_FIELD_DS_AUTHOR = 'datasetSubmission.authors';
 
     /**
+     * Elastic index dataset submission theme keywords field.
+     */
+    const INDEX_FIELD_DS_THEME_KEYWORDS = 'datasetSubmission.themeKeywords';
+
+    /**
      * Constructor.
      *
      * @param TransformedFinder $finder        The finder interface object.
@@ -93,6 +98,7 @@ class Search
     public function buildQuery(array $requestTerms): Query
     {
         $page = ($requestTerms['page']) ? $requestTerms['page'] : 1;
+        $queryTerm = $requestTerms['query'];
 
         $mainQuery = new Query();
 
@@ -107,14 +113,14 @@ class Search
 
         // Add title field to the query
         $titleQuery = new Query\Match();
-        $titleQuery->setFieldQuery(self::INDEX_FIELD_TITLE, $requestTerms['query']);
+        $titleQuery->setFieldQuery(self::INDEX_FIELD_TITLE, $queryTerm);
         $titleQuery->setFieldOperator(self::INDEX_FIELD_TITLE, 'and');
         $titleQuery->setFieldBoost(self::INDEX_FIELD_TITLE, 2);
         $fieldsBoolQuery->addShould($titleQuery);
 
         // Add title field to the query
         $abstractQuery = new Query\Match();
-        $abstractQuery->setFieldQuery(self::INDEX_FIELD_ABSTRACT, $requestTerms['query']);
+        $abstractQuery->setFieldQuery(self::INDEX_FIELD_ABSTRACT, $queryTerm);
         $abstractQuery->setFieldOperator(self::INDEX_FIELD_ABSTRACT, 'and');
         $fieldsBoolQuery->addShould($abstractQuery);
 
@@ -122,12 +128,23 @@ class Search
         $datasetSubmissionQuery = new Query\Nested();
         $datasetSubmissionQuery->setPath('datasetSubmission');
 
+        // Bool query to add fields in datasetSubmission
+        $datasetSubmissionBoolQuery = new Query\BoolQuery();
+
+        $themeKeywordsQuery = new Query\Match();
+        $themeKeywordsQuery->setFieldQuery(self::INDEX_FIELD_DS_THEME_KEYWORDS, $queryTerm);
+        $themeKeywordsQuery->setFieldOperator(self::INDEX_FIELD_DS_THEME_KEYWORDS, 'and');
+        $themeKeywordsQuery->setFieldBoost(self::INDEX_FIELD_DS_THEME_KEYWORDS, 2);
+        $datasetSubmissionBoolQuery->addShould($themeKeywordsQuery);
+
         // Add datasetSubmission author field to the query
         $authorQuery = new Query\Match();
-        $authorQuery->setFieldQuery(self::INDEX_FIELD_DS_AUTHOR, $requestTerms['query']);
+        $authorQuery->setFieldQuery(self::INDEX_FIELD_DS_AUTHOR, $queryTerm);
         $authorQuery->setFieldOperator(self::INDEX_FIELD_DS_AUTHOR, 'and');
         $authorQuery->setFieldBoost(self::INDEX_FIELD_DS_AUTHOR, 2);
-        $datasetSubmissionQuery->setQuery($authorQuery);
+        $datasetSubmissionBoolQuery->addShould($authorQuery);
+
+        $datasetSubmissionQuery->setQuery($datasetSubmissionBoolQuery);
 
         $fieldsBoolQuery->addShould($datasetSubmissionQuery);
 
