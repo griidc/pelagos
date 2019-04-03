@@ -14,7 +14,6 @@ Encore
     // will create web/build/app.js and web/build/app.css
     .createSharedEntry('common', './assets/js/common.js')
     .addEntry('layout', './assets/js/layout.js')
-    
 
     // allow sass/scss files to be processed
     //.enableSassLoader()
@@ -30,9 +29,12 @@ Encore
     // show OS notifications when builds finish/fail
     //.enableBuildNotifications()
 
+    // Add or change path of build asset location
+    //.setManifestKeyPrefix('../build')
+
     // create hashed filenames (e.g. app.abc123.css)
-    //.enableVersioning()
-    
+    .enableVersioning(Encore.isProduction())
+
     // No runtime.js needed.
     .disableSingleRuntimeChunk()
 
