@@ -314,6 +314,7 @@ fos_elastica:
                         dataset:
                             properties:
                                 title: ~
+                                abstract: ~
                                 researchGroup:
                                     type: 'nested'
                                     properties:

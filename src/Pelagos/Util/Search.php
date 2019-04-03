@@ -33,6 +33,21 @@ class Search
     protected $entityManager;
 
     /**
+     * Elastic index title field.
+     */
+    const INDEX_FIELD_TITLE = 'title';
+
+    /**
+     * Elastic index abstract field.
+     */
+    const INDEX_FIELD_ABSTRACT = 'abstract';
+
+    /**
+     * Elastic index dataset submission authors field.
+     */
+    const INDEX_FIELD_DS_AUTHOR = 'datasetSubmission.authors';
+
+    /**
      * Constructor.
      *
      * @param TransformedFinder $finder        The finder interface object.
@@ -78,30 +93,53 @@ class Search
     public function buildQuery(array $requestTerms): Query
     {
         $page = ($requestTerms['page']) ? $requestTerms['page'] : 1;
+
         $mainQuery = new Query();
+
+        // Bool query to combine field query and filter query
         $subMainQuery = new Query\BoolQuery();
+
+        // Bool query to add filters
         $filterBoolQuery = new Query\BoolQuery();
+
+        // Bool query to add all fields
         $fieldsBoolQuery = new Query\BoolQuery();
 
+        // Add title field to the query
         $titleQuery = new Query\Match();
-        $titleQuery->setFieldQuery('title', $requestTerms['query']);
-        $titleQuery->setFieldOperator('title', 'and');
+        $titleQuery->setFieldQuery(self::INDEX_FIELD_TITLE, $requestTerms['query']);
+        $titleQuery->setFieldOperator(self::INDEX_FIELD_TITLE, 'and');
+        $titleQuery->setFieldBoost(self::INDEX_FIELD_TITLE, 2);
         $fieldsBoolQuery->addShould($titleQuery);
 
+        // Add title field to the query
+        $abstractQuery = new Query\Match();
+        $abstractQuery->setFieldQuery(self::INDEX_FIELD_ABSTRACT, $requestTerms['query']);
+        $abstractQuery->setFieldOperator(self::INDEX_FIELD_ABSTRACT, 'and');
+        $fieldsBoolQuery->addShould($abstractQuery);
+
+        // Create nested for datasetSubmission fields
         $datasetSubmissionQuery = new Query\Nested();
         $datasetSubmissionQuery->setPath('datasetSubmission');
+
+        // Add datasetSubmission author field to the query
         $authorQuery = new Query\Match();
-        $authorQuery->setFieldQuery('datasetSubmission.authors', $requestTerms['query']);
+        $authorQuery->setFieldQuery(self::INDEX_FIELD_DS_AUTHOR, $requestTerms['query']);
+        $authorQuery->setFieldOperator(self::INDEX_FIELD_DS_AUTHOR, 'and');
+        $authorQuery->setFieldBoost(self::INDEX_FIELD_DS_AUTHOR, 2);
         $datasetSubmissionQuery->setQuery($authorQuery);
 
         $fieldsBoolQuery->addShould($datasetSubmissionQuery);
 
         $agg = new Aggregation\Terms('researchGrpId');
         $nestedAgg = new Aggregation\Nested('nested', 'researchGroup');
+        // Add researchGroup id field to the aggregation
         $agg->setField('researchGroup.id');
         $agg->setSize(500);
         $nestedAgg->addAggregation($agg);
         $mainQuery->addAggregation($nestedAgg);
+
+        // Add researchGroup id field to the filter
         if (isset($requestTerms['options']['rgId'])) {
             $researchGroupNameQuery = new Query\Nested();
             $researchGroupNameQuery->setPath('researchGroup');
