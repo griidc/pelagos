@@ -3,7 +3,15 @@
 namespace Pelagos\Util;
 
 use Doctrine\ORM\EntityManager;
-use FOS\ElasticaBundle\Finder\FinderInterface;
+
+use Elastica\Aggregation;
+use Elastica\Query;
+
+use FOS\ElasticaBundle\Finder\TransformedFinder;
+
+use Pagerfanta\Pagerfanta;
+
+use Pelagos\Entity\ResearchGroup;
 
 /**
  * Util class for FOS Elastic Search.
@@ -11,84 +19,165 @@ use FOS\ElasticaBundle\Finder\FinderInterface;
 class Search
 {
     /**
-     * The entity manager to use.
+     * FOS Elastica Object to find elastica documents.
      *
-     * @var EntityManager
+     * @var TransformedFinder
      */
     protected $finder;
 
     /**
+     * The entity manager to use.
+     *
+     * @var EntityManager
+     */
+    protected $entityManager;
+
+    /**
      * Constructor.
      *
-     * @param FinderInterface $finder The finder interface object.
+     * @param TransformedFinder $finder The finder interface object.
+     * @param EntityManager     $entityManager     An entity manager.
      */
-    public function __construct(FinderInterface $finder)
+    public function __construct(TransformedFinder $finder, EntityManager $entityManager)
     {
         $this->finder = $finder;
+        $this->entityManager = $entityManager;
     }
 
     /**
      * Find datasets using Fos Elastic search.
      *
-     * @param string  $queryTerm Query string.
-     * @param integer $page      Page number of the search page.
+     * @param Query $query The query built based on the search terms and parameters.
      *
      * @return array
      */
-    public function findDatasets(string $queryTerm, int $page): array
+    public function findDatasets(Query $query): array
     {
-        $query = $this->buildQuery($queryTerm, $page);
-
-        $results = $this->finder->find($query);
-
-        return $results;
+        return $this->finder->find($query);
     }
 
     /**
      * Get number of results.
      *
-     * @param string $queryTerm Query string.
+     * @param Query $query The query built based on the search terms and parameters.
      *
      * @return integer
      */
-    public function countDatasets(string $queryTerm): int
+    public function getCount(Query $query): int
     {
-        $query = $this->buildQuery($queryTerm);
-
-        $userPaginator = $this->finder->findPaginated($query);
-        $countResults = $userPaginator->getNbResults();
-
-        return $countResults;
+        return $this->getPaginator($query)->getNbResults();
     }
 
     /**
      * Build Query using Fos Elastic search.
      *
-     * @param string  $queryTerm Query string.
-     * @param integer $page      Page start value for the search query.
+     * @param array   $requestTerms   Options for the query.
      *
-     * @return \Elastica\Query
+     * @return Query
      */
-    private function buildQuery(string $queryTerm, int $page = 0): \Elastica\Query
+    public function buildQuery(array $requestTerms): Query
     {
-        $mainQuery = new \Elastica\Query();
-        $boolQuery = new \Elastica\Query\BoolQuery();
+        $page = ($requestTerms['page'])? $requestTerms['page']:1;
+        $mainQuery = new Query();
+        $subMainQuery = new Query\BoolQuery();
+        $filterBoolQuery = new Query\BoolQuery();
+        $fieldsBoolQuery = new Query\BoolQuery();
 
-        $titleQuery = new \Elastica\Query\Match();
-        $titleQuery->setFieldQuery('title', $queryTerm);
+        $titleQuery = new Query\Match();
+        $titleQuery->setFieldQuery('title', $requestTerms['query']);
         $titleQuery->setFieldOperator('title', 'and');
-        $boolQuery->addShould($titleQuery);
+        $fieldsBoolQuery->addShould($titleQuery);
 
-        $datasetSubmissionQuery = new \Elastica\Query\Nested();
+        $datasetSubmissionQuery = new Query\Nested();
         $datasetSubmissionQuery->setPath('datasetSubmission');
-        $authorQuery = new \Elastica\Query\Match();
-        $authorQuery->setFieldQuery('datasetSubmission.authors', $queryTerm);
+        $authorQuery = new Query\Match();
+        $authorQuery->setFieldQuery('datasetSubmission.authors', $requestTerms['query']);
         $datasetSubmissionQuery->setQuery($authorQuery);
 
-        $boolQuery->addShould($datasetSubmissionQuery);
-        $mainQuery->setQuery($boolQuery);
+        $fieldsBoolQuery->addShould($datasetSubmissionQuery);
+
+        $agg = new Aggregation\Terms('researchGrpId');
+        $nestedAgg = new Aggregation\Nested('nested', 'researchGroup');
+        $agg->setField('researchGroup.id');
+        $agg->setSize(500);
+        $nestedAgg->addAggregation($agg);
+        $mainQuery->addAggregation($nestedAgg);
+        if (isset($requestTerms['options']['rgId'])) {
+            $researchGroupNameQuery = new Query\Nested();
+            $researchGroupNameQuery->setPath('researchGroup');
+            $rgNamequery = new Query\Terms();
+            $rgNamequery->setTerms('researchGroup.id', [$requestTerms['options']['rgId']]);
+            $researchGroupNameQuery->setQuery($rgNamequery);
+            $filterBoolQuery->addFilter($researchGroupNameQuery);
+        }
+
+        $subMainQuery->addMust($fieldsBoolQuery);
+        $subMainQuery->addMust($filterBoolQuery);
+
+        $mainQuery->setQuery($subMainQuery);
         $mainQuery->setFrom(($page - 1) * 10);
 
         return $mainQuery;
+    }
+
+    /**
+     * Get the paginator adapter for the query.
+     *
+     * @param Query $query The query built based on the search terms and parameters.
+     *
+     * @return Pagerfanta
+     */
+    private function getPaginator(Query $query): Pagerfanta
+    {
+        return $this->finder->findPaginated($query);
+    }
+
+    /**
+     * Get the aggregations for the query.
+     *
+     * @param Query $query The query built based on the search terms and parameters.
+     *
+     * @return array
+     */
+    public function getResearchGroupAggregations(Query $query): array
+    {
+        $userPaginator = $this->getPaginator($query);
+
+        $reseachGroupBucket = array_column(
+            $userPaginator->getAdapter()->getAggregations()['nested']['researchGrpId']['buckets'],
+            'doc_count',
+            'key'
+        );
+
+        return $this->getResearchGroupsInfo($reseachGroupBucket);
+    }
+
+    /**
+     * Get research group information for the aggregations.
+     *
+     * @param array $aggregations Aggregations for each research id.
+     *
+     * @return array
+     */
+    private function getResearchGroupsInfo(array $aggregations): array
+    {
+        $researchGroupsInfo = array();
+
+        $researchGroups = $this->entityManager
+            ->getRepository(ResearchGroup::class)
+            ->findBy(array('id' => array_keys($aggregations)));
+
+        foreach ($researchGroups as $researchGroup) {
+            $researchGroupsInfo[$researchGroup->getId()] = array(
+                'id' => $researchGroup->getId(),
+                'name' => $researchGroup->getName(),
+                'count' => $aggregations[$researchGroup->getId()]
+            );
+        }
+
+        //Sorting based on highest count
+        array_multisort(array_column($researchGroupsInfo, 'count'), SORT_DESC, $researchGroupsInfo);
+
+        return $researchGroupsInfo;
     }
 }

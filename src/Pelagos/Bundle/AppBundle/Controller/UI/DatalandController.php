@@ -56,14 +56,7 @@ class DatalandController extends UIController
 
         $downloadCount = null;
         // Remotely hosted datasets are normally also hosted locally anyway, so including.
-        if (in_array(
-            $dataset->getAvailabilityStatus(),
-            array(
-                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
-                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED
-            )
-        )
-        ) {
+        if ($this->isDatasetAvailable($dataset)) {
             $qb = $this->get('doctrine')->getManager()->createQueryBuilder();
             $qb->select($qb->expr()->count('a'))
                 ->from('\Pelagos\Entity\LogActionItem', 'a')
@@ -77,7 +70,7 @@ class DatalandController extends UIController
             $downloadCount = $query->getSingleScalarResult();
         }
 
-        if ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) {
+        if ($this->isDatasetAvailable($dataset)) {
             $data = array(
                 '#type' => 'markup',
                 '#markup' => $this->render(
@@ -237,5 +230,23 @@ class DatalandController extends UIController
             }
         }
         return $boundingBoxArray;
+    }
+
+    /**
+     * Checks if the dataset is in available status.
+     *
+     * @param Dataset $dataset The dataset for which the availability is checked.
+     *
+     * @return boolean
+     */
+    private function isDatasetAvailable(Dataset $dataset): bool
+    {
+        return in_array(
+            $dataset->getAvailabilityStatus(),
+            array(
+                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
+                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED
+            )
+        );
     }
 }
