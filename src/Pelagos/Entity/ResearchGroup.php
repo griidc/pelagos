@@ -87,6 +87,21 @@ class ResearchGroup extends Entity
     protected $name;
 
     /**
+     * Name of a research group.
+     *
+     * @var string $name
+     *
+     * @access protected
+     *
+     * @ORM\Column(type="citext", unique=true, nullable=true)
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="Short name cannot contain angle brackets (< or >)"
+     * )
+     */
+    protected $shortName;
+
+    /**
      * Research group's parent Funding Cycle.
      *
      * @var FundingCycle $fundingCycle
@@ -722,5 +737,27 @@ class ResearchGroup extends Entity
     public static function compareByName(ResearchGroup $a, ResearchGroup $b)
     {
         return strcmp($a->getName(), $b->getName());
+    }
+
+    /**
+     * Getter for short name.
+     *
+     * @return string
+     */
+    public function getShortName(): string
+    {
+        return $this->shortName;
+    }
+
+    /**
+     * Setter for short name.
+     *
+     * @param string $shortName Short name for the research group.
+     *
+     * @return void
+     */
+    public function setShortName(string $shortName): void
+    {
+        $this->shortName = $shortName;
     }
 }
