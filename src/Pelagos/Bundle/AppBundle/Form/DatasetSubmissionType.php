@@ -271,6 +271,18 @@ class DatasetSubmissionType extends AbstractType
                 'required' => false,
                 'attr' => array('data-rule-url' => true),
             ))
+            ->add('remotelyHostedName', Type\TextType::class, array(
+                'label' => 'Remotely Hosted Name',
+                'required' => false,
+            ))
+            ->add('remotelyHostedDescription', Type\TextType::class, array(
+                'label' => 'Remotely Hosted Description',
+                'required' => false,
+            ))
+            ->add('remotelyHostedFunction', Type\TextType::class, array(
+                'label' => 'Remotely Hosted Function',
+                'required' => false,
+            ))
             ->add('isDatasetFileInColdStorage', Type\CheckboxType::class, array(
                 'label' => 'In Cold Storage',
                 'mapped' => false,
@@ -334,7 +346,7 @@ class DatasetSubmissionType extends AbstractType
                 $hash = $event->getForm()->get('datasetFileColdStorageArchiveSha256Hash')->getData();
                 $name = $event->getForm()->get('datasetFileColdStorageOriginalFilename')->getData();
                 $entity = $event->getForm()->getData();
-                if ( null !== $size and null !== $hash and null !== $name) {
+                if (null !== $size and null !== $hash and null !== $name) {
                     $entity->setDatasetFileColdStorageAttributes($size, $hash, $name);
                 } else {
                     $entity->clearDatasetFileColdStorageAttributes();
