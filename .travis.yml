@@ -68,7 +68,6 @@ script:
   - phpunit
   - git clone --depth=1 https://github.com/squizlabs/PHP_CodeSniffer.git
   - ./PHP_CodeSniffer/bin/phpcs --version
-  - ./PHP_CodeSniffer/bin/phpcs --config-set installed_paths ./GRIIDC/
   - ./PHP_CodeSniffer/bin/phpcs --standard=GRIIDC --extensions=php ./src
   
 notifications:
