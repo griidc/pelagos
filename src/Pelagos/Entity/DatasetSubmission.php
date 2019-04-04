@@ -2817,7 +2817,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setRemotelyHostedDescription(string $remotelyHostedDescription)
+    public function setRemotelyHostedDescription($remotelyHostedDescription)
     {
         $this->remotelyHostedDescription = $remotelyHostedDescription;
     }
@@ -2841,7 +2841,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setRemotelyHostedFunction(string $remotelyHostedFunction)
+    public function setRemotelyHostedFunction($remotelyHostedFunction)
     {
         $this->remotelyHostedFunction = $remotelyHostedFunction;
     }

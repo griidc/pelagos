@@ -983,4 +983,39 @@ class DatasetSubmissionTest extends TestCase
         $this->datasetSubmission->setErddapUrl(null);
         $this->assertNull($this->datasetSubmission->getErddapUrlProtocol());
     }
+    
+    /**
+     * Test Remotely Hosted.
+     *
+     * @return void
+     */
+    public function testRemotelyHosted()
+    {
+        $remotelyHostedName = 'Remotely Hosted Name';
+        $this->datasetSubmission->setRemotelyHostedName($remotelyHostedName);
+        $this->assertEquals(
+            $remotelyHostedName,
+            $this->datasetSubmission->getRemotelyHostedName()
+        );
+        $this->datasetSubmission->setRemotelyHostedName(null);
+        $this->assertNull($this->datasetSubmission->getRemotelyHostedName());
+        
+        $remotelyHostedName = 'Remotely Hosted Description';
+        $this->datasetSubmission->setRemotelyHostedDescription($remotelyHostedName);
+        $this->assertEquals(
+            $remotelyHostedName,
+            $this->datasetSubmission->getRemotelyHostedDescription()
+        );
+        $this->datasetSubmission->setRemotelyHostedDescription(null);
+        $this->assertNull($this->datasetSubmission->getRemotelyHostedDescription());
+        
+        $remotelyHostedName = 'download';
+        $this->datasetSubmission->setRemotelyHostedFunction($remotelyHostedName);
+        $this->assertEquals(
+            $remotelyHostedName,
+            $this->datasetSubmission->getRemotelyHostedFunction()
+        );
+        $this->datasetSubmission->setRemotelyHostedFunction(null);
+        $this->assertNull($this->datasetSubmission->getRemotelyHostedFunction());
+    }
 }
