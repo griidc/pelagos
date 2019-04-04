@@ -742,9 +742,9 @@ class ResearchGroup extends Entity
     /**
      * Getter for short name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getShortName(): string
+    public function getShortName(): ?string
     {
         return $this->shortName;
     }
