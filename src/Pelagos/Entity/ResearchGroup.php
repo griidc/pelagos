@@ -744,7 +744,7 @@ class ResearchGroup extends Entity
      *
      * @return string|null
      */
-    public function getShortName(): ?string
+    public function getShortName() : ? string
     {
         return $this->shortName;
     }
@@ -756,7 +756,7 @@ class ResearchGroup extends Entity
      *
      * @return void
      */
-    public function setShortName(string $shortName): void
+    public function setShortName(string $shortName) : void
     {
         $this->shortName = $shortName;
     }
