@@ -77,9 +77,7 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
                     $message = 'Status for ' . $udi . ' has been changed from ' . $this->getFlashBagStatus($from) .
                         ' to ' . $this->getFlashBagStatus($to);
                     $this->get('session')->getFlashBag()->add('success', $message);
-
                 }
-
             } else {
                 $message = 'Unable to move the dataset ' . $udi . ' from status Request Revisions to status InReview as it has a unsubmitted draft dataset-submission';
                 $this->get('session')->getFlashBag()->add('error', $message);

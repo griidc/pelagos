@@ -86,7 +86,6 @@ class BootstrapDRPMFixture extends AbstractFixture implements OrderedFixtureInte
         if (isset($superDrpmFirstName)
             and isset($superDrpmLastName)
             and isset($superDrpmEmail)) {
-
             $person = new Person;
 
             $person->setFirstName($superDrpmFirstName);

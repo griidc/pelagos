@@ -29,7 +29,7 @@ class HandleSubmissionWithBadGMLCommand extends ContainerAwareCommand
     }
 
     /**
-     * Script to nullify spatial extents and remove distribution point tied to the dataset submission of a dataset
+     * Script to nullify spatial extents and remove distribution point tied to the dataset submission of a dataset.
      *
      * @param InputInterface  $input  An InputInterface instance.
      * @param OutputInterface $output An OutputInterface instance.
@@ -60,7 +60,7 @@ class HandleSubmissionWithBadGMLCommand extends ContainerAwareCommand
         $datasetSubmission->setSpatialExtent(null);
 
         //clear distribution points if there is one that has no Data Center
-        if (count($datasetSubmission->getDistributionPoints()) === 1 ) {
+        if (count($datasetSubmission->getDistributionPoints()) === 1) {
             if (null === $datasetSubmission->getDistributionPoints()[0]->getDataCenter()) {
                 $datasetSubmission->removeDistributionPoint($datasetSubmission->getDistributionPoints()[0]);
             }

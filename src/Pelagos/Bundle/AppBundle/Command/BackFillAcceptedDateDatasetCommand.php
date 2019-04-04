@@ -45,7 +45,6 @@ class BackFillAcceptedDateDatasetCommand extends ContainerAwareCommand
         $acceptedDateTimeStamp = new \DateTime();
 
         foreach ($datasets as $dataset) {
-
             $queryString = 'select id, rev, dataset_id, dataset_status, modification_time_stamp 
                             from dataset_submission_audit where dataset_id = :datasetId order by rev desc, id desc';
             $params = [
@@ -84,7 +83,6 @@ class BackFillAcceptedDateDatasetCommand extends ContainerAwareCommand
             $acceptedDateTimeStamp = new \DateTime($acceptedDateTimeStamp);
 
             if ($acceptedDateTimeStamp instanceof \DateTime) {
-
                 $entityManager->clear();
                 $newDataset = $entityManager->getRepository(Dataset::class)->findOneBy(array('id' => $dataset->getId()));
 

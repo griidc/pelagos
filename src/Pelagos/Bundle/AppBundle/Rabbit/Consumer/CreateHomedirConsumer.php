@@ -61,7 +61,6 @@ class CreateHomedirConsumer implements ConsumerInterface
         $account = $this->entityManager->find(Account::class, $message->body);
 
         if ($account instanceof Account) {
-
             // Get username, homedir.
             $username = $account->getUserName();
             $homeDir = $account->getHomeDirectory();

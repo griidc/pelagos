@@ -89,7 +89,6 @@ class DatasetRestrictionsController extends UIController
                 if ($datasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
                     $this->publishDoiForAccepted($rabbitMessage);
                 }
-
             } else {
                 // Send 500 response code if restriction key is null
                 throw new BadRequestHttpException('Restiction key is null');
