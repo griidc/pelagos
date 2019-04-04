@@ -49,8 +49,8 @@ before-install:
   - cp app/config/parameters.yml.dist app/config/parameters.yml
   - psql -c 'create database postgres' -U postgres
   - psql -c 'create extension postgis' -U postgres -d postgres
-  - git clone --depth=1 https://github.com/squizlabs/PHP_CodeSniffer.git
-  - ./PHP_CodeSniffer/bin/phpcs --config-set installed_paths ./GRIIDC/
+  
+  
 
 # Install composer dependencies,
 # Create schema and fixtures
@@ -66,7 +66,9 @@ before-script:
 # Run script
 script:
   - phpunit
+  - git clone --depth=1 https://github.com/squizlabs/PHP_CodeSniffer.git
   - ./PHP_CodeSniffer/bin/phpcs --version
+  - ./PHP_CodeSniffer/bin/phpcs --config-set installed_paths ./GRIIDC/
   - ./PHP_CodeSniffer/bin/phpcs --standard=GRIIDC --extensions=php ./src
   
 notifications:
