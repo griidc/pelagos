@@ -70,7 +70,7 @@ script:
   - ./PHP_CodeSniffer/bin/phpcs --version
   - ./PHP_CodeSniffer/bin/phpcs --config-set installed_paths GRIIDC
   - ./PHP_CodeSniffer/bin/phpcs -i
-  - ./PHP_CodeSniffer/bin/phpcs --standard=GRIIDC --extensions=php -i ./src
+  - ./PHP_CodeSniffer/bin/phpcs --standard=GRIIDC --extensions=php ./src
   
 notifications:
   email: false
