@@ -66,7 +66,7 @@ before-script:
 # Run script
 script:
   - phpunit
-  - git clone --depth=1 https://github.com/squizlabs/PHP_CodeSniffer.git
+  - git clone https://github.com/squizlabs/PHP_CodeSniffer.git --branch 2.7.0
   - ./PHP_CodeSniffer/bin/phpcs --version
   - ./PHP_CodeSniffer/bin/phpcs --config-set installed_paths GRIIDC
   - ./PHP_CodeSniffer/bin/phpcs -i
