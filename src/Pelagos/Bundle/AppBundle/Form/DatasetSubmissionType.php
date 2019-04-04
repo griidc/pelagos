@@ -334,7 +334,7 @@ class DatasetSubmissionType extends AbstractType
                 $hash = $event->getForm()->get('datasetFileColdStorageArchiveSha256Hash')->getData();
                 $name = $event->getForm()->get('datasetFileColdStorageOriginalFilename')->getData();
                 $entity = $event->getForm()->getData();
-                if ( null !== $size and null !== $hash and null !== $name) {
+                if (null !== $size and null !== $hash and null !== $name) {
                     $entity->setDatasetFileColdStorageAttributes($size, $hash, $name);
                 } else {
                     $entity->clearDatasetFileColdStorageAttributes();
