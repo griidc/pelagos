@@ -2837,6 +2837,8 @@ class DatasetSubmission extends Entity
      *
      * @param string|null $remotelyHostedFunction Remotely Hosted Function.
      *
+     * @see ONLINE_FUNCTION class constant for valid values.
+     *
      * @return void
      */
     public function setRemotelyHostedFunction(string $remotelyHostedFunction)
