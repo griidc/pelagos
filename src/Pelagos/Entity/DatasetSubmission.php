@@ -343,23 +343,28 @@ class DatasetSubmission extends Entity
     const ONLINE_FUNCTION = [
         'download' => [
             'name' => 'Download',
-            'description' => 'online instructions for transferring data from one storage device or system to another'
+            'description' => 'online instructions for transferring data from one storage device or system to another',
+            'code' => '001',
         ],
         'information' => [
             'name' => 'Information',
-            'description' => 'online information about the resource'
+            'description' => 'online information about the resource',
+            'code' => '002',
         ],
         'offlineAccess' => [
             'name' => 'Offline Access',
-            'description' => 'online instructions for requesting the resource from the provider'
+            'description' => 'online instructions for requesting the resource from the provider',
+            'code' => '003',
         ],
         'order' => [
             'name' => 'Order',
-            'description' => 'online order process for obtaining the resource'
+            'description' => 'online order process for obtaining the resource',
+            'code' => '004',
         ],
         'search' => [
             'name' => 'Search',
-            'description' => 'online search interface for seeking out information about the resource'
+            'description' => 'online search interface for seeking out information about the resource',
+            'code' => '005',
         ],
     ];
 
