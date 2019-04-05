@@ -121,3 +121,13 @@ h1{
     display:inline-block;
 }
 
+#resgrp-facet{
+    overflow: scroll;
+    height: 250px;
+    position: relative;
+}
+
+#fundorg-facet{
+    overflow: scroll;
+}
+
