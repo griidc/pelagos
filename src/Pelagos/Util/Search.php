@@ -35,8 +35,8 @@ class Search
     /**
      * Constructor.
      *
-     * @param TransformedFinder $finder The finder interface object.
-     * @param EntityManager     $entityManager     An entity manager.
+     * @param TransformedFinder $finder        The finder interface object.
+     * @param EntityManager     $entityManager An entity manager.
      */
     public function __construct(TransformedFinder $finder, EntityManager $entityManager)
     {
@@ -71,13 +71,13 @@ class Search
     /**
      * Build Query using Fos Elastic search.
      *
-     * @param array   $requestTerms   Options for the query.
+     * @param array $requestTerms Options for the query.
      *
      * @return Query
      */
     public function buildQuery(array $requestTerms): Query
     {
-        $page = ($requestTerms['page'])? $requestTerms['page']:1;
+        $page = ($requestTerms['page']) ? $requestTerms['page'] : 1;
         $mainQuery = new Query();
         $subMainQuery = new Query\BoolQuery();
         $filterBoolQuery = new Query\BoolQuery();

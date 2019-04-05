@@ -115,7 +115,6 @@ class DatasetSubmissionListener extends EventListener
                 $this->getDRPMs($datasetSubmission->getDataset())
             );
         }
-
     }
 
     /**
@@ -219,7 +218,6 @@ class DatasetSubmissionListener extends EventListener
         );
         // Publish DOI for accepted and unrestricted datasets
         $this->producer->publish($datasetSubmission->getDataset()->getId(), 'update');
-
     }
 
     /**
