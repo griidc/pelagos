@@ -33,33 +33,13 @@ class Search
     protected $entityManager;
 
     /**
-     * Elastic index title field.
-     */
-    const TITLE = 'title';
-
-    /**
-     * Elastic index abstract field.
-     */
-    const ABSTRACT = 'abstract';
-
-    /**
-     * Elastic index dataset submission authors field.
-     */
-    const DS_AUTHORS = 'datasetSubmission.authors';
-
-    /**
-     * Elastic index dataset submission theme keywords field.
-     */
-    const DS_THEME_KEYWORDS = 'datasetSubmission.themeKeywords';
-
-    /**
      * Elastic index mapping.
      */
     const ELASTIC_INDEX_MAPPING = array(
-        'title' => self::TITLE,
-        'abstract' => self::ABSTRACT,
-        'dsubAuthors' => self::DS_AUTHORS,
-        'dsubThemeKeywords' => self::DS_THEME_KEYWORDS
+        'title' => 'title',
+        'abstract' => 'abstract',
+        'dsubAuthors' => 'datasetSubmission.authors',
+        'dsubThemeKeywords' => 'datasetSubmission.themeKeywords'
     );
 
     /**
