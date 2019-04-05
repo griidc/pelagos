@@ -87,11 +87,9 @@ class ResearchGroup extends Entity
     protected $name;
 
     /**
-     * Name of a research group.
+     * Short Name of a research group.
      *
-     * @var string $name
-     *
-     * @access protected
+     * @var string $shortName
      *
      * @ORM\Column(type="citext", unique=true, nullable=true)
      *
