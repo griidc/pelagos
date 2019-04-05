@@ -221,6 +221,9 @@ class ISOMetadataExtractorUtilTest extends TestCase
                                     )
                                 ))),
                                 'getErddapUrl' => 'https://xyz',
+                                'getRemotelyHostedName' => 'remote name',
+                                'getRemotelyHostedDescription' => 'remote description',
+                                'getRemotelyHostedFunction' => 'download',
                             )
                         ),
                     )
@@ -301,6 +304,9 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getMetadataContacts' => new ArrayCollection(array($this->mockPersonDatasetSubmissionMetadataContact)),
                 'getDistributionPoints' => new ArrayCollection(array($this->mockDistributionPoint)),
                 'getErddapUrl' => 'https://xyz',
+                'getRemotelyHostedName' => 'remote name',
+                'getRemotelyHostedDescription' => 'remote description',
+                'getRemotelyHostedFunction' => 'download',
                 'getDatasetFileUrlLastCheckedDate' => new \DateTime('now', new \DateTimeZone('UTC')),
                 'getDatasetFileUrlStatusCode' => '200',
                 'getDatasetFileColdStorageArchiveSha256Hash' => 'abc123',
