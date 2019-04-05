@@ -49,7 +49,6 @@ before-install:
   - cp app/config/parameters.yml.dist app/config/parameters.yml
   - psql -c 'create database postgres' -U postgres
   - psql -c 'create extension postgis' -U postgres -d postgres
-  
 
 # Install composer dependencies,
 # Create schema and fixtures
