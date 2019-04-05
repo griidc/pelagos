@@ -33,6 +33,8 @@ use Pelagos\Exception\NotDeletableException;
  *     message="A Research Group with this name already exists"
  * )
  *
+ * @UniqueEntity("shortName", message="A Research Group with this Short name already exists")
+ *
  * @Hateoas\Relation(
  *   "self",
  *   href = @Hateoas\Route(
