@@ -1810,7 +1810,6 @@ class DatasetSubmission extends Entity
         $this->setDatasetFileColdStorageArchiveSize(null);
     }
 
-
     /**
      * Check if the file is stored in cold storage based on the values of Sha256Hash and FileSize.
      *

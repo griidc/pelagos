@@ -40,7 +40,6 @@ class PersonFundingOrganizationController extends UIController implements Option
             if (!$personFundingOrganization instanceof \Pelagos\Entity\PersonFundingOrganization) {
                 throw $this->createNotFoundException('The Person Funding Organization was not found');
             }
-
         } else {
             $personFundingOrganization = new \Pelagos\Entity\PersonFundingOrganization;
         }

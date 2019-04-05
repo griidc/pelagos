@@ -721,7 +721,6 @@ class Dataset extends Entity
         // If we have a submission, use its POC.
         if ($datasetSubmission instanceof DatasetSubmission
             and $datasetSubmission->getStatus() == DatasetSubmission::STATUS_COMPLETE) {
-
             $datasetContacts = $datasetSubmission->getDatasetContacts();
             if (count($datasetContacts) > 0) {
                 return $datasetContacts->first()->getPerson();
