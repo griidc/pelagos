@@ -361,30 +361,6 @@ class DatasetSubmission extends Entity
             'name' => 'Search',
             'description' => 'online search interface for seeking out information about the resource'
         ],
-        'browseGraphic' => [
-            'name' => 'Browse Graphic',
-            'description' => 'browse graphic provided'
-        ],
-        'browsing' => [
-            'name' => 'Browsing',
-            'description' => 'online browsing provided'
-        ],
-        'completeMetadata' => [
-            'name' => 'Complete Metadata',
-            'description' => 'complete metadata provided'
-        ],
-        'emailService' => [
-            'name' => 'Email Service',
-            'description' => 'online email service provided'
-        ],
-        'fileAccess' => [
-            'name' => 'File Access',
-            'description' => 'online file access provided'
-        ],
-        'upload' => [
-            'name' => 'Upload',
-            'description' => 'online resource upload capability provided'
-        ],
     ];
 
     /**
@@ -2783,7 +2759,7 @@ class DatasetSubmission extends Entity
      *
      * @return string|null
      */
-    public function getRemotelyHostedName() : ? string
+    public function getRemotelyHostedName(): ? string
     {
         return $this->remotelyHostedName;
     }
