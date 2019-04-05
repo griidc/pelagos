@@ -2759,7 +2759,7 @@ class DatasetSubmission extends Entity
      *
      * @return string|null
      */
-    public function getRemotelyHostedName(): ? string
+    public function getRemotelyHostedName() : ? string
     {
         return $this->remotelyHostedName;
     }
