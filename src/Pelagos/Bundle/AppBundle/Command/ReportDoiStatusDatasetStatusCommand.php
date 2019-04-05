@@ -52,7 +52,7 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
     {
         $this
             ->setName('reports:doi-status-datasets')
-            ->setDescription('Report of udi(s) with doi status, dataset status')
+            ->setDescription('Report of doi from Datacite')
             ->addArgument('outputFileName', InputArgument::REQUIRED, 'What is the output file path and name?');
     }
 
@@ -71,7 +71,7 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
         $this->outputFileName = $input->getArgument('outputFileName');
         try {
             $datasets = self::openIO($output);
-            $this->createReportForDoiMigration($datasets);
+            $this->generateReportDatacite($datasets);
         } catch (\Exception $e) {
             throw new \Exception('Unable to generate report ' . $e->getMessage());
         }
@@ -102,13 +102,13 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
     }
 
     /**
-     * Generate report for doi migration.
+     * Generate report using Datacite APIs.
      *
      * @param array $datasets Collection of datasets.
      *
      * @return void
      */
-    private function createReportForDoiMigration(array $datasets)
+    private function generateReportDatacite(array $datasets)
     {
         $headers = array(
             'udi',
