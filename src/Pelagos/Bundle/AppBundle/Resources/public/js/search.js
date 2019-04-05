@@ -17,12 +17,13 @@ $(document).ready(function () {
         $("#pageNo").attr("disabled", true);
     });
 
-    if ($(":input[type='checkbox']").attr("id") === rgId) {
-        $(":input[type='checkbox']").attr("checked", true);
+    var resGrpFacetCheckbox = $("#resgrp-facet :input[type='checkbox']");
+
+    if (resGrpFacetCheckbox.attr("id") === rgId) {
+        resGrpFacetCheckbox.attr("checked", true);
     }
 
-
-    $(":input[type='checkbox']").change(function () {
+    resGrpFacetCheckbox.change(function () {
         if ($(":input[type='checkbox']").is(":checked")) {
             window.location = url + "1&rgId="+ $(this).attr("id");
         } else {
