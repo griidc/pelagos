@@ -1112,6 +1112,9 @@ class DatasetSubmission extends Entity
             $this->setDistributionFormatName($entity->getDistributionFormatName());
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
             $this->setErddapUrl($entity->getErddapUrl());
+            $this->setRemotelyHostedName($entity->getRemotelyHostedName());
+            $this->setRemotelyHostedDescription($entity->getRemotelyHostedDescription());
+            $this->setRemotelyHostedFunction($entity->getRemotelyHostedFunction());
             $this->setDatasetFileUrlLastCheckedDate($entity->getDatasetFileUrlLastCheckedDate());
             $this->setDatasetFileUrlStatusCode($entity->getDatasetFileUrlStatusCode());
             $this->setDatasetFileColdStorageArchiveSha256Hash($entity->getDatasetFileColdStorageArchiveSha256Hash());
