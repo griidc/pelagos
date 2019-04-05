@@ -76,7 +76,7 @@ class DoiDataciteReportCommand extends ContainerAwareCommand
     }
 
     /**
-     * Generate report for doi migration.
+     * Generate report for doi using Datacite info.
      *
      * @return void
      */
