@@ -11,6 +11,7 @@ use FOS\ElasticaBundle\Finder\TransformedFinder;
 
 use Pagerfanta\Pagerfanta;
 
+use Pelagos\Entity\FundingOrganization;
 use Pelagos\Entity\ResearchGroup;
 
 /**
@@ -138,21 +139,46 @@ class Search
 
         $fieldsBoolQuery->addShould($datasetSubmissionQuery);
 
-        $agg = new Aggregation\Terms('researchGrpId');
-        $nestedAgg = new Aggregation\Nested('nested', 'researchGroup');
+        // Add nested field path for research group field
+        $nestedRgAgg = new Aggregation\Nested('nestedResGrp', 'researchGroup');
+
         // Add researchGroup id field to the aggregation
-        $agg->setField('researchGroup.id');
-        $agg->setSize(500);
-        $nestedAgg->addAggregation($agg);
-        $mainQuery->addAggregation($nestedAgg);
+        $researchGroupAgg = new Aggregation\Terms('researchGrpId');
+        $researchGroupAgg->setField('researchGroup.id');
+        $researchGroupAgg->setSize(500);
+
+        // Add research group agg to nested
+        $nestedRgAgg->addAggregation($researchGroupAgg);
+
+        // Add nested field path for funding cycle field
+        $nestedFcAgg = new Aggregation\Nested('nestedFunCyc', 'researchGroup.fundingCycle');
+
+        // Add nested field path for funding org field
+        $nestedFoAgg = new Aggregation\Nested('nestedFunOrg', 'researchGroup.fundingCycle.fundingOrganization');
+        // Add funding Org id field to the aggregation
+        $fundingOrgAgg = new Aggregation\Terms('fundingOrgId');
+        $fundingOrgAgg->setField('researchGroup.fundingCycle.fundingOrganization.id');
+        $fundingOrgAgg->setSize(10);
+
+        // Add funding Org agg to nested agg
+        $nestedFoAgg->addAggregation($fundingOrgAgg);
+
+        // Add funding org to funding cycle agg
+        $nestedFcAgg->addAggregation($nestedFoAgg);
+
+        // Add Nested fundingOrg agg to nested research group agg
+        $nestedRgAgg->addAggregation($nestedFcAgg);
+
+        // Add nested agg to main agg
+        $mainQuery->addAggregation($nestedRgAgg);
 
         // Add researchGroup id field to the filter
         if (isset($requestTerms['options']['rgId'])) {
             $researchGroupNameQuery = new Query\Nested();
             $researchGroupNameQuery->setPath('researchGroup');
-            $rgNamequery = new Query\Terms();
-            $rgNamequery->setTerms('researchGroup.id', [$requestTerms['options']['rgId']]);
-            $researchGroupNameQuery->setQuery($rgNamequery);
+            $rgNameQuery = new Query\Terms();
+            $rgNameQuery->setTerms('researchGroup.id', [$requestTerms['options']['rgId']]);
+            $researchGroupNameQuery->setQuery($rgNameQuery);
             $filterBoolQuery->addFilter($researchGroupNameQuery);
         }
 
@@ -189,7 +215,7 @@ class Search
         $userPaginator = $this->getPaginator($query);
 
         $reseachGroupBucket = array_column(
-            $userPaginator->getAdapter()->getAggregations()['nested']['researchGrpId']['buckets'],
+            $userPaginator->getAdapter()->getAggregations()['nestedResGrp']['researchGrpId']['buckets'],
             'doc_count',
             'key'
         );
@@ -224,5 +250,54 @@ class Search
         array_multisort(array_column($researchGroupsInfo, 'count'), SORT_DESC, $researchGroupsInfo);
 
         return $researchGroupsInfo;
+    }
+
+    /**
+     * Get the aggregations for the query.
+     *
+     * @param Query $query The query built based on the search terms and parameters.
+     *
+     * @return array
+     */
+    public function getFundingOrgAggregations(Query $query): array
+    {
+        $userPaginator = $this->getPaginator($query);
+
+        $fundingOrgBucket = array_column(
+            $userPaginator->getAdapter()->getAggregations()['nestedResGrp']['nestedFunCyc']['nestedFunOrg']['fundingOrgId']['buckets'],
+            'doc_count',
+            'key'
+        );
+
+        return $this->getFundingOrgInfo($fundingOrgBucket);
+    }
+
+    /**
+     * Get funding org information for the aggregations.
+     *
+     * @param array $aggregations Aggregations for each funding org id.
+     *
+     * @return array
+     */
+    private function getFundingOrgInfo(array $aggregations): array
+    {
+        $fundingOrgInfo = array();
+
+        $fundingOrgs = $this->entityManager
+            ->getRepository(FundingOrganization::class)
+            ->findBy(array('id' => array_keys($aggregations)));
+
+        foreach ($fundingOrgs as $fundingOrg) {
+            $fundingOrgInfo[$fundingOrg->getId()] = array(
+                'id' => $fundingOrg->getId(),
+                'name' => $fundingOrg->getName(),
+                'count' => $aggregations[$fundingOrg->getId()]
+            );
+        }
+
+        //Sorting based on highest count
+        array_multisort(array_column($fundingOrgInfo, 'count'), SORT_DESC, $fundingOrgInfo);
+
+        return $fundingOrgInfo;
     }
 }

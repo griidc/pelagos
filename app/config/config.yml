@@ -322,7 +322,14 @@ fos_elastica:
                                     properties:
                                         id:
                                             type: 'keyword'
-                                        name: ~
+                                        fundingCycle:
+                                            type: 'nested'
+                                            properties:
+                                                fundingOrganization:
+                                                    type: 'nested'
+                                                    properties:
+                                                        id:
+                                                            type: 'keyword'
                                 datasetSubmission:
                                     type: 'nested'
                                     properties:
