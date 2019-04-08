@@ -173,13 +173,34 @@ class Search
         $mainQuery->addAggregation($nestedRgAgg);
 
         // Add researchGroup id field to the filter
-        if (isset($requestTerms['options']['rgId']) and !empty($requestTerms['options']['rgId'])) {
-            $researchGroupNameQuery = new Query\Nested();
-            $researchGroupNameQuery->setPath('researchGroup');
-            $rgNameQuery = new Query\Terms();
-            $rgNameQuery->setTerms('researchGroup.id', explode(',', $requestTerms['options']['rgId']));
-            $researchGroupNameQuery->setQuery($rgNameQuery);
-            $filterBoolQuery->addMust($researchGroupNameQuery);
+        if (!empty($requestTerms['options']['funOrgId']) || !empty($requestTerms['options']['rgId'])) {
+            $postFilterBoolQuery = new Query\BoolQuery();
+
+            if (!empty($requestTerms['options']['rgId'])) {
+                $researchGroupNameQuery = new Query\Nested();
+                $researchGroupNameQuery->setPath('researchGroup');
+
+                $rgNameQuery = new Query\Terms();
+                $rgNameQuery->setTerms('researchGroup.id', explode(',', $requestTerms['options']['rgId']));
+                $researchGroupNameQuery->setQuery($rgNameQuery);
+
+                $postFilterBoolQuery->addMust($researchGroupNameQuery);
+            }
+
+            if (!empty($requestTerms['options']['funOrgId'])) {
+                // Add nested field path for funding org field
+                $nestedFoQuery = new Query\Nested();
+                $nestedFoQuery->setPath('researchGroup.fundingCycle.fundingOrganization');
+
+                // Add funding Org id field to the aggregation
+                $fundingOrgIdQuery = new Query\Terms();
+                $fundingOrgIdQuery->setTerms('researchGroup.fundingCycle.fundingOrganization.id', explode(',', $requestTerms['options']['funOrgId']));
+
+                $nestedFoQuery->setQuery($fundingOrgIdQuery);
+                $postFilterBoolQuery->addMust($nestedFoQuery);
+            }
+
+            $filterBoolQuery->addMust($postFilterBoolQuery);
             $mainQuery->setParam('post_filter', $filterBoolQuery);
         }
 
