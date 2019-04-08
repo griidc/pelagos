@@ -20,7 +20,7 @@ $(document).ready(function () {
     });
 
     if (rgId) {
-        rgId = rgId.split(',');
+        rgId = rgId.split(",");
         if (rgId.length > 0) {
             $.each(rgId, function (k, v) {
                 $("#" + rgId[k]).attr("checked", true);
@@ -29,7 +29,7 @@ $(document).ready(function () {
     }
 
     if (foId) {
-        foId = foId.split(',');
+        foId = foId.split(",");
         if(foId.length > 0) {
             $.each(foId, function (k, v){
                 $("#" + foId[k]).attr("checked", true);
@@ -55,7 +55,7 @@ $(document).ready(function () {
             foIdsArray.push($(this).attr("id"));
         });
         if (foIdsArray.length > 0) {
-            foIds = foIdsArray.join(',');
+            foIds = foIdsArray.join(",");
         }
 
         if (foIds && rgIds) {
