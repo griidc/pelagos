@@ -334,6 +334,39 @@ class DatasetSubmission extends Entity
             'description' => 'energy, water and waste systems and communications infrastructure and services. Examples: hydroelectricity, geothermal, solar and nuclear sources of energy, water purification and distribution, sewage collection and disposal, electricity and gas distribution, data communication, telecommunication, radio, communication networks',
         ],
     ];
+    
+    /**
+     * Valid values for self::$remotelyHostedFunction.
+     *
+     * The array keys are the values to be set in self::remotelyHostedFunction.
+     */
+    const ONLINE_FUNCTION = [
+        'download' => [
+            'name' => 'Download',
+            'description' => 'online instructions for transferring data from one storage device or system to another',
+            'code' => '001',
+        ],
+        'information' => [
+            'name' => 'Information',
+            'description' => 'online information about the resource',
+            'code' => '002',
+        ],
+        'offlineAccess' => [
+            'name' => 'Offline Access',
+            'description' => 'online instructions for requesting the resource from the provider',
+            'code' => '003',
+        ],
+        'order' => [
+            'name' => 'Order',
+            'description' => 'online order process for obtaining the resource',
+            'code' => '004',
+        ],
+        'search' => [
+            'name' => 'Search',
+            'description' => 'online search interface for seeking out information about the resource',
+            'code' => '005',
+        ],
+    ];
 
     /**
      * Indicates the dataset submission is in endReview state.
@@ -967,6 +1000,33 @@ class DatasetSubmission extends Entity
      * @ORM\Column(type="text", nullable=true)
      */
     protected $erddapUrl;
+    
+    /**
+     * Remotely Hosted Dataset Name.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $remotelyHostedName;
+    
+    /**
+     * Remotely Hosted Dataset Description.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $remotelyHostedDescription;
+    
+    /**
+     * Remotely Hosted Dataset Function.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $remotelyHostedFunction;
 
     /**
      * Constructor.
@@ -1057,6 +1117,9 @@ class DatasetSubmission extends Entity
             $this->setDistributionFormatName($entity->getDistributionFormatName());
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
             $this->setErddapUrl($entity->getErddapUrl());
+            $this->setRemotelyHostedName($entity->getRemotelyHostedName());
+            $this->setRemotelyHostedDescription($entity->getRemotelyHostedDescription());
+            $this->setRemotelyHostedFunction($entity->getRemotelyHostedFunction());
             $this->setDatasetFileUrlLastCheckedDate($entity->getDatasetFileUrlLastCheckedDate());
             $this->setDatasetFileUrlStatusCode($entity->getDatasetFileUrlStatusCode());
             $this->setDatasetFileColdStorageArchiveSha256Hash($entity->getDatasetFileColdStorageArchiveSha256Hash());
@@ -2697,5 +2760,73 @@ class DatasetSubmission extends Entity
     public function setErddapUrl($erddapUrl)
     {
         $this->erddapUrl = $erddapUrl;
+    }
+    
+    /**
+     * Getter for the Remotely Hosted Name.
+     *
+     * @return string|null
+     */
+    public function getRemotelyHostedName() : ? string
+    {
+        return $this->remotelyHostedName;
+    }
+    
+    /**
+     * Setter for the Remotely Hosted Name.
+     *
+     * @param string|null $remotelyHostedName Erddap url.
+     *
+     * @return void
+     */
+    public function setRemotelyHostedName($remotelyHostedName)
+    {
+        $this->remotelyHostedName = $remotelyHostedName;
+    }
+    
+    /**
+     * Getter for the Remotely Hosted Description.
+     *
+     * @return string|null
+     */
+    public function getRemotelyHostedDescription() : ? string
+    {
+        return $this->remotelyHostedDescription;
+    }
+    
+    /**
+     * Setter for the Remotely Hosted Description.
+     *
+     * @param string|null $remotelyHostedDescription Erddap url.
+     *
+     * @return void
+     */
+    public function setRemotelyHostedDescription($remotelyHostedDescription)
+    {
+        $this->remotelyHostedDescription = $remotelyHostedDescription;
+    }
+    
+    /**
+     * Getter for the Remotely Hosted Function.
+     *
+     * @return string|null
+     */
+    public function getRemotelyHostedFunction() : ? string
+    {
+        return $this->remotelyHostedFunction;
+    }
+    
+    /**
+     * Setter for the Remotely Hosted Function.
+     *
+     * @param string|null $remotelyHostedFunction Remotely Hosted Function.
+     *
+     * @see ONLINE_FUNCTION class constant for valid values.
+     *
+     * @return void
+     */
+    public function setRemotelyHostedFunction($remotelyHostedFunction)
+    {
+        $this->remotelyHostedFunction = $remotelyHostedFunction;
     }
 }
