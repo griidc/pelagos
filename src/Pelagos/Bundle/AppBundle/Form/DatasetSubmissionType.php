@@ -271,6 +271,11 @@ class DatasetSubmissionType extends AbstractType
                 'required' => false,
                 'attr' => array('data-rule-url' => true),
             ))
+            ->add('isRemotelyHosted', Type\CheckboxType::class, array(
+                'label' => 'Is Remotely Hosted',
+                'mapped' => false,
+                'required' => false,
+            ))
             ->add('remotelyHostedName', Type\TextType::class, array(
                 'label' => 'Remotely Hosted Name',
                 'required' => false,
@@ -279,8 +284,10 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Remotely Hosted Description',
                 'required' => false,
             ))
-            ->add('remotelyHostedFunction', Type\TextType::class, array(
+            ->add('remotelyHostedFunction', Type\ChoiceType::class, array(
                 'label' => 'Remotely Hosted Function',
+                'choices' => DatasetSubmission::getOnlineFunctionCodes(),
+                'placeholder' => '[Please Select]',
                 'required' => false,
             ))
             ->add('isDatasetFileInColdStorage', Type\CheckboxType::class, array(

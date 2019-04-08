@@ -2584,6 +2584,23 @@ class DatasetSubmission extends Entity
             )
         );
     }
+    
+    /**
+     * Gets the valid choices for Online Function codes.
+     *
+     * @return array
+     */
+    public static function getOnlineFunctionCodes()
+    {
+        return array_flip(
+            array_map(
+                function ($type) {
+                    return $type['name'];
+                },
+                static::ONLINE_FUNCTION
+            )
+        );
+    }
 
     /**
      * Sets the dataset submission status to In Review status.

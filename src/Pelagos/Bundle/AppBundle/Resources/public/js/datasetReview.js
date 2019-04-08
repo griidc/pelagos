@@ -667,6 +667,18 @@ $(document).ready(function(){
         }
         else checkColdStorageCheckBoxState();
     });
+    
+    checkRemotelyHostedCheckBoxState();
+    $(".remotelyhosted-checkbox").change(function (){
+        if (!$(this).is(":checked") &&
+            ($("#remotelyHostedName").val().trim() !== "" || $("#remotelyHostedDescription").val() !== "" || $("#remotelyHostedFunction").val() !== ""  ) ) {
+            $(this).prop("checked", true); //re-check because stop propagation doesn't work
+            showDialog("Is Remotely Hosted Information", "Please make sure the remotely hosted properties are all empty before unchecking.");
+        }
+        else checkRemotelyHostedCheckBoxState();
+    });
+    
+    
 });
 
 function checkColdStorageCheckBoxState() {
@@ -684,6 +696,24 @@ function checkColdStorageCheckBoxState() {
         $("#datasetFileColdStorageArchiveSize").removeAttr("required");
         $("#datasetFileColdStorageArchiveSha256Hash").removeAttr("required");
         $("#datasetFileColdStorageOriginalFilename").removeAttr("required");
+    }
+}
+
+function checkRemotelyHostedCheckBoxState() {
+    if ($(".remotelyhosted-checkbox").is(":checked")) {
+        $(".row-remotely-hosted-name").show();
+        $(".row-remotely-hosted-description").show();
+        $(".row-remotely-hosted-function").show();
+        $("#remotelyHostedName").attr("required", "required");
+        $("#remotelyHostedDescription").attr("required", "required");
+        $("#remotelyHostedFunction").attr("required", "required");
+    } else {
+        $(".row-remotely-hosted-name").hide();
+        $(".row-remotely-hosted-description").hide();
+        $(".row-remotely-hosted-function").hide();
+        $("#remotelyHostedName").removeAttr("required");
+        $("#remotelyHostedDescription").removeAttr("required");
+        $("#remotelyHostedFunction").removeAttr("required");
     }
 }
 

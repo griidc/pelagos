@@ -115,6 +115,31 @@
                         </tr>
                     </table>
                 </fieldset>
+                <fieldset>
+                    <table class="tab-table">
+                        <tr>
+                            <td>
+                                {{ form_label(form.isRemotelyHosted) }}
+                                {{ form_widget(form.isRemotelyHosted, { 'attr': {'class': 'remotelyhosted-checkbox'} }) }}
+                            </td>
+                        </tr>
+                        <tr class="row-remotely-hosted-name">
+                            <td>
+                                {{ form_row(form.remotelyHostedName) }}
+                            </td>
+                        </tr>
+                        <tr class="row-remotely-hosted-description">
+                            <td>
+                                {{ form_row(form.remotelyHostedDescription) }}
+                            </td>
+                        </tr>
+                        <tr class="row-remotely-hosted-function">
+                            <td>
+                                {{ form_row(form.remotelyHostedFunction) }}
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
             </div> <!-- tabs-3 -->
 
         </div> <!-- tabs -->
