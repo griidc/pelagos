@@ -64,9 +64,10 @@ $(document).ready(function () {
             window.location = url + "&resGrp=" + rgIds;
         } else if (foIds) {
             window.location = url + "&fundOrg=" + foIds;
+        } else {
+            window.location = url;
         }
 
-        window.location = url;
     });
     
     $("#resetBtn").click(function () {
