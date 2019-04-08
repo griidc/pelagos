@@ -173,18 +173,17 @@ class Search
         $mainQuery->addAggregation($nestedRgAgg);
 
         // Add researchGroup id field to the filter
-        if (isset($requestTerms['options']['rgId'])) {
+        if (isset($requestTerms['options']['rgId']) and !empty($requestTerms['options']['rgId'])) {
             $researchGroupNameQuery = new Query\Nested();
             $researchGroupNameQuery->setPath('researchGroup');
             $rgNameQuery = new Query\Terms();
-            $rgNameQuery->setTerms('researchGroup.id', [$requestTerms['options']['rgId']]);
+            $rgNameQuery->setTerms('researchGroup.id', explode(',', $requestTerms['options']['rgId']));
             $researchGroupNameQuery->setQuery($rgNameQuery);
-            $filterBoolQuery->addFilter($researchGroupNameQuery);
+            $filterBoolQuery->addMust($researchGroupNameQuery);
+            $mainQuery->setParam('post_filter', $filterBoolQuery);
         }
 
         $subMainQuery->addMust($fieldsBoolQuery);
-        $subMainQuery->addMust($filterBoolQuery);
-
         $mainQuery->setQuery($subMainQuery);
         $mainQuery->setFrom(($page - 1) * 10);
 
