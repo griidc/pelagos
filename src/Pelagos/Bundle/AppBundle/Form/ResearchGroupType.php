@@ -37,6 +37,10 @@ class ResearchGroupType extends AbstractType
             ->add('name', TextType::class, array(
                 'label' => 'Name:',
             ))
+            ->add('shortName', TextType::class, array(
+                'label' => 'Short Name:',
+                'required' => false
+            ))
             ->add('fundingCycle', EntityType::class, array(
                 'label' => 'Funding Cycle',
                 'class' => 'Pelagos:FundingCycle',

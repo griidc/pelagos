@@ -33,6 +33,8 @@ use Pelagos\Exception\NotDeletableException;
  *     message="A Research Group with this name already exists"
  * )
  *
+ * @UniqueEntity("shortName", message="A Research Group with this Short name already exists")
+ *
  * @Hateoas\Relation(
  *   "self",
  *   href = @Hateoas\Route(
@@ -85,6 +87,19 @@ class ResearchGroup extends Entity
      * )
      */
     protected $name;
+
+    /**
+     * Short Name of a research group.
+     *
+     * @var string $shortName
+     *
+     * @ORM\Column(type="citext", unique=true, nullable=true)
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="Short name cannot contain angle brackets (< or >)"
+     * )
+     */
+    protected $shortName;
 
     /**
      * Research group's parent Funding Cycle.
@@ -722,5 +737,27 @@ class ResearchGroup extends Entity
     public static function compareByName(ResearchGroup $a, ResearchGroup $b)
     {
         return strcmp($a->getName(), $b->getName());
+    }
+
+    /**
+     * Getter for short name.
+     *
+     * @return string|null
+     */
+    public function getShortName() : ? string
+    {
+        return $this->shortName;
+    }
+
+    /**
+     * Setter for short name.
+     *
+     * @param string $shortName Short name for the research group.
+     *
+     * @return void
+     */
+    public function setShortName(string $shortName) : void
+    {
+        $this->shortName = $shortName;
     }
 }
