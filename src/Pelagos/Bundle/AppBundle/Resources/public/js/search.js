@@ -65,6 +65,8 @@ $(document).ready(function () {
         } else if (foIds) {
             window.location = url + "&fundOrg=" + foIds;
         }
+
+        window.location = url;
     });
     
     $("#resetBtn").click(function () {
