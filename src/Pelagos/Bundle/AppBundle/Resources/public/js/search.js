@@ -7,9 +7,10 @@ $(document).ready(function () {
     var urlParts = window.location.search.split("&");
     var startPage = getPageNo(urlParts);
     if (urlParts[2]) {
-        var rgId = urlParts[2].split("rgId=")[1];
+        var rgId = urlParts[2].split("resGrp=")[1];
+        var foId = urlParts[2].split("fundOrg=")[1];
     }
-    var url = Routing.generate("pelagos_app_ui_searchpage_default") + "?query=" + $("#searchBox").val() + "&page=";
+    var url = Routing.generate("pelagos_app_ui_searchpage_default") + "?query=" + $("#searchBox").val() + "&page=" + startPage;
 
 
     //Setting value of page number to 1, for new search
@@ -17,18 +18,43 @@ $(document).ready(function () {
         $("#pageNo").attr("disabled", true);
     });
 
-    var resGrpFacetCheckbox = $("#resgrp-facet :input[type='checkbox']");
 
-    if (resGrpFacetCheckbox.attr("id") === rgId) {
-        resGrpFacetCheckbox.attr("checked", true);
-    }
+    $("#" + rgId).attr("checked", true);
+    $("#" + foId).attr("checked", true);
 
-    resGrpFacetCheckbox.change(function () {
-        if ($(":input[type='checkbox']").is(":checked")) {
-            window.location = url + "1&rgId="+ $(this).attr("id");
-        } else {
-            window.location = url +"1";
+    $("#resgrp-facet :checkbox:checked");
+    var rgIdsArray = [];
+    var foIdsArray = [];
+    var rgIds = "";
+    var foIds = "";
+
+    $("#applyBtn").click(function () {
+
+        $("#resgrp-facet :checkbox:checked").each(function () {
+            rgIdsArray.push($(this).attr("id"));
+        });
+
+        if (rgIdsArray.length !== 0) {
+            rgIds = rgIdsArray.join(",");
         }
+        $("#fundorg-facet :checkbox:checked").each(function () {
+            foIdsArray.push($(this).attr("id"));
+        });
+        if (foIdsArray.length !== 0) {
+            foIds = foIdsArray.join(',');
+        }
+
+        if (foIds && rgIds) {
+            window.location = url + "&fundOrg=" + foIds + "&resGrp=" + rgIds;
+        } else if (rgIds) {
+            window.location = url + "&resGrp=" + rgIds;
+        } else if (foIds) {
+            window.location = url + "&fundOrg=" + foIds;
+        }
+    });
+    
+    $("#resetBtn").click(function () {
+        $("input:checkbox").removeAttr("checked");
     });
 
     if (count > pageSize) {

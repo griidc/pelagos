@@ -24,7 +24,7 @@
                         <li for="{{ org.id }}">
                             <div class="checkbox block" style="margin-top: 0; margin-bottom: 0;">
                                 <label>
-                                    <input class="rg-checkbox" type="checkbox" id="{{ org.id }}">
+                                    <input class="fo-checkbox" type="checkbox" id="fo_{{ org.id }}">
                                     <span class="groupName">{{ org.name }} </span> ({{ org.count }})
                                     <div class="tooltiptext" style="display:none">
                                         <p>{{ org.name }}</p>
@@ -42,7 +42,7 @@
                         <li for="{{ group.id }}">
                             <div class="checkbox block" style="margin-top: 0; margin-bottom: 0;">
                                 <label>
-                                    <input class="rg-checkbox" type="checkbox" id="{{ group.id }}">
+                                    <input class="rg-checkbox" type="checkbox" id="rg_{{ group.id }}">
                                     <span class="groupName">{{ group.name }} </span> ({{ group.count }})
                                     <div class="tooltiptext" style="display:none">
                                         <p>{{ group.name }}</p>
@@ -52,7 +52,11 @@
                         </li>
                     {% endfor %}
                 </ul>
-
+                <br>
+                <div class="filter-buttons">
+                    <button type="button" id="applyBtn">Apply</button>
+                    <button type="button" id="resetBtn">Reset</button>
+                </div>
             </div>
         </div>
 

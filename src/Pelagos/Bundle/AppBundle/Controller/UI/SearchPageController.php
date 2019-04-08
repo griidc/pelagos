@@ -65,7 +65,8 @@ class SearchPageController extends UIController
             'query' => $request->get('query'),
             'page' => $request->get('page'),
             'options' => array(
-                'rgId' => $request->get('rgId')
+                'rgId' => str_replace('rg_', '', $request->get('resGrp')),
+                'funOrgId' => str_replace('fo_', '', $request->get('fundOrg'))
             )
         );
     }
