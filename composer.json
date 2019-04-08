@@ -53,9 +53,11 @@
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
-        "symfony/phpunit-bridge": "^2.7",
+        "symfony/phpunit-bridge": "3.*",
         "mockery/mockery": "dev-master",
-        "symfony/web-server-bundle": "3.4.*"
+        "symfony/web-server-bundle": "3.4.*",
+        "symfony/browser-kit": "3.*",
+        "symfony/css-selector": "3.*"
     },
     "scripts": {
         "post-install-cmd": [

@@ -16,4 +16,9 @@
             <directory suffix=".php">web</directory>
         </whitelist>
     </filter>
+    <php>
+        <env name="APP_ENV" value="drupal_dev" />
+        <env name="KERNEL_DIR" value="./app" />
+        <env name="KERNEL_CLASS" value="Symfony\Component\HttpKernel\AppKernel" />
+    </php>
 </phpunit>
