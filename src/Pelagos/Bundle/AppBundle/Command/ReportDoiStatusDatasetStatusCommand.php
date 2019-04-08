@@ -151,7 +151,6 @@ class ReportDoiStatusDatasetStatusCommand extends ContainerAwareCommand
                 $doiMetadata = $doiUtil->getDOIMetadata($dataset->getDoi()->getDoi());
                 $doiArray['status'] = $doiMetadata['_status'];
                 $doiArray['id'] = $dataset->getDoi()->getDoi();
-
             } catch (\Exception $e) {
                 throw new \Exception('Unable to get DOI metadata ' . $e->getMessage());
             }

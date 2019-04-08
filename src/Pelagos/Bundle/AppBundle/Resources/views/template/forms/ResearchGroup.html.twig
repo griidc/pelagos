@@ -6,6 +6,8 @@ _action="{{path('pelagos_api_research_groups_post')}}">
 
     {{ form_row(form.name) }}
 
+    {{ form_row(form.shortName) }}
+
     <label for="fundingOrganization">Funding Organization:</label>
     <select dontvalidate required name="fundingCycle.fundingOrganization" fundingOrganization="{{ResearchGroup.getFundingCycle.getFundingOrganization.getId|default}}">
     <option value="">[Please Select a Funding Organization]</option>

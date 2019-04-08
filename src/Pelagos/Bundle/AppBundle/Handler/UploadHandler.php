@@ -170,7 +170,6 @@ class UploadHandler
 
         if (is_writable($this->chunksDirectory) and
             1 == mt_rand(1, (1 / $this->chunksCleanupProbability))) {
-
             // Run garbage collection
             $this->cleanupChunks();
         }
@@ -271,10 +270,8 @@ class UploadHandler
                 'success' => true,
                 'uuid' => $uuid,
             );
-
         } else {
             // non-chunked upload
-
             $targetDirectory = $this->uploadDirectory . DIRECTORY_SEPARATOR . $uuid;
 
             if (!file_exists($targetDirectory)) {
@@ -367,7 +364,6 @@ class UploadHandler
             } else {
                 unlink(join(DIRECTORY_SEPARATOR, array($dir, $item)));
             }
-
         }
         rmdir($dir);
     }
