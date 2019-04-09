@@ -11,8 +11,6 @@ $(document).ready(function () {
         var rgId = facetIds["rgId"];
         var foId = facetIds["foId"];
     }
-    var url = Routing.generate("pelagos_app_ui_searchpage_default") + "?query=" + $("#searchBox").val() + "&page=";
-
 
     //Setting value of page number to 1, for new search
     $("#searchForm").submit(function () {
@@ -44,6 +42,8 @@ $(document).ready(function () {
 
     $("#applyBtn").click(function () {
 
+        var urlPelagos = Routing.generate("pelagos_app_ui_searchpage_default") + "?query=" + $("#searchBox").val();
+
         $("#resgrp-facet :checkbox:checked").each(function () {
             rgIdsArray.push($(this).attr("id"));
         });
@@ -59,23 +59,26 @@ $(document).ready(function () {
         }
 
         if (foIds && rgIds) {
-            window.location = url + startPage + "&fundOrg=" + foIds + "&resGrp=" + rgIds;
+            window.location = urlPelagos  + "&fundOrg=" + foIds + "&resGrp=" + rgIds + "&page=" + startPage;
         } else if (rgIds) {
-            window.location = url + startPage + "&resGrp=" + rgIds;
+            window.location = urlPelagos + "&resGrp=" + rgIds + "&page=" + startPage;
         } else if (foIds) {
-            window.location = url + startPage + "&fundOrg=" + foIds;
+            window.location = urlPelagos + "&fundOrg=" + foIds + "&page=" + startPage;
         } else {
-            window.location = url + startPage;
+            window.location = urlPelagos;
         }
 
     });
     
     $("#resetBtn").click(function () {
         $("input:checkbox").removeAttr("checked");
+        $("#pageNo").attr("disabled", true);
     });
 
     if (count > pageSize) {
+        var url = document.location.href;
         var pageCount = Math.ceil(count / pageSize);
+        var arr = url.split('page=');
 
         $("#search-pagination").bootpag({
             total: pageCount,
@@ -92,7 +95,7 @@ $(document).ready(function () {
             prevClass: "prev",
             lastClass: "last",
             firstClass: "first",
-            href: url + "{{number}}"
+            href: arr[0] + "page=" + "{{number}}"
         });
     }
 
@@ -104,23 +107,27 @@ $(document).ready(function () {
             }
         });
     });
+
+    $(".disabled").click(function (e) {
+        e.preventDefault();
+    })
 });
 
 function getPageNo(urlParts) {
     var pageNo = 1;
-    if (urlParts[1]){
-        pageNo = Number(urlParts[1].split("page=")[1]);
+    if (urlParts.length > 2) {
+        pageNo = Number((urlParts[urlParts.length-1]).split("page=")[1]);
     }
     return pageNo;
 }
 
 function getFacetIds(urlParts) {
     if (urlParts.length > 3) {
-        var foId = urlParts[2].split("fundOrg=")[1];
-        var rgId = urlParts[3].split("resGrp=")[1];
-    } else {
+        var foId = urlParts[1].split("fundOrg=")[1];
         var rgId = urlParts[2].split("resGrp=")[1];
-        var foId = urlParts[2].split("fundOrg=")[1];
+    } else {
+        var rgId = urlParts[1].split("resGrp=")[1];
+        var foId = urlParts[1].split("fundOrg=")[1];
     }
     return {"foId": foId, "rgId": rgId};
 }
