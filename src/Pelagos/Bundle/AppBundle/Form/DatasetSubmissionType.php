@@ -343,7 +343,7 @@ class DatasetSubmissionType extends AbstractType
                         $data->getDatasetFileColdStorageOriginalFilename()
                     );
                 }
-                if ($form->get('remotelyHostedName')->getData() !== '') {
+                if (!empty($form->get('remotelyHostedName')->getData())) {
                     $form->get('isRemotelyHosted')->setData(true);
                 }
             }
