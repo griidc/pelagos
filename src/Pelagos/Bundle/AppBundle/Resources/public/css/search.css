@@ -122,12 +122,8 @@ h1{
 }
 
 #resgrp-facet{
-    overflow: scroll;
+    overflow-y: scroll;
     height: 250px;
     position: relative;
-}
-
-#fundorg-facet{
-    overflow: scroll;
 }
 
