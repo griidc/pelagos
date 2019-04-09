@@ -11,7 +11,7 @@ $(document).ready(function () {
         var rgId = facetIds["rgId"];
         var foId = facetIds["foId"];
     }
-    var url = Routing.generate("pelagos_app_ui_searchpage_default") + "?query=" + $("#searchBox").val() + "&page=" + startPage;
+    var url = Routing.generate("pelagos_app_ui_searchpage_default") + "?query=" + $("#searchBox").val() + "&page=";
 
 
     //Setting value of page number to 1, for new search
@@ -59,13 +59,13 @@ $(document).ready(function () {
         }
 
         if (foIds && rgIds) {
-            window.location = url + "&fundOrg=" + foIds + "&resGrp=" + rgIds;
+            window.location = url + startPage + "&fundOrg=" + foIds + "&resGrp=" + rgIds;
         } else if (rgIds) {
-            window.location = url + "&resGrp=" + rgIds;
+            window.location = url + startPage + "&resGrp=" + rgIds;
         } else if (foIds) {
-            window.location = url + "&fundOrg=" + foIds;
+            window.location = url + startPage + "&fundOrg=" + foIds;
         } else {
-            window.location = url;
+            window.location = url + startPage;
         }
 
     });
