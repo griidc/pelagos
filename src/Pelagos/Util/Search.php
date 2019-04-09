@@ -201,7 +201,7 @@ class Search
             }
 
             $filterBoolQuery->addMust($postFilterBoolQuery);
-            $mainQuery->setParam('post_filter', $filterBoolQuery);
+            $mainQuery->setPostFilter($filterBoolQuery);
         }
 
         $subMainQuery->addMust($fieldsBoolQuery);
