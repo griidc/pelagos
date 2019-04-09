@@ -7,6 +7,8 @@ use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 
+use Symfony\Component\Security\Core\User\UserInterface;
+
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Password;
 
@@ -58,7 +60,7 @@ class SecuredPageTest extends WebTestCase
 
         $firewallName = 'main';
         $firewallContext = 'main';
-
+        
         $token = new PostAuthenticationGuardToken($this->account, $firewallName, array('ROLE_DATA_REPOSITORY_MANAGER'));
         $token->setAuthenticated(true);
         $session->set('_security_'.$firewallContext, serialize($token));
@@ -73,7 +75,7 @@ class SecuredPageTest extends WebTestCase
      */
     public function testDif()
     {
-        //$this->logIn();
+        $this->logIn();
         
         $url = $this->client->getContainer()->get('router')->generate('pelagos_admin', array(), false);
         $crawler = $this->client->request('GET', $url);

@@ -16,7 +16,6 @@ addons:
   apt:
     packages:
     - postgresql-9.6-postgis-2.3
-  chrome: stable
 
 # Cache composer packages so "composer install" is faster
 cache:
