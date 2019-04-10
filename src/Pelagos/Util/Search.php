@@ -152,17 +152,17 @@ class Search
         $researchGroupAgg->setSize(500);
 
         if (!empty($requestTerms['options']['funOrgId'])) {
-            $sampleFilter = new Aggregation\Filter('fcFilter');
-            $secondNestedQuery = new Query\Nested();
-            $secondNestedQuery->setPath('researchGroup.fundingCycle.fundingOrganization');
-            $queryForFilter = new Query\Term();
-            $queryForFilter->setTerm('researchGroup.fundingCycle.fundingOrganization.id', $requestTerms['options']['funOrgId']);
-            $secondNestedQuery->setQuery($queryForFilter);
-            $sampleFilter->setFilter($secondNestedQuery);
-            $sampleFilter->addAggregation($researchGroupAgg);
+            $fundOrgFilter = new Aggregation\Filter('fundOrgFilter');
+            $fundOrgNestedQuery = new Query\Nested();
+            $fundOrgNestedQuery->setPath('researchGroup.fundingCycle.fundingOrganization');
+            $fundOrgTerm = new Query\Term();
+            $fundOrgTerm->setTerm('researchGroup.fundingCycle.fundingOrganization.id', $requestTerms['options']['funOrgId']);
+            $fundOrgNestedQuery->setQuery($fundOrgTerm);
+            $fundOrgFilter->setFilter($fundOrgNestedQuery);
+            $fundOrgFilter->addAggregation($researchGroupAgg);
 
             // Add research group agg to nested
-            $nestedRgAgg->addAggregation($sampleFilter);
+            $nestedRgAgg->addAggregation($fundOrgFilter);
         } else {
             $nestedRgAgg->addAggregation($researchGroupAgg);
         }
@@ -252,13 +252,13 @@ class Search
     {
         $userPaginator = $this->getPaginator($query);
 
-        $reseachGroupBucket = array_column(
+        $researchGroupBucket = array_column(
             $this->findKey($userPaginator->getAdapter()->getAggregations(), 'researchGrpId')['buckets'],
             'doc_count',
             'key'
         );
 
-        return $this->getResearchGroupsInfo($reseachGroupBucket);
+        return $this->getResearchGroupsInfo($researchGroupBucket);
     }
 
     /**
@@ -302,7 +302,7 @@ class Search
         $userPaginator = $this->getPaginator($query);
 
         $fundingOrgBucket = array_column(
-            $userPaginator->getAdapter()->getAggregations()['nestedResGrp']['nestedFunCyc']['nestedFunOrg']['fundingOrgId']['buckets'],
+            $this->findKey($userPaginator->getAdapter()->getAggregations(), 'fundingOrgId')['buckets'],
             'doc_count',
             'key'
         );
