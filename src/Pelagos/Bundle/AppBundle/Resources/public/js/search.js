@@ -40,7 +40,7 @@ $(document).ready(function () {
     var rgIds = "";
     var foIds = "";
 
-    $("#applyBtn").click(function () {
+    $(".checkbox").change(function () {
 
         var urlPelagos = Routing.generate("pelagos_app_ui_searchpage_default") + "?query=" + $("#searchBox").val();
 
@@ -59,26 +59,21 @@ $(document).ready(function () {
         }
 
         if (foIds && rgIds) {
-            window.location = urlPelagos  + "&fundOrg=" + foIds + "&resGrp=" + rgIds + "&page=" + startPage;
+            window.location = urlPelagos  + "&fundOrg=" + foIds + "&resGrp=" + rgIds;
         } else if (rgIds) {
-            window.location = urlPelagos + "&resGrp=" + rgIds + "&page=" + startPage;
+            window.location = urlPelagos + "&resGrp=" + rgIds;
         } else if (foIds) {
-            window.location = urlPelagos + "&fundOrg=" + foIds + "&page=" + startPage;
+            window.location = urlPelagos + "&fundOrg=" + foIds;
         } else {
             window.location = urlPelagos;
         }
 
     });
-    
-    $("#resetBtn").click(function () {
-        $("input:checkbox").removeAttr("checked");
-        $("#pageNo").attr("disabled", true);
-    });
 
     if (count > pageSize) {
         var url = document.location.href;
         var pageCount = Math.ceil(count / pageSize);
-        var arr = url.split('page=');
+        var arr = url.split('&page=');
 
         $("#search-pagination").bootpag({
             total: pageCount,
@@ -88,14 +83,17 @@ $(document).ready(function () {
             firstLastUse: true,
             first: "←",
             last: "→",
-            wrapClass: "pagination",
             activeClass: "active",
             disabledClass: "disabled",
             nextClass: "next",
             prevClass: "prev",
             lastClass: "last",
             firstClass: "first",
-            href: arr[0] + "page=" + "{{number}}"
+            href: arr[0] + "&page=" + "{{number}}"
+        });
+
+        $(".next").click(function (e) {
+           e.preventDefault();
         });
     }
 
@@ -115,8 +113,11 @@ $(document).ready(function () {
 
 function getPageNo(urlParts) {
     var pageNo = 1;
-    if (urlParts.length > 2) {
-        pageNo = Number((urlParts[urlParts.length-1]).split("page=")[1]);
+    if (urlParts.length > 1) {
+        var urlPagePart = urlParts[urlParts.length-1].split("page=");
+        if (urlPagePart.length > 1) {
+            pageNo = Number(urlPagePart[1]);
+        }
     }
     return pageNo;
 }
