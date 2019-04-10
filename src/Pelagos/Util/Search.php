@@ -14,18 +14,14 @@ use Pagerfanta\Pagerfanta;
 use Pelagos\Entity\FundingOrganization;
 use Pelagos\Entity\ResearchGroup;
 
+use RecursiveArrayIterator;
+use RecursiveIteratorIterator;
+
 /**
  * Util class for FOS Elastic Search.
  */
 class Search
 {
-
-    /**
-     * Research group bucket.
-     *
-     * @var array
-     */
-    protected $resGroupBucket = array();
 
     /**
      * FOS Elastica Object to find elastica documents.
@@ -256,10 +252,8 @@ class Search
     {
         $userPaginator = $this->getPaginator($query);
 
-        $this->findKey($userPaginator->getAdapter()->getAggregations(), 'researchGrpId');
-
         $reseachGroupBucket = array_column(
-            $this->resGroupBucket['buckets'],
+            $this->findKey($userPaginator->getAdapter()->getAggregations(), 'researchGrpId')['buckets'],
             'doc_count',
             'key'
         );
@@ -351,19 +345,33 @@ class Search
      * @param array  $aggregations Array of aggregations.
      * @param string $bucketKey    The name of the bucket to be found.
      *
-     * @return boolean
+     * @return array
      */
-    private function findKey(array $aggregations, string $bucketKey): bool
+    private function findKey(array $aggregations, string $bucketKey)
     {
-        // Used recursive function to iterate through the multi-dimensional array.
-        foreach ($aggregations as $key => $item) {
+        $bucket = array();
+
+        //create a recursive iterator to loop over the array recursively
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveArrayIterator($aggregations),
+            RecursiveIteratorIterator::SELF_FIRST
+        );
+
+        //loop over the iterator
+        foreach ($iterator as $key => $value) {
+            //if the key matches our search
             if ($key === $bucketKey) {
-                $this->resGroupBucket = $item;
-                return true;
-            } elseif (is_array($item) && $this->findKey($item, $bucketKey)) {
-                return true;
+                //add the current key
+                $keys = array($key);
+                //loop up the recursive chain
+                for ($i = ($iterator->getDepth() - 1); $i >= 0; $i--) {
+                    //add each parent key
+                    array_unshift($keys, $iterator->getSubIterator($i)->key());
+                }
+                //return our output array
+                $bucket = $value;
             }
         }
-        return false;
+        return $bucket;
     }
 }
