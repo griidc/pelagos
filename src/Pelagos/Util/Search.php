@@ -19,6 +19,14 @@ use Pelagos\Entity\ResearchGroup;
  */
 class Search
 {
+
+    /**
+     * Research group bucket.
+     *
+     * @var array
+     */
+    protected $resGroupBucket = array();
+
     /**
      * FOS Elastica Object to find elastica documents.
      *
@@ -147,8 +155,22 @@ class Search
         $researchGroupAgg->setField('researchGroup.id');
         $researchGroupAgg->setSize(500);
 
-        // Add research group agg to nested
-        $nestedRgAgg->addAggregation($researchGroupAgg);
+        if (!empty($requestTerms['options']['funOrgId'])) {
+            $sampleFilter = new Aggregation\Filter('fcFilter');
+            $secondNestedQuery = new Query\Nested();
+            $secondNestedQuery->setPath('researchGroup.fundingCycle.fundingOrganization');
+            $queryForFilter = new Query\Term();
+            $queryForFilter->setTerm('researchGroup.fundingCycle.fundingOrganization.id', $requestTerms['options']['funOrgId']);
+            $secondNestedQuery->setQuery($queryForFilter);
+            $sampleFilter->setFilter($secondNestedQuery);
+            $sampleFilter->addAggregation($researchGroupAgg);
+
+            // Add research group agg to nested
+            $nestedRgAgg->addAggregation($sampleFilter);
+        } else {
+            $nestedRgAgg->addAggregation($researchGroupAgg);
+        }
+
 
         // Add nested field path for funding cycle field
         $nestedFcAgg = new Aggregation\Nested('nestedFunCyc', 'researchGroup.fundingCycle');
@@ -160,12 +182,12 @@ class Search
         $fundingOrgAgg->setField('researchGroup.fundingCycle.fundingOrganization.id');
         $fundingOrgAgg->setSize(10);
 
+
         // Add funding Org agg to nested agg
         $nestedFoAgg->addAggregation($fundingOrgAgg);
 
         // Add funding org to funding cycle agg
         $nestedFcAgg->addAggregation($nestedFoAgg);
-
         // Add Nested fundingOrg agg to nested research group agg
         $nestedRgAgg->addAggregation($nestedFcAgg);
 
@@ -234,8 +256,10 @@ class Search
     {
         $userPaginator = $this->getPaginator($query);
 
+        $this->findKey($userPaginator->getAdapter()->getAggregations(), 'researchGrpId');
+
         $reseachGroupBucket = array_column(
-            $userPaginator->getAdapter()->getAggregations()['nestedResGrp']['researchGrpId']['buckets'],
+            $this->resGroupBucket['buckets'],
             'doc_count',
             'key'
         );
@@ -319,5 +343,27 @@ class Search
         array_multisort(array_column($fundingOrgInfo, 'count'), SORT_DESC, $fundingOrgInfo);
 
         return $fundingOrgInfo;
+    }
+
+    /**
+     * Find the bucket name of the aggregation.
+     *
+     * @param array  $aggregations Array of aggregations.
+     * @param string $bucketKey    The name of the bucket to be found.
+     *
+     * @return boolean
+     */
+    private function findKey(array $aggregations, string $bucketKey): bool
+    {
+        // Used recursive function to iterate through the multi-dimensional array.
+        foreach ($aggregations as $key => $item) {
+            if ($key === $bucketKey) {
+                $this->resGroupBucket = $item;
+                return true;
+            } elseif (is_array($item) && $this->findKey($item, $bucketKey)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
