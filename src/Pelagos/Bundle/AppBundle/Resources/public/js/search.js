@@ -6,7 +6,7 @@ $(document).ready(function () {
     var count = $("#count").attr("data-content");
     var urlParts = window.location.search.split("&");
     var startPage = getPageNo(urlParts);
-    if (urlParts.length > 2) {
+    if (urlParts.length > 1) {
         var facetIds = getFacetIds(urlParts);
         var rgId = facetIds["rgId"];
         var foId = facetIds["foId"];
@@ -123,7 +123,7 @@ function getPageNo(urlParts) {
 }
 
 function getFacetIds(urlParts) {
-    if (urlParts.length > 3) {
+    if (urlParts.length > 2) {
         var foId = urlParts[1].split("fundOrg=")[1];
         var rgId = urlParts[2].split("resGrp=")[1];
     } else {
