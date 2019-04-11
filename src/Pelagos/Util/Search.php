@@ -155,8 +155,8 @@ class Search
             $fundOrgFilter = new Aggregation\Filter('fundOrgFilter');
             $fundOrgNestedQuery = new Query\Nested();
             $fundOrgNestedQuery->setPath('researchGroup.fundingCycle.fundingOrganization');
-            $fundOrgTerm = new Query\Term();
-            $fundOrgTerm->setTerm('researchGroup.fundingCycle.fundingOrganization.id', $requestTerms['options']['funOrgId']);
+            $fundOrgTerm = new Query\Terms();
+            $fundOrgTerm->setTerms('researchGroup.fundingCycle.fundingOrganization.id', explode(',', $requestTerms['options']['funOrgId']));
             $fundOrgNestedQuery->setQuery($fundOrgTerm);
             $fundOrgFilter->setFilter($fundOrgNestedQuery);
             $fundOrgFilter->addAggregation($researchGroupAgg);
