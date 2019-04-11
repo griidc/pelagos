@@ -1,0 +1,3 @@
+doi_api_user_name = "username"
+doi_api_password = "password"
+url = "https://website.here"
