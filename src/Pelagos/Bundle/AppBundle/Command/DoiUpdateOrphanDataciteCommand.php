@@ -37,6 +37,8 @@ class DoiUpdateOrphanDataciteCommand extends ContainerAwareCommand
      * @param InputInterface  $input  An InputInterface instance.
      * @param OutputInterface $output An OutputInterface instance.
      *
+     * @throws \RuntimeException Throws exception when no filename is provided.
+     *
      * @return void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -45,28 +47,23 @@ class DoiUpdateOrphanDataciteCommand extends ContainerAwareCommand
 
         if ($inputFileName) {
             $contents = file($inputFileName);
-        } else if (0 === ftell(STDIN)) {
-            $contents = '';
-            while (!feof(STDIN)) {
-                $contents .= fread(STDIN, 1024);
-            }
         } else {
-            throw new \RuntimeException("Please provide a filename or pipe template content to STDIN.");
+            throw new \RuntimeException('Please provide a filename or pipe template content to STDIN.');
         }
 
         $iniFile = dirname(__FILE__) . '/../../../Util/DoiRest.ini';
         $parameters = parse_ini_file($iniFile);
 
         $url = $parameters['url'] . '/dois';
-        $doiusername = $parameters['doi_api_user_name'];
-        $doipassword = $parameters['doi_api_password'];
+        $doiUserName = $parameters['doi_api_user_name'];
+        $doiPassword = $parameters['doi_api_password'];
 
         $defaultBody = [
             'data' => [
                 'id' => null,
                 'type' => 'dois',
                 'attributes' => [
-                    'creators' =>  [
+                    'creators' => [
                         ['name' => '(:null)']
                     ],
                     'titles' => [
@@ -83,7 +80,15 @@ class DoiUpdateOrphanDataciteCommand extends ContainerAwareCommand
         foreach ($contents as $doi) {
             $defaultBody['data']['id'] = $doi;
             try {
-                $response = $client->request('PUT', $url . "/$doi", ['auth' => [$doiusername, $doipassword], 'headers' => ['Content-Type' => 'application/json'],'body' => json_encode($defaultBody)]);
+                $response = $client->request(
+                    'PUT',
+                    $url . "/$doi",
+                    [
+                        'auth' => [$doiUserName, $doiPassword],
+                        'headers' => ['Content-Type' => 'application/json'],
+                        'body' => json_encode($defaultBody)
+                    ]
+                );
             } catch (GuzzleException $e) {
                 $output->writeln($e->getMessage());
             }
