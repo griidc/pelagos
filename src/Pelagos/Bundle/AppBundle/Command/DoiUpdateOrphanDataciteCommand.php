@@ -51,10 +51,10 @@ class DoiUpdateOrphanDataciteCommand extends ContainerAwareCommand
             throw new \RuntimeException('Please provide a filename or pipe template content to STDIN.');
         }
 
-        $iniFile = dirname(__FILE__) . '/../../../Util/DoiRest.ini';
+        $iniFile = dirname(__FILE__) . '/../../../Util/DOIutil.ini';
         $parameters = parse_ini_file($iniFile);
 
-        $url = $parameters['url'] . '/dois';
+        $url = $parameters['url_rest'] . '/dois';
         $doiUserName = $parameters['doi_api_user_name'];
         $doiPassword = $parameters['doi_api_password'];
 
