@@ -11,13 +11,18 @@ use FOS\ElasticaBundle\Finder\TransformedFinder;
 
 use Pagerfanta\Pagerfanta;
 
+use Pelagos\Entity\FundingOrganization;
 use Pelagos\Entity\ResearchGroup;
+
+use RecursiveArrayIterator;
+use RecursiveIteratorIterator;
 
 /**
  * Util class for FOS Elastic Search.
  */
 class Search
 {
+
     /**
      * FOS Elastica Object to find elastica documents.
      *
@@ -138,27 +143,86 @@ class Search
 
         $fieldsBoolQuery->addShould($datasetSubmissionQuery);
 
-        $agg = new Aggregation\Terms('researchGrpId');
-        $nestedAgg = new Aggregation\Nested('nested', 'researchGroup');
+        // Add nested field path for research group field
+        $nestedRgAgg = new Aggregation\Nested('nestedResGrp', 'researchGroup');
+
         // Add researchGroup id field to the aggregation
-        $agg->setField('researchGroup.id');
-        $agg->setSize(500);
-        $nestedAgg->addAggregation($agg);
-        $mainQuery->addAggregation($nestedAgg);
+        $researchGroupAgg = new Aggregation\Terms('researchGrpId');
+        $researchGroupAgg->setField('researchGroup.id');
+        $researchGroupAgg->setSize(500);
+
+        if (!empty($requestTerms['options']['funOrgId'])) {
+            $fundOrgFilter = new Aggregation\Filter('fundOrgFilter');
+            $fundOrgNestedQuery = new Query\Nested();
+            $fundOrgNestedQuery->setPath('researchGroup.fundingCycle.fundingOrganization');
+            $fundOrgTerm = new Query\Terms();
+            $fundOrgTerm->setTerms('researchGroup.fundingCycle.fundingOrganization.id', explode(',', $requestTerms['options']['funOrgId']));
+            $fundOrgNestedQuery->setQuery($fundOrgTerm);
+            $fundOrgFilter->setFilter($fundOrgNestedQuery);
+            $fundOrgFilter->addAggregation($researchGroupAgg);
+
+            // Add research group agg to nested
+            $nestedRgAgg->addAggregation($fundOrgFilter);
+        } else {
+            $nestedRgAgg->addAggregation($researchGroupAgg);
+        }
+
+
+        // Add nested field path for funding cycle field
+        $nestedFcAgg = new Aggregation\Nested('nestedFunCyc', 'researchGroup.fundingCycle');
+
+        // Add nested field path for funding org field
+        $nestedFoAgg = new Aggregation\Nested('nestedFunOrg', 'researchGroup.fundingCycle.fundingOrganization');
+        // Add funding Org id field to the aggregation
+        $fundingOrgAgg = new Aggregation\Terms('fundingOrgId');
+        $fundingOrgAgg->setField('researchGroup.fundingCycle.fundingOrganization.id');
+        $fundingOrgAgg->setSize(10);
+
+
+        // Add funding Org agg to nested agg
+        $nestedFoAgg->addAggregation($fundingOrgAgg);
+
+        // Add funding org to funding cycle agg
+        $nestedFcAgg->addAggregation($nestedFoAgg);
+        // Add Nested fundingOrg agg to nested research group agg
+        $nestedRgAgg->addAggregation($nestedFcAgg);
+
+        // Add nested agg to main agg
+        $mainQuery->addAggregation($nestedRgAgg);
 
         // Add researchGroup id field to the filter
-        if (isset($requestTerms['options']['rgId'])) {
-            $researchGroupNameQuery = new Query\Nested();
-            $researchGroupNameQuery->setPath('researchGroup');
-            $rgNamequery = new Query\Terms();
-            $rgNamequery->setTerms('researchGroup.id', [$requestTerms['options']['rgId']]);
-            $researchGroupNameQuery->setQuery($rgNamequery);
-            $filterBoolQuery->addFilter($researchGroupNameQuery);
+        if (!empty($requestTerms['options']['funOrgId']) || !empty($requestTerms['options']['rgId'])) {
+            $postFilterBoolQuery = new Query\BoolQuery();
+
+            if (!empty($requestTerms['options']['rgId'])) {
+                $researchGroupNameQuery = new Query\Nested();
+                $researchGroupNameQuery->setPath('researchGroup');
+
+                $rgNameQuery = new Query\Terms();
+                $rgNameQuery->setTerms('researchGroup.id', explode(',', $requestTerms['options']['rgId']));
+                $researchGroupNameQuery->setQuery($rgNameQuery);
+
+                $postFilterBoolQuery->addMust($researchGroupNameQuery);
+            }
+
+            if (!empty($requestTerms['options']['funOrgId'])) {
+                // Add nested field path for funding org field
+                $nestedFoQuery = new Query\Nested();
+                $nestedFoQuery->setPath('researchGroup.fundingCycle.fundingOrganization');
+
+                // Add funding Org id field to the aggregation
+                $fundingOrgIdQuery = new Query\Terms();
+                $fundingOrgIdQuery->setTerms('researchGroup.fundingCycle.fundingOrganization.id', explode(',', $requestTerms['options']['funOrgId']));
+
+                $nestedFoQuery->setQuery($fundingOrgIdQuery);
+                $postFilterBoolQuery->addMust($nestedFoQuery);
+            }
+
+            $filterBoolQuery->addMust($postFilterBoolQuery);
+            $mainQuery->setPostFilter($filterBoolQuery);
         }
 
         $subMainQuery->addMust($fieldsBoolQuery);
-        $subMainQuery->addMust($filterBoolQuery);
-
         $mainQuery->setQuery($subMainQuery);
         $mainQuery->setFrom(($page - 1) * 10);
 
@@ -188,13 +252,13 @@ class Search
     {
         $userPaginator = $this->getPaginator($query);
 
-        $reseachGroupBucket = array_column(
-            $userPaginator->getAdapter()->getAggregations()['nested']['researchGrpId']['buckets'],
+        $researchGroupBucket = array_column(
+            $this->findKey($userPaginator->getAdapter()->getAggregations(), 'researchGrpId')['buckets'],
             'doc_count',
             'key'
         );
 
-        return $this->getResearchGroupsInfo($reseachGroupBucket);
+        return $this->getResearchGroupsInfo($researchGroupBucket);
     }
 
     /**
@@ -224,5 +288,90 @@ class Search
         array_multisort(array_column($researchGroupsInfo, 'count'), SORT_DESC, $researchGroupsInfo);
 
         return $researchGroupsInfo;
+    }
+
+    /**
+     * Get the aggregations for the query.
+     *
+     * @param Query $query The query built based on the search terms and parameters.
+     *
+     * @return array
+     */
+    public function getFundingOrgAggregations(Query $query): array
+    {
+        $userPaginator = $this->getPaginator($query);
+
+        $fundingOrgBucket = array_column(
+            $this->findKey($userPaginator->getAdapter()->getAggregations(), 'fundingOrgId')['buckets'],
+            'doc_count',
+            'key'
+        );
+
+        return $this->getFundingOrgInfo($fundingOrgBucket);
+    }
+
+    /**
+     * Get funding org information for the aggregations.
+     *
+     * @param array $aggregations Aggregations for each funding org id.
+     *
+     * @return array
+     */
+    private function getFundingOrgInfo(array $aggregations): array
+    {
+        $fundingOrgInfo = array();
+
+        $fundingOrgs = $this->entityManager
+            ->getRepository(FundingOrganization::class)
+            ->findBy(array('id' => array_keys($aggregations)));
+
+        foreach ($fundingOrgs as $fundingOrg) {
+            $fundingOrgInfo[$fundingOrg->getId()] = array(
+                'id' => $fundingOrg->getId(),
+                'name' => $fundingOrg->getName(),
+                'count' => $aggregations[$fundingOrg->getId()]
+            );
+        }
+
+        //Sorting based on highest count
+        array_multisort(array_column($fundingOrgInfo, 'count'), SORT_DESC, $fundingOrgInfo);
+
+        return $fundingOrgInfo;
+    }
+
+    /**
+     * Find the bucket name of the aggregation.
+     *
+     * @param array  $aggregations Array of aggregations.
+     * @param string $bucketKey    The name of the bucket to be found.
+     *
+     * @return array
+     */
+    private function findKey(array $aggregations, string $bucketKey)
+    {
+        $bucket = array();
+
+        //create a recursive iterator to loop over the array recursively
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveArrayIterator($aggregations),
+            RecursiveIteratorIterator::SELF_FIRST
+        );
+
+        //loop over the iterator
+        foreach ($iterator as $key => $value) {
+            //if the key matches our search
+            if ($key === $bucketKey) {
+                //add the current key
+                $keys = array($key);
+                //loop up the recursive chain
+                for ($i = ($iterator->getDepth() - 1); $i >= 0; $i--) {
+                    //add each parent key
+                    array_unshift($keys, $iterator->getSubIterator($i)->key());
+                }
+                //return our output array
+                $bucket = $value;
+            }
+        }
+        return $bucket;
     }
 }
