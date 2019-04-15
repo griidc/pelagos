@@ -361,6 +361,15 @@ class DatasetSubmissionType extends AbstractType
                 } else {
                     $entity->clearDatasetFileColdStorageAttributes();
                 }
+
+                // If all remotely hosted required fields are set, set to remotely hosted.
+                $remotelyHostedName = $event->getForm()->get('remotelyHostedName')->getData();
+                $remotelyHostedDescription = $event->getForm()->get('remotelyHostedDescription')->getData();
+                $remotelyHostedFunction = $event->getForm()->get('remotelyHostedFunction')->getData();
+                $entity = $event->getForm()->getData();
+                if (null !== $remotelyHostedName and null !== $remotelyHostedDescription and null !== $remotelyHostedFunction) {
+                    $entity->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
+                }
             }
         );
     }

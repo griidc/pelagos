@@ -138,7 +138,11 @@ $(document).ready(function(){
 
     var fileTabs = $("#filetabs");
 
-    fileTabs.tabs();
+    fileTabs.tabs({
+        activate: function(event, ui) {
+            $(":input", ui.newTab.context.hash).trigger("change");
+        }
+    });
 
     switch ($("#datasetFileTransferType").val()) {
         case "upload":
@@ -492,6 +496,8 @@ $(document).ready(function(){
     $("#datasetFilePath, #datasetFileUrl").on("keyup change", function() {
         $(this).valid();
         setDatasetFileUri($(this).val());
+        var isRemotelyHosted = ($(this).val() !== "" || $("#isRemotelyHosted").prop("checked")) ? false : true;
+        $("#isRemotelyHosted").attr("disabled", isRemotelyHosted)
     });
 
     // set the datasetFileUri and datasetFileTransferType
