@@ -4,19 +4,18 @@ $(document).ready(function () {
     "use strict";
     var pageSize = 10;
     var count = $("#count").attr("data-content");
-    var urlParts = window.location.search.split("&");
-    var startPage = getPageNo(urlParts);
-    if (urlParts.length > 1) {
-        var facetIds = getFacetIds(urlParts);
-        var rgId = facetIds["rgId"];
-        var foId = facetIds["foId"];
-    }
+    var urlParts = window.location.search.split("?");
+    let queryParse = parseQueryString(urlParts[1]);
+    let startPage = `${queryParse.page ? `${queryParse.page}` : 1}`;
+    let rgId = `${queryParse.resGrp}`;
+    let foId = `${queryParse.fundOrg}`;
 
     //Setting value of page number to 1, for new search
     $("#searchForm").submit(function () {
         $("#pageNo").attr("disabled", true);
     });
 
+    // Research group checkbox
     if (rgId) {
         rgId = rgId.split(",");
         if (rgId.length > 0) {
@@ -26,6 +25,7 @@ $(document).ready(function () {
         }
     }
 
+    // Funding organization checkbox
     if (foId) {
         foId = foId.split(",");
         if(foId.length > 0) {
@@ -111,24 +111,15 @@ $(document).ready(function () {
     })
 });
 
-function getPageNo(urlParts) {
-    var pageNo = 1;
-    if (urlParts.length > 1) {
-        var urlPagePart = urlParts[urlParts.length-1].split("page=");
-        if (urlPagePart.length > 1) {
-            pageNo = Number(urlPagePart[1]);
-        }
-    }
-    return pageNo;
+function parseQueryString(urlParts) {
+    let parsedQuery = {};
+
+    let vars = urlParts.split("&");
+    vars.forEach(function (key, value) {
+        let pair = key.split("=");
+        parsedQuery[pair[0]] = pair[1];
+    });
+
+    return parsedQuery;
 }
 
-function getFacetIds(urlParts) {
-    if (urlParts.length > 2) {
-        var foId = urlParts[1].split("fundOrg=")[1];
-        var rgId = urlParts[2].split("resGrp=")[1];
-    } else {
-        var rgId = urlParts[1].split("resGrp=")[1];
-        var foId = urlParts[1].split("fundOrg=")[1];
-    }
-    return {"foId": foId, "rgId": rgId};
-}
