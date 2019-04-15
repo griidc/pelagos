@@ -665,6 +665,26 @@ class Dataset extends Entity
         }
         $this->setAvailabilityStatus($availabilityStatus);
     }
+    
+    /**
+     * Whether this Dataset is available.
+     *
+     * @return boolean
+     */
+    public function isAvailable() : boolean
+    {
+        return $this->availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED or $this->availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE;
+    }
+    
+    /**
+     * Whether this Dataset is remotely hosted.
+     *
+     * @return boolean
+     */
+    public function isRemotelyHosted()
+    {
+        return $this->availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED or $this->availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED;
+    }
 
     /**
      * Return a value that represents the status of the Dataset as understood in the work flow.
