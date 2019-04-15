@@ -140,7 +140,15 @@ $(document).ready(function(){
 
     fileTabs.tabs({
         activate: function(event, ui) {
-            $(":input", ui.newTab.context.hash).trigger("change");
+            $(ui.newTab.context.hash).trigger("active");
+        }
+    });
+
+    fileTabs.on("active", function() {
+        var activeTab = $("#filetabs").tabs("option","active");
+        if (activeTab === 2) {
+            var isRemotelyHosted = ($(this).val() !== "" || $("#isRemotelyHosted").prop("checked")) ? false : true;
+            $("#isRemotelyHosted").attr("disabled", isRemotelyHosted);
         }
     });
 
@@ -497,7 +505,7 @@ $(document).ready(function(){
         $(this).valid();
         setDatasetFileUri($(this).val());
         var isRemotelyHosted = ($(this).val() !== "" || $("#isRemotelyHosted").prop("checked")) ? false : true;
-        $("#isRemotelyHosted").attr("disabled", isRemotelyHosted)
+        $("#isRemotelyHosted").attr("disabled", isRemotelyHosted);
     });
 
     // set the datasetFileUri and datasetFileTransferType
@@ -673,7 +681,7 @@ $(document).ready(function(){
         }
         else checkColdStorageCheckBoxState();
     });
-    
+
     checkRemotelyHostedCheckBoxState();
     $(".remotelyhosted-checkbox").change(function (){
         if (!$(this).is(":checked") &&
@@ -683,8 +691,6 @@ $(document).ready(function(){
         }
         else checkRemotelyHostedCheckBoxState();
     });
-    
-    
 });
 
 function checkColdStorageCheckBoxState() {
