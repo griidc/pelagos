@@ -17,7 +17,6 @@ use GuzzleHttp\Exception\GuzzleException;
  */
 class DoiUpdateOrphanDataciteCommand extends ContainerAwareCommand
 {
-
     /**
      * Configures the current command.
      *
