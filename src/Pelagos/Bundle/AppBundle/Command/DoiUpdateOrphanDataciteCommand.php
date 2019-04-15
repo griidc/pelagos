@@ -77,11 +77,11 @@ class DoiUpdateOrphanDataciteCommand extends ContainerAwareCommand
         $client = new Client();
 
         foreach ($contents as $doi) {
-            $defaultBody['data']['id'] = $doi;
+            $defaultBody['data']['id'] = trim($doi);
             try {
                 $response = $client->request(
                     'PUT',
-                    $url . "/$doi",
+                    $url . '/' . trim($doi),
                     [
                         'auth' => [$doiUserName, $doiPassword],
                         'headers' => ['Content-Type' => 'application/json'],
