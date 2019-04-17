@@ -100,7 +100,13 @@ class Search
         // Bool query to combine field query and filter query
         $subMainQuery = new Query\BoolQuery();
 
-        $subMainQuery->addMust($this->getFieldsQuery($queryTerm));
+        // Search exact phrase if query string has double quotes
+        if (preg_match('/"/', $queryTerm)) {
+            $subMainQuery->addMust($this->getExactMatchQuery($queryTerm));
+        } else {
+            $subMainQuery->addMust($this->getFieldsQuery($queryTerm));
+
+        }
 
         // Add facet filters
         if (!empty($requestTerms['options']['funOrgId']) || !empty($requestTerms['options']['rgId'])) {
@@ -416,5 +422,21 @@ class Search
         $filterBoolQuery->addMust($postFilterBoolQuery);
 
         return $filterBoolQuery;
+    }
+
+    /**
+     * Get query for exact match.
+     *
+     * @param string $queryTerm Query term that needs to be searched upon.
+     *
+     * @return Query\QueryString
+     */
+    private function getExactMatchQuery(string $queryTerm): Query\QueryString
+    {
+        $exactMatchQuery = new Query\QueryString();
+        $exactMatchQuery->setQuery(addslashes($queryTerm));
+        $exactMatchQuery->setDefaultOperator('and');
+
+        return $exactMatchQuery;
     }
 }
