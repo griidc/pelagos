@@ -7,8 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
+use Pelagos\Util\DOIutil;
 
 /**
  * This Symfony Command updates the Datacite orphan dois.
@@ -50,46 +49,19 @@ class DoiUpdateOrphanDataciteCommand extends ContainerAwareCommand
             throw new \RuntimeException('Please provide a filename or pipe template content to STDIN.');
         }
 
-        $iniFile = dirname(__FILE__) . '/../../../Util/DOIutil.ini';
-        $parameters = parse_ini_file($iniFile);
-
-        $url = $parameters['url_rest'] . '/dois';
-        $doiUserName = $parameters['doi_api_user_name'];
-        $doiPassword = $parameters['doi_api_password'];
-
-        $defaultBody = [
-            'data' => [
-                'id' => null,
-                'type' => 'dois',
-                'attributes' => [
-                    'creators' => [
-                        ['name' => '(:null)']
-                    ],
-                    'titles' => [
-                        ['title' => 'inactive']
-                    ],
-                    'publisher' => 'none supplied',
-                    'url' => 'http://datacite.org/invalidDOI',
-                    'event' => 'hide'
-                ]
-            ]
-        ];
-        $client = new Client();
-
         foreach ($contents as $doi) {
-            $defaultBody['data']['id'] = trim($doi);
             try {
-                $response = $client->request(
-                    'PUT',
-                    $url . '/' . trim($doi),
-                    [
-                        'auth' => [$doiUserName, $doiPassword],
-                        'headers' => ['Content-Type' => 'application/json'],
-                        'body' => json_encode($defaultBody)
-                    ]
+                $doiUtil = new DOIutil();
+                $doiUtil->updateDOI(
+                    trim($doi),
+                    'http://datacite.org/invalidDOI',
+                    '(:null)',
+                    'inactive',
+                    'Harte Research Institute',
+                    '2019'
                 );
-            } catch (GuzzleException $e) {
-                $output->writeln($e->getMessage());
+            } catch (\Exception $e) {
+                $output->writeln('Error for doi: ' . $doi . $e->getMessage());
             }
         }
     }
