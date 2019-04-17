@@ -76,6 +76,19 @@ class FundingOrganization extends Entity
     protected $name;
 
     /**
+     * Short Name of a funding organization.
+     *
+     * @var string $shortName
+     *
+     * @ORM\Column(type="citext", unique=true, nullable=true)
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="Short name cannot contain angle brackets (< or >)"
+     * )
+     */
+    protected $shortName;
+
+    /**
      * Funding organization's logo.
      *
      * @var string|resource $logo
@@ -765,5 +778,27 @@ class FundingOrganization extends Entity
             $notDeletableException->setReasons($notDeletableReasons);
             throw $notDeletableException;
         }
+    }
+
+    /**
+     * Getter for short name.
+     *
+     * @return string|null
+     */
+    public function getShortName() : ? string
+    {
+        return $this->shortName;
+    }
+
+    /**
+     * Setter for short name.
+     *
+     * @param string $shortName Short name for the funding organization.
+     *
+     * @return void
+     */
+    public function setShortName(string $shortName) : void
+    {
+        $this->shortName = $shortName;
     }
 }
