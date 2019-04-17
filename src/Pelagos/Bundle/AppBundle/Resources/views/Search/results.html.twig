@@ -16,24 +16,42 @@
         <div class="col-md-2 col-xs-2">
 
             <div class="aggregations">
+                <h5 style="margin-bottom: 5px;"><strong style="color: #337ab7;">Funding Organizations</strong></h5>
+                <ul class="browse-list list-unstyled long-list" style="margin-bottom: 0;" id="fundorg-facet">
+
+                    {% for org in fundingOrgInfo %}
+
+                        <li for="{{ org.id }}">
+                            <div class="checkbox block" style="margin-top: 0; margin-bottom: 0;">
+                                <label>
+                                    <input class="fo-checkbox" type="checkbox" id="fo_{{ org.id }}">
+                                    <span class="groupName">{{ org.name }} </span> ({{ org.count }})
+                                    <div class="tooltiptext" style="display:none">
+                                        <p>{{ org.name }}</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
                 <h5 style="margin-bottom: 5px;"><strong style="color: #337ab7;">Research Groups</strong></h5>
+                <ul class="browse-list list-unstyled long-list" style="margin-bottom: 0;" id="resgrp-facet">
 
-                {% for group in researchGroupsInfo %}
+                    {% for group in researchGroupsInfo %}
 
-                <ul class="browse-list list-unstyled long-list" style="margin-bottom: 0;">
-                    <li for="{{ group.id }}">
-                        <div class="checkbox block" style="margin-top: 0; margin-bottom: 0;">
-                            <label>
-                                <input class="rg-checkbox" type="checkbox" id="{{ group.id }}">
+                        <li for="{{ group.id }}">
+                            <div class="checkbox block" style="margin-top: 0; margin-bottom: 0;">
+                                <label>
+                                    <input class="rg-checkbox" type="checkbox" id="rg_{{ group.id }}">
                                     <span class="groupName">{{ group.name }} </span> ({{ group.count }})
                                     <div class="tooltiptext" style="display:none">
                                         <p>{{ group.name }}</p>
                                     </div>
-                            </label>
-                        </div>
-                    </li>
+                                </label>
+                            </div>
+                        </li>
+                    {% endfor %}
                 </ul>
-                {% endfor %}
             </div>
         </div>
 

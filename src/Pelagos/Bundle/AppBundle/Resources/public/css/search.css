@@ -121,3 +121,9 @@ h1{
     display:inline-block;
 }
 
+#resgrp-facet{
+    overflow-y: scroll;
+    height: 250px;
+    position: relative;
+}
+
