@@ -474,7 +474,7 @@ class FundingOrganizationTest extends TestCase
      */
     public function testGetAndSetShortName(): void
     {
-        $shortName = 'CARTHE';
+        $shortName = 'Harte Research Institute';
         $this->fundingOrganization->setShortName($shortName);
         $this->assertEquals($shortName, $this->fundingOrganization->getShortName());
     }
