@@ -58,7 +58,8 @@ class DoiUpdateOrphanDataciteCommand extends ContainerAwareCommand
                     '(:null)',
                     'inactive',
                     'Harte Research Institute',
-                    '2019'
+                    '2019',
+                    'unavailable'
                 );
             } catch (\Exception $e) {
                 $output->writeln('Error for doi: ' . $doi . $e->getMessage());
