@@ -434,7 +434,7 @@ class Search
     private function getExactMatchQuery(string $queryTerm): Query\QueryString
     {
         $exactMatchQuery = new Query\QueryString();
-        $exactMatchQuery->setQuery(addslashes($queryTerm));
+        $exactMatchQuery->setQuery($queryTerm);
         $exactMatchQuery->setDefaultOperator('and');
 
         return $exactMatchQuery;
