@@ -9,6 +9,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use Pelagos\Util\DOIutil;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+
 /**
  * This Symfony Command updates the Datacite orphan dois.
  *
@@ -49,20 +52,49 @@ class DoiUpdateOrphanDataciteCommand extends ContainerAwareCommand
             throw new \RuntimeException('Please provide a filename or pipe template content to STDIN.');
         }
 
-        foreach ($contents as $doi) {
-            try {
-                $doiUtil = new DOIutil();
-                $doiUtil->updateDOI(
-                    trim($doi),
-                    'http://datacite.org/invalidDOI',
-                    '(:null)',
-                    'inactive',
-                    'Harte Research Institute',
-                    '2019',
-                    'unavailable'
-                );
-            } catch (\Exception $e) {
-                $output->writeln('Error for doi: ' . $doi . $e->getMessage());
+        $iniFile = dirname(__FILE__) . '/../../../Util/DOIutil.ini';
+        $parameters = parse_ini_file($iniFile);
+
+        $url = $parameters['url_rest'] . '/dois';
+        $doiUserName = $parameters['doi_api_user_name'];
+        $doiPassword = $parameters['doi_api_password'];
+
+        $defaultBody = [
+            'data' => [
+                'id' => null,
+                'type' => 'dois',
+                'attributes' => [
+                    'creators' => [
+                        ['name' => '(:null)']
+                    ],
+                    'titles' => [
+                        ['title' => 'inactive']
+                    ],
+                    'publisher' => 'none supplied',
+                    'publicationYear' => '2019',
+                    'url' => 'http://datacite.org/invalidDOI',
+                    'event' => 'hide'
+                ]
+            ]
+        ];
+        $client = new Client();
+
+        foreach ($contents as $k => $v) {
+            if ($k > 0) {
+                $defaultBody['data']['id'] = trim($v);
+                try {
+                    $response = $client->request(
+                        'PUT',
+                        $url . '/' . trim($v),
+                        [
+                            'auth' => [$doiUserName, $doiPassword],
+                            'headers' => ['Content-Type' => 'application/json'],
+                            'body' => json_encode($defaultBody)
+                        ]
+                    );
+                } catch (GuzzleException $e) {
+                    $output->writeln($e->getMessage());
+                }
             }
         }
     }
