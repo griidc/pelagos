@@ -51,7 +51,8 @@
         "egulias/email-validator": "^1.2",
         "php-http/httplug-bundle": "^1.10",
         "php-http/guzzle6-adapter": "^1.1",
-        "guzzlehttp/guzzle": "~6.0"
+        "guzzlehttp/guzzle": "~6.0",
+        "kriswallsmith/buzz": "0.16.*"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
