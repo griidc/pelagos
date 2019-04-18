@@ -105,7 +105,6 @@ class Search
             $subMainQuery->addMust($this->getExactMatchQuery($queryTerm));
         } else {
             $subMainQuery->addMust($this->getFieldsQuery($queryTerm));
-
         }
 
         // Add facet filters
