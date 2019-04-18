@@ -34,6 +34,10 @@ class FundingOrganizationType extends AbstractType
         ->add('name', TextType::class, array(
                 'label' => 'Name:',
             ))
+            ->add('shortName', TextType::class, array(
+                'label' => 'Short Name:',
+                'required' => false
+            ))
             ->add('dataRepository', EntityType::class, array(
                 'label' => 'Data Repository',
                 'class' => 'Pelagos:DataRepository',
