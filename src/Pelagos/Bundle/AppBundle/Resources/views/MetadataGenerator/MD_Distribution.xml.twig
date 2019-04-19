@@ -175,11 +175,7 @@
                                     {{ dataset.datasetSubmission.remotelyHostedDescription }}
                                 </gmd:description>
                                 <gmd:function>
-                                    <gmd:CI_OnLineFunctionCode
-                                            codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode"
-                                            codeListValue="download" codeSpace="001">
-                                        download
-                                    </gmd:CI_OnLineFunctionCode>
+                                {% include "PelagosAppBundle:MetadataGenerator:CI_RoleCode.xml.twig" with {"function" : dataset.datasetSubmission.remotelyHostedFunction} %}
                                 </gmd:function>
                             </gmd:CI_OnlineResource>
                         </gmd:onLine>

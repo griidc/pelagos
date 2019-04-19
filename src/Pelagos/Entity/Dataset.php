@@ -671,7 +671,7 @@ class Dataset extends Entity
      *
      * @return boolean
      */
-    public function isAvailable() : boolean
+    public function isAvailable() : bool
     {
         return $this->availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED or $this->availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE;
     }
@@ -681,7 +681,7 @@ class Dataset extends Entity
      *
      * @return boolean
      */
-    public function isRemotelyHosted()
+    public function isRemotelyHosted() : bool
     {
         return $this->availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED or $this->availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED;
     }
