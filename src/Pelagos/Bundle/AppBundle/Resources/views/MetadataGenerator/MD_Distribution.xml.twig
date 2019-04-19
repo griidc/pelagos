@@ -108,7 +108,7 @@
                             <gmd:protocol>
                                 <gco:CharacterString>{{ distPoint.distributionUrlProtocol }}</gco:CharacterString>
                             </gmd:protocol>
-                            {%  if dataset.availabilityStatus != constant('\Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED') and dataset.availabilityStatus != constant('\Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED') %}
+                            {%  if dataset.isRemotelyHosted == false %}
                                 <gmd:name>
                                     <gco:CharacterString>Data Landing Page</gco:CharacterString>
                                 </gmd:name>
@@ -121,6 +121,28 @@
                                         information
                                     </gmd:CI_OnLineFunctionCode>
                                 </gmd:function>
+                            {% elseif dataset.isRemotelyHosted == true %}
+                                {%  if dataset.datasetSubmission.remotelyHostedName %}
+                                <gmd:name>
+                                    {{ dataset.datasetSubmission.remotelyHostedName }}
+                                </gmd:name>
+                                {% else %}
+                                <gmd:name gco:nilReason="missing"/>
+                                {% endif %}
+                                {%  if dataset.datasetSubmission.remotelyHostedDescription %}
+                                <gmd:description>
+                                    {{ dataset.datasetSubmission.remotelyHostedDescription }}
+                                </gmd:description>
+                                {% else %}
+                                <gmd:gmd:description  gco:nilReason="missing"/>
+                                {% endif %}
+                                 {%  if dataset.datasetSubmission.remotelyHostedFunction %}
+                                <gmd:function>
+                                {% include "PelagosAppBundle:MetadataGenerator:CI_OnLineFunctionCode.xml.twig" with {"function" : dataset.datasetSubmission.remotelyHostedFunction} %}
+                                </gmd:function>
+                                {% else %}
+                                <gmd:gmd:function gco:nilReason="missing"/>
+                                {% endif %}
                             {% endif %}
                         </gmd:CI_OnlineResource>
                     </gmd:onLine>
@@ -151,31 +173,6 @@
                                             codeListValue="download" codeSpace="001">
                                         download
                                     </gmd:CI_OnLineFunctionCode>
-                                </gmd:function>
-                            </gmd:CI_OnlineResource>
-                        </gmd:onLine>
-                    </gmd:MD_DigitalTransferOptions>
-                </gmd:distributorTransferOptions>
-            {% endif %}
-            {% if dataset.datasetSubmission.remotelyHostedName %}
-                <gmd:distributorTransferOptions>
-                    <gmd:MD_DigitalTransferOptions>
-                        <gmd:onLine>
-                            <gmd:CI_OnlineResource>
-                                <gmd:linkage>
-                                    <gmd:URL>{{ dataset.datasetSubmission.url }}</gmd:URL>
-                                </gmd:linkage>
-                                <gmd:protocol>
-                                    <gco:CharacterString>{{ remotelyHostedProtocol  }}</gco:CharacterString>
-                                </gmd:protocol>
-                                <gmd:name>
-                                    {{ dataset.datasetSubmission.remotelyHostedName }}
-                                </gmd:name>
-                                <gmd:description>
-                                    {{ dataset.datasetSubmission.remotelyHostedDescription }}
-                                </gmd:description>
-                                <gmd:function>
-                                {% include "PelagosAppBundle:MetadataGenerator:CI_RoleCode.xml.twig" with {"function" : dataset.datasetSubmission.remotelyHostedFunction} %}
                                 </gmd:function>
                             </gmd:CI_OnlineResource>
                         </gmd:onLine>

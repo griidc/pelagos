@@ -687,6 +687,16 @@ class Dataset extends Entity
     }
 
     /**
+     * Whether this Dataset is restricted.
+     *
+     * @return boolean
+     */
+    public function isRestricted() : bool
+    {
+        return $this->availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED or $this->availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED or $this->availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED;
+    }
+
+    /**
      * Return a value that represents the status of the Dataset as understood in the work flow.
      *
      * @return string The value of the status like that tabulated in MDAPP
