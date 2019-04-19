@@ -7,6 +7,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Pelagos\Util\DOIutil;
+
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -69,6 +71,7 @@ class DoiUpdateOrphanDataciteCommand extends ContainerAwareCommand
                         ['title' => 'inactive']
                     ],
                     'publisher' => 'none supplied',
+                    'publicationYear' => '2019',
                     'url' => 'http://datacite.org/invalidDOI',
                     'event' => 'hide'
                 ]
@@ -76,20 +79,22 @@ class DoiUpdateOrphanDataciteCommand extends ContainerAwareCommand
         ];
         $client = new Client();
 
-        foreach ($contents as $doi) {
-            $defaultBody['data']['id'] = trim($doi);
-            try {
-                $response = $client->request(
-                    'PUT',
-                    $url . '/' . trim($doi),
-                    [
-                        'auth' => [$doiUserName, $doiPassword],
-                        'headers' => ['Content-Type' => 'application/json'],
-                        'body' => json_encode($defaultBody)
-                    ]
-                );
-            } catch (GuzzleException $e) {
-                $output->writeln($e->getMessage());
+        foreach ($contents as $k => $v) {
+            if ($k > 0) {
+                $defaultBody['data']['id'] = trim($v);
+                try {
+                    $response = $client->request(
+                        'PUT',
+                        $url . '/' . trim($v),
+                        [
+                            'auth' => [$doiUserName, $doiPassword],
+                            'headers' => ['Content-Type' => 'application/json'],
+                            'body' => json_encode($defaultBody)
+                        ]
+                    );
+                } catch (GuzzleException $e) {
+                    $output->writeln($e->getMessage());
+                }
             }
         }
     }
