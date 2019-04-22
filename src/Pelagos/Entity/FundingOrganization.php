@@ -22,6 +22,8 @@ use Pelagos\Exception\NotDeletableException;
  *     message="A Funding Organization with this name already exists"
  * )
  *
+ * @UniqueEntity("shortName", message="A Funding Organization with this Short name already exists")
+ *
  * @Hateoas\Relation(
  *   "self",
  *   href = @Hateoas\Route(
