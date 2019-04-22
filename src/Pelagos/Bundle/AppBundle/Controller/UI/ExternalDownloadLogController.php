@@ -47,6 +47,8 @@ class ExternalDownloadLogController extends UIController
         if ($form->isSubmitted() && $form->isValid()) {
             $formData = $this->getFormData($form);
             $udi = substr($formData['udi'], 0, 16);
+            $typeId = '';
+            $type = '';
             $datasets = $this->entityHandler->getby(Dataset::class, array('udi' => $udi));
             $dataset = $datasets[0];
             if ($dataset instanceof Dataset) {
@@ -75,7 +77,6 @@ class ExternalDownloadLogController extends UIController
             } else {
                 $this->addToFlashBag($request, $udi, 'notFound');
             }
-
         }
 
         return $this->render(
@@ -111,9 +112,9 @@ class ExternalDownloadLogController extends UIController
     /**
      * Add error messages to flash bag to show it to the user.
      *
-     * @param Request $request          The Symfony request object.
-     * @param string  $udi              The UDI entered by the user.
-     * @param string  $flashMessage     The Flashbag message to be showed to the user.
+     * @param Request $request      The Symfony request object.
+     * @param string  $udi          The UDI entered by the user.
+     * @param string  $flashMessage The Flashbag message to be showed to the user.
      *
      * @return void
      */
