@@ -2766,6 +2766,21 @@ class DatasetSubmission extends Entity
             return null;
         }
     }
+    
+    /**
+     * Getter for the datasetFileUri url protocol.
+     *
+     * @return string|null
+     */
+    public function getDatasetFileUriProtocol()
+    {
+        if ($this->datasetFileUri !== null) {
+            preg_match('/^(.*?):.*$/', $this->datasetFileUri, $matches);
+            return $matches[1];
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Setter for the erddap url.
