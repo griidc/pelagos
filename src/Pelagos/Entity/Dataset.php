@@ -673,7 +673,13 @@ class Dataset extends Entity
      */
     public function isAvailable() : bool
     {
-        return $this->availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED or $this->availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE;
+        return in_array(
+            $this->availabilityStatus,
+            array(
+                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
+                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED
+            )
+        );
     }
     
     /**
@@ -683,7 +689,13 @@ class Dataset extends Entity
      */
     public function isRemotelyHosted() : bool
     {
-        return $this->availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED or $this->availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED;
+        return in_array(
+            $this->availabilityStatus,
+            array(
+                DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
+                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED
+            )
+        );
     }
 
     /**
@@ -693,7 +705,13 @@ class Dataset extends Entity
      */
     public function isRestricted() : bool
     {
-        return $this->availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED or $this->availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED or $this->availabilityStatus === DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED;
+        return in_array(
+            $this->availabilityStatus,
+            array(
+                DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
+                DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED
+            )
+        );
     }
 
     /**
