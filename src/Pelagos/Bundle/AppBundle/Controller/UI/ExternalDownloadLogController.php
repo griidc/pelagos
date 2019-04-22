@@ -46,19 +46,21 @@ class ExternalDownloadLogController extends UIController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $formData = $this->getFormData($form);
-
-            if ($formData['userType']) {
-                $account = $this->entityHandler
-                    ->getBy(Account::class, array('userId' => $formData['username']));
-                if ($account[0]) {
-                    $typeId = $formData['username']->getUser()->getUserId();
-                    $type = 'GoMRI';
+            $udi = substr($formData['udi'], 0, 16);
+            $datasets = $this->entityHandler->getby(Dataset::class, array('udi' => $udi));
+            $dataset = $datasets[0];
+            if ($dataset instanceof Dataset) {
+                if ($formData['userType']) {
+                    $account = $this->entityHandler
+                        ->getBy(Account::class, array('userId' => $formData['username']));
+                    if ($account[0]) {
+                        $typeId = $account[0]->getUserId();
+                        $type = 'GoMRI';
+                    }
                 } else {
                     $type = 'Non-GoMRI';
                     $typeId = 'anonymous';
                 }
-                $datasets = $this->entityHandler->getby(Dataset::class, array('udi' => trim($formData['udi'])));
-                $dataset = $datasets[0];
 
                 $this->container->get('pelagos.event.log_action_item_event_dispatcher')->dispatch(
                     array(
@@ -69,7 +71,11 @@ class ExternalDownloadLogController extends UIController
                     ),
                     'file_download'
                 );
+                $this->addToFlashBag($request, $udi, 'downloadLogged');
+            } else {
+                $this->addToFlashBag($request, $udi, 'notFound');
             }
+
         }
 
         return $this->render(
@@ -100,5 +106,39 @@ class ExternalDownloadLogController extends UIController
             'userType' => $userType,
             'username' => $username
         );
+    }
+
+    /**
+     * Add error messages to flash bag to show it to the user.
+     *
+     * @param Request $request          The Symfony request object.
+     * @param string  $udi              The UDI entered by the user.
+     * @param string  $flashMessage     The Flashbag message to be showed to the user.
+     *
+     * @return void
+     */
+    private function addToFlashBag(Request $request, $udi, $flashMessage)
+    {
+        $flashBag = $request->getSession()->getFlashBag();
+
+        $warning = [
+            'notFound' => 'Sorry, the dataset with Unique Dataset Identifier (UDI) ' .
+                $udi . ' could not be found. Please email
+                        <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a>
+                        if you have any questions.',
+        ];
+
+        $success = [
+            'downloadLogged' => 'The external download for the dataset ' . $udi . ' has been logged in the system.'
+        ];
+
+        switch ($flashMessage) {
+            case (array_key_exists($flashMessage, $warning)):
+                $flashBag->add('warning', $warning[$flashMessage]);
+                break;
+            case (array_key_exists($flashMessage, $success)):
+                $flashBag->add('success', $success[$flashMessage]);
+                break;
+        }
     }
 }

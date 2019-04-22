@@ -2,12 +2,32 @@
 
 {% block head %}
 
+    {{
+    add_js(
+        [
+            '//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js'
+        ]
+    )
+    }}
 
+    {% javascripts
+        '@PelagosAppBundle/Resources/public/js/pelagosNoty.js'
+        '@PelagosAppBundle/Resources/public/js/external-download-log.js'
+    %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
 {% endblock %}
 
 
 {% block body %}
     <h2> External Download Log Tool</h2>
+    {% if app.session.flashbag %}
+        {% for label, messages in app.session.flashbag.all %}
+            {% for message in messages %}
+                <div class="pelagosNoty" text="{{message}}" type="{{label}}"></div>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
     {{ form_start(form) }}
     {{ form_widget(form) }}
     {{ form_end(form) }}
