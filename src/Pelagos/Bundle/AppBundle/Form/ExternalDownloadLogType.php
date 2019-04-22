@@ -26,7 +26,7 @@ class ExternalDownloadLogType extends abstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('datasetUdi', TextType::class, array(
+            ->add('udi', TextType::class, array(
                 'label' => 'Enter the dataset UDI',
                 'required' => true
             ))
