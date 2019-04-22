@@ -16,6 +16,12 @@
     %}
         {{ add_js(asset_url) }}
     {% endjavascripts %}
+
+    {% stylesheets
+        '@PelagosAppBundle/Resources/public/css/registry.css'
+    %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets %}
 {% endblock %}
 
 

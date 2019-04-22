@@ -40,7 +40,7 @@ class ExternalDownloadLogType extends abstractType
             ))
             ->add('username', TextType::class, array(
                 'label' => 'Please enter the username',
-                'required' => false,
+                'required' => true,
             ))
             ->add('submit', SubmitType::class, array(
                 'label' => 'Submit',
