@@ -21,7 +21,6 @@ use Pelagos\Entity\Dataset;
  */
 class ExternalDownloadLogController extends UIController
 {
-
     /**
      * The default action for End Review.
      *
