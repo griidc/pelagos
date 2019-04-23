@@ -2,6 +2,7 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
+use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
 use Pelagos\Bundle\AppBundle\Security\EntityProperty;
 
 use Pelagos\Bundle\AppBundle\Form\PersonType;
@@ -42,6 +43,7 @@ class PersonController extends UIController implements OptionalReadOnlyInterface
         $entityHandler = $this->get('pelagos.entity.handler');
 
         $ui = array();
+        $personInLeadership = null;
 
         if (isset($id)) {
             $person = $entityHandler->get('Pelagos:Person', $id);
@@ -56,8 +58,13 @@ class PersonController extends UIController implements OptionalReadOnlyInterface
                     $ui['PersonResearchGroupForms'][$personResearchGroup->getId()] = $formView;
                     $ui['PersonResearchGroupEditLabel'][$personResearchGroup->getId()]
                         = new EntityProperty($personResearchGroup, 'label');
+                    $listOfPersonsInResearchGroup = $personResearchGroup->getResearchGroup()->getPersonResearchGroups();
+                    foreach ($listOfPersonsInResearchGroup as $personResearch) {
+                        if ($personResearch->getRole()->getName() === ResearchGroupRoles::LEADERSHIP) {
+                            $personInLeadership = $personResearch->getPerson();
+                        }
+                    }
                 }
-
                 foreach ($person->getPersonFundingOrganizations() as $personFundingOrganization) {
                     $formView = $this
                     ->get('form.factory')
@@ -79,6 +86,7 @@ class PersonController extends UIController implements OptionalReadOnlyInterface
         $ui['Person'] = $person;
         $ui['form'] = $form->createView();
         $ui['entityService'] = $entityHandler;
+        $ui['personInLeadership'] = $personInLeadership;
 
         return $this->render('PelagosAppBundle:template:Person.html.twig', $ui);
     }

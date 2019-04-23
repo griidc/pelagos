@@ -64,6 +64,11 @@
                         <tr>
                             <td>
                                 <div>
+                                    <b>Funding Organization :</b> {{ PersonResearchGroup.researchGroup.fundingCycle.fundingOrganization.name }}
+                                    <br>
+                                    <b>Funding Cycle :</b> {{ PersonResearchGroup.researchGroup.fundingCycle.name }}
+                                    <br>
+                                    <b>PI :</b> {{ personInLeadership.firstName }} {{ personInLeadership.lastName }}
                                     <p>
                                          {% include '@templates/forms/PersonResearchGroup.html.twig' with {'PersonResearchGroup': PersonResearchGroup, 'form' : PersonResearchGroupForms[PersonResearchGroup.getId], 'editlabel' : PersonResearchGroupEditLabel[PersonResearchGroup.getId]}%}
                                     </p>
