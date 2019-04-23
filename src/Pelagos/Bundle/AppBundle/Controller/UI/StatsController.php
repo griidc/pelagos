@@ -211,7 +211,6 @@ class StatsController extends UIController
         $dataSizes = array();
 
         foreach ($dataSizeRanges as $index => $range) {
-
             $qb = $repository->createQueryBuilder('d');
             $qb->select('count(d.id)');
             $qb->join('d.datasetSubmission', 'ds');

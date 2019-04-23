@@ -58,7 +58,6 @@ class ReportMetadataHtmlEscapedCharactersCommand extends ContainerAwareCommand
                 $count++;
                 echo 'Dataset UDI ' . $udi . ' (' . $count . ")\n";
                 $data[] = array($count, $udi);
-
             }
         }
 

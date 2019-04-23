@@ -310,9 +310,8 @@ class DatasetDownloadReportController extends ReportController
             $query = $qb
                 ->select('log.creationTimeStamp, d.udi, log.payLoad')
                 ->from('\Pelagos\Entity\LogActionItem', 'log')
-                ->join('\Pelagos\Entity\Dataset', 'd')
-                ->where('log.subjectEntityId = d.id')
-                ->andWhere('log.subjectEntityName = ?1')
+                ->join('\Pelagos\Entity\Dataset', 'd', Query\Expr\Join::WITH, 'log.subjectEntityId = d.id')
+                ->where('log.subjectEntityName = ?1')
                 ->andWhere('log.actionName = ?2')
                 ->orderBy('log.creationTimeStamp', 'ASC')
                 ->setParameter(1, 'Pelagos\Entity\Dataset')

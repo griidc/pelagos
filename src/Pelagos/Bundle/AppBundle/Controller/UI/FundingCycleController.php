@@ -40,7 +40,6 @@ class FundingCycleController extends UIController implements OptionalReadOnlyInt
             if (!$fundingCycle instanceof \Pelagos\Entity\FundingCycle) {
                 throw $this->createNotFoundException('The Funding Cycle was not found');
             }
-
         } else {
             $fundingCycle = new \Pelagos\Entity\FundingCycle;
         }

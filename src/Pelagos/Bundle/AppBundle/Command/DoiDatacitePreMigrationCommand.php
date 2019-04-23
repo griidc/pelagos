@@ -85,7 +85,6 @@ class DoiDatacitePreMigrationCommand extends ContainerAwareCommand
         $status = DOI::STATUS_PUBLIC;
 
         foreach ($datasets as $dataset) {
-
             $doiUtil = new DOIutil;
             $doi = $dataset->getDoi();
             $doiId = $doi->getDoi();

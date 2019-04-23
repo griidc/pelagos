@@ -466,4 +466,16 @@ class FundingOrganizationTest extends TestCase
         array_push($testArry, 'string data');
         $this->fundingOrganization->setPersonFundingOrganizations($testArry);
     }
+
+    /**
+     * Test getter and setter for short name attribute.
+     *
+     * @return void
+     */
+    public function testGetAndSetShortName(): void
+    {
+        $shortName = 'Harte Research Institute';
+        $this->fundingOrganization->setShortName($shortName);
+        $this->assertEquals($shortName, $this->fundingOrganization->getShortName());
+    }
 }

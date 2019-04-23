@@ -151,7 +151,6 @@ class ISOMetadataExtractorUtil
 
         if (!empty($pointsOfContact)) {
             foreach ($pointsOfContact as $pointOfContact) {
-
                 // for each POC get all email addresses
                 $query = './gmd:CI_ResponsibleParty' .
                     '/gmd:contactInfo' .
@@ -194,7 +193,6 @@ class ISOMetadataExtractorUtil
 
         if (!empty($pointsOfContact)) {
             foreach ($pointsOfContact as $pointOfContact) {
-
                 // Find Person
                 $query = './gmd:CI_ResponsibleParty' .
                          '/gmd:contactInfo' .

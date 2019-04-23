@@ -27,22 +27,47 @@ class SearchPageController extends UIController
      */
     public function defaultAction(Request $request)
     {
-        $queryTerm = $request->get('query');
         $results = array();
         $count = 0;
-        $page = ($request->get('page')) ? $request->get('page') : 1;
+        $requestParams = $this->getRequestParams($request);
+        $researchGroupsInfo = array();
+        $fundingOrgInfo = array();
 
-        if ($queryTerm) {
+        if (!empty($requestParams['query'])) {
             $searchUtil = $this->get('pelagos.util.search');
-            $results = $searchUtil->findDatasets($queryTerm, $page);
-            $count = $searchUtil->countDatasets($queryTerm);
+            $buildQuery = $searchUtil->buildQuery($requestParams);
+            $results = $searchUtil->findDatasets($buildQuery);
+            $count = $searchUtil->getCount($buildQuery);
+            $researchGroupsInfo = $searchUtil->getResearchGroupAggregations($buildQuery);
+            $fundingOrgInfo = $searchUtil->getFundingOrgAggregations($buildQuery);
         }
 
         return $this->render('PelagosAppBundle:Search:default.html.twig', array(
-            'query' => $queryTerm,
+            'query' => $requestParams['query'],
             'results' => $results,
             'count' => $count,
-            'page' => $page
+            'page' => $requestParams['page'],
+            'researchGroupsInfo' => $researchGroupsInfo,
+            'fundingOrgInfo' => $fundingOrgInfo
         ));
+    }
+
+    /**
+     * Gets the request parameters from the request.
+     *
+     * @param Request $request The Symfony request object.
+     *
+     * @return array
+     */
+    private function getRequestParams(Request $request): array
+    {
+        return array(
+            'query' => $request->get('query'),
+            'page' => $request->get('page'),
+            'options' => array(
+                'rgId' => ($request->get('resGrp')) ? str_replace('rg_', '', $request->get('resGrp')) : null,
+                'funOrgId' => ($request->get('fundOrg')) ? str_replace('fo_', '', $request->get('fundOrg')) : null
+            )
+        );
     }
 }

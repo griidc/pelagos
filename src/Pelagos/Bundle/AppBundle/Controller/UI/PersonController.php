@@ -46,7 +46,6 @@ class PersonController extends UIController implements OptionalReadOnlyInterface
         if (isset($id)) {
             $person = $entityHandler->get('Pelagos:Person', $id);
             if ($person instanceof Person) {
-
                 foreach ($person->getPersonResearchGroups() as $personResearchGroup) {
                     $formView = $this
                     ->get('form.factory')

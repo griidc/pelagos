@@ -56,14 +56,7 @@ class DatalandController extends UIController
 
         $downloadCount = null;
         // Remotely hosted datasets are normally also hosted locally anyway, so including.
-        if (in_array(
-            $dataset->getAvailabilityStatus(),
-            array(
-                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
-                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED
-            )
-        )
-        ) {
+        if ($this->isDatasetAvailable($dataset)) {
             $qb = $this->get('doctrine')->getManager()->createQueryBuilder();
             $qb->select($qb->expr()->count('a'))
                 ->from('\Pelagos\Entity\LogActionItem', 'a')

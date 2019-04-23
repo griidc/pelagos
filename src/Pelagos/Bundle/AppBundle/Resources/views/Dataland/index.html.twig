@@ -3,7 +3,7 @@
 {% block head %}
     {{ parent() }}
 
-    {% if dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') %}
+    {% if dataset.isAvailable %}
         {% include 'PelagosAppBundle:Dataland:metadata.markup.twig' %}
     {% else %}
         <meta name="robots" content="noindex" />

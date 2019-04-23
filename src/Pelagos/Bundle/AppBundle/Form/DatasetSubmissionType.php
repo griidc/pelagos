@@ -271,6 +271,25 @@ class DatasetSubmissionType extends AbstractType
                 'required' => false,
                 'attr' => array('data-rule-url' => true),
             ))
+            ->add('isRemotelyHosted', Type\CheckboxType::class, array(
+                'label' => 'Is Remotely Hosted',
+                'mapped' => false,
+                'required' => false,
+            ))
+            ->add('remotelyHostedName', Type\TextType::class, array(
+                'label' => 'Remotely Hosted Name',
+                'required' => false,
+            ))
+            ->add('remotelyHostedDescription', Type\TextType::class, array(
+                'label' => 'Remotely Hosted Description',
+                'required' => false,
+            ))
+            ->add('remotelyHostedFunction', Type\ChoiceType::class, array(
+                'label' => 'Remotely Hosted Function',
+                'choices' => DatasetSubmission::getOnlineFunctionCodes(),
+                'placeholder' => '[Please Select]',
+                'required' => false,
+            ))
             ->add('isDatasetFileInColdStorage', Type\CheckboxType::class, array(
                 'label' => 'In Cold Storage',
                 'mapped' => false,
@@ -324,6 +343,9 @@ class DatasetSubmissionType extends AbstractType
                         $data->getDatasetFileColdStorageOriginalFilename()
                     );
                 }
+                if ($data->getDatasetFileTransferStatus() === DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED) {
+                    $form->get('isRemotelyHosted')->setData(true);
+                }
             }
         });
 
@@ -334,10 +356,19 @@ class DatasetSubmissionType extends AbstractType
                 $hash = $event->getForm()->get('datasetFileColdStorageArchiveSha256Hash')->getData();
                 $name = $event->getForm()->get('datasetFileColdStorageOriginalFilename')->getData();
                 $entity = $event->getForm()->getData();
-                if ( null !== $size and null !== $hash and null !== $name) {
+                if (null !== $size and null !== $hash and null !== $name) {
                     $entity->setDatasetFileColdStorageAttributes($size, $hash, $name);
                 } else {
                     $entity->clearDatasetFileColdStorageAttributes();
+                }
+
+                // If all remotely hosted required fields are set, set to remotely hosted.
+                $remotelyHostedName = $event->getForm()->get('remotelyHostedName')->getData();
+                $remotelyHostedDescription = $event->getForm()->get('remotelyHostedDescription')->getData();
+                $remotelyHostedFunction = $event->getForm()->get('remotelyHostedFunction')->getData();
+                $entity = $event->getForm()->getData();
+                if (null !== $remotelyHostedName and null !== $remotelyHostedDescription and null !== $remotelyHostedFunction) {
+                    $entity->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
                 }
             }
         );
