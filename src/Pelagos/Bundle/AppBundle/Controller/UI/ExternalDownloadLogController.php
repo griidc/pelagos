@@ -27,6 +27,9 @@ class ExternalDownloadLogController extends UIController
      *
      * @param Request $request The Symfony request object.
      *
+     * @throws \Exception $exception Exception thrown when Dataset does not exist for the given Udi.
+     * @throws \Exception $exception Exception thrown when Person does not exist for the given username.
+     *
      * @Route("")
      *
      * @return Response A Response instance.
@@ -47,35 +50,39 @@ class ExternalDownloadLogController extends UIController
         if ($form->isSubmitted() && $form->isValid()) {
             $formData = $this->getFormData($form);
             $udi = substr($formData['udi'], 0, 16);
-            $typeId = '';
-            $type = '';
-            $datasets = $this->entityHandler->getby(Dataset::class, array('udi' => $udi));
-            $dataset = $datasets[0];
-            if ($dataset instanceof Dataset) {
-                if ($formData['userType']) {
-                    $account = $this->entityHandler
-                        ->getBy(Account::class, array('userId' => $formData['username']));
-                    if ($account[0]) {
-                        $typeId = $account[0]->getUserId();
-                        $type = 'GoMRI';
+            try {
+                $datasets = $this->entityHandler->getby(Dataset::class, array('udi' => $udi));
+                if (!empty($datasets) and $datasets[0] instanceof Dataset) {
+                    $dataset = $datasets[0];
+                    if ($formData['userType']) {
+                        $account = $this->entityHandler
+                            ->getBy(Account::class, array('userId' => $formData['username']));
+                        if (!empty($account) and $account[0] instanceof Account) {
+                            $typeId = $account[0]->getUserId();
+                            $type = 'GoMRI';
+                        } else {
+                            throw new \Exception('userNotFound');
+                        }
+                    } else {
+                        $type = 'Non-GoMRI';
+                        $typeId = 'anonymous';
                     }
-                } else {
-                    $type = 'Non-GoMRI';
-                    $typeId = 'anonymous';
-                }
 
-                $this->container->get('pelagos.event.log_action_item_event_dispatcher')->dispatch(
-                    array(
-                        'actionName' => 'File Download',
-                        'subjectEntityName' => get_class($dataset),
-                        'subjectEntityId' => $dataset->getId(),
-                        'payLoad' => array('userType' => $type, 'userId' => $typeId, 'downloadType' => 'external'),
-                    ),
-                    'file_download'
-                );
-                $this->addToFlashBag($request, $udi, 'downloadLogged');
-            } else {
-                $this->addToFlashBag($request, $udi, 'notFound');
+                    $this->container->get('pelagos.event.log_action_item_event_dispatcher')->dispatch(
+                        array(
+                            'actionName' => 'File Download',
+                            'subjectEntityName' => get_class($dataset),
+                            'subjectEntityId' => $dataset->getId(),
+                            'payLoad' => array('userType' => $type, 'userId' => $typeId, 'downloadType' => 'external'),
+                        ),
+                        'file_download'
+                    );
+                    $this->addToFlashBag($request, $udi, 'downloadLogged');
+                } else {
+                    throw new \Exception('datasetNotFound');
+                }
+            } catch (\Exception $exception) {
+                $this->addToFlashBag($request, $udi, $exception->getMessage());
             }
         }
 
@@ -122,11 +129,12 @@ class ExternalDownloadLogController extends UIController
     {
         $flashBag = $request->getSession()->getFlashBag();
 
-        $warning = [
-            'notFound' => 'Sorry, the dataset with Unique Dataset Identifier (UDI) ' .
+        $error = [
+            'datasetNotFound' => 'Sorry, the dataset with Unique Dataset Identifier (UDI) ' .
                 $udi . ' could not be found. Please email
                         <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a>
                         if you have any questions.',
+            'userNotFound' => 'Username entered is not found in the system.'
         ];
 
         $success = [
@@ -134,8 +142,8 @@ class ExternalDownloadLogController extends UIController
         ];
 
         switch ($flashMessage) {
-            case (array_key_exists($flashMessage, $warning)):
-                $flashBag->add('warning', $warning[$flashMessage]);
+            case (array_key_exists($flashMessage, $error)):
+                $flashBag->add('error', $error[$flashMessage]);
                 break;
             case (array_key_exists($flashMessage, $success)):
                 $flashBag->add('success', $success[$flashMessage]);
