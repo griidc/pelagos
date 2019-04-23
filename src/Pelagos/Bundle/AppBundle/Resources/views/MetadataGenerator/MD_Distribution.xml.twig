@@ -134,14 +134,14 @@
                                     {{ dataset.datasetSubmission.remotelyHostedDescription }}
                                 </gmd:description>
                                 {% else %}
-                                <gmd:gmd:description  gco:nilReason="missing"/>
+                                <gmd:description  gco:nilReason="missing"/>
                                 {% endif %}
                                  {%  if dataset.datasetSubmission.remotelyHostedFunction %}
                                 <gmd:function>
                                 {% include "PelagosAppBundle:MetadataGenerator:CI_OnLineFunctionCode.xml.twig" with {"function" : dataset.datasetSubmission.remotelyHostedFunction} %}
                                 </gmd:function>
                                 {% else %}
-                                <gmd:gmd:function gco:nilReason="missing"/>
+                                <gmd:function gco:nilReason="missing"/>
                                 {% endif %}
                             {% endif %}
                         </gmd:CI_OnlineResource>
