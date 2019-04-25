@@ -15,17 +15,19 @@ $(document).ready(function () {
     checkUserType(userType);
 
     userType.on("change", function () {
-        if (userType.val() === "0") {
-            $("#externalDownloadLog_username").hide().removeAttr("required");
-            $('label[for=externalDownloadLog_username]').hide();
-        }
+        checkUserType(userType);
     })
 });
 
 function checkUserType(userType) {
+    let username = $("#externalDownloadLog_username");
+    let labelUsername = $("label[for=externalDownloadLog_username]");
     if (userType.val() === "0") {
-        $("#externalDownloadLog_username").hide().removeAttr("required");
-        $('label[for=externalDownloadLog_username]').hide();
+        username.hide().removeAttr("required");
+        labelUsername.hide();
+    } else {
+        username.show().attr("required");
+        labelUsername.show();
     }
 }
 
