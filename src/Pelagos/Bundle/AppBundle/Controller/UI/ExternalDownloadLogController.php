@@ -129,10 +129,7 @@ class ExternalDownloadLogController extends UIController
         $flashBag = $request->getSession()->getFlashBag();
 
         $error = [
-            'datasetNotFound' => 'Sorry, the dataset with Unique Dataset Identifier (UDI) ' .
-                $udi . ' could not be found. Please email
-                        <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a>
-                        if you have any questions.',
+            'datasetNotFound' => 'No dataset found for UDI: ' . $udi,
             'userNotFound' => 'Username entered is not found in the system.'
         ];
 

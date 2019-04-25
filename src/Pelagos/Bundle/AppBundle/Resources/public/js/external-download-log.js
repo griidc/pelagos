@@ -1,8 +1,5 @@
 var $ = jQuery.noConflict();
 
-//FOUC preventor
-$("html").hide();
-
 $(document).ready(function () {
     "use strict";
 
