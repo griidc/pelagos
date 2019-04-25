@@ -64,11 +64,15 @@
                         <tr>
                             <td>
                                 <div>
-                                    <b>Funding Organization :</b> {{ PersonResearchGroup.researchGroup.fundingCycle.fundingOrganization.name }}
+                                    <b>Funding Organization:</b> {{ PersonResearchGroup.researchGroup.fundingCycle.fundingOrganization.name }}
                                     <br>
-                                    <b>Funding Cycle :</b> {{ PersonResearchGroup.researchGroup.fundingCycle.name }}
+                                    <b>Funding Cycle:</b> {{ PersonResearchGroup.researchGroup.fundingCycle.name }}
                                     <br>
-                                    <b>PI :</b> {{ personInLeadership.firstName }} {{ personInLeadership.lastName }}
+                                    {% for personResearch in PersonResearchGroup.researchGroup.personResearchGroups %}
+                                        {% if personResearch.role.name ==  constant('Pelagos\\Bundle\\AppBundle\\DataFixtures\\ORM\\ResearchGroupRoles::LEADERSHIP') %}
+                                            <b>PI:</b> {{ personResearch.person.firstName }} {{ personResearch.person.lastName }}
+                                        {% endif %}
+                                    {% endfor %}
                                     <p>
                                          {% include '@templates/forms/PersonResearchGroup.html.twig' with {'PersonResearchGroup': PersonResearchGroup, 'form' : PersonResearchGroupForms[PersonResearchGroup.getId], 'editlabel' : PersonResearchGroupEditLabel[PersonResearchGroup.getId]}%}
                                     </p>
