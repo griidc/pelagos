@@ -11,7 +11,6 @@ These instructions will get you a copy of the project up and running on your loc
 
 * [CENTOS 6/7](https://wiki.centos.org/) - Linux Distribution based on Red Hat
 * [PHP 7.1](http://php.net/docs.php) - General-purpose scripting language
-* [Symfony 3.4](https://symfony.com/doc/3.4/index.html) - PHP framework for web application
 * [PostgreSQL 9.6](https://www.postgresql.org/docs/9.6/static/release-9-6.html) - ORDBMS
 * [Elasticsearch 6.6.2](https://www.elastic.co/products/elasticsearch) - ElasticSearch Document Indexer
 * [RabbitMQ](https://www.rabbitmq.com/documentation.html) - Open source message broker software
@@ -20,9 +19,11 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Installation
 
+Pelagos is a [Symfony 3.4](https://symfony.com/doc/3.4/index.html) project, please follow the normal configuration regarding setting up your webserver for a Symfony project.
+
 To install fullfill prerequisites then run:
 * `composer install`
-* `yarn run encore`
+* `yarn run encore production`
 
 ## Contributors
 
