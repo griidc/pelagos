@@ -417,4 +417,16 @@ class ResearchGroupTest extends TestCase
         $this->researchGroup->setLogo(null);
         $this->researchGroup->setEmailAddress(null);
     }
+
+    /**
+     * Test getter and setter for short name attribute.
+     *
+     * @return void
+     */
+    public function testGetAndSetShortName(): void
+    {
+        $shortName = 'CARTHE';
+        $this->researchGroup->setShortName($shortName);
+        $this->assertEquals($shortName, $this->researchGroup->getShortName());
+    }
 }

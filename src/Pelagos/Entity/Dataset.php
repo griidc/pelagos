@@ -665,6 +665,54 @@ class Dataset extends Entity
         }
         $this->setAvailabilityStatus($availabilityStatus);
     }
+    
+    /**
+     * Whether this Dataset is available.
+     *
+     * @return boolean
+     */
+    public function isAvailable() : bool
+    {
+        return in_array(
+            $this->availabilityStatus,
+            array(
+                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
+                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED
+            )
+        );
+    }
+    
+    /**
+     * Whether this Dataset is remotely hosted.
+     *
+     * @return boolean
+     */
+    public function isRemotelyHosted() : bool
+    {
+        return in_array(
+            $this->availabilityStatus,
+            array(
+                DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
+                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED
+            )
+        );
+    }
+
+    /**
+     * Whether this Dataset is restricted.
+     *
+     * @return boolean
+     */
+    public function isRestricted() : bool
+    {
+        return in_array(
+            $this->availabilityStatus,
+            array(
+                DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
+                DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED
+            )
+        );
+    }
 
     /**
      * Return a value that represents the status of the Dataset as understood in the work flow.
@@ -721,7 +769,6 @@ class Dataset extends Entity
         // If we have a submission, use its POC.
         if ($datasetSubmission instanceof DatasetSubmission
             and $datasetSubmission->getStatus() == DatasetSubmission::STATUS_COMPLETE) {
-
             $datasetContacts = $datasetSubmission->getDatasetContacts();
             if (count($datasetContacts) > 0) {
                 return $datasetContacts->first()->getPerson();

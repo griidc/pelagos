@@ -53,7 +53,6 @@ class DoctrineDataCenterListener
                 ->findOneBy(['emailAddress' => $originalDataRepository['emailAddress']]);
 
             if (null !== $dataCenter) {
-
                 //changeSet structure: [ "key" => [ 0: old value, 1: new value] ]
                 $changeSet = $entityManager->getUnitOfWork()->getEntityChangeSet($dataRepository);
 

@@ -127,7 +127,6 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                 }
 
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
-
                     if ($dif->getStatus() == DIF::STATUS_APPROVED) {
                         // This is the first submission, so create a new one based on the DIF.
                         $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact;
@@ -199,7 +198,6 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
         $form->handleRequest($request);
 
         if ($form->isSubmitted() and $form->isValid()) {
-
             $this->processDatasetFileTransferDetails($form, $datasetSubmission);
 
             $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_SUBMITTED);
@@ -453,7 +451,6 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
             }
             // Designate the first contact is primary.
             $datasetSubmission->getDatasetContacts()->first()->setPrimaryContact(true);
-
         } else {
             throw new InvalidMetadataException(array('This does not appear to be valid ISO 19115-2 metadata.'));
         }
@@ -570,7 +567,6 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                 $distributionPoint->setDataCenter($defaultDistributionContacts[0]);
                 $distributionPoint->setDistributionUrl(self::DEFAULT_DISTRIBUTION_POINT_BASE_URL . $udi);
             }
-
         } else {
             throw new \Exception('There is none or more than one default distribution contact(s)');
         }

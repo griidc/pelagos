@@ -157,7 +157,6 @@ class DatasetController extends EntityController
         $this->handleUpdate(DatasetType::class, Dataset::class, $id, $request, 'PATCH');
         $jiraLinkValue = $request->request->get('issueTrackingTicket');
         if (null !== $jiraLinkValue) {
-
             $entityHandler = $this->get('pelagos.entity.handler');
             $mdappLogger = $this->get('pelagos.util.mdapplogger');
 
