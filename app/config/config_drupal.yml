@@ -8,7 +8,6 @@ framework:
     assets:
         base_path: ~
 
-
 twig:
     globals:
         wrapped: true

@@ -1,3 +1,2 @@
 _main:
     resource: routing.yml
-    prefix:   /%pelagos.prefix%
