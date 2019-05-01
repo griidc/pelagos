@@ -319,42 +319,43 @@ class DOIutil
      * @throws HttpClientErrorException When there was an 4xx error negotiating with EZID.
      * @throws HttpServerErrorException When there was an 5xx error negotiating with EZID.
      *
-     * @return array
+     * @return void
      */
     public function deleteDOI($doi)
     {
-        // Add doi: to doi is it doesn't exist.
-        $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->url . '/id/' . $doi);
-        curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-        $output = curl_exec($ch);
+        $doiMetadata = $this->getDOIMetadata($doi);
+        if ($doiMetadata['_status'] === 'reserved') {
+            // Add doi: to doi is it doesn't exist.
+            $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $this->url . '/id/' . $doi);
+            curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+            $output = curl_exec($ch);
 
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
 
-        //check to see if it worked.
-        if (200 != $httpCode) {
-            $expMsg = "ezid failed with:$httpCode($output)";
-            if ($httpCode >= 400 and $httpCode <= 499) {
-                throw new HttpClientErrorException($expMsg, $httpCode);
-            } elseif ($httpCode >= 500 or $httpCode == 0) {
-                throw new HttpServerErrorException($expMsg, $httpCode);
+            //check to see if it worked.
+            if (200 != $httpCode) {
+                $expMsg = "ezid failed with:$httpCode($output)";
+                if ($httpCode >= 400 and $httpCode <= 499) {
+                    throw new HttpClientErrorException($expMsg, $httpCode);
+                } elseif ($httpCode >= 500 or $httpCode == 0) {
+                    throw new HttpServerErrorException($expMsg, $httpCode);
+                }
             }
+        } else {
+             $this->updateDOI(
+                 $doi,
+                 'http://datacite.org/invalidDOI',
+                 '(:null)',
+                 'inactive',
+                 'none supplied',
+                 '2019',
+                 'unavailable'
+             );
         }
-
-        $metadata = array();
-        foreach (explode("\n", $output) as $line) {
-            $split = preg_split('/:/', $line, 2);
-            if (count($split) > 1) {
-                $metadata[$split[0]] = trim($split[1]);
-            }
-        }
-
-        return $metadata;
     }
 
     /**
