@@ -319,7 +319,7 @@ class DOIutil
      * @throws HttpClientErrorException When there was an 4xx error negotiating with EZID.
      * @throws HttpServerErrorException When there was an 5xx error negotiating with EZID.
      *
-     * @return boolean
+     * @return void
      */
     public function deleteDOI($doi)
     {
@@ -358,8 +358,6 @@ class DOIutil
                  'unavailable'
              );
         }
-
-        return true;
     }
 
     /**
