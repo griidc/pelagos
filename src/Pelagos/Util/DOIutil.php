@@ -235,7 +235,7 @@ class DOIutil
         $input .= 'datacite.title:' . $this->escapeSpecialCharacters($title) . "\n";
         $input .= 'datacite.publisher:' . $this->escapeSpecialCharacters($publisher) . "\n";
         $input .= "datacite.publicationyear:$publicationYear\n";
-        $input .= 'datacite.resourcetype:Dataset';
+        $input .= "datacite.resourcetype:Dataset\n";
 
         $input .= '_status: ' . $status . "\n";
 
