@@ -193,7 +193,7 @@ class DoiComparisonCommand extends ContainerAwareCommand
         }
 
         if (!empty($this->outOfSyncDoi)) {
-            $this->sendEmail($this->outOfSyncDoi);
+            $this->sendEmail();
         }
     }
 
@@ -250,7 +250,6 @@ class DoiComparisonCommand extends ContainerAwareCommand
             );
             // Check doi state and url
             $this->isStateValid($dataset, $doiElements);
-
         } else {
             // Check title
             $this->doesStringExist(
@@ -289,7 +288,7 @@ class DoiComparisonCommand extends ContainerAwareCommand
      * @param Dataset $dataset     A dataset instance.
      * @param array   $doiElements Doi metadata elements.
      *
-     * @return boolean
+     * @return void
      */
     private function isStateValid(Dataset $dataset, array $doiElements): void
     {
@@ -371,20 +370,20 @@ class DoiComparisonCommand extends ContainerAwareCommand
      */
     private function doesStringExist(array $metadataElement, string $comparisonElement): void
     {
-        if (strpos($comparisonElement, $metadataElement[$metadataElement['field']]) === false) {
-            //Error message
-            $this->outOfSyncDoi[$metadataElement['doi']] = array($metadataElement['field'] => 'Incorrect ' . $metadataElement['field']);
+        if (strcasecmp($comparisonElement, $metadataElement[$metadataElement['field']]) !== 0) {
+            if (strpos($comparisonElement, $metadataElement[$metadataElement['field']]) === false) {
+                //Error message
+                $this->outOfSyncDoi[$metadataElement['doi']] = array($metadataElement['field'] => 'Incorrect ' . $metadataElement['field']);
+            }
         }
     }
 
     /**
      * To send an email.
      *
-     * @param array $outOfSyncDoi List of dois which are out of sync.
-     *
      * @return void
      */
-    private function sendEmail(array $outOfSyncDoi): void
+    private function sendEmail(): void
     {
         $message = \Swift_Message::newInstance()
             ->setSubject('DOI Sync Log - List of Dois that are out of sync')
@@ -392,8 +391,8 @@ class DoiComparisonCommand extends ContainerAwareCommand
             ->setTo(array('griidc@gomri.org' => 'GRIIDC'))
             ->setCharset('UTF-8')
             ->setBody($this->getContainer()->get('templating')->render(
-                'PelagosAppBundle:Email:data-repository-managers.error-remotely-hosted.email.twig',
-                array('Dois' => $outOfSyncDoi)
+                'PelagosAppBundle:Email:data-repository-managers.out-of-sync-doi.email.twig',
+                array('dois' => $this->outOfSyncDoi)
             ), 'text/html');
         $this->getContainer()->get('mailer')->send($message);
     }

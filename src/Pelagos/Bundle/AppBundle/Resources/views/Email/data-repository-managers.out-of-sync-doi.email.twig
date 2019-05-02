@@ -6,18 +6,20 @@
     </h3>
 
     <br>
+    {% if dois|length > 0 %}
+        <h4> No. of dois: {{ dois|length }}</h4>
 
-    {% for key, value in outOfSyncDoi %}
-       <tr>
-          <td>
-              {{ key }}
-          </td>
-           <td>
-               {{ value }}
-           </td>
-       </tr>
-    {% endfor %}
-
+        {% for key, reasons in dois %}
+            <li>
+                {{ key }}
+                {% for value in reasons %}
+                    <ul>
+                        {{ value }}
+                    </ul>
+                {% endfor %}
+            </li>
+        {% endfor %}
+    {% endif %}
 
 {% endblock %}
 
