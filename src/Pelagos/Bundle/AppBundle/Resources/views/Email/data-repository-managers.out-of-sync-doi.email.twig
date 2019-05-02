@@ -1,0 +1,23 @@
+{% block subject 'Doi sync report - List of Dois that are out of sync '%}
+
+{% block body_html %}
+    <h3>
+        Below are the list of DOIs that are out of sync in comparison to GRIIDC system.
+    </h3>
+
+    <br>
+
+    {% for key, value in outOfSyncDoi %}
+       <tr>
+          <td>
+              {{ key }}
+          </td>
+           <td>
+               {{ value }}
+           </td>
+       </tr>
+    {% endfor %}
+
+
+{% endblock %}
+
