@@ -22,13 +22,6 @@ use Pelagos\Entity\DOI;
 class DoiComparisonCommand extends ContainerAwareCommand
 {
     /**
-     * The Symfony Console output object.
-     *
-     * @var OutputInterface fileOutput
-     */
-    protected $fileOutput = null;
-
-    /**
      * The file output array which stores the data.
      *
      * @var array
@@ -49,6 +42,13 @@ class DoiComparisonCommand extends ContainerAwareCommand
      * A value for doi state from Datacite.
      */
     const DOI_REGISTERED = 'registered';
+
+    /**
+     * Array of out of sync dois.
+     *
+     * @var array
+     */
+    protected $outOfSyncDoi = array();
 
     /**
      * Configures the current command.
@@ -174,23 +174,27 @@ class DoiComparisonCommand extends ContainerAwareCommand
      */
     private function syncConditions(array $doiData): void
     {
-        $errorDoi = array();
+        $outOfSyncDoi = array();
         foreach ($doiData as $doi) {
             if ($doi['udi']) {
                 $datasets = $this->getDataset($doi['udi']);
-                $dataset = $datasets[0];
-                if ($dataset instanceof Dataset) {
-                    if (!$this->compareFields($dataset, $doi)) {
-                        array_push($errorDoi, $doi['doi']);
+                $dataset = null;
+                if (!empty($datasets)) {
+                    $dataset = $datasets[0];
+                    if ($dataset instanceof Dataset) {
+                        $this->compareFields($doi, $dataset);
+                    } else {
+                        // Error message
+                        $this->outOfSyncDoi[$doi['doi']] = 'Dataset does not exist for given doi.';
                     }
-                } else {
-                    array_push($errorDoi, $doi['doi']);
                 }
+            } else {
+                $this->compareFields($doi);
             }
         }
 
-        if (!empty($errorDoi)) {
-            $this->sendEmail($errorDoi);
+        if (!empty($this->outOfSyncDoi)) {
+            $this->sendEmail($this->outOfSyncDoi);
         }
     }
 
@@ -199,7 +203,7 @@ class DoiComparisonCommand extends ContainerAwareCommand
      *
      * @param string $udi Identifier used to get a dataset.
      *
-     * @return Collection
+     * @return array
      */
     private function getDataset(string $udi): array
     {
@@ -212,45 +216,75 @@ class DoiComparisonCommand extends ContainerAwareCommand
     /**
      * Compares fields of doi metadata from datactie and GRIIDC.
      *
-     * @param Dataset $dataset     A dataset instance.
      * @param array   $doiElements Doi metadata elements.
+     * @param Dataset $dataset     A dataset instance.
      *
-     * @return boolean
+     * @return void
      */
-    private function compareFields(Dataset $dataset, array $doiElements): bool
+    private function compareFields(array $doiElements, Dataset $dataset = null): void
     {
-        if ($doiElements['title'] !== $dataset->getTitle()) {
-            //incorrect title
-            return false;
-        }
+        if ($dataset) {
+            // Check title
+            $this->doesStringExist(
+                ['doi' => $doiElements['doi'], 'title' => $doiElements['title'], 'field' => 'title'],
+                $dataset->getTitle()
+            );
 
-        if ($doiElements['author'] !== $dataset->getAuthors() and $doiElements !== '(:tba)') {
-            //incorrect author
-            return false;
-        }
-        // PublicationYear field can not be null, as it is a required field when the DOI is published
-        $pubYear = $dataset->getReferenceDateYear();
-        if (empty($pubYear) and
-            $dataset->getDif()->getApprovedDate() instanceof \Datetime) {
-            $pubYear = $dataset->getDif()->getApprovedDate()->format('Y');
-        }
+            // Check author
+            $creator = ($dataset->getAuthors()) ? $dataset->getAuthors() : '(:tba)';
 
-        if ($doiElements['pubYear'] !== $pubYear) {
-            //incorrect publication year
-            return false;
-        }
+            $this->doesStringExist(
+                ['doi' => $doiElements['doi'], 'author' => $doiElements['author'], 'field' => 'author'],
+                $creator
+            );
 
-        if ($doiElements['publisher'] !== 'Harte Research Institute') {
-            //incorrect publisher
-            return false;
-        }
+            // Check publisher
+            $this->doesStringExist(
+                ['doi' => $doiElements['doi'], 'publisher' => $doiElements['publisher'], 'field' => 'publisher'],
+                'Harte Research Institute'
+            );
 
-        if (!$this->isStateValid($dataset, $doiElements)) {
-            //incorrect state/url
-            return false;
-        }
+            // CHeck resource type
+            $this->doesStringExist(
+                ['doi' => $doiElements['doi'], 'resourceType' => $doiElements['resourceType'], 'field' => 'resourceType'],
+                'Dataset'
+            );
 
-        return true;
+
+            if (!$this->isStateValid($dataset, $doiElements)) {
+                // Error message
+                $this->outOfSyncDoi[$doiElements['doi']] = 'Incorrect state/url';
+            }
+        } else {
+            // Check title
+            $this->doesStringExist(
+                ['doi' => $doiElements['doi'], 'title' => $doiElements['title'], 'field' => 'title'],
+                'inactive'
+            );
+
+            // Check author
+            $this->doesStringExist(
+                ['doi' => $doiElements['doi'], 'author' => $doiElements['author'], 'field' => 'author'],
+                '(:null)'
+            );
+
+            // Check publisher
+            $this->doesStringExist(
+                ['doi' => $doiElements['doi'], 'publisher' => $doiElements['publisher'], 'field' => 'publisher'],
+                'none supplied'
+            );
+
+            $doiStatus = $this->getDoiStatus($doiElements['state']);
+            if ($doiStatus === DOI::STATUS_UNAVAILABLE) {
+                if ($this->isUrlValid($doiElements['url'], 'invalidDOI') === false) {
+                    // Error message
+                    $this->outOfSyncDoi[$doiElements['doi']] = 'Incorrect url';
+                }
+            } else {
+                // Error message
+                $this->outOfSyncDoi[$doiElements['doi']] = 'Incorrect state';
+            }
+        }
     }
 
     /**
@@ -317,29 +351,44 @@ class DoiComparisonCommand extends ContainerAwareCommand
     {
         if (strpos($url, $needle) !== false) {
             return true;
-        } else {
-            // incorrect url
-            return false;
+        }
+
+        return false;
+    }
+
+    /**
+     * Compare strings case insensitive.
+     *
+     * @param array  $metadataElement   Doi metadata elements.
+     * @param string $comparisonElement String that needs to be compared.
+     *
+     * @return void
+     */
+    private function doesStringExist(array $metadataElement, string $comparisonElement): void
+    {
+        if (strcasecmp($metadataElement[$metadataElement['field']], $comparisonElement) !== 0) {
+            // Error message
+            $this->outOfSyncDoi[$metadataElement['doi']] = 'Incorrect ' . $metadataElement['field'];
         }
     }
 
     /**
      * To send an email.
      *
-     * @param array $errorDoi List of dois which are out of sync.
+     * @param array $outOfSyncDoi List of dois which are out of sync.
      *
      * @return void
      */
-    private function sendEmail(array $errorDoi): void
+    private function sendEmail(array $outOfSyncDoi): void
     {
         $message = \Swift_Message::newInstance()
-            ->setSubject('DOI Sync Log - List of Dois which are out of sync')
+            ->setSubject('DOI Sync Log - List of Dois that are out of sync')
             ->setFrom(array('griidc@gomri.org' => 'GRIIDC'))
             ->setTo(array('griidc@gomri.org' => 'GRIIDC'))
             ->setCharset('UTF-8')
             ->setBody($this->getContainer()->get('templating')->render(
                 'PelagosAppBundle:Email:data-repository-managers.error-remotely-hosted.email.twig',
-                array('listOfDoi' => $errorDoi)
+                array('Dois' => $outOfSyncDoi)
             ), 'text/html');
         $this->getContainer()->get('mailer')->send($message);
     }
