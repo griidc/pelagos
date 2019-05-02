@@ -174,7 +174,6 @@ class DoiComparisonCommand extends ContainerAwareCommand
      */
     private function syncConditions(array $doiData): void
     {
-        $outOfSyncDoi = array();
         foreach ($doiData as $doi) {
             if ($doi['udi']) {
                 $datasets = $this->getDataset($doi['udi']);
@@ -227,7 +226,7 @@ class DoiComparisonCommand extends ContainerAwareCommand
             // Check title
             $this->doesStringExist(
                 ['doi' => $doiElements['doi'], 'title' => $doiElements['title'], 'field' => 'title'],
-                $dataset->getTitle()
+                str_replace(',', '', $dataset->getTitle())
             );
 
             // Check author
@@ -235,7 +234,7 @@ class DoiComparisonCommand extends ContainerAwareCommand
 
             $this->doesStringExist(
                 ['doi' => $doiElements['doi'], 'author' => $doiElements['author'], 'field' => 'author'],
-                $creator
+                str_replace(',', '', $creator)
             );
 
             // Check publisher
@@ -249,12 +248,9 @@ class DoiComparisonCommand extends ContainerAwareCommand
                 ['doi' => $doiElements['doi'], 'resourceType' => $doiElements['resourceType'], 'field' => 'resourceType'],
                 'Dataset'
             );
+            // Check doi state and url
+            $this->isStateValid($dataset, $doiElements);
 
-
-            if (!$this->isStateValid($dataset, $doiElements)) {
-                // Error message
-                $this->outOfSyncDoi[$doiElements['doi']] = 'Incorrect state/url';
-            }
         } else {
             // Check title
             $this->doesStringExist(
@@ -278,11 +274,11 @@ class DoiComparisonCommand extends ContainerAwareCommand
             if ($doiStatus === DOI::STATUS_UNAVAILABLE) {
                 if ($this->isUrlValid($doiElements['url'], 'invalidDOI') === false) {
                     // Error message
-                    $this->outOfSyncDoi[$doiElements['doi']] = 'Incorrect url';
+                    $this->outOfSyncDoi[$doiElements['doi']] = array('url' => 'Incorrect url');
                 }
             } else {
                 // Error message
-                $this->outOfSyncDoi[$doiElements['doi']] = 'Incorrect state';
+                $this->outOfSyncDoi[$doiElements['doi']] = array('state' => 'Incorrect state');
             }
         }
     }
@@ -295,25 +291,34 @@ class DoiComparisonCommand extends ContainerAwareCommand
      *
      * @return boolean
      */
-    private function isStateValid(Dataset $dataset, array $doiElements): bool
+    private function isStateValid(Dataset $dataset, array $doiElements): void
     {
         $doiStatus = $this->getDoiStatus($doiElements['state']);
 
         if ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_NONE and $dataset->getIdentifiedStatus() === DIF::STATUS_APPROVED) {
             if ($doiStatus === DOI::STATUS_RESERVED || $doiStatus === DOI::STATUS_UNAVAILABLE) {
-                return $this->isUrlValid($doiElements['url'], 'tombstone');
-            } else {
-                //incorrect state
-                return false;
+                if (!$this->isUrlValid($doiElements['url'], 'tombstone')) {
+                    // Error message
+                    $this->outOfSyncDoi[$doiElements['doi']] = array('url' => 'Incorrect url');
+                }
             }
         } elseif ($dataset->getDatasetStatus() !== Dataset::DATASET_STATUS_NONE) {
             if ($doiStatus === DOI::STATUS_PUBLIC) {
                 if ($dataset->isAvailable()) {
-                    return $this->isUrlValid($doiElements['url'], 'data');
+                    if (!$this->isUrlValid($doiElements['url'], 'data')) {
+                        // Error message
+                        $this->outOfSyncDoi[$doiElements['doi']] = array('url' => 'Incorrect url');
+                    }
                 } else {
-                    return $this->isUrlValid($doiElements['url'], 'tombstone');
+                    if (!$this->isUrlValid($doiElements['url'], 'tombstone')) {
+                        // Error message
+                        $this->outOfSyncDoi[$doiElements['doi']] = array('url' => 'Incorrect url');
+                    }
                 }
             }
+        } else {
+            // Error message
+            $this->outOfSyncDoi[$doiElements['doi']] = array('state' => 'Incorrect state');
         }
     }
 
@@ -366,9 +371,9 @@ class DoiComparisonCommand extends ContainerAwareCommand
      */
     private function doesStringExist(array $metadataElement, string $comparisonElement): void
     {
-        if (strcasecmp($metadataElement[$metadataElement['field']], $comparisonElement) !== 0) {
-            // Error message
-            $this->outOfSyncDoi[$metadataElement['doi']] = 'Incorrect ' . $metadataElement['field'];
+        if (strpos($comparisonElement, $metadataElement[$metadataElement['field']]) === false) {
+            //Error message
+            $this->outOfSyncDoi[$metadataElement['doi']] = array($metadataElement['field'] => 'Incorrect ' . $metadataElement['field']);
         }
     }
 
