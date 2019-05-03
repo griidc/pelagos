@@ -89,6 +89,8 @@ function updateTree(tree) {
 
     var left_to_open = init_open.length;
 
+    $("#" + tree.name).jstree('destroy');
+
     $("#" + tree.name).jstree({
         "core": {
             "html_titles": true,
