@@ -24,6 +24,7 @@ Pelagos is a [Symfony 3.4](https://symfony.com/doc/3.4/index.html) project, plea
 To install fullfill prerequisites then run:
 * `export SYMFONY-ENV=drupal_prod`
 * `composer install`
+* `yarn install`
 * `yarn run encore production`
 
 ## Contributors
