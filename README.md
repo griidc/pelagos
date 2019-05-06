@@ -22,6 +22,7 @@ These instructions will get you a copy of the project up and running on your loc
 Pelagos is a [Symfony 3.4](https://symfony.com/doc/3.4/index.html) project, please follow the normal configuration regarding setting up your webserver for a Symfony project.
 
 To install fullfill prerequisites then run:
+* `export SYMFONY-ENV=drupal_prod`
 * `composer install`
 * `yarn run encore production`
 
