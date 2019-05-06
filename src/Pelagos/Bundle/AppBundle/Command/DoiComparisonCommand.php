@@ -370,7 +370,8 @@ class DoiComparisonCommand extends ContainerAwareCommand
      */
     private function doesStringExist(array $metadataElement, string $comparisonElement): void
     {
-        if (strcasecmp($comparisonElement, $metadataElement[$metadataElement['field']]) !== 0) {
+        if (!empty($metadataElement[$metadataElement['field']])
+            and strcasecmp($comparisonElement, $metadataElement[$metadataElement['field']]) !== 0) {
             if (strpos($comparisonElement, $metadataElement[$metadataElement['field']]) === false) {
                 //Error message
                 $this->outOfSyncDoi[$metadataElement['doi']] = array($metadataElement['field'] => 'Incorrect ' . $metadataElement['field']);
