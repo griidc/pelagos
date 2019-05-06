@@ -107,9 +107,9 @@ function updateTree(tree) {
                         } else {
                             url = Routing.generate("pelagos_api_tree_get_letters");
                         }
-                    }
-                    else {
-                        nodeId = node.id;
+                    } else {
+                        nodeId = node.a_attr['id'];
+                        
                         if (tree.type == 'ra') {
                             var matchFundingCycleId = nodeId.match(/^projects_funding-cycle_(\d+)$/);
                             if (null !== matchFundingCycleId) {
