@@ -22,13 +22,6 @@ use Pelagos\Entity\DOI;
 class DoiComparisonCommand extends ContainerAwareCommand
 {
     /**
-     * The file output array which stores the data.
-     *
-     * @var array
-     */
-    protected $fileOutputArray;
-
-    /**
      * A value for doi state from Datacite.
      */
     const DOI_FINDABLE = 'findable';
