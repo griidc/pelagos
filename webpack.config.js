@@ -8,7 +8,7 @@ Encore
     .setOutputPath('web/build/')
 
     // the public path used by the web server to access the previous directory
-    .setPublicPath('/build')
+    .setPublicPath(Encore.isProduction() ? '/pelagos-symfony/build' : '/build')
 
     // will create web/build/app.js and web/build/app.css
     .createSharedEntry('common', './assets/js/common.js')
