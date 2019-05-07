@@ -1,13 +1,12 @@
 [
 {% for letter in letters %}
     {
+        "id": "{{letter}}",
         "text": "{{letter}}",
         "li_attr": {
             "style": "color:black"
         },
-        "a_attr": {
-            "id": "{{letter}}"
-        },
+        "children": true,
         {% if tree.expand_to_depth > 0 %}
             "state": "open"
         {% else %}
