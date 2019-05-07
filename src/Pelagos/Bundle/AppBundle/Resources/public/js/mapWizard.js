@@ -172,9 +172,9 @@ function MapWizard(json)
 
         //only show input GML tab on dataset-review
         if (true === inputGmlControl) {
-            $("#coordTabs a[href=#gmlTab]").parent().show();
+            $('#coordTabs a[href="#gmlTab"]').parent().show();
         } else {
-            $("#coordTabs a[href=#gmlTab]").parent().hide();
+            $('#coordTabs a[href="#gmlTab"]').parent().hide();
         }
     }
 
