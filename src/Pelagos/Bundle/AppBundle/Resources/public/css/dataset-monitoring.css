@@ -41,3 +41,7 @@
 .display-table-cell {
     display: table-cell;
 }
+
+#pelagos-content table {
+     border-collapse: collapse;
+}
