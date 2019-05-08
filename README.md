@@ -12,7 +12,7 @@ These instructions will get you a copy of the project up and running on your loc
 * [CENTOS 6/7](https://wiki.centos.org/) - Linux Distribution based on Red Hat
 * [PHP 7.1](http://php.net/docs.php) - General-purpose scripting language
 * [PostgreSQL 9.6](https://www.postgresql.org/docs/9.6/static/release-9-6.html) - ORDBMS
-* [Elasticsearch 6.6.2](https://www.elastic.co/products/elasticsearch) - ElasticSearch Document Indexer
+* [Elasticsearch 6.7.2+](https://www.elastic.co/products/elasticsearch) - ElasticSearch Document Indexer
 * [RabbitMQ](https://www.rabbitmq.com/documentation.html) - Open source message broker software
 * [Composer 1.5.2+](https://getcomposer.org/) - Dependency Manager for PHP
 * [Yarn 1.15.2](https://yarnpkg.com/en/) - Package Manager
