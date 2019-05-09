@@ -243,10 +243,15 @@ input[required] {
     font-size: 0.85em;
 }
 
-.login-input-fields {
+.login-page-text {
     font-family: "Merriweather", Arial, serif;
 }
 
 input.form-control {
     width: 250px;
+}
+
+.form-item, .form-actions {
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
