@@ -4,6 +4,7 @@ namespace Pelagos\Util;
 
 use Pelagos\Exception\HttpClientErrorException;
 use Pelagos\Exception\HttpServerErrorException;
+use HylianShield\Encoding\Base32CrockfordEncoder;
 
 /**
  * A utility to create and issue DOI from EZID API.
@@ -374,5 +375,57 @@ class DOIutil
             },
             $input
         );
+    }
+
+    /**
+     * This function generates a new DOI string that is not already in use per datacite.
+     *
+     * @return string A unique, unused DOI string.
+     */
+    public function generateDoi()
+    {
+        $encoder = new Base32CrockfordEncoder();
+        // 1099511627775 encodes to the longest 8 character Crockford 32 string.
+        $max = 1099511627775;
+        // Start at 1 (0 is problematic as library does not produce checksum for 0.)
+        $random = mt_rand(1, $max);
+        // Add shoulder and remove the checksum character.
+        $doi = $this->doishoulder . '/' . substr($encoder->encode($random), 0, -1);
+        while ($this->checkDoiExists($doi)) {
+            $random = mt_rand(0, $max);
+            $doi = $this->doishoulder . '/' . substr($encoder->encode($random), 0, -1);
+        }
+        return $doi;
+    }
+
+    /**
+     * This function queries Datacite to determine if the DOI is already in use.
+     *
+     * @param string $doi The DOI to be checked.
+
+     * @throws HttpClientErrorException When there is a 4xx error negotiating with Datacite, other than a 400.
+     * @throws HttpServerErrorException When there is a 5xx error negotiating with Datacite.
+     *
+     * @return boolean True if returned if the DOI exists, false if it does not.
+     */
+    protected function checkDoiExists($doi)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $this->url . '/id/' . $doi);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $output = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        if (400 != $httpCode) {
+            $expMsg = "ezid failed with:$httpCode($output)";
+            if ($httpCode >= 400 and $httpCode <= 499) {
+                throw new HttpClientErrorException($expMsg, $httpCode);
+            } elseif ($httpCode >= 500 or $httpCode == 0) {
+                throw new HttpServerErrorException($expMsg, $httpCode);
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 }
