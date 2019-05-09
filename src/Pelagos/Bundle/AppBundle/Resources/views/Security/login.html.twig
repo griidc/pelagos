@@ -40,17 +40,13 @@
                 <div class="box fl-panel" id="login">
                     <h2>Enter your Username and Password</h2>
                     <div class="row fl-controls-left">
-                        {{ form_row(form._username) }}
-                        <div class="description">Enter your GRIIDC - Test username.</div>
-                        {{ form_row(form._password) }}
-                        <div class="description">Enter the password that accompanies your username.</div>
-                        {#
-                        <div class="checkbox mb-3">
-                            <label>
-                                <input type="checkbox" name="_remember_me"> Remember me
-                            </label>
+                        <div class="login-input-fields">
+                            {{ form_row(form._username) }}
+                            <div class="description">Enter your GRIIDC - Test username.</div>
+                            {{ form_row(form._password) }}
+                            <div class="description">Enter the password that accompanies your username.</div>
                         </div>
-                        #}
+                        
                         <span style="display:inline; float:none; vertical-align:15%;">
                         <a href="{{ path('pelagos_app_ui_account_passwordreset') }}">Forgot Your Password or Password Expired?</a>
                         </span>

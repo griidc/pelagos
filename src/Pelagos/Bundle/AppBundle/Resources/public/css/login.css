@@ -239,6 +239,14 @@ input[required] {
     content:"*";
 }
 
-.form-item .description {
+.description {
     font-size: 0.85em;
+}
+
+.login-input-fields {
+    font-family: "Merriweather", Arial, serif;
+}
+
+input.form-control {
+    width: 250px;
 }
