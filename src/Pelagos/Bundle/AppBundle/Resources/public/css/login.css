@@ -233,3 +233,12 @@ input[required] {
 #page-title {
     display: none;
 }
+.required::after
+{
+    font-weight: bold; color:#FF0000;
+    content:"*";
+}
+
+.form-item .description {
+    font-size: 0.85em;
+}
