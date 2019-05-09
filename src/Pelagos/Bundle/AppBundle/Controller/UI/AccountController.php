@@ -23,14 +23,14 @@ use Pelagos\Exception\PasswordException;
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
  *
- * @Route("/account")
+ * @Route("")
  */
 class AccountController extends UIController implements OptionalReadOnlyInterface
 {
     /**
      * The default action.
      *
-     * @Route("")
+     * @Route("/account")
      * @Method("GET")
      *
      * @return Response A Symfony Response instance.
@@ -43,7 +43,7 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
     /**
      * Password Reset action.
      *
-     * @Route("/reset-password")
+     * @Route("/account/reset-password")
      * @Method("GET")
      *
      * @return Response A Symfony Response instance.
@@ -65,7 +65,7 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
      *
      * @throws \Exception When more than one Person is found for an email address.
      *
-     * @Route("")
+     * @Route("/account")
      * @Method("POST")
      *
      * @return Response A Symfony Response instance.
@@ -155,7 +155,7 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
      * This verifies that the token has authenticated the user and that the user does not already have an account.
      * It then provides the user with a screen to establish a password.
      *
-     * @Route("/verify-email")
+     * @Route("/account/verify-email")
      * @Method("GET")
      *
      * @return Response A Response instance.
@@ -191,7 +191,7 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
     /**
      * Redirect GET sent to this route.
      *
-     * @Route("/create")
+     * @Route("/account/create")
      * @Method("GET")
      *
      * @return Response A Symfony Response instance.
@@ -209,7 +209,7 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
      *
      * @throws \Exception When password do not match.
      *
-     * @Route("/create")
+     * @Route("/account/create")
      * @Method("POST")
      *
      * @return Response A Symfony Response instance.
@@ -332,7 +332,7 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
         // If the user is not authenticated.
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             // The token must be bad or missing.
-            return $this->render('PelagosAppBundle:template:NotLoggedIn.html.twig');
+            return $this->redirectToRoute('pelagos_app_ui_account_passwordreset');
         }
 
         // Send back the set password screen.
@@ -409,7 +409,7 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("/forgot-username")
+     * @Route("/account/forgot-username")
      * @Method("GET")
      *
      * @return Response A Response instance.
@@ -440,5 +440,25 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
                 'emailId' => $userEmailAddr
             )
         );
+    }
+
+    /**
+     * The action will redirect you to the correct password page.
+     *
+     * Either change password if logged in, otherwise reset password.
+     *
+     * @Route("/password")
+     * @Method("GET")
+     *
+     * @return RedirectResponse A Redirect Response.
+     */
+    public function passwordAction()
+    {
+        // If the user is not authenticated.
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->redirectToRoute('pelagos_app_ui_account_changepassword');
+        } else {
+            return $this->redirectToRoute('pelagos_app_ui_account_passwordreset');
+        }
     }
 }
