@@ -349,7 +349,7 @@ class DOIutil
         // Add shoulder and remove the checksum character.
         $doi = $this->doishoulder . '/' . substr($encoder->encode($random), 0, -1);
         while ($this->checkDoiExists($doi)) {
-            $random = mt_rand(0, $max);
+            $random = mt_rand(1, $max);
             $doi = $this->doishoulder . '/' . substr($encoder->encode($random), 0, -1);
         }
         return $doi;
