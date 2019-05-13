@@ -248,6 +248,7 @@ class DOIutil
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
+
         //check to see if it worked.
         if (200 != $httpCode) {
             $expMsg = "ezid failed with:$httpCode($output)";
@@ -348,7 +349,7 @@ class DOIutil
         $random = mt_rand(1, $max);
         // Add shoulder and remove the checksum character.
         $doi = $this->doishoulder . '/' . substr($encoder->encode($random), 0, -1);
-        while ($this->checkDoiExists($doi)) {
+        while ($this->checkDoiExistsExternal($doi)) {
             $random = mt_rand(1, $max);
             $doi = $this->doishoulder . '/' . substr($encoder->encode($random), 0, -1);
         }
@@ -359,30 +360,25 @@ class DOIutil
      * This function queries Datacite to determine if the DOI is already in use.
      *
      * @param string $doi The DOI to be checked.
-
-     * @throws HttpClientErrorException When there is a 4xx error negotiating with Datacite, other than a 400.
-     * @throws HttpServerErrorException When there is a 5xx error negotiating with Datacite.
+     *
+     * @throws HttpClientErrorException If a non 400 error is encountered.
      *
      * @return boolean True if returned if the DOI exists, false if it does not.
      */
-    protected function checkDoiExists($doi)
+    public function checkDoiExistsExternal(string $doi): bool
     {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->url . '/id/' . $doi);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $output = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        if (400 != $httpCode) {
-            $expMsg = "ezid failed with:$httpCode($output)";
-            if ($httpCode >= 400 and $httpCode <= 499) {
-                throw new HttpClientErrorException($expMsg, $httpCode);
-            } elseif ($httpCode >= 500 or $httpCode == 0) {
-                throw new HttpServerErrorException($expMsg, $httpCode);
+        try {
+            $doiUtil = new DOIutil();
+            $doiUtil->getDOIMetadata($doi);
+        } catch (HttpClientErrorException $exception) {
+            if ($exception->getCode() == 400) {
+                // No, this DOI does not exist upstream (Datacite) thus can be used.
+                return false;
+            } else {
+                throw new HttpClientErrorException($exception->getMessage(), $exception->getCode());
             }
-            return true;
-        } else {
-            return false;
         }
+        // Yes, this DOI must already exist uptstream, because we didn't get a 400.
+        return true;
     }
 }
