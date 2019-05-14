@@ -8,17 +8,18 @@
     <br>
     {% if dois|length > 0 %}
         <h4> No. of dois: {{ dois|length }}</h4>
-
+        <table>
         {% for key, reasons in dois %}
-            <li>
-                {{ key }}
+            <tr>
+                <td>{{ key }}</td>
                 {% for value in reasons %}
-                    <ul>
+                    <td>
                         {{ value }}
-                    </ul>
+                    </td>
                 {% endfor %}
-            </li>
+            </tr>
         {% endfor %}
+        </table>
     {% endif %}
 
 {% endblock %}
