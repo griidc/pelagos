@@ -271,6 +271,15 @@ div#header #griidc-logo-wrapper {
     font-size: 12px;
 }
 
+.ui-widget {
+    font-size: 12px !important;
+    line-height: 18px !important;
+}
+
+#geowizBtn {
+    font-size: larger !important;
+}
+
 .page-pelagos-full {
     /* Full Window */
     /* layout */
