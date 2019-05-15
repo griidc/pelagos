@@ -173,3 +173,11 @@ span.attr {
 #tabs li.ui-state-disabled {
     opacity: .5;
 }
+
+#pelagos-content table {
+	border-collapse: collapse;
+}
+
+table.datasets td {
+	padding: 10px !important;
+}
