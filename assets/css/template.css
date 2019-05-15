@@ -545,3 +545,7 @@ div#header #griidc-logo-wrapper {
     top: 0px;
     position: relative !important;
 }
+
+table.datasets td {
+    padding: 10px !important;
+}
