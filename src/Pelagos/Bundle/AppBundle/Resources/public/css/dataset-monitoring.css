@@ -43,5 +43,9 @@
 }
 
 #pelagos-content table {
-     border-collapse: collapse;
+    border-collapse: collapse;
+}
+
+table.datasets td {
+    padding: 10px !important;
 }
