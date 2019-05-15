@@ -9,26 +9,35 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-* [CENTOS 6/7](https://wiki.centos.org/)
-* [PHP 7.1](http://php.net/docs.php )
-* [Symfony 3.4](https://symfony.com/doc/3.4/index.html) - PHP framework for web application
+* [CENTOS 6/7](https://wiki.centos.org/) - Linux Distribution based on Red Hat
+* [PHP 7.1](http://php.net/docs.php) - General-purpose scripting language
 * [PostgreSQL 9.6](https://www.postgresql.org/docs/9.6/static/release-9-6.html) - ORDBMS
-* [FOSElasticaBundle](https://github.com/FriendsOfSymfony/FOSElasticaBundle) - PHP integration for Symfony with ElasticSearch
+* [Elasticsearch 6.7.2+](https://www.elastic.co/products/elasticsearch) - ElasticSearch Document Indexer
 * [RabbitMQ](https://www.rabbitmq.com/documentation.html) - Open source message broker software
+* [Composer 1.5.2+](https://getcomposer.org/) - Dependency Manager for PHP
+* [Yarn 1.15.2](https://yarnpkg.com/en/) - Package Manager
 
 ### Installation
+
+Pelagos is a [Symfony 3.4](https://symfony.com/doc/3.4/index.html) project, please follow the normal configuration regarding setting up your webserver for a Symfony project.
+
+To install fullfill prerequisites then run:
+* `export SYMFONY-ENV=drupal_prod`
+* `composer install`
+* `yarn install`
+* `yarn run encore production`
 
 ## Contributors
 
 * **Michael Van Den Eijnden**  - (2012 - present) [Github](https://github.com/mickel1138)
 * **Michael S. Williamson**  - (2013 - present) [Github](https://github.com/fightingtexasaggie)
-* **Son Nguyen**  - (2017 - present) [Github](https://github.com/snguyen1)
+* **Son Nguyen**  - (2017 - 2019) [Github](https://github.com/snguyen1)
 * **Praneeth Pondicherry Ravendernath**  - (2017 - present) [Github](https://github.com/praneethpr)
 
 See also the list of [contributors](https://github.com/griidc/pelagos/contributors) who participated in this project.
 
 ## License
-Copyright 2018 Texas A&M University-Corpus Christi
+Copyright 2019 Texas A&M University-Corpus Christi
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
