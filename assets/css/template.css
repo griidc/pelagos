@@ -271,6 +271,11 @@ div#header #griidc-logo-wrapper {
     font-size: 12px;
 }
 
+/* Make sure that jquery UI element (normally 100) ends up in front of the superfish menu, which is z-index 499 */
+.ui-front {
+    z-index:500 !important;
+}
+
 .page-pelagos-full {
     /* Full Window */
     /* layout */
