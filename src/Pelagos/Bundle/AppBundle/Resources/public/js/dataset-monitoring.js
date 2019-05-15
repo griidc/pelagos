@@ -6,10 +6,15 @@ $(document).ready(function() {
     // Due to a bug in hashChange (old version, no newer compatible with current jQuery),
     // manualy detect the hash on load, and force hash change.
     // But we have to wait with opening nodes until js Tree is fully loaded.
-    $("#tree").bind("loaded.jstree", function(e, data) {
+    let tree = $("#tree");
+    tree.bind("loaded.jstree", function(e, data) {
         if (window.location.hash != "") {
             $(window).trigger("hashchange");
         }
+    });
+
+    tree.on('select_node.jstree', function (e, data) {
+        data.instance.toggle_node(data.node);
     });
 
     $(window).on("hashchange", function(){
