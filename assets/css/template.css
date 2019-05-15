@@ -276,6 +276,10 @@ div#header #griidc-logo-wrapper {
     line-height: 18px !important;
 }
 
+#geowizBtn {
+    font-size: larger !important;
+}
+
 .page-pelagos-full {
     /* Full Window */
     /* layout */
