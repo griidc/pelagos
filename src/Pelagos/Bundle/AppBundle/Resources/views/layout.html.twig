@@ -67,7 +67,7 @@
                         <div id="block-pelagos-pelagos-login-logout-links" class="block block-pelagos">
                             <div class="content">
                             {% if is_granted('ROLE_USER') %}
-                                <a href="{{ path("pelagos_app_ui_person_default", {id: app.user.person.id }) }}">
+                                <a href="#">
                                     Logged in as: {{ app.user.username }}
                                 </a>
                                 |
