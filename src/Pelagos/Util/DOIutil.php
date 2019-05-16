@@ -368,10 +368,9 @@ class DOIutil
     public function checkDoiExistsExternal(string $doi): bool
     {
         try {
-            $doiUtil = new DOIutil();
-            $doiUtil->getDOIMetadata($doi);
+            $this->getDOIMetadata($doi);
         } catch (HttpClientErrorException $exception) {
-            if ($exception->getCode() == 400) {
+            if (in_array($exception->getCode(), [400, 404])) {
                 // No, this DOI does not exist upstream (Datacite) thus can be used.
                 return false;
             } else {
