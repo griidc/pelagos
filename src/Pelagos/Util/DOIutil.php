@@ -12,11 +12,11 @@ use HylianShield\Encoding\Base32CrockfordEncoder;
 class DOIutil
 {
     /**
-     * The shoulder for the GRIIDC doi.
+     * The prefix for the GRIIDC doi.
      *
      * @var string
      */
-    private $doishoulder;
+    private $doiprefix;
 
     /**
      * The username for ezid.
@@ -42,7 +42,7 @@ class DOIutil
     /**
      * Constructor.
      *
-     * Sets the ezid username, password, and shoulder.
+     * Sets the ezid username, password, and prefix.
      *
      * @throws \Exception When ini file is not found.
      */
@@ -55,7 +55,7 @@ class DOIutil
         }
         $parameters = parse_ini_file($iniFile);
 
-        $this->doishoulder = $parameters['doi_api_shoulder'];
+        $this->doiprefix = $parameters['doi_api_prefix'];
         $this->doiusername = $parameters['doi_api_user_name'];
         $this->doipassword = $parameters['doi_api_password'];
         $this->url = $parameters['url'];
@@ -347,11 +347,11 @@ class DOIutil
         $max = 1099511627775;
         // Start at 1 (0 is problematic as library does not produce checksum for 0.)
         $random = mt_rand(1, $max);
-        // Add shoulder and remove the checksum character.
-        $doi = $this->doishoulder . '/' . substr($encoder->encode($random), 0, -1);
+        // Add prefix and remove the checksum character.
+        $doi = $this->doiprefix . '/' . substr($encoder->encode($random), 0, -1);
         while ($this->checkDoiExistsExternal($doi)) {
             $random = mt_rand(1, $max);
-            $doi = $this->doishoulder . '/' . substr($encoder->encode($random), 0, -1);
+            $doi = $this->doiprefix . '/' . substr($encoder->encode($random), 0, -1);
         }
         return $doi;
     }
