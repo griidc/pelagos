@@ -87,7 +87,6 @@ class DoiComparisonCommand extends ContainerAwareCommand
                     'title' => str_replace(',', '', $doi['attributes']['titles'][0]['title']),
                     'author' => str_replace(',', '', $doi['attributes']['creators'][0]['name']),
                     'publisher' => $doi['attributes']['publisher'],
-                    'pubYear' => $doi['attributes']['publicationYear'],
                     'state' => $doi['attributes']['state'],
                     'resourceType' => $this->getResourceType($doi['attributes']['types'])
                 );
@@ -200,7 +199,9 @@ class DoiComparisonCommand extends ContainerAwareCommand
     private function getDataset(string $udi): array
     {
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
-        $datasets = $entityManager->getRepository(Dataset::class)->findBy(array('udi' => array('udi' => substr($udi, 0, 16))));
+        $datasets = $entityManager->getRepository(Dataset::class)->findBy(array(
+            'udi' => array('udi' => substr($udi, 0, 16))
+        ));
 
         return $datasets;
     }
@@ -238,7 +239,11 @@ class DoiComparisonCommand extends ContainerAwareCommand
 
             // CHeck resource type
             $this->doesStringExist(
-                ['doi' => $doiElements['doi'], 'resourceType' => $doiElements['resourceType'], 'field' => 'resourceType'],
+                [
+                    'doi' => $doiElements['doi'],
+                    'resourceType' => $doiElements['resourceType'],
+                    'field' => 'resourceType'
+                ],
                 'Dataset'
             );
             // Check doi state and url
@@ -262,11 +267,24 @@ class DoiComparisonCommand extends ContainerAwareCommand
                 'none supplied'
             );
 
+            // CHeck resource type
+            $this->doesStringExist(
+                [
+                    'doi' => $doiElements['doi'],
+                    'resourceType' => $doiElements['resourceType'],
+                    'field' => 'resourceType'
+                ],
+                'Dataset'
+            );
+
             $doiStatus = $this->getDoiStatus($doiElements['state']);
             if ($doiStatus === DOI::STATUS_UNAVAILABLE) {
                 if ($this->isUrlValid($doiElements['url'], 'invalidDOI') === false) {
                     // Error message
-                    $this->outOfSyncDoi[$doiElements['doi']] = array('url' => 'Incorrect url');
+                    $this->outOfSyncDoi[$doiElements['doi']] = array(
+                        'url' => 'Incorrect url',
+                        'value' => $doiElements['url']
+                    );
                 }
             } else {
                 // Error message
@@ -287,11 +305,15 @@ class DoiComparisonCommand extends ContainerAwareCommand
     {
         $doiStatus = $this->getDoiStatus($doiElements['state']);
 
-        if ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_NONE and $dataset->getIdentifiedStatus() === DIF::STATUS_APPROVED) {
+        if ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_NONE and
+            $dataset->getIdentifiedStatus() === DIF::STATUS_APPROVED) {
             if ($doiStatus === DOI::STATUS_RESERVED || $doiStatus === DOI::STATUS_UNAVAILABLE) {
                 if (!$this->isUrlValid($doiElements['url'], 'tombstone')) {
                     // Error message
-                    $this->outOfSyncDoi[$doiElements['doi']] = array('url' => 'Incorrect url');
+                    $this->outOfSyncDoi[$doiElements['doi']] = array(
+                        'url' => 'Incorrect url',
+                        'value' => $doiElements['url']
+                    );
                 }
             }
         } elseif ($dataset->getDatasetStatus() !== Dataset::DATASET_STATUS_NONE) {
@@ -299,12 +321,18 @@ class DoiComparisonCommand extends ContainerAwareCommand
                 if ($dataset->isAvailable()) {
                     if (!$this->isUrlValid($doiElements['url'], 'data')) {
                         // Error message
-                        $this->outOfSyncDoi[$doiElements['doi']] = array('url' => 'Incorrect url');
+                        $this->outOfSyncDoi[$doiElements['doi']] = array(
+                            'url' => 'Incorrect url',
+                            'value' => $doiElements['url']
+                            );
                     }
                 } else {
                     if (!$this->isUrlValid($doiElements['url'], 'tombstone')) {
                         // Error message
-                        $this->outOfSyncDoi[$doiElements['doi']] = array('url' => 'Incorrect url');
+                        $this->outOfSyncDoi[$doiElements['doi']] = array(
+                            'url' => 'Incorrect url',
+                            'value' => $doiElements['url']
+                            );
                     }
                 }
             }
@@ -363,11 +391,20 @@ class DoiComparisonCommand extends ContainerAwareCommand
      */
     private function doesStringExist(array $metadataElement, string $comparisonElement): void
     {
-        if (!empty($metadataElement[$metadataElement['field']])
-            and strcasecmp($comparisonElement, $metadataElement[$metadataElement['field']]) !== 0) {
-            if (strpos($comparisonElement, $metadataElement[$metadataElement['field']]) === false) {
-                //Error message
-                $this->outOfSyncDoi[$metadataElement['doi']] = array($metadataElement['field'] => 'Incorrect ' . $metadataElement['field']);
+        if (empty($metadataElement[$metadataElement['field']])) {
+            //Error message
+            $this->outOfSyncDoi[$metadataElement['doi']] = array(
+                $metadataElement['field'] => 'Null/Empty ' . $metadataElement['field']
+            );
+        } else {
+            if (strcasecmp($comparisonElement, $metadataElement[$metadataElement['field']]) !== 0) {
+                if (strpos($comparisonElement, $metadataElement[$metadataElement['field']]) === false) {
+                    //Error message
+                    $this->outOfSyncDoi[$metadataElement['doi']] = array(
+                        $metadataElement['field'] => 'Incorrect ' . $metadataElement['field'],
+                        'value' => $metadataElement[$metadataElement['field']]
+                    );
+                }
             }
         }
     }
