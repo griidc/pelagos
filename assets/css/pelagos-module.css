@@ -88,3 +88,8 @@
     overflow: hidden;
     height: 1px;
 }
+
+.jstree-anchor {
+    white-space: normal !important;
+    height: auto !important;
+}
