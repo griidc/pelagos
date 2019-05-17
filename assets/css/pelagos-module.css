@@ -93,3 +93,37 @@
     white-space: normal !important;
     height: auto !important;
 }
+
+div.error {
+    background-image: url("/build/images/message-24-error.png");
+    border-color: #ed541d;
+}
+
+div.messages {
+    background-position: 8px 8px;
+    background-repeat: no-repeat;
+    border: 1px solid;
+    margin: 6px 0;
+    padding: 10px 10px 10px 50px;
+}
+
+.fa-exclamation-circle:before {
+     content: none !important;
+}
+
+div.error, table tr.error {
+    background-color: #fef5f1;
+}
+
+div.status {
+    background-image: url("/build/images/message-24-ok.png");
+    border-color: #be7;
+}
+div.status,
+.ok {
+    color: #234600;
+}
+
+div.status, table tr.ok {
+    background-color: #f8fff0;
+}
