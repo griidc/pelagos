@@ -12,7 +12,7 @@ div.messages {
 }
 
 div.status {
-  background-image: url("/build/images/message-24-ok.png");
+  background-image: url("../images/message-24-ok.png");
   border-color: #be7;
 }
 div.status,
@@ -25,7 +25,7 @@ table tr.ok {
 }
 
 div.warning {
-  background-image: url("/build/images/message-24-warning.png");
+  background-image: url("../images/message-24-warning.png");
   border-color: #ed5;
 }
 div.warning,
@@ -39,7 +39,7 @@ table tr.warning {
 
 div.error {
   border-color: #ed541d;
-  background-image: url("/build/images/message-24-error.png");
+  background-image: url("../images/message-24-error.png");
 }
 div.error,
 .error {
