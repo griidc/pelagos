@@ -135,7 +135,7 @@ li.sfHover > span.nolink > .sf-sub-indicator {
 .sf-menu.rtl .sf-sub-indicator {
     left: 0.75em;
     right: auto;
-    background: url('/build/images/arrows-ffffff-rtl.png') no-repeat -10px -100px;
+    background: url('../images/arrows-ffffff.png') no-repeat -10px -100px;
 }
 .sf-menu.rtl a > .sf-sub-indicator,
 .sf-menu.rtl span.nolink > .sf-sub-indicator {

@@ -91,9 +91,7 @@ p {
 }
 
 a.extlink:after {
-    background-image: url('../images/extlink.png');
-    background-repeat: no-repeat;
-    background-position: 0 0;
+    background: url('../images/extlink.png') no-repeat 0 0;
     background-size: contain;
     content: '';
     display: inline-block;
@@ -205,10 +203,7 @@ div#header #griidc-logo-wrapper {
 }
 
 .sidebar-first #main-wrapper {
-    background-image: url('../images/bg-interior.gif');
-    background-repeat: repeat-y;
-    background-position: 4px top;
-    background-color: white;
+    background: white url('../images/bg-interior.gif') repeat-y 4px top;
 }
 
 #block-pelagos-menu-1 .content {
