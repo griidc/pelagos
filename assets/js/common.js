@@ -7,6 +7,7 @@ require('../css/template.css');
 require('../css/superfish-navbar.css');
 require('../css/superfish.css');
 require('../css/pelagos-module.css');
+require('../css/messages.css');
 
 $( document ).ready(function() {
     $("#pelagos-menu-1").hoverIntent(hoverIn, hoverOut, 'li');
