@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Styles for system messages.
+ */
+
 div.messages {
   background-position: 8px 8px; /* LTR */
   background-repeat: no-repeat;
@@ -20,6 +25,7 @@ table tr.ok {
 }
 
 div.warning {
+  background-image: url("/build/images/message-24-warning.png");
   border-color: #ed5;
 }
 div.warning,
