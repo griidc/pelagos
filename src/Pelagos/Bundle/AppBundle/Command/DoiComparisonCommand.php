@@ -451,7 +451,7 @@ class DoiComparisonCommand extends ContainerAwareCommand
      */
     private function isOrphan(string $doi, Dataset $dataset): bool
     {
-        if (strtolower($dataset->getDoi()->getDoi()) !== strtolower($doi)) {
+        if (!$dataset->getDoi() instanceof DOI || strtolower($dataset->getDoi()->getDoi()) !== strtolower($doi)) {
             return true;
         }
 
