@@ -11,6 +11,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
 use Pelagos\Entity\Dataset;
+use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\DOI;
 
@@ -228,7 +229,8 @@ class DoiComparisonCommand extends ContainerAwareCommand
 
             $this->doesStringExist(
                 ['doi' => $doiElements['doi'], 'author' => $doiElements['author'], 'field' => 'author'],
-                str_replace(',', '', $creator)
+                str_replace(',', '', $creator),
+                $dataset
             );
 
             // Check publisher
@@ -384,14 +386,20 @@ class DoiComparisonCommand extends ContainerAwareCommand
     /**
      * Compare strings case insensitive.
      *
-     * @param array  $metadataElement   Doi metadata elements.
-     * @param string $comparisonElement String that needs to be compared.
+     * @param array        $metadataElement   Doi metadata elements.
+     * @param string       $comparisonElement String that needs to be compared.
+     * @param Dataset|null $dataset           A dataset instance.
      *
      * @return void
      */
-    private function doesStringExist(array $metadataElement, string $comparisonElement): void
+    private function doesStringExist(array $metadataElement, string $comparisonElement, Dataset $dataset = null): void
     {
         if (empty($metadataElement[$metadataElement['field']])) {
+            if (!empty($dataset)
+                and $dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE
+                and $metadataElement['field'] === 'author') {
+                return;
+            }
             //Error message
             $this->outOfSyncDoi[$metadataElement['doi']] = array(
                 $metadataElement['field'] => 'Null/Empty ' . $metadataElement['field']
