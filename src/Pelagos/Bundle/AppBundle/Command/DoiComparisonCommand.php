@@ -170,11 +170,13 @@ class DoiComparisonCommand extends ContainerAwareCommand
         foreach ($doiData as $doi) {
             if ($doi['udi']) {
                 $dataset = $this->getDataset($doi['udi']);
-                if (!empty($dataset)) {
+                if (!empty($dataset) and !$this->isOrphan($doi['doi'], $dataset)) {
                     $this->compareFields($doi, $dataset);
                 } else {
                     // Error message
-                    $this->outOfSyncDoi[$doi['doi']] = 'Dataset does not exist for given doi.';
+                    $this->outOfSyncDoi[$doi['doi']] = array(
+                        'orphan' => 'Orphan/Duplicate'
+                    );
                 }
             } else {
                 $this->compareFields($doi);
@@ -437,5 +439,22 @@ class DoiComparisonCommand extends ContainerAwareCommand
                 array('dois' => $this->outOfSyncDoi)
             ), 'text/html');
         $this->getContainer()->get('mailer')->send($message);
+    }
+
+    /**
+     * Check if doi is orphan or duplicate.
+     *
+     * @param string  $doi     Doi identifier for the dataset.
+     * @param Dataset $dataset A dataset instance.
+     *
+     * @return boolean
+     */
+    private function isOrphan(string $doi, Dataset $dataset): bool
+    {
+        if (strtolower($dataset->getDoi()->getDoi()) !== strtolower($doi)) {
+            return true;
+        }
+
+        return false;
     }
 }
