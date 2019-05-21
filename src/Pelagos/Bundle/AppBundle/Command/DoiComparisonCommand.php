@@ -397,7 +397,7 @@ class DoiComparisonCommand extends ContainerAwareCommand
         if (empty($metadataElement[$metadataElement['field']])) {
             if (!empty($dataset)
                 and $dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE
-            and $metadataElement['field'] === 'author') {
+                and $metadataElement['field'] === 'author') {
                 return;
             }
             //Error message
