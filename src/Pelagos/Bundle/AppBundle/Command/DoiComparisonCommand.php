@@ -169,16 +169,14 @@ class DoiComparisonCommand extends ContainerAwareCommand
     {
         foreach ($doiData as $doi) {
             if ($doi['udi']) {
-                $datasets = $this->getDataset($doi['udi']);
-                $dataset = null;
-                if (!empty($datasets)) {
-                    $dataset = $datasets[0];
-                    if ($dataset instanceof Dataset) {
-                        $this->compareFields($doi, $dataset);
-                    } else {
-                        // Error message
-                        $this->outOfSyncDoi[$doi['doi']] = 'Dataset does not exist for given doi.';
-                    }
+                $dataset = $this->getDataset($doi['udi']);
+                if (!empty($dataset) and !$this->isOrphan($doi['doi'], $dataset)) {
+                    $this->compareFields($doi, $dataset);
+                } else {
+                    // Error message
+                    $this->outOfSyncDoi[$doi['doi']] = array(
+                        'orphan' => 'Orphan/Duplicate'
+                    );
                 }
             } else {
                 $this->compareFields($doi);
@@ -195,16 +193,23 @@ class DoiComparisonCommand extends ContainerAwareCommand
      *
      * @param string $udi Identifier used to get a dataset.
      *
-     * @return array
+     * @return Dataset|null
      */
-    private function getDataset(string $udi): array
+    private function getDataset(string $udi): ? Dataset
     {
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
         $datasets = $entityManager->getRepository(Dataset::class)->findBy(array(
             'udi' => array('udi' => substr($udi, 0, 16))
         ));
 
-        return $datasets;
+        if (!empty($datasets)) {
+            $dataset = $datasets[0];
+            if ($dataset instanceof Dataset) {
+                return $dataset;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -215,7 +220,7 @@ class DoiComparisonCommand extends ContainerAwareCommand
      *
      * @return void
      */
-    private function compareFields(array $doiElements, Dataset $dataset = null): void
+    private function compareFields(array $doiElements, Dataset $dataset = null) : void
     {
         if ($dataset) {
             // Check title
@@ -434,5 +439,22 @@ class DoiComparisonCommand extends ContainerAwareCommand
                 array('dois' => $this->outOfSyncDoi)
             ), 'text/html');
         $this->getContainer()->get('mailer')->send($message);
+    }
+
+    /**
+     * Check if doi is orphan or duplicate.
+     *
+     * @param string  $doi     Doi identifier for the dataset.
+     * @param Dataset $dataset A dataset instance.
+     *
+     * @return boolean
+     */
+    private function isOrphan(string $doi, Dataset $dataset): bool
+    {
+        if (!$dataset->getDoi() instanceof DOI || strtolower($dataset->getDoi()->getDoi()) !== strtolower($doi)) {
+            return true;
+        }
+
+        return false;
     }
 }
