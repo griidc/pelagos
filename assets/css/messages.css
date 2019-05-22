@@ -64,3 +64,11 @@ div.messages ul li {
 .fa-exclamation-circle:before {
   content: none !important;
 }
+
+.fa-exclamation-triangle:before {
+  content: none !important;
+}
+
+.fa-check-circle:before {
+  content: none !important;
+}
