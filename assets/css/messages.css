@@ -60,15 +60,3 @@ div.messages ul {
 div.messages ul li {
   list-style-image: none;
 }
-
-.fa-exclamation-circle:before {
-  content: none !important;
-}
-
-.fa-exclamation-triangle:before {
-  content: none !important;
-}
-
-.fa-check-circle:before {
-  content: none !important;
-}
