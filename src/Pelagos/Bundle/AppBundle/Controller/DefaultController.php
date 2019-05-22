@@ -25,7 +25,7 @@ class DefaultController extends Controller
         if ($this->get('kernel')->isDebug()) {
             return $this->render('PelagosAppBundle:Default:index.html.twig');
         } else {
-           return $this->redirect('/', 302);
+            return $this->redirect('/', 302);
         }
     }
 
