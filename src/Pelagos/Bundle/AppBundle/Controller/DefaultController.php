@@ -22,7 +22,11 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        return $this->render('PelagosAppBundle:Default:index.html.twig');
+        if ($this->get('kernel')->isDebug()) {
+            return $this->render('PelagosAppBundle:Default:index.html.twig');
+        } else {
+           return $this->redirect('/', 302);
+        }
     }
 
     /**
