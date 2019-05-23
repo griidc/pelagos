@@ -60,7 +60,3 @@ div.messages ul {
 div.messages ul li {
   list-style-image: none;
 }
-
-.fa-exclamation-circle:before {
-  content: none !important;
-}
