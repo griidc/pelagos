@@ -36,7 +36,7 @@
 
 {% block body %}
     {% if warnings|length > 0 %}
-    <div class="messages warning alert alert-warning">
+    <div class="messages warning">
         <h2 class="element-invisible">Warning message</h2>
         <ul>
         {% for warning in warnings %}
@@ -46,7 +46,7 @@
     </div>
     {% endif %}
     {% if errors|length > 0 %}
-    <div class="messages error alert alert-danger">
+    <div class="messages error">
         <h2 class="element-invisible">Error message</h2>
         <ul>
         {% for error in errors %}
