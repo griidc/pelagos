@@ -261,8 +261,14 @@ class DatasetSubmissionController extends EntityController
      */
     public function validateUrlAction($id, Request $request)
     {
+        $erddapUrl = $request->get('erddapUrl');
+
+        if (empty($erddapUrl)) {
+            return true;
+        }
+
         $urlValidationService = $this->get('pelagos.util.url_validation');
 
-        return $urlValidationService->validateUrl($request->get('erddapUrl'));
+        return $urlValidationService->validateUrl($erddapUrl);
     }
 }
