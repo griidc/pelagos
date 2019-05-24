@@ -62,55 +62,9 @@ class DOIutil
     }
 
     /**
-     * This function will mint a DOI, generating the unique DOI on-site.
-     *
-     * @param string $url             URL for DOI.
-     * @param string $creator         Creator for DOI.
-     * @param string $title           Title for DOI.
-     * @param string $publisher       Publisher for DOI.
-     * @param string $publicationYear Published Date for DOI.
-     * @param string $status          Status of the DOI, by default is reserved.
-     * @param string $resourcetype    Type for DOI Request, by default Dataset.
-     *
-     * @throws HttpClientErrorException When there was an unexpected 4xx error negotiating with Datacite while generating a DOI id.
-     * @throws HttpServerErrorException When there was an unexpected 5xx error negotiating with Datacite while generating a DOI id.
-     * @throws HttpClientErrorException When there was an unexpected 4xx error negotiating with Datacite while creating a DOI.
-     * @throws HttpServerErrorException When there was an unexpected 5xx error negotiating with Datacite while creating a DOI.
-     *
-     * @return string The DOI issued by EZID.
-     */
-    public function mintDOI(
-        $url,
-        $creator,
-        $title,
-        $publisher,
-        $publicationYear,
-        $status = 'reserved',
-        $resourcetype = 'Dataset'
-    ) {
-        try {
-            $doi = $this->generateDoi();
-        } catch (HttpClientErrorException $exception) {
-            throw new HttpClientErrorException($exception->getMessage(), $exception->getCode());
-        } catch (HttpServerErrorException $exception) {
-            throw new HttpServerErrorException($exception->getMessage(), $exception->getCode());
-        }
-
-        try {
-            $this->createDOI($doi, $url, $creator, $title, $publisher, $publicationYear, $status, $resourcetype);
-        } catch (HttpClientErrorException $exception) {
-            throw new HttpClientErrorException($exception->getMessage(), $exception->getCode());
-        } catch (HttpServerErrorException $exception) {
-            throw new HttpServerErrorException($exception->getMessage(), $exception->getCode());
-        }
-
-        return $doi;
-    }
-
-    /**
      * This function will create a DOI.
      *
-     * @param string $doi             The DOI identifier to create.
+     * @param string $doi             The DOI identifier to create, or 'mint' to generate new.
      * @param string $url             URL for DOI.
      * @param string $creator         Creator for DOI.
      * @param string $title           Title for DOI.
@@ -134,6 +88,16 @@ class DOIutil
         $status = 'reserved',
         $resourcetype = 'Dataset'
     ) {
+        if ('mint' === $doi) {
+            $encoder = new Base32CrockfordEncoder();
+            // 1099511627775 encodes to the longest 8 character Crockford 32 string.
+            $max = 1099511627775;
+            // Start at 1 (0 is problematic as library does not produce checksum for 0.)
+            $random = random_int(1, $max);
+            // Add prefix and remove the checksum character.
+            $doi = $this->doiprefix . '/' . substr($encoder->encode($random), 0, -1);
+        }
+
         $input = '_target:' . $this->escapeSpecialCharacters($url) . "\n";
         $input .= "_profile:datacite\n";
         $input .= "_status:$status\n";
@@ -203,6 +167,7 @@ class DOIutil
         $publicationYear,
         $status = 'public'
     ) {
+
         // Add doi: to doi is it doesn't exist.
         $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
 
@@ -351,73 +316,5 @@ class DOIutil
             },
             $input
         );
-    }
-
-    /**
-     * This function generates a new DOI string that is not already in use per datacite.
-     *
-     * @throws HttpClientErrorException When there was an 4xx error negotiating with Datacite, except for a 400 or 404.
-     * @throws HttpServerErrorException When there was an 5xx error negotiating with Datacite.
-     * @throws HttpClientErrorException When there was an 4xx error negotiating with Datacite, except for a 400 or 404, in loop.
-     * @throws HttpServerErrorException When there was an 5xx error negotiating with Datacite, in loop.
-     *
-     * @return string A unique, unused DOI string.
-     */
-    public function generateDoi()
-    {
-        $encoder = new Base32CrockfordEncoder();
-        // 1099511627775 encodes to the longest 8 character Crockford 32 string.
-        $max = 1099511627775;
-        // Start at 1 (0 is problematic as library does not produce checksum for 0.)
-        $random = mt_rand(1, $max);
-        // Add prefix and remove the checksum character.
-        $doi = $this->doiprefix . '/' . substr($encoder->encode($random), 0, -1);
-        try {
-            $doiExists = $this->checkDoiExistsExternal($doi);
-        } catch (HttpClientErrorException $exception) {
-            throw new HttpClientErrorException($exception->getMessage(), $exception->getCode());
-        } catch (HttpServerErrorException $exception) {
-            throw new HttpServerErrorException($exception->getMessage(), $exception->getCode());
-        }
-        while ($doiExists) {
-            $random = mt_rand(1, $max);
-            $doi = $this->doiprefix . '/' . substr($encoder->encode($random), 0, -1);
-            try {
-                $doiExists = $this->checkDoiExistsExternal($doi);
-            } catch (HttpClientErrorException $exception) {
-                throw new HttpClientErrorException($exception->getMessage(), $exception->getCode());
-            } catch (HttpServerErrorException $exception) {
-                throw new HttpServerErrorException($exception->getMessage(), $exception->getCode());
-            }
-        }
-        return $doi;
-    }
-
-    /**
-     * This function queries Datacite to determine if the DOI is already in use.
-     *
-     * @param string $doi The DOI to be checked.
-     *
-     * @throws HttpClientErrorException When there was an 4xx error negotiating with Datacite, except for a 400 or 404.
-     * @throws HttpServerErrorException When there was an 5xx error negotiating with Datacite.
-     *
-     * @return boolean True if returned if the DOI exists, false if it does not.
-     */
-    public function checkDoiExistsExternal(string $doi): bool
-    {
-        try {
-            $this->getDOIMetadata($doi);
-        } catch (HttpClientErrorException $exception) {
-            if (in_array($exception->getCode(), [400, 404])) {
-                // No, this DOI does not exist upstream (Datacite) thus can be used.
-                return false;
-            } else {
-                throw new HttpClientErrorException($exception->getMessage(), $exception->getCode());
-            }
-        } catch (HttpServerErrorException $exception) {
-            throw new HttpServerErrorException($exception->getMessage(), $exception->getCode());
-        }
-        // Yes, this DOI must already exist uptstream, because we didn't get a 400.
-        return true;
     }
 }

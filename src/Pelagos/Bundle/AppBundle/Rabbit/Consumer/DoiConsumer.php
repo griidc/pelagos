@@ -140,7 +140,8 @@ class DoiConsumer implements ConsumerInterface
         if (!$this->doiAlreadyExists($dataset, $loggingContext)) {
             try {
                 $doiUtil = new DOIutil();
-                $issuedDoi = $doiUtil->mintDOI(
+                $issuedDoi = $doiUtil->createDOI(
+                    'mint',
                     'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi(),
                     $dataset->getAuthors(),
                     $dataset->getTitle(),
