@@ -76,7 +76,7 @@ class DOIutil
      * @throws HttpClientErrorException When there was an 4xx error negotiating with EZID.
      * @throws HttpServerErrorException When there was an 5xx error negotiating with EZID.
      *
-     * @return string The DOI issued by EZID.
+     * @return string The DOI identifier of the DOI either updated or generated.
      */
     public function createDOI(
         $doi,
@@ -139,7 +139,7 @@ class DOIutil
             }
         }
 
-        return true;
+        return $doi;
     }
 
     /**
