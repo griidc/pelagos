@@ -88,13 +88,13 @@ class DoiComparisonCommand extends ContainerAwareCommand
                     'title' => str_replace(
                         ',',
                         '',
-                        $this->isArrayEmpty($doi['attributes']['titles'])
+                        $this->doesKeyExist($doi['attributes']['titles'], 'title')
                             ? $doi['attributes']['titles'][0]['title'] : ''
                     ),
                     'author' => str_replace(
                         ',',
                         '',
-                        $this->isArrayEmpty($doi['attributes']['creators'])
+                        $this->doesKeyExist($doi['attributes']['creators'], 'name')
                             ? $doi['attributes']['creators'][0]['name'] : ''
                     ),
                     'publisher' => $doi['attributes']['publisher'],
@@ -148,14 +148,17 @@ class DoiComparisonCommand extends ContainerAwareCommand
     /**
      * Checks if the array is empty.
      *
-     * @param array $doiMetadataElementArray Metadata element array to check if empty.
+     * @param array  $doiMetadataElementArray Metadata element array to check if empty and key exists.
+     * @param string $keySearch               The key which needs to be checked if it exists in the array.
      *
      * @return boolean
      */
-    private function isArrayEmpty(array $doiMetadataElementArray): bool
+    private function doesKeyExist(array $doiMetadataElementArray, $keySearch): bool
     {
         if (!empty($doiMetadataElementArray)) {
-            return true;
+            if (array_key_exists($keySearch, $doiMetadataElementArray[0])) {
+                return true;
+            }
         }
 
         return false;
