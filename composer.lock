@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "cb63b2500e0f7287f6cb92a5a15fb869",
+    "content-hash": "6b5681960c7f07d9868ddd1f703e3662",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -2238,6 +2238,87 @@
                 "youtube"
             ],
             "time": "2018-07-31T10:19:28+00:00"
+        },
+        {
+            "name": "hylianshield/alphabet",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/HylianShield/alphabet.git",
+                "reference": "c7e9af6d67229236469ef1e5f1ff7b6849f98a35"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/HylianShield/alphabet/zipball/c7e9af6d67229236469ef1e5f1ff7b6849f98a35",
+                "reference": "c7e9af6d67229236469ef1e5f1ff7b6849f98a35",
+                "shasum": ""
+            },
+            "require": {
+                "ext-spl": "^7.0",
+                "php": "^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.7.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "HylianShield\\Alphabet\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Jan-Marten de Boer",
+                    "email": "johmanx@hylianshield.org"
+                }
+            ],
+            "description": "Library to support operations on a given alphabet",
+            "time": "2017-01-01T12:39:10+00:00"
+        },
+        {
+            "name": "hylianshield/base32-crockford",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/HylianShield/base32-crockford.git",
+                "reference": "d921520c23e9fc29452ddc6914201e5c89c543e9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/HylianShield/base32-crockford/zipball/d921520c23e9fc29452ddc6914201e5c89c543e9",
+                "reference": "d921520c23e9fc29452ddc6914201e5c89c543e9",
+                "shasum": ""
+            },
+            "require": {
+                "hylianshield/alphabet": "^1.0",
+                "php": "^7.0"
+            },
+            "require-dev": {
+                "hylianshield/validator-base-encoding": "^2.0.3",
+                "phpunit/phpunit": "^5.7.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "HylianShield\\Encoding\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Jan-Marten de Boer",
+                    "email": "johmanx@hylianshield.org"
+                }
+            ],
+            "description": "Implementation of Crockford's Base 32 encoder and decoder",
+            "time": "2017-01-28T21:12:24+00:00"
         },
         {
             "name": "incenteev/composer-parameter-handler",
@@ -5360,7 +5441,7 @@
                 },
                 {
                     "name": "Gert de Pagter",
-                    "email": "backendtea@gmail.com"
+                    "email": "BackEndTea@gmail.com"
                 }
             ],
             "description": "Symfony polyfill for ctype functions",
