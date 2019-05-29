@@ -85,8 +85,18 @@ class DoiComparisonCommand extends ContainerAwareCommand
                     'doi' => $doi['attributes']['doi'],
                     'url' => $doi['attributes']['url'],
                     'udi' => $this->getUdi($doi['attributes']['url']),
-                    'title' => str_replace(',', '', $doi['attributes']['titles'][0]['title']),
-                    'author' => str_replace(',', '', $doi['attributes']['creators'][0]['name']),
+                    'title' => str_replace(
+                        ',',
+                        '',
+                        $this->isArrayEmpty($doi['attributes']['titles'])
+                            ? $doi['attributes']['titles'][0]['title'] : ''
+                    ),
+                    'author' => str_replace(
+                        ',',
+                        '',
+                        $this->isArrayEmpty($doi['attributes']['creators'])
+                            ? $doi['attributes']['creators'][0]['name'] : ''
+                    ),
                     'publisher' => $doi['attributes']['publisher'],
                     'state' => $doi['attributes']['state'],
                     'resourceType' => $this->getResourceType($doi['attributes']['types'])
@@ -133,6 +143,22 @@ class DoiComparisonCommand extends ContainerAwareCommand
         }
 
         return $resourceType;
+    }
+
+    /**
+     * Checks if the array is empty.
+     *
+     * @param array $doiMetadataElementArray Metadata element array to check if empty.
+     *
+     * @return boolean
+     */
+    private function isArrayEmpty(array $doiMetadataElementArray): bool
+    {
+        if (!empty($doiMetadataElementArray)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
