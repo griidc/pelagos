@@ -62,6 +62,22 @@ class DOIutil
     }
 
     /**
+     * Generates a random DOI in our namespace.
+     *
+     * @return string The generated DOI.
+     */
+    public function generateDoi() : string
+    {
+        $encoder = new Base32CrockfordEncoder();
+        // 1099511627775 encodes to the longest 8 character Crockford 32 string.
+        $max = 1099511627775;
+        // Start at 1 (0 is problematic as library does not produce checksum for 0.)
+        $random = random_int(1, $max);
+        // Add prefix and remove the checksum character.
+        return $this->doiprefix . '/' . substr($encoder->encode($random), 0, -1);
+    }
+
+    /**
      * This function will create a DOI.
      *
      * @param string $doi             The DOI identifier to create, or 'mint' to generate new.
@@ -88,16 +104,6 @@ class DOIutil
         $status = 'reserved',
         $resourcetype = 'Dataset'
     ) {
-        if ('mint' === $doi) {
-            $encoder = new Base32CrockfordEncoder();
-            // 1099511627775 encodes to the longest 8 character Crockford 32 string.
-            $max = 1099511627775;
-            // Start at 1 (0 is problematic as library does not produce checksum for 0.)
-            $random = random_int(1, $max);
-            // Add prefix and remove the checksum character.
-            $doi = $this->doiprefix . '/' . substr($encoder->encode($random), 0, -1);
-        }
-
         $input = '_target:' . $this->escapeSpecialCharacters($url) . "\n";
         $input .= "_profile:datacite\n";
         $input .= "_status:$status\n";
@@ -139,7 +145,7 @@ class DOIutil
             }
         }
 
-        return $doi;
+        return true;
     }
 
     /**
