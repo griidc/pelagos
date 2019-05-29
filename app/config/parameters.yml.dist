@@ -85,6 +85,7 @@ parameters:
     download_base_url: ~
 
     google_maps_api_key: ~
+    google_analytics_id: ~
 
     # Read-only parameters
     pelagos_readonly_mode: false
