@@ -24,7 +24,7 @@ class DOI extends Entity
     /**
      * State for a DOI that is in draft and not publicly available.
      */
-    const STATE_DRAFT = 'reserved';
+    const STATE_DRAFT = 'draft';
 
     /**
      * State for a DOI that is publicly visible, but resolves to tombstone.
