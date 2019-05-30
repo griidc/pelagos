@@ -122,13 +122,14 @@ class DOIutil
                     ],
                     'publisher' => $this->escapeSpecialCharacters($publisher),
                     'publicationYear' => $publicationYear,
-                    'url' => $this->escapeSpecialCharacters($url),
+                    'url' => $url,
                     'types' => [
                         'resourceTypeGeneral' => $resourcetype
                     ],
                 ]
             ]
         ];
+
         try {
             $client->request(
                 'POST',
@@ -136,7 +137,7 @@ class DOIutil
                 [
                     'auth' => [$this->doiusername, $this->doipassword],
                     'headers' => ['Content-Type' => 'application/vnd.api+json'],
-                    'body' => json_encode($defaultBody)
+                    'body' => json_encode($defaultBody, JSON_UNESCAPED_SLASHES)
                 ]
             );
         } catch (ClientException $exception) {
@@ -185,7 +186,7 @@ class DOIutil
                     ],
                     'publisher' => $this->escapeSpecialCharacters($publisher),
                     'publicationYear' => $publicationYear,
-                    'url' => $this->escapeSpecialCharacters($url),
+                    'url' => $url,
                     'types' => [
                         'resourceTypeGeneral' => 'Dataset'
                     ],
@@ -201,7 +202,7 @@ class DOIutil
                 [
                     'auth' => [$this->doiusername, $this->doipassword],
                     'headers' => ['Content-Type' => 'application/vnd.api+json'],
-                    'body' => json_encode($defaultBody)
+                    'body' => json_encode($defaultBody, JSON_UNESCAPED_SLASHES)
                 ]
             );
         } catch (ClientException $exception) {
