@@ -115,12 +115,12 @@ class DOIutil
                 'attributes' => [
                     'doi' => $doi,
                     'creators' => [
-                        ['name' => $this->escapeSpecialCharacters($creator)]
+                        ['name' => $creator]
                     ],
                     'titles' => [
-                        ['title' => $this->escapeSpecialCharacters($title)]
+                        ['title' => $title]
                     ],
-                    'publisher' => $this->escapeSpecialCharacters($publisher),
+                    'publisher' => $publisher,
                     'publicationYear' => $publicationYear,
                     'url' => $url,
                     'types' => [
@@ -179,10 +179,10 @@ class DOIutil
                 'type' => 'dois',
                 'attributes' => [
                     'creators' => [
-                        ['name' => $this->escapeSpecialCharacters($creator)]
+                        ['name' => $creator]
                     ],
                     'titles' => [
-                        ['title' => $this->escapeSpecialCharacters($title)]
+                        ['title' => $title]
                     ],
                     'publisher' => $publisher,
                     'publicationYear' => $publicationYear,
@@ -287,23 +287,5 @@ class DOIutil
                 DOI::STATE_REGISTERED
             );
         }
-    }
-
-    /**
-     * This function escape :%\n\r characters, because these are special with EZID.
-     *
-     * @param string $input Text that needs to be escaped.
-     *
-     * @return string The escaped string.
-     */
-    private function escapeSpecialCharacters($input)
-    {
-        return preg_replace_callback(
-            '/[%:\r\n]/',
-            function ($matches) {
-                return sprintf('%%%02X', ord($matches[0]));
-            },
-            $input
-        );
     }
 }
