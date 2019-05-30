@@ -147,7 +147,6 @@ class DoiConsumer implements ConsumerInterface
                 'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi(),
                 $dataset->getAuthors(),
                 $dataset->getTitle(),
-                'Harte Research Institute',
                 $dataset->getReferenceDateYear()
             );
 
