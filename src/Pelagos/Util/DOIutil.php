@@ -193,7 +193,7 @@ class DOIutil
                 ]
             ]
         ];
-        
+
         try {
             $client->request(
                 'PUT',
@@ -261,37 +261,30 @@ class DOIutil
     public function deleteDOI($doi)
     {
         $doiMetadata = $this->getDOIMetadata($doi);
-        if ($doiMetadata['_status'] === 'reserved') {
-            // Add doi: to doi is it doesn't exist.
-            $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $this->url . '/id/' . $doi);
-            curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-            $output = curl_exec($ch);
-
-            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_close($ch);
-
-            //check to see if it worked.
-            if (200 != $httpCode) {
-                $expMsg = "ezid failed with:$httpCode($output)";
-                if ($httpCode >= 400 and $httpCode <= 499) {
-                    throw new HttpClientErrorException($expMsg, $httpCode);
-                } elseif ($httpCode >= 500 or $httpCode == 0) {
-                    throw new HttpServerErrorException($expMsg, $httpCode);
-                }
+        if ($doiMetadata['_status'] === DOI::STATE_DRAFT) {
+            $client = new Client();
+            $url = $this->url . '/dois/' . $doi;
+            try {
+                $client->request(
+                    'DELETE',
+                    $url,
+                    ['auth' => [$this->doiusername, $this->doipassword]]
+                );
+            } catch (ClientException $exception) {
+                throw new HttpClientErrorException($exception->getMessage(), $exception->getCode());
+            } catch (ServerException $exception) {
+                throw new HttpServerErrorException($exception->getMessage(), $exception->getCode());
             }
         } else {
-             $this->updateDOI(
-                 $doi,
-                 'http://datacite.org/invalidDOI',
-                 '(:null)',
-                 'inactive',
-                 'none supplied',
-                 '2019',
-                 'unavailable'
-             );
+            $this->updateDOI(
+                $doi,
+                'http://datacite.org/invalidDOI',
+                '(:null)',
+                'inactive',
+                '2019',
+                'none supplied',
+                DOI::STATE_REGISTERED
+            );
         }
     }
 
