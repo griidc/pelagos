@@ -221,39 +221,33 @@ class DOIutil
      *
      * @param string $doi DOI to get metadata for.
      *
-     * @throws HttpClientErrorException When there was an 4xx error negotiating with EZID.
-     * @throws HttpServerErrorException When there was an 5xx error negotiating with EZID.
+     * @throws HttpClientErrorException Exception thrown when response code is 4xx negotiating with Datacite REST API.
+     * @throws HttpServerErrorException Exception thrown when response code is 5xx negotiating with Datacite REST API.
      *
-     * @return array Array or metadata variables.
+     * @return array
      */
     public function getDOIMetadata($doi)
     {
-        // Add doi: to doi is it doesn't exist.
-        $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->url . '/id/' . $doi);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $output = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-
-        //check to see if it worked.
-        if (200 != $httpCode) {
-            $expMsg = "ezid failed with:$httpCode($output)";
-            if ($httpCode >= 400 and $httpCode <= 499) {
-                throw new HttpClientErrorException($expMsg, $httpCode);
-            } elseif ($httpCode >= 500 or $httpCode == 0) {
-                throw new HttpServerErrorException($expMsg, $httpCode);
-            }
+        $client = new Client();
+        $metadata = array();
+        $url = $this->url . '/dois/' . $doi;
+        try {
+            $response = $client->request(
+                'GET',
+                $url,
+                ['auth' => [$this->doiusername, $this->doipassword],
+                'headers' => ['Accept' => 'application/vnd.api+json']]
+            );
+        } catch (ClientException $exception) {
+            throw new HttpClientErrorException($exception->getMessage(), $exception->getCode());
+        } catch (ServerException $exception) {
+            throw new HttpServerErrorException($exception->getMessage(), $exception->getCode());
         }
 
-        $metadata = array();
-        foreach (explode("\n", $output) as $line) {
-            $split = preg_split('/:/', $line, 2);
-            if (count($split) > 1) {
-                $metadata[$split[0]] = trim($split[1]);
-            }
+        $body = json_decode($response->getBody()->getContents(), true);
+
+        if (array_key_exists('data', $body)) {
+            $metadata = $body['data'];
         }
 
         return $metadata;
