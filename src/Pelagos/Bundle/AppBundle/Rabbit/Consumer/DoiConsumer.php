@@ -215,7 +215,6 @@ class DoiConsumer implements ConsumerInterface
                 $doiUrl,
                 $creator,
                 $dataset->getTitle(),
-                'Harte Research Institute',
                 $pubYear
             );
 

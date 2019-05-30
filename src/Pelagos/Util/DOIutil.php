@@ -154,8 +154,8 @@ class DOIutil
      * @param string $url             URL for DOI.
      * @param string $creator         Creator for DOI.
      * @param string $title           Title for DOI.
-     * @param string $publisher       Publisher for DOI.
      * @param string $publicationYear Published Date for DOI.
+     * @param string $publisher       Publisher for DOI.
      * @param string $status          Status of the DOI.
      *
      * @throws HttpClientErrorException When there was an 4xx error negotiating with EZID.
@@ -168,8 +168,8 @@ class DOIutil
         $url,
         $creator,
         $title,
-        $publisher,
         $publicationYear,
+        $publisher = 'Harte Research Institute',
         $status = DOI::STATE_FINDABLE
     ) {
         $client = new Client();
@@ -184,12 +184,12 @@ class DOIutil
                     'titles' => [
                         ['title' => $this->escapeSpecialCharacters($title)]
                     ],
-                    'publisher' => $this->escapeSpecialCharacters($publisher),
+                    'publisher' => $publisher,
                     'publicationYear' => $publicationYear,
-                    'url' => $url,
                     'types' => [
                         'resourceTypeGeneral' => 'Dataset'
                     ],
+                    'url' => $url,
                     'event' => ($status === DOI::STATE_FINDABLE) ? 'publish' : 'hide'
                 ]
             ]
