@@ -2,9 +2,15 @@
 
 namespace Pelagos\Util;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+
+use GuzzleHttp\Exception\ServerException;
+use HylianShield\Encoding\Base32CrockfordEncoder;
+
+use Pelagos\Entity\DOI;
 use Pelagos\Exception\HttpClientErrorException;
 use Pelagos\Exception\HttpServerErrorException;
-use HylianShield\Encoding\Base32CrockfordEncoder;
 
 /**
  * A utility to create and issue DOI from EZID API.
@@ -162,7 +168,7 @@ class DOIutil
      * @throws HttpClientErrorException When there was an 4xx error negotiating with EZID.
      * @throws HttpServerErrorException When there was an 5xx error negotiating with EZID.
      *
-     * @return boolean True if updated successfully.
+     * @return void
      */
     public function updateDOI(
         $doi,
@@ -171,49 +177,46 @@ class DOIutil
         $title,
         $publisher,
         $publicationYear,
-        $status = 'public'
+        $status = DOI::STATE_FINDABLE
     ) {
+        $client = new Client();
+        $defaultBody = [
+            'data' => [
+                'id' => $doi,
+                'type' => 'dois',
+                'attributes' => [
+                    'creators' => [
+                        ['name' => $this->escapeSpecialCharacters($creator)]
+                    ],
+                    'titles' => [
+                        ['title' => $this->escapeSpecialCharacters($title)]
+                    ],
+                    'publisher' => $this->escapeSpecialCharacters($publisher),
+                    'publicationYear' => $publicationYear,
+                    'url' => $this->escapeSpecialCharacters($url),
+                    'types' => [
+                        'resourceTypeGeneral' => 'Dataset'
+                    ],
+                    'event' => ($status === DOI::STATE_FINDABLE) ? 'publish' : 'hide'
+                ]
+            ]
+        ];
+        try {
 
-        // Add doi: to doi is it doesn't exist.
-        $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
-
-        $input = '_target:' . $this->escapeSpecialCharacters($url) . "\n";
-        $input .= 'datacite.creator:' . $this->escapeSpecialCharacters($creator) . "\n";
-        $input .= 'datacite.title:' . $this->escapeSpecialCharacters($title) . "\n";
-        $input .= 'datacite.publisher:' . $this->escapeSpecialCharacters($publisher) . "\n";
-        $input .= "datacite.publicationyear:$publicationYear\n";
-        $input .= "datacite.resourcetype:Dataset\n";
-
-        $input .= '_status: ' . $status . "\n";
-
-        utf8_encode($input);
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->url . '/id/' . $doi);
-        curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt(
-            $ch,
-            CURLOPT_HTTPHEADER,
-            array('Content-Type: text/plain; charset=UTF-8','Content-Length: ' . strlen($input))
-        );
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $input);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $output = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        //check to see if it worked.
-        if (200 != $httpCode) {
-            $expMsg = "ezid failed with:$httpCode($output)";
-            if ($httpCode >= 400 and $httpCode <= 499) {
-                throw new HttpClientErrorException($expMsg, $httpCode);
-            } elseif ($httpCode >= 500 or $httpCode == 0) {
-                throw new HttpServerErrorException($expMsg, $httpCode);
-            }
+            $client->request(
+                'PUT',
+                $this->url . '/dois/' . $doi,
+                [
+                    'auth' => [$this->doiusername, $this->doipassword],
+                    'headers' => ['Content-Type' => 'application/vnd.api+json'],
+                    'body' => json_encode($defaultBody)
+                ]
+            );
+        } catch (ClientException $exception) {
+            throw new HttpClientErrorException($exception->getMessage(), $exception->getCode());
+        } catch (ServerException $exception) {
+            throw new HttpServerErrorException($exception->getMessage(), $exception->getCode());
         }
-
-        return true;
     }
 
     /**
