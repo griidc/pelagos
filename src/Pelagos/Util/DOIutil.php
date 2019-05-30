@@ -262,7 +262,7 @@ class DOIutil
     public function deleteDOI($doi)
     {
         $doiMetadata = $this->getDOIMetadata($doi);
-        if ($doiMetadata['_status'] === DOI::STATE_DRAFT) {
+        if ($doiMetadata['attributes']['state'] === DOI::STATE_DRAFT) {
             $client = new Client();
             $url = $this->url . '/dois/' . $doi;
             try {
