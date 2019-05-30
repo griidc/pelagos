@@ -287,7 +287,7 @@ class DoiConsumer implements ConsumerInterface
                     $doiUtil = new DOIutil();
                     $doiUtil->getDOIMetadata($doi->getDoi());
                 } catch (HttpClientErrorException $exception) {
-                    //DOI exist, but is not found in EZID/Datacite.
+                    //DOI exist, but is not found in REST API/Datacite.
                     $this->logger->error('Error getting DOI: ' . $exception->getMessage(), $loggingContext);
                     $exceptionType = get_class($exception);
                     $this->createDoi($dataset, $loggingContext);

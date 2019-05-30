@@ -4,8 +4,8 @@ namespace Pelagos\Util;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
-
 use GuzzleHttp\Exception\ServerException;
+
 use HylianShield\Encoding\Base32CrockfordEncoder;
 
 use Pelagos\Entity\DOI;
@@ -13,7 +13,7 @@ use Pelagos\Exception\HttpClientErrorException;
 use Pelagos\Exception\HttpServerErrorException;
 
 /**
- * A utility to create and issue DOI from EZID API.
+ * A utility to create and issue DOI from Datacite REST API.
  */
 class DOIutil
 {
@@ -25,14 +25,14 @@ class DOIutil
     private $doiprefix;
 
     /**
-     * The username for ezid.
+     * The username for REST API.
      *
      * @var string
      */
     private $doiusername;
 
     /**
-     * The password for ezid.
+     * The password for REST API.
      *
      * @var string
      */
@@ -48,7 +48,7 @@ class DOIutil
     /**
      * Constructor.
      *
-     * Sets the ezid username, password, and prefix.
+     * Sets the REST API username, password, and prefix.
      *
      * @throws \Exception When ini file is not found.
      */
@@ -94,8 +94,8 @@ class DOIutil
      * @param string $publisher       Publisher for DOI.
      * @param string $resourcetype    Type for DOI Request, by default Dataset.
      *
-     * @throws HttpClientErrorException When there was an 4xx error negotiating with EZID.
-     * @throws HttpServerErrorException When there was an 5xx error negotiating with EZID.
+     * @throws HttpClientErrorException When there was an 4xx error negotiating with REST API.
+     * @throws HttpServerErrorException When there was an 5xx error negotiating with REST API.
      *
      * @return void
      */
@@ -158,8 +158,8 @@ class DOIutil
      * @param string $publisher       Publisher for DOI.
      * @param string $status          Status of the DOI.
      *
-     * @throws HttpClientErrorException When there was an 4xx error negotiating with EZID.
-     * @throws HttpServerErrorException When there was an 5xx error negotiating with EZID.
+     * @throws HttpClientErrorException When there was an 4xx error negotiating with REST API.
+     * @throws HttpServerErrorException When there was an 5xx error negotiating with REST API.
      *
      * @return void
      */
@@ -254,8 +254,8 @@ class DOIutil
      *
      * @param string $doi DOI to delete.
      *
-     * @throws HttpClientErrorException When there was an 4xx error negotiating with EZID.
-     * @throws HttpServerErrorException When there was an 5xx error negotiating with EZID.
+     * @throws HttpClientErrorException When there was an 4xx error negotiating with REST API.
+     * @throws HttpServerErrorException When there was an 5xx error negotiating with REST API.
      *
      * @return void
      */
