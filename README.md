@@ -9,20 +9,23 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-* [CENTOS 6/7](https://wiki.centos.org/)
-* [PHP 7.1](http://php.net/docs.php )
-* [Symfony 3.4](https://symfony.com/doc/3.4/index.html) - PHP framework for web application
-* [PostgreSQL 9.6](https://www.postgresql.org/docs/9.6/static/release-9-6.html) - ORDBMS
+* [Apache 2.4](https://www.apache.org) - Webserver
+* [CentOS 7](https://wiki.centos.org) - Enterprise Linux
+* [ElasticSearch 6.8+](https://www.elastic.co) - High-performance Indexing system
 * [FOSElasticaBundle](https://github.com/FriendsOfSymfony/FOSElasticaBundle) - PHP integration for Symfony with ElasticSearch
-* [RabbitMQ](https://www.rabbitmq.com/documentation.html) - Open source message broker software
+* [PHP 7.1](http://php.net) - Scripting language, installed from Remi
+* [PostGIS 2.4](http://www.postgis.org) - Geospatial extensions for PostgreSQL
+* [PostgreSQL 9.6](https://www.postgresql.org) - ORDBMS
+* [RabbitMQ](https://www.rabbitmq.com) - Open source message broker
+* [Remi](https://rpms.remirepo.net) - RPM Repository to support current PHP on CentOS 7.
+* [Symfony 3.4](https://symfony.com) - PHP framework for web application
 
 ### Installation
 
-## Contributors
+## Contributors (Current)
 
 * **Michael Van Den Eijnden**  - (2012 - present) [Github](https://github.com/mickel1138)
 * **Michael S. Williamson**  - (2013 - present) [Github](https://github.com/fightingtexasaggie)
-* **Son Nguyen**  - (2017 - present) [Github](https://github.com/snguyen1)
 * **Praneeth Pondicherry Ravendernath**  - (2017 - present) [Github](https://github.com/praneethpr)
 
 See also the list of [contributors](https://github.com/griidc/pelagos/contributors) who participated in this project.
