@@ -153,6 +153,6 @@ class DOI extends Entity
      */
     public function __toString()
     {
-        return (string) $this->doi;
+        return (string) 'doi:' . $this->doi;
     }
 }
