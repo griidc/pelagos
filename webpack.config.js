@@ -39,7 +39,10 @@ Encore
 
     .addPlugin(new CopyWebpackPlugin([
         // copies to {output}/static
-        { from: './assets/images', to: 'images' }
+        {from: './assets/images', to: 'images'},
+        {from: './src/Pelagos/Bundle/AppBundle/Resources/public/js', to: 'js'},
+        {from: './src/Pelagos/Bundle/AppBundle/Resources/public/css', to: 'css'},
+        {from: './src/Pelagos/Bundle/AppBundle/Resources/public/images', to: 'images'}
     ]))
 ;
 
