@@ -13,7 +13,9 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', '{{google_analytics_id}}');
+      gtag('config', '{{google_analytics_id}}', {
+        'page_path': '{{ app.request.pathinfo }}'
+      });
     </script>
 
     {%block stylesheets %}
