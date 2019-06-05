@@ -105,7 +105,7 @@ class DOIutil
         $creator,
         $title,
         $publicationYear,
-        $publisher = 'Harte Research Institute',
+        $publisher,
         $resourcetype = 'Dataset'
     ) {
         $client = new Client();
@@ -169,7 +169,7 @@ class DOIutil
         $creator,
         $title,
         $publicationYear,
-        $publisher = 'Harte Research Institute',
+        $publisher,
         $status = DOI::STATE_FINDABLE
     ) {
         $client = new Client();

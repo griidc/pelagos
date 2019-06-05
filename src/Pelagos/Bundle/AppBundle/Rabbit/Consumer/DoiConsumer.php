@@ -147,7 +147,8 @@ class DoiConsumer implements ConsumerInterface
                 'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi(),
                 $dataset->getAuthors(),
                 $dataset->getTitle(),
-                $dataset->getReferenceDateYear()
+                $dataset->getReferenceDateYear(),
+                'Harte Research Institute'
             );
 
             $doi = new DOI($generatedDOI);
@@ -215,7 +216,8 @@ class DoiConsumer implements ConsumerInterface
                 $doiUrl,
                 $creator,
                 $dataset->getTitle(),
-                $pubYear
+                $pubYear,
+                'Harte Research Institute'
             );
 
             $doi->setModifier($dataset->getModifier());
