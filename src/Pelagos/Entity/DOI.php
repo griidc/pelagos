@@ -17,19 +17,19 @@ class DOI extends Entity
     const FRIENDLY_NAME = 'DOI';
 
     /**
-     * Status value for a DOI that is publicly available.
+     * State for a DOI that is publicly available.
      */
-    const STATUS_PUBLIC = 'public';
+    const STATE_FINDABLE = 'findable';
 
     /**
-     * Status value for a DOI that is reserved and not publicly available.
+     * State for a DOI that is in draft and not publicly available.
      */
-    const STATUS_RESERVED = 'reserved';
+    const STATE_DRAFT = 'draft';
 
     /**
-     * Status value for a DOI that is publicly visible, but does not resolve.
+     * State for a DOI that is publicly visible, but resolves to tombstone.
      */
-    const STATUS_UNAVAILABLE = 'unavailable';
+    const STATE_REGISTERED = 'registered';
 
     /**
      * The DOI identifier.
@@ -71,7 +71,7 @@ class DOI extends Entity
     {
         $this->setDoi($doi);
         // Initial state for issue is reserved.
-        $this->setStatus(self::STATUS_RESERVED);
+        $this->setStatus(self::STATE_DRAFT);
     }
 
     /**

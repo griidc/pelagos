@@ -147,8 +147,8 @@ class DoiConsumer implements ConsumerInterface
                 'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi(),
                 $dataset->getAuthors(),
                 $dataset->getTitle(),
-                'Harte Research Institute',
-                $dataset->getReferenceDateYear()
+                $dataset->getReferenceDateYear(),
+                'Harte Research Institute'
             );
 
             $doi = new DOI($generatedDOI);
@@ -216,8 +216,8 @@ class DoiConsumer implements ConsumerInterface
                 $doiUrl,
                 $creator,
                 $dataset->getTitle(),
-                'Harte Research Institute',
-                $pubYear
+                $pubYear,
+                'Harte Research Institute'
             );
 
             $doi->setModifier($dataset->getModifier());
@@ -289,7 +289,7 @@ class DoiConsumer implements ConsumerInterface
                     $doiUtil = new DOIutil();
                     $doiUtil->getDOIMetadata($doi->getDoi());
                 } catch (HttpClientErrorException $exception) {
-                    //DOI exist, but is not found in EZID/Datacite.
+                    //DOI exist, but is not found in REST API/Datacite.
                     $this->logger->error('Error getting DOI: ' . $exception->getMessage(), $loggingContext);
                     $exceptionType = get_class($exception);
                     $this->createDoi($dataset, $loggingContext);
