@@ -21,6 +21,10 @@
     {%block stylesheets %}
         <link href="{{ asset('build/common.css') }}" rel="stylesheet" />
         <link href="//cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.css" rel="stylesheet" />
+
+        {% stylesheets '@PelagosAppBundle/Resources/public/css/griidc_site_banner_screen.css'%}
+            {{ add_css(asset_url) }}
+        {% endstylesheets %}
     {%endblock stylesheets  %}
 
     {% block javascripts %}
@@ -73,6 +77,8 @@
     </ul>
     <div id="page-wrapper">
         <div id="page">
+            <div id="siteBannerHeaderBanner" class="toolbar clearfix toolbar-processed overlay-displace-top">NOTICE: Maintenance Scheduled today.</div>
+            <div id="siteBannerFooterBanner" class="toolbar clearfix toolbar-processed overlay-displace-top">NOTICE: Maintenance Scheduled today.</div>
             <div id="header"><div class="section clearfix">
 
                     <div class="region region-header">
