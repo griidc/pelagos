@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\Collection;
 
 use Pelagos\Entity\DIF;
 
+use Pelagos\Util\MaintenanceMode;
+
 /**
  * Custom Twig extensions for Pelagos.
  */
@@ -60,6 +62,18 @@ class Extensions extends \Twig_Extension
                 'add_library',
                 array(self::class, 'addLibrary'),
                 array('is_safe' => array('html'))
+            ),
+            new \Twig_SimpleFunction(
+                'isMaintenanceMode', 
+                [$this, 'isMaintenanceMode']
+            ),
+            new \Twig_SimpleFunction(
+                'maintenanceModeText', 
+                [$this, 'maintenanceModeText']
+            ),
+            new \Twig_SimpleFunction(
+                'maintenanceModeColor', 
+                [$this, 'maintenanceModeColor']
             ),
         );
     }
@@ -188,6 +202,38 @@ class Extensions extends \Twig_Extension
             }
         }
         return $return;
+    }
+    
+    /**
+     * Is the system in maintenance mode?
+     *
+     * @return boolean If in maintenance mode.
+     */
+    public function isMaintenanceMode() : bool
+    {
+        return MaintenanceMode::isMaintenanceMode($this->kernelRootDir);
+    }
+    
+    /**
+     * Is the system in maintenance mode?
+     *
+     * @return string|null If in maintenance mode.
+     */
+    public function maintenanceModeText() : string
+    {
+         $file = $this->kernelRootDir . '/../var/maintenance.ini';
+        return file_exists($file);
+    }
+    
+    /**
+     * Is the system in maintenance mode?
+     *
+     * @return boolean If in maintenance mode.
+     */
+    public function maintenanceModeColor() : string
+    {
+         $file = $this->kernelRootDir . '/../var/maintenance.ini';
+        return file_exists($file);
     }
 
     /**

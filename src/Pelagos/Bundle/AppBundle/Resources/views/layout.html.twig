@@ -59,6 +59,9 @@
 </head>
 <body class="html page-pelagos-full">
 {% block htmlbody %}
+{% if isMaintenanceMode() %}
+dump(true)
+{% endif %}
     <ul class="atlassian-btns">
         <li>
             <a href="#" id="atlwdg-issue" class="atlwdg-trigger">
