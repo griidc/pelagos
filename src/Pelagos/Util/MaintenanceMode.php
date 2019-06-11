@@ -26,7 +26,7 @@ class MaintenanceMode
      *
      * @param string $fileName The filename of the maintenance file.
      */
-    public function __construct($fileName)
+    public function __construct(string $fileName)
     {
         $this->fileName = $fileName;
     }
@@ -103,6 +103,8 @@ class MaintenanceMode
      */
     public function deactivateMaintenanceMode()
     {
-        unlink($this->fileName);
+        if (file_exists($this->fileName)) {
+            unlink($this->fileName);
+        }
     }
 }
