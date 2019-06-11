@@ -3,23 +3,16 @@
 namespace Pelagos\Util;
 
 /**
- * A utility to create and issue DOI from EZID API.
+ * A utility to check for maintenance mode, and create maintenance mode file.
  */
 class MaintenanceMode
 {
     /**
-     * FOS Elastica Object to find elastica documents.
-     *
-     * @var TransformedFinder
-     */
-    protected $fileName;
-
-    /**
-     * The kernel root path.
+     * The file name and path where the maintenance file is located.
      *
      * @var string
      */
-    private $kernelRootDir;
+    private $fileName;
 
     /**
      * Constructor.
@@ -89,7 +82,7 @@ class MaintenanceMode
      *
      * @return void
      */
-    public function activateMaintenanceMode(string $text, string $color)
+    public function activateMaintenanceMode(string $text, string $color) : void
     {
         $contents = 'maintenance_text = "' . $text . '"' . PHP_EOL .
             'maintenance_color = "' . $color . '"' . PHP_EOL;
@@ -97,11 +90,11 @@ class MaintenanceMode
     }
 
     /**
-     * Create the maintenance mode ini file.
+     * Delete the maintenance mode ini file.
      *
      * @return void
      */
-    public function deactivateMaintenanceMode()
+    public function deactivateMaintenanceMode() : void
     {
         if (file_exists($this->fileName)) {
             unlink($this->fileName);
