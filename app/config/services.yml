@@ -131,4 +131,4 @@ services:
 
     pelagos.util.maintenancemode:
         class: Pelagos\Util\MaintenanceMode
-        arguments: ["%maintenance_mode_filename%", "%kernel.root_dir%"]
+        arguments: ["%maintenance_mode_filename%"]

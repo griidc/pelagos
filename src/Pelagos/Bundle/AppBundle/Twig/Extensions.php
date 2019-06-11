@@ -220,7 +220,6 @@ class Extensions extends \Twig_Extension
      */
     public function isMaintenanceMode() : bool
     {
-
         return $this->maintenanceMode->isMaintenanceMode();
     }
 
