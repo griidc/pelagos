@@ -6,7 +6,7 @@ services:
 
     pelagos.twig.extensions:
         class: Pelagos\Bundle\AppBundle\Twig\Extensions
-        arguments: ["%kernel.root_dir%"]
+        arguments: ["%kernel.root_dir%", "@pelagos.util.maintenancemode"]
         public: false
         tags:
             - { name: twig.extension }
