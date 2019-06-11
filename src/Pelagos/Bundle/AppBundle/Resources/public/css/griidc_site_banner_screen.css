@@ -68,5 +68,5 @@ body.adminimal-menu.overlay {
 #siteBannerFooterBanner,#siteBannerHeaderBanner{background-color:#EED202;color:#000000;}
 
 .atlassian-btns {
-    top: 20px;
+    margin-top: 20px;
 }
