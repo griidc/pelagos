@@ -122,6 +122,11 @@ class Extensions extends \Twig_Extension
                 'formatBytes',
                 array(self::class, 'formatBytes')
             ),
+            new \Twig_SimpleFilter(
+                'maintenanceModeColor',
+                [$this, 'maintenanceModeColor']
+            ),
+
         );
     }
 
@@ -241,6 +246,24 @@ class Extensions extends \Twig_Extension
     public function getMaintenanceModeColor() : ? string
     {
         return $this->maintenanceMode->getMaintenanceModeColor();
+    }
+
+    /**
+     * Gets maintenance mode color.
+     *
+     * @param string $color The color text.
+     *
+     * @return string|null Returns maintenance mode banner color.
+     */
+    public function maintenanceModeColor(string $color) : string
+    {
+        $bannerColor = $this->maintenanceMode->getMaintenanceModeColor();
+        dump($bannerColor);
+        if (empty($bannerColor)) {
+            $bannerColor = $color;
+        }
+
+        return $bannerColor;
     }
 
     /**

@@ -87,3 +87,6 @@ pelagos_remotelyhosted_datasets_ui:
 
 pelagos_search_page_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\SearchPageController
+    
+pelagos_maintenance_mode_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\MaintenanceModeController
