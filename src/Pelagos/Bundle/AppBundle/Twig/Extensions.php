@@ -126,7 +126,6 @@ class Extensions extends \Twig_Extension
                 'maintenanceModeColor',
                 [$this, 'maintenanceModeColor']
             ),
-
         );
     }
 
@@ -258,7 +257,7 @@ class Extensions extends \Twig_Extension
     public function maintenanceModeColor(string $color) : string
     {
         $bannerColor = $this->maintenanceMode->getMaintenanceModeColor();
-        dump($bannerColor);
+
         if (empty($bannerColor)) {
             $bannerColor = $color;
         }
