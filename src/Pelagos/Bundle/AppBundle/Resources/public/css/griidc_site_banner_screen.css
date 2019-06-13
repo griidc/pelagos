@@ -1,0 +1,72 @@
+#siteBannerHeaderBanner,
+#siteBannerFooterBanner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: auto;
+    height: 20px;
+    /*Height of top frame div*/
+    max-height: 20px;
+    overflow: hidden;
+    z-index: 1000;
+    right: 0;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#siteBannerFooterBanner {
+    top: auto;
+    bottom: 0;
+}
+
+#header {
+    padding-top: 20px!important;
+}
+
+/*IE6 hack*/
+* html body {
+    padding: 20px 0; /*Set value to (HeightOfTopFrameDiv 0 HeightOfBottomFrameDiv 0)*/
+}
+
+/*IE6 hack*/
+* html #maincontent {
+    height: 100%;
+    width: 100%;
+}
+
+/* fixes for moving content around when viewing with toolbars */
+#toolbar,
+#admin-menu {
+    padding-top: 20px!important;
+}
+
+body.toolbar {
+    margin-top: -20px!important;
+}
+
+body.overlay {
+    margin-top: 20px!important;
+    padding-top: 40px!important;
+}
+
+/* fixes for specific admin toolbars */
+body.page-admin.logged-in.toolbar {
+    padding-top: 95px!important;
+}
+
+body.adminimal-menu.logged-in.admin-menu {
+    padding-top: 25px!important;
+}
+
+body.adminimal-menu.overlay {
+    padding-top: 80px!important;
+    margin-top: 30px!important;
+    margin-bottom: 30px!important;
+}
+
+#siteBannerFooterBanner,#siteBannerHeaderBanner{background-color:#EED202;color:#000000;}
+
+.atlassian-btns {
+    margin-top: 20px;
+}

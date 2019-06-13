@@ -6,14 +6,32 @@
 
     <link rel="icon" type="image/x-icon" href="{{ asset('build/images/griidc_fav.png') }}" />
 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{google_analytics_id}}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', '{{google_analytics_id}}', {
+        'page_path': '{{ app.request.pathinfo }}'
+      });
+    </script>
+
     {%block stylesheets %}
         <link href="{{ asset('build/common.css') }}" rel="stylesheet" />
         <link href="//cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.css" rel="stylesheet" />
+
+        {% if isMaintenanceMode() %}
+            {% stylesheets '@PelagosAppBundle/Resources/public/css/griidc_site_banner_screen.css'%}
+                {{ add_css(asset_url) }}
+            {% endstylesheets %}
+        {% endif %}
     {%endblock stylesheets  %}
 
     {% block javascripts %}
         <script src="{{ asset('build/common.js') }}"></script>
-        
+
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.hoverintent/1.9.0/jquery.hoverIntent.min.js"></script>
 
         <script type="text/javascript" src="https://griidc.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-2rfjj7/b/29/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=8b54034b"></script>
@@ -61,6 +79,13 @@
     </ul>
     <div id="page-wrapper">
         <div id="page">
+            {% if isMaintenanceMode() %}
+            <div id="siteBannerHeaderBanner" class="toolbar clearfix toolbar-processed overlay-displace-top" style="background-color:{{ getMaintenanceModeColor() }}">
+            {{ getMaintenanceModeText()}}
+            </div>
+            <div id="siteBannerFooterBanner" class="toolbar clearfix toolbar-processed overlay-displace-top" style="background-color:{{ getMaintenanceModeColor() }}">
+            {{ getMaintenanceModeText()}}.</div>
+            {% endif %}
             <div id="header"><div class="section clearfix">
 
                     <div class="region region-header">
