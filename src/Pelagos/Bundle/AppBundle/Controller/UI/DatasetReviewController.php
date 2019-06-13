@@ -539,7 +539,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
 
         if (count($datasetSubmissionHistory) > 1) {
             // Get the previous datasetFileUri. DatasetSubmissionHistory collection is ordered by DESC.
-            $previousDatasetFileUri = $datasetSubmissionHistory->get(1);
+            $previousDatasetFileUri = $datasetSubmissionHistory->get(1)->getDatasetFileUri();
             if ($datasetSubmission->getDatasetFileUri() !== $previousDatasetFileUri
                 or $form['datasetFileForceImport']->getData()
                 or $form['datasetFileForceDownload']->getData()) {
