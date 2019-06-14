@@ -27,7 +27,9 @@ class MaintenanceModeController extends UIController
      */
     public function defaultAction(Request $request)
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
         
         $bannerMode = $request->request->get('bannermode');
         

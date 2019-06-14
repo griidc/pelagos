@@ -72,15 +72,15 @@ class Extensions extends \Twig_Extension
                 array(self::class, 'addLibrary'),
                 array('is_safe' => array('html'))
             ),
-            new \Twig_SimpleFunction(
+            new \Twig\TwigFunction(
                 'isMaintenanceMode',
                 [$this, 'isMaintenanceMode']
             ),
-            new \Twig_SimpleFunction(
+            new \Twig\TwigFunction(
                 'getMaintenanceModeText',
                 [$this, 'getMaintenanceModeText']
             ),
-            new \Twig_SimpleFunction(
+            new \Twig\TwigFunction(
                 'getMaintenanceModeColor',
                 [$this, 'getMaintenanceModeColor']
             ),
@@ -122,7 +122,7 @@ class Extensions extends \Twig_Extension
                 'formatBytes',
                 array(self::class, 'formatBytes')
             ),
-            new \Twig_SimpleFilter(
+            new \Twig\TwigFilter(
                 'maintenanceModeColor',
                 [$this, 'maintenanceModeColor']
             ),
