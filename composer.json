@@ -56,9 +56,10 @@
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
-        "symfony/phpunit-bridge": "^2.7",
         "mockery/mockery": "dev-master",
-        "symfony/web-server-bundle": "3.4.*"
+        "symfony/web-server-bundle": "3.4.*",
+        "squizlabs/php_codesniffer": "2.7.*",
+        "phpunit/phpunit": "7.4.*"
     },
     "scripts": {
         "post-install-cmd": [
