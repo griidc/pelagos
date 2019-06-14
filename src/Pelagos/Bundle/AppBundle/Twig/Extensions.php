@@ -82,7 +82,7 @@ class Extensions extends \Twig_Extension
             ),
             new \Twig\TwigFunction(
                 'getMaintenanceModeColor',
-                [$this, 'getMaintenanceModeColor']
+                [$this, 'maintenanceModeColor']
             ),
         );
     }
@@ -240,21 +240,11 @@ class Extensions extends \Twig_Extension
     /**
      * Gets maintenance mode color.
      *
-     * @return string|null Returns maintenance mode banner color.
-     */
-    public function getMaintenanceModeColor() : ? string
-    {
-        return $this->maintenanceMode->getMaintenanceModeColor();
-    }
-
-    /**
-     * Gets maintenance mode color.
-     *
      * @param string $color The color text.
      *
      * @return string|null Returns maintenance mode banner color.
      */
-    public function maintenanceModeColor(string $color) : string
+    public function maintenanceModeColor(string $color= null) : ? string
     {
         $bannerColor = $this->maintenanceMode->getMaintenanceModeColor();
 
