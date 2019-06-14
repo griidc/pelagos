@@ -244,7 +244,7 @@ class Extensions extends \Twig_Extension
      *
      * @return string|null Returns maintenance mode banner color.
      */
-    public function maintenanceModeColor(string $color= null) : ? string
+    public function maintenanceModeColor(string $color = null) : ? string
     {
         $bannerColor = $this->maintenanceMode->getMaintenanceModeColor();
 
