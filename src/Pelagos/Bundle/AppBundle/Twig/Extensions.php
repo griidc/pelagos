@@ -72,17 +72,17 @@ class Extensions extends \Twig_Extension
                 array(self::class, 'addLibrary'),
                 array('is_safe' => array('html'))
             ),
-            new \Twig_SimpleFunction(
+            new \Twig\TwigFunction(
                 'isMaintenanceMode',
                 [$this, 'isMaintenanceMode']
             ),
-            new \Twig_SimpleFunction(
+            new \Twig\TwigFunction(
                 'getMaintenanceModeText',
                 [$this, 'getMaintenanceModeText']
             ),
-            new \Twig_SimpleFunction(
+            new \Twig\TwigFunction(
                 'getMaintenanceModeColor',
-                [$this, 'getMaintenanceModeColor']
+                [$this, 'maintenanceModeColor']
             ),
         );
     }
@@ -121,6 +121,10 @@ class Extensions extends \Twig_Extension
             new \Twig_SimpleFilter(
                 'formatBytes',
                 array(self::class, 'formatBytes')
+            ),
+            new \Twig\TwigFilter(
+                'maintenanceModeColor',
+                [$this, 'maintenanceModeColor']
             ),
         );
     }
@@ -236,11 +240,19 @@ class Extensions extends \Twig_Extension
     /**
      * Gets maintenance mode color.
      *
+     * @param string $color The color text.
+     *
      * @return string|null Returns maintenance mode banner color.
      */
-    public function getMaintenanceModeColor() : ? string
+    public function maintenanceModeColor(string $color = null) : ? string
     {
-        return $this->maintenanceMode->getMaintenanceModeColor();
+        $bannerColor = $this->maintenanceMode->getMaintenanceModeColor();
+
+        if (empty($bannerColor)) {
+            $bannerColor = $color;
+        }
+
+        return $bannerColor;
     }
 
     /**
