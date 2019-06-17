@@ -1,10 +1,8 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
-{% block title %}Search GRIIDC Data{% endblock %}
+{% block title %}Search GRIIDC Data{% endblock title %}
 
-{%block stylesheets %}
+{% block stylesheets %}
     {{ parent() }}
-
-    <link href="{{ asset('build/common.css') }}" rel="stylesheet" />
 
     <link href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/themes/default/style.min.css" rel="stylesheet" />
 

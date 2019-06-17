@@ -35,9 +35,7 @@
         {% set available_red = 0 %}
         {% set available_na = 0 %}
 
-        {% image '@PelagosAppBundle/Resources/public/images/check.png' %}
-        {% set green_icon = asset_url %}
-        {% endimage %}
+        {% set green_icon = asset('@PelagosAppBundle/Resources/public/images/check.png') %}
 
         {% image '@PelagosAppBundle/Resources/public/images/check-remote.png' %}
         {% set green_remote_icon = asset_url %}
