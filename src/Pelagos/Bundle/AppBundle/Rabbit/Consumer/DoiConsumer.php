@@ -137,86 +137,39 @@ class DoiConsumer implements ConsumerInterface
 
         $issueMsg = ConsumerInterface::MSG_ACK;
 
-        if (!$this->doiAlreadyExists($dataset, $loggingContext)) {
-            try {
-                $doiUtil = new DOIutil();
-                $issuedDoi = $doiUtil->mintDOI(
-                    'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi(),
-                    $dataset->getAuthors(),
-                    $dataset->getTitle(),
-                    'Harte Research Institute',
-                    $dataset->getReferenceDateYear()
-                );
+        $doiUtil = new DOIutil();
 
-                $doi = new DOI($issuedDoi);
-                $doi->setCreator($dataset->getModifier());
-                $doi->setModifier($dataset->getModifier());
-                $dataset->setDoi($doi);
-
-                $loggingContext['doi'] = $doi->getDoi();
-                // Log processing complete.
-                $this->logger->info('DOI Issued', $loggingContext);
-            } catch (HttpClientErrorException $exception) {
-                $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
-                $issueMsg = ConsumerInterface::MSG_REJECT;
-            } catch (HttpServerErrorException $exception) {
-                $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
-                //server down. wait for 10 minutes and retry.
-                sleep(self::DELAY_TIME);
-                $issueMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
-            }
-        } else {
-            $this->logger->warning('The DOI already exist for dataset', $loggingContext);
-            $issueMsg = $this->createDoi($dataset, $loggingContext);
-        }
-
-        return $issueMsg;
-    }
-
-    /**
-     * Create a DOI with a known DOI from the dataset.
-     *
-     * @param Dataset $dataset        The Dataset.
-     * @param array   $loggingContext The logging context to use when logging.
-     *
-     * @return integer
-     */
-    private function createDoi(Dataset $dataset, array $loggingContext)
-    {
-        // Log processing start.
-        $this->logger->info('Attempting to create DOI', $loggingContext);
-
-        $createMsg = ConsumerInterface::MSG_ACK;
-
-        $doi = $dataset->getDoi();
+        $generatedDOI = $doiUtil->generateDoi();
 
         try {
-            $doiUtil = new DOIutil();
             $doiUtil->createDOI(
-                $doi->getDoi(),
+                $generatedDOI,
                 'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi(),
                 $dataset->getAuthors(),
                 $dataset->getTitle(),
-                'Harte Research Institute',
-                $dataset->getReferenceDateYear()
+                $dataset->getReferenceDateYear(),
+                'Harte Research Institute'
             );
 
+            $doi = new DOI($generatedDOI);
+            $doi->setCreator($dataset->getModifier());
             $doi->setModifier($dataset->getModifier());
+            $dataset->setDoi($doi);
 
             $loggingContext['doi'] = $doi->getDoi();
             // Log processing complete.
-            $this->logger->info('DOI Created', $loggingContext);
+            $this->logger->info('DOI Issued', $loggingContext);
         } catch (HttpClientErrorException $exception) {
             $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
-            $createMsg = ConsumerInterface::MSG_REJECT;
+            $issueMsg = ConsumerInterface::MSG_REJECT;
         } catch (HttpServerErrorException $exception) {
             $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
             //server down. wait for 10 minutes and retry.
             sleep(self::DELAY_TIME);
-            $createMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
+            $issueMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
         }
 
-        return $createMsg;
+        return $issueMsg;
     }
 
     /**
@@ -263,8 +216,8 @@ class DoiConsumer implements ConsumerInterface
                 $doiUrl,
                 $creator,
                 $dataset->getTitle(),
-                'Harte Research Institute',
-                $pubYear
+                $pubYear,
+                'Harte Research Institute'
             );
 
             $doi->setModifier($dataset->getModifier());
@@ -336,7 +289,7 @@ class DoiConsumer implements ConsumerInterface
                     $doiUtil = new DOIutil();
                     $doiUtil->getDOIMetadata($doi->getDoi());
                 } catch (HttpClientErrorException $exception) {
-                    //DOI exist, but is not found in EZID/Datacite.
+                    //DOI exist, but is not found in REST API/Datacite.
                     $this->logger->error('Error getting DOI: ' . $exception->getMessage(), $loggingContext);
                     $exceptionType = get_class($exception);
                     $this->createDoi($dataset, $loggingContext);

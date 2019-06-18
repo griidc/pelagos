@@ -108,7 +108,7 @@
                             <gmd:protocol>
                                 <gco:CharacterString>{{ distPoint.distributionUrlProtocol }}</gco:CharacterString>
                             </gmd:protocol>
-                            {%  if dataset.isRemotelyHosted == false %}
+                            {% if dataset.isRemotelyHosted == false %}
                                 <gmd:name>
                                     <gco:CharacterString>Data Landing Page</gco:CharacterString>
                                 </gmd:name>
@@ -122,26 +122,30 @@
                                     </gmd:CI_OnLineFunctionCode>
                                 </gmd:function>
                             {% elseif dataset.isRemotelyHosted == true %}
-                                {%  if dataset.datasetSubmission.remotelyHostedName %}
+                                {% if dataset.datasetSubmission.remotelyHostedName %}
                                 <gmd:name>
-                                    {{ dataset.datasetSubmission.remotelyHostedName }}
+                                    <gco:CharacterString>
+                                        {{ dataset.datasetSubmission.remotelyHostedName }}
+                                    </gco:CharacterString>
                                 </gmd:name>
                                 {% else %}
                                 <gmd:name gco:nilReason="missing"/>
                                 {% endif %}
                                 {%  if dataset.datasetSubmission.remotelyHostedDescription %}
                                 <gmd:description>
-                                    {{ dataset.datasetSubmission.remotelyHostedDescription }}
+                                    <gco:CharacterString>
+                                        {{ dataset.datasetSubmission.remotelyHostedDescription }}
+                                    </gco:CharacterString>
                                 </gmd:description>
                                 {% else %}
-                                <gmd:gmd:description  gco:nilReason="missing"/>
+                                <gmd:description gco:nilReason="missing"/>
                                 {% endif %}
-                                 {%  if dataset.datasetSubmission.remotelyHostedFunction %}
+                                {% if dataset.datasetSubmission.remotelyHostedFunction %}
                                 <gmd:function>
                                 {% include "PelagosAppBundle:MetadataGenerator:CI_OnLineFunctionCode.xml.twig" with {"function" : dataset.datasetSubmission.remotelyHostedFunction} %}
                                 </gmd:function>
                                 {% else %}
-                                <gmd:gmd:function gco:nilReason="missing"/>
+                                <gmd:function gco:nilReason="missing"/>
                                 {% endif %}
                             {% endif %}
                         </gmd:CI_OnlineResource>

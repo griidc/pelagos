@@ -57,7 +57,6 @@ class PersonController extends UIController implements OptionalReadOnlyInterface
                     $ui['PersonResearchGroupEditLabel'][$personResearchGroup->getId()]
                         = new EntityProperty($personResearchGroup, 'label');
                 }
-
                 foreach ($person->getPersonFundingOrganizations() as $personFundingOrganization) {
                     $formView = $this
                     ->get('form.factory')
