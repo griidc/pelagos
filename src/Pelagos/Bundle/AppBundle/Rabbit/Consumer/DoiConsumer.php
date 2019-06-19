@@ -291,8 +291,7 @@ class DoiConsumer implements ConsumerInterface
                 } catch (HttpClientErrorException $exception) {
                     //DOI exist, but is not found in REST API/Datacite.
                     $this->logger->error('Error getting DOI: ' . $exception->getMessage(), $loggingContext);
-                    $exceptionType = get_class($exception);
-                    $this->createDoi($dataset, $loggingContext);
+                    return false;
                 } catch (HttpServerErrorException $exception) {
                     //server down. wait for 10 minutes and retry.
                     $this->logger->error('Error getting DOI: ' . $exception->getMessage(), $loggingContext);
