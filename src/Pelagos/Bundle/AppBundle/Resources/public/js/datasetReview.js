@@ -64,7 +64,7 @@ $(document).ready(function(){
         ignore: ".ignore,.prototype",
         submitHandler: function (form) {
             if ($(".ignore").valid()) {
-                formHash = regForm.serialize();
+                regForm.serialize();
                 regForm.prop("unsavedChanges", false);
                 form.submit();
             }
