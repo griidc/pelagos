@@ -165,9 +165,6 @@ function updateTree(tree) {
             return;
         }
 
-        if (typeof tree.onload !== 'undefined') {
-            eval(tree.onload);
-        }
         loadOpenChildren(data.instance,-1);
         var root_nodes=data.instance.get_children_dom(-1);
         var root_node_ids=[];
