@@ -124,7 +124,16 @@ services:
         autowire: true
         tags:
             - { name: monolog.logger, channel: login_attempts }
- 
+
+    pelagos.login_listener:
+        class: Pelagos\Event\LoginEventListener
+        arguments: ["@security.token_storage"]
+        tags:
+          - { name: kernel.event_listener, event: security.interactive_login, method: onSecurityInteractiveLogin }
+
+    pelagos.logout_listener:
+        class: Pelagos\Event\LogoutListener
+
     pelagos.util.search:
         class: Pelagos\Util\Search
         arguments: ["@fos_elastica.finder.search_pelagos.dataset", "@doctrine.orm.entity_manager"]
