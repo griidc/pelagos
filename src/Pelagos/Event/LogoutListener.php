@@ -14,12 +14,14 @@ class LogoutListener implements LogoutHandlerInterface
     /**
      * This method triggers upon logout and clears a username-holding session cookie.
      *
-     * @param Request $Request
-     * @param Response $Response
-     * @param TokenInterface $Token
+     * @param Request        $request  A Symfony Request, req by interface.
+     * @param Response       $response A Symfony Response, req by interface.
+     * @param TokenInterface $token    A Symfony user token, req by interface.
+     *
+     * @return void
      */
-    public function logout(Request $Request, Response $Response, TokenInterface $Token)
+    public function logout(Request $request, Response $response, TokenInterface $token)
     {
-        setcookie("GRIIDC_USERNAME", '', 0, '/');
+        setcookie('GRIIDC_USERNAME', '', 0, '/');
     }
 }
