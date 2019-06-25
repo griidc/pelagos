@@ -1,15 +1,16 @@
 <?php
-namespace Pelagos\Event;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+namespace Pelagos\Bundle\AppBundle\Security;
+
 use Symfony\Component\Security\Http\Logout\LogoutHandlerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Listener for logout events.
+ * Handler for logout.
  */
-class LogoutListener implements LogoutHandlerInterface
+class LogoutHandler implements LogoutHandlerInterface
 {
     /**
      * This method triggers upon logout and clears a username-holding session cookie.
@@ -20,8 +21,8 @@ class LogoutListener implements LogoutHandlerInterface
      *
      * @return void
      */
-    public function logout(Request $request, Response $response, TokenInterface $token)
+    public function logout(Request $request, Response $response, TokenInterface $authToken)
     {
-        setcookie('GRIIDC_USERNAME', '', 0, '/');
+        $response->headers->clearCookie('GRIIDC_USERNAME');
     }
 }

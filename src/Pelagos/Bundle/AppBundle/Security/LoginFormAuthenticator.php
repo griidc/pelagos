@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\RouterInterface;
@@ -16,6 +17,8 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
+use Symfony\Component\Security\Http\Util\TargetPathTrait;
+
 
 use Pelagos\Bundle\AppBundle\Form\LoginForm;
 
@@ -30,6 +33,8 @@ use Pelagos\Entity\Person;
  */
 class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 {
+    use TargetPathTrait;
+
     /**
      * An instance of FormFactory.
      *
@@ -184,6 +189,21 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     protected function getDefaultSuccessRedirectUrl()
     {
         return $this->router->generate('pelagos_homepage');
+    }
+
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    {
+        $targetPath = $this->getTargetPath($request->getSession(), $providerKey);
+
+        if (!$targetPath) {
+            $targetPath = $this->router->generate('pelagos_homepage');
+        }
+
+        $response = new RedirectResponse($targetPath);
+        $cookie = new Cookie('GRIIDC_USERNAME', $token->getUser()->getUserId());
+        $response->headers->setCookie($cookie);
+
+        return $response;
     }
 
     /**
