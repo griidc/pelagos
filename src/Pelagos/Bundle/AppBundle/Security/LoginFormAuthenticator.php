@@ -194,9 +194,9 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     /**
      * Set a cookie and return the response to the target page.
      *
-     * @param Request  $request     A Symfony Request, req by interface.
-     * @param Response $response    A Symfony Response, req by interface.
-     * @param string   $providerKey The name of the used firewall key.
+     * @param Request        $request     A Symfony Request, req by interface.
+     * @param TokenInterface $token       A Symfony user token, req by interface.
+     * @param string         $providerKey The name of the used firewall key.
      *
      * @return Response The response or null to continue request.
      */
