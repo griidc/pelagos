@@ -136,6 +136,10 @@ class DoiConsumer implements ConsumerInterface
         $this->logger->info('Attempting to issue DOI', $loggingContext);
 
         $issueMsg = ConsumerInterface::MSG_ACK;
+        if ($this->doiAlreadyExists($dataset, $loggingContext)) {
+            return $this->updateDoi($dataset, $loggingContext);
+        }
+
 
         $doiUtil = new DOIutil();
 
