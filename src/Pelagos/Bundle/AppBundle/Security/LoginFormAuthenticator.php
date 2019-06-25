@@ -109,8 +109,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
         $data = $form->getData();
 
-        $this->saveTargetPath($request->getSession(), 'main', $data['_referer']);
-
         $this->logAttempt($request);
 
         $request->getSession()->set(
@@ -204,13 +202,17 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        $targetPath = $this->getTargetPath($request->getSession(), $providerKey);
+        $session = $request->getSession();
+        $targetPath = $this->getTargetPath($session, $providerKey);
 
         if (!$targetPath) {
             $targetPath = $this->router->generate('pelagos_homepage');
         }
 
         $response = new RedirectResponse($targetPath);
+
+        $this->removeTargetPath($session, $providerKey);
+
         $cookie = new Cookie('GRIIDC_USERNAME', $token->getUser()->getUserId());
         $response->headers->setCookie($cookie);
 

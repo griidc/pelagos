@@ -6,6 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
 use Pelagos\Bundle\AppBundle\Form\LoginForm;
 
@@ -14,6 +15,8 @@ use Pelagos\Bundle\AppBundle\Form\LoginForm;
  */
 class SecurityController extends Controller
 {
+    use TargetPathTrait;
+
     /**
      * The login action.
      *
@@ -30,10 +33,19 @@ class SecurityController extends Controller
         $error = $authenticationUtils->getLastAuthenticationError();
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
-        
+
+        $referer = $request->headers->get('referer');
+
+        $session = $request->getSession();
+
+        $targetPath = $this->getTargetPath($session, 'main');
+
+        if (!$targetPath) {
+            $this->saveTargetPath($session, 'main', $referer);
+        }
+
         $form = $this->get('form.factory')->createNamed(null, LoginForm::class, [
             '_username' => $lastUsername,
-            '_referer' => $request->headers->get('referer'),
         ]);
 
         return $this->render(

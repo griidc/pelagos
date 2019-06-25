@@ -41,9 +41,6 @@ class LoginForm extends AbstractType
                     'placeholder' => 'Password',
                     'class' => 'form-control',
                 ),
-            ))
-            ->add('_referer', HiddenType::class, array(
-                'required' => false,
             ));
     }
 }
