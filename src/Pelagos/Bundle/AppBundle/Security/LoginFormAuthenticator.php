@@ -191,6 +191,15 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         return $this->router->generate('pelagos_homepage');
     }
 
+    /**
+     * Set a cookie and return the response to the target page.
+     *
+     * @param Request  $request     A Symfony Request, req by interface.
+     * @param Response $response    A Symfony Response, req by interface.
+     * @param string   $providerKey The name of the used firewall key.
+     *
+     * @return Response The response or null to continue request.
+     */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
         $targetPath = $this->getTargetPath($request->getSession(), $providerKey);
