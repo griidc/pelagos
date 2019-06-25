@@ -109,6 +109,8 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
         $data = $form->getData();
 
+        $this->saveTargetPath($request->getSession(), 'main', $data['_referer']);
+
         $this->logAttempt($request);
 
         $request->getSession()->set(

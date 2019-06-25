@@ -61,8 +61,8 @@
                                 <a href="{{ path('pelagos_app_ui_account_forgotusername') }}">Forgot Your Username?</a>
                             </label>
                         </div>
-
                     </div>
+                    {{ form_row(form._referer) }}
                     {# <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"> #}
                     <div class="row btn-row">
                     <input class="btn-submit form-submit" id="edit-submit" name="op" value="LOGIN" accesskey="l" type="submit">

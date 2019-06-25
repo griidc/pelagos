@@ -5,6 +5,7 @@ namespace Pelagos\Bundle\AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 use Pelagos\Bundle\AppBundle\Form\LoginForm;
 
@@ -16,11 +17,13 @@ class SecurityController extends Controller
     /**
      * The login action.
      *
+     * @param Request $request The request object.
+     *
      * @Route("/login", name="security_login")
      *
      * @return Response A Response instance.
      */
-    public function loginAction()
+    public function loginAction(Request $request)
     {
         $authenticationUtils = $this->get('security.authentication_utils');
         // get the login error if there is one
@@ -30,6 +33,7 @@ class SecurityController extends Controller
         
         $form = $this->get('form.factory')->createNamed(null, LoginForm::class, [
             '_username' => $lastUsername,
+            '_referer' => $request->headers->get('referer'),
         ]);
 
         return $this->render(
