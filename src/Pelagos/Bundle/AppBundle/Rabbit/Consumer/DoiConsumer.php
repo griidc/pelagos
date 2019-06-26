@@ -137,42 +137,41 @@ class DoiConsumer implements ConsumerInterface
 
         $issueMsg = ConsumerInterface::MSG_ACK;
         if ($this->doiAlreadyExists($dataset, $loggingContext)) {
-            return $this->updateDoi($dataset, $loggingContext);
+            $this->logger->info('DOI Already issued for this dataset', $loggingContext);
+        } else {
+            $doiUtil = new DOIutil();
+
+            $generatedDOI = $doiUtil->generateDoi();
+
+            try {
+                $doiUtil->createDOI(
+                    $generatedDOI,
+                    'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi(),
+                    $dataset->getAuthors(),
+                    $dataset->getTitle(),
+                    $dataset->getReferenceDateYear(),
+                    'Harte Research Institute'
+                );
+
+                $doi = new DOI($generatedDOI);
+                $doi->setCreator($dataset->getModifier());
+                $doi->setModifier($dataset->getModifier());
+                $dataset->setDoi($doi);
+
+                $loggingContext['doi'] = $doi->getDoi();
+                // Log processing complete.
+                $this->logger->info('DOI Issued', $loggingContext);
+            } catch (HttpClientErrorException $exception) {
+                $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
+                $issueMsg = ConsumerInterface::MSG_REJECT;
+            } catch (HttpServerErrorException $exception) {
+                $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
+                //server down. wait for 10 minutes and retry.
+                sleep(self::DELAY_TIME);
+                $issueMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
+            }
         }
-
-
-        $doiUtil = new DOIutil();
-
-        $generatedDOI = $doiUtil->generateDoi();
-
-        try {
-            $doiUtil->createDOI(
-                $generatedDOI,
-                'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi(),
-                $dataset->getAuthors(),
-                $dataset->getTitle(),
-                $dataset->getReferenceDateYear(),
-                'Harte Research Institute'
-            );
-
-            $doi = new DOI($generatedDOI);
-            $doi->setCreator($dataset->getModifier());
-            $doi->setModifier($dataset->getModifier());
-            $dataset->setDoi($doi);
-
-            $loggingContext['doi'] = $doi->getDoi();
-            // Log processing complete.
-            $this->logger->info('DOI Issued', $loggingContext);
-        } catch (HttpClientErrorException $exception) {
-            $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
-            $issueMsg = ConsumerInterface::MSG_REJECT;
-        } catch (HttpServerErrorException $exception) {
-            $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
-            //server down. wait for 10 minutes and retry.
-            sleep(self::DELAY_TIME);
-            $issueMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
-        }
-
+        
         return $issueMsg;
     }
 
