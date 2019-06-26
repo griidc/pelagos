@@ -222,6 +222,25 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     }
 
     /**
+     * Return to login page and add destination for redirect.
+     *
+     * @param Request                 $request   A Symfony Request, req by interface.
+     * @param AuthenticationException $exception The exception thrown.
+     *
+     * @return Response The response or null to continue request.
+     */
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    {
+        $destination = $request->query->get('destination');
+        $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
+        $url = $this->router->generate(
+            'security_login',
+            ['destination' => $destination]
+        );
+        return new RedirectResponse($url);
+    }
+
+    /**
      * Logs the attemps to log.
      *
      * @param Request $request The home directory.
