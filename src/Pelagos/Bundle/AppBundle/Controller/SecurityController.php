@@ -20,13 +20,11 @@ class SecurityController extends Controller
     /**
      * The login action.
      *
-     * @param Request $request The request object.
-     *
      * @Route("/login", name="security_login")
      *
      * @return Response A Response instance.
      */
-    public function loginAction(Request $request)
+    public function loginAction()
     {
         $authenticationUtils = $this->get('security.authentication_utils');
         // get the login error if there is one
