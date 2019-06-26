@@ -202,16 +202,18 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
+        $destination = $request->query->get('destination');
+
         $session = $request->getSession();
         $targetPath = $this->getTargetPath($session, $providerKey);
 
-        if (!$targetPath) {
+        if (!isset($targetPath) and !empty($destination)) {
+            $targetPath = $destination;
+        } elseif (!isset($targetPath)) {
             $targetPath = $this->router->generate('pelagos_homepage');
         }
 
         $response = new RedirectResponse($targetPath);
-
-        $this->removeTargetPath($session, $providerKey);
 
         $cookie = new Cookie('GRIIDC_USERNAME', $token->getUser()->getUserId());
         $response->headers->setCookie($cookie);
