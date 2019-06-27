@@ -146,7 +146,7 @@ class DoiConsumer implements ConsumerInterface
             try {
                 $doiUtil->createDOI(
                     $generatedDOI,
-                    'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi(),
+                    $this->generateUrl('pelagos_homepage') . '/tombstone/' . $dataset->getUdi(),
                     $dataset->getAuthors(),
                     $dataset->getTitle(),
                     $dataset->getReferenceDateYear(),
@@ -200,10 +200,10 @@ class DoiConsumer implements ConsumerInterface
             // Set dataland pages for available datasets and tombstone pages for unavailable datasets.
             if (($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) or
                 ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED)) {
-                $doiUrl = 'https://data.gulfresearchinitiative.org/data/' . $dataset->getUdi();
+                $doiUrl = $this->generateUrl('pelagos_homepage') . '/data/' . $dataset->getUdi();
                 $doi->setPublicDate(new \DateTime);
             } else {
-                $doiUrl = 'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi();
+                $doiUrl = $this->generateUrl('pelagos_homepage') . '/tombstone/' . $dataset->getUdi();
             }
 
             $creator = ($dataset->getAuthors()) ? $dataset->getAuthors() : '(:tba)';

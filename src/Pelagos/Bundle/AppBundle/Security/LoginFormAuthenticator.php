@@ -202,17 +202,42 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        $targetPath = $this->getTargetPath($request->getSession(), $providerKey);
+        $destination = $request->query->get('destination');
 
-        if (!$targetPath) {
+        $session = $request->getSession();
+        $targetPath = $this->getTargetPath($session, $providerKey);
+
+        if (!isset($targetPath) and !empty($destination)) {
+            $targetPath = $destination;
+        } elseif (!isset($targetPath)) {
             $targetPath = $this->router->generate('pelagos_homepage');
         }
 
         $response = new RedirectResponse($targetPath);
+
         $cookie = new Cookie('GRIIDC_USERNAME', $token->getUser()->getUserId());
         $response->headers->setCookie($cookie);
 
         return $response;
+    }
+
+    /**
+     * Return to login page and add destination for redirect.
+     *
+     * @param Request                 $request   A Symfony Request, req by interface.
+     * @param AuthenticationException $exception The exception thrown.
+     *
+     * @return Response The response or null to continue request.
+     */
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    {
+        $destination = $request->query->get('destination');
+        $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
+        $url = $this->router->generate(
+            'security_login',
+            ['destination' => $destination]
+        );
+        return new RedirectResponse($url);
     }
 
     /**
