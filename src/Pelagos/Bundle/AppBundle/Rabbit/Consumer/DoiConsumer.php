@@ -171,7 +171,7 @@ class DoiConsumer implements ConsumerInterface
                 $issueMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
             }
         }
-        
+
         return $issueMsg;
     }
 
