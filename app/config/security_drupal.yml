@@ -2,7 +2,7 @@ security:
 
     firewalls:
         dev:
-            pattern: ^/%pelagos.prefix%/(_(profiler|wdt)|css|images|js)/
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
 
         account:
-            pattern: ^/%pelagos.prefix%/account
+            pattern: ^/account

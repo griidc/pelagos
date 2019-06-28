@@ -58,11 +58,6 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
     const DEFAULT_DISTRIBUTION_POINT_ROLECODE = 'distributor';
 
     /**
-     * Name of the base url for default distribution url (dataland base url).
-     */
-    const DEFAULT_DISTRIBUTION_POINT_BASE_URL = 'https://data.gulfresearchinitiative.org/data/';
-
-    /**
      * The default action for Dataset Submission.
      *
      * @param Request $request The Symfony request object.
@@ -75,9 +70,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
      */
     public function defaultAction(Request $request)
     {
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->redirect('/user/login?destination=' . $request->getPathInfo());
-        }
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $udi = $request->query->get('regid');
         $datasetSubmission = null;
@@ -565,7 +558,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
             if (null === $distributionPoint->getDataCenter()) {
                 $distributionPoint->setRoleCode(self::DEFAULT_DISTRIBUTION_POINT_ROLECODE);
                 $distributionPoint->setDataCenter($defaultDistributionContacts[0]);
-                $distributionPoint->setDistributionUrl(self::DEFAULT_DISTRIBUTION_POINT_BASE_URL . $udi);
+                $distributionPoint->setDistributionUrl($this->generateUrl('pelagos_homepage') . '/data/' . $udi);
             }
         } else {
             throw new \Exception('There is none or more than one default distribution contact(s)');

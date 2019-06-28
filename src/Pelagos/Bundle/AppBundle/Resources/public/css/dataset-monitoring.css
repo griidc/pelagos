@@ -1,9 +1,9 @@
 #container {
-    position: relative;
     width: 100%;
     height: 100%;
     padding: 0;
     margin: 0;
+    position: relative;
 }
 
 #left {
@@ -40,4 +40,8 @@
 
 .display-table-cell {
     display: table-cell;
+}
+
+#pelagos-content table {
+    border-collapse: collapse;
 }

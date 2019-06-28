@@ -1,6 +1,9 @@
 pelagos_homepage:
     path:     /
     defaults: { _controller: PelagosAppBundle:Default:index }
+    
+pelagos_login:
+    resource: Pelagos\Bundle\AppBundle\Controller\SecurityController
 
 pelagos_admin:
     path:     /admin

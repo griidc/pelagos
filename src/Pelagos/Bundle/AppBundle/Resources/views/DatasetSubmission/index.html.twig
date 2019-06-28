@@ -1,17 +1,10 @@
-{% extends "PelagosAppBundle::layout.html.twig" %}
-
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
+{% block title %}
+    Dataset Submission {{ ' | ' ~ datasetSubmission.dataset.udi | default }}
+{% endblock %}
 {% block head %}
-    {{
-        add_library (
-            [
-                'ui.datepicker',
-                'ui.dialog',
-                'ui.tabs',
-                'ui.widget',
-            ]
-        )
-    }}
-
+    {{ parent() }}
+    
     {{
         add_css (
             [

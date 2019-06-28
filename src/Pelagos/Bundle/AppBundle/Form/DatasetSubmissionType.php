@@ -269,7 +269,6 @@ class DatasetSubmissionType extends AbstractType
             ->add('erddapUrl', Type\TextType::class, array(
                 'label' => 'ERDDAP Url',
                 'required' => false,
-                'attr' => array('data-rule-url' => true),
             ))
             ->add('isRemotelyHosted', Type\CheckboxType::class, array(
                 'label' => 'Is Remotely Hosted',

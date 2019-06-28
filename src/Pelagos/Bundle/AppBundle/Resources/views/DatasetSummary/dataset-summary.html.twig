@@ -1,6 +1,8 @@
-{% extends "PelagosAppBundle::layout.html.twig" %}
-
-{% block head %}
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
+{% block title %}Dataset Summary{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    
     {% javascripts
         '@PelagosAppBundle/Resources/public/js/dataset-summary.js'
         '@FOSJsRoutingBundle/Resources/public/js/router.js'

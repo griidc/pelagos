@@ -152,3 +152,16 @@ label:not(.button)
 {
     display:hidden;
 }
+
+fieldset {
+    margin-bottom: 1em;
+    padding: 0.5em;
+}
+
+#pelagos-content table {
+    border-collapse: collapse;
+}
+
+select, input{
+    height: auto;
+}

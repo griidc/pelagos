@@ -1,12 +1,7 @@
-{% extends "PelagosAppBundle::layout.html.twig" %}
-
-
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
+{% block title %}Dataset Restrictions{% endblock %}
 {% block head %}
-    {{ add_library (
-        [
-            'ui.dialog'
-        ]
-    ) }}
+    {{ parent() }}
 
     {{ add_css (
         [

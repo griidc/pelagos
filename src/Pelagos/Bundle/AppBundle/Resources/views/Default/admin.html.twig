@@ -1,5 +1,5 @@
-{% extends "PelagosAppBundle::layout.html.twig" %}
-
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
+{% block title %}Admin{% endblock %}
 {% block body %}
     {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
         <ul>
@@ -12,6 +12,7 @@
             <li><a href="{{ path("pelagos_app_ui_sidebyside_default") }}">Side-by-Side Review</a></li>
             <li><a href="{{ path("pelagos_app_ui_endreview_default") }}">End Review Tool</a></li>
             <li><a href="{{ path("pelagos_app_ui_remotelyhosteddatasets_default") }}">Remotely Hosted Datasets</a></li>
+            <li><a href="{{ path("pelagos_app_ui_maintenancemode_default") }}">Maintenance Mode</a></li>
             <li><a href="{{ path("pelagos_app_ui_externaldownloadlog_default") }}">External Download Log Tool</a></li>
             <li>
                 Lists

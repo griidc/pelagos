@@ -2,30 +2,37 @@
 
 namespace Pelagos\Util;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
+
+use HylianShield\Encoding\Base32CrockfordEncoder;
+
+use Pelagos\Entity\DOI;
 use Pelagos\Exception\HttpClientErrorException;
 use Pelagos\Exception\HttpServerErrorException;
 
 /**
- * A utility to create and issue DOI from EZID API.
+ * A utility to create and issue DOI from Datacite REST API.
  */
 class DOIutil
 {
     /**
-     * The shoulder for the GRIIDC doi.
+     * The prefix for the GRIIDC doi.
      *
      * @var string
      */
-    private $doishoulder;
+    private $doiprefix;
 
     /**
-     * The username for ezid.
+     * The username for REST API.
      *
      * @var string
      */
     private $doiusername;
 
     /**
-     * The password for ezid.
+     * The password for REST API.
      *
      * @var string
      */
@@ -41,7 +48,7 @@ class DOIutil
     /**
      * Constructor.
      *
-     * Sets the ezid username, password, and shoulder.
+     * Sets the REST API username, password, and prefix.
      *
      * @throws \Exception When ini file is not found.
      */
@@ -54,152 +61,90 @@ class DOIutil
         }
         $parameters = parse_ini_file($iniFile);
 
-        $this->doishoulder = $parameters['doi_api_shoulder'];
+        $this->doiprefix = $parameters['doi_api_prefix'];
         $this->doiusername = $parameters['doi_api_user_name'];
         $this->doipassword = $parameters['doi_api_password'];
         $this->url = $parameters['url'];
     }
 
     /**
-     * This function will mint a DOI.
+     * Generates a random DOI in our namespace.
      *
-     * @param string $url             URL for DOI.
-     * @param string $creator         Creator for DOI.
-     * @param string $title           Title for DOI.
-     * @param string $publisher       Publisher for DOI.
-     * @param string $publicationYear Published Date for DOI.
-     * @param string $status          Status of the DOI, by default is reserved.
-     * @param string $resourcetype    Type for DOI Request, by default Dataset.
-     *
-     * @throws HttpClientErrorException When there was an 4xx error negotiating with EZID.
-     * @throws HttpServerErrorException When there was an 5xx error negotiating with EZID.
-     *
-     * @return string The DOI issued by EZID.
+     * @return string The generated DOI.
      */
-    public function mintDOI(
-        $url,
-        $creator,
-        $title,
-        $publisher,
-        $publicationYear,
-        $status = 'reserved',
-        $resourcetype = 'Dataset'
-    ) {
-        $input = '_target:' . $this->escapeSpecialCharacters($url) . "\n";
-        $input .= "_profile:datacite\n";
-        $input .= "_status:$status\n";
-        $input .= 'datacite.creator:'
-            . $this->escapeSpecialCharacters($creator)
-            . "\n";
-        $input .= 'datacite.title:'
-            . $this->escapeSpecialCharacters($title)
-            . "\n";
-        $input .= 'datacite.publisher:' . $this->escapeSpecialCharacters($publisher) . "\n";
-        $input .= "datacite.publicationyear:$publicationYear\n";
-        $input .= "datacite.resourcetype:$resourcetype";
-
-        utf8_encode($input);
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->url . '/shoulder/' . $this->doishoulder);
-        curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt(
-            $ch,
-            CURLOPT_HTTPHEADER,
-            array('Content-Type: text/plain; charset=UTF-8','Content-Length: ' . strlen($input))
-        );
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $input);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $output = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        //check to see if it worked.
-        //using in array because EZID API returns 201 and EZ Datacite API returns 200.
-        if (!in_array($httpCode, [200, 201])) {
-            $expMsg = "ezid failed with:$httpCode($output)";
-            if ($httpCode >= 400 and $httpCode <= 499) {
-                throw new HttpClientErrorException($expMsg, $httpCode);
-            } elseif ($httpCode >= 500 or $httpCode == 0) {
-                throw new HttpServerErrorException($expMsg, $httpCode);
-            }
-        }
-
-        $doi = preg_match('/^success: (doi:\S+)/', $output, $matches);
-
-        return $matches[1];
+    public function generateDoi() : string
+    {
+        $encoder = new Base32CrockfordEncoder();
+        // 1099511627775 encodes to the longest 8 character Crockford 32 string.
+        $max = 1099511627775;
+        // Start at 1 (0 is problematic as library does not produce checksum for 0.)
+        $random = random_int(1, $max);
+        // Add prefix and remove the checksum character.
+        return $this->doiprefix . '/' . substr($encoder->encode($random), 0, -1);
     }
 
     /**
      * This function will create a DOI.
      *
-     * @param string $doi             The DOI identifier to create.
+     * @param string $doi             The DOI identifier to create, or 'mint' to generate new.
      * @param string $url             URL for DOI.
      * @param string $creator         Creator for DOI.
      * @param string $title           Title for DOI.
-     * @param string $publisher       Publisher for DOI.
      * @param string $publicationYear Published Date for DOI.
-     * @param string $status          Status of the DOI, by default is reserved.
+     * @param string $publisher       Publisher for DOI.
      * @param string $resourcetype    Type for DOI Request, by default Dataset.
      *
-     * @throws HttpClientErrorException When there was an 4xx error negotiating with EZID.
-     * @throws HttpServerErrorException When there was an 5xx error negotiating with EZID.
+     * @throws HttpClientErrorException When there was an 4xx error negotiating with REST API.
+     * @throws HttpServerErrorException When there was an 5xx error negotiating with REST API.
      *
-     * @return string The DOI issued by EZID.
+     * @return void
      */
     public function createDOI(
         $doi,
         $url,
         $creator,
         $title,
-        $publisher,
         $publicationYear,
-        $status = 'reserved',
+        $publisher,
         $resourcetype = 'Dataset'
     ) {
-        $input = '_target:' . $this->escapeSpecialCharacters($url) . "\n";
-        $input .= "_profile:datacite\n";
-        $input .= "_status:$status\n";
-        $input .= 'datacite.creator:'
-            . $this->escapeSpecialCharacters($creator)
-            . "\n";
-        $input .= 'datacite.title:'
-            . $this->escapeSpecialCharacters($title)
-            . "\n";
-        $input .= 'datacite.publisher:' . $this->escapeSpecialCharacters($publisher) . "\n";
-        $input .= "datacite.publicationyear:$publicationYear\n";
-        $input .= "datacite.resourcetype:$resourcetype";
+        $client = new Client();
+        $defaultBody = [
+            'data' => [
+                'type' => 'dois',
+                'attributes' => [
+                    'doi' => $doi,
+                    'creators' => [
+                        ['name' => $creator]
+                    ],
+                    'titles' => [
+                        ['title' => $title]
+                    ],
+                    'publisher' => $publisher,
+                    'publicationYear' => $publicationYear,
+                    'url' => $url,
+                    'types' => [
+                        'resourceTypeGeneral' => $resourcetype
+                    ],
+                ]
+            ]
+        ];
 
-        utf8_encode($input);
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->url . '/id/' . $doi);
-        curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
-        curl_setopt(
-            $ch,
-            CURLOPT_HTTPHEADER,
-            array('Content-Type: text/plain; charset=UTF-8','Content-Length: ' . strlen($input))
-        );
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $input);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $output = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        //check to see if it worked.
-        //using in array because EZID API returns 201 and EZDatacite API returns 200.
-        if (!in_array($httpCode, [200, 201])) {
-            $expMsg = "ezid failed with:$httpCode($output)";
-            if ($httpCode >= 400 and $httpCode <= 499) {
-                throw new HttpClientErrorException($expMsg, $httpCode);
-            } elseif ($httpCode >= 500 or $httpCode == 0) {
-                throw new HttpServerErrorException($expMsg, $httpCode);
-            }
+        try {
+            $client->request(
+                'POST',
+                $this->url . '/dois',
+                [
+                    'auth' => [$this->doiusername, $this->doipassword],
+                    'headers' => ['Content-Type' => 'application/vnd.api+json'],
+                    'body' => json_encode($defaultBody, JSON_UNESCAPED_SLASHES)
+                ]
+            );
+        } catch (ClientException $exception) {
+            throw new HttpClientErrorException($exception->getMessage(), $exception->getCode());
+        } catch (ServerException $exception) {
+            throw new HttpServerErrorException($exception->getMessage(), $exception->getCode());
         }
-
-        return true;
     }
 
     /**
@@ -209,64 +154,62 @@ class DOIutil
      * @param string $url             URL for DOI.
      * @param string $creator         Creator for DOI.
      * @param string $title           Title for DOI.
-     * @param string $publisher       Publisher for DOI.
      * @param string $publicationYear Published Date for DOI.
+     * @param string $publisher       Publisher for DOI.
      * @param string $status          Status of the DOI.
      *
-     * @throws HttpClientErrorException When there was an 4xx error negotiating with EZID.
-     * @throws HttpServerErrorException When there was an 5xx error negotiating with EZID.
+     * @throws HttpClientErrorException When there was an 4xx error negotiating with REST API.
+     * @throws HttpServerErrorException When there was an 5xx error negotiating with REST API.
      *
-     * @return boolean True if updated successfully.
+     * @return void
      */
     public function updateDOI(
         $doi,
         $url,
         $creator,
         $title,
-        $publisher,
         $publicationYear,
-        $status = 'public'
+        $publisher,
+        $status = DOI::STATE_FINDABLE
     ) {
-        // Add doi: to doi is it doesn't exist.
-        $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
+        $client = new Client();
+        $defaultBody = [
+            'data' => [
+                'id' => $doi,
+                'type' => 'dois',
+                'attributes' => [
+                    'creators' => [
+                        ['name' => $creator]
+                    ],
+                    'titles' => [
+                        ['title' => $title]
+                    ],
+                    'publisher' => $publisher,
+                    'publicationYear' => $publicationYear,
+                    'types' => [
+                        'resourceTypeGeneral' => 'Dataset'
+                    ],
+                    'url' => $url,
+                    'event' => ($status === DOI::STATE_FINDABLE) ? 'publish' : 'hide'
+                ]
+            ]
+        ];
 
-        $input = '_target:' . $this->escapeSpecialCharacters($url) . "\n";
-        $input .= 'datacite.creator:' . $this->escapeSpecialCharacters($creator) . "\n";
-        $input .= 'datacite.title:' . $this->escapeSpecialCharacters($title) . "\n";
-        $input .= 'datacite.publisher:' . $this->escapeSpecialCharacters($publisher) . "\n";
-        $input .= "datacite.publicationyear:$publicationYear\n";
-        $input .= "datacite.resourcetype:Dataset\n";
-
-        $input .= '_status: ' . $status . "\n";
-
-        utf8_encode($input);
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->url . '/id/' . $doi);
-        curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt(
-            $ch,
-            CURLOPT_HTTPHEADER,
-            array('Content-Type: text/plain; charset=UTF-8','Content-Length: ' . strlen($input))
-        );
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $input);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $output = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        //check to see if it worked.
-        if (200 != $httpCode) {
-            $expMsg = "ezid failed with:$httpCode($output)";
-            if ($httpCode >= 400 and $httpCode <= 499) {
-                throw new HttpClientErrorException($expMsg, $httpCode);
-            } elseif ($httpCode >= 500 or $httpCode == 0) {
-                throw new HttpServerErrorException($expMsg, $httpCode);
-            }
+        try {
+            $client->request(
+                'PUT',
+                $this->url . '/dois/' . $doi,
+                [
+                    'auth' => [$this->doiusername, $this->doipassword],
+                    'headers' => ['Content-Type' => 'application/vnd.api+json'],
+                    'body' => json_encode($defaultBody, JSON_UNESCAPED_SLASHES)
+                ]
+            );
+        } catch (ClientException $exception) {
+            throw new HttpClientErrorException($exception->getMessage(), $exception->getCode());
+        } catch (ServerException $exception) {
+            throw new HttpServerErrorException($exception->getMessage(), $exception->getCode());
         }
-
-        return true;
     }
 
     /**
@@ -274,38 +217,33 @@ class DOIutil
      *
      * @param string $doi DOI to get metadata for.
      *
-     * @throws HttpClientErrorException When there was an 4xx error negotiating with EZID.
-     * @throws HttpServerErrorException When there was an 5xx error negotiating with EZID.
+     * @throws HttpClientErrorException Exception thrown when response code is 4xx negotiating with Datacite REST API.
+     * @throws HttpServerErrorException Exception thrown when response code is 5xx negotiating with Datacite REST API.
      *
-     * @return array Array or metadata variables.
+     * @return array
      */
     public function getDOIMetadata($doi)
     {
-        // Add doi: to doi is it doesn't exist.
-        $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->url . '/id/' . $doi);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $output = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        //check to see if it worked.
-        if (200 != $httpCode) {
-            $expMsg = "ezid failed with:$httpCode($output)";
-            if ($httpCode >= 400 and $httpCode <= 499) {
-                throw new HttpClientErrorException($expMsg, $httpCode);
-            } elseif ($httpCode >= 500 or $httpCode == 0) {
-                throw new HttpServerErrorException($expMsg, $httpCode);
-            }
+        $client = new Client();
+        $metadata = array();
+        $url = $this->url . '/dois/' . $doi;
+        try {
+            $response = $client->request(
+                'GET',
+                $url,
+                ['auth' => [$this->doiusername, $this->doipassword],
+                'headers' => ['Accept' => 'application/vnd.api+json']]
+            );
+        } catch (ClientException $exception) {
+            throw new HttpClientErrorException($exception->getMessage(), $exception->getCode());
+        } catch (ServerException $exception) {
+            throw new HttpServerErrorException($exception->getMessage(), $exception->getCode());
         }
 
-        $metadata = array();
-        foreach (explode("\n", $output) as $line) {
-            $split = preg_split('/:/', $line, 2);
-            if (count($split) > 1) {
-                $metadata[$split[0]] = trim($split[1]);
-            }
+        $body = json_decode($response->getBody()->getContents(), true);
+
+        if (array_key_exists('data', $body)) {
+            $metadata = $body['data'];
         }
 
         return $metadata;
@@ -316,63 +254,38 @@ class DOIutil
      *
      * @param string $doi DOI to delete.
      *
-     * @throws HttpClientErrorException When there was an 4xx error negotiating with EZID.
-     * @throws HttpServerErrorException When there was an 5xx error negotiating with EZID.
+     * @throws HttpClientErrorException When there was an 4xx error negotiating with REST API.
+     * @throws HttpServerErrorException When there was an 5xx error negotiating with REST API.
      *
      * @return void
      */
     public function deleteDOI($doi)
     {
         $doiMetadata = $this->getDOIMetadata($doi);
-        if ($doiMetadata['_status'] === 'reserved') {
-            // Add doi: to doi is it doesn't exist.
-            $doi = preg_replace('/^(?:doi:)?(10.\S+)/', 'doi:$1', $doi);
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $this->url . '/id/' . $doi);
-            curl_setopt($ch, CURLOPT_USERPWD, $this->doiusername . ':' . $this->doipassword);
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-            $output = curl_exec($ch);
-
-            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_close($ch);
-
-            //check to see if it worked.
-            if (200 != $httpCode) {
-                $expMsg = "ezid failed with:$httpCode($output)";
-                if ($httpCode >= 400 and $httpCode <= 499) {
-                    throw new HttpClientErrorException($expMsg, $httpCode);
-                } elseif ($httpCode >= 500 or $httpCode == 0) {
-                    throw new HttpServerErrorException($expMsg, $httpCode);
-                }
+        if ($doiMetadata['attributes']['state'] === DOI::STATE_DRAFT) {
+            $client = new Client();
+            $url = $this->url . '/dois/' . $doi;
+            try {
+                $client->request(
+                    'DELETE',
+                    $url,
+                    ['auth' => [$this->doiusername, $this->doipassword]]
+                );
+            } catch (ClientException $exception) {
+                throw new HttpClientErrorException($exception->getMessage(), $exception->getCode());
+            } catch (ServerException $exception) {
+                throw new HttpServerErrorException($exception->getMessage(), $exception->getCode());
             }
         } else {
-             $this->updateDOI(
-                 $doi,
-                 'http://datacite.org/invalidDOI',
-                 '(:null)',
-                 'inactive',
-                 'none supplied',
-                 '2019',
-                 'unavailable'
-             );
+            $this->updateDOI(
+                $doi,
+                'http://datacite.org/invalidDOI',
+                '(:null)',
+                'inactive',
+                '2019',
+                'none supplied',
+                DOI::STATE_REGISTERED
+            );
         }
-    }
-
-    /**
-     * This function escape :%\n\r characters, because these are special with EZID.
-     *
-     * @param string $input Text that needs to be escaped.
-     *
-     * @return string The escaped string.
-     */
-    private function escapeSpecialCharacters($input)
-    {
-        return preg_replace_callback(
-            '/[%:\r\n]/',
-            function ($matches) {
-                return sprintf('%%%02X', ord($matches[0]));
-            },
-            $input
-        );
     }
 }

@@ -36,12 +36,10 @@ class AppKernel extends Kernel
             new \FOS\JsRoutingBundle\FOSJsRoutingBundle(),
             new \OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
             new \Phobetor\RabbitMqSupervisorBundle\RabbitMqSupervisorBundle(),
-            new \HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
             new \FOS\ElasticaBundle\FOSElasticaBundle(),
             new \Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new \Pelagos\Bundle\LegacyBundle\PelagosLegacyBundle(),
             new \Pelagos\Bundle\AppBundle\PelagosAppBundle(),
-            new \Http\HttplugBundle\HttplugBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test', 'drupal_dev'), true)) {
@@ -49,6 +47,7 @@ class AppKernel extends Kernel
             $bundles[] = new \Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             $bundles[] = new \Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
             $bundles[] = new \Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
+            $bundles[] = new \Symfony\Bundle\WebServerBundle\WebServerBundle();
         }
 
         return $bundles;

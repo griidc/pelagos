@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\Collection;
 
 use Pelagos\Entity\DIF;
 
+use Pelagos\Util\MaintenanceMode;
+
 /**
  * Custom Twig extensions for Pelagos.
  */
@@ -19,13 +21,22 @@ class Extensions extends \Twig_Extension
     private $kernelRootDir;
 
     /**
+     * The maintenance mode service.
+     *
+     * @var MaintenanceMode
+     */
+    private $maintenanceMode;
+
+    /**
      *  Constructor.
      *
-     * @param string $kernelRootDir The kernel root path.
+     * @param string          $kernelRootDir   The kernel root path.
+     * @param MaintenanceMode $maintenanceMode The maintenance mode utility.
      */
-    public function __construct($kernelRootDir)
+    public function __construct($kernelRootDir, MaintenanceMode $maintenanceMode)
     {
         $this->kernelRootDir = $kernelRootDir;
+        $this->maintenanceMode = $maintenanceMode;
     }
 
     /**
@@ -60,6 +71,18 @@ class Extensions extends \Twig_Extension
                 'add_library',
                 array(self::class, 'addLibrary'),
                 array('is_safe' => array('html'))
+            ),
+            new \Twig\TwigFunction(
+                'isMaintenanceMode',
+                [$this, 'isMaintenanceMode']
+            ),
+            new \Twig\TwigFunction(
+                'getMaintenanceModeText',
+                [$this, 'getMaintenanceModeText']
+            ),
+            new \Twig\TwigFunction(
+                'getMaintenanceModeColor',
+                [$this, 'maintenanceModeColor']
             ),
         );
     }
@@ -98,6 +121,10 @@ class Extensions extends \Twig_Extension
             new \Twig_SimpleFilter(
                 'formatBytes',
                 array(self::class, 'formatBytes')
+            ),
+            new \Twig\TwigFilter(
+                'maintenanceModeColor',
+                [$this, 'maintenanceModeColor']
             ),
         );
     }
@@ -184,10 +211,48 @@ class Extensions extends \Twig_Extension
             if ($drupal) {
                 drupal_add_library('system', $libraryName);
             } else {
-                $return .= "$libraryName\n";
+                $return .= "<!-- drupal_library:$libraryName -->";
             }
         }
         return $return;
+    }
+
+    /**
+     * Is the system in maintenance mode.
+     *
+     * @return boolean If in maintenance mode.
+     */
+    public function isMaintenanceMode() : bool
+    {
+        return $this->maintenanceMode->isMaintenanceMode();
+    }
+
+    /**
+     * Gets the maintenance text.
+     *
+     * @return string|null Returns maintenance mode banner text.
+     */
+    public function getMaintenanceModeText() : ? string
+    {
+        return $this->maintenanceMode->getMaintenanceModeText();
+    }
+
+    /**
+     * Gets maintenance mode color.
+     *
+     * @param string $color The color text.
+     *
+     * @return string|null Returns maintenance mode banner color.
+     */
+    public function maintenanceModeColor(string $color = null) : ? string
+    {
+        $bannerColor = $this->maintenanceMode->getMaintenanceModeColor();
+
+        if (empty($bannerColor)) {
+            $bannerColor = $color;
+        }
+
+        return $bannerColor;
     }
 
     /**

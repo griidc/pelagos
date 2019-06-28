@@ -6,7 +6,8 @@ imports:
 
 framework:
     assets:
-        base_path: "/%pelagos.prefix%"
+        base_path: ~
+
 
 twig:
     globals:

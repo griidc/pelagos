@@ -1,5 +1,5 @@
 {
-    "name": "Pelagos",
+    "name": "griidc/pelagos",
     "license": "BSD",
     "type": "project",
     "minimum-stability": "dev",
@@ -43,21 +43,24 @@
         "php-amqplib/rabbitmq-bundle": "^1.9",
         "jsor/doctrine-postgis": "^1.1",
         "opensoft/doctrine-postgres-types": "^1.2",
-        "hwi/oauth-bundle": "^0.6",
         "phobetor/rabbitmq-supervisor-bundle": "^1.5",
         "friendsofsymfony/elastica-bundle": "^5.0",
         "phayes/geophp": "^1.2",
         "doctrine/doctrine-migrations-bundle": "^1.2",
         "egulias/email-validator": "^1.2",
+        "symfony/webpack-encore-bundle": "^1.1",
         "php-http/httplug-bundle": "^1.10",
         "php-http/guzzle6-adapter": "^1.1",
         "guzzlehttp/guzzle": "~6.0",
-        "kriswallsmith/buzz": "0.16.*"
+        "kriswallsmith/buzz": "0.16.*",
+        "hylianshield/base32-crockford": "^1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
-        "symfony/phpunit-bridge": "^2.7",
-        "mockery/mockery": "dev-master"
+        "mockery/mockery": "dev-master",
+        "symfony/web-server-bundle": "3.4.*",
+        "squizlabs/php_codesniffer": "2.7.*",
+        "phpunit/phpunit": "7.4.*"
     },
     "scripts": {
         "post-install-cmd": [

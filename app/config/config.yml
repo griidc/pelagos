@@ -20,6 +20,7 @@ parameters:
 framework:
     #esi:             ~
     #translator:      { fallbacks: ["%locale%"] }
+    #csrf_protection: ~
     secret:          "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
@@ -39,7 +40,8 @@ framework:
         storage_id: session.storage.native
     fragments:       ~
     http_method_override: true
-    assets: ~
+    assets:
+        json_manifest_path: '%kernel.project_dir%/web/build/manifest.json'
 
 # Twig Configuration
 twig:
@@ -51,6 +53,7 @@ twig:
         "%kernel.root_dir%/../src/Pelagos/Bundle/AppBundle/Resources/views/Email": Email
     globals:
         google_maps_api_key: "%google_maps_api_key%"
+        google_analytics_id: "%google_analytics_id%"
         pelagos_readonly_message: "%pelagos_readonly_message%"
 
 # Doctrine Configuration
@@ -221,16 +224,6 @@ old_sound_rabbit_mq:
                     - 'update'
                     - 'delete'
 
-hwi_oauth:
-    firewall_names: [main]
-    resource_owners:
-        google:
-            type:           google
-            client_id:      "%google_oauth_client_id%"
-            client_secret:  "%google_oauth_client_secret%"
-            scope:          "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
-    use_referer: true
-
 rabbit_mq_supervisor:
     supervisor_instance_identifier: "%pelagos_name%"
     commands:
@@ -351,13 +344,3 @@ doctrine_migrations:
     namespace: Pelagos\Migrations
     table_name: migration_versions
     name: Pelagos Migrations
-
-httplug:
-    plugins:
-        logger: ~
-    clients:
-        acme:
-            factory: 'httplug.factory.guzzle6'
-            plugins: ['httplug.plugin.logger']
-            config:
-                timeout: 2

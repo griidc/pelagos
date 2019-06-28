@@ -1,17 +1,9 @@
 {% extends "PelagosAppBundle::layout.html.twig" %}
 
-{% block head %}
-    {{
-        add_library (
-            [
-                'ui.datepicker',
-                'ui.dialog',
-                'ui.tabs',
-                'ui.widget',
-                'ui.autocomplete'
-            ]
-        )
-    }}
+{%block stylesheets %}
+    {{ parent() }}
+
+    <link rel="stylesheet" href="{{ asset('build/layout.css') }}">
 
     {{
         add_css (
@@ -26,10 +18,17 @@
         {{ add_css(asset_url) }}
     {% endstylesheets  %}
 
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script src="{{ asset('build/layout.js') }}"></script>
+
     {{
         add_js(
             [
-                '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js',
                 '//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js',
                 '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js',
                 '//cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.min.js',
@@ -38,15 +37,11 @@
         )
     }}
 
-    {% javascripts '@PelagosAppBundle/Resources/public/js/common.js' %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
-
-    {% javascripts '@PelagosAppBundle/Resources/public/js/entityForm.js' %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
-
-    {% javascripts '@PelagosAppBundle/Resources/public/js/ui.js' %}
+    {% javascripts
+        '@PelagosAppBundle/Resources/public/js/common.js'
+        '@PelagosAppBundle/Resources/public/js/entityForm.js'
+        '@PelagosAppBundle/Resources/public/js/ui.js'
+    %}
         {{ add_js(asset_url) }}
     {% endjavascripts %}
 {% endblock %}

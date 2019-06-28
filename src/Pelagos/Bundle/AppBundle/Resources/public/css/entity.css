@@ -1,6 +1,6 @@
 /*select 2 overrides */
 .select2-selection,.select2-container {
-    font-family: sans-serif;
+
     font-size: 100%;
     -webkit-transition: border-color 200ms ease-in 0ms;
        -moz-transition: border-color 200ms ease-in 0ms;
@@ -35,11 +35,6 @@
 
 .hiddenFormField {
     display:none;
-}
-
-/* to counteract user-agent font sizing */
-input, textarea, keygen, select, button {
-    font-size: 100%;
 }
 
 select, input{
