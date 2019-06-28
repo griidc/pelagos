@@ -1,18 +1,13 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
-
+{% block title %}{{ dataset.udi }}{% endblock %}
 {% block head %}
     {{ parent() }}
 
-    {{
-        add_library (
-            [
-                'ui.dialog',
-                'ui.tabs',
-                'ui.widget',
-                'jquery.cookie',
-            ]
-        )
-    }}
+    {% if dataset.isAvailable %}
+        {% include 'PelagosAppBundle:Dataland:metadata.markup.twig' %}
+    {% else %}
+        <meta name="robots" content="noindex" />
+    {% endif %}
 
     {% stylesheets
         '@PelagosAppBundle/Resources/public/css/dataland-details.css'

@@ -1,8 +1,4 @@
-parameters:
-    hwi_oauth.user.provider.class: Pelagos\Bundle\AppBundle\Security\OAuthUserProvider
-
 security:
-
     # leave session alone
     session_fixation_strategy: none
 
@@ -13,8 +9,6 @@ security:
                 property: userId
         person_token:
             id: person_token_user_provider
-        hwi_outh:
-            id: hwi_oauth.user.provider
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -27,9 +21,6 @@ security:
             stateless: true
             # allow anonymous access
             anonymous: ~
-            # use REMOTE_USER environment variable if set
-            remote_user:
-                provider: pelagos_account
             # use a Person Token, if present
             simple_preauth:
                 authenticator: person_token_authenticator
@@ -39,16 +30,19 @@ security:
             logout_on_user_change: true
             # allow anonymous access
             anonymous: ~
+            #guard authentication
+            guard:
+               authenticators:
+                   - pelagos.security.login_form_authenticator
+               provider: pelagos_account
+            #logout
+            logout:
+                path: security_logout
+                target: pelagos_homepage
+                handlers: [pelagos.logout_handler]
             # use REMOTE_USER environment variable if set
             remote_user:
                 provider: pelagos_account
-            oauth:
-                provider: pelagos_account
-                resource_owners:
-                    google:     check_google
-                login_path:     /
-                oauth_user_provider:
-                    oauth:
 
 services:
     super_user_voter:

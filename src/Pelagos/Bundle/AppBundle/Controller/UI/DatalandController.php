@@ -56,7 +56,7 @@ class DatalandController extends UIController
 
         $downloadCount = null;
         // Remotely hosted datasets are normally also hosted locally anyway, so including.
-        if ($this->isDatasetAvailable($dataset)) {
+        if ($dataset->isAvailable()) {
             $qb = $this->get('doctrine')->getManager()->createQueryBuilder();
             $qb->select($qb->expr()->count('a'))
                 ->from('\Pelagos\Entity\LogActionItem', 'a')
@@ -68,25 +68,6 @@ class DatalandController extends UIController
                 ->setParameter(3, 'File Download');
             $query = $qb->getQuery();
             $downloadCount = $query->getSingleScalarResult();
-        }
-
-        if ($this->isDatasetAvailable($dataset)) {
-            $data = array(
-                '#type' => 'markup',
-                '#markup' => $this->render(
-                    'PelagosAppBundle:Dataland:metadata.markup.twig',
-                    array(
-                        'dataset' => $dataset,
-                    )
-                )->getContent()
-            );
-            drupal_add_html_head($data, 'json-ld');
-        } else {
-            $data = array(
-                '#type' => 'markup',
-                '#markup' => '<meta name="robots" content="noindex" />' . "\n",
-            );
-            drupal_add_html_head($data, 'meta');
         }
 
         return $this->render(
@@ -230,23 +211,5 @@ class DatalandController extends UIController
             }
         }
         return $boundingBoxArray;
-    }
-
-    /**
-     * Checks if the dataset is in available status.
-     *
-     * @param Dataset $dataset The dataset for which the availability is checked.
-     *
-     * @return boolean
-     */
-    private function isDatasetAvailable(Dataset $dataset): bool
-    {
-        return in_array(
-            $dataset->getAvailabilityStatus(),
-            array(
-                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
-                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED
-            )
-        );
     }
 }

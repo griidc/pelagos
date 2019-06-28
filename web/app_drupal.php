@@ -19,5 +19,5 @@ $kernel->loadClassCache();
 $request = Request::createFromGlobals();
 $response = $kernel->handle($request);
 Request::setTrustedProxies(['~']);
-
-require_once __DIR__ . '/../app/drupal_send_and_terminate.php';
+$response->send();
+$kernel->terminate($request, $response);

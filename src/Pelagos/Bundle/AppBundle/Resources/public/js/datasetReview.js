@@ -38,6 +38,10 @@ $(document).ready(function(){
         return this.optional(element) || ((Date.parse(value)) && regPattern.test(value));
     });
 
+    jQuery.validator.addMethod("validURL", function(value, element) {
+        return (value === "") || this.optional(element) || /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})).?)(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(value);
+    }, "Please enter a valid URL.");
+
     var remoteURL = Routing.generate("pelagos_api_dataset_submission_validate_url", { id: $("form[datasetsubmission]").attr("datasetsubmission") });
 
     regForm.validate({
@@ -46,7 +50,10 @@ $(document).ready(function(){
             temporalExtentBeginPosition: "trueISODate",
             temporalExtentEndPosition: "trueISODate",
             erddapUrl: {
-                remote: remoteURL
+                "validURL" : true,
+                remote: {
+                    url: remoteURL
+                }
             }
         },
         messages: {
@@ -55,10 +62,8 @@ $(document).ready(function(){
             temporalExtentEndPosition: "End Date is not a valid ISO date",
         },
         ignore: ".ignore,.prototype",
-        submitHandler: function(form) {
+        submitHandler: function (form) {
             if ($(".ignore").valid()) {
-                formHash = regForm.serialize();
-                regForm.prop("unsavedChanges", false);
                 form.submit();
             }
         }
@@ -651,7 +656,7 @@ $(document).ready(function(){
 
                     //auto-generate/clear distribution fields
                     if ("GRIIDC" === data.organizationName) {
-                        $(".distributionurl").val("https://data.gulfresearchinitiative.org/data/" + $("#regForm").attr("udi"));
+                        $(".distributionurl").val(Routing.generate("pelagos_homepage") + "/data/" + $("#regForm").attr("udi"));
                     }
               }
         });

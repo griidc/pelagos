@@ -1,12 +1,12 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
-
+{% block title %}Search GRIIDC Data{% endblock %}
 {% block head %}
     {{ parent() }}
 
     {{
-        add_library (
+        add_css (
             [
-                'jquery.cookie',
+                '//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/themes/default/style.min.css',
             ]
         )
     }}
@@ -25,6 +25,7 @@
     {{ 
         add_js(
             [
+                '//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/jstree.min.js',
                 '//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',
                 '//maps.google.com/maps/api/js?v=3&key=' ~ google_maps_api_key,
             ]
