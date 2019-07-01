@@ -5,7 +5,7 @@
     <br>
     The password for your GRIIDC account will expire on {{ expireTimeStamp | date("F jS \\a\\t g:i a T") }}. Please click on the link below to change your password before this time.<br>
     <br>
-    <a href="https://{{ hostname }}{{ path('pelagos_app_ui_account_changepassword') }}">https://{{ hostname }}{{ path('pelagos_app_ui_account_changepassword') }}</a><br>
+    <a href="{{ url('pelagos_app_ui_account_changepassword') }}">{{ url('pelagos_app_ui_account_changepassword') }}</a><br>
     <br>
     Thank you,<br>
     <br>
@@ -19,7 +19,7 @@ Dear {{ person.getFirstName }} {{ person.getLastName }},
 
 The password for your GRIIDC account will expire on {{ expireTimeStamp | date("F jS \\a\\t g:ia T") }}. Please use the link below to change your password before this time.
 
-https://{{ hostname }}{{ path('pelagos_app_ui_account_changepassword') }}
+    {{ url('pelagos_app_ui_account_changepassword') }}
 
 Thank you,
 
