@@ -314,7 +314,7 @@ class DoiComparisonCommand extends ContainerAwareCommand
             );
 
             $doiStatus = $this->getDoiStatus($doiElements['state']);
-            if ($doiStatus === DOI::STATUS_UNAVAILABLE) {
+            if ($doiStatus === DOI::STATE_REGISTERED) {
                 if ($this->isUrlValid($doiElements['url'], 'invalidDOI') === false) {
                     // Error message
                     $this->outOfSyncDoi[$doiElements['doi']] = array(
@@ -343,7 +343,7 @@ class DoiComparisonCommand extends ContainerAwareCommand
 
         if ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_NONE and
             $dataset->getIdentifiedStatus() === DIF::STATUS_APPROVED) {
-            if ($doiStatus === DOI::STATUS_RESERVED || $doiStatus === DOI::STATUS_UNAVAILABLE) {
+            if ($doiStatus === DOI::STATE_DRAFT || $doiStatus === DOI::STATE_REGISTERED) {
                 if (!$this->isUrlValid($doiElements['url'], 'tombstone')) {
                     // Error message
                     $this->outOfSyncDoi[$doiElements['doi']] = array(
@@ -353,7 +353,7 @@ class DoiComparisonCommand extends ContainerAwareCommand
                 }
             }
         } elseif ($dataset->getDatasetStatus() !== Dataset::DATASET_STATUS_NONE) {
-            if ($doiStatus === DOI::STATUS_PUBLIC) {
+            if ($doiStatus === DOI::STATE_FINDABLE) {
                 if ($dataset->isAvailable()) {
                     if (!$this->isUrlValid($doiElements['url'], 'data')) {
                         // Error message
@@ -389,13 +389,13 @@ class DoiComparisonCommand extends ContainerAwareCommand
     {
         switch (true) {
             case ($state === self::DOI_DRAFT):
-                return DOI::STATUS_RESERVED;
+                return DOI::STATE_DRAFT;
                 break;
             case ($state === self::DOI_FINDABLE):
-                return DOI::STATUS_PUBLIC;
+                return DOI::STATE_FINDABLE;
                 break;
             case ($state === self::DOI_REGISTERED):
-                return DOI::STATUS_UNAVAILABLE;
+                return DOI::STATE_REGISTERED;
                 break;
         }
     }
