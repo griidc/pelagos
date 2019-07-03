@@ -96,9 +96,9 @@
                                     Logged in as: {{ app.user.username }}
                                 </a>
                                 |
-                                <a href="{{ path('security_logout') }}">  Logout</a>
+                                <a href="{{ path('security_logout') }}">  Log out</a>
                                 {% else %}
-                            <a href="{{ path('security_login', {destination: app.request.uri}) }}">Login</a>
+                            <a href="{{ path('security_login', {destination: app.request.uri}) }}">Log in</a>
                             {% endif %}
                             </div>
                         </div>
