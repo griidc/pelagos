@@ -82,7 +82,7 @@ class DatasetIndex
                 $text = trim(preg_replace($udiRegEx, '', $text));
                 foreach ($matches[1] as $udi) {
                     // Replacing the 11th position to ":"
-                    $udi = substr_replace($udi, ':',11, 1);
+                    $udi = substr_replace($udi, ':', 11, 1);
                     $textQuery->addShould(
                         new Query\MatchPhrase('udi', $udi)
                     );
