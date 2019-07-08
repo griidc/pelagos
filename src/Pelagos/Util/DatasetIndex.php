@@ -77,7 +77,7 @@ class DatasetIndex
 
         if (!empty($text)) {
             $textQuery = new Query\BoolQuery();
-            $udiRegEx = '/\b([a-zA-Z\d]{2}\.x\d\d\d\.\d\d\d[:.]\d\d\d\d)\b/';
+            $udiRegEx = '/\b([A-Z\d]{2}\.x\d\d\d\.\d\d\d[:.]\d\d\d\d)\b/i';
             if (preg_match_all($udiRegEx, $text, $matches)) {
                 $text = trim(preg_replace($udiRegEx, '', $text));
                 foreach ($matches[1] as $udi) {
