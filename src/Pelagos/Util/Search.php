@@ -311,7 +311,6 @@ class Search
                 $datasetSubmissionQuery->setQuery($datasetSubmissionBoolQuery);
                 $fieldsBoolQuery->addShould($datasetSubmissionQuery);
             }
-
         } else {
             $fieldsBoolQuery->addShould($this->getTitleQuery($queryTerm));
             $fieldsBoolQuery->addShould($this->getAbstractQuery($queryTerm));
