@@ -38,14 +38,24 @@ class Search
     protected $entityManager;
 
     /**
-     * Elastic index mapping.
+     * Elastic index mapping for title.
      */
-    const ELASTIC_INDEX_MAPPING = array(
-        'title' => 'title',
-        'abstract' => 'abstract',
-        'dsubAuthors' => 'datasetSubmission.authors',
-        'dsubThemeKeywords' => 'datasetSubmission.themeKeywords'
-    );
+    const ELASTIC_INDEX_MAPPING_TITLE = 'title';
+
+    /**
+     * Elastic index mapping for abstract.
+     */
+    const ELASTIC_INDEX_MAPPING_ABSTRACT = 'abstract';
+
+    /**
+     * Elastic index mapping for authors.
+     */
+    const ELASTIC_INDEX_MAPPING_AUTHORS = 'datasetSubmission.authors';
+
+    /**
+     * Elastic index mapping for theme keywords.
+     */
+    const ELASTIC_INDEX_MAPPING_THEME_KEYWORDS = 'datasetSubmission.themeKeywords';
 
     /**
      * Constructor.
@@ -94,6 +104,7 @@ class Search
     {
         $page = ($requestTerms['page']) ? $requestTerms['page'] : 1;
         $queryTerm = $requestTerms['query'];
+        $specificField = $requestTerms['field'];
 
         $mainQuery = new Query();
 
@@ -104,7 +115,7 @@ class Search
         if (preg_match('/"/', $queryTerm)) {
             $subMainQuery->addMust($this->getExactMatchQuery($queryTerm));
         } else {
-            $subMainQuery->addMust($this->getFieldsQuery($queryTerm));
+            $subMainQuery->addMust($this->getFieldsQuery($queryTerm, $specificField));
         }
 
         // Add facet filters
@@ -270,27 +281,15 @@ class Search
     /**
      * Get Bool query for fields.
      *
-     * @param string $queryTerm Query term that needs to be searched upon.
+     * @param string $queryTerm     Query term that needs to be searched upon.
+     * @param string $specificField Query a specific field for data.
      *
      * @return Query\BoolQuery
      */
-    private function getFieldsQuery(string $queryTerm): Query\BoolQuery
+    private function getFieldsQuery(string $queryTerm, string $specificField = null): Query\BoolQuery
     {
         // Bool query to add all fields
         $fieldsBoolQuery = new Query\BoolQuery();
-
-        // Add title field to the query
-        $titleQuery = new Query\Match();
-        $titleQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING['title'], $queryTerm);
-        $titleQuery->setFieldOperator(self::ELASTIC_INDEX_MAPPING['title'], 'and');
-        $titleQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING['title'], 2);
-        $fieldsBoolQuery->addShould($titleQuery);
-
-        // Add title field to the query
-        $abstractQuery = new Query\Match();
-        $abstractQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING['abstract'], $queryTerm);
-        $abstractQuery->setFieldOperator(self::ELASTIC_INDEX_MAPPING['abstract'], 'and');
-        $fieldsBoolQuery->addShould($abstractQuery);
 
         // Create nested for datasetSubmission fields
         $datasetSubmissionQuery = new Query\Nested();
@@ -298,23 +297,29 @@ class Search
 
         // Bool query to add fields in datasetSubmission
         $datasetSubmissionBoolQuery = new Query\BoolQuery();
+        if ($specificField) {
+            if ($specificField === self::ELASTIC_INDEX_MAPPING_TITLE) {
+                $fieldsBoolQuery->addShould($this->getTitleQuery($queryTerm));
+            } elseif ($specificField === self::ELASTIC_INDEX_MAPPING_ABSTRACT) {
+                $fieldsBoolQuery->addShould($this->getAbstractQuery($queryTerm));
+            } elseif ($specificField === self::ELASTIC_INDEX_MAPPING_AUTHORS) {
+                $datasetSubmissionBoolQuery->addShould($this->getDSubAuthorQuery($queryTerm));
+                $datasetSubmissionQuery->setQuery($datasetSubmissionBoolQuery);
+                $fieldsBoolQuery->addShould($datasetSubmissionQuery);
+            } elseif ($specificField === self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS) {
+                $datasetSubmissionBoolQuery->addShould($this->getThemeKeywordsQuery($queryTerm));
+                $datasetSubmissionQuery->setQuery($datasetSubmissionBoolQuery);
+                $fieldsBoolQuery->addShould($datasetSubmissionQuery);
+            }
 
-        $themeKeywordsQuery = new Query\Match();
-        $themeKeywordsQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING['dsubThemeKeywords'], $queryTerm);
-        $themeKeywordsQuery->setFieldOperator(self::ELASTIC_INDEX_MAPPING['dsubThemeKeywords'], 'and');
-        $themeKeywordsQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING['dsubThemeKeywords'], 2);
-        $datasetSubmissionBoolQuery->addShould($themeKeywordsQuery);
-
-        // Add datasetSubmission author field to the query
-        $authorQuery = new Query\Match();
-        $authorQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING['dsubAuthors'], $queryTerm);
-        $authorQuery->setFieldOperator(self::ELASTIC_INDEX_MAPPING['dsubAuthors'], 'and');
-        $authorQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING['dsubAuthors'], 2);
-        $datasetSubmissionBoolQuery->addShould($authorQuery);
-
-        $datasetSubmissionQuery->setQuery($datasetSubmissionBoolQuery);
-
-        $fieldsBoolQuery->addShould($datasetSubmissionQuery);
+        } else {
+            $fieldsBoolQuery->addShould($this->getTitleQuery($queryTerm));
+            $fieldsBoolQuery->addShould($this->getAbstractQuery($queryTerm));
+            $datasetSubmissionBoolQuery->addShould($this->getThemeKeywordsQuery($queryTerm));
+            $datasetSubmissionBoolQuery->addShould($this->getDSubAuthorQuery($queryTerm));
+            $datasetSubmissionQuery->setQuery($datasetSubmissionBoolQuery);
+            $fieldsBoolQuery->addShould($datasetSubmissionQuery);
+        }
 
         return $fieldsBoolQuery;
     }
@@ -437,5 +442,74 @@ class Search
         $exactMatchQuery->setDefaultOperator('and');
 
         return $exactMatchQuery;
+    }
+
+    /**
+     * Get the Title query.
+     *
+     * @param string $queryTerm Query term that needs to be searched upon.
+     *
+     * @return Query\Match
+     */
+    private function getTitleQuery(string $queryTerm): Query\Match
+    {
+        // Add title field to the query
+        $titleQuery = new Query\Match();
+        $titleQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_TITLE, $queryTerm);
+        $titleQuery->setFieldOperator(self::ELASTIC_INDEX_MAPPING_TITLE, 'and');
+        $titleQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_TITLE, 2);
+
+        return $titleQuery;
+    }
+
+    /**
+     * Get the Abstract query.
+     *
+     * @param string $queryTerm Query term that needs to be searched upon.
+     *
+     * @return Query\Match
+     */
+    private function getAbstractQuery(string $queryTerm): Query\Match
+    {
+        // Add abstract field to the query
+        $abstractQuery = new Query\Match();
+        $abstractQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_ABSTRACT, $queryTerm);
+        $abstractQuery->setFieldOperator(self::ELASTIC_INDEX_MAPPING_ABSTRACT, 'and');
+
+        return $abstractQuery;
+    }
+
+    /**
+     * Get the Theme keywords query.
+     *
+     * @param string $queryTerm Query term that needs to be searched upon.
+     *
+     * @return Query\Match
+     */
+    private function getThemeKeywordsQuery(string $queryTerm): Query\Match
+    {
+        // Add theme keywords to the query
+        $themeKeywordsQuery = new Query\Match();
+        $themeKeywordsQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS, $queryTerm);
+        $themeKeywordsQuery->setFieldOperator(self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS, 'and');
+        $themeKeywordsQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS, 2);
+        return $themeKeywordsQuery;
+    }
+
+    /**
+     * Get the Dataset Submission Author query.
+     *
+     * @param string $queryTerm Query term that needs to be searched upon.
+     *
+     * @return Query\Match
+     */
+    private function getDSubAuthorQuery(string $queryTerm): Query\Match
+    {
+        // Add datasetSubmission author field to the query
+        $authorQuery = new Query\Match();
+        $authorQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_AUTHORS, $queryTerm);
+        $authorQuery->setFieldOperator(self::ELASTIC_INDEX_MAPPING_AUTHORS, 'and');
+        $authorQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_AUTHORS, 2);
+        return $authorQuery;
     }
 }

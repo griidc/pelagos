@@ -64,6 +64,7 @@ class SearchPageController extends UIController
         return array(
             'query' => $request->get('query'),
             'page' => $request->get('page'),
+            'field' => $request->get('field'),
             'options' => array(
                 'rgId' => ($request->get('resGrp')) ? str_replace('rg_', '', $request->get('resGrp')) : null,
                 'funOrgId' => ($request->get('fundOrg')) ? str_replace('fo_', '', $request->get('fundOrg')) : null

@@ -1,6 +1,15 @@
 <form id="searchForm" name="searchForm" action="{{ path('pelagos_app_ui_searchpage_default') }}" method="get" class="search-form">
     <div id="custom-search-input">
-        <div class="col-md-4"></div>
+        <div class="col-md-2"></div>
+        <div class="col-md-2">
+            <select class="input-group form-control" name="field" id="field">
+                <option disabled selected value> -- All -- </option>
+                <option value={{ constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_TITLE') }} >Title</option>
+                <option value={{ constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_ABSTRACT') }}>Abstract</option>
+                <option value={{ constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_AUTHORS') }}>Author</option>
+                <option value={{ constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS') }}>Theme Keywords</option>
+            </select>
+        </div>
         <div class="input-group col-md-4">
             <input type="search" id="searchBox" name="query" class="search-query form-control" placeholder="Search..."
                    value = "{{ query|default }}">
