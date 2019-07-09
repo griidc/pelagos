@@ -64,7 +64,7 @@ class DoiTest extends TestCase
     public function testGetStatus()
     {
         $this->assertEquals(
-            DOI::STATUS_RESERVED,
+            DOI::STATE_DRAFT,
             $this->doi->getStatus()
         );
     }

@@ -1,14 +1,5 @@
 $(document).ready(function()
 {
-    // If cookie is set remove it and initiate download
-    if (typeof $.cookie("dl_attempt_cookie") != "undefined") {
-        var dl_cookie = $.cookie("dl_attempt_cookie");
-        $.cookie("dl_attempt_cookie", null, { path: "/", domain: location.hostname });
-        if (dl_cookie != null) {
-            console.log(dl_cookie);
-            startDownload(dl_cookie);
-        }
-    }
 });
 
 function startDownload(id)
@@ -26,20 +17,16 @@ function startDownload(id)
 
 function initializeDownload(id)
 {
-    if ($("#download_splash #pre_login").length) {
-        $.cookie("dl_attempt_cookie", id, { expires: 1, path: "/", domain: location.hostname });
-    } else {
-        $("#download_splash .dl_button[title]").qtip({
-            position: {
-                viewport: $(window),
-                my: "bottom left",  // position of arrow
-                at: "top right"     // position relative to selector
-            },
-            style: {
-                classes: "qtip-shadow qtip-tipped customqtip"
-            }
-        });
-    }
+    $("#download_splash .dl_button[title]").qtip({
+        position: {
+            viewport: $(window),
+            my: "bottom left",  // position of arrow
+            at: "top right"     // position relative to selector
+        },
+        style: {
+            classes: "qtip-shadow qtip-tipped customqtip"
+        }
+    });
     $("#download_splash .close_button").click(function () {
         closeSplashScreen();
     });

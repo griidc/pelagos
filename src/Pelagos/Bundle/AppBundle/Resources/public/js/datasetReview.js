@@ -64,8 +64,6 @@ $(document).ready(function(){
         ignore: ".ignore,.prototype",
         submitHandler: function (form) {
             if ($(".ignore").valid()) {
-                formHash = regForm.serialize();
-                regForm.prop("unsavedChanges", false);
                 form.submit();
             }
         }
@@ -658,7 +656,7 @@ $(document).ready(function(){
 
                     //auto-generate/clear distribution fields
                     if ("GRIIDC" === data.organizationName) {
-                        $(".distributionurl").val("https://data.gulfresearchinitiative.org/data/" + $("#regForm").attr("udi"));
+                        $(".distributionurl").val(Routing.generate("pelagos_homepage") + "/data/" + $("#regForm").attr("udi"));
                     }
               }
         });

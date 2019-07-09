@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\RouterInterface;
@@ -16,6 +17,8 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
+use Symfony\Component\Security\Http\Util\TargetPathTrait;
+
 
 use Pelagos\Bundle\AppBundle\Form\LoginForm;
 
@@ -30,6 +33,8 @@ use Pelagos\Entity\Person;
  */
 class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 {
+    use TargetPathTrait;
+
     /**
      * An instance of FormFactory.
      *
@@ -184,6 +189,55 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     protected function getDefaultSuccessRedirectUrl()
     {
         return $this->router->generate('pelagos_homepage');
+    }
+
+    /**
+     * Set a cookie and return the response to the target page.
+     *
+     * @param Request        $request     A Symfony Request, req by interface.
+     * @param TokenInterface $token       A Symfony user token, req by interface.
+     * @param string         $providerKey The name of the used firewall key.
+     *
+     * @return Response The response or null to continue request.
+     */
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    {
+        $destination = $request->query->get('destination');
+
+        $session = $request->getSession();
+        $targetPath = $this->getTargetPath($session, $providerKey);
+
+        if (!isset($targetPath) and !empty($destination)) {
+            $targetPath = $destination;
+        } elseif (!isset($targetPath)) {
+            $targetPath = $this->router->generate('pelagos_homepage');
+        }
+
+        $response = new RedirectResponse($targetPath);
+
+        $cookie = new Cookie('GRIIDC_USERNAME', $token->getUser()->getUserId());
+        $response->headers->setCookie($cookie);
+
+        return $response;
+    }
+
+    /**
+     * Return to login page and add destination for redirect.
+     *
+     * @param Request                 $request   A Symfony Request, req by interface.
+     * @param AuthenticationException $exception The exception thrown.
+     *
+     * @return Response The response or null to continue request.
+     */
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    {
+        $destination = $request->query->get('destination');
+        $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
+        $url = $this->router->generate(
+            'security_login',
+            ['destination' => $destination]
+        );
+        return new RedirectResponse($url);
     }
 
     /**
