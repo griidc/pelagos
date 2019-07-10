@@ -13,7 +13,7 @@ class DatasetRepository extends EntityRepository
     /**
      * Count the number of registered Datasets.
      *
-     * @return integer Size of data in bytes.
+     * @return integer
      */
     public function countRegistered()
     {
@@ -28,7 +28,7 @@ class DatasetRepository extends EntityRepository
     /**
      * Sum of all dataset file sizes.
      *
-     * @return integer
+     * @return integer Size of data in bytes.
      */
     public function totalDatasetSize()
     {
