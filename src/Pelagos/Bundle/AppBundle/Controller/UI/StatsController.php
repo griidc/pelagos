@@ -60,10 +60,13 @@ class StatsController extends UIController
             ->select($queryBuilder->expr()->count('researchGroup.id'))
             ->getQuery()->getSingleScalarResult();
 
+        $datasets = $entityManager->getRepository(Dataset::class);
+
         return $this->render(
             'PelagosAppBundle:Stats:index.html.twig',
             $twigData = array(
-                'datasets' => $entityManager->getRepository(Dataset::class)->countRegistered(),
+                'datasets' => $datasets->countRegistered(),
+                'totalsize' => $datasets->totalDatasetSize(),
                 'people' => $peopleCount,
                 'researchGroups' => $researchGroupCount,
             )

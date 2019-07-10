@@ -13,12 +13,28 @@ class DatasetRepository extends EntityRepository
     /**
      * Count the number of registered Datasets.
      *
-     * @return integer
+     * @return integer Size of data in bytes.
      */
     public function countRegistered()
     {
         return $this->createQueryBuilder('dataset')
             ->select('COUNT(dataset)')
+            ->where('dataset.datasetSubmissionStatus = :datasetSubmissionStatus')
+            ->setParameter('datasetSubmissionStatus', DatasetSubmission::STATUS_COMPLETE)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * Sum of all dataset file sizes.
+     *
+     * @return integer
+     */
+    public function totalDatasetSize()
+    {
+        return $this->createQueryBuilder('dataset')
+            ->select('SUM(datasetSubmission.datasetFileSize)')
+            ->join('dataset.datasetSubmission', 'datasetSubmission')
             ->where('dataset.datasetSubmissionStatus = :datasetSubmissionStatus')
             ->setParameter('datasetSubmissionStatus', DatasetSubmission::STATUS_COMPLETE)
             ->getQuery()
