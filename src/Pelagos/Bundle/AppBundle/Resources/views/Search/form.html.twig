@@ -3,11 +3,42 @@
         <div class="col-md-2"></div>
         <div class="col-md-2">
             <select class="input-group form-control" name="field" id="field">
-                <option disabled selected value> -- All -- </option>
-                <option value={{ constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_TITLE') }} >Title</option>
-                <option value={{ constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_ABSTRACT') }}>Abstract</option>
-                <option value={{ constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_AUTHORS') }}>Author</option>
-                <option value={{ constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS') }}>Theme Keywords</option>
+                    <option
+                            disabled
+                            {% if field is empty %}
+                                selected
+                            {% endif %}
+                            value>
+                        -- All --
+                    </option>
+                    <option
+                            value={{ constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_TITLE') }}
+                            {% if field is defined and field is not empty and field == constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_TITLE') %}
+                            selected
+                            {% endif %}>
+                        Title
+                    </option>
+                    <option
+                            value={{ constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_ABSTRACT') }}
+                             {% if field is defined and field is not empty and field == constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_ABSTRACT')%}
+                            selected
+                            {% endif %}>
+                        Abstract
+                    </option>
+                    <option
+                            value={{ constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_AUTHORS') }}
+                             {% if field is defined and field is not empty and field == constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_AUTHORS')%}
+                            selected
+                            {% endif %}>
+                        Author
+                    </option>
+                    <option
+                            value={{ constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS') }}
+                             {% if field is defined and field is not empty and field == constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS')%}
+                            selected
+                            {% endif %}>
+                        Theme Keywords
+                    </option>
             </select>
         </div>
         <div class="input-group col-md-4">

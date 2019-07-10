@@ -44,6 +44,7 @@ class SearchPageController extends UIController
 
         return $this->render('PelagosAppBundle:Search:default.html.twig', array(
             'query' => $requestParams['query'],
+            'field' => $requestParams['field'],
             'results' => $results,
             'count' => $count,
             'page' => $requestParams['page'],
