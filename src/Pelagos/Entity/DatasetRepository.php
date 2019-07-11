@@ -33,7 +33,7 @@ class DatasetRepository extends EntityRepository
     public function totalDatasetSize()
     {
         return $this->createQueryBuilder('dataset')
-            ->select('SUM(datasetSubmission.datasetFileSize)')
+            ->select('SUM(COALESCE(datasetSubmission.datasetFileColdStorageArchiveSize,datasetSubmission.datasetFileSize))')
             ->join('dataset.datasetSubmission', 'datasetSubmission')
             ->where('dataset.datasetSubmissionStatus = :datasetSubmissionStatus')
             ->setParameter('datasetSubmissionStatus', DatasetSubmission::STATUS_COMPLETE)
