@@ -26,6 +26,22 @@ class DatasetRepository extends EntityRepository
     }
 
     /**
+     * Sum of all dataset file sizes.
+     *
+     * @return integer Size of data in bytes.
+     */
+    public function totalDatasetSize() : int
+    {
+        return $this->createQueryBuilder('dataset')
+            ->select('SUM(COALESCE(datasetSubmission.datasetFileColdStorageArchiveSize,datasetSubmission.datasetFileSize))')
+            ->join('dataset.datasetSubmission', 'datasetSubmission')
+            ->where('dataset.datasetSubmissionStatus = :datasetSubmissionStatus')
+            ->setParameter('datasetSubmissionStatus', DatasetSubmission::STATUS_COMPLETE)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
      * Get datasets with properties matching any values specified by $criteria filtered by text and/or geo filters.
      *
      * @param array   $criteria   An array of criteria.
