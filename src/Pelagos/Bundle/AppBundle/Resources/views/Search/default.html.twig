@@ -5,8 +5,9 @@
 
     {% stylesheets
         '@PelagosAppBundle/Resources/public/css/search.css' %}
-        {{ add_css(asset_url) }}
+        <link rel="stylesheet" href="{{ asset_url }}">
     {% endstylesheets %}
+
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('build/layout.css') }}">
 {%endblock stylesheets  %}
@@ -22,7 +23,7 @@
         '@PelagosAppBundle/Resources/public/js/search.js'
         '@FOSJsRoutingBundle/Resources/public/js/router.js'
     %}
-        {{ add_js(asset_url) }}
+        <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
 
     {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
