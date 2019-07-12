@@ -48,6 +48,11 @@ class StatsController extends UIController
     /**
      * Get Statistics Data by reference.
      *
+     * @param integer $totalDatasets      The total count of datasets.
+     * @param string  $totalSize          The total size of data.
+     * @param integer $peopleCount        The total count of people.
+     * @param integer $researchGroupCount The total count of research groups.
+     *
      * @return void
      */
     private function getStatistics(&$totalDatasets, &$totalSize, &$peopleCount, &$researchGroupCount) : void
