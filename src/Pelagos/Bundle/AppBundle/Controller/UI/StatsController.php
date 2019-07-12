@@ -91,7 +91,6 @@ class StatsController extends UIController
 
         $totalDatasets = $datasets->countRegistered();
         $totalSize = $datasets->totalDatasetSize();
-
     }
 
     /**
