@@ -44,6 +44,7 @@ class SearchPageController extends UIController
 
         return $this->render('PelagosAppBundle:Search:default.html.twig', array(
             'query' => $requestParams['query'],
+            'field' => $requestParams['field'],
             'results' => $results,
             'count' => $count,
             'page' => $requestParams['page'],
@@ -64,6 +65,7 @@ class SearchPageController extends UIController
         return array(
             'query' => $request->get('query'),
             'page' => $request->get('page'),
+            'field' => $request->get('field'),
             'options' => array(
                 'rgId' => ($request->get('resGrp')) ? str_replace('rg_', '', $request->get('resGrp')) : null,
                 'funOrgId' => ($request->get('fundOrg')) ? str_replace('fo_', '', $request->get('fundOrg')) : null

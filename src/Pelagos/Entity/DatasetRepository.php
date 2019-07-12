@@ -30,7 +30,7 @@ class DatasetRepository extends EntityRepository
      *
      * @return integer Size of data in bytes.
      */
-    public function totalDatasetSize()
+    public function totalDatasetSize() : int
     {
         return $this->createQueryBuilder('dataset')
             ->select('SUM(COALESCE(datasetSubmission.datasetFileColdStorageArchiveSize,datasetSubmission.datasetFileSize))')
