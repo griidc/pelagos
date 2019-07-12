@@ -3,16 +3,11 @@
 {%block stylesheets %}
     {{ parent() }}
 
-    {{ add_css (
-        [
-            '//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css'
-        ]
-    ) }}
     {% stylesheets
         '@PelagosAppBundle/Resources/public/css/search.css' %}
         {{ add_css(asset_url) }}
     {% endstylesheets %}
-
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('build/layout.css') }}">
 {%endblock stylesheets  %}
 
@@ -20,13 +15,9 @@
     {{ parent() }}
 
     <script src="{{ asset('build/layout.js') }}"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootpag/1.0.7/jquery.bootpag.min.js"></script>
 
-    {{ add_js (
-        [
-            '//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js',
-            '//cdnjs.cloudflare.com/ajax/libs/bootpag/1.0.7/jquery.bootpag.min.js'
-        ]
-    ) }}
     {% javascripts
         '@PelagosAppBundle/Resources/public/js/search.js'
         '@FOSJsRoutingBundle/Resources/public/js/router.js'
