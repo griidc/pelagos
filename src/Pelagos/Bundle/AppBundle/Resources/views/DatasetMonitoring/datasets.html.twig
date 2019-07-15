@@ -35,23 +35,11 @@
         {% set available_red = 0 %}
         {% set available_na = 0 %}
 
-        {% set green_icon = asset('@PelagosAppBundle/Resources/public/images/check.png') %}
-
-        {% image '@PelagosAppBundle/Resources/public/images/check-remote.png' %}
-        {% set green_remote_icon = asset_url %}
-        {% endimage %}
-
-        {% image '@PelagosAppBundle/Resources/public/images/triangle_yellow.png' %}
-        {% set yellow_icon = asset_url %}
-        {% endimage %}
-
-        {% image '@PelagosAppBundle/Resources/public/images/x.png' %}
-        {% set red_icon = asset_url %}
-        {% endimage %}
-
-        {% image '@PelagosAppBundle/Resources/public/images/na.png' %}
-        {% set na_icon = asset_url %}
-        {% endimage %}
+        {% set green_icon = asset('build/images/check.png') %}
+        {% set green_remote_icon = asset('build/images/check-remote.png.png') %}
+        {% set yellow_icon = asset('build/images/triangle_yellow.png') %}
+        {% set red_icon = asset('build/images/x.png') %}
+        {% set na_icon = asset('build/images/na.png') %}
 
         {% if not dataland | default %}
         {% set datasets = datasets|submittedDIFs%}

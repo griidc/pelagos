@@ -1,7 +1,6 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
 {% block title %}Dataset Monitoring{% endblock title %}
 
-
 {% block stylesheets %}
     {{ parent() }}
 
@@ -10,18 +9,7 @@
     <link href="{{ asset('build/css/dataset-monitoring.css') }}" rel="stylesheet" />
     <link href="{{ asset('build/css/scrollbars.css') }}" rel="stylesheet" />
     <link href="{{ asset('build/css/projects.css') }}" rel="stylesheet" />
-
-    {% stylesheets
-        '@PelagosAppBundle/Resources/public/css/dataset-monitoring.css'
-        '@PelagosAppBundle/Resources/public/css/scrollbars.css'
-        '@PelagosAppBundle/Resources/public/css/projects.css'
-    %}
-        {{ add_css(asset_url) }}
-    {% endstylesheets %}
-
-
 {%endblock stylesheets %}
-
 
 {% block javascripts %}
     {{ parent() }}
