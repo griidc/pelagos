@@ -34,7 +34,7 @@ function initializeDownload(id)
 
     $.getJSON(Routing.generate("pelagos_app_download_http", {"id": id}), function (data) {
         $(".qtip").hide();
-        $("#download_splash #download-link").attr("href", (data['downloadUrl']));
+        $("#download_splash #download-link").attr("href", (data["downloadUrl"]));
     });
 }
 
