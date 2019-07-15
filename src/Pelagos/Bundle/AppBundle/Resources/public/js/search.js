@@ -2,9 +2,9 @@ var $ = jQuery.noConflict();
 
 $(document).ready(function () {
     "use strict";
-    var pageSize = 10;
-    var count = $("#count").attr("data-content");
-    var urlParts = window.location.search.split("?");
+    let pageSize = 10;
+    let count = $("#count").attr("data-content");
+    let urlParts = window.location.search.split("?");
     let queryParse = parseQueryString(urlParts[1]);
     let startPage = `${queryParse.page ? `${queryParse.page}` : 1}`;
     let rgId = `${queryParse.resGrp}`;
@@ -35,10 +35,10 @@ $(document).ready(function () {
         }
     }
 
-    var rgIdsArray = [];
-    var foIdsArray = [];
-    var rgIds = "";
-    var foIds = "";
+    let rgIdsArray = [];
+    let foIdsArray = [];
+    let rgIds = "";
+    let foIds = "";
 
     $(".checkbox").change(function () {
 
@@ -71,9 +71,9 @@ $(document).ready(function () {
     });
 
     if (count > pageSize) {
-        var url = document.location.href;
-        var pageCount = Math.ceil(count / pageSize);
-        var arr = url.split('&page=');
+        let url = document.location.href;
+        let pageCount = Math.ceil(count / pageSize);
+        let arr = url.split('&page=');
 
         $("#search-pagination").bootpag({
             total: pageCount,
@@ -114,11 +114,13 @@ $(document).ready(function () {
 function parseQueryString(urlParts) {
     let parsedQuery = {};
 
-    let vars = urlParts.split("&");
-    vars.forEach(function (key, value) {
-        let pair = key.split("=");
-        parsedQuery[pair[0]] = pair[1];
-    });
+    if (typeof urlParts !== 'undefined') {
+        let vars = urlParts.split("&");
+        vars.forEach(function (key, value) {
+            let pair = key.split("=");
+            parsedQuery[pair[0]] = pair[1];
+        });
+    }
 
     return parsedQuery;
 }

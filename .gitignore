@@ -33,3 +33,4 @@ coverage
 .vscode/*
 npm-debug.log
 yarn-error.log
+.web-server-pid
