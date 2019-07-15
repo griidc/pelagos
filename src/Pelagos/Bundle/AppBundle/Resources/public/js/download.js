@@ -7,6 +7,7 @@ function startDownload(id)
     if ($("#download_splash").length) {
         return;
     }
+
     $('<div id="download_splash" />').appendTo("#pelagos-content").load(
         Routing.generate("pelagos_app_download_default", {"id": id}),
         function () {
@@ -31,12 +32,9 @@ function initializeDownload(id)
         closeSplashScreen();
     });
 
-    $("#download_splash #download-link").attr("href", Routing.generate("pelagos_app_download_http", {"id": id}));
-    $("#download_splash #gridftp_download_button").click(function () {
+    $.getJSON(Routing.generate("pelagos_app_download_http", {"id": id}), function (data) {
         $(".qtip").hide();
-        $('#dataset_download_content').load(
-            Routing.generate("pelagos_app_download_gridftp", {"id": id})
-        );
+        $("#download_splash #download-link").attr("href", (data['downloadUrl']));
     });
 }
 

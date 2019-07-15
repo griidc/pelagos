@@ -110,13 +110,10 @@ class DownloadController extends Controller
             ),
             'file_download'
         );
-        return $this->render(
-            'PelagosAppBundle:Download:download-via-http-splash-screen.html.twig',
-            array(
-                'dataset' => $dataset,
-                'downloadUrl' => $downloadBaseUrl . '/' . $uniqueDirectory . '/' . $datasetFileName,
-            )
-        );
+        $response = new Response(json_encode(['downloadUrl' => $downloadBaseUrl . '/' . $uniqueDirectory . '/' . $datasetFileName]));
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
     }
 
     /**
