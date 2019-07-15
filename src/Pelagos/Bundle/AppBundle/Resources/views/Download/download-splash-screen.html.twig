@@ -51,8 +51,6 @@
 
     <div id="dataset_download_content">
 
-    <h3 style="text-align:center;"> The dataset you selected is ready for download. </h3>
-
         <div style="border: 1px solid #aaa; padding: 10px; margin-top: 15px; border-radius: 4px;">
             <p style="margin-top:0">
                 All materials on this website are made available to GRIIDC and in turn to you "as-is." There is no
@@ -90,16 +88,10 @@
         </div>
 
     <div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px;">
-        <strong>UDI:</strong> {{ dataset.udi }}<br />
         <strong>Title:</strong> {{ dataset.title }}<br />
-        <strong>Author(s):</strong> {{ dataset.datasetSubmission.authors }}<br />
-        {% if dataset.datasetStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
-            <strong>Metadata:</strong>
-            <a href="{{ path('pelagos_app_ui_dataland_metadata', {'udi': dataset.udi}) }}">{{ dataset.udi|replace({':': '-'}) }}-metadata.xml</a>
-            <br />
-        {% endif %}
-        <strong>File name:</strong> {{ dataset.datasetSubmission.datasetFileName }} &nbsp; <strong>File size:</strong> {{ dataset.datasetSubmission.datasetFileSize | formatBytes }}<br />
+        <strong>File size:</strong> {{ dataset.datasetSubmission.datasetFileSize | formatBytes }}<br />
         <strong>SHA256 Checksum:</strong> {{ dataset.datasetSubmission.datasetFileSha256Hash|default }}<br />
         <strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span><br />
     </div>
+</div>
 </div>
