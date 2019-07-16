@@ -18,8 +18,8 @@
                             {% image '@PelagosAppBundle/Resources/public/images/icon-filesize.png' %}
                             <img src="{{asset_url}}">
                             {% endimage %}
-                            <div class="count">{{totalsize|formatBytes(1)|default}}</div>
-                            <div class="label">Total Size</div>
+                            <div class="count">{{totalsize|formatBytes(1)|number_format(1)|default}}</div>
+                            <div class="label">TB Of Data</div>
                         </td>
                         <td>
                             {% image '@PelagosAppBundle/Resources/public/images/icon-projects.png' %}
