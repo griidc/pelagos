@@ -110,49 +110,9 @@ class DownloadController extends Controller
             ),
             'file_download'
         );
-        return $this->render(
-            'PelagosAppBundle:Download:download-via-http-splash-screen.html.twig',
-            array(
-                'dataset' => $dataset,
-                'downloadUrl' => $downloadBaseUrl . '/' . $uniqueDirectory . '/' . $datasetFileName,
-            )
-        );
-    }
+        $response = new Response(json_encode(['downloadUrl' => $downloadBaseUrl . '/' . $uniqueDirectory . '/' . $datasetFileName]));
+        $response->headers->set('Content-Type', 'application/json');
 
-    /**
-     * Set up download via GridFTP and produce html for GridFTP download splash screen.
-     *
-     * @param string $id The id of the dataset to download.
-     *
-     * @throws AccessDeniedException When a guest user attempts to download via GridFTP.
-     *
-     * @Route("/{id}/grid-ftp")
-     *
-     * @return Response
-     */
-    public function gridFtpAction($id)
-    {
-        $dataset = $this->get('pelagos.entity.handler')->get(Dataset::class, $id);
-        if (!$this->getUser() instanceof Account) {
-            throw $this->createAccessDeniedException('Only GRIIDC users can use GridFTP');
-        }
-        $downloadFileInfo = $this->get('pelagos.util.data_store')->getDownloadFileInfo($dataset->getUdi(), 'dataset');
-        $homeDirectory = $this->getUser()->getHomeDirectory();
-        $downloadDirectory = $homeDirectory . '/download';
-        $datasetDownloadDirectory = $downloadDirectory . '/' . $dataset->getUdi();
-        if (!file_exists($datasetDownloadDirectory)) {
-            mkdir($datasetDownloadDirectory, 0755);
-        }
-        $linkFile = $datasetDownloadDirectory . '/' . $dataset->getDatasetSubmission()->getDatasetFileName();
-        if (file_exists($linkFile)) {
-            unlink($linkFile);
-        }
-        symlink($downloadFileInfo->getRealPath(), $linkFile);
-        return $this->render(
-            'PelagosAppBundle:Download:download-via-gridftp-splash-screen.html.twig',
-            array(
-                'dataset' => $dataset,
-            )
-        );
+        return $response;
     }
 }

@@ -51,8 +51,6 @@
 
     <div id="dataset_download_content">
 
-    <h3 style="text-align:center;"> The dataset you selected is ready for download. </h3>
-
         <div style="border: 1px solid #aaa; padding: 10px; margin-top: 15px; border-radius: 4px;">
             <p style="margin-top:0">
                 All materials on this website are made available to GRIIDC and in turn to you "as-is." There is no
@@ -67,22 +65,7 @@
             <div style="text-align:left;">
                 <div style="width: 100%; display: table; border: 1px solid #aaa; border-radius: 4px;">
                     <div style="display: table-row; margin: 0 auto;">
-                        <div style="display: table-cell;">
-                            <button id="http_download_button" title="Download file directly to your web browser." class="dl_button" style="padding: 0px 0px;">
-                                {% image '@PelagosAppBundle/Resources/public/images/direct-download.png' %}
-                                    <img style="vertical-align:middle;" src="{{ asset_url }}">
-                                {% endimage %}
-                            </button>
-                            Direct File Download
-                        </div>
-                        <div style="display: table-cell;">
-                            <button class="close_button" title="Cancel this download attempt and close this dialog screen." class="dl_button" style="padding: 0px 0px;">
-                                {% image '@PelagosAppBundle/Resources/public/images/cancel.png' %}
-                                    <img style="vertical-align:middle;" src="{{ asset_url }}" border="0">
-                                {% endimage %}
-                            </button>
-                            Cancel Download
-                        </div>
+                        <a id="download-link" href="#"> Please click here to Download</a>
                     </div>
                 </div>
             </div>
@@ -90,16 +73,9 @@
         </div>
 
     <div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px;">
-        <strong>UDI:</strong> {{ dataset.udi }}<br />
-        <strong>Title:</strong> {{ dataset.title }}<br />
-        <strong>Author(s):</strong> {{ dataset.datasetSubmission.authors }}<br />
-        {% if dataset.datasetStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
-            <strong>Metadata:</strong>
-            <a href="{{ path('pelagos_app_ui_dataland_metadata', {'udi': dataset.udi}) }}">{{ dataset.udi|replace({':': '-'}) }}-metadata.xml</a>
-            <br />
-        {% endif %}
-        <strong>File name:</strong> {{ dataset.datasetSubmission.datasetFileName }} &nbsp; <strong>File size:</strong> {{ dataset.datasetSubmission.datasetFileSize | formatBytes }}<br />
+        <strong>File size:</strong> {{ dataset.datasetSubmission.datasetFileSize | formatBytes }}<br />
         <strong>SHA256 Checksum:</strong> {{ dataset.datasetSubmission.datasetFileSha256Hash|default }}<br />
         <strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span><br />
     </div>
+</div>
 </div>
