@@ -330,6 +330,10 @@ fos_elastica:
                                             type: 'text'
                                         themeKeywords:
                                             type: 'text'
+                                        temporalExtentBeginPosition:
+                                            type: 'date'
+                                        temporalExtentEndPosition:
+                                            type: 'date'
                             persistence:
                                 driver: orm
                                 model: Pelagos\Entity\Dataset
