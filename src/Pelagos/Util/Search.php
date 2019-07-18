@@ -118,11 +118,20 @@ class Search
         // Bool query to combine field query and filter query
         $subMainQuery = new Query\BoolQuery();
 
+        // Bool query to get range temporal extent dates
+        $collectionDateBoolQuery = new Query\BoolQuery();
+
         // Search exact phrase if query string has double quotes
         if (preg_match('/"/', $queryTerm)) {
             $subMainQuery->addMust($this->getExactMatchQuery($queryTerm));
         } else {
             $subMainQuery->addMust($this->getFieldsQuery($queryTerm, $specificField, $collectionDateRange));
+        }
+
+        if (!empty($collectionDateRange)) {
+            $collectionDateBoolQuery->addMust($this->getCollectionStartDateQuery($collectionDateRange));
+            $collectionDateBoolQuery->addMust($this->getCollectionEndDateQuery($collectionDateRange));
+            $subMainQuery->addFilter($collectionDateBoolQuery);
         }
 
         // Add facet filters
@@ -135,6 +144,7 @@ class Search
 
         $mainQuery->setQuery($subMainQuery);
         $mainQuery->setFrom(($page - 1) * 10);
+
         return $mainQuery;
     }
 
@@ -323,10 +333,6 @@ class Search
             $fieldsBoolQuery->addShould($this->getAbstractQuery($queryTerm));
             $datasetSubmissionBoolQuery->addShould($this->getThemeKeywordsQuery($queryTerm));
             $datasetSubmissionBoolQuery->addShould($this->getDSubAuthorQuery($queryTerm));
-            if (!empty($collectionDateRange)) {
-                $datasetSubmissionBoolQuery->addMust($this->getCollectionStartDateQuery($collectionDateRange));
-                $datasetSubmissionBoolQuery->addMust($this->getCollectionEndDateQuery($collectionDateRange));
-            }
             $datasetSubmissionQuery->setQuery($datasetSubmissionBoolQuery);
             $fieldsBoolQuery->addShould($datasetSubmissionQuery);
         }
@@ -526,14 +532,14 @@ class Search
     /**
      * Added start date range for collection.
      *
-     * @param array $collectionDates
+     * @param array $collectionDates Data collection range start date.
      *
      * @return Query\Range
      */
     private function getCollectionStartDateQuery(array $collectionDates): Query\Range
     {
         $collectionStartDateRange = new Query\Range();
-        $collectionStartDateRange->addField('datasetSubmission.temporalExtentBeginPosition', ['gte' => $collectionDates['startDate']]);
+        $collectionStartDateRange->addField('collectionStartDate', ['gte' => $collectionDates['startDate']]);
 
         return $collectionStartDateRange;
     }
@@ -541,14 +547,14 @@ class Search
     /**
      * Added end date range for collection.
      *
-     * @param array $collectionDates
+     * @param array $collectionDates Data collection range end date.
      *
      * @return Query\Range
      */
     private function getCollectionEndDateQuery(array $collectionDates): Query\Range
     {
         $collectionEndDateRange = new Query\Range();
-        $collectionEndDateRange->addField('datasetSubmission.temporalExtentEndPosition', ['lte' => $collectionDates['endDate']]);
+        $collectionEndDateRange->addField('collectionEndDate', ['lte' => $collectionDates['endDate']]);
 
         return $collectionEndDateRange;
     }

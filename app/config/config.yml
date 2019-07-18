@@ -334,6 +334,12 @@ fos_elastica:
                                             type: 'date'
                                         temporalExtentEndPosition:
                                             type: 'date'
+                                collectionStartDate:
+                                    property_path: false
+                                    type: 'date'
+                                collectionEndDate:
+                                    property_path: false
+                                    type: 'date'
                             persistence:
                                 driver: orm
                                 model: Pelagos\Entity\Dataset

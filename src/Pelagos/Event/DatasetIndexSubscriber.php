@@ -94,6 +94,14 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
                 $document->set('estimatedEndDate', $dataset->getDif()->getEstimatedEndDate()->format('Y-m-d'));
             }
         }
+
+        if ($dataset->hasDatasetSubmission()) {
+            if ($dataset->getDatasetSubmission()->getTemporalExtentBeginPosition() and $dataset->getDatasetSubmission()->getTemporalExtentEndPosition()) {
+                $document->set('collectionStartDate', $dataset->getDatasetSubmission()->getTemporalExtentBeginPosition()->format('Y-m-d'));
+                $document->set('collectionEndDate', $dataset->getDatasetSubmission()->getTemporalExtentEndPosition()->format('Y-m-d'));
+
+            }
+        }
     }
 
     /**
