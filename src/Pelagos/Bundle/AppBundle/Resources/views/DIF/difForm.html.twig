@@ -20,15 +20,11 @@
     <div id="udidiv" style="display:none;">
         <h1>Unique Dataset Identifier (UDI):<span class="title" id="udilabel"></span></h1>
     </div>
-    {% image '@PelagosAppBundle/Resources/public/images/warning.png' %}
-    <div id="imgwarning" src="{{ asset_url }}">
-    {% endimage %}
+    <div id="imgwarning" src="{{ asset('build/images/warning.png') }}" \>
     <div class="frmSection">
         <fieldset>
             <span class="helpSection">
-                {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
-                <img class="info" src="{{ asset_url }}">
-                {% endimage %}
+                <img class="info" src="{{ asset('build/images/info32.png') }}">
                 <div class="tooltiptext">
                     <p>This is a required field. The drop-down menu will list all projects that you are associated with.</p>
                 </div>
@@ -40,9 +36,7 @@
     <div class="frmSection">
         <fieldset>
             <span class="helpSection">
-                {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
-                <img class="info" src="{{ asset_url }}">
-                {% endimage %}
+                <img class="info" src="{{ asset('build/images/info32.png') }}">
                 <div class="tooltiptext">
                     <p>This is a required field. Please provide a descriptive title that briefly explains the contents of your dataset. This will be similar to titles used in publications, and may include location where, and time period when the research was completed. It should be understandable by a user unfamiliar with your methods, site collections or research platforms.</p>
                 </div>
@@ -57,9 +51,7 @@
                 <div class="frmSection">
                     <fieldset >
                         <span class="helpSection">
-                            {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
-                            <img class="info" src="{{ asset_url }}">
-                            {% endimage %}
+                            <img class="info" src="{{ asset('build/images/info32.png') }}">
                             <div class="tooltiptext">
                                 <p>This is a required field. This is the person responsible for answering questions associated with this dataset and responding to requests for the dataset. Please select the appropriate person from the dropdown list.</p>
                             </div>
@@ -72,9 +64,7 @@
                 <div class="frmSection">
                     <fieldset >
                         <span class="helpSection">
-                            {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
-                            <img class="info" src="{{ asset_url }}">
-                            {% endimage %}
+                            <img class="info" src="{{ asset('build/images/info32.png') }}">
                             <div class="tooltiptext">
                                 <p>The additional data point of contact will be contacted if the primary data point of contact cannot be reached or is unable to respond to questions about the dataset. Please select the appropriate person from the drop down list.</p>
                             </div>
@@ -89,9 +79,7 @@
     <div class="frmSection">
         <fieldset>
             <span class="helpSection">
-                {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
-                <img class="info" src="{{ asset_url }}">
-                {% endimage %}
+                <img class="info" src="{{ asset('build/images/info32.png') }}">
                 <div class="tooltiptext">
                     <p>This is a required field. This field should summarize the rationale for collecting the dataset, methods that will be used to collect or generate the dataset, period of data collection and what the dataset will contain. This may be similar to a publication abstract, however, it does not need to include details about conclusions drawn or statistical analysis completed using the dataset.</p>
                 </div>
@@ -103,9 +91,7 @@
     <div class="frmSection">
         <fieldset>
             <span class="helpSection">
-                {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
-                <img class="info" src="{{ asset_url }}">
-                {% endimage %}
+                <img class="info" src="{{ asset('build/images/info32.png') }}">
                 <div class="tooltiptext">
                     <p>Datasets may be categorized based on the discipline for which they are collected. Please check all the boxes that categorize the discipline(s) for which your dataset will be created. Note that datasets can be multidisciplinary so select all disciplines that apply. If your field of study is not listed, please specify additional details in the &ldquo;other&rdquo; field.</p>
                 </div>
@@ -162,9 +148,7 @@
     <div class="frmSection">
         <fieldset >
             <span class="helpSection">
-                {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
-                <img class="info" src="{{ asset_url }}">
-                {% endimage %}
+                <img class="info" src="{{ asset('build/images/info32.png') }}">
                 <div class="tooltiptext">
                     <p>Please provide an estimate of the total size of the dataset files you expect will be created. This field can be estimated based on data files you have created in the past. This field will help GRIIDC formulate strategies to access and distribute your dataset.</p>
                 </div>
@@ -185,9 +169,7 @@
     <div class="frmSection">
     <fieldset>
         <span class="helpSection">
-            {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
-            <img class="info" src="{{ asset_url }}">
-            {% endimage %}
+            <img class="info" src="{{ asset('build/images/info32.png') }}">
             <div class="tooltiptext">
                 <p>Please provide a comma separated list of the data parameters or variables with units that will be included in the dataset.</p>
             </div>
@@ -199,9 +181,7 @@
     <div class="frmSection">
         <fieldset>
             <span class="helpSection">
-                {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
-                <img class="info" src="{{ asset_url }}">
-                {% endimage %}
+                <img class="info" src="{{ asset('build/images/info32.png') }}">
                 <div class="tooltiptext">
                     <p>Please select all the procedures or methods that you will use to collect or generate data in the dataset. If not available on the list, please provide additional information in the &ldquo;other&rdquo; field.</p>
                 </div>
@@ -247,9 +227,7 @@
    <div class="frmSection">
         <fieldset>
             <span class="helpSection">
-                {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
-                <img class="info" src="{{ asset_url }}">
-                {% endimage %}
+                <img class="info" src="{{ asset('build/images/info32.png') }}">
                 <div class="tooltiptext">
                     <p>The approximate time period when the data is expected to be collected and generated based on the information provided in your GoMRI proposal.</p>
                 </div>
@@ -270,9 +248,7 @@
     <div class="frmSection">
         <fieldset>
             <span class="helpSection">
-                {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
-                <img class="info" src="{{ asset_url }}">
-                {% endimage %}
+                <img class="info" src="{{ asset('build/images/info32.png') }}">
                 <div class="tooltiptext">
                     <p>The approximate geographic area where the data will be collected. Alternatively, the geographic area the data will be generated for or about, for example the area to be included in a model. Please use the spatial extent wizard to provide the geographic area. If available, please provide location in latitude and longitude in decimal degrees to create a point or a series to create a closed polygon. Alternatively, the spatial extent tool allows you to create an approximate point or polygon of the area where you expect to collect data, or the area that your data will be generated for or about. If your research is purely lab-based, you can indicate this using the spatial extent wizard.</p>
                 </div>
@@ -303,9 +279,7 @@
     <div class="frmSection">
         <fieldset>
             <span class="helpSection">
-                {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
-                <img class="info" src="{{ asset_url }}">
-                {% endimage %}
+                <img class="info" src="{{ asset('build/images/info32.png') }}">
                 <div class="tooltiptext">
                     <p>All research projects funded by the Gulf of Mexico Research Initiative (GoMRI) are required to make data publicly accessible. Datasets can be submitted directly to GRIIDC, however, your dataset may also be submitted to a national data archival center. If your dataset is submitted to a national data archive center you must still register your dataset with the GRIIDC system so that the dataset can be cataloged with other datasets produced by GoMRI research projects. If you will be submitting your dataset to a national data center not on the list provided, please specify the data center and associated URL in the &ldquo;other&rdquo; field.</p>
                 </div>
@@ -340,9 +314,7 @@
     <div class="frmSection">
         <fieldset>
             <span class="helpSection">
-                {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
-                <img class="info" src="{{ asset_url }}">
-                {% endimage %}
+                <img class="info" src="{{ asset('build/images/info32.png') }}">
                 <div class="tooltiptext">
                     <p>Datasets that contain human health information or personal identifying information may have ethical and/or privacy issues that prevent the data from being shared or distributed. If such conditions exist, please select &ldquo;yes&rdquo;. If uncertain, please select &ldquo;uncertain&rdquo; and provide a short description of potential issues. GRIIDC staff will then follow up to help determine if privacy or ethical issues apply to your dataset.</p>
                 </div>
@@ -372,9 +344,7 @@
     <div class="frmSection">
         <fieldset>
             <span class="helpSection">
-                {% image '@PelagosAppBundle/Resources/public/images/info32.png' %}
-                <img class="info" src="{{ asset_url }}">
-                {% endimage %}
+                <img class="info" src="{{ asset('build/images/info32.png') }}">
                 <div class="tooltiptext">
                     <p>Please provide any additional information that would help GRIIDC understand the contents or format of your dataset that would assist in GRIIDC obtaining, using or distributing your dataset.</p>
                 </div>
@@ -396,7 +366,6 @@
             <button style="display:none;" type="button" id="btnReqUnlock" value="requnlock">Request Unlock</button>
             <button type="button" id="btnDS" value="submit">Continue to Dataset Submission</button>
             <button type="button" id="btnReset">Reset Form</button>
-            <!--button type="button" id="btnTop">Top</button-->
         </center>
     </div>
 </form>

@@ -1,47 +1,34 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
 {% block title %}DIF{% endblock %}
-{% block head %}
+
+{%block stylesheets %}
     {{ parent() }}
 
-    {{
-        add_css (
-            [
-                '//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.1/themes/default/style.min.css',
-            ]
-        )
-    }}
+    <link href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.1/themes/default/style.min.css" rel="stylesheet" />
 
-    {% stylesheets  '@PelagosAppBundle/Resources/public/css/dif.css' %}
-        {{ add_css(asset_url) }}
-    {% endstylesheets  %}
-
-    {{
-        add_js(
-            [
-                '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',
-                '//cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js',
-                '//cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js',
-                '//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',
-                '//maps.google.com/maps/api/js?v=3&key=' ~ google_maps_api_key,
-                '//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.1/jstree.min.js',
-            ]
-        )
-    }}
-    
-    {% javascripts
-        '@FOSJsRoutingBundle/Resources/public/js/router.js'
-        '@PelagosAppBundle/Resources/public/js/common.js'
-        '@PelagosAppBundle/Resources/public/js/geoviz.js'
-        '@PelagosAppBundle/Resources/public/js/mapWizard.js'
-        '@PelagosAppBundle/Resources/public/js/dif.js'
-    %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
-
-    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
-
+    <link href="{{ asset('build/css/dif.css') }}" rel="stylesheet" />
 {% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js"></script>
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js"></script>
+    <script type="text/javascript" src="//maps.google.com/maps/api/js?v=3&key={{ google_maps_api_key }}"></script>
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.1/jstree.min.js"></script>
+
+    <script type="text/javascript" src="{{ asset('build/js/common.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/geoviz.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/mapWizard.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/dif.js') }}"></script>
+
+    <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+{% endblock %}
 
 {% block body %}
 
@@ -104,33 +91,23 @@
                         <td>
                             <h3>Legend:&nbsp;
                                 <span class="statusicon" title="DIF is Open. DIF has been started and saved for this dataset, but has not yet been submitted to GRIIDC.">
-                                    {% image '@PelagosAppBundle/Resources/public/images/cross.png' %}
-                                    <img id="imgcross" src="{{ asset_url }}">
-                                    {% endimage %}
+                                    <img id="imgcross" src="{{ asset('build/images/cross.png') }}">
                                     &nbsp;Open
                                 </span>&nbsp;-
                                 <span class="statusicon" title="DIF is locked and is in review. DIF has been completed and submitted to GRIIDC for review and approval.">
-                                    {% image '@PelagosAppBundle/Resources/public/images/error.png' %}
-                                    <img id="imgerror" src="{{ asset_url }}">
-                                    {% endimage %}
+                                    <img id="imgerror" src="{{ asset('build/images/error.png') }}">
                                     &nbsp;Submitted
                                 </span>&nbsp;-
                                 <span class="statusicon" title="DIF is locked and approved. DIF has been submitted to GRIIDC and reviewed and approved by GRIIDC. It is locked to prevent additional changes.">
-                                    {% image '@PelagosAppBundle/Resources/public/images/tick.png' %}
-                                    <img id="imgtick" src="{{ asset_url }}">
-                                    {% endimage %}
+                                    <img id="imgtick" src="{{ asset('build/images/tick.png') }}">
                                     &nbsp;Approved
                                 </span>&nbsp;-
                                 <span class="statusicon" title="This is a project that you are associated with through your GoMRI proposal or grant funding agreement that has datasets identified">
-                                    {% image '@PelagosAppBundle/Resources/public/images/folder.png' %}
-                                    <img id="imgfolder" src="{{ asset_url }}">
-                                    {% endimage %}
+                                    <img id="imgfolder" src="{{ asset('build/images/folder.png') }}">
                                     &nbsp;Project
                                 </span>&nbsp;-
                                 <span class="statusicon" title="This is a project that you are associated with through your GoMRI proposal or grant funding agreement that does not yet have datasets identified.">
-                                    {% image '@PelagosAppBundle/Resources/public/images/folder_gray.png' %}
-                                    <img id="imgfoldergray" style="-webkit-filter:grayscale(100%);" src="{{ asset_url }}">
-                                    {% endimage %}
+                                    <img id="imgfoldergray" src="{{ asset('build/images/folder_gray.png') }}">
                                     &nbsp;Project Without Datasets
                                 </span>
                             </h3>
@@ -143,9 +120,7 @@
                             <div style="position:relative;height:100%;">
                                 <div id="diftree" class="diftree" data-research-groups="{{ research_groups }}">
                                     <a class="jstree-anchor" href="#">
-                                        {% image '@PelagosAppBundle/Resources/public/images/throbber.gif' %}
-                                        <img id="imgthrobber" src="{{ asset_url }}">
-                                        {% endimage %}
+                                        <img id="imgthrobber" src="{{ asset('build/images/throbber.gif') }}">
                                         Loading...
                                     </a>
                                 </div>
@@ -164,7 +139,5 @@
 
 <div id="noresults" title="Search...">No Results Found.</div>
 <div class="modal" id="spinner"></div>
-    {% image '@PelagosAppBundle/Resources/public/images/cancel.png'%}
-        <img id="imgCancel" src="{{ asset_url }}" style="display:none">
-    {% endimage %}
+<img id="imgCancel" src="{{ asset('build/images/cancel.png') }}" style="display:none">
 {% endblock %}
