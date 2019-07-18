@@ -99,7 +99,6 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
             if ($dataset->getDatasetSubmission()->getTemporalExtentBeginPosition() and $dataset->getDatasetSubmission()->getTemporalExtentEndPosition()) {
                 $document->set('collectionStartDate', $dataset->getDatasetSubmission()->getTemporalExtentBeginPosition()->format('Y-m-d'));
                 $document->set('collectionEndDate', $dataset->getDatasetSubmission()->getTemporalExtentEndPosition()->format('Y-m-d'));
-
             }
         }
     }
