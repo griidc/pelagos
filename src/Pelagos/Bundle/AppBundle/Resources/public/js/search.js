@@ -106,29 +106,7 @@ $(document).ready(function () {
         });
     });
 
-    // set up DatePickers
-    $("#collectionStartDate").datepicker({
-        dateFormat: "yy-mm-dd",
-        changeMonth: true,
-        changeYear: true,
-        numberOfMonths: 1,
-        stepMonths: 1,
-        showButtonPanel: false,
-        onClose: function(selectedDate) {
-            $("#collectionEndDate").datepicker("option", "minDate", selectedDate);
-        }
-    });
-    $("#collectionEndDate").datepicker({
-        dateFormat: "yy-mm-dd",
-        changeMonth: true,
-        changeYear: true,
-        numberOfMonths: 1,
-        stepMonths: 1,
-        showButtonPanel: false,
-        onClose: function(selectedDate) {
-            $("#collectionStartDate").datepicker("option", "maxDate", selectedDate);
-        }
-    });
+
 
     $(".disabled").click(function (e) {
         e.preventDefault();
