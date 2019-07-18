@@ -35,13 +35,7 @@
         </div>
         <div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px;">
             <p style="margin-top:0">
-            <strong>UDI:</strong> {{dataset.udi}}<br />
             <strong>Title:</strong> {{dataset.title}}<br />
-            <strong>Author(s):</strong> {{dataset.datasetSubmission.authors}}<br />
-            {% if dataset.datasetStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
-                    <strong>Metadata:</strong>
-                    <a href="{{ path('pelagos_app_ui_dataland_metadata', {'udi': dataset.udi}) }}">{{ dataset.udi|replace({':': '-'}) }}-metadata.xml</a><br />
-            {% endif %}
             <strong>Location:</strong>
             <a href="{{dataset.datasetSubmission.datasetFileUri}}" target=_BLANK>
                 {{dataset.datasetSubmission.datasetFileUri}}
