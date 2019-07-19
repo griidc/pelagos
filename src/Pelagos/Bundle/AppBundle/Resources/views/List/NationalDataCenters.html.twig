@@ -1,38 +1,23 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
 {% block title %}National Data Centers{% endblock %}
-{% block head %}
+
+{%block stylesheets %}
     {{ parent() }}
 
-    {{
-        add_css (
-            [
-                '//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css',
-                '//cdn.datatables.net/select/1.0.1/css/select.dataTables.min.css'
-            ]
-        )
-    }}
+    <link href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="//cdn.datatables.net/select/1.2.3/css/select.dataTables.min.css" rel="stylesheet" />
 
-    {% stylesheets  '@PelagosAppBundle/Resources/public/css/entity.css' %}
-        {{ add_css(asset_url) }}
-    {% endstylesheets  %}
+    <link href="{{ asset('build/css/entity.css') }}" rel="stylesheet" />
+{% endblock %}
 
-    {{
-        add_js(
-            [
-                '//cdn.datatables.net/1.10.7/js/jquery.dataTables.js',
-                '//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js'
-            ]
-        )
-    }}
+{% block javascripts %}
+    {{ parent() }}
 
-    {% javascripts '@PelagosAppBundle/Resources/public/js/common.js' %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
+    <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js"></script>
 
-    {% javascripts '@PelagosAppBundle/Resources/public/js/entityList.js' %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
-
+    <script type="text/javascript" src="{{ asset('build/js/common.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/entityList.js') }}"></script>
 {% endblock %}
 
 {%

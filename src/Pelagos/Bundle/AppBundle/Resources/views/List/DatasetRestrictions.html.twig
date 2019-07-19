@@ -1,39 +1,29 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
 {% block title %}Dataset Restrictions{% endblock %}
-{% block head %}
+
+{%block stylesheets %}
     {{ parent() }}
 
-    {{ add_css (
-        [
-            '//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css',
-            '//cdn.datatables.net/select/1.2.3/css/select.dataTables.min.css',
-            '//cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css',
-            '//cdnjs.cloudflare.com/ajax/libs/animate.css/3.3.0/animate.min.css',
-        ]
-    ) }}
+    <link href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="//cdn.datatables.net/select/1.2.3/css/select.dataTables.min.css" rel="stylesheet" />
+    <link href="//cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css" rel="stylesheet" />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.3.0/animate.min.css" rel="stylesheet" />
 
-    {{ add_js(
-        [
-            '//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js',
-            '//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js',
-            '//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js',
-        ]
-    ) }}
+    <link href="{{ asset('build/css/entity.css') }}" rel="stylesheet" />
+{% endblock %}
 
-    {% stylesheets
-        '@PelagosAppBundle/Resources/public/css/entity.css' %}
-            {{ add_css(asset_url) }}
-    {% endstylesheets %}
+{% block javascripts %}
+    {{ parent() }}
 
-    {% javascripts
-        '@PelagosAppBundle/Resources/public/js/common.js'
-        '@PelagosAppBundle/Resources/public/js/dataset-restrictions.js'
-        '@FOSJsRoutingBundle/Resources/public/js/router.js' %}
-            {{ add_js(asset_url) }}
-    {% endjavascripts %}
+    <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js"></script>
 
-    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
+    <script type="text/javascript" src="{{ asset('build/js/common.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/dataset-restrictions.js') }}"></script>
 
+    <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
 {% endblock %}
 
 {% set properties = [
