@@ -28,7 +28,6 @@ a:visited {
 .ibox-content {
     background-color: #FFFFFF;
     color: inherit;
-    /*padding: 15px 20px 20px 20px;*/
     border-color: #E7EAEC;
     border-image: none;
     border-style: solid solid none;
@@ -69,8 +68,6 @@ h2 {
 #custom-search-input button {
     border: #1E0FBE;
     background: none;
-    /** belows styles are working good */
-    /*padding: 2px 5px;*/
     margin-top: 2px;
     position: relative;
     left: -28px;
@@ -114,4 +111,3 @@ h1{
     height: 250px;
     position: relative;
 }
-

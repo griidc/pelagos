@@ -106,8 +106,6 @@ $(document).ready(function () {
         });
     });
 
-
-
     $(".disabled").click(function (e) {
         e.preventDefault();
     })
@@ -126,4 +124,3 @@ function parseQueryString(urlParts) {
 
     return parsedQuery;
 }
-
