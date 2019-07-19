@@ -1,26 +1,17 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
+{% block title %}External Download Log Tool{% endblock %}
 
-{% block head %}
+{% block javascripts %}
     {{ parent() }}
-    {{
-    add_js(
-        [
-            '//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js'
-        ]
-    )
-    }}
 
-    {% javascripts
-        '@PelagosAppBundle/Resources/public/js/pelagosNoty.js'
-        '@PelagosAppBundle/Resources/public/js/external-download-log.js'
-    %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
-    
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js"></script>
+
+    <script type="text/javascript" src="{{ asset('build/js/pelagosNoty.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/external-download-log.js') }}"></script>
 {% endblock %}
 
 {% block body %}
-    <h2> External Download Log Tool</h2>
+    <h2>External Download Log Tool</h2>
     {% if app.session.flashbag %}
         {% for label, messages in app.session.flashbag.all %}
             {% for message in messages %}
@@ -31,5 +22,4 @@
     {{ form_start(form) }}
     {{ form_widget(form) }}
     {{ form_end(form) }}
-
 {% endblock %}
