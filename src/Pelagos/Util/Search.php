@@ -315,17 +315,26 @@ class Search
             [
                 'id' => 2,
                 'name' => 'Unavailable, Pending Review',
-                'count' => $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION) + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL)
+                'count' => (
+                    $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION)
+                    + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL)
+                )
             ],
             [
                 'id' => 3,
                 'name' => 'Available with Restrictions',
-                'count' => $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED) + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED)
+                'count' => (
+                    $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED)
+                    + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED)
+                )
             ],
             [
                 'id' => 4,
                 'name' => 'Available',
-                'count' => $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED) + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE)
+                'count' => (
+                    $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED)
+                    + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE)
+                )
             ],
         ];
 
