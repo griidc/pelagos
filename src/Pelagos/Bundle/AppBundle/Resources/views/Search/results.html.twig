@@ -40,7 +40,7 @@
                     {% for org in fundingOrgInfo %}
 
                         <li for="{{ org.id }}">
-                            <div class="checkbox block" style="margin-top: 0; margin-bottom: 0;">
+                            <div class="checkbox block facet-aggregation" style="margin-top: 0; margin-bottom: 0;">
                                 <label>
                                     <input class="fo-checkbox" type="checkbox" id="fo_{{ org.id }}">
                                     <span class="groupName">{{ org.name }} </span> ({{ org.count }})
@@ -58,7 +58,7 @@
                     {% for group in researchGroupsInfo %}
 
                         <li for="{{ group.id }}">
-                            <div class="checkbox block" style="margin-top: 0; margin-bottom: 0;">
+                            <div class="checkbox block facet-aggregation" style="margin-top: 0; margin-bottom: 0;">
                                 <label>
                                     <input class="rg-checkbox" type="checkbox" id="rg_{{ group.id }}">
                                     <span class="groupName">{{ group.name }} </span> ({{ group.count }})
