@@ -330,10 +330,6 @@ fos_elastica:
                                             type: 'text'
                                         themeKeywords:
                                             type: 'text'
-                                        temporalExtentBeginPosition:
-                                            type: 'date'
-                                        temporalExtentEndPosition:
-                                            type: 'date'
                                 collectionStartDate:
                                     property_path: false
                                     type: 'date'
