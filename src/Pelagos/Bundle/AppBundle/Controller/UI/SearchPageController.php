@@ -32,6 +32,7 @@ class SearchPageController extends UIController
         $requestParams = $this->getRequestParams($request);
         $researchGroupsInfo = array();
         $fundingOrgInfo = array();
+        $statusInfo = array();
 
         if (!empty($requestParams['query'])) {
             $searchUtil = $this->get('pelagos.util.search');
@@ -40,6 +41,7 @@ class SearchPageController extends UIController
             $count = $searchUtil->getCount($buildQuery);
             $researchGroupsInfo = $searchUtil->getResearchGroupAggregations($buildQuery);
             $fundingOrgInfo = $searchUtil->getFundingOrgAggregations($buildQuery);
+            $statusInfo = $searchUtil->getStatusAggregations($buildQuery);
         }
 
         return $this->render('PelagosAppBundle:Search:default.html.twig', array(
@@ -49,7 +51,8 @@ class SearchPageController extends UIController
             'count' => $count,
             'page' => $requestParams['page'],
             'researchGroupsInfo' => $researchGroupsInfo,
-            'fundingOrgInfo' => $fundingOrgInfo
+            'fundingOrgInfo' => $fundingOrgInfo,
+            'statusInfo' => $statusInfo
         ));
     }
 
@@ -68,7 +71,7 @@ class SearchPageController extends UIController
             'field' => $request->get('field'),
             'options' => array(
                 'rgId' => ($request->get('resGrp')) ? str_replace('rg_', '', $request->get('resGrp')) : null,
-                'funOrgId' => ($request->get('fundOrg')) ? str_replace('fo_', '', $request->get('fundOrg')) : null
+                'funOrgId' => ($request->get('fundOrg')) ? str_replace('fo_', '', $request->get('fundOrg')) : null,
             )
         );
     }

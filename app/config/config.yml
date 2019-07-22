@@ -330,6 +330,8 @@ fos_elastica:
                                             type: 'text'
                                         themeKeywords:
                                             type: 'text'
+                                availabilityStatus:
+                                    type: 'integer'
                             persistence:
                                 driver: orm
                                 model: Pelagos\Entity\Dataset

@@ -11,6 +11,7 @@ use FOS\ElasticaBundle\Finder\TransformedFinder;
 
 use Pagerfanta\Pagerfanta;
 
+use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\FundingOrganization;
 use Pelagos\Entity\ResearchGroup;
 
@@ -123,8 +124,11 @@ class Search
             $mainQuery->setPostFilter($this->getFiltersQuery($requestTerms));
         }
 
-        // Add nested agg to main agg
+        // Add nested agg for research group and funding org to main agg
         $mainQuery->addAggregation($this->getAggregationsQuery($requestTerms));
+
+        // Add dataset availability status agg to mainQuery
+        $mainQuery->addAggregation($this->getStatusAggregationQuery());
 
         $mainQuery->setQuery($subMainQuery);
         $mainQuery->setFrom(($page - 1) * 10);
@@ -235,11 +239,70 @@ class Search
                 'count' => $aggregations[$fundingOrg->getId()]
             );
         }
-
         //Sorting based on highest count
         array_multisort(array_column($fundingOrgInfo, 'count'), SORT_DESC, $fundingOrgInfo);
 
         return $fundingOrgInfo;
+    }
+
+    /**
+     * Get the aggregations for the query.
+     *
+     * @param Query $query The query built based on the search terms and parameters.
+     *
+     * @return array
+     */
+    public function getStatusAggregations(Query $query): array
+    {
+        $userPaginator = $this->getPaginator($query);
+
+        $statusBucket = array_column(
+            $this->findKey($userPaginator->getAdapter()->getAggregations(), 'status')['buckets'],
+            'doc_count',
+            'key'
+        );
+
+        return $this->getStatusInfo($statusBucket);
+    }
+
+    /**
+     * Get dataset availability status information for the aggregations.
+     *
+     * @param array $aggregations Aggregations for each availability status.
+     *
+     * @return array
+     */
+    private function getStatusInfo(array $aggregations): array
+    {
+        $datasetCount = function ($status) use ($aggregations) {
+            if (array_key_exists($status, $aggregations)) {
+                return $aggregations[$status];
+            }
+        };
+
+        $statusInfo = [
+            [
+                'name' => 'Unavailable & Expected Soon',
+                'count' => $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE)
+            ],
+            [
+                'name' => 'Unavailable, Pending Review',
+                'count' => $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION) + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL)
+            ],
+            [
+                'name' => 'Available with Restrictions',
+                'count' => $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED) + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED)
+            ],
+            [
+                'name' => 'Available',
+                'count' => $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED) + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE)
+            ],
+        ];
+
+        //Sorting based on highest count
+        array_multisort(array_column($statusInfo, 'count'), SORT_DESC, $statusInfo);
+
+        return $statusInfo;
     }
 
     /**
@@ -383,6 +446,20 @@ class Search
     }
 
     /**
+     * Get status aggregations for the query.
+     * 
+     * @return Aggregation\Terms
+     */
+    private function getStatusAggregationQuery(): Aggregation\Terms
+    {
+        $availabilityStatusAgg = new Aggregation\Terms('status');
+        $availabilityStatusAgg->setField('availabilityStatus');
+        $availabilityStatusAgg->setSize(5);
+
+        return $availabilityStatusAgg;
+    }
+
+    /**
      * Get post filter query.
      *
      * @param array $requestTerms Options for the query.
@@ -420,6 +497,15 @@ class Search
 
             $nestedFoQuery->setQuery($fundingOrgIdQuery);
             $postFilterBoolQuery->addMust($nestedFoQuery);
+        }
+
+        if (!empty($requestTerms['options']['availabilityStatus'])) {
+
+            $availabilityStatusQuery = new Query\Terms();
+            $availabilityStatusQuery->setTerms(
+                'availabilityStatus',
+                explode(',', $requestTerms['options']['statusId']));
+            $postFilterBoolQuery->addMust($availabilityStatusQuery);
         }
 
         $filterBoolQuery->addMust($postFilterBoolQuery);

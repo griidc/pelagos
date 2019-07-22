@@ -16,6 +16,24 @@
         <div class="col-md-2 col-xs-2">
 
             <div class="aggregations">
+                <h5 style="margin-bottom: 5px;"><strong style="color: #337ab7;">Dataset Status</strong></h5>
+                <ul class="browse-list list-unstyled long-list" style="margin-bottom: 0;" id="status-facet">
+
+                    {% for status in statusInfo %}
+
+                        <li>
+                            <div class="checkbox block" style="margin-top: 0; margin-bottom: 0;">
+                                <label>
+                                    <input class="fo-checkbox" type="checkbox">
+                                    <span class="groupName">{{ status.name }} </span> ({{ status.count }})
+                                    <div class="tooltiptext" style="display:none">
+                                        <p>{{ status.name }} </p>
+                                    </div>
+                                </label>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
                 <h5 style="margin-bottom: 5px;"><strong style="color: #337ab7;">Funding Organizations</strong></h5>
                 <ul class="browse-list list-unstyled long-list" style="margin-bottom: 0;" id="fundorg-facet">
 
