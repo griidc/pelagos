@@ -9,6 +9,7 @@ $(document).ready(function () {
     let startPage = `${parsed.page ? `${parsed.page}` : 1}`;
     let rgId = `${parsed.resGrp}`;
     let foId = `${parsed.fundOrg}`;
+    let status = `${parsed.status}`;
 
     //Setting value of page number to 1, for new search
     $("#searchForm").submit(function () {
@@ -35,8 +36,20 @@ $(document).ready(function () {
         }
     }
 
+    // Availability status checkbox
+    if (status) {
+        status = status.split(",");
+        if(status.length > 0) {
+            $.each(status, function (k, v){
+                $("#" + status[k]).attr("checked", true);
+            });
+        }
+    }
+
+
     let rgIdsArray = [];
     let foIdsArray = [];
+    let statusArray = [];
 
     $(".facet-aggregation").change(function () {
         let urlPelagos = Routing.generate("pelagos_app_ui_searchpage_default") + "?";
@@ -53,6 +66,13 @@ $(document).ready(function () {
         if (foIdsArray.length > 0) {
             parsed.fundOrg = foIdsArray.join(",");
         }
+        $("#status-facet :checkbox:checked").each(function () {
+            statusArray.push($(this).attr("id"));
+        });
+        if (statusArray.length > 0) {
+            parsed.status = statusArray.join(",");
+        }
+
         let newQueryString = Object.keys(parsed).map(key => key + "=" + parsed[key]).join("&");
         window.location = urlPelagos + newQueryString;
     });

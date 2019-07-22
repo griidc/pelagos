@@ -58,6 +58,13 @@ class Search
      */
     const ELASTIC_INDEX_MAPPING_THEME_KEYWORDS = 'datasetSubmission.themeKeywords';
 
+    const AVAILABILITY_STATUSES = array(
+        1 => [DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE],
+        2 => [DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION, DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL],
+        3 => [DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED, DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED],
+        4 => [DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE, DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED]
+    );
+
     /**
      * Constructor.
      *
@@ -136,7 +143,10 @@ class Search
         }
 
         // Add facet filters
-        if (!empty($requestTerms['options']['funOrgId']) || !empty($requestTerms['options']['rgId'])) {
+        if (!empty($requestTerms['options']['funOrgId'])
+            || !empty($requestTerms['options']['rgId'])
+            || !empty($requestTerms['options']['status'])
+        ) {
             $mainQuery->setPostFilter($this->getFiltersQuery($requestTerms));
         }
 
@@ -144,7 +154,7 @@ class Search
         $mainQuery->addAggregation($this->getAggregationsQuery($requestTerms));
 
         // Add dataset availability status agg to mainQuery
-        $mainQuery->addAggregation($this->getStatusAggregationQuery());
+        $mainQuery->addAggregation($this->getStatusAggregationQuery($requestTerms));
 
         $mainQuery->setQuery($subMainQuery);
         $mainQuery->setFrom(($page - 1) * 10);
@@ -298,18 +308,22 @@ class Search
 
         $statusInfo = [
             [
+                'id' => 1,
                 'name' => 'Unavailable & Expected Soon',
                 'count' => $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE)
             ],
             [
+                'id' => 2,
                 'name' => 'Unavailable, Pending Review',
                 'count' => $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION) + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL)
             ],
             [
+                'id' => 3,
                 'name' => 'Available with Restrictions',
                 'count' => $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED) + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED)
             ],
             [
+                'id' => 4,
                 'name' => 'Available',
                 'count' => $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED) + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE)
             ],
@@ -464,10 +478,12 @@ class Search
 
     /**
      * Get status aggregations for the query.
-     * 
+     *
+     * @param array $requestTerms Options for the query.
+     *
      * @return Aggregation\Terms
      */
-    private function getStatusAggregationQuery(): Aggregation\Terms
+    private function getStatusAggregationQuery(array $requestTerms): Aggregation\Terms
     {
         $availabilityStatusAgg = new Aggregation\Terms('status');
         $availabilityStatusAgg->setField('availabilityStatus');
@@ -516,12 +532,17 @@ class Search
             $postFilterBoolQuery->addMust($nestedFoQuery);
         }
 
-        if (!empty($requestTerms['options']['availabilityStatus'])) {
+        if (!empty($requestTerms['options']['status'])) {
+            $statuses = array();
+            foreach (explode(',', $requestTerms['options']['status']) as $key => $value) {
+                $statuses[$key] = self::AVAILABILITY_STATUSES[$value];
+            }
 
             $availabilityStatusQuery = new Query\Terms();
             $availabilityStatusQuery->setTerms(
                 'availabilityStatus',
-                explode(',', $requestTerms['options']['statusId']));
+                array_reduce($statuses, 'array_merge', array())
+            );
             $postFilterBoolQuery->addMust($availabilityStatusQuery);
         }
 

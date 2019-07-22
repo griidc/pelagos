@@ -22,9 +22,9 @@
                     {% for status in statusInfo %}
 
                         <li>
-                            <div class="checkbox block" style="margin-top: 0; margin-bottom: 0;">
+                            <div class="checkbox block facet-aggregation" style="margin-top: 0; margin-bottom: 0;">
                                 <label>
-                                    <input class="fo-checkbox" type="checkbox">
+                                    <input class="status-checkbox" type="checkbox" id="status_{{ status.id }}">
                                     <span class="groupName">{{ status.name }} </span> ({{ status.count }})
                                     <div class="tooltiptext" style="display:none">
                                         <p>{{ status.name }} </p>

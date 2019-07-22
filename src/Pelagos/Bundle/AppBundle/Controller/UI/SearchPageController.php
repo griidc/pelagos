@@ -44,18 +44,21 @@ class SearchPageController extends UIController
             $statusInfo = $searchUtil->getStatusAggregations($buildQuery);
         }
 
-        return $this->render('PelagosAppBundle:Search:default.html.twig', array(
-            'query' => $requestParams['query'],
-            'field' => $requestParams['field'],
-            'results' => $results,
-            'count' => $count,
-            'page' => $requestParams['page'],
-            'researchGroupsInfo' => $researchGroupsInfo,
-            'fundingOrgInfo' => $fundingOrgInfo,
-            'statusInfo' => $statusInfo,
-            'collectionStartDate' => $requestParams['collectionStartDate'],
-            'collectionEndDate' => $requestParams['collectionEndDate'],
-        ));
+        return $this->render(
+            'PelagosAppBundle:Search:default.html.twig',
+            array(
+                'query' => $requestParams['query'],
+                'field' => $requestParams['field'],
+                'results' => $results,
+                'count' => $count,
+                'page' => $requestParams['page'],
+                'researchGroupsInfo' => $researchGroupsInfo,
+                'fundingOrgInfo' => $fundingOrgInfo,
+                'statusInfo' => $statusInfo,
+                'collectionStartDate' => $requestParams['collectionStartDate'],
+                'collectionEndDate' => $requestParams['collectionEndDate'],
+                )
+        );
     }
 
     /**
@@ -76,6 +79,7 @@ class SearchPageController extends UIController
             'options' => array(
                 'rgId' => ($request->get('resGrp')) ? str_replace('rg_', '', $request->get('resGrp')) : null,
                 'funOrgId' => ($request->get('fundOrg')) ? str_replace('fo_', '', $request->get('fundOrg')) : null,
+                'status' => $request->get('status') ? str_replace('status_', '', $request->get('status')) : null,
             )
         );
     }
