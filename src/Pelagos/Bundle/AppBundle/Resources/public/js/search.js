@@ -4,11 +4,11 @@ $(document).ready(function () {
     "use strict";
     let pageSize = 10;
     let count = $("#count").attr("data-content");
-    let urlParts = window.location.search.split("?");
-    let queryParse = parseQueryString(urlParts[1]);
-    let startPage = `${queryParse.page ? `${queryParse.page}` : 1}`;
-    let rgId = `${queryParse.resGrp}`;
-    let foId = `${queryParse.fundOrg}`;
+    const parsed = queryString.parse(location.search);
+    console.log(parsed);
+    let startPage = `${parsed.page ? `${parsed.page}` : 1}`;
+    let rgId = `${parsed.resGrp}`;
+    let foId = `${parsed.fundOrg}`;
 
     //Setting value of page number to 1, for new search
     $("#searchForm").submit(function () {
@@ -37,43 +37,30 @@ $(document).ready(function () {
 
     let rgIdsArray = [];
     let foIdsArray = [];
-    let rgIds = "";
-    let foIds = "";
 
-    $(".checkbox").change(function () {
-
-        var urlPelagos = Routing.generate("pelagos_app_ui_searchpage_default") + "?query=" + $("#searchBox").val();
-
+    $(".facet-aggregation").change(function () {
+        let urlPelagos = Routing.generate("pelagos_app_ui_searchpage_default") + "?";
         $("#resgrp-facet :checkbox:checked").each(function () {
             rgIdsArray.push($(this).attr("id"));
         });
 
         if (rgIdsArray.length > 0) {
-            rgIds = rgIdsArray.join(",");
+            parsed.resGrp = rgIdsArray.join(",");
         }
         $("#fundorg-facet :checkbox:checked").each(function () {
             foIdsArray.push($(this).attr("id"));
         });
         if (foIdsArray.length > 0) {
-            foIds = foIdsArray.join(",");
+            parsed.fundOrg = foIdsArray.join(",");
         }
-
-        if (foIds && rgIds) {
-            window.location = urlPelagos  + "&fundOrg=" + foIds + "&resGrp=" + rgIds;
-        } else if (rgIds) {
-            window.location = urlPelagos + "&resGrp=" + rgIds;
-        } else if (foIds) {
-            window.location = urlPelagos + "&fundOrg=" + foIds;
-        } else {
-            window.location = urlPelagos;
-        }
-
+        let newQueryString = Object.keys(parsed).map(key => key + "=" + parsed[key]).join("&");
+        window.location = urlPelagos + newQueryString;
     });
 
     if (count > pageSize) {
         let url = document.location.href;
         let pageCount = Math.ceil(count / pageSize);
-        let arr = url.split('&page=');
+        let arr = url.split("&page=");
 
         $("#search-pagination").bootpag({
             total: pageCount,
@@ -110,18 +97,4 @@ $(document).ready(function () {
         e.preventDefault();
     })
 });
-
-function parseQueryString(urlParts) {
-    let parsedQuery = {};
-
-    if (typeof urlParts !== 'undefined') {
-        let vars = urlParts.split("&");
-        vars.forEach(function (key, value) {
-            let pair = key.split("=");
-            parsedQuery[pair[0]] = pair[1];
-        });
-    }
-
-    return parsedQuery;
-}
 
