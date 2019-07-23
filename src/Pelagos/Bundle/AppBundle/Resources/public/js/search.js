@@ -5,7 +5,6 @@ $(document).ready(function () {
     let pageSize = 10;
     let count = $("#count").attr("data-content");
     const parsed = queryString.parse(location.search);
-    console.log(parsed);
     let startPage = `${parsed.page ? `${parsed.page}` : 1}`;
     let rgId = `${parsed.resGrp}`;
     let foId = `${parsed.fundOrg}`;
