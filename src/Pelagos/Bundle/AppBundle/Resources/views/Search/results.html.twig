@@ -20,7 +20,7 @@
                 <ul class="browse-list list-unstyled long-list" style="margin-bottom: 0;" id="status-facet">
 
                     {% for status in statusInfo %}
-
+                        {% if status.count != 0 %}
                         <li>
                             <div class="checkbox block facet-aggregation" style="margin-top: 0; margin-bottom: 0;">
                                 <label>
@@ -32,6 +32,7 @@
                                 </label>
                             </div>
                         </li>
+                        {% endif %}
                     {% endfor %}
                 </ul>
                 <h5 style="margin-bottom: 5px;"><strong style="color: #337ab7;">Funding Organizations</strong></h5>

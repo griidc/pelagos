@@ -303,6 +303,8 @@ class Search
         $datasetCount = function ($status) use ($aggregations) {
             if (array_key_exists($status, $aggregations)) {
                 return $aggregations[$status];
+            } else {
+                return 0;
             }
         };
 
