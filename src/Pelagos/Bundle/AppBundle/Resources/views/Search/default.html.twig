@@ -1,32 +1,35 @@
 {% extends "PelagosAppBundle::layout.html.twig" %}
 
-{% block head %}
-    {{ add_css (
-        [
-            '//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css'
-        ]
-    ) }}
+{%block stylesheets %}
+    {{ parent() }}
+
     {% stylesheets
         '@PelagosAppBundle/Resources/public/css/search.css' %}
-        {{ add_css(asset_url) }}
+        <link rel="stylesheet" href="{{ asset_url }}">
     {% endstylesheets %}
 
-    {{ add_js (
-        [
-            '//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js',
-            '//cdnjs.cloudflare.com/ajax/libs/bootpag/1.0.7/jquery.bootpag.min.js'
-        ]
-    ) }}
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ asset('build/layout.css') }}">
+{%endblock stylesheets  %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script src="{{ asset('build/layout.js') }}"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootpag/1.0.7/jquery.bootpag.min.js"></script>
+
     {% javascripts
         '@PelagosAppBundle/Resources/public/js/search.js'
         '@FOSJsRoutingBundle/Resources/public/js/router.js'
     %}
-        {{ add_js(asset_url) }}
+        <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
 
     {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
 
 {% endblock %}
+
 
 {% block body %}
     {% if query is null %}

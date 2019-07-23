@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
+use Pelagos\Bundle\AppBundle\Twig\Extensions as TwigExtentions;
+
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\DIF;
@@ -29,6 +31,31 @@ class StatsController extends UIController
      * @return Response
      */
     public function defaultAction()
+    {
+        $this->getStatistics($totalDatasets, $totalSize, $peopleCount, $researchGroupCount);
+
+        return $this->render(
+            'PelagosAppBundle:Stats:index.html.twig',
+            $twigData = array(
+                'datasets' => $totalDatasets,
+                'totalsize' => $totalSize,
+                'people' => $peopleCount,
+                'researchGroups' => $researchGroupCount,
+            )
+        );
+    }
+
+    /**
+     * Get Statistics Data by reference.
+     *
+     * @param integer $totalDatasets      The total count of datasets.
+     * @param string  $totalSize          The total size of data.
+     * @param integer $peopleCount        The total count of people.
+     * @param integer $researchGroupCount The total count of research groups.
+     *
+     * @return void
+     */
+    private function getStatistics(&$totalDatasets, &$totalSize, &$peopleCount, &$researchGroupCount) : void
     {
         // Get the Entity Manager.
         $entityManager = $this
@@ -60,14 +87,33 @@ class StatsController extends UIController
             ->select($queryBuilder->expr()->count('researchGroup.id'))
             ->getQuery()->getSingleScalarResult();
 
-        return $this->render(
-            'PelagosAppBundle:Stats:index.html.twig',
-            $twigData = array(
-                'datasets' => $entityManager->getRepository(Dataset::class)->countRegistered(),
-                'people' => $peopleCount,
-                'researchGroups' => $researchGroupCount,
-            )
-        );
+        $datasets = $entityManager->getRepository(Dataset::class);
+
+        $totalDatasets = $datasets->countRegistered();
+        $totalSize = $datasets->totalDatasetSize();
+    }
+
+    /**
+     * Get Statistics Data as JSON.
+     *
+     * @Route("/json")
+     *
+     * @return Response
+     */
+    public function getStatisticsJson()
+    {
+        $this->getStatistics($totalDatasets, $totalSize, $peopleCount, $researchGroupCount);
+
+        $result = array();
+        $result['totalDatasets'] = $totalDatasets;
+        $result['totalSize'] = TwigExtentions::formatBytes($totalSize, 1);
+        $result['peopleCount'] = $peopleCount;
+        $result['researchGroupCount'] = $researchGroupCount;
+
+        $response = new Response(json_encode($result));
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
     }
 
     /**
