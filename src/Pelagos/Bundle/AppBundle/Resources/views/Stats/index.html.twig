@@ -1,48 +1,34 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
 {% block title %}System Statistics{% endblock %}
-{% block head %}
+
+{%block stylesheets %}
     {{ parent() }}
-    
-    {% stylesheets  '@PelagosAppBundle/Resources/public/css/stats.css' %}
-        {{ add_css(asset_url) }}
-    {% endstylesheets  %}
 
-    {{
-        add_js(
-            [
-                '//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.min.js',
-                '//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.resize.min.js',
-                '//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.time.min.js',
-                '//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.pie.min.js',
-            ]
-        )
-    }}
+    <link href="{{ asset('build/css/stats.css') }}" rel="stylesheet" />
+{% endblock %}
 
-    {% javascripts '@PelagosAppBundle/Resources/public/js/jquery.flot.barnumbers.js' %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
+{% block javascripts %}
+    {{ parent() }}
 
-    {% javascripts '@FOSJsRoutingBundle/Resources/public/js/router.js' %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.resize.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.time.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.pie.min.js"></script>
 
-    {% javascripts '@PelagosAppBundle/Resources/public/js/stats.js' %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
+    <script type="text/javascript" src="{{ asset('build/js/jquery.flot.barnumbers.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/stats.js') }}"></script>
 
-    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
+    <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
 {% endblock %}
 
 {% block body %}
-
     <div class="display-table">
-
         <div class="display-table-row">
             <div class="display-table-cell">
                 <h1>System Statistics (as of {{ 'now'|date('F j, Y') }})</h1>
             </div>
         </div>
-
         <div class="display-table-row">
             <div id="stats-container" class="display-table-cell">
                 <div id="stats-tabs">
@@ -62,9 +48,6 @@
                 </div>
             </div>
         </div>
-
     </div>
-
     <div id="section_canvas_div"></div>
-
 {% endblock %}
