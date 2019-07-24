@@ -105,17 +105,33 @@ class Search
         $page = ($requestTerms['page']) ? $requestTerms['page'] : 1;
         $queryTerm = $requestTerms['query'];
         $specificField = $requestTerms['field'];
+        $collectionDateRange = array();
+        if ($requestTerms['collectionStartDate'] and $requestTerms['collectionEndDate']) {
+            $collectionDateRange = array(
+                'startDate' => $requestTerms['collectionStartDate'],
+                'endDate' => $requestTerms['collectionEndDate']
+            );
+        }
 
         $mainQuery = new Query();
 
         // Bool query to combine field query and filter query
         $subMainQuery = new Query\BoolQuery();
 
+        // Bool query to get range temporal extent dates
+        $collectionDateBoolQuery = new Query\BoolQuery();
+
         // Search exact phrase if query string has double quotes
         if (preg_match('/"/', $queryTerm)) {
             $subMainQuery->addMust($this->getExactMatchQuery($queryTerm));
         } else {
-            $subMainQuery->addMust($this->getFieldsQuery($queryTerm, $specificField));
+            $subMainQuery->addMust($this->getFieldsQuery($queryTerm, $specificField, $collectionDateRange));
+        }
+
+        if (!empty($collectionDateRange)) {
+            $collectionDateBoolQuery->addMust($this->getCollectionStartDateQuery($collectionDateRange));
+            $collectionDateBoolQuery->addMust($this->getCollectionEndDateQuery($collectionDateRange));
+            $subMainQuery->addFilter($collectionDateBoolQuery);
         }
 
         // Add facet filters
@@ -281,12 +297,13 @@ class Search
     /**
      * Get Bool query for fields.
      *
-     * @param string $queryTerm     Query term that needs to be searched upon.
-     * @param string $specificField Query a specific field for data.
+     * @param string     $queryTerm           Query term that needs to be searched upon.
+     * @param string     $specificField       Query a specific field for data.
+     * @param array|null $collectionDateRange Query for collection date range.
      *
      * @return Query\BoolQuery
      */
-    private function getFieldsQuery(string $queryTerm, string $specificField = null): Query\BoolQuery
+    private function getFieldsQuery(string $queryTerm, string $specificField = null, array $collectionDateRange = null): Query\BoolQuery
     {
         // Bool query to add all fields
         $fieldsBoolQuery = new Query\BoolQuery();
@@ -510,5 +527,35 @@ class Search
         $authorQuery->setFieldOperator(self::ELASTIC_INDEX_MAPPING_AUTHORS, 'and');
         $authorQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_AUTHORS, 2);
         return $authorQuery;
+    }
+
+    /**
+     * Added start date range for collection.
+     *
+     * @param array $collectionDates Data collection range start date.
+     *
+     * @return Query\Range
+     */
+    private function getCollectionStartDateQuery(array $collectionDates): Query\Range
+    {
+        $collectionStartDateRange = new Query\Range();
+        $collectionStartDateRange->addField('collectionStartDate', ['gte' => $collectionDates['startDate']]);
+
+        return $collectionStartDateRange;
+    }
+
+    /**
+     * Added end date range for collection.
+     *
+     * @param array $collectionDates Data collection range end date.
+     *
+     * @return Query\Range
+     */
+    private function getCollectionEndDateQuery(array $collectionDates): Query\Range
+    {
+        $collectionEndDateRange = new Query\Range();
+        $collectionEndDateRange->addField('collectionEndDate', ['lte' => $collectionDates['endDate']]);
+
+        return $collectionEndDateRange;
     }
 }

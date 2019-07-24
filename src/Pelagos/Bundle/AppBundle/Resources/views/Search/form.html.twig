@@ -1,6 +1,9 @@
 <form id="searchForm" name="searchForm" action="{{ path('pelagos_app_ui_searchpage_default') }}" method="get" class="search-form">
     <div id="custom-search-input">
-        <div class="col-md-2"></div>
+        <div class="col-md-2">
+            <input type="date" id="collectionStartDate" name="collectionStartDate" class="input-group form-control" value="{{ (collectionStartDate) ? collectionStartDate : null }}">
+            <input type="date" id="collectionEndDate" name="collectionEndDate" class="input-group form-control" value="{{ (collectionEndDate) ? collectionEndDate : null }}">
+        </div>
         <div class="col-md-2">
             <select class="input-group form-control" name="field" id="field">
                     <option
@@ -52,6 +55,5 @@
                 </button>
             </span>
         </div>
-        <div class="col-md-4"></div>
     </div>
 </form>
