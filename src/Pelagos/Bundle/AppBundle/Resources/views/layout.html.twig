@@ -23,9 +23,7 @@
         <link href="//cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.css" rel="stylesheet" />
 
         {% if isMaintenanceMode() %}
-            {% stylesheets '@PelagosAppBundle/Resources/public/css/griidc_site_banner_screen.css'%}
-                {{ add_css(asset_url) }}
-            {% endstylesheets %}
+            <link href="{{ asset('build/css/griidc_site_banner_screen.css') }}" rel="stylesheet" />
         {% endif %}
     {%endblock stylesheets  %}
 
