@@ -1,16 +1,13 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
 {% block title %}Dataset Summary{% endblock %}
+
 {% block javascripts %}
     {{ parent() }}
     
-    {% javascripts
-        '@PelagosAppBundle/Resources/public/js/dataset-summary.js'
-        '@FOSJsRoutingBundle/Resources/public/js/router.js'
-    %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
-
-    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
+    <script type="text/javascript" src="{{ asset('build/js/dataset-summary.js') }}"></script>
+    
+    <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
 {% endblock %}
 
 {% block body %}
