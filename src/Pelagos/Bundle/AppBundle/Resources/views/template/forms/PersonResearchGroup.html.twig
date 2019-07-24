@@ -36,17 +36,5 @@ _action="{{path('pelagos_api_person_research_groups_post')}}">
         {{ form_row(form.label) }}
     </div>
 
-    <div class="innerForm">
-        {% if is_granted('CAN_EDIT', PersonResearchGroup) or is_granted('CAN_EDIT', editlabel|default)%}
-            {% image '@PelagosAppBundle/Resources/public/images/application_edit.png' %}
-                <img class="editimg" src="{{asset_url}}">
-            {% endimage %}
-        {% endif %}
-        {% if is_granted('CAN_DELETE', PersonResearchGroup) %}
-            {% image '@PelagosAppBundle/Resources/public/images/delete.png' %}
-                <img class="deleteimg" src="{{asset_url}}">
-            {% endimage %}
-        {% endif %}
-    </div>
-
+    {% include '@templates/forms/innerForm.html.twig' with {'Entity': PersonResearchGroup} %}
 </form>

@@ -1,12 +1,8 @@
 <div class="innerForm">
     {% if is_granted('CAN_EDIT', Entity) %}
-        {% image '@PelagosAppBundle/Resources/public/images/application_edit.png' %}
-            <img class="editimg" src="{{asset_url}}">
-        {% endimage %}
+        <img class="editimg" src="{{ asset('build/images/application_edit.png') }}">
     {% endif %}
     {% if is_granted('CAN_DELETE', Entity) %}
-        {% image '@PelagosAppBundle/Resources/public/images/delete.png' %}
-            <img class="deleteimg" src="{{asset_url}}">
-        {% endimage %}
+        <img class="deleteimg" src="{{ asset('build/images/delete.png') }}">
     {% endif %}
 </div>
