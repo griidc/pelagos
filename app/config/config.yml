@@ -36,8 +36,6 @@ framework:
     session:
         # handler_id set to null will use default session handler from php.ini
         handler_id:  ~
-        save_path:   "%kernel.root_dir%/../var/sessions/%kernel.environment%"
-        storage_id: session.storage.native
     fragments:       ~
     http_method_override: true
     assets:
@@ -124,14 +122,6 @@ nelmio_api_doc:
     sandbox:
         request_format:
             method: accept_header
-
-assetic:
-    debug:          '%kernel.debug%'
-    use_controller: '%kernel.debug%'
-    filters:
-        cssrewrite: ~
-    bundles:
-        - PelagosAppBundle
 
 simple_things_entity_audit:
     audited_entities:
