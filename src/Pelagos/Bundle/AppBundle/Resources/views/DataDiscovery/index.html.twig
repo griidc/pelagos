@@ -12,7 +12,7 @@
     <link href="{{ asset('build/css/downloads.css') }}" rel="stylesheet" />
     <link href="{{ asset('build/css/dataset_details.css') }}" rel="stylesheet" />
     <link href="{{ asset('build/css/download.css') }}" rel="stylesheet" />
-{%endblock stylesheets %}
+{% endblock stylesheets %}
 
 {% block javascripts %}
     {{ parent() }}
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="{{ asset('build/js/download.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
     <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
-{%endblock javascripts %}
+{% endblock javascripts %}
 
 {% block body %}
     <input id="by-input" type="hidden">
