@@ -18,14 +18,14 @@
       });
     </script>
 
-    {%block stylesheets %}
+    {% block stylesheets %}
         <link href="{{ asset('build/common.css') }}" rel="stylesheet" />
         <link href="//cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.css" rel="stylesheet" />
 
         {% if isMaintenanceMode() %}
             <link href="{{ asset('build/css/griidc_site_banner_screen.css') }}" rel="stylesheet" />
         {% endif %}
-    {%endblock stylesheets  %}
+    {% endblock stylesheets  %}
 
     {% block javascripts %}
         <script src="{{ asset('build/common.js') }}"></script>
