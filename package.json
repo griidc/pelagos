@@ -6,7 +6,7 @@
   },
   "dependencies": {
     "jquery": "1.12",
-    "jquery-ui": "1.10",
+    "jquery-ui": "^1.12.1",
     "jquery.cookie": "^1.4.1",
     "qtip2": "2.2.0",
     "query-string": "^6.8.1"

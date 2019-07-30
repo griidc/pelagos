@@ -50,8 +50,9 @@ $(document).ready(function() {
         $("#clearGeoFilterButton").button("disable");
     });
 
-    $("#show_extents_checkbox").button();
-    $(".map_button").button();
+    $("#show_extents_checkbox").checkboxradio();
+    $("#clearGeoFilterButton").button();
+    $("#drawGeoFilterButton").button();
     // local variable for filter button//
     var filterButton = $("#filter-button");
     filterButton.button();
@@ -352,7 +353,7 @@ function showDatasets(by,id) {
     myGeoViz.removeAllFeaturesFromMap();
 
     //enable this
-    $("#show_extents_checkbox").button();
+    $("#show_extents_checkbox").checkboxradio();
     $("#filter-button").button("disable");
     $("#clear-button").button("disable");
 
@@ -453,10 +454,12 @@ function displayActiveTabExtents()
 
 function showAllExtents() {
     if ($("#show_extents_checkbox").is(":checked")) {
-        $("#show_extents_label").html('<span class="ui-button-text">Hide Extents</span>');
+        //$("#show_extents_label").html('<span class="ui-button-text">Hide Extents</span>');
+        $("#show_extents_checkbox").checkboxradio( "option", "label", "Hide Extents" );
         displayActiveTabExtents();
     } else {
-        $("#show_extents_label").html('<span class="ui-button-text">Show Extents</span>');
+        //$("#show_extents_label").html('<span class="ui-button-text">Show Extents</span>');
+        $("#show_extents_checkbox").checkboxradio( "option", "label", "Show Extents" );
         $("table.datasets tr td").removeClass("highlight");
         myGeoViz.removeAllFeaturesFromMap();
     }

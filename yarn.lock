@@ -3394,10 +3394,10 @@ isobject@^3.0.0, isobject@^3.0.1:
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-3.0.1.tgz#4e431e92b11a9731636aa1f9c8d1ccbcfdab78df"
   integrity sha1-TkMekrEalzFjaqH5yNHMvP2reN8=
 
-jquery-ui@1.10:
-  version "1.10.5"
-  resolved "https://registry.yarnpkg.com/jquery-ui/-/jquery-ui-1.10.5.tgz#826aed3dd1f88d32ae75d74df48643dc431a5815"
-  integrity sha1-gmrtPdH4jTKudddN9IZD3EMaWBU=
+jquery-ui@^1.12.1:
+  version "1.12.1"
+  resolved "https://registry.yarnpkg.com/jquery-ui/-/jquery-ui-1.12.1.tgz#bcb4045c8dd0539c134bc1488cdd3e768a7a9e51"
+  integrity sha1-vLQEXI3QU5wTS8FIjN0+dop6nlE=
 
 jquery.cookie@^1.4.1:
   version "1.4.1"
