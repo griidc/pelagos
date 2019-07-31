@@ -49,9 +49,8 @@ $(document).ready(function () {
     let rgIdsArray = [];
     let foIdsArray = [];
     let statusArray = [];
-
+    let urlPelagos = Routing.generate("pelagos_app_ui_searchpage_default") + "?";
     $(".facet-aggregation").change(function () {
-        let urlPelagos = Routing.generate("pelagos_app_ui_searchpage_default") + "?";
         $("#resgrp-facet :checkbox:checked").each(function () {
             rgIdsArray.push($(this).attr("id"));
         });
@@ -99,18 +98,13 @@ $(document).ready(function () {
         } else if (statusArray.length === 0) {
             delete parsed.status;
         }
-
-        let newQueryString = Object.keys(parsed).map(key => key + "=" + parsed[key]).join("&");
-        window.location = urlPelagos + newQueryString;
+        window.location = getUrl(urlPelagos, parsed);
     });
 
     if (count > pageSize) {
-        let url = document.location.href;
-        let pageCount = Math.ceil(count / pageSize);
-        let arr = url.split("&page=");
-
+        delete parsed.page;
         $("#search-pagination").bootpag({
-            total: pageCount,
+            total: Math.ceil(count / pageSize),
             page: startPage,
             maxVisible: 5,
             leaps: true,
@@ -123,7 +117,7 @@ $(document).ready(function () {
             prevClass: "prev",
             lastClass: "last",
             firstClass: "first",
-            href: arr[0] + "&page=" + "{{number}}"
+            href: getUrl(urlPelagos, parsed) + "&page=" + "{{number}}"
         });
 
         $(".next").click(function (e) {
@@ -144,4 +138,8 @@ $(document).ready(function () {
         e.preventDefault();
     })
 });
+
+function getUrl(urlPelagos, parsed) {
+    return urlPelagos + Object.keys(parsed).map(key => key + "=" + parsed[key]).join("&");
+}
 
