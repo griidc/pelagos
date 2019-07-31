@@ -50,9 +50,7 @@ $(document).ready(function() {
         $("#clearGeoFilterButton").button("disable");
     });
 
-    $("#show_extents_checkbox").button();
-    $("#clearGeoFilterButton").button();
-    $("#drawGeoFilterButton").button();
+    $(".map_button").button();
     // local variable for filter button//
     var filterButton = $("#filter-button");
     filterButton.button();
