@@ -56,8 +56,7 @@
                     <div id="olmap"></div>
                     <div id="map_buttons">
                         <div class="map_button_container">
-                            <label for="show_extents_checkbox" id="show_extents_label">Show Extents</label>
-                            <input type="checkbox" id="show_extents_checkbox" class="map_button" onclick="showAllExtents();">
+                            <input type="button" id="show_extents_checkbox" class="map_button" value="Show Extents" onclick="showAllExtents();">
                         </div>
                         <div class="map_button_container">
                             <input type="button" id="clearGeoFilterButton" class="map_button" value="Clear Filter" disabled onclick="$(this).button('disable');myGeoViz.clearFilter();trees['tree'].geo_filter = null;applyFilter();">
