@@ -320,6 +320,8 @@ fos_elastica:
                                             type: 'text'
                                         themeKeywords:
                                             type: 'text'
+                                availabilityStatus:
+                                    type: 'integer'
                                 collectionStartDate:
                                     property_path: false
                                     type: 'date'
