@@ -124,7 +124,7 @@ $(document).ready(function () {
         stepMonths: 1,
         showButtonPanel: false,
         onClose: function(selectedDate) {
-            $("#estimatedEndDate").datepicker("option", "minDate", selectedDate);
+            $("#collectionEndDate").datepicker("option", "minDate", selectedDate);
         }
     });
     $("#collectionEndDate").datepicker({
@@ -135,7 +135,7 @@ $(document).ready(function () {
         stepMonths: 1,
         showButtonPanel: false,
         onClose: function(selectedDate) {
-            $("#estimatedStartDate").datepicker("option", "maxDate", selectedDate);
+            $("#collectionStartDate").datepicker("option", "maxDate", selectedDate);
         }
     });
 
