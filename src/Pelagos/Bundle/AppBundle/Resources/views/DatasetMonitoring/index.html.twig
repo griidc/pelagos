@@ -1,47 +1,32 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
-{% block title %}Dataset Monitoring{% endblock %}
+{% block title %}Dataset Monitoring{% endblock title %}
 
-{% block head %}
+{% block stylesheets %}
     {{ parent() }}
 
-    {{
-        add_css (
-            [
-                '//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/themes/default/style.min.css',
-            ]
-        )
-    }}
+    <link href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/themes/default/style.min.css" rel="stylesheet" />
 
-    {% stylesheets
-        '@PelagosAppBundle/Resources/public/css/dataset-monitoring.css'
-        '@PelagosAppBundle/Resources/public/css/scrollbars.css'
-        '@PelagosAppBundle/Resources/public/css/projects.css'
-    %}
-        {{ add_css(asset_url) }}
-    {% endstylesheets %}
+    <link href="{{ asset('build/css/dataset-monitoring.css') }}" rel="stylesheet" />
+    <link href="{{ asset('build/css/scrollbars.css') }}" rel="stylesheet" />
+    <link href="{{ asset('build/css/projects.css') }}" rel="stylesheet" />
+{% endblock stylesheets %}
 
-    {{ add_js(
-        [
-            '//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/jstree.min.js',
-            '//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.15.5/js/jquery.tablesorter.min.js',
-            '//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js',
-        ]
-    ) }}
+{% block javascripts %}
+    {{ parent() }}
 
-    {% javascripts
-        '@PelagosAppBundle/Resources/public/js/dataset-monitoring.js'
-        '@PelagosAppBundle/Resources/public/js/tree.js'
-        '@PelagosAppBundle/Resources/public/js/dotgraph.js'
-        '@FOSJsRoutingBundle/Resources/public/js/router.js'
-    %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/jstree.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.15.5/js/jquery.tablesorter.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
 
-    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
-{% endblock %}
+    <script type="text/javascript" src="{{ asset('build/js/dataset-monitoring.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/tree.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/dotgraph.js') }}"></script>
+
+    <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+{% endblock javascripts %}
 
 {% block body %}
-
     <div class="display-table">
 
         <div class="display-table-row">
@@ -89,9 +74,7 @@
                                 <div class="overview"></div>
                                 <div class="spinner">
                                     <div>
-                                        {% image '@PelagosAppBundle/Resources/public/images/spinner.gif' %}
-                                            <img src="{{ asset_url }}">
-                                        {% endimage %}
+                                        <img src="{{ asset('build/images/spinner.gif') }}">
                                     </div>
                                 </div>
                             </div>
@@ -100,6 +83,5 @@
                 </div>
             </div>
         </div>
-
     </div>
 {% endblock %}

@@ -1,16 +1,12 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
 
-{% block head %}
-    {{ parent () }}
+{% block javascripts %}
+    {{ parent() }}
 
-    {% javascripts '@PelagosAppBundle/Resources/public/js/entity/NationalDataCenter.js' %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
-
+    <script type="text/javascript" src="{{ asset('build/js/entity/NationalDataCenter.js') }}"></script>
 {% endblock %}
 
 {% block body %}
-
     <div>
         <table border="0" width="100%">
             <tr>

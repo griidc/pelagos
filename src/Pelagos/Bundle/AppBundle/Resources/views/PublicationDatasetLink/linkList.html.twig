@@ -1,38 +1,27 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
 
-{% block head %}
+{% block stylesheets %}
     {{ parent() }}
 
-    {{
-        add_css (
-            [
-                '//cdn.datatables.net/1.10.6/css/jquery.dataTables.min.css',
-                '//cdn.datatables.net/plug-ins/1.10.6/integration/jqueryui/dataTables.jqueryui.css'
-            ]
-        )
-    }}
+    <link href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="//cdn.datatables.net/plug-ins/1.10.6/integration/jqueryui/dataTables.jqueryui.css" rel="stylesheet" />
 
-    {{
-        add_js(
-            [
-                '//cdn.datatables.net/1.10.6/js/jquery.dataTables.min.js',
-                '//cdn.datatables.net/plug-ins/1.10.6/integration/jqueryui/dataTables.jqueryui.min.js'
-            ]
-        )
-    }}
+
+    <link href="{{ asset('build/css/entity.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.6/integration/jqueryui/dataTables.jqueryui.min.js"></script>
 
     {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
-        {% javascripts '@PelagosAppBundle/Resources/public/js/linkList.js' %}
-            {{ add_js(asset_url) }}
-        {% endjavascripts %}
+    <script type="text/javascript" src="{{ asset('build/js/linkList.js') }}"></script>
 
-        {% javascripts '@FOSJsRoutingBundle/Resources/public/js/router.js' %}
-            {{ add_js(asset_url) }}
-        {% endjavascripts %}
-
-        {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
+    <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
     {% endif %}
-
 {% endblock %}
 
 {% block body %}

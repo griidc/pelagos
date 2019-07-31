@@ -1,15 +1,13 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
 
-{% block head %}
+{% block javascripts %}
     {{ parent() }}
-    {% javascripts  '@FOSJsRoutingBundle/Resources/public/js/router.js'
-                    '@PelagosAppBundle/Resources/public/js/ResearchGroup.js'
-                    '@PelagosAppBundle/Resources/public/js/entity/ResearchGroup.js'
-    %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
 
-    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
+    <script type="text/javascript" src="{{ asset('build/js/ResearchGroup.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/entity/ResearchGroup.js') }}"></script>
+
+    <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
 {% endblock %}
 
 {% block body %}
@@ -82,9 +80,7 @@
             {% endif %}
             </table>
             {% if newResearchGroupPerson is defined and is_granted('CAN_CREATE', newResearchGroupPerson) %}
-                {% image '@PelagosAppBundle/Resources/public/images/add.png' %}
-                    <img class="addimg" src="{{asset_url}}">
-                {% endimage %}
+                <img class="addimg" src="{{ asset('build/images/add.png') }}">
             {% endif %}
         </div>
     </div>
