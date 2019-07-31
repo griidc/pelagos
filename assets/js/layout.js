@@ -7,7 +7,7 @@ global.queryString = require('query-string');
 
 require('@fortawesome/fontawesome-free/css/all.min.css');
 
-require('jquery-ui/themes/base/all.css');
+require('jquery-ui/themes/base/base.css');
 require('../css/jquery-ui.theme/jquery-ui.theme.css');
 
 require('jquery-ui/ui/widgets/autocomplete');
