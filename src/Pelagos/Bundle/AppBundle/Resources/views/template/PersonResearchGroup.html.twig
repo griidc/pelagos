@@ -1,10 +1,9 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
 
-{% block head %}
+{% block javascripts %}
     {{ parent() }}
-    {% javascripts '@PelagosAppBundle/Resources/public/js/entity/PersonResearchGroup.js' %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
+
+    <script type="text/javascript" src="{{ asset('build/js/entity/PersonResearchGroup.js') }}"></script>
 {% endblock %}
 
 {% block body %}

@@ -3,9 +3,7 @@
 {% block javascripts %}
     {{ parent() }}
     
-    {% javascripts '@PelagosAppBundle/Resources/public/js/Account.js' %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
+    <script type="text/javascript" src="{{ asset('build/js/Account.js') }}"></script>
 {% endblock %}
 
 {% block body %}

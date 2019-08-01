@@ -14,39 +14,23 @@
             <div>
                 {% if dl_ok == 1 %}
                     {% if dataset_available %}
-                        {% image '@PelagosAppBundle/Resources/public/images/download-package.png' %}
-                            <img width="40px" height="40px" id="downloadds" src="{{ asset_url }}">
-                        {% endimage %}
+                        <img width="40px" height="40px" id="downloadds" src="{{ asset('build/images/download-package.png') }}">
                     {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED') %}
-                        {% image '@PelagosAppBundle/Resources/public/images/download-package.png' %}
-                            <img width="40px" height="40px" id="downloaddsdenrestricted" src="{{ asset_url }}">
-                        {% endimage %}
+                        <img width="40px" height="40px" id="downloaddsdenrestricted" src="{{ asset('build/images/download-package.png') }}">
                     {% else %}
-                        {% image '@PelagosAppBundle/Resources/public/images/download-package-grey.png' %}
-                            <img width="40px" height="40px" id="downloaddsden" src="{{ asset_url }}">
-                        {% endimage %}
+                        <img width="40px" height="40px" id="downloaddsden" src="{{ asset('build/images/download-package-grey.png') }}">
                     {% endif %}
                     {% if dataset.datasetStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
-                        {% image '@PelagosAppBundle/Resources/public/images/xmlc.png' %}
-                            <img title="test" width="40px" height="40px" id="metadatadl" src="{{ asset_url }}">
-                        {% endimage %}
+                        <img width="40px" height="40px" id="metadatadl" src="{{ asset('build/images/xmlc.png') }}">
                     {% else %}
-                        {% image '@PelagosAppBundle/Resources/public/images/xmlc-bw.png' %}
-                            <img title="test" width="40px" height="40px" id="metadatadl-dis" src="{{ asset_url }}">
-                        {% endimage %}
+                        <img width="40px" height="40px" id="metadatadl-dis" src="{{ asset('build/images/xmlc-bw.png') }}">
                     {% endif %}
                     {% if dataset.datasetSubmission.ErddapUrl %}
-                        {% image '@PelagosAppBundle/Resources/public/images/button_erddap.png' %}
-                            <br /><a href="{{ dataset.datasetSubmission.ErddapUrl }}" border="0" target="_blank"><img src="{{ asset_url }}" id="erddaplink"></a>
-                        {% endimage %}
+                        <br /><a href="{{ dataset.datasetSubmission.ErddapUrl }}" border="0" target="_blank"><img src="{{ asset('build/images/button_erddap.png') }}" id="erddaplink"></a>
                     {% endif %}
                 {% else %}
-                    {% image '@PelagosAppBundle/Resources/public/images/download-package-grey.png' %}
-                        <img width="40px" height="40px" id="downloaddsdenmd" src="{{ asset_url }}">
-                    {% endimage %}
-                    {% image '@PelagosAppBundle/Resources/public/images/xmlc-bw.png' %}
-                        <img title="test" width="40px" height="40px" id="metadatadl-dis" src="{{ asset_url }}">
-                    {% endimage %}
+                    <img width="40px" height="40px" id="downloaddsdenmd" src="{{ asset('build/images/download-package-grey.png') }}">
+                    <img width="40px" height="40px" id="metadatadl-dis" src="{{ asset('build/images/xmlc-bw.png') }}">
                 {% endif %}
             </div>
         </div>
@@ -54,7 +38,6 @@
         <h2>{{ dataset.title }}</h2>
 
         <h3>{{ dataset.researchGroup.name }}</h3>
-
 
         <table width="90%" datasetId="{{ dataset.id }}">
             {% if dataset.doi|default %}

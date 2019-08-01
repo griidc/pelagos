@@ -3,22 +3,15 @@
 {% block stylesheets %}
     {{ parent() }}
 
-    {% stylesheets
-        '@PelagosAppBundle/Resources/public/css/login.css'
-    %}
-        {{ add_css(asset_url) }}
-    {% endstylesheets %}
+    <link href="{{ asset('build/css/login.css') }}" rel="stylesheet" />
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
 
-    {% javascripts
-        '//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js'
-        '@PelagosAppBundle/Resources/public/js/pelagosNoty.js'
-    %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js"></script>
+
+    <script type="text/javascript" src="{{ asset('build/js/pelagosNoty.js') }}"></script>
 
     <script type="text/javascript">
         $(document).ready(function(){

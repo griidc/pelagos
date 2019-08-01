@@ -1,27 +1,16 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
 {% block title %}End Review Tool{% endblock %}
-{% block head %}
+
+{% block javascripts %}
     {{ parent() }}
 
-    {{
-        add_js(
-            [
-                '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',
-                '//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js'
-            ]
-        )
-    }}
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js"></script>
 
-    {% javascripts
-        '@PelagosAppBundle/Resources/public/js/common.js'
-        '@PelagosAppBundle/Resources/public/js/pelagosNoty.js'
-        '@PelagosAppBundle/Resources/public/js/endReviewTool.js'
-    %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
-
+    <script type="text/javascript" src="{{ asset('build/js/common.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/pelagosNoty.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/endReviewTool.js') }}"></script>
 {% endblock %}
-
 
 {% block body %}
     <h2> End review tool</h2>

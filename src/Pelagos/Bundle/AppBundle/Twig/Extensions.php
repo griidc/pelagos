@@ -57,21 +57,6 @@ class Extensions extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction(
-                'add_js',
-                array(self::class, 'addJS'),
-                array('is_safe' => array('html'))
-            ),
-            new \Twig_SimpleFunction(
-                'add_css',
-                array(self::class, 'addCSS'),
-                array('is_safe' => array('html'))
-            ),
-            new \Twig_SimpleFunction(
-                'add_library',
-                array(self::class, 'addLibrary'),
-                array('is_safe' => array('html'))
-            ),
             new \Twig\TwigFunction(
                 'isMaintenanceMode',
                 [$this, 'isMaintenanceMode']
@@ -127,94 +112,6 @@ class Extensions extends \Twig_Extension
                 [$this, 'maintenanceModeColor']
             ),
         );
-    }
-
-    /**
-     * Add a javascript file.
-     *
-     * @param string|array $js   The path to the javascript file or a string containing javascript code
-     *                           (or an array of paths or code).
-     * @param string       $type The type of script (external = file, inline = code).
-     *
-     * @return null|string Nothing if drupal_add_js is used, a script tag otherwise.
-     */
-    public static function addJS($js, $type = 'external')
-    {
-        if (!is_array($js)) {
-            $js = array($js);
-        }
-        $drupal = false;
-        $return = '';
-        if (function_exists('drupal_add_js')) {
-            $drupal = true;
-            $return = null;
-        }
-        foreach ($js as $jsUrl) {
-            if ($drupal) {
-                drupal_add_js($jsUrl, array('type' => $type));
-            } else {
-                $return .= "<script type=\"text/javascript\" src=\"$jsUrl\"></script>\n";
-            }
-        }
-        return $return;
-    }
-
-    /**
-     * Add a CSS file.
-     *
-     * @param string|array $css  The path to the css file or a string containing css code
-     *                           (or an array of paths or code).
-     * @param string       $type The type of script (external = file, inline = code).
-     *
-     * @return null|string Nothing if drupal_add_css is used, a style tag otherwise.
-     */
-    public static function addCSS($css, $type = 'external')
-    {
-        if (!is_array($css)) {
-            $css = array($css);
-        }
-        $drupal = false;
-        $return = '';
-        if (function_exists('drupal_add_css')) {
-            $drupal = true;
-            $return = null;
-        }
-        foreach ($css as $cssUrl) {
-            if ($drupal) {
-                drupal_add_css($cssUrl, array('type' => $type));
-            } else {
-                $return .= "<style type=\"text/css\" media=\"all\">@import url(\"$cssUrl\");</style>\n";
-            }
-        }
-        return $return;
-    }
-
-    /**
-     * Add a library.
-     *
-     * @param string|array $library The name of the library to add (or an array of library names).
-     *
-     * @return null|string Nothing if drupal_add_library is used, a list of libraries otherwise.
-     */
-    public static function addLibrary($library)
-    {
-        if (!is_array($library)) {
-            $library = array($library);
-        }
-        $drupal = false;
-        $return = '';
-        if (function_exists('drupal_add_library')) {
-            $drupal = true;
-            $return = null;
-        }
-        foreach ($library as $libraryName) {
-            if ($drupal) {
-                drupal_add_library('system', $libraryName);
-            } else {
-                $return .= "<!-- drupal_library:$libraryName -->";
-            }
-        }
-        return $return;
     }
 
     /**
