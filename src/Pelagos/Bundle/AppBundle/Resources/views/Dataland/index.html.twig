@@ -19,6 +19,8 @@
     <link href="{{ asset('build/css/status.css') }}" rel="stylesheet" />
     <link href="{{ asset('build/css/xmlverbatim.css') }}" rel="stylesheet" />
     <link href="{{ asset('build/css/download.css') }}" rel="stylesheet" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/vex-js/4.1.0/css/vex.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/vex-js/4.1.0/css/vex-theme-os.css" />
 {% endblock %}
 
 {% block javascripts %}
@@ -26,12 +28,14 @@
 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js"></script>
     <script type="text/javascript" src="//maps.google.com/maps/api/js?v=3&key={{ google_maps_api_key }}"></script>
-
     <script type="text/javascript" src="{{ asset('build/js/geoviz.js') }}"></script>
     <script type="text/javascript" src="{{ asset('build/js/dataland.js') }}"></script>
     <script type="text/javascript" src="{{ asset('build/js/download.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
     <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+    <script type="text/javascript" src="{{ asset('build/downloadBox.js') }}"></script>
+
+
 {% endblock %}
 
 {% block body %}
