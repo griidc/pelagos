@@ -50,40 +50,62 @@ $(document).ready(function () {
     let rgIdsArray = [];
     let foIdsArray = [];
     let statusArray = [];
-
+    let urlPelagos = Routing.generate("pelagos_app_ui_searchpage_default") + "?";
     $(".facet-aggregation").change(function () {
-        let urlPelagos = Routing.generate("pelagos_app_ui_searchpage_default") + "?";
         $("#resgrp-facet :checkbox:checked").each(function () {
             rgIdsArray.push($(this).attr("id"));
         });
 
+        $("#resgrp-facet :checkbox:not(:checked)").each(function () {
+            if (rgIdsArray.includes(($(this).attr("id")))) {
+                delete rgIdsArray[$(this).attr("id")];
+            }
+        });
+
         if (rgIdsArray.length > 0) {
             parsed.resGrp = rgIdsArray.join(",");
+        } else if (rgIdsArray.length === 0) {
+            delete parsed.resGrp;
         }
+
         $("#fundorg-facet :checkbox:checked").each(function () {
             foIdsArray.push($(this).attr("id"));
         });
+
+        $("#fundorg-facet :checkbox:not(:checked)").each(function () {
+            if (foIdsArray.includes(($(this).attr("id")))) {
+                delete foIdsArray[$(this).attr("id")];
+            }
+        });
+
         if (foIdsArray.length > 0) {
             parsed.fundOrg = foIdsArray.join(",");
+        } else if (foIdsArray.length === 0) {
+            delete parsed.fundOrg;
         }
+
         $("#status-facet :checkbox:checked").each(function () {
             statusArray.push($(this).attr("id"));
         });
+
+        $("#status-facet :checkbox:not(:checked)").each(function () {
+            if (statusArray.includes(($(this).attr("id")))) {
+                delete statusArray[$(this).attr("id")];
+            }
+        });
+
         if (statusArray.length > 0) {
             parsed.status = statusArray.join(",");
+        } else if (statusArray.length === 0) {
+            delete parsed.status;
         }
-
-        let newQueryString = Object.keys(parsed).map(key => key + "=" + parsed[key]).join("&");
-        window.location = urlPelagos + newQueryString;
+        window.location = getUrl(urlPelagos, parsed);
     });
 
     if (count > pageSize) {
-        let url = document.location.href;
-        let pageCount = Math.ceil(count / pageSize);
-        let arr = url.split("&page=");
-
+        delete parsed.page;
         $("#search-pagination").bootpag({
-            total: pageCount,
+            total: Math.ceil(count / pageSize),
             page: startPage,
             maxVisible: 5,
             leaps: true,
@@ -96,7 +118,7 @@ $(document).ready(function () {
             prevClass: "prev",
             lastClass: "last",
             firstClass: "first",
-            href: arr[0] + "&page=" + "{{number}}"
+            href: getUrl(urlPelagos, parsed) + "&page=" + "{{number}}"
         });
 
         $(".next").click(function (e) {
@@ -163,4 +185,8 @@ $(document).ready(function () {
         e.preventDefault();
     })
 });
+
+function getUrl(urlPelagos, parsed) {
+    return urlPelagos + Object.keys(parsed).map(key => key + "=" + parsed[key]).join("&");
+}
 

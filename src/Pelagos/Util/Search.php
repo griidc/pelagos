@@ -311,12 +311,12 @@ class Search
         $statusInfo = [
             [
                 'id' => 1,
-                'name' => 'Unavailable & Expected Soon',
+                'name' => 'Identified',
                 'count' => $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE)
             ],
             [
                 'id' => 2,
-                'name' => 'Unavailable, Pending Review',
+                'name' => 'Submitted',
                 'count' => (
                     $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION)
                     + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL)
@@ -324,7 +324,7 @@ class Search
             ],
             [
                 'id' => 3,
-                'name' => 'Available with Restrictions',
+                'name' => 'Restricted',
                 'count' => (
                     $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED)
                     + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED)
