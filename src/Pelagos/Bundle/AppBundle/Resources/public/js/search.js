@@ -115,8 +115,6 @@ $(document).ready(function () {
 
     // set up DatePickers
     $("#collectionStartDate").datepicker({
-        //defaultDate: "",
-        //showOn: "button",
         dateFormat: "yy-mm-dd",
         changeMonth: true,
         changeYear: true,
@@ -159,8 +157,8 @@ $(document).ready(function () {
                 form.submit();
             }
         }
-
     });
+    
     $(".disabled").click(function (e) {
         e.preventDefault();
     })
