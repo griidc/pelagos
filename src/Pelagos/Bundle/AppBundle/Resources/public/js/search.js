@@ -10,8 +10,9 @@ $(document).ready(function () {
     let foId = `${parsed.fundOrg}`;
     let status = `${parsed.status}`;
 
+    let searchForm = $("#searchForm");
     //Setting value of page number to 1, for new search
-    $("#searchForm").submit(function () {
+    searchForm.submit(function () {
         $("#pageNo").attr("disabled", true);
     });
 
@@ -112,6 +113,52 @@ $(document).ready(function () {
         });
     });
 
+    // set up DatePickers
+    $("#collectionStartDate").datepicker({
+        dateFormat: "yy-mm-dd",
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        stepMonths: 1,
+        showButtonPanel: false,
+        onClose: function(selectedDate) {
+            $("#collectionEndDate").datepicker("option", "minDate", selectedDate);
+        }
+    });
+    $("#collectionEndDate").datepicker({
+        dateFormat: "yy-mm-dd",
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        stepMonths: 1,
+        showButtonPanel: false,
+        onClose: function(selectedDate) {
+            $("#collectionStartDate").datepicker("option", "maxDate", selectedDate);
+        }
+    });
+
+    jQuery.validator.addMethod("trueISODate", function(value, element) {
+        var regPattern = /^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/
+        return this.optional(element) || ((Date.parse(value)) && regPattern.test(value));
+    });
+
+    searchForm.validate({
+        rules: {
+            collectionStartDate: "trueISODate",
+            collectionEndDate: "trueISODate",
+        },
+        messages: {
+            collectionStartDate: "Collection Start Date is not a valid ISO date",
+            collectionEndDate: "Collection End Date is not a valid ISO date",
+        },
+        ignore: ".ignore,.prototype",
+        submitHandler: function (form) {
+            if ($(".ignore").valid()) {
+                form.submit();
+            }
+        }
+    });
+    
     $(".disabled").click(function (e) {
         e.preventDefault();
     })
