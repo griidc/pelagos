@@ -10,6 +10,7 @@
     "jquery-ui-themes": "^1.12.0",
     "jquery.cookie": "^1.4.1",
     "qtip2": "2.2.0",
-    "query-string": "^6.8.1"
+    "query-string": "^6.8.1",
+    "vex-js": "^4.1.0"
   }
 }
