@@ -40,7 +40,7 @@ $(document).ready(function()
 
             // Count the number of options, but divide by 2,
             // because there are two select boxes (with options).
-            $("#numversions").text(select.find("option").size() / 2);
+            $("#numversions").text(select.find("option").length / 2);
             $("#datasetstatus").text(data.datasetstatus);
             $(".udi-title").text(data.udi);
         })
@@ -77,11 +77,16 @@ $(document).ready(function()
             .find(".submission-modifier")
             .text($(this).find("option:selected").data("modifier"));
         var getFormUrl = Routing.generate("pelagos_app_ui_sidebyside_getsubmissionform");
-        $("#left").load(getFormUrl + "/" + udi + "/" + version, function() {
-            $(".smallmap", this).gMap();
-            $(".filetabs", this).tabs();
-            leftLoaded = true;
-            loading.notify();
+        $.ajax({
+            url: getFormUrl + "/" + udi + "/" + version,
+            dataType: "html",
+            success: function(html) {
+                $(".smallmap", $("#left")).gMap();
+                $(".filetabs", $("#left")).tabs();
+                $("#left").html(html);
+                leftLoaded = true;
+                loading.notify();
+            }
         });
     });
 
@@ -103,11 +108,16 @@ $(document).ready(function()
             .find(".submission-modifier")
             .text($(this).find("option:selected").data("modifier"));
         var getFormUrl = Routing.generate("pelagos_app_ui_sidebyside_getsubmissionform");
-        $("#right").load(getFormUrl + "/" + udi + "/" + version, function() {
-            $(".smallmap", this).gMap();
-            $(".filetabs", this).tabs();
-            rightLoaded = true;
-            loading.notify();
+        $.ajax({
+            url: getFormUrl + "/" + udi + "/" + version,
+            dataType: "html",
+            success: function(html) {
+                $(".smallmap", $("#right")).gMap();
+                $(".filetabs", $("#right")).tabs();
+                $("#right").html(html);
+                leftLoaded = true;
+                loading.notify();
+            }
         });
     });
 
