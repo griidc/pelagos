@@ -424,4 +424,22 @@ class DataStore
         }
         return $storeFileName;
     }
+
+    /**
+     * Get the numeric ID of a POSIX user or group.
+     *
+     * @param string $name  The user or group name.
+     * @param bool $isGroup Flag set to true if a group, defaults to user.
+     *
+     * @return string|bool
+     */
+    protected function getIdFromName(string $name, bool $isGroup = false)
+    {
+        if ($isGroup) {
+            $id = posix_getgrnam($name);
+        } else {
+            $id = posix_getpwnam($name);
+        }
+        return $id;
+    }
 }
