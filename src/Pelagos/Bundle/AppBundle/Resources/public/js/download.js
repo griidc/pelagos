@@ -21,15 +21,7 @@ function startDownload(id)
                                 }
                             }}),
                     $.extend({}, vex.dialog.buttons.NO, { text: "Cancel" })
-                ],
-                callback: function (data) {
-                    if (data) {
-                        $.getJSON(Routing.generate("pelagos_app_download_http", {"id": id}), function (data) {
-                            console.log(data["downloadUrl"]);
-                            $("#downloadBtn").attr("href", (data["downloadUrl"]));
-                        });
-                    }
-                }
+                ]
             })
         })
     );
@@ -99,9 +91,43 @@ function getHtmlForDownload(data)
                                  <strong>File name:</strong> ${data.dataset.filename}<br />
                                  <strong>File size:</strong> ${data.dataset.fileSize}<br />
                                  <strong>SHA256 Checksum:</strong> ${data.dataset.checksum}<br />
-                                 <strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span><br />
+                                 <strong>Estimated Download Time:</strong> <span id="dl_time">${testDownload(data.dataset.fileSizeRaw)}</span><br />
                              </div>
                           </div>`;
     }
     return dialogBoxHtml;
+}
+
+function testDownload(fileSize) {
+    let start = new Date().getTime();
+    $.ajax({
+        type: "GET",
+        url: "/download/testfile.bin?id=" + start,
+        success: function(msg) {
+            end = new Date().getTime();
+            diff = (end - start) / 1000;
+            bytes = msg.length;
+            speed = (bytes / diff);
+            time = filesize / speed;
+            unit = "second";
+            if (time > 60) {
+                time = time / 60;
+                unit = "minute";
+            }
+            if (time > 60) {
+                time = time / 60;
+                unit = "hour";
+            }
+            if (Math.round(time) != 1) unit += "s";
+            $('#dl_time').html(Math.round(time) + " " + unit + " (based on your current connection speed)");
+            if (filesize > 5000000000 && unit == "hours" && time >= 24) {
+                showDialog('Notice:', 'This dataset will take approximately ' + Math.round(time) +
+                    ' hours to download. Please contact GRIIDC (<a href=mailto:griidc@gomri.org>griidc@gomri.org</a>) ' +
+                    ' if you would like to arrange alternative data delivery.');
+            }
+        },
+        error: function () {
+            $("#dl_time").html("Failed to calculate");
+        }
+    });
 }

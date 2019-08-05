@@ -130,6 +130,7 @@ class DownloadController extends Controller
             'udi' => $dataset->getUdi(),
             'filename' => $datasetSubmission->getDatasetFileName(),
             'fileSize' => TwigExtentions::formatBytes($datasetSubmission->getDatasetFileSize(), 2),
+            'fileSizeRaw' => $datasetSubmission->getDatasetFileSize(),
             'checksum' => $datasetSubmission->getDatasetFileSha256Hash(),
             'availability' => $dataset->getAvailabilityStatus()
         );
