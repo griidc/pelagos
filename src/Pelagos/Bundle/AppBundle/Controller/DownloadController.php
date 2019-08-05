@@ -117,7 +117,6 @@ class DownloadController extends Controller
     }
 
     /**
-     *
      * Get the dataset required information for the Download dialog box.
      *
      * @param Dataset $dataset A dataset instance.
