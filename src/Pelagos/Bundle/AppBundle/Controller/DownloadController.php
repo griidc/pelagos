@@ -8,11 +8,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
+
+use Pelagos\Bundle\AppBundle\Twig\Extensions as TwigExtentions;
 
 /**
  * The Dataset download controller.
@@ -22,36 +23,35 @@ use Pelagos\Entity\DatasetSubmission;
 class DownloadController extends Controller
 {
     /**
-     * Produce html for download splash screen.
+     * Produce json response for download dialog box.
      *
-     * @param Request $request The Symfony request object.
-     * @param string  $id      The id of the dataset to download.
+     * @param string $id The id of the dataset to download.
      *
      * @Route("/{id}")
      *
      * @return Response
      */
-    public function defaultAction(Request $request, $id)
+    public function defaultAction(string $id)
     {
         $dataset = $this->get('pelagos.entity.handler')->get(Dataset::class, $id);
-        if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
-            and DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED ===
-                $dataset->getDatasetSubmission()->getDatasetFileTransferStatus()) {
-            return $this->render(
-                'PelagosAppBundle:Download:download-external-resource-splash-screen.html.twig',
-                array(
-                    'dataset' => $dataset,
-                )
+        if ($dataset->isRemotelyHosted()) {
+            $result = array(
+                'dataset' => $this->getDatasetDetails($dataset),
+                'remotelyHosted' => true,
+                'fileUri' => $dataset->getDatasetSubmission()->getDatasetFileUri()
+            );
+        } else {
+            $result = array(
+                'dataset' => $this->getDatasetDetails($dataset),
+                'remotelyHosted' => false,
+                'guest' => !$this->getUser() instanceof Account,
+                'gridOK' => $this->getUser() instanceof Account and $this->getUser()->isPosix()
             );
         }
-        return $this->render(
-            'PelagosAppBundle:Download:download-splash-screen.html.twig',
-            array(
-                'dataset' => $dataset,
-                'guest' => !$this->getUser() instanceof Account,
-                'gridOK' => $this->getUser() instanceof Account and $this->getUser()->isPosix(),
-            )
-        );
+        $response = new Response(json_encode($result));
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
     }
 
     /**
@@ -114,5 +114,25 @@ class DownloadController extends Controller
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
+    }
+
+    /**
+     *
+     * Get the dataset required information for the Download dialog box.
+     *
+     * @param Dataset $dataset A dataset instance.
+     *
+     * @return array
+     */
+    private function getDatasetDetails(Dataset $dataset): array
+    {
+        $datasetSubmission = $dataset->getDatasetSubmission();
+        return array(
+            'udi' => $dataset->getUdi(),
+            'filename' => $datasetSubmission->getDatasetFileName(),
+            'fileSize' => TwigExtentions::formatBytes($datasetSubmission->getDatasetFileSize(), 2),
+            'checksum' => $datasetSubmission->getDatasetFileSha256Hash(),
+            'availability' => $dataset->getAvailabilityStatus()
+        );
     }
 }
