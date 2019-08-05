@@ -312,7 +312,7 @@ class DataStore
                 $dataStoreDirectory,
                 $this->dataStoreOwner,
                 $this->dataStoreGroup,
-                'u:' . $this->webServerUser . ':--x'
+                'A::' . getIdFromName($this->webServerUser) . ':X'
             );
         }
         return $dataStoreDirectory;
@@ -362,14 +362,14 @@ class DataStore
                 $downloadDirectory,
                 $this->dataStoreOwner,
                 $this->dataStoreGroup,
-                'u:' . $this->webServerUser . ':r-x,' . 'g:' . $this->dataDownloadBrowserGroup . ':r-x'
+                'A::' . getIdFromName($this->webServerUser) . ':RX,' . 'A:g:' . getIdFromName($this->dataDownloadBrowserGroup, true) . ':RX'
             );
         }
         return $downloadDirectory;
     }
 
     /**
-     * Set the owner, group, and FACLs for a file or directory.
+     * Set the owner, group, and NFS4 FACLs for a file or directory.
      *
      * @param string $file  The file or directory to set owner, group, and FACLs for.
      * @param string $owner The owner to set.
@@ -378,7 +378,7 @@ class DataStore
      *
      * @throws \Exception When an error occurs setting the owner of the data download directory.
      * @throws \Exception When an error occurs setting the group of the data download directory.
-     * @throws \Exception When an error occurs setting the FACLs of the data download directory.
+     * @throws \Exception When an error occurs setting the NFS4 FACLs of the data download directory.
      *
      * @return void
      */
@@ -392,9 +392,9 @@ class DataStore
         }
         if (null !== $facls) {
             $output = array();
-            exec("setfacl -m $facls $file", $output, $returnVal);
+            exec("nfs4_setfacl -a $facls $file", $output, $returnVal);
             if ($returnVal !== 0) {
-                throw new \Exception("Could not set ACls to $facls for $file (Return value: $returnVal)");
+                throw new \Exception("Could not set NFS4 ACls to $facls for $file (Return value: $returnVal)");
             }
         }
     }
