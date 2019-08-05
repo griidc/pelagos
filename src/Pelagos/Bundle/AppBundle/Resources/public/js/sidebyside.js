@@ -16,7 +16,7 @@ $(document).ready(function()
             data: {udi: udi},
             context: document.body
         })
-        .success(function(data) {
+        .done(function(data) {
             var select = $("select.version-select");
             select.find("option").remove();
 
@@ -44,7 +44,7 @@ $(document).ready(function()
             $("#datasetstatus").text(data.datasetstatus);
             $(".udi-title").text(data.udi);
         })
-        .error(function() {
+        .fail(function() {
             var n = new noty({
                 text: "UDI:" + udi + " not found!",
                 type: "error",
