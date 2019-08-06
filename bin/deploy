@@ -11,14 +11,14 @@ bin/console rabbitmq-supervisor:control stop
 
 # Run composer install to make sure all non-dev dependencies are installed and parameters are defined
 composer install --no-dev --optimize-autoloader
-echo
-
-# Dump assetic assets
-bin/console assetic:dump
 
 # Dump FOSJsRouting routes
 echo "Dumping FOSJsRouting routes..."
 bin/console fos:js-routing:dump --target=web/js/routing
+
+# Handle Yarn
+yarn install
+yarn run encore prod
 
 # Rebuild Supervisor config for RabbitMQ consumers and start them
 bin/console rabbitmq-supervisor:rebuild
