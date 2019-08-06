@@ -23,6 +23,10 @@ function startDownload(id)
                     $.extend({}, vex.dialog.buttons.NO, { text: "Cancel" })
                 ]
             })
+        }).always(function (data) {
+            if (data.remotelyHosted) {
+                $(":button[type='submit']").remove();
+            }
         })
     );
 }
@@ -63,9 +67,8 @@ function getHtmlForDownload(data)
                             <div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px;">
                                 <strong>UDI:</strong> ${data.dataset.udi}<br />
                                 <strong>File name:</strong> ${data.dataset.filename}<br />
-                                <strong>File size:</strong> ${data.dataset.fileSize}<br />
                                 <strong>Location:</strong>
-                                <a href="{{dataset.datasetSubmission.datasetFileUri}}" target=_BLANK>
+                                <a href="${data.fileUri}" target=_BLANK>
                                     ${data.fileUri}
                                 </a><br />
                                 ${additionalInfo}
