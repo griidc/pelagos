@@ -6,7 +6,7 @@ function startDownload(id)
 {
     $('<div id="download_splash" />').appendTo("#pelagos-content").load(
         $.getJSON( Routing.generate("pelagos_app_download_default", {"id": id}), function( data ) {
-            vex.dialog.open({
+            let vexBox = vex.dialog.open({
                 className: "vex-theme-os",
                 unsafeMessage: getHtmlForDownload(data),
                 buttons: [
@@ -22,7 +22,7 @@ function startDownload(id)
                 ]
             });
             if (data.remotelyHosted) {
-                $(":button[type='submit']").remove();
+                $(":button[type='submit']", vexBox.contentEl).remove();
             }
         })
     );
