@@ -6,24 +6,21 @@ function startDownload(id)
 {
     $('<div id="download_splash" />').appendTo("#pelagos-content").load(
         $.getJSON( Routing.generate("pelagos_app_download_default", {"id": id}), function( data ) {
-
-        }).done(function (data) {
             vex.dialog.open({
                 className: "vex-theme-os",
                 unsafeMessage: getHtmlForDownload(data),
                 buttons: [
                     $.extend({}, vex.dialog.buttons.YES, { text: "Download", click: function($vexContent, event) {
-                                if (!data.remotelyHosted) {
-                                    $.getJSON(Routing.generate("pelagos_app_download_http", {"id": id}), function (data) {
-                                    }).done(function (data) {
-                                        window.location = `${data.downloadUrl}`;
-                                    });
-                                }
-                            }}),
+                            if (!data.remotelyHosted) {
+                                $.getJSON(Routing.generate("pelagos_app_download_http", {"id": id}), function (data) {
+                                }).done(function (data) {
+                                    window.location = `${data.downloadUrl}`;
+                                });
+                            }
+                        }}),
                     $.extend({}, vex.dialog.buttons.NO, { text: "Cancel" })
                 ]
-            })
-        }).always(function (data) {
+            });
             if (data.remotelyHosted) {
                 $(":button[type='submit']").remove();
             }
@@ -66,7 +63,6 @@ function getHtmlForDownload(data)
                             </div>
                             <div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px;">
                                 <strong>UDI:</strong> ${data.dataset.udi}<br />
-                                <strong>File name:</strong> ${data.dataset.filename}<br />
                                 <strong>Location:</strong>
                                 <a href="${data.fileUri}" target=_BLANK>
                                     ${data.fileUri}
@@ -76,7 +72,7 @@ function getHtmlForDownload(data)
                     </div>`;
     } else {
         dialogBoxHtml = `<div id="dataset_download_content">
-                             <div style="border: 1px solid #aaa; padding: 10px; margin-top: 15px; border-radius: 4px;">
+                             <div style="border: 1px solid #aaa; padding: 10px; margin-top: 20px; margin-bottom: 10px; border-radius: 4px;">
                                  <p style="margin-top:0">
                                  All materials on this website are made available to GRIIDC and in turn to you "as-is." There is no 
                                  warranty (expressed or implied) to these materials, their title, accuracy, non-infringement of third 
