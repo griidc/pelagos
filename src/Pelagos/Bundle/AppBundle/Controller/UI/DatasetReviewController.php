@@ -238,22 +238,22 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             $datasetSubmissionId = $datasetSubmission->getId();
             $researchGroupId = $dataset->getResearchGroup()->getId();
             $datasetSubmissionStatus = $datasetSubmission->getStatus();
+
+            //Tidy GML.
+            $gml = tidy_parse_string(
+                $datasetSubmission->getSpatialExtent(),
+                array(
+                    'input-xml' => true,
+                    'output-xml' => true,
+                    'indent' => true,
+                    'indent-spaces' => 4,
+                    'wrap' => 0,
+                ),
+                'utf8'
+            );
+
+            $datasetSubmission->setSpatialExtent($gml);
         }
-
-        //Tidy GML.
-        $gml = tidy_parse_string(
-            $datasetSubmission->getSpatialExtent(),
-            array(
-                'input-xml' => true,
-                'output-xml' => true,
-                'indent' => true,
-                'indent-spaces' => 4,
-                'wrap' => 0,
-            ),
-            'utf8'
-        );
-
-        $datasetSubmission->setSpatialExtent($gml);
 
         $form = $this->get('form.factory')->createNamed(
             null,
