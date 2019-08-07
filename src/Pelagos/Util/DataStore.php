@@ -312,7 +312,7 @@ class DataStore
                 $dataStoreDirectory,
                 $this->dataStoreOwner,
                 $this->dataStoreGroup,
-                'A::' . getIdFromName($this->webServerUser) . ':X'
+                'A::' . $this->getIdFromName($this->webServerUser) . ':X'
             );
         }
         return $dataStoreDirectory;
@@ -362,7 +362,7 @@ class DataStore
                 $downloadDirectory,
                 $this->dataStoreOwner,
                 $this->dataStoreGroup,
-                'A::' . getIdFromName($this->webServerUser) . ':RX,' . 'A:g:' . getIdFromName($this->dataDownloadBrowserGroup, true) . ':RX'
+                'A::' . $this->getIdFromName($this->webServerUser) . ':RX,' . 'A:g:' . $this->getIdFromName($this->dataDownloadBrowserGroup, true) . ':RX'
             );
         }
         return $downloadDirectory;
