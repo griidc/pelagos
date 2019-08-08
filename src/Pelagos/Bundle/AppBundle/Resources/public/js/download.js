@@ -107,7 +107,7 @@ function testDownload(fileSize) {
             diff = (end - start) / 1000;
             bytes = msg.length;
             speed = (bytes / diff);
-            time = filesize / speed;
+            time = fileSize / speed;
             unit = "second";
             if (time > 60) {
                 time = time / 60;
