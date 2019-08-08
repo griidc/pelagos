@@ -126,13 +126,17 @@ class DownloadController extends Controller
     private function getDatasetDetails(Dataset $dataset): array
     {
         $datasetSubmission = $dataset->getDatasetSubmission();
-        return array(
+        $datasetInfo = array(
             'udi' => $dataset->getUdi(),
-            'filename' => $datasetSubmission->getDatasetFileName(),
-            'fileSize' => TwigExtentions::formatBytes($datasetSubmission->getDatasetFileSize(), 2),
-            'fileSizeRaw' => $datasetSubmission->getDatasetFileSize(),
-            'checksum' => $datasetSubmission->getDatasetFileSha256Hash(),
             'availability' => $dataset->getAvailabilityStatus()
         );
+        
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            $datasetInfo['filename'] = $datasetSubmission->getDatasetFileName();
+            $datasetInfo['fileSize'] = TwigExtentions::formatBytes($datasetSubmission->getDatasetFileSize(), 2);
+            $datasetInfo['fileSizeRaw'] = $datasetSubmission->getDatasetFileSize();
+            $datasetInfo['checksum'] = $datasetSubmission->getDatasetFileSha256Hash();
+        }
+        return $datasetInfo;
     }
 }
