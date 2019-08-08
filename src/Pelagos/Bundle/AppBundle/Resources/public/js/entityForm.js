@@ -169,7 +169,7 @@
                     }
                 });
 
-            $(this).bind("reset", function() {
+            $(this).on("reset", function() {
                 formValidator.resetForm();
                 $("input:visible,textarea,select", this).each(function() {
                     $(this)

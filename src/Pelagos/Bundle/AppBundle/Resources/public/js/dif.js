@@ -466,7 +466,7 @@ function createDIF(form)
         type: method,
         datatype: "json",
         data: formData
-    }).success(function (json, textStatus, jqXHR) {
+    }).done(function (json, textStatus, jqXHR) {
         // Saving the DIF
         if (jqXHR.status === 201) {
             resourceLocation = jqXHR.getResponseHeader("location");
@@ -474,7 +474,7 @@ function createDIF(form)
             resourceLocation = url;
         }
         response.status = "success";
-    }).error(function (json, text, jqXHR) {
+    }).fail(function (json, text, jqXHR) {
         var errorMessage = JSON.parse(json.responseText);
         response.status = "error";
         response.message = errorMessage.message;
@@ -501,11 +501,11 @@ function createDIF(form)
                 type: "PATCH",
                 datatype: "json",
                 data: formData
-            }).success(function(json, textStatus, jqXHR) {
+            }).done(function(json, textStatus, jqXHR) {
                 if (jqXHR.status === 204) {
                     response.status = "success";
                 }
-            }).error(function (json, text, jqXHR) {
+            }).fail(function (json, text, jqXHR) {
                 var errorMessage = JSON.parse(json.responseText);
                 response.status = "error";
                 response.message = errorMessage.message;
