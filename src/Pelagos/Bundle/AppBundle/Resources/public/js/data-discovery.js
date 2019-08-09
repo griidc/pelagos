@@ -209,32 +209,13 @@ function createRow(data, row)
     //clone from template row and shove actual data in
     var rowContent = $("#template-data-row-available").children().clone();
 
-    var imgTitle = "";
     switch (activeTabIndex) {
         case 0: //available
-            if ("RemotelyHosted" === data["datasetSubmission"]["datasetFileTransferStatus"] && !data["datasetSubmission"]["datasetFileTransferStatus"].match("!^https?://data.gulfresearchinitiative.org!")) {
-                imgTitle = "This dataset can be downloaded from an external repository.";
-            } else {
-                imgTitle = ("title", "Download dataset");
-            }
-            $(rowContent).find("#img-download-package").removeClass("greyout");
-            $(rowContent).find("#dataset-download").click( function(){
-                var id = $(this).parents("tr").attr("datasetid");
-                startDownload(id);
-            });
-
             if (!data["datasetSubmission"]["datasetFileSize"]) {
                 $(rowContent).find("#container-dataset-filesize").hide();
             }
             break;
         case 1: //restricted
-            if ("RemotelyHosted" === data["datasetSubmission"]["datasetFileTransferStatus"]) {
-                imgTitle = "This dataset is restricted for download but is hosted by another website so availability status is not guaranteed to be accurate. " +
-                    "Please contact the external repository for information on how to access this dataset.";
-            } else {
-                imgTitle = "This dataset is restricted for download.";
-            }
-            $(rowContent).find("#dataset-restrictions").text("Download Restricted");
             $(rowContent).find("#container-dataset-restrictions").show();
 
             if (!data["datasetSubmission"]["datasetFileSize"]) {
@@ -242,14 +223,12 @@ function createRow(data, row)
             }
             break;
         case 2: //InReview
-                imgTitle = "Download unavailable"
 
                 if (!data["datasetSubmission"]["datasetFileSize"]) {
                     $(rowContent).find("#container-dataset-filesize").hide();
                 }
             break;
         case 3: //identified
-            $(rowContent).find("#img-download-package").hide();
             $(rowContent).find("#container-dataset-restrictions").css("color","grey");
             $(rowContent).find("#dataset-restrictions").text("?");
             $(rowContent).find("#container-dataset-restrictions").show();
@@ -260,7 +239,6 @@ function createRow(data, row)
         default:
             break;
     }
-    $(rowContent).find("#img-download-package").attr("title", imgTitle);
 
     if (data["datasetSubmission"]) {
         if (data["datasetSubmission"]["authors"]) {
