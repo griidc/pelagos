@@ -209,48 +209,12 @@ function createRow(data, row)
     //clone from template row and shove actual data in
     var rowContent = $("#template-data-row-available").children().clone();
 
-    switch (activeTabIndex) {
-        case 0: //available
-            if (!data["datasetSubmission"]["datasetFileSize"]) {
-                $(rowContent).find("#container-dataset-filesize").hide();
-            }
-            break;
-        case 1: //restricted
-            $(rowContent).find("#container-dataset-restrictions").show();
-
-            if (!data["datasetSubmission"]["datasetFileSize"]) {
-                $(rowContent).find("#container-dataset-filesize").hide();
-            }
-            break;
-        case 2: //InReview
-
-                if (!data["datasetSubmission"]["datasetFileSize"]) {
-                    $(rowContent).find("#container-dataset-filesize").hide();
-                }
-            break;
-        case 3: //identified
-            $(rowContent).find("#container-dataset-restrictions").css("color","grey");
-            $(rowContent).find("#dataset-restrictions").text("?");
-            $(rowContent).find("#container-dataset-restrictions").show();
-            $(rowContent).find("#container-dataset-filesize").css("color","grey");
-            $(rowContent).find("#dataset-filesize").text("?");
-            $(rowContent).find("#container-dataset-doi").hide();
-            break;
-        default:
-            break;
+    if (activeTabIndex === 3) {
+        $(rowContent).find("#container-dataset-doi").hide();
     }
-
     if (data["datasetSubmission"]) {
         if (data["datasetSubmission"]["authors"]) {
             $(rowContent).find("#dataset-authors").text(data["datasetSubmission"]["authors"]);
-        }
-
-        var filesize = parseInt(data["datasetSubmission"]["datasetFileSize"]);
-        if (filesize) {
-            if (filesize > 1073741824) {
-                $(rowContent).find("#dataset-filesize").css("color","red");
-            }
-            $(rowContent).find("#dataset-filesize").text(formatBytes(filesize,0));
         }
     } else {
         $(rowContent).find("#container-dataset-authors").hide();
