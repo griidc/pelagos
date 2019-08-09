@@ -272,28 +272,6 @@ class DataDiscoveryController extends UIController
     }
 
     /**
-     * Show details for a dataset.
-     *
-     * @param integer $id The id of the Dataset.
-     *
-     * @Route("/show-details/{id}")
-     * @Method("GET")
-     *
-     * @return Response
-     */
-    public function showDetailsAction($id)
-    {
-        $dataset = $this->get('pelagos.entity.handler')->get(Dataset::class, $id);
-
-        return $this->render(
-            'PelagosAppBundle:DataDiscovery:dataset_details.html.twig',
-            array(
-                'dataset' => $dataset
-            )
-        );
-    }
-
-    /**
      * This dispatches a search term log event.
      *
      * @param Request             $request      The request passed from datasetAction.
