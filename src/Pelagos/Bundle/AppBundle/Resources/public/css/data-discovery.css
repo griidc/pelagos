@@ -140,6 +140,12 @@ input.ui-button {
     border-top-right-radius: 4px;
 }
 
+.odd-row {
+    background-color: #effcff;
+}
+
+.even-row {
+}
 
 #menu-wrapper {
     height: 40%;
