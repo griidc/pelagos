@@ -29,6 +29,5 @@ $(document).ready(function()
         done: function (e, data) {
             $("#fundingOrganizationLogo img").attr("src", data.url + "?" + new Date().getTime());
         }
-    }).prop("disabled", !$.support.fileInput)
-    .parent().addClass($.support.fileInput ? undefined : "disabled");
+    });
 });

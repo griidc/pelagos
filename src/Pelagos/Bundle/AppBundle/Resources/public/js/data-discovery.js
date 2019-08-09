@@ -20,7 +20,7 @@ $(document).ready(function() {
         $('table.datasets tr[udi="' + eventVariables.attributes.udi + '"] td').removeClass("highlight");
     });
 
-    $("#filter-input").bind("keypress", function(e) {
+    $("#filter-input").on("keypress", function(e) {
         if(e.keyCode==13){
             applyFilter();
         }
@@ -309,7 +309,7 @@ function createRow(data, row)
 
 
     //this shows the details dataset on Show Details button
-    $(".details_link", rowContent).bind("click", function(){
+    $(".details_link", rowContent).on("click", function(){
         var row = $(this).parents("tr");
         if ($(row).has(".details:empty").length == 1) {
             var datasetId = $(row).attr("datasetid");

@@ -81,3 +81,7 @@
     padding-bottom: 0px;
     margin-bottom: 5px;
 }
+
+.vex.vex-theme-os .vex-content {
+    width: 750px !important;
+}

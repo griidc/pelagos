@@ -5,11 +5,12 @@
     "copy-webpack-plugin": "^4.6.0"
   },
   "dependencies": {
-    "jquery": "1.12",
+    "jquery": "^3.4.0",
     "jquery-ui": "^1.12.1",
     "jquery-ui-themes": "^1.12.0",
     "jquery.cookie": "^1.4.1",
     "qtip2": "2.2.0",
-    "query-string": "^6.8.1"
+    "query-string": "^6.8.1",
+    "vex-js": "^4.1.0"
   }
 }

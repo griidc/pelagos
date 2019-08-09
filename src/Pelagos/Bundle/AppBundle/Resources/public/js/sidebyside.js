@@ -16,7 +16,7 @@ $(document).ready(function()
             data: {udi: udi},
             context: document.body
         })
-        .success(function(data) {
+        .done(function(data) {
             var select = $("select.version-select");
             select.find("option").remove();
 
@@ -40,11 +40,11 @@ $(document).ready(function()
 
             // Count the number of options, but divide by 2,
             // because there are two select boxes (with options).
-            $("#numversions").text(select.find("option").size() / 2);
+            $("#numversions").text(select.find("option").length / 2);
             $("#datasetstatus").text(data.datasetstatus);
             $(".udi-title").text(data.udi);
         })
-        .error(function() {
+        .fail(function() {
             var n = new noty({
                 text: "UDI:" + udi + " not found!",
                 type: "error",

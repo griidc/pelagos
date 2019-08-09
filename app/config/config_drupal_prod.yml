@@ -8,6 +8,9 @@ framework:
     router:
         resource: "%kernel.root_dir%/config/routing_drupal.yml"
 
+fos_js_routing:
+   request_context_base_url: .
+
 monolog:
     handlers:
         filer:
