@@ -160,7 +160,7 @@ $(function() {
     $("#dtabs").tabs({
         heightStyle: "content",
         activate: function(event, ui) {
-            $(ui.newTab.context.hash).trigger("active");
+            $(ui.newTab.find("[href]").get(0).hash).trigger("active");
         }
     });
 
