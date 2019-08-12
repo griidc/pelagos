@@ -153,6 +153,8 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             } else {
                 $this->addToFlashDisplayQueue($request, $udi, 'requestRevision');
             }
+        } elseif ($datasetStatus === Dataset::DATASET_STATUS_NONE) {
+            $this->addToFlashDisplayQueue($request, $udi, 'notSubmitted');
         } else {
             if ($datasetSubmission instanceof DatasetSubmission and $this->filerStatus($datasetSubmission)) {
                 $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
