@@ -4,28 +4,26 @@ $(document).ready(function()
 
 function startDownload(id)
 {
-    $('<div id="download_splash" />').appendTo("#pelagos-content").load(
-        $.getJSON( Routing.generate("pelagos_app_download_default", {"id": id}), function( data ) {
-            let vexBox = vex.dialog.open({
-                className: "vex-theme-os",
-                unsafeMessage: getHtmlForDownload(data),
-                buttons: [
-                    $.extend({}, vex.dialog.buttons.YES, { text: "Download", click: function($vexContent, event) {
-                            if (!data.remotelyHosted) {
-                                $.getJSON(Routing.generate("pelagos_app_download_http", {"id": id}), function (data) {
-                                }).done(function (data) {
-                                    window.location = `${data.downloadUrl}`;
-                                });
-                            }
-                        }}),
-                    $.extend({}, vex.dialog.buttons.NO, { text: "Cancel" })
-                ]
-            });
-            if (data.remotelyHosted) {
-                $(":button[type='submit']", vexBox.contentEl).remove();
-            }
-        })
-    );
+    $.getJSON( Routing.generate("pelagos_app_download_default", {"id": id}), function( data ) {
+        let vexBox = vex.dialog.open({
+            className: "vex-theme-os",
+            unsafeMessage: getHtmlForDownload(data),
+            buttons: [
+                $.extend({}, vex.dialog.buttons.YES, { text: "Download", click: function($vexContent, event) {
+                        if (!data.remotelyHosted) {
+                            $.getJSON(Routing.generate("pelagos_app_download_http", {"id": id}), function (data) {
+                            }).done(function (data) {
+                                window.location = `${data.downloadUrl}`;
+                            });
+                        }
+                    }}),
+                $.extend({}, vex.dialog.buttons.NO, { text: "Cancel" })
+            ]
+        });
+        if (data.remotelyHosted) {
+            $(":button[type='submit']", vexBox.contentEl).remove();
+        }
+    })
 }
 
 function getHtmlForDownload(data)
@@ -119,7 +117,7 @@ function testDownload(fileSize) {
             }
             if (Math.round(time) != 1) unit += "s";
             $('#dl_time').html(Math.round(time) + " " + unit + " (based on your current connection speed)");
-            if (filesize > 5000000000 && unit == "hours" && time >= 24) {
+            if (fileSize > 5000000000 && unit == "hours" && time >= 24) {
                 showDialog(`Notice: This dataset will take approximately  ${Math.round(time)} hours to download. 
                             Please contact GRIIDC (<a href=mailto:griidc@gomri.org>griidc@gomri.org</a>) 
                             if you would like to arrange alternative data delivery.`);
