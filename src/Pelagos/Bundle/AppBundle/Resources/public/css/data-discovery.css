@@ -140,12 +140,14 @@ input.ui-button {
     border-top-right-radius: 4px;
 }
 
+.datasets tr:nth-child(odd) {
+    background-color: #f6f5f4;
+ }
 
 #menu-wrapper {
     height: 40%;
     padding-top: 10px;
 }
-
 
 #right {
     display: table;
