@@ -362,7 +362,8 @@ class DataStore
                 $downloadDirectory,
                 $this->dataStoreOwner,
                 $this->dataStoreGroup,
-                'A::' . $this->getIdFromName($this->webServerUser) . ':RX,' . 'A:g:' . $this->getIdFromName($this->dataDownloadBrowserGroup, true) . ':RX'
+                'A::' . $this->getIdFromName($this->webServerUser) . ':RX,' .
+                    'A:g:' . $this->getIdFromName($this->dataDownloadBrowserGroup, true) . ':RX'
             );
         }
         return $downloadDirectory;
@@ -428,10 +429,10 @@ class DataStore
     /**
      * Get the numeric ID of a POSIX user or group.
      *
-     * @param string $name  The user or group name.
-     * @param bool $isGroup Flag set to true if a group, defaults to user.
+     * @param string  $name    The user or group name.
+     * @param boolean $isGroup Flag set to true if a group, defaults to user.
      *
-     * @return string|bool
+     * @return string|boolean
      */
     protected function getIdFromName(string $name, bool $isGroup = false)
     {
