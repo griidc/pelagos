@@ -167,12 +167,6 @@ function addRows() {
         var row = document.createElement("tr");
         $(row).attr("udi", data["udi"]);
         $(row).attr("datasetid", dataset["_id"]);
-       // 0 offset, so 0th row is row 1 thus odd.
-        if (i%2 == 0) {
-            $(row).addClass("odd-row");
-        } else {
-            $(row).addClass("even-row");
-        }
         if (data["geometry"]) {
             $(row).hover(function () {
                 //show geometries on the map on hovering on the row
