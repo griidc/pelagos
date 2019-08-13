@@ -34,7 +34,9 @@ var dlmap = new GeoViz();
            $( "#tabs" ).tabs( "disable", $(this).find("a").attr("href") );
         });
 
-        $("#xmlradio").buttonset();
+        $(".xmlcheckradio").checkboxradio({
+            icon: false
+        });
 
         $("#xmlraw").click(function() {
             $("#formatedxml").hide();
