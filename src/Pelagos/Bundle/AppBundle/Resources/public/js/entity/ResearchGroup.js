@@ -2,15 +2,15 @@ $(document).ready(function()
 {
     "use strict";
 
-    $('[name="person"]', $('[name="person"]').parent(':not([newform])')).select2({
+    $('[name="person"]', $('[name="person"]').parent(":not([newform])")).select2({
         placeholder: "[Please Select a Person]",
         allowClear: true,
         ajax: {
-            dataType: 'json',
+            dataType: "json",
             data: function (params) {
                 if (params.term != undefined) {
                     var query = {
-                        "lastName": params.term + '*'
+                        "lastName": params.term + "*"
                     }
                 } else {
                     var query = {}
@@ -51,32 +51,34 @@ $(document).ready(function()
             .append("<option value=\"\">[Please Select a Funding Organization First]</option>");
         } else {
             fundingCycle.append("<option value=\"\">[Please Select a Funding Cycle]</option>");
-            addOptionsByEntity(
-                fundingCycle,
-                "funding_cycles", "fundingOrganization=" + $(this).val()
-            );
+            $.when(
+                addOptionsByEntity(
+                    fundingCycle,
+                    "funding_cycles", "fundingOrganization=" + $(this).val()
+                )
+            ).then(function() {
+                // Set FundingCycle list back to match with the original funding organization
+                $("form[entityType=\"ResearchGroup\"]").on("reset", function() {
+                    var fundingOrganization = $(this).find("[fundingOrganization]");
+                    var fundingOrganizationValue = fundingOrganization.attr("fundingOrganization");
+                    fundingOrganization.find("option").attr("selected", false);
+                    fundingOrganization.val(fundingOrganizationValue);
+                    fundingOrganization.find("[value=\"" + fundingOrganizationValue + "\"]").attr("selected", true);
+                    fundingOrganization.change();
+
+                    fundingCycle = $(this).find("[fundingCycle]");
+                    var fundingCycleValue = fundingCycle.attr("fundingCycle");
+                    fundingCycle.val(fundingCycleValue);
+                    fundingCycle.find("option[value=\"" + fundingCycleValue + "\"]").attr("selected", true);
+                });
+
+                $("form[entityType=\"PersonResearchGroup\"]").on("reset", function() {
+                    setTimeout(function () {
+                        $('[name="person"]').change();
+                    });
+                });
+            });
         }
-    });
-
-    // Set FundingCycle list back to match with the original funding organization
-    $("form[entityType=\"ResearchGroup\"]").on("reset", function() {
-        var fundingOrganization = $(this).find("[fundingOrganization]");
-        var fundingOrganizationValue = fundingOrganization.attr("fundingOrganization");
-        fundingOrganization.find("option").attr("selected", false);
-        fundingOrganization.val(fundingOrganizationValue);
-        fundingOrganization.find("[value=\"" + fundingOrganizationValue + "\"]").attr("selected", true);
-        fundingOrganization.change();
-
-        var fundingCycle = $(this).find("[fundingCycle]");
-        var fundingCycleValue = fundingCycle.attr("fundingCycle");
-        fundingCycle.val(fundingCycleValue);
-        fundingCycle.find("option[value=\"" + fundingCycleValue + "\"]").attr("selected", true);
-    });
-
-    $("form[entityType=\"PersonResearchGroup\"]").on("reset", function() {
-        setTimeout(function () {
-            $('[name="person"]').change();
-        });
     });
 });
 
@@ -91,28 +93,25 @@ $(document).ready(function()
  */
 function addOptionsByEntity(selectElement, entity, filter)
 {
-    "use strict";
+    return $.Deferred(function() {
+        var url = $(selectElement).attr("data-url");
+        if (typeof filter !== "undefined") {
+            url += "?" + filter;// + "&properties=id,name";
+        } else {
+            //url += "?properties=id,name";
+        }
 
-    var url = $(selectElement).attr("data-url");
-    if (typeof filter !== "undefined") {
-        url += "?" + filter;// + "&properties=id,name";
-    } else {
-        //url += "?properties=id,name";
-    }
+        $.getJSON(url, function(data) {
+             var entities = sortObject(data, "name", false, true);
 
-    $.ajax({
-        url: url,
-        dataType: "json",
-        async: false
-    })
-    .done(function(data) {
-        var entities = sortObject(data, "name", false, true);
-
-        $.each(entities, function(seq, item) {
-            selectElement.append(
-                $("<option></option>").val(item.id).html(item.name)
-            );
+            $.each(entities, function(seq, item) {
+                selectElement.append(
+                    $("<option></option>").val(item.id).html(item.name)
+                );
+            });
+            //selectElement.find("option[value=\"" + selectElement.attr(entity) + "\"]").attr("selected", true);
         });
-        //selectElement.find("option[value=\"" + selectElement.attr(entity) + "\"]").attr("selected", true);
+        
+        return this.resolve();
     });
 }
