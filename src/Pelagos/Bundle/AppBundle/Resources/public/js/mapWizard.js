@@ -81,13 +81,8 @@ function MapWizard(json)
         $(divNonSpatial).hide();
         $("#"+json.descField).hide();
 
-        $.ajax({
-            url: Routing.generate("pelagos_geoviz_wizard_dialog"),
-            success: function(html) {
-                $(document.body).append('<div id="divMapWizard">'+html+"</div>");
-            },
-            async:   false
-        });
+        $(document.body).append('<div id="divMapWizard">');
+        $("#divMapWizard").load(Routing.generate("pelagos_geoviz_wizard_dialog"));
 
         $(gmlField).change(function() {
             smlGeoViz.goHome();
@@ -119,17 +114,14 @@ function MapWizard(json)
     function initWiz()
     {
         return $.Deferred(function() {
-
             var wizPromise = this;
             //Synchonous load of HTML, then append to DIV
             $.ajax({
                 url: Routing.generate("pelagos_geoviz_wizard_map"),
                 success: function(html) {
                     $("#divMapWizard").append(html);
-                },
-                //async:   false
+                }
             }).then( function() {
-
                 wizGeoViz = new GeoViz();
 
                 var mymap = $("#mapwiz table#maptoolstbl tbody tr td").first();
