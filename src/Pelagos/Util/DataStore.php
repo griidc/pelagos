@@ -239,7 +239,6 @@ class DataStore
         if (!chmod($storeFilePath, 0644)) {
             throw new \Exception("Could not set file mode on $storeFilePath");
         }
-        $this->setOwnerGroupFacls($storeFilePath, $this->dataStoreOwner, $this->dataStoreGroup);
         return $storeFilePath;
     }
 
@@ -308,10 +307,8 @@ class DataStore
             if (!mkdir($dataStoreDirectory, 0750)) {
                 throw new \Exception("Could not create $dataStoreDirectory");
             }
-            $this->setOwnerGroupFacls(
+            $this->setFacls(
                 $dataStoreDirectory,
-                $this->dataStoreOwner,
-                $this->dataStoreGroup,
                 'A::' . $this->getIdFromName($this->webServerUser) . ':X'
             );
         }
@@ -358,10 +355,8 @@ class DataStore
             if (!mkdir($downloadDirectory, $mode)) {
                 throw new \Exception("Could not create $downloadDirectory");
             }
-            $this->setOwnerGroupFacls(
+            $this->setFacls(
                 $downloadDirectory,
-                $this->dataStoreOwner,
-                $this->dataStoreGroup,
                 'A::' . $this->getIdFromName($this->webServerUser) . ':RX,' .
                     'A:g:' . $this->getIdFromName($this->dataDownloadBrowserGroup, true) . ':RX'
             );
@@ -370,27 +365,17 @@ class DataStore
     }
 
     /**
-     * Set the owner, group, and NFS4 FACLs for a file or directory.
+     * Set the NFS4 FACLs for a file or directory.
      *
      * @param string $file  The file or directory to set owner, group, and FACLs for.
-     * @param string $owner The owner to set.
-     * @param string $group The group to set.
      * @param string $facls The FACLs to set.
      *
-     * @throws \Exception When an error occurs setting the owner of the data download directory.
-     * @throws \Exception When an error occurs setting the group of the data download directory.
      * @throws \Exception When an error occurs setting the NFS4 FACLs of the data download directory.
      *
      * @return void
      */
-    protected function setOwnerGroupFacls($file, $owner, $group, $facls = null)
+    protected function setFacls($file, $facls = null)
     {
-        if (!chown($file, $owner)) {
-            throw new \Exception("Could not set owner to $owner for $file");
-        }
-        if (!chgrp($file, $group)) {
-            throw new \Exception("Could not set group to $group for $file");
-        }
         if (null !== $facls) {
             $output = array();
             exec("nfs4_setfacl -a $facls $file", $output, $returnVal);
@@ -436,10 +421,14 @@ class DataStore
      */
     protected function getIdFromName(string $name, bool $isGroup = false)
     {
+        $id = false;
         if ($isGroup) {
-            $id = posix_getgrnam($name);
+            // This call returns false on failure to resolve.
+            $obj = posix_getgrnam($name);
+            $id = $obj['gid'];
         } else {
-            $id = posix_getpwnam($name);
+            $obj = posix_getpwnam($name);
+            $id = $obj['uid'];
         }
         return $id;
     }
