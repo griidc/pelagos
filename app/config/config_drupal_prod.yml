@@ -9,7 +9,7 @@ framework:
         resource: "%kernel.root_dir%/config/routing_drupal.yml"
 
 fos_js_routing:
-   request_context_base_url: /pelagos-symfony
+   request_context_base_url: /mwilliamson
 
 monolog:
     handlers:

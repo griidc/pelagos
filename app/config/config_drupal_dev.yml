@@ -10,6 +10,9 @@ framework:
         strict_requirements: true
     profiler: { only_exceptions: false }
 
+fos_js_routing:
+       request_context_base_url: /mwilliamson
+
 web_profiler:
     toolbar: true
     intercept_redirects: false

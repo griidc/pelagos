@@ -417,18 +417,28 @@ class DataStore
      * @param string  $name    The user or group name.
      * @param boolean $isGroup Flag set to true if a group, defaults to user.
      *
-     * @return string|boolean
+     * @throws \Exception When username can not be resolved.
+     * @throws \Exception When groupname can not be resolved.
+     *
+     * @return string
      */
     protected function getIdFromName(string $name, bool $isGroup = false)
     {
-        $id = false;
         if ($isGroup) {
-            // This call returns false on failure to resolve.
+            // These calls returns false on failure to resolve.
             $obj = posix_getgrnam($name);
-            $id = $obj['gid'];
+            if (false === $obj) {
+                throw new \Exception('Cannot resolve GID for groupname.');
+            } else {
+                $id = $obj['gid'];
+            }
         } else {
             $obj = posix_getpwnam($name);
-            $id = $obj['uid'];
+            if (false === $obj) {
+                throw new \Exception('Cannot resolve UID for username.');
+            } else {
+                $id = $obj['uid'];
+            }
         }
         return $id;
     }
