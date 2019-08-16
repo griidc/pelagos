@@ -96,9 +96,7 @@ function addOptionsByEntity(selectElement, entity, filter)
     return $.Deferred(function() {
         var url = $(selectElement).attr("data-url");
         if (typeof filter !== "undefined") {
-            url += "?" + filter;// + "&properties=id,name";
-        } else {
-            //url += "?properties=id,name";
+            url += "?" + filter;
         }
 
         $.getJSON(url, function(data) {
@@ -109,9 +107,8 @@ function addOptionsByEntity(selectElement, entity, filter)
                     $("<option></option>").val(item.id).html(item.name)
                 );
             });
-            //selectElement.find("option[value=\"" + selectElement.attr(entity) + "\"]").attr("selected", true);
         });
         
-        return this.resolve();
+        this.resolve();
     });
 }
