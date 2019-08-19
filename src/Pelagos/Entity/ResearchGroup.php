@@ -671,7 +671,7 @@ class ResearchGroup extends Entity
     /**
      * Setter for lockStatus.
      *
-     * @param boolean $state Containing desired state of lock
+     * @param boolean $state Containing desired state of lock.
      *
      * @access public
      *
