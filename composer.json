@@ -33,7 +33,7 @@
         "slim/views": "0.1.*",
         "indigophp/doctrine-annotation-autoload": "^0.1.0@dev",
         "friendsofsymfony/rest-bundle": "^1.7",
-        "jms/serializer-bundle": "^1.1",
+        "jms/serializer-bundle": "^2.0",
         "nelmio/api-doc-bundle": "^2.11",
         "doctrine/doctrine-fixtures-bundle": "^2.3",
         "willdurand/hateoas-bundle": "^1.1",
