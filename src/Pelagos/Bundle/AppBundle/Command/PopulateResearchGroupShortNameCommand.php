@@ -2,12 +2,12 @@
 
 namespace Pelagos\Bundle\AppBundle\Command;
 
-
-use Pelagos\Entity\ResearchGroup;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use Pelagos\Entity\ResearchGroup;
 
 /**
  * This Symfony Command populates the short names for Research groups.
@@ -46,7 +46,7 @@ class PopulateResearchGroupShortNameCommand extends ContainerAwareCommand
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
 
         $fileContents = array_map('str_getcsv', file($inputFileName));
-        array_walk($fileContents, function(&$combine) use ($fileContents) {
+        array_walk($fileContents, function (&$combine) use ($fileContents) {
             $combine = array_combine($fileContents[0], $combine);
         });
         array_shift($fileContents);
