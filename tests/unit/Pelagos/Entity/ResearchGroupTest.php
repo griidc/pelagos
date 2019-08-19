@@ -429,4 +429,17 @@ class ResearchGroupTest extends TestCase
         $this->researchGroup->setShortName($shortName);
         $this->assertEquals($shortName, $this->researchGroup->getShortName());
     }
+
+    /**
+     * Test getter/setter for lockState.
+     *
+     * @return void
+     */
+    public function testLockSetAndGet(): void
+    {
+        $this->researchGroup->setLockStatus(true);
+        $this->assertTrue($this->researchGroup->getLockStatus());
+        $this->researchGroup->setLockStatus(false);
+        $this->assertFalse($this->researchGroup->getLockStatus());
+    }
 }

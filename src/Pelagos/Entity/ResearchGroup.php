@@ -294,6 +294,15 @@ class ResearchGroup extends Entity
     protected $datasets;
 
     /**
+     * Lock flag for Research Group.
+     *
+     * @var boolean $lockStatus
+     *
+     * @ORM\Column(type="boolean", nullable=false, default=false)
+     */
+    protected $lockStatus;
+
+    /**
      * Getter for Datasets.
      *
      * @return Collection A Collection of Datasets.
@@ -652,11 +661,37 @@ class ResearchGroup extends Entity
      *
      * @access public
      *
-     * @return string Containing emailADdress.
+     * @return string Containing emailAddress.
      */
     public function getEmailAddress()
     {
         return $this->emailAddress;
+    }
+
+    /**
+     * Setter for lockStatus.
+     *
+     * @param boolean $state Containing desired state of lock
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setLockStatus(bool $state)
+    {
+        $this->lockStatus = $state;
+    }
+
+    /**
+     * Getter for lockStatus.
+     *
+     * @access public
+     *
+     * @return boolean Containing lock status for this Research Group.
+     */
+    public function getLockStatus()
+    {
+        return $this->lockStatus;
     }
 
     /**
