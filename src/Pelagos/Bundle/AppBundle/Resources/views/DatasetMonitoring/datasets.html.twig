@@ -8,6 +8,7 @@
         <tr>
             {% if not dataland | default %}
             <th class="udi" title="sort by UDI">UDI</th>
+            <th class="doi" title="sort by DOI">DOI</th>
             <th title="sort by Title">Title</th>
             {% endif %}
             <th class="status" {% if not dataland | default %} title="sort by Identified status" {% endif %}>Identified</th>
@@ -137,7 +138,8 @@
 
             <tr udi="{{dataset.udi}}">
                 {% if not dataland | default %}
-                <td class="udi details"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank">{{dataset.udi}}</a></td>
+                <td class="details"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank">{{dataset.udi}}</a></td>
+                <td class="details">{{dataset.doi | replace({'doi:': "", }) }}</td>
                 <td class="details"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank">{{dataset.title}}</a></td>
                 {% endif %}
                 <td class="status" title="{{ identified_title | default }}">
@@ -206,7 +208,7 @@
         <tfoot>
         {% endif %}
             <tr style="border-top:3.25px solid black;">
-                <th style="text-align:center; font-weight:bold;" data-column="0" rowspan="4">TOTALS</th>
+                <th style="text-align:center; font-weight:bold;" data-column="0" rowspan="4" colspan="2">TOTALS</th>
                 <th style="text-align:right;">
                     <img src="{{green_icon}}">
                 </th>
@@ -243,8 +245,7 @@
                 <td class="status">{{available_na}}</td>
             </tr>
             <tr>
-                <td style="border: 0px;"></td>
-                <td style="border: 0px;"></td>
+                <td style="border: 0px;" colspan="3"></td>
                 <th>Identified</th>
                 <th>Submitted</th>
                 <th>Review</th>
