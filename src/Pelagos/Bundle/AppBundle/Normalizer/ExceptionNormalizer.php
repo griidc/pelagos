@@ -4,18 +4,38 @@ namespace Pelagos\Bundle\AppBundle\Normalizer;
 
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
+/**
+ * The ExceptionNormalizer to normalize serialized error messages.
+ */
 class ExceptionNormalizer implements NormalizerInterface
 {
-    public function normalize($object, $format = null, array $context = array())
+    /**
+     * Normalize the serialized error message.
+     *
+     * @param string  $topic   The topic.
+     * @param string  $format  The format.
+     * @param array   $context The context.
+     *
+     * @return integer
+     */
+    public function normalize($topic, $format = null, array $context = array())
     {
         return array(
-            'code' => $data['status_code'],
-            'message' => $data['message'],
+            'code' => $context['status_code'],
+            'message' => $context['message'],
         );
     }
 
+    /**
+     * Count entities of a given type.
+     *
+     * @param string  $data    The the exception data.
+     * @param string  $format  The format.
+     *
+     * @return integer
+     */
     public function supportsNormalization($data, $format = null)
     {
-        return true;
+        return false;
     }
 }

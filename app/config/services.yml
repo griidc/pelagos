@@ -136,7 +136,7 @@ services:
         class: Pelagos\Util\MaintenanceMode
         arguments: ["%maintenance_mode_filename%"]
 
-    app_bundle.exception_normalizer:
+    pelagos.exception_normalizer:
         class: Pelagos\Bundle\AppBundle\Normalizer\ExceptionNormalizer
         tags:
             - { name: jms_serializer.normalizer }
