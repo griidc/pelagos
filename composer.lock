@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "829996cac9a02a8fbf91f74d503978ac",
+    "content-hash": "8d76334811399a16e5fcd8ba7271cb09",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -1530,16 +1530,16 @@
         },
         {
             "name": "friendsofsymfony/elastica-bundle",
-            "version": "v5.1.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSElasticaBundle.git",
-                "reference": "3f2707d1d606a59527f74e88808b820a170d3f42"
+                "reference": "d4a2a677c07bf6af9b34c416b7a6c611b2e6e93c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSElasticaBundle/zipball/3f2707d1d606a59527f74e88808b820a170d3f42",
-                "reference": "3f2707d1d606a59527f74e88808b820a170d3f42",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSElasticaBundle/zipball/d4a2a677c07bf6af9b34c416b7a6c611b2e6e93c",
+                "reference": "d4a2a677c07bf6af9b34c416b7a6c611b2e6e93c",
                 "shasum": ""
             },
             "require": {
@@ -1613,7 +1613,7 @@
                 "mongodb",
                 "search"
             ],
-            "time": "2019-05-03T10:13:56+00:00"
+            "time": "2019-06-25T12:21:26+00:00"
         },
         {
             "name": "friendsofsymfony/jsrouting-bundle",
@@ -7986,6 +7986,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "indigophp/doctrine-annotation-autoload": 20,
+        "friendsofsymfony/elastica-bundle": 20,
         "mockery/mockery": 20
     },
     "prefer-stable": true,
