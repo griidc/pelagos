@@ -113,7 +113,6 @@ swiftmailer:
 fos_rest:
     view:
         view_response_listener: true
-        exception_wrapper_handler: Pelagos\Bundle\AppBundle\Handler\ExceptionWrapperHandler
     routing_loader:
         default_format: json
         include_format: false
@@ -222,8 +221,6 @@ old_sound_rabbit_mq:
 
 rabbit_mq_supervisor:
     supervisor_instance_identifier: "%pelagos_name%"
-    commands:
-        rabbitmq_consumer: rabbitmq:consumer -w %%2$s
 
 fos_elastica:
     clients:

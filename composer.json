@@ -20,33 +20,30 @@
     },
     "require": {
         "php": ">=7.1",
-        "symfony/symfony": "3.4.*",
+        "symfony/symfony": "^4.0",
         "doctrine/orm": "^2.5",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/doctrine-cache-bundle": "^1.2",
-        "symfony/swiftmailer-bundle": "^2.3",
+        "symfony/swiftmailer-bundle": "^3.1",
         "symfony/monolog-bundle": "^3.0",
-        "sensio/distribution-bundle": "^5.0",
         "sensio/framework-extra-bundle": "^3.0.2",
-        "incenteev/composer-parameter-handler": "^2.0",
         "slim/slim": "2.*",
         "slim/views": "0.1.*",
         "indigophp/doctrine-annotation-autoload": "^0.1.0@dev",
-        "friendsofsymfony/rest-bundle": "^1.7",
+        "friendsofsymfony/rest-bundle": "^2.3",
         "jms/serializer-bundle": "^2.0",
         "nelmio/api-doc-bundle": "^2.11",
         "doctrine/doctrine-fixtures-bundle": "^2.3",
         "willdurand/hateoas-bundle": "^1.1",
         "simplethings/entity-audit-bundle": "^1.0",
-        "friendsofsymfony/jsrouting-bundle": "^1.6",
+        "friendsofsymfony/jsrouting-bundle": "^2.1",
         "php-amqplib/rabbitmq-bundle": "^1.9",
         "jsor/doctrine-postgis": "^1.1",
         "opensoft/doctrine-postgres-types": "^1.2",
-        "phobetor/rabbitmq-supervisor-bundle": "^1.5",
+        "phobetor/rabbitmq-supervisor-bundle": "^3.0",
         "friendsofsymfony/elastica-bundle": "dev-master",
         "phayes/geophp": "^1.2",
         "doctrine/doctrine-migrations-bundle": "^1.2",
-        "egulias/email-validator": "^1.2",
         "symfony/webpack-encore-bundle": "^1.1",
         "php-http/httplug-bundle": "^1.10",
         "php-http/guzzle6-adapter": "^1.1",
@@ -55,28 +52,15 @@
         "hylianshield/base32-crockford": "^1.0"
     },
     "require-dev": {
-        "sensio/generator-bundle": "^3.0",
         "mockery/mockery": "dev-master",
-        "symfony/web-server-bundle": "3.4.*",
+        "symfony/web-server-bundle": "^4.0",
         "squizlabs/php_codesniffer": "2.7.*",
         "phpunit/phpunit": "7.4.*"
     },
     "scripts": {
         "post-install-cmd": [
-            "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
         ],
         "post-update-cmd": [
-            "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
         ]
     },
     "extra": {
