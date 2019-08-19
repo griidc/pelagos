@@ -298,9 +298,9 @@ class ResearchGroup extends Entity
      *
      * @var boolean $lockStatus
      *
-     * @ORM\Column(type="boolean", nullable=false, default=false)
+     * @ORM\Column(type="boolean", nullable=false)
      */
-    protected $lockStatus;
+    protected $lockStatus = false;
 
     /**
      * Getter for Datasets.
