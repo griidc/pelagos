@@ -13,7 +13,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use FOS\RestBundle\Controller\FOSRestController;
-use FOS\RestBundle\Util\Codes;
 
 use Pelagos\Entity\Entity;
 use Pelagos\Entity\Account;
@@ -311,14 +310,14 @@ abstract class EntityController extends FOSRestController
         $getter = 'get' . ucfirst($property);
         $content = $entity->$getter();
         if ($content === null) {
-            return new Response(null, Codes::HTTP_NO_CONTENT);
+            return new Response(null, Response::HTTP_NO_CONTENT);
         }
         $info = finfo_open(FILEINFO_MIME_TYPE);
         $mimeType = finfo_buffer($info, $content);
         finfo_close($info);
         return new Response(
             $content,
-            Codes::HTTP_OK,
+            Response::HTTP_OK,
             array(
                 'Content-Type' => $mimeType,
                 'Content-Length' => strlen($content),
@@ -345,7 +344,7 @@ abstract class EntityController extends FOSRestController
             $entity->$setter(file_get_contents($file->getPathname()));
         }
         $this->container->get('pelagos.entity.handler')->update($entity);
-        return new Response(null, Codes::HTTP_NO_CONTENT);
+        return new Response(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -364,7 +363,7 @@ abstract class EntityController extends FOSRestController
         $setter = 'set' . ucfirst($property);
         $entity->$setter($request->getContent());
         $this->container->get('pelagos.entity.handler')->update($entity);
-        return new Response(null, Codes::HTTP_NO_CONTENT);
+        return new Response(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -402,7 +401,7 @@ abstract class EntityController extends FOSRestController
     {
         return new Response(
             null,
-            Codes::HTTP_CREATED,
+            Response::HTTP_CREATED,
             array_merge(
                 array(
                     'Content-Type' => 'application/x-empty',
@@ -426,7 +425,7 @@ abstract class EntityController extends FOSRestController
     {
         return new Response(
             null,
-            Codes::HTTP_NO_CONTENT,
+            Response::HTTP_NO_CONTENT,
             array(
                 'Content-Type' => 'application/x-empty',
             )
@@ -461,7 +460,7 @@ abstract class EntityController extends FOSRestController
     {
         return new Response(
             json_encode($data),
-            Codes::HTTP_OK,
+            Response::HTTP_OK,
             array(
                 'Content-Type' => 'application/json',
             )

@@ -8,7 +8,7 @@ class ExceptionNormalizer implements NormalizerInterface
 {
     public function normalize($object, $format = null, array $context = array())
     {
-        return array('status_code' => 'foo');return array(
+        return array(
             'code' => $data['status_code'],
             'message' => $data['message'],
         );
@@ -16,7 +16,6 @@ class ExceptionNormalizer implements NormalizerInterface
 
     public function supportsNormalization($data, $format = null)
     {
-        //dump($data);
         return true;
     }
 }
