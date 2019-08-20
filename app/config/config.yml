@@ -221,6 +221,8 @@ old_sound_rabbit_mq:
 
 rabbit_mq_supervisor:
     supervisor_instance_identifier: "%pelagos_name%"
+    commands:
+        rabbitmq_consumer: rabbitmq:consumer -w 
 
 fos_elastica:
     clients:
