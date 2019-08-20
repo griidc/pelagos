@@ -8,14 +8,14 @@
 
 #left {
     position: absolute;
-    width: 40%;
+    width: 25%;
     height: 100%;
 }
 
 #right {
     position: absolute;
-    left: 40%;
-    width: 60%;
+    left: 25%;
+    width: 75%;
     height: 100%;
 }
 
