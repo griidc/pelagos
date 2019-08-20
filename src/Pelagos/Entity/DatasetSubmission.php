@@ -1029,6 +1029,15 @@ class DatasetSubmission extends Entity
     protected $remotelyHostedFunction;
 
     /**
+     * Fileset for the datasetSubmission instance.
+     *
+     * @var Fileset
+     *
+     * @ORM\OneToOne(targetEntity="Fileset", cascade={"persist"})
+     */
+    protected $fileSet;
+
+    /**
      * Constructor.
      *
      * Initializes collections to empty collections.
@@ -2860,5 +2869,27 @@ class DatasetSubmission extends Entity
     public function setRemotelyHostedFunction($remotelyHostedFunction)
     {
         $this->remotelyHostedFunction = $remotelyHostedFunction;
+    }
+
+    /**
+     * Getter for fileset entity.
+     *
+     * @return Fileset
+     */
+    public function getFileSet() : Fileset
+    {
+        return $this->fileSet;
+    }
+
+    /**
+     * Setter for fileset entity.
+     *
+     * @param Fileset $fileSet The fileset entity associated with this datasetSubmission instance.
+     *
+     * @return void
+     */
+    public function setFileSet(Fileset $fileSet) : void
+    {
+        $this->fileSet = $fileSet;
     }
 }
