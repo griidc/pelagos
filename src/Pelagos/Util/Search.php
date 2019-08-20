@@ -11,6 +11,7 @@ use FOS\ElasticaBundle\Finder\TransformedFinder;
 
 use Pagerfanta\Pagerfanta;
 
+use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\FundingOrganization;
 use Pelagos\Entity\ResearchGroup;
 
@@ -56,6 +57,13 @@ class Search
      * Elastic index mapping for theme keywords.
      */
     const ELASTIC_INDEX_MAPPING_THEME_KEYWORDS = 'datasetSubmission.themeKeywords';
+
+    const AVAILABILITY_STATUSES = array(
+        1 => [DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE],
+        2 => [DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION, DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL],
+        3 => [DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED, DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED],
+        4 => [DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE, DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED]
+    );
 
     /**
      * Constructor.
@@ -105,26 +113,48 @@ class Search
         $page = ($requestTerms['page']) ? $requestTerms['page'] : 1;
         $queryTerm = $requestTerms['query'];
         $specificField = $requestTerms['field'];
+        $collectionDateRange = array();
+        if ($requestTerms['collectionStartDate'] and $requestTerms['collectionEndDate']) {
+            $collectionDateRange = array(
+                'startDate' => $requestTerms['collectionStartDate'],
+                'endDate' => $requestTerms['collectionEndDate']
+            );
+        }
 
         $mainQuery = new Query();
 
         // Bool query to combine field query and filter query
         $subMainQuery = new Query\BoolQuery();
 
+        // Bool query to get range temporal extent dates
+        $collectionDateBoolQuery = new Query\BoolQuery();
+
         // Search exact phrase if query string has double quotes
         if (preg_match('/"/', $queryTerm)) {
             $subMainQuery->addMust($this->getExactMatchQuery($queryTerm));
         } else {
-            $subMainQuery->addMust($this->getFieldsQuery($queryTerm, $specificField));
+            $subMainQuery->addMust($this->getFieldsQuery($queryTerm, $specificField, $collectionDateRange));
+        }
+
+        if (!empty($collectionDateRange)) {
+            $collectionDateBoolQuery->addMust($this->getCollectionStartDateQuery($collectionDateRange));
+            $collectionDateBoolQuery->addMust($this->getCollectionEndDateQuery($collectionDateRange));
+            $subMainQuery->addFilter($collectionDateBoolQuery);
         }
 
         // Add facet filters
-        if (!empty($requestTerms['options']['funOrgId']) || !empty($requestTerms['options']['rgId'])) {
+        if (!empty($requestTerms['options']['funOrgId'])
+            || !empty($requestTerms['options']['rgId'])
+            || !empty($requestTerms['options']['status'])
+        ) {
             $mainQuery->setPostFilter($this->getFiltersQuery($requestTerms));
         }
 
-        // Add nested agg to main agg
+        // Add nested agg for research group and funding org to main agg
         $mainQuery->addAggregation($this->getAggregationsQuery($requestTerms));
+
+        // Add dataset availability status agg to mainQuery
+        $mainQuery->addAggregation($this->getStatusAggregationQuery($requestTerms));
 
         $mainQuery->setQuery($subMainQuery);
         $mainQuery->setFrom(($page - 1) * 10);
@@ -235,11 +265,85 @@ class Search
                 'count' => $aggregations[$fundingOrg->getId()]
             );
         }
-
         //Sorting based on highest count
         array_multisort(array_column($fundingOrgInfo, 'count'), SORT_DESC, $fundingOrgInfo);
 
         return $fundingOrgInfo;
+    }
+
+    /**
+     * Get the aggregations for the query.
+     *
+     * @param Query $query The query built based on the search terms and parameters.
+     *
+     * @return array
+     */
+    public function getStatusAggregations(Query $query): array
+    {
+        $userPaginator = $this->getPaginator($query);
+
+        $statusBucket = array_column(
+            $this->findKey($userPaginator->getAdapter()->getAggregations(), 'status')['buckets'],
+            'doc_count',
+            'key'
+        );
+
+        return $this->getStatusInfo($statusBucket);
+    }
+
+    /**
+     * Get dataset availability status information for the aggregations.
+     *
+     * @param array $aggregations Aggregations for each availability status.
+     *
+     * @return array
+     */
+    private function getStatusInfo(array $aggregations): array
+    {
+        $datasetCount = function ($status) use ($aggregations) {
+            if (array_key_exists($status, $aggregations)) {
+                return $aggregations[$status];
+            } else {
+                return 0;
+            }
+        };
+
+        $statusInfo = [
+            [
+                'id' => 1,
+                'name' => 'Identified',
+                'count' => $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE)
+            ],
+            [
+                'id' => 2,
+                'name' => 'Submitted',
+                'count' => (
+                    $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION)
+                    + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL)
+                )
+            ],
+            [
+                'id' => 3,
+                'name' => 'Restricted',
+                'count' => (
+                    $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED)
+                    + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED)
+                )
+            ],
+            [
+                'id' => 4,
+                'name' => 'Available',
+                'count' => (
+                    $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED)
+                    + $datasetCount(DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE)
+                )
+            ],
+        ];
+
+        //Sorting based on highest count
+        array_multisort(array_column($statusInfo, 'count'), SORT_DESC, $statusInfo);
+
+        return $statusInfo;
     }
 
     /**
@@ -281,12 +385,13 @@ class Search
     /**
      * Get Bool query for fields.
      *
-     * @param string $queryTerm     Query term that needs to be searched upon.
-     * @param string $specificField Query a specific field for data.
+     * @param string     $queryTerm           Query term that needs to be searched upon.
+     * @param string     $specificField       Query a specific field for data.
+     * @param array|null $collectionDateRange Query for collection date range.
      *
      * @return Query\BoolQuery
      */
-    private function getFieldsQuery(string $queryTerm, string $specificField = null): Query\BoolQuery
+    private function getFieldsQuery(string $queryTerm, string $specificField = null, array $collectionDateRange = null): Query\BoolQuery
     {
         // Bool query to add all fields
         $fieldsBoolQuery = new Query\BoolQuery();
@@ -383,6 +488,22 @@ class Search
     }
 
     /**
+     * Get status aggregations for the query.
+     *
+     * @param array $requestTerms Options for the query.
+     *
+     * @return Aggregation\Terms
+     */
+    private function getStatusAggregationQuery(array $requestTerms): Aggregation\Terms
+    {
+        $availabilityStatusAgg = new Aggregation\Terms('status');
+        $availabilityStatusAgg->setField('availabilityStatus');
+        $availabilityStatusAgg->setSize(5);
+
+        return $availabilityStatusAgg;
+    }
+
+    /**
      * Get post filter query.
      *
      * @param array $requestTerms Options for the query.
@@ -420,6 +541,20 @@ class Search
 
             $nestedFoQuery->setQuery($fundingOrgIdQuery);
             $postFilterBoolQuery->addMust($nestedFoQuery);
+        }
+
+        if (!empty($requestTerms['options']['status'])) {
+            $statuses = array();
+            foreach (explode(',', $requestTerms['options']['status']) as $key => $value) {
+                $statuses[$key] = self::AVAILABILITY_STATUSES[$value];
+            }
+
+            $availabilityStatusQuery = new Query\Terms();
+            $availabilityStatusQuery->setTerms(
+                'availabilityStatus',
+                array_reduce($statuses, 'array_merge', array())
+            );
+            $postFilterBoolQuery->addMust($availabilityStatusQuery);
         }
 
         $filterBoolQuery->addMust($postFilterBoolQuery);
@@ -510,5 +645,35 @@ class Search
         $authorQuery->setFieldOperator(self::ELASTIC_INDEX_MAPPING_AUTHORS, 'and');
         $authorQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_AUTHORS, 2);
         return $authorQuery;
+    }
+
+    /**
+     * Added start date range for collection.
+     *
+     * @param array $collectionDates Data collection range start date.
+     *
+     * @return Query\Range
+     */
+    private function getCollectionStartDateQuery(array $collectionDates): Query\Range
+    {
+        $collectionStartDateRange = new Query\Range();
+        $collectionStartDateRange->addField('collectionStartDate', ['gte' => $collectionDates['startDate']]);
+
+        return $collectionStartDateRange;
+    }
+
+    /**
+     * Added end date range for collection.
+     *
+     * @param array $collectionDates Data collection range end date.
+     *
+     * @return Query\Range
+     */
+    private function getCollectionEndDateQuery(array $collectionDates): Query\Range
+    {
+        $collectionEndDateRange = new Query\Range();
+        $collectionEndDateRange->addField('collectionEndDate', ['lte' => $collectionDates['endDate']]);
+
+        return $collectionEndDateRange;
     }
 }

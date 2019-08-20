@@ -20,7 +20,7 @@ $(document).ready(function() {
         $('table.datasets tr[udi="' + eventVariables.attributes.udi + '"] td').removeClass("highlight");
     });
 
-    $("#filter-input").bind("keypress", function(e) {
+    $("#filter-input").on("keypress", function(e) {
         if(e.keyCode==13){
             applyFilter();
         }
@@ -50,7 +50,6 @@ $(document).ready(function() {
         $("#clearGeoFilterButton").button("disable");
     });
 
-    $("#show_extents_checkbox").button();
     $(".map_button").button();
     // local variable for filter button//
     var filterButton = $("#filter-button");
@@ -210,70 +209,12 @@ function createRow(data, row)
     //clone from template row and shove actual data in
     var rowContent = $("#template-data-row-available").children().clone();
 
-    var imgTitle = "";
-    switch (activeTabIndex) {
-        case 0: //available
-            if ("RemotelyHosted" === data["datasetSubmission"]["datasetFileTransferStatus"] && !data["datasetSubmission"]["datasetFileTransferStatus"].match("!^https?://data.gulfresearchinitiative.org!")) {
-                imgTitle = "This dataset can be downloaded from an external repository.";
-            } else {
-                imgTitle = ("title", "Download dataset");
-            }
-            $(rowContent).find("#img-download-package").removeClass("greyout");
-            $(rowContent).find("#dataset-download").click( function(){
-                var id = $(this).parents("tr").attr("datasetid");
-                startDownload(id);
-            });
-
-            if (!data["datasetSubmission"]["datasetFileSize"]) {
-                $(rowContent).find("#container-dataset-filesize").hide();
-            }
-            break;
-        case 1: //restricted
-            if ("RemotelyHosted" === data["datasetSubmission"]["datasetFileTransferStatus"]) {
-                imgTitle = "This dataset is restricted for download but is hosted by another website so availability status is not guaranteed to be accurate. " +
-                    "Please contact the external repository for information on how to access this dataset.";
-            } else {
-                imgTitle = "This dataset is restricted for download.";
-            }
-            $(rowContent).find("#dataset-restrictions").text("Download Restricted");
-            $(rowContent).find("#container-dataset-restrictions").show();
-
-            if (!data["datasetSubmission"]["datasetFileSize"]) {
-                $(rowContent).find("#container-dataset-filesize").hide();
-            }
-            break;
-        case 2: //InReview
-                imgTitle = "Download unavailable"
-
-                if (!data["datasetSubmission"]["datasetFileSize"]) {
-                    $(rowContent).find("#container-dataset-filesize").hide();
-                }
-            break;
-        case 3: //identified
-            $(rowContent).find("#img-download-package").hide();
-            $(rowContent).find("#container-dataset-restrictions").css("color","grey");
-            $(rowContent).find("#dataset-restrictions").text("?");
-            $(rowContent).find("#container-dataset-restrictions").show();
-            $(rowContent).find("#container-dataset-filesize").css("color","grey");
-            $(rowContent).find("#dataset-filesize").text("?");
-            $(rowContent).find("#container-dataset-doi").hide();
-            break;
-        default:
-            break;
+    if (activeTabIndex === 3) {
+        $(rowContent).find("#container-dataset-doi").hide();
     }
-    $(rowContent).find("#img-download-package").attr("title", imgTitle);
-
     if (data["datasetSubmission"]) {
         if (data["datasetSubmission"]["authors"]) {
             $(rowContent).find("#dataset-authors").text(data["datasetSubmission"]["authors"]);
-        }
-
-        var filesize = parseInt(data["datasetSubmission"]["datasetFileSize"]);
-        if (filesize) {
-            if (filesize > 1073741824) {
-                $(rowContent).find("#dataset-filesize").css("color","red");
-            }
-            $(rowContent).find("#dataset-filesize").text(formatBytes(filesize,0));
         }
     } else {
         $(rowContent).find("#container-dataset-authors").hide();
@@ -310,7 +251,7 @@ function createRow(data, row)
 
 
     //this shows the details dataset on Show Details button
-    $(".details_link", rowContent).bind("click", function(){
+    $(".details_link", rowContent).on("click", function(){
         var row = $(this).parents("tr");
         if ($(row).has(".details:empty").length == 1) {
             var datasetId = $(row).attr("datasetid");
@@ -452,11 +393,11 @@ function displayActiveTabExtents()
 }
 
 function showAllExtents() {
-    if ($("#show_extents_checkbox").is(":checked")) {
-        $("#show_extents_label").html('<span class="ui-button-text">Hide Extents</span>');
+    if ($("#show_extents_checkbox").button( "option", "label" ) ==  "Show Extents" ) {
+        $("#show_extents_checkbox").button( "option", "label", "Hide Extents" );
         displayActiveTabExtents();
     } else {
-        $("#show_extents_label").html('<span class="ui-button-text">Show Extents</span>');
+        $("#show_extents_checkbox").button( "option", "label", "Show Extents" );
         $("table.datasets tr td").removeClass("highlight");
         myGeoViz.removeAllFeaturesFromMap();
     }

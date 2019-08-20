@@ -1,43 +1,28 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
 {% block title %}MDAPP{% endblock %}
-{% block head %}
+
+{% block stylesheets %}
     {{ parent() }}
 
-    {{
-        add_css (
-            [
-                '//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css',
-            ]
-        )
-    }}
+    <link href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css" rel="stylesheet" />
 
-    {% stylesheets  '@PelagosAppBundle/Resources/public/css/mdapp.css' %}
-        {{ add_css(asset_url) }}
-    {% endstylesheets  %}
+    <link href="{{ asset('build/css/mdapp.css') }}" rel="stylesheet" />
+{% endblock %}
 
-    {{
-        add_js(
-            [
-                '//cdn.datatables.net/1.10.7/js/jquery.dataTables.js',
-                '//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js',
-            ]
-        )
-    }}
+{% block javascripts %}
+    {{ parent() }}
 
-    {% javascripts
-        '@PelagosAppBundle/Resources/public/js/mdapp.js'
-        '@FOSJsRoutingBundle/Resources/public/js/router.js'
-        '@PelagosAppBundle/Resources/public/js/pelagosNoty.js'
-    %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
+    <script type="text/javascript" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js"></script>
 
-    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
+    <script type="text/javascript" src="{{ asset('build/js/mdapp.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/pelagosNoty.js') }}"></script>
 
+    <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
 {% endblock %}
 
 {% block body %}
-    
     {% for label, messages in app.flashes(['success', 'error']) %}
         {% for message in messages %}
             <div class="pelagosNoty" text="{{message}}" type="{{label}}"></div>
@@ -55,7 +40,6 @@
         <li style="text-align:center"><a href="#backtosubmitter" onClick="clearStatusMessages()" >Request Revisions ({{ m_dataset.backtosubmitter|length }})</a></li>
     </ul>
   </div>
-
 
     {% for sname,section in m_dataset %} <!-- allows key,value iteration -->
       {% if section|length %}
@@ -87,9 +71,7 @@
                             <td style="position:relative;">
                                 <div>
                                     <button id="jiraLinkEditButton" class="jlink">
-                                        {% image '@PelagosAppBundle/Resources/public/images/edit.png' %}
-                                        <img src="{{ asset_url }}">
-                                        {% endimage %}
+                                        <img src="{{ asset('build/images/edit.png') }}">
                                     </button>&nbsp;
                                     <a href="{{ issueTrackingBaseUrl }}/{{ dta.issueTrackingTicket }}" target="_BLANK">{{ dta.issueTrackingTicket }}</a>
                                     <table class="jiraForm">
@@ -136,9 +118,7 @@
 </div>
 <div id='log'>
     <div id="log_close">
-        {% image '@PelagosAppBundle/Resources/public/images/close.gif' %}
-            <input type="image" src="{{ asset_url }}" onclick="jQuery('#log').hide();">
-        {% endimage %}
+        <input type="image" src="{{ asset('build/images/close.gif') }}" onclick="jQuery('#log').hide();">
     </div>
     <div id='log_title'>Log replaces by js</div>
     <div id='log_content'>

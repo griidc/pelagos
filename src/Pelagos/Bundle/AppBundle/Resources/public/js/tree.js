@@ -140,7 +140,7 @@ function updateTree(tree) {
         },
     });
 
-    $("#" + tree.name).bind("after_open.jstree", function(event, data) {
+    $("#" + tree.name).on("after_open.jstree", function(event, data) {
         childrenLoading--;
         loadOpenChildren(data.instance,data.node);
         var settings = data.instance.settings;
@@ -160,7 +160,7 @@ function updateTree(tree) {
         }
     });
 
-    $("#" + tree.name).bind("loaded.jstree", function(event, data) {
+    $("#" + tree.name).on("loaded.jstree", function(event, data) {
         if (data.element === null) {
             return;
         }
@@ -180,12 +180,12 @@ function updateTree(tree) {
         }
     });
 
-    $("#" + tree.name).bind("select_node.jstree", function(event, data) {
+    $("#" + tree.name).on("select_node.jstree", function(event, data) {
         trees[tree.name].selected = data.node.id;
         eval(data.node.a_attr.action);
     });
 
-    $("#" + tree.name).bind("deselect_node.jstree", function(event, data) {
+    $("#" + tree.name).on("deselect_node.jstree", function(event, data) {
         trees[tree.name].selected = null;
         eval(trees[tree.name].deselect_action);
     });

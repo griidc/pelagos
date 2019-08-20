@@ -7,7 +7,7 @@ $(document).ready(function() {
     // manualy detect the hash on load, and force hash change.
     // But we have to wait with opening nodes until js Tree is fully loaded.
     let tree = $("#tree");
-    tree.bind("loaded.jstree", function(e, data) {
+    tree.on("loaded.jstree", function(e, data) {
         if (window.location.hash != "") {
             $(window).trigger("hashchange");
         }

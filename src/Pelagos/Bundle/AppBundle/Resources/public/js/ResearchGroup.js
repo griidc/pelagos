@@ -38,8 +38,7 @@ $(document).ready(function()
         done: function (e, data) {
             $("#researchGroupLogo img").attr("src", data.url + "?" + new Date().getTime());
         }
-    }).prop("disabled", !$.support.fileInput)
-        .parent().addClass($.support.fileInput ? undefined : "disabled");
+    });
 
     // Special stuff for Addform
     if ($(document).has(".addimg").length ? true : false) {

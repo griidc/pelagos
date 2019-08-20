@@ -7,7 +7,7 @@ $("html").hide();
 $(document).ready(function(){
     "use strict";
 
-    $("#udiLoadReviewform").bind("change keyup mouseout", function() {
+    $("#udiLoadReviewform").on("change keyup mouseout", function() {
         var udiTextBox = $("#udiReview");
         if($(this).valid() && udiTextBox.val() !== "" && udiTextBox.is(":disabled") === false) {
             $(".reviewButtons").button({
@@ -137,7 +137,7 @@ $(document).ready(function(){
     dtabs.tabs({
         heightStyle: "content",
         activate: function(event, ui) {
-            $(ui.newTab.context.hash).trigger("active");
+            $(ui.newTab.find("[href]").get(0).hash).trigger("active");
         }
     });
 

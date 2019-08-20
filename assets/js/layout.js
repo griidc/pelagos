@@ -3,17 +3,20 @@
 const $ = require('jquery');
 
 global.$ = global.jQuery = $;
+global.queryString = require('query-string');
+
+require('jquery-migrate');
 
 require('@fortawesome/fontawesome-free/css/all.min.css');
 
-require('jquery-ui/themes/base/minified/jquery-ui.min.css');
+require('jquery-ui-themes/themes/smoothness/jquery-ui.min.css');
 
-require('jquery-ui/autocomplete');
-require('jquery-ui/button');
-require('jquery-ui/datepicker');
-require('jquery-ui/dialog');
-require('jquery-ui/tabs');
-require('jquery-ui/widget');
+require('jquery-ui/ui/widgets/autocomplete');
+require('jquery-ui/ui/widgets/button');
+require('jquery-ui/ui/widgets/datepicker');
+require('jquery-ui/ui/widgets/dialog');
+require('jquery-ui/ui/widgets/tabs');
+
 require('jquery.cookie');
 require('qtip2');
 

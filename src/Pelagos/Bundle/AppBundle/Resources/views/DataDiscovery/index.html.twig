@@ -1,49 +1,31 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
-{% block title %}Search GRIIDC Data{% endblock %}
-{% block head %}
+{% block title %}Search GRIIDC Data{% endblock title %}
+
+{% block stylesheets %}
     {{ parent() }}
 
-    {{
-        add_css (
-            [
-                '//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/themes/default/style.min.css',
-            ]
-        )
-    }}
+    <link href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/themes/default/style.min.css" rel="stylesheet" />
 
-    {% stylesheets
-        '@PelagosAppBundle/Resources/public/css/data-discovery.css'
-        '@PelagosAppBundle/Resources/public/css/data-discovery-scrollbars.css'
-        '@PelagosAppBundle/Resources/public/css/data-discovery-datasets.css'
-        '@PelagosAppBundle/Resources/public/css/downloads.css'
-        '@PelagosAppBundle/Resources/public/css/dataset_details.css'
-        '@PelagosAppBundle/Resources/public/css/download.css'
-    %}
-        {{ add_css(asset_url) }}
-    {% endstylesheets %}
+    <link href="{{ asset('build/css/data-discovery.css') }}" rel="stylesheet" />
+    <link href="{{ asset('build/css/data-discovery-scrollbars.css') }}" rel="stylesheet" />
+    <link href="{{ asset('build/css/data-discovery-datasets.css') }}" rel="stylesheet" />
+    <link href="{{ asset('build/css/dataset_details.css') }}" rel="stylesheet" />
+{% endblock stylesheets %}
 
-    {{ 
-        add_js(
-            [
-                '//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/jstree.min.js',
-                '//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',
-                '//maps.google.com/maps/api/js?v=3&key=' ~ google_maps_api_key,
-            ]
-        )
-    }}
+{% block javascripts %}
+    {{ parent() }}
 
-    {% javascripts
-        '@PelagosAppBundle/Resources/public/js/geoviz.js'
-        '@PelagosAppBundle/Resources/public/js/data-discovery.js'
-        '@PelagosAppBundle/Resources/public/js/tree.js'
-        '@PelagosAppBundle/Resources/public/js/download.js'
-        '@FOSJsRoutingBundle/Resources/public/js/router.js'
-    %}
-        {{ add_js(asset_url) }}
-    {% endjavascripts %}
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/jstree.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js"></script>
+    <script type="text/javascript" src="//maps.google.com/maps/api/js?v=3&key={{ google_maps_api_key }}"></script>
 
-    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
-{% endblock %}
+    <script type="text/javascript" src="{{ asset('build/js/geoviz.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/data-discovery.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/tree.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+{% endblock javascripts %}
+
 {% block body %}
     <input id="by-input" type="hidden">
     <input id="id-input" type="hidden">
@@ -56,8 +38,7 @@
                     <div id="olmap"></div>
                     <div id="map_buttons">
                         <div class="map_button_container">
-                            <label for="show_extents_checkbox" id="show_extents_label">Show Extents</label>
-                            <input type="checkbox" id="show_extents_checkbox" class="map_button" onclick="showAllExtents();">
+                            <input type="button" id="show_extents_checkbox" class="map_button" value="Show Extents" onclick="showAllExtents();">
                         </div>
                         <div class="map_button_container">
                             <input type="button" id="clearGeoFilterButton" class="map_button" value="Clear Filter" disabled onclick="$(this).button('disable');myGeoViz.clearFilter();trees['tree'].geo_filter = null;applyFilter();">
@@ -113,21 +94,15 @@
                     <div id="dataset_listing"></div>
                     <div class="spinner">
                         <div>
-                            {% image '@PelagosAppBundle/Resources/public/images/spinner.gif' %}
-                                <img src="{{asset_url}}">
-                            {% endimage %}
+                            <img src="{{ asset('build/images/spinner.gif') }}">
                         </div>
                     </div>
                 </div>
             </div>
             <div id="expand-collapse"
-                {% image '@PelagosAppBundle/Resources/public/images/CollapseLeft-12.gif' %}
-                    collapse-image="{{ asset_url }}"
-                {% endimage %}
-                {% image '@PelagosAppBundle/Resources/public/images/CollapseRight-12.gif' %}
-                    expand-image="{{ asset_url }}"
-                {% endimage %}
-                >
+                collapse-image="{{ asset('build/images/CollapseLeft-12.gif') }}"
+                expand-image="{{ asset('build/images/CollapseRight-12.gif') }}"
+            >
                 <div style="height:50px; width:12px"></div>
             </div>
         </div>

@@ -77,7 +77,7 @@ $(document).ready(function()
             }
         });
 
-        $(this).bind("reset", function() {
+        $(this).on("reset", function() {
             startDateField.datepicker("option", "maxDate", "");
             endDateField.datepicker("option", "minDate", "");
         });

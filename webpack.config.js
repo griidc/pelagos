@@ -13,6 +13,7 @@ Encore
     // will create web/build/app.js and web/build/app.css
     .createSharedEntry('common', './assets/js/common.js')
     .addEntry('layout', './assets/js/layout.js')
+    .addEntry('downloadBox', './assets/js/downloadBox.js')
 
     // allow sass/scss files to be processed
     //.enableSassLoader()
@@ -39,7 +40,11 @@ Encore
 
     .addPlugin(new CopyWebpackPlugin([
         // copies to {output}/static
-        { from: './assets/images', to: 'images' }
+        {from: './assets/images', to: 'images'},
+        {from: './src/Pelagos/Bundle/AppBundle/Resources/public/js', to: 'js'},
+        {from: './src/Pelagos/Bundle/AppBundle/Resources/public/css', to: 'css'},
+        {from: './src/Pelagos/Bundle/AppBundle/Resources/public/images', to: 'images'},
+        {from: './src/Pelagos/Bundle/AppBundle/Resources/public/js/entity', to: 'js/entity'},
     ]))
 ;
 

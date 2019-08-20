@@ -124,7 +124,7 @@ $(function() {
         disabled: true
     });
 
-    $("#regidform").bind("change keyup mouseout", function() {
+    $("#regidform").on("change keyup mouseout", function() {
         if($(this).valid() && $("#regid").val() != "" && $("#regid").is(":disabled") == false) {
             $("#regbutton").button("enable");
         } else {
@@ -160,7 +160,7 @@ $(function() {
     $("#dtabs").tabs({
         heightStyle: "content",
         activate: function(event, ui) {
-            $(ui.newTab.context.hash).trigger("active");
+            $(ui.newTab.find("[href]").get(0).hash).trigger("active");
         }
     });
 
