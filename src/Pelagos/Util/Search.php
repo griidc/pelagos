@@ -213,6 +213,7 @@ class Search
             $researchGroupsInfo[$researchGroup->getId()] = array(
                 'id' => $researchGroup->getId(),
                 'name' => $researchGroup->getName(),
+                'shortName' => $researchGroup->getShortName(),
                 'count' => $aggregations[$researchGroup->getId()]
             );
         }
