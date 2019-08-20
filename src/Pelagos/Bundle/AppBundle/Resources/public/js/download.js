@@ -44,15 +44,9 @@ function getHtmlForDownload(data)
         dialogBoxHtml = `<div id="dataset_download_content">
                             <h3 style="text-align:center;">The dataset you selected is hosted by an external repository.</h3>
                             <div style="border: 1px solid #aaa; padding: 10px; margin-top: 20px; margin-bottom: 10px; border-radius: 4px;">
-                                <p style="margin-top:0">
-                                All materials on this website are made available to GRIIDC and in turn to you "as-is." There is no
-                                warranty (expressed or implied) to these materials, their title, accuracy, non-infringement of third
-                                party rights, or fitness for any particular purpose, including the performance or results you may
-                                obtain from their use. Use these materials at your own risk. Under no circumstances shall GRIIDC be
-                                liable for any direct, incidental, special, consequential, indirect, or punitive damages that result
-                                from the use or the inability to use either this website or the materials available via this website.
-                                If you are dissatisfied with any website feature, content, or terms of use, your sole and exclusive
-                                remedy is to discontinue use.
+                                <p style="margin-top:0; margin-bottom: 0">
+                                All materials on this website are made available to GRIIDC and in turn to you "as-is." 
+                                By downloading files, you agree to the <a href=https://data.gulfresearchinitiative.org/terms-and-conditions>GRIIDC Terms of Service</a>.
                                 </p>
                                 <p style="margin-top:0">
                                 This particular dataset is not hosted directly by GRIIDC, so additional terms and conditions may be
@@ -71,15 +65,9 @@ function getHtmlForDownload(data)
     } else {
         dialogBoxHtml = `<div id="dataset_download_content">
                              <div style="border: 1px solid #aaa; padding: 10px; margin-top: 20px; margin-bottom: 10px; border-radius: 4px;">
-                                 <p style="margin-top:0">
-                                 All materials on this website are made available to GRIIDC and in turn to you "as-is." There is no 
-                                 warranty (expressed or implied) to these materials, their title, accuracy, non-infringement of third 
-                                 party rights, or fitness for any particular purpose, including the performance or results you may
-                                 obtain from their use. Use these materials at your own risk. Under no circumstances shall GRIIDC be
-                                 liable for any direct, incidental, special, consequential, indirect, or punitive damages that result
-                                 from the use or the inability to use either this website or the materials available via this website.
-                                 If you are dissatisfied with any website feature, content, or terms of use, your sole and exclusive
-                                 remedy is to discontinue use.
+                                 <p style="margin-top:0; margin-bottom: 0">
+                                 All materials on this website are made available to GRIIDC and in turn to you "as-is." 
+                                 By downloading files, you agree to the <a href=https://data.gulfresearchinitiative.org/terms-and-conditions>GRIIDC Terms of Service</a>.
                                  </p>
                              </div>
 
