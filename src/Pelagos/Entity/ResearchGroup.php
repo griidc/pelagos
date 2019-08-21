@@ -294,13 +294,13 @@ class ResearchGroup extends Entity
     protected $datasets;
 
     /**
-     * Lock flag for Research Group.
+     * Lock flag for Research Group, defaults to false for new Research Groups.
      *
-     * @var boolean $lockStatus
+     * @var boolean $locked
      *
      * @ORM\Column(type="boolean", nullable=false)
      */
-    protected $lockStatus = false;
+    protected $locked = false;
 
     /**
      * Getter for Datasets.
@@ -669,29 +669,39 @@ class ResearchGroup extends Entity
     }
 
     /**
-     * Setter for lockStatus.
-     *
-     * @param boolean $state Containing desired state of lock.
+     * Method to lock Research Group.
      *
      * @access public
      *
      * @return void
      */
-    public function setLockStatus(bool $state)
+    public function lockResearchGroup()
     {
-        $this->lockStatus = $state;
+        $this->locked = true;
     }
 
     /**
-     * Getter for lockStatus.
+     * Method to unlock Research Group.
      *
      * @access public
      *
-     * @return boolean Containing lock status for this Research Group.
+     * @return void
      */
-    public function getLockStatus()
+    public function unlockResearchGroup()
     {
-        return $this->lockStatus;
+        $this->locked = false;
+    }
+
+    /**
+     * Method to check if Research Group is locked.
+     *
+     * @access public
+     *
+     * @return boolean Set to true if this Research Group is locked, false otherwise.
+     */
+    public function isResearchGroupLocked()
+    {
+        return $this->locked;
     }
 
     /**
