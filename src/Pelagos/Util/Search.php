@@ -263,6 +263,7 @@ class Search
             $fundingOrgInfo[$fundingOrg->getId()] = array(
                 'id' => $fundingOrg->getId(),
                 'name' => $fundingOrg->getName(),
+                'shortName' => $fundingOrg->getShortName(),
                 'count' => $aggregations[$fundingOrg->getId()]
             );
         }
