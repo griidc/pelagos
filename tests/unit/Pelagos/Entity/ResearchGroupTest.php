@@ -431,20 +431,20 @@ class ResearchGroupTest extends TestCase
     }
 
     /**
-     * Test locked.
+     * Test lock/unlock.
      *
      * @return void
      */
-    public function testLockSetAndGet(): void
+    public function testLockAndUnlock(): void
     {
         // Test default for new Research Group object, should be unlocked.
-        $this->researchGroup->unlockResearchGroup();
-        $this->assertFalse($this->researchGroup->isResearchGroupLocked());
+        $this->researchGroup->unlock();
+        $this->assertFalse($this->researchGroup->isLocked());
 
         // Test setting/checking lock and unlock.
-        $this->researchGroup->lockResearchGroup();
-        $this->assertTrue($this->researchGroup->isResearchGroupLocked());
-        $this->researchGroup->unlockResearchGroup();
-        $this->assertFalse($this->researchGroup->isResearchGroupLocked());
+        $this->researchGroup->lock();
+        $this->assertTrue($this->researchGroup->isLocked());
+        $this->researchGroup->unlock();
+        $this->assertFalse($this->researchGroup->isLocked());
     }
 }

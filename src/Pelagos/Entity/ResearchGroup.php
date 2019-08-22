@@ -675,7 +675,7 @@ class ResearchGroup extends Entity
      *
      * @return void
      */
-    public function lockResearchGroup()
+    public function lock()
     {
         $this->locked = true;
     }
@@ -687,7 +687,7 @@ class ResearchGroup extends Entity
      *
      * @return void
      */
-    public function unlockResearchGroup()
+    public function unlock()
     {
         $this->locked = false;
     }
@@ -699,7 +699,7 @@ class ResearchGroup extends Entity
      *
      * @return boolean Set to true if this Research Group is locked, false otherwise.
      */
-    public function isResearchGroupLocked()
+    public function isLocked()
     {
         return $this->locked;
     }
