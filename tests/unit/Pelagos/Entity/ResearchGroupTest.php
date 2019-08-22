@@ -438,7 +438,6 @@ class ResearchGroupTest extends TestCase
     public function testLockAndUnlock(): void
     {
         // Test default for new Research Group object, should be unlocked.
-        $this->researchGroup->unlock();
         $this->assertFalse($this->researchGroup->isLocked());
 
         // Test setting/checking lock and unlock.
