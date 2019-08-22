@@ -5,6 +5,8 @@ const $ = require('jquery');
 global.$ = global.jQuery = $;
 global.queryString = require('query-string');
 
+require('jquery-migrate');
+
 require('@fortawesome/fontawesome-free/css/all.min.css');
 
 require('jquery-ui-themes/themes/smoothness/jquery-ui.min.css');

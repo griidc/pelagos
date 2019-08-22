@@ -7,12 +7,13 @@
     <thead>
         <tr>
             {% if not dataland | default %}
-            <th class="udi" title="sort by UDI">UDI</th>
+            <th title="sort by UDI">UDI</th>
+            <th title="sort by DOI">DOI</th>
             <th title="sort by Title">Title</th>
             {% endif %}
             <th class="status" {% if not dataland | default %} title="sort by Identified status" {% endif %}>Identified</th>
             <th class="status" {% if not dataland | default %} title="sort by Submitted status" {% endif %}>Submitted</th>
-            <th class="status" {% if not dataland | default %} title="sort by Review status" {% endif %}>Review</th>
+            <th class="status" {% if not dataland | default %} title="sort by Review status" {% endif %}>In-Review</th>
             <th class="status" {% if not dataland | default %} title="sort by Available status" {% endif %}>Available</th>
         </tr>
     </thead>
@@ -137,7 +138,12 @@
 
             <tr udi="{{dataset.udi}}">
                 {% if not dataland | default %}
-                <td class="udi details"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank">{{dataset.udi}}</a></td>
+                <td class="details"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank">{{dataset.udi}}</a></td>
+                {% if dataset.doi and (dataset.datasetSubmissionStatus == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_COMPLETE') or dataset.datasetSubmissionStatus == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_IN_REVIEW')) %}
+                <td class="details"><a href="https://doi.org/{{ dataset.doi.doi }}" target="_blank">{{ dataset.doi.doi }}</a></td>
+                {% else %}
+                <td></td>
+                {% endif %}
                 <td class="details"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank">{{dataset.title}}</a></td>
                 {% endif %}
                 <td class="status" title="{{ identified_title | default }}">
@@ -206,7 +212,7 @@
         <tfoot>
         {% endif %}
             <tr style="border-top:3.25px solid black;">
-                <th style="text-align:center; font-weight:bold;" data-column="0" rowspan="4">TOTALS</th>
+                <th style="text-align:center; font-weight:bold;" data-column="0" rowspan="4" colspan="2">TOTALS</th>
                 <th style="text-align:right;">
                     <img src="{{green_icon}}">
                 </th>
@@ -243,11 +249,10 @@
                 <td class="status">{{available_na}}</td>
             </tr>
             <tr>
-                <td style="border: 0px;"></td>
-                <td style="border: 0px;"></td>
+                <td style="border: 0px;" colspan="3"></td>
                 <th>Identified</th>
                 <th>Submitted</th>
-                <th>Review</th>
+                <th>In-Review</th>
                 <th>Available</th>
             </tr>
         {% if pdf | default %}
