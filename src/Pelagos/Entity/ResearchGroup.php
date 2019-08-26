@@ -298,6 +298,12 @@ class ResearchGroup extends Entity
      *
      * @var boolean $locked
      *
+     * @access public
+     *
+     * @Assert\NotNull(
+     *     message="Please select Yes or No"
+     * )
+     *
      * @ORM\Column(type="boolean", nullable=false)
      */
     protected $locked = false;
@@ -702,6 +708,20 @@ class ResearchGroup extends Entity
     public function isLocked()
     {
         return $this->locked;
+    }
+
+    /**
+     * Setter for locked.
+     *
+     * @param boolean $locked Containing desired state of lock
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setLocked($locked)
+    {
+        $this->locked = $locked;
     }
 
     /**

@@ -4,6 +4,9 @@ namespace Pelagos\Bundle\AppBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -83,6 +86,15 @@ class ResearchGroupType extends AbstractType
             ->add('emailAddress', TextType::class, array(
                 'label' => 'E-Mail Address:',
                 'required' => false,
+            ))
+            ->add('locked', ChoiceType::class, array(
+                'choices' => [
+                    'Yes' => true,
+                    'No' => false,
+                ],
+                'placeholder' => '[PLEASE SELECT A STATE]',
+                'label' => 'Closed Out:',
+                'required' => true,
             ));
     }
 
