@@ -429,21 +429,4 @@ class ResearchGroupTest extends TestCase
         $this->researchGroup->setShortName($shortName);
         $this->assertEquals($shortName, $this->researchGroup->getShortName());
     }
-
-    /**
-     * Test lock/unlock.
-     *
-     * @return void
-     */
-    public function testLockAndUnlock(): void
-    {
-        // Test default for new Research Group object, should be unlocked.
-        $this->assertFalse($this->researchGroup->isLocked());
-
-        // Test setting/checking lock and unlock.
-        $this->researchGroup->lock();
-        $this->assertTrue($this->researchGroup->isLocked());
-        $this->researchGroup->unlock();
-        $this->assertFalse($this->researchGroup->isLocked());
-    }
 }
