@@ -81,13 +81,8 @@ function MapWizard(json)
         $(divNonSpatial).hide();
         $("#"+json.descField).hide();
 
-        $.ajax({
-            url: Routing.generate("pelagos_geoviz_wizard_dialog"),
-            success: function(html) {
-                $(document.body).append('<div id="divMapWizard">'+html+"</div>");
-            },
-            async:   false
-        });
+        $(document.body).append('<div id="divMapWizard">');
+        $("#divMapWizard").load(Routing.generate("pelagos_geoviz_wizard_dialog"));
 
         $(gmlField).change(function() {
             smlGeoViz.goHome();
@@ -118,130 +113,134 @@ function MapWizard(json)
 
     function initWiz()
     {
-        //Synchonous load of HTML, then append to DIV
-        $.ajax({
-            url: Routing.generate("pelagos_geoviz_wizard_map"),
-            success: function(html) {
-                $("#divMapWizard").append(html);
-            },
-            async:   false
-
-        });
-
-        wizGeoViz = new GeoViz();
-
-        var mymap = $("#mapwiz table#maptoolstbl tbody tr td").first();
-        $(mymap).append("<div />").attr("id","olmap").css({width:100,height:600});
-        wizGeoViz.initMap("olmap",{"onlyOneFeature":true,"allowModify":true,"allowDelete":true});
-
-        $("#coordTabs").tabs();
-
-        $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
-            show: {
-                event: "mouseenter mouseover"
-            },
-            hide: {
-                event: "mouseleave mouseout click"
-            },
-            position: {
-                adjust: {
-                    method: "flip flip"
-                },
-                my: "right bottom",
-                at: "center left",
-                viewport: $(window)
-            },
-            style:
-            {
-                classes: "qtip-tipped qtip-shadow customqtip"
-
-            }
-        });
-
-        $("#coordForm").validate({
-            rules: {
-                maxLat: {
-                    required: true,
-                    range: [-90, 90],
-                    number: true
+        return $.Deferred(function() {
+            var wizPromise = this;
+            //Synchonous load of HTML, then append to DIV
+            $.ajax({
+                url: Routing.generate("pelagos_geoviz_wizard_map"),
+                success: function(html) {
+                    $("#divMapWizard").append(html);
                 }
-            }
+            }).then( function() {
+                wizGeoViz = new GeoViz();
+
+                var mymap = $("#mapwiz table#maptoolstbl tbody tr td").first();
+                $(mymap).append("<div />").attr("id","olmap").css({width:100,height:600});
+                wizGeoViz.initMap("olmap",{"onlyOneFeature":true,"allowModify":true,"allowDelete":true});
+
+                $("#coordTabs").tabs();
+
+                $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
+                    show: {
+                        event: "mouseenter mouseover"
+                    },
+                    hide: {
+                        event: "mouseleave mouseout click"
+                    },
+                    position: {
+                        adjust: {
+                            method: "flip flip"
+                        },
+                        my: "right bottom",
+                        at: "center left",
+                        viewport: $(window)
+                    },
+                    style:
+                    {
+                        classes: "qtip-tipped qtip-shadow customqtip"
+
+                    }
+                });
+
+                $("#coordForm").validate({
+                    rules: {
+                        maxLat: {
+                            required: true,
+                            range: [-90, 90],
+                            number: true
+                        }
+                    }
+                });
+
+                setEvents();
+
+                //only show input GML tab on dataset-review
+                if (true === inputGmlControl) {
+                    $('#coordTabs a[href="#gmlTab"]').parent().show();
+                } else {
+                    $('#coordTabs a[href="#gmlTab"]').parent().hide();
+                }
+
+                wizPromise.resolve();
+            });
         });
-
-        setEvents();
-
-        //only show input GML tab on dataset-review
-        if (true === inputGmlControl) {
-            $('#coordTabs a[href="#gmlTab"]').parent().show();
-        } else {
-            $('#coordTabs a[href="#gmlTab"]').parent().hide();
-        }
     }
 
     function showWizard()
     {
-        initWiz();
+        $.when(initWiz())
+        .then(function(){
+            orderEnum = wizGeoViz.orderEnum;
 
-        orderEnum = wizGeoViz.orderEnum;
+            $("#helpinfo").dialog({
+                autoOpen: false,
+                width: 400,
+                modal: true,
+                buttons: {
+                    OK: function() {
+                        if ($("#drawPolygon:checked").length){$("#drawPolygon:checked").click();$("#coordTabs").tabs({ active: 0 });}
+                        if ($("#drawLine:checked").length){$("#drawLine:checked").click();$("#coordTabs").tabs({ active: 0 });}
+                        if ($("#drawPoint:checked").length){$("#drawPoint:checked").click();$("#coordTabs").tabs({ active: 0 });}
+                        if ($("#drawBox:checked").length){$("#drawBox:checked").click();$("#coordTabs").tabs({ active: 1 });}
+                        if ($("#featDraw:checked").length){$("#featDraw:checked").click();}
+                        if ($("#featPaste:checked").length){$("#featPaste:checked").click();}
 
-        $("#helpinfo").dialog({
-            autoOpen: false,
-            width: 400,
-            modal: true,
-            buttons: {
-                OK: function() {
-                    if ($("#drawPolygon:checked").length){$("#drawPolygon:checked").click();$("#coordTabs").tabs({ active: 0 });}
-                    if ($("#drawLine:checked").length){$("#drawLine:checked").click();$("#coordTabs").tabs({ active: 0 });}
-                    if ($("#drawPoint:checked").length){$("#drawPoint:checked").click();$("#coordTabs").tabs({ active: 0 });}
-                    if ($("#drawBox:checked").length){$("#drawBox:checked").click();$("#coordTabs").tabs({ active: 1 });}
-                    if ($("#featDraw:checked").length){$("#featDraw:checked").click();}
-                    if ($("#featPaste:checked").length){$("#featPaste:checked").click();}
+                        if (startOffDrawing)
+                        {wizGeoViz.startDrawing();}
+                        else
+                        {
+                            $("#coordlist").focus();
+                        }
 
-                    if (startOffDrawing)
-                    {wizGeoViz.startDrawing();}
-                    else
-                    {
-                        $("#coordlist").focus();
-                    }
-
-                    if (!$("#drawPolygon:checked").length && !$("#drawLine:checked").length && !$("#drawPoint:checked").length && !$("#drawBox:checked").length && !$("#featDraw:checked").length && !$("#featPaste:checked").length)
-                    {alert("Please make a selection!");}
-                    else
-                    {
-                        $(this).dialog("close");
-                        wizGeoViz.updateMap();
+                        if (!$("#drawPolygon:checked").length && !$("#drawLine:checked").length && !$("#drawPoint:checked").length && !$("#drawBox:checked").length && !$("#featDraw:checked").length && !$("#featPaste:checked").length)
+                        {alert("Please make a selection!");}
+                        else
+                        {
+                            $(this).dialog("close");
+                            wizGeoViz.updateMap();
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        $(document).on("imready", function(e,who) {
-            if (who == "#olmap")
-            {
-                if (drawTheMap)
+            $(document).on("imready", function(e,who) {
+                if (who == "#olmap")
                 {
-                    drawMap();
+                    if (drawTheMap)
+                    {
+                        drawMap();
+                    }
                 }
+            });
+
+            switch (geometryType)
+            {
+                case "Polygon":
+                    $("#drawPolygon").click();
+                    break;
+                case "Point":
+                    $("#drawPoint").click();
+                    break;
+                case "MultiPoint":
+                    $("#drawPoint").click();
+                    break;
+                case "Line":
+                    $("#drawLine").click();
+                    break;
             }
+
+            drawMap();
         });
-
-        switch (geometryType)
-        {
-            case "Polygon":
-                $("#drawPolygon").click();
-                break;
-            case "Point":
-                $("#drawPoint").click();
-                break;
-            case "MultiPoint":
-                $("#drawPoint").click();
-                break;
-            case "Line":
-                $("#drawLine").click();
-                break;
-        }
-
-        drawMap();
     }
 
     function showSpatialDialog()

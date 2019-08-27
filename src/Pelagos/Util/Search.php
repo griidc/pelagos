@@ -213,6 +213,7 @@ class Search
             $researchGroupsInfo[$researchGroup->getId()] = array(
                 'id' => $researchGroup->getId(),
                 'name' => $researchGroup->getName(),
+                'shortName' => $researchGroup->getShortName(),
                 'count' => $aggregations[$researchGroup->getId()]
             );
         }
@@ -262,6 +263,7 @@ class Search
             $fundingOrgInfo[$fundingOrg->getId()] = array(
                 'id' => $fundingOrg->getId(),
                 'name' => $fundingOrg->getName(),
+                'shortName' => $fundingOrg->getShortName(),
                 'count' => $aggregations[$fundingOrg->getId()]
             );
         }
