@@ -21,11 +21,10 @@ class SuperUserVoter extends PelagosEntityVoter
      */
     private $readOnlyMode;
 
-
     /**
      * Constructor for SuperUserVoter.
      *
-     * @param String $readOnlyMode If the system is in readonly mode (from parameter file).
+     * @param string $readOnlyMode If the system is in readonly mode (from parameter file).
      */
     public function __construct($readOnlyMode)
     {
