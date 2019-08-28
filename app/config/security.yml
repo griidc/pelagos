@@ -47,6 +47,7 @@ security:
 services:
     super_user_voter:
         class: Pelagos\Bundle\AppBundle\Security\SuperUserVoter
+        arguments: ["%pelagos_readonly_mode%"]
         tags:
             - { name: security.voter }
     research_group_voter:

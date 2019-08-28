@@ -15,6 +15,24 @@ use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 class SuperUserVoter extends PelagosEntityVoter
 {
     /**
+     * Is the system in readonly mode.
+     *
+     * @var boolean
+     */
+    private $readOnlyMode;
+
+
+    /**
+     * Constructor for SuperUserVoter.
+     *
+     * @param String $readOnlyMode If the system is in readonly mode (from parameter file).
+     */
+    public function __construct($readOnlyMode)
+    {
+        $this->readOnlyMode = (bool) $readOnlyMode;
+    }
+
+    /**
      * Determines if the attribute and subject are supported by this voter.
      *
      * @param string $attribute A string representing the supported attribute.
@@ -46,6 +64,10 @@ class SuperUserVoter extends PelagosEntityVoter
      */
     protected function voteOnAttribute($attribute, $object, TokenInterface $token)
     {
+        if ($this->readOnlyMode === true) {
+            return false;
+        }
+
         $user = $token->getUser();
         if (!$user instanceof Account) {
             return false;
