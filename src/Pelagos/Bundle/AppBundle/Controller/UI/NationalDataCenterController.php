@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * The National Data Center Controller class.
  */
-class NationalDataCenterController extends UIController
+class NationalDataCenterController extends UIController implements OptionalReadOnlyInterface
 {
     /**
      * The default action for National Data center.

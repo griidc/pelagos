@@ -17,7 +17,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  *
  * @Route("/dataset-restrictions")
  */
-class DatasetRestrictionsController extends UIController
+class DatasetRestrictionsController extends UIController implements OptionalReadOnlyInterface
 {
     /**
      * Dataset Restrictions Modifier UI.
