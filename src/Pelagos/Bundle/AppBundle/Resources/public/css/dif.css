@@ -2,7 +2,7 @@ select,textarea {
     width:100%;
 }
 
-label:not(.button) 
+label:not(.button)
 {
     font-weight: bold;
     display: block;
@@ -36,7 +36,12 @@ label:not(.button)
 
 .statustext
 {
-   font-size:1.5em; 
+   font-size:1.5em;
+}
+
+.substatus
+{
+   font-size: 15px;
 }
 
 .emRequired::before
@@ -47,24 +52,24 @@ label:not(.button)
 
 .helpSection img
 {
-    opacity:.5;   
+    opacity:.5;
 }
 
 .helpSection img:hover
 {
-    opacity:1;   
+    opacity:1;
 }
 
 .helpSection
 {
     float:right;margin-right:-42px;
-    
+
 }
 
 .frmSection fieldset
 {
     padding-right:48px;
-    
+
 }
 
 .tooltiptext

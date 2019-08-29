@@ -209,7 +209,14 @@ $(document).ready(function()
 
     $("#status").change(function(){
         $("#btnDS").button("option", "disabled", true);
-        if ($('[name="udi"]').val() != "")
+        if ($(this).val() == "closedout") {
+            var html = '<fieldset><img src="' + imgCross +'">&nbsp;Research Group (locked)';
+            html += '<div class="substatus"><i>A DIF cannot be submitted for this research group because the grant has been closed out.<br>Please contact GRIIDC at <a href="mailto:griidc@gomri.org">griidc@gomri.org</a> if you would like to submit a DIF or have any questions.</i></div>';
+            html += '</fieldset>';
+            $("#statustext").html(html);
+            formHash = $("#difForm").serialize();
+        }
+        else if ($('[name="udi"]').val() != "")
         {
             if ($(this).val() == "0")
             {
@@ -928,6 +935,12 @@ function loadPOCs(researchGroup,ppoc,spoc)
                 $('[name="primaryPointOfContact"]').addClass("required");
             }
             hideSpinner();
+            var researchGroupLocked = $("#researchGroup option[value=" + researchGroup + "]").attr("locked");
+            if (researchGroupLocked == "true") {
+                $("#status").val("closedout");
+                setFormStatus();
+            }
+
             $("#status").change();
     });
 
