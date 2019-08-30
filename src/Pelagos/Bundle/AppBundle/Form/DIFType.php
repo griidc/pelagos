@@ -294,8 +294,7 @@ class DIFType extends AbstractType
             'placeholder' => '[PLEASE SELECT A PROJECT]',
             'required' => true,
             'label' => 'Project Title:',
-            'choice_attr' => function($choice, $key, $value) {
-                // adds a class like attending_yes, attending_no, etc
+            'choice_attr' => function($choice) {
                 return ['locked' => $choice->isLocked() ? 'true' : 'false'];
             },
         ));
