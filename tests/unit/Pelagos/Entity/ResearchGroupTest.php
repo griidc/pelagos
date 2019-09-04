@@ -441,9 +441,9 @@ class ResearchGroupTest extends TestCase
         $this->assertFalse($this->researchGroup->isLocked());
 
         // Test setting/checking lock and unlock.
-        $this->researchGroup->lock();
+        $this->researchGroup->setLocked(true);
         $this->assertTrue($this->researchGroup->isLocked());
-        $this->researchGroup->unlock();
+        $this->researchGroup->setLocked(false);
         $this->assertFalse($this->researchGroup->isLocked());
     }
 }

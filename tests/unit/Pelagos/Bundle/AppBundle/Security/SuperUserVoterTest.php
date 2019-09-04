@@ -35,7 +35,7 @@ class SuperUserVoterTest extends PelagosEntityVoterTest
     {
         parent::setUp();
 
-        $this->voter = new Voter;
+        $this->voter = new Voter(false);
 
         $this->mockEntity = \Mockery::mock('\Pelagos\Entity\Entity');
 
