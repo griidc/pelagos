@@ -504,7 +504,9 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
      */
     private function isSubmissionLocked(Dataset $dataset)
     {
-        if (in_array($dataset->getDatasetStatus(), [Dataset::DATASET_STATUS_BACK_TO_SUBMITTER, Dataset::DATASET_STATUS_NONE])) {
+        if (in_array($dataset->getDatasetStatus(), [Dataset::DATASET_STATUS_BACK_TO_SUBMITTER, Dataset::DATASET_STATUS_NONE])
+            and !$dataset->getResearchGroup()->isLocked()
+        ) {
             return false;
         }
         return true;
