@@ -106,8 +106,13 @@
         {% if xmlStatus.success is null and  datasetSubmissionLockStatus == true %}
         <div class="messages warning">
             <h2 class="element-invisible">Status message</h2>
+            {% if dataset.researchgroup.islocked %}
+            Dataset Identifier <b>'{{ udi }}'</b> was found. The latest version has been loaded.
+            A Dataset cannot be submitted for this research group because the grant has been closed out. Please contact GRIIDC at griidc@gomri.org if you would like to submit a dataset or have any questions.
+            {% else %}
             Dataset Identifier <b>'{{ udi }}'</b> was found. The latest version has been loaded.
             This dataset is locked. Please contact griidc@gomri.org if revisions are required.
+            {% endif %}
         </div>
         {% elseif xmlStatus.success is null %}
         <div class="messages status">
