@@ -245,26 +245,10 @@ function createRow(data, row)
 
 
     //this shows the details dataset on Show Details button
-    $(".details_link", rowContent).on("click", function(){
-        var row = $(this).parents("tr");
-        if ($(row).has(".details:empty").length == 1) {
-            var datasetId = $(row).attr("datasetid");
-            $.ajax({
-                "url": Routing.generate("pelagos_app_ui_datadiscovery_showdetails", { "id": datasetId }),
-                "success": function(data) {
-                    $(row).find(".details").html(data);
-                    $(row).find(".details").show();
-                    $(row).find(".details_link").html("Hide Details");
-                }
-            });
-        } else {
-            if ($(row).find(".details:visible").length == 1) {
-                $(row).find(".details_link").html("Show Details");
-            } else {
-                $(row).find(".details_link").html("Hide Details");
-            }
-            $(row).find(".details").toggle();
-        }
+    $(row).on("click", function(){
+        var UDI = $(row).attr("udi");
+        url = Routing.generate("pelagos_app_ui_dataland_default", {udi: UDI});
+        window.open(url);
     });
 
     return rowContent;
