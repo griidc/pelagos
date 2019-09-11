@@ -244,7 +244,7 @@ function createRow(data, row)
 
 
 
-    //this shows the details dataset on Show Details button
+    // On row click event, open Dataland for that particular dataset in new tab/window.
     $(row).on("click", function(){
         var UDI = $(row).attr("udi");
         url = Routing.generate("pelagos_app_ui_dataland_default", {udi: UDI});
