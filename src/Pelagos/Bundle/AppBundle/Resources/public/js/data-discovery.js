@@ -248,7 +248,6 @@ function createRow(data, row)
     $(row).on("click", function(){
         // If copying text to clipboard, don't assume it is a "click" as this is ÜberAnnoying.
         var sel = getSelection().toString();
-       console.log(sel);
         if(!sel){
             var UDI = $(row).attr("udi");
             url = Routing.generate("pelagos_app_ui_dataland_default", {udi: UDI});
