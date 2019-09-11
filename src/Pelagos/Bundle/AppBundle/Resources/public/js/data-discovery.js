@@ -226,7 +226,7 @@ function createRow(data, row)
         $(rowContent).find("#dataset-year").text(data["year"]);
     }
 
-    $(rowContent).find("#dataset-title").replaceWith(data["title"]);
+    $(rowContent).find("#dataset-title").text(data["title"]);
 
     if (!data["researchGroup"]["name"]) {
         $(rowContent).find("#container-dataset-research-group").hide();
@@ -237,10 +237,10 @@ function createRow(data, row)
     if (!data["doi"]["doi"]) {
         $(rowContent).find("#container-dataset-doi").hide();
     } else {
-        $(rowContent).find("#dataset-doi").replaceWith(data["doi"]["doi"]);
+        $(rowContent).find("#dataset-doi").text(data["doi"]["doi"]);
     }
 
-    $(rowContent).find("#dataset-udi").replaceWith(data["udi"]);
+    $(rowContent).find("#dataset-udi").text(data["udi"]);
 
 
 
