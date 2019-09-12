@@ -24,6 +24,7 @@ use Pelagos\Bundle\AppBundle\Form\LoginForm;
 
 use Pelagos\Entity\Account;
 use Pelagos\Entity\LoginAttempts;
+use Pelagos\Entity\Password;
 use Pelagos\Entity\Person;
 
 /**
@@ -64,6 +65,13 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     protected $logger;
 
     /**
+     * String describing max PW age.
+     *
+     * @var string maxPwAge
+     */
+    protected $maxPwAge;
+
+    /**
      * Class constructor for Dependency Injection.
      *
      * @param FormFactoryInterface   $formFactory   A Form Factory.
@@ -75,12 +83,14 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         FormFactoryInterface $formFactory,
         EntityManagerInterface $entityManager,
         RouterInterface $router,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        string $maxPwAge
     ) {
         $this->formFactory = $formFactory;
         $this->entityManager = $entityManager;
         $this->router = $router;
         $this->logger = $logger;
+        $this->maxPwAge = $maxPwAge;
     }
 
     /**
@@ -151,6 +161,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      *
      * @throws AuthenticationException When account is locked out.
      * @throws AuthenticationException When this is a bad password.
+     * @throws AuthenticationException When this is an expired password.
      *
      * @return bool True if the credentials are valid.
      */
@@ -159,6 +170,12 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         // Here check to see if $user is locked out?
         if ($user->isLockedOut()) {
             throw new AuthenticationException('Too many login attempts');
+        }
+
+        // Here check to see if $user has expired password.
+        $passwordObj = $user->getPasswordEntity();
+        if (false) {
+            throw new AuthenticationException('Password is expired.');
         }
 
         $this->userAttempt($user);

@@ -122,6 +122,8 @@ services:
     pelagos.security.login_form_authenticator:
         class: Pelagos\Bundle\AppBundle\Security\LoginFormAuthenticator
         autowire: true
+        arguments:
+            $maxPwAge: "%account_password_max_age%"
         tags:
             - { name: monolog.logger, channel: login_attempts }
 
