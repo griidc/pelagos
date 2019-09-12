@@ -78,6 +78,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      * @param EntityManagerInterface $entityManager An Entity Manager.
      * @param RouterInterface        $router        A Router.
      * @param LoggerInterface        $logger        A Monolog logger.
+     * @param string                 $maxPwAge      The max age for password paramater.
      */
     public function __construct(
         FormFactoryInterface $formFactory,
@@ -172,9 +173,11 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
             throw new AuthenticationException('Too many login attempts');
         }
 
-        // Here check to see if $user has expired password.
-        $passwordObj = $user->getPasswordEntity();
-        if (false) {
+        // Check for expired password.
+        $now = new \DateTime('now');
+        $expiration = $user->getPasswordEntity()->getModificationTimeStamp()->add(new \DateInterval($this->maxPwAge));
+        // If today is past the expiration date, the milk is sour.
+        if ($now > $expiration) {
             throw new AuthenticationException('Password is expired.');
         }
 
