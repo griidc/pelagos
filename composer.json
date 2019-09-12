@@ -6,16 +6,13 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "": "src/"
-        },
-        "files": [
-            "app/AppKernel.php"
-        ]
+            "App\\": "src/"
+        }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/",
-            "": "tests/helpers"
+            "App\\Tests\\": "tests/"
+            
         }
     },
     "require": {
