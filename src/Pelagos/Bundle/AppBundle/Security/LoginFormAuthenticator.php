@@ -78,7 +78,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      * @param EntityManagerInterface $entityManager An Entity Manager.
      * @param RouterInterface        $router        A Router.
      * @param LoggerInterface        $logger        A Monolog logger.
-     * @param string                 $maxPwAge      The max age for password paramater.
+     * @param string                 $maxPwAge      The max age for password parameter.
      */
     public function __construct(
         FormFactoryInterface $formFactory,
