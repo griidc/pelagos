@@ -70,7 +70,7 @@
             The DIF has not yet been submitted for dataset: {{ udi }}. Please email <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> if you have any questions.
         </div>
         {% include 'PelagosAppBundle:DatasetSubmission:form.html.twig' %}
-    {% elseif not is_granted('CAN_CREATE', datasetSubmission) and not is_granted('CAN_EDIT', datasetSubmission) %}
+    {% elseif not dataset.researchgroup.islocked and not is_granted('CAN_CREATE', datasetSubmission) and not is_granted('CAN_EDIT', datasetSubmission) %}
         <div class="messages warning">
                 <h2 class="element-invisible">Status message</h2>
                 Sorry, but you can only create or edit dataset submissions for datasets associated with your research groups.
