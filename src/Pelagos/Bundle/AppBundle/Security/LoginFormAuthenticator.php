@@ -174,10 +174,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         }
 
         // Check for expired password.
-        $now = new \DateTime('now');
-        $expiration = $user->getPasswordEntity()->getModificationTimeStamp()->add(new \DateInterval($this->maxPwAge));
-        // If today is past the expiration date, the milk is sour.
-        if ($now > $expiration) {
+        if ($this->checkIfPasswordExpired($user->getPasswordEntity())) {
             throw new AuthenticationException('Password is expired.');
         }
 
@@ -189,6 +186,22 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         } else {
             throw new AuthenticationException('Invalid Credentials');
         }
+    }
+
+    /**
+     * Checks if a Password object is expired.
+     *
+     * @param password $password The Password object that may or may not be expired.
+     *
+     * @return bool True if expired, false otherwise.
+     */
+    protected function checkIfPasswordExpired(password $password)
+    {
+        // Check for expired password.
+        $now = new \DateTime('now');
+        $expiration = $password->getModificationTimeStamp()->add(new \DateInterval($this->maxPwAge));
+        // If the current timestamp is past the calculated expiration timestamp, the password has expired.
+        return ($now > $expiration);
     }
 
     /**
