@@ -67,31 +67,31 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     /**
      * String describing max PW age.
      *
-     * @var string maxPwAge
+     * @var string maximumPasswordAge
      */
-    protected $maxPwAge;
+    protected $maximumPasswordAge;
 
     /**
      * Class constructor for Dependency Injection.
      *
-     * @param FormFactoryInterface   $formFactory   A Form Factory.
-     * @param EntityManagerInterface $entityManager An Entity Manager.
-     * @param RouterInterface        $router        A Router.
-     * @param LoggerInterface        $logger        A Monolog logger.
-     * @param string                 $maxPwAge      The max age for password parameter.
+     * @param FormFactoryInterface   $formFactory        A Form Factory.
+     * @param EntityManagerInterface $entityManager      An Entity Manager.
+     * @param RouterInterface        $router             A Router.
+     * @param LoggerInterface        $logger             A Monolog logger.
+     * @param string                 $maximumPasswordAge The max age for password parameter.
      */
     public function __construct(
         FormFactoryInterface $formFactory,
         EntityManagerInterface $entityManager,
         RouterInterface $router,
         LoggerInterface $logger,
-        string $maxPwAge
+        string $maximumPasswordAge
     ) {
         $this->formFactory = $formFactory;
         $this->entityManager = $entityManager;
         $this->router = $router;
         $this->logger = $logger;
-        $this->maxPwAge = $maxPwAge;
+        $this->maximumPasswordAge = $maximumPasswordAge;
     }
 
     /**
@@ -199,7 +199,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     {
         // Check for expired password.
         $now = new \DateTime('now');
-        $expiration = $password->getModificationTimeStamp()->add(new \DateInterval($this->maxPwAge));
+        $expiration = $password->getModificationTimeStamp()->add(new \DateInterval($this->maximumPasswordAge));
         // If the current timestamp is past the calculated expiration timestamp, the password has expired.
         return ($now > $expiration);
     }
