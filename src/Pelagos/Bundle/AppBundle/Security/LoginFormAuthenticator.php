@@ -173,15 +173,16 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
             throw new AuthenticationException('Too many login attempts');
         }
 
-        // Check for expired password.
-        if ($this->checkIfPasswordExpired($user->getPasswordEntity())) {
-            throw new AuthenticationException('Password is expired.');
-        }
 
         $this->userAttempt($user);
 
         $password = $credentials['_password'];
+        // Check that password is correct.
         if ($user->getPasswordEntity()->comparePassword($password)) {
+            // Since password is correct, now check for expired password.
+            if ($this->checkIfPasswordExpired($user->getPasswordEntity())) {
+                throw new AuthenticationException('Password is expired.');
+            }
             return true;
         } else {
             throw new AuthenticationException('Invalid Credentials');
