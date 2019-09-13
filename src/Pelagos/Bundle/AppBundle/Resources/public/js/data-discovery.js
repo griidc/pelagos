@@ -246,7 +246,7 @@ function createRow(data, row)
 
     // On row click event, open Dataland for that particular dataset in new tab/window.
     $(row).on("click", function(){
-        // If copying text to clipboard, don't assume it is a "click" as this is ÜberAnnoying.
+        // If copying text to clipboard, don't assume it is a "click" in order to improve the user experience.
         var sel = getSelection().toString();
         if(!sel){
             var UDI = $(row).attr("udi");
