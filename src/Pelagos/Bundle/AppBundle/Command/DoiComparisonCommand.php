@@ -458,8 +458,9 @@ class DoiComparisonCommand extends ContainerAwareCommand
      */
     private function sendEmail(): void
     {
-        $message = \Swift_Message::newInstance()
-            ->setSubject('DOI Sync Log - List of Dois that are out of sync')
+        $message = new \Swift_Message('DOI Sync Log - List of Dois that are out of sync');
+        $message
+            ->setSubject()
             ->setFrom(array('griidc@gomri.org' => 'GRIIDC'))
             ->setTo(array('griidc@gomri.org' => 'GRIIDC'))
             ->setCharset('UTF-8')

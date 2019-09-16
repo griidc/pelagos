@@ -188,17 +188,12 @@ class AccountExpirationNotifyCommand extends ContainerAwareCommand
             );
 
             // Create a new SwiftMailer message using the email template.
-            $message = \Swift_Message::newInstance()
+            $message = new \Swift_Message($emailTemplate->renderBlock('subject', array()));
+            $message
                 ->setFrom($this->from)
                 ->setTo(
                     array(
                         $person->getEmailAddress() => $person->getFirstName() . ' ' . $person->getLastName(),
-                    )
-                )
-                ->setSubject(
-                    $emailTemplate->renderBlock(
-                        'subject',
-                        array()
                     )
                 )
                 ->setBody(
