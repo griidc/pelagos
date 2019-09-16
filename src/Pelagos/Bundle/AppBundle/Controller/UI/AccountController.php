@@ -131,10 +131,11 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
         );
 
         // Create a message
-        $message = new \Swift_Message($template->renderBlock('subject', $mailData));
+        $message = new \Swift_Message();
         $message
             ->setFrom(array('griidc@gomri.org' => 'GRIIDC'))
             ->setTo(array($person->getEmailAddress() => $person->getFirstName() . ' ' . $person->getLastName()))
+            ->setSubject($template->renderBlock('subject', $mailData))
             ->setBody($template->renderBlock('body_text', $mailData), 'text/plain')
             ->addPart($template->renderBlock('body_html', $mailData), 'text/html');
 
