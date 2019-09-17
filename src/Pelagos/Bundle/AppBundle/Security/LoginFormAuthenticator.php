@@ -19,7 +19,6 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-
 use Pelagos\Bundle\AppBundle\Form\LoginForm;
 
 use Pelagos\Entity\Account;
@@ -174,7 +173,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
             throw new AuthenticationException('Too many login attempts');
         }
 
-
         $this->userAttempt($user);
 
         $password = $credentials['_password'];
@@ -286,19 +284,20 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
             }
 
             $person = $user->getPerson();
+
             $personToken = $person->getToken();
 
             // if $person has Token, remove Token
             if ($personToken instanceof PersonToken) {
                 $personToken->getPerson()->setToken(null);
                 $this->entityManager->remove($personToken);
+                $this->entityManager->flush();
             }
 
-            $personToken = new PersonToken($person, 'PASSWORD_RESET', new \DateInterval('P1D'));
-            $personToken->getPerson()->setToken($personToken);
+            $personToken = new PersonToken($person, 'PASSWORD_EXPIRED', new \DateInterval('PT1H'));
             $this->entityManager->persist($personToken);
             $this->entityManager->flush();
-            $url = $this->router->generate('pelagos_app_ui_account_verifyemail', array('person_token' => $person->getToken()));
+            $url = $this->router->generate('pelagos_app_ui_account_passwordexpired', array('person_token' => $person->getToken()->getTokenText()));
         } else {
             $destination = $request->query->get('destination');
             $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
