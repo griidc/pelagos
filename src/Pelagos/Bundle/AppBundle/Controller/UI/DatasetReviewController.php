@@ -4,6 +4,7 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 
+use Pelagos\Entity\File;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
@@ -571,6 +572,13 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             'body' => $datasetSubmission->getId(),
             'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
         );
+
+        $fileSet = $datasetSubmission->getFileSet();
+        $newFile = new File($fileSet);
+        $newFile->setFileName(null);
+        $newFile->setFileSize(null);
+        $newFile->setFileSha256Hash(null);
+        $this->createEntity($newFile);
     }
 
     /**

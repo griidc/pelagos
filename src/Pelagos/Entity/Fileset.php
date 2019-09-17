@@ -2,6 +2,7 @@
 
 namespace Pelagos\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -23,12 +24,18 @@ class Fileset extends Entity
      */
     protected $files;
 
+    public function __construct()
+    {
+        $this->files = new ArrayCollection();
+    }
+
+
     /**
      * Getter for files.
      *
      * @return Collection
      */
-    public function getFiles() : Collection
+    public function getFiles() : ? Collection
     {
         return $this->files;
     }

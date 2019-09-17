@@ -1083,6 +1083,9 @@ class DatasetSubmission extends Entity
             }
 
             $this->addDistributionPoint(new DistributionPoint());
+
+            // Add fileset entity
+            $this->setFileSet(new Fileset());
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
             $this->setSequence($entity->getDataset()->getDatasetSubmissionHistory()->first()->getSequence() + 1);
@@ -1134,7 +1137,7 @@ class DatasetSubmission extends Entity
             $this->setDatasetFileColdStorageArchiveSha256Hash($entity->getDatasetFileColdStorageArchiveSha256Hash());
             $this->setDatasetFileColdStorageArchiveSize($entity->getDatasetFileColdStorageArchiveSize());
             $this->setDatasetFileColdStorageOriginalFilename($entity->getDatasetFileColdStorageOriginalFilename());
-
+            $this->setFileSet($entity->getFileSet());
             //Submitter should always be the user who has submitted the dataset.
             if (!in_array($entity->getDatasetStatus(), [ Dataset::DATASET_STATUS_NONE, Dataset::DATASET_STATUS_BACK_TO_SUBMITTER])) {
                 $this->submitter = $entity->getSubmitter();
@@ -1684,6 +1687,7 @@ class DatasetSubmission extends Entity
      */
     public function setDatasetFileUri($datasetFileUri)
     {
+        $this->getFileSet()->getFiles()->first()->setFilePath($datasetFileUri);
         $this->datasetFileUri = $datasetFileUri;
     }
 
@@ -1732,6 +1736,7 @@ class DatasetSubmission extends Entity
     public function setDatasetFileName($datasetFileName)
     {
         $this->datasetFileName = $datasetFileName;
+        $this->getFileSet()->getFiles()->first()->setFileName($datasetFileName);
     }
 
     /**
@@ -1754,6 +1759,7 @@ class DatasetSubmission extends Entity
     public function setDatasetFileSize($datasetFileSize)
     {
         $this->datasetFileSize = $datasetFileSize;
+        $this->getFileSet()->getFiles()->first()->setFileSize($datasetFileSize);
     }
 
     /**
@@ -1776,6 +1782,7 @@ class DatasetSubmission extends Entity
     public function setDatasetFileSha256Hash($datasetFileSha256Hash)
     {
         $this->datasetFileSha256Hash = $datasetFileSha256Hash;
+        $this->getFileSet()->getFiles()->first()->setFileSha256Hash($datasetFileSha256Hash);
     }
 
     /**

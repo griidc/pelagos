@@ -2,6 +2,7 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
+use Pelagos\Entity\File;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
@@ -292,6 +293,17 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
             'body' => $datasetSubmission->getId(),
             'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
         );
+
+        $fileSet = $datasetSubmission->getFileSet();
+        $newFile = new File($fileSet);
+        $newFile->setFileName(null);
+        $newFile->setFileSize(null);
+        $newFile->setFileSha256Hash(null);
+        try {
+            $this->entityHandler->create($newFile);
+        } catch (AccessDeniedException $e) {
+            // This is handled in the template.
+        }
     }
 
     /**

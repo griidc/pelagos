@@ -79,8 +79,8 @@ class File extends Entity
      *
      * @var Fileset
      *
-     * @ORM\ManyToOne(targetEntity="Fileset", inversedBy="File")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="Fileset", inversedBy="files")
+     * @ORM\JoinColumn(name="fileset_id", referencedColumnName="id", nullable=false)
      */
     protected $fileSet;
 
