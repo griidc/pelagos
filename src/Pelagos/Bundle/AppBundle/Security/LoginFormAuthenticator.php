@@ -78,7 +78,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      * @param EntityManagerInterface $entityManager      An Entity Manager.
      * @param RouterInterface        $router             A Router.
      * @param LoggerInterface        $logger             A Monolog logger.
-     * @param string                 $maximumPasswordAge The max age for password parameter.
+     * @param string|null            $maximumPasswordAge The max age for password, 0 or null means never expires.
      */
     public function __construct(
         FormFactoryInterface $formFactory,
@@ -91,7 +91,12 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         $this->entityManager = $entityManager;
         $this->router = $router;
         $this->logger = $logger;
-        $this->maximumPasswordAge = $maximumPasswordAge;
+        // Set attribute to 0 if null in constructor.
+        if (null === $maximumPasswordAge) {
+            $this->maximumPasswordAge = 0;
+        } else {
+            $this->maximumPasswordAge = $maximumPasswordAge;
+        }
     }
 
     /**
@@ -196,13 +201,20 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      *
      * @return bool True if expired, false otherwise.
      */
-    protected function checkIfPasswordExpired(password $password)
+    protected function checkIfPasswordExpired(password $password) : bool
     {
-        // Check for expired password.
-        $now = new \DateTime('now');
-        $expiration = $password->getModificationTimeStamp()->add(new \DateInterval($this->maximumPasswordAge));
-        // If the current timestamp is past the calculated expiration timestamp, the password has expired.
-        return ($now > $expiration);
+        $passwordIsExpired = true;
+        // If parameter is missing or set to 0, passwords do not expire.
+        if (0 === $this->maximumPasswordAge) {
+            $passwordIsExpired = false;
+        } else {
+            // Check for expired password.
+            $now = new \DateTime('now');
+            $expiration = $password->getModificationTimeStamp()->add(new \DateInterval($this->maximumPasswordAge));
+            // If the current timestamp is past the calculated expiration timestamp, the password has expired.
+            $passwordIsExpired = ($now > $expiration);
+        }
+        return $passwordIsExpired;
     }
 
     /**
