@@ -1,6 +1,7 @@
 <?php
 namespace Tests\unit\Pelagos\Util;
 
+use Pelagos\Entity\Fileset;
 use PHPUnit\Framework\TestCase;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -204,6 +205,7 @@ class ISOMetadataExtractorUtilTest extends TestCase
                                 'getSubmitter' => $this->mockPerson,
                                 'getSubmissionTimeStamp' => $this->testingDatetime,
                                 'getMetadataContacts' => new ArrayCollection(array($this->mockPersonDatasetSubmissionMetadataContact)),
+                                'getFileset' => new Fileset(),
                                 'getDistributionPoints' => new ArrayCollection(array(\Mockery::mock(
                                     'Pelagos\Entity\DistributionPoint',
                                     array(
@@ -312,6 +314,7 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getDatasetFileColdStorageArchiveSha256Hash' => 'abc123',
                 'getDatasetFileColdStorageArchiveSize' => '100',
                 'getDatasetFileColdStorageOriginalFilename' => 'filename.txt',
+                'getFileset' => new Fileset(),
             )
         );
 
