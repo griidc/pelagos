@@ -667,7 +667,7 @@ class ResearchGroup extends Entity
      *
      * @access public
      *
-     * @return string Containing emailAddress.
+     * @return string Containing emailADdress.
      */
     public function getEmailAddress()
     {
