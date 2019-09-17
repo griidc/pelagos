@@ -264,8 +264,8 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     /**
      * Return to login page and add destination for redirect.
      *
-     * @param Request                  $request   A Symfony Request, req by interface.
-     * @param AuthenticationException  $exception The exception thrown.
+     * @param Request                 $request   A Symfony Request, req by interface.
+     * @param AuthenticationException $exception The exception thrown.
      *
      * @throws AuthenticationException When the user is not found, and credentials is invalid.
      *
@@ -274,7 +274,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
         if ($exception->getMessage() == 'Password is expired.') {
-
             $credentials = $this->getCredentials($request);
             $username = $credentials['_username'];
 
@@ -299,7 +298,12 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
             $personToken = new PersonToken($person, 'PASSWORD_EXPIRED', new \DateInterval('PT1H'));
             $this->entityManager->persist($personToken);
             $this->entityManager->flush();
-            $url = $this->router->generate('pelagos_app_ui_account_passwordexpired', array('person_token' => $person->getToken()->getTokenText()));
+            $url = $this->router->generate(
+                'pelagos_app_ui_account_passwordexpired',
+                array(
+                    'person_token' => $person->getToken()->getTokenText()
+                )
+            );
         } else {
             $destination = $request->query->get('destination');
             $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
