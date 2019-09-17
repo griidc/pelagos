@@ -92,7 +92,6 @@ class DatasetIndex
             if (preg_match_all($doiRegEx, $text, $matches)) {
                 $text = trim(preg_replace($doiRegEx, '', $text));
                 foreach ($matches[1] as $doi) {
-
                     $doiBoolQuery = new Query\BoolQuery();
                     // Query against dataset DOIs.
                     $doiQuery = new Query\Nested();
