@@ -85,18 +85,13 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         EntityManagerInterface $entityManager,
         RouterInterface $router,
         LoggerInterface $logger,
-        string $maximumPasswordAge
+        $maximumPasswordAge
     ) {
         $this->formFactory = $formFactory;
         $this->entityManager = $entityManager;
         $this->router = $router;
         $this->logger = $logger;
-        // Set attribute to 0 if null in constructor.
-        if (null === $maximumPasswordAge) {
-            $this->maximumPasswordAge = 0;
-        } else {
-            $this->maximumPasswordAge = $maximumPasswordAge;
-        }
+        $this->maximumPasswordAge = $maximumPasswordAge;
     }
 
     /**
@@ -205,7 +200,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     {
         $passwordIsExpired = true;
         // If parameter is missing or set to 0, passwords do not expire.
-        if (0 === $this->maximumPasswordAge) {
+        if (empty($this->maximumPasswordAge)) {
             $passwordIsExpired = false;
         } else {
             // Check for expired password.

@@ -36,7 +36,7 @@ parameters:
     ldap_bind_pw: ~
     ldap_people_ou: ou=members,ou=people,dc=griidc,dc=org
 
-    # The maximum age allowed for account passwords (as an ISO 8601 duration)
+    # The maximum age allowed for account passwords (as an ISO 8601 duration), 0 for no expiration.
     account_password_max_age: P180D
     # When to warn account holders of soon to expire passwords (as ISO 8601 durations)
     account_password_expiration_warn: [P7D, P1D]
