@@ -20,22 +20,48 @@ class Fileset extends Entity
      *
      * @access protected
      *
-     * @ORM\OneToMany(targetEntity="File", mappedBy="Fileset", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="File", mappedBy="fileset", cascade={"persist"}, orphanRemoval=true)
      */
     protected $files;
 
+    /**
+     *  constructor.
+     */
     public function __construct()
     {
         $this->files = new ArrayCollection();
     }
 
+    /**
+     * Adding a file to fileset.
+     *
+     * @param File $file
+     *
+     * @return void
+     */
+    public function addFile(File $file) : void
+    {
+        $file->setFileset($this);
+        $this->files->add($file);
+    }
 
+    /**
+     * Removing a file from fileset.
+     *
+     * @param File $file
+     *
+     * @return void
+     */
+    public function removeFile(File $file) : void
+    {
+        $this->files->remove($file);
+    }
     /**
      * Getter for files.
      *
      * @return Collection
      */
-    public function getFiles() : ? Collection
+    public function getFiles() : Collection
     {
         return $this->files;
     }

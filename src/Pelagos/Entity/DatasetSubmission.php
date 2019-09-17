@@ -1035,7 +1035,7 @@ class DatasetSubmission extends Entity
      *
      * @ORM\OneToOne(targetEntity="Fileset", cascade={"persist"})
      */
-    protected $fileSet;
+    protected $fileset;
 
     /**
      * Constructor.
@@ -1085,7 +1085,7 @@ class DatasetSubmission extends Entity
             $this->addDistributionPoint(new DistributionPoint());
 
             // Add fileset entity
-            $this->setFileSet(new Fileset());
+            $this->setFileset(new Fileset());
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
             $this->setSequence($entity->getDataset()->getDatasetSubmissionHistory()->first()->getSequence() + 1);
@@ -1137,7 +1137,7 @@ class DatasetSubmission extends Entity
             $this->setDatasetFileColdStorageArchiveSha256Hash($entity->getDatasetFileColdStorageArchiveSha256Hash());
             $this->setDatasetFileColdStorageArchiveSize($entity->getDatasetFileColdStorageArchiveSize());
             $this->setDatasetFileColdStorageOriginalFilename($entity->getDatasetFileColdStorageOriginalFilename());
-            $this->setFileSet($entity->getFileSet());
+            $this->setFileset($entity->getFileset());
             //Submitter should always be the user who has submitted the dataset.
             if (!in_array($entity->getDatasetStatus(), [ Dataset::DATASET_STATUS_NONE, Dataset::DATASET_STATUS_BACK_TO_SUBMITTER])) {
                 $this->submitter = $entity->getSubmitter();
@@ -1687,7 +1687,6 @@ class DatasetSubmission extends Entity
      */
     public function setDatasetFileUri($datasetFileUri)
     {
-        $this->getFileSet()->getFiles()->first()->setFilePath($datasetFileUri);
         $this->datasetFileUri = $datasetFileUri;
     }
 
@@ -1736,7 +1735,6 @@ class DatasetSubmission extends Entity
     public function setDatasetFileName($datasetFileName)
     {
         $this->datasetFileName = $datasetFileName;
-        $this->getFileSet()->getFiles()->first()->setFileName($datasetFileName);
     }
 
     /**
@@ -1759,7 +1757,6 @@ class DatasetSubmission extends Entity
     public function setDatasetFileSize($datasetFileSize)
     {
         $this->datasetFileSize = $datasetFileSize;
-        $this->getFileSet()->getFiles()->first()->setFileSize($datasetFileSize);
     }
 
     /**
@@ -1782,7 +1779,6 @@ class DatasetSubmission extends Entity
     public function setDatasetFileSha256Hash($datasetFileSha256Hash)
     {
         $this->datasetFileSha256Hash = $datasetFileSha256Hash;
-        $this->getFileSet()->getFiles()->first()->setFileSha256Hash($datasetFileSha256Hash);
     }
 
     /**
@@ -2883,20 +2879,20 @@ class DatasetSubmission extends Entity
      *
      * @return Fileset
      */
-    public function getFileSet() : Fileset
+    public function getFileset() : ? Fileset
     {
-        return $this->fileSet;
+        return $this->fileset;
     }
 
     /**
      * Setter for fileset entity.
      *
-     * @param Fileset $fileSet The fileset entity associated with this datasetSubmission instance.
+     * @param Fileset $fileset The fileset entity associated with this datasetSubmission instance.
      *
      * @return void
      */
-    public function setFileSet(Fileset $fileSet) : void
+    public function setFileset(Fileset $fileset) : void
     {
-        $this->fileSet = $fileSet;
+        $this->fileset = $fileset;
     }
 }

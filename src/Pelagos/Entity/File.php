@@ -80,19 +80,9 @@ class File extends Entity
      * @var Fileset
      *
      * @ORM\ManyToOne(targetEntity="Fileset", inversedBy="files")
-     * @ORM\JoinColumn(name="fileset_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(nullable=false)
      */
-    protected $fileSet;
-
-    /**
-     * File constructor.
-     *
-     * @param Fileset $fileSet Fileset entity which this file belongs to.
-     */
-    public function __construct(Fileset $fileSet)
-    {
-        $this->fileSet = $fileSet;
-    }
+    protected $fileset;
 
     /**
      * Getter for File Name.
@@ -246,5 +236,21 @@ class File extends Entity
     public function setFilePath(string $filePath): void
     {
         $this->filePath = $filePath;
+    }
+
+    /**
+     * @return Fileset
+     */
+    public function getFileset(): Fileset
+    {
+        return $this->fileset;
+    }
+
+    /**
+     * @param Fileset $fileset
+     */
+    public function setFileset(Fileset $fileset): void
+    {
+        $this->fileset = $fileset;
     }
 }

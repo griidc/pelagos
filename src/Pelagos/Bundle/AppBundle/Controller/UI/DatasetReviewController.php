@@ -572,13 +572,6 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             'body' => $datasetSubmission->getId(),
             'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
         );
-
-        $fileSet = $datasetSubmission->getFileSet();
-        $newFile = new File($fileSet);
-        $newFile->setFileName(null);
-        $newFile->setFileSize(null);
-        $newFile->setFileSha256Hash(null);
-        $this->createEntity($newFile);
     }
 
     /**
