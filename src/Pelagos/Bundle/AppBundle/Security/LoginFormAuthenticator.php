@@ -26,6 +26,7 @@ use Pelagos\Entity\Account;
 use Pelagos\Entity\LoginAttempts;
 use Pelagos\Entity\Password;
 use Pelagos\Entity\Person;
+use Pelagos\Entity\PersonToken;
 
 /**
  * The login form authenticator.
@@ -272,12 +273,40 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        $destination = $request->query->get('destination');
-        $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
-        $url = $this->router->generate(
-            'security_login',
-            ['destination' => $destination]
-        );
+        if ($exception->getMessage() == 'Password is expired.') {
+
+            $credentials = $this->getCredentials($request);
+            $username = $credentials['_username'];
+
+            $user = $this->entityManager->getRepository(Account::class)
+                ->findOneBy(['userId' => $username]);
+
+            if (null == $user) {
+                throw new AuthenticationException('Invalid Credentials');
+            }
+
+            $person = $user->getPerson();
+            $personToken = $person->getToken();
+
+            // if $person has Token, remove Token
+            if ($personToken instanceof PersonToken) {
+                $personToken->getPerson()->setToken(null);
+                $this->entityManager->remove($personToken);
+            }
+
+            $personToken = new PersonToken($person, 'PASSWORD_RESET', new \DateInterval('P1D'));
+            $personToken->getPerson()->setToken($personToken);
+            $this->entityManager->persist($personToken);
+            $this->entityManager->flush();
+            $url = $this->router->generate('pelagos_app_ui_account_verifyemail', array('person_token' => $person->getToken()));
+        } else {
+            $destination = $request->query->get('destination');
+            $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
+            $url = $this->router->generate(
+                'security_login',
+                ['destination' => $destination]
+            );
+        }
         return new RedirectResponse($url);
     }
 
