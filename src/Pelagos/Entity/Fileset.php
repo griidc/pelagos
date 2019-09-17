@@ -25,7 +25,7 @@ class Fileset extends Entity
     protected $files;
 
     /**
-     *  constructor.
+     *   Constructor.
      */
     public function __construct()
     {
@@ -35,7 +35,7 @@ class Fileset extends Entity
     /**
      * Adding a file to fileset.
      *
-     * @param File $file
+     * @param File $file The file instance.
      *
      * @return void
      */
@@ -48,7 +48,7 @@ class Fileset extends Entity
     /**
      * Removing a file from fileset.
      *
-     * @param File $file
+     * @param File $file The file instance.
      *
      * @return void
      */
@@ -56,6 +56,7 @@ class Fileset extends Entity
     {
         $this->files->remove($file);
     }
+    
     /**
      * Getter for files.
      *

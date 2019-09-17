@@ -239,6 +239,8 @@ class File extends Entity
     }
 
     /**
+     * Getter for fileset.
+     *
      * @return Fileset
      */
     public function getFileset(): Fileset
@@ -247,7 +249,11 @@ class File extends Entity
     }
 
     /**
-     * @param Fileset $fileset
+     * Setter for fileset.
+     *
+     * @param Fileset $fileset Fileset that owns the file.
+     *
+     * @return void
      */
     public function setFileset(Fileset $fileset): void
     {
