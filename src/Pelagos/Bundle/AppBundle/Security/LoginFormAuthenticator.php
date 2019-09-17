@@ -264,8 +264,10 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     /**
      * Return to login page and add destination for redirect.
      *
-     * @param Request                 $request   A Symfony Request, req by interface.
-     * @param AuthenticationException $exception The exception thrown.
+     * @param Request                  $request   A Symfony Request, req by interface.
+     * @param AuthenticationException  $exception The exception thrown.
+     *
+     * @throws AuthenticationException When the user is not found, and credentials is invalid.
      *
      * @return Response The response or null to continue request.
      */
