@@ -121,6 +121,11 @@ class DIFVoter extends PelagosEntityVoter
             return true;
         }
 
+        // If research group is locked, vote false.
+        if (true === $object->getResearchGroup()->isLocked()) {
+            return false;
+        }
+
         // Anyone can create, submit, or request unlock.
         if (in_array($attribute, array(self::CAN_CREATE, self::CAN_SUBMIT, self::CAN_REQUEST_UNLOCK))) {
             return true;

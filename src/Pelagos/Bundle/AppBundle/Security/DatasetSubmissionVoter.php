@@ -56,6 +56,11 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
+        // If research group is locked, vote false.
+        if ($subject instanceof DatasetSubmission and true === $subject->getDataset()->getResearchGroup()->isLocked()) {
+            return false;
+        }
+
         $user = $token->getUser();
 
         // If the user token does not contain an Account, vote false.
@@ -70,7 +75,7 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
 
         // A user with an account can only create or edit dataset submissions
         // associated with research groups that they (the user) are a member of.
-        
+
         $researchGroups = $user->getPerson()->getResearchGroups();
         if ($subject instanceof DatasetSubmission) {
             $submissionResearchGroup = $subject->getDataset()->getResearchGroup();

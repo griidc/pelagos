@@ -50,5 +50,7 @@ _action="{{path('pelagos_api_research_groups_post')}}">
 
     {{ form_row(form.emailAddress) }}
 
+    {{ form_row(form.locked) }}
+
     {% include '@templates/forms/innerForm.html.twig' with {'Entity': ResearchGroup} %}
 </form>

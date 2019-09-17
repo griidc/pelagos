@@ -294,6 +294,21 @@ class ResearchGroup extends Entity
     protected $datasets;
 
     /**
+     * Lock flag for Research Group, defaults to false for new Research Groups.
+     *
+     * @var boolean $locked
+     *
+     * @access public
+     *
+     * @Assert\NotNull(
+     *     message="Please select Yes or No"
+     * )
+     *
+     * @ORM\Column(type="boolean", nullable=false)
+     */
+    protected $locked = false;
+
+    /**
      * Getter for Datasets.
      *
      * @return Collection A Collection of Datasets.
@@ -657,6 +672,32 @@ class ResearchGroup extends Entity
     public function getEmailAddress()
     {
         return $this->emailAddress;
+    }
+
+    /**
+     * Method to check if Research Group is locked.
+     *
+     * @access public
+     *
+     * @return boolean Set to true if this Research Group is locked, false otherwise.
+     */
+    public function isLocked()
+    {
+        return $this->locked;
+    }
+
+    /**
+     * Setter for locked.
+     *
+     * @param boolean $locked Containing desired state of lock.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setLocked($locked)
+    {
+        $this->locked = $locked;
     }
 
     /**
