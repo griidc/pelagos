@@ -85,7 +85,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         EntityManagerInterface $entityManager,
         RouterInterface $router,
         LoggerInterface $logger,
-        $maximumPasswordAge
+        ? string $maximumPasswordAge
     ) {
         $this->formFactory = $formFactory;
         $this->entityManager = $entityManager;
