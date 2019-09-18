@@ -19,12 +19,13 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-
 use Pelagos\Bundle\AppBundle\Form\LoginForm;
 
 use Pelagos\Entity\Account;
 use Pelagos\Entity\LoginAttempts;
+use Pelagos\Entity\Password;
 use Pelagos\Entity\Person;
+use Pelagos\Entity\PersonToken;
 
 /**
  * The login form authenticator.
@@ -64,23 +65,33 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     protected $logger;
 
     /**
+     * String describing max PW age.
+     *
+     * @var string maximumPasswordAge
+     */
+    protected $maximumPasswordAge;
+
+    /**
      * Class constructor for Dependency Injection.
      *
-     * @param FormFactoryInterface   $formFactory   A Form Factory.
-     * @param EntityManagerInterface $entityManager An Entity Manager.
-     * @param RouterInterface        $router        A Router.
-     * @param LoggerInterface        $logger        A Monolog logger.
+     * @param FormFactoryInterface   $formFactory        A Form Factory.
+     * @param EntityManagerInterface $entityManager      An Entity Manager.
+     * @param RouterInterface        $router             A Router.
+     * @param LoggerInterface        $logger             A Monolog logger.
+     * @param string|null            $maximumPasswordAge The max age for password, 0 or null means never expires.
      */
     public function __construct(
         FormFactoryInterface $formFactory,
         EntityManagerInterface $entityManager,
         RouterInterface $router,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        ? string $maximumPasswordAge
     ) {
         $this->formFactory = $formFactory;
         $this->entityManager = $entityManager;
         $this->router = $router;
         $this->logger = $logger;
+        $this->maximumPasswordAge = $maximumPasswordAge;
     }
 
     /**
@@ -151,6 +162,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      *
      * @throws AuthenticationException When account is locked out.
      * @throws AuthenticationException When this is a bad password.
+     * @throws AuthenticationException When this is an expired password.
      *
      * @return bool True if the credentials are valid.
      */
@@ -164,11 +176,39 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         $this->userAttempt($user);
 
         $password = $credentials['_password'];
+        // Check that password is correct.
         if ($user->getPasswordEntity()->comparePassword($password)) {
+            // Since password is correct, now check for expired password.
+            if ($this->checkIfPasswordExpired($user->getPasswordEntity())) {
+                throw new AuthenticationException('Password is expired.');
+            }
             return true;
         } else {
             throw new AuthenticationException('Invalid Credentials');
         }
+    }
+
+    /**
+     * Checks if a Password object is expired.
+     *
+     * @param password $password The Password object that may or may not be expired.
+     *
+     * @return bool True if expired, false otherwise.
+     */
+    protected function checkIfPasswordExpired(password $password) : bool
+    {
+        $passwordIsExpired = true;
+        // If parameter is missing or set to 0, passwords do not expire.
+        if (empty($this->maximumPasswordAge)) {
+            $passwordIsExpired = false;
+        } else {
+            // Check for expired password.
+            $now = new \DateTime('now');
+            $expiration = $password->getModificationTimeStamp()->add(new \DateInterval($this->maximumPasswordAge));
+            // If the current timestamp is past the calculated expiration timestamp, the password has expired.
+            $passwordIsExpired = ($now > $expiration);
+        }
+        return $passwordIsExpired;
     }
 
     /**
@@ -227,16 +267,51 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      * @param Request                 $request   A Symfony Request, req by interface.
      * @param AuthenticationException $exception The exception thrown.
      *
+     * @throws AuthenticationException When the user is not found, and credentials is invalid.
+     *
      * @return Response The response or null to continue request.
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        $destination = $request->query->get('destination');
-        $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
-        $url = $this->router->generate(
-            'security_login',
-            ['destination' => $destination]
-        );
+        if ($exception->getMessage() === 'Password is expired.') {
+            $credentials = $this->getCredentials($request);
+            $username = $credentials['_username'];
+
+            $user = $this->entityManager->getRepository(Account::class)
+                ->findOneBy(['userId' => $username]);
+
+            if (null === $user) {
+                throw new AuthenticationException('Invalid Credentials');
+            }
+
+            $person = $user->getPerson();
+
+            $personToken = $person->getToken();
+
+            // if $person has Token, remove Token
+            if ($personToken instanceof PersonToken) {
+                $personToken->getPerson()->setToken(null);
+                $this->entityManager->remove($personToken);
+                $this->entityManager->flush();
+            }
+
+            $personToken = new PersonToken($person, 'PASSWORD_EXPIRED', new \DateInterval('PT1H'));
+            $this->entityManager->persist($personToken);
+            $this->entityManager->flush();
+            $url = $this->router->generate(
+                'pelagos_app_ui_account_passwordexpired',
+                array(
+                    'person_token' => $person->getToken()->getTokenText()
+                )
+            );
+        } else {
+            $destination = $request->query->get('destination');
+            $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
+            $url = $this->router->generate(
+                'security_login',
+                ['destination' => $destination]
+            );
+        }
         return new RedirectResponse($url);
     }
 
