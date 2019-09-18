@@ -103,7 +103,6 @@ class DatasetIndex
                     $doiBoolQuery->addMust($doiQuery);
                     $doiBoolQuery->setBoost(3.0);
 
-
                     // Query against DOIs associated with the dataset.
                     $pubDoiQuery = new Query\Nested();
                     $pubDoiQuery->setPath('publications');
