@@ -273,14 +273,14 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        if ($exception->getMessage() == 'Password is expired.') {
+        if ($exception->getMessage() === 'Password is expired.') {
             $credentials = $this->getCredentials($request);
             $username = $credentials['_username'];
 
             $user = $this->entityManager->getRepository(Account::class)
                 ->findOneBy(['userId' => $username]);
 
-            if (null == $user) {
+            if (null === $user) {
                 throw new AuthenticationException('Invalid Credentials');
             }
 
