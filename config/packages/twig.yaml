@@ -3,9 +3,9 @@ twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
     paths:
-        "%kernel.root_dir%/templates/template": templates
-        "%kernel.root_dir%/templates/DIF/email": DIFEmail
-        "%kernel.root_dir%/templates/Email": Email
+        "%kernel.project_dir%/templates/template": templates
+        "%kernel.project_dir%/templates/DIF/email": DIFEmail
+        "%kernel.project_dir%/templates/Email": Email
     globals:
         google_maps_api_key: "%env(GOOGLE_MAPS_API_KEY)%"
         google_analytics_id: "%env(GOOGLE_ANALYTICS_ID)%"
