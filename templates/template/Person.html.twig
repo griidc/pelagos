@@ -1,0 +1,85 @@
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript" src="{{ asset('build/js/Person.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/entity/Person.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+    <div>
+        <table border="0" width="100%">
+            <tr>
+                <td width="25%">
+                    <div id="placeholder" style="height:100px;">
+                    </div>
+                </td>
+                <td style="padding:10px;" width="60%" valign="top">
+                    <div id="orgdetails">
+                        <h2>Person Details</h2>
+                        {% include '@templates/forms/Person.html.twig' %}
+                    </div>
+                </td>
+                </tr>
+        </table>
+
+        <div id="tabs" style="width:100%">
+            <ul>
+                {% if PersonFundingOrganizations is defined %}
+                    <li><a href="#tabs-FundingOrganizations">Funding Organizations</a></li>
+                {% endif %}
+                {% if PersonResearchGroups is defined %}
+                    <li><a href="#tabs-1">Research Groups</a></li>
+                {% endif %}
+                <li><a href="#tabs-2">Datasets</a></li>
+                <li><a href="#tabs-3">Publications</a></li>
+            </ul>
+            {% if PersonFundingOrganizations is defined %}
+                <div id="tabs-FundingOrganizations">
+                    <table border="0" width="100%">
+                        {% for PersonFundingOrganization in PersonFundingOrganizations | sortBy(["fundingOrganization.name"]) %}
+                            <tr>
+                                <td>
+                                    <div>
+                                        <p>
+                                            {% include '@templates/forms/PersonFundingOrganization.html.twig' with {'PersonFundingOrganization': PersonFundingOrganization, 'form' : PersonFundingOrganizationForms[PersonFundingOrganization.getId]}%}
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            {% endif %}
+
+            <div id="tabs-1">
+                <table border="0" width="100%">
+                {% if PersonResearchGroups is defined %}
+                    {% for PersonResearchGroup in PersonResearchGroups | sortBy(["researchGroup.name"]) %}
+                        <tr>
+                            <td>
+                                <div>
+                                    <b>Funding Organization:</b> {{ PersonResearchGroup.researchGroup.fundingCycle.fundingOrganization.name }}
+                                    <br>
+                                    <b>Funding Cycle:</b> {{ PersonResearchGroup.researchGroup.fundingCycle.name }}
+                                    <br>
+                                    {% for personResearch in PersonResearchGroup.researchGroup.personResearchGroups %}
+                                        {% if personResearch.role.name ==  constant('Pelagos\\Bundle\\AppBundle\\DataFixtures\\ORM\\ResearchGroupRoles::LEADERSHIP') %}
+                                            <b>PI:</b> {{ personResearch.person.firstName }} {{ personResearch.person.lastName }}
+                                        {% endif %}
+                                    {% endfor %}
+                                    <p>
+                                         {% include '@templates/forms/PersonResearchGroup.html.twig' with {'PersonResearchGroup': PersonResearchGroup, 'form' : PersonResearchGroupForms[PersonResearchGroup.getId], 'editlabel' : PersonResearchGroupEditLabel[PersonResearchGroup.getId]}%}
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+                </table>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

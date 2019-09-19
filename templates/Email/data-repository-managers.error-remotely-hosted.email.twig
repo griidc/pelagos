@@ -1,0 +1,14 @@
+{% block subject 'Error Log - List of Remotely Hosted Datasets links failed '%}
+
+{% block body_html %}
+    <h3>
+        Below are the list of Dataset Udi's which have failed.
+    </h3>
+
+    <br>
+
+    {% for udi in listOfUdi %}
+        <li>{{ udi }}</li>
+    {% endfor %}
+{% endblock %}
+

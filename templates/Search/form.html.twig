@@ -1,0 +1,69 @@
+<form id="searchForm" name="searchForm" action="{{ path('pelagos_app_ui_searchpage_default') }}" method="get" class="search-form">
+    <div id="custom-search-input">
+        <div class="col-md-2">
+            <input type="text"
+                   id="collectionStartDate"
+                   name="collectionStartDate"
+                   class="input-group form-control"
+                   value="{{ (collectionStartDate) ? collectionStartDate : null }}"
+                   placeholder="yyyy-mm-dd">
+            <input type="text"
+                   id="collectionEndDate"
+                   name="collectionEndDate"
+                   class="input-group form-control"
+                   value="{{ (collectionEndDate) ? collectionEndDate : null }}"
+                   placeholder="yyyy-mm-dd">
+        </div>
+        <div class="col-md-2">
+            <select class="input-group form-control" name="field" id="field">
+                    <option
+                            {% if field is empty %}
+                                selected
+                            {% endif %}
+                            value>
+                        -- All --
+                    </option>
+                    <option
+                            value={{ constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_TITLE') }}
+                            {% if field is defined and field is not empty and field == constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_TITLE') %}
+                            selected
+                            {% endif %}>
+                        Title
+                    </option>
+                    <option
+                            value={{ constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_ABSTRACT') }}
+                             {% if field is defined and field is not empty and field == constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_ABSTRACT')%}
+                            selected
+                            {% endif %}>
+                        Abstract
+                    </option>
+                    <option
+                            value={{ constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_AUTHORS') }}
+                             {% if field is defined and field is not empty and field == constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_AUTHORS')%}
+                            selected
+                            {% endif %}>
+                        Author
+                    </option>
+                    <option
+                            value={{ constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS') }}
+                             {% if field is defined and field is not empty and field == constant('Pelagos\\Util\\Search::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS')%}
+                            selected
+                            {% endif %}>
+                        Theme Keywords
+                    </option>
+            </select>
+        </div>
+        <div class="input-group col-md-4">
+            <input type="search" id="searchBox" name="query" class="search-query form-control" placeholder="Search..."
+                   value = "{{ query|default }}">
+            {% if page is defined and page is not null%}
+                <input type="hidden" id="pageNo" name="page" value="{{ page | default }}">
+            {% endif %}
+            <span class="input-group-btn">
+                <button id="searchSubmit" class="btn btn-danger" type="submit">
+                    <span class=" glyphicon glyphicon-search"></span>
+                </button>
+            </span>
+        </div>
+    </div>
+</form>

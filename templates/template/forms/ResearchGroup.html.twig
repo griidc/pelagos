@@ -1,0 +1,56 @@
+<form class="entityForm" entityType="ResearchGroup"
+{% include '@templates/forms/permissionsBlock.html.twig' with {'Entity': ResearchGroup} %}
+_action="{{path('pelagos_api_research_groups_post')}}">
+
+    {{ form_row(form.id) }}
+
+    {{ form_row(form.name) }}
+
+    {{ form_row(form.shortName) }}
+
+    <label for="fundingOrganization">Funding Organization:</label>
+    <select dontvalidate required name="fundingCycle.fundingOrganization" fundingOrganization="{{ResearchGroup.getFundingCycle.getFundingOrganization.getId|default}}">
+    <option value="">[Please Select a Funding Organization]</option>
+    {% for FundingOrganization in entityService.getAll('Pelagos:FundingOrganization') | sortBy(["name"]) %}
+        <option value="{{FundingOrganization.getId}}"
+        {{ (ResearchGroup.getFundingCycle.getFundingOrganization.getId|default == FundingOrganization.getId ? ' selected ' : '') }}
+        >{{FundingOrganization.getName|default}}</option>
+    {% endfor %}
+    </select><br>
+
+    <label for="fundingCycle">Funding Cycle:</label>
+    <select
+    {{ (ResearchGroup.getFundingCycle.getId|default == '' ? ' disabled ' : '')  }}
+    required name="fundingCycle" fundingCycle="{{ResearchGroup.getFundingCycle.getId|default}}" data-url="{{path('pelagos_api_funding_cycles_get_collection')}}">
+        <option value="">[Please Select a Funding Organization First]</option>
+        {% if (ResearchGroup) %}
+            {% for FundingCycle in ResearchGroup.getFundingCycle.getFundingOrganization.getFundingCycles|default %}
+                <option value="{{FundingCycle.getId}}"
+                {{ (ResearchGroup.getFundingCycle.getId|default == FundingCycle.getId ? ' selected ' : '') }}
+                >{{FundingCycle.getName}}</option>
+            {% endfor %}
+        {% endif %}
+    </select><br>
+
+    {{ form_row(form.url) }}
+
+    {{ form_row(form.phoneNumber) }}
+
+    {{ form_row(form.deliveryPoint) }}
+
+    {{ form_row(form.city) }}
+
+    {{ form_row(form.administrativeArea) }}
+
+    {{ form_row(form.postalCode) }}
+
+    {{ form_row(form.country) }}
+
+    {{ form_row(form.description) }}
+
+    {{ form_row(form.emailAddress) }}
+
+    {{ form_row(form.locked) }}
+
+    {% include '@templates/forms/innerForm.html.twig' with {'Entity': ResearchGroup} %}
+</form>

@@ -1,0 +1,92 @@
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
+{% block title %}Remotely Hosted Datasets{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="//cdn.datatables.net/select/1.2.3/css/select.dataTables.min.css" rel="stylesheet" />
+    <link href="//cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css" rel="stylesheet" />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.3.0/animate.min.css" rel="stylesheet" />
+
+    <link href="{{ asset('build/css/remotelyhosted-datasets.css') }}" rel="stylesheet" />
+    <link href="{{ asset('build/css/entity.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js"></script>
+
+    <script type="text/javascript" src="{{ asset('build/js/common.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/remotelyHostedDatasets.js') }}"></script>
+
+    <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+{% endblock %}
+
+{% set properties = [
+    'id',
+    'udi',
+    'datasetSubmission.datasetFileUri',
+    'datasetStatus',
+    'datasetSubmission.datasetFileUrlStatusCode',
+    'datasetSubmission.datasetFileUrlLastCheckedDate',
+] %}
+
+{% block body %}
+    <h1> Remotely Hosted Datasets</h1>
+
+    <div class="cleair">
+        <fieldset>
+            <form id="updateForm">
+                <label for="udiInput"><b>Unique Dataset Identifier - UDI (Accepted status only): </b></label>
+                <input minlength="16" type="text" id="udiInput" name="udiInput" style="width: 80%" required>
+                <button name="updateButton" id="updateButton"
+                        type="button" disabled>
+                    Mark as Remotely Hosted
+                </button>
+                <div id="urlDiv" hidden><b>URL: </b><span id="urlText" name="urlText"></span></div>
+            </form>
+        </fieldset>
+        <fieldset>
+            <table
+                    id="remotelyHostedDatasetsTable"
+                    class="stripe"
+                    width="100%"
+                    data-ajax='{
+                        "url": "{{ path("pelagos_api_datasets_get_collection", {"datasetSubmission.datasetFileTransferStatus": "RemotelyHosted", "_properties": properties | join(',')}) }}",
+                        "dataSrc": "",
+                        "cache": true
+                    }'
+                    data-columns='[
+                        {"data": "id"},
+                        {"data": "udi"},
+                        {"data": "datasetSubmission.datasetFileUri"},
+                        {"data": "datasetStatus"},
+                        {"data": "datasetSubmission.datasetFileUrlStatusCode"},
+                        {"data": "datasetSubmission.datasetFileUrlLastCheckedDate"}
+                    ]'
+                    data-order='[
+                        [ 1, "desc"]
+                    ]'
+            >
+                <thead>
+                <tr>
+                    <th>Dataset ID</th>
+                    <th>UDI</th>
+                    <th>URL</th>
+                    <th>Dataset Status</th>
+                    <th>Url Status Code</th>
+                    <th>Url Last Test</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </fieldset>
+    </div>
+{% endblock %}

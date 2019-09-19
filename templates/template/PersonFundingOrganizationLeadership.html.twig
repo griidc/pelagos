@@ -1,0 +1,19 @@
+<h2>Leadership</h2>
+<div id="leadership">
+    <table>
+    {% if FundingOrganization.getPersonFundingOrganizations | length > 0 %}
+        {% for PersonFundingOrganization in FundingOrganization.getPersonFundingOrganizations | sortBy(["role.weight","person.lastName","person.firstName"]) %}
+            {% if PersonFundingOrganization.getRole.getWeight == 1 %}
+                <tr PersonFundingOrganizationId="{{PersonFundingOrganization.getId}}">
+                    <td>
+                        <b>Name:</b> <span class="displayField">{{PersonFundingOrganization.getPerson.getFirstName}} {{PersonFundingOrganization.getPerson.getLastName}}</span><br>
+                        <b>eMail:</b> <a class="displayField" href="mailto:{{PersonFundingOrganization.getPerson.getEmailAddress}}">{{PersonFundingOrganization.getPerson.getEmailAddress}}</a><br>
+                        <b>Title:</b> <span class="displayField">{{PersonFundingOrganization.getLabel}}</span>
+                    </td>
+                <tr>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    </table>
+</div>
+

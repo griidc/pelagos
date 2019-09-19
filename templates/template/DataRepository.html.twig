@@ -1,0 +1,40 @@
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
+
+{% block body %}
+    <table border="0" width="100%">
+        <tr>
+            <td width="25%" valign="top">
+
+            </td>
+            <td style="padding:10px;" width="50%" valign="top">
+                <div id="orgdetails">
+                    <h2>Data Repository Details</h2>
+                    {% include '@templates/forms/DataRepository.html.twig' %}
+                </div>
+            </td>
+            <td width="25%">
+
+            </td>
+        </tr>
+        {% if DataRepository.getPersonDataRepositories | length > 0 %}
+            <tr>
+                <td></td>
+                <td><h2>People</h2></td>
+            </tr>
+            {% for PersonDataRepository in PersonDataRepositories | sortBy(["role.weight","person.lastName","person.firstName"]) %}
+            <tr>
+                <td width="25%" valign="top">
+
+                </td>
+                <td>
+                    <div>
+                        <p>
+                            {% include '@templates/forms/PersonDataRepository.html.twig' with {'PersonDataRepository': PersonDataRepository, 'form' : PersonDataRepositoryForms[PersonDataRepository.getId]} %}
+                        </p>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+    </table>
+{% endblock %}

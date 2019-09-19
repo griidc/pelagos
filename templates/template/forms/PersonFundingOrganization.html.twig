@@ -1,0 +1,21 @@
+<form class="entityForm" entityType="PersonFundingOrganization"
+{% include '@templates/forms/permissionsBlock.html.twig' with {'Entity': PersonFundingOrganization} %}
+_action="{{path('pelagos_api_person_funding_organizations_post')}}">
+
+    <input type="hidden" name="id" value="{{PersonFundingOrganization.getId}}">
+
+    {{ form_row(form.person) }}
+
+    {{ form_row(form.fundingOrganization) }}
+
+    {% if is_granted('CAN_CREATE', PersonFundingOrganization) or  is_granted('CAN_EDIT', PersonFundingOrganization)%}
+
+    {{ form_row(form.role) }}
+
+    {% endif %}
+
+    {{ form_row(form.label) }}
+
+    {% include '@templates/forms/innerForm.html.twig' with {'Entity': PersonFundingOrganization} %}
+
+</form>

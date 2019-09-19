@@ -1,0 +1,17 @@
+{% block subject 'Unable to process Dataset file for ' ~ datasetSubmission.dataset.udi %}
+
+{% block body_html %}
+The user provided the following URI for the dataset file for dataset {{ datasetSubmission.dataset.udi }}<br>
+<br>
+{{ datasetSubmission.datasetFileUri }}<br>
+<br>
+An error occurred while attempting to process it. Please see the logs for more information.
+{% endblock %}
+
+{% block body_text %}
+The user provided the following URI for the dataset file for dataset {{ datasetSubmission.dataset.udi }}
+
+{{ datasetSubmission.datasetFileUri }}
+
+An error occurred while attempting to process it. Please see the logs for more information.
+{% endblock %}

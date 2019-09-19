@@ -1,0 +1,109 @@
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
+{% block title %}Research Groups{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="//cdn.datatables.net/select/1.2.3/css/select.dataTables.min.css" rel="stylesheet" />
+
+    <link href="{{ asset('build/css/entity.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js"></script>
+
+    <script type="text/javascript" src="{{ asset('build/js/common.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/entityList.js') }}"></script>
+{% endblock %}
+
+{%
+set properties = [
+    'id',
+    'name',
+    'fundingCycle.name',
+    'fundingCycle.fundingOrganization.name',
+    'creationTimeStamp',
+    'modificationTimeStamp',
+    'creator.id',
+    'creator.firstName',
+    'creator.lastName',
+    'modifier.id',
+    'modifier.firstName',
+    'modifier.lastName',
+]
+%}
+
+{% block body %}
+<table
+    entityNiceName = "Research Group"
+    viewInterface = "{{ path('pelagos_app_ui_researchgroup_default') }}"
+    personInterface = "{{ path('pelagos_app_ui_person_default') }}"
+    entityApi = "{{ path('pelagos_api_research_groups_get_collection') }}"
+    class = "entityTable stripe"
+    width = "100%"
+    data-ajax = '{
+        "url": "{{ path('pelagos_api_research_groups_get_collection', {'_properties': properties | join(',')}) }}",
+        "dataSrc": "",
+        "cache": true
+    }'
+    data-columns = '[
+        { "data": "id" },
+        { "data": "name" },
+        { "data": "fundingCycle.name" },
+        { "data": "fundingCycle.fundingOrganization.name" },
+        { "data": "creationTimeStamp" },
+        { "data": "modificationTimeStamp" },
+        { "data": "creator" },
+        { "data": "modifier" }
+    ]'
+    data-order = '[
+        [ 5, "desc" ]
+    ]'
+    data-column-definitions = '[
+        {
+            "targets": [ 0 ],
+            "visible": false,
+            "searchable": false
+        },
+        {
+            "targets": [ 0, 2, 3, 4, 5, 6, 7 ],
+            "searchable": false
+        }
+    ]'
+    creatorColumn = "6"
+    modifierColumn = "7"
+    creationTimeStampColumn = "4"
+    modificationTimeStampColumn = "5"
+>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Research Group Name</th>
+            <th>Funding Cycle Name</th>
+            <th>Funding Org Name</th>
+            <th>Created</th>
+            <th>Modified</th>
+            <th>Created By</th>
+            <th>Modified By</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <td class="buttons" colspan = "7">
+                <div>
+                    <button id="button_detail">View Research Group Details</button>
+                    <button id="button_delete">Delete Research Group</button>
+                    <span id="selection_comment">
+                        <i>For additional options, please make a selection above.</i>
+                    </span>
+                </div>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+{% endblock %}
+
