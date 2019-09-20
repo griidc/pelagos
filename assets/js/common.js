@@ -1,13 +1,8 @@
-/*
- * App.js the main app for the base template.
- */
-
 'use strict';
 
 const $ = require('jquery');
 global.$ = global.jQuery = $;
 
-require('../css/app.css');
 require('../css/template.css');
 require('../css/superfish-navbar.css');
 require('../css/superfish.css');
@@ -50,5 +45,4 @@ function setContentHeight() {
 
     $(".page-pelagos-full #main-wrapper").height(newheight);
 }
-
 

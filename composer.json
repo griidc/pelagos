@@ -33,14 +33,17 @@
         "symfony/framework-bundle": "4.3.*",
         "symfony/maker-bundle": "^1.13",
         "symfony/monolog-bundle": "^3.0",
+        "symfony/security-bundle": "4.3.*",
         "symfony/swiftmailer-bundle": "^3.1",
         "symfony/webpack-encore-bundle": "^1.1",
         "symfony/yaml": "4.3.*",
+        "twig/extensions": "^1.5",
         "willdurand/hateoas-bundle": "^1.1"
     },
     "require-dev": {
         "mockery/mockery": "^1.0",
         "squizlabs/php_codesniffer": "2.7.*",
+        "symfony/debug-pack": "^1.0",
         "symfony/test-pack": "^1.0",
         "symfony/web-server-bundle": "4.3.*"
     },
