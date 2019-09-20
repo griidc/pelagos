@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator\Constraints as CustomAssert;
 
 /**
  * This class represent data center entity information.
@@ -88,7 +89,7 @@ class DataCenter extends Entity
      *     message="Organization URL is required"
      * )
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Website URL cannot contain angle brackets (< or >)"
      * )
      */
@@ -101,7 +102,7 @@ class DataCenter extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Phone number cannot contain angle brackets (< or >)"
      * )
      */
@@ -114,7 +115,7 @@ class DataCenter extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Delievery point (address) cannot contain angle brackets (< or >)"
      * )
      */
@@ -127,7 +128,7 @@ class DataCenter extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="City cannot contain angle brackets (< or >)"
      * )
      */
@@ -142,7 +143,7 @@ class DataCenter extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Administrative area (state) cannot contain angle brackets (< or >)"
      * )
      */
@@ -155,7 +156,7 @@ class DataCenter extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Postal code (zip) cannot contain angle brackets (< or >)"
      * )
      */
@@ -168,7 +169,7 @@ class DataCenter extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Country cannot contain angle brackets (< or >)"
      * )
      */
@@ -181,7 +182,7 @@ class DataCenter extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Phone number cannot contain angle brackets (< or >)"
      * )
      *

@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator\Constraints as CustomAssert;
 
 use Hateoas\Configuration\Annotation as Hateoas;
 
@@ -104,7 +105,7 @@ class PersonDataRepository extends Entity implements PersonAssociationInterface
      * @Assert\NotBlank(
      *     message="Label is required"
      * )
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Label cannot contain angle brackets (< or >)"
      * )
      */

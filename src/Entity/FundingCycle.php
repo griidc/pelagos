@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator\Constraints as CustomAssert;
 
 use Hateoas\Configuration\Annotation as Hateoas;
 
@@ -29,12 +30,6 @@ use Pelagos\Exception\NotDeletableException;
  *     fields={"fundingOrganization","name"},
  *     errorPath="name",
  *     message="Name must be unique within a FundingOrganization"
- * )
- * @Assert\CompareProperties(
- *     left="endDate",
- *     comparison="GreaterThan",
- *     right="startDate",
- *     message="End Date must be after Start Date"
  * )
  *
  * @Hateoas\Relation(
@@ -84,7 +79,7 @@ class FundingCycle extends Entity
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
@@ -99,7 +94,7 @@ class FundingCycle extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Description cannot contain angle brackets (< or >)"
      * )
      */
@@ -111,10 +106,9 @@ class FundingCycle extends Entity
      * @var string $url
      *
      * @access protected
-     *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="URL cannot contain angle brackets (< or >)"
      * )
      */
@@ -128,6 +122,8 @@ class FundingCycle extends Entity
      * @access protected
      *
      * @ORM\Column(type="date", nullable=true)
+     *
+     * @Assert\DateTime()
      */
     protected $startDate;
 
@@ -139,6 +135,9 @@ class FundingCycle extends Entity
      * @access protected
      *
      * @ORM\Column(type="date", nullable=true)
+     *
+     * @Assert\DateTime()
+     * @Assert\GreaterThan(propertyPath="startDate", message="End Date must be after Start Date")
      */
     protected $endDate;
 
