@@ -16,15 +16,11 @@ class DefaultController extends AbstractController
      */
     public function index()
     {
-        //if ($this->get('http_kernel')->isDebug()) {
+        if ($this->getParameter('kernel.debug')) {
             return $this->render('Default/index.html.twig');
-        //} else {
-            //return $this->redirect('/', 302);
-        //}
-        
-        // return $this->render('Default/index.html.twig', [
-            // 'controller_name' => 'DefaultController',
-        // ]);
+        } else {
+            return $this->redirect('/', 302);
+        }
     }
     
     /**
