@@ -239,7 +239,6 @@ class DataStore
         if (!chmod($storeFilePath, 0644)) {
             throw new \Exception("Could not set file mode on $storeFilePath");
         }
-        $this->setOwnerGroupFacls($storeFilePath, $this->dataStoreOwner, $this->dataStoreGroup);
         return $storeFilePath;
     }
 
@@ -308,11 +307,9 @@ class DataStore
             if (!mkdir($dataStoreDirectory, 0750)) {
                 throw new \Exception("Could not create $dataStoreDirectory");
             }
-            $this->setOwnerGroupFacls(
+            $this->setFacls(
                 $dataStoreDirectory,
-                $this->dataStoreOwner,
-                $this->dataStoreGroup,
-                'u:' . $this->webServerUser . ':--x'
+                'A::' . $this->getIdFromName($this->webServerUser) . ':X'
             );
         }
         return $dataStoreDirectory;
@@ -358,43 +355,32 @@ class DataStore
             if (!mkdir($downloadDirectory, $mode)) {
                 throw new \Exception("Could not create $downloadDirectory");
             }
-            $this->setOwnerGroupFacls(
+            $this->setFacls(
                 $downloadDirectory,
-                $this->dataStoreOwner,
-                $this->dataStoreGroup,
-                'u:' . $this->webServerUser . ':r-x,' . 'g:' . $this->dataDownloadBrowserGroup . ':r-x'
+                'A::' . $this->getIdFromName($this->webServerUser) . ':RX,' .
+                    'A:g:' . $this->getIdFromName($this->dataDownloadBrowserGroup, true) . ':RX'
             );
         }
         return $downloadDirectory;
     }
 
     /**
-     * Set the owner, group, and FACLs for a file or directory.
+     * Set the NFS4 FACLs for a file or directory.
      *
      * @param string $file  The file or directory to set owner, group, and FACLs for.
-     * @param string $owner The owner to set.
-     * @param string $group The group to set.
      * @param string $facls The FACLs to set.
      *
-     * @throws \Exception When an error occurs setting the owner of the data download directory.
-     * @throws \Exception When an error occurs setting the group of the data download directory.
-     * @throws \Exception When an error occurs setting the FACLs of the data download directory.
+     * @throws \Exception When an error occurs setting the NFS4 FACLs of the data download directory.
      *
      * @return void
      */
-    protected function setOwnerGroupFacls($file, $owner, $group, $facls = null)
+    protected function setFacls($file, $facls = null)
     {
-        if (!chown($file, $owner)) {
-            throw new \Exception("Could not set owner to $owner for $file");
-        }
-        if (!chgrp($file, $group)) {
-            throw new \Exception("Could not set group to $group for $file");
-        }
         if (null !== $facls) {
             $output = array();
-            exec("setfacl -m $facls $file", $output, $returnVal);
+            exec("nfs4_setfacl -a $facls $file", $output, $returnVal);
             if ($returnVal !== 0) {
-                throw new \Exception("Could not set ACls to $facls for $file (Return value: $returnVal)");
+                throw new \Exception("Could not set NFS4 ACls to $facls for $file (Return value: $returnVal)");
             }
         }
     }
@@ -423,5 +409,37 @@ class DataStore
                 throw new \Exception("$type is not a valid type");
         }
         return $storeFileName;
+    }
+
+    /**
+     * Get the numeric ID of a POSIX user or group.
+     *
+     * @param string  $name    The user or group name.
+     * @param boolean $isGroup Flag set to true if a group, defaults to user.
+     *
+     * @throws \Exception When username can not be resolved.
+     * @throws \Exception When groupname can not be resolved.
+     *
+     * @return string
+     */
+    protected function getIdFromName(string $name, bool $isGroup = false)
+    {
+        if ($isGroup) {
+            // These calls returns false on failure to resolve.
+            $obj = posix_getgrnam($name);
+            if (false === $obj) {
+                throw new \Exception('Cannot resolve GID for groupname.');
+            } else {
+                $id = $obj['gid'];
+            }
+        } else {
+            $obj = posix_getpwnam($name);
+            if (false === $obj) {
+                throw new \Exception('Cannot resolve UID for username.');
+            } else {
+                $id = $obj['uid'];
+            }
+        }
+        return $id;
     }
 }

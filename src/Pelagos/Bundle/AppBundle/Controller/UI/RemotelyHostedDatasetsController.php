@@ -18,7 +18,7 @@ use Pelagos\Response\TerminateResponse;
  *
  * @Route("/remotelyhosted-datasets")
  */
-class RemotelyHostedDatasetsController extends UIController
+class RemotelyHostedDatasetsController extends UIController implements OptionalReadOnlyInterface
 {
     /**
      * Default action of Remotely Hosted Datasets.

@@ -189,6 +189,31 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
     }
 
     /**
+     * The page for changing the password when it's expired.
+     *
+     * @Route("/account/password-expired")
+     * @Method("GET")
+     *
+     * @return Response A Response instance.
+     */
+    public function passwordExpiredAction()
+    {
+        // If the user is not authenticated.
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            // The token must be bad or missing.
+            return $this->render('PelagosAppBundle:template:InvalidToken.html.twig');
+        }
+
+        // Send back the set password screen.
+        return $this->render(
+            'PelagosAppBundle:Account:setExpiredPassword.html.twig',
+            array(
+                'personToken' => $this->getUser()->getPerson()->getToken(),
+            )
+        );
+    }
+
+    /**
      * Redirect GET sent to this route.
      *
      * @Route("/account/create")

@@ -91,6 +91,7 @@ class DatasetSubmissionVoterTest extends PelagosEntityVoterTest
                             ResearchGroup::class,
                             array(
                                 'isSameTypeAndId' => false,
+                                'isLocked' => false,
                             )
                         ),
                     )
@@ -123,6 +124,7 @@ class DatasetSubmissionVoterTest extends PelagosEntityVoterTest
                             ResearchGroup::class,
                             array(
                                 'isSameTypeAndId' => true,
+                                'isLocked' => false,
                             )
                         ),
                     )
@@ -172,6 +174,7 @@ class DatasetSubmissionVoterTest extends PelagosEntityVoterTest
                             ResearchGroup::class,
                             array(
                                 'isSameTypeAndId' => false,
+                                'isLocked' => false,
                             )
                         ),
                     )
@@ -221,6 +224,7 @@ class DatasetSubmissionVoterTest extends PelagosEntityVoterTest
                             ResearchGroup::class,
                             array(
                                 'isSameTypeAndId' => true,
+                                'isLocked' => false,
                             )
                         ),
                     )
@@ -262,6 +266,7 @@ class DatasetSubmissionVoterTest extends PelagosEntityVoterTest
                             ResearchGroup::class,
                             array(
                                 'isSameTypeAndId' => true,
+                                'isLocked' => false,
                             )
                         ),
                     )
@@ -276,6 +281,56 @@ class DatasetSubmissionVoterTest extends PelagosEntityVoterTest
                 $mockToken,
                 $datasetSubmission,
                 array(Voter::CAN_DELETE)
+            )
+        );
+    }
+
+    /**
+     * Test can create and edit for locked research group.
+     *
+     * Test if a user can NOT create a Dataset Submission for a dataset associated
+     * because the research group is locked.
+     *
+     * @return void
+     */
+    public function testCanNotCreateAndEditLockedResearchGroup()
+    {
+        $mockToken = $this->createMockToken();
+        $this->createMockPersonAssociation('ResearchGroup', $mockToken, RG_Roles::RESEARCHER);
+
+        $datasetSubmission = \Mockery::mock(
+            DatasetSubmission::class,
+            array(
+                'getDataset' => \Mockery::mock(
+                    Dataset::class,
+                    array(
+                        'getResearchGroup' => \Mockery::mock(
+                            ResearchGroup::class,
+                            array(
+                                'isSameTypeAndId' => false,
+                                'isLocked' => true,
+                            )
+                        ),
+                    )
+                ),
+                'getStatus' => DatasetSubmission::STATUS_INCOMPLETE,
+            )
+        );
+
+        $this->assertEquals(
+            Voter::ACCESS_DENIED,
+            $this->voter->vote(
+                $mockToken,
+                $datasetSubmission,
+                array(Voter::CAN_CREATE)
+            )
+        );
+        $this->assertEquals(
+            Voter::ACCESS_DENIED,
+            $this->voter->vote(
+                $mockToken,
+                $datasetSubmission,
+                array(Voter::CAN_EDIT)
             )
         );
     }

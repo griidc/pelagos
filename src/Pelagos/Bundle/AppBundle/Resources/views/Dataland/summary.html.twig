@@ -56,6 +56,8 @@
                     <b>Last Update:</b><br>
                     {% if dataset.datasetSubmission %}
                         {{ dataset.datasetSubmission.submissionTimeStamp|date('M d Y H:i T', 'UTC') }}
+                    {% elseif dataset.dif.approvedDate %}
+                        {{ dataset.dif.approvedDate|date('M d Y H:i T', 'UTC') }}
                     {% else %}
                         {{ dataset.dif.modificationTimeStamp|date('M d Y H:i T', 'UTC') }}
                     {% endif %}
@@ -131,13 +133,13 @@
                         {% if not dataset.datasetSubmission.temporalExtentBeginPosition|date('Y-m-d') |default %}
                             {% set begin = 'N/A' %}
                         {% else %}
-                            {% set begin = dataset.datasetSubmission.temporalExtentBeginPosition|date('Y-m-d') %}
+                            {% set begin = dataset.datasetSubmission.temporalExtentBeginPosition|date('Y-m-d', 'UTC') %}
                         {% endif %}
 
                         {% if not dataset.datasetSubmission.temporalExtentEndPosition|date('Y-m-d') |default %}
                             {% set end = 'N/A' %}
                         {% else %}
-                            {% set end = dataset.datasetSubmission.temporalExtentEndPosition|date('Y-m-d') %}
+                            {% set end = dataset.datasetSubmission.temporalExtentEndPosition|date('Y-m-d', 'UTC') %}
                         {% endif %}
 
                         <tr>
