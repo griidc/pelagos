@@ -1,22 +1,52 @@
 security:
-    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    # leave session alone
+    session_fixation_strategy: none
+
     providers:
-        in_memory: { memory: null }
+        pelagos_account:
+            entity:
+                class: App\Entity\Account
+                property: userId
+        person_token:
+            id: App\Security\PersonTokenUserProvider
+
     firewalls:
+        # disables authentication for assets and the profiler, adapt it according to your needs
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
+        account:
+            pattern: ^/account
+            stateless: true
+            # allow anonymous access
+            anonymous: ~
+            # use a Person Token, if present
+            simple_preauth:
+                authenticator: App\Security\PersonTokenAuthenticator
+                provider: person_token
+
         main:
-            anonymous: true
-
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#firewalls-authentication
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
+            logout_on_user_change: true
+            # allow anonymous access
+            anonymous: ~
+            #guard authentication
+            guard:
+               authenticators:
+                   - App\Security\LoginFormAuthenticator
+               provider: pelagos_account
+            #logout
+            logout:
+                path: security_logout
+                target: pelagos_homepage
+                handlers: [App\Security\LogoutHandler]
+            # use REMOTE_USER environment variable if set
+            remote_user:
+                provider: pelagos_account
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+        

@@ -425,6 +425,9 @@
             ".env"
         ]
     },
+    "symfony/form": {
+        "version": "v4.3.4"
+    },
     "symfony/framework-bundle": {
         "version": "4.2",
         "recipe": {
@@ -451,6 +454,9 @@
         "version": "v4.3.4"
     },
     "symfony/inflector": {
+        "version": "v4.3.4"
+    },
+    "symfony/intl": {
         "version": "v4.3.4"
     },
     "symfony/maker-bundle": {
@@ -500,6 +506,9 @@
             "phpunit.xml.dist",
             "tests/.gitignore"
         ]
+    },
+    "symfony/polyfill-intl-icu": {
+        "version": "v1.12.0"
     },
     "symfony/polyfill-intl-idn": {
         "version": "v1.12.0"

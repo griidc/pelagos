@@ -29,3 +29,7 @@ services:
     App\Util\MaintenanceMode:
         bind:
             string $maintenanceModeFilename: '%kernel.project_dir%%env(MAINTENANCE_MODE_FILENAME)%'
+            
+    App\Security\LoginFormAuthenticator:
+        bind:
+            $maximumPasswordAge: "%env(ACCOUNT_PASSWORD_MAX_AGE)%"
