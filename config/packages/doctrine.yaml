@@ -5,6 +5,11 @@ doctrine:
         charset: utf8
         server_version: 9.6
         url: '%env(resolve:DATABASE_URL)%'
+        mapping_types:
+            citext: citext
+        types:
+            citext: App\DoctrineExtensions\DBAL\Types\CITextType
+            interval: App\DoctrineExtensions\DBAL\Types\IntervalType
     orm:
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore
