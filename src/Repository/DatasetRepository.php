@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Repository;
 
+use App\Entity\DatasetSubmission;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 
