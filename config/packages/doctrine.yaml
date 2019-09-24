@@ -7,10 +7,8 @@ doctrine:
         url: '%env(resolve:DATABASE_URL)%'
         mapping_types:
             citext: citext
-            interval: interval
         types:
             citext: App\DoctrineExtensions\DBAL\Types\CITextType
-            interval: App\DoctrineExtensions\DBAL\Types\IntervalType
     orm:
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore
