@@ -6,8 +6,7 @@ imports:
 
 framework:
     assets:
-        base_path: ~
-
+        base_path: "/"
 
 twig:
     globals:

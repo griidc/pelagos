@@ -73,9 +73,15 @@ doctrine:
                     xml: xml
                     geometry: geometry
         types:
-            text_array: "Doctrine\\DBAL\\PostgresTypes\\TextArrayType"
-            xml: "Pelagos\\DoctrineExtensions\\DBAL\\Types\\PelagosXmlType"
-            geometry: "Pelagos\\DoctrineExtensions\\DBAL\\Types\\GeometryType"
+            text_array: 
+                class: "Doctrine\\DBAL\\PostgresTypes\\TextArrayType"
+                commented: false
+            xml: 
+                class: "Pelagos\\DoctrineExtensions\\DBAL\\Types\\PelagosXmlType"
+                commented: false
+            geometry: 
+                class: "Pelagos\\DoctrineExtensions\\DBAL\\Types\\GeometryType"
+                commented: false
     orm:
         metadata_cache_driver: apc
         query_cache_driver: apc
@@ -107,7 +113,6 @@ swiftmailer:
 fos_rest:
     view:
         view_response_listener: true
-        exception_wrapper_handler: Pelagos\Bundle\AppBundle\Handler\ExceptionWrapperHandler
     routing_loader:
         default_format: json
         include_format: false
@@ -217,7 +222,7 @@ old_sound_rabbit_mq:
 rabbit_mq_supervisor:
     supervisor_instance_identifier: "%pelagos_name%"
     commands:
-        rabbitmq_consumer: rabbitmq:consumer -w %%2$s
+        rabbitmq_consumer: rabbitmq:consumer -w 
 
 fos_elastica:
     clients:

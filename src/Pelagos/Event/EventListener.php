@@ -152,7 +152,8 @@ abstract class EventListener
 
         foreach (array_unique($peopleObjs, SORT_REGULAR) as $person) {
             $mailData['recipient'] = $person;
-            $message = \Swift_Message::newInstance()
+            $message = new \Swift_Message();
+            $message
                 ->setSubject($twigTemplate->renderBlock('subject', $mailData))
                 ->setFrom($this->from)
                 ->setTo($person->getEmailAddress())
