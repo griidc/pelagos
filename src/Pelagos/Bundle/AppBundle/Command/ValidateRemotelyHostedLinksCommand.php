@@ -77,7 +77,8 @@ class ValidateRemotelyHostedLinksCommand extends ContainerAwareCommand
         }
 
         if (!empty($errorUdi)) {
-            $message = \Swift_Message::newInstance()
+            $message = new \Swift_Message();
+            $message
                 ->setSubject('Error Log - List of Remotely Hosted Datasets links failed')
                 ->setFrom(array('griidc@gomri.org' => 'GRIIDC'))
                 ->setTo(array('griidc@gomri.org' => 'GRIIDC'))
