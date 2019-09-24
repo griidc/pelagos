@@ -92,12 +92,16 @@ class DatasetIndex
             if (preg_match_all($doiRegEx, $text, $matches)) {
                 $text = trim(preg_replace($doiRegEx, '', $text));
                 foreach ($matches[1] as $doi) {
+                    $doiBoolQuery = new Query\BoolQuery();
                     // Query against dataset DOIs.
                     $doiQuery = new Query\Nested();
                     $doiQuery->setPath('doi');
                     $doiQuery->setQuery(
                         new Query\MatchPhrase('doi.doi', $doi)
                     );
+
+                    $doiBoolQuery->addMust($doiQuery);
+                    $doiBoolQuery->setBoost(3.0);
 
                     // Query against DOIs associated with the dataset.
                     $pubDoiQuery = new Query\Nested();
@@ -106,7 +110,7 @@ class DatasetIndex
                         new Query\MatchPhrase('publications.doi', $doi)
                     );
 
-                    $textQuery->addShould($doiQuery);
+                    $textQuery->addShould($doiBoolQuery);
                     $textQuery->addShould($pubDoiQuery);
 
                     // Also check the titles and abstracts for mention of the given DOI.
