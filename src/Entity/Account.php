@@ -547,7 +547,6 @@ class Account extends Entity implements UserInterface, EquatableInterface
     {
         $roles = array(self::ROLE_USER);
         foreach ($this->getPerson()->getPersonDataRepositories() as $personDataRepository) {
-            dump('here');
             if ($personDataRepository->getRole()->getName() == DataRepositoryRole::MANAGER
                 and !in_array(self::ROLE_DATA_REPOSITORY_MANAGER, $roles)
             ) {
