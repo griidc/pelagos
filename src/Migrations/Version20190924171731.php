@@ -15,6 +15,8 @@ final class Version20190924171731 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
+        $this->addSql('SET SESSION IntervalStyle TO ISO_8601');
+
         $this->addSql('ALTER TABLE person_token ALTER valid_for TYPE VARCHAR(255)');
         $this->addSql('ALTER TABLE person_token ALTER valid_for DROP DEFAULT');
     }
@@ -24,7 +26,7 @@ final class Version20190924171731 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('ALTER TABLE person_token ALTER valid_for TYPE INTERVAL');
+        $this->addSql('ALTER TABLE person_token ALTER valid_for TYPE INTERVAL  USING valid_for::interval');
         $this->addSql('ALTER TABLE person_token ALTER valid_for DROP DEFAULT');
     }
 }
