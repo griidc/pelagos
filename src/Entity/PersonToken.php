@@ -34,7 +34,7 @@ class PersonToken extends Entity
      *
      * @var \DateInterval $validFor
      *
-     * @ORM\Column(type="interval")
+     * @ORM\Column(type="dateinterval")
      */
     protected $validFor;
 

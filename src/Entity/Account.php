@@ -13,8 +13,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
 
 use Pelagos\Exception\PasswordException;
-use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
-use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
 
 /**
  * Entity class to represent an Account.
@@ -549,17 +547,17 @@ class Account extends Entity implements UserInterface, EquatableInterface
     {
         $roles = array(self::ROLE_USER);
         foreach ($this->getPerson()->getPersonDataRepositories() as $personDataRepository) {
-            if ($personDataRepository->getRole()->getName() == DataRepositoryRoles::MANAGER
+            if ($personDataRepository->getRole()->getName() == DataRepositoryRole::MANAGER
                 and !in_array(self::ROLE_DATA_REPOSITORY_MANAGER, $roles)
             ) {
                 $roles[] = self::ROLE_DATA_REPOSITORY_MANAGER;
-            } elseif ($personDataRepository->getRole()->getName() === DataRepositoryRoles::SME
+            } elseif ($personDataRepository->getRole()->getName() === DataRepositoryRole::SME
              and !in_array(self::ROLE_SUBJECT_MATTER_EXPERT, $roles)) {
                 $roles[] = self::ROLE_SUBJECT_MATTER_EXPERT;
             }
         }
         foreach ($this->getPerson()->getPersonResearchGroups() as $personResearchGroup) {
-            if ($personResearchGroup->getRole()->getName() == ResearchGroupRoles::DATA
+            if ($personResearchGroup->getRole()->getName() == ResearchGroupRole::DATA
                 and !in_array(self::ROLE_RESEARCH_GROUP_DATA, $roles)
             ) {
                 $roles[] = self::ROLE_RESEARCH_GROUP_DATA;
