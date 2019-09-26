@@ -14,6 +14,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 
+use App\Handler\EntityHandler;
+
 use App\Entity\Entity;
 use App\Entity\Account;
 use App\Entity\Person;
@@ -25,6 +27,21 @@ use App\Exception\UnmappedPropertyException;
  */
 abstract class EntityController extends AbstractFOSRestController
 {
+    /**
+     * @var EntityHandler Entity Handler instance.
+     */
+    protected $entityHandler;
+
+    /**
+     * EntityController constructor.
+     *
+     * @param EntityHandler $entityHandler Entity Handler instance.
+     */
+    public function __construct(EntityHandler $entityHandler)
+    {
+        $this->entityHandler = $entityHandler;
+    }
+
     /**
      * Count entities of a given type.
      *
@@ -43,7 +60,7 @@ abstract class EntityController extends AbstractFOSRestController
         foreach (array_keys($params) as $param) {
             str_replace('_', '.', $params[$param]);
         }
-        return $this->container->get('pelagos.entity.handler')->count($entityClass, $params);
+        return $this->entityHandler->count($entityClass, $params);
     }
 
     /**
@@ -75,7 +92,7 @@ abstract class EntityController extends AbstractFOSRestController
         if (isset($permission)) {
             $hydrator = Query::HYDRATE_OBJECT;
         }
-        $entities = $this->container->get('pelagos.entity.handler')->getBy(
+        $entities = $this->entityHandler->getBy(
             $entityClass,
             $params,
             $orderBy,
@@ -141,7 +158,7 @@ abstract class EntityController extends AbstractFOSRestController
             $entity = new $entityClass;
         }
         $this->processForm($formType, $entity, $request, 'POST');
-        $this->container->get('pelagos.entity.handler')->create($entity);
+        $this->entityHandler->create($entity);
         return $entity;
     }
 
@@ -160,7 +177,7 @@ abstract class EntityController extends AbstractFOSRestController
     {
         $entity = $this->handleGetOne($entityClass, $id);
         $this->processForm($formType, $entity, $request, $method);
-        $this->container->get('pelagos.entity.handler')->update($entity);
+        $this->entityHandler->update($entity);
         return $entity;
     }
 
@@ -178,7 +195,7 @@ abstract class EntityController extends AbstractFOSRestController
     {
         $entity = $this->handleGetOne($entityClass, $id);
         try {
-            $this->container->get('pelagos.entity.handler')->delete($entity);
+            $this->entityHandler->delete($entity);
         } catch (NotDeletableException $exception) {
             throw new BadRequestHttpException(
                 'This ' . $entity::FRIENDLY_NAME . ' is not deletable because ' .
@@ -343,7 +360,7 @@ abstract class EntityController extends AbstractFOSRestController
             $setter = 'set' . ucfirst($property);
             $entity->$setter(file_get_contents($file->getPathname()));
         }
-        $this->container->get('pelagos.entity.handler')->update($entity);
+        $this->entityHandler->update($entity);
         return new Response(null, Response::HTTP_NO_CONTENT);
     }
 
@@ -362,7 +379,7 @@ abstract class EntityController extends AbstractFOSRestController
         $entity = $this->handleGetOne($entityClass, $id);
         $setter = 'set' . ucfirst($property);
         $entity->$setter($request->getContent());
-        $this->container->get('pelagos.entity.handler')->update($entity);
+        $this->entityHandler->update($entity);
         return new Response(null, Response::HTTP_NO_CONTENT);
     }
 
@@ -379,7 +396,7 @@ abstract class EntityController extends AbstractFOSRestController
     public function getDistinctVals($entityClass, $property)
     {
         try {
-            return $this->container->get('pelagos.entity.handler')->getDistinctVals($entityClass, $property);
+            return $this->entityHandler->getDistinctVals($entityClass, $property);
         } catch (UnmappedPropertyException $e) {
             throw new BadRequestHttpException(
                 "$property is not a valid property of " . $entityClass::FRIENDLY_NAME . '.'

@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Form\FormFactoryInterface;
 
 use App\Form\DIFType;
 
@@ -21,19 +22,19 @@ class DIFController extends AbstractController
     /**
      * The default action for the DIF.
      *
-     * @param Request     $request The Symfony request object.
-     * @param string|null $id      The id of the DIF to load.
-     *
-     * @Route("/dif/{id}", name="dif")
+     * @param Request $request The Symfony request object.
+     * @param string|null $id The id of the DIF to load.
+     * @param FormFactoryInterface $formFactory
      *
      * @return Response A Response instance.
+     * @Route("/dif/{id}", name="dif_index")
      */
-    public function index(Request $request, $id = null)
+    public function index(Request $request, FormFactoryInterface $formFactory, $id = null)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $dif = new DIF;
-        $form = $this->get('form.factory')->createNamed(null, DIFType::class, $dif);
+        $form = $formFactory->createNamed(null, DIFType::class, $dif);
 
         $researchGroupIds = array();
         if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
