@@ -6,8 +6,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 use Symfony\Component\Routing\Annotation\Route;
+
+use FOS\RestBundle\Controller\Annotations\View;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
@@ -40,9 +41,9 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/count")
+     * @Route("/api/research-groups/count", name="pelagos_api_research_groups_count", methods={"GET"})
      *
-     * @Rest\View()
+     * @View()
      *
      * @return integer
      */
@@ -68,9 +69,9 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/validateProperty")
+     * @Route("/api/research-groups/validateProperty", name="pelagos_api_research_groups_validate_property", methods={"GET"})
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
@@ -96,9 +97,9 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/{id}/validateProperty")
+     * @Route("/api/research-groups/{id}/validateProperty", name="pelagos_api_research_groups_validate_property_existing", methods={"GET"})
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
@@ -129,7 +130,7 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @Route("/api/research-groups", name="pelagos_api_research_groups_get_collection", methods={"GET"})
      *
@@ -159,7 +160,9 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
+     *
+     * @Route("/api/research-groups/{id}", name="pelagos_api_research_groups_get", methods={"GET"})
      *
      * @return ResearchGroup The Research Group that was retrieved.
      */
@@ -193,6 +196,8 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
+     * @Route("/api/research-groups", name="pelagos_api_research_groups_post", methods={"POST"})
+     *
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new Research Group in the Location header.
      */
@@ -220,6 +225,8 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
+     * @Route("/api/research-groups/{id}", name="pelagos_api_research_groups_put", methods={"PUT"})
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
     public function putAction($id, Request $request)
@@ -246,6 +253,8 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
+     * @Route("/api/research-groups/{id}", name="pelagos_api_research_groups_patch", methods={"PATCH"})
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
     public function patchAction($id, Request $request)
@@ -268,6 +277,8 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
+     * @Route("/api/research-groups/{id}", name="pelagos_api_research_groups_delete", methods={"DELETE"})
+     *
      * @return Response A response object with an empty body and a "no content" status code.
      */
     public function deleteAction($id)
@@ -289,7 +300,7 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/{id}/logo")
+     * @Route("/api/research-groups/{id}/logo", name="pelagos_api_research_groups_get_logo", methods={"GET"})
      *
      * @return Response A response object containing the logo.
      */
@@ -315,7 +326,7 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\Post("/{id}/logo")
+     * @Route("/api/research-groups/{id}/logo", name="pelagos_api_research_groups_post_logo", methods={"POST"})
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
@@ -338,7 +349,7 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\Put("/{id}/logo")
+     * @Route("/api/research-groups/{id}/logo", name="pelagos_api_research_groups_put_logo", methods={"PUT"})
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */

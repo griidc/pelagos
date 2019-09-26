@@ -5,13 +5,14 @@ namespace App\Controller\Api;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-use Symfony\Component\Routing\Annotation\Route;
-
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+
+use FOS\RestBundle\Controller\Annotations\View;
 
 use App\Entity\Dataset;
 use App\Entity\DIF;
@@ -44,9 +45,9 @@ class DIFController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/count")
+     * @View()
      *
-     * @Rest\View()
+     * @Route("/api/difs/count", name="pelagos_api_difs_count", methods={"GET"})
      *
      * @return integer
      */
@@ -72,9 +73,9 @@ class DIFController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("")
+     * @Route("/api/difs", name="pelagos_api_difs_get_collection", methods={"GET"})
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return array
      */
@@ -98,7 +99,9 @@ class DIFController extends EntityController
      *   }
      * )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
+     *
+     * @Route("/api/difs/{id}", name="pelagos_api_difs_get", methods={"GET"})
      *
      * @return DIF
      */
@@ -169,6 +172,8 @@ class DIFController extends EntityController
      *   }
      * )
      *
+     * @Route("/api/difs/{id}", name="pelagos_api_difs_put", methods={"PUT"})
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
     public function putAction($id, Request $request)
@@ -194,6 +199,8 @@ class DIFController extends EntityController
      *     500 = "An internal error has occurred.",
      *   }
      * )
+     *
+     * @Route("/api/difs/{id}", name="pelagos_api_difs_patch", methods={"PATCH"})
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
@@ -221,6 +228,8 @@ class DIFController extends EntityController
      *     500 = "An internal error has occurred.",
      *   }
      * )
+     *
+     * @Route("/api/difs/{id}/submit", name="pelagos_api_difs_submit", methods={"PATCH"})
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
@@ -268,6 +277,8 @@ class DIFController extends EntityController
      *     500 = "An internal error has occurred.",
      *   }
      * )
+     *
+     * @Route("/api/difs/{id}/approve", name="pelagos_api_difs_approve", methods={"PATCH"})
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
@@ -320,6 +331,8 @@ class DIFController extends EntityController
      *   }
      * )
      *
+     * @Route("/api/difs/{id}/reject", name="pelagos_api_difs_reject", methods={"PATCH"})
+     *
      * @return Response A response object with an empty body and a "no content" status code.
      */
     public function rejectAction($id)
@@ -366,6 +379,8 @@ class DIFController extends EntityController
      *     500 = "An internal error has occurred.",
      *   }
      * )
+     *
+     * @Route("/api/difs/{id}/unlock", name="pelagos_api_difs_unlock", methods={"PATCH"})
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
@@ -414,7 +429,7 @@ class DIFController extends EntityController
      *   }
      * )
      *
-     * @Rest\Patch("/{id}/request-unlock")
+     * @Route("/api/difs/{id}/request-unlock", name="pelagos_api_difs_request_unlock", methods={"PATCH"})
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */

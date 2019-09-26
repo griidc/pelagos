@@ -4,12 +4,11 @@ namespace App\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
-use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\Routing\Annotation\Route;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Symfony\Component\Routing\Annotation\Route;
+use FOS\RestBundle\Controller\Annotations\View;
 
 use App\Form\DatasetType;
 
@@ -46,9 +45,9 @@ class DatasetController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/count")
+     * @Route("/api/datasets/count", name="pelagos_api_datasets_count", methods={"GET"})
      *
-     * @Rest\View()
+     * @View()
      *
      * @return integer
      */
@@ -74,7 +73,7 @@ class DatasetController extends EntityController
      *   }
      * )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @Route("/api/datasets", name="pelagos_api_datasets_get_collection", methods={"GET"})
      *
@@ -100,7 +99,9 @@ class DatasetController extends EntityController
      *   }
      * )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
+     *
+     * @Route("/api/datasets/{id}", name="pelagos_api_datasets_get", methods={"GET"})
      *
      * @return Dataset
      */
@@ -123,9 +124,9 @@ class DatasetController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/{id}/citation")
+     * @Route("/api/datasets/{id}/citation", name="pelagos_api_datasets_get_citation", methods={"GET"})
      *
-     * @Rest\View
+     * @View()
      *
      * @return string
      */
@@ -152,6 +153,8 @@ class DatasetController extends EntityController
      *     500 = "An internal error has occurred.",
      *   }
      * )
+     *
+     * @Route("/api/datasets/{id}", name="pelagos_api_datasets_patch", methods={"PATCH"})
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
@@ -190,6 +193,8 @@ class DatasetController extends EntityController
      *     500 = "An internal error has occurred.",
      *   }
      * )
+     *
+     * @Route("/api/datasets/{id}", name="pelagos_api_datasets_delete", methods={"DELETE"})
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */

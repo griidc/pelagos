@@ -5,8 +5,9 @@ namespace App\Controller\Api;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormInterface;
-
 use Symfony\Component\Routing\Annotation\Route;
+
+use FOS\RestBundle\Controller\Annotations\View;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
@@ -39,9 +40,9 @@ class PersonResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/count")
+     * @Route("/api/person-research-groups/count", name="pelagos_api_person_research_groups_count", methods={"GET"})
      *
-     * @Rest\View()
+     * @View()
      *
      * @return integer
      */
@@ -65,9 +66,9 @@ class PersonResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/validateProperty")
+     * @Route("/api/person-research-groups/validateProperty", name="pelagos_api_person_research_groups_validate_property", methods={"GET"})
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
@@ -93,9 +94,9 @@ class PersonResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/{id}/validateProperty")
+     * @Route("/api/person-research-groups/{id}/validateProperty", name="pelagos_api_person_research_groups_validate_property_existing", methods={"GET"})
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
@@ -126,7 +127,7 @@ class PersonResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @Route("/api/person-research-groups", name="pelagos_api_person_research_groups_get_collection", methods={"GET"})
      *
@@ -152,7 +153,9 @@ class PersonResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
+     *
+     * @Route("/api/person-research-groups/{id}", name="pelagos_api_person_research_groups_get", methods={"GET"})
      *
      * @return PersonResearchGroup
      */
@@ -176,6 +179,8 @@ class PersonResearchGroupController extends EntityController
      *     500 = "An internal error has occurred.",
      *   }
      * )
+     *
+     * @Route("/api/person-research-groups", name="pelagos_api_person_research_groups_post", methods={"POST"})
      *
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new Person to Research Group Association in the Location header.
@@ -204,6 +209,8 @@ class PersonResearchGroupController extends EntityController
      *   }
      * )
      *
+     * @Route("/api/person-research-groups/{id}", name="pelagos_api_person_research_groups_put", methods={"PUT"})
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
     public function putAction($id, Request $request)
@@ -230,6 +237,8 @@ class PersonResearchGroupController extends EntityController
      *   }
      * )
      *
+     * @Route("/api/person-research-groups/{id}", name="pelagos_api_person_research_groups_patch", methods={"PATCH"})
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
     public function patchAction($id, Request $request)
@@ -251,6 +260,8 @@ class PersonResearchGroupController extends EntityController
      *     500 = "An internal error has occurred.",
      *   }
      * )
+     *
+     * @Route("/api/person-research-groups/{id}", name="pelagos_api_person_research_groups_delete", methods={"DELETE"})
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
