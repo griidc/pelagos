@@ -33,3 +33,7 @@ services:
     App\Security\LoginFormAuthenticator:
         bind:
             $maximumPasswordAge: "%env(ACCOUNT_PASSWORD_MAX_AGE)%"
+            
+    App\EventListener\AccountListener:
+        tags:
+            - { name: kernel.event_listener, event: pelagos.entity.account.forgot_username, method: onForgotUsername }

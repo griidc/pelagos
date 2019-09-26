@@ -8,7 +8,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundE
 use Symfony\Component\Security\Core\Exception\AuthenticationExpiredException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 use App\Entity\Account;
 use App\Entity\PersonToken;
@@ -32,9 +32,9 @@ class PersonTokenUserProvider implements UserProviderInterface
      *
      * @param EntityManager $entityManager An instance of the Doctrine entity manager.
      */
-    public function __construct()
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        //$this->entityManager = $entityManager;
+        $this->entityManager = $entityManager;
     }
 
     /**

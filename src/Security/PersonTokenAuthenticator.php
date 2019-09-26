@@ -33,9 +33,9 @@ class PersonTokenAuthenticator implements SimplePreAuthenticatorInterface, Authe
      *
      * @param \Twig_Environment $twig An instance of Twig.
      */
-    public function __construct()
+    public function __construct(\Twig\Environment $twig)
     {
-        //$this->twig = $twig;
+        $this->twig = $twig;
     }
 
     /**
@@ -123,13 +123,13 @@ class PersonTokenAuthenticator implements SimplePreAuthenticatorInterface, Authe
     {
         if ($exception instanceof AuthenticationCredentialsNotFoundException) {
             return new Response(
-                $this->twig->render('PelagosAppBundle:template:InvalidToken.html.twig'),
+                $this->twig->render('template/InvalidToken.html.twig'),
                 403
             );
         }
         if ($exception instanceof AuthenticationExpiredException) {
             return new Response(
-                $this->twig->render('PelagosAppBundle:template:ExpiredToken.html.twig'),
+                $this->twig->render('template/ExpiredToken.html.twig'),
                 403
             );
         }
