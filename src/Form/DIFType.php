@@ -5,7 +5,6 @@ namespace App\Form;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -23,12 +22,9 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 use Doctrine\ORM\EntityManager;
 
-use Pelagos\Bundle\AppBundle\Security\ResearchGroupVoter;
-
 use App\Entity\Account;
 use App\Entity\DIF;
 use App\Entity\ResearchGroup;
-use App\Entity\Person;
 
 /**
  * A form for creating a DIF.

@@ -17,7 +17,7 @@ use FOS\RestBundle\Controller\Annotations\View;
 use App\Entity\Dataset;
 use App\Entity\DIF;
 use App\Form\DIFType;
-use App\Security\DIFVoter;
+use App\Security\Voter\DIFVoter;
 
 /**
  * The DIF api controller.

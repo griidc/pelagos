@@ -24,7 +24,7 @@ use App\Event\EntityEventDispatcher;
 
 use App\Exception\UnmappedPropertyException;
 
-use App\Security\PelagosEntityVoter;
+use App\Security\Voter\PelagosEntityVoter;
 use App\Security\EntityProperty;
 
 /**
