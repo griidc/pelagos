@@ -16,8 +16,12 @@ use FOS\RestBundle\Controller\Annotations\View;
 
 use App\Entity\Dataset;
 use App\Entity\DIF;
+
+use App\Event\EntityEventDispatcher;
+
 use App\Form\DIFType;
 use App\Security\Voter\DIFVoter;
+use App\Util\Udi;
 
 /**
  * The DIF api controller.
@@ -114,7 +118,12 @@ class DIFController extends EntityController
      * Create a new DIF from the submitted data.
      *
      * @param Request $request The request object.
+     * @param EntityEventDispatcher $entityEventDispatcher
+     * @param Udi $udiUtil
      *
+     * @return Response A Response object with an empty body, a "created" status code,
+     *                  and the location of the new DIF in the Location header.
+     * @throws \Exception
      * @ApiDoc(
      *   section = "DIFs",
      *   input = {"class" = "App\Form\DIFType", "name" = ""},
@@ -127,11 +136,8 @@ class DIFController extends EntityController
      * )
      *
      * @Route("/api/dif", name="pelagos_api_difs_post", methods={"POST"})
-     *
-     * @return Response A Response object with an empty body, a "created" status code,
-     *                  and the location of the new DIF in the Location header.
      */
-    public function postAction(Request $request)
+    public function postAction(Request $request, EntityEventDispatcher $entityEventDispatcher, Udi $udiUtil)
     {
         // Create a new Dataset.
         $dataset = new Dataset;
@@ -142,13 +148,13 @@ class DIFController extends EntityController
         // Handle the post (DIF will be created and Dataset creation will cascade).
         $this->handlePost(DIFType::class, DIF::class, $request, $dif);
         // Mint an UDI for the Dataset.
-        $udi = $this->container->get('pelagos.util.udi')->mintUdi($dataset);
+        $udi = $udiUtil->mintUdi($dataset);
         // Update the Dataset with the new UDI.
-        $this->container->get('pelagos.entity.handler')->update($dataset);
+        $this->entityHandler->update($dataset);
         // If the "Save and Continue Later" button was pressed.
         if ($request->request->get('button') === 'save') {
             // Dispatch an event to indicate a DIF has been saved but not submitted.
-            $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch($dif, 'saved_not_submitted');
+            $entityEventDispatcher->dispatch($dif, 'saved_not_submitted');
         }
         // Return a created response, adding the UDI as a custom response header.
         return $this->makeCreatedResponse('pelagos_api_difs_get', $dif->getId(), array('X-UDI' => $udi));
@@ -252,9 +258,9 @@ class DIFController extends EntityController
             throw new BadRequestHttpException($exception->getMessage());
         }
         // Update the DIF in persistence and dispatch a 'submitted' event.
-        $this->container->get('pelagos.entity.handler')->update($dif, 'submitted');
+        $this->entityHandler->update($dif, 'submitted');
         // Update the Dataset too because cascade persist doesn't work as expected.
-        $this->container->get('pelagos.entity.handler')->update($dif->getDataset());
+        $this->entityHandler->update($dif->getDataset());
         // Return a no content success response.
         return $this->makeNoContentResponse();
     }
@@ -305,9 +311,9 @@ class DIFController extends EntityController
             throw new BadRequestHttpException($exception->getMessage());
         }
         // Update the DIF in persistence and dispatch an 'approved' event.
-        $this->container->get('pelagos.entity.handler')->update($dif, 'approved');
+        $this->entityHandler->update($dif, 'approved');
         // Update the Dataset too because cascade persist doesn't work as expected.
-        $this->container->get('pelagos.entity.handler')->update($dif->getDataset());
+        $this->entityHandler->update($dif->getDataset());
         // Return a no content success response.
         return $this->makeNoContentResponse();
     }
@@ -354,9 +360,9 @@ class DIFController extends EntityController
             throw new BadRequestHttpException($exception->getMessage());
         }
         // Update the DIF in persistence and dispatch a 'rejected' event.
-        $this->container->get('pelagos.entity.handler')->update($dif, 'rejected');
+        $this->entityHandler->update($dif, 'rejected');
         // Update the Dataset too because cascade persist doesn't work as expected.
-        $this->container->get('pelagos.entity.handler')->update($dif->getDataset());
+        $this->entityHandler->update($dif->getDataset());
         // Return a no content success response.
         return $this->makeNoContentResponse();
     }
@@ -403,9 +409,9 @@ class DIFController extends EntityController
             throw new BadRequestHttpException($exception->getMessage());
         }
         // Update the DIF in persistence and dispatch an 'unlocked' event.
-        $this->container->get('pelagos.entity.handler')->update($dif, 'unlocked');
+        $this->entityHandler->update($dif, 'unlocked');
         // Update the Dataset too because cascade persist doesn't work as expected.
-        $this->container->get('pelagos.entity.handler')->update($dif->getDataset());
+        $this->entityHandler->update($dif->getDataset());
         // Return a no content success response.
         return $this->makeNoContentResponse();
     }
@@ -414,11 +420,9 @@ class DIFController extends EntityController
      * Request a DIF be unlocked.
      *
      * @param integer $id The id of the DIF to request unlock for.
+     * @param EntityEventDispatcher $entityEventDispatcher
      *
-     * @throws AccessDeniedHttpException   When the authenticated user does not have
-     *                                 permission to request unlock for the DIF.
-     * @throws BadRequestHttpException When the DIF could not be requested to be unlocked.
-     *
+     * @return Response A response object with an empty body and a "no content" status code.
      * @ApiDoc(
      *   section = "DIFs",
      *   statusCodes = {
@@ -431,9 +435,8 @@ class DIFController extends EntityController
      *
      * @Route("/api/difs/{id}/request-unlock", name="pelagos_api_difs_request_unlock", methods={"PATCH"})
      *
-     * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function requestUnlockAction($id)
+    public function requestUnlockAction($id, EntityEventDispatcher $entityEventDispatcher)
     {
         // Get the specified DIF.
         $dif = $this->handleGetOne(DIF::class, $id);
@@ -450,7 +453,7 @@ class DIFController extends EntityController
             throw new BadRequestHttpException('This ' . $dif::FRIENDLY_NAME . ' cannot be unlocked');
         }
         // Dispatch an 'unlock_requested' event.
-        $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch($dif, 'unlock_requested');
+        $entityEventDispatcher->dispatch($dif, 'unlock_requested');
         // Return a no content success response.
         return $this->makeNoContentResponse();
     }

@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Dataset Entity class.
  *
- * @ORM\Entity(repositoryClass="App\Entity\DatasetRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\DatasetRepository")
  */
 class Dataset extends Entity
 {

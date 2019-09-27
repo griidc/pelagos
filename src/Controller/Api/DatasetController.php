@@ -12,8 +12,9 @@ use FOS\RestBundle\Controller\Annotations\View;
 
 use App\Form\DatasetType;
 
+use App\Event\EntityEventDispatcher;
+
 use App\Entity\Dataset;
-use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
 use App\Entity\DistributionPoint;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
@@ -163,13 +164,12 @@ class DatasetController extends EntityController
         $this->handleUpdate(DatasetType::class, Dataset::class, $id, $request, 'PATCH');
         $jiraLinkValue = $request->request->get('issueTrackingTicket');
         if (null !== $jiraLinkValue) {
-            $entityHandler = $this->get('pelagos.entity.handler');
             $mdappLogger = $this->get('pelagos.util.mdapplogger');
 
             $mdappLogger->writeLog(
                 $this->getUser()->getUserName() .
                 ' set Jira Link for udi: ' .
-                $entityHandler->get(Dataset::class, $id)->getUdi() .
+                $this->entityHandler->get(Dataset::class, $id)->getUdi() .
                 ' to ' .
                 $jiraLinkValue .
                 '.' .
@@ -183,7 +183,9 @@ class DatasetController extends EntityController
      * Delete a Dataset and associated Metadata and Difs.
      *
      * @param integer $id The id of the Dataset to delete.
+     * @param EntityEventDispatcher $entityEventDispatcher
      *
+     * @return Response A response object with an empty body and a "no content" status code.
      * @ApiDoc(
      *   section = "Datasets",
      *   statusCodes = {
@@ -195,10 +197,8 @@ class DatasetController extends EntityController
      * )
      *
      * @Route("/api/datasets/{id}", name="pelagos_api_datasets_delete", methods={"DELETE"})
-     *
-     * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteAction($id)
+    public function deleteAction($id, EntityEventDispatcher $entityEventDispatcher)
     {
         $dataset = $this->handleGetOne(Dataset::class, $id);
 
@@ -224,10 +224,7 @@ class DatasetController extends EntityController
             }
         }
 
-        $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
-            $dataset,
-            'delete_doi'
-        );
+        $entityEventDispatcher->dispatch($dataset, 'delete_doi');
 
         $this->handleDelete(Dataset::class, $id);
 

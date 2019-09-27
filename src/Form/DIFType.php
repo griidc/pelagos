@@ -24,6 +24,7 @@ use Doctrine\ORM\EntityManager;
 
 use App\Entity\Account;
 use App\Entity\DIF;
+use App\Entity\Person;
 use App\Entity\ResearchGroup;
 
 /**
@@ -256,10 +257,10 @@ class DIFType extends AbstractType
             ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
                 $event->getForm()
                 ->add('primaryPointOfContact', EntityType::class, array(
-                    'class' => 'App/Entity/Person',
+                    'class' => Person::class,
                 ))
                 ->add('secondaryPointOfContact', EntityType::class, array(
-                    'class' => 'App/Entity/Person',
+                    'class' => Person::class,
                 ));
             });
 

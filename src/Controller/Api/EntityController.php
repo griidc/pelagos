@@ -4,12 +4,12 @@ namespace App\Controller\Api;
 
 use Doctrine\ORM\Query;
 
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -17,8 +17,6 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 use App\Handler\EntityHandler;
 
 use App\Entity\Entity;
-use App\Entity\Account;
-use App\Entity\Person;
 use App\Exception\NotDeletableException;
 use App\Exception\UnmappedPropertyException;
 
@@ -33,13 +31,20 @@ abstract class EntityController extends AbstractFOSRestController
     protected $entityHandler;
 
     /**
+     * @var FormFactoryInterface Form factory instance.
+     */
+    protected $formFactory;
+
+    /**
      * EntityController constructor.
      *
-     * @param EntityHandler $entityHandler Entity Handler instance.
+     * @param EntityHandler        $entityHandler Entity Handler instance.
+     * @param FormFactoryInterface $formFactory   Form factory instance.
      */
-    public function __construct(EntityHandler $entityHandler)
+    public function __construct(EntityHandler $entityHandler, FormFactoryInterface $formFactory)
     {
         $this->entityHandler = $entityHandler;
+        $this->formFactory = $formFactory;
     }
 
     /**
@@ -132,10 +137,7 @@ abstract class EntityController extends AbstractFOSRestController
         if (!preg_match('/^\d+$/', $id)) {
             throw new BadRequestHttpException('id must be a non-negative integer');
         }
-        $entity = $this
-            ->container
-            ->get('pelagos.entity.handler')
-            ->get($entityClass, $id);
+        $entity = $this->entityHandler->get($entityClass, $id);
         if ($entity === null) {
             throw $this->createNotFoundException('No ' . $entityClass::FRIENDLY_NAME . " exists with id: $id");
         }
@@ -208,19 +210,16 @@ abstract class EntityController extends AbstractFOSRestController
     /**
      * Processes the form.
      *
-     * @param string  $formType The type of form to process.
-     * @param Entity  $entity   The entity to populate.
-     * @param Request $request  The request object.
-     * @param string  $method   The HTTP method.
-     *
-     * @throws BadRequestHttpException When no valid parameters are passed.
-     * @throws BadRequestHttpException When invalid data is submitted.
+     * @param string $formType The type of form to process.
+     * @param Entity $entity The entity to populate.
+     * @param Request $request The request object.
+     * @param string $method The HTTP method.
      *
      * @return Entity The updated entity.
      */
     private function processForm($formType, Entity $entity, Request $request, $method = 'PUT')
     {
-        $form = $this->get('form.factory')->createNamed(null, $formType, $entity, array('method' => $method));
+        $form = $this->formFactory->createNamed(null, $formType, $entity, array('method' => $method, 'csrf_protection' => false));
         $form->handleRequest($request);
         if (!$form->isSubmitted()) {
             throw new BadRequestHttpException(
@@ -248,16 +247,10 @@ abstract class EntityController extends AbstractFOSRestController
      * This method will validate key/value pairs found in the query string against
      * properties of the given entity type.
      *
-     * @param string       $formType    The class of the type of form to use for validation.
-     * @param string       $entityClass The class of the type of entity to validate against.
-     * @param Request      $request     The request object.
-     * @param integer|null $id          The id of the entity to validate against.
-     *
-     * @access public
-     *
-     * @throws BadRequestHttpException When no property is supplied.
-     * @throws BadRequestHttpException When more than one property is supplied.
-     * @throws BadRequestHttpException The supplied property is not valid for the resource.
+     * @param string $formType The class of the type of form to use for validation.
+     * @param string $entityClass The class of the type of entity to validate against.
+     * @param Request $request The request object.
+     * @param integer|null $id The id of the entity to validate against.
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
@@ -286,7 +279,7 @@ abstract class EntityController extends AbstractFOSRestController
             $entity = $this->handleGetOne($entityClass, $id);
         }
         // Create a form with this entity.
-        $form = $this->get('form.factory')->createNamed(null, $formType, $entity, array('method' => 'GET'));
+        $form = $this->formFactory->createNamed(null, $formType, $entity, array('method' => 'GET', 'csrf_protection' => false));
         try {
             // Process the request against the form.
             $form->submit($params, false);

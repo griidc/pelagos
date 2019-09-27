@@ -5,10 +5,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use App\Entity\Account;
 use App\Entity\DIF;
+use App\Entity\DataRepositoryRole;
 
 use App\Security\EntityProperty;
-
-use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 
 /**
  * A voter to determine if a actions are possible by the user on a DIF object.
@@ -112,7 +111,7 @@ class DIFVoter extends PelagosEntityVoter
         if ($this->doesUserHaveRole(
             $userPerson,
             $personDataRepositories,
-            array(DataRepositoryRoles::MANAGER)
+            array(DataRepositoryRole::MANAGER)
         ) and in_array(
             $attribute,
             array(
