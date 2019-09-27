@@ -15,8 +15,6 @@ use App\Entity\PersonToken;
 use App\Event\EntityEventDispatcher;
 use App\Handler\EntityHandler;
 
-
-
 class AccountController extends AbstractController
 {
     /**
