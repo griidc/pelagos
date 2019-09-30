@@ -46,7 +46,7 @@
                         </ul>
                     </li>
                     {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
-                        {% include "PelagosAppBundle:Menus:admin.html.twig" %}
+                        {% include "Menus/admin.html.twig" %}
                         <li class="last even"><a href="http://research.gulfresearchinitiative.org/" title="GoMRI Research Information" name="GoMRI Research" target="_top" >Research</a></li>
                     {% else %}
                         <li class="last odd"><a href="http://research.gulfresearchinitiative.org/" title="GoMRI Research Information" name="GoMRI Research" target="_top" >Research</a></li>

@@ -4,6 +4,7 @@ namespace App\Controller\UI;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Ldap\Exception\LdapException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -14,6 +15,8 @@ use App\Entity\Person;
 use App\Entity\PersonToken;
 use App\Event\EntityEventDispatcher;
 use App\Handler\EntityHandler;
+use App\Util\Factory\UserIdFactory;
+use App\Util\Ldap\Ldap;
 
 class AccountController extends AbstractController
 {
@@ -68,7 +71,6 @@ class AccountController extends AbstractController
         }
         return $this->render('Account/PasswordReset.html.twig');
     }
-
 
     /**
      * Post handler to verify the email address by sending a link with a Person Token.
@@ -240,6 +242,7 @@ class AccountController extends AbstractController
      * Post handler to create an account.
      *
      * @param Request $request The Symfony Request object.
+     * @param Ldap    $ldap    The Ldap Utility.
      *
      * @throws \Exception When password do not match.
      *
@@ -247,7 +250,7 @@ class AccountController extends AbstractController
      *
      * @return Response A Symfony Response instance.
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request, Ldap $ldap)
     {
         // If the user is not authenticated.
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -287,9 +290,7 @@ class AccountController extends AbstractController
             try {
                 $account->setPassword(
                     $password,
-                    ((bool) ($this->container->hasParameter('account_less_strict_password_rules')) and
-                        (bool) ($this->container->getParameter('account_less_strict_password_rules'))
-                    )
+                    (bool) $_ENV['ACCOUNT_LESS_STRICT_PASSWORD_RULES']
                 );
             } catch (PasswordException $e) {
                 return $this->render(
@@ -299,13 +300,13 @@ class AccountController extends AbstractController
             }
 
             // Validate the entities.
-            $this->validateEntity($password, $validator);
-            $this->validateEntity($account, $validator);
+            $this->validateEntity($password);
+            $this->validateEntity($account);
 
             // Persist Account
             $account = $this->entityHandler->update($account);
 
-            $this->get('pelagos.ldap')->updatePerson($person);
+            $ldap->updatePerson($person);
         } else {
             // Generate a unique User ID for this account.
             $userId = UserIdFactory::generateUniqueUserId($person, $this->entityHandler);
@@ -329,10 +330,10 @@ class AccountController extends AbstractController
 
             try {
                 // Try to add the person to LDAP.
-                $this->get('pelagos.ldap')->addPerson($person);
+                $ldap->addPerson($person);
             } catch (LdapException $exception) {
                 // If that fails, try to update the person in LDAP.
-                $this->get('pelagos.ldap')->updatePerson($person);
+                $ldap->updatePerson($person);
             }
         }
 
@@ -375,6 +376,7 @@ class AccountController extends AbstractController
      * Post handler to change password.
      *
      * @param Request $request The Symfony Request object.
+     * @param Ldap    $ldap    The Ldap Utility.
      *
      * @throws \Exception When password do not match.
      *
@@ -382,7 +384,7 @@ class AccountController extends AbstractController
      *
      * @return Response A Symfony Response instance.
      */
-    public function changePasswordPostAction(Request $request)
+    public function changePasswordPostAction(Request $request, Ldap $ldap)
     {
         // If the user is not authenticated.
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -412,9 +414,7 @@ class AccountController extends AbstractController
         try {
             $account->setPassword(
                 $password,
-                ((bool) ($this->container->hasParameter('account_less_strict_password_rules')) and
-                    (bool) ($this->container->getParameter('account_less_strict_password_rules'))
-                )
+                (bool) $_ENV['ACCOUNT_LESS_STRICT_PASSWORD_RULES']
             );
         } catch (PasswordException $e) {
             return $this->render(
@@ -424,13 +424,19 @@ class AccountController extends AbstractController
         }
 
         // Validate both Password and Account
-        $this->validateEntity($password, $validator);
-        $this->validateEntity($account, $validator);
+        $this->validateEntity($password);
+        $this->validateEntity($account);
 
         $account = $this->entityHandler->update($account);
 
         // Update LDAP
-        $this->get('pelagos.ldap')->updatePerson($person);
+        try {
+            // Try to add the person to LDAP, incase it needs to re-create.
+            $ldap->addPerson($person);
+        } catch (LdapException $exception) {
+            // If that fails, try to update the person in LDAP.
+            $ldap->updatePerson($person);
+        }
 
         return $this->render('Account/AccountReset.html.twig');
     }

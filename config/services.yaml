@@ -37,3 +37,10 @@ services:
     App\EventListener\AccountListener:
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.account.forgot_username, method: onForgotUsername }
+
+    App\Util\Ldap\Ldap:
+        $ldapBindDn: "%env(LDAP_BIND_DN)%"
+        $ldapBindPw: "%env(LDAP_BIND_PW)%"
+        $peopleOu: "%env(LDAP_PEOPLE_OU)%"
+    App\Util\Ldap\LdapClient:
+        $host: "%env(LDAP_HOST)%"
