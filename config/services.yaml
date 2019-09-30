@@ -34,7 +34,7 @@ services:
         bind:
             $maximumPasswordAge: "%env(ACCOUNT_PASSWORD_MAX_AGE)%"
 
-    App\Event\DIFListener:
+    App\EventListener\DIFListener:
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.dif.saved_not_submitted, method: onSavedNotSubmitted }
             - { name: kernel.event_listener, event: pelagos.entity.dif.submitted, method: onSubmitted }
