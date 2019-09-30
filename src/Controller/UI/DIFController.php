@@ -27,7 +27,7 @@ class DIFController extends AbstractController
      * @param FormFactoryInterface $formFactory
      *
      * @return Response A Response instance.
-     * @Route("/dif/{id}", name="dif_index")
+     * @Route("/dif/{id}", name="pelagos_app_ui_dif_default")
      */
     public function index(Request $request, FormFactoryInterface $formFactory, $id = null)
     {
