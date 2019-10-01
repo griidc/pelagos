@@ -33,8 +33,16 @@ services:
     App\Security\LoginFormAuthenticator:
         bind:
             $maximumPasswordAge: "%env(ACCOUNT_PASSWORD_MAX_AGE)%"
+
+    App\EventListener\EventListener:
+        bind:
+            string $fromAddress: "%env(MAILER_FROM_ADDR)%"
+            string $fromName: "%env(MAILER_FROM_NAME)%"
             
     App\EventListener\AccountListener:
+        bind:
+            string $fromAddress: "%env(MAILER_FROM_ADDR)%"
+            string $fromName: "%env(MAILER_FROM_NAME)%"
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.account.forgot_username, method: onForgotUsername }
 

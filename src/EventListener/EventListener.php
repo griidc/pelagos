@@ -103,9 +103,9 @@ abstract class EventListener
     public function __construct(
         \Twig_Environment $twig,
         \Swift_Mailer $mailer,
-        TokenStorageInterface $tokenStorage
-        // $fromAddress,
-        // $fromName,
+        TokenStorageInterface $tokenStorage,
+        string $fromAddress,
+        string $fromName
         // EntityHandler $entityHandler = null,
         // Producer $producer = null,
         // DataStore $dataStore = null,
@@ -114,7 +114,7 @@ abstract class EventListener
         $this->twig = $twig;
         $this->mailer = $mailer;
         $this->tokenStorage = $tokenStorage;
-        // $this->from = array($fromAddress => $fromName);
+        $this->from = array($fromAddress => $fromName);
         // $this->entityHandler = $entityHandler;
         // $this->producer = $producer;
         // $this->dataStore = $dataStore;
