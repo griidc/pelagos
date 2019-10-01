@@ -33,3 +33,11 @@ services:
     App\Security\LoginFormAuthenticator:
         bind:
             $maximumPasswordAge: "%env(ACCOUNT_PASSWORD_MAX_AGE)%"
+
+    App\EventListener\DIFListener:
+        tags:
+            - { name: kernel.event_listener, event: pelagos.entity.dif.saved_not_submitted, method: onSavedNotSubmitted }
+            - { name: kernel.event_listener, event: pelagos.entity.dif.submitted, method: onSubmitted }
+            - { name: kernel.event_listener, event: pelagos.entity.dif.approved, method: onApproved }
+            - { name: kernel.event_listener, event: pelagos.entity.dif.unlock_requested, method: onUnlockRequested }
+            - { name: kernel.event_listener, event: pelagos.entity.dif.unlocked, method: onUnlocked }
