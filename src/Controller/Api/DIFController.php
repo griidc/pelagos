@@ -135,7 +135,7 @@ class DIFController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/dif", name="pelagos_api_difs_post", methods={"POST"})
+     * @Route("/api/difs", name="pelagos_api_difs_post", methods={"POST"})
      */
     public function postAction(Request $request, EntityEventDispatcher $entityEventDispatcher, Udi $udiUtil)
     {
