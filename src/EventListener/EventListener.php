@@ -16,6 +16,9 @@ use App\Entity\Dataset;
 use App\Entity\DataRepositoryRole;
 use App\Entity\Person;
 use App\Entity\PersonDataRepository;
+
+use App\Entity\ResearchGroupRole;
+
 // use Pelagos\Util\DataStore;
 // use Pelagos\Util\MdappLogger;
 
@@ -187,9 +190,8 @@ abstract class EventListener
                                           ->getPersonDataRepositories();
 
         foreach ($personDataRepositories as $pdr) {
-            if ($pdr->getRole()->getName() == DataRepositoryRoles::MANAGER) {
-                $recipientPeople[] = $pdr->getPerson();
-            }
+            if ($pdr->getRole()->getName() == DataRepositoryRole::MANAGER) {
+                $recipientPeople[] = $pdr->getPerson();            }
         }
         return $recipientPeople;
     }
@@ -206,7 +208,8 @@ abstract class EventListener
         $recipientPeople = array();
         $eh = $this->entityHandler;
 
-        $drpmRole = $eh->getBy(DataRepositoryRole::class, array('name' => DataRepositoryRoles::MANAGER));
+        $drpmRole = $eh->getBy(DataRepositoryRole::class, array('name' => DataRepositoryRole::MANAGER));
+
         if (1 !== count($drpmRole)) {
             throw new \Exception('More than one role found for manager role.');
         }
@@ -232,7 +235,8 @@ abstract class EventListener
         $personResearchGroups = $dataset->getResearchGroup()->getPersonResearchGroups();
 
         foreach ($personResearchGroups as $prg) {
-            if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
+            if ($prg->getRole()->getName() == ResearchGroupRole::DATA) {
+
                 $recipientPeople[] = $prg->getPerson();
             }
         }
@@ -254,7 +258,7 @@ abstract class EventListener
         foreach ($researchGroups as $rg) {
             $prgs = $rg->getPersonResearchGroups();
             foreach ($prgs as $prg) {
-                if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
+                if ($prg->getRole()->getName() == ResearchGroupRole::DATA) {
                     $recipientPeople[] = $prg->getPerson();
                 }
             }

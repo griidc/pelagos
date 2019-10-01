@@ -1,0 +1,209 @@
+/*select 2 overrides */
+.select2-selection,.select2-container {
+
+    font-size: 100%;
+    -webkit-transition: border-color 200ms ease-in 0ms;
+       -moz-transition: border-color 200ms ease-in 0ms;
+         -o-transition: border-color 200ms ease-in 0ms;
+            transition: border-color 200ms ease-in 0ms;
+    vertical-align: bottom;
+}
+.select2-container--default.select2-container--disabled .select2-selection--single {
+    background-color:white;
+    border-color: rgba(255,255,255,0);
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: black;
+}
+.select2-container--default.select2-container--disabled .select2-selection--single .select2-selection__clear {
+    color: black;
+}
+.select2-selection__arrow {
+    -webkit-transition: opacity 200ms ease-in 0ms;
+       -moz-transition: opacity 200ms ease-in 0ms;
+         -o-transition: opacity 200ms ease-in 0ms;
+            transition: opacity 200ms ease-in 0ms;
+    opacity: 1;
+}
+.select2-container--default.select2-container--disabled .select2-selection--single .select2-selection__arrow {
+   opacity: 0;
+}
+.select2-container--default .select2-selection--single .select2-selection__placeholder{
+    color:black;
+}
+/* */
+
+.hiddenFormField {
+    display:none;
+}
+
+select, input{
+   height: 20px;
+}
+
+.entityForm input[type="text"],
+.entityForm input[type="email"],
+.entityForm textarea {
+    width:100%;
+}
+
+.entityForm select {
+    width:50%;
+}
+
+.entityForm label {
+    display: inline;
+}
+
+.entityForm .showOnEdit {
+    visibility: hidden;
+}
+
+.entityForm input,
+.entityForm textarea,
+.entityForm select {
+    -webkit-transition: border-color 200ms ease-in 0ms;
+       -moz-transition: border-color 200ms ease-in 0ms;
+         -o-transition: border-color 200ms ease-in 0ms;
+            transition: border-color 200ms ease-in 0ms;
+    border: 1px solid white;
+    border: 1px solid rgba(255,255,255,0);
+    margin: 1px;
+    font-family: sans-serif;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+    appearance: none;
+    background: none;
+    overflow: auto;
+}
+
+.entityForm select::-ms-expand {
+    display: none;
+}
+
+.active select::-ms-expand {
+    display: block;
+}
+
+.entityWrapper input:disabled,
+.entityWrapper textarea:disabled,
+.entityWrapper select:disabled{
+    color:black;
+}
+
+.entityWrapper.active input.clickableLink {
+    opacity: 1;
+    visibility: visible;
+}
+
+.entityForm div.clickableLink {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+}
+
+.entityForm input.clickableLink {
+    -webkit-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+       -moz-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+         -o-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+            transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+    visibility: hidden;
+    opacity: 0;
+    border: 1px solid #aaa;
+}
+
+.entityForm div.clickableLink span {
+    margin-left: 2px;
+    margin-top: 1px;
+    font-family: sans-serif;
+    position: absolute;
+    left: 0;
+    opacity: 1;
+    top: 0;
+}
+
+.entityWrapper.active div.clickableLink span {
+    -webkit-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+       -moz-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+         -o-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+            transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+    visibility: hidden;
+    opacity: 0;
+}
+
+.entityForm textarea {
+    resize: none;
+}
+
+.entityWrapper.active input:enabled,
+.entityWrapper.active textarea:enabled,
+.entityWrapper.active select:enabled {
+    border: 1px solid #aaa;
+}
+
+.entityWrapper.active select:enabled {
+    -webkit-appearance: menulist;
+       -moz-appearance: menulist;
+    appearance: list-menu;
+}
+
+.entityWrapper {
+    position: relative;
+}
+
+.innerForm {
+    position: absolute;
+    left: -10px;
+    right: -10px;
+    top: -10px;
+    bottom: -10px;
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+    -webkit-transition: all 200ms ease-in 0ms;
+       -moz-transition: all 200ms ease-in 0ms;
+         -o-transition: all 200ms ease-in 0ms;
+            transition: all 200ms ease-in 0ms;
+    border-radius: 2.01px;
+    display: inline-block;
+    max-width: 100%;
+    box-shadow: 0 0 0 0 transparent;
+    background: transparent;
+    background: rgba(208, 208, 208, 0);
+}
+
+.innerForm:hover {
+    box-shadow: 0 0 0 3px #d3d3d3;
+    visibility: visible;
+    background: transparent;
+    background: rgba(208, 208, 208, 0.1);
+}
+
+.deleteimg,.editimg {
+    -webkit-transition: opacity 200ms ease-in 0ms;
+       -moz-transition: opacity 200ms ease-in 0ms;
+         -o-transition: opacity 200ms ease-in 0ms;
+            transition: opacity 200ms ease-in 0ms;
+    opacity: 0;
+    height: 32px;
+    width: 32px;
+    position: absolute;
+}
+
+.deleteimg {
+   top: 0;
+   right: 0;
+}
+
+.editimg {
+    bottom: 0;
+    right: 0;
+}
+.innerForm:hover>.deleteimg,.innerForm:hover>.editimg{
+     opacity: 1;
+}
+
+.displayField {
+    font-size: 100%;
+    font-family: sans-serif;
+}
