@@ -37,4 +37,5 @@ class EntityEvent extends Event
     {
         return $this->entity;
     }
+
 }

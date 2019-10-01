@@ -295,7 +295,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
                 $this->entityManager->flush();
             }
 
-            $personToken = new PersonToken($person, 'PASSWORD_EXPIRED', new \DateInterval('PT1H'));
+            $personToken = new PersonToken($person, 'PASSWORD_RESET', new \DateInterval('PT1H'));
             $this->entityManager->persist($personToken);
             $this->entityManager->flush();
             $url = $this->router->generate(

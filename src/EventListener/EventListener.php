@@ -16,7 +16,9 @@ use App\Entity\Dataset;
 use App\Entity\DataRepositoryRole;
 use App\Entity\Person;
 use App\Entity\PersonDataRepository;
+
 use App\Entity\ResearchGroupRole;
+
 // use Pelagos\Util\DataStore;
 // use Pelagos\Util\MdappLogger;
 
@@ -104,9 +106,9 @@ abstract class EventListener
     public function __construct(
         \Twig_Environment $twig,
         \Swift_Mailer $mailer,
-        TokenStorageInterface $tokenStorage
-        // $fromAddress,
-        // $fromName,
+        TokenStorageInterface $tokenStorage,
+        string $fromAddress,
+        string $fromName
         // EntityHandler $entityHandler = null,
         // Producer $producer = null,
         // DataStore $dataStore = null,
@@ -115,7 +117,7 @@ abstract class EventListener
         $this->twig = $twig;
         $this->mailer = $mailer;
         $this->tokenStorage = $tokenStorage;
-        // $this->from = array($fromAddress => $fromName);
+        $this->from = array($fromAddress => $fromName);
         // $this->entityHandler = $entityHandler;
         // $this->producer = $producer;
         // $this->dataStore = $dataStore;
@@ -182,15 +184,14 @@ abstract class EventListener
     {
         $recipientPeople = array();
         $personDataRepositories = $dataset->getResearchGroup()
-            ->getFundingCycle()
-            ->getFundingOrganization()
-            ->getDataRepository()
-            ->getPersonDataRepositories();
+                                          ->getFundingCycle()
+                                          ->getFundingOrganization()
+                                          ->getDataRepository()
+                                          ->getPersonDataRepositories();
 
         foreach ($personDataRepositories as $pdr) {
             if ($pdr->getRole()->getName() == DataRepositoryRole::MANAGER) {
-                $recipientPeople[] = $pdr->getPerson();
-            }
+                $recipientPeople[] = $pdr->getPerson();            }
         }
         return $recipientPeople;
     }
@@ -208,6 +209,7 @@ abstract class EventListener
         $eh = $this->entityHandler;
 
         $drpmRole = $eh->getBy(DataRepositoryRole::class, array('name' => DataRepositoryRole::MANAGER));
+
         if (1 !== count($drpmRole)) {
             throw new \Exception('More than one role found for manager role.');
         }
@@ -234,6 +236,7 @@ abstract class EventListener
 
         foreach ($personResearchGroups as $prg) {
             if ($prg->getRole()->getName() == ResearchGroupRole::DATA) {
+
                 $recipientPeople[] = $prg->getPerson();
             }
         }

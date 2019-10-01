@@ -32,6 +32,7 @@
         "symfony/flex": "^1.4",
         "symfony/form": "4.3.*",
         "symfony/framework-bundle": "4.3.*",
+        "symfony/ldap": "4.3.*",
         "symfony/maker-bundle": "^1.13",
         "symfony/monolog-bundle": "^3.0",
         "symfony/security-bundle": "4.3.*",

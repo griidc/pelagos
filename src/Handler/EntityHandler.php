@@ -342,7 +342,7 @@ class EntityHandler
             ->getConfiguration()
             ->addCustomHydrationMode(
                 'COLUMN_HYDRATOR',
-                'Pelagos\DoctrineExtensions\Hydrators\ColumnHydrator'
+                'App\DoctrineExtensions\Hydrators\ColumnHydrator'
             );
         // Get distinct vals
         $query = $this->entityManager
