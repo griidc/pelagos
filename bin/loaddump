@@ -38,7 +38,7 @@ if [ ! -f $1 ]; then
     exit
 fi
 
-# Manually parse DATABASE_URL rom .env.local file
+# Manually parse DATABASE_URL from .env.local file
 
 DATABASE_URL=$(grep "^DATABASE_URL" ./.env.local)
 IFS=':' read -ra ADDR <<< "$DATABASE_URL"
