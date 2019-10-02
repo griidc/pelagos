@@ -23,8 +23,8 @@ parse_yaml() {
    }'
 }
 
-if [ ! -f app/config/parameters.yml ]; then
-    echo "parameters.yml not found"
+if [ ! -f .env.local ]; then
+    echo ".env.local not found"
     exit
 fi
 
@@ -38,7 +38,27 @@ if [ ! -f $1 ]; then
     exit
 fi
 
-eval $(parse_yaml app/config/parameters.yml "")
+# Manually parse DATABASE_URL rom .env.local file
+
+DATABASE_URL=$(grep "^DATABASE_URL" ./.env.local)
+IFS=':' read -ra ADDR <<< "$DATABASE_URL"
+
+# unused
+DBTYPE=${ADDR[0]}
+DBTYPE=${DBTYPE/DATABASE_URL=/}
+
+parameters__database_user=${ADDR[1]}
+parameters__database_user=${parameters__database_user/\/\//}
+
+DBPASSHOST=${ADDR[2]}
+IFS='@' read -ra PASSHOST_ARR <<< "$DBPASSHOST"
+parameters__database_password=${PASSHOST_ARR[0]}
+parameters__database_host=${PASSHOST_ARR[1]}
+
+DBPORTNAME=${ADDR[3]}
+IFS='/' read -ra PORTNAME_ARR <<< "$DBPORTNAME"
+DBPORT=${PORTNAME_ARR[0]} # unused
+parameters__database_name=${PORTNAME_ARR[1]}
 
 echo "WARNING!!!: This will destroy all data in the $parameters__database_name database on $parameters__database_host!"
 read -r -p "Are you sure you want to do this? [y/N] " response
@@ -80,10 +100,15 @@ fi
 bin/console rabbitmq-supervisor:control stop
 
 # Drop existing database
+echo ONE
+echo "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '$parameters__database_name' AND pid <> pg_backend_pid(); $parameters__database_host"
 echo "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '$parameters__database_name' AND pid <> pg_backend_pid();" | psql -h $parameters__database_host -U postgres || exit
+echo TWO
 echo "DROP DATABASE $parameters__database_name" | psql -h $parameters__database_host -U postgres || exit
+echo THREE
 echo "Database $parameters__database_name dropped"
 echo "CREATE DATABASE $parameters__database_name" | psql -h $parameters__database_host -U postgres || exit
+echo FOUR
 echo "Created database $parameters__database_name"
 
 # Set Permissions
