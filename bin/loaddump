@@ -100,15 +100,10 @@ fi
 bin/console rabbitmq-supervisor:control stop
 
 # Drop existing database
-echo ONE
-echo "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '$parameters__database_name' AND pid <> pg_backend_pid(); $parameters__database_host"
 echo "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '$parameters__database_name' AND pid <> pg_backend_pid();" | psql -h $parameters__database_host -U postgres || exit
-echo TWO
 echo "DROP DATABASE $parameters__database_name" | psql -h $parameters__database_host -U postgres || exit
-echo THREE
 echo "Database $parameters__database_name dropped"
 echo "CREATE DATABASE $parameters__database_name" | psql -h $parameters__database_host -U postgres || exit
-echo FOUR
 echo "Created database $parameters__database_name"
 
 # Set Permissions
