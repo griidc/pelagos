@@ -1,0 +1,25 @@
+{% if role == "resourceProvider" %}
+    {% set codespace="001" %}
+{% elseif role == "custodian" %}
+    {% set codespace="002" %}
+{% elseif role == "owner" %}
+    {% set codespace="003" %}
+{% elseif role == "user" %}
+    {% set codespace="004" %}
+{% elseif role == "distributor" %}
+    {% set codespace="005" %}
+{% elseif role == "originator" %}
+    {% set codespace="006" %}
+{% elseif role == "pointOfContact" %}
+    {% set codespace="007" %}
+{% elseif role == "principalInvestigator" %}
+    {% set codespace="008" %}
+{% elseif role == "processor" %}
+    {% set codespace="009" %}
+{% elseif role == "publisher" %}
+    {% set codespace="010" %}
+{% elseif role == "author" %}
+    {% set codespace="011" %}
+{% endif %}
+
+<gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="{{role}}" codeSpace="{{codespace|default}}">{{role}}</gmd:CI_RoleCode>

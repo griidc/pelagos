@@ -248,7 +248,7 @@ class Extensions extends \Twig_Extension
 
             // XSL template.
             $xslDoc = new \DOMDocument();
-            $xslDoc->load($this->kernelRootDir . '/../src/Pelagos/Bundle/AppBundle/Resources/views/xsl/' . $xsl);
+            $xslDoc->load($this->kernelRootDir . '/../templates/xsl/' . $xsl);
 
             // The Processor.
             $proc = new \XSLTProcessor();
