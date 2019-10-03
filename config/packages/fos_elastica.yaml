@@ -64,7 +64,7 @@ fos_elastica:
                             property_path: false
                     persistence:
                         driver: orm
-                        model: Pelagos\Entity\Dataset
+                        model: App\Entity\Dataset
                         provider:
                             query_builder_method: createSortedQueryBuilder
                         listener:

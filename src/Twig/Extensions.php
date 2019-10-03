@@ -4,7 +4,7 @@ namespace App\Twig;
 
 use Doctrine\Common\Collections\Collection;
 
-use Entity\DIF;
+use App\Entity\DIF;
 
 use App\Util\MaintenanceMode;
 

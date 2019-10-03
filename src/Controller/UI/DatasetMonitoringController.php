@@ -5,9 +5,17 @@ namespace App\Controller\UI;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
+use App\Handler\EntityHandler;
+
+use App\Entity\Dataset;
+use App\Entity\FundingCycle;
+use App\Entity\Person;
+use App\Entity\ResearchGroup;
 
 /**
  * The Dataset Monitoring controller.
@@ -16,6 +24,23 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class DatasetMonitoringController extends AbstractController
 {
     /**
+     * Protected entityHandler value instance of entityHandler.
+     *
+     * @var entityHandler
+     */
+    protected $entityHandler;
+
+    /**
+     * Constructor for this Controller, to set up default services.
+     *
+     * @param EntityHandler $entityHandler
+     */
+    public function __construct(EntityHandler $entityHandler)
+    {
+        $this->entityHandler = $entityHandler;
+    }
+
+        /**
      * The default action.
      *
      * @Route("/dataset-monitoring", name="pelagos_app_ui_datasetmonitoring_default", methods={"GET"})
@@ -33,20 +58,20 @@ class DatasetMonitoringController extends AbstractController
      * @param string $id       A Pelagos Funding Cycle entity id.
      * @param string $renderer Either 'browser' or 'html2pdf'.
      *
-     * @Route("/funding-cycle/{id}/{renderer}", defaults={"renderer" = "browser"})
+     * @Route("/dataset-monitoring/funding-cycle/{id}/{renderer}", name="pelagos_app_ui_datasetmonitoring_allresearchgroup", defaults={"renderer" = "browser"})
      *
      * @return Response A Response instance.
      */
-    public function allResearchGroupAction($id, $renderer)
+    public function allResearchGroupAction($id, $renderer = 'browser')
     {
-        $fundingCycle = $this->entityHandler->get('Pelagos:FundingCycle', $id);
+        $fundingCycle = $this->entityHandler->get(FundingCycle::class, $id);
         $title = $fundingCycle->getName();
         $pdfFilename = 'Dataset Monitoring-' . date('Y-m-d');
         $researchGroups = $fundingCycle->getResearchGroups();
 
         if ('html2pdf' == $renderer) {
             return $this->render(
-                'PelagosAppBundle:DatasetMonitoring:pdf.html.twig',
+                'DatasetMonitoring/pdf.html.twig',
                 array(
                     'researchGroups' => $researchGroups,
                     'header' => $title,
@@ -55,7 +80,7 @@ class DatasetMonitoringController extends AbstractController
             );
         } else {
             return $this->render(
-                'PelagosAppBundle:DatasetMonitoring:projects.html.twig',
+                'DatasetMonitoring/projects.html.twig',
                 array(
                     'researchGroups' => $researchGroups,
                     'header' => $title,
@@ -72,18 +97,18 @@ class DatasetMonitoringController extends AbstractController
      * @param string $id       A Pelagos Research Group entity id.
      * @param string $renderer Either 'browser' or 'html2pdf'.
      *
-     * @Route("/research-group/{id}/{renderer}", defaults={"renderer" = "browser"})
+     * @Route("/dataset-monitoring/research-group/{id}/{renderer}", name="pelagos_app_ui_datasetmonitoring_researchgroup")
      *
      * @return Response A Response instance.
      */
-    public function researchGroupAction($id, $renderer)
+    public function researchGroupAction($id, $renderer = 'browser')
     {
-        $researchGroup = $this->entityHandler->get('Pelagos:ResearchGroup', $id);
+        $researchGroup = $this->entityHandler->get(ResearchGroup::class, $id);
         $title = $researchGroup->getName();
         $pdfFilename = 'Dataset Monitoring-' . date('Y-m-d');
         if ('html2pdf' == $renderer) {
             return $this->render(
-                'PelagosAppBundle:DatasetMonitoring:pdf.html.twig',
+                'DatasetMonitoring/pdf.html.twig',
                 array(
                     'researchGroups' => array($researchGroup),
                     'header' => $title,
@@ -92,7 +117,7 @@ class DatasetMonitoringController extends AbstractController
             );
         } else {
             return $this->render(
-                'PelagosAppBundle:DatasetMonitoring:projects.html.twig',
+                'DatasetMonitoring/projects.html.twig',
                 array(
                     'researchGroups' => array($researchGroup),
                     'header' => $title,
@@ -109,18 +134,18 @@ class DatasetMonitoringController extends AbstractController
      * @param string $id       A Pelagos Person entity id of a researcher.
      * @param string $renderer Either 'browser' or 'html2pdf'.
      *
-     * @Route("/researcher/{id}/{renderer}", defaults={"renderer" = "browser"})
+     * @Route("/dataset-monitoring/researcher/{id}/{renderer}", name="pelagos_app_ui_datasetmonitoring_researcher")
      *
      * @return Response A Response instance.
      */
-    public function researcherAction($id, $renderer)
+    public function researcherAction($id, $renderer = 'browser')
     {
-        $researcher = $this->entityHandler->get('Pelagos:Person', $id);
+        $researcher = $this->entityHandler->get(Person::class, $id);
         $title = $researcher->getLastName() . ', ' . $researcher->getFirstName();
         $researchGroups = $researcher->getResearchGroups();
         if ('html2pdf' == $renderer) {
             return $this->render(
-                'PelagosAppBundle:DatasetMonitoring:pdf.html.twig',
+                'DatasetMonitoring/pdf.html.twig',
                 array(
                     'researchGroups' => $researchGroups,
                     'header' => $title,
@@ -132,7 +157,7 @@ class DatasetMonitoringController extends AbstractController
             );
         } else {
             return $this->render(
-                'PelagosAppBundle:DatasetMonitoring:projects.html.twig',
+                'DatasetMonitoring/projects.html.twig',
                 array(
                     'researchGroups' => $researchGroups,
                     'header' => $title,
@@ -151,16 +176,16 @@ class DatasetMonitoringController extends AbstractController
      *
      * @param string $udi A UDI.
      *
-     * @Route("/dataset_details/{udi}")
+     * @Route("/dataset-monitoring/dataset_details/{udi}", name="pelagos_app_ui_datasetmonitoring_datasetdetails")
      *
      * @return Response A Response instance.
      */
     public function datasetDetailsAction($udi)
     {
-        $datasets = $this->entityHandler->getBy('Pelagos:Dataset', array('udi' => $udi));
+        $datasets = $this->entityHandler->getBy(Dataset::class, array('udi' => $udi));
 
         return $this->render(
-            'PelagosAppBundle:DatasetMonitoring:dataset_details.html.twig',
+            'DatasetMonitoring/dataset_details.html.twig',
             array(
                 'datasets' => $datasets,
                 )
