@@ -136,73 +136,73 @@
                 {% set available_icon = na_icon %}
             {% endif %}
 
-{#            <tr udi="{{dataset.udi}}">#}
-{#                {% if not dataland | default %}#}
-{#                <td class="details"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank">{{dataset.udi}}</a></td>#}
-{#                {% if dataset.doi and (dataset.datasetSubmissionStatus == constant('App\\Entity\\DatasetSubmission::STATUS_COMPLETE') or dataset.datasetSubmissionStatus == constant('App\\Entity\\DatasetSubmission::STATUS_IN_REVIEW')) %}#}
-{#                <td class="details"><a href="https://doi.org/{{ dataset.doi.doi }}" target="_blank">{{ dataset.doi.doi }}</a></td>#}
-{#                {% else %}#}
-{#                <td></td>#}
-{#                {% endif %}#}
-{#                <td class="details"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank">{{dataset.title}}</a></td>#}
-{#                {% endif %}#}
-{#                <td class="status" title="{{ identified_title | default }}">#}
-{#                    <span style="display:none;">#}
-{#                        {% if identified_icon == na_icon %}#}
-{#                            0#}
-{#                        {% elseif identified_icon == red_icon %}#}
-{#                            1#}
-{#                        {% elseif identified_icon == yellow_icon %}#}
-{#                            2#}
-{#                        {% else %}#}
-{#                            3#}
-{#                        {% endif %}#}
-{#                    </span>#}
-{#                    <img src="{{ identified_icon | default }}">#}
-{#                </td>#}
-{#                <td class="status" title="{{ registered_title | default }}">#}
-{#                    <span style="display:none;">#}
-{#                        {% if registered_icon == na_icon %}#}
-{#                            0#}
-{#                        {% elseif registered_icon == red_icon %}#}
-{#                            1#}
-{#                        {% elseif registered_icon == yellow_icon %}#}
-{#                            2#}
-{#                        {% else %}#}
-{#                            3#}
-{#                        {% endif %}#}
-{#                    </span>#}
-{#                    <img src="{{ registered_icon | default }}">#}
-{#                </td>#}
-{#                <td class="status" title="{{ metadata_title | default }}">#}
-{#                    <span style="display:none;">#}
-{#                        {% if metadata_icon == na_icon %}#}
-{#                            0#}
-{#                        {% elseif metadata_icon == red_icon %}#}
-{#                            1#}
-{#                        {% elseif metadata_icon == yellow_icon %}#}
-{#                            2#}
-{#                        {% else %}#}
-{#                            3#}
-{#                        {% endif %}#}
-{#                    </span>#}
-{#                    <img src="{{ metadata_icon | default }}">#}
-{#                </td>#}
-{#                <td class="status" title="{{ available_title | default }}">#}
-{#                    <span style="display:none;">#}
-{#                        {% if available_icon == na_icon %}#}
-{#                            0#}
-{#                        {% elseif available_icon == red_icon %}#}
-{#                            1#}
-{#                        {% elseif available_icon == yellow_icon %}#}
-{#                            2#}
-{#                        {% else %}#}
-{#                            3#}
-{#                        {% endif %}#}
-{#                    </span>#}
-{#                    <img src="{{ available_icon | default }}">#}
-{#                </td>#}
-{#            </tr>#}
+            <tr udi="{{dataset.udi}}">
+                {% if not dataland | default %}
+                <td class="details"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank">{{dataset.udi}}</a></td>
+                {% if dataset.doi and (dataset.datasetSubmissionStatus == constant('App\\Entity\\DatasetSubmission::STATUS_COMPLETE') or dataset.datasetSubmissionStatus == constant('App\\Entity\\DatasetSubmission::STATUS_IN_REVIEW')) %}
+                <td class="details"><a href="https://doi.org/{{ dataset.doi.doi }}" target="_blank">{{ dataset.doi.doi }}</a></td>
+                {% else %}
+                <td></td>
+                {% endif %}
+                <td class="details"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank">{{dataset.title}}</a></td>
+                {% endif %}
+                <td class="status" title="{{ identified_title | default }}">
+                    <span style="display:none;">
+                        {% if identified_icon == na_icon %}
+                            0
+                        {% elseif identified_icon == red_icon %}
+                            1
+                        {% elseif identified_icon == yellow_icon %}
+                            2
+                        {% else %}
+                            3
+                        {% endif %}
+                    </span>
+                    <img src="{{ identified_icon | default }}">
+                </td>
+                <td class="status" title="{{ registered_title | default }}">
+                    <span style="display:none;">
+                        {% if registered_icon == na_icon %}
+                            0
+                        {% elseif registered_icon == red_icon %}
+                            1
+                        {% elseif registered_icon == yellow_icon %}
+                            2
+                        {% else %}
+                            3
+                        {% endif %}
+                    </span>
+                    <img src="{{ registered_icon | default }}">
+                </td>
+                <td class="status" title="{{ metadata_title | default }}">
+                    <span style="display:none;">
+                        {% if metadata_icon == na_icon %}
+                            0
+                        {% elseif metadata_icon == red_icon %}
+                            1
+                        {% elseif metadata_icon == yellow_icon %}
+                            2
+                        {% else %}
+                            3
+                        {% endif %}
+                    </span>
+                    <img src="{{ metadata_icon | default }}">
+                </td>
+                <td class="status" title="{{ available_title | default }}">
+                    <span style="display:none;">
+                        {% if available_icon == na_icon %}
+                            0
+                        {% elseif available_icon == red_icon %}
+                            1
+                        {% elseif available_icon == yellow_icon %}
+                            2
+                        {% else %}
+                            3
+                        {% endif %}
+                    </span>
+                    <img src="{{ available_icon | default }}">
+                </td>
+            </tr>
 
         {% endfor %}
 
