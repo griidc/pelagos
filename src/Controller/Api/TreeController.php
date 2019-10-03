@@ -90,7 +90,12 @@ class TreeController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/tree/json/ra.json", name="pelagos_api_tree_get_funding_organizations", methods={"GET"})
+     * @Route(
+     *     "/api/tree/json/ra.json",
+     *     name="pelagos_api_tree_get_funding_organizations",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      */
     public function getFundingOrganizationsAction(Request $request, DatasetIndex $datasetIndex)
@@ -152,7 +157,12 @@ class TreeController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/tree/json/ra/projects/funding-cycle/{fundingCycle}.json", name="pelagos_api_tree_get_research_groups_by_funding_cycle", methods={"GET"})
+     * @Route(
+     *     "/api/tree/json/ra/projects/funding-cycle/{fundingCycle}.json",
+     *     name="pelagos_api_tree_get_research_groups_by_funding_cycle",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      */
     public function getResearchGroupsByFundingCycleAction(Request $request, $fundingCycle, DatasetIndex $datasetIndex)
@@ -208,7 +218,12 @@ class TreeController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/tree/json/re.json", name="pelagos_api_tree_get_letters", methods={"GET"})
+     * @Route(
+     *     "/api/tree/json/re.json",
+     *     name="pelagos_api_tree_get_letters",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return string
      */
@@ -259,7 +274,12 @@ class TreeController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/tree/json/re/{letter}.json", name="pelagos_api_tree_get_people", methods={"GET"})
+     * @Route(
+     *     "/api/tree/json/re/{letter}.json",
+     *     name="pelagos_api_tree_get_people",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return string
      */
@@ -310,7 +330,12 @@ class TreeController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/tree/json/re/projects/peopleId/{personId}.json", name="pelagos_api_tree_get_research_groups_by_person", methods={"GET"})
+     * @Route(
+     *     "/api/tree/json/re/projects/peopleId/{personId}.json",
+     *     name="pelagos_api_tree_get_research_groups_by_person",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return string
      */
