@@ -65,4 +65,6 @@ services:
     App\Util\Ldap\LdapClient:
         $host: "%env(LDAP_HOST)%"
 
-    Elastica\Type: "@fos_elastica.index.pelagos.dataset"
+    App\Util\DatasetIndex:
+        autowire: false
+        arguments: ["@fos_elastica.index.pelagos.dataset"]
