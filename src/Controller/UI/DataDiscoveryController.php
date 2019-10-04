@@ -48,12 +48,12 @@ class DataDiscoveryController extends AbstractController
      *
      * @param Request $request The Symfony request object.
      * @param DatasetIndex $datasetIndex
+     * @param LogActionItemEventDispatcher $logActionItemEventDispatcher
      *
      * @return Response
      * @Route("/data-discovery/dataset-count", name="pelagos_app_ui_datadiscovery_count", methods={"GET"})
-     *
      */
-    public function countAction(Request $request, DatasetIndex $datasetIndex)
+    public function countAction(Request $request, DatasetIndex $datasetIndex, LogActionItemEventDispatcher $logActionItemEventDispatcher)
     {
         $criteria = array();
         if (!empty($request->query->get('by')) and !empty($request->query->get('id'))) {
@@ -101,7 +101,7 @@ class DataDiscoveryController extends AbstractController
                 $textFilter,
                 $geoFilter
             );
-            $this->dispatchSearchTermsLogEvent($request, $searchTermsQueryResult);
+            $this->dispatchSearchTermsLogEvent($request, $searchTermsQueryResult, $logActionItemEventDispatcher);
         }
         
         return $this->render(
