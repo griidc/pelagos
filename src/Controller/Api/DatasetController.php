@@ -46,7 +46,7 @@ class DatasetController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/datasets/count", name="pelagos_api_datasets_count", methods={"GET"})
+     * @Route("/api/datasets/count", name="pelagos_api_datasets_count", methods={"GET"}, defaults={"_format"="json"})
      *
      * @View()
      *
@@ -102,7 +102,7 @@ class DatasetController extends EntityController
      *
      * @View(serializerEnableMaxDepthChecks = true)
      *
-     * @Route("/api/datasets/{id}", name="pelagos_api_datasets_get", methods={"GET"})
+     * @Route("/api/datasets/{id}", name="pelagos_api_datasets_get", methods={"GET"}, defaults={"_format"="json"})
      *
      * @return Dataset
      */
