@@ -874,11 +874,13 @@ class Person extends Entity
                 ($personDataRepositoriesCount > 1 ? 'Repositories' : 'Repository');
         }
 
-        $personAccountCount = count($this->getAccount());
-        if ($personAccountCount > 0) {
-            $notDeletableReasons[] = 'there is an associated Account';
+        if (is_countable($this->getAccount())) {
+            $personAccountCount = count($this->getAccount());
+            if ($personAccountCount > 0) {
+                $notDeletableReasons[] = 'there is an associated Account';
+            }
         }
-
+        
         if (count($notDeletableReasons) > 0) {
             $notDeletableException = new NotDeletableException();
             $notDeletableException->setReasons($notDeletableReasons);
