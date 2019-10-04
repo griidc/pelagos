@@ -4,7 +4,7 @@ namespace App\Twig;
 
 use Doctrine\Common\Collections\Collection;
 
-use Entity\DIF;
+use App\Entity\DIF;
 
 use App\Util\MaintenanceMode;
 
@@ -248,7 +248,7 @@ class Extensions extends \Twig_Extension
 
             // XSL template.
             $xslDoc = new \DOMDocument();
-            $xslDoc->load($this->kernelRootDir . '/../src/Pelagos/Bundle/AppBundle/Resources/views/xsl/' . $xsl);
+            $xslDoc->load($this->kernelRootDir . '/../templates/xsl/' . $xsl);
 
             // The Processor.
             $proc = new \XSLTProcessor();

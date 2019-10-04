@@ -1,0 +1,65 @@
+[
+    {% for fundingOrg in fundingOrgs %}
+        {
+            "text": "{{fundingOrg.getName}}",
+            "li_attr": {
+                "style": "color:{{tree.rfp_color}}"
+            },
+            "children": [
+                {% set fundingCycles = [] %}
+                {% for fundingCycle in fundingOrg.getFundingCycles if fundingCycleIds|length == 0 or fundingCycle.id in fundingCycleIds %}
+                    {% set fundingCycles = fundingCycles|merge([fundingCycle]) %}
+                {% endfor %}
+                {% for fundSrc in fundingCycles %}
+                {% set projects = fundSrc.getResearchGroups %}
+                    {
+                        "id" : "projects_funding-cycle_{{fundSrc.getId}}",
+                        "text": "{{fundSrc.getName}}",
+                        "children": true
+                        ,
+                        "li_attr": {
+                            "style": "color:{{tree.rfp_color}}",
+                            "id" : "projects_funding-cycle_{{fundSrc.getId}}"
+                        },
+                        "a_attr": {
+                            "action": "{{tree.rfp_action | evaluate}}"
+                        }
+                        {% if tree.max_depth > 1 %}
+                            ,
+                            "state" : {
+                            {% if tree.expand_to_depth > 1 %}
+                                "opened": true
+                            {% else %}
+                                "opened": false
+                            {% endif %}
+                            }
+                        {% endif %}
+                    }
+                    {% if not loop.last %}
+                        ,
+                    {% endif %}
+                {% endfor %}
+            ]
+            {% if tree.max_depth > 0 %}
+                ,
+                "state" : {
+                    "opened": true
+                }
+            {% endif %}
+        }
+        {% if not loop.last %}
+            ,
+        {% endif %}
+    {% endfor %}
+    {% if not fundingOrgs %}
+        {
+            "text": "no datasets found",
+            "li_attr": {
+                "style": "color:red"
+            },
+            "a_attr": {
+                "id": "noDatasetsFound"
+            }
+        }
+    {% endif %}
+]

@@ -58,3 +58,7 @@ services:
         $peopleOu: "%env(LDAP_PEOPLE_OU)%"
     App\Util\Ldap\LdapClient:
         $host: "%env(LDAP_HOST)%"
+
+    App\Util\DatasetIndex:
+        autowire: false
+        arguments: ["@fos_elastica.index.pelagos.dataset"]
