@@ -8,7 +8,9 @@ doctrine:
         mapping_types:
             citext: citext
         types:
-            citext: App\DoctrineExtensions\DBAL\Types\CITextType
+            citext: 
+                class: App\DoctrineExtensions\DBAL\Types\CITextType
+                commented: false
     orm:
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore

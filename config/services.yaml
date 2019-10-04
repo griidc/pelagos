@@ -35,22 +35,16 @@ services:
             $maximumPasswordAge: "%env(ACCOUNT_PASSWORD_MAX_AGE)%"
 
 
-    App\EventListener\EventListener:
+    App\Util\MailSender:
         bind:
             string $fromAddress: "%env(MAILER_FROM_ADDR)%"
             string $fromName: "%env(MAILER_FROM_NAME)%"
             
     App\EventListener\AccountListener:
-        bind:
-            string $fromAddress: "%env(MAILER_FROM_ADDR)%"
-            string $fromName: "%env(MAILER_FROM_NAME)%"
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.account.forgot_username, method: onForgotUsername }
 
     App\EventListener\DIFListener:
-        bind:
-            string $fromAddress: "%env(MAILER_FROM_ADDR)%"
-            string $fromName: "%env(MAILER_FROM_NAME)%"
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.dif.saved_not_submitted, method: onSavedNotSubmitted }
             - { name: kernel.event_listener, event: pelagos.entity.dif.submitted, method: onSubmitted }

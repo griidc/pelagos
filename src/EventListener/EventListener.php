@@ -16,8 +16,8 @@ use App\Entity\Dataset;
 use App\Entity\DataRepositoryRole;
 use App\Entity\Person;
 use App\Entity\PersonDataRepository;
-
 use App\Entity\ResearchGroupRole;
+use App\Util\MailSender;
 
 // use Pelagos\Util\DataStore;
 // use Pelagos\Util\MdappLogger;
@@ -56,13 +56,6 @@ abstract class EventListener
     protected $tokenStorage;
 
     /**
-     * An array holding email from name/email information.
-     *
-     * @var array
-     */
-    protected $from;
-
-    /**
      * A variable to hold instance of Pelagos Entityhandler.
      *
      * @var EntityHandler
@@ -94,10 +87,8 @@ abstract class EventListener
      * This is the class constructor to handle dependency injections.
      *
      * @param \Twig_Environment  $twig          Twig engine.
-     * @param \Swift_Mailer      $mailer        Email handling library.
+     * @param MailSender         $mailer        Email handling library.
      * @param TokenStorage       $tokenStorage  Symfony's token object.
-     * @param string             $fromAddress   Sender's email address.
-     * @param string             $fromName      Sender's name to include in email.
      * @param EntityHandler|null $entityHandler Pelagos entity handler.
      * @param Producer           $producer      An AMQP/RabbitMQ Producer.
      * @param DataStore|null     $dataStore     An instance of the Pelagos Data Store utility service.
@@ -105,10 +96,8 @@ abstract class EventListener
      */
     public function __construct(
         \Twig_Environment $twig,
-        \Swift_Mailer $mailer,
-        TokenStorageInterface $tokenStorage,
-        string $fromAddress,
-        string $fromName
+        MailSender $mailer,
+        TokenStorageInterface $tokenStorage
         // EntityHandler $entityHandler = null,
         // Producer $producer = null,
         // DataStore $dataStore = null,
@@ -117,7 +106,6 @@ abstract class EventListener
         $this->twig = $twig;
         $this->mailer = $mailer;
         $this->tokenStorage = $tokenStorage;
-        $this->from = array($fromAddress => $fromName);
         // $this->entityHandler = $entityHandler;
         // $this->producer = $producer;
         // $this->dataStore = $dataStore;
@@ -156,20 +144,12 @@ abstract class EventListener
 
         foreach (array_unique($peopleObjs, SORT_REGULAR) as $person) {
             $mailData['recipient'] = $person;
-            $message = new \Swift_Message();
-            $message
-                ->setSubject($twigTemplate->renderBlock('subject', $mailData))
-                ->setFrom($this->from)
-                ->setTo($person->getEmailAddress())
-                ->setBody($twigTemplate->renderBlock('body_html', $mailData), 'text/html')
-                ->addPart($twigTemplate->renderBlock('body_text', $mailData), 'text/plain');
-            foreach ($attachments as $attachment) {
-                if (!$attachment instanceof \Swift_Attachment) {
-                    throw new \InvalidArgumentException('Attachment is not an instance of Swift_Attachment');
-                }
-                $message->attach($attachment);
-            }
-            $this->mailer->send($message);
+            $this->mailer->sendEmailMessage(
+                $twigTemplate,
+                $mailData,
+                $person->getEmailAddress(),
+                $attachments
+            );
         }
     }
 
