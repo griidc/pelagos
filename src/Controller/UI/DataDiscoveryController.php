@@ -103,7 +103,7 @@ class DataDiscoveryController extends AbstractController
             );
             $this->dispatchSearchTermsLogEvent($request, $searchTermsQueryResult, $logActionItemEventDispatcher);
         }
-        
+
         return $this->render(
             'DataDiscovery/datasets.html.twig',
             array(
@@ -282,18 +282,20 @@ class DataDiscoveryController extends AbstractController
             'sessionId' => $request->getSession()->getId(),
             'clientIp' => $request->getClientIp()
         );
-        $userType = get_class($this->getUser());
-        switch ($userType) {
-            case 'App\Entity\Account':
-                $clientInfo['userType'] = 'GoMRI';
-                $clientInfo['userId'] = $this->getUser()->getUserId();
-                break;
-            case 'HWI\Bundle\OAuthBundle\Security\Core\User\OAuthUser':
-                $clientInfo['userType'] = 'Non-GoMRI';
-                $clientInfo['userId'] = $this->getUser()->getUsername();
-                break;
-            default:
-                break;
+        if ($this->getUser() instanceof Account) {
+            $userType = get_class($this->getUser());
+            switch ($userType) {
+                case 'App\Entity\Account':
+                    $clientInfo['userType'] = 'GoMRI';
+                    $clientInfo['userId'] = $this->getUser()->getUserId();
+                    break;
+                case 'HWI\Bundle\OAuthBundle\Security\Core\User\OAuthUser':
+                    $clientInfo['userType'] = 'Non-GoMRI';
+                    $clientInfo['userId'] = $this->getUser()->getUsername();
+                    break;
+                default:
+                    break;
+            }
         }
 
         $numResults = $searchResult->count();
