@@ -35,11 +35,10 @@ matrix:
 # Define an environment variable
 env:
   - SYMFONY_VERSION="4.3.*" DB=postgresql
-  - APP_ENV=test
 
 # Update composer
 # Create database
-before-install:
+before_install:
   - sudo apt-get update
 
   - echo 'DOCKER_OPTS="-H tcp://127.0.0.1:2375 -H unix:///var/run/docker.sock -s devicemapper"' | sudo tee /etc/default/docker > /dev/null
@@ -53,11 +52,11 @@ before-install:
 # Install composer dependencies,
 # Create schema and fixtures
 install:
-  - export SYMFONY_ENV=drupal_dev
+  - export APP_ENV=test
   - composer install
   - phpenv rehash
 
-before-script:
+before_script:
   - php bin/console doctrine:schema:create
   - php bin/console doctrine:fixtures:load
 
