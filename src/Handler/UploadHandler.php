@@ -277,7 +277,7 @@ class UploadHandler
             if (!file_exists($targetDirectory)) {
                 mkdir($targetDirectory, 0755, true);
             }
-            
+
             $movedFile = $file->move($targetDirectory, $name);
 
             return array(
