@@ -11,7 +11,11 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\Query;
 
-use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\Routing\Annotation\Route;
+
+use FOS\RestBundle\Controller\Annotations\View;
+
+use FOS\ElasticaBundle\Persister\ObjectPersister;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
@@ -88,8 +92,7 @@ class DatasetPublicationController extends EntityController
     */
     public function getCollectionAction()
     {
-        $entityHandler = $this->get('pelagos.entity.handler');
-        $collection = $entityHandler->getAll(
+        $collection = $this->entityHandler->getAll(
             DatasetPublication::class,
             array(
                 'creationTimeStamp' => 'DESC'
@@ -133,9 +136,12 @@ class DatasetPublicationController extends EntityController
     /**
      * Link a Publication to a Dataset by their respective IDs.
      *
-     * @param integer $id      Publication ID.
+     * @param integer $id Publication ID.
      * @param Request $request A Request object.
+     * @param ObjectPersister $objectPersister
      *
+     * @return Response A HTTP Response object.
+     * @throws UniqueConstraintViolationException If entity handler re-throws a this exception that isn't uniq_dataset_publication.
      * @ApiDoc(
      *   section = "Publication to Dataset Association",
      *   parameters = {
@@ -159,14 +165,8 @@ class DatasetPublicationController extends EntityController
      *     methods={"LINK"}
      *     )
      *
-     * @throws BadRequestHttpException            If link already exists.
-     * @throws BadRequestHttpException            If Dataset is not found internally.
-     * @throws BadRequestHttpException            If database throws this specific uniqueness violation.
-     * @throws UniqueConstraintViolationException If entity handler re-throws a this exception that isn't uniq_dataset_publication.
-     *
-     * @return Response A HTTP Response object.
      */
-    public function linkAction($id, Request $request)
+    public function linkAction($id, Request $request, ObjectPersister $objectPersister)
     {
         $datasetId = $request->query->get('dataset');
 
@@ -180,7 +180,7 @@ class DatasetPublicationController extends EntityController
 
         // Check for existing publink and throw bad request error if exists.
         $criteria = array('dataset' => $datasetId, 'publication' => $id);
-        $publinks = $this->get('pelagos.entity.handler')->getBy(DatasetPublication::class, $criteria);
+        $publinks = $this->entityHandler->getBy(DatasetPublication::class, $criteria);
         if (count($publinks) > 0) {
             $existingPublink = $publinks[0];
             $createdOn = $existingPublink->getCreationTimeStamp()->format('m/d/Y H:i');
@@ -190,13 +190,11 @@ class DatasetPublicationController extends EntityController
         }
 
         $dataPub = new DatasetPublication($publication, $dataset);
-        $entityHandler = $this->get('pelagos.entity.handler');
         try {
-            $entityHandler->create($dataPub);
+            $this->entityHandler->create($dataPub);
             // When a dataset to publication link is made the related dataset is reindex by Elastica.
             // This is done because of the way their relationship works, and change is not detected.
-            $persister = $this->get('fos_elastica.object_persister.pelagos.dataset');
-            $persister->insertOne($dataPub->getDataset());
+            $objectPersister->insertOne($dataPub->getDataset());
         } catch (UniqueConstraintViolationException $e) {
             if (preg_match('/uniq_dataset_publication/', $e->getMessage())) {
                 throw new BadRequestHttpException('Link already exists.');

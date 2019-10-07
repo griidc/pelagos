@@ -2,15 +2,51 @@
 
 namespace App\Controller\Api;
 
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\Routing\Annotation\Route;
+
+use FOS\RestBundle\Controller\Annotations\View;
+
+use App\Handler\EntityHandler;
+use App\Handler\UploadHandler;
 
 /**
  * The upload api controller.
  */
 class UploadController extends EntityController
 {
+    /**
+     * @var UploadHandler
+     */
+    protected $uploadHandler;
+
+    /**
+     * @var EntityHandler
+     */
+    protected $entityHandler;
+
+    /**
+     * @var FormFactoryInterface Form factory instance.
+     */
+    protected $formFactory;
+
+    /**
+     * TreeController constructor.
+     *
+     * @param UploadHandler $uploadHandler
+     * @param EntityHandler $entityHandler
+     * @param FormFactoryInterface $formFactory
+     */
+    public function __construct(UploadHandler $uploadHandler, EntityHandler $entityHandler, FormFactoryInterface $formFactory)
+    {
+        $this->entityHandler = $entityHandler;
+        $this->formFactory = $formFactory;
+        parent::__construct($entityHandler, $formFactory);
+        $this->uploadHandler = $uploadHandler;
+    }
+
     /**
      * Process a post of a file or a file chunk.
      *
@@ -30,7 +66,7 @@ class UploadController extends EntityController
     public function postAction(Request $request)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        return $this->container->get('pelagos.handler.upload')->handleUpload($request);
+        return $this->uploadHandler->handleUpload($request);
     }
 
     /**
@@ -52,6 +88,6 @@ class UploadController extends EntityController
     public function deleteAction($uuid)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        return $this->container->get('pelagos.handler.upload')->handleDelete($uuid);
+        return $this->uploadHandler->handleDelete($uuid);
     }
 }

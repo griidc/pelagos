@@ -342,9 +342,8 @@ class PersonController extends EntityController
      */
     public function deleteAction($id)
     {
-        $handler = $this->container->get('pelagos.entity.handler');
-        $primaryPointOfContactCount = $handler->count(DIF::class, array('primaryPointOfContact' => $id));
-        $secondaryPointOfContactCount = $handler->count(DIF::class, array('secondaryPointOfContact' => $id));
+        $primaryPointOfContactCount = $this->entityHandler->count(DIF::class, array('primaryPointOfContact' => $id));
+        $secondaryPointOfContactCount = $this->entityHandler->count(DIF::class, array('secondaryPointOfContact' => $id));
         if ($primaryPointOfContactCount > 0) {
             throw new BadRequestHttpException('This Person is not deletable because 
                 there' . ($primaryPointOfContactCount > 1 ? ' are ' : ' is ') . $primaryPointOfContactCount .

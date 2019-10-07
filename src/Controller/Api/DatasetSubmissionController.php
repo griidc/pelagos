@@ -7,10 +7,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Form\FormInterface;
 
-use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\Routing\Annotation\Route;
+
+use FOS\RestBundle\Controller\Annotations\View;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
+use App\Util\UrlValidation;
 use App\Entity\DatasetSubmission;
 use App\Form\DatasetSubmissionType;
 
@@ -156,10 +159,10 @@ class DatasetSubmissionController extends EntityController
         }
         $this->handleUpdate(DatasetSubmissionType::class, DatasetSubmission::class, $id, $request, 'PUT');
         foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
-            $this->container->get('pelagos.entity.handler')->update($datasetContact);
+            $this->entityHandler->update($datasetContact);
         }
         foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
-            $this->container->get('pelagos.entity.handler')->update($metadataContact);
+            $this->entityHandler->update($metadataContact);
         }
         return $this->makeNoContentResponse();
     }
@@ -199,13 +202,12 @@ class DatasetSubmissionController extends EntityController
         if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
             throw new BadRequestHttpException('This submission has already been submitted');
         }
-        $entityHandler = $this->container->get('pelagos.entity.handler');
         $datasetSubmission = $this->handleUpdate(DatasetSubmissionType::class, DatasetSubmission::class, $id, $request, 'PATCH');
         foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
-            $entityHandler->update($datasetContact);
+            $this->entityHandler->update($datasetContact);
         }
         foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
-            $entityHandler->update($metadataContact);
+            $this->entityHandler->update($metadataContact);
         }
         return $this->makeNoContentResponse();
     }
@@ -294,9 +296,11 @@ class DatasetSubmissionController extends EntityController
     /**
      * Validate the url of the attribute.
      *
-     * @param string  $id      The id of the dataset submission.
+     * @param string $id The id of the dataset submission.
      * @param Request $request The request object.
+     * @param UrlValidation $urlValidation
      *
+     * @return boolean|string
      * @Route(
      *     "/api/dataset_submission/validate-url/{id}",
      *     name="pelagos_api_dataset_submission_validate_url",
@@ -306,9 +310,8 @@ class DatasetSubmissionController extends EntityController
      *
      * @View()
      *
-     * @return boolean|string
      */
-    public function validateUrlAction($id, Request $request)
+    public function validateUrlAction($id, Request $request, UrlValidation $urlValidation)
     {
         $erddapUrl = $request->get('erddapUrl');
 
@@ -316,8 +319,6 @@ class DatasetSubmissionController extends EntityController
             return true;
         }
 
-        $urlValidationService = $this->get('pelagos.util.url_validation');
-
-        return $urlValidationService->validateUrl($erddapUrl);
+        return $urlValidation->validateUrl($erddapUrl);
     }
 }
