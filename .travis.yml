@@ -44,7 +44,7 @@ before_install:
   - echo 'DOCKER_OPTS="-H tcp://127.0.0.1:2375 -H unix:///var/run/docker.sock -s devicemapper"' | sudo tee /etc/default/docker > /dev/null
   - sudo service docker restart
   - sleep 5
-  - sudo docker pull centos:centos${version}
+  #- sudo docker pull centos:centos${version}
 
   - psql -c 'create database postgres' -U postgres
   - psql -c 'create extension postgis' -U postgres -d postgres
