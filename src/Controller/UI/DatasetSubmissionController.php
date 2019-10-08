@@ -22,6 +22,8 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use App\Form\DatasetSubmissionType;
 use App\Form\DatasetSubmissionXmlFileType;
 
+use App\Event\EntityEventDispatcher;
+
 use App\Entity\DataCenter;
 use App\Entity\DIF;
 use App\Entity\Dataset;
@@ -29,6 +31,8 @@ use App\Entity\DatasetSubmission;
 use App\Entity\DistributionPoint;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
+
+use App\Handler\EntityHandler;
 
 use App\Exception\InvalidMetadataException;
 
@@ -55,6 +59,32 @@ class DatasetSubmissionController extends AbstractController
      * Name of the default distribution contact.
      */
     const DEFAULT_DISTRIBUTION_POINT_ROLECODE = 'distributor';
+
+    /**
+     * Protected entityHandler value instance of entityHandler.
+     *
+     * @var entityHandler
+     */
+    protected $entityHandler;
+
+    /**
+     * Protected entity event dispatcher.
+     *
+     * @var EntityEventDispatcher
+     */
+    protected $entityEventDispatcher;
+
+    /**
+     * Constructor for this Controller, to set up default services.
+     *
+     * @param EntityHandler $entityHandler
+     * @param EntityEventDispatcher $entityEventDispatcher
+     */
+    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher)
+    {
+        $this->entityHandler = $entityHandler;
+        $this->entityEventDispatcher = $entityEventDispatcher;
+    }
 
     /**
      * The default action for Dataset Submission.
@@ -222,7 +252,7 @@ class DatasetSubmissionController extends AbstractController
                 $this->entityHandler->update($metadataContact);
             }
 
-            $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
+            $this->entityEventDispatcher->dispatch(
                 $datasetSubmission,
                 $eventName
             );

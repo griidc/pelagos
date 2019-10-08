@@ -2,8 +2,7 @@
 
 namespace App\Controller\UI;
 
-use App\Form\DatasetSubmissionType;
-
+use App\Event\EntityEventDispatcher;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,6 +13,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+
+use App\Form\DatasetSubmissionType;
+
+use App\Handler\EntityHandler;
 
 use App\Entity\Account;
 use App\Entity\Dataset;
@@ -41,6 +44,32 @@ class DatasetReviewController extends AbstractController
      * @var string
      */
     private $mode;
+
+    /**
+     * Protected entityHandler value instance of entityHandler.
+     *
+     * @var entityHandler
+     */
+    protected $entityHandler;
+
+    /**
+     * Protected entity event dispatcher.
+     *
+     * @var EntityEventDispatcher
+     */
+    protected $entityEventDispatcher;
+
+    /**
+     * Constructor for this Controller, to set up default services.
+     *
+     * @param EntityHandler $entityHandler
+     * @param EntityEventDispatcher $entityEventDispatcher
+     */
+    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher)
+    {
+        $this->entityHandler = $entityHandler;
+        $this->entityEventDispatcher = $entityEventDispatcher;
+    }
 
     /**
      * The default action for Dataset Review.
@@ -396,7 +425,7 @@ class DatasetReviewController extends AbstractController
         $datasetSubmission->setDatasetSubmissionReview($datasetSubmissionReview);
         $this->entityHandler->update($datasetSubmission);
 
-        $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
+        $this->entityEventDispatcher->dispatch(
             $datasetSubmission,
             $eventName
         );
@@ -490,7 +519,7 @@ class DatasetReviewController extends AbstractController
             }
 
             // update MDAPP logs after action is executed.
-            $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
+            $this->entityEventDispatcher->dispatch(
                 $datasetSubmission,
                 $eventName
             );
