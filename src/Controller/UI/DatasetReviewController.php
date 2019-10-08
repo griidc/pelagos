@@ -77,7 +77,7 @@ class DatasetReviewController extends AbstractController
         }
 
         return $this->render(
-            'DatasetReview:index.html.twig',
+            'DatasetReview/index.html.twig',
             array(
                 'udi' => $udi,
                 'dataset' => $dataset,

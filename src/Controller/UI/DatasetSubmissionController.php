@@ -2,7 +2,6 @@
 
 namespace App\Controller\UI;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,6 +10,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
+use Symfony\Component\Routing\Annotation\Route;
 
 use Symfony\Component\Form\Form;
 
@@ -35,8 +36,6 @@ use App\Util\ISOMetadataExtractorUtil;
 
 /**
  * The Dataset Submission controller for the Pelagos UI App Bundle.
- *
- * @Route("/dataset-submission")
  */
 class DatasetSubmissionController extends AbstractController
 {
@@ -64,7 +63,7 @@ class DatasetSubmissionController extends AbstractController
      *
      * @throws BadRequestHttpException When xmlUploadForm is submitted without a file.
      *
-     * @Route("")
+     * @Route("/dataset-submission", name="pelagos_app_ui_datasetsubmission_default")
      *
      * @return Response A Response instance.
      */
@@ -164,9 +163,7 @@ class DatasetSubmissionController extends AbstractController
      * @throws BadRequestHttpException When dataset submission has already been submitted.
      * @throws BadRequestHttpException When DIF has not yet been approved.
      *
-     * @Route("/{id}")
-     *
-     * @Method("POST")
+     * @Route("/dataset-submission/{id}", name="pelagos_app_ui_datasetsubmission_post", methods={"POST"})
      *
      * @return Response A Response instance.
      */
@@ -238,7 +235,7 @@ class DatasetSubmissionController extends AbstractController
             }
 
             return $this->render(
-                'PelagosAppBundle:DatasetSubmission:submit.html.twig',
+                'DatasetSubmission/submit.html.twig',
                 array('DatasetSubmission' => $datasetSubmission)
             );
         }
@@ -399,7 +396,7 @@ class DatasetSubmissionController extends AbstractController
         }
 
         return $this->render(
-            'PelagosAppBundle:DatasetSubmission:index.html.twig',
+            'DatasetSubmission/index.html.twig',
             array(
                 'form' => $form->createView(),
                 'xmlForm' => $xmlFormView,
