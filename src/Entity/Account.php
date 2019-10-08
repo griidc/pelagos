@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 use JMS\Serializer\Annotation as Serializer;
 
-use Pelagos\Exception\PasswordException;
+use App\Exception\PasswordException;
 
 /**
  * Entity class to represent an Account.

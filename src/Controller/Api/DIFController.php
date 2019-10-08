@@ -51,7 +51,7 @@ class DIFController extends EntityController
      *
      * @View()
      *
-     * @Route("/api/difs/count", name="pelagos_api_difs_count", methods={"GET"})
+     * @Route("/api/difs/count", name="pelagos_api_difs_count", methods={"GET"}, defaults={"_format"="json"})
      *
      * @return integer
      */
@@ -105,7 +105,7 @@ class DIFController extends EntityController
      *
      * @View(serializerEnableMaxDepthChecks = true)
      *
-     * @Route("/api/difs/{id}", name="pelagos_api_difs_get", methods={"GET"})
+     * @Route("/api/difs/{id}", name="pelagos_api_difs_get", methods={"GET"}, defaults={"_format"="json"})
      *
      * @return DIF
      */
