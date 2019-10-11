@@ -16,6 +16,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use App\Entity\Account;
 use App\Security\Voter\AccountVoter;
+use App\Util\POSIXifyAccount;
 
 /**
  * The Account API controller.
@@ -154,9 +155,9 @@ class AccountController extends EntityController
     /**
      * Request a user to be converted to POSIX.
      *
-     * @throws BadRequestHttpException In event POSIX cannot be requested.
-     * @throws AccessDeniedException   If user isn't logged in or does not have an account.
+     * @param POSIXifyAccount $posixifyAccount
      *
+     * @return \Symfony\Component\HttpFoundation\Response A response object with an empty body and a "no content" status code.
      * @ApiDoc(
      *   section = "Account",
      *   statusCodes = {
@@ -175,9 +176,8 @@ class AccountController extends EntityController
      *
      * @View()
      *
-     * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function makePosixAction()
+    public function makePosixAction(POSIXifyAccount $posixifyAccount)
     {
         if (!($this->getUser() instanceof Account)) {
             throw new AccessDeniedException('User is either not logged in or does not have an account');
@@ -185,7 +185,7 @@ class AccountController extends EntityController
 
         // Call utility class to POSIX-enable this Account.
         try {
-            $this->get('pelagos.util.posixify_account')->POSIXifyAccount($this->getUser());
+            $posixifyAccount->POSIXifyAccount($this->getUser());
         } catch (\Exception $e) {
             throw new BadRequestHttpException(
                 'There was a problem. '
