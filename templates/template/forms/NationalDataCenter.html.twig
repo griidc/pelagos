@@ -1,0 +1,11 @@
+<form class="entityForm" entityType="NationalDataCenter"
+        {% include 'template/forms/permissionsBlock.html.twig' with {'Entity': NationalDataCenter} %}
+      _action="{{path('pelagos_api_national_data_center_post')}}">
+
+    <input type="hidden" name="id" value="{{NationalDataCenter.getId}}">
+
+    {{ form_widget(form) }}
+
+    {% include 'template/forms/innerForm.html.twig' with {'Entity': NationalDataCenter} %}
+
+</form>
