@@ -45,7 +45,6 @@ class PersonDataRepositoryController extends AbstractController
 
         $ui['PersonDataRepository'] = $personDataRepository;
         $ui['form'] = $form->createView();
-        $ui['entityService'] = $entityHandler;
 
         return $this->render('template/PersonDataRepository.html.twig', $ui);
     }

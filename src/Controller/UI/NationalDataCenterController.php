@@ -49,8 +49,7 @@ class NationalDataCenterController extends AbstractController
 
         return $this->render('template/NationalDataCenter.html.twig', array(
             'NationalDataCenter' => $nationalDataCenter,
-            'form' => $form->createView(),
-            'entityService' => $this->entityHandler
+            'form' => $form->createView()
         ));
     }
 }

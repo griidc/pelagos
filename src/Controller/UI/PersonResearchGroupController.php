@@ -52,7 +52,6 @@ class PersonResearchGroupController extends AbstractController
 
         $ui['PersonResearchGroup'] = $personResearchGroup;
         $ui['form'] = $form->createView();
-        $ui['entityService'] = $entityHandler;
 
         return $this->render('template/PersonResearchGroup.html.twig', $ui);
     }

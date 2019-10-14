@@ -50,7 +50,6 @@ class FundingCycleController extends AbstractController
 
         $ui['FundingCycle'] = $fundingCycle;
         $ui['form'] = $form->createView();
-        $ui['entityService'] = $entityHandler;
 
         return $this->render('template/FundingCycle.html.twig', $ui);
     }
