@@ -2,6 +2,7 @@
 
 namespace App\Controller\UI;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 
 use Symfony\Component\HttpFoundation\Response;
@@ -22,6 +23,13 @@ use App\Entity\ResearchGroup;
  */
 class StatsController extends AbstractController
 {
+    protected $entityManager;
+
+    public function __construct(EntityManagerInterface $em)
+    {
+        $this->entityManager = $em;
+    }
+
     /**
      * Statistics Page.
      *
@@ -34,7 +42,7 @@ class StatsController extends AbstractController
         $this->getStatistics($totalDatasets, $totalSize, $peopleCount, $researchGroupCount);
 
         return $this->render(
-            'PelagosAppBundle:Stats:index.html.twig',
+            'Stats/index.html.twig',
             $twigData = array(
                 'datasets' => $totalDatasets,
                 'totalsize' => $totalSize,
@@ -56,12 +64,8 @@ class StatsController extends AbstractController
      */
     private function getStatistics(&$totalDatasets, &$totalSize, &$peopleCount, &$researchGroupCount) : void
     {
-        // Get the Entity Manager.
-        $entityManager = $this
-            ->container->get('doctrine.orm.entity_manager');
-
         // Recreate a Query Builder for the Person Repository.
-        $queryBuilder = $entityManager
+        $queryBuilder = $this->entityManager
             ->getRepository(Person::class)
             ->createQueryBuilder('person');
 
@@ -77,7 +81,7 @@ class StatsController extends AbstractController
             ->getQuery()->getSingleScalarResult();
 
         // Recreate a Query Builder for the Research Group Repository
-        $queryBuilder = $entityManager
+        $queryBuilder = $this->entityManager
             ->getRepository(ResearchGroup::class)
             ->createQueryBuilder('researchGroup');
 
@@ -86,7 +90,7 @@ class StatsController extends AbstractController
             ->select($queryBuilder->expr()->count('researchGroup.id'))
             ->getQuery()->getSingleScalarResult();
 
-        $datasets = $entityManager->getRepository(Dataset::class);
+        $datasets = $this->entityManager->getRepository(Dataset::class);
 
         $totalDatasets = $datasets->countRegistered();
         $totalSize = $datasets->totalDatasetSize();
@@ -95,7 +99,7 @@ class StatsController extends AbstractController
     /**
      * Get Statistics Data as JSON.
      *
-     * @Route("/json")
+     * @Route("/stats/json", name="pelagos_app_ui_stats_getstatisticsjson")
      *
      * @return Response
      */
@@ -118,15 +122,14 @@ class StatsController extends AbstractController
     /**
      * JSON data for Datasets over Time.
      *
-     * @Route("/data/total-records-over-time")
+     * @Route("/stats/data/total-records-over-time", name="pelagos_app_ui_stats_getdatasetovertime")
      *
      * @return Response
      */
     public function getDatasetOverTimeAction()
     {
 
-        $queryBuilder = $this
-            ->container->get('doctrine.orm.entity_manager')
+        $queryBuilder = $this->entityManager
             ->getRepository(DatasetSubmission::class)
             ->createQueryBuilder('datasetSubmission');
 
@@ -200,7 +203,7 @@ class StatsController extends AbstractController
     /**
      * JSON data for Dataset Size Ranges.
      *
-     * @Route("/data/dataset-size-ranges")
+     * @Route("/stats/data/dataset-size-ranges", name="pelagos_app_ui_stats_getdatasetsizeranges")
      *
      * @return Response
      */
@@ -250,7 +253,7 @@ class StatsController extends AbstractController
             )
         );
 
-        $repository = $this->container->get('doctrine.orm.entity_manager')
+        $repository = $this->entityManager
             ->getRepository(Dataset::class);
 
         $dataSizes = array();
