@@ -5,12 +5,11 @@ namespace App\Controller\UI;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 
-use Symfony\Component\HttpFoundation\Response;
-
-use Symfony\Component\Routing\Annotation\Route;
+use Pelagos\Bundle\AppBundle\Twig\Extensions as TwigExtentions;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-use Pelagos\Bundle\AppBundle\Twig\Extensions as TwigExtentions;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
@@ -25,6 +24,11 @@ class StatsController extends AbstractController
 {
     protected $entityManager;
 
+    /**
+     * Class constructor
+     *
+     * @param EntityManagerInterface $em A Doctrine entity manager.
+     */
     public function __construct(EntityManagerInterface $em)
     {
         $this->entityManager = $em;
