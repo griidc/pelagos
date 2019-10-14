@@ -1,32 +1,31 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
 use Doctrine\ORM\Query;
 
 use Symfony\Component\HttpFoundation\Response;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 use Pelagos\Bundle\AppBundle\Twig\Extensions as TwigExtentions;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DIF;
-use Pelagos\Entity\Person;
-use Pelagos\Entity\ResearchGroup;
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Entity\DIF;
+use App\Entity\Person;
+use App\Entity\ResearchGroup;
 
 /**
  * The Dataset Monitoring controller.
- *
- * @Route("/stats")
  */
-class StatsController extends UIController
+class StatsController extends AbstractController
 {
     /**
      * Statistics Page.
      *
-     * @Route("")
+     * @Route("/stats", name="pelagos_app_ui_stats_default")
      *
      * @return Response
      */
