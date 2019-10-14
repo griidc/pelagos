@@ -1,27 +1,30 @@
 #!/bin/bash
 
-parse_yaml() {
-   local prefix=$2
-   local s='[[:space:]]*' w='[a-zA-Z0-9_]*' fs=$(echo @|tr @ '\034')
-   sed -ne "s|^\($s\)\($w\)$s:$s[\"']\(.*\)[\"']$s\$|\1$fs\2$fs\3|p" \
-        -e "s|^\($s\)\($w\)$s:$s\(.*\)$s\$|\1$fs\2$fs\3|p"  $1 |
-   awk -F$fs '{
-      indent = length($1)/2;
-      vname[indent] = $2;
-      for (i in vname) {if (i > indent) {delete vname[i]}}
-      if (length($3) > 0) {
-         vn=""; for (i=0; i<indent; i++) {vn=(vn)(vname[i])("_")}
-         printf("%s%s%s=\"%s\"\n", "'$prefix'",vn, $2, $3);
-      }
-   }'
-}
-
-if [ ! -f app/config/parameters.yml ]; then
-    echo "parameters.yml not found"
+if [ ! -f .env.local ]; then
+    echo ".env.local not found"
     exit
 fi
+# Manually parse DATABASE_URL from .env.local file
 
-eval $(parse_yaml app/config/parameters.yml "")
+database_url=$(grep "^DATABASE_URL" ./.env.local)
+IFS=':' read -ra database_url_parts <<< "$database_url"
+
+# unused
+dbtype=${database_url_parts[0]}
+dbtype=${dbtype/database_url=/}
+
+parameters__database_user=${database_url_parts[1]}
+parameters__database_user=${parameters__database_user/\/\//}
+
+dbpasshost=${database_url_parts[2]}
+IFS='@' read -ra passhost_array <<< "$dbpasshost"
+parameters__database_password=${passhost_array[0]}
+parameters__database_host=${passhost_array[1]}
+
+dbportname=${database_url_parts[3]}
+IFS='/' read -ra partname_array <<< "$dbportname"
+dbport=${partname_array[0]} # unused
+parameters__database_name=${partname_array[1]}
 
 export PGPASSWORD="$parameters__database_password"
 
