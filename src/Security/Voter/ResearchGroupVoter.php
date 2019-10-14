@@ -2,8 +2,6 @@
 
 namespace App\Security\Voter;
 
-use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
-use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use App\Entity\Account;
@@ -11,6 +9,8 @@ use App\Entity\ResearchGroup;
 use App\Entity\FundingCycle;
 use App\Entity\FundingOrganization;
 use App\Entity\DataRepository;
+use App\Entity\DataRepositoryRole;
+use App\Entity\ResearchGroupRole;
 
 /**
  * A voter to determine if a ResearchGroup can be created or edited.
@@ -93,7 +93,7 @@ class ResearchGroupVoter extends PelagosEntityVoter
             // Research Group Person - Leadership, Admin, Data (aka DR-P/LAD)
             $personResearchGroups = $object->getPersonResearchGroups();
             // If user has one of ResearchGroupRole Leadership, Admin or Data they can edit the ResearchGroup object.
-            $rgRoles = array(ResearchGroupRoles::LEADERSHIP, ResearchGroupRoles::ADMIN, ResearchGroupRoles::DATA);
+            $rgRoles = array(ResearchGroupRole::LEADERSHIP, ResearchGroupRole::ADMIN, ResearchGroupRole::DATA);
             if ($this->doesUserHaveRole($userPerson, $personResearchGroups, $rgRoles)) {
                 return true;
             }
@@ -109,7 +109,7 @@ class ResearchGroupVoter extends PelagosEntityVoter
             if ($this->doesUserHaveRole(
                 $userPerson,
                 $personDataRepositories,
-                array(DataRepositoryRoles::MANAGER)
+                array(DataRepositoryRole::MANAGER)
             )) {
                 return true;
             }

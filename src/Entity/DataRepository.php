@@ -12,7 +12,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Pelagos\Exception\NotDeletableException;
+use App\Exception\NotDeletableException;
 
 /**
  * Entity class to represent a Data Repository.

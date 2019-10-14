@@ -1,0 +1,98 @@
+<fieldset>
+    <legend>Format</legend>
+    <table class="tab-table">
+        <tr>
+            <td>
+				<span class="helpSection">
+					<img class="info" src="{{ asset('images/info32.png') }}">
+					<div class="tooltiptext">
+						A list of all the file types or extensions of all the files included as part
+                        of your dataset. For example: xlsx, csv, tiff, txt, etc.
+					</div>
+				</span>
+                {{ form_row(form.distributionFormatName) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+				<span class="helpSection">
+					<img class="info" src="{{ asset('images/info32.png') }}">
+					<div class="tooltiptext">
+						If multiple files were packaged together to create a single dataset file, please
+                        provide the method used to package these files together. Common examples include
+                        zip and tar.
+					</div>
+				</span>
+                {{ form_row(form.fileDecompressionTechnique) }}
+            </td>
+        </tr>
+    </table>
+</fieldset>
+
+<fieldset>
+    <legend>ERDDAP Info</legend>
+    <table class="tab-table">
+        <tr>
+            <td>
+				<span class="helpSection">
+					<img class="info" src="{{ asset('images/info32.png') }}">
+                    <div class="tooltiptext">
+						Please provide the ERDDAP Url.
+					</div>
+				</span>
+                {{ form_row(form.erddapUrl) }}
+            </td>
+        </tr>
+    </table>
+</fieldset>
+
+<fieldset>
+    <legend>Cold Storage File Information</legend>
+    <table class="tab-table">
+        <tr>
+            <td>
+                {{ form_label(form.isDatasetFileInColdStorage) }}
+                {{ form_widget(form.isDatasetFileInColdStorage, { 'attr': {'class': 'coldstorage-checkbox'} }) }}
+            </td>
+        </tr>
+        <tr class="row-coldstorage-filesize">
+            <td>
+                {{ form_row(form.datasetFileColdStorageArchiveSize) }}
+            </td>
+        </tr>
+        <tr class="row-coldstorage-sha256hash">
+            <td>
+                {{ form_row(form.datasetFileColdStorageArchiveSha256Hash) }}
+            </td>
+        </tr>
+        <tr class="row-coldstorage-original-filename">
+            <td>
+                {{ form_row(form.datasetFileColdStorageOriginalFilename) }}
+            </td>
+        </tr>
+    </table>
+</fieldset>
+
+<fieldset>
+    <legend>File Information</legend>
+    <table class="tab-table">
+        <tr>
+            <td>
+                {{ form_label(form.datasetFileName) }}
+                {{ form.datasetFileName.vars.value }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_label(form.datasetFileSize) }}
+                {{ form.datasetFileSize.vars.value | formatBytes }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_label(form.datasetFileSha256Hash) }}
+                {{ form.datasetFileSha256Hash.vars.value }}
+            </td>
+        </tr>
+    </table>
+</fieldset>

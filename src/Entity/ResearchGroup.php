@@ -14,7 +14,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
 
 use JMS\Serializer\Annotation as Serializer;
 
-use Pelagos\Exception\NotDeletableException;
+use App\Exception\NotDeletableException;
 
 /**
  * Entity class to represent a Research Group.

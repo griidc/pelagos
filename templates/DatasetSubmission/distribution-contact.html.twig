@@ -1,0 +1,4 @@
+{% set distPoint = form.distributionPoints | first %}
+<input type="hidden" id="distributioncontact" name="{{ distPoint.dataCenter.vars.full_name }}" value="{{distPoint.vars.data.dataCenter.id|default}}">
+<input type="hidden" id="distributionrolecode" name="{{ distPoint.roleCode.vars.full_name }}" value="{{ distPoint.vars.data.roleCode|default }}">
+<input type="hidden" id="distributionurl" name="{{ distPoint.distributionUrl.vars.full_name }}" value="{{ distPoint.vars.data.distributionUrl|default }}">

@@ -10,7 +10,7 @@ use App\Validator\Constraints as CustomAssert;
 
 use Hateoas\Configuration\Annotation as Hateoas;
 
-use Pelagos\Exception\NotDeletableException;
+use App\Exception\NotDeletableException;
 
 /**
  * Entity class to represent a Funding Organization.

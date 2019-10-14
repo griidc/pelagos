@@ -29,7 +29,7 @@ services:
     App\Util\MaintenanceMode:
         bind:
             string $maintenanceModeFilename: '%kernel.project_dir%%env(MAINTENANCE_MODE_FILENAME)%'
-            
+
     App\Security\LoginFormAuthenticator:
         bind:
             $maximumPasswordAge: "%env(ACCOUNT_PASSWORD_MAX_AGE)%"
@@ -39,7 +39,7 @@ services:
         bind:
             string $fromAddress: "%env(MAILER_FROM_ADDR)%"
             string $fromName: "%env(MAILER_FROM_NAME)%"
-            
+
     App\EventListener\AccountListener:
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.account.forgot_username, method: onForgotUsername }
@@ -51,7 +51,7 @@ services:
             - { name: kernel.event_listener, event: pelagos.entity.dif.approved, method: onApproved }
             - { name: kernel.event_listener, event: pelagos.entity.dif.unlock_requested, method: onUnlockRequested }
             - { name: kernel.event_listener, event: pelagos.entity.dif.unlocked, method: onUnlocked }
-            
+
     App\Util\Ldap\Ldap:
         $ldapBindDn: "%env(LDAP_BIND_DN)%"
         $ldapBindPw: "%env(LDAP_BIND_PW)%"
@@ -62,3 +62,7 @@ services:
     App\Util\DatasetIndex:
         autowire: false
         arguments: ["@fos_elastica.index.pelagos.dataset"]
+
+    App\Handler\UploadHandler:
+        bind:
+            $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
