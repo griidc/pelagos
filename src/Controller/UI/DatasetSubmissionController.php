@@ -257,12 +257,12 @@ class DatasetSubmissionController extends AbstractController
                 $eventName
             );
 
-            foreach ($this->messages as $message) {
-                $this->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(
-                    $message['body'],
-                    $message['routing_key']
-                );
-            }
+//            foreach ($this->messages as $message) {
+//                $this->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(
+//                    $message['body'],
+//                    $message['routing_key']
+//                );
+//            }
 
             return $this->render(
                 'DatasetSubmission/submit.html.twig',
