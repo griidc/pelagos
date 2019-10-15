@@ -85,7 +85,7 @@ function initJiraLinks() {
             if (origValue !== curLinkVal) {
                 $.ajax({
                     "method": "PATCH",
-                    "url": "api/datasets" + id,
+                    "url": "api/datasets/" + id,
                     "data": { "issueTrackingTicket": curLinkVal }
                     }).done(function() {
                         $(curPos).closest("div").find("a").attr('href', issueTrackingBaseUrl + "/" + curLinkVal).text(curLinkVal);
