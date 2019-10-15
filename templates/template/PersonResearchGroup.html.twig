@@ -1,0 +1,23 @@
+{% extends "template/UI.html.twig" %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript" src="{{ asset('js/entity/PersonResearchGroup.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+<div>
+    <table border="0" width="100%">
+        <tr>
+            <td width="25%" valign="top">
+            </td>
+            <td style="padding:10px;" width="60%" valign="top">
+                <div id="details">
+                    {% include 'template/forms/PersonResearchGroup.html.twig' %}
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+{% endblock %}

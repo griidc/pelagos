@@ -41,7 +41,12 @@ class FundingOrganizationController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/funding-organizations/count", name="pelagos_api_funding_organizations_count", methods={"GET"})
+     * @Route(
+     *     "/api/funding-organizations/count",
+     *     name="pelagos_api_funding_organizations_count",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @View()
      *
@@ -72,7 +77,8 @@ class FundingOrganizationController extends EntityController
      * @Route(
      *     "/api/funding-organizations/validateProperty",
      *     name="pelagos_api_funding_organizations_validate_property",
-     *     methods={"GET"}
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
      *     )
      *
      * @View()
@@ -104,7 +110,8 @@ class FundingOrganizationController extends EntityController
      * @Route(
      *     "/api/funding-organizations/{id}/validateProperty",
      *     name="pelagos_api_funding_organizations_validate_property_existing",
-     *     methods={"GET"}
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
      *     )
      *
      * @View()
@@ -217,6 +224,7 @@ class FundingOrganizationController extends EntityController
      *     "/api/funding-organizations",
      *     name="pelagos_api_funding_organizations_post",
      *     methods={"POST"},
+     *     defaults={"_format"="json"}
      *     )
      *
      * @return Response A Response object with an empty body, a "created" status code,
@@ -250,6 +258,7 @@ class FundingOrganizationController extends EntityController
      *     "/api/funding-organizations/{id}",
      *     name="pelagos_api_funding_organizations_put",
      *     methods={"PUT"},
+     *     defaults={"_format"="json"}
      *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
@@ -282,6 +291,7 @@ class FundingOrganizationController extends EntityController
      *     "/api/funding-organizations/{id}",
      *     name="pelagos_api_funding_organizations_patch",
      *     methods={"PATCH"},
+     *     defaults={"_format"="json"}
      *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
@@ -310,6 +320,7 @@ class FundingOrganizationController extends EntityController
      *     "/api/funding-organizations/{id}",
      *     name="pelagos_api_funding_organizations_delete",
      *     methods={"DELETE"},
+     *     defaults={"_format"="json"}
      *     )
      *
      * @return Response A response object with an empty body and a "no content" status code.
@@ -368,6 +379,7 @@ class FundingOrganizationController extends EntityController
      *     "/api/funding-organizations/{id}/logo",
      *     name="pelagos_api_funding_organizations_post_logo",
      *     methods={"POST"},
+     *     defaults={"_format"="json"}
      *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
@@ -395,6 +407,7 @@ class FundingOrganizationController extends EntityController
      *     "/api/funding-organizations/{id}/logo",
      *     name="pelagos_api_funding_organizations_put_logo",
      *     methods={"PUT"},
+     *     defaults={"_format"="json"}
      *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.

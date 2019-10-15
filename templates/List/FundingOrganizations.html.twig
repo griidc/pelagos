@@ -1,0 +1,117 @@
+{% extends "template/UI.html.twig" %}
+{% block title %}Funding Organization{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="//cdn.datatables.net/select/1.2.3/css/select.dataTables.min.css" rel="stylesheet" />
+
+    <link href="{{ asset('css/entity.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js"></script>
+
+    <script type="text/javascript" src="{{ asset('js/common.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/entityList.js') }}"></script>
+{% endblock %}
+
+{%
+set properties = [
+    'sortOrder',
+    'name',
+    'emailAddress',
+    'description',
+    'url',
+    'phoneNumber',
+    'deliveryPoint',
+    'city',
+    'administrativeArea',
+    'postalCode',
+    'country',
+    'creationTimeStamp',
+    'creator.id',
+    'creator.firstName',
+    'creator.lastName',
+    'modificationTimeStamp',
+    'modifier.id',
+    'modifier.firstName',
+    'modifier.lastName',
+]
+%}
+
+{% block body %}
+<table
+    viewInterface = "{{ path('pelagos_app_ui_fundingorganization_default') }}"
+    personInterface = "{{ path('pelagos_app_ui_person_default') }}"
+    entityApi = "{{ path('pelagos_api_funding_organizations_get_collection') }}"
+    entityNiceName = "Funding Organization"
+    class = "entityTable stripe"
+    width = "100%"
+    data-ajax = '{
+        "url": "{{ path('pelagos_api_funding_organizations_get_collection', {'_properties': properties | join(',')}) }}",
+        "dataSrc": "",
+        "cache": true
+    }'
+    data-columns = '[
+        { "data": "sortOrder" },
+        { "data": "name" },
+        { "data": "emailAddress" },
+        { "data": "description" },
+        { "data": "url" },
+        { "data": "phoneNumber" },
+        { "data": "deliveryPoint" },
+        { "data": "city" },
+        { "data": "administrativeArea" },
+        { "data": "postalCode" },
+        { "data": "country" },
+        { "data": "creationTimeStamp" },
+        { "data": "creator" },
+        { "data": "modificationTimeStamp" },
+        { "data": "modifier" }
+    ]'
+    data-order = '[[ 1, "asc" ]]'
+    creatorColumn = "12"
+    modifierColumn = "14"
+    creationTimeStampColumn = "11"
+    modificationTimeStampColumn = "13"
+>
+    <thead>
+        <tr>
+            <th>Sort</th>
+            <th>Funding Org Name</th>
+            <th>Email</th>
+            <th>Description</th>
+            <th>URL</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Zip</th>
+            <th>Country</th>
+            <th>Created</th>
+            <th>Creator</th>
+            <th>Modified</th>
+            <th>Modifier</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <td class="buttons" colspan = "7">
+                <div>
+                    <button id="button_detail">View Funding Organization Details</button>
+                    <button id="button_delete">Delete Funding Organization</button>
+                    <span id="selection_comment">
+                        <i>For additional options, please make a selection above.</i>
+                    </span>
+                </div>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+{% endblock %}
+
