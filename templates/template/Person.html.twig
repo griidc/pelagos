@@ -65,7 +65,7 @@
                                     <b>Funding Cycle:</b> {{ PersonResearchGroup.researchGroup.fundingCycle.name }}
                                     <br>
                                     {% for personResearch in PersonResearchGroup.researchGroup.personResearchGroups %}
-                                        {% if personResearch.role.name ==  constant('Pelagos\\Bundle\\AppBundle\\DataFixtures\\ORM\\ResearchGroupRoles::LEADERSHIP') %}
+                                        {% if personResearch.role.name ==  constant('App\\Entity\\ResearchGroupRole::LEADERSHIP') %}
                                             <b>PI:</b> {{ personResearch.person.firstName }} {{ personResearch.person.lastName }}
                                         {% endif %}
                                     {% endfor %}

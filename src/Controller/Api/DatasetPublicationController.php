@@ -83,7 +83,8 @@ class DatasetPublicationController extends EntityController
     * @Route(
     *     "/api/dataset_publications",
     *     name="pelagos_api_dataset_publications_get_collection",
-    *     methods={"GET"}
+    *     methods={"GET"},
+    *     defaults={"_format"="json"}
     *     )
     *
     * @View(serializerEnableMaxDepthChecks = true)
@@ -162,7 +163,8 @@ class DatasetPublicationController extends EntityController
      * @Route(
      *     "/api/dataset_publications/{id}",
      *     name="pelagos_api_dataset_publications_link",
-     *     methods={"LINK"}
+     *     methods={"LINK"},
+     *     defaults={"_format"="json"}
      *     )
      *
      */
