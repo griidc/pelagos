@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\FundingOrganization;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -43,7 +44,7 @@ class FundingCycleType extends AbstractType
             ))
             ->add('fundingOrganization', EntityType::class, array(
                 'label' => 'Funding Organization:',
-                'class' => 'App:FundingOrganization',
+                'class' => FundingOrganization::class,
                 'choice_label' => 'name',
                 'placeholder' => '[Please Select a Funding Organization]',
             ))

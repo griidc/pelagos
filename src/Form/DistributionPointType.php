@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\DataCenter;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
@@ -35,7 +36,7 @@ class DistributionPointType extends AbstractType
         $builder
             ->add('dataCenter', EntityType::class, array(
                 'label' => 'Distribution Contact:',
-                'class' => 'App:DataCenter',
+                'class' => DataCenter::class,
                 'choice_value' => 'id',
                 'choice_label' => 'organizationName',
                 'required' => true,
