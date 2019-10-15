@@ -1,0 +1,4 @@
+doi_api_user_name = "username"
+doi_api_password = "password"
+doi_api_prefix = "10.1234"
+url = "https://doi.website.here"

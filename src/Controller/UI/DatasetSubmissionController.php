@@ -22,7 +22,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use App\Form\DatasetSubmissionType;
 use App\Form\DatasetSubmissionXmlFileType;
 
-use App\Event\EntityEventDispatcher;
+use App\EventListener\EntityEventDispatcher;
 
 use App\Entity\DataCenter;
 use App\Entity\DIF;
@@ -257,12 +257,12 @@ class DatasetSubmissionController extends AbstractController
                 $eventName
             );
 
-//            foreach ($this->messages as $message) {
-//                $this->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(
-//                    $message['body'],
-//                    $message['routing_key']
-//                );
-//            }
+            foreach ($this->messages as $message) {
+                $this->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(
+                    $message['body'],
+                    $message['routing_key']
+                );
+            }
 
             return $this->render(
                 'DatasetSubmission/submit.html.twig',

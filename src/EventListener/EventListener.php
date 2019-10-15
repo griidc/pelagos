@@ -4,12 +4,7 @@ namespace App\EventListener;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
-
-// use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
-// use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
-// use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
 
 use App\Entity\Account;
 use App\Entity\Dataset;
@@ -18,9 +13,6 @@ use App\Entity\Person;
 use App\Entity\PersonDataRepository;
 use App\Entity\ResearchGroupRole;
 use App\Util\MailSender;
-
-// use Pelagos\Util\DataStore;
-// use Pelagos\Util\MdappLogger;
 
 /**
  * Listener class for Dataset Submission-related events.
@@ -97,9 +89,9 @@ abstract class EventListener
     public function __construct(
         \Twig_Environment $twig,
         MailSender $mailer,
-        TokenStorageInterface $tokenStorage
+        TokenStorageInterface $tokenStorage,
         // EntityHandler $entityHandler = null,
-        // Producer $producer = null,
+         Producer $producer = null
         // DataStore $dataStore = null,
         // MdappLogger $mdappLogger = null
     ) {
@@ -107,7 +99,7 @@ abstract class EventListener
         $this->mailer = $mailer;
         $this->tokenStorage = $tokenStorage;
         // $this->entityHandler = $entityHandler;
-        // $this->producer = $producer;
+         $this->producer = $producer;
         // $this->dataStore = $dataStore;
         // $this->mdappLogger = $mdappLogger;
     }

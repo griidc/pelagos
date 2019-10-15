@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Event;
+namespace App\EventListener;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * A generic dispatcher.

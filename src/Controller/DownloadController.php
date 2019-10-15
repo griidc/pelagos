@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Event\LogActionItemEventDispatcher;
+use App\EventListener\LogActionItemEventDispatcher;
 use App\Handler\EntityHandler;
 use App\Util\DataStore;
 use Symfony\Component\Routing\Annotation\Route;
