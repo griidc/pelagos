@@ -10,8 +10,6 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-
 use App\Entity\DatasetSubmission;
 use App\Entity\DistributionPoint;
 use App\Entity\Entity;

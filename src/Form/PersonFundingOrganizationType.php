@@ -2,6 +2,8 @@
 
 namespace App\Form;
 
+use App\Entity\FundingOrganization;
+use App\Entity\FundingOrganizationRole;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -41,14 +43,14 @@ class PersonFundingOrganizationType extends AbstractType
             ))
             ->add('fundingOrganization', EntityType::class, array(
                 'label' => 'Funding Organization:',
-                'class' => 'App:FundingOrganization',
+                'class' => FundingOrganization::class,
                 'choice_label' => 'name',
                 'placeholder' => '[Please Select a Funding Organization]',
                 //'attr' => array('class' => 'hiddenFormField'),
             ))
             ->add('role', EntityType::class, array(
                 'label' => 'Role:',
-                'class' => 'App:FundingOrganizationRole',
+                'class' => FundingOrganizationRole::class,
                 'choice_label' => 'name',
                 'placeholder' => '[Please Select a Role]',
             ))

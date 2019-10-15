@@ -1,0 +1,9 @@
+<form class="entityForm" entityType="FundingCycle"
+{% include 'template/forms/permissionsBlock.html.twig' with {'Entity': FundingCycle} %}
+_action="{{path('pelagos_api_funding_cycles_post')}}">
+
+    {{ form_widget(form) }}
+
+    {% include 'template/forms/innerForm.html.twig' with {'Entity': FundingCycle} %}
+
+</form>

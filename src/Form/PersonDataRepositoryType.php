@@ -2,6 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\DataRepository;
+use App\Entity\DataRepositoryRole;
+use App\Entity\Person;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -32,7 +35,7 @@ class PersonDataRepositoryType extends AbstractType
         $builder
             ->add('person', EntityType::class, array(
                 'label' => 'Person:',
-                'class' => 'App:Person',
+                'class' => Person::class,
                 'choice_label' => function ($value, $key, $index) {
                     return $value->getLastName() . ', ' . $value->getFirstName() . ', ' . $value->getEmailAddress();
                 },
@@ -40,13 +43,13 @@ class PersonDataRepositoryType extends AbstractType
             ))
             ->add('dataRepository', EntityType::class, array(
                 'label' => 'Data Repository:',
-                'class' => 'App:DataRepository',
+                'class' => DataRepository::class,
                 'choice_label' => 'name',
                 'placeholder' => '[Please Select a Data Repository]',
             ))
             ->add('role', EntityType::class, array(
                 'label' => 'Role:',
-                'class' => 'App:DataRepositoryRole',
+                'class' => DataRepositoryRole::class,
                 'choice_label' => 'name',
                 'placeholder' => '[Please Select a Role]',
             ))
