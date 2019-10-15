@@ -2,6 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Person;
+use App\Entity\ResearchGroup;
+use App\Entity\ResearchGroupRole;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -35,13 +38,13 @@ class PersonResearchGroupType extends AbstractType
         $builder
             ->add('researchGroup', EntityType::class, array(
                 'label' => 'Research Group:',
-                'class' => 'Pelagos:ResearchGroup',
+                'class' => ResearchGroup::class,
                 'choice_label' => 'name',
                 'placeholder' => '[Please Select a Research Group]',
             ))
             ->add('role', EntityType::class, array(
                 'label' => 'Role:',
-                'class' => 'Pelagos:ResearchGroupRole',
+                'class' => ResearchGroupRole::class,
                 'choice_label' => 'name',
                 'placeholder' => '[Please Select a Role]',
             ))
@@ -52,7 +55,7 @@ class PersonResearchGroupType extends AbstractType
             ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
                 $event->getForm()->add('person', EntityType::class, array(
                     'label' => 'Person:',
-                    'class' => 'Pelagos:Person',
+                    'class' => Person::class,
                     'choice_label' => function ($value, $key, $index) {
                         return $value->getLastName() . ', ' . $value->getFirstName() . ', ' . $value->getEmailAddress();
                     },
@@ -71,7 +74,7 @@ class PersonResearchGroupType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Pelagos\Entity\PersonResearchGroup',
+            'data_class' => 'App\Entity\PersonResearchGroup',
             'allow_extra_fields' => true,
         ));
     }

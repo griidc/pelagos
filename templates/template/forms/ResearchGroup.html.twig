@@ -11,7 +11,7 @@ _action="{{path('pelagos_api_research_groups_post')}}">
     <label for="fundingOrganization">Funding Organization:</label>
     <select dontvalidate required name="fundingCycle.fundingOrganization" fundingOrganization="{{ResearchGroup.getFundingCycle.getFundingOrganization.getId|default}}">
     <option value="">[Please Select a Funding Organization]</option>
-    {% for FundingOrganization in entityService.getAll('Pelagos:FundingOrganization') | sortBy(["name"]) %}
+    {% for FundingOrganization in FundingOrganizations | sortBy(["name"]) %}
         <option value="{{FundingOrganization.getId}}"
         {{ (ResearchGroup.getFundingCycle.getFundingOrganization.getId|default == FundingOrganization.getId ? ' selected ' : '') }}
         >{{FundingOrganization.getName|default}}</option>

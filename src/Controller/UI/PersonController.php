@@ -75,7 +75,6 @@ class PersonController extends AbstractController
 
         $ui['Person'] = $person;
         $ui['form'] = $form->createView();
-        $ui['entityService'] = $entityHandler;
 
         return $this->render('template/Person.html.twig', $ui);
     }

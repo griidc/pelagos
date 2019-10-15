@@ -2,6 +2,7 @@
 
 namespace App\Controller\UI;
 
+use App\Entity\FundingOrganization;
 use App\Entity\ResearchGroup;
 use App\Handler\EntityHandler;
 use App\Security\EntityProperty;
@@ -72,7 +73,7 @@ class ResearchGroupController extends AbstractController
         $form = $this->get('form.factory')->createNamed(null, ResearchGroupType::class, $researchGroup);
         $ui['form'] = $form->createView();
         $ui['ResearchGroup'] = $researchGroup;
-        $ui['entityService'] = $entityHandler;
+        $ui['FundingOrganizations'] = $this->getDoctrine()->getRepository(FundingOrganization::class)->findAll();
 
         return $this->render('template/ResearchGroup.html.twig', $ui);
     }
