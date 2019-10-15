@@ -311,7 +311,7 @@ class DatasetDownloadReportController extends ReportController
                 ->where('log.subjectEntityName = ?1')
                 ->andWhere('log.actionName = ?2')
                 ->orderBy('log.creationTimeStamp', 'ASC')
-                ->setParameter(1, 'App\Entity\Dataset')
+                ->setParameter(1, 'Pelagos\Entity\Dataset')
                 ->setParameter(2, 'File Download')
                 ->getQuery();
         } else {
@@ -327,7 +327,7 @@ class DatasetDownloadReportController extends ReportController
             $endDateInclusively = $endDateInclusively->add(new \DateInterval('P1D'));
             $query->setParameters([
                 'actionName' => 'File Download',
-                'subjectEntityName' => 'App\Entity\Dataset',
+                'subjectEntityName' => 'Pelagos\Entity\Dataset',
                 'startDate' => $options['startDate'],
                 'endDate' => $endDateInclusively
             ]);
