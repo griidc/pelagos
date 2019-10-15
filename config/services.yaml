@@ -10,6 +10,9 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            string $issueTrackingBaseUrl: '%env(ISSUE_TRACKING_BASE_URL)%'
+            string $mdappLogfile: '%env(MDAPP_LOGFILE)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -39,6 +42,10 @@ services:
         bind:
             string $fromAddress: "%env(MAILER_FROM_ADDR)%"
             string $fromName: "%env(MAILER_FROM_NAME)%"
+
+    App\Util\MdappLogger:
+        arguments:
+            - '%env(MDAPP_LOGFILE)%'
 
     App\EventListener\AccountListener:
         tags:

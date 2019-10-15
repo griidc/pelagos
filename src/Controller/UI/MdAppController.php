@@ -12,27 +12,44 @@ use App\Form\MdappType;
 
 use Doctrine\ORM\Query;
 
-#use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Handler\EntityHandler;
+use App\Util\MdappLogger;
 
 /**
  * The MDApp controller.
  */
 class MdAppController extends AbstractController
 {
+    /**
+     * Jira issue tracker.
+     *
+     * @var string issueTrackingBaseUrl
+     */
+    protected $issueTrackingBaseUrl;
+
+    /**
+     * The Pelagos Mdapp logfile.
+     *
+     * @var string mdappLogfile
+     */
+    protected $mdappLogfile;
 
     /**
      * Class constructor.
      *
-     * @param EntityHandler $entityHandler A Pelagos EntityHandler instance.
+     * @param EntityHandler $entityHandler         A Pelagos EntityHandler instance.
+     * @param string        $issueTrackingBaseUrl  Issue tracker base URL.
+     * @param string        $mdappLogfile          The Mdapp logfile.
      */
-    public function __construct(EntityHandler $entityHandler)
+    public function __construct(EntityHandler $entityHandler, string $issueTrackingBaseUrl, string $mdappLogfile)
     {
+        $this->issueTrackingBaseUrl = $issueTrackingBaseUrl;
         $this->entityHandler = $entityHandler;
+        $this->mdappLogfile = $mdappLogfile;
     }
 
     /**
@@ -40,8 +57,9 @@ class MdAppController extends AbstractController
      *
      * @Route(
      *      "/mdapp",
-     *      name="pelagos_app_ui_mdapp_default")
+     *      name="pelagos_app_ui_mdapp_default",
      *      methods={"GET"}
+     * )
      *
      * @return Response
      */
@@ -60,20 +78,20 @@ class MdAppController extends AbstractController
      *
      * This function called when Post occurs upon submitt of the MdApp form.
      *
-     * @param Request $request The Symfony request object.
-     * @param integer $id      The id of the Dataset to change the dataset status for.
+     * @param Request     $request The Symfony request object.
+     * @param MdappLogger $logger  The Pelagos Mdapp logger.
+     * @param integer     $id      The id of the Dataset to change the dataset status for.
      *
      * @Route(
      *      "/mdapp/change-dataset-status/{id}",
-     *      name="/mdapp/change-dataset-status/{id}",
+     *      name="app_ui_mdapp_changedatasetstatus",
      *      methods={"POST"}
      * )
      *
      * @return Response
      */
-    public function changeDatasetStatusAction(Request $request, $id)
+    public function changeDatasetStatusAction(Request $request, MdappLogger $mdappLogger, $id)
     {
-        $mdappLogger = $this->get('pelagos.util.mdapplogger');
         $dataset = $this->entityHandler->get(Dataset::class, $id);
         $message = null;
         $from = $dataset->getDatasetStatus();
@@ -99,7 +117,6 @@ class MdAppController extends AbstractController
                 $this->get('session')->getFlashBag()->add('error', $message);
             }
         }
-
         return $this->redirectToRoute('pelagos_app_ui_mdapp_default');
     }
 
@@ -128,7 +145,7 @@ class MdAppController extends AbstractController
         return $this->render(
             'MdApp/main.html.twig',
             array(
-                'issueTrackingBaseUrl' => $this->getParameter('issue_tracking_base_url'),
+                'issueTrackingBaseUrl' => $this->issueTrackingBaseUrl,
                 'm_dataset' => array(
                     'submitted' => $this->entityHandler->getBy(
                         Dataset::class,
@@ -168,14 +185,16 @@ class MdAppController extends AbstractController
      *
      * @param string $udi The dataset UDI identifier.
      *
-     * @Route("/mdapp/getlog/{udi}")
+     * @Route("/mdapp/getlog/{udi}",
+     *      name="app_ui_mdapp_getlog"
+     * )
      *
      * @return response
      */
     public function getlog($udi)
     {
 
-        $rawlog = file($this->getParameter('mdapp_logfile'));
+        $rawlog = file($this->mdappLogfile);
         $entries = array_values(preg_grep("/$udi/i", $rawlog));
         $data = null;
         if (count($entries) > 0) {
