@@ -41,7 +41,7 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/research-groups/count", name="pelagos_api_research_groups_count", methods={"GET"})
+     * @Route("/api/research-groups/count", name="pelagos_api_research_groups_count", methods={"GET"}, defaults={"_format"="json"})
      *
      * @View()
      *
@@ -69,7 +69,12 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/research-groups/validateProperty", name="pelagos_api_research_groups_validate_property", methods={"GET"})
+     * @Route(
+     *     "/api/research-groups/validateProperty",
+     *     name="pelagos_api_research_groups_validate_property",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @View()
      *
@@ -97,7 +102,12 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/research-groups/{id}/validateProperty", name="pelagos_api_research_groups_validate_property_existing", methods={"GET"})
+     * @Route(
+     *     "/api/research-groups/{id}/validateProperty",
+     *     name="pelagos_api_research_groups_validate_property_existing",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @View()
      *
@@ -162,7 +172,12 @@ class ResearchGroupController extends EntityController
      *
      * @View(serializerEnableMaxDepthChecks = true)
      *
-     * @Route("/api/research-groups/{id}", name="pelagos_api_research_groups_get", methods={"GET"})
+     * @Route(
+     *     "/api/research-groups/{id}",
+     *     name="pelagos_api_research_groups_get",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return ResearchGroup The Research Group that was retrieved.
      */
@@ -300,7 +315,12 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/research-groups/{id}/logo", name="pelagos_api_research_groups_get_logo", methods={"GET"})
+     * @Route(
+     *     "/api/research-groups/{id}/logo",
+     *     name="pelagos_api_research_groups_get_logo",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return Response A response object containing the logo.
      */
@@ -326,7 +346,11 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/research-groups/{id}/logo", name="pelagos_api_research_groups_post_logo", methods={"POST"})
+     * @Route(
+     *     "/api/research-groups/{id}/logo",
+     *     name="pelagos_api_research_groups_post_logo",
+     *     methods={"POST"}
+     *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */

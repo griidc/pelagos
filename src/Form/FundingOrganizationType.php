@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\DataRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -40,7 +41,7 @@ class FundingOrganizationType extends AbstractType
             ))
             ->add('dataRepository', EntityType::class, array(
                 'label' => 'Data Repository',
-                'class' => 'App:DataRepository',
+                'class' => DataRepository::class,
                 'choice_label' => 'name',
                 'placeholder' => '[Please Select a Data Repository]',
             ))
