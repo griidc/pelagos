@@ -66,3 +66,14 @@ services:
     App\Handler\UploadHandler:
         bind:
             $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
+
+    App\Util\DataStore:
+        bind:
+            $dataStoreDirectory: "%env(DATA_STORE_DIRECTORY)%"
+            $dataDownloadDirectory: "%env(DATA_DOWNLOAD_DIRECTORY)%"
+            $dataStoreOwner: "%env(DATA_STORE_OWNER)%"
+            $dataStoreGroup: "%env(DATA_STORE_GROUP)%"
+            $dataDownloadBrowserGroup: "%env(DATA_DOWNLOAD_BROWSER_GROUP)%"
+            $webServerUser: "%env(WEB_SERVER_USER)%"
+            $anonFtpUser: "%env(ANONYMOUS_FTP_USER)%"
+            $anonFtpPass: "%env(ANONYMOUS_FTP_PASS)%"

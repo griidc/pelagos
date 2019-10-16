@@ -2,7 +2,6 @@
 
 namespace App\Controller\UI;
 
-use App\Event\EntityEventDispatcher;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,6 +16,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Form\DatasetSubmissionType;
 
 use App\Handler\EntityHandler;
+
+use App\EventListener\EntityEventDispatcher;
 
 use App\Entity\Account;
 use App\Entity\Dataset;
