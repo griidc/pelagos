@@ -21,3 +21,33 @@ monolog:
             handler: deprecation
             max_level: info
             channels: ["php"]
+
+        filer:
+            type: stream
+            path: "%kernel.project_dir%/var/logs/filer.log"
+            level: info
+            channels: [filer]
+
+        retriever:
+            type: stream
+            path: "%kernel.project_dir%/var/logs/retriever.log"
+            level: info
+            channels: [retriever]
+
+        dataset_file_hasher:
+            type: stream
+            path: "%kernel.project_dir%/var/logs/dataset_file_hasher.log"
+            level: info
+            channels: [dataset_file_hasher]
+
+        doi_issue:
+            type: stream
+            path: "%kernel.project_dir%/var/logs/doi_issue.log"
+            level: info
+            channels: [doi_issue]
+
+        create_homedir:
+            type: stream
+            path: "%kernel.project_dir%/var/logs/create_homedir.log"
+            level: info
+            channels: [create_homedir]
