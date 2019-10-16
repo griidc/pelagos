@@ -32,24 +32,15 @@ class MdAppController extends AbstractController
     protected $issueTrackingBaseUrl;
 
     /**
-     * The Pelagos Mdapp logfile.
-     *
-     * @var string mdappLogfile
-     */
-    protected $mdappLogfile;
-
-    /**
      * Class constructor.
      *
      * @param EntityHandler $entityHandler         A Pelagos EntityHandler instance.
      * @param string        $issueTrackingBaseUrl  Issue tracker base URL.
-     * @param string        $mdappLogfile          The Mdapp logfile.
      */
-    public function __construct(EntityHandler $entityHandler, string $issueTrackingBaseUrl, string $mdappLogfile)
+    public function __construct(EntityHandler $entityHandler, string $issueTrackingBaseUrl)
     {
         $this->issueTrackingBaseUrl = $issueTrackingBaseUrl;
         $this->entityHandler = $entityHandler;
-        $this->mdappLogfile = $mdappLogfile;
     }
 
     /**
@@ -191,19 +182,9 @@ class MdAppController extends AbstractController
      *
      * @return response
      */
-    public function getlog($udi)
+    public function getlog($udi, MdappLogger $mdappLogger)
     {
-
-        $rawlog = file($this->mdappLogfile);
-        $entries = array_values(preg_grep("/$udi/i", $rawlog));
-        $data = null;
-        if (count($entries) > 0) {
-            $data .= '<ul>';
-            foreach ($entries as $entry) {
-                $data .= '<li>' . strip_tags($entry) . "</li>\n";
-            }
-            $data .= '</ul>';
-        }
+        $data = $mdappLogger->getLogEntriesByUdi($udi);
         $response = new Response();
         $response->setContent($data);
         $response->headers->set('Content-Type', 'text/html');
