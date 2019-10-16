@@ -174,7 +174,8 @@ class MdAppController extends AbstractController
     /**
      * Get logfile entries for particular dataset UDI.
      *
-     * @param string $udi The dataset UDI identifier.
+     * @param string      $udi         The dataset UDI identifier.
+     * @param MdappLogger $mdappLogger The Logger utility.
      *
      * @Route("/mdapp/getlog/{udi}",
      *      name="app_ui_mdapp_getlog"
@@ -184,7 +185,17 @@ class MdAppController extends AbstractController
      */
     public function getlog($udi, MdappLogger $mdappLogger)
     {
-        $data = $mdappLogger->getLogEntriesByUdi($udi);
+        $data = null;
+        $entries = $mdappLogger->getLogEntriesByUdi($udi);
+
+       if (count($entries) > 0) {
+            $data .= '<ul>';
+            foreach ($entries as $entry) {
+                $data .= '<li>' . strip_tags($entry) . "</li>\n";
+            }
+            $data .= '</ul>';
+        }
+
         $response = new Response();
         $response->setContent($data);
         $response->headers->set('Content-Type', 'text/html');

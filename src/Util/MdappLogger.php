@@ -48,21 +48,14 @@ class MdappLogger
      *
      * @param string $udi The dataset UDI identifier.
      *
-     * @return string Containing log entries for that UDI.
+     * @return array Containing log entries for that UDI.
      */
     public function getlogEntriesByUdi($udi)
     {
 
         $rawlog = file($this->logfile);
+        $entries = array();
         $entries = array_values(preg_grep("/$udi/i", $rawlog));
-        $data = null;
-        if (count($entries) > 0) {
-            $data .= '<ul>';
-            foreach ($entries as $entry) {
-                $data .= '<li>' . strip_tags($entry) . "</li>\n";
-            }
-            $data .= '</ul>';
-        }
-        return $data;
+        return $entries;
     }
 }
