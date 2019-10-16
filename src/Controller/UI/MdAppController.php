@@ -58,7 +58,7 @@ class MdAppController extends AbstractController
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
 
         return $this->renderUi();

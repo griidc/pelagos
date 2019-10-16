@@ -45,8 +45,8 @@ services:
             string $fromName: "%env(MAILER_FROM_NAME)%"
 
     App\Util\MdappLogger:
-        arguments:
-            - '%kernel.project_dir%/var/log/mdapp.log'
+        bind:
+            string $mdappLogfile: '%kernel.logs_dir%/mdapp.log'
 
     App\EventListener\AccountListener:
         tags:
