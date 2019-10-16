@@ -34,11 +34,11 @@ class MakeDRPMCommand extends Command
     /**
      * Class constructor for dependency injection.
      *
-     * @param EntityManagerInterface $em
+     * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $em;
+        $this->entityManager = $entityManager;
         // It is required to call parent constructor if
         // using a constructon in a Symfony command.
         parent::__construct();
@@ -56,6 +56,12 @@ class MakeDRPMCommand extends Command
         ;
     }
 
+    /**
+     * Symfony command execute section.
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
