@@ -56,6 +56,7 @@ services:
         $ldapBindDn: "%env(LDAP_BIND_DN)%"
         $ldapBindPw: "%env(LDAP_BIND_PW)%"
         $peopleOu: "%env(LDAP_PEOPLE_OU)%"
+
     App\Util\Ldap\LdapClient:
         $host: "%env(LDAP_HOST)%"
 
@@ -77,3 +78,33 @@ services:
             $webServerUser: "%env(WEB_SERVER_USER)%"
             $anonFtpUser: "%env(ANONYMOUS_FTP_USER)%"
             $anonFtpPass: "%env(ANONYMOUS_FTP_PASS)%"
+
+    App\Consumer\DoiConsumer:
+        arguments:
+            $logger: monolog.logger.doi_issue
+
+    App\Consumer\DatasetFileHasherConsumer:
+        arguments:
+            $logger: monolog.logger.dataset_file_hasher
+
+    App\Consumer\CreateHomedirConsumer:
+        arguments:
+            $logger: monolog.logger.create_homedir
+
+    consumer.dataset_submission.filer:
+        class: App\Consumer\DatasetSubmissionConsumer
+        arguments:
+            $logger: monolog.logger.filer
+            $datasetFileHasherProducer: '@old_sound_rabbit_mq.dataset_submission_producer'
+
+    consumer.dataset_submission.retriever:
+        class: App\Consumer\DatasetSubmissionConsumer
+        arguments:
+            $logger: monolog.logger.retriever
+            $datasetFileHasherProducer: '@old_sound_rabbit_mq.dataset_submission_producer'
+
+    App\Consumer\DatasetSubmissionConsumer: '@consumer.dataset_submission.filer'
+
+    App\EventListener\EventListener:
+        arguments:
+            $producer: '@old_sound_rabbit_mq.doi_issue_producer'

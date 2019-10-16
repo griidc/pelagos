@@ -1,11 +1,13 @@
 <?php
 namespace App\EventListener;
 
+
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 
+use App\Handler\EntityHandler;
 use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Entity\DataRepositoryRole;
@@ -13,6 +15,7 @@ use App\Entity\Person;
 use App\Entity\PersonDataRepository;
 use App\Entity\ResearchGroupRole;
 use App\Util\MailSender;
+use App\Util\DataStore;
 
 /**
  * Listener class for Dataset Submission-related events.
@@ -90,17 +93,17 @@ abstract class EventListener
         \Twig_Environment $twig,
         MailSender $mailer,
         TokenStorageInterface $tokenStorage,
-        // EntityHandler $entityHandler = null,
-         Producer $producer = null
-        // DataStore $dataStore = null,
+         EntityHandler $entityHandler = null,
+         Producer $producer = null,
+         DataStore $dataStore = null
         // MdappLogger $mdappLogger = null
     ) {
         $this->twig = $twig;
         $this->mailer = $mailer;
         $this->tokenStorage = $tokenStorage;
-        // $this->entityHandler = $entityHandler;
+         $this->entityHandler = $entityHandler;
          $this->producer = $producer;
-        // $this->dataStore = $dataStore;
+         $this->dataStore = $dataStore;
         // $this->mdappLogger = $mdappLogger;
     }
 
