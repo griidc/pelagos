@@ -80,31 +80,31 @@ services:
             $anonFtpPass: "%env(ANONYMOUS_FTP_PASS)%"
 
     App\Consumer\DoiConsumer:
-        arguments:
-            $logger: monolog.logger.doi_issue
+        bind:
+            Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.doi_issue'
 
     App\Consumer\DatasetFileHasherConsumer:
-        arguments:
-            $logger: monolog.logger.dataset_file_hasher
+        bind:
+            Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.dataset_file_hasher'
 
     App\Consumer\CreateHomedirConsumer:
-        arguments:
-            $logger: monolog.logger.create_homedir
+        bind:
+            Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.create_homedir'
 
     consumer.dataset_submission.filer:
         class: App\Consumer\DatasetSubmissionConsumer
-        arguments:
-            $logger: monolog.logger.filer
-            $datasetFileHasherProducer: '@old_sound_rabbit_mq.dataset_submission_producer'
+        bind:
+            Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.filer'
+            OldSound\RabbitMqBundle\RabbitMq\Producer $datasetFileHasherProducer: '@old_sound_rabbit_mq.dataset_submission_producer'
 
     consumer.dataset_submission.retriever:
         class: App\Consumer\DatasetSubmissionConsumer
-        arguments:
-            $logger: monolog.logger.retriever
-            $datasetFileHasherProducer: '@old_sound_rabbit_mq.dataset_submission_producer'
+        bind:
+            Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.retriever'
+            OldSound\RabbitMqBundle\RabbitMq\Producer $datasetFileHasherProducer: '@old_sound_rabbit_mq.dataset_submission_producer'
 
     App\Consumer\DatasetSubmissionConsumer: '@consumer.dataset_submission.filer'
 
     App\EventListener\EventListener:
-        arguments:
-            $producer: '@old_sound_rabbit_mq.doi_issue_producer'
+        bind:
+            OldSound\RabbitMqBundle\RabbitMq\Producer $producer: '@old_sound_rabbit_mq.doi_issue_producer'
