@@ -26,7 +26,7 @@ services:
     App\Controller\UI\MdAppController:
         bind:
             string $issueTrackingBaseUrl: '%env(ISSUE_TRACKING_BASE_URL)%'
-            string $mdappLogfile: '%env(MDAPP_LOGFILE)%'
+            string $mdappLogfile: '%kernel.project_dir%/var/log/mdapp.log'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
@@ -47,7 +47,7 @@ services:
 
     App\Util\MdappLogger:
         arguments:
-            - '%env(MDAPP_LOGFILE)%'
+            - '%kernel.project_dir%/var/log/mdapp.log'
 
     App\EventListener\AccountListener:
         tags:
