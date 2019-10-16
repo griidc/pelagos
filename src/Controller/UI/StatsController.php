@@ -5,7 +5,7 @@ namespace App\Controller\UI;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 
-use Pelagos\Bundle\AppBundle\Twig\Extensions as TwigExtentions;
+use App\Twig\Extensions as TwigExtentions;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 use Symfony\Component\HttpFoundation\Response;
