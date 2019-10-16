@@ -9,8 +9,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use App\Entity\Dataset;
-
 /**
  * A form type for creating a Dataset form.
  */
@@ -45,7 +43,7 @@ class DatasetType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Pelagos\Entity\Dataset',
+            'data_class' => 'App\Entity\Dataset',
             'allow_extra_fields' => true,
         ));
     }

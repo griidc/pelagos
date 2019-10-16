@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\FundingCycle;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -44,7 +45,7 @@ class ResearchGroupType extends AbstractType
             ))
             ->add('fundingCycle', EntityType::class, array(
                 'label' => 'Funding Cycle',
-                'class' => 'Pelagos:FundingCycle',
+                'class' => FundingCycle::class,
                 'choice_label' => 'name',
             ))
             ->add('url', TextType::class, array(
@@ -106,7 +107,7 @@ class ResearchGroupType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Pelagos\Entity\ResearchGroup',
+            'data_class' => 'App\Entity\ResearchGroup',
             'allow_extra_fields' => true,
         ));
     }
