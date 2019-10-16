@@ -36,7 +36,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      * @param integer $researchGroupId The identifier for the Research Group subject of the report.
      *
      * @return Response|StreamedResponse A Symfony Response instance.
-     * @throws \Exception
+     *
      * @Route("/report-researchgroup-dataset-status", name="pelagos_app_ui_reportresearchgroupdatasetstatus_default")
      *
      */
