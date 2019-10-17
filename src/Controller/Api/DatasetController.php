@@ -19,6 +19,7 @@ use App\Entity\DIF;
 use App\Entity\DistributionPoint;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
+use App\Util\MdappLogger;
 
 /**
  * The Dataset api controller.
@@ -159,12 +160,11 @@ class DatasetController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function patchAction($id, Request $request)
+    public function patchAction($id, Request $request, MdappLogger $mdappLogger)
     {
         $this->handleUpdate(DatasetType::class, Dataset::class, $id, $request, 'PATCH');
         $jiraLinkValue = $request->request->get('issueTrackingTicket');
         if (null !== $jiraLinkValue) {
-            $mdappLogger = $this->get('pelagos.util.mdapplogger');
 
             $mdappLogger->writeLog(
                 $this->getUser()->getUserName() .
