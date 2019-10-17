@@ -5,7 +5,11 @@ namespace App\Controller\UI;
 
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
+use App\Handler\EntityHandler;
+use App\Event\LogActionItemEventDispatcher;
 use App\Exception\PersistenceException;
+
+use Doctrine\ORM\EntityManagerInterface;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -21,6 +25,26 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  */
 class DatasetRestrictionsController extends AbstractController
 {
+    /**
+     * Class variable for dependency injection, an event dispatcher.
+     *
+     * @var LogActionItemEventDispatcher $logActionItemEventDispatcher
+     */
+    protected $logActionItemEventDispatcher;
+
+    /**
+     * Class variable for dependency injection - entityManager.
+     *
+     * @var EntityManager $entityManager
+     */
+    protected $entityManager;
+
+    public function __construct(LogActionItemEventDispatcher $logActionItemEventDispatcher, EntityManagerInterface $entityManager)
+    {
+        $this->logActionItemEventDispatcher = $logActionItemEventDispatcher;
+        $this->entityManager = $entityManager;
+    }
+
     /**
      * Dataset Restrictions Modifier UI.
      *
@@ -63,11 +87,11 @@ class DatasetRestrictionsController extends AbstractController
      *
      * @return Response
      */
-    public function postAction(Request $request, $id)
+    public function postAction(Request $request, $id, EntityHandler $entityHandler)
     {
         $restrictionKey = $request->request->get('restrictions');
 
-        $datasets = $this->entityHandler->getBy(Dataset::class, array('id' => $id));
+        $datasets = $entityHandler->getBy(Dataset::class, array('id' => $id));
 
         // RabbitMQ message to update the DOI for the dataset.
         $rabbitMessage = array(
@@ -89,7 +113,7 @@ class DatasetRestrictionsController extends AbstractController
                 $datasetSubmission->setRestrictions($restrictionKey);
 
                 try {
-                    $this->entityHandler->update($datasetSubmission);
+                    $entityHandler->update($datasetSubmission);
                 } catch (PersistenceException $exception) {
                     throw new PersistenceException($exception->getMessage());
                 }
@@ -118,29 +142,30 @@ class DatasetRestrictionsController extends AbstractController
     {
        // Publish the message to DoiConsumer to update the DOI.
 
-        $this->get('old_sound_rabbit_mq.doi_issue_producer')->publish(
-            $rabbitMessage['body'],
-            $rabbitMessage['routing_key']
-        );
+        //$this->get('old_sound_rabbit_mq.doi_issue_producer')->publish(
+        //    $rabbitMessage['body'],
+        //    $rabbitMessage['routing_key']
+        //);
+        ;
     }
 
     /**
      * Log restriction changes.
      *
-     * @param Dataset $dataset          The dataset having restrictions modified.
-     * @param string  $actor            The username of the person modifying the restriction.
-     * @param string  $restrictionsFrom The original restriction.
-     * @param mixed   $restrictionsTo   The restriction that was put in place.
+     * @param Dataset                      $dataset                      The dataset having restrictions modified.
+     * @param string                       $actor                        The username of the person modifying the restriction.
+     * @param string                       $restrictionsFrom             The original restriction.
+     * @param mixed                        $restrictionsTo               The restriction that was put in place.
+     * @param LogActionItemEventDispatcher $logActionItemEventDispatcher The Pelagos action-item-event dispatcher.
      *
      * @return void
      */
     protected function dispatchLogRestrictionsEvent(Dataset $dataset, $actor, $restrictionsFrom, $restrictionsTo)
     {
-        $em = $this->container->get('doctrine')->getManager();
-        $this->container->get('pelagos.event.log_action_item_event_dispatcher')->dispatch(
+        $this->logActionItemEventDispatcher->dispatch(
             array(
                 'actionName' => 'Restriction Change',
-                'subjectEntityName' => $em->getClassMetadata(get_class($dataset))->getName(),
+                'subjectEntityName' => $this->entityManager->getClassMetadata(get_class($dataset))->getName(),
                 'subjectEntityId' => $dataset->getId(),
                 'payLoad' => array(
                     'userId' => $actor,
