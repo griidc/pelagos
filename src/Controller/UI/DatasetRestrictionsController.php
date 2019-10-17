@@ -17,14 +17,17 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 /**
  * The Dataset Restrictions Modifier controller.
  *
- * @Route("/dataset-restrictions")
  */
 class DatasetRestrictionsController extends UIController implements OptionalReadOnlyInterface
 {
     /**
      * Dataset Restrictions Modifier UI.
      *
-     * @Route("")
+     * @Route(
+     *      "/dataset-restrictions",
+     *      name="pelagos_app_ui_datasetrestrictions_default",
+     *      methods={"GET"}
+     * )
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -48,9 +51,11 @@ class DatasetRestrictionsController extends UIController implements OptionalRead
      * @param Request $request HTTP Symfony Request object.
      * @param string  $id      Dataset Submission ID.
      *
-     * @Route("/{id}")
-     *
-     * @Method("POST")
+     * @Route(
+     *      "/dataset-restrictions/{id}",
+     *      name="pelagos_app_ui_datasetrestrictions_post",
+     *      methods={"POST"}
+     * )
      *
      * @throws PersistenceException Exception thrown when update fails.
      * @throws BadRequestHttpException Exception thrown when restriction key is null.
