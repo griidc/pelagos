@@ -26,3 +26,4 @@ yarn-error.log
 
 .idea
 /src/Util/DOIutil.ini
+/public/js/fos_js_routes.json
