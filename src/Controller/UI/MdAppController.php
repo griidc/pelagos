@@ -32,6 +32,13 @@ class MdAppController extends AbstractController
     protected $issueTrackingBaseUrl;
 
     /**
+     * A Doctine ORM Entity Handler.
+     *
+     * @var EntityHandler entityHandler
+     */
+    protected $entityHandler;
+
+    /**
      * Class constructor.
      *
      * @param EntityHandler $entityHandler         A Pelagos EntityHandler instance.
