@@ -1,0 +1,148 @@
+<?php
+
+
+namespace App\Controller\UI;
+
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Exception\PersistenceException;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
+/**
+ * The Dataset Restrictions Modifier controller.
+ *
+ * @Route("/dataset-restrictions")
+ */
+class DatasetRestrictionsController extends UIController implements OptionalReadOnlyInterface
+{
+    /**
+     * Dataset Restrictions Modifier UI.
+     *
+     * @Route("")
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function defaultAction()
+    {
+        // Checks authorization of users
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+        }
+
+        $GLOBALS['pelagos']['title'] = 'Dataset Restrictions Modifier';
+        return $this->render('PelagosAppBundle:List:DatasetRestrictions.html.twig');
+    }
+
+    /**
+     * Update restrictions for the dataset.
+     *
+     * This updates the dataset submission restrictions property.Dataset Submission PATCH API exists,
+     * but doesn't work with Symfony.
+     *
+     * @param Request $request HTTP Symfony Request object.
+     * @param string  $id      Dataset Submission ID.
+     *
+     * @Route("/{id}")
+     *
+     * @Method("POST")
+     *
+     * @throws PersistenceException Exception thrown when update fails.
+     * @throws BadRequestHttpException Exception thrown when restriction key is null.
+     *
+     * @return Response
+     */
+    public function postAction(Request $request, $id)
+    {
+        $restrictionKey = $request->request->get('restrictions');
+
+        $datasets = $this->entityHandler->getBy(Dataset::class, array('id' => $id));
+
+        // RabbitMQ message to update the DOI for the dataset.
+        $rabbitMessage = array(
+            'body' => $id,
+            'routing_key' => 'update'
+        );
+
+        if (!empty($datasets)) {
+            $dataset = $datasets[0];
+            $datasetSubmission = $dataset->getDatasetSubmission();
+            $datasetStatus = $dataset->getDatasetStatus();
+
+            if ($restrictionKey) {
+                // Record the original state for logging purposes before changing it.
+                $from = $datasetSubmission->getRestrictions();
+                $actor = $this->get('security.token_storage')->getToken()->getUser()->getUserId();
+                $this->dispatchLogRestrictionsEvent($dataset, $actor, $from, $restrictionKey);
+
+                $datasetSubmission->setRestrictions($restrictionKey);
+
+                try {
+                    $this->entityHandler->update($datasetSubmission);
+                } catch (PersistenceException $exception) {
+                    throw new PersistenceException($exception->getMessage());
+                }
+
+                if ($datasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
+                    $this->publishDoiForAccepted($rabbitMessage);
+                }
+            } else {
+                // Send 500 response code if restriction key is null
+                throw new BadRequestHttpException('Restiction key is null');
+            }
+        }
+        // Send 204(okay) if the restriction key is not null and updated is successful
+
+        return new Response('', 204);
+    }
+
+    /**
+     * Method to publish doi for accepted datasets.
+     *
+     * @param array $rabbitMessage The rabbitMq message that needs to be published.
+     *
+     * @return void
+     */
+    private function publishDoiForAccepted(array $rabbitMessage)
+    {
+       // Publish the message to DoiConsumer to update the DOI.
+
+        $this->get('old_sound_rabbit_mq.doi_issue_producer')->publish(
+            $rabbitMessage['body'],
+            $rabbitMessage['routing_key']
+        );
+    }
+
+    /**
+     * Log restriction changes.
+     *
+     * @param Dataset $dataset          The dataset having restrictions modified.
+     * @param string  $actor            The username of the person modifying the restriction.
+     * @param string  $restrictionsFrom The original restriction.
+     * @param mixed   $restrictionsTo   The restriction that was put in place.
+     *
+     * @return void
+     */
+    protected function dispatchLogRestrictionsEvent(Dataset $dataset, $actor, $restrictionsFrom, $restrictionsTo)
+    {
+        $em = $this->container->get('doctrine')->getManager();
+        $this->container->get('pelagos.event.log_action_item_event_dispatcher')->dispatch(
+            array(
+                'actionName' => 'Restriction Change',
+                'subjectEntityName' => $em->getClassMetadata(get_class($dataset))->getName(),
+                'subjectEntityId' => $dataset->getId(),
+                'payLoad' => array(
+                    'userId' => $actor,
+                    'previousRestriction' => $restrictionsFrom,
+                    'newRestriction' => $restrictionsTo,
+                )
+            ),
+            'restrictions_log'
+        );
+    }
+}
