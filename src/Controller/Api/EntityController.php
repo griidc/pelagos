@@ -279,7 +279,7 @@ abstract class EntityController extends AbstractFOSRestController
         // Grab the property name from the parameter array.
         $property = array_keys($params)[0];
         // If we don't have an ID.
-        if (int $id === null) {
+        if ($id === null) {
             // Instantiate a new entity.
             $entity = new $entityClass;
         } else {

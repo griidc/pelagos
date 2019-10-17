@@ -113,7 +113,7 @@ abstract class PersonDatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setRole($role = null)
+    public function setRole(string $role = null)
     {
         if (!array_key_exists($role, static::ROLES) and $role !== null) {
             throw new \InvalidArgumentException("$role is not a valid value for PersonDatasetSubmission::\$role");
@@ -170,7 +170,7 @@ abstract class PersonDatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setPrimaryContact($state)
+    public function setPrimaryContact(bool $state)
     {
         $this->primaryContact = $state;
     }

@@ -359,7 +359,7 @@ class ResearchGroup extends Entity
      *
      * @return void
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
@@ -411,7 +411,7 @@ class ResearchGroup extends Entity
      *
      * @return void
      */
-    public function setUrl($url)
+    public function setUrl(string $url)
     {
         $this->url = $url;
     }
@@ -437,7 +437,7 @@ class ResearchGroup extends Entity
      *
      * @return void
      */
-    public function setPhoneNumber($phoneNumber)
+    public function setPhoneNumber(string $phoneNumber)
     {
         $this->phoneNumber = $phoneNumber;
     }
@@ -463,7 +463,7 @@ class ResearchGroup extends Entity
      *
      * @return void
      */
-    public function setDeliveryPoint($deliveryPoint)
+    public function setDeliveryPoint(string $deliveryPoint)
     {
         $this->deliveryPoint = $deliveryPoint;
     }
@@ -489,7 +489,7 @@ class ResearchGroup extends Entity
      *
      * @return void
      */
-    public function setCity($city)
+    public function setCity(string $city)
     {
         $this->city = $city;
     }
@@ -515,7 +515,7 @@ class ResearchGroup extends Entity
      *
      * @return void
      */
-    public function setAdministrativeArea($administrativeArea)
+    public function setAdministrativeArea(string $administrativeArea)
     {
         $this->administrativeArea = $administrativeArea;
     }
@@ -541,7 +541,7 @@ class ResearchGroup extends Entity
      *
      * @return void
      */
-    public function setPostalCode($postalCode)
+    public function setPostalCode(string $postalCode)
     {
         $this->postalCode = $postalCode;
     }
@@ -567,7 +567,7 @@ class ResearchGroup extends Entity
      *
      * @return void
      */
-    public function setCountry($country)
+    public function setCountry(string $country)
     {
         $this->country = $country;
     }
@@ -593,7 +593,7 @@ class ResearchGroup extends Entity
      *
      * @return void
      */
-    public function setDescription($description)
+    public function setDescription(string $description)
     {
         $this->description = $description;
     }
@@ -633,7 +633,7 @@ class ResearchGroup extends Entity
      *
      * @return string|resource Binary string containing the logo or a stream resource pointing to it.
      */
-    public function getLogo($asStream = false)
+    public function getLogo(bool $asStream = false)
     {
         if ($asStream) {
             if (is_resource($this->logo) and get_resource_type($this->logo) == 'stream') {
@@ -658,7 +658,7 @@ class ResearchGroup extends Entity
      *
      * @return void
      */
-    public function setEmailAddress($emailAddress)
+    public function setEmailAddress(string $emailAddress)
     {
         $this->emailAddress = $emailAddress;
     }
@@ -696,7 +696,7 @@ class ResearchGroup extends Entity
      *
      * @return void
      */
-    public function setLocked($locked)
+    public function setLocked(bool $locked)
     {
         $this->locked = $locked;
     }

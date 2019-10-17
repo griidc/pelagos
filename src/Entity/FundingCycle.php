@@ -106,6 +106,7 @@ class FundingCycle extends Entity
      * @var string $url
      *
      * @access protected
+     *
      * @ORM\Column(type="text", nullable=true)
      *
      * @CustomAssert\NoAngleBrackets(
@@ -219,7 +220,7 @@ class FundingCycle extends Entity
      *
      * @return void
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
@@ -245,7 +246,7 @@ class FundingCycle extends Entity
      *
      * @return void
      */
-    public function setDescription($description)
+    public function setDescription(string $description)
     {
         $this->description = $description;
     }
@@ -297,7 +298,7 @@ class FundingCycle extends Entity
      *
      * @return void
      */
-    public function setUrl($url)
+    public function setUrl(string $url)
     {
         $this->url = $url;
     }
@@ -387,7 +388,7 @@ class FundingCycle extends Entity
      *
      * @return void
      */
-    public function setUdiPrefix($udiPrefix)
+    public function setUdiPrefix(string $udiPrefix)
     {
         $this->udiPrefix = $udiPrefix;
     }
@@ -415,7 +416,7 @@ class FundingCycle extends Entity
      *
      * @return void
      */
-    public function setSortOrder($position)
+    public function setSortOrder(int $position)
     {
         if (is_int($position) or null === $position) {
             $this->sortOrder = $position;
