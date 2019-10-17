@@ -2,6 +2,7 @@
 
 namespace App\Controller\UI;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Response;
@@ -9,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * The dataset-summary application controller.
  */
-class DatasetSummaryController extends UIController implements OptionalReadOnlyInterface
+class DatasetSummaryController extends AbstractController
 {
     /**
      * The default action.
