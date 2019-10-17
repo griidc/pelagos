@@ -2,7 +2,6 @@
 
 namespace App\EventListener;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 
@@ -40,8 +39,6 @@ class DoctrineDataCenterListener
      * @param EntityManagerInterface $entityManager The Doctrine entity manager.
      *
      * @return void
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \ReflectionException
      */
     protected function updateDataCenter($dataRepository, EntityManagerInterface $entityManager)
     {

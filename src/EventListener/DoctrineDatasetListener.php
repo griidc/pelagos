@@ -40,7 +40,6 @@ class DoctrineDatasetListener
      * @param EntityManagerInterface $entityManager The Doctrine entity manager.
      *
      * @return void
-     * @throws \Doctrine\ORM\ORMException
      */
     protected function updateDataset($entity, EntityManagerInterface $entityManager)
     {

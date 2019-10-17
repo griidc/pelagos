@@ -115,8 +115,6 @@ abstract class EventListener
      * @param array|null     $peopleObjs   An optional array of recipient Persons.
      * @param array          $attachments  An optional array of Swift_Message_Attachments to attach.
      *
-     * @throws \InvalidArgumentException When any element of $attachments is not a Swift_Message_Attachment.
-     *
      * @return void
      */
     protected function sendMailMsg(
