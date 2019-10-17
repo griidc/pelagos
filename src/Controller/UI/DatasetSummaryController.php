@@ -23,9 +23,9 @@ class DatasetSummaryController extends AbstractController
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
 
-        return $this->render('PelagosAppBundle:DatasetSummary:dataset-summary.html.twig');
+        return $this->render('DatasetSummary/dataset-summary.html.twig');
     }
 }
