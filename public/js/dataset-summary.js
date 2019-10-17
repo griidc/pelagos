@@ -24,7 +24,7 @@ $(document).ready(function() {
             "datasetPublications.publication"
         ];
         $.ajax({
-            url: Routing.generate("pelagos_api_datasets_get_collection"),
+            url: "/api/datasets",
             data: {
                 udi: $("#udi").val(),
                 _properties: properties.join(",")
@@ -48,7 +48,7 @@ $(document).ready(function() {
     deleteDataset.click(function() {
         if (confirm("Are you sure you want to delete all records for this dataset?")) {
             $.ajax({
-                url: Routing.generate("pelagos_api_datasets_delete", { id: deleteDataset.attr("datasetId") }),
+                url: "/api/datasets/" + deleteDataset.attr("datasetId"),
                 method: "DELETE",
                 success: function() {
                     $("#summary-display").val("Dataset deleted!");
@@ -77,6 +77,7 @@ function saveTextAsFile(textToWrite, fileNameToSaveAs)
     var downloadLink = document.createElement("a");
     downloadLink.download = fileNameToSaveAs;
     downloadLink.innerHTML = "Download File";
+
     if (window.webkitURL != null)
     {
         // Chrome allows the link to be clicked
@@ -92,7 +93,6 @@ function saveTextAsFile(textToWrite, fileNameToSaveAs)
         downloadLink.style.display = "none";
         document.body.appendChild(downloadLink);
     }
-
     downloadLink.click();
 }
 
