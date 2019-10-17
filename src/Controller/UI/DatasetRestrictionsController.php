@@ -36,11 +36,11 @@ class DatasetRestrictionsController extends AbstractController
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
 
         $GLOBALS['pelagos']['title'] = 'Dataset Restrictions Modifier';
-        return $this->render('PelagosAppBundle:List:DatasetRestrictions.html.twig');
+        return $this->render('List/DatasetRestrictions.html.twig');
     }
 
     /**
