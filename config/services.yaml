@@ -38,7 +38,6 @@ services:
         bind:
             $maximumPasswordAge: "%env(ACCOUNT_PASSWORD_MAX_AGE)%"
 
-
     App\Util\MailSender:
         bind:
             string $fromAddress: "%env(MAILER_FROM_ADDR)%"
@@ -64,6 +63,7 @@ services:
         $ldapBindDn: "%env(LDAP_BIND_DN)%"
         $ldapBindPw: "%env(LDAP_BIND_PW)%"
         $peopleOu: "%env(LDAP_PEOPLE_OU)%"
+
     App\Util\Ldap\LdapClient:
         $host: "%env(LDAP_HOST)%"
 
@@ -74,3 +74,13 @@ services:
     App\Handler\UploadHandler:
         bind:
             $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
+
+    App\Command\AccountExpirationNotifyCommand:
+        bind:
+            string $maximumPasswordAge: "%env(ACCOUNT_PASSWORD_MAX_AGE)%"
+            string $passwordExpiryWarn: "%env(ACCOUNT_PASSWORD_EXPIRATION_WARN)%"
+            string $hostName: "%env(HOSTNAME)%"
+
+    App\Command\RebuildElasticsearchIndexCommand:
+        bind:
+            FOS\ElasticaBundle\Persister\ObjectPersister $pelagosDatasetIndexPersister: "@fos_elastica.object_persister.pelagos.dataset"

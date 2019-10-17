@@ -18,6 +18,7 @@ use App\Entity\Person;
 use App\Entity\PersonDataRepository;
 use App\Entity\ResearchGroupRole;
 use App\Util\MailSender;
+use Twig\Environment;
 
 // use Pelagos\Util\DataStore;
 // use Pelagos\Util\MdappLogger;
@@ -30,7 +31,7 @@ abstract class EventListener
     /**
      * The twig templating engine instance.
      *
-     * @var \Twig_Environment
+     * @var Environment
      */
     protected $twig;
 
@@ -86,7 +87,7 @@ abstract class EventListener
     /**
      * This is the class constructor to handle dependency injections.
      *
-     * @param \Twig_Environment  $twig          Twig engine.
+     * @param Environment        $twig          Twig engine.
      * @param MailSender         $mailer        Email handling library.
      * @param TokenStorage       $tokenStorage  Symfony's token object.
      * @param EntityHandler|null $entityHandler Pelagos entity handler.
@@ -95,7 +96,7 @@ abstract class EventListener
      * @param MdappLogger|null   $mdappLogger   An MDAPP logger.
      */
     public function __construct(
-        \Twig_Environment $twig,
+        Environment $twig,
         MailSender $mailer,
         TokenStorageInterface $tokenStorage
         // EntityHandler $entityHandler = null,
@@ -115,17 +116,17 @@ abstract class EventListener
     /**
      * Method to build and send an email.
      *
-     * @param \Twig_Template $twigTemplate A twig template.
-     * @param array          $mailData     Mail data array for email.
-     * @param array|null     $peopleObjs   An optional array of recipient Persons.
-     * @param array          $attachments  An optional array of Swift_Message_Attachments to attach.
+     * @param \Twig\TemplateWrapper $twigTemplate A twig template.
+     * @param array                 $mailData     Mail data array for email.
+     * @param array|null            $peopleObjs   An optional array of recipient Persons.
+     * @param array                 $attachments  An optional array of Swift_Message_Attachments to attach.
      *
      * @throws \InvalidArgumentException When any element of $attachments is not a Swift_Message_Attachment.
      *
      * @return void
      */
     protected function sendMailMsg(
-        \Twig_Template $twigTemplate,
+        \Twig\TemplateWrapper $twigTemplate,
         array $mailData,
         array $peopleObjs = null,
         array $attachments = array()
