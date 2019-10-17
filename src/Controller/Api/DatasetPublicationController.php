@@ -137,12 +137,13 @@ class DatasetPublicationController extends EntityController
     /**
      * Link a Publication to a Dataset by their respective IDs.
      *
-     * @param integer $id Publication ID.
-     * @param Request $request A Request object.
-     * @param ObjectPersister $objectPersister
+     * @param integer         $id              Publication ID.
+     * @param Request         $request         A Request object.
+     * @param ObjectPersister $objectPersister The object persister.
      *
-     * @return Response A HTTP Response object.
-     * @throws UniqueConstraintViolationException If entity handler re-throws a this exception that isn't uniq_dataset_publication.
+     * @throws UniqueConstraintViolationException If entity handler re-throws a this exception that is not uniq_dataset_publication.
+     * @throws BadRequestHttpException If link already exists.
+     *
      * @ApiDoc(
      *   section = "Publication to Dataset Association",
      *   parameters = {
@@ -167,8 +168,9 @@ class DatasetPublicationController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
+     * @return Response A HTTP Response object.
      */
-    public function linkAction($id, Request $request, ObjectPersister $objectPersister)
+    public function linkAction(int $id, Request $request, ObjectPersister $objectPersister)
     {
         $datasetId = $request->query->get('dataset');
 
@@ -231,7 +233,7 @@ class DatasetPublicationController extends EntityController
     *
     * @return Response A response object with an empty body and a "no content" status code.
     */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
         $this->handleDelete(DatasetPublication::class, $id);
         return $this->makeNoContentResponse();

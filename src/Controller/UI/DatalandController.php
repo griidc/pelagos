@@ -28,26 +28,32 @@ use App\Util\GmlUtil;
 class DatalandController extends AbstractController
 {
     /**
-     * @var Geometry
+     * Geometry.
+     *
+     * @var geoUtil
      */
     protected $geoUtil;
 
     /**
-     * @var Metadata
+     * Metadata.
+     *
+     * @var metadata
      */
     protected $metadata;
 
     /**
-     * @var EntityHandler
+     * Entity Handler.
+     *
+     * @var entityHandler
      */
     protected $entityHandler;
 
     /**
      * Dataland Controller constructor.
      *
-     * @param EntityHandler $entityHandler
-     * @param Geometry      $geoUtil
-     * @param Metadata      $metadata
+     * @param EntityHandler $entityHandler The Entity Handler.
+     * @param Geometry      $geoUtil       The Geomtery Util.
+     * @param Metadata      $metadata      The Metadata Util.
      */
     public function __construct(EntityHandler $entityHandler, Geometry $geoUtil, Metadata $metadata)
     {
@@ -65,7 +71,7 @@ class DatalandController extends AbstractController
      *
      * @return Response
      */
-    public function defaultAction($udi)
+    public function defaultAction(string $udi)
     {
         $dataset = $this->getDataset($udi);
 
@@ -121,7 +127,7 @@ class DatalandController extends AbstractController
      *
      * @return Response
      */
-    public function metadataAction($udi)
+    public function metadataAction(string $udi)
     {
         $dataset = $this->getDataset($udi);
 
@@ -143,16 +149,16 @@ class DatalandController extends AbstractController
     /**
      * Download the dataset file.
      *
-     * @param string $udi The UDI of the dataset to download.
-     * @param DataStore $dataStore
+     * @param string    $udi       The UDI of the dataset to download.
+     * @param DataStore $dataStore The data store.
      *
-     * @return BinaryFileResponse
-     * @throws \Exception When the dataset is marked as remotely hosted,
-     *                               but datasetFileUri does not contain a valid URL.
+     * @throws \Exception When the dataset is marked as remotely hosted, but datasetFileUri does not contain a valid URL.
+     *
      * @Route("/data/{udi}/download", name="pelagos_app_ui_dataland_download")
      *
+     * @return BinaryFileResponse
      */
-    public function downloadAction($udi, DataStore $dataStore)
+    public function downloadAction(string $udi, DataStore $dataStore)
     {
         $dataset = $this->getDataset($udi);
 
@@ -202,12 +208,12 @@ class DatalandController extends AbstractController
      *
      * @return Dataset
      */
-    protected function getDataset($udi)
+    protected function getDataset(string $udi)
     {
         $datasets = $this->entityHandler->getBy(Dataset::class, array('udi' => $udi));
 
         if (count($datasets) == 0) {
-            throw $this->createNotFoundException("No dataset found for UDI: $udi");
+            throw new NotFoundHttpException("No dataset found for UDI: $udi");
         }
 
         if (count($datasets) > 1) {

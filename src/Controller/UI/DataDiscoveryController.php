@@ -46,12 +46,13 @@ class DataDiscoveryController extends AbstractController
     /**
      * The dataset counts action.
      *
-     * @param Request $request The Symfony request object.
-     * @param DatasetIndex $datasetIndex
-     * @param LogActionItemEventDispatcher $logActionItemEventDispatcher
+     * @param Request                      $request                      The Symfony request object.
+     * @param DatasetIndex                 $datasetIndex                 The dataset index.
+     * @param LogActionItemEventDispatcher $logActionItemEventDispatcher The log action dispatcher.
+     *
+     * @Route("/data-discovery/dataset-count", name="pelagos_app_ui_datadiscovery_count", methods={"GET"})
      *
      * @return Response
-     * @Route("/data-discovery/dataset-count", name="pelagos_app_ui_datadiscovery_count", methods={"GET"})
      */
     public function countAction(Request $request, DatasetIndex $datasetIndex, LogActionItemEventDispatcher $logActionItemEventDispatcher)
     {
@@ -170,12 +171,12 @@ class DataDiscoveryController extends AbstractController
     /**
      * The datasets search action.
      *
-     * @param Request $request The Symfony request object.
-     * @param DatasetIndex $datasetIndex
+     * @param Request      $request      The Symfony request object.
+     * @param DatasetIndex $datasetIndex The dataset index.
      *
-     * @return JsonResponse
      * @Route("/data-discovery/dataset-results", name="pelagos_app_ui_datadiscovery_search", methods={"GET"})
      *
+     * @return JsonResponse
      */
     public function searchAction(Request $request, DatasetIndex $datasetIndex)
     {
@@ -269,9 +270,9 @@ class DataDiscoveryController extends AbstractController
     /**
      * This dispatches a search term log event.
      *
-     * @param Request $request The request passed from datasetAction.
-     * @param \Elastica\ResultSet $searchResult Results returned by a search.
-     * @param LogActionItemEventDispatcher $logActionItemEventDispatcher
+     * @param Request                      $request                      The request passed from datasetAction.
+     * @param ResultSet                    $searchResult                 Results returned by a search.
+     * @param LogActionItemEventDispatcher $logActionItemEventDispatcher Log item action dispatcher.
      *
      * @return void
      */

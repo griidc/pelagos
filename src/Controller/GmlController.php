@@ -103,7 +103,7 @@ class GmlController extends AbstractController
      *
      * @return string
      */
-    private function addGMLid($gml)
+    private function addGMLid(string $gml)
     {
         $doc = new \DomDocument('1.0', 'UTF-8');
         $doc->loadXML($gml, LIBXML_NOERROR);
@@ -157,16 +157,17 @@ class GmlController extends AbstractController
     /**
      * This function validates Gml against OpenGIS schema.
      *
-     * @param Request $request The Symfony request object.
-     * @param string $schema Url to remote schema validation cache.
-     * @param Metadata $metadataUtil
+     * @param Request  $request      The Symfony request object.
+     * @param string   $schema       Url to remote schema validation cache.
+     * @param Metadata $metadataUtil The metadata util.
      *
-     * @return JsonResponse A json array response including a boolean,errors array,warnings array.
+     * @throws BadRequestHttpException When no GML was given.
      *
      * @Route("/validategml", name="pelagos_app_gml_validategml", methods={"POST"})
      *
+     * @return JsonResponse A json array response including a boolean,errors array,warnings array.
      */
-    public function validateGml(Request $request, $schema = 'http://schemas.opengis.net/gml/3.2.1/gml.xsd', Metadata $metadataUtil)
+    public function validateGml(Request $request, string $schema = 'http://schemas.opengis.net/gml/3.2.1/gml.xsd', Metadata $metadataUtil)
     {
         $gml = $request->request->get('gml');
         $isValid = false;

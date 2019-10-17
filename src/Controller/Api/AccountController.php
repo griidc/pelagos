@@ -58,7 +58,7 @@ class AccountController extends EntityController
      *
      * @return array The incoming directory.
      */
-    public function getIncomingDirectoryAction(Request $request, $id)
+    public function getIncomingDirectoryAction(Request $request, int $id)
     {
         if ('self' == $id) {
             if (!$this->getUser() instanceof Account) {
@@ -100,7 +100,7 @@ class AccountController extends EntityController
      *
      * @return array
      */
-    protected function readDirectory($baseDirectory, $subDirectory = null)
+    protected function readDirectory(string $baseDirectory, string $subDirectory = null)
     {
         if (preg_match('/^\./', $subDirectory)) {
             throw new BadRequestHttpException(
@@ -155,9 +155,11 @@ class AccountController extends EntityController
     /**
      * Request a user to be converted to POSIX.
      *
-     * @param POSIXifyAccount $posixifyAccount
+     * @param POSIXifyAccount $posixifyAccount Posixify account instance.
      *
-     * @return \Symfony\Component\HttpFoundation\Response A response object with an empty body and a "no content" status code.
+     * @throws AccessDeniedException   When the user is not logged in.
+     * @throws BadRequestHttpException When there was a problem.
+     *
      * @ApiDoc(
      *   section = "Account",
      *   statusCodes = {
@@ -176,6 +178,7 @@ class AccountController extends EntityController
      *
      * @View()
      *
+     * @return \Symfony\Component\HttpFoundation\Response A response object with an empty body and a "no content" status code.
      */
     public function makePosixAction(POSIXifyAccount $posixifyAccount)
     {
