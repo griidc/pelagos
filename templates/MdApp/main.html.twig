@@ -1,0 +1,126 @@
+{% extends "template/UI.html.twig" %}
+{% block title %}MDAPP{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css" rel="stylesheet" />
+
+    <link href="{{ asset('css/mdapp.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js"></script>
+
+    <script type="text/javascript" src="{{ asset('js/mdapp.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/pelagosNoty.js') }}"></script>
+
+{% endblock %}
+
+{% block body %}
+    {% for label, messages in app.flashes(['success', 'error']) %}
+        {% for message in messages %}
+            <div class="pelagosNoty" text="{{message}}" type="{{label}}"></div>
+        {% endfor %}
+    {% endfor %}
+
+    <!--  Filtering Tabs at the top of MDAPP -->
+<script type="text/javascript">var issueTrackingBaseUrl="{{ issueTrackingBaseUrl }}";</script>
+<div style="background: #fff2e8; padding:0px;" id="tabs">
+  <div class="ui-tabs">
+    <ul class="ui-tabs-nav">
+        <li style="text-align:center"><a href="#submitted" onClick="clearStatusMessages()">Submitted ({{ m_dataset.submitted|length }})</a></li>
+        <li style="text-align:center"><a href="#inreview" onClick="clearStatusMessages()">In Review ({{ m_dataset.inreview|length }})</a></li>
+        <li style="text-align:center"><a href="#accepted" onClick="clearStatusMessages()" >Accepted ({{ m_dataset.accepted|length }})</a></li>
+        <li style="text-align:center"><a href="#backtosubmitter" onClick="clearStatusMessages()" >Request Revisions ({{ m_dataset.backtosubmitter|length }})</a></li>
+    </ul>
+  </div>
+
+    {% for sname,section in m_dataset %} <!-- allows key,value iteration -->
+      {% if section|length %}
+        <div id="{{sname}}" class="tab" style="padding:0">
+          <fieldset>
+            <table id="metadata_fancy_{{sname}}" class="display">
+                <thead>
+                    <tr>
+                        <th><div class="title">UDI</div></th>
+                        <th><div class="title">Jira Link</div></th>
+                        <th><div class="title">Action</div></th>
+                        <th><div class="title">Timestamp</div></th>
+                        <th><div class="title">Log</div></th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th><div class="title">UDI</div></th>
+                        <th><div class="title">Jira Link</div></th>
+                        <th><div class="title">Action</div></th>
+                        <th><div class="title">Timestamp</div></th>
+                        <th><div class="title">Log</div></th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {% for dta in section %}
+                    <tr datasetId = "{{ dta.id }}">
+                        <td valign="top" class="udiTD"><a href="data/{{dta.udi}}" target="_BLANK" >{{dta.udi}}</a></td>
+                            <td style="position:relative;">
+                                <div>
+                                    <button id="jiraLinkEditButton" class="jlink">
+                                        <img src="{{ asset('images/edit.png') }}">
+                                    </button>&nbsp;
+                                    <a href="{{ issueTrackingBaseUrl }}/{{ dta.issueTrackingTicket }}" target="_BLANK">{{ dta.issueTrackingTicket }}</a>
+                                    <table class="jiraForm">
+                                        <tr>
+                                            <td><input type="text" name="jiraTicket" class="jiraTicketClass" placeholder="URL or Jira Issue"></td>
+                                            <td><button type="submit" class="jiraSaveButton">Save</button></td>
+                                            <td><button type="cancel" class="jiraCancelButton">Cancel</button></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                            <td valign="top">
+                                <form name="AcceptedState" action="mdapp/change-dataset-status/{{dta.id}}" method="post">
+                                   {% if sname == 'backtosubmitter' %}
+                                       change to <input type="submit" name="to" value="InReview" id="state_sel_sub_{{dta.udi}}">
+                                    {% else %}
+                                        no action available
+                                    {% endif %}
+                            </form>
+                            </td>
+                            <td valign="top">{{ dta.datasetSubmission.submissionTimeStamp is defined and dta.datasetSubmission.submissionTimeStamp is not null ? dta.datasetSubmission.submissionTimeStamp | date("c") }}</td>
+                            <td valign="top">
+                                <table id="filedisp">
+                                    <tr>
+                                        <td id="button"><button style="font-size:66%"
+                                                                onclick="javascript:showLogEntries('{{dta.udi}}')"
+                                                                id="log_butt_{{dta.udi}}">Log</button></td>
+                                        {% if dta.datasetsubmission.MetadataFileName|default %}
+                                            <td id="md_filename">{{ dta.udi }}</td>
+                                        {% else %}
+                                            <td id="md_filename">{{ dta.datasetsubmission.MetadataFileName|default }}</td>
+                                        {% endif %}
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+          </fieldset>
+        </div>
+       {% endif %}
+     {% endfor %}
+</div>
+<div id='log'>
+    <div id="log_close">
+        <input type="image" src="{{ asset('images/close.gif') }}" onclick="jQuery('#log').hide();">
+    </div>
+    <div id='log_title'>Log replaces by js</div>
+    <div id='log_content'>
+        Log replaced by AJAX call to /getlog/:udi
+    </div>
+</div>
+{% endblock %}

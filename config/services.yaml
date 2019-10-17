@@ -23,6 +23,10 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
+    App\Controller\UI\MdAppController:
+        bind:
+            string $issueTrackingBaseUrl: '%env(ISSUE_TRACKING_BASE_URL)%'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
@@ -39,6 +43,10 @@ services:
         bind:
             string $fromAddress: "%env(MAILER_FROM_ADDR)%"
             string $fromName: "%env(MAILER_FROM_NAME)%"
+
+    App\Util\MdappLogger:
+        bind:
+            string $mdappLogfile: '%kernel.logs_dir%/mdapp.log'
 
     App\EventListener\AccountListener:
         tags:
