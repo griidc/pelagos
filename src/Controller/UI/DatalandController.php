@@ -83,10 +83,12 @@ class DatalandController extends AbstractController
             $rawXml = $this->metadata->getXmlRepresentation($dataset, $boundingBoxArray);
         }
         //Logic to get DIF or Accepted Dataset is in Dataset Entity.
-        try {
-            $wkt = $this->geoUtil->convertGmlToWkt($dataset->getSpatialExtentGeometry());
-        } catch (InvalidGmlException $exception) {
-            $wkt = null;
+        if (!empty($dataset->getSpatialExtentGeometry())) {
+            try {
+                $wkt = $this->geoUtil->convertGmlToWkt($dataset->getSpatialExtentGeometry());
+            } catch (InvalidGmlException $exception) {
+                $wkt = null;
+            }
         }
 
         $downloadCount = null;
