@@ -3,6 +3,9 @@ old_sound_rabbit_mq:
         default:
             url: '%env(RABBITMQ_URL)%'
     producers:
+        dataset_submission:
+            connection:       default
+            exchange_options: { name: 'dataset_submission', type: topic }
         dataset_file_hasher:
             connection:       default
             exchange_options: { name: 'dataset_file_hasher', type: direct }

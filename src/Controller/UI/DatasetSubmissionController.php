@@ -37,6 +37,7 @@ use App\Handler\EntityHandler;
 use App\Exception\InvalidMetadataException;
 
 use App\Util\ISOMetadataExtractorUtil;
+use App\Util\RabbitPublisher;
 
 /**
  * The Dataset Submission controller for the Pelagos UI App Bundle.
@@ -75,15 +76,24 @@ class DatasetSubmissionController extends AbstractController
     protected $entityEventDispatcher;
 
     /**
+     * Custom rabbitmq publisher.
+     *
+     * @var RabbitPublisher
+     */
+    protected $publisher;
+
+    /**
      * Constructor for this Controller, to set up default services.
      *
-     * @param EntityHandler $entityHandler
+     * @param EntityHandler         $entityHandler
      * @param EntityEventDispatcher $entityEventDispatcher
+     * @param RabbitPublisher       $publisher
      */
-    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher)
+    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher, RabbitPublisher $publisher)
     {
         $this->entityHandler = $entityHandler;
         $this->entityEventDispatcher = $entityEventDispatcher;
+        $this->publisher = $publisher;
     }
 
     /**
@@ -258,10 +268,9 @@ class DatasetSubmissionController extends AbstractController
             );
 
             foreach ($this->messages as $message) {
-                $this->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(
-                    $message['body'],
-                    $message['routing_key']
-                );
+                foreach ($this->messages as $message) {
+                    $this->publisher->publish($message['body'], $message['routing_key']);
+                }
             }
 
             return $this->render(

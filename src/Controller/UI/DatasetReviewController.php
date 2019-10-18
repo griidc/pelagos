@@ -27,6 +27,8 @@ use App\Entity\Entity;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
 
+use App\Util\RabbitPublisher;
+
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
  */
@@ -61,15 +63,24 @@ class DatasetReviewController extends AbstractController
     protected $entityEventDispatcher;
 
     /**
+     * Custom rabbitmq publisher.
+     *
+     * @var RabbitPublisher
+     */
+    protected $publisher;
+
+    /**
      * Constructor for this Controller, to set up default services.
      *
-     * @param EntityHandler $entityHandler
+     * @param EntityHandler         $entityHandler
      * @param EntityEventDispatcher $entityEventDispatcher
+     * @param RabbitPublisher       $publisher
      */
-    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher)
+    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher, RabbitPublisher $publisher)
     {
         $this->entityHandler = $entityHandler;
         $this->entityEventDispatcher = $entityEventDispatcher;
+        $this->publisher = $publisher;
     }
 
     /**
@@ -527,10 +538,7 @@ class DatasetReviewController extends AbstractController
 
             //use rabbitmq to process dataset file and persist the file details.
             foreach ($this->messages as $message) {
-                $this->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(
-                    $message['body'],
-                    $message['routing_key']
-                );
+                $this->publisher->publish($message['body'], $message['routing_key']);
             }
             $reviewedBy = $datasetSubmission->getDatasetSubmissionReview()->getReviewEndedBy()->getFirstName();
 
