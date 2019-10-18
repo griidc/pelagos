@@ -1315,7 +1315,7 @@ class DatasetSubmission extends Entity
      *
      * @return integer
      */
-    public function getStatus()
+    public function getStatus() : int
     {
         return $this->status;
     }
@@ -1337,7 +1337,7 @@ class DatasetSubmission extends Entity
      *
      * @return DatasetSubmissionReview
      */
-    public function getDatasetSubmissionReview()
+    public function getDatasetSubmissionReview() : DatasetSubmissionReview
     {
         return $this->datasetSubmissionReview;
     }
@@ -1359,7 +1359,7 @@ class DatasetSubmission extends Entity
      *
      * @return Dataset
      */
-    public function getDataset()
+    public function getDataset() : Dataset
     {
         return $this->dataset;
     }
@@ -1384,9 +1384,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the sequence for this Dataset Submission.
      *
-     * @return string
+     * @return integer
      */
-    public function getSequence()
+    public function getSequence() : int
     {
         return $this->sequence;
     }
@@ -1394,11 +1394,11 @@ class DatasetSubmission extends Entity
     /**
      * Set the title for this Dataset Submission.
      *
-     * @param string $title The title for this Dataset Submission.
+     * @param string|null $title The title for this Dataset Submission.
      *
      * @return void
      */
-    public function setTitle(string $title)
+    public function setTitle(?string $title)
     {
         $this->title = $title;
     }
@@ -1406,9 +1406,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the title for this Dataset Submission.
      *
-     * @return string
+     * @return string|null
      */
-    public function getTitle()
+    public function getTitle() : ?string
     {
         return $this->title;
     }
@@ -1416,11 +1416,11 @@ class DatasetSubmission extends Entity
     /**
      * Set the short title for this Dataset Submission.
      *
-     * @param string $shortTitle The short title for this Dataset Submission.
+     * @param string|null $shortTitle The short title for this Dataset Submission.
      *
      * @return void
      */
-    public function setShortTitle(string $shortTitle)
+    public function setShortTitle(?string $shortTitle)
     {
         $this->shortTitle = $shortTitle;
     }
@@ -1428,9 +1428,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the short title for this Dataset Submission.
      *
-     * @return string
+     * @return string|null
      */
-    public function getShortTitle()
+    public function getShortTitle() : ?string
     {
         return $this->shortTitle;
     }
@@ -1438,11 +1438,11 @@ class DatasetSubmission extends Entity
     /**
      * Set the abstract for this Dataset Submission.
      *
-     * @param string $abstract The abstract for this Dataset Submission.
+     * @param string|null $abstract The abstract for this Dataset Submission.
      *
      * @return void
      */
-    public function setAbstract(string $abstract)
+    public function setAbstract(?string $abstract)
     {
         $this->abstract = $abstract;
     }
@@ -1450,9 +1450,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the abstract for this Dataset Submission.
      *
-     * @return string
+     * @return string|null
      */
-    public function getAbstract()
+    public function getAbstract() : ?string
     {
         return $this->abstract;
     }
@@ -1460,11 +1460,11 @@ class DatasetSubmission extends Entity
     /**
      * Set the author(s) for this Dataset Submission.
      *
-     * @param string $authors The author(s) for this Dataset Submission.
+     * @param string|null $authors The author(s) for this Dataset Submission.
      *
      * @return void
      */
-    public function setAuthors(string $authors)
+    public function setAuthors(?string $authors)
     {
         $this->authors = $authors;
     }
@@ -1472,9 +1472,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the author(s) for this Dataset Submission.
      *
-     * @return string
+     * @return string|null
      */
-    public function getAuthors()
+    public function getAuthors() : ?string
     {
         return $this->authors;
     }
@@ -1574,7 +1574,7 @@ class DatasetSubmission extends Entity
      *
      * @return string
      */
-    public function getPointOfContactName()
+    public function getPointOfContactName() : string
     {
         if ($this->getDatasetContacts()->isEmpty()) {
             if (property_exists(self::class, 'pointOfContactName')) {
@@ -1602,7 +1602,7 @@ class DatasetSubmission extends Entity
      *
      * @return string
      */
-    public function getPointOfContactEmail()
+    public function getPointOfContactEmail() : string
     {
         if ($this->getDatasetContacts()->isEmpty()) {
             if (property_exists(self::class, 'pointOfContactEmail')) {
@@ -1620,13 +1620,13 @@ class DatasetSubmission extends Entity
     /**
      * Set whether the dataset has any restrictions.
      *
-     * @param string $restrictions Whether the dataset has any restrictions.
+     * @param string|null $restrictions Whether the dataset has any restrictions.
      *
      * @see RESTRICTIONS class constant for valid values.
      *
      * @return void
      */
-    public function setRestrictions(string $restrictions)
+    public function setRestrictions(?string $restrictions)
     {
         $this->restrictions = $restrictions;
         $this->updateAvailabilityStatus();
@@ -1635,9 +1635,9 @@ class DatasetSubmission extends Entity
     /**
      * Get whether the dataset has any restrictions.
      *
-     * @return string
+     * @return string|null
      */
-    public function getRestrictions()
+    public function getRestrictions() : ?string
     {
         return $this->restrictions;
     }
@@ -1645,13 +1645,13 @@ class DatasetSubmission extends Entity
     /**
      * Set the dataset file transfer type.
      *
-     * @param string $datasetFileTransferType The dataset file transfer type.
+     * @param string|null $datasetFileTransferType The dataset file transfer type.
      *
      * @see TRANSFER_TYPES class constant for valid values.
      *
      * @return void
      */
-    public function setDatasetFileTransferType(string $datasetFileTransferType)
+    public function setDatasetFileTransferType(?string $datasetFileTransferType)
     {
         $this->datasetFileTransferType = $datasetFileTransferType;
     }
@@ -1659,9 +1659,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the dataset file transfer type.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDatasetFileTransferType()
+    public function getDatasetFileTransferType() : ?string
     {
         return $this->datasetFileTransferType;
     }
@@ -1669,11 +1669,11 @@ class DatasetSubmission extends Entity
     /**
      * Set the dataset file URI.
      *
-     * @param string $datasetFileUri The dataset file URI.
+     * @param string|null $datasetFileUri The dataset file URI.
      *
      * @return void
      */
-    public function setDatasetFileUri(string $datasetFileUri)
+    public function setDatasetFileUri(?string $datasetFileUri)
     {
         $this->datasetFileUri = $datasetFileUri;
     }
@@ -1681,9 +1681,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the dataset file URI.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDatasetFileUri()
+    public function getDatasetFileUri() : ?string
     {
         return $this->datasetFileUri;
     }
@@ -1691,13 +1691,13 @@ class DatasetSubmission extends Entity
     /**
      * Set the dataset file transfer status.
      *
-     * @param string $datasetFileTransferStatus The dataset file transfer status.
+     * @param string|null $datasetFileTransferStatus The dataset file transfer status.
      *
      * @see TRANSFER_STATUSES class constant for valid values.
      *
      * @return void
      */
-    public function setDatasetFileTransferStatus(string $datasetFileTransferStatus)
+    public function setDatasetFileTransferStatus(?string $datasetFileTransferStatus)
     {
         $this->datasetFileTransferStatus = $datasetFileTransferStatus;
         $this->updateAvailabilityStatus();
@@ -1706,9 +1706,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the dataset file transfer status.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDatasetFileTransferStatus()
+    public function getDatasetFileTransferStatus() : ?string
     {
         return $this->datasetFileTransferStatus;
     }
@@ -1716,11 +1716,11 @@ class DatasetSubmission extends Entity
     /**
      * Set the dataset file name.
      *
-     * @param string $datasetFileName The dataset file name.
+     * @param string|null $datasetFileName The dataset file name.
      *
      * @return void
      */
-    public function setDatasetFileName(string $datasetFileName)
+    public function setDatasetFileName(?string $datasetFileName)
     {
         $this->datasetFileName = $datasetFileName;
     }
@@ -1728,9 +1728,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the dataset file name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDatasetFileName()
+    public function getDatasetFileName() : ?string
     {
         return $this->datasetFileName;
     }
@@ -1738,11 +1738,11 @@ class DatasetSubmission extends Entity
     /**
      * Set the dataset file size.
      *
-     * @param integer $datasetFileSize The dataset file size.
+     * @param integer|null $datasetFileSize The dataset file size.
      *
      * @return void
      */
-    public function setDatasetFileSize(int $datasetFileSize)
+    public function setDatasetFileSize(?int $datasetFileSize)
     {
         $this->datasetFileSize = $datasetFileSize;
     }
@@ -1750,9 +1750,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the dataset file size.
      *
-     * @return integer
+     * @return integer|null
      */
-    public function getDatasetFileSize()
+    public function getDatasetFileSize() : ?int
     {
         return $this->datasetFileSize;
     }
@@ -1760,11 +1760,11 @@ class DatasetSubmission extends Entity
     /**
      * Set the dataset file sha256 hash.
      *
-     * @param string $datasetFileSha256Hash The dataset file sha256 hash.
+     * @param string|null $datasetFileSha256Hash The dataset file sha256 hash.
      *
      * @return void
      */
-    public function setDatasetFileSha256Hash(string $datasetFileSha256Hash)
+    public function setDatasetFileSha256Hash(?string $datasetFileSha256Hash)
     {
         $this->datasetFileSha256Hash = $datasetFileSha256Hash;
     }
@@ -1772,9 +1772,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the dataset file sha256 hash.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDatasetFileSha256Hash()
+    public function getDatasetFileSha256Hash() : ?string
     {
         return $this->datasetFileSha256Hash;
     }
@@ -1782,11 +1782,11 @@ class DatasetSubmission extends Entity
     /**
      * Set the hash of the single archive file to be stored in cold storage.
      *
-     * @param string $datasetFileColdStorageArchiveSha256Hash Hash of the archive to be put into cold storage.
+     * @param string|null $datasetFileColdStorageArchiveSha256Hash Hash of the archive to be put into cold storage.
      *
      * @return void
      */
-    protected function setDatasetFileColdStorageArchiveSha256Hash(string $datasetFileColdStorageArchiveSha256Hash)
+    protected function setDatasetFileColdStorageArchiveSha256Hash(?string $datasetFileColdStorageArchiveSha256Hash)
     {
         $this->datasetFileColdStorageArchiveSha256Hash = $datasetFileColdStorageArchiveSha256Hash;
     }
@@ -1794,9 +1794,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the hash of the single archive file to be stored in cold storage.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDatasetFileColdStorageArchiveSha256Hash()
+    public function getDatasetFileColdStorageArchiveSha256Hash() : ?string
     {
         return $this->datasetFileColdStorageArchiveSha256Hash;
     }
@@ -1808,7 +1808,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    protected function setDatasetFileColdStorageArchiveSize($datasetFileColdStorageArchiveSize)
+    protected function setDatasetFileColdStorageArchiveSize(?int $datasetFileColdStorageArchiveSize)
     {
         $this->datasetFileColdStorageArchiveSize = $datasetFileColdStorageArchiveSize;
     }
@@ -1816,9 +1816,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the size of the single archive file to be stored in cold storage, in bytes.
      *
-     * @return integer
+     * @return integer|null
      */
-    public function getDatasetFileColdStorageArchiveSize()
+    public function getDatasetFileColdStorageArchiveSize() : ?int
     {
         return $this->datasetFileColdStorageArchiveSize;
     }
@@ -1830,7 +1830,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    protected function setDatasetFileColdStorageOriginalFilename($datasetFileColdStorageOriginalFilename)
+    protected function setDatasetFileColdStorageOriginalFilename(?string $datasetFileColdStorageOriginalFilename)
     {
         $this->datasetFileColdStorageOriginalFilename = $datasetFileColdStorageOriginalFilename;
     }
@@ -1840,7 +1840,7 @@ class DatasetSubmission extends Entity
      *
      * @return string|null
      */
-    public function getDatasetFileColdStorageOriginalFilename()
+    public function getDatasetFileColdStorageOriginalFilename() : ?string
     {
         return $this->datasetFileColdStorageOriginalFilename;
     }
@@ -1905,7 +1905,7 @@ class DatasetSubmission extends Entity
      *
      * @return \DateTime
      */
-    public function getDatasetFileUrlLastCheckedDate()
+    public function getDatasetFileUrlLastCheckedDate() : ?\DateTime
     {
         return $this->datasetFileUrlLastCheckedDate;
     }
@@ -1913,11 +1913,11 @@ class DatasetSubmission extends Entity
     /**
      * Set the dataset file url status code.
      *
-     * @param string $datasetFileUrlStatusCode The dataset dataset file url status code.
+     * @param string|null $datasetFileUrlStatusCode The dataset dataset file url status code.
      *
      * @return void
      */
-    public function setDatasetFileUrlStatusCode(string $datasetFileUrlStatusCode)
+    public function setDatasetFileUrlStatusCode(?string $datasetFileUrlStatusCode)
     {
         $this->datasetFileUrlStatusCode = $datasetFileUrlStatusCode;
     }
@@ -1925,9 +1925,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the dataset file url status code.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDatasetFileUrlStatusCode()
+    public function getDatasetFileUrlStatusCode() : ?string
     {
         return $this->datasetFileUrlStatusCode;
     }
@@ -1935,13 +1935,13 @@ class DatasetSubmission extends Entity
     /**
      * Set the metadata file transfer type.
      *
-     * @param string $metadataFileTransferType The metadata file transfer type.
+     * @param string|null $metadataFileTransferType The metadata file transfer type.
      *
      * @see TRANSFER_TYPES class constant for valid values.
      *
      * @return void
      */
-    public function setMetadataFileTransferType(string $metadataFileTransferType)
+    public function setMetadataFileTransferType(?string $metadataFileTransferType)
     {
         $this->metadataFileTransferType = $metadataFileTransferType;
     }
@@ -1949,9 +1949,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the metadata file transfer type.
      *
-     * @return string
+     * @return string|null
      */
-    public function getMetadataFileTransferType()
+    public function getMetadataFileTransferType() : ?string
     {
         return $this->metadataFileTransferType;
     }
@@ -1959,11 +1959,11 @@ class DatasetSubmission extends Entity
     /**
      * Set the metadata file URI.
      *
-     * @param string $metadataFileUri The metadata file URI.
+     * @param string|null $metadataFileUri The metadata file URI.
      *
      * @return void
      */
-    public function setMetadataFileUri(string $metadataFileUri)
+    public function setMetadataFileUri(?string $metadataFileUri)
     {
         $this->metadataFileUri = $metadataFileUri;
     }
@@ -1971,9 +1971,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the metadata file URI.
      *
-     * @return string
+     * @return string|null
      */
-    public function getMetadataFileUri()
+    public function getMetadataFileUri() : ?string
     {
         return $this->metadataFileUri;
     }
@@ -1981,13 +1981,13 @@ class DatasetSubmission extends Entity
     /**
      * Set the metadata file transfer status.
      *
-     * @param string $metadataFileTransferStatus The metadata file transfer status.
+     * @param string|null $metadataFileTransferStatus The metadata file transfer status.
      *
      * @see TRANSFER_STATUSES class constant for valid values.
      *
      * @return void
      */
-    public function setMetadataFileTransferStatus(string $metadataFileTransferStatus)
+    public function setMetadataFileTransferStatus(?string $metadataFileTransferStatus)
     {
         $this->metadataFileTransferStatus = $metadataFileTransferStatus;
     }
@@ -1995,9 +1995,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the metadata file transfer status.
      *
-     * @return string
+     * @return string|null
      */
-    public function getMetadataFileTransferStatus()
+    public function getMetadataFileTransferStatus() : ?string
     {
         return $this->metadataFileTransferStatus;
     }
@@ -2005,11 +2005,11 @@ class DatasetSubmission extends Entity
     /**
      * Set the metadata file name.
      *
-     * @param string $metadataFileName The metadata file name.
+     * @param string|null $metadataFileName The metadata file name.
      *
      * @return void
      */
-    public function setMetadataFileName(string $metadataFileName)
+    public function setMetadataFileName(?string $metadataFileName)
     {
         $this->metadataFileName = $metadataFileName;
     }
@@ -2017,9 +2017,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the metadata file name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getMetadataFileName()
+    public function getMetadataFileName() : ?string
     {
         return $this->metadataFileName;
     }
@@ -2027,11 +2027,11 @@ class DatasetSubmission extends Entity
     /**
      * Set the metadata file sha256 hash.
      *
-     * @param string $metadataFileSha256Hash The metadata file sha256 hash.
+     * @param string|null $metadataFileSha256Hash The metadata file sha256 hash.
      *
      * @return void
      */
-    public function setMetadataFileSha256Hash(string $metadataFileSha256Hash)
+    public function setMetadataFileSha256Hash(?string $metadataFileSha256Hash)
     {
         $this->metadataFileSha256Hash = $metadataFileSha256Hash;
     }
@@ -2039,9 +2039,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the metadata file sha256 hash.
      *
-     * @return string
+     * @return string|null
      */
-    public function getMetadataFileSha256Hash()
+    public function getMetadataFileSha256Hash() : ?string
     {
         return $this->metadataFileSha256Hash;
     }
@@ -2049,13 +2049,13 @@ class DatasetSubmission extends Entity
     /**
      * Set the status of the metadata.
      *
-     * @param string $datasetStatus The status of the metadata.
+     * @param string|null $datasetStatus The status of the metadata.
      *
      * @see DATASET_STATUSES class constant for valid values.
      *
      * @return void
      */
-    public function setDatasetStatus(string $datasetStatus)
+    public function setDatasetStatus(?string $datasetStatus)
     {
         $this->datasetStatus = $datasetStatus;
         $this->updateDatasetStatus();
@@ -2065,9 +2065,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the status of the metadata.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDatasetStatus()
+    public function getDatasetStatus() : ?string
     {
         return $this->datasetStatus;
     }
@@ -2081,7 +2081,7 @@ class DatasetSubmission extends Entity
      *
      * @return string|null
      */
-    public function getDatasetSubmissionId()
+    public function getDatasetSubmissionId() : ?string
     {
         // If the dataset is not set or the dataset does not have an UDI.
         if (!$this->dataset instanceof Dataset or null === $this->dataset->getUdi()) {
@@ -2110,7 +2110,7 @@ class DatasetSubmission extends Entity
      *
      * @return \DateTime
      */
-    public function getReferenceDate()
+    public function getReferenceDate() : ?\DateTime
     {
         return $this->referenceDate;
     }
@@ -2118,7 +2118,7 @@ class DatasetSubmission extends Entity
     /**
      * Set reference date type.
      *
-     * @param string $referenceDateType The designated type of dataset reference.
+     * @param string|null $referenceDateType The designated type of dataset reference.
      *
      * @see REFERENCE_DATE_TYPES class constant for possible values.
      *
@@ -2126,7 +2126,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setReferenceDateType(string $referenceDateType)
+    public function setReferenceDateType(?string $referenceDateType)
     {
         if (null !== $referenceDateType and !array_key_exists($referenceDateType, static::REFERENCE_DATE_TYPES)) {
             throw new \InvalidArgumentException("'$referenceDateType' is not a valid value for referenceDateType");
@@ -2137,9 +2137,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the type of reference date associated with this submission.
      *
-     * @return string
+     * @return string|null
      */
-    public function getReferenceDateType()
+    public function getReferenceDateType() : ?string
     {
         return $this->referenceDateType;
     }
@@ -2147,11 +2147,11 @@ class DatasetSubmission extends Entity
     /**
      * Sets the purpose.
      *
-     * @param string $purpose The purpose of the dataset.
+     * @param string|null $purpose The purpose of the dataset.
      *
      * @return void
      */
-    public function setPurpose(string $purpose)
+    public function setPurpose(?string $purpose)
     {
         $this->purpose = $purpose;
     }
@@ -2159,9 +2159,9 @@ class DatasetSubmission extends Entity
     /**
      * Gets the purpose.
      *
-     * @return string
+     * @return string|null
      */
-    public function getPurpose()
+    public function getPurpose() : ?string
     {
         return $this->purpose;
     }
@@ -2169,11 +2169,11 @@ class DatasetSubmission extends Entity
     /**
      * Sets the Supplemental Information - Data Parameters and Units.
      *
-     * @param string $suppParams Supplemental data parameters and units.
+     * @param string|null $suppParams Supplemental data parameters and units.
      *
      * @return void
      */
-    public function setSuppParams(string $suppParams)
+    public function setSuppParams(?string $suppParams)
     {
         $this->suppParams = $suppParams;
     }
@@ -2181,9 +2181,9 @@ class DatasetSubmission extends Entity
     /**
      * Gets the Supplemental Information - Data Parameters and Units.
      *
-     * @return string
+     * @return string|null
      */
-    public function getSuppParams()
+    public function getSuppParams() : ?string
     {
         return $this->suppParams;
     }
@@ -2191,11 +2191,11 @@ class DatasetSubmission extends Entity
     /**
      * Sets the Supplemental Information - Methods.
      *
-     * @param string $suppMethods Supplemental data methods.
+     * @param string|null $suppMethods Supplemental data methods.
      *
      * @return void
      */
-    public function setSuppMethods(string $suppMethods)
+    public function setSuppMethods(?string $suppMethods)
     {
         $this->suppMethods = $suppMethods;
     }
@@ -2203,9 +2203,9 @@ class DatasetSubmission extends Entity
     /**
      * Gets the Supplemental Information - Methods.
      *
-     * @return string
+     * @return string|null
      */
-    public function getSuppMethods()
+    public function getSuppMethods() : ?string
     {
         return $this->suppMethods;
     }
@@ -2213,11 +2213,11 @@ class DatasetSubmission extends Entity
     /**
      * Sets the Supplemental Information - Instruments.
      *
-     * @param string $suppInstruments Supplemental data - instruments.
+     * @param string|null $suppInstruments Supplemental data - instruments.
      *
      * @return void
      */
-    public function setSuppInstruments(string $suppInstruments)
+    public function setSuppInstruments(?string $suppInstruments)
     {
         $this->suppInstruments = $suppInstruments;
     }
@@ -2225,9 +2225,9 @@ class DatasetSubmission extends Entity
     /**
      * Gets the Supplemental Information - Instruments.
      *
-     * @return string
+     * @return string|null
      */
-    public function getSuppInstruments()
+    public function getSuppInstruments() : ?string
     {
         return $this->suppInstruments;
     }
@@ -2235,11 +2235,11 @@ class DatasetSubmission extends Entity
     /**
      * Sets the Supplemental Information - sampling scales and rates.
      *
-     * @param string $suppSampScalesRates Supplemental data - sampling scales and rates.
+     * @param string|null $suppSampScalesRates Supplemental data - sampling scales and rates.
      *
      * @return void
      */
-    public function setSuppSampScalesRates(string $suppSampScalesRates)
+    public function setSuppSampScalesRates(?string $suppSampScalesRates)
     {
         $this->suppSampScalesRates = $suppSampScalesRates;
     }
@@ -2247,9 +2247,9 @@ class DatasetSubmission extends Entity
     /**
      * Gets the Supplemental Information - sampling scales and rates.
      *
-     * @return string
+     * @return string|null
      */
-    public function getSuppSampScalesRates()
+    public function getSuppSampScalesRates() : ?string
     {
         return $this->suppSampScalesRates;
     }
@@ -2257,11 +2257,11 @@ class DatasetSubmission extends Entity
     /**
      * Sets the Supplemental Information - error analysis.
      *
-     * @param string $suppErrorAnalysis Supplemental data - error analysis.
+     * @param string|null $suppErrorAnalysis Supplemental data - error analysis.
      *
      * @return void
      */
-    public function setSuppErrorAnalysis(string $suppErrorAnalysis)
+    public function setSuppErrorAnalysis(?string $suppErrorAnalysis)
     {
         $this->suppErrorAnalysis = $suppErrorAnalysis;
     }
@@ -2269,9 +2269,9 @@ class DatasetSubmission extends Entity
     /**
      * Gets the Supplemental Information - error analysis.
      *
-     * @return string
+     * @return string|null
      */
-    public function getSuppErrorAnalysis()
+    public function getSuppErrorAnalysis() : ?string
     {
         return $this->suppErrorAnalysis;
     }
@@ -2279,11 +2279,11 @@ class DatasetSubmission extends Entity
     /**
      * Sets the Supplemental Information - provenance and historical references.
      *
-     * @param string $suppProvenance Supplemental data - provenance and historical references.
+     * @param string|null $suppProvenance Supplemental data - provenance and historical references.
      *
      * @return void
      */
-    public function setSuppProvenance(string $suppProvenance)
+    public function setSuppProvenance(?string $suppProvenance)
     {
         $this->suppProvenance = $suppProvenance;
     }
@@ -2291,9 +2291,9 @@ class DatasetSubmission extends Entity
     /**
      * Gets the Supplemental Information - provenance and historical references.
      *
-     * @return string
+     * @return string|null
      */
-    public function getSuppProvenance()
+    public function getSuppProvenance() : ?string
     {
         return $this->suppProvenance;
     }
@@ -2315,7 +2315,7 @@ class DatasetSubmission extends Entity
      *
      * @return array
      */
-    public function getThemeKeywords()
+    public function getThemeKeywords() : array
     {
         return $this->themeKeywords;
     }
@@ -2337,7 +2337,7 @@ class DatasetSubmission extends Entity
      *
      * @return array
      */
-    public function getPlaceKeywords()
+    public function getPlaceKeywords() : array
     {
         return $this->placeKeywords;
     }
@@ -2368,7 +2368,7 @@ class DatasetSubmission extends Entity
      *
      * @return array
      */
-    public function getTopicKeywords()
+    public function getTopicKeywords() : array
     {
         return $this->topicKeywords;
     }
@@ -2376,11 +2376,11 @@ class DatasetSubmission extends Entity
     /**
      * Setter for geographic spatial extent.
      *
-     * @param string $spatialExtent Well-Known text of dataset's geometry.
+     * @param string|null $spatialExtent Well-Known text of dataset's geometry.
      *
      * @return void
      */
-    public function setSpatialExtent(string $spatialExtent)
+    public function setSpatialExtent(?string $spatialExtent)
     {
         $this->spatialExtent = $spatialExtent;
     }
@@ -2388,9 +2388,9 @@ class DatasetSubmission extends Entity
     /**
      * Getter for geographic spatial extent.
      *
-     * @return string As WKT.
+     * @return string|null As WKT.
      */
-    public function getSpatialExtent()
+    public function getSpatialExtent() : ?string
     {
         return $this->spatialExtent;
     }
@@ -2398,11 +2398,11 @@ class DatasetSubmission extends Entity
     /**
      * Setter for spatial extent description.
      *
-     * @param string $spatialExtentDescription Description of spatial extent.
+     * @param string|null $spatialExtentDescription Description of spatial extent.
      *
      * @return void
      */
-    public function setSpatialExtentDescription(string $spatialExtentDescription)
+    public function setSpatialExtentDescription(?string $spatialExtentDescription)
     {
         $this->spatialExtentDescription = $spatialExtentDescription;
     }
@@ -2410,9 +2410,9 @@ class DatasetSubmission extends Entity
     /**
      * Getter for spatial extent description.
      *
-     * @return string
+     * @return string|null
      */
-    public function getSpatialExtentDescription()
+    public function getSpatialExtentDescription() : ?string
     {
         return $this->spatialExtentDescription;
     }
@@ -2420,13 +2420,13 @@ class DatasetSubmission extends Entity
     /**
      * Setter for dataset's temporal extent description.
      *
-     * @param string $temporalExtentDesc Description of temporal extent, either 'ground condition' or 'modeled period'.
+     * @param string|null $temporalExtentDesc Description of temporal extent, either 'ground condition' or 'modeled period'.
      *
      * @throws \InvalidArgumentException If $temporalExtentDesc is not in static::TEMPORAL_EXTENT_DESCRIPTIONS.
      *
      * @return void
      */
-    public function setTemporalExtentDesc(string $temporalExtentDesc)
+    public function setTemporalExtentDesc(?string $temporalExtentDesc)
     {
         if (null !== $temporalExtentDesc and
             !array_key_exists($temporalExtentDesc, static::TEMPORAL_EXTENT_DESCRIPTIONS)) {
@@ -2438,9 +2438,9 @@ class DatasetSubmission extends Entity
     /**
      * Getter for dataset's temporal extent description.
      *
-     * @return string
+     * @return string|null
      */
-    public function getTemporalExtentDesc()
+    public function getTemporalExtentDesc() : ?string
     {
         return $this->temporalExtentDesc;
     }
@@ -2465,7 +2465,7 @@ class DatasetSubmission extends Entity
      *
      * @return \DateTime
      */
-    public function getTemporalExtentBeginPosition()
+    public function getTemporalExtentBeginPosition() : ?\DateTime
     {
         return $this->temporalExtentBeginPosition;
     }
@@ -2490,7 +2490,7 @@ class DatasetSubmission extends Entity
      *
      * @return \DateTime
      */
-    public function getTemporalExtentEndPosition()
+    public function getTemporalExtentEndPosition() : ?\DateTime
     {
         return $this->temporalExtentEndPosition;
     }
@@ -2498,11 +2498,11 @@ class DatasetSubmission extends Entity
     /**
      * Set the distribution format name.
      *
-     * @param string $distributionFormatName The distribution format name.
+     * @param string|null $distributionFormatName The distribution format name.
      *
      * @return void
      */
-    public function setDistributionFormatName(string $distributionFormatName)
+    public function setDistributionFormatName(?string $distributionFormatName)
     {
         $this->distributionFormatName = $distributionFormatName;
     }
@@ -2510,9 +2510,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the distribution format name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDistributionFormatName()
+    public function getDistributionFormatName() : ?string
     {
         return $this->distributionFormatName;
     }
@@ -2520,11 +2520,11 @@ class DatasetSubmission extends Entity
     /**
      * Set the file decompression technique.
      *
-     * @param string $fileDecompressionTechnique The file decompression technique.
+     * @param string|null $fileDecompressionTechnique The file decompression technique.
      *
      * @return void
      */
-    public function setFileDecompressionTechnique(string $fileDecompressionTechnique)
+    public function setFileDecompressionTechnique(?string $fileDecompressionTechnique)
     {
         $this->fileDecompressionTechnique = $fileDecompressionTechnique;
     }
@@ -2532,9 +2532,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the file decompression technique.
      *
-     * @return string
+     * @return string|null
      */
-    public function getFileDecompressionTechnique()
+    public function getFileDecompressionTechnique() : ?string
     {
         return $this->fileDecompressionTechnique;
     }
@@ -2544,7 +2544,7 @@ class DatasetSubmission extends Entity
      *
      * @return \DateTime
      */
-    public function getSubmissionTimeStamp()
+    public function getSubmissionTimeStamp() : ?\DateTime
     {
         return $this->submissionTimeStamp;
     }
@@ -2554,7 +2554,7 @@ class DatasetSubmission extends Entity
      *
      * @return Person|null
      */
-    public function getSubmitter()
+    public function getSubmitter() : ?Person
     {
         return $this->submitter;
     }
@@ -2601,7 +2601,7 @@ class DatasetSubmission extends Entity
      *
      * @return array
      */
-    public static function getReferenceDateTypeChoices()
+    public static function getReferenceDateTypeChoices() : array
     {
         return array_flip(
             array_map(
@@ -2618,7 +2618,7 @@ class DatasetSubmission extends Entity
      *
      * @return array
      */
-    public static function getTopicKeywordsChoices()
+    public static function getTopicKeywordsChoices() : array
     {
         return array_flip(
             array_map(
@@ -2635,7 +2635,7 @@ class DatasetSubmission extends Entity
      *
      * @return array
      */
-    public static function getTemporalExtentDescChoices()
+    public static function getTemporalExtentDescChoices() : array
     {
         return array_flip(
             array_map(
@@ -2652,7 +2652,7 @@ class DatasetSubmission extends Entity
      *
      * @return array
      */
-    public static function getOnlineFunctionCodes()
+    public static function getOnlineFunctionCodes() : array
     {
         return array_flip(
             array_map(
@@ -2677,9 +2677,9 @@ class DatasetSubmission extends Entity
     /**
      * Gets the temporal nilreason type for the dataset.
      *
-     * @return string
+     * @return string|null
      */
-    public function getTemporalExtentNilReasonType()
+    public function getTemporalExtentNilReasonType() : ?string
     {
         return $this->temporalExtentNilReasonType;
     }
@@ -2687,13 +2687,13 @@ class DatasetSubmission extends Entity
     /**
      * Sets the temporal nilreason type for the dataset.
      *
-     * @param string $temporalExtentNilReasonType The nilReason for temporal extent.
+     * @param string|null $temporalExtentNilReasonType The nilReason for temporal extent.
      *
      * @throws \InvalidArgumentException If $temporalExtentNilReasonType is not in self::NILREASON_TYPES.
      *
      * @return void
      */
-    public function setTemporalExtentNilReasonType(string $temporalExtentNilReasonType)
+    public function setTemporalExtentNilReasonType(?string $temporalExtentNilReasonType)
     {
         if (null !== $temporalExtentNilReasonType and !array_key_exists($temporalExtentNilReasonType, self::NILREASON_TYPES)) {
                 throw new \InvalidArgumentException("'$temporalExtentNilReasonType' is not a valid value for nilReason types");
@@ -2747,7 +2747,7 @@ class DatasetSubmission extends Entity
      *
      * @return string|null
      */
-    public function getErddapUrl(): ? string
+    public function getErddapUrl(): ?string
     {
         return $this->erddapUrl;
     }
@@ -2757,7 +2757,7 @@ class DatasetSubmission extends Entity
      *
      * @return string|null
      */
-    public function getErddapUrlProtocol()
+    public function getErddapUrlProtocol() : ?string
     {
         if ($this->erddapUrl !== null) {
             preg_match('/^(.*?):.*$/', $this->erddapUrl, $matches);
@@ -2772,7 +2772,7 @@ class DatasetSubmission extends Entity
      *
      * @return string|null
      */
-    public function getDatasetFileUriProtocol()
+    public function getDatasetFileUriProtocol() : ?string
     {
         if ($this->datasetFileUri !== null) {
             preg_match('/^(.*?):.*$/', $this->datasetFileUri, $matches);
@@ -2789,7 +2789,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setErddapUrl($erddapUrl)
+    public function setErddapUrl(?string $erddapUrl)
     {
         $this->erddapUrl = $erddapUrl;
     }
@@ -2799,7 +2799,7 @@ class DatasetSubmission extends Entity
      *
      * @return string|null
      */
-    public function getRemotelyHostedName() : ? string
+    public function getRemotelyHostedName() : ?string
     {
         return $this->remotelyHostedName;
     }
@@ -2811,7 +2811,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setRemotelyHostedName($remotelyHostedName)
+    public function setRemotelyHostedName(?string $remotelyHostedName)
     {
         $this->remotelyHostedName = $remotelyHostedName;
     }
@@ -2821,7 +2821,7 @@ class DatasetSubmission extends Entity
      *
      * @return string|null
      */
-    public function getRemotelyHostedDescription() : ? string
+    public function getRemotelyHostedDescription() : ?string
     {
         return $this->remotelyHostedDescription;
     }
@@ -2833,7 +2833,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setRemotelyHostedDescription($remotelyHostedDescription)
+    public function setRemotelyHostedDescription(?string $remotelyHostedDescription)
     {
         $this->remotelyHostedDescription = $remotelyHostedDescription;
     }
@@ -2843,7 +2843,7 @@ class DatasetSubmission extends Entity
      *
      * @return string|null
      */
-    public function getRemotelyHostedFunction() : ? string
+    public function getRemotelyHostedFunction() : ?string
     {
         return $this->remotelyHostedFunction;
     }
@@ -2857,7 +2857,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setRemotelyHostedFunction($remotelyHostedFunction)
+    public function setRemotelyHostedFunction(?string $remotelyHostedFunction)
     {
         $this->remotelyHostedFunction = $remotelyHostedFunction;
     }

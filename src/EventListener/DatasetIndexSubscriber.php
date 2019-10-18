@@ -54,9 +54,11 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
 
         // Logic to get the spatialExtent is in Dataset Entity.
         try {
-            $wkt = $this->geometryUtil->convertGmlToWkt(
-                $dataset->getSpatialExtentGeometry()
-            );
+            if ($dataset->getSpatialExtentGeometry()) {
+                $wkt = $this->geometryUtil->convertGmlToWkt(
+                    $dataset->getSpatialExtentGeometry()
+                );
+            }
         } catch (InvalidGmlException $exception) {
             $wkt = null;
         }
