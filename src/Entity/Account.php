@@ -180,7 +180,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      * @param string   $userId   The user ID for this account.
      * @param Password $password The password for this account.
      */
-    public function __construct(Person $person = null, $userId = null, Password $password = null)
+    public function __construct(Person $person = null, string $userId = null, Password $password = null)
     {
         $this->passwordHistory = new ArrayCollection();
         $this->loginAttempts = new ArrayCollection();
@@ -239,7 +239,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return void
      */
-    public function setUserId($userId)
+    public function setUserId(string $userId)
     {
         $this->userId = $userId;
     }
@@ -265,7 +265,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return void
      */
-    public function setPassword(Password $password, $lessStrict = false)
+    public function setPassword(Password $password, bool $lessStrict = false)
     {
         $this->password = $password;
 
@@ -407,7 +407,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return void
      */
-    public function makePosix($uidNumber, $gidNumber, $homeDirectoryPrefix, $loginShell = '/sbin/nologin')
+    public function makePosix(int $uidNumber, int $gidNumber, string $homeDirectoryPrefix, string $loginShell = '/sbin/nologin')
     {
         if ('integer' !== gettype($uidNumber)) {
             throw new \Exception("$uidNumber is not as valid uid number (must be an integer)");
@@ -469,7 +469,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return void
      */
-    public function setHomeDirectory($homeDir)
+    public function setHomeDirectory(string $homeDir)
     {
         $this->homeDirectory = $homeDir;
     }
@@ -492,7 +492,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return void
      */
-    public function addSshPublicKey($sshPublicKey, $keyName)
+    public function addSshPublicKey(string $sshPublicKey, string $keyName)
     {
         $this->sshPublicKeys[$keyName] = $sshPublicKey;
     }
@@ -506,7 +506,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return void
      */
-    public function removeSshPublicKey($keyName)
+    public function removeSshPublicKey(string $keyName)
     {
         if (!array_key_exists($number, $this->sshPublicKeys)) {
             throw new \Exception("SSH pubilc key $keyName does not exist");
@@ -531,7 +531,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return string
      */
-    public function getSshPublicKey($keyName)
+    public function getSshPublicKey(string $keyName)
     {
         return $this->sshPublicKeys[$keyName];
     }
@@ -597,7 +597,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @param UserInterface $user The user class.
      *
-     * @return bool True to tell the EquatableInterface we are a real user class.
+     * @return boolean True to tell the EquatableInterface we are a real user class.
      */
     public function isEqualTo(UserInterface $user)
     {

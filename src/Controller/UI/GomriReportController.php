@@ -69,7 +69,7 @@ class GomriReportController extends ReportController
      *
      * @return array  Return the data array
      */
-    protected function getData($version = 'v2')
+    protected function getData(string $version = 'v2')
     {
         //prepare labels
         $labels = array('labels' => array(
@@ -129,7 +129,7 @@ class GomriReportController extends ReportController
      *
      * @return array
      */
-    private function getVersionOneQueryData($dataArray)
+    private function getVersionOneQueryData(array $dataArray)
     {
         $entityManager = $this->getDoctrine()->getManager();
         // Query Identified.
@@ -217,7 +217,7 @@ class GomriReportController extends ReportController
      *
      * @return array
      */
-    private function getVersionTwoQueryData($dataArray)
+    private function getVersionTwoQueryData(array $dataArray)
     {
         $entityManager = $this->getDoctrine()->getManager();
         // Query Identified (i.e. Datasets which have DIF approved).

@@ -33,7 +33,7 @@ class PersonTokenAuthenticator implements SimplePreAuthenticatorInterface, Authe
      *
      * @param \Twig_Environment $twig An instance of Twig.
      */
-    public function __construct(\Twig\Environment $twig)
+    public function __construct(\Twig_Environment $twig)
     {
         $this->twig = $twig;
     }
@@ -46,6 +46,8 @@ class PersonTokenAuthenticator implements SimplePreAuthenticatorInterface, Authe
      *
      * @return PreAuthenticatedToken|null A new authentication token or null if token is not set.
      */
+    // Next line to be ignored because implemented function does not have type-hint on $providerKey.
+    // phpcs:ignore
     public function createToken(Request $request, $providerKey)
     {
         $tokenString = $request->query->get('person_token');
@@ -75,6 +77,8 @@ class PersonTokenAuthenticator implements SimplePreAuthenticatorInterface, Authe
      *
      * @return PreAuthenticatedToken An authenticated Symfony authentication token.
      */
+    // Next line to be ignored because implemented function does not have type-hint on $providerKey.
+    // phpcs:ignore
     public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey)
     {
         if (!$userProvider instanceof PersonTokenUserProvider) {
@@ -106,6 +110,8 @@ class PersonTokenAuthenticator implements SimplePreAuthenticatorInterface, Authe
      *
      * @return boolean Whether the token is supported.
      */
+    // Next line to be ignored because implemented function does not have type-hint on $providerKey.
+    // phpcs:ignore
     public function supportsToken(TokenInterface $token, $providerKey)
     {
         return $token instanceof PreAuthenticatedToken && $token->getProviderKey() === $providerKey;

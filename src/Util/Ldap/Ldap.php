@@ -34,7 +34,7 @@ class Ldap
      * @param string     $ldapBindPw The password to bind with.
      * @param string     $peopleOu   The OU which contains people.
      */
-    public function __construct(LdapClient $ldapClient, $ldapBindDn, $ldapBindPw, $peopleOu)
+    public function __construct(LdapClient $ldapClient, string $ldapBindDn, string $ldapBindPw, string $peopleOu)
     {
         $this->ldapClient = $ldapClient;
         $this->peopleOu = $peopleOu;
@@ -167,7 +167,7 @@ class Ldap
      *
      * @return boolean True if uidNumber is available, False if not.
      */
-    protected function checkIfUidNumberAvailable($uidNumber, $uid = null)
+    protected function checkIfUidNumberAvailable(string $uidNumber, $uid = null)
     {
         // If not being set, then is available, so return true.
         if (null === $uidNumber) {

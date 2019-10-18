@@ -18,6 +18,9 @@ use App\Handler\EntityHandler;
 use App\Util\Factory\UserIdFactory;
 use App\Util\Ldap\Ldap;
 
+/**
+ * The account controller.
+ */
 class AccountController extends AbstractController
 {
     /**
@@ -36,6 +39,11 @@ class AccountController extends AbstractController
 
     /**
      * Constructor for this Controller, to set up default services.
+     *
+     * @param EntityHandler      $entityHandler The entity handler.
+     * @param ValidatorInterface $validator     The validator interface.
+     *
+     * @return void
      */
     public function __construct(EntityHandler $entityHandler, ValidatorInterface $validator)
     {
@@ -47,6 +55,8 @@ class AccountController extends AbstractController
      * The index action.
      *
      * @Route("/account", methods={"GET"}, name="pelagos_app_ui_account_default")
+     *
+     * @return Response
      */
     public function index()
     {
@@ -75,7 +85,8 @@ class AccountController extends AbstractController
     /**
      * Post handler to verify the email address by sending a link with a Person Token.
      *
-     * @param Request $request The Symfony Request object.
+     * @param Request       $request The Symfony Request object.
+     * @param \Swift_Mailer $mailer  The Swift Mailer.
      *
      * @throws \Exception When more than one Person is found for an email address.
      *
@@ -169,7 +180,7 @@ class AccountController extends AbstractController
      * This verifies that the token has authenticated the user and that the user does not already have an account.
      * It then provides the user with a screen to establish a password.
      *
-     * @Route("/account/verify-email",  methods={"GET"}, name="pelagos_app_ui_account_verifyemail")
+     * @Route("/account/verify-email", methods={"GET"}, name="pelagos_app_ui_account_verifyemail")
      *
      * @return Response A Response instance.
      */
@@ -444,7 +455,8 @@ class AccountController extends AbstractController
     /**
      * Forgot username for users.
      *
-     * @param Request $request The Symfony request object.
+     * @param Request               $request               The Symfony request object.
+     * @param EntityEventDispatcher $entityEventDispatcher The Entity Event Dispatcher.
      *
      * @Route("/account/forgot-username", methods={"GET"}, name="pelagos_app_ui_account_forgotusername")
      *

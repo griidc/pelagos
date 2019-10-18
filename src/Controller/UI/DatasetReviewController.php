@@ -72,9 +72,9 @@ class DatasetReviewController extends AbstractController
     /**
      * Constructor for this Controller, to set up default services.
      *
-     * @param EntityHandler         $entityHandler
-     * @param EntityEventDispatcher $entityEventDispatcher
-     * @param RabbitPublisher       $publisher
+     * @param EntityHandler         $entityHandler         The entity handler.
+     * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
+     * @param RabbitPublisher       $publisher             Utility class for rabbitmq publisher.
      */
     public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher, RabbitPublisher $publisher)
     {
@@ -154,7 +154,7 @@ class DatasetReviewController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    protected function eligibiltyForReview($udi, Request $request)
+    protected function eligibiltyForReview(string $udi, Request $request)
     {
         $dataset = null;
         $datasetSubmission = null;
@@ -228,7 +228,7 @@ class DatasetReviewController extends AbstractController
      *
      * @return void
      */
-    private function addToFlashDisplayQueue(Request $request, $udi, $noticeCode, $reviewerUserName = null)
+    private function addToFlashDisplayQueue(Request $request, string $udi, int $noticeCode, string $reviewerUserName = null)
     {
         $flashBag = $request->getSession()->getFlashBag();
 
@@ -263,7 +263,7 @@ class DatasetReviewController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    protected function makeSubmissionForm($udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null)
+    protected function makeSubmissionForm(string $udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null)
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;

@@ -29,7 +29,7 @@ class EntityProperty
      * @param Entity $entity   The Entity.
      * @param string $property The property.
      */
-    public function __construct(Entity $entity, $property)
+    public function __construct(Entity $entity, string $property)
     {
         $this->entity = $entity;
         $this->property = $property;

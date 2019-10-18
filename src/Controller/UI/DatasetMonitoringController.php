@@ -19,7 +19,6 @@ use App\Entity\ResearchGroup;
 
 /**
  * The Dataset Monitoring controller.
- *
  */
 class DatasetMonitoringController extends AbstractController
 {
@@ -33,14 +32,14 @@ class DatasetMonitoringController extends AbstractController
     /**
      * Constructor for this Controller, to set up default services.
      *
-     * @param EntityHandler $entityHandler
+     * @param EntityHandler $entityHandler The entity handler.
      */
     public function __construct(EntityHandler $entityHandler)
     {
         $this->entityHandler = $entityHandler;
     }
 
-        /**
+    /**
      * The default action.
      *
      * @Route("/dataset-monitoring", name="pelagos_app_ui_datasetmonitoring_default", methods={"GET"})
@@ -62,7 +61,7 @@ class DatasetMonitoringController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function allResearchGroupAction($id, $renderer = 'browser')
+    public function allResearchGroupAction(string $id, string $renderer = 'browser')
     {
         $fundingCycle = $this->entityHandler->get(FundingCycle::class, $id);
         $title = $fundingCycle->getName();
@@ -101,7 +100,7 @@ class DatasetMonitoringController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function researchGroupAction($id, $renderer = 'browser')
+    public function researchGroupAction(string $id, string $renderer = 'browser')
     {
         $researchGroup = $this->entityHandler->get(ResearchGroup::class, $id);
         $title = $researchGroup->getName();
@@ -138,7 +137,7 @@ class DatasetMonitoringController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function researcherAction($id, $renderer = 'browser')
+    public function researcherAction(string $id, string $renderer = 'browser')
     {
         $researcher = $this->entityHandler->get(Person::class, $id);
         $title = $researcher->getLastName() . ', ' . $researcher->getFirstName();
@@ -180,7 +179,7 @@ class DatasetMonitoringController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function datasetDetailsAction($udi)
+    public function datasetDetailsAction(string $udi)
     {
         $datasets = $this->entityHandler->getBy(Dataset::class, array('udi' => $udi));
 

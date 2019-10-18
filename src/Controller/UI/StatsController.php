@@ -22,10 +22,15 @@ use App\Entity\ResearchGroup;
  */
 class StatsController extends AbstractController
 {
+    /**
+     * The Entity Manager.
+     *
+     * @var entityManager
+     */
     protected $entityManager;
 
     /**
-     * Class constructor
+     * Class constructor.
      *
      * @param EntityManagerInterface $em A Doctrine entity manager.
      */
@@ -66,7 +71,7 @@ class StatsController extends AbstractController
      *
      * @return void
      */
-    private function getStatistics(&$totalDatasets, &$totalSize, &$peopleCount, &$researchGroupCount) : void
+    private function getStatistics(int &$totalDatasets, string &$totalSize, int &$peopleCount, int &$researchGroupCount) : void
     {
         // Recreate a Query Builder for the Person Repository.
         $queryBuilder = $this->entityManager

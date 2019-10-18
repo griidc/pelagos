@@ -85,9 +85,9 @@ class DatasetSubmissionController extends AbstractController
     /**
      * Constructor for this Controller, to set up default services.
      *
-     * @param EntityHandler         $entityHandler
-     * @param EntityEventDispatcher $entityEventDispatcher
-     * @param RabbitPublisher       $publisher
+     * @param EntityHandler         $entityHandler         The entity handler.
+     * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
+     * @param RabbitPublisher       $publisher             Utility class for rabbitmq publisher.
      */
     public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher, RabbitPublisher $publisher)
     {
@@ -340,7 +340,7 @@ class DatasetSubmissionController extends AbstractController
      *
      * @return Response
      */
-    protected function makeSubmissionForm($udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null)
+    protected function makeSubmissionForm(string $udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null)
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;
@@ -576,7 +576,7 @@ class DatasetSubmissionController extends AbstractController
      *
      * @return DatasetSubmission A datasetsubmission.
      */
-    private function defaultDistributionPoint(DatasetSubmission $datasetSubmission, $udi)
+    private function defaultDistributionPoint(DatasetSubmission $datasetSubmission, string $udi)
     {
         $defaultDistributionContacts = $this->entityHandler->getBy(
             DataCenter::class,

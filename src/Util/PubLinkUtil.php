@@ -30,7 +30,7 @@ class PubLinkUtil
      *
      * @return array
      */
-    public function fetchCitation($doi, $style = PublicationCitation::CITATION_STYLE_APA, $locale = 'en-US')
+    public function fetchCitation(string $doi, $style = PublicationCitation::CITATION_STYLE_APA, $locale = 'en-US')
     {
         try {
             // Try using doi.dx first
@@ -61,7 +61,7 @@ class PubLinkUtil
      *
      * @return array
      */
-    private function curlCitation($doi, $style = PublicationCitation::CITATION_STYLE_APA, $locale = 'en-US', $useCrossRef = false)
+    private function curlCitation(string $doi, $style = PublicationCitation::CITATION_STYLE_APA, $locale = 'en-US', $useCrossRef = false)
     {
         $ch = curl_init();
 

@@ -33,6 +33,8 @@ class DIFVoter extends PelagosEntityVoter
      *
      * @return boolean True if the attribute and subject are supported, false otherwise.
      */
+    // Next line to be ignored because implemented function does not have type-hint on $attribute.
+    // phpcs:ignore
     protected function supports($attribute, $object)
     {
         // If the object is an EntityProperty.
@@ -81,6 +83,8 @@ class DIFVoter extends PelagosEntityVoter
      *
      * @return boolean True If the user has one of the target roles for any of the subject's DataRepositories.
      */
+    // Next line to be ignored because implemented function does not have type-hint on $attribute.
+    // phpcs:ignore
     protected function voteOnAttribute($attribute, $object, TokenInterface $token)
     {
         $user = $token->getUser();

@@ -31,16 +31,15 @@ class ReportResearchGroupDatasetStatusController extends ReportController
     /**
      * The default action.
      *
-     * @param Request $request Message information for this Request.
-     * @param EntityHandler $entityHandler
-     * @param integer $researchGroupId The identifier for the Research Group subject of the report.
-     *
-     * @return Response|StreamedResponse A Symfony Response instance.
+     * @param Request       $request         Message information for this Request.
+     * @param EntityHandler $entityHandler   The entity handler.
+     * @param integer       $researchGroupId The identifier for the Research Group subject of the report.
      *
      * @Route("/report-researchgroup-dataset-status", name="pelagos_app_ui_reportresearchgroupdatasetstatus_default")
      *
+     * @return Response|StreamedResponse A Symfony Response instance.
      */
-    public function defaultAction(Request $request, EntityHandler $entityHandler, $researchGroupId = null)
+    public function defaultAction(Request $request, EntityHandler $entityHandler, int $researchGroupId = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -152,7 +151,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      *
      * @return string
      */
-    private function createCsvReportFileName($researchGroupName, $researchGroupId)
+    private function createCsvReportFileName(string $researchGroupName, string $researchGroupId)
     {
         $nowDateTimeString = date(self::REPORTFILENAMEDATETIMEFORMAT);
         $researchGroupNameSubstring = substr($researchGroupName, 0, self::MAXRESEARCHGROUPLENGTH);

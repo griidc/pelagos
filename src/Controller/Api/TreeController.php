@@ -42,26 +42,32 @@ class TreeController extends EntityController
     );
 
     /**
+     * The entity manager.
+     *
      * @var EntityManager
      */
     protected $doctrineOrmEntityManager;
 
     /**
+     * The entity manager.
+     *
      * @var EntityHandler
      */
     protected $entityHandler;
 
     /**
-     * @var FormFactoryInterface Form factory instance.
+     * Form factory instance.
+     *
+     * @var FormFactoryInterface
      */
     protected $formFactory;
 
     /**
      * TreeController constructor.
      *
-     * @param EntityManagerInterface $doctrineOrmEntityManager
-     * @param EntityHandler $entityHandler
-     * @param FormFactoryInterface $formFactory
+     * @param EntityManagerInterface $doctrineOrmEntityManager Doctrine Entity Manager.
+     * @param EntityHandler          $entityHandler            Pelagos Entity Handler.
+     * @param FormFactoryInterface   $formFactory              Symfony Form Factory.
      */
     public function __construct(EntityManagerInterface $doctrineOrmEntityManager, EntityHandler $entityHandler, FormFactoryInterface $formFactory)
     {
@@ -71,14 +77,12 @@ class TreeController extends EntityController
         $this->doctrineOrmEntityManager = $doctrineOrmEntityManager;
     }
 
-
     /**
      * Gets the Funding Organization and Funding Cycle nodes.
      *
      * @param Request      $request      The request object.
      * @param DatasetIndex $datasetIndex Dataset index object.
      *
-     * @return string
      * @ApiDoc(
      *   section = "Tree",
      *   parameters = {
@@ -97,6 +101,7 @@ class TreeController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
+     * @return string
      */
     public function getFundingOrganizationsAction(Request $request, DatasetIndex $datasetIndex)
     {
@@ -141,11 +146,10 @@ class TreeController extends EntityController
     /**
      * Gets the Research Group nodes for a Funding Cycle.
      *
-     * @param Request $request The request object.
-     * @param integer $fundingCycle The Funding Cycle to return Research Groups for.
-     * @param DatasetIndex $datasetIndex
+     * @param Request      $request      The request object.
+     * @param integer      $fundingCycle The Funding Cycle to return Research Groups for.
+     * @param DatasetIndex $datasetIndex The dataset index.
      *
-     * @return string
      * @ApiDoc(
      *   section = "Tree",
      *   parameters = {
@@ -164,8 +168,9 @@ class TreeController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
+     * @return string
      */
-    public function getResearchGroupsByFundingCycleAction(Request $request, $fundingCycle, DatasetIndex $datasetIndex)
+    public function getResearchGroupsByFundingCycleAction(Request $request, int $fundingCycle, DatasetIndex $datasetIndex)
     {
         $tree = $this->buildTreeConfig($request);
         $filter = false;
@@ -283,7 +288,7 @@ class TreeController extends EntityController
      *
      * @return string
      */
-    public function getPeopleAction(Request $request, $letter)
+    public function getPeopleAction(Request $request, string $letter)
     {
         $qb = $this->doctrineOrmEntityManager
             ->getRepository(Person::class)
@@ -339,7 +344,7 @@ class TreeController extends EntityController
      *
      * @return string
      */
-    public function getResearchGroupsByPersonAction(Request $request, $personId)
+    public function getResearchGroupsByPersonAction(Request $request, int $personId)
     {
         $person = $this->entityHandler->get(Person::class, $personId);
 

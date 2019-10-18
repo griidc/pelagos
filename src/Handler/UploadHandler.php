@@ -73,7 +73,7 @@ class UploadHandler
      *
      * @param string $homedirPrefix The full path prefix for home directories.
      */
-    public function __construct($homedirPrefix)
+    public function __construct(string $homedirPrefix)
     {
         $this->uploadDirectory = $homedirPrefix . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'files';
         $this->chunksDirectory = $homedirPrefix . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'chunks';
@@ -296,7 +296,7 @@ class UploadHandler
      *
      * @return array
      */
-    public function handleDelete($uuid)
+    public function handleDelete(string $uuid)
     {
         if ($this->isInaccessible($this->uploadDirectory)) {
             return array('error' => 'Server error. Uploads directory isn\'t writable and executable.');
@@ -352,7 +352,7 @@ class UploadHandler
      *
      * @return void
      */
-    protected function removeDir($dir)
+    protected function removeDir(string $dir)
     {
         foreach (scandir($dir) as $item) {
             if ($item == '.' || $item == '..') {
@@ -375,7 +375,7 @@ class UploadHandler
      *
      * @return integer
      */
-    protected function toBytes($str)
+    protected function toBytes(string $str)
     {
         $val = preg_replace('/\D/', '', $str);
         $last = strtolower($str[(strlen($str) - 1)]);
@@ -399,7 +399,7 @@ class UploadHandler
      *
      * @return boolean
      */
-    protected function isInaccessible($directory)
+    protected function isInaccessible(string $directory)
     {
         return !is_writable($directory) or !is_executable($directory);
     }

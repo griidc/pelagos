@@ -38,8 +38,9 @@ abstract class PelagosEntityVoter extends Voter
      * @param Collection $hasRoleObjects A set of HsaRoleInterface instances.
      * @param array      $roleNames      List of user roles to be tested.
      *
-     * @see    voteOnAttribute($attribute, $object, TokenInterface $token)
-     * @return bool True if the user has a role in the roleNames.
+     * @see voteOnAttribute($attribute, $object, TokenInterface $token)
+     *
+     * @return boolean True if the user has a role in the roleNames.
      */
     protected function doesUserHaveRole(Person $userPerson, Collection $hasRoleObjects, array $roleNames)
     {
