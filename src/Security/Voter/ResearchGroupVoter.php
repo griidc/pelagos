@@ -28,7 +28,7 @@ class ResearchGroupVoter extends PelagosEntityVoter
      * @return boolean True if the attribute and subject are supported, false otherwise.
      */
     // Next line to be ignored because implemented function does not have type-hint on $attribute.
-    // @codingStandardsIgnoreLine
+    // phpcs:ignore
     protected function supports($attribute, $object)
     {
         // Make sure the object is an instance of ResearchGroup
@@ -77,7 +77,7 @@ class ResearchGroupVoter extends PelagosEntityVoter
      * @return boolean True if the attribute (action) is allowed on the subject for the user specified by the token.
      */
     // Next line to be ignored because implemented function does not have type-hint on $attribute.
-    // @codingStandardsIgnoreLine
+    // phpcs:ignore
     protected function voteOnAttribute($attribute, $object, TokenInterface $token)
     {
         $user = $token->getUser();

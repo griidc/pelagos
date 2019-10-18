@@ -56,7 +56,7 @@ class DIFType extends AbstractType
     /**
      * Constructor.
      *
-     * @param EntityManager                 $entityManager        The entity manager to use.
+     * @param EntityManagerInterface        $entityManager        The entity manager to use.
      * @param AuthorizationCheckerInterface $authorizationChecker The authorization checker to use.
      * @param TokenStorageInterface         $tokenStorage         The token storage to use.
      */

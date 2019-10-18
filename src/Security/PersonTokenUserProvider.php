@@ -51,7 +51,7 @@ class PersonTokenUserProvider implements UserProviderInterface
      * @return Account The account for the given token string.
      */
     // Next line to be ignored because implemented function does not have type-hint on $tokenString.
-    // @codingStandardsIgnoreLine
+    // phpcs:ignore
     public function loadUserByUsername($tokenString)
     {
         $personTokens = $this->entityManager->getRepository(PersonToken::class)->findBy(
@@ -101,7 +101,7 @@ class PersonTokenUserProvider implements UserProviderInterface
      * @return boolean Whether the given class is supported.
      */
     // Next line to be ignored because implemented function does not have type-hint on $class.
-    // @codingStandardsIgnoreLine
+    // phpcs:ignore
     public function supportsClass($class)
     {
         return Account::class === $class;

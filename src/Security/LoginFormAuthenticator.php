@@ -241,7 +241,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      * @return Response The response or null to continue request.
      */
     // Next line to be ignored because implemented function does not have type-hint on $providerKey.
-    // @codingStandardsIgnoreLine
+    // phpcs:ignore
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
         $destination = $request->query->get('destination');

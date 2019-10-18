@@ -20,7 +20,7 @@ class NoAngleBracketsValidator extends ConstraintValidator
      *
      * @return void
      */
-    public function validate($value, Constraint $constraint)
+    public function validate(string $value, Constraint $constraint)
     {
         if (preg_match('/[<>]/', $value, $matches)) {
             $this->context->buildViolation($constraint->message)->addViolation();
