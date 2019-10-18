@@ -55,7 +55,7 @@ class MailSender
      *
      * @param \Twig\TemplateWrapper $emailTwigTemplate A twig template.
      * @param array                 $mailData          Mail data array for email.
-     * @param string|null           $toAddresses       Recipient's email addresses.
+     * @param array                 $toAddresses       Recipient's email addresses.
      * @param array                 $attachments       An optional array of Swift_Message_Attachments to attach.
      *
      * @throws \InvalidArgumentException When any element of $attachments is not a Swift_Message_Attachment.
@@ -65,7 +65,7 @@ class MailSender
     public function sendEmailMessage(
         \Twig\TemplateWrapper $emailTwigTemplate,
         array $mailData,
-        string $toAddresses  = null,
+        array $toAddresses  = array(),
         array $attachments = array()
     ) {
          $message = new \Swift_Message();

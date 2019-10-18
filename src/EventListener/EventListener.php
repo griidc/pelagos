@@ -38,7 +38,7 @@ abstract class EventListener
     /**
      * The swiftmailer instance.
      *
-     * @var \Swift_Mailer
+     * @var MailSender
      */
     protected $mailer;
 
@@ -148,7 +148,7 @@ abstract class EventListener
             $this->mailer->sendEmailMessage(
                 $twigTemplate,
                 $mailData,
-                $person->getEmailAddress(),
+                array($person->getEmailAddress() => $person->getFirstName() . ' ' . $person->getLastName()),
                 $attachments
             );
         }
