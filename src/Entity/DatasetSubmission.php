@@ -1323,7 +1323,7 @@ class DatasetSubmission extends Entity
     /**
      * Set the Dataset Submission Review for this Dataset Submission.
      *
-     * @param DatasetSubmissionReview $datasetSubmissionReview The Review for this Dataset Submission.
+     * @param DatasetSubmissionReview|null $datasetSubmissionReview The Review for this Dataset Submission.
      *
      * @return void
      */
@@ -1335,9 +1335,9 @@ class DatasetSubmission extends Entity
     /**
      * Get the DataseSubmision review collection.
      *
-     * @return DatasetSubmissionReview
+     * @return DatasetSubmissionReview|null
      */
-    public function getDatasetSubmissionReview() : DatasetSubmissionReview
+    public function getDatasetSubmissionReview() : ?DatasetSubmissionReview
     {
         return $this->datasetSubmissionReview;
     }
