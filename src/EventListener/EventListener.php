@@ -1,7 +1,6 @@
 <?php
 namespace App\EventListener;
 
-
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -16,6 +15,7 @@ use App\Entity\PersonDataRepository;
 use App\Entity\ResearchGroupRole;
 use App\Util\MailSender;
 use App\Util\DataStore;
+use App\Util\MdappLogger;
 
 /**
  * Listener class for Dataset Submission-related events.
@@ -95,8 +95,8 @@ abstract class EventListener
         TokenStorageInterface $tokenStorage,
          EntityHandler $entityHandler = null,
          Producer $producer = null,
-         DataStore $dataStore = null
-        // MdappLogger $mdappLogger = null
+         DataStore $dataStore = null,
+         MdappLogger $mdappLogger = null
     ) {
         $this->twig = $twig;
         $this->mailer = $mailer;
@@ -104,7 +104,7 @@ abstract class EventListener
          $this->entityHandler = $entityHandler;
          $this->producer = $producer;
          $this->dataStore = $dataStore;
-        // $this->mdappLogger = $mdappLogger;
+         $this->mdappLogger = $mdappLogger;
     }
 
     /**
