@@ -1,6 +1,4 @@
 <?php
-
-
 namespace App\Controller\UI;
 
 use App\Entity\Dataset;
@@ -21,7 +19,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * The Dataset Restrictions Modifier controller.
- *
  */
 class DatasetRestrictionsController extends AbstractController
 {
@@ -39,6 +36,12 @@ class DatasetRestrictionsController extends AbstractController
      */
     protected $entityManager;
 
+    /**
+     * Class constructor for Dependency Injections.
+     *
+     * @param LogActionItemEventDispatcher $logActionItemEventDispatcher A Pelagos action dispatcher.
+     * @param EntityManagerInterface       $entityManager                A Doctrine ORM entity manager.
+     */
     public function __construct(LogActionItemEventDispatcher $logActionItemEventDispatcher, EntityManagerInterface $entityManager)
     {
         $this->logActionItemEventDispatcher = $logActionItemEventDispatcher;
@@ -73,8 +76,9 @@ class DatasetRestrictionsController extends AbstractController
      * This updates the dataset submission restrictions property.Dataset Submission PATCH API exists,
      * but doesn't work with Symfony.
      *
-     * @param Request $request HTTP Symfony Request object.
-     * @param string  $id      Dataset Submission ID.
+     * @param Request       $request       The HTTP request.
+     * @param string        $id            The entity ID of a Dataset.
+     * @param EntityHandler $entityHandler A Pelagos entity handler.
      *
      * @Route(
      *      "/dataset-restrictions/{id}",
@@ -82,12 +86,12 @@ class DatasetRestrictionsController extends AbstractController
      *      methods={"POST"}
      * )
      *
-     * @throws PersistenceException Exception thrown when update fails.
+     * @throws PersistenceException    Exception thrown when update fails.
      * @throws BadRequestHttpException Exception thrown when restriction key is null.
      *
      * @return Response
      */
-    public function postAction(Request $request, $id, EntityHandler $entityHandler)
+    public function postAction(Request $request, string $id, EntityHandler $entityHandler)
     {
         $restrictionKey = $request->request->get('restrictions');
 
@@ -146,21 +150,19 @@ class DatasetRestrictionsController extends AbstractController
         //    $rabbitMessage['body'],
         //    $rabbitMessage['routing_key']
         //);
-        ;
     }
 
     /**
      * Log restriction changes.
      *
-     * @param Dataset                      $dataset                      The dataset having restrictions modified.
-     * @param string                       $actor                        The username of the person modifying the restriction.
-     * @param string                       $restrictionsFrom             The original restriction.
-     * @param mixed                        $restrictionsTo               The restriction that was put in place.
-     * @param LogActionItemEventDispatcher $logActionItemEventDispatcher The Pelagos action-item-event dispatcher.
+     * @param Dataset $dataset          The dataset having restrictions modified.
+     * @param string  $actor            The username of the person modifying the restriction.
+     * @param string  $restrictionsFrom The original restriction.
+     * @param mixed   $restrictionsTo   The restriction that was put in place.
      *
      * @return void
      */
-    protected function dispatchLogRestrictionsEvent(Dataset $dataset, $actor, $restrictionsFrom, $restrictionsTo)
+    protected function dispatchLogRestrictionsEvent(Dataset $dataset, string $actor, string $restrictionsFrom, $restrictionsTo)
     {
         $this->logActionItemEventDispatcher->dispatch(
             array(
