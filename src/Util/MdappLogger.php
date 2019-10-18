@@ -18,7 +18,7 @@ class MdappLogger
     /**
      * Constructor for dependency injection.
      *
-     * @param string $logfile String with filepath.
+     * @param string $mdappLogfile String with filepath.
      */
     public function __construct(string $mdappLogfile)
     {
@@ -32,7 +32,7 @@ class MdappLogger
      *
      * @return void
      */
-    public function writeLog($message)
+    public function writeLog(string $message)
     {
         $tz = ini_get('date.timezone');
         $timestamp = new \DateTime('now', new \DateTimeZone($tz));
@@ -50,7 +50,7 @@ class MdappLogger
      *
      * @return array Containing log entries for that UDI.
      */
-    public function getlogEntriesByUdi($udi)
+    public function getlogEntriesByUdi(string $udi)
     {
 
         $rawlog = file($this->logfile);

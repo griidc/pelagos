@@ -19,7 +19,7 @@ class MaintenanceMode
     /**
      * Constructor.
      *
-     * @param string $fileName The filename of the maintenance file.
+     * @param string $maintenanceModeFilename The filename of the maintenance file.
      */
     public function __construct(string $maintenanceModeFilename)
     {
