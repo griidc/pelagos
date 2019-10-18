@@ -167,7 +167,7 @@ class DatasetDownloadReportController extends ReportController
      *
      * @return float
      */
-    private function formatSizeUnits($fileSizeBytes)
+    private function formatSizeUnits(int $fileSizeBytes)
     {
         if ($fileSizeBytes) {
             // Formats the size to MB
@@ -262,7 +262,7 @@ class DatasetDownloadReportController extends ReportController
      *
      * @return array
      */
-    private function getLabels($reportName): array
+    private function getLabels(string $reportName): array
     {
         //prepare labels
         $labels = array();
@@ -297,7 +297,7 @@ class DatasetDownloadReportController extends ReportController
      *
      * @return Query
      */
-    private function getQuery($reportName, array $options = null): Query
+    private function getQuery(string $reportName, array $options = null): Query
     {
         $entityManager = $this->getDoctrine()->getManager();
 

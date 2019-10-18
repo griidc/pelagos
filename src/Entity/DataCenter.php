@@ -210,7 +210,7 @@ class DataCenter extends Entity
      *
      * @return void
      */
-    public function setOrganizationName($organizationName)
+    public function setOrganizationName(string $organizationName)
     {
         $this->organizationName = $organizationName;
     }
@@ -232,7 +232,7 @@ class DataCenter extends Entity
      *
      * @return void
      */
-    public function setOrganizationUrl($organizationUrl)
+    public function setOrganizationUrl(string $organizationUrl)
     {
         $this->organizationUrl = $organizationUrl;
     }
@@ -254,7 +254,7 @@ class DataCenter extends Entity
      *
      * @return void
      */
-    public function setPhoneNumber($phoneNumber)
+    public function setPhoneNumber(string $phoneNumber)
     {
         $this->phoneNumber = $phoneNumber;
     }
@@ -276,7 +276,7 @@ class DataCenter extends Entity
      *
      * @return void
      */
-    public function setDeliveryPoint($deliveryPoint)
+    public function setDeliveryPoint(string $deliveryPoint)
     {
         $this->deliveryPoint = $deliveryPoint;
     }
@@ -298,7 +298,7 @@ class DataCenter extends Entity
      *
      * @return void
      */
-    public function setCity($city)
+    public function setCity(string $city)
     {
         $this->city = $city;
     }
@@ -320,7 +320,7 @@ class DataCenter extends Entity
      *
      * @return void
      */
-    public function setAdministrativeArea($administrativeArea)
+    public function setAdministrativeArea(string $administrativeArea)
     {
         $this->administrativeArea = $administrativeArea;
     }
@@ -342,7 +342,7 @@ class DataCenter extends Entity
      *
      * @return void
      */
-    public function setPostalCode($postalCode)
+    public function setPostalCode(string $postalCode)
     {
         $this->postalCode = $postalCode;
     }
@@ -364,7 +364,7 @@ class DataCenter extends Entity
      *
      * @return void
      */
-    public function setCountry($country)
+    public function setCountry(string $country)
     {
         $this->country = $country;
     }
@@ -386,7 +386,7 @@ class DataCenter extends Entity
      *
      * @return void
      */
-    public function setEmailAddress($emailAddress)
+    public function setEmailAddress(string $emailAddress)
     {
         $this->emailAddress = $emailAddress;
     }

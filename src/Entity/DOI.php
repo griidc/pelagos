@@ -67,7 +67,7 @@ class DOI extends Entity
      *
      * Sets to DOI identifier for the DOI entity.
      */
-    public function __construct($doi)
+    public function __construct(string $doi)
     {
         $this->setDoi($doi);
         // Initial state for issue is reserved.
@@ -81,7 +81,7 @@ class DOI extends Entity
      *
      * @return void
      */
-    protected function setDoi($doi)
+    protected function setDoi(string $doi)
     {
         // If the identifier contains doi:, remove it.
         $doi = preg_replace('/^(?:doi:)?(10.\S+)/', '$1', $doi);
@@ -107,7 +107,7 @@ class DOI extends Entity
      *
      * @return void
      */
-    public function setStatus($status)
+    public function setStatus(string $status)
     {
         $this->status = $status;
     }

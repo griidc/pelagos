@@ -18,7 +18,7 @@ class UserIdFactory
     {
         // Do nothing.
     }
-    
+
     /**
      * Generate a unique user ID for a Person.
      *

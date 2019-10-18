@@ -30,7 +30,7 @@ class PersonTokenUserProvider implements UserProviderInterface
     /**
      * Constructor that intitializes the entity manager.
      *
-     * @param EntityManager $entityManager An instance of the Doctrine entity manager.
+     * @param EntityManagerInterface $entityManager An instance of the Doctrine entity manager.
      */
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -50,6 +50,8 @@ class PersonTokenUserProvider implements UserProviderInterface
      *
      * @return Account The account for the given token string.
      */
+    // Next line to be ignored because implemented function does not have type-hint on $tokenString.
+    // phpcs:ignore
     public function loadUserByUsername($tokenString)
     {
         $personTokens = $this->entityManager->getRepository(PersonToken::class)->findBy(
@@ -98,6 +100,8 @@ class PersonTokenUserProvider implements UserProviderInterface
      *
      * @return boolean Whether the given class is supported.
      */
+    // Next line to be ignored because implemented function does not have type-hint on $class.
+    // phpcs:ignore
     public function supportsClass($class)
     {
         return Account::class === $class;

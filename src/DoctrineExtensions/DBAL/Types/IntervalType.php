@@ -38,8 +38,7 @@ class IntervalType extends Type
      * @param mixed            $value    The value to convert.
      * @param AbstractPlatform $platform The currently used database platform.
      *
-     * @throws DBALException::notSupported When attempting to convert from anything
-     *                                     other than a PHP DateInterval.
+     * @throws DBALException When attempting to convert from anything other than a PHP DateInterval.
      *
      * @return string The database representation of the value.
      */
@@ -57,13 +56,10 @@ class IntervalType extends Type
     /**
      * Converts a value from its database representation to its PHP representation of this type.
      *
-     * @param string           $value    The value to convert.
+     * @param mixed            $value    The value to convert.
      * @param AbstractPlatform $platform The currently used database platform.
      *
-     * @throws ConversionException::conversionFailedFormat When the value from the database
-     *                                                     does not look like an ISO 8601 interval.
-     * @throws ConversionException::conversionFailed       When the value from the database
-     *                                                     cannot be used to instantiate a \DateInterval.
+     * @throws ConversionException When the conversion fails.
      *
      * @return \DateInterval The PHP representation of the value.
      */

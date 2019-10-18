@@ -85,7 +85,7 @@ class DatasetSubmissionController extends EntityController
      *
      * @return DatasetSubmission
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         return $this->handleGetOne(DatasetSubmission::class, $id);
     }
@@ -151,7 +151,7 @@ class DatasetSubmissionController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putAction($id, Request $request)
+    public function putAction(int $id, Request $request)
     {
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
         if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
@@ -196,7 +196,7 @@ class DatasetSubmissionController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function patchAction($id, Request $request)
+    public function patchAction(int $id, Request $request)
     {
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
         if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
@@ -236,7 +236,7 @@ class DatasetSubmissionController extends EntityController
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
         $this->handleDelete(DatasetSubmission::class, $id);
         return $this->makeNoContentResponse();
@@ -245,7 +245,7 @@ class DatasetSubmissionController extends EntityController
     /**
      * Return a list of files uploaded for a dataset submission.
      *
-     * @param string $id The id of the dataset submission.
+     * @param integer $id The id of the dataset submission.
      *
      * @Route(
      *     "/api/dataset_submission/uploaded-files/{id}",
@@ -258,7 +258,7 @@ class DatasetSubmissionController extends EntityController
      *
      * @return array The list of uploaded files.
      */
-    public function getUploadedFilesAction($id)
+    public function getUploadedFilesAction(int $id)
     {
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
         // If the dataset transfer type is not upload.
@@ -296,11 +296,10 @@ class DatasetSubmissionController extends EntityController
     /**
      * Validate the url of the attribute.
      *
-     * @param string $id The id of the dataset submission.
-     * @param Request $request The request object.
-     * @param UrlValidation $urlValidation
+     * @param integer       $id            The id of the dataset submission.
+     * @param Request       $request       The request object.
+     * @param UrlValidation $urlValidation The URL validator.
      *
-     * @return boolean|string
      * @Route(
      *     "/api/dataset_submission/validate-url/{id}",
      *     name="pelagos_api_dataset_submission_validate_url",
@@ -310,8 +309,9 @@ class DatasetSubmissionController extends EntityController
      *
      * @View()
      *
+     * @return boolean|string
      */
-    public function validateUrlAction($id, Request $request, UrlValidation $urlValidation)
+    public function validateUrlAction(int $id, Request $request, UrlValidation $urlValidation)
     {
         $erddapUrl = $request->get('erddapUrl');
 

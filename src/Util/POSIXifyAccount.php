@@ -79,9 +79,9 @@ class POSIXifyAccount
         EntityManager $entityManager,
         Ldap $ldap,
         EntityHandler $entityHandler,
-        $posixStartingUidNumber,
-        $posixGidNumber,
-        $homedirPrefix,
+        int $posixStartingUidNumber,
+        int $posixGidNumber,
+        string $homedirPrefix,
         Producer $producer
     ) {
         $this->entityManager = $entityManager;
