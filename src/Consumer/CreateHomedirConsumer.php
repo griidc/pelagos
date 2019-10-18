@@ -36,7 +36,7 @@ class CreateHomedirConsumer implements ConsumerInterface
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager The entity manager.
-     * @param Logger $logger A Monolog logger.
+     * @param Logger                 $logger        A Monolog logger.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -117,9 +117,9 @@ class CreateHomedirConsumer implements ConsumerInterface
     * @param string $path Path of directory or file to set ACL on.
     * @param string $acl  Actual rwx string to use in setting ACL.
     *
-    * @return Boolean True on success, false on failure.
+    * @return boolean True on success, false on failure.
     */
-    protected function setLinuxAcl($user, $path, $acl)
+    protected function setLinuxAcl(string $user, string $path, string $acl)
     {
         $outputLines = array();
         $status = true;

@@ -100,13 +100,13 @@ class DOIutil
      * @return void
      */
     public function createDOI(
-        $doi,
-        $url,
-        $creator,
-        $title,
-        $publicationYear,
-        $publisher,
-        $resourcetype = 'Dataset'
+        string $doi,
+        string $url,
+        string $creator,
+        string $title,
+        string $publicationYear,
+        string $publisher,
+        string $resourcetype = 'Dataset'
     ) {
         $client = new Client();
         $defaultBody = [
@@ -164,13 +164,13 @@ class DOIutil
      * @return void
      */
     public function updateDOI(
-        $doi,
-        $url,
-        $creator,
-        $title,
-        $publicationYear,
-        $publisher,
-        $status = DOI::STATE_FINDABLE
+        string $doi,
+        string $url,
+        string $creator,
+        string $title,
+        string $publicationYear,
+        string $publisher,
+        string $status = DOI::STATE_FINDABLE
     ) {
         $client = new Client();
         $defaultBody = [
@@ -222,7 +222,7 @@ class DOIutil
      *
      * @return array
      */
-    public function getDOIMetadata($doi)
+    public function getDOIMetadata(string $doi)
     {
         $client = new Client();
         $metadata = array();
@@ -259,7 +259,7 @@ class DOIutil
      *
      * @return void
      */
-    public function deleteDOI($doi)
+    public function deleteDOI(string $doi)
     {
         $doiMetadata = $this->getDOIMetadata($doi);
         if ($doiMetadata['attributes']['state'] === DOI::STATE_DRAFT) {

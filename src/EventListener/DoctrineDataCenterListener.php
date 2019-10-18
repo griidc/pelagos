@@ -35,8 +35,8 @@ class DoctrineDataCenterListener
     /**
      * Method to update dataCenter when the corresponding entity in dataRepository changes.
      *
-     * @param mixed $dataRepository A Doctrine entity (dataRepository).
-     * @param EntityManagerInterface $entityManager The Doctrine entity manager.
+     * @param mixed                  $dataRepository A Doctrine entity (dataRepository).
+     * @param EntityManagerInterface $entityManager  The Doctrine entity manager.
      *
      * @return void
      */

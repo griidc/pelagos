@@ -2,7 +2,6 @@
 
 namespace App\Consumer;
 
-
 use Doctrine\ORM\EntityManagerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
@@ -65,11 +64,11 @@ class DatasetSubmissionConsumer implements ConsumerInterface
     /**
      * Constructor.
      *
-     * @param EntityManagerInterface $entityManager The entity manager.
-     * @param DataStore $dataStore The data store service.
-     * @param Logger $logger A Monolog logger.
-     * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
-     * @param Producer $datasetFileHasherProducer The dataset file hasher AQMP producer.
+     * @param EntityManagerInterface $entityManager             The entity manager.
+     * @param DataStore              $dataStore                 The data store service.
+     * @param Logger                 $logger                    A Monolog logger.
+     * @param EntityEventDispatcher  $entityEventDispatcher     The entity event dispatcher.
+     * @param Producer               $datasetFileHasherProducer The dataset file hasher AQMP producer.
      */
     public function __construct(
         EntityManagerInterface $entityManager,

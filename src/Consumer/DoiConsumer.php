@@ -2,7 +2,6 @@
 
 namespace App\Consumer;
 
-
 use Doctrine\ORM\EntityManagerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 
@@ -57,9 +56,9 @@ class DoiConsumer implements ConsumerInterface
     /**
      * Constructor.
      *
-     * @param EntityManagerInterface $entityManager The entity manager.
-     * @param Logger $logger A Monolog logger.
-     * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
+     * @param EntityManagerInterface $entityManager         The entity manager.
+     * @param Logger                 $logger                A Monolog logger.
+     * @param EntityEventDispatcher  $entityEventDispatcher The entity event dispatcher.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -252,7 +251,7 @@ class DoiConsumer implements ConsumerInterface
      *
      * @return integer
      */
-    protected function deleteDoi($doi, array $loggingContext)
+    protected function deleteDoi(string $doi, array $loggingContext)
     {
         // Log processing start.
         $this->logger->info('Attempting to delete DOI', $loggingContext);
@@ -281,7 +280,7 @@ class DoiConsumer implements ConsumerInterface
      *
      * @return boolean
      */
-    private function doiAlreadyExists(Dataset $dataset, $loggingContext): bool
+    private function doiAlreadyExists(Dataset $dataset, array $loggingContext): bool
     {
         $doi = $dataset->getDoi();
         $exceptionType = null;

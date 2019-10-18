@@ -48,8 +48,8 @@ class DatasetFileHasherConsumer implements ConsumerInterface
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager The entity manager.
-     * @param DataStore $dataStore The data store service.
-     * @param Logger $logger A Monolog logger.
+     * @param DataStore              $dataStore     The data store service.
+     * @param Logger                 $logger        A Monolog logger.
      */
     public function __construct(
         EntityManagerInterface $entityManager,

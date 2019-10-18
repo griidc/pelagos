@@ -81,31 +81,30 @@ abstract class EventListener
     /**
      * This is the class constructor to handle dependency injections.
      *
-     * @param \Twig_Environment     $twig         Twig engine.
-     * @param MailSender            $mailer       Email handling library.
-     * @param TokenStorageInterface $tokenStorage Symfony's token object.
-     *
-     * //param EntityHandler|null $entityHandler Pelagos entity handler.
-     * //param Producer           $producer      An AMQP/RabbitMQ Producer.
-     * //param DataStore|null     $dataStore     An instance of the Pelagos Data Store utility service.
-     * //param MdappLogger|null   $mdappLogger   An MDAPP logger.
+     * @param \Twig_Environment     $twig          Twig engine.
+     * @param MailSender            $mailer        Email handling library.
+     * @param TokenStorageInterface $tokenStorage  Symfony's token object.
+     * @param EntityHandler|null    $entityHandler Pelagos entity handler.
+     * @param Producer              $producer      An AMQP/RabbitMQ Producer.
+     * @param DataStore|null        $dataStore     An instance of the Pelagos Data Store utility service.
+     * @param MdappLogger|null      $mdappLogger   An MDAPP logger.
      */
     public function __construct(
         \Twig_Environment $twig,
         MailSender $mailer,
         TokenStorageInterface $tokenStorage,
-         EntityHandler $entityHandler = null,
-         Producer $producer = null,
-         DataStore $dataStore = null,
-         MdappLogger $mdappLogger = null
+        EntityHandler $entityHandler = null,
+        Producer $producer = null,
+        DataStore $dataStore = null,
+        MdappLogger $mdappLogger = null
     ) {
         $this->twig = $twig;
         $this->mailer = $mailer;
         $this->tokenStorage = $tokenStorage;
-         $this->entityHandler = $entityHandler;
-         $this->producer = $producer;
-         $this->dataStore = $dataStore;
-         $this->mdappLogger = $mdappLogger;
+        $this->entityHandler = $entityHandler;
+        $this->producer = $producer;
+        $this->dataStore = $dataStore;
+        $this->mdappLogger = $mdappLogger;
     }
 
     /**

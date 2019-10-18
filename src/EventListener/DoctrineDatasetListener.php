@@ -36,7 +36,7 @@ class DoctrineDatasetListener
     /**
      * Method to update dataset title and abstract when DIF, Dataset Submission, or Metadata changes.
      *
-     * @param mixed $entity A Doctrine entity.
+     * @param mixed                  $entity        A Doctrine entity.
      * @param EntityManagerInterface $entityManager The Doctrine entity manager.
      *
      * @return void
