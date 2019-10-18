@@ -15,7 +15,7 @@ class UrlValidation
      *
      * @return boolean
      */
-    public function validateUrl($url)
+    public function validateUrl(string $url)
     {
         $ch = curl_init();
         //php://memory is a read-write streams that allow temporary data to be stored in a file-like wrapper.

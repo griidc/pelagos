@@ -57,7 +57,7 @@ abstract class AbstractRole extends Entity implements RoleInterface
      *
      * @return void
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
@@ -81,7 +81,7 @@ abstract class AbstractRole extends Entity implements RoleInterface
      *
      * @return void
      */
-    public function setWeight($weight)
+    public function setWeight(int $weight)
     {
         if (is_int($weight) and $weight > 0 or
             is_string($weight) and ctype_digit($weight) and (integer) $weight > 0

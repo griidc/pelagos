@@ -38,7 +38,7 @@ class Geometry
      *
      * @return string WKT string for the envelope.
      */
-    public function calculateEnvelopeFromGml($gml)
+    public function calculateEnvelopeFromGml(string $gml)
     {
         $gml = GmlUtil::addNamespace($gml);
 
@@ -69,7 +69,7 @@ class Geometry
      *
      * @return array Of North, South, East, West.
      */
-    public function calculateGeographicBoundsFromGml($gml)
+    public function calculateGeographicBoundsFromGml(string $gml)
     {
         $gml = GmlUtil::addNamespace($gml);
 
@@ -105,7 +105,7 @@ class Geometry
      *
      * @return string WKT string for the GML geometry.
      */
-    public function convertGmlToWkt($gml)
+    public function convertGmlToWkt(string $gml)
     {
         $gml = GmlUtil::addNamespace($gml);
 

@@ -113,7 +113,7 @@ class ResearchGroupController extends EntityController
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
-    public function validatePropertyExistingAction($id, Request $request)
+    public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(ResearchGroupType::class, ResearchGroup::class, $request, $id);
     }
@@ -181,7 +181,7 @@ class ResearchGroupController extends EntityController
      *
      * @return ResearchGroup The Research Group that was retrieved.
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         $researchGroup = $this->handleGetOne(ResearchGroup::class, $id);
         if ($researchGroup instanceof ResearchGroup and $researchGroup->getLogo(true) !== null) {
@@ -244,7 +244,7 @@ class ResearchGroupController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putAction($id, Request $request)
+    public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(ResearchGroupType::class, ResearchGroup::class, $id, $request, 'PUT');
         return $this->makeNoContentResponse();
@@ -272,7 +272,7 @@ class ResearchGroupController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function patchAction($id, Request $request)
+    public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(ResearchGroupType::class, ResearchGroup::class, $id, $request, 'PATCH');
         return $this->makeNoContentResponse();
@@ -296,7 +296,7 @@ class ResearchGroupController extends EntityController
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
         $this->handleDelete(ResearchGroup::class, $id);
         return $this->makeNoContentResponse();
@@ -324,7 +324,7 @@ class ResearchGroupController extends EntityController
      *
      * @return Response A response object containing the logo.
      */
-    public function getLogoAction($id)
+    public function getLogoAction(int $id)
     {
         return $this->getProperty(ResearchGroup::class, $id, 'logo');
     }
@@ -354,7 +354,7 @@ class ResearchGroupController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function postLogoAction($id, Request $request)
+    public function postLogoAction(int $id, Request $request)
     {
         return $this->postProperty(ResearchGroup::class, $id, 'logo', $request);
     }
@@ -377,7 +377,7 @@ class ResearchGroupController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putLogoAction($id, Request $request)
+    public function putLogoAction(int $id, Request $request)
     {
         return $this->putProperty(ResearchGroup::class, $id, 'logo', $request);
     }

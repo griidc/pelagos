@@ -6,13 +6,13 @@ use App\Entity\FundingOrganization;
 use App\Form\FundingOrganizationType;
 use App\Form\FundingCycleType;
 use App\Form\PersonFundingOrganizationType;
-
 use App\Handler\EntityHandler;
-use Symfony\Component\Routing\Annotation\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
@@ -22,14 +22,16 @@ class FundingOrganizationController extends AbstractController
     /**
      * The Funding Org action.
      *
-     * @param EntityHandler $entityHandler
-     * @param string $id The id of the entity to retrieve.
+     * @param EntityHandler $entityHandler The entity handler.
+     * @param string        $id            The id of the entity to retrieve.
      *
-     * @return Response A Response instance.
+     * @throws NotFoundHttpException When the funding organization is not found.
      *
      * @Route("/funding-organization/{id}", name="pelagos_app_ui_fundingorganization_default")
+     *
+     * @return Response A Response instance.
      */
-    public function defaultAction(EntityHandler $entityHandler, $id = null)
+    public function defaultAction(EntityHandler $entityHandler, string $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -42,7 +44,7 @@ class FundingOrganizationController extends AbstractController
             $fundingOrganization = $entityHandler->get(FundingOrganization::class, $id);
 
             if (!$fundingOrganization instanceof \App\Entity\FundingOrganization) {
-                throw $this->createNotFoundException('The Funding Organization was not found');
+                throw new NotFoundHttpException('The Funding Organization was not found');
             }
 
             foreach ($fundingOrganization->getPersonFundingOrganizations() as $personFundingOrganization) {

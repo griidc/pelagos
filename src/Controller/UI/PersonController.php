@@ -25,14 +25,16 @@ class PersonController extends AbstractController
     /**
      * The Person Research Group action.
      *
-     * @param string $id The id of the entity to retrieve.
-     * @param EntityHandler $entityHandler
+     * @param EntityHandler $entityHandler The enitity handler.
+     * @param string        $id            The id of the entity to retrieve.
      *
-     * @return Response A Response instance.
+     * @throws NotFoundHttpException When person was not found.
+     *
      * @Route("/person/{id}", name="pelagos_app_ui_person_default")
      *
+     * @return Response A Response instance.
      */
-    public function defaultAction(EntityHandler $entityHandler, $id = null)
+    public function defaultAction(EntityHandler $entityHandler, string $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {

@@ -118,7 +118,7 @@ class FundingOrganizationController extends EntityController
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
-    public function validatePropertyExistingAction($id, Request $request)
+    public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(FundingOrganizationType::class, FundingOrganization::class, $request, $id);
     }
@@ -190,7 +190,7 @@ class FundingOrganizationController extends EntityController
      *
      * @return FundingOrganization The Funding Organization that was retrieved.
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         $fundingOrganization = $this->handleGetOne(FundingOrganization::class, $id);
         if ($fundingOrganization instanceof FundingOrganization and $fundingOrganization->getLogo(true) !== null) {
@@ -263,7 +263,7 @@ class FundingOrganizationController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putAction($id, Request $request)
+    public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(FundingOrganizationType::class, FundingOrganization::class, $id, $request, 'PUT');
         return $this->makeNoContentResponse();
@@ -296,7 +296,7 @@ class FundingOrganizationController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function patchAction($id, Request $request)
+    public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(FundingOrganizationType::class, FundingOrganization::class, $id, $request, 'PATCH');
         return $this->makeNoContentResponse();
@@ -325,7 +325,7 @@ class FundingOrganizationController extends EntityController
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
         $this->handleDelete(FundingOrganization::class, $id);
         return $this->makeNoContentResponse();
@@ -353,7 +353,7 @@ class FundingOrganizationController extends EntityController
      *
      * @return Response A response object containing the logo.
      */
-    public function getLogoAction($id)
+    public function getLogoAction(int $id)
     {
         return $this->getProperty(FundingOrganization::class, $id, 'logo');
     }
@@ -384,7 +384,7 @@ class FundingOrganizationController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function postLogoAction($id, Request $request)
+    public function postLogoAction(int $id, Request $request)
     {
         return $this->postProperty(FundingOrganization::class, $id, 'logo', $request);
     }
@@ -412,7 +412,7 @@ class FundingOrganizationController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putLogoAction($id, Request $request)
+    public function putLogoAction(int $id, Request $request)
     {
         return $this->putProperty(FundingOrganization::class, $id, 'logo', $request);
     }

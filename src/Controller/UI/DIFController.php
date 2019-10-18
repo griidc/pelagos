@@ -22,12 +22,13 @@ class DIFController extends AbstractController
     /**
      * The default action for the DIF.
      *
-     * @param Request $request The Symfony request object.
-     * @param string|null $id The id of the DIF to load.
-     * @param FormFactoryInterface $formFactory
+     * @param Request              $request     The Symfony request object.
+     * @param FormFactoryInterface $formFactory The form factory.
+     * @param string|null          $id          The id of the DIF to load.
+     *
+     * @Route("/dif/{id}", name="pelagos_app_ui_dif_default")
      *
      * @return Response A Response instance.
-     * @Route("/dif/{id}", name="pelagos_app_ui_dif_default")
      */
     public function index(Request $request, FormFactoryInterface $formFactory, $id = null)
     {

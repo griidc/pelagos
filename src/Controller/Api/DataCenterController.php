@@ -112,7 +112,7 @@ class DataCenterController extends EntityController
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
-    public function validatePropertyExistingAction($id, Request $request)
+    public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(DataCenterType::class, DataCenter::class, $request, $id);
     }
@@ -157,7 +157,7 @@ class DataCenterController extends EntityController
     /**
      * Get a data center for a given id.
      *
-     * @param string $id The id of the Data center.
+     * @param integer $id The id of the Data center.
      *
      * @ApiDoc(
      *     section = "Data Centers",
@@ -180,7 +180,7 @@ class DataCenterController extends EntityController
      *
      * @return Entity(DataCenter)
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         return $this->handleGetOne(DataCenter::class, $id);
     }
@@ -243,7 +243,7 @@ class DataCenterController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putAction($id, Request $request)
+    public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(DataCenterType::class, DataCenter::class, $id, $request, 'PUT');
         return $this->makeNoContentResponse();
@@ -276,7 +276,7 @@ class DataCenterController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function patchAction($id, Request $request)
+    public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(DataCenterType::class, DataCenter::class, $id, $request, 'PATCH');
         return $this->makeNoContentResponse();
@@ -305,7 +305,7 @@ class DataCenterController extends EntityController
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
         $this->handleDelete(DataCenter::class, $id);
         return $this->makeNoContentResponse();

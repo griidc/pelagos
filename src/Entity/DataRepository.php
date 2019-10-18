@@ -274,7 +274,7 @@ class DataRepository extends Entity
      *
      * @return void
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
@@ -300,7 +300,7 @@ class DataRepository extends Entity
      *
      * @return void
      */
-    public function setEmailAddress($emailAddress)
+    public function setEmailAddress(string $emailAddress)
     {
         $this->emailAddress = $emailAddress;
     }
@@ -326,7 +326,7 @@ class DataRepository extends Entity
      *
      * @return void
      */
-    public function setDescription($description)
+    public function setDescription(string $description)
     {
         $this->description = $description;
     }
@@ -352,7 +352,7 @@ class DataRepository extends Entity
      *
      * @return void
      */
-    public function setUrl($url)
+    public function setUrl(string $url)
     {
         $this->url = $url;
     }
@@ -378,7 +378,7 @@ class DataRepository extends Entity
      *
      * @return void
      */
-    public function setPhoneNumber($phoneNumber)
+    public function setPhoneNumber(string $phoneNumber)
     {
         $this->phoneNumber = $phoneNumber;
     }
@@ -404,7 +404,7 @@ class DataRepository extends Entity
      *
      * @return void
      */
-    public function setDeliveryPoint($deliveryPoint)
+    public function setDeliveryPoint(string $deliveryPoint)
     {
         $this->deliveryPoint = $deliveryPoint;
     }
@@ -430,7 +430,7 @@ class DataRepository extends Entity
      *
      * @return void
      */
-    public function setCity($city)
+    public function setCity(string $city)
     {
         $this->city = $city;
     }
@@ -456,7 +456,7 @@ class DataRepository extends Entity
      *
      * @return void
      */
-    public function setAdministrativeArea($administrativeArea)
+    public function setAdministrativeArea(string $administrativeArea)
     {
         $this->administrativeArea = $administrativeArea;
     }
@@ -482,7 +482,7 @@ class DataRepository extends Entity
      *
      * @return void
      */
-    public function setPostalCode($postalCode)
+    public function setPostalCode(string $postalCode)
     {
         $this->postalCode = $postalCode;
     }
@@ -508,7 +508,7 @@ class DataRepository extends Entity
      *
      * @return void
      */
-    public function setCountry($country)
+    public function setCountry(string $country)
     {
         $this->country = $country;
     }

@@ -18,16 +18,22 @@ use App\Handler\UploadHandler;
 class UploadController extends EntityController
 {
     /**
-     * @var UploadHandler
+     * The Upload Handler.
+     *
+     * @var uploadHandler
      */
     protected $uploadHandler;
 
     /**
-     * @var EntityHandler
+     * The Entity Handler.
+     *
+     * @var uploadHandler
      */
     protected $entityHandler;
 
     /**
+     * The form factory.
+     *
      * @var FormFactoryInterface Form factory instance.
      */
     protected $formFactory;
@@ -35,9 +41,9 @@ class UploadController extends EntityController
     /**
      * TreeController constructor.
      *
-     * @param UploadHandler $uploadHandler
-     * @param EntityHandler $entityHandler
-     * @param FormFactoryInterface $formFactory
+     * @param UploadHandler        $uploadHandler The upload handler.
+     * @param EntityHandler        $entityHandler The entity handler.
+     * @param FormFactoryInterface $formFactory   The form factory.
      */
     public function __construct(UploadHandler $uploadHandler, EntityHandler $entityHandler, FormFactoryInterface $formFactory)
     {
@@ -85,7 +91,7 @@ class UploadController extends EntityController
      *
      * @return array The result of the delete.
      */
-    public function deleteAction($uuid)
+    public function deleteAction(string $uuid)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->uploadHandler->handleDelete($uuid);
