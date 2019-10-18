@@ -38,7 +38,7 @@ class EntityEventDispatcher
      *
      * @return void
      */
-    public function dispatch(Entity $entity, $entityEventName)
+    public function dispatch(Entity $entity, string $entityEventName)
     {
         $this->eventDispatcher->dispatch(
             'pelagos.entity.' . $entity->getUnderscoredName() . '.' . $entityEventName,

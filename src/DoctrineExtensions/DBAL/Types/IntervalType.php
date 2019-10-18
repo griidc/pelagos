@@ -56,14 +56,14 @@ class IntervalType extends Type
     /**
      * Converts a value from its database representation to its PHP representation of this type.
      *
-     * @param string           $value    The value to convert.
+     * @param mixed            $value    The value to convert.
      * @param AbstractPlatform $platform The currently used database platform.
      *
      * @throws ConversionException When the conversion fails.
      *
      * @return \DateInterval The PHP representation of the value.
      */
-    public function convertToPHPValue(string $value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform)
     {
         if (null !== $value) {
             $iso8601IntervalRegEx

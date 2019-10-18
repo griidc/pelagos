@@ -35,7 +35,7 @@ class LogActionItemEventDispatcher
    *
    * @return void
    */
-    public function dispatch($data, $eventName)
+    public function dispatch(array $data, string $eventName)
     {
         $this->eventDispatcher->dispatch(
             'pelagos.logactionitem.' . $eventName,
