@@ -158,8 +158,8 @@ class GmlController extends AbstractController
      * This function validates Gml against OpenGIS schema.
      *
      * @param Request  $request      The Symfony request object.
+     * @param Metadata $metadataUtil The metadata util.\
      * @param string   $schema       Url to remote schema validation cache.
-     * @param Metadata $metadataUtil The metadata util.
      *
      * @throws BadRequestHttpException When no GML was given.
      *
@@ -167,7 +167,7 @@ class GmlController extends AbstractController
      *
      * @return JsonResponse A json array response including a boolean,errors array,warnings array.
      */
-    public function validateGml(Request $request, string $schema = 'http://schemas.opengis.net/gml/3.2.1/gml.xsd', Metadata $metadataUtil)
+    public function validateGml(Request $request, Metadata $metadataUtil, string $schema = 'http://schemas.opengis.net/gml/3.2.1/gml.xsd')
     {
         $gml = $request->request->get('gml');
         $isValid = false;
