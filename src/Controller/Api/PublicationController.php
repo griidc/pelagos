@@ -103,7 +103,8 @@ class PublicationController extends EntityController
     /**
      * Fetch and cache a citation for a given DOI.
      *
-     * @param Request $request A Symfony http request object, data includes the doi.
+     * @param Request     $request     A Symfony http request object, data includes the doi.
+     * @param PubLinkUtil $pubLinkUtil The publication link utility.
      *
      * @ApiDoc(
      *   section = "Publications",
@@ -199,7 +200,7 @@ class PublicationController extends EntityController
      *
      * @return Publication
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         return $this->handleGetOne(Publication::class, $id);
     }

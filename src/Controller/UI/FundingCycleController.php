@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
@@ -19,15 +20,16 @@ class FundingCycleController extends AbstractController
     /**
      * The Funding Cycle action.
      *
-     * @param EntityHandler $entityHandler
-     * @param string $id The id of the entity to retrieve.
+     * @param EntityHandler $entityHandler The entity handler.
+     * @param string        $id            The id of the entity to retrieve.
      *
-     * @return Response A Response instance.
+     * @throws NotFoundHttpException When fundingcycle was not found.
      *
      * @Route("/funding-cycle/{id}", name="pelagos_app_ui_fundingcycle_default")
      *
+     * @return Response A Response instance.
      */
-    public function defaultAction(EntityHandler $entityHandler, $id = null)
+    public function defaultAction(EntityHandler $entityHandler, string $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -40,7 +42,7 @@ class FundingCycleController extends AbstractController
             $fundingCycle = $entityHandler->get(FundingCycle::class, $id);
 
             if (!$fundingCycle instanceof \App\Entity\FundingCycle) {
-                throw $this->createNotFoundException('The Funding Cycle was not found');
+                throw new NotFoundHttpException('The Funding Cycle was not found');
             }
         } else {
             $fundingCycle = new \App\Entity\FundingCycle;

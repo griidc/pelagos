@@ -1,5 +1,5 @@
 <?php
-
+// phpcs:disable
 namespace App;
 
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;

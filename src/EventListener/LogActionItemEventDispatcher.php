@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Event;
+namespace App\EventListener;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * A generic dispatcher.
@@ -35,7 +34,7 @@ class LogActionItemEventDispatcher
    *
    * @return void
    */
-    public function dispatch($data, $eventName)
+    public function dispatch(array $data, string $eventName)
     {
         $this->eventDispatcher->dispatch(
             'pelagos.logactionitem.' . $eventName,

@@ -34,10 +34,10 @@ class MailSender
     /**
      * This is the class constructor to handle dependency injections.
      *
-     * @param Swift_Mailer $mailer        Symfony Mailer.
-     * @param Environment   $twig          Twig engine.
-     * @param string        $fromAddress   Sender's email address.
-     * @param string        $fromName      Sender's name to include in email.
+     * @param \Swift_Mailer     $mailer      Symfony Mailer.
+     * @param \Twig_Environment $twig        Twig engine.
+     * @param string            $fromAddress Sender's email address.
+     * @param string            $fromName    Sender's name to include in email.
      */
     public function __construct(
         Swift_Mailer  $mailer,

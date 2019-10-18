@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Event;
+namespace App\EventListener;
 
 use Symfony\Component\EventDispatcher\Event;
 
@@ -37,5 +37,4 @@ class EntityEvent extends Event
     {
         return $this->entity;
     }
-
 }

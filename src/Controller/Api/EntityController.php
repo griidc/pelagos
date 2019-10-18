@@ -26,12 +26,16 @@ use App\Exception\UnmappedPropertyException;
 abstract class EntityController extends AbstractFOSRestController
 {
     /**
-     * @var EntityHandler Entity Handler instance.
+     * Entity Handler instance.
+     *
+     * @var EntityHandler
      */
     protected $entityHandler;
 
     /**
-     * @var FormFactoryInterface Form factory instance.
+     * Form factory instance.
+     *
+     * @var FormFactoryInterface
      */
     protected $formFactory;
 
@@ -55,7 +59,7 @@ abstract class EntityController extends AbstractFOSRestController
      *
      * @return integer
      */
-    protected function handleCount($entityClass, Request $request)
+    protected function handleCount(string $entityClass, Request $request)
     {
         $params = $request->query->all();
         if (array_key_exists('q', $params)) {
@@ -77,7 +81,7 @@ abstract class EntityController extends AbstractFOSRestController
      *
      * @return array
      */
-    public function handleGetCollection($entityClass, Request $request, array $subResources = array())
+    public function handleGetCollection(string $entityClass, Request $request, array $subResources = array())
     {
         $params = $request->query->all();
         if (array_key_exists('q', $params)) {
@@ -132,14 +136,14 @@ abstract class EntityController extends AbstractFOSRestController
      *
      * @return Entity
      */
-    public function handleGetOne($entityClass, $id)
+    public function handleGetOne(string $entityClass, int $id)
     {
         if (!preg_match('/^\d+$/', $id)) {
             throw new BadRequestHttpException('id must be a non-negative integer');
         }
         $entity = $this->entityHandler->get($entityClass, $id);
         if ($entity === null) {
-            throw $this->createNotFoundException('No ' . $entityClass::FRIENDLY_NAME . " exists with id: $id");
+            throw new NotFoundHttpException('No ' . $entityClass::FRIENDLY_NAME . " exists with id: $id");
         }
         return $entity;
     }
@@ -154,7 +158,7 @@ abstract class EntityController extends AbstractFOSRestController
      *
      * @return Entity The newly created entity.
      */
-    public function handlePost($formType, $entityClass, Request $request, Entity $entity = null)
+    public function handlePost(string $formType, string $entityClass, Request $request, Entity $entity = null)
     {
         if (null === $entity) {
             $entity = new $entityClass;
@@ -175,7 +179,7 @@ abstract class EntityController extends AbstractFOSRestController
      *
      * @return Entity The updated entity.
      */
-    public function handleUpdate($formType, $entityClass, $id, Request $request, $method)
+    public function handleUpdate(string $formType, string $entityClass, int $id, Request $request, string $method)
     {
         $entity = $this->handleGetOne($entityClass, $id);
         $this->processForm($formType, $entity, $request, $method);
@@ -193,7 +197,7 @@ abstract class EntityController extends AbstractFOSRestController
      *
      * @return Entity The deleted entity.
      */
-    public function handleDelete($entityClass, $id)
+    public function handleDelete(string $entityClass, int $id)
     {
         $entity = $this->handleGetOne($entityClass, $id);
         try {
@@ -210,14 +214,16 @@ abstract class EntityController extends AbstractFOSRestController
     /**
      * Processes the form.
      *
-     * @param string $formType The type of form to process.
-     * @param Entity $entity The entity to populate.
-     * @param Request $request The request object.
-     * @param string $method The HTTP method.
+     * @param string  $formType The type of form to process.
+     * @param Entity  $entity   The entity to populate.
+     * @param Request $request  The request object.
+     * @param string  $method   The HTTP method.
+     *
+     * @throws BadRequestHttpException When there is an error.
      *
      * @return Entity The updated entity.
      */
-    private function processForm($formType, Entity $entity, Request $request, $method = 'PUT')
+    private function processForm(string $formType, Entity $entity, Request $request, string $method = 'PUT')
     {
         $form = $this->formFactory->createNamed(null, $formType, $entity, array('method' => $method));
         $form->handleRequest($request);
@@ -247,14 +253,16 @@ abstract class EntityController extends AbstractFOSRestController
      * This method will validate key/value pairs found in the query string against
      * properties of the given entity type.
      *
-     * @param string $formType The class of the type of form to use for validation.
-     * @param string $entityClass The class of the type of entity to validate against.
-     * @param Request $request The request object.
-     * @param integer|null $id The id of the entity to validate against.
+     * @param string       $formType    The class of the type of form to use for validation.
+     * @param string       $entityClass The class of the type of entity to validate against.
+     * @param Request      $request     The request object.
+     * @param integer|null $id          The id of the entity to validate against.
+     *
+     * @throws BadRequestHttpException When property is not valid.
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
-    public function validateProperty($formType, $entityClass, Request $request, $id = null)
+    public function validateProperty(string $formType, string $entityClass, Request $request, int $id = null)
     {
         // Get all the parameters from the query string.
         $params = $request->query->all();
@@ -314,7 +322,7 @@ abstract class EntityController extends AbstractFOSRestController
      * @return Response A Response object containing the property or an empty body
      *                  and a "no content" status code if the property is not set.
      */
-    public function getProperty($entityClass, $id, $property)
+    public function getProperty(string $entityClass, int $id, string $property)
     {
         $entity = $this->handleGetOne($entityClass, $id);
         $getter = 'get' . ucfirst($property);
@@ -345,7 +353,7 @@ abstract class EntityController extends AbstractFOSRestController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function postProperty($entityClass, $id, $property, Request $request)
+    public function postProperty(string $entityClass, int $id, string $property, Request $request)
     {
         $entity = $this->handleGetOne($entityClass, $id);
         $file = $request->files->get($property);
@@ -367,7 +375,7 @@ abstract class EntityController extends AbstractFOSRestController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putProperty($entityClass, $id, $property, Request $request)
+    public function putProperty(string $entityClass, int $id, string $property, Request $request)
     {
         $entity = $this->handleGetOne($entityClass, $id);
         $setter = 'set' . ucfirst($property);
@@ -386,7 +394,7 @@ abstract class EntityController extends AbstractFOSRestController
      *
      * @return array The list of distinct values for $property of $entityClass.
      */
-    public function getDistinctVals($entityClass, $property)
+    public function getDistinctVals(string $entityClass, string $property)
     {
         try {
             return $this->entityHandler->getDistinctVals($entityClass, $property);
@@ -407,7 +415,7 @@ abstract class EntityController extends AbstractFOSRestController
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new Person to Research Group Association in the Location header.
      */
-    protected function makeCreatedResponse($locationRouteName, $resourceId, array $additionalHeaders = array())
+    protected function makeCreatedResponse(string $locationRouteName, int $resourceId, array $additionalHeaders = array())
     {
         return new Response(
             null,
@@ -450,7 +458,7 @@ abstract class EntityController extends AbstractFOSRestController
      *
      * @return string
      */
-    protected function getResourceUrl($routeName, $id)
+    protected function getResourceUrl(string $routeName, int $id)
     {
         return $this->generateUrl(
             $routeName,
@@ -522,7 +530,7 @@ abstract class EntityController extends AbstractFOSRestController
      *
      * @return array
      */
-    private function filterByPermission(array $entities, $permission)
+    private function filterByPermission(array $entities, string $permission)
     {
         $authorizedEntities = array();
         foreach ($entities as $entity) {
@@ -542,7 +550,7 @@ abstract class EntityController extends AbstractFOSRestController
      *
      * @return void
      */
-    private function processSubResources(array &$entities, array $subResources, $objects = true)
+    private function processSubResources(array &$entities, array $subResources, bool $objects = true)
     {
         if (true === $objects) {
             $accessor = PropertyAccess::createPropertyAccessor();

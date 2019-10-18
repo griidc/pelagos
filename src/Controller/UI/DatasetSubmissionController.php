@@ -22,7 +22,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use App\Form\DatasetSubmissionType;
 use App\Form\DatasetSubmissionXmlFileType;
 
-use App\Event\EntityEventDispatcher;
+use App\EventListener\EntityEventDispatcher;
 
 use App\Entity\DataCenter;
 use App\Entity\DIF;
@@ -37,6 +37,7 @@ use App\Handler\EntityHandler;
 use App\Exception\InvalidMetadataException;
 
 use App\Util\ISOMetadataExtractorUtil;
+use App\Util\RabbitPublisher;
 
 /**
  * The Dataset Submission controller for the Pelagos UI App Bundle.
@@ -75,15 +76,24 @@ class DatasetSubmissionController extends AbstractController
     protected $entityEventDispatcher;
 
     /**
+     * Custom rabbitmq publisher.
+     *
+     * @var RabbitPublisher
+     */
+    protected $publisher;
+
+    /**
      * Constructor for this Controller, to set up default services.
      *
-     * @param EntityHandler $entityHandler
-     * @param EntityEventDispatcher $entityEventDispatcher
+     * @param EntityHandler         $entityHandler         The entity handler.
+     * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
+     * @param RabbitPublisher       $publisher             Utility class for rabbitmq publisher.
      */
-    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher)
+    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher, RabbitPublisher $publisher)
     {
         $this->entityHandler = $entityHandler;
         $this->entityEventDispatcher = $entityEventDispatcher;
+        $this->publisher = $publisher;
     }
 
     /**
@@ -257,12 +267,11 @@ class DatasetSubmissionController extends AbstractController
                 $eventName
             );
 
-//            foreach ($this->messages as $message) {
-//                $this->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(
-//                    $message['body'],
-//                    $message['routing_key']
-//                );
-//            }
+            foreach ($this->messages as $message) {
+                foreach ($this->messages as $message) {
+                    $this->publisher->publish($message['body'], $message['routing_key']);
+                }
+            }
 
             return $this->render(
                 'DatasetSubmission/submit.html.twig',
@@ -331,7 +340,7 @@ class DatasetSubmissionController extends AbstractController
      *
      * @return Response
      */
-    protected function makeSubmissionForm($udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null)
+    protected function makeSubmissionForm(string $udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null)
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;
@@ -567,7 +576,7 @@ class DatasetSubmissionController extends AbstractController
      *
      * @return DatasetSubmission A datasetsubmission.
      */
-    private function defaultDistributionPoint(DatasetSubmission $datasetSubmission, $udi)
+    private function defaultDistributionPoint(DatasetSubmission $datasetSubmission, string $udi)
     {
         $defaultDistributionContacts = $this->entityHandler->getBy(
             DataCenter::class,

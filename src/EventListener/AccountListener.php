@@ -4,7 +4,6 @@ namespace App\EventListener;
 
 use App\Entity\Account;
 use App\Entity\ResearchGroupRole;
-use App\Event\EntityEvent;
 
 /**
  * Listener class for Account-related events.
@@ -39,7 +38,7 @@ class AccountListener extends EventListener
      *
      * @param Account $account An Account entity.
      *
-     * @return Array of Persons who are Data Managers for the Research Group tied back to the Account.
+     * @return array Array of Persons who are Data Managers for the Research Group tied back to the Account.
      */
     protected function getDMsFromAccount(Account $account)
     {

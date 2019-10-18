@@ -20,7 +20,7 @@ use App\Entity\Account;
 use App\Entity\Password;
 use App\Entity\Person;
 
-use App\Event\EntityEventDispatcher;
+use App\EventListener\EntityEventDispatcher;
 
 use App\Exception\UnmappedPropertyException;
 
@@ -73,7 +73,7 @@ class EntityHandler
     /**
      * Constructor for EntityHandler.
      *
-     * @param EntityManagerInterface                 $entityManager         The entity manager to use.
+     * @param EntityManagerInterface        $entityManager         The entity manager to use.
      * @param TokenStorageInterface         $tokenStorage          The token storage to use.
      * @param AuthorizationCheckerInterface $authorizationChecker  The authorization checker to use.
      * @param EntityEventDispatcher         $entityEventDispatcher The entity event dispatcher.
@@ -98,7 +98,7 @@ class EntityHandler
      *
      * @return Entity|null The entity.
      */
-    public function get($entityClass, $id)
+    public function get(string $entityClass, int $id)
     {
         return $this->entityManager
             ->getRepository($entityClass)
@@ -117,7 +117,7 @@ class EntityHandler
      * @return Collection|array A collection of entities or an array depending on the hydrator.
      */
     public function getAll(
-        $entityClass,
+        string $entityClass,
         array $orderBy = array(),
         array $properties = array(),
         $hydrator = null
@@ -141,7 +141,7 @@ class EntityHandler
      * @return Collection|array A collection of entities or an array depending on the hydrator.
      */
     public function getBy(
-        $entityClass,
+        string $entityClass,
         array $criteria,
         array $orderBy = array(),
         array $properties = array(),
@@ -181,7 +181,7 @@ class EntityHandler
      *
      * @return intger
      */
-    public function count($entityClass, array $criteria)
+    public function count(string $entityClass, array $criteria)
     {
         // Create query builder for this type of entity.
         $qb = $this->entityManager->getRepository($entityClass)->createQueryBuilder('e');
@@ -322,7 +322,7 @@ class EntityHandler
      *
      * @return array List of all distinct values for $property for $entityClass.
      */
-    public function getDistinctVals($entityClass, $property)
+    public function getDistinctVals(string $entityClass, string $property)
     {
         $entity = new $entityClass;
         if (!$this->authorizationChecker->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -333,10 +333,7 @@ class EntityHandler
         }
         $class = $this->entityManager->getClassMetadata($entityClass);
         if (!$class->hasField($property) && !$class->hasAssociation($property)) {
-            $exception = new UnmappedPropertyException;
-            $exception->setClassName($entityClass);
-            $exception->setPropertyName($property);
-            throw $exception;
+            throw new UnmappedPropertyException($entityClass, $property);
         }
         $this->entityManager
             ->getConfiguration()
@@ -473,7 +470,7 @@ class EntityHandler
      *
      * @return void
      */
-    protected function processProperties($entityClass, array $properties, QueryBuilder $qb, array &$joins)
+    protected function processProperties(string $entityClass, array $properties, QueryBuilder $qb, array &$joins)
     {
         // An array to hold all the entity aliases their properties to hydrate.
         $hydrate = array();
@@ -536,7 +533,7 @@ class EntityHandler
      *
      * @return ClassMetadata
      */
-    protected function processEntityAlias($entityClass, $alias, array &$hydrate, array &$joins)
+    protected function processEntityAlias(string $entityClass, string $alias, array &$hydrate, array &$joins)
     {
         // Split the entity alias on _ and loop through the nodes.
         foreach (explode('_', $alias) as $node) {
@@ -578,7 +575,7 @@ class EntityHandler
      *
      * @return array The entity alias and the property.
      */
-    protected function buildAliasedProperty($property, array &$joins)
+    protected function buildAliasedProperty(string $property, array &$joins)
     {
         // Initialize the alias to 'e', the root entity.
         $alias = 'e';

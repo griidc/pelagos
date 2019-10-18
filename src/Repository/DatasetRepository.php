@@ -52,7 +52,7 @@ class DatasetRepository extends EntityRepository
      *
      * @return array
      */
-    public function filter(array $criteria, $textFilter = null, $geoFilter = null, $hydrator = Query::HYDRATE_ARRAY)
+    public function filter(array $criteria, string $textFilter = null, string $geoFilter = null, int $hydrator = Query::HYDRATE_ARRAY)
     {
         $qb = $this->createQueryBuilder('dataset');
         $qb->select('dataset, dif, datasetSubmission, metadata, researchGroup, fundingCycle, fundingOrganization');
@@ -141,7 +141,7 @@ class DatasetRepository extends EntityRepository
      *
      * @return QueryBuilder
      */
-    public function createSortedQueryBuilder($alias, $indexBy = null)
+    public function createSortedQueryBuilder(string $alias, string $indexBy = null)
     {
         return $this->_em->createQueryBuilder()
             ->select($alias)

@@ -52,12 +52,49 @@ services:
             - { name: kernel.event_listener, event: pelagos.entity.account.forgot_username, method: onForgotUsername }
 
     App\EventListener\DIFListener:
+        bind:
+            OldSound\RabbitMqBundle\RabbitMq\Producer $producer: '@old_sound_rabbit_mq.doi_issue_producer'
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.dif.saved_not_submitted, method: onSavedNotSubmitted }
             - { name: kernel.event_listener, event: pelagos.entity.dif.submitted, method: onSubmitted }
             - { name: kernel.event_listener, event: pelagos.entity.dif.approved, method: onApproved }
             - { name: kernel.event_listener, event: pelagos.entity.dif.unlock_requested, method: onUnlockRequested }
             - { name: kernel.event_listener, event: pelagos.entity.dif.unlocked, method: onUnlocked }
+
+    App\EventListener\DatasetSubmissionListener:
+        bind:
+            OldSound\RabbitMqBundle\RabbitMq\Producer $producer: '@old_sound_rabbit_mq.doi_issue_producer'
+        tags:
+            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.submitted, method: onSubmitted }
+            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.resubmitted, method: onResubmitted }
+            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.dataset_processed, method: onDatasetProcessed }
+            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.html_found, method: onHtmlFound }
+            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.dataset_unprocessable, method: onDatasetUnprocessable }
+            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.start_review, method: onStartReview }
+            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.end_review, method: onEndReview }
+            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.accept_review, method: onAcceptReview }
+            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.request_revisions, method: onRequestRevisions }
+
+    App\EventListener\DoctrineDatasetListener:
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+
+    App\EventListener\DoctrineDataCenterListener:
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+
+    App\EventListener\DoiDatasetListener:
+        bind:
+            OldSound\RabbitMqBundle\RabbitMq\Producer $producer: '@old_sound_rabbit_mq.doi_issue_producer'
+        tags:
+            - { name: kernel.event_listener, event: pelagos.entity.dataset.delete_doi, method: onDeleteDoi }
+
+    App\EventListener\LogActionItemEventListener:
+        tags:
+            - { name: kernel.event_listener, event: pelagos.logactionitem.file_download, method: onNewLogCreated }
+            - { name: kernel.event_listener, event: pelagos.logactionitem.search_terms_log, method: onNewLogCreated }
+            - { name: kernel.event_listener, event: pelagos.logactionitem.restrictions_log, method: onNewLogCreated }
+            - { name: kernel.event_listener, event: pelagos.logactionitem.remotelyhosted_update_log, method: onNewLogCreated }
 
     App\Util\Ldap\Ldap:
         $ldapBindDn: "%env(LDAP_BIND_DN)%"
@@ -74,6 +111,47 @@ services:
     App\Handler\UploadHandler:
         bind:
             $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
+
+    App\Util\DataStore:
+        bind:
+            $dataStoreDirectory: "%env(DATA_STORE_DIRECTORY)%"
+            $dataDownloadDirectory: "%env(DATA_DOWNLOAD_DIRECTORY)%"
+            $dataStoreOwner: "%env(DATA_STORE_OWNER)%"
+            $dataStoreGroup: "%env(DATA_STORE_GROUP)%"
+            $dataDownloadBrowserGroup: "%env(DATA_DOWNLOAD_BROWSER_GROUP)%"
+            $webServerUser: "%env(WEB_SERVER_USER)%"
+            $anonFtpUser: "%env(ANONYMOUS_FTP_USER)%"
+            $anonFtpPass: "%env(ANONYMOUS_FTP_PASS)%"
+
+    App\Consumer\DoiConsumer:
+        bind:
+            Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.doi_issue'
+
+    App\Consumer\DatasetFileHasherConsumer:
+        bind:
+            Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.dataset_file_hasher'
+
+    App\Consumer\CreateHomedirConsumer:
+        bind:
+            Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.create_homedir'
+
+    consumer.dataset_submission.filer:
+        class: App\Consumer\DatasetSubmissionConsumer
+        bind:
+            Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.filer'
+            OldSound\RabbitMqBundle\RabbitMq\Producer $datasetFileHasherProducer: '@old_sound_rabbit_mq.dataset_file_hasher_producer'
+
+    consumer.dataset_submission.retriever:
+        class: App\Consumer\DatasetSubmissionConsumer
+        bind:
+            Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.retriever'
+            OldSound\RabbitMqBundle\RabbitMq\Producer $datasetFileHasherProducer: '@old_sound_rabbit_mq.dataset_file_hasher_producer'
+
+    App\Consumer\DatasetSubmissionConsumer: '@consumer.dataset_submission.filer'
+
+    App\Util\RabbitPublisher:
+        bind:
+            OldSound\RabbitMqBundle\RabbitMq\Producer $datasetSubProducer: '@old_sound_rabbit_mq.dataset_submission_producer'
 
     App\Command\AccountExpirationNotifyCommand:
         bind:

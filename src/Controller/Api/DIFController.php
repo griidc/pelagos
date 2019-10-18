@@ -17,7 +17,7 @@ use FOS\RestBundle\Controller\Annotations\View;
 use App\Entity\Dataset;
 use App\Entity\DIF;
 
-use App\Event\EntityEventDispatcher;
+use App\EventListener\EntityEventDispatcher;
 
 use App\Form\DIFType;
 use App\Security\Voter\DIFVoter;
@@ -109,7 +109,7 @@ class DIFController extends EntityController
      *
      * @return DIF
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         return $this->handleGetOne(DIF::class, $id);
     }
@@ -117,13 +117,10 @@ class DIFController extends EntityController
     /**
      * Create a new DIF from the submitted data.
      *
-     * @param Request $request The request object.
-     * @param EntityEventDispatcher $entityEventDispatcher
-     * @param Udi $udiUtil
+     * @param Request               $request               The request object.
+     * @param EntityEventDispatcher $entityEventDispatcher The event Dispatcher.
+     * @param Udi                   $udiUtil               Instance of UDI Utility.
      *
-     * @return Response A Response object with an empty body, a "created" status code,
-     *                  and the location of the new DIF in the Location header.
-     * @throws \Exception
      * @ApiDoc(
      *   section = "DIFs",
      *   input = {"class" = "App\Form\DIFType", "name" = ""},
@@ -136,6 +133,9 @@ class DIFController extends EntityController
      * )
      *
      * @Route("/api/difs", name="pelagos_api_difs_post", methods={"POST"})
+     *
+     * @return Response A Response object with an empty body, a "created" status code,
+     *                  and the location of the new DIF in the Location header.
      */
     public function postAction(Request $request, EntityEventDispatcher $entityEventDispatcher, Udi $udiUtil)
     {
@@ -182,7 +182,7 @@ class DIFController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putAction($id, Request $request)
+    public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(DIFType::class, DIF::class, $id, $request, 'PUT');
         return $this->makeNoContentResponse();
@@ -210,7 +210,7 @@ class DIFController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function patchAction($id, Request $request)
+    public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(DIFType::class, DIF::class, $id, $request, 'PATCH');
         return $this->makeNoContentResponse();
@@ -239,7 +239,7 @@ class DIFController extends EntityController
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function submitAction($id)
+    public function submitAction(int $id)
     {
         // Get the specified DIF.
         $dif = $this->handleGetOne(DIF::class, $id);
@@ -288,7 +288,7 @@ class DIFController extends EntityController
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function approveAction($id)
+    public function approveAction(int $id)
     {
         // Get the specified DIF.
         $dif = $this->handleGetOne(DIF::class, $id);
@@ -341,7 +341,7 @@ class DIFController extends EntityController
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function rejectAction($id)
+    public function rejectAction(int $id)
     {
         // Get the specified DIF.
         $dif = $this->handleGetOne(DIF::class, $id);
@@ -390,7 +390,7 @@ class DIFController extends EntityController
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function unlockAction($id)
+    public function unlockAction(int $id)
     {
         // Get the specified DIF.
         $dif = $this->handleGetOne(DIF::class, $id);
@@ -419,10 +419,9 @@ class DIFController extends EntityController
     /**
      * Request a DIF be unlocked.
      *
-     * @param integer $id The id of the DIF to request unlock for.
-     * @param EntityEventDispatcher $entityEventDispatcher
+     * @param integer               $id                    The id of the DIF to request unlock for.
+     * @param EntityEventDispatcher $entityEventDispatcher The event dispatcher.
      *
-     * @return Response A response object with an empty body and a "no content" status code.
      * @ApiDoc(
      *   section = "DIFs",
      *   statusCodes = {
@@ -433,10 +432,14 @@ class DIFController extends EntityController
      *   }
      * )
      *
+     * @throws AccessDeniedHttpException When you do not have the permissions to unlock.
+     * @throws BadRequestHttpException   When DIF can not be unlocked.
+     *
      * @Route("/api/difs/{id}/request-unlock", name="pelagos_api_difs_request_unlock", methods={"PATCH"})
      *
+     * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function requestUnlockAction($id, EntityEventDispatcher $entityEventDispatcher)
+    public function requestUnlockAction(int $id, EntityEventDispatcher $entityEventDispatcher)
     {
         // Get the specified DIF.
         $dif = $this->handleGetOne(DIF::class, $id);

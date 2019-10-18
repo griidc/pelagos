@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Event\LogActionItemEventDispatcher;
+use App\EventListener\LogActionItemEventDispatcher;
 use App\Handler\EntityHandler;
 use App\Util\DataStore;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,14 +24,16 @@ use App\Twig\Extensions as TwigExtentions;
 class DownloadController extends AbstractController
 {
     /**
-     * @var EntityHandler
+     * Entity Handler.
+     *
+     * @var entityHandler
      */
     protected $entityHandler;
 
     /**
      * DownloadController constructor.
      *
-     * @param EntityHandler $entityHandler
+     * @param EntityHandler $entityHandler The entity handler.
      */
     public function __construct(EntityHandler $entityHandler)
     {
@@ -73,15 +75,15 @@ class DownloadController extends AbstractController
     /**
      * Set up direct download via HTTP and produce html for direct download splash screen.
      *
-     * @param string $id The id of the dataset to download.
-     * @param DataStore $dataStore
-     * @param LogActionItemEventDispatcher $logActionItemEventDispatcher
-     *
-     * @return Response
+     * @param string                       $id                           The id of the dataset to download.
+     * @param DataStore                    $dataStore                    The data store.
+     * @param LogActionItemEventDispatcher $logActionItemEventDispatcher The log action dispatcher.
      *
      * @Route("/download/{id}/http", name="pelagos_app_download_http")
+     *
+     * @return Response
      */
-    public function httpAction($id, DataStore $dataStore, LogActionItemEventDispatcher $logActionItemEventDispatcher)
+    public function httpAction(string $id, DataStore $dataStore, LogActionItemEventDispatcher $logActionItemEventDispatcher)
     {
         $dataset = $this->entityHandler->get(Dataset::class, $id);
         $downloadFileInfo = $dataStore->getDownloadFileInfo($dataset->getUdi(), 'dataset');

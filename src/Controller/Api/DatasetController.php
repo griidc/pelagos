@@ -12,7 +12,7 @@ use FOS\RestBundle\Controller\Annotations\View;
 
 use App\Form\DatasetType;
 
-use App\Event\EntityEventDispatcher;
+use App\EventListener\EntityEventDispatcher;
 
 use App\Entity\Dataset;
 use App\Entity\DIF;
@@ -107,7 +107,7 @@ class DatasetController extends EntityController
      *
      * @return Dataset
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         return $this->handleGetOne(Dataset::class, $id);
     }
@@ -132,7 +132,7 @@ class DatasetController extends EntityController
      *
      * @return string
      */
-    public function getCitationAction($id)
+    public function getCitationAction(int $id)
     {
         $dataset = $this->handleGetOne(Dataset::class, $id);
         return $dataset->getCitation();
@@ -141,8 +141,9 @@ class DatasetController extends EntityController
     /**
      * Update a Dataset with the submitted data.
      *
-     * @param integer $id      The id of the Dataset to update.
-     * @param Request $request The request object.
+     * @param integer     $id          The id of the Dataset to update.
+     * @param Request     $request     The request object.
+     * @param MdappLogger $mdappLogger The mdapp logger utility.
      *
      * @ApiDoc(
      *   section = "Datasets",
@@ -160,12 +161,11 @@ class DatasetController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function patchAction($id, Request $request, MdappLogger $mdappLogger)
+    public function patchAction(int $id, Request $request, MdappLogger $mdappLogger)
     {
         $this->handleUpdate(DatasetType::class, Dataset::class, $id, $request, 'PATCH');
         $jiraLinkValue = $request->request->get('issueTrackingTicket');
         if (null !== $jiraLinkValue) {
-
             $mdappLogger->writeLog(
                 $this->getUser()->getUserName() .
                 ' set Jira Link for udi: ' .
@@ -182,10 +182,9 @@ class DatasetController extends EntityController
     /**
      * Delete a Dataset and associated Metadata and Difs.
      *
-     * @param integer $id The id of the Dataset to delete.
-     * @param EntityEventDispatcher $entityEventDispatcher
+     * @param integer               $id                    The id of the Dataset to delete.
+     * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
      *
-     * @return Response A response object with an empty body and a "no content" status code.
      * @ApiDoc(
      *   section = "Datasets",
      *   statusCodes = {
@@ -197,8 +196,10 @@ class DatasetController extends EntityController
      * )
      *
      * @Route("/api/datasets/{id}", name="pelagos_api_datasets_delete", methods={"DELETE"})
+     *
+     * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteAction($id, EntityEventDispatcher $entityEventDispatcher)
+    public function deleteAction(int $id, EntityEventDispatcher $entityEventDispatcher)
     {
         $dataset = $this->handleGetOne(Dataset::class, $id);
 
