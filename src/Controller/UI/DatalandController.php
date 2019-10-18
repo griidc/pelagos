@@ -234,14 +234,17 @@ class DatalandController extends AbstractController
      */
     private function getBoundingBox(Dataset $dataset)
     {
-        $gml = GmlUtil::addNamespace($dataset->getDatasetSubmission()->getSpatialExtent());
+        $spatialExtent = $dataset->getDatasetSubmission()->getSpatialExtent();
         $boundingBoxArray = array();
-        if ($gml) {
-            try {
-                $boundingBoxArray = $this->geoUtil->calculateGeographicBoundsFromGml($gml);
-            } catch (InvalidGmlException $e) {
-                $errors[] = $e->getMessage() . ' while attempting to calculate bonding box from gml';
-                $boundingBoxArray = array();
+            if (!empty($spatialExtent)) {
+            $gml = GmlUtil::addNamespace($dataset->getDatasetSubmission()->getSpatialExtent());
+            if ($gml) {
+                try {
+                    $boundingBoxArray = $this->geoUtil->calculateGeographicBoundsFromGml($gml);
+                } catch (InvalidGmlException $e) {
+                    $errors[] = $e->getMessage() . ' while attempting to calculate bonding box from gml';
+                    $boundingBoxArray = array();
+                }
             }
         }
         return $boundingBoxArray;
