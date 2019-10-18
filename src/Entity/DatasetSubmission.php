@@ -1279,7 +1279,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function reviewEvent(Person $reviewer, $eventName)
+    public function reviewEvent(Person $reviewer, string $eventName)
     {
         switch (true) {
             case ($eventName === self::DATASET_END_REVIEW):
@@ -1373,7 +1373,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setSequence($sequence)
+    public function setSequence(int $sequence)
     {
         if ('integer' !== gettype($sequence)) {
             throw new \InvalidArgumentException('Sequence must be an integer');
@@ -1398,7 +1398,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setTitle($title)
+    public function setTitle(string $title)
     {
         $this->title = $title;
     }
@@ -1420,7 +1420,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setShortTitle($shortTitle)
+    public function setShortTitle(string $shortTitle)
     {
         $this->shortTitle = $shortTitle;
     }
@@ -1442,7 +1442,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setAbstract($abstract)
+    public function setAbstract(string $abstract)
     {
         $this->abstract = $abstract;
     }
@@ -1464,7 +1464,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setAuthors($authors)
+    public function setAuthors(string $authors)
     {
         $this->authors = $authors;
     }
@@ -1626,7 +1626,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setRestrictions($restrictions)
+    public function setRestrictions(string $restrictions)
     {
         $this->restrictions = $restrictions;
         $this->updateAvailabilityStatus();
@@ -1651,7 +1651,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setDatasetFileTransferType($datasetFileTransferType)
+    public function setDatasetFileTransferType(string $datasetFileTransferType)
     {
         $this->datasetFileTransferType = $datasetFileTransferType;
     }
@@ -1673,7 +1673,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setDatasetFileUri($datasetFileUri)
+    public function setDatasetFileUri(string $datasetFileUri)
     {
         $this->datasetFileUri = $datasetFileUri;
     }
@@ -1697,7 +1697,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setDatasetFileTransferStatus($datasetFileTransferStatus)
+    public function setDatasetFileTransferStatus(string $datasetFileTransferStatus)
     {
         $this->datasetFileTransferStatus = $datasetFileTransferStatus;
         $this->updateAvailabilityStatus();
@@ -1720,7 +1720,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setDatasetFileName($datasetFileName)
+    public function setDatasetFileName(string $datasetFileName)
     {
         $this->datasetFileName = $datasetFileName;
     }
@@ -1742,7 +1742,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setDatasetFileSize($datasetFileSize)
+    public function setDatasetFileSize(int $datasetFileSize)
     {
         $this->datasetFileSize = $datasetFileSize;
     }
@@ -1764,7 +1764,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setDatasetFileSha256Hash($datasetFileSha256Hash)
+    public function setDatasetFileSha256Hash(string $datasetFileSha256Hash)
     {
         $this->datasetFileSha256Hash = $datasetFileSha256Hash;
     }
@@ -1786,7 +1786,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    protected function setDatasetFileColdStorageArchiveSha256Hash($datasetFileColdStorageArchiveSha256Hash)
+    protected function setDatasetFileColdStorageArchiveSha256Hash(string $datasetFileColdStorageArchiveSha256Hash)
     {
         $this->datasetFileColdStorageArchiveSha256Hash = $datasetFileColdStorageArchiveSha256Hash;
     }
@@ -1917,7 +1917,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setDatasetFileUrlStatusCode($datasetFileUrlStatusCode)
+    public function setDatasetFileUrlStatusCode(string $datasetFileUrlStatusCode)
     {
         $this->datasetFileUrlStatusCode = $datasetFileUrlStatusCode;
     }
@@ -1941,7 +1941,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setMetadataFileTransferType($metadataFileTransferType)
+    public function setMetadataFileTransferType(string $metadataFileTransferType)
     {
         $this->metadataFileTransferType = $metadataFileTransferType;
     }
@@ -1963,7 +1963,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setMetadataFileUri($metadataFileUri)
+    public function setMetadataFileUri(string $metadataFileUri)
     {
         $this->metadataFileUri = $metadataFileUri;
     }
@@ -1987,7 +1987,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setMetadataFileTransferStatus($metadataFileTransferStatus)
+    public function setMetadataFileTransferStatus(string $metadataFileTransferStatus)
     {
         $this->metadataFileTransferStatus = $metadataFileTransferStatus;
     }
@@ -2009,7 +2009,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setMetadataFileName($metadataFileName)
+    public function setMetadataFileName(string $metadataFileName)
     {
         $this->metadataFileName = $metadataFileName;
     }
@@ -2031,7 +2031,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setMetadataFileSha256Hash($metadataFileSha256Hash)
+    public function setMetadataFileSha256Hash(string $metadataFileSha256Hash)
     {
         $this->metadataFileSha256Hash = $metadataFileSha256Hash;
     }
@@ -2055,7 +2055,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setDatasetStatus($datasetStatus)
+    public function setDatasetStatus(string $datasetStatus)
     {
         $this->datasetStatus = $datasetStatus;
         $this->updateDatasetStatus();
@@ -2126,7 +2126,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setReferenceDateType($referenceDateType)
+    public function setReferenceDateType(string $referenceDateType)
     {
         if (null !== $referenceDateType and !array_key_exists($referenceDateType, static::REFERENCE_DATE_TYPES)) {
             throw new \InvalidArgumentException("'$referenceDateType' is not a valid value for referenceDateType");
@@ -2151,7 +2151,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setPurpose($purpose)
+    public function setPurpose(string $purpose)
     {
         $this->purpose = $purpose;
     }
@@ -2173,7 +2173,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setSuppParams($suppParams)
+    public function setSuppParams(string $suppParams)
     {
         $this->suppParams = $suppParams;
     }
@@ -2195,7 +2195,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setSuppMethods($suppMethods)
+    public function setSuppMethods(string $suppMethods)
     {
         $this->suppMethods = $suppMethods;
     }
@@ -2217,7 +2217,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setSuppInstruments($suppInstruments)
+    public function setSuppInstruments(string $suppInstruments)
     {
         $this->suppInstruments = $suppInstruments;
     }
@@ -2239,7 +2239,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setSuppSampScalesRates($suppSampScalesRates)
+    public function setSuppSampScalesRates(string $suppSampScalesRates)
     {
         $this->suppSampScalesRates = $suppSampScalesRates;
     }
@@ -2261,7 +2261,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setSuppErrorAnalysis($suppErrorAnalysis)
+    public function setSuppErrorAnalysis(string $suppErrorAnalysis)
     {
         $this->suppErrorAnalysis = $suppErrorAnalysis;
     }
@@ -2283,7 +2283,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setSuppProvenance($suppProvenance)
+    public function setSuppProvenance(string $suppProvenance)
     {
         $this->suppProvenance = $suppProvenance;
     }
@@ -2380,7 +2380,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setSpatialExtent($spatialExtent)
+    public function setSpatialExtent(string $spatialExtent)
     {
         $this->spatialExtent = $spatialExtent;
     }
@@ -2402,7 +2402,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setSpatialExtentDescription($spatialExtentDescription)
+    public function setSpatialExtentDescription(string $spatialExtentDescription)
     {
         $this->spatialExtentDescription = $spatialExtentDescription;
     }
@@ -2426,7 +2426,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setTemporalExtentDesc($temporalExtentDesc)
+    public function setTemporalExtentDesc(string $temporalExtentDesc)
     {
         if (null !== $temporalExtentDesc and
             !array_key_exists($temporalExtentDesc, static::TEMPORAL_EXTENT_DESCRIPTIONS)) {
@@ -2502,7 +2502,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setDistributionFormatName($distributionFormatName)
+    public function setDistributionFormatName(string $distributionFormatName)
     {
         $this->distributionFormatName = $distributionFormatName;
     }
@@ -2524,7 +2524,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setFileDecompressionTechnique($fileDecompressionTechnique)
+    public function setFileDecompressionTechnique(string $fileDecompressionTechnique)
     {
         $this->fileDecompressionTechnique = $fileDecompressionTechnique;
     }
@@ -2693,7 +2693,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setTemporalExtentNilReasonType($temporalExtentNilReasonType)
+    public function setTemporalExtentNilReasonType(string $temporalExtentNilReasonType)
     {
         if (null !== $temporalExtentNilReasonType and !array_key_exists($temporalExtentNilReasonType, self::NILREASON_TYPES)) {
                 throw new \InvalidArgumentException("'$temporalExtentNilReasonType' is not a valid value for nilReason types");

@@ -89,7 +89,7 @@ class PersonToken extends Entity
      *
      * @return void
      */
-    public function __construct(Person $person, $use, \DateInterval $validFor)
+    public function __construct(Person $person, string $use, \DateInterval $validFor)
     {
         $this->setPerson($person);
         $this->setUse($use);
@@ -141,7 +141,7 @@ class PersonToken extends Entity
      *
      * @return void
      */
-    public function setUse($use)
+    public function setUse(string $use)
     {
         $this->use = $use;
     }

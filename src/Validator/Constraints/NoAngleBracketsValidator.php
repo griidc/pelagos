@@ -15,7 +15,7 @@ class NoAngleBracketsValidator extends ConstraintValidator
      *
      * Creates and adds a violation if angle brackets (< or >) are found in $value.
      *
-     * @param string     $value      The value to test.
+     * @param mixed      $value      The value to test.
      * @param Constraint $constraint The constraint this validator is for.
      *
      * @return void

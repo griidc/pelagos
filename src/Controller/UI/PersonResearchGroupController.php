@@ -23,15 +23,17 @@ class PersonResearchGroupController extends AbstractController
     /**
      * The Person Research Group action.
      *
-     * @param Request $request The HTTP request.
-     * @param EntityHandler $entityHandler
-     * @param string $id The id of the entity to retrieve.
+     * @param Request       $request       The HTTP request.
+     * @param EntityHandler $entityHandler The entity handler.
+     * @param string        $id            The id of the entity to retrieve.
      *
-     * @return Response A Response instance.
+     * @throws BadRequestHttpException When the research group parameter is not set.
+     *
      * @Route("/person-research-group/{id}", name="pelagos_app_ui_personresearchgroup_default")
      *
+     * @return Response A Response instance.
      */
-    public function defaultAction(Request $request, EntityHandler $entityHandler, $id = null)
+    public function defaultAction(Request $request, EntityHandler $entityHandler, string $id = null)
     {
         $researchGroupId = $request->query->get('ResearchGroup');
 

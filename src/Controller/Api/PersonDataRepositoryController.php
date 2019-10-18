@@ -116,7 +116,7 @@ class PersonDataRepositoryController extends EntityController
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
-    public function validatePropertyExistingAction($id, Request $request)
+    public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(PersonDataRepositoryType::class, PersonDataRepository::class, $request, $id);
     }
@@ -185,7 +185,7 @@ class PersonDataRepositoryController extends EntityController
      *
      * @return PersonDataRepository
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         return $this->handleGetOne(PersonDataRepository::class, $id);
     }
@@ -249,7 +249,7 @@ class PersonDataRepositoryController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putAction($id, Request $request)
+    public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(PersonDataRepositoryType::class, PersonDataRepository::class, $id, $request, 'PUT');
         return $this->makeNoContentResponse();
@@ -282,7 +282,7 @@ class PersonDataRepositoryController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function patchAction($id, Request $request)
+    public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(PersonDataRepositoryType::class, PersonDataRepository::class, $id, $request, 'PATCH');
         return $this->makeNoContentResponse();
@@ -312,7 +312,7 @@ class PersonDataRepositoryController extends EntityController
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
         $this->handleDelete(PersonDataRepository::class, $id);
         return $this->makeNoContentResponse();

@@ -333,7 +333,7 @@ class Person extends Entity
      *
      * @return void
      */
-    public function setFirstName($firstName)
+    public function setFirstName(string $firstName)
     {
         $this->firstName = $firstName;
     }
@@ -355,7 +355,7 @@ class Person extends Entity
      *
      * @return void
      */
-    public function setLastName($lastName)
+    public function setLastName(string $lastName)
     {
         $this->lastName = $lastName;
     }
@@ -377,7 +377,7 @@ class Person extends Entity
      *
      * @return void
      */
-    public function setEmailAddress($emailAddress)
+    public function setEmailAddress(string $emailAddress)
     {
         $this->emailAddress = $emailAddress;
     }
@@ -401,7 +401,7 @@ class Person extends Entity
      *
      * @return void
      */
-    public function setPhoneNumber($phoneNumber)
+    public function setPhoneNumber(string $phoneNumber)
     {
         $this->phoneNumber = $phoneNumber;
     }
@@ -427,7 +427,7 @@ class Person extends Entity
      *
      * @return void
      */
-    public function setDeliveryPoint($deliveryPoint)
+    public function setDeliveryPoint(string $deliveryPoint)
     {
         $this->deliveryPoint = $deliveryPoint;
     }
@@ -453,7 +453,7 @@ class Person extends Entity
      *
      * @return void
      */
-    public function setCity($city)
+    public function setCity(string $city)
     {
         $this->city = $city;
     }
@@ -479,7 +479,7 @@ class Person extends Entity
      *
      * @return void
      */
-    public function setAdministrativeArea($administrativeArea)
+    public function setAdministrativeArea(string $administrativeArea)
     {
         $this->administrativeArea = $administrativeArea;
     }
@@ -505,7 +505,7 @@ class Person extends Entity
      *
      * @return void
      */
-    public function setPostalCode($postalCode)
+    public function setPostalCode(string $postalCode)
     {
         $this->postalCode = $postalCode;
     }
@@ -531,7 +531,7 @@ class Person extends Entity
      *
      * @return void
      */
-    public function setCountry($country)
+    public function setCountry(string $country)
     {
         $this->country = $country;
     }
@@ -557,7 +557,7 @@ class Person extends Entity
      *
      * @return void
      */
-    public function setUrl($url)
+    public function setUrl(string $url)
     {
         $this->url = $url;
     }
@@ -583,7 +583,7 @@ class Person extends Entity
      *
      * @return void
      */
-    public function setOrganization($organization)
+    public function setOrganization(string $organization)
     {
         $this->organization = $organization;
     }
@@ -609,7 +609,7 @@ class Person extends Entity
      *
      * @return void
      */
-    public function setPosition($position)
+    public function setPosition(string $position)
     {
         $this->position = $position;
     }

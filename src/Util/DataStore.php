@@ -93,14 +93,14 @@ class DataStore
      * @param string $anonFtpPass              The password (email) to send to anonymous ftp servers.
      */
     public function __construct(
-        $dataStoreDirectory,
-        $dataDownloadDirectory,
-        $dataStoreOwner,
-        $dataStoreGroup,
-        $dataDownloadBrowserGroup,
-        $webServerUser,
-        $anonFtpUser,
-        $anonFtpPass
+        string $dataStoreDirectory,
+        string $dataDownloadDirectory,
+        string $dataStoreOwner,
+        string $dataStoreGroup,
+        string $dataDownloadBrowserGroup,
+        string $webServerUser,
+        string $anonFtpUser,
+        string $anonFtpPass
     ) {
         $this->dataStoreDirectory = $dataStoreDirectory;
         $this->dataDownloadDirectory = $dataDownloadDirectory;
@@ -127,7 +127,7 @@ class DataStore
      *
      * @return string The original file name of the added file.
      */
-    public function addFile($fileUri, $datasetId, $type)
+    public function addFile(string $fileUri, string $datasetId, string $type)
     {
         if (null === $fileUri) {
             throw new \Exception("$type file URI not set");
@@ -180,7 +180,7 @@ class DataStore
      *
      * @return File
      */
-    public function getFileInfo($datasetId, $type)
+    public function getFileInfo(string $datasetId, string $type)
     {
         $dataStoreDirectory = $this->getDataStoreDirectory($datasetId);
         $storeFileName = $this->getStoreFileName($datasetId, $type);
@@ -195,7 +195,7 @@ class DataStore
      *
      * @return File
      */
-    public function getDownloadFileInfo($datasetId, $type)
+    public function getDownloadFileInfo(string $datasetId, string $type)
     {
         $dataDownloadDirectory = $this->getDataDownloadDirectory($datasetId);
         $storeFileName = $this->getStoreFileName($datasetId, $type);
@@ -215,7 +215,7 @@ class DataStore
      *
      * @return string The path to the file in the data store directory.
      */
-    protected function addFileToDataStoreDirectory($fileUri, $datasetId, $storeFileName)
+    protected function addFileToDataStoreDirectory(string $fileUri, string $datasetId, string $storeFileName)
     {
         try {
             $dataStoreDirectory = $this->getDataStoreDirectory($datasetId);
@@ -254,7 +254,7 @@ class DataStore
      *
      * @return string The path to the file in the download directory.
      */
-    protected function createLinkInDownloadDirectory($storeFilePath, $datasetId, $storeFileName)
+    protected function createLinkInDownloadDirectory(string $storeFilePath, string $datasetId, string $storeFileName)
     {
         try {
             $dataDownloadDirectory = $this->getDataDownloadDirectory($datasetId);
@@ -282,7 +282,7 @@ class DataStore
      *
      * @return string
      */
-    protected function getDataStoreDirectory($datasetId)
+    protected function getDataStoreDirectory(string $datasetId)
     {
         $dataStoreDirectory = "$this->dataStoreDirectory/$datasetId";
         if (!file_exists($dataStoreDirectory)) {
@@ -300,7 +300,7 @@ class DataStore
      *
      * @return string
      */
-    protected function createDataStoreDirectory($datasetId)
+    protected function createDataStoreDirectory(string $datasetId)
     {
         $dataStoreDirectory = "$this->dataStoreDirectory/$datasetId";
         if (!file_exists($dataStoreDirectory)) {
@@ -324,7 +324,7 @@ class DataStore
      *
      * @return string
      */
-    protected function getDataDownloadDirectory($datasetId)
+    protected function getDataDownloadDirectory(string $datasetId)
     {
         $dataDownloadDirectory = "$this->dataDownloadDirectory/$datasetId";
         if (!file_exists($dataDownloadDirectory)) {
@@ -343,7 +343,7 @@ class DataStore
      *
      * @return string
      */
-    protected function createDataDownloadDirectory($datasetId, $restricted = false)
+    protected function createDataDownloadDirectory(string $datasetId, bool $restricted = false)
     {
         $downloadDirectory = "$this->dataDownloadDirectory/$datasetId";
         if (!file_exists($downloadDirectory)) {
@@ -374,7 +374,7 @@ class DataStore
      *
      * @return void
      */
-    protected function setFacls($file, $facls = null)
+    protected function setFacls(string $file, string $facls = null)
     {
         if (null !== $facls) {
             $output = array();
@@ -395,7 +395,7 @@ class DataStore
      *
      * @return string
      */
-    protected function getStoreFileName($datasetId, $type)
+    protected function getStoreFileName(string $datasetId, string $type)
     {
         $storeFileName = "$datasetId.";
         switch ($type) {

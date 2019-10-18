@@ -110,7 +110,7 @@ class FundingCycleController extends EntityController
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
-    public function validatePropertyExistingAction($id, Request $request)
+    public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(FundingCycleType::class, FundingCycle::class, $request, $id);
     }
@@ -178,7 +178,7 @@ class FundingCycleController extends EntityController
      *
      * @return FundingCycle
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         return $this->handleGetOne(FundingCycle::class, $id);
     }
@@ -240,7 +240,7 @@ class FundingCycleController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putAction($id, Request $request)
+    public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(FundingCycleType::class, FundingCycle::class, $id, $request, 'PUT');
         return $this->makeNoContentResponse();
@@ -272,7 +272,7 @@ class FundingCycleController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function patchAction($id, Request $request)
+    public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(FundingCycleType::class, FundingCycle::class, $id, $request, 'PATCH');
         return $this->makeNoContentResponse();
@@ -301,7 +301,7 @@ class FundingCycleController extends EntityController
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
         $this->handleDelete(FundingCycle::class, $id);
         return $this->makeNoContentResponse();

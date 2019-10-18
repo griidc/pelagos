@@ -41,8 +41,8 @@ class MdAppController extends AbstractController
     /**
      * Class constructor.
      *
-     * @param EntityHandler $entityHandler         A Pelagos EntityHandler instance.
-     * @param string        $issueTrackingBaseUrl  Issue tracker base URL.
+     * @param EntityHandler $entityHandler        A Pelagos EntityHandler instance.
+     * @param string        $issueTrackingBaseUrl Issue tracker base URL.
      */
     public function __construct(EntityHandler $entityHandler, string $issueTrackingBaseUrl)
     {
@@ -76,9 +76,9 @@ class MdAppController extends AbstractController
      *
      * This function called when Post occurs upon submitt of the MdApp form.
      *
-     * @param Request     $request The Symfony request object.
-     * @param MdappLogger $logger  The Pelagos Mdapp logger.
-     * @param integer     $id      The id of the Dataset to change the dataset status for.
+     * @param Request     $request     The Symfony request object.
+     * @param MdappLogger $mdappLogger The Pelagos Mdapp logger.
+     * @param integer     $id          The id of the Dataset to change the dataset status for.
      *
      * @Route(
      *      "/mdapp/change-dataset-status/{id}",
@@ -88,7 +88,7 @@ class MdAppController extends AbstractController
      *
      * @return Response
      */
-    public function changeDatasetStatusAction(Request $request, MdappLogger $mdappLogger, $id)
+    public function changeDatasetStatusAction(Request $request, MdappLogger $mdappLogger, int $id)
     {
         $dataset = $this->entityHandler->get(Dataset::class, $id);
         $message = null;
@@ -190,12 +190,12 @@ class MdAppController extends AbstractController
      *
      * @return response
      */
-    public function getlog($udi, MdappLogger $mdappLogger)
+    public function getlog(string $udi, MdappLogger $mdappLogger)
     {
         $data = null;
         $entries = $mdappLogger->getLogEntriesByUdi($udi);
 
-       if (count($entries) > 0) {
+        if (count($entries) > 0) {
             $data .= '<ul>';
             foreach ($entries as $entry) {
                 $data .= '<li>' . strip_tags($entry) . "</li>\n";
@@ -216,7 +216,7 @@ class MdAppController extends AbstractController
      *
      * @return string
      */
-    private function getFlashBagStatus($status)
+    private function getFlashBagStatus(string $status)
     {
         if (array_key_exists($status, Dataset::DATASET_STATUSES)) {
             $status = Dataset::DATASET_STATUSES[$status];

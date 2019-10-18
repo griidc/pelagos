@@ -22,15 +22,15 @@ class UnmappedPropertyException extends \Exception
     protected $propertyName;
 
     /**
-     * Setter for className.
+     * Constructor for the class.
      *
-     * @param string $className Name of the class that caused the error.
-     *
-     * @return void
+     * @param string $className    Name of the class that caused the error.
+     * @param string $propertyName Name of the property that caused the error.
      */
-    public function setClassName($className)
+    public function __construct(string $className, string $propertyName)
     {
         $this->className = $className;
+        $this->propertyName = $propertyName;
     }
 
     /**
@@ -41,18 +41,6 @@ class UnmappedPropertyException extends \Exception
     public function getClassName()
     {
         return $this->className;
-    }
-
-    /**
-     * Setter for propertyName.
-     *
-     * @param string $propertyName Name of the property that caused the error.
-     *
-     * @return void
-     */
-    public function setPropertyName($propertyName)
-    {
-        $this->propertyName = $propertyName;
     }
 
     /**

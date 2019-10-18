@@ -86,13 +86,14 @@ abstract class EventListener
     /**
      * This is the class constructor to handle dependency injections.
      *
-     * @param \Twig_Environment  $twig          Twig engine.
-     * @param MailSender         $mailer        Email handling library.
-     * @param TokenStorage       $tokenStorage  Symfony's token object.
-     * @param EntityHandler|null $entityHandler Pelagos entity handler.
-     * @param Producer           $producer      An AMQP/RabbitMQ Producer.
-     * @param DataStore|null     $dataStore     An instance of the Pelagos Data Store utility service.
-     * @param MdappLogger|null   $mdappLogger   An MDAPP logger.
+     * @param \Twig_Environment     $twig         Twig engine.
+     * @param MailSender            $mailer       Email handling library.
+     * @param TokenStorageInterface $tokenStorage Symfony's token object.
+     *
+     * //param EntityHandler|null $entityHandler Pelagos entity handler.
+     * //param Producer           $producer      An AMQP/RabbitMQ Producer.
+     * //param DataStore|null     $dataStore     An instance of the Pelagos Data Store utility service.
+     * //param MdappLogger|null   $mdappLogger   An MDAPP logger.
      */
     public function __construct(
         \Twig_Environment $twig,
@@ -158,7 +159,7 @@ abstract class EventListener
      *
      * @param Dataset $dataset A Dataset entity.
      *
-     * @return Array of Persons having DRPM status.
+     * @return array Array of Persons having DRPM status.
      */
     protected function getDRPMs(Dataset $dataset)
     {
@@ -171,7 +172,8 @@ abstract class EventListener
 
         foreach ($personDataRepositories as $pdr) {
             if ($pdr->getRole()->getName() == DataRepositoryRole::MANAGER) {
-                $recipientPeople[] = $pdr->getPerson();            }
+                $recipientPeople[] = $pdr->getPerson();
+            }
         }
         return $recipientPeople;
     }
@@ -181,7 +183,7 @@ abstract class EventListener
      *
      * @throws \Exception On more than one DataRepositoryRole found for MANAGER.
      *
-     * @return Array of Persons having DRPM status.
+     * @return array Array of Persons having DRPM status.
      */
     protected function getAllDRPMs()
     {
@@ -207,7 +209,7 @@ abstract class EventListener
      *
      * @param Dataset $dataset A Dataset entity.
      *
-     * @return Array of Persons who are Data Managers for the Research Group tied back to the DIF.
+     * @return array Array of Persons who are Data Managers for the Research Group tied back to the DIF.
      */
     protected function getDatasetDMs(Dataset $dataset)
     {
@@ -216,7 +218,6 @@ abstract class EventListener
 
         foreach ($personResearchGroups as $prg) {
             if ($prg->getRole()->getName() == ResearchGroupRole::DATA) {
-
                 $recipientPeople[] = $prg->getPerson();
             }
         }

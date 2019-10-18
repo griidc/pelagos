@@ -16,6 +16,8 @@ class SecurityController extends AbstractController
     /**
      * The login action.
      *
+     * @param AuthenticationUtils $authenticationUtils Instance of Authentication Utilities.
+     *
      * @Route("/login", name="security_login")
      *
      * @return Response A Response instance.

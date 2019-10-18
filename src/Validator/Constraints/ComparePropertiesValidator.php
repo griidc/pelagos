@@ -16,7 +16,7 @@ class ComparePropertiesValidator extends ConstraintValidator
     /**
      * Validate method for this validator.
      *
-     * @param object     $entity     The entity to validate.
+     * @param mixed      $entity     The entity to validate.
      * @param Constraint $constraint The constraint this validator is for.
      *
      * @throws UnexpectedTypeException       When $constraint is not a CompareProperties.

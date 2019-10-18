@@ -129,7 +129,7 @@ class DatasetSubmissionReview extends Entity
      *
      * @return void
      */
-    public function setReviewNotes($reviewNotes)
+    public function setReviewNotes(string $reviewNotes)
     {
         $this->reviewNotes = $reviewNotes;
     }

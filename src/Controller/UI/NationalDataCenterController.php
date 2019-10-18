@@ -23,14 +23,16 @@ class NationalDataCenterController extends AbstractController
     /**
      * The default action for National Data center.
      *
-     * @param EntityHandler $entityHandler
-     * @param string $id The id of the national data center.
+     * @param EntityHandler $entityHandler The entity handler.
+     * @param string        $id            The id of the national data center.
      *
-     * @return Response A Response instance.
+     * @throws NotFoundHttpException When National data center was not found.
+     *
      * @Route("/national-data-center/{id}", name="pelagos_app_ui_nationaldatacenter_default")
      *
+     * @return Response A Response instance.
      */
-    public function defaultAction(EntityHandler $entityHandler, $id = null)
+    public function defaultAction(EntityHandler $entityHandler, string $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -40,7 +42,7 @@ class NationalDataCenterController extends AbstractController
         if (!empty($id)) {
             $nationalDataCenter = $entityHandler->get(NationalDataCenter::class, $id);
             if (!$nationalDataCenter instanceof NationalDataCenter) {
-                throw $this->createNotFoundException('The National data center was not found');
+                throw new NotFoundHttpException('The National data center was not found');
             }
         } else {
             $nationalDataCenter = new NationalDataCenter();

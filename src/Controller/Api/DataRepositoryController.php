@@ -119,7 +119,7 @@ class DataRepositoryController extends EntityController
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
-    public function validatePropertyExistingAction($id, Request $request)
+    public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(DataRepositoryType::class, DataRepository::class, $request, $id);
     }
@@ -187,7 +187,7 @@ class DataRepositoryController extends EntityController
      *
      * @return DataRepository The Data Repository that was retrieved.
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         return $this->handleGetOne(DataRepository::class, $id);
     }
@@ -219,7 +219,7 @@ class DataRepositoryController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putAction($id, Request $request)
+    public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(DataRepositoryType::class, DataRepository::class, $id, $request, 'PUT');
         return $this->makeNoContentResponse();
@@ -252,7 +252,7 @@ class DataRepositoryController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function patchAction($id, Request $request)
+    public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(DataRepositoryType::class, DataRepository::class, $id, $request, 'PATCH');
         return $this->makeNoContentResponse();
