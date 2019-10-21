@@ -22,7 +22,6 @@ use App\Entity\Dataset;
  */
 class DatasetFileHasherConsumer implements ConsumerInterface
 {
-
     /**
      * The entity manager.
      *
