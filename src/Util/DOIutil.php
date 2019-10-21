@@ -86,13 +86,13 @@ class DOIutil
     /**
      * This function will create a DOI.
      *
-     * @param string $doi             The DOI identifier to create, or 'mint' to generate new.
-     * @param string $url             URL for DOI.
-     * @param string $creator         Creator for DOI.
-     * @param string $title           Title for DOI.
-     * @param string $publicationYear Published Date for DOI.
-     * @param string $publisher       Publisher for DOI.
-     * @param string $resourcetype    Type for DOI Request, by default Dataset.
+     * @param string      $doi             The DOI identifier to create, or 'mint' to generate new.
+     * @param string      $url             URL for DOI.
+     * @param string|null $creator         Creator for DOI.
+     * @param string      $title           Title for DOI.
+     * @param string|null $publicationYear Published Date for DOI.
+     * @param string      $publisher       Publisher for DOI.
+     * @param string      $resourcetype    Type for DOI Request, by default Dataset.
      *
      * @throws HttpClientErrorException When there was an 4xx error negotiating with REST API.
      * @throws HttpServerErrorException When there was an 5xx error negotiating with REST API.
@@ -102,9 +102,9 @@ class DOIutil
     public function createDOI(
         string $doi,
         string $url,
-        string $creator,
+        ?string $creator,
         string $title,
-        string $publicationYear,
+        ?string $publicationYear,
         string $publisher,
         string $resourcetype = 'Dataset'
     ) {
