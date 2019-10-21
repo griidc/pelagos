@@ -236,7 +236,7 @@ class DatalandController extends AbstractController
     {
         $spatialExtent = $dataset->getDatasetSubmission()->getSpatialExtent();
         $boundingBoxArray = array();
-            if (!empty($spatialExtent)) {
+        if (!empty($spatialExtent)) {
             $gml = GmlUtil::addNamespace($dataset->getDatasetSubmission()->getSpatialExtent());
             if ($gml) {
                 try {
