@@ -69,10 +69,10 @@ class ValidateRemotelyHostedLinksCommand extends Command
         EntityManagerInterface $entityManager,
         MailSender $mailer,
         Environment $twig,
-        UrlValidation $urlValidation)
-    {
+        UrlValidation $urlValidation
+    ) {
         $this->entityManager = $entityManager;
-        $this->mailer= $mailer;
+        $this->mailer = $mailer;
         $this->twig = $twig;
         $this->urlValidation = $urlValidation;
         parent::__construct();

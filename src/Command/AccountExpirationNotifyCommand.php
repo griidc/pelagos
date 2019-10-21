@@ -13,7 +13,6 @@ use Twig\Environment;
 use App\Util\MailSender;
 use App\Entity\Account;
 
-
 /**
  * Notify holders of accounts with soon to expire or expired passwords.
  *
@@ -100,13 +99,13 @@ class AccountExpirationNotifyCommand extends Command
         EntityManagerInterface $entityManager,
         string $hostName,
         MailSender $mailer,
-        Environment $twig)
-    {
+        Environment $twig
+    ) {
         $this->maximumPasswordAge = $maximumPasswordAge;
         $this->passwordExpiryWarn = $passwordExpiryWarn;
         $this->entityManager = $entityManager;
         $this->hostName = $hostName;
-        $this->mailer= $mailer;
+        $this->mailer = $mailer;
         $this->twig = $twig;
         parent::__construct();
     }
@@ -162,7 +161,6 @@ class AccountExpirationNotifyCommand extends Command
 
         // For each expiration warning interval.
         foreach (explode(',', $this->passwordExpiryWarn) as $warnInterval) {
-
             // Create a time stamp $warnInterval after $maxAgeTimeStamp.
             $warnTimeStamp = clone $maxAgeTimeStamp;
             $warnTimeStamp->add(new \DateInterval($warnInterval));

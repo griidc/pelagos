@@ -39,7 +39,6 @@ class RebuildElasticsearchIndexCommand extends Command
      */
     protected $pelagosDatasetIndexPersister;
 
-
     /**
      * Class constructor for dependency injection.
      *
@@ -52,6 +51,7 @@ class RebuildElasticsearchIndexCommand extends Command
         $this->pelagosDatasetIndexPersister = $pelagosDatasetIndexPersister;
         parent::__construct();
     }
+
     /**
      * Configures the current command.
      *

@@ -65,7 +65,7 @@ class MailSender
     public function sendEmailMessage(
         \Twig\TemplateWrapper $emailTwigTemplate,
         array $mailData,
-        array $toAddresses  = array(),
+        array $toAddresses = array(),
         array $attachments = array()
     ) {
          $message = new \Swift_Message();
