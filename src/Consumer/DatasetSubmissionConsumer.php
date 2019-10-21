@@ -115,9 +115,9 @@ class DatasetSubmissionConsumer implements ConsumerInterface
             return true;
         }
         $loggingContext['dataset_submission_id'] = $datasetSubmission->getId();
-        // @codingStandardsIgnoreStart
+        // phpcs:disable
         $routingKey = $message->delivery_info['routing_key'];
-        // @codingStandardsIgnoreEnd
+        // phpcs:enable
         if (preg_match('/^dataset\./', $routingKey)) {
             $this->processDataset($datasetSubmission, $loggingContext);
             $dataset->updateAvailabilityStatus();

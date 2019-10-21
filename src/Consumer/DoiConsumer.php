@@ -79,9 +79,9 @@ class DoiConsumer implements ConsumerInterface
      */
     public function execute(AMQPMessage $message)
     {
-        // @codingStandardsIgnoreStart
+        // phpcs:disable
         $routingKey = $message->delivery_info['routing_key'];
-
+        // phpcs:enable
         $msgStatus = ConsumerInterface::MSG_ACK;
 
         if (preg_match('/^delete/', $routingKey)) {
@@ -106,7 +106,6 @@ class DoiConsumer implements ConsumerInterface
                 $loggingContext['udi'] = $dataset->getUdi();
             }
 
-            // @codingStandardsIgnoreEnd
             if (preg_match('/^issue/', $routingKey)) {
                 $msgStatus = $this->issueDoi($dataset, $loggingContext);
             } elseif (preg_match('/^update/', $routingKey)) {
