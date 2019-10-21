@@ -2,14 +2,16 @@
 
 namespace App\Command;
 
-use App\Entity\Dataset;
 use Doctrine\ORM\EntityManagerInterface;
-use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
 use App\Entity\DatasetSubmission;
+use App\Entity\Dataset;
+
+use App\Util\RabbitPublisher;
 
 /**
  * Back fill all the submitted metadata xml to dataset submission.
@@ -33,22 +35,22 @@ class HandleSubmissionWithBadGMLCommand extends Command
     protected $entityManager;
 
     /**
-     * A Rabbitmq producer instance.
+     * Utility Rabbitmq producer instance.
      *
-     * @var Producer $producer
+     * @var RabbitPublisher $publisher
      */
-    protected $producer;
+    protected $publisher;
 
     /**
      * Class constructor for dependency injection.
      *
      * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
-     * @param Producer               $producer      A Rabbitmq producer instance.
+     * @param RabbitPublisher        $publisher     A Rabbitmq producer instance.
      */
-    public function __construct(EntityManagerInterface $entityManager, Producer $producer)
+    public function __construct(EntityManagerInterface $entityManager, RabbitPublisher $publisher)
     {
         $this->entityManager = $entityManager;
-        $this->producer = $producer;
+        $this->publisher = $publisher;
         parent::__construct();
     }
 
@@ -105,7 +107,7 @@ class HandleSubmissionWithBadGMLCommand extends Command
         $this->entityManager->flush();
 
         //re-trigger dataset submission producer
-        $this->producer->publish(
+        $this->publisher->publish(
             $datasetSubmission->getId(),
             'dataset.' . $datasetSubmission->getDatasetFileTransferType()
         );
