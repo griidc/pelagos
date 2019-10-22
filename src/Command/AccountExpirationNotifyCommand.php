@@ -251,7 +251,9 @@ class AccountExpirationNotifyCommand extends Command
             $this->mailer->sendEmailMessage(
                 $emailTemplate,
                 $twigData,
-                $person->getEmailAddress()
+                array(
+                    $person->getEmailAddress() => $person->getFirstName() . ' ' . $person->getLastName(),
+                )
             );
         }
     }
