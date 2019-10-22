@@ -2,30 +2,32 @@
 
 namespace App\Controller\UI;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use App\Util\Search;
+
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
- *
- * @Route("/search")
  */
-class SearchPageController extends UIController
+class SearchPageController extends AbstractController
 {
 
     /**
      * The default action for Dataset Review.
      *
-     * @param Request $request The Symfony request object.
+     * @param Request $request    The Symfony request object.
+     * @param Search  $searchUtil Search utility class object.
      *
-     * @Route("")
+     * @Route("/search", name="pelagos_app_ui_searchpage_default")
      *
      * @return Response
      */
-    public function defaultAction(Request $request)
+    public function defaultAction(Request $request, Search $searchUtil)
     {
         $results = array();
         $count = 0;
@@ -35,7 +37,6 @@ class SearchPageController extends UIController
         $statusInfo = array();
 
         if (!empty($requestParams['query'])) {
-            $searchUtil = $this->get('pelagos.util.search');
             $buildQuery = $searchUtil->buildQuery($requestParams);
             $results = $searchUtil->findDatasets($buildQuery);
             $count = $searchUtil->getCount($buildQuery);
@@ -45,7 +46,7 @@ class SearchPageController extends UIController
         }
 
         return $this->render(
-            'PelagosAppBundle:Search:default.html.twig',
+            'Search/default.html.twig',
             array(
                 'query' => $requestParams['query'],
                 'field' => $requestParams['field'],

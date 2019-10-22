@@ -170,3 +170,7 @@ services:
     App\Command\RabbitUpdateAllAcceptedDatasetDOICommand:
         bind:
             OldSound\RabbitMqBundle\RabbitMq\Producer $producer: '@old_sound_rabbit_mq.doi_issue_producer'
+
+    App\Util\Search:
+        bind:
+            FOS\ElasticaBundle\Finder\TransformedFinder $finder: "@fos_elastica.finder.search_pelagos.dataset"
