@@ -4,7 +4,6 @@ namespace App\EventListener;
 
 use App\Entity\Account;
 use App\Entity\ResearchGroupRole;
-use App\Event\EntityEvent;
 
 /**
  * Listener class for Account-related events.
@@ -88,7 +87,7 @@ class AccountListener extends EventListener
 
         // email User
         $this->sendMailMsg(
-            $this->twig->loadTemplate('Email/Account/UsernameRetrieval.email.twig'),
+            $this->twig->load('Email/Account/UsernameRetrieval.email.twig'),
             array('person' => $account->getPerson()),
             array($account->getPerson())
         );

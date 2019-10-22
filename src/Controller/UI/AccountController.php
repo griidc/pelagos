@@ -13,10 +13,11 @@ use App\Entity\Entity;
 use App\Entity\Password;
 use App\Entity\Person;
 use App\Entity\PersonToken;
-use App\Event\EntityEventDispatcher;
+use App\EventListener\EntityEventDispatcher;
 use App\Handler\EntityHandler;
 use App\Util\Factory\UserIdFactory;
 use App\Util\Ldap\Ldap;
+use App\Util\MailSender;
 
 /**
  * The account controller.
@@ -85,8 +86,8 @@ class AccountController extends AbstractController
     /**
      * Post handler to verify the email address by sending a link with a Person Token.
      *
-     * @param Request       $request The Symfony Request object.
-     * @param \Swift_Mailer $mailer  The Swift Mailer.
+     * @param Request    $request The Symfony Request object.
+     * @param MailSender $mailer  The custom swift mailer utility class.
      *
      * @throws \Exception When more than one Person is found for an email address.
      *
@@ -94,7 +95,7 @@ class AccountController extends AbstractController
      *
      * @return Response A Symfony Response instance.
      */
-    public function sendVerificationEmail(Request $request, \Swift_Mailer $mailer)
+    public function sendVerificationEmail(Request $request, MailSender $mailer)
     {
         $emailAddress = $request->request->get('emailAddress');
         $reset = ($request->request->get('reset') == 'reset') ? true : false;
@@ -137,12 +138,12 @@ class AccountController extends AbstractController
             // Create new personToken
             $personToken = new PersonToken($person, 'PASSWORD_RESET', $dateInterval);
             // Load email template
-            $template = $twig->loadTemplate('Account/PasswordReset.email.twig');
+            $template = $twig->load('Account/PasswordReset.email.twig');
         } else {
             // Create new personToken
             $personToken = new PersonToken($person, 'CREATE_ACCOUNT', $dateInterval);
             // Load email template
-            $template = $twig->loadTemplate('Account/AccountConfirmation.email.twig');
+            $template = $twig->load('Account/AccountConfirmation.email.twig');
         }
 
         // Persist and Validate PersonToken
@@ -154,17 +155,12 @@ class AccountController extends AbstractController
             'personToken' => $personToken,
         );
 
-        // Create a message
-        $message = new \Swift_Message();
-        $message
-            ->setFrom(array('griidc@gomri.org' => 'GRIIDC'))
-            ->setTo(array($person->getEmailAddress() => $person->getFirstName() . ' ' . $person->getLastName()))
-            ->setSubject($template->renderBlock('subject', $mailData))
-            ->setBody($template->renderBlock('body_text', $mailData), 'text/plain')
-            ->addPart($template->renderBlock('body_html', $mailData), 'text/html');
-
-        // Send the message
-        $mailer->send($message);
+        $mailData['recipient'] = $person;
+        $mailer->sendEmailMessage(
+            $template,
+            $mailData,
+            array($person->getEmailAddress() => $person->getFirstName() . ' ' . $person->getLastName())
+        );
 
         return $this->render(
             'Account/EmailFound.html.twig',

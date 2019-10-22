@@ -15,7 +15,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
-use App\Event\LogActionItemEventDispatcher;
+use App\EventListener\LogActionItemEventDispatcher;
 
 /**
  * The Data Discovery controller.

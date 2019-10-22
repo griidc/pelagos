@@ -2,7 +2,6 @@
 
 namespace App\Controller\UI;
 
-use App\Event\EntityEventDispatcher;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,6 +17,8 @@ use App\Form\DatasetSubmissionType;
 
 use App\Handler\EntityHandler;
 
+use App\EventListener\EntityEventDispatcher;
+
 use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
@@ -25,6 +26,8 @@ use App\Entity\DatasetSubmissionReview;
 use App\Entity\Entity;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
+
+use App\Util\RabbitPublisher;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
@@ -60,15 +63,24 @@ class DatasetReviewController extends AbstractController
     protected $entityEventDispatcher;
 
     /**
+     * Custom rabbitmq publisher.
+     *
+     * @var RabbitPublisher
+     */
+    protected $publisher;
+
+    /**
      * Constructor for this Controller, to set up default services.
      *
      * @param EntityHandler         $entityHandler         The entity handler.
      * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
+     * @param RabbitPublisher       $publisher             Utility class for rabbitmq publisher.
      */
-    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher)
+    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher, RabbitPublisher $publisher)
     {
         $this->entityHandler = $entityHandler;
         $this->entityEventDispatcher = $entityEventDispatcher;
+        $this->publisher = $publisher;
     }
 
     /**
@@ -525,12 +537,9 @@ class DatasetReviewController extends AbstractController
             );
 
             //use rabbitmq to process dataset file and persist the file details.
-//            foreach ($this->messages as $message) {
-//                $this->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(
-//                    $message['body'],
-//                    $message['routing_key']
-//                );
-//            }
+            foreach ($this->messages as $message) {
+                $this->publisher->publish($message['body'], $message['routing_key']);
+            }
             $reviewedBy = $datasetSubmission->getDatasetSubmissionReview()->getReviewEndedBy()->getFirstName();
 
             //when request revisions is clicked, do not display the changes made in review for the dataset-submission

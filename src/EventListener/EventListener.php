@@ -4,13 +4,9 @@ namespace App\EventListener;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 
-// use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
-// use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
-// use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
-
+use App\Handler\EntityHandler;
 use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Entity\DataRepositoryRole;
@@ -19,8 +15,10 @@ use App\Entity\PersonDataRepository;
 use App\Entity\ResearchGroupRole;
 use App\Util\MailSender;
 
-// use Pelagos\Util\DataStore;
-// use Pelagos\Util\MdappLogger;
+use Twig\Environment;
+
+use App\Util\DataStore;
+use App\Util\MdappLogger;
 
 /**
  * Listener class for Dataset Submission-related events.
@@ -30,14 +28,14 @@ abstract class EventListener
     /**
      * The twig templating engine instance.
      *
-     * @var \Twig_Environment
+     * @var Environment
      */
     protected $twig;
 
     /**
      * The swiftmailer instance.
      *
-     * @var \Swift_Mailer
+     * @var MailSender
      */
     protected $mailer;
 
@@ -86,47 +84,44 @@ abstract class EventListener
     /**
      * This is the class constructor to handle dependency injections.
      *
-     * @param \Twig_Environment     $twig         Twig engine.
-     * @param MailSender            $mailer       Email handling library.
-     * @param TokenStorageInterface $tokenStorage Symfony's token object.
-     *
-     * //param EntityHandler|null $entityHandler Pelagos entity handler.
-     * //param Producer           $producer      An AMQP/RabbitMQ Producer.
-     * //param DataStore|null     $dataStore     An instance of the Pelagos Data Store utility service.
-     * //param MdappLogger|null   $mdappLogger   An MDAPP logger.
+     * @param Environment           $twig          Twig engine.
+     * @param MailSender            $mailer        Email handling library.
+     * @param TokenStorageInterface $tokenStorage  Symfony's token object.
+     * @param EntityHandler|null    $entityHandler Pelagos entity handler.
+     * @param Producer              $producer      An AMQP/RabbitMQ Producer.
+     * @param DataStore|null        $dataStore     An instance of the Pelagos Data Store utility service.
+     * @param MdappLogger|null      $mdappLogger   An MDAPP logger.
      */
     public function __construct(
-        \Twig_Environment $twig,
+        Environment $twig,
         MailSender $mailer,
-        TokenStorageInterface $tokenStorage
-        // EntityHandler $entityHandler = null,
-        // Producer $producer = null,
-        // DataStore $dataStore = null,
-        // MdappLogger $mdappLogger = null
+        TokenStorageInterface $tokenStorage,
+        EntityHandler $entityHandler = null,
+        Producer $producer = null,
+        DataStore $dataStore = null,
+        MdappLogger $mdappLogger = null
     ) {
         $this->twig = $twig;
         $this->mailer = $mailer;
         $this->tokenStorage = $tokenStorage;
-        // $this->entityHandler = $entityHandler;
-        // $this->producer = $producer;
-        // $this->dataStore = $dataStore;
-        // $this->mdappLogger = $mdappLogger;
+        $this->entityHandler = $entityHandler;
+        $this->producer = $producer;
+        $this->dataStore = $dataStore;
+        $this->mdappLogger = $mdappLogger;
     }
 
     /**
      * Method to build and send an email.
      *
-     * @param \Twig_Template $twigTemplate A twig template.
-     * @param array          $mailData     Mail data array for email.
-     * @param array|null     $peopleObjs   An optional array of recipient Persons.
-     * @param array          $attachments  An optional array of Swift_Message_Attachments to attach.
-     *
-     * @throws \InvalidArgumentException When any element of $attachments is not a Swift_Message_Attachment.
+     * @param \Twig\TemplateWrapper $twigTemplate A twig template.
+     * @param array                 $mailData     Mail data array for email.
+     * @param array|null            $peopleObjs   An optional array of recipient Persons.
+     * @param array                 $attachments  An optional array of Swift_Message_Attachments to attach.
      *
      * @return void
      */
     protected function sendMailMsg(
-        \Twig_Template $twigTemplate,
+        \Twig\TemplateWrapper $twigTemplate,
         array $mailData,
         array $peopleObjs = null,
         array $attachments = array()
@@ -148,7 +143,7 @@ abstract class EventListener
             $this->mailer->sendEmailMessage(
                 $twigTemplate,
                 $mailData,
-                $person->getEmailAddress(),
+                array($person->getEmailAddress() => $person->getFirstName() . ' ' . $person->getLastName()),
                 $attachments
             );
         }
