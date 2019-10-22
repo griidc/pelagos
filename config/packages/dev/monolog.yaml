@@ -17,3 +17,33 @@ monolog:
             type: console
             process_psr_3_messages: false
             channels: ["!event", "!doctrine", "!console"]
+
+        filer:
+            type: stream
+            path: "%kernel.logs_dir%/filer.log"
+            level: info
+            channels: [filer]
+
+        retriever:
+            type: stream
+            path: "%kernel.logs_dir%/retriever.log"
+            level: info
+            channels: [retriever]
+
+        dataset_file_hasher:
+            type: stream
+            path: "%kernel.logs_dir%/dataset_file_hasher.log"
+            level: info
+            channels: [dataset_file_hasher]
+
+        doi_issue:
+            type: stream
+            path: "%kernel.logs_dir%/doi_issue.log"
+            level: info
+            channels: [doi_issue]
+
+        create_homedir:
+            type: stream
+            path: "%kernel.logs_dir%/create_homedir.log"
+            level: info
+            channels: [create_homedir]
