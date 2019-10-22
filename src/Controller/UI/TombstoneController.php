@@ -2,19 +2,37 @@
 
 namespace App\Controller\UI;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Handler\EntityHandler;
 
 /**
  * The Dataset Tombstone controller.
- *
- * @Route("/tombstone")
  */
-class TombstoneController extends UIController
+class TombstoneController extends AbstractController
 {
+    /**
+     * An entity handler instance.
+     *
+     * @var EntityHandler
+     */
+    protected $entityHandler;
+
+    /**
+     * SideBySideController constructor.
+     *
+     * @param EntityHandler $entityHandler An entity handler instance.
+     */
+    public function __construct(EntityHandler $entityHandler)
+    {
+        $this->entityHandler = $entityHandler;
+    }
+
     /**
      * The Dataland Page - dataset details per UDI.
      *
@@ -22,7 +40,7 @@ class TombstoneController extends UIController
      *
      * @throws NotFoundHttpException When no non-available dataset is found with this UDI.
      *
-     * @Route("/{udi}")
+     * @Route("/tombstone/{udi}", name="pelagos_app_ui_tombstone_default")
      *
      * @return Response
      */
@@ -37,7 +55,7 @@ class TombstoneController extends UIController
         }
 
         return $this->render(
-            'PelagosAppBundle:Tombstone:index.html.twig',
+            'Tombstone/index.html.twig',
             $twigData = array(
                 'dataset' => $dataset,
             )

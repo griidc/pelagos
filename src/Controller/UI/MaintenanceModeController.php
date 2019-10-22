@@ -2,39 +2,37 @@
 
 namespace App\Controller\UI;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use Pelagos\Util\MaintenanceMode;
+use App\Util\MaintenanceMode;
 
 /**
  * The DIF controller for the Pelagos UI App Bundle.
- *
- * @Route("/maintenancemode")
  */
-class MaintenanceModeController extends UIController
+class MaintenanceModeController extends AbstractController
 {
     /**
      * The default action for Maintenance Mode.
      *
-     * @param Request $request The Symfony request object.
+     * @param Request         $request         The Symfony request object.
+     * @param MaintenanceMode $maintenanceMode Maintenance mode utility class object.
      *
-     * @Route("/")
+     * @Route("/maintenancemode", name="pelagos_app_ui_maintenancemode_default")
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(Request $request)
+    public function defaultAction(Request $request, MaintenanceMode $maintenanceMode)
     {
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
         
         $bannerMode = $request->request->get('bannermode');
-        
-        $maintenanceMode = $this->get('pelagos.util.maintenancemode');
-        
+
         if ($bannerMode === 'activate') {
             $bannerText = $request->request->get('bannertext');
             $bannerColor = $request->request->get('bannercolor');
@@ -47,7 +45,7 @@ class MaintenanceModeController extends UIController
         }
 
         return $this->render(
-            'PelagosAppBundle:MaintenanceMode:maintenanceMode.html.twig'
+            'MaintenanceMode/maintenanceMode.html.twig'
         );
     }
 }
