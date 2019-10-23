@@ -87,7 +87,7 @@ class EndReviewController extends AbstractController
      *
      * @return void
      */
-    private function validateAndEndReview($udi, Request $request)
+    private function validateAndEndReview(string $udi, Request $request)
     {
         $datasets = $this->entityHandler
             ->getBy(Dataset::class, array('udi' => substr($udi, 0, 16)));
@@ -141,7 +141,7 @@ class EndReviewController extends AbstractController
      *
      * @return void
      */
-    private function addToFlashBag(Request $request, $udi, $flashMessage, $reviewerUserName = null)
+    private function addToFlashBag(Request $request, string $udi, string $flashMessage, string $reviewerUserName = null)
     {
         $flashBag = $request->getSession()->getFlashBag();
 

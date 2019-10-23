@@ -44,7 +44,7 @@ class TombstoneController extends AbstractController
      *
      * @return Response
      */
-    public function defaultAction($udi)
+    public function defaultAction(string $udi)
     {
         $dataset = $this->getDataset($udi);
 
@@ -67,12 +67,11 @@ class TombstoneController extends AbstractController
      *
      * @param string $udi The UDI to get the dataset for.
      *
-     * @throws NotFoundHttpException When no dataset is found with this UDI.
-     * @throws \Exception            When more than one dataset is found with this UDI.
+     * @throws \Exception When more than one dataset is found with this UDI.
      *
      * @return Dataset
      */
-    protected function getDataset($udi)
+    protected function getDataset(string $udi)
     {
         $datasets = $this->entityHandler->getBy(Dataset::class, array('udi' => $udi));
 

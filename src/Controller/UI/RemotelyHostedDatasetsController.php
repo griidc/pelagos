@@ -14,8 +14,6 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 
-use Pelagos\Response\TerminateResponse;
-
 /**
  * The Remotely Hosted Datasets list controller.
  */
@@ -106,7 +104,6 @@ class RemotelyHostedDatasetsController extends AbstractController
         }
         //return 202 Accepted for accepted but not processed request
         return new Response($message, Response::HTTP_ACCEPTED);
-//        return new TerminateResponse($message, Response::HTTP_ACCEPTED);
     }
 
     /**
@@ -133,7 +130,6 @@ class RemotelyHostedDatasetsController extends AbstractController
         }
 
         return new Response($responseMsg, $responseMsg === '' ? Response::HTTP_NO_CONTENT : Response::HTTP_OK);
-//        return new TerminateResponse($responseMsg, $responseMsg === '' ? 204 : Response::HTTP_OK);
     }
 
     /**
@@ -144,7 +140,7 @@ class RemotelyHostedDatasetsController extends AbstractController
      *
      * @return void
      */
-    private function dispatchLogEvent(Dataset $dataset, $actor)
+    private function dispatchLogEvent(Dataset $dataset, string $actor)
     {
         $this->logActionItemEventDispatcher->dispatch(
             array(

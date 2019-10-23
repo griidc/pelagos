@@ -17,6 +17,7 @@ use App\Entity\Dataset;
 
 use App\EventListener\LogActionItemEventDispatcher;
 use App\Handler\EntityHandler;
+
 /**
  * The end review tool helps to end the review of a dataset submission review.
  */
@@ -151,7 +152,7 @@ class ExternalDownloadLogController extends AbstractController
      *
      * @return void
      */
-    private function addToFlashBag(Request $request, $udi, $flashMessage)
+    private function addToFlashBag(Request $request, string $udi, string $flashMessage)
     {
         $flashBag = $request->getSession()->getFlashBag();
 

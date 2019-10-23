@@ -40,7 +40,7 @@ class DataRepositoryController extends AbstractController
         if ($id !== null) {
             $dataRepository = $this->getDoctrine()->getRepository(DataRepository::class)->find($id);
 
-            if (!$dataRepository instanceof DataRepository ) {
+            if (!$dataRepository instanceof DataRepository) {
                 throw $this->createNotFoundException('The Data Repository was not found');
             }
 
