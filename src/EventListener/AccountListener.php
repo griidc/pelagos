@@ -23,13 +23,13 @@ class AccountListener extends EventListener
 
         // email User
         $this->sendMailMsg(
-            $this->twig->loadTemplate('Email/Account/user.account-created.email.twig'),
+            $this->twig->load('Email/Account/user.account-created.email.twig'),
             array('account' => $account),
             array($account->getPerson())
         );
 
         // email Data Managers
-        $template = $this->twig->loadTemplate('Email/Account/data-managers.account-created.email.twig');
+        $template = $this->twig->load('Email/Account/data-managers.account-created.email.twig');
         $this->sendMailMsg($template, array('account' => $account), $this->getDMsFromAccount($account));
     }
 

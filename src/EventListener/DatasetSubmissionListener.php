@@ -33,12 +33,12 @@ class DatasetSubmissionListener extends EventListener
         $this->producer->publish($dataset->getId(), 'update');
 
         // email User
-        $template = $this->twig->loadTemplate('Email/user.dataset-created.email.twig');
+        $template = $this->twig->load('Email/user.dataset-created.email.twig');
 
         $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission));
 
         // email DM(s)
-        $template = $this->twig->loadTemplate('Email/data-managers.dataset-submitted.email.twig');
+        $template = $this->twig->load('Email/data-managers.dataset-submitted.email.twig');
         $this->sendMailMsg(
             $template,
             array('dataset' => $dataset),
@@ -69,11 +69,11 @@ class DatasetSubmissionListener extends EventListener
         $this->producer->publish($dataset->getId(), 'update');
 
         // email User
-        $template = $this->twig->loadTemplate('Email/user.dataset-created.email.twig');
+        $template = $this->twig->load('Email/user.dataset-created.email.twig');
         $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission));
 
         // email DM(s)
-        $template = $this->twig->loadTemplate('Email/data-managers.dataset-updated.email.twig');
+        $template = $this->twig->load('Email/data-managers.dataset-updated.email.twig');
         $this->sendMailMsg(
             $template,
             array('dataset' => $dataset),
@@ -82,7 +82,7 @@ class DatasetSubmissionListener extends EventListener
 
         // email DRPM(s)
         $template = $this->twig
-            ->loadTemplate('Email/data-repository-managers.dataset-resubmitted.email.twig');
+            ->load('Email/data-repository-managers.dataset-resubmitted.email.twig');
         $this->sendMailMsg(
             $template,
             array('datasetSubmission' => $datasetSubmission),
@@ -106,7 +106,7 @@ class DatasetSubmissionListener extends EventListener
         if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
             //email DRMs
             $this->sendMailMsg(
-                $this->twig->loadTemplate('Email/data-repository-managers.dataset-processed.email.twig'),
+                $this->twig->load('Email/data-repository-managers.dataset-processed.email.twig'),
                 array('datasetSubmission' => $datasetSubmission),
                 $this->getDRPMs($datasetSubmission->getDataset())
             );
@@ -126,7 +126,7 @@ class DatasetSubmissionListener extends EventListener
 
         // email DRMs
         $this->sendMailMsg(
-            $this->twig->loadTemplate(
+            $this->twig->load(
                 'Email/data-repository-managers.html-found-for-dataset.email.twig'
             ),
             array('datasetSubmission' => $datasetSubmission),
@@ -147,7 +147,7 @@ class DatasetSubmissionListener extends EventListener
 
         // email DRMs
         $this->sendMailMsg(
-            $this->twig->loadTemplate(
+            $this->twig->load(
                 'Email/data-repository-managers.dataset-unprocessable.email.twig'
             ),
             array('datasetSubmission' => $datasetSubmission),

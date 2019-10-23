@@ -24,7 +24,7 @@ class NationalDataCenterController extends AbstractController
      * The default action for National Data center.
      *
      * @param EntityHandler $entityHandler The entity handler.
-     * @param string        $id            The id of the national data center.
+     * @param integer       $id            The id of the national data center.
      *
      * @throws NotFoundHttpException When National data center was not found.
      *
@@ -32,7 +32,7 @@ class NationalDataCenterController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(EntityHandler $entityHandler, string $id = null)
+    public function defaultAction(EntityHandler $entityHandler, int $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {

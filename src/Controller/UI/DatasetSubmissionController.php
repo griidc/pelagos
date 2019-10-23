@@ -333,14 +333,14 @@ class DatasetSubmissionController extends AbstractController
     /**
      * Make the submission form and return it.
      *
-     * @param string            $udi               The UDI entered by the user.
+     * @param string|null       $udi               The UDI entered by the user.
      * @param Dataset           $dataset           The Dataset.
      * @param DatasetSubmission $datasetSubmission The Dataset Submission.
      * @param array             $xmlStatus         Error message when loading XML.
      *
      * @return Response
      */
-    protected function makeSubmissionForm(string $udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null)
+    protected function makeSubmissionForm(?string $udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null)
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;
