@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Security;
+namespace App\Security\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use App\Entity\Account;
 use App\Entity\Dataset;
-
-use App\Security\Voter\PelagosEntityVoter;
 
 /**
  * A voter to determine if a actions are possible by the user on a Dataset.
