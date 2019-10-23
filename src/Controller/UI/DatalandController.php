@@ -99,7 +99,7 @@ class DatalandController extends AbstractController
                 ->andwhere('a.subjectEntityName = ?2')
                 ->andwhere('a.actionName = ?3')
                 ->setParameter(1, $dataset->getId())
-                ->setParameter(2, 'App\Entity\Dataset')
+                ->setParameter(2, 'Pelagos\Entity\Dataset')
                 ->setParameter(3, 'File Download');
             $query = $qb->getQuery();
             $downloadCount = $query->getSingleScalarResult();

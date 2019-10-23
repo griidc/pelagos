@@ -124,7 +124,7 @@ class DownloadController extends AbstractController
         $logActionItemEventDispatcher->dispatch(
             array(
                 'actionName' => 'File Download',
-                'subjectEntityName' => $em->getClassMetadata(get_class($dataset))->getName(),
+                'subjectEntityName' => 'Pelagos\Entity\Dataset',
                 'subjectEntityId' => $dataset->getId(),
                 'payLoad' => array('userType' => $type, 'userId' => $typeId),
             ),
