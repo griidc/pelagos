@@ -153,3 +153,10 @@ services:
     App\Util\RabbitPublisher:
         bind:
             OldSound\RabbitMqBundle\RabbitMq\Producer $datasetSubProducer: '@old_sound_rabbit_mq.dataset_submission_producer'
+
+    App\EventListener\ReadOnlyListener:
+        bind:
+            bool $readOnly: "%env(READONLY)%"
+            bool $debug: '%kernel.debug%'
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
