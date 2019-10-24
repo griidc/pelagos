@@ -1,0 +1,13 @@
+rabbit_mq_supervisor:
+    supervisor_instance_identifier: "%env(PELAGOS_NAME)%"
+    commands:
+        rabbitmq_consumer: rabbitmq:consumer -w
+    paths:
+        workspace_directory:            "%kernel.project_dir%/var/supervisor/%kernel.environment%/"
+        configuration_file:             "%kernel.project_dir%/var/supervisor/%kernel.environment%/supervisord.conf"
+        pid_file:                       "%kernel.project_dir%/var/supervisor/%kernel.environment%/supervisor.pid"
+        sock_file:                      "%kernel.project_dir%/var/supervisor/%kernel.environment%/supervisor.sock"
+        log_file:                       "%kernel.project_dir%/var/supervisor/%kernel.environment%/supervisord.log"
+        worker_configuration_directory: "%kernel.project_dir%/var/supervisor/%kernel.environment%/worker/"
+        worker_output_log_file:         "%kernel.project_dir%/var/supervisor/%kernel.environment%/logs/stdout.log"
+        worker_error_log_file:          "%kernel.project_dir%/var/supervisor/%kernel.environment%/logs/stderr.log"

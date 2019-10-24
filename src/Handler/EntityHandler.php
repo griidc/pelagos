@@ -20,7 +20,7 @@ use App\Entity\Account;
 use App\Entity\Password;
 use App\Entity\Person;
 
-use App\Event\EntityEventDispatcher;
+use App\EventListener\EntityEventDispatcher;
 
 use App\Exception\UnmappedPropertyException;
 

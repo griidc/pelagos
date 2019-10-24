@@ -12,7 +12,7 @@ use FOS\RestBundle\Controller\Annotations\View;
 
 use App\Form\DatasetType;
 
-use App\Event\EntityEventDispatcher;
+use App\EventListener\EntityEventDispatcher;
 
 use App\Entity\Dataset;
 use App\Entity\DIF;

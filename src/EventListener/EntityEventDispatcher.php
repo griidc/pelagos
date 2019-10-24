@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Event;
+namespace App\EventListener;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use App\Entity\Entity;
-
-use App\Event\EntityEvent;
 
 /**
  * An entity event dispatcher.

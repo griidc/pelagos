@@ -13,7 +13,7 @@ use App\Entity\Entity;
 use App\Entity\Password;
 use App\Entity\Person;
 use App\Entity\PersonToken;
-use App\Event\EntityEventDispatcher;
+use App\EventListener\EntityEventDispatcher;
 use App\Handler\EntityHandler;
 use App\Util\Factory\UserIdFactory;
 use App\Util\Ldap\Ldap;

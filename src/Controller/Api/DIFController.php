@@ -17,7 +17,7 @@ use FOS\RestBundle\Controller\Annotations\View;
 use App\Entity\Dataset;
 use App\Entity\DIF;
 
-use App\Event\EntityEventDispatcher;
+use App\EventListener\EntityEventDispatcher;
 
 use App\Form\DIFType;
 use App\Security\Voter\DIFVoter;
