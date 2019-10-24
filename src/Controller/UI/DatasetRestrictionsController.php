@@ -2,15 +2,15 @@
 namespace App\Controller\UI;
 
 use App\Entity\Dataset;
-use App\Entity\DatasetSubmission;
 use App\Handler\EntityHandler;
-use App\Event\LogActionItemEventDispatcher;
+use App\EventListener\LogActionItemEventDispatcher;
 use App\Exception\PersistenceException;
 
+use App\Util\RabbitPublisher;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,20 +32,32 @@ class DatasetRestrictionsController extends AbstractController
     /**
      * Class variable for dependency injection - entityManager.
      *
-     * @var EntityManager $entityManager
+     * @var EntityManagerInterface $entityManager
      */
     protected $entityManager;
+
+    /**
+     * Custom rabbitmq publisher.
+     *
+     * @var RabbitPublisher
+     */
+    protected $publisher;
 
     /**
      * Class constructor for Dependency Injections.
      *
      * @param LogActionItemEventDispatcher $logActionItemEventDispatcher A Pelagos action dispatcher.
      * @param EntityManagerInterface       $entityManager                A Doctrine ORM entity manager.
+     * @param RabbitPublisher              $publisher                    Custom rabbitmq publisher.
      */
-    public function __construct(LogActionItemEventDispatcher $logActionItemEventDispatcher, EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        LogActionItemEventDispatcher $logActionItemEventDispatcher,
+        EntityManagerInterface $entityManager,
+        RabbitPublisher $publisher
+    ) {
         $this->logActionItemEventDispatcher = $logActionItemEventDispatcher;
         $this->entityManager = $entityManager;
+        $this->publisher = $publisher;
     }
 
     /**
@@ -57,7 +69,7 @@ class DatasetRestrictionsController extends AbstractController
      *      methods={"GET"}
      * )
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function defaultAction()
     {
@@ -146,10 +158,11 @@ class DatasetRestrictionsController extends AbstractController
     {
        // Publish the message to DoiConsumer to update the DOI.
 
-        //$this->get('old_sound_rabbit_mq.doi_issue_producer')->publish(
-        //    $rabbitMessage['body'],
-        //    $rabbitMessage['routing_key']
-        //);
+        $this->publisher->publish(
+            $rabbitMessage['body'],
+            $rabbitMessage['routing_key'],
+            RabbitPublisher::DOI_PRODUCER
+        );
     }
 
     /**
