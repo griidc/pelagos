@@ -269,7 +269,7 @@ class DatasetSubmissionController extends AbstractController
 
             foreach ($this->messages as $message) {
                 foreach ($this->messages as $message) {
-                    $this->publisher->publish($message['body'], $message['routing_key']);
+                    $this->publisher->publish($message['body'], RabbitPublisher::DATASET_SUBMISSION_PRODUCER, $message['routing_key']);
                 }
             }
 

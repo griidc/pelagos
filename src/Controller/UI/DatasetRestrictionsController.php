@@ -160,8 +160,8 @@ class DatasetRestrictionsController extends AbstractController
 
         $this->publisher->publish(
             $rabbitMessage['body'],
-            $rabbitMessage['routing_key'],
-            RabbitPublisher::DOI_PRODUCER
+            RabbitPublisher::DOI_PRODUCER,
+            $rabbitMessage['routing_key']
         );
     }
 
