@@ -84,7 +84,7 @@ class RabbitPublishAllApprovedNonRestrictedCommand extends Command
             'identifiedStatus' => DIF::STATUS_APPROVED));
 
         foreach ($datasets as $dataset) {
-            $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER,  'update');
+            $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'update');
             $output->writeln('Attempting to publish/transition DOI for Dataset ' . $dataset->getId());
         }
     }
