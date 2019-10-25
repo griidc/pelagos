@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
@@ -12,9 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 use JMS\Serializer\Annotation as Serializer;
 
-use Pelagos\Exception\PasswordException;
-use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
-use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
+use App\Exception\PasswordException;
 
 /**
  * Entity class to represent an Account.
@@ -182,7 +180,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      * @param string   $userId   The user ID for this account.
      * @param Password $password The password for this account.
      */
-    public function __construct(Person $person = null, $userId = null, Password $password = null)
+    public function __construct(Person $person = null, string $userId = null, Password $password = null)
     {
         $this->passwordHistory = new ArrayCollection();
         $this->loginAttempts = new ArrayCollection();
@@ -241,7 +239,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return void
      */
-    public function setUserId($userId)
+    public function setUserId(string $userId)
     {
         $this->userId = $userId;
     }
@@ -267,7 +265,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return void
      */
-    public function setPassword(Password $password, $lessStrict = false)
+    public function setPassword(Password $password, bool $lessStrict = false)
     {
         $this->password = $password;
 
@@ -409,7 +407,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return void
      */
-    public function makePosix($uidNumber, $gidNumber, $homeDirectoryPrefix, $loginShell = '/sbin/nologin')
+    public function makePosix(int $uidNumber, int $gidNumber, string $homeDirectoryPrefix, string $loginShell = '/sbin/nologin')
     {
         if ('integer' !== gettype($uidNumber)) {
             throw new \Exception("$uidNumber is not as valid uid number (must be an integer)");
@@ -471,7 +469,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return void
      */
-    public function setHomeDirectory($homeDir)
+    public function setHomeDirectory(string $homeDir)
     {
         $this->homeDirectory = $homeDir;
     }
@@ -494,7 +492,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return void
      */
-    public function addSshPublicKey($sshPublicKey, $keyName)
+    public function addSshPublicKey(string $sshPublicKey, string $keyName)
     {
         $this->sshPublicKeys[$keyName] = $sshPublicKey;
     }
@@ -508,7 +506,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return void
      */
-    public function removeSshPublicKey($keyName)
+    public function removeSshPublicKey(string $keyName)
     {
         if (!array_key_exists($number, $this->sshPublicKeys)) {
             throw new \Exception("SSH pubilc key $keyName does not exist");
@@ -533,7 +531,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @return string
      */
-    public function getSshPublicKey($keyName)
+    public function getSshPublicKey(string $keyName)
     {
         return $this->sshPublicKeys[$keyName];
     }
@@ -549,17 +547,17 @@ class Account extends Entity implements UserInterface, EquatableInterface
     {
         $roles = array(self::ROLE_USER);
         foreach ($this->getPerson()->getPersonDataRepositories() as $personDataRepository) {
-            if ($personDataRepository->getRole()->getName() == DataRepositoryRoles::MANAGER
+            if ($personDataRepository->getRole()->getName() == DataRepositoryRole::MANAGER
                 and !in_array(self::ROLE_DATA_REPOSITORY_MANAGER, $roles)
             ) {
                 $roles[] = self::ROLE_DATA_REPOSITORY_MANAGER;
-            } elseif ($personDataRepository->getRole()->getName() === DataRepositoryRoles::SME
+            } elseif ($personDataRepository->getRole()->getName() === DataRepositoryRole::SME
              and !in_array(self::ROLE_SUBJECT_MATTER_EXPERT, $roles)) {
                 $roles[] = self::ROLE_SUBJECT_MATTER_EXPERT;
             }
         }
         foreach ($this->getPerson()->getPersonResearchGroups() as $personResearchGroup) {
-            if ($personResearchGroup->getRole()->getName() == ResearchGroupRoles::DATA
+            if ($personResearchGroup->getRole()->getName() == ResearchGroupRole::DATA
                 and !in_array(self::ROLE_RESEARCH_GROUP_DATA, $roles)
             ) {
                 $roles[] = self::ROLE_RESEARCH_GROUP_DATA;
@@ -599,7 +597,7 @@ class Account extends Entity implements UserInterface, EquatableInterface
      *
      * @param UserInterface $user The user class.
      *
-     * @return bool True to tell the EquatableInterface we are a real user class.
+     * @return boolean True to tell the EquatableInterface we are a real user class.
      */
     public function isEqualTo(UserInterface $user)
     {

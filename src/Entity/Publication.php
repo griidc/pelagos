@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
@@ -55,7 +55,7 @@ class Publication extends Entity
      *
      * @param string $doi DOI.
      */
-    public function __construct($doi)
+    public function __construct(string $doi)
     {
         $this->doi = $doi;
     }

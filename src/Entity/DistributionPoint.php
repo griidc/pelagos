@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -168,7 +168,7 @@ class DistributionPoint extends Entity
      *
      * @return void
      */
-    public function setDistributionUrl($distributionUrl = null)
+    public function setDistributionUrl(string $distributionUrl = null)
     {
         $this->distributionUrl = $distributionUrl;
     }
@@ -207,7 +207,7 @@ class DistributionPoint extends Entity
      *
      * @return void
      */
-    public function setRoleCode($roleCode = null)
+    public function setRoleCode(string $roleCode = null)
     {
         if (!array_key_exists($roleCode, static::ROLECODES) and $roleCode !== null) {
             throw new \InvalidArgumentException("$roleCode is not a valid value for DistributionPoint::\$roleCode");

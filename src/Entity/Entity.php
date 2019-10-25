@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -9,9 +9,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 use JMS\Serializer\Annotation as Serializer;
 
-use Pelagos\Exception\NotDeletableException;
+use App\Exception\NotDeletableException;
 
-use Pelagos\Entity\Person;
+use App\Entity\Person;
 
 /**
  * Abstract class that contains basic properties and methods common to all Pelagos entities.
@@ -36,7 +36,7 @@ abstract class Entity
     /**
      * Entity identifier.
      *
-     * @var int $id
+     * @var integer $id
      *
      * @ORM\Column(type="integer")
      * @ORM\Id
@@ -212,7 +212,7 @@ abstract class Entity
      *
      * @return \DateTime Creation time stamp for this Person.
      */
-    public function getCreationTimeStamp($localized = false)
+    public function getCreationTimeStamp(bool $localized = false)
     {
         if (!isset($this->creationTimeStamp)) {
             return null;
@@ -233,7 +233,7 @@ abstract class Entity
      *
      * @return string ISO8601 string representing creationTimeStamp.
      */
-    public function getCreationTimeStampAsISO($localized = false)
+    public function getCreationTimeStampAsISO(bool $localized = false)
     {
         if (isset($this->creationTimeStamp) and $this->creationTimeStamp instanceof \DateTime) {
             return $this->getCreationTimeStamp($localized)->format(\DateTime::ISO8601);
@@ -289,7 +289,7 @@ abstract class Entity
      *
      * @return \DateTime Modification time stamp for this Person.
      */
-    public function getModificationTimeStamp($localized = false)
+    public function getModificationTimeStamp(bool $localized = false)
     {
         if (!isset($this->modificationTimeStamp)) {
             return null;
@@ -310,7 +310,7 @@ abstract class Entity
      *
      * @return string ISO8601 string representing modificationTimeStamp.
      */
-    public function getModificationTimeStampAsISO($localized = false)
+    public function getModificationTimeStampAsISO(bool $localized = false)
     {
         if (isset($this->modificationTimeStamp) and $this->modificationTimeStamp instanceof \DateTime) {
             return $this->getModificationTimeStamp($localized)->format(\DateTime::ISO8601);
@@ -325,7 +325,7 @@ abstract class Entity
      *
      * @return void
      */
-    public function setTimeZone($timeZone)
+    public function setTimeZone(string $timeZone)
     {
         $this->timeZone = $timeZone;
     }
@@ -356,7 +356,7 @@ abstract class Entity
      *
      * @return string The serialized binary data.
      */
-    public static function serializeBinary($binaryData)
+    public static function serializeBinary(string $binaryData)
     {
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
         $mimeType = $finfo->buffer($binaryData);
@@ -372,7 +372,7 @@ abstract class Entity
      *
      * @param Entity $other The object to which this is compared.
      *
-     * @return bool Return true if the type and id match.
+     * @return boolean Return true if the type and id match.
      */
     public function isSameTypeAndId(Entity $other)
     {
