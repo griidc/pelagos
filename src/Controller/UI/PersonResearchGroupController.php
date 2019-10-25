@@ -1,11 +1,15 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
-use Pelagos\Bundle\AppBundle\Form\PersonResearchGroupType;
+use App\Entity\PersonResearchGroup;
+use App\Entity\ResearchGroup;
+use App\Form\PersonResearchGroupType;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use App\Handler\EntityHandler;
+use Symfony\Component\Routing\Annotation\Route;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,21 +18,22 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
  */
-class PersonResearchGroupController extends UIController
+class PersonResearchGroupController extends AbstractController
 {
     /**
      * The Person Research Group action.
      *
-     * @param Request $request The HTTP request.
-     * @param string  $id      The id of the entity to retrieve.
+     * @param Request       $request       The HTTP request.
+     * @param EntityHandler $entityHandler The entity handler.
+     * @param string        $id            The id of the entity to retrieve.
      *
-     * @throws BadRequestHttpException When the Research Group ID is not provided.
+     * @throws BadRequestHttpException When the research group parameter is not set.
      *
-     * @Route("/person-research-group/{id}")
+     * @Route("/person-research-group/{id}", name="pelagos_app_ui_personresearchgroup_default")
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(Request $request, $id = null)
+    public function defaultAction(Request $request, EntityHandler $entityHandler, string $id = null)
     {
         $researchGroupId = $request->query->get('ResearchGroup');
 
@@ -39,18 +44,17 @@ class PersonResearchGroupController extends UIController
         $ui = array();
 
         if (isset($id)) {
-            $personResearchGroup = $this->entityHandler->get('Pelagos:PersonResearchGroup', $id);
+            $personResearchGroup = $entityHandler->get(PersonResearchGroup::class, $id);
         } else {
-            $personResearchGroup = new \Pelagos\Entity\PersonResearchGroup;
-            $personResearchGroup->setResearchGroup($this->entityHandler->get('Pelagos:ResearchGroup', $researchGroupId));
+            $personResearchGroup = new \App\Entity\PersonResearchGroup;
+            $personResearchGroup->setResearchGroup($entityHandler->get(ResearchGroup::class, $researchGroupId));
         }
 
         $form = $this->get('form.factory')->createNamed(null, PersonResearchGroupType::class, $personResearchGroup);
 
         $ui['PersonResearchGroup'] = $personResearchGroup;
         $ui['form'] = $form->createView();
-        $ui['entityService'] = $this->entityHandler;
 
-        return $this->render('PelagosAppBundle:template:PersonResearchGroup.html.twig', $ui);
+        return $this->render('template/PersonResearchGroup.html.twig', $ui);
     }
 }

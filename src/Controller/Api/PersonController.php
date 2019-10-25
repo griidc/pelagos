@@ -1,19 +1,20 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\Api;
+namespace App\Controller\Api;
 
-use Pelagos\Entity\DIF;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
-use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Controller\Annotations\View;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Pelagos\Entity\Person;
-use Pelagos\Bundle\AppBundle\Form\PersonType;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use App\Entity\Person;
+use App\Form\PersonType;
+use App\Entity\DIF;
 
 /**
  * The Person api controller.
@@ -41,9 +42,9 @@ class PersonController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/count")
+     * @Route("/api/people/count", name="pelagos_api_people_count", methods={"GET"}, defaults={"_format"="json"})
      *
-     * @Rest\View()
+     * @View()
      *
      * @return integer
      */
@@ -67,9 +68,14 @@ class PersonController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/validateProperty")
+     * @Route(
+     *     "/api/people/validateProperty",
+     *     name="pelagos_api_people_validate_property",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
@@ -95,13 +101,18 @@ class PersonController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/{id}/validateProperty")
+     * @Route(
+     *     "/api/people/{id}/validateProperty",
+     *     name="pelagos_api_people_validate_property_existing",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
-    public function validatePropertyExistingAction($id, Request $request)
+    public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(PersonType::class, Person::class, $request, $id);
     }
@@ -122,13 +133,18 @@ class PersonController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/getDistinctVals/{property}")
+     * @Route(
+     *     "/api/people/getDistinctVals/{property}",
+     *     name="pelagos_api_people_get_distinct_vals",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return array The list of distinct values for a property.
      */
-    public function getDistinctValsAction($property)
+    public function getDistinctValsAction(string $property)
     {
         return $this->getDistinctVals(Person::class, $property);
     }
@@ -155,9 +171,13 @@ class PersonController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("")
+     * @Route(
+     *     "/api/people",
+     *     name="pelagos_api_people_get_collection",
+     *     methods={"GET"},
+     *     )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Response
      */
@@ -181,11 +201,18 @@ class PersonController extends EntityController
      *   }
      * )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
+     *
+     * @Route(
+     *     "/api/people/{id}",
+     *     name="pelagos_api_people_get",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return Person
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         return $this->handleGetOne(Person::class, $id);
     }
@@ -205,6 +232,12 @@ class PersonController extends EntityController
      *     500 = "An internal error has occurred.",
      *   }
      * )
+     *
+     * @Route(
+     *     "/api/people",
+     *     name="pelagos_api_people_post",
+     *     methods={"POST"},
+     *     )
      *
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new Person in the Location header.
@@ -233,9 +266,15 @@ class PersonController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/people/{id}",
+     *     name="pelagos_api_people_put",
+     *     methods={"PUT"},
+     *     )
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putAction($id, Request $request)
+    public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(PersonType::class, Person::class, $id, $request, 'PUT');
         return $this->makeNoContentResponse();
@@ -259,9 +298,15 @@ class PersonController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/people/{id}",
+     *     name="pelagos_api_people_patch",
+     *     methods={"PATCH"},
+     *     )
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function patchAction($id, Request $request)
+    public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(PersonType::class, Person::class, $id, $request, 'PATCH');
         return $this->makeNoContentResponse();
@@ -287,13 +332,18 @@ class PersonController extends EntityController
      * @throws BadRequestHttpException When the person is not deletable due to
      * association with secondary point of contact in DIF.
      *
+     * @Route(
+     *     "/api/people/{id}",
+     *     name="pelagos_api_people_delete",
+     *     methods={"DELETE"},
+     *     )
+     *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
-        $handler = $this->container->get('pelagos.entity.handler');
-        $primaryPointOfContactCount = $handler->count(DIF::class, array('primaryPointOfContact' => $id));
-        $secondaryPointOfContactCount = $handler->count(DIF::class, array('secondaryPointOfContact' => $id));
+        $primaryPointOfContactCount = $this->entityHandler->count(DIF::class, array('primaryPointOfContact' => $id));
+        $secondaryPointOfContactCount = $this->entityHandler->count(DIF::class, array('secondaryPointOfContact' => $id));
         if ($primaryPointOfContactCount > 0) {
             throw new BadRequestHttpException('This Person is not deletable because 
                 there' . ($primaryPointOfContactCount > 1 ? ' are ' : ' is ') . $primaryPointOfContactCount .

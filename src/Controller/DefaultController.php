@@ -1,42 +1,41 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller;
+namespace App\Controller;
 
-use Doctrine\ORM\Query;
-
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * The default controller for the Pelagos App Bundle.
+ * This is the default controller.
  */
-class DefaultController extends Controller
+class DefaultController extends AbstractController
 {
     /**
      * The index action.
      *
+     * @Route("/", name="pelagos_homepage")
+     *
      * @return Response A Response instance.
      */
-    public function indexAction()
+    public function index()
     {
-        if ($this->get('kernel')->isDebug()) {
-            return $this->render('PelagosAppBundle:Default:index.html.twig');
+        if ($this->getParameter('kernel.debug')) {
+            return $this->render('Default/index.html.twig');
         } else {
             return $this->redirect('/', 302);
         }
     }
-
+    
     /**
      * The admin action.
      *
+     * @Route("/admin", name="pelagos_admin")
+     *
      * @return Response A Response instance.
      */
-    public function adminAction()
+    public function admin()
     {
-        return $this->render('PelagosAppBundle:Default:admin.html.twig');
+        return $this->render('Default/admin.html.twig');
     }
 
     /**
@@ -44,7 +43,7 @@ class DefaultController extends Controller
      *
      * @return Response
      */
-    public function showSiteMapXmlAction()
+    public function showSiteMapXml()
     {
         $container = $this->container;
         $response = new StreamedResponse(function () use ($container) {

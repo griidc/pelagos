@@ -1,17 +1,19 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\Api;
+namespace App\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormInterface;
 
-use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\Routing\Annotation\Route;
+
+use FOS\RestBundle\Controller\Annotations\View;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Pelagos\Entity\PersonFundingOrganization;
-use Pelagos\Bundle\AppBundle\Form\PersonFundingOrganizationType;
+use App\Entity\PersonFundingOrganization;
+use App\Form\PersonFundingOrganizationType;
 
 /**
  * The PersonFundingOrganization api controller.
@@ -39,9 +41,14 @@ class PersonFundingOrganizationController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/count")
+     * @Route(
+     *     "/api/person-funding-organizations/count",
+     *     name="pelagos_api_person_funding_organizations_count",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return integer
      */
@@ -65,9 +72,14 @@ class PersonFundingOrganizationController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/validateProperty")
+     * @Route(
+     *     "/api/person-funding-organizations/validateProperty",
+     *     name="pelagos_api_person_funding_organizations_validate_property",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
@@ -93,13 +105,18 @@ class PersonFundingOrganizationController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/{id}/validateProperty")
+     * @Route(
+     *     "/api/person-funding-organizations/{id}/validateProperty",
+     *     name="pelagos_api_person_funding_organizations_validate_property_existing",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
-    public function validatePropertyExistingAction($id, Request $request)
+    public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(PersonFundingOrganizationType::class, PersonFundingOrganization::class, $request, $id);
     }
@@ -126,9 +143,14 @@ class PersonFundingOrganizationController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("")
+     * @Route(
+     *     "/api/person-funding-organizations",
+     *     name="pelagos_api_person_funding_organizations_get_collection",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Response
      */
@@ -152,11 +174,18 @@ class PersonFundingOrganizationController extends EntityController
      *   }
      * )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @Route(
+     *     "/api/person-funding-organizations/{id}",
+     *     name="pelagos_api_person_funding_organizations_get",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
+     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return PersonFundingOrganization
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         return $this->handleGetOne(PersonFundingOrganization::class, $id);
     }
@@ -176,6 +205,13 @@ class PersonFundingOrganizationController extends EntityController
      *     500 = "An internal error has occurred.",
      *   }
      * )
+     *
+     * @Route(
+     *     "/api/person-funding-organizations",
+     *     name="pelagos_api_person_funding_organizations_post",
+     *     methods={"POST"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new Person to Funding Organization Association in the Location header.
@@ -204,9 +240,16 @@ class PersonFundingOrganizationController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/person-funding-organizations/{id}",
+     *     name="pelagos_api_person_funding_organizations_put",
+     *     methods={"PUT"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putAction($id, Request $request)
+    public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(PersonFundingOrganizationType::class, PersonFundingOrganization::class, $id, $request, 'PUT');
         return $this->makeNoContentResponse();
@@ -230,9 +273,16 @@ class PersonFundingOrganizationController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/person-funding-organizations/{id}",
+     *     name="pelagos_api_person_funding_organizations_patch",
+     *     methods={"PATCH"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function patchAction($id, Request $request)
+    public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(PersonFundingOrganizationType::class, PersonFundingOrganization::class, $id, $request, 'PATCH');
         return $this->makeNoContentResponse();
@@ -253,9 +303,16 @@ class PersonFundingOrganizationController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/person-funding-organizations/{id}",
+     *     name="pelagos_api_person_funding_organizations_delete",
+     *     methods={"DELETE"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
         $this->handleDelete(PersonFundingOrganization::class, $id);
         return $this->makeNoContentResponse();

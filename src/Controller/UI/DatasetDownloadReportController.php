@@ -1,29 +1,27 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Doctrine\ORM\Query;
 
-use Pelagos\Bundle\AppBundle\Form\ReportDatasetDownloadType;
+use App\Form\ReportDatasetDownloadType;
 
-use Pelagos\Exception\InvalidDateSelectedException;
+use App\Exception\InvalidDateSelectedException;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\LogActionItem;
-use Pelagos\Entity\Person;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\Account;
-use Pelagos\Entity\PersonDataRepository;
+use App\Entity\Dataset;
+use App\Entity\LogActionItem;
+use App\Entity\Person;
+use App\Entity\DatasetSubmission;
+use App\Entity\Account;
+use App\Entity\PersonDataRepository;
 
 /**
  * The dataset download report generator.
- *
- * @Route("/dataset-download-report")
  */
 class DatasetDownloadReportController extends ReportController
 {
@@ -39,7 +37,7 @@ class DatasetDownloadReportController extends ReportController
      *
      * @param Request $request Message response.
      *
-     * @Route("")
+     * @Route("/dataset-download-report", name="pelagos_app_ui_datasetdownloadreport_default")
      *
      * @throws InvalidDateSelectedException Selected Dates are invalid.
      *
@@ -49,7 +47,7 @@ class DatasetDownloadReportController extends ReportController
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
         $form = $this->get('form.factory')->createNamed(
             null,
@@ -81,7 +79,7 @@ class DatasetDownloadReportController extends ReportController
             }
         }
         return $this->render(
-            'PelagosAppBundle:template:ReportDatasetDownload.html.twig',
+            'Reports/ReportDatasetDownload.html.twig',
             array('form' => $form->createView())
         );
     }
@@ -169,7 +167,7 @@ class DatasetDownloadReportController extends ReportController
      *
      * @return float
      */
-    private function formatSizeUnits($fileSizeBytes)
+    private function formatSizeUnits(int $fileSizeBytes)
     {
         if ($fileSizeBytes) {
             // Formats the size to MB
@@ -182,7 +180,7 @@ class DatasetDownloadReportController extends ReportController
     /**
      * Generates report of dataset downloads based on timestamp.
      *
-     * @Route("/timestamp")
+     * @Route("/dataset-download-report/timestamp", name="pelagos_app_ui_datasetdownloadreport_timestampreport")
      *
      * @return Response|StreamedResponse A Response instance.
      */
@@ -190,7 +188,7 @@ class DatasetDownloadReportController extends ReportController
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
 
         $data = $this->getDataTimeStamp();
@@ -264,7 +262,7 @@ class DatasetDownloadReportController extends ReportController
      *
      * @return array
      */
-    private function getLabels($reportName): array
+    private function getLabels(string $reportName): array
     {
         //prepare labels
         $labels = array();
@@ -299,18 +297,17 @@ class DatasetDownloadReportController extends ReportController
      *
      * @return Query
      */
-    private function getQuery($reportName, array $options = null): Query
+    private function getQuery(string $reportName, array $options = null): Query
     {
-        $container = $this->container;
-        $entityManager = $container->get('doctrine')->getManager();
+        $entityManager = $this->getDoctrine()->getManager();
 
         //Query
         if ($reportName === self::TIMESTAMP_REPORT) {
             $qb = $entityManager->createQueryBuilder();
             $query = $qb
                 ->select('log.creationTimeStamp, d.udi, log.payLoad')
-                ->from('\Pelagos\Entity\LogActionItem', 'log')
-                ->join('\Pelagos\Entity\Dataset', 'd', Query\Expr\Join::WITH, 'log.subjectEntityId = d.id')
+                ->from('\App\Entity\LogActionItem', 'log')
+                ->join('\App\Entity\Dataset', 'd', Query\Expr\Join::WITH, 'log.subjectEntityId = d.id')
                 ->where('log.subjectEntityName = ?1')
                 ->andWhere('log.actionName = ?2')
                 ->orderBy('log.creationTimeStamp', 'ASC')
@@ -364,8 +361,7 @@ class DatasetDownloadReportController extends ReportController
      */
     private function excludeGriidcStaff(): array
     {
-        $container = $this->container;
-        $entityManager = $container->get('doctrine')->getManager();
+        $entityManager = $this->getDoctrine()->getManager();
         //get user Ids of Griidc Staff to exclude from the report with personDataRepository roles of:
         //Manager (1), Developer (2), Support (3), Subject Matter Expert (4)
         $griidcUserQueryString = 'SELECT account.userId FROM ' . PersonDataRepository::class .

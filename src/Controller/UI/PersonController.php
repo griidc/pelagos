@@ -1,17 +1,18 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
-use Pelagos\Bundle\AppBundle\Security\EntityProperty;
+use App\Handler\EntityHandler;
+use App\Security\EntityProperty;
 
-use Pelagos\Bundle\AppBundle\Form\PersonType;
-use Pelagos\Bundle\AppBundle\Form\PersonResearchGroupType;
-use Pelagos\Bundle\AppBundle\Form\PersonFundingOrganizationType;
-use Pelagos\Entity\Person;
+use App\Form\PersonType;
+use App\Form\PersonResearchGroupType;
+use App\Form\PersonFundingOrganizationType;
+use App\Entity\Person;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -19,32 +20,31 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
  */
-class PersonController extends UIController implements OptionalReadOnlyInterface
+class PersonController extends AbstractController
 {
     /**
      * The Person Research Group action.
      *
-     * @param string $id The id of the entity to retrieve.
+     * @param EntityHandler $entityHandler The enitity handler.
+     * @param string        $id            The id of the entity to retrieve.
      *
-     * @Route("/person/{id}")
+     * @throws NotFoundHttpException When person was not found.
      *
-     * @throws NotFoundHttpException If Person could not be found having specified id.
+     * @Route("/person/{id}", name="pelagos_app_ui_person_default")
      *
      * @return Response A Response instance.
      */
-    public function defaultAction($id = null)
+    public function defaultAction(EntityHandler $entityHandler, string $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
-
-        $entityHandler = $this->get('pelagos.entity.handler');
 
         $ui = array();
 
         if (isset($id)) {
-            $person = $entityHandler->get('Pelagos:Person', $id);
+            $person = $entityHandler->get(Person::class, $id);
             if ($person instanceof Person) {
                 foreach ($person->getPersonResearchGroups() as $personResearchGroup) {
                     $formView = $this
@@ -70,15 +70,14 @@ class PersonController extends UIController implements OptionalReadOnlyInterface
                 throw new NotFoundHttpException('The person with id of ' . $id . ' could not be found.');
             }
         } else {
-            $person = new \Pelagos\Entity\Person;
+            $person = new \App\Entity\Person;
         }
 
         $form = $this->get('form.factory')->createNamed(null, PersonType::class, $person);
 
         $ui['Person'] = $person;
         $ui['form'] = $form->createView();
-        $ui['entityService'] = $entityHandler;
 
-        return $this->render('PelagosAppBundle:template:Person.html.twig', $ui);
+        return $this->render('template/Person.html.twig', $ui);
     }
 }

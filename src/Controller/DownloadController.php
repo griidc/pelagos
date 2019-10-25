@@ -1,39 +1,57 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller;
+namespace App\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use App\EventListener\LogActionItemEventDispatcher;
+use App\Handler\EntityHandler;
+use App\Util\DataStore;
+use Symfony\Component\Routing\Annotation\Route;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use Pelagos\Entity\Account;
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
+use App\Entity\Account;
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
 
-use Pelagos\Bundle\AppBundle\Twig\Extensions as TwigExtentions;
+use App\Twig\Extensions as TwigExtentions;
 
 /**
  * The Dataset download controller.
- *
- * @Route("/download")
  */
-class DownloadController extends Controller
+class DownloadController extends AbstractController
 {
+    /**
+     * Entity Handler.
+     *
+     * @var entityHandler
+     */
+    protected $entityHandler;
+
+    /**
+     * DownloadController constructor.
+     *
+     * @param EntityHandler $entityHandler The entity handler.
+     */
+    public function __construct(EntityHandler $entityHandler)
+    {
+        $this->entityHandler = $entityHandler;
+    }
+
     /**
      * Produce json response for download dialog box.
      *
      * @param string $id The id of the dataset to download.
      *
-     * @Route("/{id}")
+     * @Route("/download/{id}", name="pelagos_app_download_default")
      *
      * @return Response
      */
     public function defaultAction(string $id)
     {
-        $dataset = $this->get('pelagos.entity.handler')->get(Dataset::class, $id);
+        $dataset = $this->entityHandler->get(Dataset::class, $id);
         if ($dataset->isRemotelyHosted()) {
             $result = array(
                 'dataset' => $this->getDatasetDetails($dataset),
@@ -57,16 +75,18 @@ class DownloadController extends Controller
     /**
      * Set up direct download via HTTP and produce html for direct download splash screen.
      *
-     * @param string $id The id of the dataset to download.
+     * @param string                       $id                           The id of the dataset to download.
+     * @param DataStore                    $dataStore                    The data store.
+     * @param LogActionItemEventDispatcher $logActionItemEventDispatcher The log action dispatcher.
      *
-     * @Route("/{id}/http")
+     * @Route("/download/{id}/http", name="pelagos_app_download_http")
      *
      * @return Response
      */
-    public function httpAction($id)
+    public function httpAction(string $id, DataStore $dataStore, LogActionItemEventDispatcher $logActionItemEventDispatcher)
     {
-        $dataset = $this->get('pelagos.entity.handler')->get(Dataset::class, $id);
-        $downloadFileInfo = $this->get('pelagos.util.data_store')->getDownloadFileInfo($dataset->getUdi(), 'dataset');
+        $dataset = $this->entityHandler->get(Dataset::class, $id);
+        $downloadFileInfo = $dataStore->getDownloadFileInfo($dataset->getUdi(), 'dataset');
         $username = null;
         if ($this->getUser()) {
             $username = $this->getUser()->getUsername();
@@ -89,7 +109,7 @@ class DownloadController extends Controller
 
         if ($this->getUser()) {
             $type = get_class($this->getUser());
-            if ($type == 'Pelagos\Entity\Account') {
+            if ($type == 'App\Entity\Account') {
                 $type = 'GoMRI';
                 $typeId = $this->getUser()->getUserId();
             } else {
@@ -101,7 +121,7 @@ class DownloadController extends Controller
             $typeId = 'anonymous';
         }
 
-        $this->container->get('pelagos.event.log_action_item_event_dispatcher')->dispatch(
+        $logActionItemEventDispatcher->dispatch(
             array(
                 'actionName' => 'File Download',
                 'subjectEntityName' => $em->getClassMetadata(get_class($dataset))->getName(),

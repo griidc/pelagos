@@ -1,31 +1,56 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\Api;
+namespace App\Controller\Api;
 
 use Doctrine\ORM\Query;
 
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-use FOS\RestBundle\Controller\FOSRestController;
-use FOS\RestBundle\Util\Codes;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
 
-use Pelagos\Entity\Entity;
-use Pelagos\Entity\Account;
-use Pelagos\Entity\Person;
-use Pelagos\Exception\NotDeletableException;
-use Pelagos\Exception\UnmappedPropertyException;
+use App\Handler\EntityHandler;
+
+use App\Entity\Entity;
+use App\Exception\NotDeletableException;
+use App\Exception\UnmappedPropertyException;
 
 /**
  * The Entity api controller.
  */
-abstract class EntityController extends FOSRestController
+abstract class EntityController extends AbstractFOSRestController
 {
+    /**
+     * Entity Handler instance.
+     *
+     * @var EntityHandler
+     */
+    protected $entityHandler;
+
+    /**
+     * Form factory instance.
+     *
+     * @var FormFactoryInterface
+     */
+    protected $formFactory;
+
+    /**
+     * EntityController constructor.
+     *
+     * @param EntityHandler        $entityHandler Entity Handler instance.
+     * @param FormFactoryInterface $formFactory   Form factory instance.
+     */
+    public function __construct(EntityHandler $entityHandler, FormFactoryInterface $formFactory)
+    {
+        $this->entityHandler = $entityHandler;
+        $this->formFactory = $formFactory;
+    }
+
     /**
      * Count entities of a given type.
      *
@@ -34,7 +59,7 @@ abstract class EntityController extends FOSRestController
      *
      * @return integer
      */
-    protected function handleCount($entityClass, Request $request)
+    protected function handleCount(string $entityClass, Request $request)
     {
         $params = $request->query->all();
         if (array_key_exists('q', $params)) {
@@ -44,7 +69,7 @@ abstract class EntityController extends FOSRestController
         foreach (array_keys($params) as $param) {
             str_replace('_', '.', $params[$param]);
         }
-        return $this->container->get('pelagos.entity.handler')->count($entityClass, $params);
+        return $this->entityHandler->count($entityClass, $params);
     }
 
     /**
@@ -56,7 +81,7 @@ abstract class EntityController extends FOSRestController
      *
      * @return array
      */
-    public function handleGetCollection($entityClass, Request $request, array $subResources = array())
+    public function handleGetCollection(string $entityClass, Request $request, array $subResources = array())
     {
         $params = $request->query->all();
         if (array_key_exists('q', $params)) {
@@ -76,7 +101,7 @@ abstract class EntityController extends FOSRestController
         if (isset($permission)) {
             $hydrator = Query::HYDRATE_OBJECT;
         }
-        $entities = $this->container->get('pelagos.entity.handler')->getBy(
+        $entities = $this->entityHandler->getBy(
             $entityClass,
             $params,
             $orderBy,
@@ -111,17 +136,14 @@ abstract class EntityController extends FOSRestController
      *
      * @return Entity
      */
-    public function handleGetOne($entityClass, $id)
+    public function handleGetOne(string $entityClass, int $id)
     {
         if (!preg_match('/^\d+$/', $id)) {
             throw new BadRequestHttpException('id must be a non-negative integer');
         }
-        $entity = $this
-            ->container
-            ->get('pelagos.entity.handler')
-            ->get($entityClass, $id);
+        $entity = $this->entityHandler->get($entityClass, $id);
         if ($entity === null) {
-            throw $this->createNotFoundException('No ' . $entityClass::FRIENDLY_NAME . " exists with id: $id");
+            throw new NotFoundHttpException('No ' . $entityClass::FRIENDLY_NAME . " exists with id: $id");
         }
         return $entity;
     }
@@ -136,13 +158,13 @@ abstract class EntityController extends FOSRestController
      *
      * @return Entity The newly created entity.
      */
-    public function handlePost($formType, $entityClass, Request $request, Entity $entity = null)
+    public function handlePost(string $formType, string $entityClass, Request $request, Entity $entity = null)
     {
         if (null === $entity) {
             $entity = new $entityClass;
         }
         $this->processForm($formType, $entity, $request, 'POST');
-        $this->container->get('pelagos.entity.handler')->create($entity);
+        $this->entityHandler->create($entity);
         return $entity;
     }
 
@@ -157,11 +179,11 @@ abstract class EntityController extends FOSRestController
      *
      * @return Entity The updated entity.
      */
-    public function handleUpdate($formType, $entityClass, $id, Request $request, $method)
+    public function handleUpdate(string $formType, string $entityClass, int $id, Request $request, string $method)
     {
         $entity = $this->handleGetOne($entityClass, $id);
         $this->processForm($formType, $entity, $request, $method);
-        $this->container->get('pelagos.entity.handler')->update($entity);
+        $this->entityHandler->update($entity);
         return $entity;
     }
 
@@ -175,11 +197,11 @@ abstract class EntityController extends FOSRestController
      *
      * @return Entity The deleted entity.
      */
-    public function handleDelete($entityClass, $id)
+    public function handleDelete(string $entityClass, int $id)
     {
         $entity = $this->handleGetOne($entityClass, $id);
         try {
-            $this->container->get('pelagos.entity.handler')->delete($entity);
+            $this->entityHandler->delete($entity);
         } catch (NotDeletableException $exception) {
             throw new BadRequestHttpException(
                 'This ' . $entity::FRIENDLY_NAME . ' is not deletable because ' .
@@ -197,14 +219,13 @@ abstract class EntityController extends FOSRestController
      * @param Request $request  The request object.
      * @param string  $method   The HTTP method.
      *
-     * @throws BadRequestHttpException When no valid parameters are passed.
-     * @throws BadRequestHttpException When invalid data is submitted.
+     * @throws BadRequestHttpException When there is an error.
      *
      * @return Entity The updated entity.
      */
-    private function processForm($formType, Entity $entity, Request $request, $method = 'PUT')
+    private function processForm(string $formType, Entity $entity, Request $request, string $method = 'PUT')
     {
-        $form = $this->get('form.factory')->createNamed(null, $formType, $entity, array('method' => $method));
+        $form = $this->formFactory->createNamed(null, $formType, $entity, array('method' => $method));
         $form->handleRequest($request);
         if (!$form->isSubmitted()) {
             throw new BadRequestHttpException(
@@ -237,15 +258,11 @@ abstract class EntityController extends FOSRestController
      * @param Request      $request     The request object.
      * @param integer|null $id          The id of the entity to validate against.
      *
-     * @access public
-     *
-     * @throws BadRequestHttpException When no property is supplied.
-     * @throws BadRequestHttpException When more than one property is supplied.
-     * @throws BadRequestHttpException The supplied property is not valid for the resource.
+     * @throws BadRequestHttpException When property is not valid.
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
-    public function validateProperty($formType, $entityClass, Request $request, $id = null)
+    public function validateProperty(string $formType, string $entityClass, Request $request, int $id = null)
     {
         // Get all the parameters from the query string.
         $params = $request->query->all();
@@ -270,7 +287,7 @@ abstract class EntityController extends FOSRestController
             $entity = $this->handleGetOne($entityClass, $id);
         }
         // Create a form with this entity.
-        $form = $this->get('form.factory')->createNamed(null, $formType, $entity, array('method' => 'GET'));
+        $form = $this->formFactory->createNamed(null, $formType, $entity, array('method' => 'GET'));
         try {
             // Process the request against the form.
             $form->submit($params, false);
@@ -305,20 +322,20 @@ abstract class EntityController extends FOSRestController
      * @return Response A Response object containing the property or an empty body
      *                  and a "no content" status code if the property is not set.
      */
-    public function getProperty($entityClass, $id, $property)
+    public function getProperty(string $entityClass, int $id, string $property)
     {
         $entity = $this->handleGetOne($entityClass, $id);
         $getter = 'get' . ucfirst($property);
         $content = $entity->$getter();
         if ($content === null) {
-            return new Response(null, Codes::HTTP_NO_CONTENT);
+            return new Response(null, Response::HTTP_NO_CONTENT);
         }
         $info = finfo_open(FILEINFO_MIME_TYPE);
         $mimeType = finfo_buffer($info, $content);
         finfo_close($info);
         return new Response(
             $content,
-            Codes::HTTP_OK,
+            Response::HTTP_OK,
             array(
                 'Content-Type' => $mimeType,
                 'Content-Length' => strlen($content),
@@ -336,7 +353,7 @@ abstract class EntityController extends FOSRestController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function postProperty($entityClass, $id, $property, Request $request)
+    public function postProperty(string $entityClass, int $id, string $property, Request $request)
     {
         $entity = $this->handleGetOne($entityClass, $id);
         $file = $request->files->get($property);
@@ -344,8 +361,8 @@ abstract class EntityController extends FOSRestController
             $setter = 'set' . ucfirst($property);
             $entity->$setter(file_get_contents($file->getPathname()));
         }
-        $this->container->get('pelagos.entity.handler')->update($entity);
-        return new Response(null, Codes::HTTP_NO_CONTENT);
+        $this->entityHandler->update($entity);
+        return new Response(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -358,13 +375,13 @@ abstract class EntityController extends FOSRestController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putProperty($entityClass, $id, $property, Request $request)
+    public function putProperty(string $entityClass, int $id, string $property, Request $request)
     {
         $entity = $this->handleGetOne($entityClass, $id);
         $setter = 'set' . ucfirst($property);
         $entity->$setter($request->getContent());
-        $this->container->get('pelagos.entity.handler')->update($entity);
-        return new Response(null, Codes::HTTP_NO_CONTENT);
+        $this->entityHandler->update($entity);
+        return new Response(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -377,10 +394,10 @@ abstract class EntityController extends FOSRestController
      *
      * @return array The list of distinct values for $property of $entityClass.
      */
-    public function getDistinctVals($entityClass, $property)
+    public function getDistinctVals(string $entityClass, string $property)
     {
         try {
-            return $this->container->get('pelagos.entity.handler')->getDistinctVals($entityClass, $property);
+            return $this->entityHandler->getDistinctVals($entityClass, $property);
         } catch (UnmappedPropertyException $e) {
             throw new BadRequestHttpException(
                 "$property is not a valid property of " . $entityClass::FRIENDLY_NAME . '.'
@@ -398,11 +415,11 @@ abstract class EntityController extends FOSRestController
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new Person to Research Group Association in the Location header.
      */
-    protected function makeCreatedResponse($locationRouteName, $resourceId, array $additionalHeaders = array())
+    protected function makeCreatedResponse(string $locationRouteName, int $resourceId, array $additionalHeaders = array())
     {
         return new Response(
             null,
-            Codes::HTTP_CREATED,
+            Response::HTTP_CREATED,
             array_merge(
                 array(
                     'Content-Type' => 'application/x-empty',
@@ -426,7 +443,7 @@ abstract class EntityController extends FOSRestController
     {
         return new Response(
             null,
-            Codes::HTTP_NO_CONTENT,
+            Response::HTTP_NO_CONTENT,
             array(
                 'Content-Type' => 'application/x-empty',
             )
@@ -441,7 +458,7 @@ abstract class EntityController extends FOSRestController
      *
      * @return string
      */
-    protected function getResourceUrl($routeName, $id)
+    protected function getResourceUrl(string $routeName, int $id)
     {
         return $this->generateUrl(
             $routeName,
@@ -461,7 +478,7 @@ abstract class EntityController extends FOSRestController
     {
         return new Response(
             json_encode($data),
-            Codes::HTTP_OK,
+            Response::HTTP_OK,
             array(
                 'Content-Type' => 'application/json',
             )
@@ -513,7 +530,7 @@ abstract class EntityController extends FOSRestController
      *
      * @return array
      */
-    private function filterByPermission(array $entities, $permission)
+    private function filterByPermission(array $entities, string $permission)
     {
         $authorizedEntities = array();
         foreach ($entities as $entity) {
@@ -533,7 +550,7 @@ abstract class EntityController extends FOSRestController
      *
      * @return void
      */
-    private function processSubResources(array &$entities, array $subResources, $objects = true)
+    private function processSubResources(array &$entities, array $subResources, bool $objects = true)
     {
         if (true === $objects) {
             $accessor = PropertyAccess::createPropertyAccessor();

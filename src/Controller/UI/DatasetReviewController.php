@@ -1,33 +1,38 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
-use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
-use Pelagos\Entity\Account;
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DatasetSubmissionReview;
-use Pelagos\Entity\Entity;
-use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
-use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
+use App\Form\DatasetSubmissionType;
+
+use App\Handler\EntityHandler;
+
+use App\EventListener\EntityEventDispatcher;
+
+use App\Entity\Account;
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Entity\DatasetSubmissionReview;
+use App\Entity\Entity;
+use App\Entity\PersonDatasetSubmissionDatasetContact;
+use App\Entity\PersonDatasetSubmissionMetadataContact;
+
+use App\Util\RabbitPublisher;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
- *
- * @Route("/dataset-review")
  */
-class DatasetReviewController extends UIController implements OptionalReadOnlyInterface
+class DatasetReviewController extends AbstractController
 {
     /**
      * A queue of messages to publish to RabbitMQ.
@@ -44,11 +49,46 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
     private $mode;
 
     /**
+     * Protected entityHandler value instance of entityHandler.
+     *
+     * @var entityHandler
+     */
+    protected $entityHandler;
+
+    /**
+     * Protected entity event dispatcher.
+     *
+     * @var EntityEventDispatcher
+     */
+    protected $entityEventDispatcher;
+
+    /**
+     * Custom rabbitmq publisher.
+     *
+     * @var RabbitPublisher
+     */
+    protected $publisher;
+
+    /**
+     * Constructor for this Controller, to set up default services.
+     *
+     * @param EntityHandler         $entityHandler         The entity handler.
+     * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
+     * @param RabbitPublisher       $publisher             Utility class for rabbitmq publisher.
+     */
+    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher, RabbitPublisher $publisher)
+    {
+        $this->entityHandler = $entityHandler;
+        $this->entityEventDispatcher = $entityEventDispatcher;
+        $this->publisher = $publisher;
+    }
+
+    /**
      * The default action for Dataset Review.
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("")
+     * @Route("/dataset-review", name="pelagos_app_ui_datasetreview_default")
      *
      * @return Response A Response instance.
      */
@@ -71,14 +111,14 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             $userAuthCheck = $this->authForReview();
 
             if (!$userAuthCheck) {
-                return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+                return $this->render('template/AdminOnly.html.twig');
             }
 
             return $this->eligibiltyForReview($udi, $request);
         }
 
         return $this->render(
-            'PelagosAppBundle:DatasetReview:index.html.twig',
+            'DatasetReview/index.html.twig',
             array(
                 'udi' => $udi,
                 'dataset' => $dataset,
@@ -114,7 +154,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      *
      * @return Response A Response instance.
      */
-    protected function eligibiltyForReview($udi, Request $request)
+    protected function eligibiltyForReview(string $udi, Request $request)
     {
         $dataset = null;
         $datasetSubmission = null;
@@ -188,7 +228,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      *
      * @return void
      */
-    private function addToFlashDisplayQueue(Request $request, $udi, $noticeCode, $reviewerUserName = null)
+    private function addToFlashDisplayQueue(Request $request, string $udi, int $noticeCode, string $reviewerUserName = null)
     {
         $flashBag = $request->getSession()->getFlashBag();
 
@@ -223,7 +263,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      *
      * @return Response A Response instance.
      */
-    protected function makeSubmissionForm($udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null)
+    protected function makeSubmissionForm(string $udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null)
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;
@@ -355,7 +395,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         }
 
         return $this->render(
-            'PelagosAppBundle:DatasetReview:index.html.twig',
+            'DatasetReview/index.html.twig',
             array(
                 'form' => $form->createView(),
                 'udi' => $udi,
@@ -397,7 +437,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
         $datasetSubmission->setDatasetSubmissionReview($datasetSubmissionReview);
         $this->entityHandler->update($datasetSubmission);
 
-        $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
+        $this->entityEventDispatcher->dispatch(
             $datasetSubmission,
             $eventName
         );
@@ -430,9 +470,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
      * @throws BadRequestHttpException When dataset submission has already been submitted.
      * @throws BadRequestHttpException When DIF has not yet been approved.
      *
-     * @Route("/{id}")
-     *
-     * @Method("POST")
+     * @Route("/dataset-review/{id}", name="pelagos_app_ui_datasetreview_post", methods={"POST"})
      *
      * @return Response A Response instance.
      */
@@ -493,17 +531,14 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             }
 
             // update MDAPP logs after action is executed.
-            $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
+            $this->entityEventDispatcher->dispatch(
                 $datasetSubmission,
                 $eventName
             );
 
             //use rabbitmq to process dataset file and persist the file details.
             foreach ($this->messages as $message) {
-                $this->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(
-                    $message['body'],
-                    $message['routing_key']
-                );
+                $this->publisher->publish($message['body'], $message['routing_key']);
             }
             $reviewedBy = $datasetSubmission->getDatasetSubmissionReview()->getReviewEndedBy()->getFirstName();
 
@@ -514,7 +549,7 @@ class DatasetReviewController extends UIController implements OptionalReadOnlyIn
             }
 
             return $this->render(
-                'PelagosAppBundle:DatasetReview:submit.html.twig',
+                'DatasetReview/submit.html.twig',
                 array(
                     'DatasetSubmission' => $datasetSubmission,
                     'reviewedBy' => $reviewedBy

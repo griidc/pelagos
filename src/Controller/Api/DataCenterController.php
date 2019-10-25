@@ -1,18 +1,20 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\Api;
+namespace App\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\Routing\Annotation\Route;
+
+use FOS\RestBundle\Controller\Annotations\View;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Pelagos\Bundle\AppBundle\Form\DataCenterType;
+use App\Form\DataCenterType;
 
-use Pelagos\Entity\DataCenter;
-use Pelagos\Entity\Entity;
+use App\Entity\DataCenter;
+use App\Entity\Entity;
 
 /**
  * The API Controller Class for DataCenter.
@@ -40,9 +42,9 @@ class DataCenterController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/count")
+     * @Route("/api/data-center/count", name="pelagos_api_data_center_count", methods={"GET"}, defaults={"_format"="json"})
      *
-     * @Rest\View()
+     * @View()
      *
      * @return integer
      */
@@ -66,9 +68,14 @@ class DataCenterController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/validateProperty")
+     * @Route(
+     *     "/api/data-center/validateProperty",
+     *     name="pelagos_api_data_center_validate_property",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
@@ -94,13 +101,18 @@ class DataCenterController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/{id}/validateProperty")
+     * @Route(
+     *     "/api/data-center/{id}/validateProperty",
+     *     name="pelagos_api_data_center_validate_property_existing",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
-    public function validatePropertyExistingAction($id, Request $request)
+    public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(DataCenterType::class, DataCenter::class, $request, $id);
     }
@@ -127,9 +139,13 @@ class DataCenterController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("")
+     * @Route(
+     *     "/api/data-center",
+     *     name="pelagos_api_data_center_get_collection",
+     *     methods={"GET"}
+     *     )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Response
      */
@@ -141,7 +157,7 @@ class DataCenterController extends EntityController
     /**
      * Get a data center for a given id.
      *
-     * @param string $id The id of the Data center.
+     * @param integer $id The id of the Data center.
      *
      * @ApiDoc(
      *     section = "Data Centers",
@@ -152,11 +168,19 @@ class DataCenterController extends EntityController
      *       500 = "An internal error has occurred.",
      *     }
      * )
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     *
+     * @Route(
+     *     "/api/data-center/{id}",
+     *     name="pelagos_api_data_center_get",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
+     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Entity(DataCenter)
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         return $this->handleGetOne(DataCenter::class, $id);
     }
@@ -176,6 +200,13 @@ class DataCenterController extends EntityController
      *       500 = "An internal error has occurred.",
      *     }
      * )
+     *
+     * @Route(
+     *     "/api/data-center",
+     *     name="pelagos_api_data_center_post",
+     *     methods={"POST"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return Response A response object with empty body and status code.
      */
@@ -203,9 +234,16 @@ class DataCenterController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/data-center/{id}",
+     *     name="pelagos_api_data_center_put",
+     *     methods={"PUT"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putAction($id, Request $request)
+    public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(DataCenterType::class, DataCenter::class, $id, $request, 'PUT');
         return $this->makeNoContentResponse();
@@ -229,9 +267,16 @@ class DataCenterController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/data-center/{id}",
+     *     name="pelagos_api_data_center_patch",
+     *     methods={"PATCH"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function patchAction($id, Request $request)
+    public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(DataCenterType::class, DataCenter::class, $id, $request, 'PATCH');
         return $this->makeNoContentResponse();
@@ -251,9 +296,16 @@ class DataCenterController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/data-center/{id}",
+     *     name="pelagos_api_data_center_delete",
+     *     methods={"DELETE"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
         $this->handleDelete(DataCenter::class, $id);
         return $this->makeNoContentResponse();

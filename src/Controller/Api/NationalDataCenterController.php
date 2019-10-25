@@ -1,18 +1,20 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\Api;
+namespace App\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\Routing\Annotation\Route;
+
+use FOS\RestBundle\Controller\Annotations\View;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Pelagos\Bundle\AppBundle\Form\NationalDataCenterType;
+use App\Form\NationalDataCenterType;
 
-use Pelagos\Entity\NationalDataCenter;
-use Pelagos\Entity\Entity;
+use App\Entity\NationalDataCenter;
+use App\Entity\Entity;
 
 /**
  * The API Controller Class for NationalDataCenter.
@@ -40,9 +42,14 @@ class NationalDataCenterController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/count")
+     * @Route(
+     *     "/api/national-data-center/count",
+     *     name="pelagos_api_national_data_center_count",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return integer
      */
@@ -66,9 +73,14 @@ class NationalDataCenterController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/validateProperty")
+     * @Route(
+     *     "/api/national-data-center/validateProperty",
+     *     name="pelagos_api_national_data_center_validate_property",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
@@ -94,13 +106,18 @@ class NationalDataCenterController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/{id}/validateProperty")
+     * @Route(
+     *     "/api/national-data-center/{id}/validateProperty",
+     *     name="pelagos_api_national_data_center_validate_property_existing",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
-    public function validatePropertyExistingAction($id, Request $request)
+    public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(NationalDataCenterType::class, NationalDataCenter::class, $request, $id);
     }
@@ -127,9 +144,13 @@ class NationalDataCenterController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("")
+     * @Route(
+     *     "/api/national-data-center",
+     *     name="pelagos_api_national_data_center_get_collection",
+     *     methods={"GET"}
+     *     )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Response
      */
@@ -141,7 +162,7 @@ class NationalDataCenterController extends EntityController
     /**
      * Get a National data center for a given id.
      *
-     * @param string $id The id of the National Data center.
+     * @param integer $id The id of the National Data center.
      *
      * @ApiDoc(
      *     section = "National Data Center",
@@ -152,11 +173,19 @@ class NationalDataCenterController extends EntityController
      *       500 = "An internal error has occurred.",
      *     }
      * )
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     *
+     * @Route(
+     *     "/api/national-data-center/{id}",
+     *     name="pelagos_api_national_data_center_get",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
+     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Entity(NationalDataCenter)
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         return $this->handleGetOne(NationalDataCenter::class, $id);
     }
@@ -176,6 +205,13 @@ class NationalDataCenterController extends EntityController
      *       500 = "An internal error has occurred.",
      *     }
      * )
+     *
+     * @Route(
+     *     "/api/national-data-center",
+     *     name="pelagos_api_national_data_center_post",
+     *     methods={"POST"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return Response A response object with empty body and status code.
      */
@@ -203,9 +239,16 @@ class NationalDataCenterController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/national-data-center/{id}",
+     *     name="pelagos_api_national_data_center_put",
+     *     methods={"PUT"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putAction($id, Request $request)
+    public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(NationalDataCenterType::class, NationalDataCenter::class, $id, $request, 'PUT');
         return $this->makeNoContentResponse();
@@ -229,9 +272,16 @@ class NationalDataCenterController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/national-data-center/{id}",
+     *     name="pelagos_api_national_data_center_patch",
+     *     methods={"PATCH"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function patchAction($id, Request $request)
+    public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(NationalDataCenterType::class, NationalDataCenter::class, $id, $request, 'PATCH');
         return $this->makeNoContentResponse();
@@ -251,9 +301,16 @@ class NationalDataCenterController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/national-data-center/{id}",
+     *     name="pelagos_api_national_data_center_delete",
+     *     methods={"DELETE"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
         $this->handleDelete(NationalDataCenter::class, $id);
         return $this->makeNoContentResponse();
