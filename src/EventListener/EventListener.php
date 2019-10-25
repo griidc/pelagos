@@ -1,10 +1,9 @@
 <?php
 namespace App\EventListener;
 
+use App\Util\RabbitPublisher;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
-use OldSound\RabbitMqBundle\RabbitMq\Producer;
 
 use App\Handler\EntityHandler;
 use App\Entity\Account;
@@ -61,11 +60,11 @@ abstract class EventListener
     protected $entityHandler;
 
     /**
-     * A variable to hold an instance of an AMQP producer.
+     * Custom rabbitmq publisher.
      *
-     * @var Producer
+     * @var RabbitPublisher
      */
-    protected $producer;
+    protected $publisher;
 
     /**
      * An instance of the Pelagos Data Store utility service.
@@ -88,7 +87,7 @@ abstract class EventListener
      * @param MailSender            $mailer        Email handling library.
      * @param TokenStorageInterface $tokenStorage  Symfony's token object.
      * @param EntityHandler|null    $entityHandler Pelagos entity handler.
-     * @param Producer              $producer      An AMQP/RabbitMQ Producer.
+     * @param RabbitPublisher       $publisher     An AMQP/RabbitMQ Producer.
      * @param DataStore|null        $dataStore     An instance of the Pelagos Data Store utility service.
      * @param MdappLogger|null      $mdappLogger   An MDAPP logger.
      */
@@ -97,7 +96,7 @@ abstract class EventListener
         MailSender $mailer,
         TokenStorageInterface $tokenStorage,
         EntityHandler $entityHandler = null,
-        Producer $producer = null,
+        RabbitPublisher $publisher = null,
         DataStore $dataStore = null,
         MdappLogger $mdappLogger = null
     ) {
@@ -105,7 +104,7 @@ abstract class EventListener
         $this->mailer = $mailer;
         $this->tokenStorage = $tokenStorage;
         $this->entityHandler = $entityHandler;
-        $this->producer = $producer;
+        $this->publisher = $publisher;
         $this->dataStore = $dataStore;
         $this->mdappLogger = $mdappLogger;
     }

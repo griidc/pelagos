@@ -83,10 +83,12 @@ class DatalandController extends AbstractController
             $rawXml = $this->metadata->getXmlRepresentation($dataset, $boundingBoxArray);
         }
         //Logic to get DIF or Accepted Dataset is in Dataset Entity.
-        try {
-            $wkt = $this->geoUtil->convertGmlToWkt($dataset->getSpatialExtentGeometry());
-        } catch (InvalidGmlException $exception) {
-            $wkt = null;
+        if (!empty($dataset->getSpatialExtentGeometry())) {
+            try {
+                $wkt = $this->geoUtil->convertGmlToWkt($dataset->getSpatialExtentGeometry());
+            } catch (InvalidGmlException $exception) {
+                $wkt = null;
+            }
         }
 
         $downloadCount = null;
@@ -232,14 +234,17 @@ class DatalandController extends AbstractController
      */
     private function getBoundingBox(Dataset $dataset)
     {
-        $gml = GmlUtil::addNamespace($dataset->getDatasetSubmission()->getSpatialExtent());
+        $spatialExtent = $dataset->getDatasetSubmission()->getSpatialExtent();
         $boundingBoxArray = array();
-        if ($gml) {
-            try {
-                $boundingBoxArray = $this->geoUtil->calculateGeographicBoundsFromGml($gml);
-            } catch (InvalidGmlException $e) {
-                $errors[] = $e->getMessage() . ' while attempting to calculate bonding box from gml';
-                $boundingBoxArray = array();
+        if (!empty($spatialExtent)) {
+            $gml = GmlUtil::addNamespace($dataset->getDatasetSubmission()->getSpatialExtent());
+            if ($gml) {
+                try {
+                    $boundingBoxArray = $this->geoUtil->calculateGeographicBoundsFromGml($gml);
+                } catch (InvalidGmlException $e) {
+                    $errors[] = $e->getMessage() . ' while attempting to calculate bonding box from gml';
+                    $boundingBoxArray = array();
+                }
             }
         }
         return $boundingBoxArray;

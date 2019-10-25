@@ -3,8 +3,7 @@
 namespace App\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
-use OldSound\RabbitMqBundle\RabbitMq\Producer;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -12,6 +11,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use App\Entity\Dataset;
 use App\Entity\DIF;
+
+use App\Util\RabbitPublisher;
 
 /**
  * This command publishes a rabbit message for every accepted dataset forcing update of DOI info.
@@ -42,22 +43,22 @@ class RabbitUpdateAllAcceptedDatasetDOICommand extends Command
     protected $entityManager;
 
     /**
-     * A Rabbitmq producer instance.
+     * Utility class for Rabbitmq producer instance.
      *
-     * @var Producer $producer
+     * @var RabbitPublisher $publisher
      */
-    protected $producer;
+    protected $publisher;
 
     /**
      * Class constructor for dependency injection.
      *
      * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
-     * @param Producer               $producer      A Rabbitmq producer instance.
+     * @param RabbitPublisher        $publisher     A custom utility class for Rabbitmq producer instance.
      */
-    public function __construct(EntityManagerInterface $entityManager, Producer $producer)
+    public function __construct(EntityManagerInterface $entityManager, RabbitPublisher $publisher)
     {
         $this->entityManager = $entityManager;
-        $this->producer = $producer;
+        $this->publisher = $publisher;
         parent::__construct();
     }
 
@@ -77,10 +78,7 @@ class RabbitUpdateAllAcceptedDatasetDOICommand extends Command
      * @param InputInterface  $input  An InputInterface instance.
      * @param OutputInterface $output An OutputInterface instance.
      *
-     * @throws \Exception When dataset not found.
-     * @throws \Exception When datasetSubmission not found.
-     *
-     * @return integer Return 0 on success, or an error code otherwise.
+     * @return void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -88,10 +86,8 @@ class RabbitUpdateAllAcceptedDatasetDOICommand extends Command
             'identifiedStatus' => DIF::STATUS_APPROVED));
 
         foreach ($datasets as $dataset) {
-            $this->producer->publish($dataset->getId(), 'update');
+            $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER,  'update');
             echo 'Requesting DOI update for dataset ' . $dataset->getId() . ' (' . $dataset->getUdi() . ")\n";
         }
-
-        return 0;
     }
 }
