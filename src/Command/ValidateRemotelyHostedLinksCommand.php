@@ -27,7 +27,7 @@ class ValidateRemotelyHostedLinksCommand extends Command
      *
      * @var string $defaultName
      */
-    protected static $defaultName = 'dataset:validate-remotely-hosted';
+    protected static $defaultName = 'pelagos:validate-remotely-hosted';
 
     /**
      * A Doctrine ORM EntityManager instance.

@@ -24,7 +24,7 @@ class RabbitPublishAllApprovedNonRestrictedCommand extends Command
      *
      * @var string $defaultName
      */
-    protected static $defaultName = 'dataset-doi:pub-all-appr-nonres-datasets';
+    protected static $defaultName = 'pelagos:dataset-doi:pub-all-appr-nonres-datasets';
 
     /**
      * The Symfony Console output object.

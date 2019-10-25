@@ -26,7 +26,7 @@ class RabbitUpdateAllAcceptedDatasetDOICommand extends Command
      *
      * @var string $defaultName
      */
-    protected static $defaultName = 'dataset-doi:force-doi-update-all';
+    protected static $defaultName = 'pelagos:dataset-doi:force-doi-update-all';
 
     /**
      * The Symfony Console output object.

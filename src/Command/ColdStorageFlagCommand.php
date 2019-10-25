@@ -28,7 +28,7 @@ class ColdStorageFlagCommand extends Command
      *
      * @var string $defaultName
      */
-    protected static $defaultName = 'dataset:flag-coldstorage';
+    protected static $defaultName = 'pelagos:dataset-flag-coldstorage';
 
     /**
      * A Doctrine ORM EntityManager instance.

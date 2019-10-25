@@ -26,7 +26,7 @@ class ReportDoiStatusDatasetStatusCommand extends Command
      *
      * @var string $defaultName
      */
-    protected static $defaultName = 'reports:doi-status-datasets';
+    protected static $defaultName = 'pelagos:reports:doi-status-datasets';
 
     /**
      * A name of the file that will store the results of this report program.

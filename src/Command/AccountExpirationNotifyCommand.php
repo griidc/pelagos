@@ -25,7 +25,7 @@ class AccountExpirationNotifyCommand extends Command
      *
      * @var string $defaultName
      */
-    protected static $defaultName = 'account:expiration-notify';
+    protected static $defaultName = 'pelagos:account-expiration-notify';
 
     /**
      * The Symfony Console output object.
