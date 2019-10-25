@@ -53,8 +53,6 @@ services:
             - { name: kernel.event_listener, event: pelagos.entity.account.forgot_username, method: onForgotUsername }
 
     App\EventListener\DIFListener:
-        bind:
-            OldSound\RabbitMqBundle\RabbitMq\Producer $producer: '@old_sound_rabbit_mq.doi_issue_producer'
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.dif.saved_not_submitted, method: onSavedNotSubmitted }
             - { name: kernel.event_listener, event: pelagos.entity.dif.submitted, method: onSubmitted }
@@ -63,8 +61,6 @@ services:
             - { name: kernel.event_listener, event: pelagos.entity.dif.unlocked, method: onUnlocked }
 
     App\EventListener\DatasetSubmissionListener:
-        bind:
-            OldSound\RabbitMqBundle\RabbitMq\Producer $producer: '@old_sound_rabbit_mq.doi_issue_producer'
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.submitted, method: onSubmitted }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.resubmitted, method: onResubmitted }
@@ -85,8 +81,6 @@ services:
             - { name: doctrine.event_listener, event: onFlush }
 
     App\EventListener\DoiDatasetListener:
-        bind:
-            OldSound\RabbitMqBundle\RabbitMq\Producer $producer: '@old_sound_rabbit_mq.doi_issue_producer'
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.dataset.delete_doi, method: onDeleteDoi }
 
@@ -140,19 +134,19 @@ services:
         class: App\Consumer\DatasetSubmissionConsumer
         bind:
             Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.filer'
-            OldSound\RabbitMqBundle\RabbitMq\Producer $datasetFileHasherProducer: '@old_sound_rabbit_mq.dataset_file_hasher_producer'
 
     consumer.dataset_submission.retriever:
         class: App\Consumer\DatasetSubmissionConsumer
         bind:
             Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.retriever'
-            OldSound\RabbitMqBundle\RabbitMq\Producer $datasetFileHasherProducer: '@old_sound_rabbit_mq.dataset_file_hasher_producer'
 
     App\Consumer\DatasetSubmissionConsumer: '@consumer.dataset_submission.filer'
 
     App\Util\RabbitPublisher:
         bind:
             OldSound\RabbitMqBundle\RabbitMq\Producer $datasetSubProducer: '@old_sound_rabbit_mq.dataset_submission_producer'
+            OldSound\RabbitMqBundle\RabbitMq\Producer $datasetFileHasherProducer: '@old_sound_rabbit_mq.dataset_submission_producer'
+            OldSound\RabbitMqBundle\RabbitMq\Producer $doiProducer: '@old_sound_rabbit_mq.doi_issue_producer'
 
     App\EventListener\ReadOnlyListener:
         bind:

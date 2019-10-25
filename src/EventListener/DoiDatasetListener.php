@@ -2,6 +2,8 @@
 
 namespace App\EventListener;
 
+use App\Util\RabbitPublisher;
+
 /**
  * Listener class for DOI deletion.
  */
@@ -19,7 +21,7 @@ class DoiDatasetListener extends EventListener
         $dataset = $event->getEntity();
         $doi = $dataset->getDoi();
         if ($doi) {
-            $this->producer->publish($doi->getDoi(), 'delete');
+            $this->publisher->publish($doi->getDoi(), RabbitPublisher::DOI_PRODUCER, 'delete');
         }
     }
 }
