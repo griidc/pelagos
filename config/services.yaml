@@ -150,7 +150,7 @@ services:
 
     App\EventListener\MaintenanceModeListener:
         bind:
-            bool $readOnly: "%env(MAINTENANCE_MODE)%"
+            bool $maintenanceMode: "%env(MAINTENANCE_MODE)%"
             bool $debug: '%kernel.debug%'
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
