@@ -7,16 +7,16 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Twig\Environment;
 
 /**
- * Class ReadOnlyListener to enable/diable maintenance mode.
+ * Class MaintenanceModeListener to enable/diable maintenance mode.
  */
-class ReadOnlyListener
+class MaintenanceModeListener
 {
     /**
-     * Boolean value for read only  mode.
+     * Boolean value for maintenance mode.
      *
      * @var boolean
      */
-    protected $readOnly;
+    protected $maintenanceMode;
 
     /**
      * Boolean value for debug mode.
@@ -35,13 +35,13 @@ class ReadOnlyListener
     /**
      * ReadOnlyListener constructor.
      *
-     * @param boolean     $readOnly Boolean value to check if it is in read only mode.
-     * @param boolean     $debug    Boolean value to check if it is in debug.
-     * @param Environment $twig     Twig environment variable.
+     * @param boolean     $maintenanceMode Boolean value to check if it is in read only mode.
+     * @param boolean     $debug           Boolean value to check if it is in debug.
+     * @param Environment $twig            Twig environment variable.
      */
-    public function __construct(bool $readOnly, bool $debug, Environment $twig)
+    public function __construct(bool $maintenanceMode, bool $debug, Environment $twig)
     {
-        $this->readOnly = $readOnly;
+        $this->maintenanceMode = $maintenanceMode;
         $this->debug = $debug;
         $this->twig = $twig;
     }
@@ -55,8 +55,8 @@ class ReadOnlyListener
      */
     public function onKernelRequest(RequestEvent $event)
     {
-        if ($this->readOnly and !$this->debug) {
-            $template = $this->twig->render('template/readonly.html.twig');
+        if ($this->maintenanceMode and !$this->debug) {
+            $template = $this->twig->render('template/maintenanceMode.html.twig');
             $event->setResponse(new Response($template, 503));
             $event->stopPropagation();
         }
