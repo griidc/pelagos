@@ -958,12 +958,12 @@ class ISOMetadataExtractorUtil
     /**
      * Picks an item from a bar delimited list.
      *
-     * @param string  $list   A bar delimited list of strings.
-     * @param integer $offset The array offset of the desired position in the list.
+     * @param string|null $list   A bar delimited list of strings.
+     * @param integer     $offset The array offset of the desired position in the list.
      *
      * @return string|null The item at the given offset, or null.
      */
-    private static function getDelimitedItem(string $list, int $offset)
+    private static function getDelimitedItem(?string $list, int $offset)
     {
         // If null input given for list, return null.
         if (null === $list) {
