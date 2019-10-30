@@ -24,7 +24,7 @@ $(document).ready(function() {
             "datasetPublications.publication"
         ];
         $.ajax({
-            url: "/api/datasets",
+            url: Routing.generate("pelagos_api_datasets_get_collection"),
             data: {
                 udi: $("#udi").val(),
                 _properties: properties.join(",")
