@@ -51,7 +51,7 @@ class DownloadController extends AbstractController
      */
     public function defaultAction(int $id)
     {
-        $dataset = $this->entityHandler->get(Dataset::class, (int) $id);
+        $dataset = $this->entityHandler->get(Dataset::class, $id);
         if ($dataset->isRemotelyHosted()) {
             $result = array(
                 'dataset' => $this->getDatasetDetails($dataset),
