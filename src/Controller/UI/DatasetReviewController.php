@@ -538,7 +538,7 @@ class DatasetReviewController extends AbstractController
 
             //use rabbitmq to process dataset file and persist the file details.
             foreach ($this->messages as $message) {
-                $this->publisher->publish($message['body'], $message['routing_key']);
+                $this->publisher->publish($message['body'], RabbitPublisher::DATASET_SUBMISSION_PRODUCER, $message['routing_key']);
             }
             $reviewedBy = $datasetSubmission->getDatasetSubmissionReview()->getReviewEndedBy()->getFirstName();
 

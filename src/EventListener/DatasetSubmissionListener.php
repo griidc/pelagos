@@ -2,6 +2,7 @@
 namespace App\EventListener;
 
 use App\Entity\DatasetSubmission;
+use App\Util\RabbitPublisher;
 
 /**
  * Listener class for Dataset Submission-related events.
@@ -30,7 +31,7 @@ class DatasetSubmissionListener extends EventListener
 
         // Publish message requesting DOI generation.
         // Producer passed in via constructor is that of the doi_issue producer.
-        $this->producer->publish($dataset->getId(), 'update');
+        $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'update');
 
         // email User
         $template = $this->twig->load('Email/user.dataset-created.email.twig');
