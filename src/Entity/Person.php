@@ -117,7 +117,7 @@ class Person extends Entity
      * )
      * @Assert\Email(
      *     message="Email address is invalid",
-     *     strict=true
+     *     mode="strict"
      * )
      */
     protected $emailAddress;
@@ -880,7 +880,7 @@ class Person extends Entity
                 $notDeletableReasons[] = 'there is an associated Account';
             }
         }
-        
+
         if (count($notDeletableReasons) > 0) {
             $notDeletableException = new NotDeletableException();
             $notDeletableException->setReasons($notDeletableReasons);
