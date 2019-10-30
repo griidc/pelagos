@@ -51,6 +51,7 @@ fos_elastica:
                             property_path: false
                         simpleGeometry:
                             type: 'geo_shape'
+                            ignore_malformed: true
                             property_path: false
                         year:
                             property_path: false
