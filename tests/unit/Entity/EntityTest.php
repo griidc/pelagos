@@ -3,7 +3,6 @@
 namespace App\Tests\Entity;
 
 use App\Entity\Person;
-use App\Tests\Helpers\Entity\ConcreteEntity;
 use PHPUnit\Framework\TestCase;
 
 use Symfony\Component\Validator\Validation;
@@ -14,11 +13,11 @@ use Symfony\Component\Validator\Validation;
 class EntityTest extends TestCase
 {
     /**
-     * Property to hold an instance of ConcreteEntity for testing.
+     * Property to hold an instance of a mock Entity for testing.
      *
-     * @var ConcreteEntity $concreteEntity
+     * @var mixed $testEntity
      */
-    protected $concreteEntity;
+    protected $testEntity;
 
     /**
      * Property to hold an instance of the Symfony Validator.
@@ -75,9 +74,11 @@ class EntityTest extends TestCase
         $this->validator = Validation::createValidatorBuilder()
             ->enableAnnotationMapping()
             ->getValidator();
-        $this->concreteEntity = new ConcreteEntity;
-        $this->concreteEntity->setCreator($this->testCreator);
-        $this->concreteEntity->setModifier($this->testCreator);
+        $this->testEntity = $this
+            ->getMockBuilder('App\Entity\Entity')
+            ->getMockForAbstractClass();
+        $this->testEntity->setCreator($this->testCreator);
+        $this->testEntity->setModifier($this->testCreator);
         $this->timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->timeStampISO = $this->timeStamp->format(\DateTime::ISO8601);
         $this->timeStampLocalized = clone $this->timeStamp;
@@ -96,7 +97,7 @@ class EntityTest extends TestCase
     public function testGetID()
     {
         $this->assertEquals(
-            $this->concreteEntity->getId(),
+            $this->testEntity->getId(),
             null
         );
     }
@@ -111,7 +112,7 @@ class EntityTest extends TestCase
     public function testGetCreator()
     {
         $this->assertSame(
-            $this->concreteEntity->getCreator(),
+            $this->testEntity->getCreator(),
             $this->testCreator
         );
     }
@@ -126,7 +127,7 @@ class EntityTest extends TestCase
     public function testGetModifier()
     {
         $this->assertEquals(
-            $this->concreteEntity->getModifier(),
+            $this->testEntity->getModifier(),
             $this->testCreator
         );
     }
@@ -144,8 +145,8 @@ class EntityTest extends TestCase
     {
         $timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $timeStampISO = $timeStamp->format(\DateTime::ISO8601);
-        $this->concreteEntity->setCreationTimeStamp($timeStamp);
-        $creationTimeStamp = $this->concreteEntity->getCreationTimeStamp(false);
+        $this->testEntity->setCreationTimeStamp($timeStamp);
+        $creationTimeStamp = $this->testEntity->getCreationTimeStamp(false);
         $this->assertInstanceOf('\DateTime', $creationTimeStamp);
         $this->assertEquals($timeStampISO, $creationTimeStamp->format(\DateTime::ISO8601));
     }
@@ -159,7 +160,7 @@ class EntityTest extends TestCase
      */
     public function testSetCreationTimeStampFailForNonUTC()
     {
-        $this->concreteEntity->setCreationTimeStamp(
+        $this->testEntity->setCreationTimeStamp(
             new \DateTime('now', new \DateTimeZone('America/Chicago'))
         );
     }
@@ -173,8 +174,8 @@ class EntityTest extends TestCase
      */
     public function testGetCreationTimeStamp()
     {
-        $this->concreteEntity->setCreationTimeStamp($this->timeStamp);
-        $creationTimeStamp = $this->concreteEntity->getCreationTimeStamp();
+        $this->testEntity->setCreationTimeStamp($this->timeStamp);
+        $creationTimeStamp = $this->testEntity->getCreationTimeStamp();
         $this->assertInstanceOf('\DateTime', $creationTimeStamp);
         $this->assertEquals(
             'UTC',
@@ -192,8 +193,8 @@ class EntityTest extends TestCase
      */
     public function testGetCreationTimeStampLocalized()
     {
-        $this->concreteEntity->setCreationTimeStamp($this->timeStamp);
-        $creationTimeStamp = $this->concreteEntity->getCreationTimeStamp(true);
+        $this->testEntity->setCreationTimeStamp($this->timeStamp);
+        $creationTimeStamp = $this->testEntity->getCreationTimeStamp(true);
         $this->assertInstanceOf('\DateTime', $creationTimeStamp);
         $this->assertEquals(
             date_default_timezone_get(),
@@ -212,10 +213,10 @@ class EntityTest extends TestCase
      */
     public function testGetCreationTimeStampAsISO()
     {
-        $this->concreteEntity->setCreationTimeStamp($this->timeStamp);
+        $this->testEntity->setCreationTimeStamp($this->timeStamp);
         $this->assertEquals(
             $this->timeStampISO,
-            $this->concreteEntity->getCreationTimeStampAsISO()
+            $this->testEntity->getCreationTimeStampAsISO()
         );
     }
 
@@ -229,10 +230,10 @@ class EntityTest extends TestCase
      */
     public function testGetCreationTimeStampAsISOLocalized()
     {
-        $this->concreteEntity->setCreationTimeStamp($this->timeStamp);
+        $this->testEntity->setCreationTimeStamp($this->timeStamp);
         $this->assertEquals(
             $this->timeStampLocalizedISO,
-            $this->concreteEntity->getCreationTimeStampAsISO(true)
+            $this->testEntity->getCreationTimeStampAsISO(true)
         );
     }
 
@@ -245,7 +246,7 @@ class EntityTest extends TestCase
      */
     public function testGetCreationTimeStampAsISONull()
     {
-        $this->assertNull($this->concreteEntity->getCreationTimeStampAsISO());
+        $this->assertNull($this->testEntity->getCreationTimeStampAsISO());
     }
 
     /**
@@ -261,8 +262,8 @@ class EntityTest extends TestCase
     {
         $timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $timeStampISO = $timeStamp->format(\DateTime::ISO8601);
-        $this->concreteEntity->setModificationTimeStamp($timeStamp);
-        $modificationTimeStamp = $this->concreteEntity->getModificationTimeStamp(false);
+        $this->testEntity->setModificationTimeStamp($timeStamp);
+        $modificationTimeStamp = $this->testEntity->getModificationTimeStamp(false);
         $this->assertInstanceOf('\DateTime', $modificationTimeStamp);
         $this->assertEquals($timeStampISO, $modificationTimeStamp->format(\DateTime::ISO8601));
     }
@@ -276,7 +277,7 @@ class EntityTest extends TestCase
      */
     public function testSetModificationTimeStampFailForNonUTC()
     {
-        $this->concreteEntity->setModificationTimeStamp(
+        $this->testEntity->setModificationTimeStamp(
             new \DateTime('now', new \DateTimeZone('America/Chicago'))
         );
     }
@@ -290,8 +291,8 @@ class EntityTest extends TestCase
      */
     public function testGetModificationTimeStamp()
     {
-        $this->concreteEntity->setModificationTimeStamp($this->timeStamp);
-        $modificationTimeStamp = $this->concreteEntity->getModificationTimeStamp();
+        $this->testEntity->setModificationTimeStamp($this->timeStamp);
+        $modificationTimeStamp = $this->testEntity->getModificationTimeStamp();
         $this->assertInstanceOf('\DateTime', $modificationTimeStamp);
         $this->assertEquals(
             'UTC',
@@ -309,8 +310,8 @@ class EntityTest extends TestCase
      */
     public function testGetModificationTimeStampLocalized()
     {
-        $this->concreteEntity->setModificationTimeStamp($this->timeStamp);
-        $modificationTimeStamp = $this->concreteEntity->getModificationTimeStamp(true);
+        $this->testEntity->setModificationTimeStamp($this->timeStamp);
+        $modificationTimeStamp = $this->testEntity->getModificationTimeStamp(true);
         $this->assertInstanceOf('\DateTime', $modificationTimeStamp);
         $this->assertEquals(
             date_default_timezone_get(),
@@ -329,10 +330,10 @@ class EntityTest extends TestCase
      */
     public function testGetModificationTimeStampAsISO()
     {
-        $this->concreteEntity->setModificationTimeStamp($this->timeStamp);
+        $this->testEntity->setModificationTimeStamp($this->timeStamp);
         $this->assertEquals(
             $this->timeStampISO,
-            $this->concreteEntity->getModificationTimeStampAsISO()
+            $this->testEntity->getModificationTimeStampAsISO()
         );
     }
 
@@ -346,10 +347,10 @@ class EntityTest extends TestCase
      */
     public function testGetModificationTimeStampAsISOLocalized()
     {
-        $this->concreteEntity->setModificationTimeStamp($this->timeStamp);
+        $this->testEntity->setModificationTimeStamp($this->timeStamp);
         $this->assertEquals(
             $this->timeStampLocalizedISO,
-            $this->concreteEntity->getModificationTimeStampAsISO(true)
+            $this->testEntity->getModificationTimeStampAsISO(true)
         );
     }
 
@@ -362,7 +363,7 @@ class EntityTest extends TestCase
      */
     public function testGetModificationTimeStampAsISONull()
     {
-        $this->assertNull($this->concreteEntity->getModificationTimeStampAsISO());
+        $this->assertNull($this->testEntity->getModificationTimeStampAsISO());
     }
 
     /**
@@ -372,11 +373,11 @@ class EntityTest extends TestCase
      */
     public function testUpdateTimeStamps()
     {
-        $this->assertNull($this->concreteEntity->getCreationTimeStamp());
-        $this->assertNull($this->concreteEntity->getModificationTimeStamp());
-        $this->concreteEntity->updateTimeStamps();
-        $this->assertInstanceOf('\DateTime', $this->concreteEntity->getCreationTimeStamp());
-        $this->assertInstanceOf('\DateTime', $this->concreteEntity->getModificationTimeStamp());
+        $this->assertNull($this->testEntity->getCreationTimeStamp());
+        $this->assertNull($this->testEntity->getModificationTimeStamp());
+        $this->testEntity->updateTimeStamps();
+        $this->assertInstanceOf('\DateTime', $this->testEntity->getCreationTimeStamp());
+        $this->assertInstanceOf('\DateTime', $this->testEntity->getModificationTimeStamp());
     }
 
 //    /**
@@ -387,11 +388,11 @@ class EntityTest extends TestCase
 //    public function testSerializeTimeStampsTimeZone()
 //    {
 //        $timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
-//        $this->concreteEntity->setCreationTimeStamp($timeStamp);
-//        $this->concreteEntity->setTimeZone('America/Chicago');
+//        $this->testEntity->setCreationTimeStamp($timeStamp);
+//        $this->testEntity->setTimeZone('America/Chicago');
 //        $timeStamp->setTimeZone(new \DateTimeZone('America/Chicago'));
 //        $timeStampISO = $timeStamp->format(\DateTime::ISO8601);
-//        $concreteEntityData = array(
+//        $testEntityData = array(
 //            'id' => null,
 //            'creator' => $this->testCreator,
 //            'creationTimeStamp' => $timeStampISO,
@@ -408,8 +409,8 @@ class EntityTest extends TestCase
      */
     public function testCheckDeletable()
     {
-        $this->assertTrue(method_exists($this->concreteEntity, 'checkDeletable'));
-        $this->concreteEntity->checkDeletable();
+        $this->assertTrue(method_exists($this->testEntity, 'checkDeletable'));
+        $this->testEntity->checkDeletable();
     }
 
     /**
@@ -420,14 +421,14 @@ class EntityTest extends TestCase
     public function testFilterOutBlanksFromArray()
     {
         // Filter empty string is filtered out - the typical use case.
-        $this->assertEquals(['a', 'b', 'c'], $this->concreteEntity->filterArrayBlanks(['a', '', 'b', 'c']));
+        $this->assertEquals(['a', 'b', 'c'], $this->testEntity->filterArrayBlanks(['a', '', 'b', 'c']));
         // Ensure bool false is filtered out.
-        $this->assertEquals(['a', 'b', 'c'], $this->concreteEntity->filterArrayBlanks(['a', false, 'b', 'c']));
+        $this->assertEquals(['a', 'b', 'c'], $this->testEntity->filterArrayBlanks(['a', false, 'b', 'c']));
         // Ensure a null value is filtered out.
-        $this->assertEquals(['a', 'b', 'c'], $this->concreteEntity->filterArrayBlanks(['a', null, 'b', 'c']));
+        $this->assertEquals(['a', 'b', 'c'], $this->testEntity->filterArrayBlanks(['a', null, 'b', 'c']));
         // Ensure a boolean true is not filtered out.
-        $this->assertNotEquals(['a', 'b', 'c'], $this->concreteEntity->filterArrayBlanks(['a', true, 'b', 'c']));
+        $this->assertNotEquals(['a', 'b', 'c'], $this->testEntity->filterArrayBlanks(['a', true, 'b', 'c']));
         // Ensure the value 0 (zero) is not filtered out.
-        $this->assertNotEquals(['a', 'b', 'c'], $this->concreteEntity->filterArrayBlanks(['a', 0, 'b', 'c']));
+        $this->assertNotEquals(['a', 'b', 'c'], $this->testEntity->filterArrayBlanks(['a', 0, 'b', 'c']));
     }
 }
