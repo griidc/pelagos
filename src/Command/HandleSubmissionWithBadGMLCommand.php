@@ -25,7 +25,7 @@ class HandleSubmissionWithBadGMLCommand extends Command
      *
      * @var string $defaultName
      */
-    protected static $defaultName = 'onetime:handle-bad-gml-submission';
+    protected static $defaultName = 'pelagos:handle-bad-gml-submission';
 
     /**
      * A Doctrine ORM EntityManager instance.

@@ -25,7 +25,7 @@ class AccountExpirationNotifyCommand extends Command
      *
      * @var string $defaultName
      */
-    protected static $defaultName = 'account:expiration-notify';
+    protected static $defaultName = 'pelagos:account-expiration-notify';
 
     /**
      * The Symfony Console output object.
@@ -251,7 +251,9 @@ class AccountExpirationNotifyCommand extends Command
             $this->mailer->sendEmailMessage(
                 $emailTemplate,
                 $twigData,
-                $person->getEmailAddress()
+                array(
+                    $person->getEmailAddress() => $person->getFirstName() . ' ' . $person->getLastName(),
+                )
             );
         }
     }

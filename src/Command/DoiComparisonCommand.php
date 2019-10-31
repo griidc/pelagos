@@ -28,7 +28,7 @@ class DoiComparisonCommand extends Command
      *
      * @var string $defaultName
      */
-    protected static $defaultName = 'dataset-doi:comparison';
+    protected static $defaultName = 'pelagos:dataset-doi:comparison';
 
     /**
      * A value for doi state from Datacite.

@@ -299,7 +299,7 @@ class DOIutil
      */
     public function getDoiCollection(int $pageNo) : array
     {
-        $url = $this->url . '/dois/' . '?client-id=' . $this->doiusername . '&page%5Bnumber%5D=' . $pageNo . '&page%5Bsize%5D=1000';
+        $url = $this->url . '/dois' . '?client-id=' . strtolower($this->doiusername) . '&page%5Bnumber%5D=' . $pageNo . '&page%5Bsize%5D=1000';
         $header = ['Accept' => 'application/vnd.api+json'];
         $client = new Client();
         try {

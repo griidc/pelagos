@@ -23,7 +23,7 @@ class DoiDataciteReportCommand extends Command
      *
      * @var string $defaultName
      */
-    protected static $defaultName = 'reports:doi-datacite-report';
+    protected static $defaultName = 'pelagos:reports:doi-datacite-report';
 
     /**
      * A name of the file that will store the results of this report program.

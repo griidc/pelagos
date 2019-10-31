@@ -23,7 +23,7 @@ class RebuildElasticsearchIndexCommand extends Command
      *
      * @var string $defaultName
      */
-    protected static $defaultName = 'elasticsearch:reindex-datasets';
+    protected static $defaultName = 'pelagos:elasticsearch-reindex-datasets';
 
     /**
      * A Doctrine ORM EntityManager instance.
