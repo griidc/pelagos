@@ -160,3 +160,10 @@ services:
     App\Util\Search:
         bind:
             FOS\ElasticaBundle\Finder\TransformedFinder $finder: "@fos_elastica.finder.search_pelagos.dataset"
+
+    App\Event\MaintenanceModeListener:
+        bind:
+            bool $maintenanceMode: "%env(MAINTENANCE_MODE)%"
+            bool $debug: '%kernel.debug%'
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
