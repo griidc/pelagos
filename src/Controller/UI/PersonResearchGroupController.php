@@ -25,7 +25,7 @@ class PersonResearchGroupController extends AbstractController
      *
      * @param Request       $request       The HTTP request.
      * @param EntityHandler $entityHandler The entity handler.
-     * @param string        $id            The id of the entity to retrieve.
+     * @param integer       $id            The id of the entity to retrieve.
      *
      * @throws BadRequestHttpException When the research group parameter is not set.
      *
@@ -33,7 +33,7 @@ class PersonResearchGroupController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(Request $request, EntityHandler $entityHandler, string $id = null)
+    public function defaultAction(Request $request, EntityHandler $entityHandler, int $id = null)
     {
         $researchGroupId = $request->query->get('ResearchGroup');
 

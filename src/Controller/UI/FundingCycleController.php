@@ -21,7 +21,7 @@ class FundingCycleController extends AbstractController
      * The Funding Cycle action.
      *
      * @param EntityHandler $entityHandler The entity handler.
-     * @param string        $id            The id of the entity to retrieve.
+     * @param integer       $id            The id of the entity to retrieve.
      *
      * @throws NotFoundHttpException When fundingcycle was not found.
      *
@@ -29,7 +29,7 @@ class FundingCycleController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(EntityHandler $entityHandler, string $id = null)
+    public function defaultAction(EntityHandler $entityHandler, int $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {

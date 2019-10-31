@@ -156,3 +156,7 @@ services:
     App\Command\RebuildElasticsearchIndexCommand:
         bind:
             FOS\ElasticaBundle\Persister\ObjectPersister $pelagosDatasetIndexPersister: "@fos_elastica.object_persister.pelagos.dataset"
+
+    App\Util\Search:
+        bind:
+            FOS\ElasticaBundle\Finder\TransformedFinder $finder: "@fos_elastica.finder.search_pelagos.dataset"

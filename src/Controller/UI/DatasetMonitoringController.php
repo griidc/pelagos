@@ -54,14 +54,14 @@ class DatasetMonitoringController extends AbstractController
     /**
      * The Dataset Monitoring display all research groups of a Funding Cycle.
      *
-     * @param string $id       A Pelagos Funding Cycle entity id.
-     * @param string $renderer Either 'browser' or 'html2pdf'.
+     * @param integer $id       A Pelagos Funding Cycle entity id.
+     * @param string  $renderer Either 'browser' or 'html2pdf'.
      *
      * @Route("/dataset-monitoring/funding-cycle/{id}/{renderer}", name="pelagos_app_ui_datasetmonitoring_allresearchgroup", defaults={"renderer" = "browser"})
      *
      * @return Response A Response instance.
      */
-    public function allResearchGroupAction(string $id, string $renderer = 'browser')
+    public function allResearchGroupAction(int $id, string $renderer = 'browser')
     {
         $fundingCycle = $this->entityHandler->get(FundingCycle::class, $id);
         $title = $fundingCycle->getName();
@@ -93,14 +93,14 @@ class DatasetMonitoringController extends AbstractController
     /**
      * The Dataset Monitoring display by research group.
      *
-     * @param string $id       A Pelagos Research Group entity id.
-     * @param string $renderer Either 'browser' or 'html2pdf'.
+     * @param integer $id       A Pelagos Research Group entity id.
+     * @param string  $renderer Either 'browser' or 'html2pdf'.
      *
      * @Route("/dataset-monitoring/research-group/{id}/{renderer}", name="pelagos_app_ui_datasetmonitoring_researchgroup")
      *
      * @return Response A Response instance.
      */
-    public function researchGroupAction(string $id, string $renderer = 'browser')
+    public function researchGroupAction(int $id, string $renderer = 'browser')
     {
         $researchGroup = $this->entityHandler->get(ResearchGroup::class, $id);
         $title = $researchGroup->getName();
@@ -130,14 +130,14 @@ class DatasetMonitoringController extends AbstractController
     /**
      * The Dataset Monitoring display by a researcher.
      *
-     * @param string $id       A Pelagos Person entity id of a researcher.
-     * @param string $renderer Either 'browser' or 'html2pdf'.
+     * @param integer $id       A Pelagos Person entity id of a researcher.
+     * @param string  $renderer Either 'browser' or 'html2pdf'.
      *
      * @Route("/dataset-monitoring/researcher/{id}/{renderer}", name="pelagos_app_ui_datasetmonitoring_researcher")
      *
      * @return Response A Response instance.
      */
-    public function researcherAction(string $id, string $renderer = 'browser')
+    public function researcherAction(int $id, string $renderer = 'browser')
     {
         $researcher = $this->entityHandler->get(Person::class, $id);
         $title = $researcher->getLastName() . ', ' . $researcher->getFirstName();

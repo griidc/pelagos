@@ -51,6 +51,7 @@ fos_elastica:
                             property_path: false
                         simpleGeometry:
                             type: 'geo_shape'
+                            ignore_malformed: true
                             property_path: false
                         year:
                             property_path: false
@@ -62,6 +63,53 @@ fos_elastica:
                             type: 'date'
                             format: 'basic_date_time_no_millis'
                             property_path: false
+                    persistence:
+                        driver: orm
+                        model: App\Entity\Dataset
+                        provider:
+                            query_builder_method: createSortedQueryBuilder
+                        listener:
+                            logger: true
+                        finder: ~
+
+        search_pelagos:
+            client: default
+            index_name: "%env(SEARCH_TOOL_INDEX)%"
+            types:
+                dataset:
+                    properties:
+                        title:
+                            type: 'text'
+                        abstract:
+                            type: 'text'
+                        researchGroup:
+                            type: 'nested'
+                            properties:
+                                id:
+                                    type: 'keyword'
+                                fundingCycle:
+                                    type: 'nested'
+                                    properties:
+                                        fundingOrganization:
+                                            type: 'nested'
+                                            properties:
+                                                id:
+                                                    type: 'keyword'
+                        datasetSubmission:
+                            type: 'nested'
+                            properties:
+                                authors:
+                                    type: 'text'
+                                themeKeywords:
+                                    type: 'text'
+                        availabilityStatus:
+                            type: 'integer'
+                        collectionStartDate:
+                            property_path: false
+                            type: 'date'
+                        collectionEndDate:
+                            property_path: false
+                            type: 'date'
                     persistence:
                         driver: orm
                         model: App\Entity\Dataset
