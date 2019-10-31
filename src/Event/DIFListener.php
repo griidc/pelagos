@@ -1,5 +1,5 @@
 <?php
-namespace App\EventListener;
+namespace App\Event;
 
 use App\Entity\DIF;
 use App\Util\RabbitPublisher;

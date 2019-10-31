@@ -1,5 +1,5 @@
 <?php
-namespace App\EventListener;
+namespace App\Event;
 
 use App\Entity\DatasetSubmission;
 use App\Util\RabbitPublisher;
@@ -67,7 +67,7 @@ class DatasetSubmissionListener extends EventListener
             )
         );
 
-        $this->producer->publish($dataset->getId(), 'update');
+        $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'update');
 
         // email User
         $template = $this->twig->load('Email/user.dataset-created.email.twig');
@@ -178,7 +178,7 @@ class DatasetSubmissionListener extends EventListener
                 ' ->InReview)');
         }
         // Publish DOI for accepted and unrestricted datasets
-        $this->producer->publish($datasetSubmission->getDataset()->getId(), 'update');
+        $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'update');
     }
 
     /**
@@ -214,7 +214,7 @@ class DatasetSubmissionListener extends EventListener
             ' accepted dataset ' . $dataset->getUdi() . ' (In Review->Accepted)'
         );
         // Publish DOI for accepted and unrestricted datasets
-        $this->producer->publish($datasetSubmission->getDataset()->getId(), 'update');
+        $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'update');
     }
 
     /**

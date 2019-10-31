@@ -47,11 +47,11 @@ services:
         bind:
             string $mdappLogfile: '%kernel.logs_dir%/mdapp.log'
 
-    App\EventListener\AccountListener:
+    App\Event\AccountListener:
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.account.forgot_username, method: onForgotUsername }
 
-    App\EventListener\DIFListener:
+    App\Event\DIFListener:
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.dif.saved_not_submitted, method: onSavedNotSubmitted }
             - { name: kernel.event_listener, event: pelagos.entity.dif.submitted, method: onSubmitted }
@@ -59,7 +59,7 @@ services:
             - { name: kernel.event_listener, event: pelagos.entity.dif.unlock_requested, method: onUnlockRequested }
             - { name: kernel.event_listener, event: pelagos.entity.dif.unlocked, method: onUnlocked }
 
-    App\EventListener\DatasetSubmissionListener:
+    App\Event\DatasetSubmissionListener:
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.submitted, method: onSubmitted }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.resubmitted, method: onResubmitted }
@@ -71,19 +71,19 @@ services:
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.accept_review, method: onAcceptReview }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.request_revisions, method: onRequestRevisions }
 
-    App\EventListener\DoctrineDatasetListener:
+    App\Event\DoctrineDatasetListener:
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 
-    App\EventListener\DoctrineDataCenterListener:
+    App\Event\DoctrineDataCenterListener:
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 
-    App\EventListener\DoiDatasetListener:
+    App\Event\DoiDatasetListener:
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.dataset.delete_doi, method: onDeleteDoi }
 
-    App\EventListener\LogActionItemEventListener:
+    App\Event\LogActionItemEventListener:
         tags:
             - { name: kernel.event_listener, event: pelagos.logactionitem.file_download, method: onNewLogCreated }
             - { name: kernel.event_listener, event: pelagos.logactionitem.search_terms_log, method: onNewLogCreated }

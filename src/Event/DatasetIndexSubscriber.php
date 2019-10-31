@@ -1,6 +1,6 @@
 <?php
 
-namespace App\EventListener;
+namespace App\Event;
 
 use FOS\ElasticaBundle\Event\TransformEvent;
 

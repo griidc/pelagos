@@ -2,7 +2,7 @@
 
 namespace App\Controller\UI;
 
-use App\EventListener\EntityEventDispatcher;
+use App\Event\EntityEventDispatcher;
 use App\Form\EndReviewType;
 
 use App\Entity\Account;

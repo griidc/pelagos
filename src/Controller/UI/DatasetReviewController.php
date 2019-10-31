@@ -17,7 +17,7 @@ use App\Form\DatasetSubmissionType;
 
 use App\Handler\EntityHandler;
 
-use App\EventListener\EntityEventDispatcher;
+use App\Event\EntityEventDispatcher;
 
 use App\Entity\Account;
 use App\Entity\Dataset;

@@ -15,7 +15,7 @@ use App\Form\ExternalDownloadLogType;
 use App\Entity\Account;
 use App\Entity\Dataset;
 
-use App\EventListener\LogActionItemEventDispatcher;
+use App\Event\LogActionItemEventDispatcher;
 use App\Handler\EntityHandler;
 
 /**

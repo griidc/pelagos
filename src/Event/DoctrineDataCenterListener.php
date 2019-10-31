@@ -1,6 +1,6 @@
 <?php
 
-namespace App\EventListener;
+namespace App\Event;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;

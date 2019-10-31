@@ -1,5 +1,5 @@
 <?php
-namespace App\EventListener;
+namespace App\Event;
 
 use App\Util\RabbitPublisher;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;

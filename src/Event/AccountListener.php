@@ -1,6 +1,6 @@
 <?php
 
-namespace App\EventListener;
+namespace App\Event;
 
 use App\Entity\Account;
 use App\Entity\ResearchGroupRole;

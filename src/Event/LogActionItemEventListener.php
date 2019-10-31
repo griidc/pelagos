@@ -1,5 +1,5 @@
 <?php
-namespace App\EventListener;
+namespace App\Event;
 
 use App\Entity\LogActionItem;
 use App\Entity\Person;

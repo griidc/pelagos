@@ -2,7 +2,7 @@
 
 namespace App\Controller\UI;
 
-use App\EventListener\LogActionItemEventDispatcher;
+use App\Event\LogActionItemEventDispatcher;
 use App\Handler\EntityHandler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
