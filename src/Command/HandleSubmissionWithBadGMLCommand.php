@@ -109,6 +109,7 @@ class HandleSubmissionWithBadGMLCommand extends Command
         //re-trigger dataset submission producer
         $this->publisher->publish(
             $datasetSubmission->getId(),
+            RabbitPublisher::DATASET_SUBMISSION_PRODUCER,
             'dataset.' . $datasetSubmission->getDatasetFileTransferType()
         );
 

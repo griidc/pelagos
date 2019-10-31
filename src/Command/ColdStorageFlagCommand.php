@@ -142,6 +142,7 @@ class ColdStorageFlagCommand extends Command
                     //Trigger filer and hasher (via filer) to complete the process.
                     $this->publisher->publish(
                         $dataset->getDatasetSubmission()->getId(),
+                        RabbitPublisher::DATASET_SUBMISSION_PRODUCER,
                         'dataset.' . DatasetSubmission::TRANSFER_TYPE_SFTP
                     );
                 }
