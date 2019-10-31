@@ -147,3 +147,10 @@ services:
             OldSound\RabbitMqBundle\RabbitMq\Producer $datasetSubProducer: '@old_sound_rabbit_mq.dataset_submission_producer'
             OldSound\RabbitMqBundle\RabbitMq\Producer $datasetFileHasherProducer: '@old_sound_rabbit_mq.dataset_submission_producer'
             OldSound\RabbitMqBundle\RabbitMq\Producer $doiProducer: '@old_sound_rabbit_mq.doi_issue_producer'
+
+    App\EventListener\MaintenanceModeListener:
+        bind:
+            bool $maintenanceMode: "%env(MAINTENANCE_MODE)%"
+            bool $debug: '%kernel.debug%'
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
