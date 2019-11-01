@@ -88,7 +88,7 @@ class DatasetReviewController extends AbstractController
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("/dataset-review", name="pelagos_app_ui_datasetreview_default")
+     * @Route("/dataset-review", name="pelagos_app_ui_datasetreview_default", methods={"GET"})
      *
      * @return Response A Response instance.
      */

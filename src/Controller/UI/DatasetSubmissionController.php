@@ -103,7 +103,7 @@ class DatasetSubmissionController extends AbstractController
      *
      * @throws BadRequestHttpException When xmlUploadForm is submitted without a file.
      *
-     * @Route("/dataset-submission", name="pelagos_app_ui_datasetsubmission_default")
+     * @Route("/dataset-submission", name="pelagos_app_ui_datasetsubmission_default", methods={"GET"})
      *
      * @return Response A Response instance.
      */

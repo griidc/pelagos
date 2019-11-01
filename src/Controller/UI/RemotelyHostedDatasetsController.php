@@ -48,7 +48,7 @@ class RemotelyHostedDatasetsController extends AbstractController
     /**
      * Default action of Remotely Hosted Datasets.
      *
-     * @Route("/remotelyhosted-datasets", name="pelagos_app_ui_remotelyhosteddatasets_default")
+     * @Route("/remotelyhosted-datasets", name="pelagos_app_ui_remotelyhosteddatasets_default", methods={"GET"})
      *
      * @return Response A response instance.
      */
