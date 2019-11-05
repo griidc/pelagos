@@ -197,8 +197,8 @@ class DatasetSubmissionController extends AbstractController
     /**
      * The post action for Dataset Submission.
      *
-     * @param Request     $request The Symfony request object.
-     * @param string|null $id      The id of the Dataset Submission to load.
+     * @param Request      $request The Symfony request object.
+     * @param integer|null $id      The id of the Dataset Submission to load.
      *
      * @throws BadRequestHttpException When dataset submission has already been submitted.
      * @throws BadRequestHttpException When DIF has not yet been approved.
@@ -207,7 +207,7 @@ class DatasetSubmissionController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function postAction(Request $request, $id = null)
+    public function postAction(Request $request, int $id = null)
     {
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
 

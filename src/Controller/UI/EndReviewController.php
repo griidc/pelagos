@@ -113,7 +113,7 @@ class EndReviewController extends AbstractController
                         $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_END_REVIEW);
                         $this->entityHandler->update($datasetSubmissionReview);
                         $this->entityHandler->update($datasetSubmission);
-                        $reviewerUserName = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
+                        $reviewerUserName = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy()->getId())->getUserId();
                         $this->addToFlashBag($request, $udi, 'reviewEnded', $reviewerUserName);
                         // update MDAPP logs after action is executed.
                         $this->entityEventDispatcher->dispatch($datasetSubmission, 'end_review');

@@ -41,7 +41,7 @@ class MdAppController extends AbstractController
     /**
      * Class constructor.
      *
-     * @param EntityHandler $entityHandler        A Pelagos EntityHandler instance.
+     * @param EntityHandler $entityHandler Pelagos EntityHandler instance.
      */
     public function __construct(EntityHandler $entityHandler)
     {

@@ -205,7 +205,7 @@ class DatasetReviewController extends AbstractController
                             break;
                         case (empty($datasetSubmissionReview->getReviewEndDateTime())
                             and $datasetSubmissionReview->getReviewedBy() !== $this->getUser()->getPerson()):
-                            $reviewerUserName = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
+                            $reviewerUserName = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy()->getId())->getUserId();
                             $this->addToFlashDisplayQueue($request, $udi, 'locked', $reviewerUserName);
                             break;
                     }
@@ -464,8 +464,8 @@ class DatasetReviewController extends AbstractController
     /**
      * The post action for Dataset Review.
      *
-     * @param Request     $request The Symfony request object.
-     * @param string|null $id      The id of the Dataset Submission to load.
+     * @param Request      $request The Symfony request object.
+     * @param integer|null $id      The id of the Dataset Submission to load.
      *
      * @throws BadRequestHttpException When dataset submission has already been submitted.
      * @throws BadRequestHttpException When DIF has not yet been approved.
@@ -474,7 +474,7 @@ class DatasetReviewController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function postAction(Request $request, $id = null)
+    public function postAction(Request $request, int $id = null)
     {
         // set to default event
         $eventName = 'end_review';
