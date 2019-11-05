@@ -105,7 +105,6 @@ class DownloadController extends AbstractController
             $downloadDirectory . '/' . $datasetFileName
         );
         $downloadBaseUrl = $this->getParameter('download_base_url');
-        $em = $this->container->get('doctrine')->getManager();
 
         if ($this->getUser()) {
             $type = get_class($this->getUser());

@@ -42,11 +42,10 @@ class MdAppController extends AbstractController
      * Class constructor.
      *
      * @param EntityHandler $entityHandler        A Pelagos EntityHandler instance.
-     * @param string        $issueTrackingBaseUrl Issue tracker base URL.
      */
-    public function __construct(EntityHandler $entityHandler, string $issueTrackingBaseUrl)
+    public function __construct(EntityHandler $entityHandler)
     {
-        $this->issueTrackingBaseUrl = $issueTrackingBaseUrl;
+        $this->issueTrackingBaseUrl = $this->getParameter('issue_tracking_base_url');
         $this->entityHandler = $entityHandler;
     }
 
