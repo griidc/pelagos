@@ -9,8 +9,8 @@
             }
         };
         </script>
-        <link href="{{ asset('build/css/projects-pdf.css') }}" rel="stylesheet" />
-        <link href="{{ asset('build/css/projects.css') }}" rel="stylesheet" />
+        <link href="{{ asset('css/projects-pdf.css') }}" rel="stylesheet" />
+        <link href="{{ asset('css/projects.css') }}" rel="stylesheet" />
         <style media='all'>
             @page { margin: 48px; }
             #header { position: relative; left: -1px; top: 5px; } 
@@ -20,8 +20,8 @@
     </head>
     <body style='font-family:'>
         <div id='header'>
-            <img src='{{ asset('build/images/griidc_header.png') }}'>
+            <img src='{{ asset('images/griidc_header.png') }}'>
         </div>
-        {% include 'PelagosAppBundle:DatasetMonitoring:projects.html.twig' with {'pdf' : true} %}
+        {% include 'DatasetMonitoring/projects.html.twig' with {'pdf' : true} %}
     </body>
 </html>

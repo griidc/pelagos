@@ -1,4 +1,4 @@
-{% extends "PelagosAppBundle:template:UI.html.twig" %}
+{% extends "template/UI.html.twig" %}
 {% block title %}Research Groups{% endblock %}
 
 {% block stylesheets %}
@@ -7,7 +7,7 @@
     <link href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="//cdn.datatables.net/select/1.2.3/css/select.dataTables.min.css" rel="stylesheet" />
 
-    <link href="{{ asset('build/css/entity.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/entity.css') }}" rel="stylesheet" />
 {% endblock %}
 
 {% block javascripts %}
@@ -16,8 +16,8 @@
     <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js"></script>
 
-    <script type="text/javascript" src="{{ asset('build/js/common.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('build/js/entityList.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/common.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/entityList.js') }}"></script>
 {% endblock %}
 
 {%

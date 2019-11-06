@@ -12,3 +12,11 @@
     {% endfor %}
 {% endblock %}
 
+{% block body_text %}
+
+Below are the list of Dataset Udi's which have failed.
+
+    {% for udi in listOfUdi %}
+        {{ udi }}
+    {% endfor %}
+{% endblock %}

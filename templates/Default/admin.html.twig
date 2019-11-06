@@ -1,4 +1,4 @@
-{% extends "PelagosAppBundle:template:UI.html.twig" %}
+{% extends "template/UI.html.twig" %}
 {% block title %}Admin{% endblock %}
 {% block body %}
     {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
@@ -50,6 +50,6 @@
             </li>
         </ul>
     {% else %}
-        {% include '@templates/AdminOnly.html.twig' %}
+        {% include 'template/AdminOnly.html.twig' %}
     {% endif %}
 {% endblock %}
