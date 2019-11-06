@@ -1,10 +1,10 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Form;
+namespace App\Form;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -22,12 +22,10 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 use Doctrine\ORM\EntityManager;
 
-use Pelagos\Bundle\AppBundle\Security\ResearchGroupVoter;
-
-use Pelagos\Entity\Account;
-use Pelagos\Entity\DIF;
-use Pelagos\Entity\ResearchGroup;
-use Pelagos\Entity\Person;
+use App\Entity\Account;
+use App\Entity\DIF;
+use App\Entity\Person;
+use App\Entity\ResearchGroup;
 
 /**
  * A form for creating a DIF.
@@ -58,12 +56,12 @@ class DIFType extends AbstractType
     /**
      * Constructor.
      *
-     * @param EntityManager                 $entityManager        The entity manager to use.
+     * @param EntityManagerInterface        $entityManager        The entity manager to use.
      * @param AuthorizationCheckerInterface $authorizationChecker The authorization checker to use.
      * @param TokenStorageInterface         $tokenStorage         The token storage to use.
      */
     public function __construct(
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         AuthorizationCheckerInterface $authorizationChecker,
         TokenStorageInterface $tokenStorage
     ) {
@@ -259,10 +257,10 @@ class DIFType extends AbstractType
             ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
                 $event->getForm()
                 ->add('primaryPointOfContact', EntityType::class, array(
-                    'class' => 'Pelagos:Person',
+                    'class' => Person::class,
                 ))
                 ->add('secondaryPointOfContact', EntityType::class, array(
-                    'class' => 'Pelagos:Person',
+                    'class' => Person::class,
                 ));
             });
 
@@ -310,7 +308,7 @@ class DIFType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Pelagos\Entity\DIF',
+            'data_class' => 'App\Entity\DIF',
             'allow_extra_fields' => true,
         ));
     }

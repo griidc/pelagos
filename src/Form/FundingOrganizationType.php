@@ -1,7 +1,8 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Form;
+namespace App\Form;
 
+use App\Entity\DataRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -40,7 +41,7 @@ class FundingOrganizationType extends AbstractType
             ))
             ->add('dataRepository', EntityType::class, array(
                 'label' => 'Data Repository',
-                'class' => 'Pelagos:DataRepository',
+                'class' => DataRepository::class,
                 'choice_label' => 'name',
                 'placeholder' => '[Please Select a Data Repository]',
             ))
@@ -98,7 +99,7 @@ class FundingOrganizationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Pelagos\Entity\FundingOrganization',
+            'data_class' => 'App\Entity\FundingOrganization',
             'allow_extra_fields' => true,
         ));
     }

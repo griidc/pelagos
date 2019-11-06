@@ -1,7 +1,9 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Form;
+namespace App\Form;
 
+use App\Entity\FundingOrganization;
+use App\Entity\FundingOrganizationRole;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -33,7 +35,7 @@ class PersonFundingOrganizationType extends AbstractType
         $builder
             ->add('person', EntityType::class, array(
                 'label' => 'Person:',
-                'class' => 'Pelagos:Person',
+                'class' => 'App:Person',
                 'choice_label' => function ($value, $key, $index) {
                     return $value->getLastName() . ', ' . $value->getFirstName() . ', ' . $value->getEmailAddress();
                 },
@@ -41,14 +43,14 @@ class PersonFundingOrganizationType extends AbstractType
             ))
             ->add('fundingOrganization', EntityType::class, array(
                 'label' => 'Funding Organization:',
-                'class' => 'Pelagos:FundingOrganization',
+                'class' => FundingOrganization::class,
                 'choice_label' => 'name',
                 'placeholder' => '[Please Select a Funding Organization]',
                 //'attr' => array('class' => 'hiddenFormField'),
             ))
             ->add('role', EntityType::class, array(
                 'label' => 'Role:',
-                'class' => 'Pelagos:FundingOrganizationRole',
+                'class' => FundingOrganizationRole::class,
                 'choice_label' => 'name',
                 'placeholder' => '[Please Select a Role]',
             ))
@@ -68,7 +70,7 @@ class PersonFundingOrganizationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Pelagos\Entity\PersonFundingOrganization',
+            'data_class' => 'App\Entity\PersonFundingOrganization',
             'allow_extra_fields' => true,
         ));
     }

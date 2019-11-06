@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Migrations;
+namespace DoctrineMigrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;

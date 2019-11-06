@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Exception;
+namespace App\Exception;
 
 /**
  * Custom exception for when an Entity is not deletable.

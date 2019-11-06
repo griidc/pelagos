@@ -1,7 +1,8 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Form;
+namespace App\Form;
 
+use App\Entity\FundingOrganization;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -43,7 +44,7 @@ class FundingCycleType extends AbstractType
             ))
             ->add('fundingOrganization', EntityType::class, array(
                 'label' => 'Funding Organization:',
-                'class' => 'Pelagos:FundingOrganization',
+                'class' => FundingOrganization::class,
                 'choice_label' => 'name',
                 'placeholder' => '[Please Select a Funding Organization]',
             ))
@@ -88,7 +89,7 @@ class FundingCycleType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Pelagos\Entity\FundingCycle',
+            'data_class' => 'App\Entity\FundingCycle',
             'allow_extra_fields' => true,
         ));
     }

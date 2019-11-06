@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Exception\POSIXifyAccount;
+namespace App\Exception;
 
 /**
  * Class AccountAlreadyPOSIXEnabledException.
