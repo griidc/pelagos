@@ -1,4 +1,4 @@
-{% extends "PelagosAppBundle:template:UI.html.twig" %}
+{% extends "template/UI.html.twig" %}
 {% block title %}DIF{% endblock %}
 
 {% block stylesheets %}
@@ -6,7 +6,7 @@
 
     <link href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.1/themes/default/style.min.css" rel="stylesheet" />
 
-    <link href="{{ asset('build/css/dif.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/dif.css') }}" rel="stylesheet" />
 {% endblock %}
 
 {% block javascripts %}
@@ -21,10 +21,10 @@
 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.1/jstree.min.js"></script>
 
-    <script type="text/javascript" src="{{ asset('build/js/common.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('build/js/geoviz.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('build/js/mapWizard.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('build/js/dif.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/common.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/geoviz.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/mapWizard.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/dif.js') }}"></script>
 
     <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
     <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
@@ -44,7 +44,7 @@
         To create a new DIF, begin by selecting the project title that you would like your dataset associated with from the drop down menu &ldquo;Project Title&rdquo;. To load an existing DIF, left click the dataset tile found in the &ldquo;Datasets&rdquo; list in the right hand panel. The red asterisk (<span class="emRequired"/>) is used to indicate required fields. Once a DIF is submitted, it will be locked to prevent additional changes. Please contact <a href="mailto:griidc@gomri.org?subject=DIF">griidc@gomri.org</a> with the dataset Unique Dataset Identifier (UDI) if you require additional assistance with the completion of this form.<br>
         <hr>
         <div id="statustext" class="statustext"></div>
-        {% include 'PelagosAppBundle:DIF:difForm.html.twig' %}
+        {% include 'DIF/difForm.html.twig' %}
     </div>
     </td>
     <td height="100%" valign="top">
@@ -91,23 +91,23 @@
                         <td>
                             <h3>Legend:&nbsp;
                                 <span class="statusicon" title="DIF is Open. DIF has been started and saved for this dataset, but has not yet been submitted to GRIIDC.">
-                                    <img id="imgcross" src="{{ asset('build/images/cross.png') }}">
+                                    <img id="imgcross" src="{{ asset('images/cross.png') }}">
                                     &nbsp;Open
                                 </span>&nbsp;-
                                 <span class="statusicon" title="DIF is locked and is in review. DIF has been completed and submitted to GRIIDC for review and approval.">
-                                    <img id="imgerror" src="{{ asset('build/images/error.png') }}">
+                                    <img id="imgerror" src="{{ asset('images/error.png') }}">
                                     &nbsp;Submitted
                                 </span>&nbsp;-
                                 <span class="statusicon" title="DIF is locked and approved. DIF has been submitted to GRIIDC and reviewed and approved by GRIIDC. It is locked to prevent additional changes.">
-                                    <img id="imgtick" src="{{ asset('build/images/tick.png') }}">
+                                    <img id="imgtick" src="{{ asset('images/tick.png') }}">
                                     &nbsp;Approved
                                 </span>&nbsp;-
                                 <span class="statusicon" title="This is a project that you are associated with through your GoMRI proposal or grant funding agreement that has datasets identified">
-                                    <img id="imgfolder" src="{{ asset('build/images/folder.png') }}">
+                                    <img id="imgfolder" src="{{ asset('images/folder.png') }}">
                                     &nbsp;Project
                                 </span>&nbsp;-
                                 <span class="statusicon" title="This is a project that you are associated with through your GoMRI proposal or grant funding agreement that does not yet have datasets identified.">
-                                    <img id="imgfoldergray" src="{{ asset('build/images/folder_gray.png') }}">
+                                    <img id="imgfoldergray" src="{{ asset('images/folder_gray.png') }}">
                                     &nbsp;Project Without Datasets
                                 </span>
                             </h3>
@@ -120,7 +120,7 @@
                             <div style="position:relative;height:100%;">
                                 <div id="diftree" class="diftree" data-research-groups="{{ research_groups }}">
                                     <a class="jstree-anchor" href="#">
-                                        <img id="imgthrobber" src="{{ asset('build/images/throbber.gif') }}">
+                                        <img id="imgthrobber" src="{{ asset('images/throbber.gif') }}">
                                         Loading...
                                     </a>
                                 </div>
@@ -139,5 +139,5 @@
 
 <div id="noresults" title="Search...">No Results Found.</div>
 <div class="modal" id="spinner"></div>
-<img id="imgCancel" src="{{ asset('build/images/cancel.png') }}" style="display:none">
+<img id="imgCancel" src="{{ asset('images/cancel.png') }}" style="display:none">
 {% endblock %}

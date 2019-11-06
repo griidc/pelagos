@@ -1,5 +1,5 @@
 <form class="entityForm" entityType="PersonFundingOrganization"
-{% include '@templates/forms/permissionsBlock.html.twig' with {'Entity': PersonFundingOrganization} %}
+{% include 'template/forms/permissionsBlock.html.twig' with {'Entity': PersonFundingOrganization} %}
 _action="{{path('pelagos_api_person_funding_organizations_post')}}">
 
     <input type="hidden" name="id" value="{{PersonFundingOrganization.getId}}">
@@ -16,6 +16,6 @@ _action="{{path('pelagos_api_person_funding_organizations_post')}}">
 
     {{ form_row(form.label) }}
 
-    {% include '@templates/forms/innerForm.html.twig' with {'Entity': PersonFundingOrganization} %}
+    {% include 'template/forms/innerForm.html.twig' with {'Entity': PersonFundingOrganization} %}
 
 </form>

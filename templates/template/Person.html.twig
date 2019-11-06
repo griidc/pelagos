@@ -1,10 +1,10 @@
-{% extends "PelagosAppBundle:template:UI.html.twig" %}
+{% extends "template/UI.html.twig" %}
 
 {% block javascripts %}
     {{ parent() }}
 
-    <script type="text/javascript" src="{{ asset('build/js/Person.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('build/js/entity/Person.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/Person.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/entity/Person.js') }}"></script>
 {% endblock %}
 
 {% block body %}
@@ -18,7 +18,7 @@
                 <td style="padding:10px;" width="60%" valign="top">
                     <div id="orgdetails">
                         <h2>Person Details</h2>
-                        {% include '@templates/forms/Person.html.twig' %}
+                        {% include 'template/forms/Person.html.twig' %}
                     </div>
                 </td>
                 </tr>
@@ -43,7 +43,7 @@
                                 <td>
                                     <div>
                                         <p>
-                                            {% include '@templates/forms/PersonFundingOrganization.html.twig' with {'PersonFundingOrganization': PersonFundingOrganization, 'form' : PersonFundingOrganizationForms[PersonFundingOrganization.getId]}%}
+                                            {% include 'template/forms/PersonFundingOrganization.html.twig' with {'PersonFundingOrganization': PersonFundingOrganization, 'form' : PersonFundingOrganizationForms[PersonFundingOrganization.getId]}%}
                                         </p>
                                     </div>
                                 </td>
@@ -65,12 +65,12 @@
                                     <b>Funding Cycle:</b> {{ PersonResearchGroup.researchGroup.fundingCycle.name }}
                                     <br>
                                     {% for personResearch in PersonResearchGroup.researchGroup.personResearchGroups %}
-                                        {% if personResearch.role.name ==  constant('Pelagos\\Bundle\\AppBundle\\DataFixtures\\ORM\\ResearchGroupRoles::LEADERSHIP') %}
+                                        {% if personResearch.role.name ==  constant('App\\Entity\\ResearchGroupRole::LEADERSHIP') %}
                                             <b>PI:</b> {{ personResearch.person.firstName }} {{ personResearch.person.lastName }}
                                         {% endif %}
                                     {% endfor %}
                                     <p>
-                                         {% include '@templates/forms/PersonResearchGroup.html.twig' with {'PersonResearchGroup': PersonResearchGroup, 'form' : PersonResearchGroupForms[PersonResearchGroup.getId], 'editlabel' : PersonResearchGroupEditLabel[PersonResearchGroup.getId]}%}
+                                         {% include 'template/forms/PersonResearchGroup.html.twig' with {'PersonResearchGroup': PersonResearchGroup, 'form' : PersonResearchGroupForms[PersonResearchGroup.getId], 'editlabel' : PersonResearchGroupEditLabel[PersonResearchGroup.getId]}%}
                                     </p>
                                 </div>
                             </td>

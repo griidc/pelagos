@@ -24,3 +24,18 @@
 
 {% endblock %}
 
+{% block body_text %}
+        Below are the list of DOIs that are out of sync in comparison to GRIIDC system.
+
+
+    {% if dois|length > 0 %}
+        No. of dois: {{ dois|length }}
+        {% for key, reasons in dois %}
+            {{ key }}
+            {% for value in reasons %}
+                {{ value }}
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}
