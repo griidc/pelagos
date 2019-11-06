@@ -1,40 +1,85 @@
 <?php
+namespace App\Controller\UI;
 
+use App\Entity\Dataset;
+use App\Handler\EntityHandler;
+use App\Event\LogActionItemEventDispatcher;
+use App\Exception\PersistenceException;
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+use App\Util\RabbitPublisher;
+use Doctrine\ORM\EntityManagerInterface;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Exception\PersistenceException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * The Dataset Restrictions Modifier controller.
- *
- * @Route("/dataset-restrictions")
  */
-class DatasetRestrictionsController extends UIController implements OptionalReadOnlyInterface
+class DatasetRestrictionsController extends AbstractController
 {
+    /**
+     * Class variable for dependency injection, an event dispatcher.
+     *
+     * @var LogActionItemEventDispatcher $logActionItemEventDispatcher
+     */
+    protected $logActionItemEventDispatcher;
+
+    /**
+     * Class variable for dependency injection - entityManager.
+     *
+     * @var EntityManagerInterface $entityManager
+     */
+    protected $entityManager;
+
+    /**
+     * Custom rabbitmq publisher.
+     *
+     * @var RabbitPublisher
+     */
+    protected $publisher;
+
+    /**
+     * Class constructor for Dependency Injections.
+     *
+     * @param LogActionItemEventDispatcher $logActionItemEventDispatcher A Pelagos action dispatcher.
+     * @param EntityManagerInterface       $entityManager                A Doctrine ORM entity manager.
+     * @param RabbitPublisher              $publisher                    Custom rabbitmq publisher.
+     */
+    public function __construct(
+        LogActionItemEventDispatcher $logActionItemEventDispatcher,
+        EntityManagerInterface $entityManager,
+        RabbitPublisher $publisher
+    ) {
+        $this->logActionItemEventDispatcher = $logActionItemEventDispatcher;
+        $this->entityManager = $entityManager;
+        $this->publisher = $publisher;
+    }
+
     /**
      * Dataset Restrictions Modifier UI.
      *
-     * @Route("")
+     * @Route(
+     *      "/dataset-restrictions",
+     *      name="pelagos_app_ui_datasetrestrictions_default",
+     *      methods={"GET"}
+     * )
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function defaultAction()
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
 
         $GLOBALS['pelagos']['title'] = 'Dataset Restrictions Modifier';
-        return $this->render('PelagosAppBundle:List:DatasetRestrictions.html.twig');
+        return $this->render('List/DatasetRestrictions.html.twig');
     }
 
     /**
@@ -43,23 +88,26 @@ class DatasetRestrictionsController extends UIController implements OptionalRead
      * This updates the dataset submission restrictions property.Dataset Submission PATCH API exists,
      * but doesn't work with Symfony.
      *
-     * @param Request $request HTTP Symfony Request object.
-     * @param string  $id      Dataset Submission ID.
+     * @param Request       $request       The HTTP request.
+     * @param string        $id            The entity ID of a Dataset.
+     * @param EntityHandler $entityHandler A Pelagos entity handler.
      *
-     * @Route("/{id}")
+     * @Route(
+     *      "/dataset-restrictions/{id}",
+     *      name="pelagos_app_ui_datasetrestrictions_post",
+     *      methods={"POST"}
+     * )
      *
-     * @Method("POST")
-     *
-     * @throws PersistenceException Exception thrown when update fails.
+     * @throws PersistenceException    Exception thrown when update fails.
      * @throws BadRequestHttpException Exception thrown when restriction key is null.
      *
      * @return Response
      */
-    public function postAction(Request $request, $id)
+    public function postAction(Request $request, string $id, EntityHandler $entityHandler)
     {
         $restrictionKey = $request->request->get('restrictions');
 
-        $datasets = $this->entityHandler->getBy(Dataset::class, array('id' => $id));
+        $datasets = $entityHandler->getBy(Dataset::class, array('id' => $id));
 
         // RabbitMQ message to update the DOI for the dataset.
         $rabbitMessage = array(
@@ -81,7 +129,7 @@ class DatasetRestrictionsController extends UIController implements OptionalRead
                 $datasetSubmission->setRestrictions($restrictionKey);
 
                 try {
-                    $this->entityHandler->update($datasetSubmission);
+                    $entityHandler->update($datasetSubmission);
                 } catch (PersistenceException $exception) {
                     throw new PersistenceException($exception->getMessage());
                 }
@@ -110,8 +158,9 @@ class DatasetRestrictionsController extends UIController implements OptionalRead
     {
        // Publish the message to DoiConsumer to update the DOI.
 
-        $this->get('old_sound_rabbit_mq.doi_issue_producer')->publish(
+        $this->publisher->publish(
             $rabbitMessage['body'],
+            RabbitPublisher::DOI_PRODUCER,
             $rabbitMessage['routing_key']
         );
     }
@@ -126,13 +175,12 @@ class DatasetRestrictionsController extends UIController implements OptionalRead
      *
      * @return void
      */
-    protected function dispatchLogRestrictionsEvent(Dataset $dataset, $actor, $restrictionsFrom, $restrictionsTo)
+    protected function dispatchLogRestrictionsEvent(Dataset $dataset, string $actor, string $restrictionsFrom, $restrictionsTo)
     {
-        $em = $this->container->get('doctrine')->getManager();
-        $this->container->get('pelagos.event.log_action_item_event_dispatcher')->dispatch(
+        $this->logActionItemEventDispatcher->dispatch(
             array(
                 'actionName' => 'Restriction Change',
-                'subjectEntityName' => $em->getClassMetadata(get_class($dataset))->getName(),
+                'subjectEntityName' => $this->entityManager->getClassMetadata(get_class($dataset))->getName(),
                 'subjectEntityId' => $dataset->getId(),
                 'payLoad' => array(
                     'userId' => $actor,

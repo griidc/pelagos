@@ -22,7 +22,7 @@ class PersonFundingOrganizationController extends AbstractController
      * The Person Funding Organization action.
      *
      * @param EntityHandler $entityHandler The entity handler.
-     * @param string        $id            The id of the entity to retrieve.
+     * @param integer       $id            The id of the entity to retrieve.
      *
      * @throws NotFoundHttpException When the person funding organization is not found.
      *
@@ -30,7 +30,7 @@ class PersonFundingOrganizationController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(EntityHandler $entityHandler, string $id = null)
+    public function defaultAction(EntityHandler $entityHandler, int $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {

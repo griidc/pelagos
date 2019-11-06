@@ -22,7 +22,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use App\Form\DatasetSubmissionType;
 use App\Form\DatasetSubmissionXmlFileType;
 
-use App\EventListener\EntityEventDispatcher;
+use App\Event\EntityEventDispatcher;
 
 use App\Entity\DataCenter;
 use App\Entity\DIF;
@@ -103,7 +103,7 @@ class DatasetSubmissionController extends AbstractController
      *
      * @throws BadRequestHttpException When xmlUploadForm is submitted without a file.
      *
-     * @Route("/dataset-submission", name="pelagos_app_ui_datasetsubmission_default")
+     * @Route("/dataset-submission", name="pelagos_app_ui_datasetsubmission_default", methods={"GET"})
      *
      * @return Response A Response instance.
      */
@@ -197,8 +197,8 @@ class DatasetSubmissionController extends AbstractController
     /**
      * The post action for Dataset Submission.
      *
-     * @param Request     $request The Symfony request object.
-     * @param string|null $id      The id of the Dataset Submission to load.
+     * @param Request      $request The Symfony request object.
+     * @param integer|null $id      The id of the Dataset Submission to load.
      *
      * @throws BadRequestHttpException When dataset submission has already been submitted.
      * @throws BadRequestHttpException When DIF has not yet been approved.
@@ -207,7 +207,7 @@ class DatasetSubmissionController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function postAction(Request $request, $id = null)
+    public function postAction(Request $request, int $id = null)
     {
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
 
@@ -269,7 +269,7 @@ class DatasetSubmissionController extends AbstractController
 
             foreach ($this->messages as $message) {
                 foreach ($this->messages as $message) {
-                    $this->publisher->publish($message['body'], $message['routing_key']);
+                    $this->publisher->publish($message['body'], RabbitPublisher::DATASET_SUBMISSION_PRODUCER, $message['routing_key']);
                 }
             }
 
@@ -333,14 +333,14 @@ class DatasetSubmissionController extends AbstractController
     /**
      * Make the submission form and return it.
      *
-     * @param string            $udi               The UDI entered by the user.
+     * @param string|null       $udi               The UDI entered by the user.
      * @param Dataset           $dataset           The Dataset.
      * @param DatasetSubmission $datasetSubmission The Dataset Submission.
      * @param array             $xmlStatus         Error message when loading XML.
      *
      * @return Response
      */
-    protected function makeSubmissionForm(string $udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null)
+    protected function makeSubmissionForm(?string $udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null)
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;

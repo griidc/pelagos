@@ -25,7 +25,7 @@ class ResearchGroupController extends AbstractController
      * The Research Group action.
      *
      * @param EntityHandler $entityHandler The Entity Handler.
-     * @param string        $id            The id of the entity to retrieve.
+     * @param integer       $id            The id of the entity to retrieve.
      *
      * @throws NotFoundHttpException When the research group was not found.
      *
@@ -33,7 +33,7 @@ class ResearchGroupController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(EntityHandler $entityHandler, string $id = null)
+    public function defaultAction(EntityHandler $entityHandler, int $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {

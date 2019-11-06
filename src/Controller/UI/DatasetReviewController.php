@@ -17,7 +17,7 @@ use App\Form\DatasetSubmissionType;
 
 use App\Handler\EntityHandler;
 
-use App\EventListener\EntityEventDispatcher;
+use App\Event\EntityEventDispatcher;
 
 use App\Entity\Account;
 use App\Entity\Dataset;
@@ -88,7 +88,7 @@ class DatasetReviewController extends AbstractController
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("/dataset-review", name="pelagos_app_ui_datasetreview_default")
+     * @Route("/dataset-review", name="pelagos_app_ui_datasetreview_default", methods={"GET"})
      *
      * @return Response A Response instance.
      */
@@ -205,7 +205,7 @@ class DatasetReviewController extends AbstractController
                             break;
                         case (empty($datasetSubmissionReview->getReviewEndDateTime())
                             and $datasetSubmissionReview->getReviewedBy() !== $this->getUser()->getPerson()):
-                            $reviewerUserName = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
+                            $reviewerUserName = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy()->getId())->getUserId();
                             $this->addToFlashDisplayQueue($request, $udi, 'locked', $reviewerUserName);
                             break;
                     }
@@ -464,8 +464,8 @@ class DatasetReviewController extends AbstractController
     /**
      * The post action for Dataset Review.
      *
-     * @param Request     $request The Symfony request object.
-     * @param string|null $id      The id of the Dataset Submission to load.
+     * @param Request      $request The Symfony request object.
+     * @param integer|null $id      The id of the Dataset Submission to load.
      *
      * @throws BadRequestHttpException When dataset submission has already been submitted.
      * @throws BadRequestHttpException When DIF has not yet been approved.
@@ -474,7 +474,7 @@ class DatasetReviewController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function postAction(Request $request, $id = null)
+    public function postAction(Request $request, int $id = null)
     {
         // set to default event
         $eventName = 'end_review';
@@ -538,7 +538,7 @@ class DatasetReviewController extends AbstractController
 
             //use rabbitmq to process dataset file and persist the file details.
             foreach ($this->messages as $message) {
-                $this->publisher->publish($message['body'], $message['routing_key']);
+                $this->publisher->publish($message['body'], RabbitPublisher::DATASET_SUBMISSION_PRODUCER, $message['routing_key']);
             }
             $reviewedBy = $datasetSubmission->getDatasetSubmissionReview()->getReviewEndedBy()->getFirstName();
 
