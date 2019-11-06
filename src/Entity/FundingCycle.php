@@ -240,13 +240,13 @@ class FundingCycle extends Entity
     /**
      * Setter for description.
      *
-     * @param string $description Description of funding cycle.
+     * @param string|null $description Description of funding cycle.
      *
      * @access public
      *
      * @return void
      */
-    public function setDescription(string $description)
+    public function setDescription(?string $description)
     {
         $this->description = $description;
     }
@@ -292,13 +292,13 @@ class FundingCycle extends Entity
     /**
      * Setter for url.
      *
-     * @param string $url Funding organization's Website URL.
+     * @param string|null $url Funding organization's Website URL.
      *
      * @access public
      *
      * @return void
      */
-    public function setUrl(string $url)
+    public function setUrl(?string $url)
     {
         $this->url = $url;
     }
@@ -382,13 +382,13 @@ class FundingCycle extends Entity
     /**
      * Setter for udiPrefix.
      *
-     * @param string $udiPrefix The prefix of the UDI for this Funding Cycle.
+     * @param string|null $udiPrefix The prefix of the UDI for this Funding Cycle.
      *
      * @access public
      *
      * @return void
      */
-    public function setUdiPrefix(string $udiPrefix)
+    public function setUdiPrefix(?string $udiPrefix)
     {
         $this->udiPrefix = $udiPrefix;
     }
@@ -408,21 +408,15 @@ class FundingCycle extends Entity
     /**
      * Setter for sortOrder.
      *
-     * @param integer $position The position to set in the sort ordering.
+     * @param integer|null $position The position to set in the sort ordering.
      *
      * @access public
      *
-     * @throws \InvalidArgumentException If parameter passed is neither integer or null.
-     *
      * @return void
      */
-    public function setSortOrder(int $position)
+    public function setSortOrder(?int $position)
     {
-        if (is_int($position) or null === $position) {
-            $this->sortOrder = $position;
-        } else {
-            throw new \InvalidArgumentException('Unexpected input.  This should either be an int or null.');
-        }
+        $this->sortOrder = $position;
     }
 
     /**

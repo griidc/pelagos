@@ -465,13 +465,13 @@ class Account extends Entity implements UserInterface, EquatableInterface
     /**
      * Set the home directory for this account.
      *
-     * @param string $homeDir The home directory.
+     * @param string|null $homeDirectory The home directory.
      *
      * @return void
      */
-    public function setHomeDirectory(string $homeDir)
+    public function setHomeDirectory(?string $homeDirectory)
     {
-        $this->homeDirectory = $homeDir;
+        $this->homeDirectory = $homeDirectory;
     }
 
     /**

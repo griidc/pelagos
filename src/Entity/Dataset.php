@@ -211,11 +211,11 @@ class Dataset extends Entity
     /**
      * Sets the UDI for this Dataset.
      *
-     * @param string $udi The UDI for this Dataset.
+     * @param string|null $udi The UDI for this Dataset.
      *
      * @return void
      */
-    public function setUdi(string $udi)
+    public function setUdi(?string $udi)
     {
         $this->udi = $udi;
     }
@@ -543,11 +543,11 @@ class Dataset extends Entity
     /**
      * Sets the issue tracking ticket for this Dataset.
      *
-     * @param string $issueTrackingTicket The identifier for an issue tracking ticket related to this Dataset.
+     * @param string|null $issueTrackingTicket The identifier for an issue tracking ticket related to this Dataset.
      *
      * @return void
      */
-    public function setIssueTrackingTicket(string $issueTrackingTicket)
+    public function setIssueTrackingTicket(?string $issueTrackingTicket)
     {
         $this->issueTrackingTicket = $issueTrackingTicket;
     }
