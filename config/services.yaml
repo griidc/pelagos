@@ -6,6 +6,8 @@
 parameters:
     download_base_directory: '%env(DOWNLOAD_BASE_DIRECTORY)%'
     download_base_url: '%env(DOWNLOAD_BASE_URL)%'
+    issue_tracking_base_url: '%env(ISSUE_TRACKING_BASE_URL)%'
+    homedir_prefix: '%env(HOMEDIR_PREFIX)%'
 
 services:
     # default configuration for services in *this* file
