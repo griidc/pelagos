@@ -1,12 +1,10 @@
 <?php
 
-namespace Pelagos\Event;
+namespace App\Event;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use Pelagos\Entity\Entity;
-
-use Pelagos\Event\EntityEvent;
+use App\Entity\Entity;
 
 /**
  * An entity event dispatcher.
@@ -38,7 +36,7 @@ class EntityEventDispatcher
      *
      * @return void
      */
-    public function dispatch(Entity $entity, $entityEventName)
+    public function dispatch(Entity $entity, string $entityEventName)
     {
         $this->eventDispatcher->dispatch(
             'pelagos.entity.' . $entity->getUnderscoredName() . '.' . $entityEventName,

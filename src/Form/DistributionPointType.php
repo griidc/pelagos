@@ -1,10 +1,8 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Form;
+namespace App\Form;
 
-use Pelagos\Entity\DistributionPoint;
-
-
+use App\Entity\DataCenter;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
@@ -15,6 +13,8 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use App\Entity\DistributionPoint;
 
 /**
  * A form for creating Distribution Point.
@@ -36,7 +36,7 @@ class DistributionPointType extends AbstractType
         $builder
             ->add('dataCenter', EntityType::class, array(
                 'label' => 'Distribution Contact:',
-                'class' => 'Pelagos:DataCenter',
+                'class' => DataCenter::class,
                 'choice_value' => 'id',
                 'choice_label' => 'organizationName',
                 'required' => true,
@@ -67,7 +67,7 @@ class DistributionPointType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Pelagos\Entity\DistributionPoint',
+            'data_class' => 'App\Entity\DistributionPoint',
             'allow_extra_fields' => true,
         ));
     }

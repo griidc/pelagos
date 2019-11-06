@@ -1,9 +1,9 @@
 <?php
 
-namespace Pelagos\Event;
+namespace App\Event;
 
-use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
-use Pelagos\Entity\Account;
+use App\Entity\Account;
+use App\Entity\ResearchGroupRole;
 
 /**
  * Listener class for Account-related events.
@@ -23,13 +23,13 @@ class AccountListener extends EventListener
 
         // email User
         $this->sendMailMsg(
-            $this->twig->loadTemplate('@Email/Account/user.account-created.email.twig'),
+            $this->twig->load('Email/Account/user.account-created.email.twig'),
             array('account' => $account),
             array($account->getPerson())
         );
 
         // email Data Managers
-        $template = $this->twig->loadTemplate('@Email/Account/data-managers.account-created.email.twig');
+        $template = $this->twig->load('Email/Account/data-managers.account-created.email.twig');
         $this->sendMailMsg($template, array('account' => $account), $this->getDMsFromAccount($account));
     }
 
@@ -38,7 +38,7 @@ class AccountListener extends EventListener
      *
      * @param Account $account An Account entity.
      *
-     * @return Array of Persons who are Data Managers for the Research Group tied back to the Account.
+     * @return array Array of Persons who are Data Managers for the Research Group tied back to the Account.
      */
     protected function getDMsFromAccount(Account $account)
     {
@@ -48,7 +48,7 @@ class AccountListener extends EventListener
         foreach ($researchGroups as $rg) {
             $prgs = $rg->getPersonResearchGroups();
             foreach ($prgs as $prg) {
-                if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
+                if ($prg->getRole()->getName() == ResearchGroupRole::DATA) {
                     $recipientPeople[] = $prg->getPerson();
                 }
             }
@@ -87,7 +87,7 @@ class AccountListener extends EventListener
 
         // email User
         $this->sendMailMsg(
-            $this->twig->loadTemplate('@Email/Account/UsernameRetrieval.email.twig'),
+            $this->twig->load('Email/Account/UsernameRetrieval.email.twig'),
             array('person' => $account->getPerson()),
             array($account->getPerson())
         );

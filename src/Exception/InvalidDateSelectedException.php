@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Pelagos\Exception;
+namespace App\Exception;
 
 /**
  * Class InvalidDateSelectedException.
