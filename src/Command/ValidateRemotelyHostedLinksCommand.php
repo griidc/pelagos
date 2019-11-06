@@ -1,28 +1,83 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Command;
+namespace App\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DataRepositoryRole;
-use Pelagos\Entity\PersonDataRepository;
+use App\Util\UrlValidation;
+use App\Util\MailSender;
 
-use Pelagos\Util\UrlValidation;
+use Twig\Environment;
 
 /**
  * Command to validate the links of remotely hosted datasets.
  *
- * @see ContainerAwareCommand
+ * @see Command
  */
-class ValidateRemotelyHostedLinksCommand extends ContainerAwareCommand
+class ValidateRemotelyHostedLinksCommand extends Command
 {
+    /**
+     * The Command name.
+     *
+     * @var string $defaultName
+     */
+    protected static $defaultName = 'pelagos:validate-remotely-hosted';
+
+    /**
+     * A Doctrine ORM EntityManager instance.
+     *
+     * @var EntityManagerInterface $entityManager
+     */
+    protected $entityManager;
+
+    /**
+     * Custom swiftmailer instance.
+     *
+     * @var MailSender
+     */
+    protected $mailer;
+
+    /**
+     * Twig environment instance.
+     *
+     * @var Environment
+     */
+    protected $twig;
+
+    /**
+     * Url validation utility class instance.
+     *
+     * @var UrlValidation
+     */
+    protected $urlValidation;
+
+    /**
+     * Class constructor for dependency injection.
+     *
+     * @param EntityManagerInterface $entityManager A Doctrine ORM EntityManager instance.
+     * @param MailSender             $mailer        Custom swiftmailer instance.
+     * @param Environment            $twig          Twig environment instance.
+     * @param UrlValidation          $urlValidation Url validation utility class instance.
+     */
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        MailSender $mailer,
+        Environment $twig,
+        UrlValidation $urlValidation
+    ) {
+        $this->entityManager = $entityManager;
+        $this->mailer = $mailer;
+        $this->twig = $twig;
+        $this->urlValidation = $urlValidation;
+        parent::__construct();
+    }
+
     /**
      * Configures the current command.
      *
@@ -30,9 +85,7 @@ class ValidateRemotelyHostedLinksCommand extends ContainerAwareCommand
      */
     protected function configure()
     {
-        $this
-            ->setName('dataset:validate-remotely-hosted')
-            ->setDescription('Validate links for remotely hosted datasets.');
+        $this->setDescription('Validate links for remotely hosted datasets.');
     }
 
     /**
@@ -45,9 +98,7 @@ class ValidateRemotelyHostedLinksCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
-
-        $datasets = $entityManager->getRepository(Dataset::class)->findBy(
+        $datasets = $this->entityManager->getRepository(Dataset::class)->findBy(
             array(
                 'availabilityStatus' =>
                     array(
@@ -55,14 +106,13 @@ class ValidateRemotelyHostedLinksCommand extends ContainerAwareCommand
                     )
             )
         );
-        $urlValidationService = new UrlValidation();
         $errorUdi = array();
 
         foreach ($datasets as $dataset) {
             $datasetSubmission = $dataset->getDatasetSubmission();
 
             if ($datasetSubmission instanceof DatasetSubmission) {
-                $httpResponse = $urlValidationService->validateUrl($datasetSubmission->getDatasetFileUri());
+                $httpResponse = $this->urlValidation->validateUrl($datasetSubmission->getDatasetFileUri());
                 if ($httpResponse === true) {
                     $httpCode = 200;
                 } else {
@@ -72,21 +122,16 @@ class ValidateRemotelyHostedLinksCommand extends ContainerAwareCommand
                 $datasetSubmission->setDatasetFileUrlStatusCode($httpCode);
                 $datasetSubmission->setDatasetFileUrlLastCheckedDate(new \DateTime('now', new \DateTimeZone('UTC')));
             }
-            $entityManager->persist($datasetSubmission);
-            $entityManager->flush();
+            $this->entityManager->persist($datasetSubmission);
+            $this->entityManager->flush();
         }
 
         if (!empty($errorUdi)) {
-            $message = \Swift_Message::newInstance()
-                ->setSubject('Error Log - List of Remotely Hosted Datasets links failed')
-                ->setFrom(array('griidc@gomri.org' => 'GRIIDC'))
-                ->setTo(array('griidc@gomri.org' => 'GRIIDC'))
-                ->setCharset('UTF-8')
-                ->setBody($this->getContainer()->get('templating')->render(
-                    'PelagosAppBundle:Email:data-repository-managers.error-remotely-hosted.email.twig',
-                    array('listOfUdi' => $errorUdi)
-                ), 'text/html');
-            $this->getContainer()->get('mailer')->send($message);
+            $this->mailer->sendEmailMessage(
+                $this->twig->load('Email/data-repository-managers.error-remotely-hosted.email.twig'),
+                array('listOfUdi' => $errorUdi),
+                array('griidc@gomri.org' => 'GRIIDC')
+            );
         }
     }
 }
