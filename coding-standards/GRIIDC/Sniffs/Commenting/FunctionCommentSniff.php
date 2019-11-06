@@ -1,16 +1,9 @@
 <?php
-/**
- * Extends Squiz's function DocBlock rules.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- */
+namespace GRIIDC\Sniffs\Commenting;
 
-if (class_exists('Squiz_Sniffs_Commenting_FunctionCommentSniff', true) === false) {
-    throw new PHP_CodeSniffer_Exception('Class Squiz_Sniffs_Commenting_FunctionCommentSniff not found');
-}
+use PHP_CodeSniffer\Standards\Squiz\Sniffs\Commenting\FunctionCommentSniff as SquizFunctionCommentSniff;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Files\File;
 
 /**
  * Extends Squiz's function DocBlock rules.
@@ -18,10 +11,8 @@ if (class_exists('Squiz_Sniffs_Commenting_FunctionCommentSniff', true) === false
  * Extends Squiz's function DocBlock rules to:
  *   - require the @return tag to be the last tag in the DocBlock
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
  */
-class GRIIDC_Sniffs_Commenting_FunctionCommentSniff extends Squiz_Sniffs_Commenting_FunctionCommentSniff
+class FunctionCommentSniff extends SquizFunctionCommentSniff
 {
 
 
@@ -35,7 +26,7 @@ class GRIIDC_Sniffs_Commenting_FunctionCommentSniff extends Squiz_Sniffs_Comment
      *
      * @return void
      */
-    protected function processReturn(PHP_CodeSniffer_File $phpcsFile, $stackPtr, $commentStart)
+    protected function processReturn(File $phpcsFile, $stackPtr, $commentStart)
     {
         parent::processReturn($phpcsFile, $stackPtr, $commentStart);
 
