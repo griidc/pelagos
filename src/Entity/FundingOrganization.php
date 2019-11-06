@@ -364,13 +364,13 @@ class FundingOrganization extends Entity
     /**
      * Setter for logo.
      *
-     * @param string|resource|null $logo Containing byte string of logo.
+     * @param string|resource $logo Containing byte string of logo.
      *
      * @access public
      *
      * @return void
      */
-    public function setLogo(?$logo)
+    public function setLogo($logo)
     {
         $this->logo = $logo;
     }
