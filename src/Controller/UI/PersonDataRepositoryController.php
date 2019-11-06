@@ -1,49 +1,51 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
-use Pelagos\Bundle\AppBundle\Form\PersonDataRepositoryType;
+use App\Entity\PersonDataRepository;
+use App\Form\PersonDataRepositoryType;
+use App\Handler\EntityHandler;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
  */
-class PersonDataRepositoryController extends UIController implements OptionalReadOnlyInterface
+class PersonDataRepositoryController extends AbstractController
 {
     /**
      * The Person Research Group action.
      *
-     * @param string $id The id of the entity to retrieve.
+     * @param EntityHandler $entityHandler The entity handler.
+     * @param integer       $id            The id of the entity to retrieve.
      *
-     * @Route("/person-data-repository/{id}")
+     * @Route("/person-data-repository/{id}", name="pelagos_app_ui_persondatarepository_default")
      *
      * @return Response A Response instance.
      */
-    public function defaultAction($id = null)
+    public function defaultAction(EntityHandler $entityHandler, int $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
 
         $ui = array();
 
         if (isset($id)) {
-            $personDataRepository = $this->entityHandler->get('Pelagos:PersonDataRepository', $id);
+            $personDataRepository = $entityHandler->get(PersonDataRepository::class, $id);
         } else {
-            $personDataRepository = new \Pelagos\Entity\PersonDataRepository;
+            $personDataRepository = new \App\Entity\PersonDataRepository;
         }
 
         $form = $this->get('form.factory')->createNamed(null, PersonDataRepositoryType::class, $personDataRepository);
 
         $ui['PersonDataRepository'] = $personDataRepository;
         $ui['form'] = $form->createView();
-        $ui['entityService'] = $this->entityHandler;
 
-        return $this->render('PelagosAppBundle:template:PersonDataRepository.html.twig', $ui);
+        return $this->render('template/PersonDataRepository.html.twig', $ui);
     }
 }

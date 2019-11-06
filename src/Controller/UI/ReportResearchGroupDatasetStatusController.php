@@ -1,10 +1,12 @@
 <?php
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
-use Pelagos\Bundle\AppBundle\Form\ReportResearchGroupDatasetStatusType;
-use Pelagos\Entity\ResearchGroup;
+namespace App\Controller\UI;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use App\Form\ReportResearchGroupDatasetStatusType;
+use App\Entity\ResearchGroup;
+
+use App\Handler\EntityHandler;
+use Symfony\Component\Routing\Annotation\Route;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,8 +14,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * A controller for a Report of Research Groups and related Datasets.
- *
- * @Route("report-researchgroup-dataset-status")
  *
  * @return Response A Symfony Response instance.
  */
@@ -31,21 +31,22 @@ class ReportResearchGroupDatasetStatusController extends ReportController
     /**
      * The default action.
      *
-     * @param Request $request         Message information for this Request.
-     * @param integer $researchGroupId The identifier for the Research Group subject of the report.
+     * @param Request       $request         Message information for this Request.
+     * @param EntityHandler $entityHandler   The entity handler.
+     * @param integer       $researchGroupId The identifier for the Research Group subject of the report.
      *
-     * @Route("")
+     * @Route("/report-researchgroup-dataset-status", name="pelagos_app_ui_reportresearchgroupdatasetstatus_default")
      *
      * @return Response|StreamedResponse A Symfony Response instance.
      */
-    public function defaultAction(Request $request, $researchGroupId = null)
+    public function defaultAction(Request $request, EntityHandler $entityHandler, int $researchGroupId = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
         //  fetch all the Research Groups
-        $allResearchGroups = $this->get('pelagos.entity.handler')->getAll(ResearchGroup::class, array('name' => 'ASC'));
+        $allResearchGroups = $entityHandler->getAll(ResearchGroup::class, array('name' => 'ASC'));
         //  put all the names in an array with the associated doctrine id
         $researchGroupNames = array();
         foreach ($allResearchGroups as $rg) {
@@ -61,7 +62,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
                 $researchGroupId = $form->getData()['ResearchGroupSelector'];
-                $researchGroup = $this->get('pelagos.entity.handler')
+                $researchGroup = $entityHandler
                    ->getBy(ResearchGroup::class, ['id' => $researchGroupId])[0];
 
                 return $this->writeCsvResponse(
@@ -71,7 +72,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
             }
         }
         return $this->render(
-            'PelagosAppBundle:template:ReportResearchGroupDatasetStatus.html.twig',
+            'Reports/ReportResearchGroupDatasetStatus.html.twig',
             array('form' => $form->createView())
         );
     }
@@ -150,7 +151,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      *
      * @return string
      */
-    private function createCsvReportFileName($researchGroupName, $researchGroupId)
+    private function createCsvReportFileName(string $researchGroupName, string $researchGroupId)
     {
         $nowDateTimeString = date(self::REPORTFILENAMEDATETIMEFORMAT);
         $researchGroupNameSubstring = substr($researchGroupName, 0, self::MAXRESEARCHGROUPLENGTH);

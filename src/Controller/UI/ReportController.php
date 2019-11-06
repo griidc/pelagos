@@ -1,15 +1,15 @@
 <?php
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
+namespace App\Controller\UI;
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use DateTime;
 
 /**
  * This abstract controller provide a template for reports.
- *
- * @package Pelagos\Bundle\AppBundle\Controller\UI
  */
-abstract class ReportController extends UIController
+abstract class ReportController extends AbstractController
 {
     //Datetime format used to put the date and time in the report file name
     const FILENAME_DATETIMEFORMAT = 'Y-m-d';
