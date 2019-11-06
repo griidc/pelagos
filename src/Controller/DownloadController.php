@@ -149,7 +149,7 @@ class DownloadController extends AbstractController
             'udi' => $dataset->getUdi(),
             'availability' => $dataset->getAvailabilityStatus()
         );
-        
+
         if ($datasetSubmission instanceof DatasetSubmission) {
             $datasetInfo['filename'] = $datasetSubmission->getDatasetFileName();
             $datasetInfo['fileSize'] = TwigExtentions::formatBytes($datasetSubmission->getDatasetFileSize(), 2);
