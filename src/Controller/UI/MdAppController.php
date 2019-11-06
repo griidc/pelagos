@@ -25,13 +25,6 @@ use App\Util\MdappLogger;
 class MdAppController extends AbstractController
 {
     /**
-     * Jira issue tracker.
-     *
-     * @var string issueTrackingBaseUrl
-     */
-    protected $issueTrackingBaseUrl;
-
-    /**
      * A Doctine ORM Entity Handler.
      *
      * @var EntityHandler entityHandler
@@ -45,7 +38,6 @@ class MdAppController extends AbstractController
      */
     public function __construct(EntityHandler $entityHandler)
     {
-        $this->issueTrackingBaseUrl = $this->getParameter('issue_tracking_base_url');
         $this->entityHandler = $entityHandler;
     }
 
@@ -142,7 +134,7 @@ class MdAppController extends AbstractController
         return $this->render(
             'MdApp/main.html.twig',
             array(
-                'issueTrackingBaseUrl' => $this->issueTrackingBaseUrl,
+                'issueTrackingBaseUrl' => $this->getParameter('issue_tracking_base_url'),
                 'm_dataset' => array(
                     'submitted' => $this->entityHandler->getBy(
                         Dataset::class,
