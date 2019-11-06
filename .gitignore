@@ -1,9 +1,9 @@
 .gitconfig
 config.ini
 config.php
-/app/config/parameters.yml
-/app/config/parameters_drupal_dev.yml
-/app/config/parameters_drupal_prod.yml
+/config/parameters.yml
+/config/parameters_drupal_dev.yml
+/config/parameters_drupal_prod.yml
 /app/config/*.local.yml
 /build/
 /phpunit.xml
@@ -26,7 +26,7 @@ bin/symfony_requirements
 /web/js
 /web/build
 /app/supervisor
-/src/Pelagos/Util/DOIutil.ini
+/src/Util/DOIutil.ini
 coverage
 /.idea
 /node_modules/*
