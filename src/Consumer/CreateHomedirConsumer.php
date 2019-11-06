@@ -1,13 +1,10 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Rabbit\Consumer;
+namespace App\Consumer;
 
-use Symfony\Component\Ldap\Exception\LdapException;
+use App\Entity\Account;
 
-use Pelagos\Entity\Account;
-use Pelagos\Entity\Person;
-
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -31,18 +28,18 @@ class CreateHomedirConsumer implements ConsumerInterface
     /**
      * The entity manager.
      *
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
     /**
      * Constructor.
      *
-     * @param EntityManager $entityManager The entity manager.
-     * @param Logger        $logger        A Monolog logger.
+     * @param EntityManagerInterface $entityManager The entity manager.
+     * @param Logger                 $logger        A Monolog logger.
      */
     public function __construct(
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         Logger $logger
     ) {
         $this->entityManager = $entityManager;
@@ -120,9 +117,9 @@ class CreateHomedirConsumer implements ConsumerInterface
     * @param string $path Path of directory or file to set ACL on.
     * @param string $acl  Actual rwx string to use in setting ACL.
     *
-    * @return Boolean True on success, false on failure.
+    * @return boolean True on success, false on failure.
     */
-    protected function setLinuxAcl($user, $path, $acl)
+    protected function setLinuxAcl(string $user, string $path, string $acl)
     {
         $outputLines = array();
         $status = true;

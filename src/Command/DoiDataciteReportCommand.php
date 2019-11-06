@@ -1,24 +1,30 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Command;
+namespace App\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\StreamOutput;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
+use App\Util\DOIutil;
 
 /**
  * This Symfony Command generates a Datacite DOI Report.
  *
- * @see ContainerAwareCommand
+ * @see Command
  */
-class DoiDataciteReportCommand extends ContainerAwareCommand
+class DoiDataciteReportCommand extends Command
 {
+    /**
+     * The Command name.
+     *
+     * @var string $defaultName
+     */
+    protected static $defaultName = 'pelagos:reports:doi-datacite-report';
+
     /**
      * A name of the file that will store the results of this report program.
      *
@@ -43,6 +49,33 @@ class DoiDataciteReportCommand extends ContainerAwareCommand
     protected $fileOutputArray;
 
     /**
+     * A Doctrine ORM EntityManager instance.
+     *
+     * @var EntityManagerInterface $entityManager
+     */
+    protected $entityManager;
+
+    /**
+     * DOI Utility class.
+     *
+     * @var DOIutil
+     */
+    protected $doiUtil;
+
+    /**
+     * Class constructor for dependency injection.
+     *
+     * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
+     * @param DOIutil                $doiUtil       Doi utility class instance.
+     */
+    public function __construct(EntityManagerInterface $entityManager, DOIutil $doiUtil)
+    {
+        $this->entityManager = $entityManager;
+        $this->doiUtil = $doiUtil;
+        parent::__construct();
+    }
+
+    /**
      * Configures the current command.
      *
      * @return void
@@ -50,7 +83,6 @@ class DoiDataciteReportCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('reports:doi-datacite-report')
             ->setDescription('DOI report from Datacite.')
             ->addArgument('outputFileName', InputArgument::REQUIRED, 'What is the output file path and name?');
     }
@@ -143,14 +175,12 @@ class DoiDataciteReportCommand extends ContainerAwareCommand
      */
     private function getDoiData(): array
     {
-        $client = new Client();
         $response = null;
         $doiJson = array();
         $pageNumber = 1;
 
         do {
-            $url = 'https://api.datacite.org/dois?client-id=tdl.griidc&page%5Bnumber%5D=' . $pageNumber . '&page%5Bsize%5D=1000';
-            $body = $this->getRestApiData($client, $url);
+            $body = $this->doiUtil->getDoiCollection($pageNumber);
             $doiJson[$pageNumber] = $body['data'];
             $pageNumber++;
         } while (array_key_exists('next', $body['links']));
@@ -212,28 +242,5 @@ class DoiDataciteReportCommand extends ContainerAwareCommand
         }
 
         return $resourceType;
-    }
-
-    /**
-     * Get a list of dois using Datacite REST API.
-     *
-     * @param Client $client Guzzle Http client instance.
-     * @param string $url    Url that needs to be fetched.
-     *
-     * @return array
-     */
-    private function getRestApiData(Client $client, string $url): array
-    {
-        $header = ['Accept' => 'application/vnd.api+json'];
-
-        try {
-            $response = $client->request('get', $url, $header);
-        } catch (GuzzleException $exception) {
-            echo $exception->getMessage();
-        }
-
-        $body = json_decode($response->getBody()->getContents(), true);
-
-        return $body;
     }
 }

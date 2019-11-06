@@ -1,20 +1,32 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Command;
+namespace App\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Doctrine\ORM\EntityManagerInterface;
+
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use Pelagos\Entity\Account;
+use Twig\Environment;
+
+use App\Util\MailSender;
+use App\Entity\Account;
 
 /**
  * Notify holders of accounts with soon to expire or expired passwords.
  *
- * @see ContainerAwareCommand
+ * @see Command
  */
-class AccountExpirationNotifyCommand extends ContainerAwareCommand
+class AccountExpirationNotifyCommand extends Command
 {
+    /**
+     * The Command name.
+     *
+     * @var string $defaultName
+     */
+    protected static $defaultName = 'pelagos:account-expiration-notify';
+
     /**
      * The Symfony Console output object.
      *
@@ -34,7 +46,69 @@ class AccountExpirationNotifyCommand extends ContainerAwareCommand
      *
      * @var string
      */
-    protected $maxPasswordAge;
+    protected $maximumPasswordAge;
+
+    /**
+     * Number of days for password expiration warning.
+     *
+     * @var string
+     */
+    protected $passwordExpiryWarn;
+
+    /**
+     * A Doctrine ORM EntityManager instance.
+     *
+     * @var EntityManagerInterface $entityManager
+     */
+    protected $entityManager;
+
+    /**
+     * Hostname of the current server.
+     *
+     * @var string
+     */
+    protected $hostName;
+
+    /**
+     * Custom swiftmailer instance.
+     *
+     * @var MailSender
+     */
+    protected $mailer;
+
+    /**
+     * Twig environment instance.
+     *
+     * @var Environment
+     */
+    protected $twig;
+
+    /**
+     * Class constructor for dependency injection.
+     *
+     * @param string                 $maximumPasswordAge ISO 8601 interval representing the maximum allowable password age.
+     * @param string                 $passwordExpiryWarn Number of days for password expiry warn to start.
+     * @param EntityManagerInterface $entityManager      An instance of entity manager.
+     * @param string                 $hostName           Hostname of the current server.
+     * @param MailSender             $mailer             Custom swiftmailer instance.
+     * @param Environment            $twig               Twig environment variable.
+     */
+    public function __construct(
+        string $maximumPasswordAge,
+        string $passwordExpiryWarn,
+        EntityManagerInterface $entityManager,
+        string $hostName,
+        MailSender $mailer,
+        Environment $twig
+    ) {
+        $this->maximumPasswordAge = $maximumPasswordAge;
+        $this->passwordExpiryWarn = $passwordExpiryWarn;
+        $this->entityManager = $entityManager;
+        $this->hostName = $hostName;
+        $this->mailer = $mailer;
+        $this->twig = $twig;
+        parent::__construct();
+    }
 
     /**
      * Configures the current command.
@@ -43,9 +117,7 @@ class AccountExpirationNotifyCommand extends ContainerAwareCommand
      */
     protected function configure()
     {
-        $this
-            ->setName('account:expiration-notify')
-            ->setDescription('Notify holder of accounts with soon to expire or expired passwords.');
+        $this->setDescription('Notify holder of accounts with soon to expire or expired passwords.');
     }
 
     /**
@@ -54,7 +126,7 @@ class AccountExpirationNotifyCommand extends ContainerAwareCommand
      * @param InputInterface  $input  An InputInterface instance.
      * @param OutputInterface $output An OutputInterface instance.
      *
-     * @return integer Return 0 on success, or an error code otherwise.
+     * @return void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -64,25 +136,16 @@ class AccountExpirationNotifyCommand extends ContainerAwareCommand
         // Save output object for use in other methods.
         $this->output = $output;
 
-        // Construct a from array suitable for SwiftMailer.
-        $this->from = array(
-            $this->getContainer()->getParameter('mailer_from_addr') =>
-            $this->getContainer()->getParameter('mailer_from_name')
-        );
-
-        // Get the password max age parameter.
-        $this->maxPasswordAge = $this->getContainer()->getParameter('account_password_max_age');
-
         // Create a time stamp for the maximum password age.
         $maxAgeTimeStamp = new \DateTime('now');
-        $maxAgeTimeStamp->sub(new \DateInterval($this->maxPasswordAge));
+        $maxAgeTimeStamp->sub(new \DateInterval($this->maximumPasswordAge));
 
         // Create a time stamp for one day before the maximum password age.
         $minTimeStamp = clone $maxAgeTimeStamp;
         $minTimeStamp->sub(new \DateInterval('P1D'));
 
         $output->writeln('Notifying account holders of expired passwords' .
-            ' (last changed ' . $this->maxPasswordAge . ' ago' .
+            ' (last changed ' . $this->maximumPasswordAge . ' ago' .
             ', between ' . $minTimeStamp->format('c') . ' and ' . $maxAgeTimeStamp->format('c') . ')');
 
         // Get expired accounts.
@@ -91,13 +154,13 @@ class AccountExpirationNotifyCommand extends ContainerAwareCommand
         // Notify holders of expired accounts.
         $this->notifyAccountHolders(
             $expiredAccounts,
-            $this->getContainer()->get('twig')->loadTemplate(
-                'PelagosAppBundle:Account:NotifyExpired.email.twig'
+            $this->twig->load(
+                'Account/NotifyExpired.email.twig'
             )
         );
 
         // For each expiration warning interval.
-        foreach ($this->getContainer()->getParameter('account_password_expiration_warn') as $warnInterval) {
+        foreach (explode(',', $this->passwordExpiryWarn) as $warnInterval) {
             // Create a time stamp $warnInterval after $maxAgeTimeStamp.
             $warnTimeStamp = clone $maxAgeTimeStamp;
             $warnTimeStamp->add(new \DateInterval($warnInterval));
@@ -115,14 +178,11 @@ class AccountExpirationNotifyCommand extends ContainerAwareCommand
             // Notify holders of soon to expire accounts.
             $this->notifyAccountHolders(
                 $soonToExpireAccounts,
-                $this->getContainer()->get('twig')->loadTemplate(
-                    'PelagosAppBundle:Account:NotifyExpiringSoon.email.twig'
+                $this->twig->load(
+                    'Account/NotifyExpiringSoon.email.twig'
                 )
             );
         }
-
-        // Return success.
-        return 0;
     }
 
     /**
@@ -136,7 +196,7 @@ class AccountExpirationNotifyCommand extends ContainerAwareCommand
     protected function getAccounts(\DateTime $minTimeStamp, \DateTime $maxTimeStamp)
     {
         // Create a query builder.
-        $queryBuilder = $this->getContainer()->get('doctrine.orm.entity_manager')->createQueryBuilder();
+        $queryBuilder = $this->entityManager->createQueryBuilder();
 
         // Build a query to get all accounts with passwords last modified between $minTimeStamp and $maxTimeStamp.
         $queryBuilder
@@ -152,7 +212,6 @@ class AccountExpirationNotifyCommand extends ContainerAwareCommand
             )
             ->setParameter(1, $minTimeStamp)
             ->setParameter(2, $maxTimeStamp);
-
         // Return the query result.
         return $queryBuilder->getQuery()->getResult();
     }
@@ -160,12 +219,12 @@ class AccountExpirationNotifyCommand extends ContainerAwareCommand
     /**
      * Notify account holders.
      *
-     * @param array          $accounts      Array of accounts to notify holders.
-     * @param \Twig_Template $emailTemplate Twig email template to use for notification.
+     * @param array                 $accounts      Array of accounts to notify holders.
+     * @param \Twig\TemplateWrapper $emailTemplate Twig email template to use for notification.
      *
      * @return void
      */
-    protected function notifyAccountHolders(array $accounts, \Twig_Template $emailTemplate)
+    protected function notifyAccountHolders(array $accounts, \Twig\TemplateWrapper $emailTemplate)
     {
         foreach ($accounts as $account) {
             // Get the Person this Account belongs to.
@@ -173,7 +232,7 @@ class AccountExpirationNotifyCommand extends ContainerAwareCommand
 
             // Create a time stamp for when the password has expired or will expire.
             $expireTimeStamp = $account->getPasswordEntity()->getModificationTimeStamp();
-            $expireTimeStamp->add(new \DateInterval($this->maxPasswordAge));
+            $expireTimeStamp->add(new \DateInterval($this->maximumPasswordAge));
             $expireTimeStamp->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
 
             $this->output->write('  ' . $account->getUserId());
@@ -183,41 +242,19 @@ class AccountExpirationNotifyCommand extends ContainerAwareCommand
             // Construct an array for twig containing data needed for rendering the email template.
             $twigData = array(
                 'person' => $person,
-                'hostname' => $this->getContainer()->getParameter('hostname'),
+                'hostname' => $this->hostName,
                 'expireTimeStamp' => $expireTimeStamp,
             );
 
-            // Create a new SwiftMailer message using the email template.
-            $message = \Swift_Message::newInstance()
-                ->setFrom($this->from)
-                ->setTo(
-                    array(
-                        $person->getEmailAddress() => $person->getFirstName() . ' ' . $person->getLastName(),
-                    )
-                )
-                ->setSubject(
-                    $emailTemplate->renderBlock(
-                        'subject',
-                        array()
-                    )
-                )
-                ->setBody(
-                    $emailTemplate->renderBlock(
-                        'body_text',
-                        $twigData
-                    ),
-                    'text/plain'
-                )
-                ->addPart(
-                    $emailTemplate->renderBlock(
-                        'body_html',
-                        $twigData
-                    ),
-                    'text/html'
-                );
+            $mailData['recipient'] = $person;
 
-            // Send the message.
-            $this->getContainer()->get('mailer')->send($message);
+            $this->mailer->sendEmailMessage(
+                $emailTemplate,
+                $twigData,
+                array(
+                    $person->getEmailAddress() => $person->getFirstName() . ' ' . $person->getLastName(),
+                )
+            );
         }
     }
 }
