@@ -1,13 +1,13 @@
 <?php
 
-namespace Pelagos\Util;
+namespace App\Util;
 
 use Doctrine\ORM\EntityManager;
-use Pelagos\Entity\Account;
-use Pelagos\Entity\Person;
-use Pelagos\Component\Ldap\Ldap;
-use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
-use Pelagos\Exception\POSIXifyAccount\AccountAlreadyPOSIXEnabledException;
+use App\Entity\Account;
+use App\Entity\Person;
+use App\Util\Ldap\Ldap;
+use App\Handler\EntityHandler;
+use App\Exception\AccountAlreadyPOSIXEnabledException;
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 
 /**
@@ -79,9 +79,9 @@ class POSIXifyAccount
         EntityManager $entityManager,
         Ldap $ldap,
         EntityHandler $entityHandler,
-        $posixStartingUidNumber,
-        $posixGidNumber,
-        $homedirPrefix,
+        int $posixStartingUidNumber,
+        int $posixGidNumber,
+        string $homedirPrefix,
         Producer $producer
     ) {
         $this->entityManager = $entityManager;

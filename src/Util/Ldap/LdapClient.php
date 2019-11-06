@@ -1,14 +1,13 @@
 <?php
 
-namespace Pelagos\Component\Ldap;
+namespace App\Util\Ldap;
 
+use Symfony\Component\Ldap\Adapter\AdapterInterface;
 use Symfony\Component\Ldap\Exception\ConnectionException;
 use Symfony\Component\Ldap\Exception\LdapException;
 
 /**
- * An LDAP client class that implements Symfony's LdapClientInterface.
- *
- * @see Symfony\Component\Ldap\LdapClientInterface
+ * An LDAP client class.
  */
 class LdapClient
 {
@@ -74,12 +73,12 @@ class LdapClient
      * @throws LdapException When the ldap module is not loaded.
      */
     public function __construct(
-        $host = null,
-        $port = 389,
-        $version = 3,
-        $useSsl = false,
-        $useStartTls = false,
-        $optReferrals = false
+        string $host = null,
+        int $port = 389,
+        int $version = 3,
+        bool $useSsl = false,
+        bool $useStartTls = false,
+        bool $optReferrals = false
     ) {
         if (!extension_loaded('ldap')) {
             throw new LdapException('The ldap module is needed.');
@@ -111,7 +110,7 @@ class LdapClient
      *
      * @return void
      */
-    public function bind($dn = null, $password = null)
+    public function bind(string $dn = null, string $password = null)
     {
         if (!$this->connection) {
             $this->connect();
@@ -131,7 +130,7 @@ class LdapClient
      *
      * @return array|null
      */
-    public function find($dn, $query, $filter = '*')
+    public function find(string $dn, string $query, $filter = '*')
     {
         if (!is_array($filter)) {
             $filter = array($filter);
@@ -158,7 +157,7 @@ class LdapClient
      *
      * @return string
      */
-    public function escape($subject, $ignore = '', $flags = 0)
+    public function escape(string $subject, string $ignore = '', int $flags = 0)
     {
         $value = ldap_escape($subject, $ignore, $flags);
 
@@ -189,7 +188,7 @@ class LdapClient
      *
      * @return void
      */
-    public function add($dn, array $entry)
+    public function add(string $dn, array $entry)
     {
         if (false === @ldap_add($this->connection, $dn, $entry)) {
             throw new LdapException(ldap_error($this->connection));
@@ -209,7 +208,7 @@ class LdapClient
      *
      * @return void
      */
-    public function modify($dn, array $entry)
+    public function modify(string $dn, array $entry)
     {
         if (false === @ldap_modify($this->connection, $dn, $entry)) {
             throw new LdapException(ldap_error($this->connection));
@@ -231,7 +230,7 @@ class LdapClient
      *
      * @return void
      */
-    public function rename($dn, $newRdn, $newParent = null, $deleteOldRdn = true)
+    public function rename(string $dn, string $newRdn, $newParent = null, bool $deleteOldRdn = true)
     {
         if (false === @ldap_rename($this->connection, $dn, $newRdn, $newParent, $deleteOldRdn)) {
             throw new LdapException(ldap_error($this->connection));
@@ -247,7 +246,7 @@ class LdapClient
      *
      * @return void
      */
-    public function delete($dn)
+    public function delete(string $dn)
     {
         if (false === @ldap_delete($this->connection, $dn)) {
             throw new LdapException(ldap_error($this->connection));
@@ -267,7 +266,7 @@ class LdapClient
      *
      * @return void
      */
-    public function addValues($dn, array $entry)
+    public function addValues(string $dn, array $entry)
     {
         if (false === @ldap_mod_add($this->connection, $dn, $entry)) {
             throw new LdapException(ldap_error($this->connection));
@@ -289,7 +288,7 @@ class LdapClient
      *
      * @return void
      */
-    public function replaceValues($dn, array $entry)
+    public function replaceValues(string $dn, array $entry)
     {
         if (false === @ldap_mod_replace($this->connection, $dn, $entry)) {
             throw new LdapException(ldap_error($this->connection));
@@ -309,7 +308,7 @@ class LdapClient
      *
      * @return void
      */
-    public function deleteValues($dn, array $entry)
+    public function deleteValues(string $dn, array $entry)
     {
         if (false === @ldap_mod_del($this->connection, $dn, $entry)) {
             throw new LdapException(ldap_error($this->connection));

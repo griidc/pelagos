@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos;
+namespace App\Twig;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -16,7 +16,7 @@ class TwigEntityExtensions extends \Twig_Extension
      */
     public function getName()
     {
-        return 'Pelagos\Entity';
+        return 'App\Entity';
     }
 
     /**
@@ -74,14 +74,14 @@ class TwigEntityExtensions extends \Twig_Extension
                         $aVal = $accessor->getValue($aEntity, $property);
                         $bVal = $accessor->getValue($bEntity, $property);
                         // If the property value from 'a' is a reference to another entity.
-                        if (gettype($aVal) == 'object' and $aVal instanceof \Pelagos\Entity\Entity) {
+                        if (gettype($aVal) == 'object' and $aVal instanceof \App\Entity\Entity) {
                             // Put it in to $aEntity to allow further processing.
                             $aEntity = $aVal;
                             // Set $aVal to the entity's id in case we are comparing whole entities.
                             $aVal = $aVal->getId();
                         }
                         // If the property value from 'b' is a reference to another entity.
-                        if (gettype($bVal) == 'object' and $bVal instanceof \Pelagos\Entity\Entity) {
+                        if (gettype($bVal) == 'object' and $bVal instanceof \App\Entity\Entity) {
                             // Put it in to $bEntity to allow further processing.
                             $bEntity = $bVal;
                             // Set $bVal to the entity's id in case we are comparing whole entities.

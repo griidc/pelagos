@@ -1,5 +1,5 @@
 <?php
-namespace Pelagos\Util;
+namespace App\Util;
 
 use Doctrine\ORM\EntityManager;
 
@@ -18,11 +18,11 @@ class MdappLogger
     /**
      * Constructor for dependency injection.
      *
-     * @param string $logfile String with filepath.
+     * @param string $mdappLogfile String with filepath.
      */
-    public function __construct($logfile)
+    public function __construct(string $mdappLogfile)
     {
-        $this->logfile = $logfile;
+        $this->logfile = $mdappLogfile;
     }
 
     /**
@@ -32,7 +32,7 @@ class MdappLogger
      *
      * @return void
      */
-    public function writeLog($message)
+    public function writeLog(string $message)
     {
         $tz = ini_get('date.timezone');
         $timestamp = new \DateTime('now', new \DateTimeZone($tz));
@@ -41,5 +41,21 @@ class MdappLogger
             $timestamp->format('r') . ": $message\n",
             (FILE_APPEND | LOCK_EX)
         );
+    }
+
+    /**
+     * Get logfile entries for particular dataset UDI.
+     *
+     * @param string $udi The dataset UDI identifier.
+     *
+     * @return array Containing log entries for that UDI.
+     */
+    public function getlogEntriesByUdi(string $udi)
+    {
+
+        $rawlog = file($this->logfile);
+        $entries = array();
+        $entries = array_values(preg_grep("/$udi/i", $rawlog));
+        return $entries;
     }
 }

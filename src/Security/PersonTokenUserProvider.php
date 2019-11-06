@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Security;
+namespace App\Security;
 
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -8,10 +8,10 @@ use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundE
 use Symfony\Component\Security\Core\Exception\AuthenticationExpiredException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
-use Pelagos\Entity\Account;
-use Pelagos\Entity\PersonToken;
+use App\Entity\Account;
+use App\Entity\PersonToken;
 
 /**
  * A User Provider for Person Tokens.
@@ -30,9 +30,9 @@ class PersonTokenUserProvider implements UserProviderInterface
     /**
      * Constructor that intitializes the entity manager.
      *
-     * @param EntityManager $entityManager An instance of the Doctrine entity manager.
+     * @param EntityManagerInterface $entityManager An instance of the Doctrine entity manager.
      */
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }
@@ -50,6 +50,8 @@ class PersonTokenUserProvider implements UserProviderInterface
      *
      * @return Account The account for the given token string.
      */
+    // Next line to be ignored because implemented function does not have type-hint on $tokenString.
+    // phpcs:ignore
     public function loadUserByUsername($tokenString)
     {
         $personTokens = $this->entityManager->getRepository(PersonToken::class)->findBy(
@@ -98,6 +100,8 @@ class PersonTokenUserProvider implements UserProviderInterface
      *
      * @return boolean Whether the given class is supported.
      */
+    // Next line to be ignored because implemented function does not have type-hint on $class.
+    // phpcs:ignore
     public function supportsClass($class)
     {
         return Account::class === $class;

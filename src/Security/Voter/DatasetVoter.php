@@ -1,16 +1,16 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Security;
+namespace App\Security\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-use Pelagos\Entity\Account;
-use Pelagos\Entity\Dataset;
+use App\Entity\Account;
+use App\Entity\Dataset;
 
 /**
  * A voter to determine if a actions are possible by the user on a Dataset.
 
- * @package Pelagos\Bundle\AppBundle\Security
+ * @package App\Security\Voter
  */
 class DatasetVoter extends PelagosEntityVoter
 {
@@ -22,7 +22,7 @@ class DatasetVoter extends PelagosEntityVoter
      *
      * @return boolean True if the attribute and subject are supported, false otherwise.
      */
-    protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject) //phpcs:ignore
     {
         // Make sure the subject is an instance of Dataset
         if (!$subject instanceof Dataset) {
@@ -49,7 +49,7 @@ class DatasetVoter extends PelagosEntityVoter
      *
      * @return boolean True If the user has one of the target roles for any of the subject's DataRepositories.
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token) //phpcs:ignore
     {
         $user = $token->getUser();
 

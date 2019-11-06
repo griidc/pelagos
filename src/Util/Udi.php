@@ -1,10 +1,10 @@
 <?php
 
-namespace Pelagos\Util;
+namespace App\Util;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
-use Pelagos\Entity\Dataset;
+use App\Entity\Dataset;
 
 /**
  * A utility class for UDIs.
@@ -14,16 +14,16 @@ class Udi
     /**
      * The entity manager to use.
      *
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
     /**
      * Constructor.
      *
-     * @param EntityManager $entityManager The entity manager to use.
+     * @param EntityManagerInterface $entityManager The entity manager to use.
      */
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }

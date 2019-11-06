@@ -1,10 +1,10 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Security;
+namespace App\Security\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-use Pelagos\Entity\Account;
+use App\Entity\Account;
 
 /**
  * A voter for Accounts.
@@ -21,6 +21,8 @@ class AccountVoter extends PelagosEntityVoter
      *
      * @return boolean True if the attribute and subject are supported, false otherwise.
      */
+    // Next line to be ignored because implemented function does not have type-hint on $attribute.
+    // phpcs:ignore
     protected function supports($attribute, $subject)
     {
         // This voter only supports Accounts.
@@ -48,6 +50,8 @@ class AccountVoter extends PelagosEntityVoter
      *
      * @return boolean True if the attribute is allowed on the subject for the user specified by the token.
      */
+    // Next line to be ignored because implemented function does not have type-hint on $attribute.
+    // phpcs:ignore
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         // Get the user from the authentication token.

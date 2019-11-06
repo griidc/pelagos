@@ -1,12 +1,14 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Twig;
+namespace App\Twig;
 
 use Doctrine\Common\Collections\Collection;
 
-use Pelagos\Entity\DIF;
+use App\Entity\DIF;
 
-use Pelagos\Util\MaintenanceMode;
+use App\Util\MaintenanceMode;
+
+use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Custom Twig extensions for Pelagos.
@@ -30,12 +32,12 @@ class Extensions extends \Twig_Extension
     /**
      *  Constructor.
      *
-     * @param string          $kernelRootDir   The kernel root path.
+     * @param KernelInterface $kernel          The Symfony kernel.
      * @param MaintenanceMode $maintenanceMode The maintenance mode utility.
      */
-    public function __construct($kernelRootDir, MaintenanceMode $maintenanceMode)
+    public function __construct(KernelInterface $kernel, MaintenanceMode $maintenanceMode)
     {
-        $this->kernelRootDir = $kernelRootDir;
+        $this->kernelRootDir = $kernel->getRootDir();
         $this->maintenanceMode = $maintenanceMode;
     }
 
@@ -161,7 +163,7 @@ class Extensions extends \Twig_Extension
      *
      * @return string The evaluated string.
      */
-    public static function evaluate(\Twig_Environment $environment, array $context, $string)
+    public static function evaluate(\Twig_Environment $environment, array $context, string $string)
     {
         $loader = $environment->getLoader();
         $parsed = self::parseString($environment, $context, $string);
@@ -193,7 +195,7 @@ class Extensions extends \Twig_Extension
      *
      * @return Collection The filtered collection.
      */
-    public static function role(Collection $personAssociations, $roleName)
+    public static function role(Collection $personAssociations, string $roleName)
     {
         return $personAssociations->filter(
             function ($personAssociation) use ($roleName) {
@@ -211,7 +213,7 @@ class Extensions extends \Twig_Extension
      *
      * @return string The parsed string.
      */
-    protected static function parseString(\Twig_Environment $environment, array $context, $string)
+    protected static function parseString(\Twig_Environment $environment, array $context, string $string)
     {
         $environment->setLoader(new \Twig_Loader_Array());
         $template = $environment->createTemplate($string);
@@ -226,7 +228,7 @@ class Extensions extends \Twig_Extension
      *
      * @return string The xslt transformed xml.
      */
-    public function transformXml($xml, $xsl)
+    public function transformXml(string $xml, string $xsl)
     {
         if ($xml <> '' and $xml != null) {
             $xmlDoc = new \DOMDocument();
@@ -246,7 +248,7 @@ class Extensions extends \Twig_Extension
 
             // XSL template.
             $xslDoc = new \DOMDocument();
-            $xslDoc->load($this->kernelRootDir . '/../src/Pelagos/Bundle/AppBundle/Resources/views/xsl/' . $xsl);
+            $xslDoc->load($this->kernelRootDir . '/../templates/xsl/' . $xsl);
 
             // The Processor.
             $proc = new \XSLTProcessor();
@@ -259,13 +261,16 @@ class Extensions extends \Twig_Extension
     /**
      * Format bytes as a human-readable string (base 10).
      *
-     * @param integer $bytes     The bytes to format.
-     * @param integer $precision The the precision to use (default: 2).
+     * @param integer|null $bytes     The bytes to format.
+     * @param integer      $precision The the precision to use (default: 2).
      *
      * @return string
      */
-    public static function formatBytes($bytes, $precision = 2)
+    public static function formatBytes(?int $bytes, int $precision = 2) : string
     {
+        if (empty($bytes)) {
+            $bytes = 0;
+        }
         $units = array('B','KB','MB','GB','TB');
         for ($e = (count($units) - 1); $e > 0; $e--) {
             $one = pow(1000, $e);

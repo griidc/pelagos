@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Security;
+namespace App\Security;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,6 +46,8 @@ class PersonTokenAuthenticator implements SimplePreAuthenticatorInterface, Authe
      *
      * @return PreAuthenticatedToken|null A new authentication token or null if token is not set.
      */
+    // Next line to be ignored because implemented function does not have type-hint on $providerKey.
+    // phpcs:ignore
     public function createToken(Request $request, $providerKey)
     {
         $tokenString = $request->query->get('person_token');
@@ -75,6 +77,8 @@ class PersonTokenAuthenticator implements SimplePreAuthenticatorInterface, Authe
      *
      * @return PreAuthenticatedToken An authenticated Symfony authentication token.
      */
+    // Next line to be ignored because implemented function does not have type-hint on $providerKey.
+    // phpcs:ignore
     public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey)
     {
         if (!$userProvider instanceof PersonTokenUserProvider) {
@@ -106,6 +110,8 @@ class PersonTokenAuthenticator implements SimplePreAuthenticatorInterface, Authe
      *
      * @return boolean Whether the token is supported.
      */
+    // Next line to be ignored because implemented function does not have type-hint on $providerKey.
+    // phpcs:ignore
     public function supportsToken(TokenInterface $token, $providerKey)
     {
         return $token instanceof PreAuthenticatedToken && $token->getProviderKey() === $providerKey;
@@ -123,13 +129,13 @@ class PersonTokenAuthenticator implements SimplePreAuthenticatorInterface, Authe
     {
         if ($exception instanceof AuthenticationCredentialsNotFoundException) {
             return new Response(
-                $this->twig->render('PelagosAppBundle:template:InvalidToken.html.twig'),
+                $this->twig->render('template/InvalidToken.html.twig'),
                 403
             );
         }
         if ($exception instanceof AuthenticationExpiredException) {
             return new Response(
-                $this->twig->render('PelagosAppBundle:template:ExpiredToken.html.twig'),
+                $this->twig->render('template/ExpiredToken.html.twig'),
                 403
             );
         }

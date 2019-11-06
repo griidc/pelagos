@@ -1,15 +1,15 @@
 <?php
 
-namespace Pelagos\Util;
+namespace App\Util;
 
 use Doctrine\ORM\EntityManager;
 
-use Pelagos\Entity\DataCenter;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DistributionPoint;
-use Pelagos\Entity\Person;
-use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
-use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
+use App\Entity\DataCenter;
+use App\Entity\DatasetSubmission;
+use App\Entity\DistributionPoint;
+use App\Entity\Person;
+use App\Entity\PersonDatasetSubmissionDatasetContact;
+use App\Entity\PersonDatasetSubmissionMetadataContact;
 
 /**
  * A utility class for extracting information from ISO metadata.
@@ -79,7 +79,7 @@ class ISOMetadataExtractorUtil
      *
      * @return void
      */
-    protected static function setIfHas(DatasetSubmission &$ds, $setter, $value)
+    protected static function setIfHas(DatasetSubmission &$ds, string $setter, $value)
     {
         if (!empty($value)) {
             try {
@@ -97,7 +97,7 @@ class ISOMetadataExtractorUtil
      * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
      * @param EntityManager     $em  An entity manager.
      *
-     * @return Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
+     * @return array Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
      */
     public static function get1stEmailAddressesFrom1stPointOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
     {
@@ -135,7 +135,7 @@ class ISOMetadataExtractorUtil
      * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
      * @param EntityManager     $em  An entity manager.
      *
-     * @return Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
+     * @return array Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
      */
     public static function getAllEmailAddressesForAllPointsOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
     {
@@ -178,7 +178,7 @@ class ISOMetadataExtractorUtil
      * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
      * @param EntityManager     $em  An entity manager.
      *
-     * @return Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
+     * @return array Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
      */
     public static function extractPointsOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
     {
@@ -297,7 +297,7 @@ class ISOMetadataExtractorUtil
      * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
      * @param EntityManager     $em  An entity manager.
      *
-     * @return Array of DistributionPoint, or empty array if none.
+     * @return array Array of DistributionPoint, or empty array if none.
      */
     public static function extractDistributionPoint(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
     {
@@ -875,7 +875,7 @@ class ISOMetadataExtractorUtil
      *
      * @return string|null Item queried in xpath.
      */
-    protected static function querySingle(\SimpleXmlElement $xml, $xpath)
+    protected static function querySingle(\SimpleXmlElement $xml, string $xpath)
     {
         $query = @$xml->xpath($xpath);
 
@@ -912,7 +912,7 @@ class ISOMetadataExtractorUtil
      *
      * @return string|null Item queried in xpath.
      */
-    protected static function querySingleGml(\SimpleXmlElement $xml, $xpath)
+    protected static function querySingleGml(\SimpleXmlElement $xml, string $xpath)
     {
         $query = @$xml->xpath($xpath);
 
@@ -936,7 +936,7 @@ class ISOMetadataExtractorUtil
      *
      * @return array Result of items queried in xpath.
      */
-    protected static function queryMultiple(\SimpleXmlElement $xml, $xpath)
+    protected static function queryMultiple(\SimpleXmlElement $xml, string $xpath)
     {
         $query = @$xml->xpath($xpath);
 
@@ -963,7 +963,7 @@ class ISOMetadataExtractorUtil
      *
      * @return string|null The item at the given offset, or null.
      */
-    private static function getDelimitedItem($list, $offset)
+    private static function getDelimitedItem(string $list, int $offset)
     {
         // If null input given for list, return null.
         if (null === $list) {
@@ -1026,7 +1026,7 @@ class ISOMetadataExtractorUtil
      *
      * @return null|string
      */
-    private static function getXmlAttribute(\SimpleXMLElement $xmlObject, $attribute)
+    private static function getXmlAttribute(\SimpleXMLElement $xmlObject, string $attribute)
     {
         if (isset($xmlObject[$attribute])) {
             return (string) $xmlObject[$attribute];

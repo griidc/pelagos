@@ -1,12 +1,11 @@
 <?php
 
 
-namespace Pelagos\Bundle\AppBundle\Security;
+namespace App\Security\Voter;
 
-use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Pelagos\Entity\Account;
-use Pelagos\Entity\Person;
+use App\Entity\Account;
+use App\Entity\Person;
 
 /**
  * A voter to determine if a actions are possible by the user on a Person object.
@@ -23,7 +22,7 @@ class PersonVoter extends PelagosEntityVoter
      *
      * @return boolean True if the attribute and subject are supported, false otherwise.
      */
-    protected function supports($attribute, $object)
+    protected function supports($attribute, $object) //phpcs:ignore
     {
         // Make sure the object is an instance of Person
         if (!$object instanceof Person) {
@@ -50,7 +49,7 @@ class PersonVoter extends PelagosEntityVoter
      *
      * @return boolean True If the user has one of the target roles for any of the subject's DataRepositories.
      */
-    protected function voteOnAttribute($attribute, $object, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $object, TokenInterface $token) //phpcs:ignore
     {
         $user = $token->getUser();
 

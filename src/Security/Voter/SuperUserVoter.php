@@ -1,12 +1,13 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Security;
+namespace App\Security\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-use Pelagos\Entity\Entity;
-use Pelagos\Entity\Account;
-use Pelagos\Entity\Person;
+use App\Entity\Entity;
+use App\Entity\Account;
+use App\Entity\DataRepositoryRole;
+
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 
 /**
@@ -14,22 +15,22 @@ use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
  */
 class SuperUserVoter extends PelagosEntityVoter
 {
-    /**
-     * Is the system in readonly mode.
-     *
-     * @var boolean
-     */
-    private $readOnlyMode;
-
-    /**
-     * Constructor for SuperUserVoter.
-     *
-     * @param string $readOnlyMode If the system is in readonly mode (from parameter file).
-     */
-    public function __construct($readOnlyMode)
-    {
-        $this->readOnlyMode = (bool) $readOnlyMode;
-    }
+//    /**
+//     * Is the system in readonly mode.
+//     *
+//     * @var boolean
+//     */
+//    private $readOnlyMode;
+//
+//    /**
+//     * Constructor for SuperUserVoter.
+//     *
+//     * @param string $readOnlyMode If the system is in readonly mode (from parameter file).
+//     */
+//    public function __construct($readOnlyMode)
+//    {
+//        $this->readOnlyMode = (bool) $readOnlyMode;
+//    }
 
     /**
      * Determines if the attribute and subject are supported by this voter.
@@ -39,6 +40,8 @@ class SuperUserVoter extends PelagosEntityVoter
      *
      * @return boolean True if the attribute and subject are supported, false otherwise.
      */
+    // Next line to be ignored because implemented function does not have type-hint on $attribute.
+    // phpcs:ignore
     protected function supports($attribute, $object)
     {
         if (!$object instanceof Entity) {
@@ -61,11 +64,13 @@ class SuperUserVoter extends PelagosEntityVoter
      *
      * @return boolean True if the attribute is allowed on the subject for the user specified by the token.
      */
+    // Next line to be ignored because implemented function does not have type-hint on $attribute.
+    // phpcs:ignore
     protected function voteOnAttribute($attribute, $object, TokenInterface $token)
     {
-        if ($this->readOnlyMode === true) {
-            return false;
-        }
+//        if ($this->readOnlyMode === true) {
+//            return false;
+//        }
 
         $user = $token->getUser();
         if (!$user instanceof Account) {
@@ -83,7 +88,7 @@ class SuperUserVoter extends PelagosEntityVoter
         if ($this->doesUserHaveRole(
             $userPerson,
             $personDataRepositories,
-            array(DataRepositoryRoles::MANAGER)
+            array(DataRepositoryRole::MANAGER)
         ) and in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_DELETE))) {
             return true;
         }

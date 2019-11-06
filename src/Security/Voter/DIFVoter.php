@@ -1,10 +1,13 @@
 <?php
-namespace Pelagos\Bundle\AppBundle\Security;
+namespace App\Security\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Pelagos\Entity\Account;
-use Pelagos\Entity\DIF;
-use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
+
+use App\Entity\Account;
+use App\Entity\DIF;
+use App\Entity\DataRepositoryRole;
+
+use App\Security\EntityProperty;
 
 /**
  * A voter to determine if a actions are possible by the user on a DIF object.
@@ -30,6 +33,8 @@ class DIFVoter extends PelagosEntityVoter
      *
      * @return boolean True if the attribute and subject are supported, false otherwise.
      */
+    // Next line to be ignored because implemented function does not have type-hint on $attribute.
+    // phpcs:ignore
     protected function supports($attribute, $object)
     {
         // If the object is an EntityProperty.
@@ -78,6 +83,8 @@ class DIFVoter extends PelagosEntityVoter
      *
      * @return boolean True If the user has one of the target roles for any of the subject's DataRepositories.
      */
+    // Next line to be ignored because implemented function does not have type-hint on $attribute.
+    // phpcs:ignore
     protected function voteOnAttribute($attribute, $object, TokenInterface $token)
     {
         $user = $token->getUser();
@@ -108,7 +115,7 @@ class DIFVoter extends PelagosEntityVoter
         if ($this->doesUserHaveRole(
             $userPerson,
             $personDataRepositories,
-            array(DataRepositoryRoles::MANAGER)
+            array(DataRepositoryRole::MANAGER)
         ) and in_array(
             $attribute,
             array(

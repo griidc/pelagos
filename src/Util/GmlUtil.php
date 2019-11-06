@@ -1,5 +1,6 @@
 <?php
-namespace Pelagos\Util;
+
+namespace App\Util;
 
 /**
  * This is a utility class for dealing with GML manipulation.
@@ -22,7 +23,7 @@ class GmlUtil
      *
      * @return string GML string with namespace.
      */
-    public static function addNamespace($gml, array $namespaces = self::GML_NAMESPACES)
+    public static function addNamespace(string $gml, array $namespaces = self::GML_NAMESPACES)
     {
         if (($gml != null) and (1 === preg_match('/gml/', $gml))) {
             $doc = new \DomDocument('1.0', 'UTF-8');
