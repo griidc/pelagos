@@ -1,10 +1,10 @@
 <?php
 
-namespace Pelagos\Event;
+namespace App\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
-use Pelagos\Entity\Entity;
+use App\Entity\Entity;
 
 /**
  * Class for Entity events.

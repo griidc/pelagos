@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\DoctrineExtensions\DBAL\Types;
+namespace App\DoctrineExtensions\DBAL\Types;
 
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;

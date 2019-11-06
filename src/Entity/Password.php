@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 use JMS\Serializer\Annotation as Serializer;
 
-use Pelagos\Exception\PasswordException;
+use App\Exception\PasswordException;
 
 /**
  * Entity class to represent a Password.
@@ -103,7 +103,7 @@ class Password extends Entity
      *
      * @param string $passwordText The password text for this account.
      */
-    public function __construct($passwordText)
+    public function __construct(string $passwordText)
     {
         $this->setPassword($passwordText);
     }
@@ -151,7 +151,7 @@ class Password extends Entity
      *
      * @return void
      */
-    public function setPassword($password)
+    public function setPassword(string $password)
     {
         if (strlen($password) < 8) {
             throw new PasswordException('Password is not long enough (must be at least 8 characters)');
@@ -205,7 +205,7 @@ class Password extends Entity
      *
      * @return boolean Whether or not the provided password matches the hash.
      */
-    public function comparePassword($password)
+    public function comparePassword(string $password)
     {
         $hash = sha1($password . $this->getSalt(), true);
         if ($hash === $this->getPasswordHash()) {

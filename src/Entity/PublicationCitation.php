@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -63,9 +63,9 @@ class PublicationCitation extends Entity
      * @param string $locale       Citation Text Locale commonly utf-8.
      */
     public function __construct(
-        $citationText = null,
-        $style = null,
-        $locale = null
+        string $citationText = null,
+        string $style = null,
+        string $locale = null
     ) {
         $this->citationText = $citationText;
         $this->style = $style;

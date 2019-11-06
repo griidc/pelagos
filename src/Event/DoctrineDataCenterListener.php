@@ -1,12 +1,12 @@
 <?php
 
-namespace Pelagos\Event;
+namespace App\Event;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 
-use Pelagos\Entity\DataCenter;
-use Pelagos\Entity\DataRepository;
+use App\Entity\DataCenter;
+use App\Entity\DataRepository;
 
 /**
  * Doctrine Listener class for DataRepository update events.
@@ -35,12 +35,12 @@ class DoctrineDataCenterListener
     /**
      * Method to update dataCenter when the corresponding entity in dataRepository changes.
      *
-     * @param mixed         $dataRepository A Doctrine entity (dataRepository).
-     * @param EntityManager $entityManager  The Doctrine entity manager.
+     * @param mixed                  $dataRepository A Doctrine entity (dataRepository).
+     * @param EntityManagerInterface $entityManager  The Doctrine entity manager.
      *
      * @return void
      */
-    protected function updateDataCenter($dataRepository, EntityManager $entityManager)
+    protected function updateDataCenter($dataRepository, EntityManagerInterface $entityManager)
     {
         //reflection class to invoke SET methods in DataCenter
         $reflectionClass = new \ReflectionClass(DataCenter::class);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -544,7 +544,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setTitle($title)
+    public function setTitle(string $title)
     {
         $this->title = $title;
     }
@@ -610,7 +610,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setAbstract($abstract)
+    public function setAbstract(string $abstract)
     {
         $this->abstract = $abstract;
     }
@@ -635,7 +635,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setFieldOfStudyEcologicalBiological($fieldOfStudyEcologicalBiological)
+    public function setFieldOfStudyEcologicalBiological(bool $fieldOfStudyEcologicalBiological)
     {
         if ('boolean' !== gettype($fieldOfStudyEcologicalBiological)) {
             throw new \InvalidArgumentException('fieldOfStudyEcologicalBiological must be boolean');
@@ -664,7 +664,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setFieldOfStudyPhysicalOceanography($fieldOfStudyPhysicalOceanography)
+    public function setFieldOfStudyPhysicalOceanography(bool $fieldOfStudyPhysicalOceanography)
     {
         if ('boolean' !== gettype($fieldOfStudyPhysicalOceanography)) {
             throw new \InvalidArgumentException('fieldOfStudyPhysicalOceanography must be boolean');
@@ -693,7 +693,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setFieldOfStudyAtmospheric($fieldOfStudyAtmospheric)
+    public function setFieldOfStudyAtmospheric(bool $fieldOfStudyAtmospheric)
     {
         if ('boolean' !== gettype($fieldOfStudyAtmospheric)) {
             throw new \InvalidArgumentException('fieldOfStudyAtmospheric must be boolean');
@@ -721,7 +721,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setFieldOfStudyChemical($fieldOfStudyChemical)
+    public function setFieldOfStudyChemical(bool $fieldOfStudyChemical)
     {
         if ('boolean' !== gettype($fieldOfStudyChemical)) {
             throw new \InvalidArgumentException('fieldOfStudyChemical must be boolean');
@@ -749,7 +749,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setFieldOfStudyHumanHealth($fieldOfStudyHumanHealth)
+    public function setFieldOfStudyHumanHealth(bool $fieldOfStudyHumanHealth)
     {
         if ('boolean' !== gettype($fieldOfStudyHumanHealth)) {
             throw new \InvalidArgumentException('fieldOfStudyHumanHealth must be boolean');
@@ -777,7 +777,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setFieldOfStudySocialCulturalPolitical($fieldOfStudySocialCulturalPolitical)
+    public function setFieldOfStudySocialCulturalPolitical(bool $fieldOfStudySocialCulturalPolitical)
     {
         if ('boolean' !== gettype($fieldOfStudySocialCulturalPolitical)) {
             throw new \InvalidArgumentException('fieldOfStudySocialCulturalPolitical must be boolean');
@@ -806,7 +806,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setFieldOfStudyEconomics($fieldOfStudyEconomics)
+    public function setFieldOfStudyEconomics(bool $fieldOfStudyEconomics)
     {
         if ('boolean' !== gettype($fieldOfStudyEconomics)) {
             throw new \InvalidArgumentException('fieldOfStudyEconomics must be boolean');
@@ -832,7 +832,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setFieldOfStudyOther($fieldOfStudyOther)
+    public function setFieldOfStudyOther(string $fieldOfStudyOther)
     {
         $this->fieldOfStudyOther = $fieldOfStudyOther;
     }
@@ -858,7 +858,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setDataSize($dataSize)
+    public function setDataSize(string $dataSize)
     {
         if (!in_array($dataSize, self::DATA_SIZES)) {
             throw new \InvalidArgumentException('Data size must be one of: ' . implode(', ', self::DATA_SIZES));
@@ -884,7 +884,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setVariablesObserved($variablesObserved)
+    public function setVariablesObserved(string $variablesObserved)
     {
         $this->variablesObserved = $variablesObserved;
     }
@@ -910,7 +910,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setCollectionMethodFieldSampling($collectionMethodFieldSampling)
+    public function setCollectionMethodFieldSampling(bool $collectionMethodFieldSampling)
     {
         if ('boolean' !== gettype($collectionMethodFieldSampling)) {
             throw new \InvalidArgumentException('collectionMethodFieldSampling must be boolean');
@@ -939,7 +939,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setCollectionMethodSimulatedGenerated($collectionMethodSimulatedGenerated)
+    public function setCollectionMethodSimulatedGenerated(bool $collectionMethodSimulatedGenerated)
     {
         if ('boolean' !== gettype($collectionMethodSimulatedGenerated)) {
             throw new \InvalidArgumentException('collectionMethodSimulatedGenerated must be boolean');
@@ -968,7 +968,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setCollectionMethodLaboratory($collectionMethodLaboratory)
+    public function setCollectionMethodLaboratory(bool $collectionMethodLaboratory)
     {
         if ('boolean' !== gettype($collectionMethodLaboratory)) {
             throw new \InvalidArgumentException('collectionMethodLaboratory must be boolean');
@@ -997,7 +997,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setCollectionMethodLiteratureBased($collectionMethodLiteratureBased)
+    public function setCollectionMethodLiteratureBased(bool $collectionMethodLiteratureBased)
     {
         if ('boolean' !== gettype($collectionMethodLiteratureBased)) {
             throw new \InvalidArgumentException('collectionMethodLiteratureBased must be boolean');
@@ -1026,7 +1026,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setCollectionMethodRemoteSensing($collectionMethodRemoteSensing)
+    public function setCollectionMethodRemoteSensing(bool $collectionMethodRemoteSensing)
     {
         if ('boolean' !== gettype($collectionMethodRemoteSensing)) {
             throw new \InvalidArgumentException('collectionMethodRemoteSensing must be boolean');
@@ -1053,7 +1053,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setCollectionMethodOther($collectionMethodOther)
+    public function setCollectionMethodOther(string $collectionMethodOther)
     {
         $this->collectionMethodOther = $collectionMethodOther;
     }
@@ -1119,7 +1119,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setSpatialExtentDescription($spatialExtentDescription)
+    public function setSpatialExtentDescription(string $spatialExtentDescription)
     {
         $this->spatialExtentDescription = $spatialExtentDescription;
     }
@@ -1141,7 +1141,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setSpatialExtentGeometry($spatialExtentGeometry)
+    public function setSpatialExtentGeometry(string $spatialExtentGeometry)
     {
         $this->spatialExtentGeometry = $spatialExtentGeometry;
     }
@@ -1166,7 +1166,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setNationalDataArchiveNODC($nationalDataArchiveNODC)
+    public function setNationalDataArchiveNODC(bool $nationalDataArchiveNODC)
     {
         if ('boolean' !== gettype($nationalDataArchiveNODC)) {
             throw new \InvalidArgumentException('nationalDataArchiveNODC must be boolean');
@@ -1195,7 +1195,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setNationalDataArchiveStoret($nationalDataArchiveStoret)
+    public function setNationalDataArchiveStoret(bool $nationalDataArchiveStoret)
     {
         if ('boolean' !== gettype($nationalDataArchiveStoret)) {
             throw new \InvalidArgumentException('nationalDataArchiveStoret must be boolean');
@@ -1224,7 +1224,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setNationalDataArchiveGBIF($nationalDataArchiveGBIF)
+    public function setNationalDataArchiveGBIF(bool $nationalDataArchiveGBIF)
     {
         if ('boolean' !== gettype($nationalDataArchiveGBIF)) {
             throw new \InvalidArgumentException('nationalDataArchiveGBIF must be boolean');
@@ -1253,7 +1253,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setNationalDataArchiveNCBI($nationalDataArchiveNCBI)
+    public function setNationalDataArchiveNCBI(bool $nationalDataArchiveNCBI)
     {
         if ('boolean' !== gettype($nationalDataArchiveNCBI)) {
             throw new \InvalidArgumentException('nationalDataArchiveNCBI must be boolean');
@@ -1282,7 +1282,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setNationalDataArchiveDataGov($nationalDataArchiveDataGov)
+    public function setNationalDataArchiveDataGov(bool $nationalDataArchiveDataGov)
     {
         if ('boolean' !== gettype($nationalDataArchiveDataGov)) {
             throw new \InvalidArgumentException('nationalDataArchiveDataGov must be boolean');
@@ -1308,7 +1308,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setNationalDataArchiveOther($nationalDataArchiveOther)
+    public function setNationalDataArchiveOther(string $nationalDataArchiveOther)
     {
         $this->nationalDataArchiveOther = $nationalDataArchiveOther;
     }
@@ -1333,7 +1333,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setEthicalIssues($ethicalIssues)
+    public function setEthicalIssues(string $ethicalIssues)
     {
         if (!in_array($ethicalIssues, self::ETHICAL_ISSUES)) {
             throw new \InvalidArgumentException(
@@ -1361,7 +1361,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setEthicalIssuesExplanation($ethicalIssuesExplanation)
+    public function setEthicalIssuesExplanation(string $ethicalIssuesExplanation)
     {
         $this->ethicalIssuesExplanation = $ethicalIssuesExplanation;
     }
@@ -1383,7 +1383,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setRemarks($remarks)
+    public function setRemarks(string $remarks)
     {
         $this->remarks = $remarks;
     }
@@ -1529,7 +1529,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    protected function setStatus($status)
+    protected function setStatus(int $status)
     {
         $this->status = $status;
         $this->updateIdentifiedStatus();

@@ -1,10 +1,9 @@
 <?php
-namespace Pelagos\Event;
+namespace App\Event;
 
-use Doctrine\ORM\EntityManager;
-
-use Pelagos\Entity\LogActionItem;
-use Pelagos\Entity\Person;
+use App\Entity\LogActionItem;
+use App\Entity\Person;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Listener class for LogActionItem-related events.
@@ -14,16 +13,16 @@ class LogActionItemEventListener extends EventListener
     /**
      * The entity manager.
      *
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
     /**
      * This is the class constructor to handle dependency injections.
      *
-     * @param EntityManager $entityManager The entity manager.
+     * @param EntityManagerInterface $entityManager The entity manager.
      */
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }
