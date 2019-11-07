@@ -76,7 +76,7 @@
                         </gmd:CI_Contact>
                     </gmd:contactInfo>
                     <gmd:role>
-                        {% include "PelagosAppBundle:MetadataGenerator:CI_RoleCode.xml.twig" with {"role" : distPoint.roleCode} %}
+                        {% include "MetadataGenerator/CI_RoleCode.xml.twig" with {"role" : distPoint.roleCode} %}
                     </gmd:role>
                 </gmd:CI_ResponsibleParty>
             </gmd:distributorContact>
@@ -142,7 +142,7 @@
                                 {% endif %}
                                 {% if dataset.datasetSubmission.remotelyHostedFunction %}
                                 <gmd:function>
-                                {% include "PelagosAppBundle:MetadataGenerator:CI_OnLineFunctionCode.xml.twig" with {"function" : dataset.datasetSubmission.remotelyHostedFunction} %}
+                                {% include "MetadataGenerator/CI_OnLineFunctionCode.xml.twig" with {"function" : dataset.datasetSubmission.remotelyHostedFunction} %}
                                 </gmd:function>
                                 {% else %}
                                 <gmd:function gco:nilReason="missing"/>

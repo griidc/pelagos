@@ -14,7 +14,7 @@
     </gmd:hierarchyLevel>
     {% for contact in dataset.datasetSubmission.metadataContacts %}
     <gmd:contact>
-        {% include "PelagosAppBundle:MetadataGenerator:CI_ResponsibleParty.xml.twig" with
+        {% include "MetadataGenerator/CI_ResponsibleParty.xml.twig" with
             {
             "Person" : contact.person,
             "role" : contact.role,
@@ -35,10 +35,10 @@
         <gco:CharacterString>https://data.gulfresearchinitiative.org/metadata/{{dataset.udi}}</gco:CharacterString>
     </gmd:dataSetURI>
     <gmd:identificationInfo>
-        {% include "PelagosAppBundle:MetadataGenerator:MD_DataIdentification.xml.twig" %}
+        {% include "MetadataGenerator/MD_DataIdentification.xml.twig" %}
     </gmd:identificationInfo>
     <gmd:distributionInfo>
-        {% include "PelagosAppBundle:MetadataGenerator:MD_Distribution.xml.twig" %}
+        {% include "MetadataGenerator/MD_Distribution.xml.twig" %}
     </gmd:distributionInfo>
     <gmd:metadataMaintenance>
         <gmd:MD_MaintenanceInformation>

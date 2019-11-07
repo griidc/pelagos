@@ -7,7 +7,7 @@
 
     <div class="row">
         <div class="search-form">
-            {% include 'PelagosAppBundle:Search:form.html.twig' %}
+            {% include 'Search/form.html.twig' %}
         </div>
     </div>
 
@@ -80,7 +80,7 @@
             <table class="table">
                 <tbody>
                 {% for result in results %}
-                    {% include 'PelagosAppBundle:Search:dataset-row.html.twig'  %}
+                    {% include 'Search/dataset-row.html.twig'  %}
                 {% endfor %}
                 </tbody>
             </table>

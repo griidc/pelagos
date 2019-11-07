@@ -1,5 +1,5 @@
 <form class="entityForm" entityType="PersonDataRepository"
-{% include '@templates/forms/permissionsBlock.html.twig' with {'Entity': PersonDataRepository} %}
+{% include 'template/forms/permissionsBlock.html.twig' with {'Entity': PersonDataRepository} %}
 _action="{{path('pelagos_api_person_data_repositories_post')}}">
 
     <input type="hidden" name="id" value="{{PersonDataRepository.getId}}">
@@ -17,6 +17,6 @@ _action="{{path('pelagos_api_person_data_repositories_post')}}">
 
     {{ form_row(form.label) }}
 
-    {% include '@templates/forms/innerForm.html.twig' with {'Entity': PersonDataRepository} %}
+    {% include 'template/forms/innerForm.html.twig' with {'Entity': PersonDataRepository} %}
 
 </form>

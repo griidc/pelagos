@@ -1,4 +1,4 @@
-{% if dataset.datasetStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
+{% if dataset.datasetStatus == constant('App\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
     <h2>Suggested Citation:</h2>
     <div>
         {{ dataset.citation|default }}
@@ -10,7 +10,7 @@
     {{ dataset.abstract|default }}
 </div>
 
-{% if dataset.datasetStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
+{% if dataset.datasetStatus == constant('App\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
 
     {% if dataset.datasetSubmission.purpose|default %}
         <h2>Purpose:</h2>

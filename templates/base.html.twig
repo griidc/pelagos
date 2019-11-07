@@ -4,7 +4,7 @@
 {% block head %}
     <title>GRIIDC | {% block title %}Pelagos{% endblock %}</title>
 
-    <link rel="icon" type="image/x-icon" href="{{ asset('build/images/griidc_fav.png') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/griidc_fav.png') }}" />
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id={{google_analytics_id}}"></script>
@@ -19,16 +19,16 @@
     </script>
 
     {% block stylesheets %}
-        <link href="{{ asset('build/common.css') }}" rel="stylesheet" />
+        <link href="{{ asset('build/app.css') }}" rel="stylesheet" />
         <link href="//cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.css" rel="stylesheet" />
 
         {% if isMaintenanceMode() %}
-            <link href="{{ asset('build/css/griidc_site_banner_screen.css') }}" rel="stylesheet" />
+            <link href="{{ asset('css/griidc_site_banner_screen.css') }}" rel="stylesheet" />
         {% endif %}
     {% endblock stylesheets  %}
 
     {% block javascripts %}
-        <script src="{{ asset('build/common.js') }}"></script>
+        <script src="{{ asset('build/app.js') }}"></script>
 
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.hoverintent/1.9.0/jquery.hoverIntent.min.js"></script>
 
@@ -105,7 +105,7 @@
                     <div id="branding" class="container">
                         <div id="logo-wrapper">
                             <a href="http://gulfresearchinitiative.org" title="Gulf of Mexico Research Initiative" rel="home" id="logo">
-                                <img src="{{asset('build/images/logo.png')}}" alt="Home">
+                                <img src="{{asset('images/logo.png')}}" alt="Home">
                             </a>
                         </div>
 
@@ -116,14 +116,14 @@
 
                         <div id="griidc-logo-wrapper">
                             <a href="/" title="Home" rel="home" id="logo">
-                                <img src="{{asset('build/images/griidc-logo.png')}}" alt="GRIIDC">
+                                <img src="{{asset('images/griidc-logo.png')}}" alt="GRIIDC">
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
             {% block menu %}
-                {% include "PelagosAppBundle:Menus:main.html.twig" %}
+                {% include "Menus/main.html.twig" %}
             {% endblock menu %}
             <div id="main-wrapper">
                 <div id="pelagos-container">
