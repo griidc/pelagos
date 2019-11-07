@@ -1,10 +1,10 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Factory;
+namespace App\Util\Factory;
 
-use Pelagos\Entity\Person;
-use Pelagos\Entity\Account;
-use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
+use App\Entity\Person;
+use App\Entity\Account;
+use App\Handler\EntityHandler;
 
 /**
  * A factory class for generating user IDs.
@@ -18,7 +18,7 @@ class UserIdFactory
     {
         // Do nothing.
     }
-    
+
     /**
      * Generate a unique user ID for a Person.
      *

@@ -1,8 +1,8 @@
 <?php
 
-namespace Pelagos\Util;
+namespace App\Util;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 use Elastica\Aggregation;
 use Elastica\Query;
@@ -11,9 +11,9 @@ use FOS\ElasticaBundle\Finder\TransformedFinder;
 
 use Pagerfanta\Pagerfanta;
 
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\FundingOrganization;
-use Pelagos\Entity\ResearchGroup;
+use App\Entity\DatasetSubmission;
+use App\Entity\FundingOrganization;
+use App\Entity\ResearchGroup;
 
 use RecursiveArrayIterator;
 use RecursiveIteratorIterator;
@@ -34,7 +34,7 @@ class Search
     /**
      * The entity manager to use.
      *
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -68,10 +68,10 @@ class Search
     /**
      * Constructor.
      *
-     * @param TransformedFinder $finder        The finder interface object.
-     * @param EntityManager     $entityManager An entity manager.
+     * @param TransformedFinder      $finder        The finder interface object.
+     * @param EntityManagerInterface $entityManager An entity manager.
      */
-    public function __construct(TransformedFinder $finder, EntityManager $entityManager)
+    public function __construct(TransformedFinder $finder, EntityManagerInterface $entityManager)
     {
         $this->finder = $finder;
         $this->entityManager = $entityManager;
