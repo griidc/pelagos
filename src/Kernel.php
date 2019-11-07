@@ -1,100 +1,53 @@
 <?php
+// phpcs:disable
+namespace App;
 
-namespace Symfony\Component\HttpKernel;
-
+use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Kernel as BaseKernel;
+use Symfony\Component\Routing\RouteCollectionBuilder;
 
-/**
- * The Kernel is the heart of the Symfony system.
- *
- * It manages an environment made of bundles.
- */
-class AppKernel extends Kernel
+class Kernel extends BaseKernel
 {
-    /**
-     * Returns an array of bundles to register.
-     *
-     * @return BundleInterface[] An array of bundle instances.
-     */
-    public function registerBundles()
-    {
-        $bundles = array(
-            new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
-            new \Symfony\Bundle\SecurityBundle\SecurityBundle(),
-            new \Symfony\Bundle\TwigBundle\TwigBundle(),
-            new \Symfony\Bundle\MonologBundle\MonologBundle(),
-            new \Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
-            new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
-            new \Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
-            new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
-            new \FOS\RestBundle\FOSRestBundle(),
-            new \JMS\SerializerBundle\JMSSerializerBundle(),
-            new \Nelmio\ApiDocBundle\NelmioApiDocBundle(),
-            new \Bazinga\Bundle\HateoasBundle\BazingaHateoasBundle(),
-            new \SimpleThings\EntityAudit\SimpleThingsEntityAuditBundle(),
-            new \FOS\JsRoutingBundle\FOSJsRoutingBundle(),
-            new \OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
-            new \Phobetor\RabbitMqSupervisorBundle\RabbitMqSupervisorBundle(),
-            new \FOS\ElasticaBundle\FOSElasticaBundle(),
-            new \Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
-            new \Pelagos\Bundle\LegacyBundle\PelagosLegacyBundle(),
-            new \Pelagos\Bundle\AppBundle\PelagosAppBundle(),
-        );
+    use MicroKernelTrait;
 
-        if (in_array($this->getEnvironment(), array('dev', 'test', 'drupal_dev'), true)) {
-            $bundles[] = new \Symfony\Bundle\DebugBundle\DebugBundle();
-            $bundles[] = new \Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
-            $bundles[] = new \Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
-            $bundles[] = new \Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
-            $bundles[] = new \Symfony\Bundle\WebServerBundle\WebServerBundle();
+    private const CONFIG_EXTS = '.{php,xml,yaml,yml}';
+
+    public function registerBundles(): iterable
+    {
+        $contents = require $this->getProjectDir().'/config/bundles.php';
+        foreach ($contents as $class => $envs) {
+            if ($envs[$this->environment] ?? $envs['all'] ?? false) {
+                yield new $class();
+            }
         }
-
-        return $bundles;
     }
 
-    /**
-     * Gets the application root dir.
-     *
-     * @return string The application root dir.
-     */
-    public function getRootDir()
+    public function getProjectDir(): string
     {
-        return __DIR__;
+        return \dirname(__DIR__);
     }
 
-    /**
-     * Gets the cache directory.
-     *
-     * @return string The cache directory.
-     */
-    public function getCacheDir()
+    protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void
     {
-        return dirname(__DIR__) . '/var/cache/' . $this->getEnvironment();
+        $container->addResource(new FileResource($this->getProjectDir().'/config/bundles.php'));
+        $container->setParameter('container.dumper.inline_class_loader', true);
+        $confDir = $this->getProjectDir().'/config';
+
+        $loader->load($confDir.'/{packages}/*'.self::CONFIG_EXTS, 'glob');
+        $loader->load($confDir.'/{packages}/'.$this->environment.'/**/*'.self::CONFIG_EXTS, 'glob');
+        $loader->load($confDir.'/{services}'.self::CONFIG_EXTS, 'glob');
+        $loader->load($confDir.'/{services}_'.$this->environment.self::CONFIG_EXTS, 'glob');
     }
 
-    /**
-     * Gets the log directory.
-     *
-     * @return string The log directory.
-     */
-    public function getLogDir()
+    protected function configureRoutes(RouteCollectionBuilder $routes): void
     {
-        return dirname(__DIR__) . '/var/logs';
-    }
+        $confDir = $this->getProjectDir().'/config';
 
-    /**
-     * Loads the container configuration.
-     *
-     * @param LoaderInterface $loader A LoaderInterface instance.
-     *
-     * @return void
-     */
-    public function registerContainerConfiguration(LoaderInterface $loader)
-    {
-        $loader->load($this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml');
-        $localConfigFile = $this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.local.yml';
-        if (file_exists($localConfigFile)) {
-            $loader->load($localConfigFile);
-        }
+        $routes->import($confDir.'/{routes}/'.$this->environment.'/**/*'.self::CONFIG_EXTS, '/', 'glob');
+        $routes->import($confDir.'/{routes}/*'.self::CONFIG_EXTS, '/', 'glob');
+        $routes->import($confDir.'/{routes}'.self::CONFIG_EXTS, '/', 'glob');
     }
 }

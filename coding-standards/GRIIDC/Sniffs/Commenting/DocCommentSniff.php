@@ -1,16 +1,9 @@
 <?php
-/**
- * Extends the basic DocBlock formatting rules.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- */
+namespace GRIIDC\Sniffs\Commenting;
 
-if (class_exists('Generic_Sniffs_Commenting_DocCommentSniff', true) === false) {
-    throw new PHP_CodeSniffer_Exception('Class Generic_Sniffs_Commenting_DocCommentSniff not found');
-}
+use PHP_CodeSniffer\Standards\Generic\Sniffs\Commenting\DocCommentSniff as GenericDocCommentSniff;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Files\File;
 
 /**
  * Extends the basic DocBlock formatting rules.
@@ -22,11 +15,8 @@ if (class_exists('Generic_Sniffs_Commenting_DocCommentSniff', true) === false) {
  *  - require the long description to start with a capital letter
  *
  * Based on Generic_Sniffs_Commenting_DocCommentSniff.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  */
-class GRIIDC_Sniffs_Commenting_DocCommentSniff extends Generic_Sniffs_Commenting_DocCommentSniff
+class DocCommentSniff extends GenericDocCommentSniff
 {
 
 
@@ -39,7 +29,7 @@ class GRIIDC_Sniffs_Commenting_DocCommentSniff extends Generic_Sniffs_Commenting
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         parent::process($phpcsFile, $stackPtr);
         $tokens       = $phpcsFile->getTokens();
