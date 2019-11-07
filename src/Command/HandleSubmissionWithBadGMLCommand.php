@@ -1,20 +1,59 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Command;
+namespace App\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Pelagos\Entity\DatasetSubmission;
+
+use App\Entity\DatasetSubmission;
+use App\Entity\Dataset;
+
+use App\Util\RabbitPublisher;
 
 /**
  * Back fill all the submitted metadata xml to dataset submission.
  *
- * @see ContainerAwareCommand
+ * @see Command
  */
-class HandleSubmissionWithBadGMLCommand extends ContainerAwareCommand
+class HandleSubmissionWithBadGMLCommand extends Command
 {
+    /**
+     * The Command name.
+     *
+     * @var string $defaultName
+     */
+    protected static $defaultName = 'pelagos:handle-bad-gml-submission';
+
+    /**
+     * A Doctrine ORM EntityManager instance.
+     *
+     * @var EntityManagerInterface $entityManager
+     */
+    protected $entityManager;
+
+    /**
+     * Utility Rabbitmq producer instance.
+     *
+     * @var RabbitPublisher $publisher
+     */
+    protected $publisher;
+
+    /**
+     * Class constructor for dependency injection.
+     *
+     * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
+     * @param RabbitPublisher        $publisher     A Rabbitmq producer instance.
+     */
+    public function __construct(EntityManagerInterface $entityManager, RabbitPublisher $publisher)
+    {
+        $this->entityManager = $entityManager;
+        $this->publisher = $publisher;
+        parent::__construct();
+    }
+
     /**
      * Configuration for the command script.
      *
@@ -23,7 +62,6 @@ class HandleSubmissionWithBadGMLCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('onetime:handle-bad-gml-submission')
             ->setDescription('Make the submission accessible in Dataset Review and Submission tool and retrigger filer/hasher.')
             ->addArgument('udi', InputArgument::REQUIRED, 'What is the UDI of the dataset?');
     }
@@ -43,8 +81,7 @@ class HandleSubmissionWithBadGMLCommand extends ContainerAwareCommand
     {
         $udi = $input->getArgument('udi');
 
-        $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
-        $datasets = $entityManager->getRepository('Pelagos\Entity\Dataset')->findBy(array('udi' => $udi));
+        $datasets = $this->entityManager->getRepository(Dataset::class)->findBy(array('udi' => $udi));
 
         if (count($datasets) == 0) {
             throw new \Exception('Could not find a dataset with the udi provided.');
@@ -66,12 +103,13 @@ class HandleSubmissionWithBadGMLCommand extends ContainerAwareCommand
             }
         }
 
-        $entityManager->persist($datasetSubmission);
-        $entityManager->flush();
+        $this->entityManager->persist($datasetSubmission);
+        $this->entityManager->flush();
 
         //re-trigger dataset submission producer
-        $this->getContainer()->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(
+        $this->publisher->publish(
             $datasetSubmission->getId(),
+            RabbitPublisher::DATASET_SUBMISSION_PRODUCER,
             'dataset.' . $datasetSubmission->getDatasetFileTransferType()
         );
 
