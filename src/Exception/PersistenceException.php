@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Exception;
+namespace App\Exception;
 
 /**
  * Custom exception for errors related to persistence.
@@ -60,7 +60,7 @@ class PersistenceException extends \Exception
      * @param integer    $code     An exception code.
      * @param \Exception $previous A previous exception.
      */
-    public function __construct($message = '', $code = 0, \Exception $previous = null)
+    public function __construct(string $message = '', int $code = 0, \Exception $previous = null)
     {
         if (isset($previous) and is_a($previous->getPrevious(), '\PDOException')) {
             $pdoException = $previous->getPrevious();
