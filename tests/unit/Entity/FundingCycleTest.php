@@ -170,20 +170,6 @@ class FundingCycleTest extends TestCase
     }
 
     /**
-     * Test the setFundingOrganization method with something that is not a FundingOrganization.
-     *
-     * This method should not accept a parameter that is not a \App\Entity\FundingOrganization.
-     *
-     * @expectedException \Error
-     *
-     * @return void
-     */
-    public function testSetFundingOrganizationInvalid()
-    {
-        $this->fundingCycle->setFundingOrganization('not a FundingOrganization');
-    }
-
-    /**
      * Test the getFundingOrganization method.
      *
      * This method should return the FundingOrganization that was set in setUp.

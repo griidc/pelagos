@@ -80,12 +80,11 @@ class PersonDataRepositoryTest extends TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \Error
-     *
      * @return void
      */
     public function testSetPersonWithNonObject()
     {
+        $this->expectException(\TypeError::class);
         $this->personDataRepository->setPerson('string data');
     }
 
@@ -94,12 +93,11 @@ class PersonDataRepositoryTest extends TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \Error
-     *
      * @return void
      */
     public function testSetPersonWithNonPerson()
     {
+        $this->expectException(\TypeError::class);
         $this->personDataRepository->setPerson($this->mockDataRepository);
     }
 
@@ -138,12 +136,11 @@ class PersonDataRepositoryTest extends TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \Error
-     *
      * @return void
      */
     public function testSetDataRepositoryWithNonObject()
     {
+        $this->expectException(\TypeError::class);
         $this->personDataRepository->setDataRepository('string data');
     }
 
@@ -152,12 +149,11 @@ class PersonDataRepositoryTest extends TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \Error
-     *
      * @return void
      */
     public function testSetDataRepositoryWithNonDataRepository()
     {
+        $this->expectException(\TypeError::class);
         $this->personDataRepository->setDataRepository($this->mockPerson);
     }
 
@@ -189,34 +185,6 @@ class PersonDataRepositoryTest extends TestCase
         $this->assertNull(
             $this->personDataRepository->getRole()
         );
-    }
-
-    /**
-     * Test the setRole method with a non object.
-     *
-     * This method should result in an exception being thrown.
-     *
-     * @expectedException \Error
-     *
-     * @return void
-     */
-    public function testSetRoleWithNonObject()
-    {
-        $this->personDataRepository->setRole('string data');
-    }
-
-    /**
-     * Test the setDataRepository method with a non DataRepository.
-     *
-     * This method should result in an exception being thrown.
-     *
-     * @expectedException \Error
-     *
-     * @return void
-     */
-    public function testSetRoleWithNonDataRepositoryRole()
-    {
-        $this->personDataRepository->setRole($this->mockPerson);
     }
 
     /**
@@ -254,12 +222,11 @@ class PersonDataRepositoryTest extends TestCase
      *
      * This should throw an exception.
      *
-     * @expectedException \InvalidArgumentException
-     *
      * @return void
      */
     public function testSetLabelNonString()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->personDataRepository->setLabel(1);
     }
 }

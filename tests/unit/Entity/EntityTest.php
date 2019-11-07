@@ -154,12 +154,11 @@ class EntityTest extends TestCase
     /**
      * Test the setCreationTimeStamp method with a non-UTC timestamp.
      *
-     * @expectedException \Exception
-     *
      * @return void
      */
     public function testSetCreationTimeStampFailForNonUTC()
     {
+        $this->expectException(\Exception::class);
         $this->testEntity->setCreationTimeStamp(
             new \DateTime('now', new \DateTimeZone('America/Chicago'))
         );
@@ -271,12 +270,11 @@ class EntityTest extends TestCase
     /**
      * Test the setModificationTimeStamp method with a non-UTC timestamp.
      *
-     * @expectedException \Exception
-     *
      * @return void
      */
     public function testSetModificationTimeStampFailForNonUTC()
     {
+        $this->expectException(\Exception::class);
         $this->testEntity->setModificationTimeStamp(
             new \DateTime('now', new \DateTimeZone('America/Chicago'))
         );

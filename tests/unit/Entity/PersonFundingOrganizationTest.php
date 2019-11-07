@@ -75,34 +75,6 @@ class PersonFundingOrganizationTest extends TestCase
     }
 
     /**
-     * Test the setPerson method with a non object.
-     *
-     * This method should result in an exception being thrown.
-     *
-     * @expectedException \Error
-     *
-     * @return void
-     */
-    public function testSetPersonWithNonObject()
-    {
-        $this->personFundingOrganization->setPerson('string data');
-    }
-
-    /**
-     * Test the setPerson method with a non Person.
-     *
-     * This method should result in an exception being thrown.
-     *
-     * @expectedException \Error
-     *
-     * @return void
-     */
-    public function testSetPersonWithNonPerson()
-    {
-        $this->personFundingOrganization->setPerson($this->mockFundingOrganization);
-    }
-
-    /**
      * Test the getFundingOrganization method.
      *
      * This method should return the FundingOrganization set in setUp.
@@ -130,34 +102,6 @@ class PersonFundingOrganizationTest extends TestCase
         $this->assertNull(
             $this->personFundingOrganization->getFundingOrganization()
         );
-    }
-
-    /**
-     * Test the setFundingOrganization method with a non object.
-     *
-     * This method should result in an exception being thrown.
-     *
-     * @expectedException \Error
-     *
-     * @return void
-     */
-    public function testSetFundingOrganizationWithNonObject()
-    {
-        $this->personFundingOrganization->setFundingOrganization('string data');
-    }
-
-    /**
-     * Test the setFundingOrganization method with a non FundingOrganization.
-     *
-     * This method should result in an exception being thrown.
-     *
-     * @expectedException \Error
-     *
-     * @return void
-     */
-    public function testSetFundingOrganizationWithNonFundingOrganization()
-    {
-        $this->personFundingOrganization->setFundingOrganization($this->mockPerson);
     }
 
     /**
@@ -191,34 +135,6 @@ class PersonFundingOrganizationTest extends TestCase
     }
 
     /**
-     * Test the setRole method with a non object.
-     *
-     * This method should result in an exception being thrown.
-     *
-     * @expectedException \Error
-     *
-     * @return void
-     */
-    public function testSetRoleWithNonObject()
-    {
-        $this->personFundingOrganization->setRole('string data');
-    }
-
-    /**
-     * Test the setFundingOrganization method with a non FundingOrganization.
-     *
-     * This method should result in an exception being thrown.
-     *
-     * @expectedException \Error
-     *
-     * @return void
-     */
-    public function testSetRoleWithNonFundingOrganizationRole()
-    {
-        $this->personFundingOrganization->setRole($this->mockPerson);
-    }
-
-    /**
      * Test the getLabel method.
      *
      * This method should return the label that was set in setUp.
@@ -246,19 +162,5 @@ class PersonFundingOrganizationTest extends TestCase
         $this->assertNull(
             $this->personFundingOrganization->getLabel()
         );
-    }
-
-    /**
-     * Test setLabel with non-string.
-     *
-     * This should throw an exception.
-     *
-     * @expectedException \InvalidArgumentException
-     *
-     * @return void
-     */
-    public function testSetLabelNonString()
-    {
-        $this->personFundingOrganization->setLabel(1);
     }
 }

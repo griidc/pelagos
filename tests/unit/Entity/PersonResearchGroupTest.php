@@ -75,34 +75,6 @@ class PersonResearchGroupTest extends TestCase
     }
 
     /**
-     * Test the setPerson method with a non object.
-     *
-     * This method should result in an exception being thrown.
-     *
-     * @expectedException \Error
-     *
-     * @return void
-     */
-    public function testSetPersonWithNonObject()
-    {
-        $this->personResearchGroup->setPerson('string data');
-    }
-
-    /**
-     * Test the setPerson method with a non Person.
-     *
-     * This method should result in an exception being thrown.
-     *
-     * @expectedException \Error
-     *
-     * @return void
-     */
-    public function testSetPersonWithNonPerson()
-    {
-        $this->personResearchGroup->setPerson($this->mockResearchGroup);
-    }
-
-    /**
      * Test the getResearchGroup method.
      *
      * This method should return the ResearchGroup set in setUp.
@@ -130,34 +102,6 @@ class PersonResearchGroupTest extends TestCase
         $this->assertNull(
             $this->personResearchGroup->getResearchGroup()
         );
-    }
-
-    /**
-     * Test the setResearchGroup method with a non object.
-     *
-     * This method should result in an exception being thrown.
-     *
-     * @expectedException \Error
-     *
-     * @return void
-     */
-    public function testSetResearchGroupWithNonObject()
-    {
-        $this->personResearchGroup->setResearchGroup('string data');
-    }
-
-    /**
-     * Test the setResearchGroup method with a non ResearchGroup.
-     *
-     * This method should result in an exception being thrown.
-     *
-     * @expectedException \Error
-     *
-     * @return void
-     */
-    public function testSetResearchGroupWithNonResearchGroup()
-    {
-        $this->personResearchGroup->setResearchGroup($this->mockPerson);
     }
 
     /**
@@ -191,34 +135,6 @@ class PersonResearchGroupTest extends TestCase
     }
 
     /**
-     * Test the setRole method with a non object.
-     *
-     * This method should result in an exception being thrown.
-     *
-     * @expectedException \Error
-     *
-     * @return void
-     */
-    public function testSetRoleWithNonObject()
-    {
-        $this->personResearchGroup->setRole('string data');
-    }
-
-    /**
-     * Test the setResearchGroup method with a non ResearchGroup.
-     *
-     * This method should result in an exception being thrown.
-     *
-     * @expectedException \Error
-     *
-     * @return void
-     */
-    public function testSetRoleWithNonResearchGroupRole()
-    {
-        $this->personResearchGroup->setRole($this->mockPerson);
-    }
-
-    /**
      * Test the getLabel method.
      *
      * This method should return the label that was set in setUp.
@@ -246,19 +162,5 @@ class PersonResearchGroupTest extends TestCase
         $this->assertNull(
             $this->personResearchGroup->getLabel()
         );
-    }
-
-    /**
-     * Test setLabel with non-string.
-     *
-     * This should throw an exception.
-     *
-     * @expectedException \InvalidArgumentException
-     *
-     * @return void
-     */
-    public function testSetLabelNonString()
-    {
-        $this->personResearchGroup->setLabel(1);
     }
 }

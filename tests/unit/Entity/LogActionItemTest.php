@@ -138,12 +138,11 @@ class LogActionItemTest extends TestCase
    *
    * This method should return the Log Action Item that was assigned in setUp.
    *
-   * @expectedException \Exception
-   *
    * @return void
    */
     public function testConstructorWithoutSubjectEntityId()
     {
+        $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Subject Entity Id is required.');
         $this->logActionItem = new LogActionItem(
             self::$testActionName,

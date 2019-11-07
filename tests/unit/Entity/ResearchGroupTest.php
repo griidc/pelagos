@@ -206,12 +206,11 @@ class ResearchGroupTest extends TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \Exception
-     *
      * @return void
      */
     public function testSetPersonResearchGroupsWithNonTraversable()
     {
+        $this->expectException(\Exception::class);
         $this->researchGroup->setPersonResearchGroups('string data');
     }
 
@@ -220,29 +219,14 @@ class ResearchGroupTest extends TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \Exception
-     *
      * @return void
      */
     public function testSetPersonResearchGroupsWithANonPersonResearchGroupInArray()
     {
+        $this->expectException(\Exception::class);
         $testArry = $this->testPersonResearchGroups;
         array_push($testArry, 'string data');
         $this->researchGroup->setPersonResearchGroups($testArry);
-    }
-
-    /**
-     * Test the testSetFundingCycle() method with bad (non-FC) element.
-     *
-     * This method should result in an exception being thrown.
-     *
-     * @expectedException \Error
-     *
-     * @return void
-     */
-    public function testSetFundingCyclesWithNonFC()
-    {
-        $this->researchGroup->setFundingCycle('string data');
     }
 
     /**

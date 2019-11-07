@@ -558,12 +558,11 @@ class PersonTest extends TestCase
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \Error
-     *
      * @return void
      */
     public function testSetAccountWithNonAccount()
     {
+        $this->expectException(\TypeError::class);
         $this->person->setAccount('foo');
     }
 

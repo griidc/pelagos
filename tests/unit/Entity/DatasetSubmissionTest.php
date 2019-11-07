@@ -434,12 +434,11 @@ class DatasetSubmissionTest extends TestCase
     /**
      * Test attempting to set a bad referenceDateType.
      *
-     * @expectedException \InvalidArgumentException
-     *
      * @return void
      */
     public function testBadReferenceDateType()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->datasetSubmission->setReferenceDateType('foobar');
     }
 
@@ -552,12 +551,11 @@ class DatasetSubmissionTest extends TestCase
     /**
      * Test bad topic keywords.
      *
-     * @expectedException \InvalidArgumentException
-     *
      * @return void
      */
     public function testBadTopicKeywords()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->datasetSubmission->setTopicKeywords(array('badTopic'));
     }
 
@@ -617,12 +615,11 @@ class DatasetSubmissionTest extends TestCase
     /**
      * Test bad temporal extent description.
      *
-     * @expectedException \InvalidArgumentException
-     *
      * @return void
      */
     public function testBadTemporalExtentDesc()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->datasetSubmission->setTemporalExtentDesc('bad temporal extent description');
     }
 
