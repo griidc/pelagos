@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\Api;
+namespace App\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,13 +11,17 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\Query;
 
-use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\Routing\Annotation\Route;
+
+use FOS\RestBundle\Controller\Annotations\View;
+
+use FOS\ElasticaBundle\Persister\ObjectPersister;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetPublication;
-use Pelagos\Entity\Publication;
+use App\Entity\Dataset;
+use App\Entity\DatasetPublication;
+use App\Entity\Publication;
 
 /**
  * The Publication api controller.
@@ -45,9 +49,14 @@ class DatasetPublicationController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/count")
+     * @Route(
+     *     "/api/dataset_publications/count",
+     *     name="pelagos_api_dataset_publications_count",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return integer
      */
@@ -71,16 +80,20 @@ class DatasetPublicationController extends EntityController
     *   }
     * )
     *
-    * @Rest\Get("")
+    * @Route(
+    *     "/api/dataset_publications",
+    *     name="pelagos_api_dataset_publications_get_collection",
+    *     methods={"GET"},
+    *     defaults={"_format"="json"}
+    *     )
     *
-    * @Rest\View(serializerEnableMaxDepthChecks = true)
+    * @View(serializerEnableMaxDepthChecks = true)
     *
     * @return array
     */
     public function getCollectionAction()
     {
-        $entityHandler = $this->get('pelagos.entity.handler');
-        $collection = $entityHandler->getAll(
+        $collection = $this->entityHandler->getAll(
             DatasetPublication::class,
             array(
                 'creationTimeStamp' => 'DESC'
@@ -124,8 +137,12 @@ class DatasetPublicationController extends EntityController
     /**
      * Link a Publication to a Dataset by their respective IDs.
      *
-     * @param integer $id      Publication ID.
-     * @param Request $request A Request object.
+     * @param integer         $id              Publication ID.
+     * @param Request         $request         A Request object.
+     * @param ObjectPersister $objectPersister The object persister.
+     *
+     * @throws UniqueConstraintViolationException If entity handler re-throws a this exception that is not uniq_dataset_publication.
+     * @throws BadRequestHttpException If link already exists.
      *
      * @ApiDoc(
      *   section = "Publication to Dataset Association",
@@ -144,16 +161,16 @@ class DatasetPublicationController extends EntityController
      *   }
      * )
      *
-     * @Rest\View
-     *
-     * @throws BadRequestHttpException            If link already exists.
-     * @throws BadRequestHttpException            If Dataset is not found internally.
-     * @throws BadRequestHttpException            If database throws this specific uniqueness violation.
-     * @throws UniqueConstraintViolationException If entity handler re-throws a this exception that isn't uniq_dataset_publication.
+     * @Route(
+     *     "/api/dataset_publications/{id}",
+     *     name="pelagos_api_dataset_publications_link",
+     *     methods={"LINK"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return Response A HTTP Response object.
      */
-    public function linkAction($id, Request $request)
+    public function linkAction(int $id, Request $request, ObjectPersister $objectPersister)
     {
         $datasetId = $request->query->get('dataset');
 
@@ -167,7 +184,7 @@ class DatasetPublicationController extends EntityController
 
         // Check for existing publink and throw bad request error if exists.
         $criteria = array('dataset' => $datasetId, 'publication' => $id);
-        $publinks = $this->get('pelagos.entity.handler')->getBy(DatasetPublication::class, $criteria);
+        $publinks = $this->entityHandler->getBy(DatasetPublication::class, $criteria);
         if (count($publinks) > 0) {
             $existingPublink = $publinks[0];
             $createdOn = $existingPublink->getCreationTimeStamp()->format('m/d/Y H:i');
@@ -177,13 +194,11 @@ class DatasetPublicationController extends EntityController
         }
 
         $dataPub = new DatasetPublication($publication, $dataset);
-        $entityHandler = $this->get('pelagos.entity.handler');
         try {
-            $entityHandler->create($dataPub);
+            $this->entityHandler->create($dataPub);
             // When a dataset to publication link is made the related dataset is reindex by Elastica.
             // This is done because of the way their relationship works, and change is not detected.
-            $persister = $this->get('fos_elastica.object_persister.pelagos.dataset');
-            $persister->insertOne($dataPub->getDataset());
+            $objectPersister->insertOne($dataPub->getDataset());
         } catch (UniqueConstraintViolationException $e) {
             if (preg_match('/uniq_dataset_publication/', $e->getMessage())) {
                 throw new BadRequestHttpException('Link already exists.');
@@ -209,9 +224,16 @@ class DatasetPublicationController extends EntityController
     *   }
     * )
     *
+    * @Route(
+    *     "/api/dataset_publications/{id}",
+    *     name="pelagos_api_dataset_publications_delete",
+    *     methods={"DELETE"},
+    *     defaults={"_format"="json"}
+    *     )
+    *
     * @return Response A response object with an empty body and a "no content" status code.
     */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
         $this->handleDelete(DatasetPublication::class, $id);
         return $this->makeNoContentResponse();
