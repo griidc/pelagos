@@ -15,7 +15,7 @@ addons:
   postgresql: 9.6
   apt:
     packages:
-    - postgresql-9.6-postgis-2.4
+      - postgresql-9.6-postgis-2.4
 
 # Cache composer packages so "composer install" is faster
 cache:
@@ -45,7 +45,7 @@ install:
 
 # Run script
 script:
-  - ./bin/phpunit
+  - ./vendor/bin/simple-phpunit
   - ./vendor/bin/phpcs --version
   - ./vendor/bin/phpcs --colors --standard=coding-standards/GRIIDC --extensions=php --ignore=./src/Migrations/* -s -n ./src
 

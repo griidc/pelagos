@@ -51,22 +51,22 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
         }
         // Only if the tree is as expected, vote.
         if (($object
-                ->getResearchGroup()
+                    ->getResearchGroup()
                 instanceof ResearchGroup) and
             ($object
-                ->getResearchGroup()
-                ->getFundingCycle()
+                    ->getResearchGroup()
+                    ->getFundingCycle()
                 instanceof FundingCycle) and
             ($object
-                ->getResearchGroup()
-                ->getFundingCycle()
-                ->getFundingOrganization()
+                    ->getResearchGroup()
+                    ->getFundingCycle()
+                    ->getFundingOrganization()
                 instanceof FundingOrganization) and
             ($object
-                ->getResearchGroup()
-                ->getFundingCycle()
-                ->getFundingOrganization()
-                ->getDataRepository()
+                    ->getResearchGroup()
+                    ->getFundingCycle()
+                    ->getFundingOrganization()
+                    ->getDataRepository()
                 instanceof DataRepository)
         ) {
             return true;
@@ -121,11 +121,11 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
             // Get all PersonResearchGroups for the $object's ResearchGroup but
             // exclude the one we are attempting to create.
             $authPersonResearchGroups = $object->getResearchGroup()->getPersonResearchGroups()->filter(
-                //  anonymous function to exclude the subject from the list of PersonResearchGroups
+            //  anonymous function to exclude the subject from the list of PersonResearchGroups
                 function ($personResearchGroup) use ($object) {
                     return ($personResearchGroup !== $object);
                 }
-                // end of anonymous function
+            // end of anonymous function
             );
             // If the user has a PersonResearchGroup with a Role that is one of [Leadership, Admin or Data]
             // the user can create (persist) the subject PersonResearchGroup ($object).

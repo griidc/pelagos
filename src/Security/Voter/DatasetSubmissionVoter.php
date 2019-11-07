@@ -28,7 +28,7 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
     {
         // Abstain if the subject is not an instance of DatasetSubmission.
         if (!$subject instanceof DatasetSubmission and !$subject instanceof PersonDatasetSubmission
-        and !$subject instanceof DistributionPoint) {
+            and !$subject instanceof DistributionPoint) {
             return false;
         }
 

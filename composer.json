@@ -47,8 +47,10 @@
         "mockery/mockery": "^1.0",
         "squizlabs/php_codesniffer": "^3.4",
         "symfony/debug-pack": "^1.0",
+        "symfony/phpunit-bridge": "^4.3",
         "symfony/test-pack": "^1.0",
-        "symfony/web-server-bundle": "4.3.*"
+        "symfony/web-server-bundle": "4.3.*",
+        "ext-http": "*"
     },
     "config": {
         "preferred-install": {
@@ -63,7 +65,9 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\Tests\\": "tests/"
+            "App\\Tests\\": "tests/",
+            "App\\Tests\\Helpers\\": "tests/helpers",
+            "App\\Tests\\Security\\": "tests/unit/Security"
         }
     },
     "replace": {
