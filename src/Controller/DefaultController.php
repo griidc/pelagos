@@ -1,57 +1,60 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller;
+namespace App\Controller;
 
-use Doctrine\ORM\Query;
-
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Routing\Annotation\Route;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
+use App\Entity\DatasetSubmission;
+use App\Entity\Dataset;
 
 /**
- * The default controller for the Pelagos App Bundle.
+ * This is the default controller.
  */
-class DefaultController extends Controller
+class DefaultController extends AbstractController
 {
     /**
      * The index action.
      *
+     * @Route("/", name="pelagos_homepage")
+     *
      * @return Response A Response instance.
      */
-    public function indexAction()
+    public function index()
     {
-        if ($this->get('kernel')->isDebug()) {
-            return $this->render('PelagosAppBundle:Default:index.html.twig');
+        if ($this->getParameter('kernel.debug')) {
+            return $this->render('Default/index.html.twig');
         } else {
             return $this->redirect('/', 302);
         }
     }
-
+    
     /**
      * The admin action.
      *
-     * @return Response A Response instance.
+     * @Route("/admin", name="pelagos_admin")
+     *
+     * @return Response
      */
-    public function adminAction()
+    public function admin()
     {
-        return $this->render('PelagosAppBundle:Default:admin.html.twig');
+        return $this->render('Default/admin.html.twig');
     }
 
     /**
      * Get the sitemap.xml containing all dataset urls.
      *
-     * @return Response
+     * @Route("/sitemap.xml", name="pelagos_sitemap")
+     *
+     * @return StreamedResponse
      */
-    public function showSiteMapXmlAction()
+    public function showSiteMapXml()
     {
-        $container = $this->container;
-        $response = new StreamedResponse(function () use ($container) {
+        $response = new StreamedResponse(function () {
 
-            $entityManager = $container->get('doctrine.orm.entity_manager');
-
-            $datasets = $entityManager->getRepository(Dataset::class)->findBy(
+            $datasets = $this->getDoctrine()->getRepository(Dataset::class)->findBy(
                 array(
                     'availabilityStatus' =>
                     array(
@@ -62,7 +65,7 @@ class DefaultController extends Controller
             );
 
             echo $this->renderView(
-                'PelagosAppBundle:Default:sitemap.xml.twig',
+                'Default/sitemap.xml.twig',
                 array(
                     'datasets' => $datasets
                 )
