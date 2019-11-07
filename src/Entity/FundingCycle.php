@@ -1,17 +1,18 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator\Constraints as CustomAssert;
 
 use Hateoas\Configuration\Annotation as Hateoas;
 
 use JMS\Serializer\Annotation as Serializer;
 
-use Pelagos\Exception\NotDeletableException;
+use App\Exception\NotDeletableException;
 
 /**
  * Entity class to represent a Funding Cycle.
@@ -29,12 +30,6 @@ use Pelagos\Exception\NotDeletableException;
  *     fields={"fundingOrganization","name"},
  *     errorPath="name",
  *     message="Name must be unique within a FundingOrganization"
- * )
- * @Assert\CompareProperties(
- *     left="endDate",
- *     comparison="GreaterThan",
- *     right="startDate",
- *     message="End Date must be after Start Date"
  * )
  *
  * @Hateoas\Relation(
@@ -84,7 +79,7 @@ class FundingCycle extends Entity
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
@@ -99,7 +94,7 @@ class FundingCycle extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Description cannot contain angle brackets (< or >)"
      * )
      */
@@ -114,7 +109,7 @@ class FundingCycle extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="URL cannot contain angle brackets (< or >)"
      * )
      */
@@ -128,6 +123,8 @@ class FundingCycle extends Entity
      * @access protected
      *
      * @ORM\Column(type="date", nullable=true)
+     *
+     * @Assert\DateTime()
      */
     protected $startDate;
 
@@ -139,6 +136,9 @@ class FundingCycle extends Entity
      * @access protected
      *
      * @ORM\Column(type="date", nullable=true)
+     *
+     * @Assert\DateTime()
+     * @Assert\GreaterThan(propertyPath="startDate", message="End Date must be after Start Date")
      */
     protected $endDate;
 
@@ -220,7 +220,7 @@ class FundingCycle extends Entity
      *
      * @return void
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
@@ -240,13 +240,13 @@ class FundingCycle extends Entity
     /**
      * Setter for description.
      *
-     * @param string $description Description of funding cycle.
+     * @param string|null $description Description of funding cycle.
      *
      * @access public
      *
      * @return void
      */
-    public function setDescription($description)
+    public function setDescription(?string $description)
     {
         $this->description = $description;
     }
@@ -292,13 +292,13 @@ class FundingCycle extends Entity
     /**
      * Setter for url.
      *
-     * @param string $url Funding organization's Website URL.
+     * @param string|null $url Funding organization's Website URL.
      *
      * @access public
      *
      * @return void
      */
-    public function setUrl($url)
+    public function setUrl(?string $url)
     {
         $this->url = $url;
     }
@@ -382,13 +382,13 @@ class FundingCycle extends Entity
     /**
      * Setter for udiPrefix.
      *
-     * @param string $udiPrefix The prefix of the UDI for this Funding Cycle.
+     * @param string|null $udiPrefix The prefix of the UDI for this Funding Cycle.
      *
      * @access public
      *
      * @return void
      */
-    public function setUdiPrefix($udiPrefix)
+    public function setUdiPrefix(?string $udiPrefix)
     {
         $this->udiPrefix = $udiPrefix;
     }
@@ -408,21 +408,15 @@ class FundingCycle extends Entity
     /**
      * Setter for sortOrder.
      *
-     * @param integer $position The position to set in the sort ordering.
+     * @param integer|null $position The position to set in the sort ordering.
      *
      * @access public
      *
-     * @throws \InvalidArgumentException If parameter passed is neither integer or null.
-     *
      * @return void
      */
-    public function setSortOrder($position)
+    public function setSortOrder(?int $position)
     {
-        if (is_int($position) or null === $position) {
-            $this->sortOrder = $position;
-        } else {
-            throw new \InvalidArgumentException('Unexpected input.  This should either be an int or null.');
-        }
+        $this->sortOrder = $position;
     }
 
     /**

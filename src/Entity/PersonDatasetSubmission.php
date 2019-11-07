@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -105,7 +105,7 @@ abstract class PersonDatasetSubmission extends Entity
     /**
      * Setter for role.
      *
-     * @param string $role The role for this association.
+     * @param string|null $role The role for this association.
      *
      * @see ROLES class constant for possible values.
      *
@@ -113,7 +113,7 @@ abstract class PersonDatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setRole($role = null)
+    public function setRole(?string $role = null)
     {
         if (!array_key_exists($role, static::ROLES) and $role !== null) {
             throw new \InvalidArgumentException("$role is not a valid value for PersonDatasetSubmission::\$role");
@@ -166,11 +166,11 @@ abstract class PersonDatasetSubmission extends Entity
     /**
      * Setter for primary contact indicator.
      *
-     * @param boolean $state A boolean to be set, true if primary contact, false otherwise.
+     * @param boolean|null $state A boolean to be set, true if primary contact, false otherwise.
      *
      * @return void
      */
-    public function setPrimaryContact($state)
+    public function setPrimaryContact(?bool $state)
     {
         $this->primaryContact = $state;
     }

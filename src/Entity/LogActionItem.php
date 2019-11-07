@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -77,9 +77,9 @@ class LogActionItem extends Entity
      * @throws \Exception When there is no Subject Entity ID for a not-null Subject Entity Name.
      */
     public function __construct(
-        $actionName,
-        $subjectEntityName = null,
-        $subjectEntityId = null,
+        string $actionName,
+        string $subjectEntityName = null,
+        int $subjectEntityId = null,
         array $payLoad = null
     ) {
         if ($actionName !== null) {
@@ -119,7 +119,7 @@ class LogActionItem extends Entity
      *
      * @return void
      */
-    public function setActionName($actionName)
+    public function setActionName(string $actionName)
     {
         $this->actionName = $actionName;
     }
@@ -139,13 +139,13 @@ class LogActionItem extends Entity
     /**
      * Setter for subjectEntityName.
      *
-     * @param string $subjectEntityName The Subject Entity Name to attach to this Action Log Item.
+     * @param string|null $subjectEntityName The Subject Entity Name to attach to this Action Log Item.
      *
      * @access public
      *
      * @return void
      */
-    public function setSubjectEntityName($subjectEntityName)
+    public function setSubjectEntityName(?string $subjectEntityName)
     {
         $this->subjectEntityName = $subjectEntityName;
     }
@@ -165,13 +165,13 @@ class LogActionItem extends Entity
     /**
      * Setter for subjectEntityId.
      *
-     * @param integer $subjectEntityId The Subject Entity ID to attach to this Action Log Item.
+     * @param integer|null $subjectEntityId The Subject Entity ID to attach to this Action Log Item.
      *
      * @access public
      *
      * @return void
      */
-    public function setSubjectEntityId($subjectEntityId)
+    public function setSubjectEntityId(?int $subjectEntityId)
     {
         $this->subjectEntityId = $subjectEntityId;
     }
@@ -179,13 +179,13 @@ class LogActionItem extends Entity
     /**
      * Setter for payLoad.
      *
-     * @param array $payLoad The additional information to attach to this Action Log Item (json_array).
+     * @param array|null $payLoad The additional information to attach to this Action Log Item (json_array).
      *
      * @access public
      *
      * @return void
      */
-    public function setPayLoad(array $payLoad)
+    public function setPayLoad(?array $payLoad)
     {
         $this->payLoad = $payLoad;
     }

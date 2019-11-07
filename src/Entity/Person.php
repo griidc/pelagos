@@ -1,11 +1,12 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator\Constraints as CustomAssert;
 
 use Hateoas\Configuration\Annotation as Hateoas;
 
@@ -14,7 +15,7 @@ use JMS\Serializer\Annotation as Serializer;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Pelagos\Exception\NotDeletableException;
+use App\Exception\NotDeletableException;
 
 /**
  * Entity class to represent a Person.
@@ -79,7 +80,7 @@ class Person extends Entity
      * @Assert\NotBlank(
      *     message="First name is required"
      * )
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="First name cannot contain angle brackets (< or >)"
      * )
      */
@@ -95,7 +96,7 @@ class Person extends Entity
      * @Assert\NotBlank(
      *     message="Last name is required"
      * )
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Last name cannot contain angle brackets (< or >)"
      * )
      */
@@ -111,7 +112,7 @@ class Person extends Entity
      * @Assert\NotBlank(
      *     message="Email address is required"
      * )
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Email address cannot contain angle brackets (< or >)"
      * )
      * @Assert\Email(
@@ -130,7 +131,7 @@ class Person extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Phone number cannot contain angle brackets (< or >)"
      * )
      */
@@ -145,7 +146,7 @@ class Person extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Delievery point (address) cannot contain angle brackets (< or >)"
      * )
      */
@@ -160,7 +161,7 @@ class Person extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="City cannot contain angle brackets (< or >)"
      * )
      */
@@ -175,7 +176,7 @@ class Person extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Administrative area (state) cannot contain angle brackets (< or >)"
      * )
      */
@@ -190,7 +191,7 @@ class Person extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Postal code (zip) cannot contain angle brackets (< or >)"
      * )
      */
@@ -205,7 +206,7 @@ class Person extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Country cannot contain angle brackets (< or >)"
      * )
      */
@@ -220,7 +221,7 @@ class Person extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Website URL cannot contain angle brackets (< or >)"
      * )
      */
@@ -235,7 +236,7 @@ class Person extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Organization cannot contain angle brackets (< or >)"
      * )
      */
@@ -250,7 +251,7 @@ class Person extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Position cannot contain angle brackets (< or >)"
      * )
      */
@@ -332,7 +333,7 @@ class Person extends Entity
      *
      * @return void
      */
-    public function setFirstName($firstName)
+    public function setFirstName(string $firstName)
     {
         $this->firstName = $firstName;
     }
@@ -354,7 +355,7 @@ class Person extends Entity
      *
      * @return void
      */
-    public function setLastName($lastName)
+    public function setLastName(string $lastName)
     {
         $this->lastName = $lastName;
     }
@@ -376,7 +377,7 @@ class Person extends Entity
      *
      * @return void
      */
-    public function setEmailAddress($emailAddress)
+    public function setEmailAddress(string $emailAddress)
     {
         $this->emailAddress = $emailAddress;
     }
@@ -394,13 +395,13 @@ class Person extends Entity
     /**
      * Setter for phoneNumber.
      *
-     * @param string $phoneNumber Person's phone number.
+     * @param string|null $phoneNumber Person's phone number.
      *
      * @access public
      *
      * @return void
      */
-    public function setPhoneNumber($phoneNumber)
+    public function setPhoneNumber(?string $phoneNumber)
     {
         $this->phoneNumber = $phoneNumber;
     }
@@ -420,13 +421,13 @@ class Person extends Entity
     /**
      * Setter for deliveryPoint.
      *
-     * @param string $deliveryPoint Street address of Person.
+     * @param string|null $deliveryPoint Street address of Person.
      *
      * @access public
      *
      * @return void
      */
-    public function setDeliveryPoint($deliveryPoint)
+    public function setDeliveryPoint(?string $deliveryPoint)
     {
         $this->deliveryPoint = $deliveryPoint;
     }
@@ -446,13 +447,13 @@ class Person extends Entity
     /**
      * Setter for city.
      *
-     * @param string $city City of Person.
+     * @param string|null $city City of Person.
      *
      * @access public
      *
      * @return void
      */
-    public function setCity($city)
+    public function setCity(?string $city)
     {
         $this->city = $city;
     }
@@ -472,13 +473,13 @@ class Person extends Entity
     /**
      * Setter for administrativeArea.
      *
-     * @param string $administrativeArea Person's administrative area (state).
+     * @param string|null $administrativeArea Person's administrative area (state).
      *
      * @access public
      *
      * @return void
      */
-    public function setAdministrativeArea($administrativeArea)
+    public function setAdministrativeArea(?string $administrativeArea)
     {
         $this->administrativeArea = $administrativeArea;
     }
@@ -498,13 +499,13 @@ class Person extends Entity
     /**
      * Setter for postalCode.
      *
-     * @param string $postalCode Postal (zip) code.
+     * @param string|null $postalCode Postal (zip) code.
      *
      * @access public
      *
      * @return void
      */
-    public function setPostalCode($postalCode)
+    public function setPostalCode(?string $postalCode)
     {
         $this->postalCode = $postalCode;
     }
@@ -524,13 +525,13 @@ class Person extends Entity
     /**
      * Setter for country.
      *
-     * @param string $country Person's country.
+     * @param string|null $country Person's country.
      *
      * @access public
      *
      * @return void
      */
-    public function setCountry($country)
+    public function setCountry(?string $country)
     {
         $this->country = $country;
     }
@@ -550,13 +551,13 @@ class Person extends Entity
     /**
      * Setter for url.
      *
-     * @param string $url Person's Website URL.
+     * @param string|null $url Person's Website URL.
      *
      * @access public
      *
      * @return void
      */
-    public function setUrl($url)
+    public function setUrl(?string $url)
     {
         $this->url = $url;
     }
@@ -576,13 +577,13 @@ class Person extends Entity
     /**
      * Setter for organization.
      *
-     * @param string $organization Person's organization.
+     * @param string|null $organization Person's organization.
      *
      * @access public
      *
      * @return void
      */
-    public function setOrganization($organization)
+    public function setOrganization(?string $organization)
     {
         $this->organization = $organization;
     }
@@ -602,13 +603,13 @@ class Person extends Entity
     /**
      * Setter for position.
      *
-     * @param string $position Person's position.
+     * @param string|null $position Person's position.
      *
      * @access public
      *
      * @return void
      */
-    public function setPosition($position)
+    public function setPosition(?string $position)
     {
         $this->position = $position;
     }
@@ -873,11 +874,13 @@ class Person extends Entity
                 ($personDataRepositoriesCount > 1 ? 'Repositories' : 'Repository');
         }
 
-        $personAccountCount = count($this->getAccount());
-        if ($personAccountCount > 0) {
-            $notDeletableReasons[] = 'there is an associated Account';
+        if (is_countable($this->getAccount())) {
+            $personAccountCount = count($this->getAccount());
+            if ($personAccountCount > 0) {
+                $notDeletableReasons[] = 'there is an associated Account';
+            }
         }
-
+        
         if (count($notDeletableReasons) > 0) {
             $notDeletableException = new NotDeletableException();
             $notDeletableException->setReasons($notDeletableReasons);

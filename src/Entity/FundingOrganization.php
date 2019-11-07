@@ -1,15 +1,16 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator\Constraints as CustomAssert;
 
 use Hateoas\Configuration\Annotation as Hateoas;
 
-use Pelagos\Exception\NotDeletableException;
+use App\Exception\NotDeletableException;
 
 /**
  * Entity class to represent a Funding Organization.
@@ -71,7 +72,7 @@ class FundingOrganization extends Entity
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
@@ -84,7 +85,7 @@ class FundingOrganization extends Entity
      *
      * @ORM\Column(type="citext", unique=true, nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Short name cannot contain angle brackets (< or >)"
      * )
      */
@@ -110,7 +111,7 @@ class FundingOrganization extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Email address cannot contain angle brackets (< or >)"
      * )
      * @Assert\Email(
@@ -128,7 +129,7 @@ class FundingOrganization extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Description cannot contain angle brackets (< or >)"
      * )
      */
@@ -143,7 +144,7 @@ class FundingOrganization extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Website URL cannot contain angle brackets (< or >)"
      * )
      */
@@ -158,7 +159,7 @@ class FundingOrganization extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Phone number cannot contain angle brackets (< or >)"
      * )
      */
@@ -173,7 +174,7 @@ class FundingOrganization extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Delievery point (address) cannot contain angle brackets (< or >)"
      * )
      */
@@ -188,7 +189,7 @@ class FundingOrganization extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="City cannot contain angle brackets (< or >)"
      * )
      */
@@ -203,7 +204,7 @@ class FundingOrganization extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Administrative area (state) cannot contain angle brackets (< or >)"
      * )
      */
@@ -218,7 +219,7 @@ class FundingOrganization extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Postal code (zip) cannot contain angle brackets (< or >)"
      * )
      */
@@ -233,7 +234,7 @@ class FundingOrganization extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Country cannot contain angle brackets (< or >)"
      * )
      */
@@ -343,7 +344,7 @@ class FundingOrganization extends Entity
      *
      * @return void
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
@@ -383,7 +384,7 @@ class FundingOrganization extends Entity
      *
      * @return string|resource Binary string containing the logo or a stream resource pointing to it.
      */
-    public function getLogo($asStream = false)
+    public function getLogo(bool $asStream = false)
     {
         if ($asStream) {
             if (is_resource($this->logo) and get_resource_type($this->logo) == 'stream') {
@@ -415,13 +416,13 @@ class FundingOrganization extends Entity
     /**
      * Setter for emailAddress.
      *
-     * @param string $emailAddress Containing email address of funding organization.
+     * @param string|null $emailAddress Containing email address of funding organization.
      *
      * @access public
      *
      * @return void
      */
-    public function setEmailAddress($emailAddress)
+    public function setEmailAddress(?string $emailAddress)
     {
         $this->emailAddress = $emailAddress;
     }
@@ -441,13 +442,13 @@ class FundingOrganization extends Entity
     /**
      * Setter for description.
      *
-     * @param string $description Description of funding organization.
+     * @param string|null $description Description of funding organization.
      *
      * @access public
      *
      * @return void
      */
-    public function setDescription($description)
+    public function setDescription(?string $description)
     {
         $this->description = $description;
     }
@@ -467,13 +468,13 @@ class FundingOrganization extends Entity
     /**
      * Setter for url.
      *
-     * @param string $url Funding organization's Website URL.
+     * @param string|null $url Funding organization's Website URL.
      *
      * @access public
      *
      * @return void
      */
-    public function setUrl($url)
+    public function setUrl(?string $url)
     {
         $this->url = $url;
     }
@@ -493,7 +494,7 @@ class FundingOrganization extends Entity
     /**
      * Setter for sortOrder.
      *
-     * @param integer $position The position to set in the sort ordering.
+     * @param integer|null $position The position to set in the sort ordering.
      *
      * @access public
      *
@@ -501,13 +502,9 @@ class FundingOrganization extends Entity
      *
      * @return void
      */
-    public function setSortOrder($position)
+    public function setSortOrder(?int $position)
     {
-        if (is_int($position) or null === $position) {
-            $this->sortOrder = $position;
-        } else {
-            throw new \InvalidArgumentException('Unexpected input.  This should either be an int or null.');
-        }
+        $this->sortOrder = $position;
     }
 
     /**
@@ -525,13 +522,13 @@ class FundingOrganization extends Entity
     /**
      * Setter for phoneNumber.
      *
-     * @param string $phoneNumber Funding organization's phone number.
+     * @param string|null $phoneNumber Funding organization's phone number.
      *
      * @access public
      *
      * @return void
      */
-    public function setPhoneNumber($phoneNumber)
+    public function setPhoneNumber(?string $phoneNumber)
     {
         $this->phoneNumber = $phoneNumber;
     }
@@ -551,13 +548,13 @@ class FundingOrganization extends Entity
     /**
      * Setter for deliveryPoint.
      *
-     * @param string $deliveryPoint Street address of funding organization.
+     * @param string|null $deliveryPoint Street address of funding organization.
      *
      * @access public
      *
      * @return void
      */
-    public function setDeliveryPoint($deliveryPoint)
+    public function setDeliveryPoint(?string $deliveryPoint)
     {
         $this->deliveryPoint = $deliveryPoint;
     }
@@ -577,13 +574,13 @@ class FundingOrganization extends Entity
     /**
      * Setter for city.
      *
-     * @param string $city City of funding organization.
+     * @param string|null $city City of funding organization.
      *
      * @access public
      *
      * @return void
      */
-    public function setCity($city)
+    public function setCity(?string $city)
     {
         $this->city = $city;
     }
@@ -603,13 +600,13 @@ class FundingOrganization extends Entity
     /**
      * Setter for administrativeArea.
      *
-     * @param string $administrativeArea Funding organization's administrative area (state).
+     * @param string|null $administrativeArea Funding organization's administrative area (state).
      *
      * @access public
      *
      * @return void
      */
-    public function setAdministrativeArea($administrativeArea)
+    public function setAdministrativeArea(?string $administrativeArea)
     {
         $this->administrativeArea = $administrativeArea;
     }
@@ -629,13 +626,13 @@ class FundingOrganization extends Entity
     /**
      * Setter for postalCode.
      *
-     * @param string $postalCode Postal (zip) code.
+     * @param string|null $postalCode Postal (zip) code.
      *
      * @access public
      *
      * @return void
      */
-    public function setPostalCode($postalCode)
+    public function setPostalCode(?string $postalCode)
     {
         $this->postalCode = $postalCode;
     }
@@ -655,13 +652,13 @@ class FundingOrganization extends Entity
     /**
      * Setter for country.
      *
-     * @param string $country Funding organization's country.
+     * @param string|null $country Funding organization's country.
      *
      * @access public
      *
      * @return void
      */
-    public function setCountry($country)
+    public function setCountry(?string $country)
     {
         $this->country = $country;
     }
@@ -723,7 +720,7 @@ class FundingOrganization extends Entity
     /**
      * Setter for dataRepository.
      *
-     * @param DataRepository $dataRepository An instance of \Pelagos\Entity\DataRepository.
+     * @param DataRepository $dataRepository An instance of \App\Entity\DataRepository.
      *
      * @access public
      *
@@ -795,11 +792,11 @@ class FundingOrganization extends Entity
     /**
      * Setter for short name.
      *
-     * @param string $shortName Short name for the funding organization.
+     * @param string|null $shortName Short name for the funding organization.
      *
      * @return void
      */
-    public function setShortName(string $shortName) : void
+    public function setShortName(?string $shortName) : void
     {
         $this->shortName = $shortName;
     }

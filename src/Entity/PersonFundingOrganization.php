@@ -1,11 +1,12 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator\Constraints as CustomAssert;
 
 use Hateoas\Configuration\Annotation as Hateoas;
 
@@ -104,7 +105,7 @@ class PersonFundingOrganization extends Entity implements PersonAssociationInter
      * @Assert\NotBlank(
      *     message="Label is required"
      * )
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Label cannot contain angle brackets (< or >)"
      * )
      */
@@ -185,13 +186,9 @@ class PersonFundingOrganization extends Entity implements PersonAssociationInter
      *
      * @return void
      */
-    public function setLabel($label)
+    public function setLabel(?string $label)
     {
-        if (is_string($label) or $label === null) {
-            $this->label = $label;
-        } else {
-            throw new \InvalidArgumentException('Label must be a string or null, ' . gettype($label) . ' given');
-        }
+        $this->label = $label;
     }
 
     /**

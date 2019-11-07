@@ -1,9 +1,10 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator\Constraints as CustomAssert;
 
 /**
  * This class represent data center entity information.
@@ -88,7 +89,7 @@ class DataCenter extends Entity
      *     message="Organization URL is required"
      * )
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Website URL cannot contain angle brackets (< or >)"
      * )
      */
@@ -101,7 +102,7 @@ class DataCenter extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Phone number cannot contain angle brackets (< or >)"
      * )
      */
@@ -114,7 +115,7 @@ class DataCenter extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Delievery point (address) cannot contain angle brackets (< or >)"
      * )
      */
@@ -127,7 +128,7 @@ class DataCenter extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="City cannot contain angle brackets (< or >)"
      * )
      */
@@ -142,7 +143,7 @@ class DataCenter extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Administrative area (state) cannot contain angle brackets (< or >)"
      * )
      */
@@ -155,7 +156,7 @@ class DataCenter extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Postal code (zip) cannot contain angle brackets (< or >)"
      * )
      */
@@ -168,7 +169,7 @@ class DataCenter extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Country cannot contain angle brackets (< or >)"
      * )
      */
@@ -181,7 +182,7 @@ class DataCenter extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Phone number cannot contain angle brackets (< or >)"
      * )
      *
@@ -209,7 +210,7 @@ class DataCenter extends Entity
      *
      * @return void
      */
-    public function setOrganizationName($organizationName)
+    public function setOrganizationName(string $organizationName)
     {
         $this->organizationName = $organizationName;
     }
@@ -231,7 +232,7 @@ class DataCenter extends Entity
      *
      * @return void
      */
-    public function setOrganizationUrl($organizationUrl)
+    public function setOrganizationUrl(string $organizationUrl)
     {
         $this->organizationUrl = $organizationUrl;
     }
@@ -249,11 +250,11 @@ class DataCenter extends Entity
     /**
      * Setter for Data center's phone number.
      *
-     * @param string $phoneNumber Phone number of the organization.
+     * @param string|null $phoneNumber Phone number of the organization.
      *
      * @return void
      */
-    public function setPhoneNumber($phoneNumber)
+    public function setPhoneNumber(?string $phoneNumber)
     {
         $this->phoneNumber = $phoneNumber;
     }
@@ -271,11 +272,11 @@ class DataCenter extends Entity
     /**
      * Setter for Data center delivery point(street address).
      *
-     * @param string $deliveryPoint Delivery point(street address) of the organization.
+     * @param string|null $deliveryPoint Delivery point(street address) of the organization.
      *
      * @return void
      */
-    public function setDeliveryPoint($deliveryPoint)
+    public function setDeliveryPoint(?string $deliveryPoint)
     {
         $this->deliveryPoint = $deliveryPoint;
     }
@@ -293,11 +294,11 @@ class DataCenter extends Entity
     /**
      * Setter for Data center's city.
      *
-     * @param string $city City where the organization is located.
+     * @param string|null $city City where the organization is located.
      *
      * @return void
      */
-    public function setCity($city)
+    public function setCity(?string $city)
     {
         $this->city = $city;
     }
@@ -315,11 +316,11 @@ class DataCenter extends Entity
     /**
      * Setter for Data center's administrative area(state).
      *
-     * @param string $administrativeArea Administrative area(state) where the organization is located.
+     * @param string|null $administrativeArea Administrative area(state) where the organization is located.
      *
      * @return void
      */
-    public function setAdministrativeArea($administrativeArea)
+    public function setAdministrativeArea(?string $administrativeArea)
     {
         $this->administrativeArea = $administrativeArea;
     }
@@ -337,11 +338,11 @@ class DataCenter extends Entity
     /**
      * Setter for Data center's postal code.
      *
-     * @param string $postalCode Postal code for the organization.
+     * @param string|null $postalCode Postal code for the organization.
      *
      * @return void
      */
-    public function setPostalCode($postalCode)
+    public function setPostalCode(?string $postalCode)
     {
         $this->postalCode = $postalCode;
     }
@@ -359,11 +360,11 @@ class DataCenter extends Entity
     /**
      * Setter for Data center's country.
      *
-     * @param string $country Country of the organization.
+     * @param string|null $country Country of the organization.
      *
      * @return void
      */
-    public function setCountry($country)
+    public function setCountry(?string $country)
     {
         $this->country = $country;
     }
@@ -381,11 +382,11 @@ class DataCenter extends Entity
     /**
      * Setter for Email address of the organization.
      *
-     * @param string $emailAddress Email address of the organization.
+     * @param string|null $emailAddress Email address of the organization.
      *
      * @return void
      */
-    public function setEmailAddress($emailAddress)
+    public function setEmailAddress(?string $emailAddress)
     {
         $this->emailAddress = $emailAddress;
     }

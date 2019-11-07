@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -125,11 +125,11 @@ class DatasetSubmissionReview extends Entity
     /**
      * Sets the text for the review notes or this review.
      *
-     * @param string $reviewNotes A string with the review notes.
+     * @param string|null $reviewNotes A string with the review notes.
      *
      * @return void
      */
-    public function setReviewNotes($reviewNotes)
+    public function setReviewNotes(?string $reviewNotes)
     {
         $this->reviewNotes = $reviewNotes;
     }
