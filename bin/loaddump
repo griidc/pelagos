@@ -145,7 +145,7 @@ if [ $ELASTICA_CLEAR -eq 1 ]; then
 fi
 
 if [ $ELASTICA_INDEX -eq 1 ]; then
-    bin/console elasticsearch:reindex-datasets
+    bin/console fos:elastica:populate
     echo "Populated Elasticsearch index"
 fi
 
