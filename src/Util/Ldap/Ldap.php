@@ -162,12 +162,12 @@ class Ldap
     /**
      * Determine if an UidNumber is already in use.
      *
-     * @param string      $uidNumber User's Uid number.
+     * @param string|null $uidNumber User's Uid number.
      * @param string|null $uid       Optional username to ignore associated uid Number of.
      *
      * @return boolean True if uidNumber is available, False if not.
      */
-    protected function checkIfUidNumberAvailable(string $uidNumber, $uid = null)
+    protected function checkIfUidNumberAvailable(?string $uidNumber, $uid = null)
     {
         // If not being set, then is available, so return true.
         if (null === $uidNumber) {
