@@ -1,0 +1,24 @@
+doctrine:
+    dbal:
+        # configure these for your database server
+        driver: 'pdo_pgsql'
+        charset: utf8
+        server_version: 9.6
+        url: '%env(resolve:DATABASE_URL)%'
+        mapping_types:
+            citext: citext
+        types:
+            citext: 
+                class: App\DoctrineExtensions\DBAL\Types\CITextType
+                commented: false
+    orm:
+        auto_generate_proxy_classes: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+        auto_mapping: true
+        mappings:
+            App:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Entity'
+                prefix: 'App\Entity'
+                alias: App
