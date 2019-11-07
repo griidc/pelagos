@@ -1,28 +1,29 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller;
+namespace App\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
-use Pelagos\Bundle\AppBundle\Form\LoginForm;
+use App\Form\LoginForm;
 
 /**
  * This is the controller for the login form.
  */
-class SecurityController extends Controller
+class SecurityController extends AbstractController
 {
     /**
      * The login action.
+     *
+     * @param AuthenticationUtils $authenticationUtils Instance of Authentication Utilities.
      *
      * @Route("/login", name="security_login")
      *
      * @return Response A Response instance.
      */
-    public function loginAction()
+    public function loginAction(AuthenticationUtils $authenticationUtils)
     {
-        $authenticationUtils = $this->get('security.authentication_utils');
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
         // last username entered by the user
@@ -33,7 +34,7 @@ class SecurityController extends Controller
         ]);
 
         return $this->render(
-            'PelagosAppBundle:Security:login.html.twig',
+            'Security/login.html.twig',
             array(
                 'form'  => $form->createView(),
                 'error' => $error,
