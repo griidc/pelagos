@@ -1,11 +1,8 @@
 <?php
-namespace Pelagos\Event;
+namespace App\Event;
 
-use Pelagos\Entity\Account;
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\Entity;
-use Pelagos\Entity\Person;
+use App\Entity\DatasetSubmission;
+use App\Util\RabbitPublisher;
 
 /**
  * Listener class for Dataset Submission-related events.
@@ -34,15 +31,15 @@ class DatasetSubmissionListener extends EventListener
 
         // Publish message requesting DOI generation.
         // Producer passed in via constructor is that of the doi_issue producer.
-        $this->producer->publish($dataset->getId(), 'update');
+        $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'update');
 
         // email User
-        $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
+        $template = $this->twig->load('Email/user.dataset-created.email.twig');
 
         $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission));
 
         // email DM(s)
-        $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-submitted.email.twig');
+        $template = $this->twig->load('Email/data-managers.dataset-submitted.email.twig');
         $this->sendMailMsg(
             $template,
             array('dataset' => $dataset),
@@ -70,14 +67,14 @@ class DatasetSubmissionListener extends EventListener
             )
         );
 
-        $this->producer->publish($dataset->getId(), 'update');
+        $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'update');
 
         // email User
-        $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
+        $template = $this->twig->load('Email/user.dataset-created.email.twig');
         $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission));
 
         // email DM(s)
-        $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-updated.email.twig');
+        $template = $this->twig->load('Email/data-managers.dataset-updated.email.twig');
         $this->sendMailMsg(
             $template,
             array('dataset' => $dataset),
@@ -86,7 +83,7 @@ class DatasetSubmissionListener extends EventListener
 
         // email DRPM(s)
         $template = $this->twig
-            ->loadTemplate('PelagosAppBundle:Email:data-repository-managers.dataset-resubmitted.email.twig');
+            ->load('Email/data-repository-managers.dataset-resubmitted.email.twig');
         $this->sendMailMsg(
             $template,
             array('datasetSubmission' => $datasetSubmission),
@@ -110,7 +107,7 @@ class DatasetSubmissionListener extends EventListener
         if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
             //email DRMs
             $this->sendMailMsg(
-                $this->twig->loadTemplate('PelagosAppBundle:Email:data-repository-managers.dataset-processed.email.twig'),
+                $this->twig->load('Email/data-repository-managers.dataset-processed.email.twig'),
                 array('datasetSubmission' => $datasetSubmission),
                 $this->getDRPMs($datasetSubmission->getDataset())
             );
@@ -130,8 +127,8 @@ class DatasetSubmissionListener extends EventListener
 
         // email DRMs
         $this->sendMailMsg(
-            $this->twig->loadTemplate(
-                'PelagosAppBundle:Email:data-repository-managers.html-found-for-dataset.email.twig'
+            $this->twig->load(
+                'Email/data-repository-managers.html-found-for-dataset.email.twig'
             ),
             array('datasetSubmission' => $datasetSubmission),
             $this->getDRPMs($datasetSubmission->getDataset())
@@ -151,8 +148,8 @@ class DatasetSubmissionListener extends EventListener
 
         // email DRMs
         $this->sendMailMsg(
-            $this->twig->loadTemplate(
-                'PelagosAppBundle:Email:data-repository-managers.dataset-unprocessable.email.twig'
+            $this->twig->load(
+                'Email/data-repository-managers.dataset-unprocessable.email.twig'
             ),
             array('datasetSubmission' => $datasetSubmission),
             $this->getDRPMs($datasetSubmission->getDataset())
@@ -181,7 +178,7 @@ class DatasetSubmissionListener extends EventListener
                 ' ->InReview)');
         }
         // Publish DOI for accepted and unrestricted datasets
-        $this->producer->publish($datasetSubmission->getDataset()->getId(), 'update');
+        $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'update');
     }
 
     /**
@@ -217,7 +214,7 @@ class DatasetSubmissionListener extends EventListener
             ' accepted dataset ' . $dataset->getUdi() . ' (In Review->Accepted)'
         );
         // Publish DOI for accepted and unrestricted datasets
-        $this->producer->publish($datasetSubmission->getDataset()->getId(), 'update');
+        $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'update');
     }
 
     /**

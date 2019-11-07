@@ -1,22 +1,23 @@
 <?php
-namespace Pelagos\Event;
+namespace App\Event;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use App\Util\RabbitPublisher;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-use OldSound\RabbitMqBundle\RabbitMq\Producer;
+use App\Handler\EntityHandler;
+use App\Entity\Account;
+use App\Entity\Dataset;
+use App\Entity\DataRepositoryRole;
+use App\Entity\Person;
+use App\Entity\PersonDataRepository;
+use App\Entity\ResearchGroupRole;
+use App\Util\MailSender;
 
-use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
-use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
-use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
+use Twig\Environment;
 
-use Pelagos\Entity\Account;
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DataRepositoryRole;
-use Pelagos\Entity\Person;
-use Pelagos\Entity\PersonDataRepository;
-use Pelagos\Util\DataStore;
-use Pelagos\Util\MdappLogger;
+use App\Util\DataStore;
+use App\Util\MdappLogger;
 
 /**
  * Listener class for Dataset Submission-related events.
@@ -26,14 +27,14 @@ abstract class EventListener
     /**
      * The twig templating engine instance.
      *
-     * @var \Twig_Environment
+     * @var Environment
      */
     protected $twig;
 
     /**
      * The swiftmailer instance.
      *
-     * @var \Swift_Mailer
+     * @var MailSender
      */
     protected $mailer;
 
@@ -52,13 +53,6 @@ abstract class EventListener
     protected $tokenStorage;
 
     /**
-     * An array holding email from name/email information.
-     *
-     * @var array
-     */
-    protected $from;
-
-    /**
      * A variable to hold instance of Pelagos Entityhandler.
      *
      * @var EntityHandler
@@ -66,11 +60,11 @@ abstract class EventListener
     protected $entityHandler;
 
     /**
-     * A variable to hold an instance of an AMQP producer.
+     * Custom rabbitmq publisher.
      *
-     * @var Producer
+     * @var RabbitPublisher
      */
-    protected $producer;
+    protected $publisher;
 
     /**
      * An instance of the Pelagos Data Store utility service.
@@ -89,33 +83,28 @@ abstract class EventListener
     /**
      * This is the class constructor to handle dependency injections.
      *
-     * @param \Twig_Environment  $twig          Twig engine.
-     * @param \Swift_Mailer      $mailer        Email handling library.
-     * @param TokenStorage       $tokenStorage  Symfony's token object.
-     * @param string             $fromAddress   Sender's email address.
-     * @param string             $fromName      Sender's name to include in email.
-     * @param EntityHandler|null $entityHandler Pelagos entity handler.
-     * @param Producer           $producer      An AMQP/RabbitMQ Producer.
-     * @param DataStore|null     $dataStore     An instance of the Pelagos Data Store utility service.
-     * @param MdappLogger|null   $mdappLogger   An MDAPP logger.
+     * @param Environment           $twig          Twig engine.
+     * @param MailSender            $mailer        Email handling library.
+     * @param TokenStorageInterface $tokenStorage  Symfony's token object.
+     * @param EntityHandler|null    $entityHandler Pelagos entity handler.
+     * @param RabbitPublisher       $publisher     An AMQP/RabbitMQ Producer.
+     * @param DataStore|null        $dataStore     An instance of the Pelagos Data Store utility service.
+     * @param MdappLogger|null      $mdappLogger   An MDAPP logger.
      */
     public function __construct(
-        \Twig_Environment $twig,
-        \Swift_Mailer $mailer,
-        TokenStorage $tokenStorage,
-        $fromAddress,
-        $fromName,
+        Environment $twig,
+        MailSender $mailer,
+        TokenStorageInterface $tokenStorage,
         EntityHandler $entityHandler = null,
-        Producer $producer = null,
+        RabbitPublisher $publisher = null,
         DataStore $dataStore = null,
         MdappLogger $mdappLogger = null
     ) {
         $this->twig = $twig;
         $this->mailer = $mailer;
         $this->tokenStorage = $tokenStorage;
-        $this->from = array($fromAddress => $fromName);
         $this->entityHandler = $entityHandler;
-        $this->producer = $producer;
+        $this->publisher = $publisher;
         $this->dataStore = $dataStore;
         $this->mdappLogger = $mdappLogger;
     }
@@ -123,17 +112,15 @@ abstract class EventListener
     /**
      * Method to build and send an email.
      *
-     * @param \Twig_Template $twigTemplate A twig template.
-     * @param array          $mailData     Mail data array for email.
-     * @param array|null     $peopleObjs   An optional array of recipient Persons.
-     * @param array          $attachments  An optional array of Swift_Message_Attachments to attach.
-     *
-     * @throws \InvalidArgumentException When any element of $attachments is not a Swift_Message_Attachment.
+     * @param \Twig\TemplateWrapper $twigTemplate A twig template.
+     * @param array                 $mailData     Mail data array for email.
+     * @param array|null            $peopleObjs   An optional array of recipient Persons.
+     * @param array                 $attachments  An optional array of Swift_Message_Attachments to attach.
      *
      * @return void
      */
     protected function sendMailMsg(
-        \Twig_Template $twigTemplate,
+        \Twig\TemplateWrapper $twigTemplate,
         array $mailData,
         array $peopleObjs = null,
         array $attachments = array()
@@ -152,19 +139,12 @@ abstract class EventListener
 
         foreach (array_unique($peopleObjs, SORT_REGULAR) as $person) {
             $mailData['recipient'] = $person;
-            $message = \Swift_Message::newInstance()
-                ->setSubject($twigTemplate->renderBlock('subject', $mailData))
-                ->setFrom($this->from)
-                ->setTo($person->getEmailAddress())
-                ->setBody($twigTemplate->renderBlock('body_html', $mailData), 'text/html')
-                ->addPart($twigTemplate->renderBlock('body_text', $mailData), 'text/plain');
-            foreach ($attachments as $attachment) {
-                if (!$attachment instanceof \Swift_Attachment) {
-                    throw new \InvalidArgumentException('Attachment is not an instance of Swift_Attachment');
-                }
-                $message->attach($attachment);
-            }
-            $this->mailer->send($message);
+            $this->mailer->sendEmailMessage(
+                $twigTemplate,
+                $mailData,
+                array($person->getEmailAddress() => $person->getFirstName() . ' ' . $person->getLastName()),
+                $attachments
+            );
         }
     }
 
@@ -173,7 +153,7 @@ abstract class EventListener
      *
      * @param Dataset $dataset A Dataset entity.
      *
-     * @return Array of Persons having DRPM status.
+     * @return array Array of Persons having DRPM status.
      */
     protected function getDRPMs(Dataset $dataset)
     {
@@ -185,7 +165,7 @@ abstract class EventListener
                                           ->getPersonDataRepositories();
 
         foreach ($personDataRepositories as $pdr) {
-            if ($pdr->getRole()->getName() == DataRepositoryRoles::MANAGER) {
+            if ($pdr->getRole()->getName() == DataRepositoryRole::MANAGER) {
                 $recipientPeople[] = $pdr->getPerson();
             }
         }
@@ -197,14 +177,15 @@ abstract class EventListener
      *
      * @throws \Exception On more than one DataRepositoryRole found for MANAGER.
      *
-     * @return Array of Persons having DRPM status.
+     * @return array Array of Persons having DRPM status.
      */
     protected function getAllDRPMs()
     {
         $recipientPeople = array();
         $eh = $this->entityHandler;
 
-        $drpmRole = $eh->getBy(DataRepositoryRole::class, array('name' => DataRepositoryRoles::MANAGER));
+        $drpmRole = $eh->getBy(DataRepositoryRole::class, array('name' => DataRepositoryRole::MANAGER));
+
         if (1 !== count($drpmRole)) {
             throw new \Exception('More than one role found for manager role.');
         }
@@ -222,7 +203,7 @@ abstract class EventListener
      *
      * @param Dataset $dataset A Dataset entity.
      *
-     * @return Array of Persons who are Data Managers for the Research Group tied back to the DIF.
+     * @return array Array of Persons who are Data Managers for the Research Group tied back to the DIF.
      */
     protected function getDatasetDMs(Dataset $dataset)
     {
@@ -230,7 +211,7 @@ abstract class EventListener
         $personResearchGroups = $dataset->getResearchGroup()->getPersonResearchGroups();
 
         foreach ($personResearchGroups as $prg) {
-            if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
+            if ($prg->getRole()->getName() == ResearchGroupRole::DATA) {
                 $recipientPeople[] = $prg->getPerson();
             }
         }
@@ -252,7 +233,7 @@ abstract class EventListener
         foreach ($researchGroups as $rg) {
             $prgs = $rg->getPersonResearchGroups();
             foreach ($prgs as $prg) {
-                if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
+                if ($prg->getRole()->getName() == ResearchGroupRole::DATA) {
                     $recipientPeople[] = $prg->getPerson();
                 }
             }
