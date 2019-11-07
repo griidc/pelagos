@@ -4,6 +4,10 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    download_base_directory: '%env(DOWNLOAD_BASE_DIRECTORY)%'
+    download_base_url: '%env(DOWNLOAD_BASE_URL)%'
+    issue_tracking_base_url: '%env(ISSUE_TRACKING_BASE_URL)%'
+    homedir_prefix: '%env(HOMEDIR_PREFIX)%'
 
 services:
     # default configuration for services in *this* file
@@ -23,10 +27,6 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
-    App\Controller\UI\MdAppController:
-        bind:
-            string $issueTrackingBaseUrl: '%env(ISSUE_TRACKING_BASE_URL)%'
-
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
@@ -38,7 +38,6 @@ services:
         bind:
             $maximumPasswordAge: "%env(ACCOUNT_PASSWORD_MAX_AGE)%"
 
-
     App\Util\MailSender:
         bind:
             string $fromAddress: "%env(MAILER_FROM_ADDR)%"
@@ -48,11 +47,11 @@ services:
         bind:
             string $mdappLogfile: '%kernel.logs_dir%/mdapp.log'
 
-    App\EventListener\AccountListener:
+    App\Event\AccountListener:
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.account.forgot_username, method: onForgotUsername }
 
-    App\EventListener\DIFListener:
+    App\Event\DIFListener:
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.dif.saved_not_submitted, method: onSavedNotSubmitted }
             - { name: kernel.event_listener, event: pelagos.entity.dif.submitted, method: onSubmitted }
@@ -60,7 +59,7 @@ services:
             - { name: kernel.event_listener, event: pelagos.entity.dif.unlock_requested, method: onUnlockRequested }
             - { name: kernel.event_listener, event: pelagos.entity.dif.unlocked, method: onUnlocked }
 
-    App\EventListener\DatasetSubmissionListener:
+    App\Event\DatasetSubmissionListener:
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.submitted, method: onSubmitted }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.resubmitted, method: onResubmitted }
@@ -72,19 +71,19 @@ services:
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.accept_review, method: onAcceptReview }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.request_revisions, method: onRequestRevisions }
 
-    App\EventListener\DoctrineDatasetListener:
+    App\Event\DoctrineDatasetListener:
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 
-    App\EventListener\DoctrineDataCenterListener:
+    App\Event\DoctrineDataCenterListener:
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 
-    App\EventListener\DoiDatasetListener:
+    App\Event\DoiDatasetListener:
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.dataset.delete_doi, method: onDeleteDoi }
 
-    App\EventListener\LogActionItemEventListener:
+    App\Event\LogActionItemEventListener:
         tags:
             - { name: kernel.event_listener, event: pelagos.logactionitem.file_download, method: onNewLogCreated }
             - { name: kernel.event_listener, event: pelagos.logactionitem.search_terms_log, method: onNewLogCreated }
@@ -148,7 +147,21 @@ services:
             OldSound\RabbitMqBundle\RabbitMq\Producer $datasetFileHasherProducer: '@old_sound_rabbit_mq.dataset_submission_producer'
             OldSound\RabbitMqBundle\RabbitMq\Producer $doiProducer: '@old_sound_rabbit_mq.doi_issue_producer'
 
-    App\EventListener\MaintenanceModeListener:
+    App\Command\AccountExpirationNotifyCommand:
+        bind:
+            string $maximumPasswordAge: "%env(ACCOUNT_PASSWORD_MAX_AGE)%"
+            string $passwordExpiryWarn: "%env(ACCOUNT_PASSWORD_EXPIRATION_WARN)%"
+            string $hostName: "%env(HOSTNAME)%"
+
+    App\Command\RebuildElasticsearchIndexCommand:
+        bind:
+            FOS\ElasticaBundle\Persister\ObjectPersister $pelagosDatasetIndexPersister: "@fos_elastica.object_persister.pelagos.dataset"
+
+    App\Util\Search:
+        bind:
+            FOS\ElasticaBundle\Finder\TransformedFinder $finder: "@fos_elastica.finder.search_pelagos.dataset"
+
+    App\Event\MaintenanceModeListener:
         bind:
             bool $maintenanceMode: "%env(MAINTENANCE_MODE)%"
             bool $debug: '%kernel.debug%'

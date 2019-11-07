@@ -186,13 +186,9 @@ class PersonFundingOrganization extends Entity implements PersonAssociationInter
      *
      * @return void
      */
-    public function setLabel($label)
+    public function setLabel(?string $label)
     {
-        if (is_string($label) or $label === null) {
-            $this->label = $label;
-        } else {
-            throw new \InvalidArgumentException('Label must be a string or null, ' . gettype($label) . ' given');
-        }
+        $this->label = $label;
     }
 
     /**

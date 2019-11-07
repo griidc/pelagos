@@ -26,7 +26,7 @@ class PersonController extends AbstractController
      * The Person Research Group action.
      *
      * @param EntityHandler $entityHandler The enitity handler.
-     * @param string        $id            The id of the entity to retrieve.
+     * @param integer       $id            The id of the entity to retrieve.
      *
      * @throws NotFoundHttpException When person was not found.
      *
@@ -34,7 +34,7 @@ class PersonController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(EntityHandler $entityHandler, string $id = null)
+    public function defaultAction(EntityHandler $entityHandler, int $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {

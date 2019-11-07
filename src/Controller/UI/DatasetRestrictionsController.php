@@ -3,7 +3,7 @@ namespace App\Controller\UI;
 
 use App\Entity\Dataset;
 use App\Handler\EntityHandler;
-use App\EventListener\LogActionItemEventDispatcher;
+use App\Event\LogActionItemEventDispatcher;
 use App\Exception\PersistenceException;
 
 use App\Util\RabbitPublisher;

@@ -139,13 +139,13 @@ class LogActionItem extends Entity
     /**
      * Setter for subjectEntityName.
      *
-     * @param string $subjectEntityName The Subject Entity Name to attach to this Action Log Item.
+     * @param string|null $subjectEntityName The Subject Entity Name to attach to this Action Log Item.
      *
      * @access public
      *
      * @return void
      */
-    public function setSubjectEntityName(string $subjectEntityName)
+    public function setSubjectEntityName(?string $subjectEntityName)
     {
         $this->subjectEntityName = $subjectEntityName;
     }
@@ -165,13 +165,13 @@ class LogActionItem extends Entity
     /**
      * Setter for subjectEntityId.
      *
-     * @param integer $subjectEntityId The Subject Entity ID to attach to this Action Log Item.
+     * @param integer|null $subjectEntityId The Subject Entity ID to attach to this Action Log Item.
      *
      * @access public
      *
      * @return void
      */
-    public function setSubjectEntityId(int $subjectEntityId)
+    public function setSubjectEntityId(?int $subjectEntityId)
     {
         $this->subjectEntityId = $subjectEntityId;
     }
@@ -179,13 +179,13 @@ class LogActionItem extends Entity
     /**
      * Setter for payLoad.
      *
-     * @param array $payLoad The additional information to attach to this Action Log Item (json_array).
+     * @param array|null $payLoad The additional information to attach to this Action Log Item (json_array).
      *
      * @access public
      *
      * @return void
      */
-    public function setPayLoad(array $payLoad)
+    public function setPayLoad(?array $payLoad)
     {
         $this->payLoad = $payLoad;
     }
