@@ -405,13 +405,13 @@ class ResearchGroup extends Entity
     /**
      * Setter for url.
      *
-     * @param string $url Research group's Website URL.
+     * @param string|null $url Research group's Website URL.
      *
      * @access public
      *
      * @return void
      */
-    public function setUrl(string $url)
+    public function setUrl(?string $url)
     {
         $this->url = $url;
     }
@@ -431,13 +431,13 @@ class ResearchGroup extends Entity
     /**
      * Setter for phoneNumber.
      *
-     * @param string $phoneNumber Research group's phone number.
+     * @param string|null $phoneNumber Research group's phone number.
      *
      * @access public
      *
      * @return void
      */
-    public function setPhoneNumber(string $phoneNumber)
+    public function setPhoneNumber(?string $phoneNumber)
     {
         $this->phoneNumber = $phoneNumber;
     }
@@ -457,13 +457,13 @@ class ResearchGroup extends Entity
     /**
      * Setter for deliveryPoint.
      *
-     * @param string $deliveryPoint Street address of research group.
+     * @param string|null $deliveryPoint Street address of research group.
      *
      * @access public
      *
      * @return void
      */
-    public function setDeliveryPoint(string $deliveryPoint)
+    public function setDeliveryPoint(?string $deliveryPoint)
     {
         $this->deliveryPoint = $deliveryPoint;
     }
@@ -483,13 +483,13 @@ class ResearchGroup extends Entity
     /**
      * Setter for city.
      *
-     * @param string $city City of research group.
+     * @param string|null $city City of research group.
      *
      * @access public
      *
      * @return void
      */
-    public function setCity(string $city)
+    public function setCity(?string $city)
     {
         $this->city = $city;
     }
@@ -509,13 +509,13 @@ class ResearchGroup extends Entity
     /**
      * Setter for administrativeArea.
      *
-     * @param string $administrativeArea Research group's administrative area (state).
+     * @param string|null $administrativeArea Research group's administrative area (state).
      *
      * @access public
      *
      * @return void
      */
-    public function setAdministrativeArea(string $administrativeArea)
+    public function setAdministrativeArea(?string $administrativeArea)
     {
         $this->administrativeArea = $administrativeArea;
     }
@@ -535,13 +535,13 @@ class ResearchGroup extends Entity
     /**
      * Setter for postalCode.
      *
-     * @param string $postalCode Postal (zip) code.
+     * @param string|null $postalCode Postal (zip) code.
      *
      * @access public
      *
      * @return void
      */
-    public function setPostalCode(string $postalCode)
+    public function setPostalCode(?string $postalCode)
     {
         $this->postalCode = $postalCode;
     }
@@ -561,13 +561,13 @@ class ResearchGroup extends Entity
     /**
      * Setter for country.
      *
-     * @param string $country Research group's country.
+     * @param string|null $country Research group's country.
      *
      * @access public
      *
      * @return void
      */
-    public function setCountry(string $country)
+    public function setCountry(?string $country)
     {
         $this->country = $country;
     }
@@ -587,13 +587,13 @@ class ResearchGroup extends Entity
     /**
      * Setter for description.
      *
-     * @param string $description Description of research group.
+     * @param string|null $description Description of research group.
      *
      * @access public
      *
      * @return void
      */
-    public function setDescription(string $description)
+    public function setDescription(?string $description)
     {
         $this->description = $description;
     }
@@ -652,13 +652,13 @@ class ResearchGroup extends Entity
     /**
      * Setter for emailAddress.
      *
-     * @param string $emailAddress Containing email address of research group.
+     * @param string|null $emailAddress Containing email address of research group.
      *
      * @access public
      *
      * @return void
      */
-    public function setEmailAddress(string $emailAddress)
+    public function setEmailAddress(?string $emailAddress)
     {
         $this->emailAddress = $emailAddress;
     }
@@ -794,11 +794,11 @@ class ResearchGroup extends Entity
     /**
      * Setter for short name.
      *
-     * @param string $shortName Short name for the research group.
+     * @param string|null $shortName Short name for the research group.
      *
      * @return void
      */
-    public function setShortName(string $shortName) : void
+    public function setShortName(?string $shortName) : void
     {
         $this->shortName = $shortName;
     }

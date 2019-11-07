@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\EventListener\LogActionItemEventDispatcher;
+use App\Event\LogActionItemEventDispatcher;
 use App\Handler\EntityHandler;
 use App\Util\DataStore;
 use Symfony\Component\Routing\Annotation\Route;
@@ -43,13 +43,13 @@ class DownloadController extends AbstractController
     /**
      * Produce json response for download dialog box.
      *
-     * @param string $id The id of the dataset to download.
+     * @param integer $id The id of the dataset to download.
      *
      * @Route("/download/{id}", name="pelagos_app_download_default")
      *
      * @return Response
      */
-    public function defaultAction(string $id)
+    public function defaultAction(int $id)
     {
         $dataset = $this->entityHandler->get(Dataset::class, $id);
         if ($dataset->isRemotelyHosted()) {
@@ -75,7 +75,7 @@ class DownloadController extends AbstractController
     /**
      * Set up direct download via HTTP and produce html for direct download splash screen.
      *
-     * @param string                       $id                           The id of the dataset to download.
+     * @param integer                      $id                           The id of the dataset to download.
      * @param DataStore                    $dataStore                    The data store.
      * @param LogActionItemEventDispatcher $logActionItemEventDispatcher The log action dispatcher.
      *
@@ -83,7 +83,7 @@ class DownloadController extends AbstractController
      *
      * @return Response
      */
-    public function httpAction(string $id, DataStore $dataStore, LogActionItemEventDispatcher $logActionItemEventDispatcher)
+    public function httpAction(int $id, DataStore $dataStore, LogActionItemEventDispatcher $logActionItemEventDispatcher)
     {
         $dataset = $this->entityHandler->get(Dataset::class, $id);
         $downloadFileInfo = $dataStore->getDownloadFileInfo($dataset->getUdi(), 'dataset');
@@ -105,7 +105,6 @@ class DownloadController extends AbstractController
             $downloadDirectory . '/' . $datasetFileName
         );
         $downloadBaseUrl = $this->getParameter('download_base_url');
-        $em = $this->container->get('doctrine')->getManager();
 
         if ($this->getUser()) {
             $type = get_class($this->getUser());
@@ -124,7 +123,7 @@ class DownloadController extends AbstractController
         $logActionItemEventDispatcher->dispatch(
             array(
                 'actionName' => 'File Download',
-                'subjectEntityName' => $em->getClassMetadata(get_class($dataset))->getName(),
+                'subjectEntityName' => 'Pelagos\Entity\Dataset',
                 'subjectEntityId' => $dataset->getId(),
                 'payLoad' => array('userType' => $type, 'userId' => $typeId),
             ),
@@ -150,7 +149,7 @@ class DownloadController extends AbstractController
             'udi' => $dataset->getUdi(),
             'availability' => $dataset->getAvailabilityStatus()
         );
-        
+
         if ($datasetSubmission instanceof DatasetSubmission) {
             $datasetInfo['filename'] = $datasetSubmission->getDatasetFileName();
             $datasetInfo['fileSize'] = TwigExtentions::formatBytes($datasetSubmission->getDatasetFileSize(), 2);

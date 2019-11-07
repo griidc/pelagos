@@ -12,7 +12,7 @@ use Symfony\Bridge\Monolog\Logger;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 
-use App\EventListener\EntityEventDispatcher;
+use App\Event\EntityEventDispatcher;
 
 use App\Exception\HtmlFoundException;
 

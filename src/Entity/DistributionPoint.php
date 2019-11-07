@@ -164,11 +164,11 @@ class DistributionPoint extends Entity
     /**
      * Setter for distribution url.
      *
-     * @param string $distributionUrl The distribution url for this association.
+     * @param string|null $distributionUrl The distribution url for this association.
      *
      * @return void
      */
-    public function setDistributionUrl(string $distributionUrl = null)
+    public function setDistributionUrl(?string $distributionUrl = null)
     {
         $this->distributionUrl = $distributionUrl;
     }

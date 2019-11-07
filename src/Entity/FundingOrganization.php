@@ -416,13 +416,13 @@ class FundingOrganization extends Entity
     /**
      * Setter for emailAddress.
      *
-     * @param string $emailAddress Containing email address of funding organization.
+     * @param string|null $emailAddress Containing email address of funding organization.
      *
      * @access public
      *
      * @return void
      */
-    public function setEmailAddress(string $emailAddress)
+    public function setEmailAddress(?string $emailAddress)
     {
         $this->emailAddress = $emailAddress;
     }
@@ -442,13 +442,13 @@ class FundingOrganization extends Entity
     /**
      * Setter for description.
      *
-     * @param string $description Description of funding organization.
+     * @param string|null $description Description of funding organization.
      *
      * @access public
      *
      * @return void
      */
-    public function setDescription(string $description)
+    public function setDescription(?string $description)
     {
         $this->description = $description;
     }
@@ -468,13 +468,13 @@ class FundingOrganization extends Entity
     /**
      * Setter for url.
      *
-     * @param string $url Funding organization's Website URL.
+     * @param string|null $url Funding organization's Website URL.
      *
      * @access public
      *
      * @return void
      */
-    public function setUrl(string $url)
+    public function setUrl(?string $url)
     {
         $this->url = $url;
     }
@@ -494,7 +494,7 @@ class FundingOrganization extends Entity
     /**
      * Setter for sortOrder.
      *
-     * @param integer $position The position to set in the sort ordering.
+     * @param integer|null $position The position to set in the sort ordering.
      *
      * @access public
      *
@@ -502,13 +502,9 @@ class FundingOrganization extends Entity
      *
      * @return void
      */
-    public function setSortOrder(int $position)
+    public function setSortOrder(?int $position)
     {
-        if (is_int($position) or null === $position) {
-            $this->sortOrder = $position;
-        } else {
-            throw new \InvalidArgumentException('Unexpected input.  This should either be an int or null.');
-        }
+        $this->sortOrder = $position;
     }
 
     /**
@@ -526,13 +522,13 @@ class FundingOrganization extends Entity
     /**
      * Setter for phoneNumber.
      *
-     * @param string $phoneNumber Funding organization's phone number.
+     * @param string|null $phoneNumber Funding organization's phone number.
      *
      * @access public
      *
      * @return void
      */
-    public function setPhoneNumber(string $phoneNumber)
+    public function setPhoneNumber(?string $phoneNumber)
     {
         $this->phoneNumber = $phoneNumber;
     }
@@ -552,13 +548,13 @@ class FundingOrganization extends Entity
     /**
      * Setter for deliveryPoint.
      *
-     * @param string $deliveryPoint Street address of funding organization.
+     * @param string|null $deliveryPoint Street address of funding organization.
      *
      * @access public
      *
      * @return void
      */
-    public function setDeliveryPoint(string $deliveryPoint)
+    public function setDeliveryPoint(?string $deliveryPoint)
     {
         $this->deliveryPoint = $deliveryPoint;
     }
@@ -578,13 +574,13 @@ class FundingOrganization extends Entity
     /**
      * Setter for city.
      *
-     * @param string $city City of funding organization.
+     * @param string|null $city City of funding organization.
      *
      * @access public
      *
      * @return void
      */
-    public function setCity(string $city)
+    public function setCity(?string $city)
     {
         $this->city = $city;
     }
@@ -604,13 +600,13 @@ class FundingOrganization extends Entity
     /**
      * Setter for administrativeArea.
      *
-     * @param string $administrativeArea Funding organization's administrative area (state).
+     * @param string|null $administrativeArea Funding organization's administrative area (state).
      *
      * @access public
      *
      * @return void
      */
-    public function setAdministrativeArea(string $administrativeArea)
+    public function setAdministrativeArea(?string $administrativeArea)
     {
         $this->administrativeArea = $administrativeArea;
     }
@@ -630,13 +626,13 @@ class FundingOrganization extends Entity
     /**
      * Setter for postalCode.
      *
-     * @param string $postalCode Postal (zip) code.
+     * @param string|null $postalCode Postal (zip) code.
      *
      * @access public
      *
      * @return void
      */
-    public function setPostalCode(string $postalCode)
+    public function setPostalCode(?string $postalCode)
     {
         $this->postalCode = $postalCode;
     }
@@ -656,13 +652,13 @@ class FundingOrganization extends Entity
     /**
      * Setter for country.
      *
-     * @param string $country Funding organization's country.
+     * @param string|null $country Funding organization's country.
      *
      * @access public
      *
      * @return void
      */
-    public function setCountry(string $country)
+    public function setCountry(?string $country)
     {
         $this->country = $country;
     }
@@ -796,11 +792,11 @@ class FundingOrganization extends Entity
     /**
      * Setter for short name.
      *
-     * @param string $shortName Short name for the funding organization.
+     * @param string|null $shortName Short name for the funding organization.
      *
      * @return void
      */
-    public function setShortName(string $shortName) : void
+    public function setShortName(?string $shortName) : void
     {
         $this->shortName = $shortName;
     }

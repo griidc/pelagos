@@ -24,7 +24,7 @@ $(document).ready(function() {
             "datasetPublications.publication"
         ];
         $.ajax({
-            url: "/api/datasets",
+            url: Routing.generate("pelagos_api_datasets_get_collection"),
             data: {
                 udi: $("#udi").val(),
                 _properties: properties.join(",")
@@ -48,7 +48,7 @@ $(document).ready(function() {
     deleteDataset.click(function() {
         if (confirm("Are you sure you want to delete all records for this dataset?")) {
             $.ajax({
-                url: "/api/datasets/" + deleteDataset.attr("datasetId"),
+                url: Routing.generate("pelagos_api_datasets_get",{ "id" : deleteDataset.attr("datasetId") }),
                 method: "DELETE",
                 success: function() {
                     $("#summary-display").val("Dataset deleted!");

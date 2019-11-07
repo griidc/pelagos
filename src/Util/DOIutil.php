@@ -4,6 +4,7 @@ namespace App\Util;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\ServerException;
 
 use HylianShield\Encoding\Base32CrockfordEncoder;
@@ -287,5 +288,28 @@ class DOIutil
                 DOI::STATE_REGISTERED
             );
         }
+    }
+
+    /**
+     * Get a collection of dois using Datacite REST API.
+     *
+     * @param integer $pageNo The required page number for the API.
+     *
+     * @return array
+     */
+    public function getDoiCollection(int $pageNo) : array
+    {
+        $url = $this->url . '/dois' . '?client-id=' . strtolower($this->doiusername) . '&page%5Bnumber%5D=' . $pageNo . '&page%5Bsize%5D=1000';
+        $header = ['Accept' => 'application/vnd.api+json'];
+        $client = new Client();
+        try {
+            $response = $client->request('get', $url, $header);
+        } catch (GuzzleException $exception) {
+            echo $exception->getMessage();
+        }
+
+        $body = json_decode($response->getBody()->getContents(), true);
+
+        return $body;
     }
 }

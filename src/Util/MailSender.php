@@ -2,6 +2,9 @@
 
 namespace App\Util;
 
+use Swift_Mailer;
+use Twig\Environment;
+
 /**
  * A utility to send e-mails from templates.
  */
@@ -37,8 +40,8 @@ class MailSender
      * @param string            $fromName    Sender's name to include in email.
      */
     public function __construct(
-        \Swift_Mailer  $mailer,
-        \Twig_Environment $twig,
+        Swift_Mailer  $mailer,
+        Environment $twig,
         string $fromAddress,
         string $fromName
     ) {
@@ -46,23 +49,23 @@ class MailSender
         $this->mailer = $mailer;
         $this->from = array($fromAddress => $fromName);
     }
-    
+
     /**
      * Method to build and send an email.
      *
-     * @param \Twig_Template $emailTwigTemplate A twig template.
-     * @param array          $mailData          Mail data array for email.
-     * @param string|null    $toAddresses       An optional recipient.
-     * @param array          $attachments       An optional array of Swift_Message_Attachments to attach.
+     * @param \Twig\TemplateWrapper $emailTwigTemplate A twig template.
+     * @param array                 $mailData          Mail data array for email.
+     * @param array                 $toAddresses       Recipient's email addresses.
+     * @param array                 $attachments       An optional array of Swift_Message_Attachments to attach.
      *
      * @throws \InvalidArgumentException When any element of $attachments is not a Swift_Message_Attachment.
      *
      * @return void
      */
     public function sendEmailMessage(
-        \Twig_Template $emailTwigTemplate,
+        \Twig\TemplateWrapper $emailTwigTemplate,
         array $mailData,
-        $toAddresses = null,
+        array $toAddresses = array(),
         array $attachments = array()
     ) {
          $message = new \Swift_Message();

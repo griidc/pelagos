@@ -395,13 +395,13 @@ class Person extends Entity
     /**
      * Setter for phoneNumber.
      *
-     * @param string $phoneNumber Person's phone number.
+     * @param string|null $phoneNumber Person's phone number.
      *
      * @access public
      *
      * @return void
      */
-    public function setPhoneNumber(string $phoneNumber)
+    public function setPhoneNumber(?string $phoneNumber)
     {
         $this->phoneNumber = $phoneNumber;
     }
@@ -421,13 +421,13 @@ class Person extends Entity
     /**
      * Setter for deliveryPoint.
      *
-     * @param string $deliveryPoint Street address of Person.
+     * @param string|null $deliveryPoint Street address of Person.
      *
      * @access public
      *
      * @return void
      */
-    public function setDeliveryPoint(string $deliveryPoint)
+    public function setDeliveryPoint(?string $deliveryPoint)
     {
         $this->deliveryPoint = $deliveryPoint;
     }
@@ -447,13 +447,13 @@ class Person extends Entity
     /**
      * Setter for city.
      *
-     * @param string $city City of Person.
+     * @param string|null $city City of Person.
      *
      * @access public
      *
      * @return void
      */
-    public function setCity(string $city)
+    public function setCity(?string $city)
     {
         $this->city = $city;
     }
@@ -473,13 +473,13 @@ class Person extends Entity
     /**
      * Setter for administrativeArea.
      *
-     * @param string $administrativeArea Person's administrative area (state).
+     * @param string|null $administrativeArea Person's administrative area (state).
      *
      * @access public
      *
      * @return void
      */
-    public function setAdministrativeArea(string $administrativeArea)
+    public function setAdministrativeArea(?string $administrativeArea)
     {
         $this->administrativeArea = $administrativeArea;
     }
@@ -499,13 +499,13 @@ class Person extends Entity
     /**
      * Setter for postalCode.
      *
-     * @param string $postalCode Postal (zip) code.
+     * @param string|null $postalCode Postal (zip) code.
      *
      * @access public
      *
      * @return void
      */
-    public function setPostalCode(string $postalCode)
+    public function setPostalCode(?string $postalCode)
     {
         $this->postalCode = $postalCode;
     }
@@ -525,13 +525,13 @@ class Person extends Entity
     /**
      * Setter for country.
      *
-     * @param string $country Person's country.
+     * @param string|null $country Person's country.
      *
      * @access public
      *
      * @return void
      */
-    public function setCountry(string $country)
+    public function setCountry(?string $country)
     {
         $this->country = $country;
     }
@@ -551,13 +551,13 @@ class Person extends Entity
     /**
      * Setter for url.
      *
-     * @param string $url Person's Website URL.
+     * @param string|null $url Person's Website URL.
      *
      * @access public
      *
      * @return void
      */
-    public function setUrl(string $url)
+    public function setUrl(?string $url)
     {
         $this->url = $url;
     }
@@ -577,13 +577,13 @@ class Person extends Entity
     /**
      * Setter for organization.
      *
-     * @param string $organization Person's organization.
+     * @param string|null $organization Person's organization.
      *
      * @access public
      *
      * @return void
      */
-    public function setOrganization(string $organization)
+    public function setOrganization(?string $organization)
     {
         $this->organization = $organization;
     }
@@ -603,13 +603,13 @@ class Person extends Entity
     /**
      * Setter for position.
      *
-     * @param string $position Person's position.
+     * @param string|null $position Person's position.
      *
      * @access public
      *
      * @return void
      */
-    public function setPosition(string $position)
+    public function setPosition(?string $position)
     {
         $this->position = $position;
     }

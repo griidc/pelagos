@@ -3,7 +3,12 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
+
+use App\Entity\DatasetSubmission;
+use App\Entity\Dataset;
 
 /**
  * This is the default controller.
@@ -31,7 +36,7 @@ class DefaultController extends AbstractController
      *
      * @Route("/admin", name="pelagos_admin")
      *
-     * @return Response A Response instance.
+     * @return Response
      */
     public function admin()
     {
@@ -41,16 +46,15 @@ class DefaultController extends AbstractController
     /**
      * Get the sitemap.xml containing all dataset urls.
      *
-     * @return Response
+     * @Route("/sitemap.xml", name="pelagos_sitemap")
+     *
+     * @return StreamedResponse
      */
     public function showSiteMapXml()
     {
-        $container = $this->container;
-        $response = new StreamedResponse(function () use ($container) {
+        $response = new StreamedResponse(function () {
 
-            $entityManager = $container->get('doctrine.orm.entity_manager');
-
-            $datasets = $entityManager->getRepository(Dataset::class)->findBy(
+            $datasets = $this->getDoctrine()->getRepository(Dataset::class)->findBy(
                 array(
                     'availabilityStatus' =>
                     array(
@@ -61,7 +65,7 @@ class DefaultController extends AbstractController
             );
 
             echo $this->renderView(
-                'PelagosAppBundle:Default:sitemap.xml.twig',
+                'Default/sitemap.xml.twig',
                 array(
                     'datasets' => $datasets
                 )
