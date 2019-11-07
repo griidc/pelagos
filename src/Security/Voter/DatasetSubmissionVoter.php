@@ -1,20 +1,18 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Security;
+namespace App\Security\Voter;
 
-use Pelagos\Entity\DistributionPoint;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-use Pelagos\Entity\Account;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\PersonDatasetSubmission;
-
-use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
+use App\Entity\Account;
+use App\Entity\DatasetSubmission;
+use App\Entity\DistributionPoint;
+use App\Entity\PersonDatasetSubmission;
 
 /**
  * A voter to determine if a actions are possible by the user on a Dataset Submission.
  *
- * @package Pelagos\Bundle\AppBundle\Security
+ * @package App\Security\Voter
  */
 class DatasetSubmissionVoter extends PelagosEntityVoter
 {
@@ -26,7 +24,7 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
      *
      * @return boolean True if the attribute and subject are supported, false otherwise.
      */
-    protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject) //phpcs:ignore
     {
         // Abstain if the subject is not an instance of DatasetSubmission.
         if (!$subject instanceof DatasetSubmission and !$subject instanceof PersonDatasetSubmission
@@ -54,7 +52,7 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
      *
      * @return boolean True if the current user is authorized to perform the action specified by $attribute on $subject.
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token) //phpcs:ignore
     {
         // If research group is locked, vote false.
         if ($subject instanceof DatasetSubmission and true === $subject->getDataset()->getResearchGroup()->isLocked()) {

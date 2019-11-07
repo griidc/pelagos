@@ -1,8 +1,8 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Security;
+namespace App\Security;
 
-use Pelagos\Entity\Entity;
+use App\Entity\Entity;
 
 /**
  * A class to represent a property of a specific entity object.
@@ -29,7 +29,7 @@ class EntityProperty
      * @param Entity $entity   The Entity.
      * @param string $property The property.
      */
-    public function __construct(Entity $entity, $property)
+    public function __construct(Entity $entity, string $property)
     {
         $this->entity = $entity;
         $this->property = $property;
