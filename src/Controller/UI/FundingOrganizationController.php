@@ -1,46 +1,50 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
-use Pelagos\Bundle\AppBundle\Form\FundingOrganizationType;
-use Pelagos\Bundle\AppBundle\Form\FundingCycleType;
-use Pelagos\Bundle\AppBundle\Form\PersonFundingOrganizationType;
+use App\Entity\FundingOrganization;
+use App\Form\FundingOrganizationType;
+use App\Form\FundingCycleType;
+use App\Form\PersonFundingOrganizationType;
+use App\Handler\EntityHandler;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
  */
-class FundingOrganizationController extends UIController implements OptionalReadOnlyInterface
+class FundingOrganizationController extends AbstractController
 {
     /**
      * The Funding Org action.
      *
-     * @param string $id The id of the entity to retrieve.
+     * @param EntityHandler $entityHandler The entity handler.
+     * @param integer       $id            The id of the entity to retrieve.
      *
-     * @throws NotFoundException When the Funding Organization is not found.
+     * @throws NotFoundHttpException When the funding organization is not found.
      *
-     * @Route("/funding-organization/{id}")
+     * @Route("/funding-organization/{id}", name="pelagos_app_ui_fundingorganization_default")
      *
      * @return Response A Response instance.
      */
-    public function defaultAction($id = null)
+    public function defaultAction(EntityHandler $entityHandler, int $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
 
         $ui = array();
 
         if ($id !== null) {
-            $fundingOrganization = $this->entityHandler->get('Pelagos:FundingOrganization', $id);
+            $fundingOrganization = $entityHandler->get(FundingOrganization::class, $id);
 
-            if (!$fundingOrganization instanceof \Pelagos\Entity\FundingOrganization) {
-                throw $this->createNotFoundException('The Funding Organization was not found');
+            if (!$fundingOrganization instanceof \App\Entity\FundingOrganization) {
+                throw new NotFoundHttpException('The Funding Organization was not found');
             }
 
             foreach ($fundingOrganization->getPersonFundingOrganizations() as $personFundingOrganization) {
@@ -63,15 +67,14 @@ class FundingOrganizationController extends UIController implements OptionalRead
                 $ui['FundingCycleForms'][$fundingCycle->getId()] = $formView;
             }
         } else {
-            $fundingOrganization = new \Pelagos\Entity\FundingOrganization;
+            $fundingOrganization = new \App\Entity\FundingOrganization;
         }
 
         $form = $this->get('form.factory')->createNamed(null, FundingOrganizationType::class, $fundingOrganization);
 
         $ui['FundingOrganization'] = $fundingOrganization;
         $ui['form'] = $form->createView();
-        $ui['entityService'] = $this->entityHandler;
 
-        return $this->render('PelagosAppBundle:template:FundingOrganization.html.twig', $ui);
+        return $this->render('template/FundingOrganization.html.twig', $ui);
     }
 }

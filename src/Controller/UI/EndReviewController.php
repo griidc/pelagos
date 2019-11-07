@@ -1,39 +1,66 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
-use Pelagos\Bundle\AppBundle\Form\EndReviewType;
+use App\Event\EntityEventDispatcher;
+use App\Form\EndReviewType;
 
-use Pelagos\Entity\Account;
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DatasetSubmissionReview;
+use App\Entity\Account;
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Entity\DatasetSubmissionReview;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use App\Handler\EntityHandler;
 
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * The end review tool helps to end the review of a dataset submission review.
- *
- * @Route("/end-review")
  */
-class EndReviewController extends UIController implements OptionalReadOnlyInterface
+class EndReviewController extends AbstractController
 {
+    /**
+     * Protected entityHandler value instance of entityHandler.
+     *
+     * @var entityHandler
+     */
+    protected $entityHandler;
+
+    /**
+     * Protected entity event dispatcher.
+     *
+     * @var EntityEventDispatcher
+     */
+    protected $entityEventDispatcher;
+
+    /**
+     * Constructor for this Controller, to set up default services.
+     *
+     * @param EntityHandler         $entityHandler         The entity handler.
+     * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
+     */
+    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher)
+    {
+        $this->entityHandler = $entityHandler;
+        $this->entityEventDispatcher = $entityEventDispatcher;
+    }
+
     /**
      * The default action for End Review.
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("")
+     * @Route("/end-review", name="pelagos_app_ui_endreview_default")
      *
      * @return Response A Response instance.
      */
     public function defaultAction(Request $request)
     {
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
 
         $form = $this->get('form.factory')->createNamed(
@@ -49,7 +76,7 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
             $this->validateAndEndReview($udi, $request);
         }
 
-        return $this->render('PelagosAppBundle:EndReview:default.html.twig', array('form' => $form->createView()));
+        return $this->render('EndReview/default.html.twig', array('form' => $form->createView()));
     }
 
     /**
@@ -60,7 +87,7 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
      *
      * @return void
      */
-    private function validateAndEndReview($udi, Request $request)
+    private function validateAndEndReview(string $udi, Request $request)
     {
         $datasets = $this->entityHandler
             ->getBy(Dataset::class, array('udi' => substr($udi, 0, 16)));
@@ -86,10 +113,10 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
                         $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_END_REVIEW);
                         $this->entityHandler->update($datasetSubmissionReview);
                         $this->entityHandler->update($datasetSubmission);
-                        $reviewerUserName = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy())->getUserId();
+                        $reviewerUserName = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy()->getId())->getUserId();
                         $this->addToFlashBag($request, $udi, 'reviewEnded', $reviewerUserName);
                         // update MDAPP logs after action is executed.
-                        $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch($datasetSubmission, 'end_review');
+                        $this->entityEventDispatcher->dispatch($datasetSubmission, 'end_review');
                     } else {
                         $this->addToFlashBag($request, $udi, 'notInReview');
                     }
@@ -114,7 +141,7 @@ class EndReviewController extends UIController implements OptionalReadOnlyInterf
      *
      * @return void
      */
-    private function addToFlashBag(Request $request, $udi, $flashMessage, $reviewerUserName = null)
+    private function addToFlashBag(Request $request, string $udi, string $flashMessage, string $reviewerUserName = null)
     {
         $flashBag = $request->getSession()->getFlashBag();
 

@@ -1,15 +1,17 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
+use Symfony\Component\Routing\Annotation\Route;
 
 use Symfony\Component\Form\Form;
 
@@ -17,28 +19,30 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
-use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionXmlFileType;
+use App\Form\DatasetSubmissionType;
+use App\Form\DatasetSubmissionXmlFileType;
 
-use Pelagos\Entity\DataCenter;
-use Pelagos\Entity\DIF;
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DistributionPoint;
-use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
-use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
-use Pelagos\Entity\Person;
+use App\Event\EntityEventDispatcher;
 
-use Pelagos\Exception\InvalidMetadataException;
+use App\Entity\DataCenter;
+use App\Entity\DIF;
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Entity\DistributionPoint;
+use App\Entity\PersonDatasetSubmissionDatasetContact;
+use App\Entity\PersonDatasetSubmissionMetadataContact;
 
-use Pelagos\Util\ISOMetadataExtractorUtil;
+use App\Handler\EntityHandler;
+
+use App\Exception\InvalidMetadataException;
+
+use App\Util\ISOMetadataExtractorUtil;
+use App\Util\RabbitPublisher;
 
 /**
  * The Dataset Submission controller for the Pelagos UI App Bundle.
- *
- * @Route("/dataset-submission")
  */
-class DatasetSubmissionController extends UIController implements OptionalReadOnlyInterface
+class DatasetSubmissionController extends AbstractController
 {
     /**
      * A queue of messages to publish to RabbitMQ.
@@ -58,13 +62,48 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
     const DEFAULT_DISTRIBUTION_POINT_ROLECODE = 'distributor';
 
     /**
+     * Protected entityHandler value instance of entityHandler.
+     *
+     * @var entityHandler
+     */
+    protected $entityHandler;
+
+    /**
+     * Protected entity event dispatcher.
+     *
+     * @var EntityEventDispatcher
+     */
+    protected $entityEventDispatcher;
+
+    /**
+     * Custom rabbitmq publisher.
+     *
+     * @var RabbitPublisher
+     */
+    protected $publisher;
+
+    /**
+     * Constructor for this Controller, to set up default services.
+     *
+     * @param EntityHandler         $entityHandler         The entity handler.
+     * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
+     * @param RabbitPublisher       $publisher             Utility class for rabbitmq publisher.
+     */
+    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher, RabbitPublisher $publisher)
+    {
+        $this->entityHandler = $entityHandler;
+        $this->entityEventDispatcher = $entityEventDispatcher;
+        $this->publisher = $publisher;
+    }
+
+    /**
      * The default action for Dataset Submission.
      *
      * @param Request $request The Symfony request object.
      *
      * @throws BadRequestHttpException When xmlUploadForm is submitted without a file.
      *
-     * @Route("")
+     * @Route("/dataset-submission", name="pelagos_app_ui_datasetsubmission_default", methods={"GET"})
      *
      * @return Response A Response instance.
      */
@@ -158,19 +197,17 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
     /**
      * The post action for Dataset Submission.
      *
-     * @param Request     $request The Symfony request object.
-     * @param string|null $id      The id of the Dataset Submission to load.
+     * @param Request      $request The Symfony request object.
+     * @param integer|null $id      The id of the Dataset Submission to load.
      *
      * @throws BadRequestHttpException When dataset submission has already been submitted.
      * @throws BadRequestHttpException When DIF has not yet been approved.
      *
-     * @Route("/{id}")
-     *
-     * @Method("POST")
+     * @Route("/dataset-submission/{id}", name="pelagos_app_ui_datasetsubmission_post", methods={"POST"})
      *
      * @return Response A Response instance.
      */
-    public function postAction(Request $request, $id = null)
+    public function postAction(Request $request, int $id = null)
     {
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
 
@@ -225,20 +262,19 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
                 $this->entityHandler->update($metadataContact);
             }
 
-            $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
+            $this->entityEventDispatcher->dispatch(
                 $datasetSubmission,
                 $eventName
             );
 
             foreach ($this->messages as $message) {
-                $this->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(
-                    $message['body'],
-                    $message['routing_key']
-                );
+                foreach ($this->messages as $message) {
+                    $this->publisher->publish($message['body'], RabbitPublisher::DATASET_SUBMISSION_PRODUCER, $message['routing_key']);
+                }
             }
 
             return $this->render(
-                'PelagosAppBundle:DatasetSubmission:submit.html.twig',
+                'DatasetSubmission/submit.html.twig',
                 array('DatasetSubmission' => $datasetSubmission)
             );
         }
@@ -297,14 +333,14 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
     /**
      * Make the submission form and return it.
      *
-     * @param string            $udi               The UDI entered by the user.
+     * @param string|null       $udi               The UDI entered by the user.
      * @param Dataset           $dataset           The Dataset.
      * @param DatasetSubmission $datasetSubmission The Dataset Submission.
      * @param array             $xmlStatus         Error message when loading XML.
      *
      * @return Response
      */
-    protected function makeSubmissionForm($udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null)
+    protected function makeSubmissionForm(?string $udi, Dataset $dataset = null, DatasetSubmission $datasetSubmission = null, array $xmlStatus = null)
     {
         $datasetSubmissionId = null;
         $researchGroupId = null;
@@ -399,7 +435,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
         }
 
         return $this->render(
-            'PelagosAppBundle:DatasetSubmission:index.html.twig',
+            'DatasetSubmission/index.html.twig',
             array(
                 'form' => $form->createView(),
                 'xmlForm' => $xmlFormView,
@@ -540,7 +576,7 @@ class DatasetSubmissionController extends UIController implements OptionalReadOn
      *
      * @return DatasetSubmission A datasetsubmission.
      */
-    private function defaultDistributionPoint(DatasetSubmission $datasetSubmission, $udi)
+    private function defaultDistributionPoint(DatasetSubmission $datasetSubmission, string $udi)
     {
         $defaultDistributionContacts = $this->entityHandler->getBy(
             DataCenter::class,

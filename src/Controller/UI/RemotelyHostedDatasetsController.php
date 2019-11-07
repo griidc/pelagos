@@ -1,29 +1,54 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
+use App\Event\LogActionItemEventDispatcher;
+use App\Handler\EntityHandler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-
-use Pelagos\Response\TerminateResponse;
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
 
 /**
  * The Remotely Hosted Datasets list controller.
- *
- * @Route("/remotelyhosted-datasets")
  */
-class RemotelyHostedDatasetsController extends UIController implements OptionalReadOnlyInterface
+class RemotelyHostedDatasetsController extends AbstractController
 {
+    /**
+     * Protected entityHandler value instance of entityHandler.
+     *
+     * @var entityHandler
+     */
+    protected $entityHandler;
+
+    /**
+     * The log action item entity event dispatcher.
+     *
+     * @var LogActionItemEventDispatcher
+     */
+    protected $logActionItemEventDispatcher;
+
+    /**
+     * Constructor for this Controller, to set up default services.
+     *
+     * @param EntityHandler                $entityHandler                The entity handler.
+     * @param LogActionItemEventDispatcher $logActionItemEventDispatcher The log action item event dispatcher.
+     */
+    public function __construct(EntityHandler $entityHandler, LogActionItemEventDispatcher $logActionItemEventDispatcher)
+    {
+        $this->entityHandler = $entityHandler;
+        $this->logActionItemEventDispatcher = $logActionItemEventDispatcher;
+    }
+
     /**
      * Default action of Remotely Hosted Datasets.
      *
-     * @Route("")
+     * @Route("/remotelyhosted-datasets", name="pelagos_app_ui_remotelyhosteddatasets_default", methods={"GET"})
      *
      * @return Response A response instance.
      */
@@ -31,11 +56,11 @@ class RemotelyHostedDatasetsController extends UIController implements OptionalR
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
 
         $GLOBALS['pelagos']['title'] = 'Remotely Hosted Datasets';
-        return $this->render('PelagosAppBundle:List:RemotelyHostedDatasets.html.twig');
+        return $this->render('List/RemotelyHostedDatasets.html.twig');
     }
 
     /**
@@ -43,17 +68,15 @@ class RemotelyHostedDatasetsController extends UIController implements OptionalR
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("/{udi}")
+     * @Route("/remotelyhosted-datasets/{udi}", name="pelagos_app_ui_remotelyhosteddatasets_post", methods={"POST"})
      *
-     * @Method("POST")
-     *
-     * @return TerminateResponse A response.
+     * @return Response
      */
     public function postAction(Request $request)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
 
         $udi = $request->attributes->get('udi');
@@ -80,7 +103,7 @@ class RemotelyHostedDatasetsController extends UIController implements OptionalR
             $message = 'Invalid UDI!';
         }
         //return 202 Accepted for accepted but not processed request
-        return new TerminateResponse($message, Response::HTTP_ACCEPTED);
+        return new Response($message, Response::HTTP_ACCEPTED);
     }
 
     /**
@@ -88,11 +111,9 @@ class RemotelyHostedDatasetsController extends UIController implements OptionalR
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("/{udi}")
+     * @Route("/remotelyhosted-datasets/{udi}", name="pelagos_app_ui_remotelyhosteddatasets_geturl", methods={"GET"})
      *
-     * @Method("GET")
-     *
-     * @return TerminateResponse A response.
+     * @return Response
      */
     public function getUrlAction(Request $request)
     {
@@ -107,7 +128,8 @@ class RemotelyHostedDatasetsController extends UIController implements OptionalR
                 $responseMsg = $datasetSubmission->getDatasetFileUri();
             }
         }
-        return new TerminateResponse($responseMsg, $responseMsg === '' ? 204 : Response::HTTP_OK);
+
+        return new Response($responseMsg, $responseMsg === '' ? Response::HTTP_NO_CONTENT : Response::HTTP_OK);
     }
 
     /**
@@ -118,13 +140,12 @@ class RemotelyHostedDatasetsController extends UIController implements OptionalR
      *
      * @return void
      */
-    private function dispatchLogEvent(Dataset $dataset, $actor)
+    private function dispatchLogEvent(Dataset $dataset, string $actor)
     {
-        $em = $this->container->get('doctrine')->getManager();
-        $this->container->get('pelagos.event.log_action_item_event_dispatcher')->dispatch(
+        $this->logActionItemEventDispatcher->dispatch(
             array(
                 'actionName' => 'Mark as Remotely Hosted',
-                'subjectEntityName' => $em->getClassMetadata(get_class($dataset))->getName(),
+                'subjectEntityName' => 'Pelagos\Entity\Dataset',
                 'subjectEntityId' => $dataset->getId(),
                 'payLoad' => array(
                     'userId' => $actor,

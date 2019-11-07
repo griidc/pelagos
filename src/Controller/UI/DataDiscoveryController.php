@@ -1,41 +1,40 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
+use App\Util\DatasetIndex;
 use Elastica\ResultSet;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DIF;
+use App\Entity\DatasetSubmission;
+use App\Entity\DIF;
+use App\Event\LogActionItemEventDispatcher;
 
 /**
  * The Data Discovery controller.
- *
- * @Route("/data-discovery")
  */
-class DataDiscoveryController extends UIController
+class DataDiscoveryController extends AbstractController
 {
     /**
      * The default action.
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("")
-     * @Method("GET")
+     * @Route("/data-discovery", name="pelagos_app_ui_datadiscovery_default", methods={"GET"})
      *
      * @return Response
      */
     public function defaultAction(Request $request)
     {
         return $this->render(
-            'PelagosAppBundle:DataDiscovery:index.html.twig',
+            'DataDiscovery/index.html.twig',
             array(
                 'defaultFilter' => $request->query->get('filter'),
                 'pageName' => 'data-discovery',
@@ -47,14 +46,15 @@ class DataDiscoveryController extends UIController
     /**
      * The dataset counts action.
      *
-     * @param Request $request The Symfony request object.
+     * @param Request                      $request                      The Symfony request object.
+     * @param DatasetIndex                 $datasetIndex                 The dataset index.
+     * @param LogActionItemEventDispatcher $logActionItemEventDispatcher The log action dispatcher.
      *
-     * @Route("/dataset-count")
-     * @Method("GET")
+     * @Route("/data-discovery/dataset-count", name="pelagos_app_ui_datadiscovery_count", methods={"GET"})
      *
      * @return Response
      */
-    public function countAction(Request $request)
+    public function countAction(Request $request, DatasetIndex $datasetIndex, LogActionItemEventDispatcher $logActionItemEventDispatcher)
     {
         $criteria = array();
         if (!empty($request->query->get('by')) and !empty($request->query->get('id'))) {
@@ -79,7 +79,6 @@ class DataDiscoveryController extends UIController
         if (!empty($request->query->get('geo_filter'))) {
             $geoFilter = $request->query->get('geo_filter');
         }
-        $datasetIndex = $this->get('pelagos.util.dataset_index');
 
         //run a query without availability status & log search terms
         if (($textFilter != null && strlen(trim($textFilter)) > 0) || $geoFilter != null) {
@@ -103,11 +102,11 @@ class DataDiscoveryController extends UIController
                 $textFilter,
                 $geoFilter
             );
-            $this->dispatchSearchTermsLogEvent($request, $searchTermsQueryResult);
+            $this->dispatchSearchTermsLogEvent($request, $searchTermsQueryResult, $logActionItemEventDispatcher);
         }
-        
+
         return $this->render(
-            'PelagosAppBundle:DataDiscovery:datasets.html.twig',
+            'DataDiscovery/datasets.html.twig',
             array(
                 'counts' => array(
                     'available' => $datasetIndex->count(
@@ -172,14 +171,14 @@ class DataDiscoveryController extends UIController
     /**
      * The datasets search action.
      *
-     * @param Request $request The Symfony request object.
+     * @param Request      $request      The Symfony request object.
+     * @param DatasetIndex $datasetIndex The dataset index.
      *
-     * @Route("/dataset-results")
-     * @Method("GET")
+     * @Route("/data-discovery/dataset-results", name="pelagos_app_ui_datadiscovery_search", methods={"GET"})
      *
      * @return JsonResponse
      */
-    public function searchAction(Request $request)
+    public function searchAction(Request $request, DatasetIndex $datasetIndex)
     {
         $criteria = array();
         if (!empty($request->query->get('by')) and !empty($request->query->get('id'))) {
@@ -207,9 +206,6 @@ class DataDiscoveryController extends UIController
 
         $currentIndex = $request->query->get('current_index');
         $bulkSize = $request->query->get('bulk_size');
-
-        $datasetIndex = $this->get('pelagos.util.dataset_index');
-
 
         $activeTabIndex = $request->query->get('active_tab_index');
         switch ($activeTabIndex) {
@@ -274,30 +270,33 @@ class DataDiscoveryController extends UIController
     /**
      * This dispatches a search term log event.
      *
-     * @param Request             $request      The request passed from datasetAction.
-     * @param \Elastica\ResultSet $searchResult Results returned by a search.
+     * @param Request                      $request                      The request passed from datasetAction.
+     * @param ResultSet                    $searchResult                 Results returned by a search.
+     * @param LogActionItemEventDispatcher $logActionItemEventDispatcher Log item action dispatcher.
      *
      * @return void
      */
-    protected function dispatchSearchTermsLogEvent(Request $request, ResultSet $searchResult)
+    protected function dispatchSearchTermsLogEvent(Request $request, ResultSet $searchResult, LogActionItemEventDispatcher $logActionItemEventDispatcher)
     {
         //get logged in user's info
         $clientInfo = array(
             'sessionId' => $request->getSession()->getId(),
             'clientIp' => $request->getClientIp()
         );
-        $userType = get_class($this->getUser());
-        switch ($userType) {
-            case 'Pelagos\Entity\Account':
-                $clientInfo['userType'] = 'GoMRI';
-                $clientInfo['userId'] = $this->getUser()->getUserId();
-                break;
-            case 'HWI\Bundle\OAuthBundle\Security\Core\User\OAuthUser':
-                $clientInfo['userType'] = 'Non-GoMRI';
-                $clientInfo['userId'] = $this->getUser()->getUsername();
-                break;
-            default:
-                break;
+        if ($this->getUser() instanceof Account) {
+            $userType = get_class($this->getUser());
+            switch ($userType) {
+                case 'App\Entity\Account':
+                    $clientInfo['userType'] = 'GoMRI';
+                    $clientInfo['userId'] = $this->getUser()->getUserId();
+                    break;
+                case 'HWI\Bundle\OAuthBundle\Security\Core\User\OAuthUser':
+                    $clientInfo['userType'] = 'Non-GoMRI';
+                    $clientInfo['userId'] = $this->getUser()->getUsername();
+                    break;
+                default:
+                    break;
+            }
         }
 
         $numResults = $searchResult->count();
@@ -326,7 +325,7 @@ class DataDiscoveryController extends UIController
             'id' => !empty($request->query->get('id')) ? $request->query->get('id') : null);
 
         //dispatch the event
-        $this->container->get('pelagos.event.log_action_item_event_dispatcher')->dispatch(
+        $logActionItemEventDispatcher->dispatch(
             array(
                 'actionName' => 'Search',
                     'subjectEntityName' => null,

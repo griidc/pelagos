@@ -1,47 +1,53 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
-use Pelagos\Bundle\AppBundle\Security\EntityProperty;
-use Pelagos\Bundle\AppBundle\Form\ResearchGroupType;
-use Pelagos\Bundle\AppBundle\Form\PersonResearchGroupType;
+use App\Entity\FundingOrganization;
+use App\Entity\ResearchGroup;
+use App\Handler\EntityHandler;
+use App\Security\EntityProperty;
+use App\Form\ResearchGroupType;
+use App\Form\PersonResearchGroupType;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
  */
-class ResearchGroupController extends UIController implements OptionalReadOnlyInterface
+class ResearchGroupController extends AbstractController
 {
     /**
      * The Research Group action.
      *
-     * @param string $id The id of the entity to retrieve.
+     * @param EntityHandler $entityHandler The Entity Handler.
+     * @param integer       $id            The id of the entity to retrieve.
      *
-     * @Route("/research-group/{id}")
+     * @throws NotFoundHttpException When the research group was not found.
      *
-     * @throws createNotFoundException If research group could not be found.
+     * @Route("/research-group/{id}", name="pelagos_app_ui_researchgroup_default")
      *
      * @return Response A Response instance.
      */
-    public function defaultAction($id = null)
+    public function defaultAction(EntityHandler $entityHandler, int $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
 
         $ui = array();
         $ui['PersonResearchGroups'] = array();
 
         if (isset($id)) {
-            $researchGroup = $this->entityHandler->get('Pelagos:ResearchGroup', $id);
+            $researchGroup = $entityHandler->get(ResearchGroup::class, $id);
 
-            if (!$researchGroup instanceof \Pelagos\Entity\ResearchGroup) {
-                throw $this->createNotFoundException('The Research Group was not found!');
+            if (!$researchGroup instanceof \App\Entity\ResearchGroup) {
+                throw new NotFoundHttpException('The Research Group was not found!');
             }
 
             foreach ($researchGroup->getPersonResearchGroups() as $personResearchGroup) {
@@ -56,7 +62,7 @@ class ResearchGroupController extends UIController implements OptionalReadOnlyIn
                     = new EntityProperty($personResearchGroup, 'label');
             }
 
-            $newResearchGroupPerson = new \Pelagos\Entity\PersonResearchGroup;
+            $newResearchGroupPerson = new \App\Entity\PersonResearchGroup;
             $newResearchGroupPerson->setResearchGroup($researchGroup);
             $ui['newResearchGroupPerson'] = $newResearchGroupPerson;
             $ui['newResearchGroupPersonForm'] = $this
@@ -64,14 +70,14 @@ class ResearchGroupController extends UIController implements OptionalReadOnlyIn
                 ->createNamed(null, PersonResearchGroupType::class, $ui['newResearchGroupPerson'])
                 ->createView();
         } else {
-            $researchGroup = new \Pelagos\Entity\ResearchGroup;
+            $researchGroup = new \App\Entity\ResearchGroup;
         }
 
         $form = $this->get('form.factory')->createNamed(null, ResearchGroupType::class, $researchGroup);
         $ui['form'] = $form->createView();
         $ui['ResearchGroup'] = $researchGroup;
-        $ui['entityService'] = $this->entityHandler;
+        $ui['FundingOrganizations'] = $this->getDoctrine()->getRepository(FundingOrganization::class)->findAll();
 
-        return $this->render('PelagosAppBundle:template:ResearchGroup.html.twig', $ui);
+        return $this->render('template/ResearchGroup.html.twig', $ui);
     }
 }

@@ -1,13 +1,16 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
-use Pelagos\Bundle\AppBundle\Form\NationalDataCenterType;
+use App\Form\NationalDataCenterType;
 
-use Pelagos\Entity\NationalDataCenter;
+use App\Entity\NationalDataCenter;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use App\Handler\EntityHandler;
 
+use Symfony\Component\Routing\Annotation\Route;
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -15,30 +18,31 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * The National Data Center Controller class.
  */
-class NationalDataCenterController extends UIController implements OptionalReadOnlyInterface
+class NationalDataCenterController extends AbstractController
 {
     /**
      * The default action for National Data center.
      *
-     * @param string $id The id of the national data center.
+     * @param EntityHandler $entityHandler The entity handler.
+     * @param integer       $id            The id of the national data center.
      *
-     * @Route("/national-data-center/{id}")
+     * @throws NotFoundHttpException When National data center was not found.
      *
-     * @throws NotFoundHttpException When no national data center is found with this id.
+     * @Route("/national-data-center/{id}", name="pelagos_app_ui_nationaldatacenter_default")
      *
      * @return Response A Response instance.
      */
-    public function defaultAction($id = null)
+    public function defaultAction(EntityHandler $entityHandler, int $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
 
         if (!empty($id)) {
-            $nationalDataCenter = $this->entityHandler->get(NationalDataCenter::class, $id);
+            $nationalDataCenter = $entityHandler->get(NationalDataCenter::class, $id);
             if (!$nationalDataCenter instanceof NationalDataCenter) {
-                throw $this->createNotFoundException('The National data center was not found');
+                throw new NotFoundHttpException('The National data center was not found');
             }
         } else {
             $nationalDataCenter = new NationalDataCenter();
@@ -46,10 +50,9 @@ class NationalDataCenterController extends UIController implements OptionalReadO
 
         $form = $this->get('form.factory')->createNamed(null, NationalDataCenterType::class, $nationalDataCenter);
 
-        return $this->render('@PelagosApp/template/NationalDataCenter.html.twig', array(
+        return $this->render('template/NationalDataCenter.html.twig', array(
             'NationalDataCenter' => $nationalDataCenter,
-            'form' => $form->createView(),
-            'entityService' => $this->entityHandler
+            'form' => $form->createView()
         ));
     }
 }

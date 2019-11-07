@@ -1,40 +1,41 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Form\FormFactoryInterface;
 
-use Pelagos\Bundle\AppBundle\Form\DIFType;
+use App\Form\DIFType;
 
-use Pelagos\Entity\Account;
-use Pelagos\Entity\DIF;
+use App\Entity\Account;
+use App\Entity\DIF;
 
 /**
  * The DIF controller for the Pelagos UI App Bundle.
- *
- * @Route("/dif")
  */
-class DIFController extends UIController implements OptionalReadOnlyInterface
+class DIFController extends AbstractController
 {
     /**
      * The default action for the DIF.
      *
-     * @param Request     $request The Symfony request object.
-     * @param string|null $id      The id of the DIF to load.
+     * @param Request              $request     The Symfony request object.
+     * @param FormFactoryInterface $formFactory The form factory.
+     * @param string|null          $id          The id of the DIF to load.
      *
-     * @Route("/{id}")
+     * @Route("/dif/{id}", name="pelagos_app_ui_dif_default")
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(Request $request, $id = null)
+    public function index(Request $request, FormFactoryInterface $formFactory, $id = null)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $dif = new DIF;
-        $form = $this->get('form.factory')->createNamed(null, DIFType::class, $dif);
+        $form = $formFactory->createNamed(null, DIFType::class, $dif);
 
         $researchGroupIds = array();
         if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -53,7 +54,7 @@ class DIFController extends UIController implements OptionalReadOnlyInterface
         }
 
         return $this->render(
-            'PelagosAppBundle:DIF:dif.html.twig',
+            'DIF/dif.html.twig',
             array(
                 'form' => $form->createView(),
                 'research_groups' => implode(',', $researchGroupIds),
