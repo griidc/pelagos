@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Form;
+namespace App\Form;
 
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -11,8 +11,8 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Pelagos\Entity\Person;
-use Pelagos\Entity\PersonDatasetSubmission;
+use App\Entity\Person;
+use App\Entity\PersonDatasetSubmission;
 
 /**
  * A form for creating Person to Dataset Submission links.
