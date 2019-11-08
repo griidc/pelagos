@@ -89,7 +89,7 @@ class DatasetRestrictionsController extends AbstractController
      * but doesn't work with Symfony.
      *
      * @param Request       $request       The HTTP request.
-     * @param string        $id            The entity ID of a Dataset.
+     * @param integer       $id            The entity ID of a Dataset.
      * @param EntityHandler $entityHandler A Pelagos entity handler.
      *
      * @Route(
@@ -103,7 +103,7 @@ class DatasetRestrictionsController extends AbstractController
      *
      * @return Response
      */
-    public function postAction(Request $request, string $id, EntityHandler $entityHandler)
+    public function postAction(Request $request, int $id, EntityHandler $entityHandler)
     {
         $restrictionKey = $request->request->get('restrictions');
 
