@@ -64,14 +64,14 @@ class StatsController extends AbstractController
     /**
      * Get Statistics Data by reference.
      *
-     * @param integer $totalDatasets      The total count of datasets.
-     * @param string  $totalSize          The total size of data.
-     * @param integer $peopleCount        The total count of people.
-     * @param integer $researchGroupCount The total count of research groups.
+     * @param integer|null $totalDatasets      The total count of datasets.
+     * @param string|null  $totalSize          The total size of data.
+     * @param integer|null $peopleCount        The total count of people.
+     * @param integer|null $researchGroupCount The total count of research groups.
      *
      * @return void
      */
-    private function getStatistics(int &$totalDatasets, string &$totalSize, int &$peopleCount, int &$researchGroupCount) : void
+    private function getStatistics(?int &$totalDatasets, ?string &$totalSize, ?int &$peopleCount, ?int &$researchGroupCount) : void
     {
         // Recreate a Query Builder for the Person Repository.
         $queryBuilder = $this->entityManager

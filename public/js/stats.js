@@ -8,14 +8,14 @@ $(document).ready(function() {
 
     overviewSections = {
         "total-records-over-time": {
-            url: "stats/data/total-records-over-time",
+            url: Routing.generate("pelagos_app_ui_stats_getdatasetovertime"),
             xaxis: { mode: "time" },
             yaxis: { position: "right" },
             colors: [ "#b8dcf1", "#bfcacd", "#004250" ],
             legend: { position: "nw" }
         },
         "dataset-size-ranges": {
-            url: "stats/data/dataset-size-ranges",
+            url: Routing.generate("pelagos_app_ui_stats_getdatasetsizeranges"),
             colors: [ "#3f626a", "#3f626a", "#3f626a", "#3f626a", "#3f626a", "#3f626a" ],
             xaxis: {
                 ticks: true,
