@@ -146,6 +146,7 @@ services:
             OldSound\RabbitMqBundle\RabbitMq\Producer $datasetSubProducer: '@old_sound_rabbit_mq.dataset_submission_producer'
             OldSound\RabbitMqBundle\RabbitMq\Producer $datasetFileHasherProducer: '@old_sound_rabbit_mq.dataset_submission_producer'
             OldSound\RabbitMqBundle\RabbitMq\Producer $doiProducer: '@old_sound_rabbit_mq.doi_issue_producer'
+            OldSound\RabbitMqBundle\RabbitMq\Producer $createHomeDirProducer: '@old_sound_rabbit_mq.create_homedir_producer'
 
     App\Command\AccountExpirationNotifyCommand:
         bind:
