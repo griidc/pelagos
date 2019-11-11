@@ -167,3 +167,9 @@ services:
             bool $debug: '%kernel.debug%'
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+    App\Util\POSIXifyAccount:
+        bind:
+            int $posixStartingUidNumber: "%env(POSIX_STARTING_UID)%"
+            int $posixGidNumber: "%env(POSIX_GID)%"
+            string $homedirPrefix: "%env(HOMEDIR_PREFIX)%"

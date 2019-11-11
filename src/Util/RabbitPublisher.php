@@ -30,11 +30,20 @@ class RabbitPublisher
      */
     protected $doiProducer;
 
+    /**
+     * Create home dir producer instance.
+     *
+     * @var Producer
+     */
+    protected $createHomeDirProducer;
+
     const DOI_PRODUCER = 'doi';
 
     const FILE_HASHER_PRODUCER = 'file_hasher';
 
     const DATASET_SUBMISSION_PRODUCER = 'dataset_submission';
+
+    const CREATE_HOMEDIR_PRODUCER = 'create_homedir';
 
     /**
      * RabbitPublisher constructor.
@@ -42,12 +51,18 @@ class RabbitPublisher
      * @param Producer $datasetSubProducer        Dataset submission rabbitmq producer instance.
      * @param Producer $datasetFileHasherProducer File hasher rabbitmq producer instance.
      * @param Producer $doiProducer               Doi rabbitmq producer instance.
+     * @param Producer $createHomeDirProducer     Create home dir producer instance.
      */
-    public function __construct(Producer $datasetSubProducer, Producer $datasetFileHasherProducer, Producer $doiProducer)
-    {
+    public function __construct(
+        Producer $datasetSubProducer,
+        Producer $datasetFileHasherProducer,
+        Producer $doiProducer,
+        Producer $createHomeDirProducer
+    ) {
         $this->datasetSubProducer = $datasetSubProducer;
         $this->datasetFileHasherProducer = $datasetFileHasherProducer;
         $this->doiProducer = $doiProducer;
+        $this->createHomeDirProducer = $createHomeDirProducer;
     }
 
     /**

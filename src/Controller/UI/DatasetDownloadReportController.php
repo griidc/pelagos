@@ -163,11 +163,11 @@ class DatasetDownloadReportController extends ReportController
     /**
      * Used to format the file size units to MB.
      *
-     * @param integer $fileSizeBytes File size in bytes.
+     * @param integer|null $fileSizeBytes File size in bytes.
      *
      * @return float
      */
-    private function formatSizeUnits(int $fileSizeBytes)
+    private function formatSizeUnits(?int $fileSizeBytes)
     {
         if ($fileSizeBytes) {
             // Formats the size to MB

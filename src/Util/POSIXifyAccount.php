@@ -2,13 +2,11 @@
 
 namespace App\Util;
 
-use Doctrine\ORM\EntityManager;
 use App\Entity\Account;
-use App\Entity\Person;
 use App\Util\Ldap\Ldap;
 use App\Handler\EntityHandler;
 use App\Exception\AccountAlreadyPOSIXEnabledException;
-use OldSound\RabbitMqBundle\RabbitMq\Producer;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * A utility class to make an account into a POSIX account.
@@ -18,7 +16,7 @@ class POSIXifyAccount
     /**
      * The entity manager to use.
      *
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -58,31 +56,31 @@ class POSIXifyAccount
     protected $homedirPrefix;
 
     /**
-     * A AQMP producer.
+     * Custom Utility RabbitMQ instance.
      *
-     * @var Producer
+     * @var RabbitPublisher
      */
-    protected $aqmpProducer;
+    protected $publisher;
 
     /**
      * Constructor.
      *
-     * @param EntityManager $entityManager          The entity manager to use in querybuilder.
-     * @param Ldap          $ldap                   The instance of the LDAPClient class.
-     * @param EntityHandler $entityHandler          The Pelagos entity handler to handle updates.
-     * @param integer       $posixStartingUidNumber The value to start creating user ID number entries at.
-     * @param integer       $posixGidNumber         The value to set group ID to.
-     * @param string        $homedirPrefix          Home directory prefix, from parameter.
-     * @param Producer      $producer               A RabbitMQ or other AQMP producer.
+     * @param EntityManagerInterface $entityManager          The entity manager to use in querybuilder.
+     * @param Ldap                   $ldap                   The instance of the LDAPClient class.
+     * @param EntityHandler          $entityHandler          The Pelagos entity handler to handle updates.
+     * @param integer                $posixStartingUidNumber The value to start creating user ID number entries at.
+     * @param integer                $posixGidNumber         The value to set group ID to.
+     * @param string                 $homedirPrefix          Home directory prefix, from parameter.
+     * @param RabbitPublisher        $publisher              Custom Utility RabbitMQ instance.
      */
     public function __construct(
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         Ldap $ldap,
         EntityHandler $entityHandler,
         int $posixStartingUidNumber,
         int $posixGidNumber,
         string $homedirPrefix,
-        Producer $producer
+        RabbitPublisher $publisher
     ) {
         $this->entityManager = $entityManager;
         $this->ldap = $ldap;
@@ -90,7 +88,7 @@ class POSIXifyAccount
         $this->posixStartingUidNumber = $posixStartingUidNumber;
         $this->posixGidNumber = $posixGidNumber;
         $this->homedirPrefix = $homedirPrefix;
-        $this->amqpProducer = $producer;
+        $this->publisher = $publisher;
     }
 
     /**
@@ -120,7 +118,7 @@ class POSIXifyAccount
         $this->entityHandler->update($account);
 
         // Publish to AQMP homedir_producer consumer that there is a homedir to create.
-        $this->amqpProducer->publish($account->getId());
+        $this->publisher->publish($account->getId(), RabbitPublisher::CREATE_HOMEDIR_PRODUCER);
     }
 
     /**
@@ -131,9 +129,8 @@ class POSIXifyAccount
     protected function mintUidNumber()
     {
         // Get the account with the highest POSIX numeric UID.
-        $em = $this->entityManager;
-        $query = $em->createQuery(
-            'SELECT a FROM \Pelagos\Entity\Account a WHERE a.uidNumber IS NOT NULL ORDER BY a.uidNumber DESC'
+        $query = $this->entityManager->createQuery(
+            'SELECT a FROM \App\Entity\Account a WHERE a.uidNumber IS NOT NULL ORDER BY a.uidNumber DESC'
         );
         $query->setMaxResults(1);
         $account = $query->getOneOrNullResult();
