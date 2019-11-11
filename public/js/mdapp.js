@@ -85,7 +85,7 @@ function initJiraLinks() {
             if (origValue !== curLinkVal) {
                 $.ajax({
                     "method": "PATCH",
-                    "url": "api/datasets/" + id,
+                    "url": Routing.generate("pelagos_api_datasets_patch", { "id" : id} ),
                     "data": { "issueTrackingTicket": curLinkVal }
                     }).done(function() {
                         $(curPos).closest("div").find("a").attr('href', issueTrackingBaseUrl + "/" + curLinkVal).text(curLinkVal);
@@ -122,7 +122,7 @@ function clearTestGeometry(){
 
 function showLogEntries(udi){
     $.ajax({
-            "url": "mdapp/getlog/" + udi,
+            "url": Routing.generate('pelagos_app_ui_mdapp_getlog', { 'udi': udi} ),
             "success": function(data) {
                 $("#log_content").html(data);
                 $("#log_title").html("&nbsp; &nbsp; Log Entries For: " + udi);
