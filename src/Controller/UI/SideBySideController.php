@@ -151,10 +151,7 @@ class SideBySideController extends AbstractController
                 throw new \Exception("Revision $revision does not exist for UDI: $udi");
             }
         } catch (\Exception $e) {
-            return new TerminateResponse(
-                $e->getMessage(),
-                Response::HTTP_BAD_REQUEST
-            );
+            return new Response($e->getMessage(), Response::HTTP_BAD_REQUEST);
         }
 
         if ($revision !== null) {
@@ -213,8 +210,6 @@ class SideBySideController extends AbstractController
                 'readonly' => 'true'
             ),
         ));
-
-//        $terminateResponse = new TerminateResponse();
 
         return $this->render(
             'SideBySide/submissionForm.html.twig',

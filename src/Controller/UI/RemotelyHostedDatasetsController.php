@@ -92,7 +92,7 @@ class RemotelyHostedDatasetsController extends AbstractController
                     $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
 
                     $this->dispatchLogEvent($dataset, $this->getUser()->getUserId());
-                    return new TerminateResponse('Dataset UDI ' . $udi . ' has been successfully set to remotely hosted.', Response::HTTP_OK);
+                    return new Response('Dataset UDI ' . $udi . ' has been successfully set to remotely hosted.', Response::HTTP_OK);
                 } else {
                     $message = 'Dataset UDI ' . $udi . ' is already set to remotely hosted.';
                 }
