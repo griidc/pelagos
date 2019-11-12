@@ -68,13 +68,13 @@ class RabbitPublisher
     /**
      * Utility publish method to call rabbitmq producers.
      *
-     * @param integer $id           The id of the object that is being published.
-     * @param string  $producerName The producer name required to publish.
-     * @param string  $routingKey   The routing key for the message.
+     * @param mixed  $id           The id of the object that is being published.
+     * @param string $producerName The producer name required to publish.
+     * @param string $routingKey   The routing key for the message.
      *
      * @return void
      */
-    public function publish(int $id, string $producerName, string $routingKey = '')
+    public function publish($id, string $producerName, string $routingKey = '')
     {
         $publisher = null;
         if ($producerName === self::DATASET_SUBMISSION_PRODUCER) {

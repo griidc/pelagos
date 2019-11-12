@@ -21,7 +21,7 @@ class DoiDatasetListener extends EventListener
         $dataset = $event->getEntity();
         $doi = $dataset->getDoi();
         if ($doi) {
-            $this->publisher->publish($doi->getDoi(), RabbitPublisher::DOI_PRODUCER, 'delete');
+            $this->publisher->publish((string) $doi->getDoi(), RabbitPublisher::DOI_PRODUCER, 'delete');
         }
     }
 }
