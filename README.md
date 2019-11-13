@@ -9,7 +9,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-* [CENTOS 6/7](https://wiki.centos.org/) - Linux Distribution based on Red Hat
+* [CENTOS 7](https://wiki.centos.org/) - Linux Distribution based on Red Hat
 * [PHP 7.1+](http://php.net/docs.php) - General-purpose scripting language
 * [PostgreSQL 9.6+](https://www.postgresql.org/docs/9.6/static/release-9-6.html) - ORDBMS
 * [Elasticsearch 6.7.2+](https://www.elastic.co/products/elasticsearch) - ElasticSearch Document Indexer
