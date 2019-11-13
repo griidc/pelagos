@@ -1,5 +1,9 @@
 {
+    "name": "griidc/pelagos",
     "type": "project",
+    "description": "System for the management, discovery, and dissemination of citable scientific datasets",
+    "keywords": ["PHP", "Symfony 4", "Doctrine", "science data", "marine data", "GoMRI", "data distribution", "citation tracking", "data submission management"],
+    "homepage": "https://github.com/griidc/pelagos/",
     "license": "BSD",
     "require": {
         "php": "^7.1.3",
