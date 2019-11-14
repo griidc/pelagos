@@ -81,7 +81,6 @@ class UpdateLdapAccountCommand extends Command
                 InputOption::VALUE_NONE,
                 'Also flush password change to database.'
             );
-        ;
     }
 
     /**
