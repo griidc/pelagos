@@ -14,6 +14,7 @@ use App\Entity\Password;
 use App\Entity\Person;
 use App\Entity\PersonToken;
 use App\Event\EntityEventDispatcher;
+use App\Exception\UidNumberInUseInLDAPException;
 use App\Handler\EntityHandler;
 use App\Util\Factory\UserIdFactory;
 use App\Util\Ldap\Ldap;
@@ -440,7 +441,7 @@ class AccountController extends AbstractController
         try {
             // Try to add the person to LDAP, incase it needs to re-create.
             $ldap->addPerson($person);
-        } catch (LdapException $exception) {
+        } catch (UidNumberInUseInLDAPException $exception) {
             // If that fails, try to update the person in LDAP.
             $ldap->updatePerson($person);
         }
