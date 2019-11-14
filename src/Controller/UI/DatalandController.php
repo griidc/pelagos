@@ -37,9 +37,9 @@ class DatalandController extends AbstractController
     /**
      * Metadata.
      *
-     * @var metadata
+     * @var Metadata
      */
-    protected $metadata;
+    protected $metadataUtil;
 
     /**
      * Entity Handler.
@@ -53,13 +53,13 @@ class DatalandController extends AbstractController
      *
      * @param EntityHandler $entityHandler The Entity Handler.
      * @param Geometry      $geoUtil       The Geomtery Util.
-     * @param Metadata      $metadata      The Metadata Util.
+     * @param Metadata      $metadataUtil  The Metadata Util.
      */
-    public function __construct(EntityHandler $entityHandler, Geometry $geoUtil, Metadata $metadata)
+    public function __construct(EntityHandler $entityHandler, Geometry $geoUtil, Metadata $metadataUtil)
     {
         $this->entityHandler = $entityHandler;
         $this->geoUtil = $geoUtil;
-        $this->metadata = $metadata;
+        $this->metadataUtil = $metadataUtil;
     }
 
     /**
@@ -80,7 +80,7 @@ class DatalandController extends AbstractController
 
         if ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED) {
             $boundingBoxArray = $this->getBoundingBox($dataset);
-            $rawXml = $this->metadata->getXmlRepresentation($dataset, $boundingBoxArray);
+            $rawXml = $this->metadataUtil->getXmlRepresentation($dataset, $boundingBoxArray);
         }
         //Logic to get DIF or Accepted Dataset is in Dataset Entity.
         if (!empty($dataset->getSpatialExtentGeometry())) {
@@ -141,7 +141,7 @@ class DatalandController extends AbstractController
 
         $filename = str_replace(':', '-', $udi) . '-metadata.xml';
 
-        $response = new Response($this->metadata
+        $response = new Response($this->metadataUtil
             ->getXmlRepresentation($dataset, $boundingBoxArray));
         $response->headers->set('Content-Type', 'text/xml');
         $response->headers->set('Content-Disposition', "attachment; filename=$filename;");

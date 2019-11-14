@@ -261,12 +261,12 @@ class Extensions extends \Twig_Extension
     /**
      * Format bytes as a human-readable string (base 10).
      *
-     * @param integer|null $bytes     The bytes to format.
-     * @param integer      $precision The the precision to use (default: 2).
+     * @param mixed   $bytes     The bytes to format.
+     * @param integer $precision The the precision to use (default: 2).
      *
      * @return string
      */
-    public static function formatBytes(?int $bytes, int $precision = 2) : string
+    public static function formatBytes($bytes, int $precision = 2) : string
     {
         if (empty($bytes)) {
             $bytes = 0;
