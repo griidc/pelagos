@@ -55,8 +55,6 @@ class DOIutil
      * @param string $doiApiPassword The API password.
      * @param string $doiApiPrefix   The API DOI prefix.
      * @param string $doiApiUrl      The API URL.
-     *
-     * @throws \Exception When ini file is not found.
      */
     public function __construct(
         string $doiApiUserName,
