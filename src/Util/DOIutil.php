@@ -63,7 +63,7 @@ class DOIutil
         string $doiApiPassword,
         string $doiApiPrefix,
         string $doiApiUrl
-    ){
+    ) {
         $this->doiprefix = $doiApiPrefix;
         $this->doiusername = $doiApiUserName;
         $this->doipassword = $doiApiPassword;
