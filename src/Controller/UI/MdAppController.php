@@ -73,7 +73,7 @@ class MdAppController extends AbstractController
      *
      * @Route(
      *      "/mdapp/change-dataset-status/{id}",
-     *      name="app_ui_mdapp_changedatasetstatus",
+     *      name="pelagos_app_ui_mdapp_changedatasetstatus",
      *      methods={"POST"}
      * )
      *
@@ -176,7 +176,7 @@ class MdAppController extends AbstractController
      * @param MdappLogger $mdappLogger The Logger utility.
      *
      * @Route("/mdapp/getlog/{udi}",
-     *      name="app_ui_mdapp_getlog"
+     *      name="pelagos_app_ui_mdapp_getlog"
      * )
      *
      * @return response
