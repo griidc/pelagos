@@ -51,21 +51,23 @@ class DOIutil
      *
      * Sets the REST API username, password, and prefix.
      *
+     * @param string $doiApiUserName The API username.
+     * @param string $doiApiPassword The API password.
+     * @param string $doiApiPrefix   The API DOI prefix.
+     * @param string $doiApiUrl      The API URL.
+     *
      * @throws \Exception When ini file is not found.
      */
-    public function __construct()
-    {
-        $iniFile = dirname(__FILE__) . '/DOIutil.ini';
-
-        if (!file_exists($iniFile)) {
-            throw new \Exception("$iniFile file not found!");
-        }
-        $parameters = parse_ini_file($iniFile);
-
-        $this->doiprefix = $parameters['doi_api_prefix'];
-        $this->doiusername = $parameters['doi_api_user_name'];
-        $this->doipassword = $parameters['doi_api_password'];
-        $this->url = $parameters['url'];
+    public function __construct(
+        string $doiApiUserName,
+        string $doiApiPassword,
+        string $doiApiPrefix,
+        string $doiApiUrl
+    ){
+        $this->doiprefix = $doiApiPrefix;
+        $this->doiusername = $doiApiUserName;
+        $this->doipassword = $doiApiPassword;
+        $this->url = $doiApiUrl;
     }
 
     /**

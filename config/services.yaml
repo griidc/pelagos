@@ -95,6 +95,12 @@ services:
             - { name: kernel.event_listener, event: pelagos.logactionitem.remotelyhosted_update_log, method: onNewLogCreated }
 
     App\Util\Ldap\Ldap:
+        $doiApiUserName: "%env(DOI_API_USER_NAME)%"
+        $doiApiPassword: "%env(DOI_API_PASSWORD)%"
+        $doiApiPrefix: "%env(DOI_API_PREFIX)%"
+        $doiApiUrl: "%env(DOI_API_URL)%"
+
+    App\Util\Ldap\Ldap:
         $ldapBindDn: "%env(LDAP_BIND_DN)%"
         $ldapBindPw: "%env(LDAP_BIND_PW)%"
         $peopleOu: "%env(LDAP_PEOPLE_OU)%"
