@@ -148,11 +148,22 @@ class Ldap
                     $ldapPerson['entry'][$attribute] = $accessor->getValue($person->getAccount(), $attribute);
                 }
             }
+
+            $uidNumber = $person->getAccount()->getUidNumber();
+            $query = "uidNumber=$uidNumber";
+            $filter = array("sshPublicKey");
+            $ldapFind = $this->ldapClient->find($this->peopleOu, $query, $filter);
+
+            // If public keys are stored in the DB, then set them in the array.
+            // Else we can get the SSH public key from LDAP itself.
             if (count($accessor->getValue($person->getAccount(), 'sshPublicKeys')) > 0) {
                 $ldapPerson['entry']['objectClass'][] = 'ldapPublicKey';
                 $ldapPerson['entry']['sshPublicKey'] = array_values(
                     $accessor->getValue($person->getAccount(), 'sshPublicKeys')
                 );
+            } elseif (is_countable($ldapFind) and count($ldapFind) > 0) {
+                $ldapPerson['entry']['objectClass'][] = 'ldapPublicKey';
+                $ldapPerson['entry']['sshPublicKey'] = array(0 => $ldapFind[0]["sshpublickey"][0]);
             }
         }
 

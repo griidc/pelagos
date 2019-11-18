@@ -170,7 +170,7 @@ class UpdateLdapAccountCommand extends Command
         try {
             $this->ldap->updatePerson($person);
         } catch (LdapException $e) {
-            $io->error('LDAP Object does not exist!');
+            $io->error('LDAP Error: ' . $e->getMessage());
             return 0;
         }
 
