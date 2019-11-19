@@ -223,12 +223,12 @@ class DatasetReviewController extends AbstractController
      *
      * @param Request $request          The Symfony request object.
      * @param string  $udi              The UDI entered by the user.
-     * @param integer $noticeCode       The Notice/Error code generated.
+     * @param string  $noticeCode       The type of Notice/Error generated, non-numeric.
      * @param string  $reviewerUserName Reviewer Username for the Dataset submission review.
      *
      * @return void
      */
-    private function addToFlashDisplayQueue(Request $request, string $udi, int $noticeCode, string $reviewerUserName = null)
+    private function addToFlashDisplayQueue(Request $request, string $udi, string $noticeCode, string $reviewerUserName = null)
     {
         $flashBag = $request->getSession()->getFlashBag();
 
