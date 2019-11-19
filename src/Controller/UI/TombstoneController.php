@@ -67,7 +67,7 @@ class TombstoneController extends AbstractController
      *
      * @param string $udi The UDI to get the dataset for.
      *
-     * @throws \NotFoundHttpException When more than one dataset is found with this UDI.
+     * @throws NotFoundHttpException When more than one dataset is found with this UDI.
      * @throws \Exception             When more than one dataset exists.
      *
      * @return Dataset
