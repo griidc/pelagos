@@ -66,7 +66,7 @@
                 <tbody>
                     {% for dta in section %}
                     <tr datasetId = "{{ dta.id }}">
-                        <td valign="top" class="udiTD"><a href="data/{{dta.udi}}" target="_BLANK" >{{dta.udi}}</a></td>
+                        <td valign="top" class="udiTD"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dta.udi }) }}" target="_BLANK" >{{dta.udi}}</a></td>
                             <td style="position:relative;">
                                 <div>
                                     <button id="jiraLinkEditButton" class="jlink">
@@ -83,7 +83,7 @@
                                 </div>
                             </td>
                             <td valign="top">
-                                <form name="AcceptedState" action="mdapp/change-dataset-status/{{dta.id}}" method="post">
+                                <form name="AcceptedState" action="{{ path('pelagos_app_ui_mdapp_changedatasetstatus', {'id': dta.id}) }}" method="post">
                                    {% if sname == 'backtosubmitter' %}
                                        change to <input type="submit" name="to" value="InReview" id="state_sel_sub_{{dta.udi}}">
                                     {% else %}

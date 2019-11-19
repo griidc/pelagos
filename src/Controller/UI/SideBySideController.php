@@ -220,8 +220,7 @@ class SideBySideController extends AbstractController
                 'showForceDownload' => false,
                 'researchGroupList' => $researchGroupList,
                 'mode' => 'view',
-            ),
-            null
+            )
         );
     }
 
