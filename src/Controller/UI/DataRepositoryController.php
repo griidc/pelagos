@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
@@ -22,7 +23,7 @@ class DataRepositoryController extends AbstractController
      *
      * @param integer $id The id of the entity to retrieve.
      *
-     * @throws NotFoundException When the Funding Organization is not found.
+     * @throws NotFoundHttpException When the Funding Organization is not found.
      *
      * @Route("/data-repository/{id}", name="pelagos_app_ui_datarepository_default")
      *
@@ -41,7 +42,7 @@ class DataRepositoryController extends AbstractController
             $dataRepository = $this->getDoctrine()->getRepository(DataRepository::class)->find($id);
 
             if (!$dataRepository instanceof DataRepository) {
-                throw $this->createNotFoundException('The Data Repository was not found');
+                throw new NotFoundHttpException('The Data Repository was not found');
             }
 
             foreach ($dataRepository->getPersonDataRepositories() as $personDataRepository) {

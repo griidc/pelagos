@@ -51,7 +51,7 @@ class TombstoneController extends AbstractController
         // Don't allow tombstones on available datasets.
         if (($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) or
             ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED)) {
-            throw $this->createNotFoundException("No pending state placeholder found for UDI: $udi");
+            throw new NotFoundHttpException("No pending state placeholder found for UDI: $udi");
         }
 
         return $this->render(
@@ -67,7 +67,8 @@ class TombstoneController extends AbstractController
      *
      * @param string $udi The UDI to get the dataset for.
      *
-     * @throws \Exception When more than one dataset is found with this UDI.
+     * @throws \NotFoundHttpException When more than one dataset is found with this UDI.
+     * @throws \Exception             When more than one dataset exists.
      *
      * @return Dataset
      */
@@ -76,7 +77,7 @@ class TombstoneController extends AbstractController
         $datasets = $this->entityHandler->getBy(Dataset::class, array('udi' => $udi));
 
         if (count($datasets) == 0) {
-            throw $this->createNotFoundException("No dataset found for UDI: $udi");
+            throw new NotFoundHttpException("No dataset found for UDI: $udi");
         }
 
         if (count($datasets) > 1) {
