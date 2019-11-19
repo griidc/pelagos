@@ -142,7 +142,7 @@ class ResearchGroupController extends EntityController
      *
      * @View(serializerEnableMaxDepthChecks = true)
      *
-     * @Route("/api/research-groups", name="pelagos_api_research_groups_get_collection", methods={"GET"})
+     * @Route("/api/research-groups", name="pelagos_api_research_groups_get_collection", methods={"GET"}, defaults={"_format"="json"})
      *
      * @return Response
      */
@@ -211,7 +211,7 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/research-groups", name="pelagos_api_research_groups_post", methods={"POST"})
+     * @Route("/api/research-groups", name="pelagos_api_research_groups_post", methods={"POST"}, defaults={"_format"="json"})
      *
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new Research Group in the Location header.
@@ -240,7 +240,7 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/research-groups/{id}", name="pelagos_api_research_groups_put", methods={"PUT"})
+     * @Route("/api/research-groups/{id}", name="pelagos_api_research_groups_put", methods={"PUT"}, defaults={"_format"="json"})
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
@@ -268,7 +268,7 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/research-groups/{id}", name="pelagos_api_research_groups_patch", methods={"PATCH"})
+     * @Route("/api/research-groups/{id}", name="pelagos_api_research_groups_patch", methods={"PATCH"}, defaults={"_format"="json"})
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
@@ -292,7 +292,7 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/research-groups/{id}", name="pelagos_api_research_groups_delete", methods={"DELETE"})
+     * @Route("/api/research-groups/{id}", name="pelagos_api_research_groups_delete", methods={"DELETE"}, defaults={"_format"="json"})
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
@@ -349,7 +349,8 @@ class ResearchGroupController extends EntityController
      * @Route(
      *     "/api/research-groups/{id}/logo",
      *     name="pelagos_api_research_groups_post_logo",
-     *     methods={"POST"}
+     *     methods={"POST"},
+     *     defaults={"_format"="json"}
      *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
@@ -373,7 +374,7 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/research-groups/{id}/logo", name="pelagos_api_research_groups_put_logo", methods={"PUT"})
+     * @Route("/api/research-groups/{id}/logo", name="pelagos_api_research_groups_put_logo", methods={"PUT"}, defaults={"_format"="json"})
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */

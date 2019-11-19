@@ -142,7 +142,8 @@ class DataCenterController extends EntityController
      * @Route(
      *     "/api/data-center",
      *     name="pelagos_api_data_center_get_collection",
-     *     methods={"GET"}
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
      *     )
      *
      * @View(serializerEnableMaxDepthChecks = true)

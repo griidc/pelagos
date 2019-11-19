@@ -148,7 +148,8 @@ class FundingOrganizationController extends EntityController
      * @Route(
      *     "/api/funding-organizations",
      *     name="pelagos_api_funding_organizations_get_collection",
-     *     methods={"GET"}
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
      *     )
      *
      * @View(serializerEnableMaxDepthChecks = true)

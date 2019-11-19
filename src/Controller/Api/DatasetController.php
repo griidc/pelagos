@@ -77,7 +77,7 @@ class DatasetController extends EntityController
      *
      * @View(serializerEnableMaxDepthChecks = true)
      *
-     * @Route("/api/datasets", name="pelagos_api_datasets_get_collection", methods={"GET"})
+     * @Route("/api/datasets", name="pelagos_api_datasets_get_collection", methods={"GET"}, defaults={"_format"="json"})
      *
      * @return array
      */
@@ -126,7 +126,7 @@ class DatasetController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/datasets/{id}/citation", name="pelagos_api_datasets_get_citation", methods={"GET"})
+     * @Route("/api/datasets/{id}/citation", name="pelagos_api_datasets_get_citation", methods={"GET"}, defaults={"_format"="json"})
      *
      * @View()
      *
@@ -157,7 +157,7 @@ class DatasetController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/datasets/{id}", name="pelagos_api_datasets_patch", methods={"PATCH"})
+     * @Route("/api/datasets/{id}", name="pelagos_api_datasets_patch", methods={"PATCH"}, defaults={"_format"="json"})
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
@@ -195,7 +195,7 @@ class DatasetController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/datasets/{id}", name="pelagos_api_datasets_delete", methods={"DELETE"})
+     * @Route("/api/datasets/{id}", name="pelagos_api_datasets_delete", methods={"DELETE"}, defaults={"_format"="json"})
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */

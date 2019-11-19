@@ -47,7 +47,8 @@ class DatasetSubmissionController extends EntityController
      * @Route(
      *     "/api/dataset_submission",
      *     name="pelagos_api_dataset_submission_get_collection",
-     *     methods={"GET"}
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
      *     )
      *
      * @View(serializerEnableMaxDepthChecks = true)

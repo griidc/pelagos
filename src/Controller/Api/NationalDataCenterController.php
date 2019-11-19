@@ -147,7 +147,8 @@ class NationalDataCenterController extends EntityController
      * @Route(
      *     "/api/national-data-center",
      *     name="pelagos_api_national_data_center_get_collection",
-     *     methods={"GET"}
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
      *     )
      *
      * @View(serializerEnableMaxDepthChecks = true)

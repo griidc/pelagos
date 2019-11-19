@@ -77,7 +77,7 @@ class DIFController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/difs", name="pelagos_api_difs_get_collection", methods={"GET"})
+     * @Route("/api/difs", name="pelagos_api_difs_get_collection", methods={"GET"}, defaults={"_format"="json"})
      *
      * @View(serializerEnableMaxDepthChecks = true)
      *
@@ -132,7 +132,7 @@ class DIFController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/difs", name="pelagos_api_difs_post", methods={"POST"})
+     * @Route("/api/difs", name="pelagos_api_difs_post", methods={"POST"}, defaults={"_format"="json"})
      *
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new DIF in the Location header.
@@ -178,7 +178,7 @@ class DIFController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/difs/{id}", name="pelagos_api_difs_put", methods={"PUT"})
+     * @Route("/api/difs/{id}", name="pelagos_api_difs_put", methods={"PUT"}, defaults={"_format"="json"})
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
@@ -206,7 +206,7 @@ class DIFController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/difs/{id}", name="pelagos_api_difs_patch", methods={"PATCH"})
+     * @Route("/api/difs/{id}", name="pelagos_api_difs_patch", methods={"PATCH"}, defaults={"_format"="json"})
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
@@ -235,7 +235,7 @@ class DIFController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/difs/{id}/submit", name="pelagos_api_difs_submit", methods={"PATCH"})
+     * @Route("/api/difs/{id}/submit", name="pelagos_api_difs_submit", methods={"PATCH"}, defaults={"_format"="json"})
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
@@ -284,7 +284,7 @@ class DIFController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/difs/{id}/approve", name="pelagos_api_difs_approve", methods={"PATCH"})
+     * @Route("/api/difs/{id}/approve", name="pelagos_api_difs_approve", methods={"PATCH"}, defaults={"_format"="json"})
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
@@ -337,7 +337,7 @@ class DIFController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/difs/{id}/reject", name="pelagos_api_difs_reject", methods={"PATCH"})
+     * @Route("/api/difs/{id}/reject", name="pelagos_api_difs_reject", methods={"PATCH"}, defaults={"_format"="json"})
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
@@ -386,7 +386,7 @@ class DIFController extends EntityController
      *   }
      * )
      *
-     * @Route("/api/difs/{id}/unlock", name="pelagos_api_difs_unlock", methods={"PATCH"})
+     * @Route("/api/difs/{id}/unlock", name="pelagos_api_difs_unlock", methods={"PATCH"}, defaults={"_format"="json"})
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
@@ -435,7 +435,7 @@ class DIFController extends EntityController
      * @throws AccessDeniedHttpException When you do not have the permissions to unlock.
      * @throws BadRequestHttpException   When DIF can not be unlocked.
      *
-     * @Route("/api/difs/{id}/request-unlock", name="pelagos_api_difs_request_unlock", methods={"PATCH"})
+     * @Route("/api/difs/{id}/request-unlock", name="pelagos_api_difs_request_unlock", methods={"PATCH"}, defaults={"_format"="json"})
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */

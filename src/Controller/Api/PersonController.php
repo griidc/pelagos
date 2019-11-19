@@ -175,6 +175,7 @@ class PersonController extends EntityController
      *     "/api/people",
      *     name="pelagos_api_people_get_collection",
      *     methods={"GET"},
+     *     defaults={"_format"="json"}
      *     )
      *
      * @View(serializerEnableMaxDepthChecks = true)
@@ -237,6 +238,7 @@ class PersonController extends EntityController
      *     "/api/people",
      *     name="pelagos_api_people_post",
      *     methods={"POST"},
+     *     defaults={"_format"="json"}
      *     )
      *
      * @return Response A Response object with an empty body, a "created" status code,
@@ -270,6 +272,7 @@ class PersonController extends EntityController
      *     "/api/people/{id}",
      *     name="pelagos_api_people_put",
      *     methods={"PUT"},
+     *     defaults={"_format"="json"}
      *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
@@ -302,6 +305,7 @@ class PersonController extends EntityController
      *     "/api/people/{id}",
      *     name="pelagos_api_people_patch",
      *     methods={"PATCH"},
+     *     defaults={"_format"="json"}
      *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
@@ -336,6 +340,7 @@ class PersonController extends EntityController
      *     "/api/people/{id}",
      *     name="pelagos_api_people_delete",
      *     methods={"DELETE"},
+     *     defaults={"_format"="json"}
      *     )
      *
      * @return Response A response object with an empty body and a "no content" status code.

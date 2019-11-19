@@ -149,7 +149,8 @@ class DataRepositoryController extends EntityController
      * @Route(
      *     "/api/data-repositories",
      *     name="pelagos_api_data_repositories_get_collection",
-     *     methods={"GET"}
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
      *     )
      *
      * @View(serializerEnableMaxDepthChecks = true)
