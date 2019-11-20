@@ -1,24 +1,34 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Command;
+namespace App\Command;
+
+use Doctrine\ORM\EntityManagerInterface;
 
 use FOS\ElasticaBundle\Persister\ObjectPersister;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Pelagos\Entity\Dataset;
+
+use App\Entity\Dataset;
 
 /**
  * This class re-indexes the elasticsearch index.
  */
-class RebuildElasticsearchIndexCommand extends ContainerAwareCommand
+class RebuildElasticsearchIndexCommand extends Command
 {
+    /**
+     * The Command name.
+     *
+     * @var string $defaultName
+     */
+    protected static $defaultName = 'pelagos:elasticsearch-reindex-datasets';
 
     /**
-     * The Doctrine entity manager - ORM critter.
+     * A Doctrine ORM EntityManager instance.
      *
-     * @var EntityManager entityManager
+     * @var EntityManagerInterface $entityManager
      */
     protected $entityManager;
 
@@ -30,6 +40,19 @@ class RebuildElasticsearchIndexCommand extends ContainerAwareCommand
     protected $pelagosDatasetIndexPersister;
 
     /**
+     * Class constructor for dependency injection.
+     *
+     * @param EntityManagerInterface $entityManager                An instance of entity manager.
+     * @param ObjectPersister        $pelagosDatasetIndexPersister FOS Elastica persister to populate the elasticsearch.
+     */
+    public function __construct(EntityManagerInterface $entityManager, ObjectPersister $pelagosDatasetIndexPersister)
+    {
+        $this->entityManager = $entityManager;
+        $this->pelagosDatasetIndexPersister = $pelagosDatasetIndexPersister;
+        parent::__construct();
+    }
+
+    /**
      * Configures the current command.
      *
      * @return void
@@ -37,7 +60,6 @@ class RebuildElasticsearchIndexCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('elasticsearch:reindex-datasets')
             ->setDescription('Description: re-indexes datasets into elasticsearch')
             ->addArgument(
                 'UDI',
@@ -52,19 +74,17 @@ class RebuildElasticsearchIndexCommand extends ContainerAwareCommand
      * @param InputInterface  $input  An InputInterface instance.
      * @param OutputInterface $output An OutputInterface instance.
      *
-     * @return integer Return 0 on success, or an error code otherwise.
+     * @return void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
-        $this->pelagosDatasetIndexPersister = $this->getContainer()
-            ->get('fos_elastica.object_persister.pelagos.dataset');
+
 
         $udi = $input->getArgument('UDI');
         if (null !== $udi) {
-            $allDatasets = $this->entityManager->getRepository('Pelagos\Entity\Dataset')->findBy(array('udi' => $udi));
+            $allDatasets = $this->entityManager->getRepository(Dataset::class)->findBy(array('udi' => $udi));
         } else {
-            $allDatasets = $this->entityManager->getRepository('Pelagos\Entity\Dataset')->findAll();
+            $allDatasets = $this->entityManager->getRepository(Dataset::class)->findAll();
         }
         $count = count($allDatasets);
         $counter = 0;
@@ -78,6 +98,5 @@ class RebuildElasticsearchIndexCommand extends ContainerAwareCommand
             $elapsedTimeSeconds = $elapsedTime->format('%s');
             $output->writeln('     ' . $dataset->getUdi() . " indexed. ($counter/$count $elapsedTimeSeconds sec)");
         }
-        return 0;
     }
 }

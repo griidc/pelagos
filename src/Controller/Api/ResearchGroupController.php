@@ -1,18 +1,19 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\Api;
+namespace App\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
-use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Controller\Annotations\View;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Pelagos\Entity\ResearchGroup;
-use Pelagos\Bundle\AppBundle\Form\ResearchGroupType;
+use App\Entity\ResearchGroup;
+use App\Form\ResearchGroupType;
 
 /**
  * The ResearchGroup api controller.
@@ -40,9 +41,9 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/count")
+     * @Route("/api/research-groups/count", name="pelagos_api_research_groups_count", methods={"GET"}, defaults={"_format"="json"})
      *
-     * @Rest\View()
+     * @View()
      *
      * @return integer
      */
@@ -68,9 +69,14 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/validateProperty")
+     * @Route(
+     *     "/api/research-groups/validateProperty",
+     *     name="pelagos_api_research_groups_validate_property",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
@@ -96,13 +102,18 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/{id}/validateProperty")
+     * @Route(
+     *     "/api/research-groups/{id}/validateProperty",
+     *     name="pelagos_api_research_groups_validate_property_existing",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
-    public function validatePropertyExistingAction($id, Request $request)
+    public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(ResearchGroupType::class, ResearchGroup::class, $request, $id);
     }
@@ -115,23 +126,23 @@ class ResearchGroupController extends EntityController
      * @ApiDoc(
      *   section = "Research Groups",
      *   input = {
-     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCollectionType",
+     *     "class": "App\Form\EntityCollectionType",
      *     "name": "",
      *     "options": {
      *       "label": "Research Groups",
-     *       "data_class": "Pelagos\Entity\ResearchGroup"
+     *       "data_class": "App\Entity\ResearchGroup"
      *     }
      *   },
-     *   output = "array<Pelagos\Entity\ResearchGroup>",
+     *   output = "array<App\Entity\ResearchGroup>",
      *   statusCodes = {
      *     200 = "The requested collection of Research Groups was successfully retrieved.",
      *     500 = "An internal error has occurred.",
      *   }
      * )
      *
-     * @Rest\Get("")
+     * @View(serializerEnableMaxDepthChecks = true)
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @Route("/api/research-groups", name="pelagos_api_research_groups_get_collection", methods={"GET"}, defaults={"_format"="json"})
      *
      * @return Response
      */
@@ -159,11 +170,18 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
+     *
+     * @Route(
+     *     "/api/research-groups/{id}",
+     *     name="pelagos_api_research_groups_get",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return ResearchGroup The Research Group that was retrieved.
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         $researchGroup = $this->handleGetOne(ResearchGroup::class, $id);
         if ($researchGroup instanceof ResearchGroup and $researchGroup->getLogo(true) !== null) {
@@ -193,6 +211,8 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
+     * @Route("/api/research-groups", name="pelagos_api_research_groups_post", methods={"POST"}, defaults={"_format"="json"})
+     *
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new Research Group in the Location header.
      */
@@ -220,9 +240,11 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
+     * @Route("/api/research-groups/{id}", name="pelagos_api_research_groups_put", methods={"PUT"}, defaults={"_format"="json"})
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putAction($id, Request $request)
+    public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(ResearchGroupType::class, ResearchGroup::class, $id, $request, 'PUT');
         return $this->makeNoContentResponse();
@@ -246,9 +268,11 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
+     * @Route("/api/research-groups/{id}", name="pelagos_api_research_groups_patch", methods={"PATCH"}, defaults={"_format"="json"})
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function patchAction($id, Request $request)
+    public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(ResearchGroupType::class, ResearchGroup::class, $id, $request, 'PATCH');
         return $this->makeNoContentResponse();
@@ -268,9 +292,11 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
+     * @Route("/api/research-groups/{id}", name="pelagos_api_research_groups_delete", methods={"DELETE"}, defaults={"_format"="json"})
+     *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
         $this->handleDelete(ResearchGroup::class, $id);
         return $this->makeNoContentResponse();
@@ -289,11 +315,16 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/{id}/logo")
+     * @Route(
+     *     "/api/research-groups/{id}/logo",
+     *     name="pelagos_api_research_groups_get_logo",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return Response A response object containing the logo.
      */
-    public function getLogoAction($id)
+    public function getLogoAction(int $id)
     {
         return $this->getProperty(ResearchGroup::class, $id, 'logo');
     }
@@ -315,11 +346,16 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\Post("/{id}/logo")
+     * @Route(
+     *     "/api/research-groups/{id}/logo",
+     *     name="pelagos_api_research_groups_post_logo",
+     *     methods={"POST"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function postLogoAction($id, Request $request)
+    public function postLogoAction(int $id, Request $request)
     {
         return $this->postProperty(ResearchGroup::class, $id, 'logo', $request);
     }
@@ -338,11 +374,11 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\Put("/{id}/logo")
+     * @Route("/api/research-groups/{id}/logo", name="pelagos_api_research_groups_put_logo", methods={"PUT"}, defaults={"_format"="json"})
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putLogoAction($id, Request $request)
+    public function putLogoAction(int $id, Request $request)
     {
         return $this->putProperty(ResearchGroup::class, $id, 'logo', $request);
     }

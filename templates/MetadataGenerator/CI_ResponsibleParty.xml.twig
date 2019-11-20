@@ -57,7 +57,7 @@
     </gmd:contactInfo>
     <gmd:role>
         {% if role %}
-            {% include "PelagosAppBundle:MetadataGenerator:CI_RoleCode.xml.twig" with {"role" : role} %}
+            {% include "MetadataGenerator/CI_RoleCode.xml.twig" with {"role" : role} %}
         {% endif %}
     </gmd:role>
 </gmd:CI_ResponsibleParty>

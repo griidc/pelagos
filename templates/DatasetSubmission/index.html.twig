@@ -1,4 +1,4 @@
-{% extends "PelagosAppBundle:template:UI.html.twig" %}
+{% extends "template/UI.html.twig" %}
 {% block title %}
     Dataset Submission {{ ' | ' ~ datasetSubmission.dataset.udi | default }}
 {% endblock %}
@@ -12,9 +12,9 @@
     <link href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="//cdn.datatables.net/select/1.0.1/css/select.dataTables.min.css" rel="stylesheet" />
 
-    <link href="{{ asset('build/css/fileBrowser.css') }}" rel="stylesheet" />
-    <link href="{{ asset('build/css/dataset-submission.css') }}" rel="stylesheet" />
-    <link href="{{ asset('build/css/dataset-submission-uploader.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/fileBrowser.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/dataset-submission.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/dataset-submission-uploader.css') }}" rel="stylesheet" />
 {% endblock %}
 
 {% block javascripts %}
@@ -33,54 +33,53 @@
     <script type="text/javascript" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js"></script>
 
-    <script type="text/javascript" src="{{ asset('build/js/common.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('build/js/fileBrowser.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('build/js/geoviz.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('build/js/mapWizard.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('build/js/dataset-submission.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('build/js/datasetsWithApprovedDifs.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/common.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/fileBrowser.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/geoviz.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/mapWizard.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/dataset-submission.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/datasetsWithApprovedDifs.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-    <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+
 {% endblock %}
 
 {% block body %}
-{% include 'PelagosAppBundle:DatasetSubmission:uploader-template.html.twig' %}
+{% include 'DatasetSubmission/uploader-template.html.twig' %}
 
 <h1>Dataset Submission{% if datasetSubmission is not null %} for {{ datasetSubmission.dataset.udi }}{% endif %}</h1>
 
 {% if udi is null %}
-    {% include 'PelagosAppBundle:DatasetSubmission:form.html.twig' %}
+    {% include 'DatasetSubmission/form.html.twig' %}
 {% else %}
     {% if dataset is null %}
         <div class="messages warning">
             <h2 class="element-invisible">Status message</h2>
             Sorry, the dataset with Unique Dataset Identifier (UDI) {{ udi }} could not be found. Please email <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> if you have any questions.
         </div>
-        {% include 'PelagosAppBundle:DatasetSubmission:form.html.twig' %}
-    {% elseif dataset.dif.status == constant('Pelagos\\Entity\\DIF::STATUS_SUBMITTED') %}
+        {% include 'DatasetSubmission/form.html.twig' %}
+    {% elseif dataset.dif.status == constant('App\\Entity\\DIF::STATUS_SUBMITTED') %}
         <div class="messages warning">
             <h2 class="element-invisible">Status message</h2>
             The DIF has not yet been approved for dataset: {{ udi }}. Please email <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> if you have any questions.
         </div>
-        {% include 'PelagosAppBundle:DatasetSubmission:form.html.twig' %}
-    {% elseif dataset.dif.status == constant('Pelagos\\Entity\\DIF::STATUS_UNSUBMITTED') %}
+        {% include 'DatasetSubmission/form.html.twig' %}
+    {% elseif dataset.dif.status == constant('App\\Entity\\DIF::STATUS_UNSUBMITTED') %}
         <div class="messages warning">
             <h2 class="element-invisible">Status message</h2>
             The DIF has not yet been submitted for dataset: {{ udi }}. Please email <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a> if you have any questions.
         </div>
-        {% include 'PelagosAppBundle:DatasetSubmission:form.html.twig' %}
+        {% include 'DatasetSubmission/form.html.twig' %}
     {% elseif not dataset.researchgroup.islocked and not is_granted('CAN_CREATE', datasetSubmission) and not is_granted('CAN_EDIT', datasetSubmission) %}
         <div class="messages warning">
                 <h2 class="element-invisible">Status message</h2>
                 Sorry, but you can only create or edit dataset submissions for datasets associated with your research groups.
         </div>
-        {% include 'PelagosAppBundle:DatasetSubmission:form.html.twig' %}
-    {% elseif datasetSubmission.status == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_COMPLETE')
+        {% include 'DatasetSubmission/form.html.twig' %}
+    {% elseif datasetSubmission.status == constant('App\\Entity\\DatasetSubmission::STATUS_COMPLETE')
               and (
-                   datasetSubmission.datasetFileTransferStatus == constant('Pelagos\\Entity\\DatasetSubmission::TRANSFER_STATUS_NONE')
+                   datasetSubmission.datasetFileTransferStatus == constant('App\\Entity\\DatasetSubmission::TRANSFER_STATUS_NONE')
                    or (
-                       datasetSubmission.datasetFileTransferStatus == constant('Pelagos\\Entity\\DatasetSubmission::TRANSFER_STATUS_COMPLETED')
+                       datasetSubmission.datasetFileTransferStatus == constant('App\\Entity\\DatasetSubmission::TRANSFER_STATUS_COMPLETED')
                        and datasetSubmission.datasetFileSha256Hash is empty
                    )
               )
@@ -89,7 +88,7 @@
             <h2 class="element-invisible">Status message</h2>
             The previous Dataset Submission for {{ udi }} is still being processed. Please try again later.
         </div>
-        {% include 'PelagosAppBundle:DatasetSubmission:form.html.twig' %}
+        {% include 'DatasetSubmission/form.html.twig' %}
     {% else %}
         {% for error in xmlStatus.errors %}
         <div class="messages warning">
@@ -120,13 +119,13 @@
             Dataset Identifier <b>'{{ udi }}'</b> was found. The latest version has been loaded.
         </div>
         {% endif %}
-        {% include 'PelagosAppBundle:DatasetSubmission:submission-form.html.twig' %}
+        {% include 'DatasetSubmission/submission-form.html.twig' %}
     {% endif %}
 {% endif %}
 
 <div class="modal" id="spinner"></div>
 <div style="display:none;">
-    <img id="imgwarning" src="{{ asset('build/images/x.png') }}">
-    <img id="imgcheck" src="{{ asset('build/images/check.png') }}">
+    <img id="imgwarning" src="{{ asset('images/x.png') }}">
+    <img id="imgcheck" src="{{ asset('images/check.png') }}">
 </div>
 {% endblock %}

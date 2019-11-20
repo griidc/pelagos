@@ -1,17 +1,18 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\Api;
+namespace App\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
-use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Controller\Annotations\View;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Pelagos\Entity\FundingCycle;
-use Pelagos\Bundle\AppBundle\Form\FundingCycleType;
+use App\Entity\FundingCycle;
+use App\Form\FundingCycleType;
 
 /**
  * The FundingCycle api controller.
@@ -39,9 +40,9 @@ class FundingCycleController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/count")
+     * @Route("/api/funding-cycles/count", name="pelagos_api_funding_cycles_count", methods={"GET"}, defaults={"_format"="json"})
      *
-     * @Rest\View()
+     * @View()
      *
      * @return integer
      */
@@ -65,9 +66,14 @@ class FundingCycleController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/validateProperty")
+     * @Route(
+     *     "/api/funding-cycles/validateProperty",
+     *     name="pelagos_api_funding_cycles_validate_property",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
@@ -93,13 +99,18 @@ class FundingCycleController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/{id}/validateProperty")
+     * @Route(
+     *     "/api/funding-cycles/{id}/validateProperty",
+     *     name="pelagos_api_funding_cycles_validate_property_existing",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
-    public function validatePropertyExistingAction($id, Request $request)
+    public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(FundingCycleType::class, FundingCycle::class, $request, $id);
     }
@@ -126,9 +137,14 @@ class FundingCycleController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("")
+     * @Route(
+     *     "/api/funding-cycles",
+     *     name="pelagos_api_funding_cycles_get_collection",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Response
      */
@@ -152,11 +168,18 @@ class FundingCycleController extends EntityController
      *   }
      * )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
+     *
+     * @Route(
+     *     "/api/funding-cycles/{id}",
+     *     name="pelagos_api_funding_cycles_get",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return FundingCycle
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         return $this->handleGetOne(FundingCycle::class, $id);
     }
@@ -176,6 +199,13 @@ class FundingCycleController extends EntityController
      *     500 = "An internal error has occurred.",
      *   }
      * )
+     *
+     * @Route(
+     *     "/api/funding-cycles",
+     *     name="pelagos_api_funding_cycles_post",
+     *     methods={"POST"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new Funding Cycle in the Location header.
@@ -204,9 +234,16 @@ class FundingCycleController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/funding-cycles/{id}",
+     *     name="pelagos_api_funding_cycles_put",
+     *     methods={"PUT"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putAction($id, Request $request)
+    public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(FundingCycleType::class, FundingCycle::class, $id, $request, 'PUT');
         return $this->makeNoContentResponse();
@@ -230,9 +267,16 @@ class FundingCycleController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/funding-cycles/{id}",
+     *     name="pelagos_api_funding_cycles_patch",
+     *     methods={"PATCH"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function patchAction($id, Request $request)
+    public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(FundingCycleType::class, FundingCycle::class, $id, $request, 'PATCH');
         return $this->makeNoContentResponse();
@@ -253,9 +297,16 @@ class FundingCycleController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/funding-cycles/{id}",
+     *     name="pelagos_api_funding_cycles_delete",
+     *     methods={"DELETE"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
         $this->handleDelete(FundingCycle::class, $id);
         return $this->makeNoContentResponse();

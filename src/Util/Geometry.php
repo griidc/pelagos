@@ -1,9 +1,11 @@
 <?php
-namespace Pelagos\Util;
+
+namespace App\Util;
 
 use Doctrine\DBAL\Exception\DriverException;
-use Doctrine\ORM\EntityManager;
-use Pelagos\Exception\InvalidGmlException;
+use Doctrine\ORM\EntityManagerInterface;
+
+use App\Exception\InvalidGmlException;
 
 /**
  * This is a utility class for dealing with envelope calculation.
@@ -13,16 +15,16 @@ class Geometry
     /**
      * An instance of a Doctrine EntityManager class.
      *
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
     /**
      * Class constructor for Dependency Injection.
      *
-     * @param EntityManager $entityManager A Pelagos EntityManager.
+     * @param EntityManagerInterface $entityManager A Pelagos EntityManager.
      */
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }
@@ -36,7 +38,7 @@ class Geometry
      *
      * @return string WKT string for the envelope.
      */
-    public function calculateEnvelopeFromGml($gml)
+    public function calculateEnvelopeFromGml(string $gml)
     {
         $gml = GmlUtil::addNamespace($gml);
 
@@ -67,7 +69,7 @@ class Geometry
      *
      * @return array Of North, South, East, West.
      */
-    public function calculateGeographicBoundsFromGml($gml)
+    public function calculateGeographicBoundsFromGml(string $gml)
     {
         $gml = GmlUtil::addNamespace($gml);
 
@@ -103,7 +105,7 @@ class Geometry
      *
      * @return string WKT string for the GML geometry.
      */
-    public function convertGmlToWkt($gml)
+    public function convertGmlToWkt(string $gml)
     {
         $gml = GmlUtil::addNamespace($gml);
 

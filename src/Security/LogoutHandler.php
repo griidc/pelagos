@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Security;
+namespace App\Security;
 
 use Symfony\Component\Security\Http\Logout\LogoutHandlerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;

@@ -1,17 +1,18 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator\Constraints as CustomAssert;
 
 use Hateoas\Configuration\Annotation as Hateoas;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Pelagos\Exception\NotDeletableException;
+use App\Exception\NotDeletableException;
 
 /**
  * Entity class to represent a Data Repository.
@@ -61,7 +62,7 @@ class DataRepository extends Entity
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
@@ -79,7 +80,7 @@ class DataRepository extends Entity
      * @Assert\NotBlank(
      *     message="Email address is required"
      * )
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Email address cannot contain angle brackets (< or >)"
      * )
      * @Assert\Email(
@@ -100,7 +101,7 @@ class DataRepository extends Entity
      * @Assert\NotBlank(
      *     message="Description is required"
      * )
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Description cannot contain angle brackets (< or >)"
      * )
      */
@@ -118,7 +119,7 @@ class DataRepository extends Entity
      * @Assert\NotBlank(
      *     message="Website URL is required"
      * )
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Website URL cannot contain angle brackets (< or >)"
      * )
      */
@@ -136,7 +137,7 @@ class DataRepository extends Entity
      * @Assert\NotBlank(
      *     message="Phone number is required"
      * )
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Phone number cannot contain angle brackets (< or >)"
      * )
      */
@@ -154,7 +155,7 @@ class DataRepository extends Entity
      * @Assert\NotBlank(
      *     message="Delivery point is required"
      * )
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Delivery point (address) cannot contain angle brackets (< or >)"
      * )
      */
@@ -172,7 +173,7 @@ class DataRepository extends Entity
      * @Assert\NotBlank(
      *     message="City is required"
      * )
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="City cannot contain angle brackets (< or >)"
      * )
      */
@@ -190,7 +191,7 @@ class DataRepository extends Entity
      * @Assert\NotBlank(
      *     message="Administrative area (state) is required"
      * )
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Administrative area (state) cannot contain angle brackets (< or >)"
      * )
      */
@@ -208,7 +209,7 @@ class DataRepository extends Entity
      * @Assert\NotBlank(
      *     message="Postal code (zip) is required"
      * )
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Postal code (zip) cannot contain angle brackets (< or >)"
      * )
      */
@@ -226,7 +227,7 @@ class DataRepository extends Entity
      * @Assert\NotBlank(
      *     message="Country is required"
      * )
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Country cannot contain angle brackets (< or >)"
      * )
      */
@@ -273,7 +274,7 @@ class DataRepository extends Entity
      *
      * @return void
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
@@ -299,7 +300,7 @@ class DataRepository extends Entity
      *
      * @return void
      */
-    public function setEmailAddress($emailAddress)
+    public function setEmailAddress(string $emailAddress)
     {
         $this->emailAddress = $emailAddress;
     }
@@ -325,7 +326,7 @@ class DataRepository extends Entity
      *
      * @return void
      */
-    public function setDescription($description)
+    public function setDescription(string $description)
     {
         $this->description = $description;
     }
@@ -351,7 +352,7 @@ class DataRepository extends Entity
      *
      * @return void
      */
-    public function setUrl($url)
+    public function setUrl(string $url)
     {
         $this->url = $url;
     }
@@ -377,7 +378,7 @@ class DataRepository extends Entity
      *
      * @return void
      */
-    public function setPhoneNumber($phoneNumber)
+    public function setPhoneNumber(string $phoneNumber)
     {
         $this->phoneNumber = $phoneNumber;
     }
@@ -403,7 +404,7 @@ class DataRepository extends Entity
      *
      * @return void
      */
-    public function setDeliveryPoint($deliveryPoint)
+    public function setDeliveryPoint(string $deliveryPoint)
     {
         $this->deliveryPoint = $deliveryPoint;
     }
@@ -429,7 +430,7 @@ class DataRepository extends Entity
      *
      * @return void
      */
-    public function setCity($city)
+    public function setCity(string $city)
     {
         $this->city = $city;
     }
@@ -455,7 +456,7 @@ class DataRepository extends Entity
      *
      * @return void
      */
-    public function setAdministrativeArea($administrativeArea)
+    public function setAdministrativeArea(string $administrativeArea)
     {
         $this->administrativeArea = $administrativeArea;
     }
@@ -481,7 +482,7 @@ class DataRepository extends Entity
      *
      * @return void
      */
-    public function setPostalCode($postalCode)
+    public function setPostalCode(string $postalCode)
     {
         $this->postalCode = $postalCode;
     }
@@ -507,7 +508,7 @@ class DataRepository extends Entity
      *
      * @return void
      */
-    public function setCountry($country)
+    public function setCountry(string $country)
     {
         $this->country = $country;
     }

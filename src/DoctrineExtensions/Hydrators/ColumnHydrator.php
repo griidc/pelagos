@@ -1,6 +1,5 @@
 <?php
-
-namespace Pelagos\DoctrineExtensions\Hydrators;
+namespace App\DoctrineExtensions\Hydrators;
 
 use Doctrine\ORM\Internal\Hydration\AbstractHydrator;
 use PDO;

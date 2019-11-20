@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -15,4 +15,8 @@ class FundingOrganizationRole extends AbstractRole implements RoleInterface
      * A friendly name for this type of entity.
      */
     const FRIENDLY_NAME = 'Funding Organization Role';
+
+    const LEADERSHIP = 'Leadership';
+    const ADVISORY = 'Advisory';
+    const ADMIN = 'Admin';
 }

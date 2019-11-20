@@ -1,15 +1,15 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DIF;
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Entity\DIF;
 
 use \DateTime;
 use \DateInterval;
@@ -19,22 +19,20 @@ const GOMRI_STRING = 'Gulf of Mexico Research Initiative (GoMRI)';
 
 /**
  * The GOMRI datasets report generator.
- *
- * @Route("/gomri")
  */
 class GomriReportController extends ReportController
 {
     /**
      * This is a parameterless report, so all is in the default action.
      *
-     * @Route("/v1")
+     * @Route("/gomri/v1", name="pelagos_app_ui_gomrireport_default")
      *
      * @return Response A Response instance.
      */
     public function defaultAction()
     {
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
           // Add header to CSV.
         return $this->writeCsvResponse(
@@ -45,14 +43,14 @@ class GomriReportController extends ReportController
     /**
      * This is the version 2 Gomri Report.
      *
-     * @Route("/v2")
+     * @Route("/gomri/v2", name="pelagos_app_ui_gomrireport_versiontworeport")
      *
      * @return Response A Response instance
      */
     public function versionTwoReportAction()
     {
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
         $customFileName = 'GomriReport-v2-' .
             (new DateTime('now'))->format(self::FILENAME_DATETIMEFORMAT) .
@@ -71,7 +69,7 @@ class GomriReportController extends ReportController
      *
      * @return array  Return the data array
      */
-    protected function getData($version = 'v2')
+    protected function getData(string $version = 'v2')
     {
         //prepare labels
         $labels = array('labels' => array(
@@ -131,10 +129,9 @@ class GomriReportController extends ReportController
      *
      * @return array
      */
-    private function getVersionOneQueryData($dataArray)
+    private function getVersionOneQueryData(array $dataArray)
     {
-        $container = $this->container;
-        $entityManager = $container->get('doctrine')->getManager();
+        $entityManager = $this->getDoctrine()->getManager();
         // Query Identified.
         $queryString = 'SELECT dif.creationTimeStamp ' .
             'FROM ' . Dataset::class . ' dataset ' .
@@ -220,19 +217,18 @@ class GomriReportController extends ReportController
      *
      * @return array
      */
-    private function getVersionTwoQueryData($dataArray)
+    private function getVersionTwoQueryData(array $dataArray)
     {
-        $container = $this->container;
-        $entityManager = $container->get('doctrine')->getManager();
+        $entityManager = $this->getDoctrine()->getManager();
         // Query Identified (i.e. Datasets which have DIF approved).
         $qb = $entityManager->createQueryBuilder();
         $query = $qb
             ->select('dif.approvedDate')
-            ->from('\Pelagos\Entity\Dataset', 'd')
-            ->JOIN('\Pelagos\Entity\Dif', 'dif', 'WITH', 'd.dif = dif.id')
-            ->JOIN('\Pelagos\Entity\ResearchGroup', 'rg', 'WITH', 'd.researchGroup = rg.id')
-            ->JOIN('\Pelagos\Entity\FundingCycle', 'fc', 'WITH', 'rg.fundingCycle = fc.id')
-            ->JOIN('\Pelagos\Entity\FundingOrganization', 'fo', 'WITH', 'fc.fundingOrganization = fo.id')
+            ->from('\App\Entity\Dataset', 'd')
+            ->JOIN('\App\Entity\Dif', 'dif', 'WITH', 'd.dif = dif.id')
+            ->JOIN('\App\Entity\ResearchGroup', 'rg', 'WITH', 'd.researchGroup = rg.id')
+            ->JOIN('\App\Entity\FundingCycle', 'fc', 'WITH', 'rg.fundingCycle = fc.id')
+            ->JOIN('\App\Entity\FundingOrganization', 'fo', 'WITH', 'fc.fundingOrganization = fo.id')
             ->where('dif.status = ?1')
             ->andWhere('fo.name = ?2')
             ->setParameter(1, DIF::STATUS_APPROVED)
@@ -249,11 +245,11 @@ class GomriReportController extends ReportController
         $qb = $entityManager->createQueryBuilder();
         $query = $qb
             ->select('ds.submissionTimeStamp')
-            ->from('\Pelagos\Entity\Dataset', 'd')
-            ->JOIN('\Pelagos\Entity\DatasetSubmission', 'ds', 'WITH', 'd.datasetSubmission = ds.id')
-            ->JOIN('\Pelagos\Entity\ResearchGroup', 'rg', 'WITH', 'd.researchGroup = rg.id')
-            ->JOIN('\Pelagos\Entity\FundingCycle', 'fc', 'WITH', 'rg.fundingCycle = fc.id')
-            ->JOIN('\Pelagos\Entity\FundingOrganization', 'fo', 'WITH', 'fc.fundingOrganization = fo.id')
+            ->from('\App\Entity\Dataset', 'd')
+            ->JOIN('\App\Entity\DatasetSubmission', 'ds', 'WITH', 'd.datasetSubmission = ds.id')
+            ->JOIN('\App\Entity\ResearchGroup', 'rg', 'WITH', 'd.researchGroup = rg.id')
+            ->JOIN('\App\Entity\FundingCycle', 'fc', 'WITH', 'rg.fundingCycle = fc.id')
+            ->JOIN('\App\Entity\FundingOrganization', 'fo', 'WITH', 'fc.fundingOrganization = fo.id')
             ->where('ds.datasetFileUri IS NOT null')
             ->andWhere('fo.name = ?1')
             ->setParameter(1, GOMRI_STRING)
@@ -270,8 +266,8 @@ class GomriReportController extends ReportController
 
         $qb2 = $entityManager->createQueryBuilder()
             ->select('IDENTITY(ds2.dataset)')
-            ->from('\Pelagos\Entity\DatasetSubmission', 'ds2')
-            ->join('\Pelagos\Entity\Dataset', 'd2', 'WITH', 'ds2.dataset = d2.id')
+            ->from('\App\Entity\DatasetSubmission', 'ds2')
+            ->join('\App\Entity\Dataset', 'd2', 'WITH', 'ds2.dataset = d2.id')
             ->where('ds2.id = d2.datasetSubmission')
             ->andWhere('ds2.datasetFileUri is not null ')
             ->andWhere('ds2.restrictions = ?3')
@@ -281,10 +277,10 @@ class GomriReportController extends ReportController
 
         $query = $qb
             ->select('d.acceptedDate')
-            ->from('\Pelagos\Entity\Dataset', 'd')
-            ->JOIN('\Pelagos\Entity\ResearchGroup', 'rg', 'WITH', 'd.researchGroup = rg.id')
-            ->JOIN('\Pelagos\Entity\FundingCycle', 'fc', 'WITH', 'rg.fundingCycle = fc.id')
-            ->JOIN('\Pelagos\Entity\FundingOrganization', 'fo', 'WITH', 'fc.fundingOrganization = fo.id')
+            ->from('\App\Entity\Dataset', 'd')
+            ->JOIN('\App\Entity\ResearchGroup', 'rg', 'WITH', 'd.researchGroup = rg.id')
+            ->JOIN('\App\Entity\FundingCycle', 'fc', 'WITH', 'rg.fundingCycle = fc.id')
+            ->JOIN('\App\Entity\FundingOrganization', 'fo', 'WITH', 'fc.fundingOrganization = fo.id')
             ->where(
                 $qb->expr()->in('d.id', $qb2->getDQL())
             )

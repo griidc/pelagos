@@ -1,26 +1,54 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
 
 use Symfony\Component\Form\Form;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use Pelagos\Bundle\AppBundle\Form\ExternalDownloadLogType;
+use App\Form\ExternalDownloadLogType;
 
-use Pelagos\Entity\Account;
-use Pelagos\Entity\Dataset;
+use App\Entity\Account;
+use App\Entity\Dataset;
+
+use App\Event\LogActionItemEventDispatcher;
+use App\Handler\EntityHandler;
 
 /**
  * The end review tool helps to end the review of a dataset submission review.
- *
- * @Route("/external-download-log")
  */
-class ExternalDownloadLogController extends UIController
+class ExternalDownloadLogController extends AbstractController
 {
+    /**
+     * Protected entityHandler value instance of entityHandler.
+     *
+     * @var entityHandler
+     */
+    protected $entityHandler;
+
+    /**
+     * The log action item entity event dispatcher.
+     *
+     * @var LogActionItemEventDispatcher
+     */
+    protected $logActionItemEventDispatcher;
+
+    /**
+     * Constructor for this Controller, to set up default services.
+     *
+     * @param EntityHandler                $entityHandler                The entity handler.
+     * @param LogActionItemEventDispatcher $logActionItemEventDispatcher The log action item event dispatcher.
+     */
+    public function __construct(EntityHandler $entityHandler, LogActionItemEventDispatcher $logActionItemEventDispatcher)
+    {
+        $this->entityHandler = $entityHandler;
+        $this->logActionItemEventDispatcher = $logActionItemEventDispatcher;
+    }
+
     /**
      * The default action for End Review.
      *
@@ -29,14 +57,14 @@ class ExternalDownloadLogController extends UIController
      * @throws \Exception $exception Exception thrown when Dataset does not exist for the given Udi.
      * @throws \Exception $exception Exception thrown when Person does not exist for the given username.
      *
-     * @Route("")
+     * @Route("/external-download-log", name="pelagos_app_ui_externaldownloadlog_default")
      *
      * @return Response A Response instance.
      */
     public function defaultAction(Request $request)
     {
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
 
         $form = $this->get('form.factory')->createNamed(
@@ -67,10 +95,10 @@ class ExternalDownloadLogController extends UIController
                         $typeId = 'anonymous';
                     }
 
-                    $this->container->get('pelagos.event.log_action_item_event_dispatcher')->dispatch(
+                    $this->logActionItemEventDispatcher->dispatch(
                         array(
                             'actionName' => 'File Download',
-                            'subjectEntityName' => get_class($dataset),
+                            'subjectEntityName' => 'Pelagos\Entity\Dataset',
                             'subjectEntityId' => $dataset->getId(),
                             'payLoad' => array('userType' => $type, 'userId' => $typeId, 'downloadType' => 'external'),
                         ),
@@ -86,7 +114,7 @@ class ExternalDownloadLogController extends UIController
         }
 
         return $this->render(
-            'PelagosAppBundle:ExternalDownloadLog:default.html.twig',
+            'ExternalDownloadLog/default.html.twig',
             array('form' => $form->createView())
         );
     }
@@ -124,7 +152,7 @@ class ExternalDownloadLogController extends UIController
      *
      * @return void
      */
-    private function addToFlashBag(Request $request, $udi, $flashMessage)
+    private function addToFlashBag(Request $request, string $udi, string $flashMessage)
     {
         $flashBag = $request->getSession()->getFlashBag();
 

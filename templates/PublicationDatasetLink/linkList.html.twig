@@ -1,4 +1,4 @@
-{% extends "PelagosAppBundle:template:UI.html.twig" %}
+{% extends "template/UI.html.twig" %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -7,7 +7,7 @@
     <link href="//cdn.datatables.net/plug-ins/1.10.6/integration/jqueryui/dataTables.jqueryui.css" rel="stylesheet" />
 
 
-    <link href="{{ asset('build/css/entity.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/entity.css') }}" rel="stylesheet" />
 {% endblock %}
 
 {% block javascripts %}
@@ -17,10 +17,9 @@
     <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.6/integration/jqueryui/dataTables.jqueryui.min.js"></script>
 
     {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
-    <script type="text/javascript" src="{{ asset('build/js/linkList.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/linkList.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-    <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+
     {% endif %}
 {% endblock %}
 

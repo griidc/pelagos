@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Util;
+namespace App\Util;
 
 use Elastica\Query;
 use Elastica\Type;
@@ -36,7 +36,7 @@ class DatasetIndex
      *
      * @return array
      */
-    public function search(array $termsFilters = array(), $text = null, $geoFilter = null)
+    public function search(array $termsFilters = array(), string $text = null, string $geoFilter = null)
     {
         $query = $this->buildQuery($termsFilters, $text, $geoFilter);
         if (empty(trim($text))) {
@@ -54,7 +54,7 @@ class DatasetIndex
      *
      * @return integer
      */
-    public function count(array $termsFilters = array(), $text = null, $geoFilter = null)
+    public function count(array $termsFilters = array(), string $text = null, string $geoFilter = null)
     {
         $query = $this->buildQuery($termsFilters, $text, $geoFilter);
         return $this->datasetType->count($query);
@@ -69,7 +69,7 @@ class DatasetIndex
      *
      * @return Query
      */
-    protected function buildQuery(array $termsFilters = array(), $text = null, $geoFilter = null)
+    protected function buildQuery(array $termsFilters = array(), string $text = null, string $geoFilter = null)
     {
         $mainQuery = new Query\BoolQuery();
 
@@ -92,16 +92,12 @@ class DatasetIndex
             if (preg_match_all($doiRegEx, $text, $matches)) {
                 $text = trim(preg_replace($doiRegEx, '', $text));
                 foreach ($matches[1] as $doi) {
-                    $doiBoolQuery = new Query\BoolQuery();
                     // Query against dataset DOIs.
                     $doiQuery = new Query\Nested();
                     $doiQuery->setPath('doi');
                     $doiQuery->setQuery(
                         new Query\MatchPhrase('doi.doi', $doi)
                     );
-
-                    $doiBoolQuery->addMust($doiQuery);
-                    $doiBoolQuery->setBoost(3.0);
 
                     // Query against DOIs associated with the dataset.
                     $pubDoiQuery = new Query\Nested();
@@ -110,7 +106,7 @@ class DatasetIndex
                         new Query\MatchPhrase('publications.doi', $doi)
                     );
 
-                    $textQuery->addShould($doiBoolQuery);
+                    $textQuery->addShould($doiQuery);
                     $textQuery->addShould($pubDoiQuery);
 
                     // Also check the titles and abstracts for mention of the given DOI.
@@ -220,7 +216,7 @@ class DatasetIndex
      *
      * @return Query\Terms|Query\Nested
      */
-    protected function processTermsFilter($field, array $terms, $pointer = 1)
+    protected function processTermsFilter(string $field, array $terms, int $pointer = 1)
     {
         $path = preg_split('/\./', $field);
         if ($pointer === count($path)) {

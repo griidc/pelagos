@@ -1,8 +1,12 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
-use Pelagos\Exception\InvalidGmlException;
+use App\Handler\EntityHandler;
+use App\Util\DataStore;
+use App\Util\Geometry;
+use App\Util\Metadata;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,48 +14,81 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DIF;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\Metadata;
-use Pelagos\Util\GmlUtil;
+use App\Exception\InvalidGmlException;
+
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Util\GmlUtil;
 
 /**
  * The Dataset Monitoring controller.
- *
- * @Route("/data")
  */
-class DatalandController extends UIController
+class DatalandController extends AbstractController
 {
+    /**
+     * Geometry.
+     *
+     * @var geoUtil
+     */
+    protected $geoUtil;
+
+    /**
+     * Metadata.
+     *
+     * @var Metadata
+     */
+    protected $metadataUtil;
+
+    /**
+     * Entity Handler.
+     *
+     * @var entityHandler
+     */
+    protected $entityHandler;
+
+    /**
+     * Dataland Controller constructor.
+     *
+     * @param EntityHandler $entityHandler The Entity Handler.
+     * @param Geometry      $geoUtil       The Geomtery Util.
+     * @param Metadata      $metadataUtil  The Metadata Util.
+     */
+    public function __construct(EntityHandler $entityHandler, Geometry $geoUtil, Metadata $metadataUtil)
+    {
+        $this->entityHandler = $entityHandler;
+        $this->geoUtil = $geoUtil;
+        $this->metadataUtil = $metadataUtil;
+    }
+
     /**
      * The Dataland Page - dataset details per UDI.
      *
      * @param string $udi A UDI.
      *
-     * @Route("/{udi}")
+     * @Route("/data/{udi}", name="pelagos_app_ui_dataland_default")
      *
      * @return Response
      */
-    public function defaultAction($udi)
+    public function defaultAction(string $udi)
     {
         $dataset = $this->getDataset($udi);
-
-        $geometryUtil = $this->get('pelagos.util.geometry');
 
         $rawXml = null;
         $wkt = null;
 
         if ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED) {
             $boundingBoxArray = $this->getBoundingBox($dataset);
-            $rawXml = $this->get('pelagos.util.metadata')->getXmlRepresentation($dataset, $boundingBoxArray);
+            $rawXml = $this->metadataUtil->getXmlRepresentation($dataset, $boundingBoxArray);
         }
         //Logic to get DIF or Accepted Dataset is in Dataset Entity.
-        try {
-            $wkt = $geometryUtil->convertGmlToWkt($dataset->getSpatialExtentGeometry());
-        } catch (InvalidGmlException $exception) {
-            $wkt = null;
+        if (!empty($dataset->getSpatialExtentGeometry())) {
+            try {
+                $wkt = $this->geoUtil->convertGmlToWkt($dataset->getSpatialExtentGeometry());
+            } catch (InvalidGmlException $exception) {
+                $wkt = null;
+            }
         }
 
         $downloadCount = null;
@@ -59,7 +96,7 @@ class DatalandController extends UIController
         if ($dataset->isAvailable()) {
             $qb = $this->get('doctrine')->getManager()->createQueryBuilder();
             $qb->select($qb->expr()->count('a'))
-                ->from('\Pelagos\Entity\LogActionItem', 'a')
+                ->from('\App\Entity\LogActionItem', 'a')
                 ->where('a.subjectEntityId = ?1')
                 ->andwhere('a.subjectEntityName = ?2')
                 ->andwhere('a.actionName = ?3')
@@ -71,7 +108,7 @@ class DatalandController extends UIController
         }
 
         return $this->render(
-            'PelagosAppBundle:Dataland:index.html.twig',
+            'Dataland/index.html.twig',
             $twigData = array(
                 'dataset' => $dataset,
                 'downloads' => $downloadCount,
@@ -88,11 +125,11 @@ class DatalandController extends UIController
      *
      * @throws BadRequestHttpException When the dataset status is not accepted.
      *
-     * @Route("/{udi}/metadata")
+     * @Route("/data/{udi}/metadata", name="pelagos_app_ui_dataland_metadata")
      *
      * @return Response
      */
-    public function metadataAction($udi)
+    public function metadataAction(string $udi)
     {
         $dataset = $this->getDataset($udi);
 
@@ -104,7 +141,7 @@ class DatalandController extends UIController
 
         $filename = str_replace(':', '-', $udi) . '-metadata.xml';
 
-        $response = new Response($this->get('pelagos.util.metadata')
+        $response = new Response($this->metadataUtil
             ->getXmlRepresentation($dataset, $boundingBoxArray));
         $response->headers->set('Content-Type', 'text/xml');
         $response->headers->set('Content-Disposition', "attachment; filename=$filename;");
@@ -114,18 +151,16 @@ class DatalandController extends UIController
     /**
      * Download the dataset file.
      *
-     * @param string $udi The UDI of the dataset to download.
+     * @param string    $udi       The UDI of the dataset to download.
+     * @param DataStore $dataStore The data store.
      *
-     * @throws \Exception            When the dataset is marked as remotely hosted,
-     *                               but datasetFileUri does not contain a valid URL.
-     * @throws AccessDeniedException When the user is not authenticated.
-     * @throws AccessDeniedException When the dataset is not publicly available.
+     * @throws \Exception When the dataset is marked as remotely hosted, but datasetFileUri does not contain a valid URL.
      *
-     * @Route("/{udi}/download")
+     * @Route("/data/{udi}/download", name="pelagos_app_ui_dataland_download")
      *
      * @return BinaryFileResponse
      */
-    public function downloadAction($udi)
+    public function downloadAction(string $udi, DataStore $dataStore)
     {
         $dataset = $this->getDataset($udi);
 
@@ -148,7 +183,7 @@ class DatalandController extends UIController
             throw $this->createAccessDeniedException('This dataset is not publicly available');
         }
 
-        $fileInfo = $this->get('pelagos.util.data_store')->getDownloadFileInfo($udi, 'dataset');
+        $fileInfo = $dataStore->getDownloadFileInfo($udi, 'dataset');
 
         $filename = null;
 
@@ -175,12 +210,12 @@ class DatalandController extends UIController
      *
      * @return Dataset
      */
-    protected function getDataset($udi)
+    protected function getDataset(string $udi)
     {
         $datasets = $this->entityHandler->getBy(Dataset::class, array('udi' => $udi));
 
         if (count($datasets) == 0) {
-            throw $this->createNotFoundException("No dataset found for UDI: $udi");
+            throw new NotFoundHttpException("No dataset found for UDI: $udi");
         }
 
         if (count($datasets) > 1) {
@@ -199,15 +234,17 @@ class DatalandController extends UIController
      */
     private function getBoundingBox(Dataset $dataset)
     {
-        $geoUtil = $this->get('pelagos.util.geometry');
-        $gml = GmlUtil::addNamespace($dataset->getDatasetSubmission()->getSpatialExtent());
+        $spatialExtent = $dataset->getDatasetSubmission()->getSpatialExtent();
         $boundingBoxArray = array();
-        if ($gml) {
-            try {
-                $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
-            } catch (InvalidGmlException $e) {
-                $errors[] = $e->getMessage() . ' while attempting to calculate bonding box from gml';
-                $boundingBoxArray = array();
+        if (!empty($spatialExtent)) {
+            $gml = GmlUtil::addNamespace($dataset->getDatasetSubmission()->getSpatialExtent());
+            if ($gml) {
+                try {
+                    $boundingBoxArray = $this->geoUtil->calculateGeographicBoundsFromGml($gml);
+                } catch (InvalidGmlException $e) {
+                    $errors[] = $e->getMessage() . ' while attempting to calculate bonding box from gml';
+                    $boundingBoxArray = array();
+                }
             }
         }
         return $boundingBoxArray;

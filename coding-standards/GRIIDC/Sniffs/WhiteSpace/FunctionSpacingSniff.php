@@ -1,12 +1,9 @@
 <?php
-/**
- * GRIIDC_Sniffs_Formatting_FunctionSpacingSniff.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- */
+namespace GRIIDC\Sniffs\WhiteSpace;
+
+use PHP_CodeSniffer\Standards\Squiz\Sniffs\WhiteSpace\FunctionSpacingSniff as SquizFunctionSpacingSniff;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Files\File;
 
 /**
  * GRIIDC_Sniffs_WhiteSpace_FunctionSpacingSniff.
@@ -21,7 +18,7 @@
  * @category  PHP
  * @package   PHP_CodeSniffer
  */
-class GRIIDC_Sniffs_WhiteSpace_FunctionSpacingSniff implements PHP_CodeSniffer_Sniff
+class FunctionSpacingSniff extends SquizFunctionSpacingSniff
 {
 
     /**
@@ -53,7 +50,7 @@ class GRIIDC_Sniffs_WhiteSpace_FunctionSpacingSniff implements PHP_CodeSniffer_S
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens        = $phpcsFile->getTokens();
         $this->spacing = (int) $this->spacing;
@@ -239,8 +236,5 @@ class GRIIDC_Sniffs_WhiteSpace_FunctionSpacingSniff implements PHP_CodeSniffer_S
                 }
             }//end if
         }//end if
-
     }//end process()
-
-
 }//end class

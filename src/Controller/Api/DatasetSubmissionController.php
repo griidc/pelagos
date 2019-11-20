@@ -1,18 +1,21 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\Api;
+namespace App\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Form\FormInterface;
 
-use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\Routing\Annotation\Route;
+
+use FOS\RestBundle\Controller\Annotations\View;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
+use App\Util\UrlValidation;
+use App\Entity\DatasetSubmission;
+use App\Form\DatasetSubmissionType;
 
 /**
  * The Dataset Submission api controller.
@@ -41,9 +44,14 @@ class DatasetSubmissionController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("")
+     * @Route(
+     *     "/api/dataset_submission",
+     *     name="pelagos_api_dataset_submission_get_collection",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Response
      */
@@ -67,11 +75,18 @@ class DatasetSubmissionController extends EntityController
      *   }
      * )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @Route(
+     *     "/api/dataset_submission/{id}",
+     *     name="pelagos_api_dataset_submission_get",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
+     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return DatasetSubmission
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         return $this->handleGetOne(DatasetSubmission::class, $id);
     }
@@ -91,6 +106,13 @@ class DatasetSubmissionController extends EntityController
      *     500 = "An internal error has occurred.",
      *   }
      * )
+     *
+     * @Route(
+     *     "/api/dataset_submission",
+     *     name="pelagos_api_dataset_submission_post",
+     *     methods={"POST"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new Dataset Submission in the Location header.
@@ -121,9 +143,16 @@ class DatasetSubmissionController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/dataset_submission/{id}",
+     *     name="pelagos_api_dataset_submission_put",
+     *     methods={"PUT"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putAction($id, Request $request)
+    public function putAction(int $id, Request $request)
     {
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
         if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
@@ -131,10 +160,10 @@ class DatasetSubmissionController extends EntityController
         }
         $this->handleUpdate(DatasetSubmissionType::class, DatasetSubmission::class, $id, $request, 'PUT');
         foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
-            $this->container->get('pelagos.entity.handler')->update($datasetContact);
+            $this->entityHandler->update($datasetContact);
         }
         foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
-            $this->container->get('pelagos.entity.handler')->update($metadataContact);
+            $this->entityHandler->update($metadataContact);
         }
         return $this->makeNoContentResponse();
     }
@@ -159,21 +188,27 @@ class DatasetSubmissionController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/dataset_submission/{id}",
+     *     name="pelagos_api_dataset_submission_patch",
+     *     methods={"PATCH"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function patchAction($id, Request $request)
+    public function patchAction(int $id, Request $request)
     {
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
         if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
             throw new BadRequestHttpException('This submission has already been submitted');
         }
-        $entityHandler = $this->container->get('pelagos.entity.handler');
         $datasetSubmission = $this->handleUpdate(DatasetSubmissionType::class, DatasetSubmission::class, $id, $request, 'PATCH');
         foreach ($datasetSubmission->getDatasetContacts() as $datasetContact) {
-            $entityHandler->update($datasetContact);
+            $this->entityHandler->update($datasetContact);
         }
         foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
-            $entityHandler->update($metadataContact);
+            $this->entityHandler->update($metadataContact);
         }
         return $this->makeNoContentResponse();
     }
@@ -193,9 +228,16 @@ class DatasetSubmissionController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/dataset_submission/{id}",
+     *     name="pelagos_api_dataset_submission_delete",
+     *     methods={"DELETE"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
         $this->handleDelete(DatasetSubmission::class, $id);
         return $this->makeNoContentResponse();
@@ -204,15 +246,20 @@ class DatasetSubmissionController extends EntityController
     /**
      * Return a list of files uploaded for a dataset submission.
      *
-     * @param string $id The id of the dataset submission.
+     * @param integer $id The id of the dataset submission.
      *
-     * @Rest\Get("/uploaded-files/{id}")
+     * @Route(
+     *     "/api/dataset_submission/uploaded-files/{id}",
+     *     name="pelagos_api_dataset_submission_get_uploaded_files",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return array The list of uploaded files.
      */
-    public function getUploadedFilesAction($id)
+    public function getUploadedFilesAction(int $id)
     {
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
         // If the dataset transfer type is not upload.
@@ -250,16 +297,22 @@ class DatasetSubmissionController extends EntityController
     /**
      * Validate the url of the attribute.
      *
-     * @param string  $id      The id of the dataset submission.
-     * @param Request $request The request object.
+     * @param integer       $id            The id of the dataset submission.
+     * @param Request       $request       The request object.
+     * @param UrlValidation $urlValidation The URL validator.
      *
-     * @Rest\Get("/validate-url/{id}")
+     * @Route(
+     *     "/api/dataset_submission/validate-url/{id}",
+     *     name="pelagos_api_dataset_submission_validate_url",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string
      */
-    public function validateUrlAction($id, Request $request)
+    public function validateUrlAction(int $id, Request $request, UrlValidation $urlValidation)
     {
         $erddapUrl = $request->get('erddapUrl');
 
@@ -267,8 +320,6 @@ class DatasetSubmissionController extends EntityController
             return true;
         }
 
-        $urlValidationService = $this->get('pelagos.util.url_validation');
-
-        return $urlValidationService->validateUrl($erddapUrl);
+        return $urlValidation->validateUrl($erddapUrl);
     }
 }

@@ -1,21 +1,25 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\Api;
+namespace App\Controller\Api;
 
-use Pelagos\Entity\DistributionPoint;
-use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
-use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
-use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\Routing\Annotation\Route;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Pelagos\Bundle\AppBundle\Form\DatasetType;
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DIF;
+use FOS\RestBundle\Controller\Annotations\View;
+
+use App\Form\DatasetType;
+
+use App\Event\EntityEventDispatcher;
+
+use App\Entity\Dataset;
+use App\Entity\DIF;
+use App\Entity\DistributionPoint;
+use App\Entity\PersonDatasetSubmissionDatasetContact;
+use App\Entity\PersonDatasetSubmissionMetadataContact;
+use App\Util\MdappLogger;
 
 /**
  * The Dataset api controller.
@@ -43,9 +47,9 @@ class DatasetController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/count")
+     * @Route("/api/datasets/count", name="pelagos_api_datasets_count", methods={"GET"}, defaults={"_format"="json"})
      *
-     * @Rest\View()
+     * @View()
      *
      * @return integer
      */
@@ -71,9 +75,9 @@ class DatasetController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("")
+     * @View(serializerEnableMaxDepthChecks = true)
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @Route("/api/datasets", name="pelagos_api_datasets_get_collection", methods={"GET"}, defaults={"_format"="json"})
      *
      * @return array
      */
@@ -97,11 +101,13 @@ class DatasetController extends EntityController
      *   }
      * )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
+     *
+     * @Route("/api/datasets/{id}", name="pelagos_api_datasets_get", methods={"GET"}, defaults={"_format"="json"})
      *
      * @return Dataset
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         return $this->handleGetOne(Dataset::class, $id);
     }
@@ -120,13 +126,13 @@ class DatasetController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/{id}/citation")
+     * @Route("/api/datasets/{id}/citation", name="pelagos_api_datasets_get_citation", methods={"GET"}, defaults={"_format"="json"})
      *
-     * @Rest\View
+     * @View()
      *
      * @return string
      */
-    public function getCitationAction($id)
+    public function getCitationAction(int $id)
     {
         $dataset = $this->handleGetOne(Dataset::class, $id);
         return $dataset->getCitation();
@@ -135,8 +141,9 @@ class DatasetController extends EntityController
     /**
      * Update a Dataset with the submitted data.
      *
-     * @param integer $id      The id of the Dataset to update.
-     * @param Request $request The request object.
+     * @param integer     $id          The id of the Dataset to update.
+     * @param Request     $request     The request object.
+     * @param MdappLogger $mdappLogger The mdapp logger utility.
      *
      * @ApiDoc(
      *   section = "Datasets",
@@ -150,20 +157,19 @@ class DatasetController extends EntityController
      *   }
      * )
      *
+     * @Route("/api/datasets/{id}", name="pelagos_api_datasets_patch", methods={"PATCH"}, defaults={"_format"="json"})
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function patchAction($id, Request $request)
+    public function patchAction(int $id, Request $request, MdappLogger $mdappLogger)
     {
         $this->handleUpdate(DatasetType::class, Dataset::class, $id, $request, 'PATCH');
         $jiraLinkValue = $request->request->get('issueTrackingTicket');
         if (null !== $jiraLinkValue) {
-            $entityHandler = $this->get('pelagos.entity.handler');
-            $mdappLogger = $this->get('pelagos.util.mdapplogger');
-
             $mdappLogger->writeLog(
                 $this->getUser()->getUserName() .
                 ' set Jira Link for udi: ' .
-                $entityHandler->get(Dataset::class, $id)->getUdi() .
+                $this->entityHandler->get(Dataset::class, $id)->getUdi() .
                 ' to ' .
                 $jiraLinkValue .
                 '.' .
@@ -176,7 +182,8 @@ class DatasetController extends EntityController
     /**
      * Delete a Dataset and associated Metadata and Difs.
      *
-     * @param integer $id The id of the Dataset to delete.
+     * @param integer               $id                    The id of the Dataset to delete.
+     * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
      *
      * @ApiDoc(
      *   section = "Datasets",
@@ -188,9 +195,11 @@ class DatasetController extends EntityController
      *   }
      * )
      *
+     * @Route("/api/datasets/{id}", name="pelagos_api_datasets_delete", methods={"DELETE"}, defaults={"_format"="json"})
+     *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id, EntityEventDispatcher $entityEventDispatcher)
     {
         $dataset = $this->handleGetOne(Dataset::class, $id);
 
@@ -216,10 +225,7 @@ class DatasetController extends EntityController
             }
         }
 
-        $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
-            $dataset,
-            'delete_doi'
-        );
+        $entityEventDispatcher->dispatch($dataset, 'delete_doi');
 
         $this->handleDelete(Dataset::class, $id);
 

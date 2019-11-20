@@ -1,6 +1,8 @@
 <?php
 
-namespace Pelagos\Util;
+namespace App\Util;
+
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 
 /**
  * A utility to check for maintenance mode, and create maintenance mode file.
@@ -17,11 +19,11 @@ class MaintenanceMode
     /**
      * Constructor.
      *
-     * @param string $fileName The filename of the maintenance file.
+     * @param string $maintenanceModeFilename The filename of the maintenance file.
      */
-    public function __construct(string $fileName)
+    public function __construct(string $maintenanceModeFilename)
     {
-        $this->fileName = $fileName;
+        $this->fileName = $maintenanceModeFilename;
     }
 
     /**

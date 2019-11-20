@@ -1,21 +1,19 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
 use DateTime;
-use Pelagos\Entity\Account;
-use Pelagos\Entity\LogActionItem;
-use Pelagos\Entity\Person;
-use Pelagos\Entity\PersonDataRepository;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use App\Entity\Account;
+use App\Entity\LogActionItem;
+use App\Entity\Person;
+use App\Entity\PersonDataRepository;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 
 /**
  * The GOMRI datasets report generator.
- *
- * @Route("/search-terms-report")
  */
 class SearchTermsReportController extends ReportController
 {
@@ -25,14 +23,14 @@ class SearchTermsReportController extends ReportController
   /**
    * This is a parameterless report, so all is in the default action.
    *
-   * @Route("")
+   * @Route("/search-terms-report", name="pelagos_app_ui_searchtermsreport_default")
    *
    * @return Response A Response instance.
    */
     public function defaultAction()
     {
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
 
         // Add header to CSV.
@@ -64,8 +62,7 @@ class SearchTermsReportController extends ReportController
 
         //prepare body's data
         $dataArray = array();
-        $container = $this->container;
-        $entityManager = $container->get('doctrine')->getManager();
+        $entityManager = $this->getDoctrine()->getManager();
         //Query
         $queryString = 'SELECT log.creationTimeStamp, log.payLoad from ' .
           LogActionItem::class . ' log where log.actionName = :actionName order by log.creationTimeStamp DESC';

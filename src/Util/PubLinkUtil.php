@@ -1,12 +1,10 @@
 <?php
 
-namespace Pelagos\Util;
+namespace App\Util;
 
-use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
+use App\Entity\PublicationCitation;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\Publication;
-use Pelagos\Entity\PublicationCitation;
+use App\Handler\EntityHandler;
 
 /**
  * This is a helper class for publication/dataset linking.
@@ -32,7 +30,7 @@ class PubLinkUtil
      *
      * @return array
      */
-    public function fetchCitation($doi, $style = PublicationCitation::CITATION_STYLE_APA, $locale = 'en-US')
+    public function fetchCitation(string $doi, $style = PublicationCitation::CITATION_STYLE_APA, $locale = 'en-US')
     {
         try {
             // Try using doi.dx first
@@ -63,7 +61,7 @@ class PubLinkUtil
      *
      * @return array
      */
-    private function curlCitation($doi, $style = PublicationCitation::CITATION_STYLE_APA, $locale = 'en-US', $useCrossRef = false)
+    private function curlCitation(string $doi, $style = PublicationCitation::CITATION_STYLE_APA, $locale = 'en-US', $useCrossRef = false)
     {
         $ch = curl_init();
 

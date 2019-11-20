@@ -1,84 +1,110 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-
 use Symfony\Component\Ldap\Exception\LdapException;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-
-use Pelagos\Bundle\AppBundle\Factory\UserIdFactory;
-
-use Pelagos\Entity\Account;
-use Pelagos\Entity\Password;
-use Pelagos\Entity\PersonToken;
-use Pelagos\Entity\Person;
-
-use Pelagos\Exception\PasswordException;
+use App\Entity\Account;
+use App\Entity\Entity;
+use App\Entity\Password;
+use App\Entity\Person;
+use App\Entity\PersonToken;
+use App\Event\EntityEventDispatcher;
+use App\Exception\UidNumberInUseInLDAPException;
+use App\Handler\EntityHandler;
+use App\Util\Factory\UserIdFactory;
+use App\Util\Ldap\Ldap;
+use App\Util\MailSender;
 
 /**
- * The Research Group controller for the Pelagos UI App Bundle.
- *
- * @Route("")
+ * The account controller.
  */
-class AccountController extends UIController implements OptionalReadOnlyInterface
+class AccountController extends AbstractController
 {
     /**
-     * The default action.
+     * Protected entityHandler value instance of entityHandler.
      *
-     * @Route("/account")
-     * @Method("GET")
-     *
-     * @return Response A Symfony Response instance.
+     * @var entityHandler
      */
-    public function defaultAction()
+    protected $entityHandler;
+
+    /**
+     * Protected validator value instance of Symfony Validator.
+     *
+     * @var validator
+     */
+    protected $validator;
+
+    /**
+     * Constructor for this Controller, to set up default services.
+     *
+     * @param EntityHandler      $entityHandler The entity handler.
+     * @param ValidatorInterface $validator     The validator interface.
+     *
+     * @return void
+     */
+    public function __construct(EntityHandler $entityHandler, ValidatorInterface $validator)
     {
-        return $this->render('PelagosAppBundle:Account:Account.html.twig');
+        $this->entityHandler = $entityHandler;
+        $this->validator = $validator;
+    }
+
+    /**
+     * The index action.
+     *
+     * @Route("/account", methods={"GET"}, name="pelagos_app_ui_account_default")
+     *
+     * @return Response
+     */
+    public function index()
+    {
+        return $this->render('Account/Account.html.twig', [
+            'controller_name' => 'AccountController',
+        ]);
     }
 
     /**
      * Password Reset action.
      *
-     * @Route("/account/reset-password")
-     * @Method("GET")
+     * @Route("/account/reset-password", name="pelagos_app_ui_account_passwordreset")
      *
      * @return Response A Symfony Response instance.
      */
-    public function passwordResetAction()
+    public function passwordReset()
     {
         // If the user is authenticated.
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
             // Redirect to change password.
             return $this->redirectToRoute('pelagos_app_ui_account_changepassword');
         }
-        return $this->render('PelagosAppBundle:Account:PasswordReset.html.twig');
+        return $this->render('Account/PasswordReset.html.twig');
     }
 
     /**
      * Post handler to verify the email address by sending a link with a Person Token.
      *
-     * @param Request $request The Symfony Request object.
+     * @param Request    $request The Symfony Request object.
+     * @param MailSender $mailer  The custom swift mailer utility class.
      *
      * @throws \Exception When more than one Person is found for an email address.
      *
-     * @Route("/account")
-     * @Method("POST")
+     * @Route("/account", methods={"POST"}, name="pelagos_app_ui_account_sendverificationemail")
      *
      * @return Response A Symfony Response instance.
      */
-    public function sendVerificationEmailAction(Request $request)
+    public function sendVerificationEmail(Request $request, MailSender $mailer)
     {
         $emailAddress = $request->request->get('emailAddress');
         $reset = ($request->request->get('reset') == 'reset') ? true : false;
 
-        $people = $this->entityHandler->getBy('Pelagos:Person', array('emailAddress' => $emailAddress));
+        $people = $this->entityHandler->getBy(Person::class, array('emailAddress' => $emailAddress));
 
         if (count($people) === 0) {
-            return $this->render('PelagosAppBundle:Account:EmailNotFound.html.twig');
+            return $this->render('Account/EmailNotFound.html.twig');
         }
 
         if (count($people) > 1) {
@@ -99,9 +125,9 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
         $hasAccount = $person->getAccount() instanceof Account;
 
         if ($hasAccount and !$reset) {
-            return $this->render('PelagosAppBundle:Account:AccountExists.html.twig');
+            return $this->render('Account/AccountExists.html.twig');
         } elseif (!$hasAccount and $reset) {
-            return $this->render('PelagosAppBundle:Account:NoAccount.html.twig');
+            return $this->render('Account/NoAccount.html.twig');
         }
 
         $dateInterval = new \DateInterval('P7D');
@@ -113,12 +139,12 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
             // Create new personToken
             $personToken = new PersonToken($person, 'PASSWORD_RESET', $dateInterval);
             // Load email template
-            $template = $twig->loadTemplate('PelagosAppBundle:Account:PasswordReset.email.twig');
+            $template = $twig->load('Account/PasswordReset.email.twig');
         } else {
             // Create new personToken
             $personToken = new PersonToken($person, 'CREATE_ACCOUNT', $dateInterval);
             // Load email template
-            $template = $twig->loadTemplate('PelagosAppBundle:Account:AccountConfirmation.email.twig');
+            $template = $twig->load('Account/AccountConfirmation.email.twig');
         }
 
         // Persist and Validate PersonToken
@@ -130,19 +156,15 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
             'personToken' => $personToken,
         );
 
-        // Create a message
-        $message = \Swift_Message::newInstance()
-            ->setFrom(array('griidc@gomri.org' => 'GRIIDC'))
-            ->setTo(array($person->getEmailAddress() => $person->getFirstName() . ' ' . $person->getLastName()))
-            ->setSubject($template->renderBlock('subject', $mailData))
-            ->setBody($template->renderBlock('body_text', $mailData), 'text/plain')
-            ->addPart($template->renderBlock('body_html', $mailData), 'text/html');
-
-        // Send the message
-        $this->get('mailer')->send($message);
+        $mailData['recipient'] = $person;
+        $mailer->sendEmailMessage(
+            $template,
+            $mailData,
+            array($person->getEmailAddress() => $person->getFirstName() . ' ' . $person->getLastName())
+        );
 
         return $this->render(
-            'PelagosAppBundle:Account:EmailFound.html.twig',
+            'Account/EmailFound.html.twig',
             array(
                 'reset' => $reset,
             )
@@ -155,8 +177,7 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
      * This verifies that the token has authenticated the user and that the user does not already have an account.
      * It then provides the user with a screen to establish a password.
      *
-     * @Route("/account/verify-email")
-     * @Method("GET")
+     * @Route("/account/verify-email", methods={"GET"}, name="pelagos_app_ui_account_verifyemail")
      *
      * @return Response A Response instance.
      */
@@ -165,7 +186,7 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
         // If the user is not authenticated.
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             // The token must be bad or missing.
-            return $this->render('PelagosAppBundle:template:InvalidToken.html.twig');
+            return $this->render('template/InvalidToken.html.twig');
         }
 
         $reset = false;
@@ -176,12 +197,12 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
         // If a password has been set.
         if ($this->getUser()->getPassword() !== null and $reset === false) {
             // The user already has an account.
-            return $this->render('PelagosAppBundle:Account:AccountExists.html.twig');
+            return $this->render('Account/AccountExists.html.twig');
         }
 
         // Send back the set password screen.
         return $this->render(
-            'PelagosAppBundle:Account:setPassword.html.twig',
+            'Account/setPassword.html.twig',
             array(
                 'personToken' => $this->getUser()->getPerson()->getToken(),
             )
@@ -191,8 +212,7 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
     /**
      * The page for changing the password when it's expired.
      *
-     * @Route("/account/password-expired")
-     * @Method("GET")
+     * @Route("/account/password-expired", methods={"GET"}, name="pelagos_app_ui_account_passwordexpired")
      *
      * @return Response A Response instance.
      */
@@ -201,12 +221,12 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
         // If the user is not authenticated.
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             // The token must be bad or missing.
-            return $this->render('PelagosAppBundle:template:InvalidToken.html.twig');
+            return $this->render('template/InvalidToken.html.twig');
         }
 
         // Send back the set password screen.
         return $this->render(
-            'PelagosAppBundle:Account:setExpiredPassword.html.twig',
+            'Account/setExpiredPassword.html.twig',
             array(
                 'personToken' => $this->getUser()->getPerson()->getToken(),
             )
@@ -216,8 +236,7 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
     /**
      * Redirect GET sent to this route.
      *
-     * @Route("/account/create")
-     * @Method("GET")
+     * @Route("/account/create", methods={"GET"}, name="pelagos_app_ui_account_redirect")
      *
      * @return Response A Symfony Response instance.
      */
@@ -231,20 +250,20 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
      * Post handler to create an account.
      *
      * @param Request $request The Symfony Request object.
+     * @param Ldap    $ldap    The Ldap Utility.
      *
      * @throws \Exception When password do not match.
      *
-     * @Route("/account/create")
-     * @Method("POST")
+     * @Route("/account/create", methods={"POST"}, name="pelagos_app_ui_account_create")
      *
      * @return Response A Symfony Response instance.
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request, Ldap $ldap)
     {
         // If the user is not authenticated.
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             // The token must be bad or missing.
-            return $this->render('PelagosAppBundle:template:InvalidToken.html.twig');
+            return $this->render('template/InvalidToken.html.twig');
         }
 
         $reset = false;
@@ -255,7 +274,7 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
         // If a password has been set.
         if ($this->getUser()->getPassword() !== null and $reset === false) {
             // The user already has an account.
-            return $this->render('PelagosAppBundle:Account:AccountExists.html.twig');
+            return $this->render('Account/AccountExists.html.twig');
         }
 
         // If the supplied passwords don't match.
@@ -279,13 +298,11 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
             try {
                 $account->setPassword(
                     $password,
-                    ((bool) ($this->container->hasParameter('account_less_strict_password_rules')) and
-                        (bool) ($this->container->getParameter('account_less_strict_password_rules'))
-                    )
+                    (bool) $_ENV['ACCOUNT_LESS_STRICT_PASSWORD_RULES']
                 );
             } catch (PasswordException $e) {
                 return $this->render(
-                    'PelagosAppBundle:template:ErrorMessage.html.twig',
+                    'template/ErrorMessage.html.twig',
                     array('errormessage' => $e->getMessage())
                 );
             }
@@ -297,7 +314,7 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
             // Persist Account
             $account = $this->entityHandler->update($account);
 
-            $this->get('pelagos.ldap')->updatePerson($person);
+            $ldap->updatePerson($person);
         } else {
             // Generate a unique User ID for this account.
             $userId = UserIdFactory::generateUniqueUserId($person, $this->entityHandler);
@@ -307,7 +324,7 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
                 $account = new Account($person, $userId, $password);
             } catch (PasswordException $e) {
                 return $this->render(
-                    'PelagosAppBundle:template:ErrorMessage.html.twig',
+                    'template/ErrorMessage.html.twig',
                     array('errormessage' => $e->getMessage())
                 );
             }
@@ -321,10 +338,10 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
 
             try {
                 // Try to add the person to LDAP.
-                $this->get('pelagos.ldap')->addPerson($person);
+                $ldap->addPerson($person);
             } catch (LdapException $exception) {
                 // If that fails, try to update the person in LDAP.
-                $this->get('pelagos.ldap')->updatePerson($person);
+                $ldap->updatePerson($person);
             }
         }
 
@@ -333,10 +350,10 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
         $person->setToken(null);
 
         if ($reset === true) {
-            return $this->render('PelagosAppBundle:Account:AccountReset.html.twig');
+            return $this->render('Account/AccountReset.html.twig');
         } else {
             return $this->render(
-                'PelagosAppBundle:Account:AccountCreated.html.twig',
+                'Account/AccountCreated.html.twig',
                 array(
                     'Account' => $account,
                 )
@@ -347,8 +364,7 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
     /**
      * The action to change your password, will show password change dialog.
      *
-     * @Route("/change-password")
-     * @Method("GET")
+     * @Route("/change-password", methods={"GET"}, name="pelagos_app_ui_account_changepassword")
      *
      * @return Response A Response instance.
      */
@@ -361,27 +377,27 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
         }
 
         // Send back the set password screen.
-        return $this->render('PelagosAppBundle:Account:changePassword.html.twig');
+        return $this->render('Account/changePassword.html.twig');
     }
 
     /**
      * Post handler to change password.
      *
      * @param Request $request The Symfony Request object.
+     * @param Ldap    $ldap    The Ldap Utility.
      *
      * @throws \Exception When password do not match.
      *
-     * @Route("/change-password")
-     * @Method("POST")
+     * @Route("/change-password", methods={"POST"}, name="pelagos_app_ui_account_changepasswordpost")
      *
      * @return Response A Symfony Response instance.
      */
-    public function changePasswordPostAction(Request $request)
+    public function changePasswordPostAction(Request $request, Ldap $ldap)
     {
         // If the user is not authenticated.
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             // User is not logged in, or doesn't have a token.
-            return $this->render('PelagosAppBundle:template:NotLoggedIn.html.twig');
+            return $this->render('template/NotLoggedIn.html.twig');
         }
 
         // If the supplied passwords don't match.
@@ -406,13 +422,11 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
         try {
             $account->setPassword(
                 $password,
-                ((bool) ($this->container->hasParameter('account_less_strict_password_rules')) and
-                    (bool) ($this->container->getParameter('account_less_strict_password_rules'))
-                )
+                (bool) $_ENV['ACCOUNT_LESS_STRICT_PASSWORD_RULES']
             );
         } catch (PasswordException $e) {
             return $this->render(
-                'PelagosAppBundle:template:ErrorMessage.html.twig',
+                'template/ErrorMessage.html.twig',
                 array('errormessage' => $e->getMessage())
             );
         }
@@ -424,26 +438,32 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
         $account = $this->entityHandler->update($account);
 
         // Update LDAP
-        $this->get('pelagos.ldap')->updatePerson($person);
+        try {
+            // Try to add the person to LDAP, incase it needs to re-create.
+            $ldap->addPerson($person);
+        } catch (UidNumberInUseInLDAPException $exception) {
+            // If that fails, try to update the person in LDAP.
+            $ldap->updatePerson($person);
+        }
 
-        return $this->render('PelagosAppBundle:Account:AccountReset.html.twig');
+        return $this->render('Account/AccountReset.html.twig');
     }
 
     /**
      * Forgot username for users.
      *
-     * @param Request $request The Symfony request object.
+     * @param Request               $request               The Symfony request object.
+     * @param EntityEventDispatcher $entityEventDispatcher The Entity Event Dispatcher.
      *
-     * @Route("/account/forgot-username")
-     * @Method("GET")
+     * @Route("/account/forgot-username", methods={"GET"}, name="pelagos_app_ui_account_forgotusername")
      *
      * @return Response A Response instance.
      */
-    public function forgotUsernameAction(Request $request)
+    public function forgotUsernameAction(Request $request, EntityEventDispatcher $entityEventDispatcher)
     {
         // If the user is already authenticated.
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->render('PelagosAppBundle:template:AlreadyLoggedIn.html.twig');
+            return $this->render('template/AlreadyLoggedIn.html.twig');
         }
 
         $userEmailAddr = $request->query->get('emailAddress');
@@ -452,7 +472,7 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
             $person = $this->entityHandler->getBy(Person::class, array('emailAddress' => $userEmailAddr));
 
             if (!empty($person[0])) {
-                $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
+                $entityEventDispatcher->dispatch(
                     $person[0]->getAccount(),
                     'forgot_username'
                 );
@@ -460,7 +480,7 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
         }
 
         return $this->render(
-            'PelagosAppBundle:Account:forgotUsername.html.twig',
+            'Account/forgotUsername.html.twig',
             array(
                 'emailId' => $userEmailAddr
             )
@@ -472,8 +492,7 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
      *
      * Either change password if logged in, otherwise reset password.
      *
-     * @Route("/password")
-     * @Method("GET")
+     * @Route("/password", methods={"GET"}, name="pelagos_app_ui_account_password"))
      *
      * @return RedirectResponse A Redirect Response.
      */
@@ -484,6 +503,25 @@ class AccountController extends UIController implements OptionalReadOnlyInterfac
             return $this->redirectToRoute('pelagos_app_ui_account_changepassword');
         } else {
             return $this->redirectToRoute('pelagos_app_ui_account_passwordreset');
+        }
+    }
+
+    /**
+     * Validates the Entity prior to persisting it.
+     *
+     * @param Entity $entity The Entity (and it's extentions).
+     *
+     * @throws BadRequestHttpException When invalid data is submitted.
+     *
+     * @return void
+     */
+    public function validateEntity(Entity $entity)
+    {
+        $errors = $this->validator->validate($entity);
+        if (count($errors) > 0) {
+            throw new BadRequestHttpException(
+                (string) $errors
+            );
         }
     }
 }

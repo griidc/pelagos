@@ -1,9 +1,9 @@
-{% extends "PelagosAppBundle::layout.html.twig" %}
+{% extends 'base.html.twig' %}
 
 {% block stylesheets %}
     {{ parent() }}
 
-    <link href="{{ asset('build/css/login.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/login.css') }}" rel="stylesheet" />
 {% endblock %}
 
 {% block javascripts %}
@@ -11,7 +11,7 @@
 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js"></script>
 
-    <script type="text/javascript" src="{{ asset('build/js/pelagosNoty.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/pelagosNoty.js') }}"></script>
 
     <script type="text/javascript">
         $(document).ready(function(){
@@ -46,7 +46,7 @@
 
                         <div>
                             <label class="login-page-text" style="display:inline; float:none; vertical-align:15%;">
-                                <a href="{{ path('pelagos_app_ui_account_passwordreset') }}">Forgot Your Password or Password Expired?</a>
+                                <a href="{{ path('pelagos_app_ui_account_password') }}">Forgot Your Password or Password Expired?</a>
                             </label>
                         </div>
                         <div>

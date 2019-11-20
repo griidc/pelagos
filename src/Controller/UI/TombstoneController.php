@@ -1,20 +1,38 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Handler\EntityHandler;
 
 /**
  * The Dataset Tombstone controller.
- *
- * @Route("/tombstone")
  */
-class TombstoneController extends UIController
+class TombstoneController extends AbstractController
 {
+    /**
+     * An entity handler instance.
+     *
+     * @var EntityHandler
+     */
+    protected $entityHandler;
+
+    /**
+     * SideBySideController constructor.
+     *
+     * @param EntityHandler $entityHandler An entity handler instance.
+     */
+    public function __construct(EntityHandler $entityHandler)
+    {
+        $this->entityHandler = $entityHandler;
+    }
+
     /**
      * The Dataland Page - dataset details per UDI.
      *
@@ -22,22 +40,22 @@ class TombstoneController extends UIController
      *
      * @throws NotFoundHttpException When no non-available dataset is found with this UDI.
      *
-     * @Route("/{udi}")
+     * @Route("/tombstone/{udi}", name="pelagos_app_ui_tombstone_default")
      *
      * @return Response
      */
-    public function defaultAction($udi)
+    public function defaultAction(string $udi)
     {
         $dataset = $this->getDataset($udi);
 
         // Don't allow tombstones on available datasets.
         if (($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) or
             ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED)) {
-            throw $this->createNotFoundException("No pending state placeholder found for UDI: $udi");
+            throw new NotFoundHttpException("No pending state placeholder found for UDI: $udi");
         }
 
         return $this->render(
-            'PelagosAppBundle:Tombstone:index.html.twig',
+            'Tombstone/index.html.twig',
             $twigData = array(
                 'dataset' => $dataset,
             )
@@ -49,17 +67,17 @@ class TombstoneController extends UIController
      *
      * @param string $udi The UDI to get the dataset for.
      *
-     * @throws NotFoundHttpException When no dataset is found with this UDI.
-     * @throws \Exception            When more than one dataset is found with this UDI.
+     * @throws NotFoundHttpException When more than one dataset is found with this UDI.
+     * @throws \Exception             When more than one dataset exists.
      *
      * @return Dataset
      */
-    protected function getDataset($udi)
+    protected function getDataset(string $udi)
     {
         $datasets = $this->entityHandler->getBy(Dataset::class, array('udi' => $udi));
 
         if (count($datasets) == 0) {
-            throw $this->createNotFoundException("No dataset found for UDI: $udi");
+            throw new NotFoundHttpException("No dataset found for UDI: $udi");
         }
 
         if (count($datasets) > 1) {

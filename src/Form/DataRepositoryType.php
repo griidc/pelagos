@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Form;
+namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -73,7 +73,7 @@ class DataRepositoryType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Pelagos\Entity\DataRepository',
+            'data_class' => 'App\Entity\DataRepository',
             'allow_extra_fields' => true,
         ));
     }

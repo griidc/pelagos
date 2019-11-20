@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Security;
+namespace App\Security;
 
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -19,13 +19,13 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-use Pelagos\Bundle\AppBundle\Form\LoginForm;
+use App\Form\LoginForm;
 
-use Pelagos\Entity\Account;
-use Pelagos\Entity\LoginAttempts;
-use Pelagos\Entity\Password;
-use Pelagos\Entity\Person;
-use Pelagos\Entity\PersonToken;
+use App\Entity\Account;
+use App\Entity\LoginAttempts;
+use App\Entity\Password;
+use App\Entity\Person;
+use App\Entity\PersonToken;
 
 /**
  * The login form authenticator.
@@ -99,7 +99,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      *
      * @param Request $request A Request object.
      *
-     * @return bool True if this a login request.
+     * @return boolean True if this a login request.
      */
     public function supports(Request $request)
     {
@@ -133,7 +133,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     /**
      * Return a UserInterface object based on the credentials.
      *
-     * @param array                 $credentials  Credentials Array.
+     * @param mixed                 $credentials  Credentials Array.
      * @param UserProviderInterface $userProvider A User Provider.
      *
      * @throws AuthenticationException When login is invalid.
@@ -157,14 +157,14 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     /**
      * Returns true if the credentials are valid.
      *
-     * @param array         $credentials Credentials Array.
+     * @param mixed         $credentials Credentials Array.
      * @param UserInterface $user        The user.
      *
      * @throws AuthenticationException When account is locked out.
      * @throws AuthenticationException When this is a bad password.
      * @throws AuthenticationException When this is an expired password.
      *
-     * @return bool True if the credentials are valid.
+     * @return boolean True if the credentials are valid.
      */
     public function checkCredentials($credentials, UserInterface $user)
     {
@@ -193,7 +193,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      *
      * @param password $password The Password object that may or may not be expired.
      *
-     * @return bool True if expired, false otherwise.
+     * @return boolean True if expired, false otherwise.
      */
     protected function checkIfPasswordExpired(password $password) : bool
     {
@@ -240,6 +240,8 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      *
      * @return Response The response or null to continue request.
      */
+    // Next line to be ignored because implemented function does not have type-hint on $providerKey.
+    // phpcs:ignore
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
         $destination = $request->query->get('destination');

@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -544,7 +544,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setTitle($title)
+    public function setTitle(string $title)
     {
         $this->title = $title;
     }
@@ -610,7 +610,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setAbstract($abstract)
+    public function setAbstract(string $abstract)
     {
         $this->abstract = $abstract;
     }
@@ -628,18 +628,13 @@ class DIF extends Entity
     /**
      * Sets whether the fields of study for the dataset identified by this DIF include Ecological/Biological.
      *
-     * @param boolean $fieldOfStudyEcologicalBiological Whether the fields of study for the dataset identified
-     *                                                  by this DIF include Ecological/Biological.
-     *
-     * @throws \InvalidArgumentException When $fieldOfStudyEcologicalBiological is not boolean.
+     * @param boolean|null $fieldOfStudyEcologicalBiological Whether the fields of study for the dataset identified
+     *                                                       by this DIF include Ecological/Biological.
      *
      * @return void
      */
-    public function setFieldOfStudyEcologicalBiological($fieldOfStudyEcologicalBiological)
+    public function setFieldOfStudyEcologicalBiological(?bool $fieldOfStudyEcologicalBiological)
     {
-        if ('boolean' !== gettype($fieldOfStudyEcologicalBiological)) {
-            throw new \InvalidArgumentException('fieldOfStudyEcologicalBiological must be boolean');
-        }
         $this->fieldOfStudyEcologicalBiological = $fieldOfStudyEcologicalBiological;
     }
 
@@ -657,18 +652,13 @@ class DIF extends Entity
     /**
      * Sets whether the fields of study for the dataset identified by this DIF include Physical Oceanography.
      *
-     * @param boolean $fieldOfStudyPhysicalOceanography Whether the fields of study for the dataset identified
-     *                                                  by this DIF include Physical Oceanography.
-     *
-     * @throws \InvalidArgumentException When $fieldOfStudyPhysicalOceanography is not boolean.
+     * @param boolean|null $fieldOfStudyPhysicalOceanography Whether the fields of study for the dataset identified
+     *                                                       by this DIF include Physical Oceanography.
      *
      * @return void
      */
-    public function setFieldOfStudyPhysicalOceanography($fieldOfStudyPhysicalOceanography)
+    public function setFieldOfStudyPhysicalOceanography(?bool $fieldOfStudyPhysicalOceanography)
     {
-        if ('boolean' !== gettype($fieldOfStudyPhysicalOceanography)) {
-            throw new \InvalidArgumentException('fieldOfStudyPhysicalOceanography must be boolean');
-        }
         $this->fieldOfStudyPhysicalOceanography = $fieldOfStudyPhysicalOceanography;
     }
 
@@ -686,18 +676,13 @@ class DIF extends Entity
     /**
      * Sets whether the fields of study for the dataset identified by this DIF include Atmospheric.
      *
-     * @param boolean $fieldOfStudyAtmospheric Whether the fields of study for the dataset identified
-     *                                         by this DIF include Atmospheric.
-     *
-     * @throws \InvalidArgumentException When $fieldOfStudyAtmospheric is not boolean.
+     * @param boolean|null $fieldOfStudyAtmospheric Whether the fields of study for the dataset identified
+     *                                              by this DIF include Atmospheric.
      *
      * @return void
      */
-    public function setFieldOfStudyAtmospheric($fieldOfStudyAtmospheric)
+    public function setFieldOfStudyAtmospheric(?bool $fieldOfStudyAtmospheric)
     {
-        if ('boolean' !== gettype($fieldOfStudyAtmospheric)) {
-            throw new \InvalidArgumentException('fieldOfStudyAtmospheric must be boolean');
-        }
         $this->fieldOfStudyAtmospheric = $fieldOfStudyAtmospheric;
     }
 
@@ -714,18 +699,13 @@ class DIF extends Entity
     /**
      * Sets whether the fields of study for the dataset identified by this DIF include Chemical.
      *
-     * @param boolean $fieldOfStudyChemical Whether the fields of study for the dataset identified
-     *                                      by this DIF include Chemical.
-     *
-     * @throws \InvalidArgumentException When $fieldOfStudyChemical is not boolean.
+     * @param boolean|null $fieldOfStudyChemical Whether the fields of study for the dataset identified
+     *                                           by this DIF include Chemical.
      *
      * @return void
      */
-    public function setFieldOfStudyChemical($fieldOfStudyChemical)
+    public function setFieldOfStudyChemical(?bool $fieldOfStudyChemical)
     {
-        if ('boolean' !== gettype($fieldOfStudyChemical)) {
-            throw new \InvalidArgumentException('fieldOfStudyChemical must be boolean');
-        }
         $this->fieldOfStudyChemical = $fieldOfStudyChemical;
     }
 
@@ -742,18 +722,13 @@ class DIF extends Entity
     /**
      * Sets whether the fields of study for the dataset identified by this DIF include Human Health.
      *
-     * @param boolean $fieldOfStudyHumanHealth Whether the fields of study for the dataset identified
-     *                                         by this DIF include Human Health.
-     *
-     * @throws \InvalidArgumentException When $fieldOfStudyHumanHealth is not boolean.
+     * @param boolean|null $fieldOfStudyHumanHealth Whether the fields of study for the dataset identified
+     *                                              by this DIF include Human Health.
      *
      * @return void
      */
-    public function setFieldOfStudyHumanHealth($fieldOfStudyHumanHealth)
+    public function setFieldOfStudyHumanHealth(?bool $fieldOfStudyHumanHealth)
     {
-        if ('boolean' !== gettype($fieldOfStudyHumanHealth)) {
-            throw new \InvalidArgumentException('fieldOfStudyHumanHealth must be boolean');
-        }
         $this->fieldOfStudyHumanHealth = $fieldOfStudyHumanHealth;
     }
 
@@ -770,18 +745,13 @@ class DIF extends Entity
     /**
      * Sets whether the fields of study for the dataset identified by this DIF include Social/Cultural/Political.
      *
-     * @param boolean $fieldOfStudySocialCulturalPolitical Whether the fields of study for the dataset identified
-     *                                                     by this DIF include Social/Cultural/Political.
-     *
-     * @throws \InvalidArgumentException When $fieldOfStudySocialCulturalPolitical is not boolean.
+     * @param boolean|null $fieldOfStudySocialCulturalPolitical Whether the fields of study for the dataset identified
+     *                                                          by this DIF include Social/Cultural/Political.
      *
      * @return void
      */
-    public function setFieldOfStudySocialCulturalPolitical($fieldOfStudySocialCulturalPolitical)
+    public function setFieldOfStudySocialCulturalPolitical(?bool $fieldOfStudySocialCulturalPolitical)
     {
-        if ('boolean' !== gettype($fieldOfStudySocialCulturalPolitical)) {
-            throw new \InvalidArgumentException('fieldOfStudySocialCulturalPolitical must be boolean');
-        }
         $this->fieldOfStudySocialCulturalPolitical = $fieldOfStudySocialCulturalPolitical;
     }
 
@@ -799,18 +769,13 @@ class DIF extends Entity
     /**
      * Sets whether the fields of study for the dataset identified by this DIF include Economics.
      *
-     * @param boolean $fieldOfStudyEconomics Whether the fields of study for the dataset identified
-     *                                       by this DIF include Economics.
-     *
-     * @throws \InvalidArgumentException When $fieldOfStudyEconomics is not boolean.
+     * @param boolean|null $fieldOfStudyEconomics Whether the fields of study for the dataset identified
+     *                                            by this DIF include Economics.
      *
      * @return void
      */
-    public function setFieldOfStudyEconomics($fieldOfStudyEconomics)
+    public function setFieldOfStudyEconomics(?bool $fieldOfStudyEconomics)
     {
-        if ('boolean' !== gettype($fieldOfStudyEconomics)) {
-            throw new \InvalidArgumentException('fieldOfStudyEconomics must be boolean');
-        }
         $this->fieldOfStudyEconomics = $fieldOfStudyEconomics;
     }
 
@@ -828,11 +793,11 @@ class DIF extends Entity
     /**
      * Sets other fields of study for the dataset identified by this DIF.
      *
-     * @param string $fieldOfStudyOther Other fields of study for the dataset identified by this DIF.
+     * @param string|null $fieldOfStudyOther Other fields of study for the dataset identified by this DIF.
      *
      * @return void
      */
-    public function setFieldOfStudyOther($fieldOfStudyOther)
+    public function setFieldOfStudyOther(?string $fieldOfStudyOther)
     {
         $this->fieldOfStudyOther = $fieldOfStudyOther;
     }
@@ -850,7 +815,7 @@ class DIF extends Entity
     /**
      * Sets the approximate data size for the dataset identified by this DIF.
      *
-     * @param string $dataSize The approximate data size for the dataset identified by this DIF.
+     * @param string|null $dataSize The approximate data size for the dataset identified by this DIF.
      *
      * @throws \InvalidArgumentException When $dataSize is not a valid data size.
      *
@@ -858,7 +823,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    public function setDataSize($dataSize)
+    public function setDataSize(?string $dataSize)
     {
         if (!in_array($dataSize, self::DATA_SIZES)) {
             throw new \InvalidArgumentException('Data size must be one of: ' . implode(', ', self::DATA_SIZES));
@@ -879,12 +844,12 @@ class DIF extends Entity
     /**
      * Sets the Phenomenon/Variables Observed or Generated for the dataset identified by this DIF.
      *
-     * @param string $variablesObserved The Phenomenon/Variables Observed or Generated
+     * @param string|null $variablesObserved The Phenomenon/Variables Observed or Generated
      *                                  for the dataset identified by this DIF.
      *
      * @return void
      */
-    public function setVariablesObserved($variablesObserved)
+    public function setVariablesObserved(?string $variablesObserved)
     {
         $this->variablesObserved = $variablesObserved;
     }
@@ -903,18 +868,13 @@ class DIF extends Entity
     /**
      * Sets whether the methods for collecting or generating the dataset identified by this DIF include Field Sampling.
      *
-     * @param boolean $collectionMethodFieldSampling Whether the methods for collecting or generating the dataset
+     * @param boolean|null $collectionMethodFieldSampling Whether the methods for collecting or generating the dataset
      *                                               identified by this DIF include Field Sampling.
-     *
-     * @throws \InvalidArgumentException When $collectionMethodFieldSampling is not boolean.
      *
      * @return void
      */
-    public function setCollectionMethodFieldSampling($collectionMethodFieldSampling)
+    public function setCollectionMethodFieldSampling(?bool $collectionMethodFieldSampling)
     {
-        if ('boolean' !== gettype($collectionMethodFieldSampling)) {
-            throw new \InvalidArgumentException('collectionMethodFieldSampling must be boolean');
-        }
         $this->collectionMethodFieldSampling = $collectionMethodFieldSampling;
     }
 
@@ -932,18 +892,13 @@ class DIF extends Entity
     /**
      * Sets whether the methods for collecting or generating the dataset identified by this DIF include Simulated/Generated.
      *
-     * @param boolean $collectionMethodSimulatedGenerated Whether the methods for collecting or generating the dataset
+     * @param boolean|null $collectionMethodSimulatedGenerated Whether the methods for collecting or generating the dataset
      *                                                    identified by this DIF include Simulated/Generated.
-     *
-     * @throws \InvalidArgumentException When $collectionMethodSimulatedGenerated is not boolean.
      *
      * @return void
      */
-    public function setCollectionMethodSimulatedGenerated($collectionMethodSimulatedGenerated)
+    public function setCollectionMethodSimulatedGenerated(?bool $collectionMethodSimulatedGenerated)
     {
-        if ('boolean' !== gettype($collectionMethodSimulatedGenerated)) {
-            throw new \InvalidArgumentException('collectionMethodSimulatedGenerated must be boolean');
-        }
         $this->collectionMethodSimulatedGenerated = $collectionMethodSimulatedGenerated;
     }
 
@@ -961,18 +916,13 @@ class DIF extends Entity
     /**
      * Sets whether the methods for collecting or generating the dataset identified by this DIF include Laboratory.
      *
-     * @param boolean $collectionMethodLaboratory Whether the methods for collecting or generating the dataset
-     *                                            identified by this DIF include Laboratory.
-     *
-     * @throws \InvalidArgumentException When $collectionMethodLaboratory is not boolean.
+     * @param boolean|null $collectionMethodLaboratory Whether the methods for collecting or generating the dataset
+     *                                                 identified by this DIF include Laboratory.
      *
      * @return void
      */
-    public function setCollectionMethodLaboratory($collectionMethodLaboratory)
+    public function setCollectionMethodLaboratory(?bool $collectionMethodLaboratory)
     {
-        if ('boolean' !== gettype($collectionMethodLaboratory)) {
-            throw new \InvalidArgumentException('collectionMethodLaboratory must be boolean');
-        }
         $this->collectionMethodLaboratory = $collectionMethodLaboratory;
     }
 
@@ -990,18 +940,13 @@ class DIF extends Entity
     /**
      * Sets whether the methods for collecting or generating the dataset identified by this DIF include Literature Based.
      *
-     * @param boolean $collectionMethodLiteratureBased Whether the methods for collecting or generating the dataset
-     *                                                 identified by this DIF include Literature Based.
-     *
-     * @throws \InvalidArgumentException When $collectionMethodLiteratureBased is not boolean.
+     * @param boolean|null $collectionMethodLiteratureBased Whether the methods for collecting or generating the dataset
+     *                                                      identified by this DIF include Literature Based.
      *
      * @return void
      */
-    public function setCollectionMethodLiteratureBased($collectionMethodLiteratureBased)
+    public function setCollectionMethodLiteratureBased(?bool $collectionMethodLiteratureBased)
     {
-        if ('boolean' !== gettype($collectionMethodLiteratureBased)) {
-            throw new \InvalidArgumentException('collectionMethodLiteratureBased must be boolean');
-        }
         $this->collectionMethodLiteratureBased = $collectionMethodLiteratureBased;
     }
 
@@ -1022,15 +967,10 @@ class DIF extends Entity
      * @param boolean $collectionMethodRemoteSensing Whether the methods for collecting or generating the dataset
      *                                               identified by this DIF include Remote Sensing.
      *
-     * @throws \InvalidArgumentException When $collectionMethodRemoteSensing is not boolean.
-     *
      * @return void
      */
-    public function setCollectionMethodRemoteSensing($collectionMethodRemoteSensing)
+    public function setCollectionMethodRemoteSensing(?bool $collectionMethodRemoteSensing)
     {
-        if ('boolean' !== gettype($collectionMethodRemoteSensing)) {
-            throw new \InvalidArgumentException('collectionMethodRemoteSensing must be boolean');
-        }
         $this->collectionMethodRemoteSensing = $collectionMethodRemoteSensing;
     }
 
@@ -1048,12 +988,12 @@ class DIF extends Entity
     /**
      * Sets other methods for collecting or generating the dataset identified by this DIF.
      *
-     * @param string $collectionMethodOther Other methods for collecting or generating
-     *                                      the dataset identified by this DIF.
+     * @param string|null $collectionMethodOther Other methods for collecting or generating
+     *                                           the dataset identified by this DIF.
      *
      * @return void
      */
-    public function setCollectionMethodOther($collectionMethodOther)
+    public function setCollectionMethodOther(?string $collectionMethodOther)
     {
         $this->collectionMethodOther = $collectionMethodOther;
     }
@@ -1115,11 +1055,11 @@ class DIF extends Entity
     /**
      * Sets a text description of the spatial extent.
      *
-     * @param string $spatialExtentDescription A text description of the spatial extent.
+     * @param string|null $spatialExtentDescription A text description of the spatial extent.
      *
      * @return void
      */
-    public function setSpatialExtentDescription($spatialExtentDescription)
+    public function setSpatialExtentDescription(?string $spatialExtentDescription)
     {
         $this->spatialExtentDescription = $spatialExtentDescription;
     }
@@ -1137,11 +1077,11 @@ class DIF extends Entity
     /**
      * Sets the geometry for the spatial extent.
      *
-     * @param string $spatialExtentGeometry The geometry for the spatial extent.
+     * @param string|null $spatialExtentGeometry The geometry for the spatial extent.
      *
      * @return void
      */
-    public function setSpatialExtentGeometry($spatialExtentGeometry)
+    public function setSpatialExtentGeometry(?string $spatialExtentGeometry)
     {
         $this->spatialExtentGeometry = $spatialExtentGeometry;
     }
@@ -1159,18 +1099,13 @@ class DIF extends Entity
     /**
      * Sets Whether the national data archives for the dataset identified by this DIF include the National Oceanographic Data Center (NODC).
      *
-     * @param boolean $nationalDataArchiveNODC Whether the national data archives for the dataset identified
-     *                                         by this DIF include the National Oceanographic Data Center (NODC).
-     *
-     * @throws \InvalidArgumentException When $nationalDataArchiveNODC is not boolean.
+     * @param boolean|null $nationalDataArchiveNODC Whether the national data archives for the dataset identified
+     *                                              by this DIF include the National Oceanographic Data Center (NODC).
      *
      * @return void
      */
-    public function setNationalDataArchiveNODC($nationalDataArchiveNODC)
+    public function setNationalDataArchiveNODC(?bool $nationalDataArchiveNODC)
     {
-        if ('boolean' !== gettype($nationalDataArchiveNODC)) {
-            throw new \InvalidArgumentException('nationalDataArchiveNODC must be boolean');
-        }
         $this->nationalDataArchiveNODC = $nationalDataArchiveNODC;
     }
 
@@ -1188,18 +1123,13 @@ class DIF extends Entity
     /**
      * Sets Whether the national data archives for the dataset identified by this DIF include US EPA Storet.
      *
-     * @param boolean $nationalDataArchiveStoret Whether the national data archives for the dataset identified
-     *                                           by this DIF include US EPA Storet.
-     *
-     * @throws \InvalidArgumentException When $nationalDataArchiveStoret is not boolean.
+     * @param boolean|null $nationalDataArchiveStoret Whether the national data archives for the dataset identified
+     *                                                by this DIF include US EPA Storet.
      *
      * @return void
      */
-    public function setNationalDataArchiveStoret($nationalDataArchiveStoret)
+    public function setNationalDataArchiveStoret(?bool $nationalDataArchiveStoret)
     {
-        if ('boolean' !== gettype($nationalDataArchiveStoret)) {
-            throw new \InvalidArgumentException('nationalDataArchiveStoret must be boolean');
-        }
         $this->nationalDataArchiveStoret = $nationalDataArchiveStoret;
     }
 
@@ -1217,18 +1147,13 @@ class DIF extends Entity
     /**
      * Sets Whether the national data archives for the dataset identified by this DIF include the Global Biodiversity Information Facility.
      *
-     * @param boolean $nationalDataArchiveGBIF Whether the national data archives for the dataset identified
-     *                                         by this DIF include the Global Biodiversity Information Facility.
-     *
-     * @throws \InvalidArgumentException When $nationalDataArchiveGBIF is not boolean.
+     * @param boolean|null $nationalDataArchiveGBIF Whether the national data archives for the dataset identified
+     *                                              by this DIF include the Global Biodiversity Information Facility.
      *
      * @return void
      */
-    public function setNationalDataArchiveGBIF($nationalDataArchiveGBIF)
+    public function setNationalDataArchiveGBIF(?bool $nationalDataArchiveGBIF)
     {
-        if ('boolean' !== gettype($nationalDataArchiveGBIF)) {
-            throw new \InvalidArgumentException('nationalDataArchiveGBIF must be boolean');
-        }
         $this->nationalDataArchiveGBIF = $nationalDataArchiveGBIF;
     }
 
@@ -1246,18 +1171,13 @@ class DIF extends Entity
     /**
      * Sets Whether the national data archives for the dataset identified by this DIF include the National Center for Biotechnology Information.
      *
-     * @param boolean $nationalDataArchiveNCBI Whether the national data archives for the dataset identified
+     * @param boolean|null $nationalDataArchiveNCBI Whether the national data archives for the dataset identified
      *                                         by this DIF include the National Center for Biotechnology Information.
-     *
-     * @throws \InvalidArgumentException When $nationalDataArchiveNCBI is not boolean.
      *
      * @return void
      */
-    public function setNationalDataArchiveNCBI($nationalDataArchiveNCBI)
+    public function setNationalDataArchiveNCBI(?bool $nationalDataArchiveNCBI)
     {
-        if ('boolean' !== gettype($nationalDataArchiveNCBI)) {
-            throw new \InvalidArgumentException('nationalDataArchiveNCBI must be boolean');
-        }
         $this->nationalDataArchiveNCBI = $nationalDataArchiveNCBI;
     }
 
@@ -1275,18 +1195,13 @@ class DIF extends Entity
     /**
      * Sets Whether the national data archives for the dataset identified by this DIF include the Data.gov Dataset Management System.
      *
-     * @param boolean $nationalDataArchiveDataGov Whether the national data archives for the dataset identified
-     *                                            by this DIF include the Data.gov Dataset Management System.
-     *
-     * @throws \InvalidArgumentException When $nationalDataArchiveDataGov is not boolean.
+     * @param boolean|null $nationalDataArchiveDataGov Whether the national data archives for the dataset identified
+     *                                                 by this DIF include the Data.gov Dataset Management System.
      *
      * @return void
      */
-    public function setNationalDataArchiveDataGov($nationalDataArchiveDataGov)
+    public function setNationalDataArchiveDataGov(?bool $nationalDataArchiveDataGov)
     {
-        if ('boolean' !== gettype($nationalDataArchiveDataGov)) {
-            throw new \InvalidArgumentException('nationalDataArchiveDataGov must be boolean');
-        }
         $this->nationalDataArchiveDataGov = $nationalDataArchiveDataGov;
     }
 
@@ -1304,11 +1219,11 @@ class DIF extends Entity
     /**
      * Sets Other national data archives for the dataset identified by this DIF.
      *
-     * @param string $nationalDataArchiveOther Other national data archives for the dataset identified by this DIF.
+     * @param string|null $nationalDataArchiveOther Other national data archives for the dataset identified by this DIF.
      *
      * @return void
      */
-    public function setNationalDataArchiveOther($nationalDataArchiveOther)
+    public function setNationalDataArchiveOther(?string $nationalDataArchiveOther)
     {
         $this->nationalDataArchiveOther = $nationalDataArchiveOther;
     }
@@ -1326,20 +1241,21 @@ class DIF extends Entity
     /**
      * Sets whether the dataset identified by this DIF will include any data governed under the IRB or HIPAA, or data with other ethical issues.
      *
-     * @param string $ethicalIssues Whether the dataset identified by this DIF will include any data
+     * @param string|null $ethicalIssues Whether the dataset identified by this DIF will include any data
      *                              governed under the IRB or HIPAA, or data with other ethical issues.
      *
      * @throws \InvalidArgumentException When $ethicalIssues is not a valid value.
      *
      * @return void
      */
-    public function setEthicalIssues($ethicalIssues)
+    public function setEthicalIssues(?string $ethicalIssues)
     {
         if (!in_array($ethicalIssues, self::ETHICAL_ISSUES)) {
             throw new \InvalidArgumentException(
                 'Ethical issues must be one of: ' . implode(', ', self::ETHICAL_ISSUES)
             );
         }
+        
         $this->ethicalIssues = $ethicalIssues;
     }
 
@@ -1357,11 +1273,11 @@ class DIF extends Entity
     /**
      * Sets an explanation of ethical issues for the dataset identified by this DIF.
      *
-     * @param string $ethicalIssuesExplanation An explanation of ethical issues for the dataset identified by this DIF.
+     * @param string|null $ethicalIssuesExplanation An explanation of ethical issues for the dataset identified by this DIF.
      *
      * @return void
      */
-    public function setEthicalIssuesExplanation($ethicalIssuesExplanation)
+    public function setEthicalIssuesExplanation(?string $ethicalIssuesExplanation)
     {
         $this->ethicalIssuesExplanation = $ethicalIssuesExplanation;
     }
@@ -1379,11 +1295,11 @@ class DIF extends Entity
     /**
      * Sets additional remarks for this DIF.
      *
-     * @param string $remarks Additional remarks for this DIF.
+     * @param string|null $remarks Additional remarks for this DIF.
      *
      * @return void
      */
-    public function setRemarks($remarks)
+    public function setRemarks(?string $remarks)
     {
         $this->remarks = $remarks;
     }
@@ -1403,7 +1319,7 @@ class DIF extends Entity
      *
      * @return boolean True if this DIF can be submitted, False otherwise.
      */
-    public function isSubmittable()
+    public function isSubmittable() : bool
     {
         return self::STATUS_UNSUBMITTED === $this->status;
     }
@@ -1529,7 +1445,7 @@ class DIF extends Entity
      *
      * @return void
      */
-    protected function setStatus($status)
+    protected function setStatus(int $status)
     {
         $this->status = $status;
         $this->updateIdentifiedStatus();

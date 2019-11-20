@@ -1,10 +1,12 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use App\Handler\EntityHandler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
@@ -14,23 +16,17 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
+use App\Form\DatasetSubmissionType;
 
-use Pelagos\Entity\Account;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DIF;
-use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
-
-use Pelagos\Response\TerminateResponse;
+use App\Entity\DatasetSubmission;
+use App\Entity\Dataset;
 
 /**
  * The DIF controller for the Pelagos UI App Bundle.
- *
- * @Route("/sidebyside")
  */
-class SideBySideController extends UIController
+class SideBySideController extends AbstractController
 {
+
     /**
      * Valid values for $datasetFileTransferType and $metadataFileTransferType.
      */
@@ -42,12 +38,29 @@ class SideBySideController extends UIController
     );
 
     /**
+     * An entity handler instance.
+     *
+     * @var EntityHandler
+     */
+    protected $entityHandler;
+
+    /**
+     * SideBySideController constructor.
+     *
+     * @param EntityHandler $entityHandler An entity handler instance.
+     */
+    public function __construct(EntityHandler $entityHandler)
+    {
+        $this->entityHandler = $entityHandler;
+    }
+
+    /**
      * The default action for Side by Side.
      *
      * @param Request     $request The Symfony request object.
      * @param string|null $udi     The UDI of the Dataset to load.
      *
-     * @Route("/{udi}")
+     * @Route("/sidebyside/{udi}", name="pelagos_app_ui_sidebyside_default", methods={"GET"})
      *
      * @return Response A Response instance.
      */
@@ -58,11 +71,11 @@ class SideBySideController extends UIController
         }
 
         if (!$this->isGranted(array('ROLE_DATA_REPOSITORY_MANAGER', 'ROLE_SUBJECT_MATTER_EXPERT'))) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
 
         return $this->render(
-            'PelagosAppBundle:SideBySide:index.html.twig'
+            'SideBySide/index.html.twig'
         );
     }
 
@@ -71,9 +84,7 @@ class SideBySideController extends UIController
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("/")
-     *
-     * @Method("POST")
+     * @Route("/sidebyside", name="pelagos_app_ui_sidebyside_getversions", methods={"POST"})
      *
      * @return Response A Response instance.
      */
@@ -123,7 +134,7 @@ class SideBySideController extends UIController
      *
      * @throws \Exception If revision does not exists.
      *
-     * @Route("/getForm/{udi}/{revision}")
+     * @Route("/sidebyside/getForm/{udi}/{revision} ", name="pelagos_app_ui_sidebyside_getsubmissionform")
      *
      * @return Response A Response instance.
      */
@@ -140,10 +151,7 @@ class SideBySideController extends UIController
                 throw new \Exception("Revision $revision does not exist for UDI: $udi");
             }
         } catch (\Exception $e) {
-            return new TerminateResponse(
-                $e->getMessage(),
-                Response::HTTP_BAD_REQUEST
-            );
+            return new Response($e->getMessage(), Response::HTTP_BAD_REQUEST);
         }
 
         if ($revision !== null) {
@@ -203,10 +211,8 @@ class SideBySideController extends UIController
             ),
         ));
 
-        $terminateResponse = new TerminateResponse();
-
         return $this->render(
-            'PelagosAppBundle:SideBySide:submissionForm.html.twig',
+            'SideBySide/submissionForm.html.twig',
             array(
                 'form' => $form->createView(),
                 'datasetSubmission' => $datasetSubmission,
@@ -214,8 +220,7 @@ class SideBySideController extends UIController
                 'showForceDownload' => false,
                 'researchGroupList' => $researchGroupList,
                 'mode' => 'view',
-            ),
-            $terminateResponse
+            )
         );
     }
 

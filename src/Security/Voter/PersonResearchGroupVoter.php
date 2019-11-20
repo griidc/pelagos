@@ -1,18 +1,18 @@
 <?php
 
-
-namespace Pelagos\Bundle\AppBundle\Security;
+namespace App\Security\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-use Pelagos\Entity\PersonResearchGroup;
-use Pelagos\Entity\ResearchGroup;
-use Pelagos\Entity\FundingCycle;
-use Pelagos\Entity\FundingOrganization;
-use Pelagos\Entity\DataRepository;
-use Pelagos\Entity\Account;
-use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
-use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
+use App\Entity\PersonResearchGroup;
+use App\Entity\ResearchGroup;
+use App\Entity\FundingCycle;
+use App\Entity\FundingOrganization;
+use App\Entity\DataRepository;
+use App\Entity\Account;
+use App\Entity\ResearchGroupRole;
+
+use App\Security\EntityProperty;
 
 /**
  * Class PersonResearchGroupVoter Grant or deny authority to PersonResearchGroup objects.
@@ -20,7 +20,7 @@ use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
  * This is a Symfony voter that operates only on objects of type PersonResearchGroup.
  *
  * @see     supports() to see which operations attributes are supported
- * @package Pelagos\Bundle\AppBundle\Security
+ * @package App\Security\Voter
  */
 class PersonResearchGroupVoter extends PelagosEntityVoter
 {
@@ -32,7 +32,7 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
      *
      * @return boolean True if the attribute and subject are supported, false otherwise.
      */
-    protected function supports($attribute, $object)
+    protected function supports($attribute, $object) //phpcs:ignore
     {
         // If the object is an EntityProperty.
         if ($object instanceof EntityProperty) {
@@ -51,22 +51,22 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
         }
         // Only if the tree is as expected, vote.
         if (($object
-                ->getResearchGroup()
+                    ->getResearchGroup()
                 instanceof ResearchGroup) and
             ($object
-                ->getResearchGroup()
-                ->getFundingCycle()
+                    ->getResearchGroup()
+                    ->getFundingCycle()
                 instanceof FundingCycle) and
             ($object
-                ->getResearchGroup()
-                ->getFundingCycle()
-                ->getFundingOrganization()
+                    ->getResearchGroup()
+                    ->getFundingCycle()
+                    ->getFundingOrganization()
                 instanceof FundingOrganization) and
             ($object
-                ->getResearchGroup()
-                ->getFundingCycle()
-                ->getFundingOrganization()
-                ->getDataRepository()
+                    ->getResearchGroup()
+                    ->getFundingCycle()
+                    ->getFundingOrganization()
+                    ->getDataRepository()
                 instanceof DataRepository)
         ) {
             return true;
@@ -88,7 +88,7 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
      *
      * @return boolean True if the attribute is allowed on the subject for the user specified by the token.
      */
-    protected function voteOnAttribute($attribute, $object, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $object, TokenInterface $token) //phpcs:ignore
     {
         $user = $token->getUser();
         // If the user token does not contain an Account object return false.
@@ -129,7 +129,7 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
             );
             // If the user has a PersonResearchGroup with a Role that is one of [Leadership, Admin or Data]
             // the user can create (persist) the subject PersonResearchGroup ($object).
-            $targetRoles = array(ResearchGroupRoles::LEADERSHIP, ResearchGroupRoles::ADMIN, ResearchGroupRoles::DATA);
+            $targetRoles = array(ResearchGroupRole::LEADERSHIP, ResearchGroupRole::ADMIN, ResearchGroupRole::DATA);
             if ($this->doesUserHaveRole($userPerson, $authPersonResearchGroups, $targetRoles)) {
                 return true;
             }

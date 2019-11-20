@@ -1,18 +1,19 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\Api;
+namespace App\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
-use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Controller\Annotations\View;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Pelagos\Entity\FundingOrganization;
-use Pelagos\Bundle\AppBundle\Form\FundingOrganizationType;
+use App\Entity\FundingOrganization;
+use App\Form\FundingOrganizationType;
 
 /**
  * The FundingOrganization api controller.
@@ -40,9 +41,14 @@ class FundingOrganizationController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/count")
+     * @Route(
+     *     "/api/funding-organizations/count",
+     *     name="pelagos_api_funding_organizations_count",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return integer
      */
@@ -68,9 +74,14 @@ class FundingOrganizationController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/validateProperty")
+     * @Route(
+     *     "/api/funding-organizations/validateProperty",
+     *     name="pelagos_api_funding_organizations_validate_property",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
@@ -96,13 +107,18 @@ class FundingOrganizationController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/{id}/validateProperty")
+     * @Route(
+     *     "/api/funding-organizations/{id}/validateProperty",
+     *     name="pelagos_api_funding_organizations_validate_property_existing",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
-    public function validatePropertyExistingAction($id, Request $request)
+    public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(FundingOrganizationType::class, FundingOrganization::class, $request, $id);
     }
@@ -129,9 +145,14 @@ class FundingOrganizationController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("")
+     * @Route(
+     *     "/api/funding-organizations",
+     *     name="pelagos_api_funding_organizations_get_collection",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Response
      */
@@ -159,11 +180,18 @@ class FundingOrganizationController extends EntityController
      *   }
      * )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @Route(
+     *     "/api/funding-organizations/{id}",
+     *     name="pelagos_api_funding_organizations_get",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
+     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return FundingOrganization The Funding Organization that was retrieved.
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         $fundingOrganization = $this->handleGetOne(FundingOrganization::class, $id);
         if ($fundingOrganization instanceof FundingOrganization and $fundingOrganization->getLogo(true) !== null) {
@@ -193,6 +221,13 @@ class FundingOrganizationController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/funding-organizations",
+     *     name="pelagos_api_funding_organizations_post",
+     *     methods={"POST"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new Funding Organization in the Location header.
      */
@@ -220,9 +255,16 @@ class FundingOrganizationController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/funding-organizations/{id}",
+     *     name="pelagos_api_funding_organizations_put",
+     *     methods={"PUT"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putAction($id, Request $request)
+    public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(FundingOrganizationType::class, FundingOrganization::class, $id, $request, 'PUT');
         return $this->makeNoContentResponse();
@@ -246,9 +288,16 @@ class FundingOrganizationController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/funding-organizations/{id}",
+     *     name="pelagos_api_funding_organizations_patch",
+     *     methods={"PATCH"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function patchAction($id, Request $request)
+    public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(FundingOrganizationType::class, FundingOrganization::class, $id, $request, 'PATCH');
         return $this->makeNoContentResponse();
@@ -268,9 +317,16 @@ class FundingOrganizationController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/funding-organizations/{id}",
+     *     name="pelagos_api_funding_organizations_delete",
+     *     methods={"DELETE"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
         $this->handleDelete(FundingOrganization::class, $id);
         return $this->makeNoContentResponse();
@@ -289,11 +345,16 @@ class FundingOrganizationController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/{id}/logo")
+     * @Route(
+     *     "/api/funding-organizations/{id}/logo",
+     *     name="pelagos_api_funding_organizations_get_logo",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return Response A response object containing the logo.
      */
-    public function getLogoAction($id)
+    public function getLogoAction(int $id)
     {
         return $this->getProperty(FundingOrganization::class, $id, 'logo');
     }
@@ -315,11 +376,16 @@ class FundingOrganizationController extends EntityController
      *   }
      * )
      *
-     * @Rest\Post("/{id}/logo")
+     * @Route(
+     *     "/api/funding-organizations/{id}/logo",
+     *     name="pelagos_api_funding_organizations_post_logo",
+     *     methods={"POST"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function postLogoAction($id, Request $request)
+    public function postLogoAction(int $id, Request $request)
     {
         return $this->postProperty(FundingOrganization::class, $id, 'logo', $request);
     }
@@ -338,11 +404,16 @@ class FundingOrganizationController extends EntityController
      *   }
      * )
      *
-     * @Rest\Put("/{id}/logo")
+     * @Route(
+     *     "/api/funding-organizations/{id}/logo",
+     *     name="pelagos_api_funding_organizations_put_logo",
+     *     methods={"PUT"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putLogoAction($id, Request $request)
+    public function putLogoAction(int $id, Request $request)
     {
         return $this->putProperty(FundingOrganization::class, $id, 'logo', $request);
     }

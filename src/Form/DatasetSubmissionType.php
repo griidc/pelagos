@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Form;
+namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
@@ -10,14 +10,11 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DistributionPoint;
-use Pelagos\Entity\Entity;
-use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
-use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
+use App\Entity\DatasetSubmission;
+use App\Entity\DistributionPoint;
+use App\Entity\Entity;
+use App\Entity\PersonDatasetSubmissionDatasetContact;
+use App\Entity\PersonDatasetSubmissionMetadataContact;
 
 /**
  * A form type for creating a Dataset Submission form.

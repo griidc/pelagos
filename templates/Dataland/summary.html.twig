@@ -1,10 +1,10 @@
 {% set dl_ok = 0 %}
 {% set dataset_available = 0 %}
 
-{% if dataset.datasetStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
+{% if dataset.datasetStatus == constant('App\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
     {% set dl_ok = 1 %}
 {% endif %}
-{% if dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') or dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED') %}
+{% if dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') or dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED') %}
     {% set dataset_available = 1 %}
 {% endif %}
 
@@ -14,23 +14,23 @@
             <div>
                 {% if dl_ok == 1 %}
                     {% if dataset_available %}
-                        <img width="40px" height="40px" id="downloadds" src="{{ asset('build/images/download-package.png') }}">
-                    {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED') %}
-                        <img width="40px" height="40px" id="downloaddsdenrestricted" src="{{ asset('build/images/download-package.png') }}">
+                        <img width="40px" height="40px" id="downloadds" src="{{ asset('images/download-package.png') }}">
+                    {% elseif dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED') %}
+                        <img width="40px" height="40px" id="downloaddsdenrestricted" src="{{ asset('images/download-package.png') }}">
                     {% else %}
-                        <img width="40px" height="40px" id="downloaddsden" src="{{ asset('build/images/download-package-grey.png') }}">
+                        <img width="40px" height="40px" id="downloaddsden" src="{{ asset('images/download-package-grey.png') }}">
                     {% endif %}
-                    {% if dataset.datasetStatus == constant('Pelagos\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
-                        <img width="40px" height="40px" id="metadatadl" src="{{ asset('build/images/xmlc.png') }}">
+                    {% if dataset.datasetStatus == constant('App\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
+                        <img width="40px" height="40px" id="metadatadl" src="{{ asset('images/xmlc.png') }}">
                     {% else %}
-                        <img width="40px" height="40px" id="metadatadl-dis" src="{{ asset('build/images/xmlc-bw.png') }}">
+                        <img width="40px" height="40px" id="metadatadl-dis" src="{{ asset('images/xmlc-bw.png') }}">
                     {% endif %}
                     {% if dataset.datasetSubmission.ErddapUrl %}
-                        <br /><a href="{{ dataset.datasetSubmission.ErddapUrl }}" border="0" target="_blank"><img src="{{ asset('build/images/button_erddap.png') }}" id="erddaplink"></a>
+                        <br /><a href="{{ dataset.datasetSubmission.ErddapUrl }}" border="0" target="_blank"><img src="{{ asset('images/button_erddap.png') }}" id="erddaplink"></a>
                     {% endif %}
                 {% else %}
-                    <img width="40px" height="40px" id="downloaddsdenmd" src="{{ asset('build/images/download-package-grey.png') }}">
-                    <img width="40px" height="40px" id="metadatadl-dis" src="{{ asset('build/images/xmlc-bw.png') }}">
+                    <img width="40px" height="40px" id="downloaddsdenmd" src="{{ asset('images/download-package-grey.png') }}">
+                    <img width="40px" height="40px" id="metadatadl-dis" src="{{ asset('images/xmlc-bw.png') }}">
                 {% endif %}
             </div>
         </div>
@@ -41,7 +41,7 @@
 
         <table width="90%" datasetId="{{ dataset.id }}">
             {% if dataset.doi|default %}
-                {% if dataset.datasetSubmissionStatus == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_COMPLETE') %}
+                {% if dataset.datasetSubmissionStatus == constant('App\\Entity\\DatasetSubmission::STATUS_COMPLETE') %}
                     <tr>
                         <td colspan="2"><b>DOI:</b><br/> {{ dataset.doi.doi }}</td>
                     </tr>
@@ -171,7 +171,7 @@
 
     </font>
     <p/>
-    {% include 'PelagosAppBundle:DatasetMonitoring:datasets.html.twig' with
+    {% include 'DatasetMonitoring/datasets.html.twig' with
         { 'datasets' : [dataset], 'dataland' : true } %}
 </div>
 

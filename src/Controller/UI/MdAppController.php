@@ -1,33 +1,54 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-use Pelagos\Bundle\AppBundle\Form\MdappType;
+use App\Form\MdappType;
 
 use Doctrine\ORM\Query;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Handler\EntityHandler;
+use App\Util\MdappLogger;
 
 /**
  * The MDApp controller.
- *
- * @Route("/mdapp")
  */
-class MdAppController extends UIController implements OptionalReadOnlyInterface
+class MdAppController extends AbstractController
 {
+    /**
+     * A Doctine ORM Entity Handler.
+     *
+     * @var EntityHandler entityHandler
+     */
+    protected $entityHandler;
+
+    /**
+     * Class constructor.
+     *
+     * @param EntityHandler $entityHandler Pelagos EntityHandler instance.
+     */
+    public function __construct(EntityHandler $entityHandler)
+    {
+        $this->entityHandler = $entityHandler;
+    }
+
     /**
      * MDApp UI.
      *
-     * @Route("")
+     * @Route(
+     *      "/mdapp",
+     *      name="pelagos_app_ui_mdapp_default",
+     *      methods={"GET"}
+     * )
      *
      * @return Response
      */
@@ -35,7 +56,7 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
 
         return $this->renderUi();
@@ -46,19 +67,21 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
      *
      * This function called when Post occurs upon submitt of the MdApp form.
      *
-     * @param Request $request The Symfony request object.
-     * @param integer $id      The id of the Dataset to change the dataset status for.
+     * @param Request     $request     The Symfony request object.
+     * @param MdappLogger $mdappLogger The Pelagos Mdapp logger.
+     * @param integer     $id          The id of the Dataset to change the dataset status for.
      *
-     * @Route("/change-dataset-status/{id}")
-     * @Method("POST")
+     * @Route(
+     *      "/mdapp/change-dataset-status/{id}",
+     *      name="pelagos_app_ui_mdapp_changedatasetstatus",
+     *      methods={"POST"}
+     * )
      *
      * @return Response
      */
-    public function changeDatasetStatusAction(Request $request, $id)
+    public function changeDatasetStatusAction(Request $request, MdappLogger $mdappLogger, int $id)
     {
-        $entityHandler = $this->get('pelagos.entity.handler');
-        $mdappLogger = $this->get('pelagos.util.mdapplogger');
-        $dataset = $entityHandler->get(Dataset::class, $id);
+        $dataset = $this->entityHandler->get(Dataset::class, $id);
         $message = null;
         $from = $dataset->getDatasetStatus();
         $to = $request->request->get('to');
@@ -70,8 +93,8 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
                 $datasetSubmission = $dataset->getDatasetSubmission();
                 if (null !== $to and 'InReview' == $to) {
                     $datasetSubmission->setDatasetStatus($to);
-                    $entityHandler->update($datasetSubmission);
-                    $entityHandler->update($dataset);
+                    $this->entityHandler->update($datasetSubmission);
+                    $this->entityHandler->update($dataset);
                     $mdappLogger->writeLog($this->getUser()->getUsername() . ' changed status for ' .
                         $udi . '(' . $this->getFlashBagStatus($from) . ' >>> ' . $this->getFlashBagStatus($to) . ')');
                     $message = 'Status for ' . $udi . ' has been changed from ' . $this->getFlashBagStatus($from) .
@@ -83,10 +106,9 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
                 $this->get('session')->getFlashBag()->add('error', $message);
             }
         }
-
         return $this->redirectToRoute('pelagos_app_ui_mdapp_default');
     }
-    
+
     /**
      * Render the UI for MDApp.
      *
@@ -99,7 +121,7 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
         // object by the handler.
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render(
-                'PelagosAppBundle:MdApp:access-denied.html.twig'
+                'MdApp/access-denied.html.twig'
             );
         }
 
@@ -109,34 +131,33 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
             'datasetSubmission.submissionTimeStamp',
             'datasetSubmission.metadataFileName');
 
-        $entityHandler = $this->get('pelagos.entity.handler');
         return $this->render(
-            'PelagosAppBundle:MdApp:main.html.twig',
+            'MdApp/main.html.twig',
             array(
                 'issueTrackingBaseUrl' => $this->getParameter('issue_tracking_base_url'),
                 'm_dataset' => array(
-                    'submitted' => $entityHandler->getBy(
+                    'submitted' => $this->entityHandler->getBy(
                         Dataset::class,
                         array('datasetStatus' => Dataset::DATASET_STATUS_SUBMITTED),
                         array(),
                         $objNeeded,
                         Query::HYDRATE_ARRAY
                     ),
-                    'inreview' => $entityHandler->getBy(
+                    'inreview' => $this->entityHandler->getBy(
                         Dataset::class,
                         array('datasetStatus' => Dataset::DATASET_STATUS_IN_REVIEW),
                         array(),
                         $objNeeded,
                         Query::HYDRATE_ARRAY
                     ),
-                    'accepted' => $entityHandler->getBy(
+                    'accepted' => $this->entityHandler->getBy(
                         Dataset::class,
                         array('datasetStatus' => Dataset::DATASET_STATUS_ACCEPTED),
                         array(),
                         $objNeeded,
                         Query::HYDRATE_ARRAY
                     ),
-                    'backtosubmitter' => $entityHandler->getBy(
+                    'backtosubmitter' => $this->entityHandler->getBy(
                         Dataset::class,
                         array('datasetStatus' => Dataset::DATASET_STATUS_BACK_TO_SUBMITTER),
                         array(),
@@ -151,18 +172,20 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
     /**
      * Get logfile entries for particular dataset UDI.
      *
-     * @param string $udi The dataset UDI identifier.
+     * @param string      $udi         The dataset UDI identifier.
+     * @param MdappLogger $mdappLogger The Logger utility.
      *
-     * @Route("/getlog/{udi}")
+     * @Route("/mdapp/getlog/{udi}",
+     *      name="pelagos_app_ui_mdapp_getlog"
+     * )
      *
      * @return response
      */
-    public function getlog($udi)
+    public function getlog(string $udi, MdappLogger $mdappLogger)
     {
-
-        $rawlog = file($this->getParameter('mdapp_logfile'));
-        $entries = array_values(preg_grep("/$udi/i", $rawlog));
         $data = null;
+        $entries = $mdappLogger->getLogEntriesByUdi($udi);
+
         if (count($entries) > 0) {
             $data .= '<ul>';
             foreach ($entries as $entry) {
@@ -170,12 +193,13 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
             }
             $data .= '</ul>';
         }
+
         $response = new Response();
         $response->setContent($data);
         $response->headers->set('Content-Type', 'text/html');
         return $response;
     }
-    
+
     /**
      * Get the text need to be displayed as DatasetSubmission changed status.
      *
@@ -183,7 +207,7 @@ class MdAppController extends UIController implements OptionalReadOnlyInterface
      *
      * @return string
      */
-    private function getFlashBagStatus($status)
+    private function getFlashBagStatus(string $status)
     {
         if (array_key_exists($status, Dataset::DATASET_STATUSES)) {
             $status = Dataset::DATASET_STATUSES[$status];

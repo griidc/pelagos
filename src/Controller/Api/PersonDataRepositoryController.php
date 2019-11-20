@@ -1,17 +1,19 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\Api;
+namespace App\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormInterface;
 
-use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\Routing\Annotation\Route;
+
+use FOS\RestBundle\Controller\Annotations\View;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Pelagos\Entity\PersonDataRepository;
-use Pelagos\Bundle\AppBundle\Form\PersonDataRepositoryType;
+use App\Entity\PersonDataRepository;
+use App\Form\PersonDataRepositoryType;
 
 /**
  * The PersonDataRepository api controller.
@@ -39,9 +41,14 @@ class PersonDataRepositoryController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/count")
+     * @Route(
+     *     "/api/person-data-repositories/count",
+     *     name="pelagos_api_person_data_repositories_count",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return integer
      */
@@ -65,9 +72,14 @@ class PersonDataRepositoryController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/validateProperty")
+     * @Route(
+     *     "/api/person-data-repositories/validateProperty",
+     *     name="pelagos_api_person_data_repositories_validate_property",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
@@ -93,13 +105,18 @@ class PersonDataRepositoryController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/{id}/validateProperty")
+     * @Route(
+     *     "/api/person-data-repositories/{id}/validateProperty",
+     *     name="pelagos_api_person_data_repositories_validate_property_existing",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
-    public function validatePropertyExistingAction($id, Request $request)
+    public function validatePropertyExistingAction(int $id, Request $request)
     {
         return $this->validateProperty(PersonDataRepositoryType::class, PersonDataRepository::class, $request, $id);
     }
@@ -126,9 +143,14 @@ class PersonDataRepositoryController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("")
+     * @Route(
+     *     "/api/person-data-repositories",
+     *     name="pelagos_api_person_data_repositories_get_collection",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Response
      */
@@ -152,11 +174,18 @@ class PersonDataRepositoryController extends EntityController
      *   }
      * )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @Route(
+     *     "/api/person-data-repositories/{id}",
+     *     name="pelagos_api_person_data_repositories_get",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
+     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return PersonDataRepository
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         return $this->handleGetOne(PersonDataRepository::class, $id);
     }
@@ -176,6 +205,13 @@ class PersonDataRepositoryController extends EntityController
      *     500 = "An internal error has occurred.",
      *   }
      * )
+     *
+     * @Route(
+     *     "/api/person-data-repositories",
+     *     name="pelagos_api_person_data_repositories_post",
+     *     methods={"POST"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new Person to Data Repository Association in the Location header.
@@ -204,9 +240,16 @@ class PersonDataRepositoryController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/person-data-repositories/{id}",
+     *     name="pelagos_api_person_data_repositories_put",
+     *     methods={"PUT"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putAction($id, Request $request)
+    public function putAction(int $id, Request $request)
     {
         $this->handleUpdate(PersonDataRepositoryType::class, PersonDataRepository::class, $id, $request, 'PUT');
         return $this->makeNoContentResponse();
@@ -230,9 +273,16 @@ class PersonDataRepositoryController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/person-data-repositories/{id}",
+     *     name="pelagos_api_person_data_repositories_patch",
+     *     methods={"PATCH"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function patchAction($id, Request $request)
+    public function patchAction(int $id, Request $request)
     {
         $this->handleUpdate(PersonDataRepositoryType::class, PersonDataRepository::class, $id, $request, 'PATCH');
         return $this->makeNoContentResponse();
@@ -253,9 +303,16 @@ class PersonDataRepositoryController extends EntityController
      *   }
      * )
      *
+     * @Route(
+     *     "/api/person-data-repositories/{id}",
+     *     name="pelagos_api_person_data_repositories_delete",
+     *     methods={"DELETE"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
         $this->handleDelete(PersonDataRepository::class, $id);
         return $this->makeNoContentResponse();

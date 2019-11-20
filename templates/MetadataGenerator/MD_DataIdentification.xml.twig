@@ -37,7 +37,7 @@
     </gmd:status>
     {% for contact in dataset.datasetSubmission.datasetContacts %}
     <gmd:pointOfContact>
-        {% include "PelagosAppBundle:MetadataGenerator:CI_ResponsibleParty.xml.twig" with
+        {% include "MetadataGenerator/CI_ResponsibleParty.xml.twig" with
             {
                 "Person" : contact.person,
                 "role" : contact.role,
@@ -46,7 +46,7 @@
     </gmd:pointOfContact>
     {% endfor %}
     <gmd:descriptiveKeywords>
-        {% include "PelagosAppBundle:MetadataGenerator:MD_Keywords.xml.twig" with
+        {% include "MetadataGenerator/MD_Keywords.xml.twig" with
             {
                 "keywords" : dataset.datasetSubmission.themeKeywords,
                 "type" : {"name" : "theme", "code" : "005"},
@@ -54,7 +54,7 @@
         %}
     </gmd:descriptiveKeywords>
     <gmd:descriptiveKeywords>
-        {% include "PelagosAppBundle:MetadataGenerator:MD_Keywords.xml.twig" with
+        {% include "MetadataGenerator/MD_Keywords.xml.twig" with
             {
                 "keywords" : dataset.datasetSubmission.placeKeywords,
                 "type" : {"name" : "place", "code" : "002"},

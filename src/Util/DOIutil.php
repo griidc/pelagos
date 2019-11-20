@@ -1,16 +1,17 @@
 <?php
 
-namespace Pelagos\Util;
+namespace App\Util;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\ServerException;
 
 use HylianShield\Encoding\Base32CrockfordEncoder;
 
-use Pelagos\Entity\DOI;
-use Pelagos\Exception\HttpClientErrorException;
-use Pelagos\Exception\HttpServerErrorException;
+use App\Entity\DOI;
+use App\Exception\HttpClientErrorException;
+use App\Exception\HttpServerErrorException;
 
 /**
  * A utility to create and issue DOI from Datacite REST API.
@@ -50,21 +51,21 @@ class DOIutil
      *
      * Sets the REST API username, password, and prefix.
      *
-     * @throws \Exception When ini file is not found.
+     * @param string $doiApiUserName The API username.
+     * @param string $doiApiPassword The API password.
+     * @param string $doiApiPrefix   The API DOI prefix.
+     * @param string $doiApiUrl      The API URL.
      */
-    public function __construct()
-    {
-        $iniFile = dirname(__FILE__) . '/DOIutil.ini';
-
-        if (!file_exists($iniFile)) {
-            throw new \Exception("$iniFile file not found!");
-        }
-        $parameters = parse_ini_file($iniFile);
-
-        $this->doiprefix = $parameters['doi_api_prefix'];
-        $this->doiusername = $parameters['doi_api_user_name'];
-        $this->doipassword = $parameters['doi_api_password'];
-        $this->url = $parameters['url'];
+    public function __construct(
+        string $doiApiUserName,
+        string $doiApiPassword,
+        string $doiApiPrefix,
+        string $doiApiUrl
+    ) {
+        $this->doiprefix = $doiApiPrefix;
+        $this->doiusername = $doiApiUserName;
+        $this->doipassword = $doiApiPassword;
+        $this->url = $doiApiUrl;
     }
 
     /**
@@ -86,13 +87,13 @@ class DOIutil
     /**
      * This function will create a DOI.
      *
-     * @param string $doi             The DOI identifier to create, or 'mint' to generate new.
-     * @param string $url             URL for DOI.
-     * @param string $creator         Creator for DOI.
-     * @param string $title           Title for DOI.
-     * @param string $publicationYear Published Date for DOI.
-     * @param string $publisher       Publisher for DOI.
-     * @param string $resourcetype    Type for DOI Request, by default Dataset.
+     * @param string      $doi             The DOI identifier to create, or 'mint' to generate new.
+     * @param string      $url             URL for DOI.
+     * @param string|null $creator         Creator for DOI.
+     * @param string      $title           Title for DOI.
+     * @param string|null $publicationYear Published Date for DOI.
+     * @param string      $publisher       Publisher for DOI.
+     * @param string      $resourcetype    Type for DOI Request, by default Dataset.
      *
      * @throws HttpClientErrorException When there was an 4xx error negotiating with REST API.
      * @throws HttpServerErrorException When there was an 5xx error negotiating with REST API.
@@ -100,13 +101,13 @@ class DOIutil
      * @return void
      */
     public function createDOI(
-        $doi,
-        $url,
-        $creator,
-        $title,
-        $publicationYear,
-        $publisher,
-        $resourcetype = 'Dataset'
+        string $doi,
+        string $url,
+        ?string $creator,
+        string $title,
+        ?string $publicationYear,
+        string $publisher,
+        string $resourcetype = 'Dataset'
     ) {
         $client = new Client();
         $defaultBody = [
@@ -164,13 +165,13 @@ class DOIutil
      * @return void
      */
     public function updateDOI(
-        $doi,
-        $url,
-        $creator,
-        $title,
-        $publicationYear,
-        $publisher,
-        $status = DOI::STATE_FINDABLE
+        string $doi,
+        string $url,
+        string $creator,
+        string $title,
+        string $publicationYear,
+        string $publisher,
+        string $status = DOI::STATE_FINDABLE
     ) {
         $client = new Client();
         $defaultBody = [
@@ -222,7 +223,7 @@ class DOIutil
      *
      * @return array
      */
-    public function getDOIMetadata($doi)
+    public function getDOIMetadata(string $doi)
     {
         $client = new Client();
         $metadata = array();
@@ -259,7 +260,7 @@ class DOIutil
      *
      * @return void
      */
-    public function deleteDOI($doi)
+    public function deleteDOI(string $doi)
     {
         $doiMetadata = $this->getDOIMetadata($doi);
         if ($doiMetadata['attributes']['state'] === DOI::STATE_DRAFT) {
@@ -287,5 +288,28 @@ class DOIutil
                 DOI::STATE_REGISTERED
             );
         }
+    }
+
+    /**
+     * Get a collection of dois using Datacite REST API.
+     *
+     * @param integer $pageNo The required page number for the API.
+     *
+     * @return array
+     */
+    public function getDoiCollection(int $pageNo) : array
+    {
+        $url = $this->url . '/dois' . '?client-id=' . strtolower($this->doiusername) . '&page%5Bnumber%5D=' . $pageNo . '&page%5Bsize%5D=1000';
+        $header = ['Accept' => 'application/vnd.api+json'];
+        $client = new Client();
+        try {
+            $response = $client->request('get', $url, $header);
+        } catch (GuzzleException $exception) {
+            echo $exception->getMessage();
+        }
+
+        $body = json_decode($response->getBody()->getContents(), true);
+
+        return $body;
     }
 }

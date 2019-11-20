@@ -1,19 +1,24 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\Api;
+namespace App\Controller\Api;
 
 use Doctrine\ORM\Query;
+use Doctrine\ORM\EntityManagerInterface;
 
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
-use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Controller\Annotations\View;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\FundingOrganization;
-use Pelagos\Entity\ResearchGroup;
-use Pelagos\Entity\Person;
+use App\Handler\EntityHandler;
+use App\Entity\FundingOrganization;
+use App\Entity\ResearchGroup;
+use App\Entity\Person;
+
+use App\Util\DatasetIndex;
 
 /**
  * The Tree API controller.
@@ -37,9 +42,46 @@ class TreeController extends EntityController
     );
 
     /**
+     * The entity manager.
+     *
+     * @var EntityManager
+     */
+    protected $doctrineOrmEntityManager;
+
+    /**
+     * The entity manager.
+     *
+     * @var EntityHandler
+     */
+    protected $entityHandler;
+
+    /**
+     * Form factory instance.
+     *
+     * @var FormFactoryInterface
+     */
+    protected $formFactory;
+
+    /**
+     * TreeController constructor.
+     *
+     * @param EntityManagerInterface $doctrineOrmEntityManager Doctrine Entity Manager.
+     * @param EntityHandler          $entityHandler            Pelagos Entity Handler.
+     * @param FormFactoryInterface   $formFactory              Symfony Form Factory.
+     */
+    public function __construct(EntityManagerInterface $doctrineOrmEntityManager, EntityHandler $entityHandler, FormFactoryInterface $formFactory)
+    {
+        $this->entityHandler = $entityHandler;
+        $this->formFactory = $formFactory;
+        parent::__construct($entityHandler, $formFactory);
+        $this->doctrineOrmEntityManager = $doctrineOrmEntityManager;
+    }
+
+    /**
      * Gets the Funding Organization and Funding Cycle nodes.
      *
-     * @param Request $request The request object.
+     * @param Request      $request      The request object.
+     * @param DatasetIndex $datasetIndex Dataset index object.
      *
      * @ApiDoc(
      *   section = "Tree",
@@ -52,11 +94,16 @@ class TreeController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/json/ra.json")
+     * @Route(
+     *     "/api/tree/json/ra.json",
+     *     name="pelagos_api_tree_get_funding_organizations",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return string
      */
-    public function getFundingOrganizationsAction(Request $request)
+    public function getFundingOrganizationsAction(Request $request, DatasetIndex $datasetIndex)
     {
         $tree = $this->buildTreeConfig($request);
         $filter = false;
@@ -74,7 +121,7 @@ class TreeController extends EntityController
         $fundingCycles = array();
         if ($filter) {
             $fundingOrganizations = array();
-            $datasets = $this->get('pelagos.util.dataset_index')->search(array(), $textFilter, $geoFilter);
+            $datasets = $datasetIndex->search(array(), $textFilter, $geoFilter);
             foreach ($datasets as $dataset) {
                 $fundingOrganizations[$dataset->researchGroup['fundingCycle']['fundingOrganization']['id']] = true;
                 $fundingCycles[$dataset->researchGroup['fundingCycle']['id']] = true;
@@ -82,10 +129,10 @@ class TreeController extends EntityController
             $criteria['id'] = array_keys($fundingOrganizations);
         }
         return $this->render(
-            'PelagosAppBundle:Api:Tree/research_awards.json.twig',
+            'Api/Tree/research_awards.json.twig',
             array(
                 'tree' => $tree,
-                'fundingOrgs' => $this->container->get('doctrine.orm.entity_manager')
+                'fundingOrgs' => $this->doctrineOrmEntityManager
                     ->getRepository(FundingOrganization::class)
                     ->findBy(
                         $criteria,
@@ -99,8 +146,9 @@ class TreeController extends EntityController
     /**
      * Gets the Research Group nodes for a Funding Cycle.
      *
-     * @param Request $request      The request object.
-     * @param integer $fundingCycle The Funding Cycle to return Research Groups for.
+     * @param Request      $request      The request object.
+     * @param integer      $fundingCycle The Funding Cycle to return Research Groups for.
+     * @param DatasetIndex $datasetIndex The dataset index.
      *
      * @ApiDoc(
      *   section = "Tree",
@@ -113,11 +161,16 @@ class TreeController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/json/ra/projects/funding-cycle/{fundingCycle}.json")
+     * @Route(
+     *     "/api/tree/json/ra/projects/funding-cycle/{fundingCycle}.json",
+     *     name="pelagos_api_tree_get_research_groups_by_funding_cycle",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return string
      */
-    public function getResearchGroupsByFundingCycleAction(Request $request, $fundingCycle)
+    public function getResearchGroupsByFundingCycleAction(Request $request, int $fundingCycle, DatasetIndex $datasetIndex)
     {
         $tree = $this->buildTreeConfig($request);
         $filter = false;
@@ -134,17 +187,17 @@ class TreeController extends EntityController
         $criteria = array('fundingCycle' => $fundingCycle);
         if ($filter) {
             $researchGroups = array();
-            $datasets = $this->get('pelagos.util.dataset_index')->search(array(), $textFilter, $geoFilter);
+            $datasets = $datasetIndex->search(array(), $textFilter, $geoFilter);
             foreach ($datasets as $dataset) {
                 $researchGroups[$dataset->researchGroup['id']] = true;
             }
             $criteria['id'] = array_keys($researchGroups);
         }
         return $this->render(
-            'PelagosAppBundle:Api:Tree/projects.json.twig',
+            'Api/Tree/projects.json.twig',
             array(
                 'tree' => $tree,
-                'projects' => $this->container->get('doctrine.orm.entity_manager')
+                'projects' => $this->doctrineOrmEntityManager
                     ->getRepository(ResearchGroup::class)
                     ->findBy(
                         $criteria,
@@ -170,21 +223,24 @@ class TreeController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/json/re.json")
+     * @Route(
+     *     "/api/tree/json/re.json",
+     *     name="pelagos_api_tree_get_letters",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return string
      */
     public function getLettersAction(Request $request)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
-        $entityManager
+        $this->doctrineOrmEntityManager
             ->getConfiguration()
             ->addCustomHydrationMode(
                 'COLUMN_HYDRATOR',
-                'Pelagos\DoctrineExtensions\Hydrators\ColumnHydrator'
+                'App\DoctrineExtensions\Hydrators\ColumnHydrator'
             );
-        $qb = $entityManager
+        $qb = $this->doctrineOrmEntityManager
             ->getRepository(Person::class)
             ->createQueryBuilder('person');
 
@@ -198,7 +254,7 @@ class TreeController extends EntityController
         $letters = $query->getResult('COLUMN_HYDRATOR');
 
         return $this->render(
-            'PelagosAppBundle:Api:Tree/letters.json.twig',
+            'Api/Tree/letters.json.twig',
             array(
                 'tree' => $this->buildTreeConfig($request),
                 'letters' => $letters,
@@ -223,15 +279,18 @@ class TreeController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/json/re/{letter}.json")
+     * @Route(
+     *     "/api/tree/json/re/{letter}.json",
+     *     name="pelagos_api_tree_get_people",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return string
      */
-    public function getPeopleAction(Request $request, $letter)
+    public function getPeopleAction(Request $request, string $letter)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
-        $qb = $entityManager
+        $qb = $this->doctrineOrmEntityManager
             ->getRepository(Person::class)
             ->createQueryBuilder('person');
 
@@ -251,7 +310,7 @@ class TreeController extends EntityController
         $people = $query->getResult(Query::HYDRATE_ARRAY);
 
         return $this->render(
-            'PelagosAppBundle:Api:Tree/researchers.json.twig',
+            'Api/Tree/researchers.json.twig',
             array(
                 'tree' => $this->buildTreeConfig($request),
                 'people' => $people,
@@ -276,20 +335,25 @@ class TreeController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/json/re/projects/peopleId/{personId}.json")
+     * @Route(
+     *     "/api/tree/json/re/projects/peopleId/{personId}.json",
+     *     name="pelagos_api_tree_get_research_groups_by_person",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return string
      */
-    public function getResearchGroupsByPersonAction(Request $request, $personId)
+    public function getResearchGroupsByPersonAction(Request $request, int $personId)
     {
-        $person = $this->container->get('pelagos.entity.handler')->get(Person::class, $personId);
+        $person = $this->entityHandler->get(Person::class, $personId);
 
         $researchGroups = $person->getResearchGroups();
 
         usort($researchGroups, array(ResearchGroup::class, 'compareByName'));
 
         return $this->render(
-            'PelagosAppBundle:Api:Tree/projects.json.twig',
+            'Api/Tree/projects.json.twig',
             array(
                 'tree' => $this->buildTreeConfig($request),
                 'projects' => $researchGroups,

@@ -1,25 +1,23 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * The PublicationDatasetLink controller.
- *
- * @Route("/publink")
  */
-class PublicationDatasetLinkController extends UIController implements OptionalReadOnlyInterface
+class PublicationDatasetLinkController extends AbstractController
 {
     /**
      * The default action.
      *
-     * @Route("")
-     * @Method("GET")
+     * @Route("/publink", name="pelagos_app_ui_publicationdatasetlink_default", methods={"GET"})
      *
      * @return Response A Symfony Response instance.
      */
@@ -27,22 +25,21 @@ class PublicationDatasetLinkController extends UIController implements OptionalR
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
 
-        return $this->render('PelagosAppBundle:PublicationDatasetLink:index.html.twig');
+        return $this->render('PublicationDatasetLink/index.html.twig');
     }
 
     /**
      * List all publinks.
      *
-     * @Route("/list")
-     * @Method("GET")
+     * @Route("/publink/list", name="pelagos_app_ui_publicationdatasetlink_list", methods={"GET"})
      *
      * @return Response A Symfony Response instance.
      */
     public function listAction()
     {
-        return $this->render('PelagosAppBundle:PublicationDatasetLink:linkList.html.twig');
+        return $this->render('PublicationDatasetLink/linkList.html.twig');
     }
 }

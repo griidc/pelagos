@@ -1,36 +1,36 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller;
+namespace App\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Symfony\Component\Routing\Annotation\Route;
+
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-use Pelagos\Exception\InvalidGmlException;
+use App\Exception\InvalidGmlException;
 
-use Pelagos\Util\Geometry;
-use Pelagos\Util\GmlUtil;
+use App\Util\Geometry;
+use App\Util\GmlUtil;
+use App\Util\Metadata;
 
 /**
  * A controller that does GML conversion.
  */
-class GmlController extends Controller
+class GmlController extends AbstractController
 {
     /**
      * Converting gml to wkt.
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("/gmltowkt")
-     *
-     * @Method("POST")
+     * @Route("/gmltowkt", name="pelagos_app_gml_towkt", methods={"POST"})
      *
      * @throws BadRequestHttpException When no GML is given.
      *
@@ -66,9 +66,7 @@ class GmlController extends Controller
      *
      * @param Request $request The Symfony request object.
      *
-     * @Route("/wkttogml")
-     *
-     * @Method("POST")
+     * @Route("/wkttogml", name="pelagos_app_gml_fromwkt", methods={"POST"})
      *
      * @throws BadRequestHttpException When no WKT is given.
      *
@@ -105,7 +103,7 @@ class GmlController extends Controller
      *
      * @return string
      */
-    private function addGMLid($gml)
+    private function addGMLid(string $gml)
     {
         $doc = new \DomDocument('1.0', 'UTF-8');
         $doc->loadXML($gml, LIBXML_NOERROR);
@@ -159,18 +157,17 @@ class GmlController extends Controller
     /**
      * This function validates Gml against OpenGIS schema.
      *
-     * @param Request $request The Symfony request object.
-     * @param string  $schema  Url to remote schema validation cache.
+     * @param Request  $request      The Symfony request object.
+     * @param Metadata $metadataUtil The metadata util.
+     * @param string   $schema       Url to remote schema validation cache.
      *
-     * @Method("POST")
+     * @throws BadRequestHttpException When no GML was given.
      *
-     * @Route("/validategml")
-     *
-     * @throws BadRequestHttpException When no gml is given.
+     * @Route("/validategml", name="pelagos_app_gml_validategml", methods={"POST"})
      *
      * @return JsonResponse A json array response including a boolean,errors array,warnings array.
      */
-    public function validateGml(Request $request, $schema = 'http://schemas.opengis.net/gml/3.2.1/gml.xsd')
+    public function validateGml(Request $request, Metadata $metadataUtil, string $schema = 'http://schemas.opengis.net/gml/3.2.1/gml.xsd')
     {
         $gml = $request->request->get('gml');
         $isValid = false;
@@ -187,7 +184,6 @@ class GmlController extends Controller
 
             $errors = [];
             $warnings = [];
-            $metadataUtil = $this->get('pelagos.util.metadata');
             $analysis = $metadataUtil->validateIso($gml, $schema);
             $errors = array_merge($errors, $analysis['errors']);
             $warnings = array_merge($warnings, $analysis['warnings']);
@@ -211,9 +207,7 @@ class GmlController extends Controller
      *
      * @param Request $request The Symfony request object.
      *
-     * @Method("POST")
-     *
-     * @Route("/validategeometryfromwkt")
+     * @Route("/validategeometryfromwkt", name="pelagos_app_gml_validategeometryfromwkt", methods={"POST"})
      *
      * @throws BadRequestHttpException When no WKT is given.
      *

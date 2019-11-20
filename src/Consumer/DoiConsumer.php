@@ -1,25 +1,24 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Rabbit\Consumer;
+namespace App\Consumer;
 
-use Doctrine\ORM\EntityManager;
-
+use Doctrine\ORM\EntityManagerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 
 use PhpAmqpLib\Message\AMQPMessage;
 
 use Symfony\Bridge\Monolog\Logger;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DOI;
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Entity\DOI;
 
-use Pelagos\Event\EntityEventDispatcher;
+use App\Event\EntityEventDispatcher;
 
-use Pelagos\Util\DOIutil;
+use App\Util\DOIutil;
 
-use Pelagos\Exception\HttpClientErrorException;
-use Pelagos\Exception\HttpServerErrorException;
+use App\Exception\HttpClientErrorException;
+use App\Exception\HttpServerErrorException;
 
 /**
  * A consumer of DOI messages.
@@ -31,7 +30,7 @@ class DoiConsumer implements ConsumerInterface
     /**
      * The entity manager.
      *
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -57,12 +56,12 @@ class DoiConsumer implements ConsumerInterface
     /**
      * Constructor.
      *
-     * @param EntityManager         $entityManager         The entity manager.
-     * @param Logger                $logger                A Monolog logger.
-     * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
+     * @param EntityManagerInterface $entityManager         The entity manager.
+     * @param Logger                 $logger                A Monolog logger.
+     * @param EntityEventDispatcher  $entityEventDispatcher The entity event dispatcher.
      */
     public function __construct(
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         Logger $logger,
         EntityEventDispatcher $entityEventDispatcher
     ) {
@@ -80,9 +79,9 @@ class DoiConsumer implements ConsumerInterface
      */
     public function execute(AMQPMessage $message)
     {
-        // @codingStandardsIgnoreStart
+        // phpcs:disable
         $routingKey = $message->delivery_info['routing_key'];
-
+        // phpcs:enable
         $msgStatus = ConsumerInterface::MSG_ACK;
 
         if (preg_match('/^delete/', $routingKey)) {
@@ -107,7 +106,6 @@ class DoiConsumer implements ConsumerInterface
                 $loggingContext['udi'] = $dataset->getUdi();
             }
 
-            // @codingStandardsIgnoreEnd
             if (preg_match('/^issue/', $routingKey)) {
                 $msgStatus = $this->issueDoi($dataset, $loggingContext);
             } elseif (preg_match('/^update/', $routingKey)) {
@@ -252,7 +250,7 @@ class DoiConsumer implements ConsumerInterface
      *
      * @return integer
      */
-    protected function deleteDoi($doi, array $loggingContext)
+    protected function deleteDoi(string $doi, array $loggingContext)
     {
         // Log processing start.
         $this->logger->info('Attempting to delete DOI', $loggingContext);
@@ -281,7 +279,7 @@ class DoiConsumer implements ConsumerInterface
      *
      * @return boolean
      */
-    private function doiAlreadyExists(Dataset $dataset, $loggingContext): bool
+    private function doiAlreadyExists(Dataset $dataset, array $loggingContext): bool
     {
         $doi = $dataset->getDoi();
         $exceptionType = null;

@@ -1,27 +1,35 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Command;
+namespace App\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Entity\DIF;
+use App\Entity\DOI;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DIF;
-use Pelagos\Entity\DOI;
+use App\Util\DOIutil;
+use App\Util\MailSender;
+use Twig\Environment;
 
 /**
  * This Symfony Command compares dois between griidc and datacite.
  *
- * @see ContainerAwareCommand
+ * @see Command
  */
-class DoiComparisonCommand extends ContainerAwareCommand
+class DoiComparisonCommand extends Command
 {
+    /**
+     * The Command name.
+     *
+     * @var string $defaultName
+     */
+    protected static $defaultName = 'pelagos:dataset-doi:comparison';
+
     /**
      * A value for doi state from Datacite.
      */
@@ -45,15 +53,62 @@ class DoiComparisonCommand extends ContainerAwareCommand
     protected $outOfSyncDoi = array();
 
     /**
+     * A Doctrine ORM EntityManager instance.
+     *
+     * @var EntityManagerInterface $entityManager
+     */
+    protected $entityManager;
+
+    /**
+     * Custom swiftmailer instance.
+     *
+     * @var MailSender
+     */
+    protected $mailer;
+
+    /**
+     * DOI Utility class.
+     *
+     * @var DOIutil
+     */
+    protected $doiUtil;
+
+    /**
+     * Twig environment instance.
+     *
+     * @var Environment
+     */
+    protected $twig;
+
+    /**
+     * Class constructor for dependency injection.
+     *
+     * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
+     * @param DOIutil                $doiUtil       Doi utility class instance.
+     * @param MailSender             $mailer        Custom swiftmailer instance.
+     * @param Environment            $twig          Twig environment variable.
+     */
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        DOIutil $doiUtil,
+        MailSender $mailer,
+        Environment $twig
+    ) {
+        $this->entityManager = $entityManager;
+        $this->mailer = $mailer;
+        $this->doiUtil = $doiUtil;
+        $this->twig = $twig;
+        parent::__construct();
+    }
+
+    /**
      * Configures the current command.
      *
      * @return void
      */
     protected function configure()
     {
-        $this
-            ->setName('dataset-doi:comparison')
-            ->setDescription('DOI comparison tool.');
+        $this->setDescription('DOI comparison tool.');
     }
 
     /**
@@ -66,15 +121,13 @@ class DoiComparisonCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $client = new Client();
         $response = null;
         $doiJson = array();
         $doiData = array();
         $pageNumber = 1;
 
         do {
-            $url = 'https://api.datacite.org/dois?client-id=tdl.griidc&page%5Bnumber%5D=' . $pageNumber . '&page%5Bsize%5D=1000';
-            $body = $this->getRestApiData($client, $url);
+            $body = $this->doiUtil->getDoiCollection($pageNumber);
             $doiJson[$pageNumber] = $body['data'];
             $pageNumber++;
         } while (array_key_exists('next', $body['links']));
@@ -153,7 +206,7 @@ class DoiComparisonCommand extends ContainerAwareCommand
      *
      * @return boolean
      */
-    private function doesKeyExist(array $doiMetadataElementArray, $keySearch): bool
+    private function doesKeyExist(array $doiMetadataElementArray, string $keySearch): bool
     {
         if (!empty($doiMetadataElementArray)) {
             if (array_key_exists($keySearch, $doiMetadataElementArray[0])) {
@@ -162,29 +215,6 @@ class DoiComparisonCommand extends ContainerAwareCommand
         }
 
         return false;
-    }
-
-    /**
-     * Get a list of dois using Datacite REST API.
-     *
-     * @param Client $client Guzzle Http client instance.
-     * @param string $url    Url that needs to be fetched.
-     *
-     * @return array
-     */
-    private function getRestApiData(Client $client, string $url): array
-    {
-        $header = ['Accept' => 'application/vnd.api+json'];
-
-        try {
-            $response = $client->request('get', $url, $header);
-        } catch (GuzzleException $exception) {
-            echo $exception->getMessage();
-        }
-
-        $body = json_decode($response->getBody()->getContents(), true);
-
-        return $body;
     }
 
     /**
@@ -213,7 +243,11 @@ class DoiComparisonCommand extends ContainerAwareCommand
         }
 
         if (!empty($this->outOfSyncDoi)) {
-            $this->sendEmail();
+            $this->mailer->sendEmailMessage(
+                $this->twig->load('Email/data-repository-managers.out-of-sync-doi.email.twig'),
+                array('dois' => $this->outOfSyncDoi),
+                array('griidc@gomri.org' => 'GRIIDC')
+            );
         }
     }
 
@@ -226,8 +260,7 @@ class DoiComparisonCommand extends ContainerAwareCommand
      */
     private function getDataset(string $udi): ? Dataset
     {
-        $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
-        $datasets = $entityManager->getRepository(Dataset::class)->findBy(array(
+        $datasets = $this->entityManager->getRepository(Dataset::class)->findBy(array(
             'udi' => array('udi' => substr($udi, 0, 16))
         ));
 
@@ -449,25 +482,6 @@ class DoiComparisonCommand extends ContainerAwareCommand
                 }
             }
         }
-    }
-
-    /**
-     * To send an email.
-     *
-     * @return void
-     */
-    private function sendEmail(): void
-    {
-        $message = \Swift_Message::newInstance()
-            ->setSubject('DOI Sync Log - List of Dois that are out of sync')
-            ->setFrom(array('griidc@gomri.org' => 'GRIIDC'))
-            ->setTo(array('griidc@gomri.org' => 'GRIIDC'))
-            ->setCharset('UTF-8')
-            ->setBody($this->getContainer()->get('templating')->render(
-                'PelagosAppBundle:Email:data-repository-managers.out-of-sync-doi.email.twig',
-                array('dois' => $this->outOfSyncDoi)
-            ), 'text/html');
-        $this->getContainer()->get('mailer')->send($message);
     }
 
     /**

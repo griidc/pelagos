@@ -1,13 +1,12 @@
-{% extends "PelagosAppBundle:template:UI.html.twig" %}
+{% extends "template/UI.html.twig" %}
 
 {% block javascripts %}
     {{ parent() }}
 
-    <script type="text/javascript" src="{{ asset('build/js/ResearchGroup.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('build/js/entity/ResearchGroup.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/ResearchGroup.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/entity/ResearchGroup.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-    <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+
 {% endblock %}
 
 {% block body %}
@@ -35,12 +34,12 @@
                 <td style="padding:10px;" width="50%" valign="top">
                     <div id="orgdetails">
                         <h2>Research Group Details</h2>
-                        {% include '@templates/forms/ResearchGroup.html.twig' %}
+                        {% include 'template/forms/ResearchGroup.html.twig' %}
                     </div>
                 </td>
                 <td width="25%" valign="top">
                     <div id="leadership">
-                        {% include '@templates/PersonResearchGroupLeadership.html.twig' %}
+                        {% include 'template/PersonResearchGroupLeadership.html.twig' %}
                     </div>
                 </td>
             </tr>
@@ -60,7 +59,7 @@
                         <td>
                             <div>
                                 <p>
-                                    {% include '@templates/forms/PersonResearchGroup.html.twig' with {'PersonResearchGroup': PersonResearchGroup, 'form' : PersonResearchGroupForms[PersonResearchGroup.getId], 'editlabel' : PersonResearchGroupEditLabel[PersonResearchGroup.getId]}%}
+                                    {% include 'template/forms/PersonResearchGroup.html.twig' with {'PersonResearchGroup': PersonResearchGroup, 'form' : PersonResearchGroupForms[PersonResearchGroup.getId], 'editlabel' : PersonResearchGroupEditLabel[PersonResearchGroup.getId]}%}
                                 </p>
                             </div>
                         </td>
@@ -72,7 +71,7 @@
                     <td>
                         <div class="addForm">
                             <p>
-                                {% include '@templates/forms/PersonResearchGroup.html.twig' with {'PersonResearchGroup': newResearchGroupPerson, 'form' : newResearchGroupPersonForm, 'addForm' : true }%}
+                                {% include 'template/forms/PersonResearchGroup.html.twig' with {'PersonResearchGroup': newResearchGroupPerson, 'form' : newResearchGroupPersonForm, 'addForm' : true }%}
                             </p>
                         </div>
                     </td>
@@ -80,7 +79,7 @@
             {% endif %}
             </table>
             {% if newResearchGroupPerson is defined and is_granted('CAN_CREATE', newResearchGroupPerson) %}
-                <img class="addimg" src="{{ asset('build/images/add.png') }}">
+                <img class="addimg" src="{{ asset('images/add.png') }}">
             {% endif %}
         </div>
     </div>

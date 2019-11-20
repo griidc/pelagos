@@ -1,19 +1,9 @@
 <?php
-/**
- * Verifies that a @throws tag exists for a function that throws exceptions.
- * Verifies the number of @throws tags and the number of throw tokens matches.
- * Verifies the exception type.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- */
+namespace GRIIDC\Sniffs\Commenting;
 
-if (class_exists('PHP_CodeSniffer_Standards_AbstractScopeSniff', true) === false) {
-    $error = 'Class PHP_CodeSniffer_Standards_AbstractScopeSniff not found';
-    throw new PHP_CodeSniffer_Exception($error);
-}
+use PHP_CodeSniffer\Standards\Squiz\Sniffs\Commenting\FunctionCommentThrowTagSniff as SquizFunctionCommentThrowTagSniff;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Files\File;
 
 /**
  * Verifies that a @throws tag exists for a function that throws exceptions.
@@ -21,22 +11,9 @@ if (class_exists('PHP_CodeSniffer_Standards_AbstractScopeSniff', true) === false
  * Verifies the exception type.
  *
  * Based on Squiz_Sniffs_Commenting_FunctionCommentThrowTagSniff
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  */
-class GRIIDC_Sniffs_Commenting_FunctionCommentThrowTagSniff extends PHP_CodeSniffer_Standards_AbstractScopeSniff
+class FunctionCommentThrowTagSniff extends SquizFunctionCommentThrowTagSniff
 {
-
-
-    /**
-     * Constructs a Squiz_Sniffs_Commenting_FunctionCommentThrowTagSniff.
-     */
-    public function __construct()
-    {
-        parent::__construct(array(T_FUNCTION), array(T_THROW));
-
-    }//end __construct()
 
 
     /**
@@ -48,7 +25,7 @@ class GRIIDC_Sniffs_Commenting_FunctionCommentThrowTagSniff extends PHP_CodeSnif
      *
      * @return void
      */
-    protected function processTokenWithinScope(PHP_CodeSniffer_File $phpcsFile, $stackPtr, $currScope)
+    protected function processTokenWithinScope(File $phpcsFile, $stackPtr, $currScope)
     {
         // Is this the first throw token within the current function scope?
         // If so, we have to validate other throw tokens within the same scope.

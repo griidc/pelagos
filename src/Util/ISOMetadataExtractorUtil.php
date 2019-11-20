@@ -1,15 +1,15 @@
 <?php
 
-namespace Pelagos\Util;
+namespace App\Util;
 
 use Doctrine\ORM\EntityManager;
 
-use Pelagos\Entity\DataCenter;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DistributionPoint;
-use Pelagos\Entity\Person;
-use Pelagos\Entity\PersonDatasetSubmissionDatasetContact;
-use Pelagos\Entity\PersonDatasetSubmissionMetadataContact;
+use App\Entity\DataCenter;
+use App\Entity\DatasetSubmission;
+use App\Entity\DistributionPoint;
+use App\Entity\Person;
+use App\Entity\PersonDatasetSubmissionDatasetContact;
+use App\Entity\PersonDatasetSubmissionMetadataContact;
 
 /**
  * A utility class for extracting information from ISO metadata.
@@ -79,7 +79,7 @@ class ISOMetadataExtractorUtil
      *
      * @return void
      */
-    protected static function setIfHas(DatasetSubmission &$ds, $setter, $value)
+    protected static function setIfHas(DatasetSubmission &$ds, string $setter, $value)
     {
         if (!empty($value)) {
             try {
@@ -97,7 +97,7 @@ class ISOMetadataExtractorUtil
      * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
      * @param EntityManager     $em  An entity manager.
      *
-     * @return Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
+     * @return array Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
      */
     public static function get1stEmailAddressesFrom1stPointOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
     {
@@ -114,14 +114,14 @@ class ISOMetadataExtractorUtil
         if (!empty($pointsOfContact)) {
             $pointOfContact = $pointsOfContact[0];
 
-                // for this POC get the 1st email addresses
-                $query = './gmd:CI_ResponsibleParty' .
-                    '/gmd:contactInfo' .
-                    '/gmd:CI_Contact' .
-                    '/gmd:address' .
-                    '/gmd:CI_Address' .
-                    '/gmd:electronicMailAddress' .
-                    '/gco:CharacterString';
+            // for this POC get the 1st email addresses
+            $query = './gmd:CI_ResponsibleParty' .
+                '/gmd:contactInfo' .
+                '/gmd:CI_Contact' .
+                '/gmd:address' .
+                '/gmd:CI_Address' .
+                '/gmd:electronicMailAddress' .
+                '/gco:CharacterString';
 
             $targetEmailAddress = self::querySingle($pointOfContact, $query);
         }
@@ -135,7 +135,7 @@ class ISOMetadataExtractorUtil
      * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
      * @param EntityManager     $em  An entity manager.
      *
-     * @return Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
+     * @return array Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
      */
     public static function getAllEmailAddressesForAllPointsOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
     {
@@ -178,16 +178,16 @@ class ISOMetadataExtractorUtil
      * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
      * @param EntityManager     $em  An entity manager.
      *
-     * @return Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
+     * @return array Array of PersonDatasetSubmissionDatasetContacts, or empty array if none.
      */
     public static function extractPointsOfContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
     {
         $personDatasetSubmissionDatasetContacts = array();
 
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:pointOfContact';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:pointOfContact';
 
         $pointsOfContact = @$xml->xpath($query);
 
@@ -195,12 +195,12 @@ class ISOMetadataExtractorUtil
             foreach ($pointsOfContact as $pointOfContact) {
                 // Find Person
                 $query = './gmd:CI_ResponsibleParty' .
-                         '/gmd:contactInfo' .
-                         '/gmd:CI_Contact' .
-                         '/gmd:address' .
-                         '/gmd:CI_Address' .
-                         '/gmd:electronicMailAddress' .
-                         '/gco:CharacterString';
+                    '/gmd:contactInfo' .
+                    '/gmd:CI_Contact' .
+                    '/gmd:address' .
+                    '/gmd:CI_Address' .
+                    '/gmd:electronicMailAddress' .
+                    '/gco:CharacterString';
 
                 $email = self::querySingle($pointOfContact, $query);
                 $personArray = $em->getRepository(Person::class)->findBy(
@@ -211,8 +211,8 @@ class ISOMetadataExtractorUtil
                     $person = $personArray[0];
                     // Find Role
                     $query = './gmd:CI_ResponsibleParty' .
-                             '/gmd:role' .
-                             '/gmd:CI_RoleCode';
+                        '/gmd:role' .
+                        '/gmd:CI_RoleCode';
 
                     $role = self::querySingle($pointOfContact, $query);
                 } else {
@@ -247,14 +247,14 @@ class ISOMetadataExtractorUtil
     protected static function extractMetadataContact(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:contact[1]' .
-                 '/gmd:CI_ResponsibleParty' .
-                 '/gmd:contactInfo' .
-                 '/gmd:CI_Contact' .
-                 '/gmd:address' .
-                 '/gmd:CI_Address' .
-                 '/gmd:electronicMailAddress' .
-                 '/gco:CharacterString';
+            '/gmd:contact[1]' .
+            '/gmd:CI_ResponsibleParty' .
+            '/gmd:contactInfo' .
+            '/gmd:CI_Contact' .
+            '/gmd:address' .
+            '/gmd:CI_Address' .
+            '/gmd:electronicMailAddress' .
+            '/gco:CharacterString';
 
         $email = self::querySingle($xml, $query);
 
@@ -269,10 +269,10 @@ class ISOMetadataExtractorUtil
         }
 
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:contact[1]' .
-                 '/gmd:CI_ResponsibleParty' .
-                 '/gmd:role' .
-                 '/gmd:CI_RoleCode';
+            '/gmd:contact[1]' .
+            '/gmd:CI_ResponsibleParty' .
+            '/gmd:role' .
+            '/gmd:CI_RoleCode';
 
         $role = self::querySingle($xml, $query);
 
@@ -297,16 +297,16 @@ class ISOMetadataExtractorUtil
      * @param DatasetSubmission $ds  A Pelagos DatasetSubmission instance.
      * @param EntityManager     $em  An entity manager.
      *
-     * @return Array of DistributionPoint, or empty array if none.
+     * @return array Array of DistributionPoint, or empty array if none.
      */
     public static function extractDistributionPoint(\SimpleXmlElement $xml, DatasetSubmission $ds, EntityManager $em)
     {
         $distributionPoints = array();
 
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:distributionInfo' .
-                 '/gmd:MD_Distribution' .
-                 '/gmd:distributor';
+            '/gmd:distributionInfo' .
+            '/gmd:MD_Distribution' .
+            '/gmd:distributor';
 
         $distributors = @$xml->xpath($query);
 
@@ -314,14 +314,14 @@ class ISOMetadataExtractorUtil
             foreach ($distributors as $distributor) {
                 // Find distributor by Email
                 $query = './gmd:MD_Distributor' .
-                         '/gmd:distributorContact' .
-                         '/gmd:CI_ResponsibleParty' .
-                         '/gmd:contactInfo' .
-                         '/gmd:CI_Contact' .
-                         '/gmd:address' .
-                         '/gmd:CI_Address' .
-                         '/gmd:electronicMailAddress' .
-                         '/gco:CharacterString';
+                    '/gmd:distributorContact' .
+                    '/gmd:CI_ResponsibleParty' .
+                    '/gmd:contactInfo' .
+                    '/gmd:CI_Contact' .
+                    '/gmd:address' .
+                    '/gmd:CI_Address' .
+                    '/gmd:electronicMailAddress' .
+                    '/gco:CharacterString';
 
                 $email = strtolower(self::querySingle($distributor, $query));
 
@@ -356,21 +356,21 @@ class ISOMetadataExtractorUtil
 
                 // Find Role
                 $query = './gmd:MD_Distributor' .
-                         '/gmd:distributorContact' .
-                         '/gmd:CI_ResponsibleParty' .
-                         '/gmd:role' .
-                         '/gmd:CI_RoleCode';
+                    '/gmd:distributorContact' .
+                    '/gmd:CI_ResponsibleParty' .
+                    '/gmd:role' .
+                    '/gmd:CI_RoleCode';
 
-                    $roleCode = self::querySingle($distributor, $query);
+                $roleCode = self::querySingle($distributor, $query);
 
                 // Find Distribution URL
                 $query = './gmd:MD_Distributor' .
-                         '/gmd:distributorTransferOptions' .
-                         '/gmd:MD_DigitalTransferOptions' .
-                         '/gmd:onLine' .
-                         '/gmd:CI_OnlineResource' .
-                         '/gmd:linkage' .
-                         '/gmd:URL';
+                    '/gmd:distributorTransferOptions' .
+                    '/gmd:MD_DigitalTransferOptions' .
+                    '/gmd:onLine' .
+                    '/gmd:CI_OnlineResource' .
+                    '/gmd:linkage' .
+                    '/gmd:URL';
 
                 $distributionUrl = self::querySingle($distributor, $query);
 
@@ -400,12 +400,12 @@ class ISOMetadataExtractorUtil
     protected static function extractTitle(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:citation' .
-                 '/gmd:CI_Citation' .
-                 '/gmd:title' .
-                 '/gco:CharacterString';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:citation' .
+            '/gmd:CI_Citation' .
+            '/gmd:title' .
+            '/gco:CharacterString';
 
         return self::querySingle($xml, $query);
     }
@@ -420,12 +420,12 @@ class ISOMetadataExtractorUtil
     protected static function extractShortTitle(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:citation' .
-                 '/gmd:CI_Citation' .
-                 '/gmd:alternateTitle' .
-                 '/gco:CharacterString';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:citation' .
+            '/gmd:CI_Citation' .
+            '/gmd:alternateTitle' .
+            '/gco:CharacterString';
 
         return self::querySingle($xml, $query);
     }
@@ -440,10 +440,10 @@ class ISOMetadataExtractorUtil
     protected static function extractAbstract(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:abstract' .
-                 '/gco:CharacterString';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:abstract' .
+            '/gco:CharacterString';
 
         return self::querySingle($xml, $query);
     }
@@ -458,10 +458,10 @@ class ISOMetadataExtractorUtil
     protected static function extractPurpose(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:purpose' .
-                 '/gco:CharacterString';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:purpose' .
+            '/gco:CharacterString';
 
         return self::querySingle($xml, $query);
     }
@@ -476,10 +476,10 @@ class ISOMetadataExtractorUtil
     protected static function extractSuppParams(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:supplementalInformation' .
-                 '/gco:CharacterString';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:supplementalInformation' .
+            '/gco:CharacterString';
 
         return self::getDelimitedItem(self::querySingle($xml, $query), 0);
     }
@@ -494,10 +494,10 @@ class ISOMetadataExtractorUtil
     protected static function extractSuppMethods(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:supplementalInformation' .
-                 '/gco:CharacterString';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:supplementalInformation' .
+            '/gco:CharacterString';
 
         return self::getDelimitedItem(self::querySingle($xml, $query), 1);
     }
@@ -512,10 +512,10 @@ class ISOMetadataExtractorUtil
     protected static function extractSuppInstruments(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:supplementalInformation' .
-                 '/gco:CharacterString';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:supplementalInformation' .
+            '/gco:CharacterString';
 
         return self::getDelimitedItem(self::querySingle($xml, $query), 2);
     }
@@ -530,10 +530,10 @@ class ISOMetadataExtractorUtil
     protected static function extractSuppSampScalesRates(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:supplementalInformation' .
-                 '/gco:CharacterString';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:supplementalInformation' .
+            '/gco:CharacterString';
 
 
         return self::getDelimitedItem(self::querySingle($xml, $query), 3);
@@ -549,10 +549,10 @@ class ISOMetadataExtractorUtil
     protected static function extractSuppErrorAnalysis(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:supplementalInformation' .
-                 '/gco:CharacterString';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:supplementalInformation' .
+            '/gco:CharacterString';
 
         return self::getDelimitedItem(self::querySingle($xml, $query), 4);
     }
@@ -567,10 +567,10 @@ class ISOMetadataExtractorUtil
     protected static function extractSuppProvenance(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:supplementalInformation' .
-                 '/gco:CharacterString';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:supplementalInformation' .
+            '/gco:CharacterString';
 
         return self::getDelimitedItem(self::querySingle($xml, $query), 5);
     }
@@ -585,14 +585,14 @@ class ISOMetadataExtractorUtil
     protected static function extractReferenceDate(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:citation' .
-                 '/gmd:CI_Citation' .
-                 '/gmd:date' .
-                 '/gmd:CI_Date' .
-                 '/gmd:date' .
-                 '/gco:Date';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:citation' .
+            '/gmd:CI_Citation' .
+            '/gmd:date' .
+            '/gmd:CI_Date' .
+            '/gmd:date' .
+            '/gco:Date';
 
         $date = self::querySingle($xml, $query);
         if (null !== $date and preg_match('/\d\d\d\d-\d{1,2}-\d{1,2}/', $date)) {
@@ -613,14 +613,14 @@ class ISOMetadataExtractorUtil
     protected static function extractReferenceType(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:citation' .
-                 '/gmd:CI_Citation' .
-                 '/gmd:date' .
-                 '/gmd:CI_Date' .
-                 '/gmd:dateType' .
-                 '/gmd:CI_DateTypeCode';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:citation' .
+            '/gmd:CI_Citation' .
+            '/gmd:date' .
+            '/gmd:CI_Date' .
+            '/gmd:dateType' .
+            '/gmd:CI_DateTypeCode';
 
         return self::querySingle($xml, $query);
     }
@@ -635,14 +635,14 @@ class ISOMetadataExtractorUtil
     protected static function extractThemeKeywords(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:descriptiveKeywords' .
-                 '/gmd:MD_Keywords' .
-                 '/gmd:type[descendant::text()="theme"]' .
-                 '/parent::gmd:MD_Keywords' .
-                 '/gmd:keyword' .
-                 '/gco:CharacterString';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:descriptiveKeywords' .
+            '/gmd:MD_Keywords' .
+            '/gmd:type[descendant::text()="theme"]' .
+            '/parent::gmd:MD_Keywords' .
+            '/gmd:keyword' .
+            '/gco:CharacterString';
 
         return self::queryMultiple($xml, $query);
     }
@@ -657,14 +657,14 @@ class ISOMetadataExtractorUtil
     protected static function extractPlaceKeywords(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:descriptiveKeywords' .
-                 '/gmd:MD_Keywords' .
-                 '/gmd:type[descendant::text()="place"]' .
-                 '/parent::gmd:MD_Keywords' .
-                 '/gmd:keyword' .
-                 '/gco:CharacterString';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:descriptiveKeywords' .
+            '/gmd:MD_Keywords' .
+            '/gmd:type[descendant::text()="place"]' .
+            '/parent::gmd:MD_Keywords' .
+            '/gmd:keyword' .
+            '/gco:CharacterString';
 
         return self::queryMultiple($xml, $query);
     }
@@ -679,10 +679,10 @@ class ISOMetadataExtractorUtil
     protected static function extractTopicKeywords(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:topicCategory' .
-                 '/gmd:MD_TopicCategoryCode';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:topicCategory' .
+            '/gmd:MD_TopicCategoryCode';
 
         return self::queryMultiple($xml, $query);
     }
@@ -697,14 +697,14 @@ class ISOMetadataExtractorUtil
     protected static function extractSpatialExtent(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:extent' .
-                 '/gmd:EX_Extent' .
-                 '/gmd:geographicElement' .
-                 '/gmd:EX_BoundingPolygon' .
-                 '/gmd:polygon' .
-                 '/child::*';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:extent' .
+            '/gmd:EX_Extent' .
+            '/gmd:geographicElement' .
+            '/gmd:EX_BoundingPolygon' .
+            '/gmd:polygon' .
+            '/child::*';
 
         return self::querySingleGml($xml, $query);
     }
@@ -719,12 +719,12 @@ class ISOMetadataExtractorUtil
     protected static function extractSpatialExtentDescription(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:extent' .
-                 '/gmd:EX_Extent' .
-                 '/gmd:description' .
-                 '/gco:CharacterString';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:extent' .
+            '/gmd:EX_Extent' .
+            '/gmd:description' .
+            '/gco:CharacterString';
 
         return self::querySingle($xml, $query);
     }
@@ -739,15 +739,15 @@ class ISOMetadataExtractorUtil
     protected static function extractTemporalExtentDesc(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:extent' .
-                 '/gmd:EX_Extent' .
-                 '/gmd:temporalElement' .
-                 '/gmd:EX_TemporalExtent' .
-                 '/gmd:extent/' .
-                 '/gml:TimePeriod' .
-                 '/gml:description';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:extent' .
+            '/gmd:EX_Extent' .
+            '/gmd:temporalElement' .
+            '/gmd:EX_TemporalExtent' .
+            '/gmd:extent/' .
+            '/gml:TimePeriod' .
+            '/gml:description';
 
         $temporalExtentDescription = self::querySingle($xml, $query);
         $groundCondition = preg_match('/ground.*condition/i', $temporalExtentDescription);
@@ -775,15 +775,15 @@ class ISOMetadataExtractorUtil
     protected static function extractTemporalExtentBeginPosition(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:extent' .
-                 '/gmd:EX_Extent' .
-                 '/gmd:temporalElement' .
-                 '/gmd:EX_TemporalExtent' .
-                 '/gmd:extent/' .
-                 '/gml:TimePeriod' .
-                 '/gml:beginPosition';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:extent' .
+            '/gmd:EX_Extent' .
+            '/gmd:temporalElement' .
+            '/gmd:EX_TemporalExtent' .
+            '/gmd:extent/' .
+            '/gml:TimePeriod' .
+            '/gml:beginPosition';
 
         $date = self::querySingle($xml, $query);
         if (null !== $date and preg_match('/\d\d\d\d-\d{1,2}-\d{1,2}/', $date)) {
@@ -804,15 +804,15 @@ class ISOMetadataExtractorUtil
     protected static function extractTemporalExtentEndPosition(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:identificationInfo' .
-                 '/gmd:MD_DataIdentification' .
-                 '/gmd:extent' .
-                 '/gmd:EX_Extent' .
-                 '/gmd:temporalElement' .
-                 '/gmd:EX_TemporalExtent' .
-                 '/gmd:extent/' .
-                 '/gml:TimePeriod' .
-                 '/gml:endPosition';
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:extent' .
+            '/gmd:EX_Extent' .
+            '/gmd:temporalElement' .
+            '/gmd:EX_TemporalExtent' .
+            '/gmd:extent/' .
+            '/gml:TimePeriod' .
+            '/gml:endPosition';
 
         $date = self::querySingle($xml, $query);
         if (null !== $date and preg_match('/\d\d\d\d-\d{1,2}-\d{1,2}/', $date)) {
@@ -833,14 +833,14 @@ class ISOMetadataExtractorUtil
     protected static function extractDistributionFormatName(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:distributionInfo' .
-                 '/gmd:MD_Distribution' .
-                 '/gmd:distributor' .
-                 '/gmd:MD_Distributor' .
-                 '/gmd:distributorFormat' .
-                 '/gmd:MD_Format' .
-                 '/gmd:name' .
-                 '/gco:CharacterString';
+            '/gmd:distributionInfo' .
+            '/gmd:MD_Distribution' .
+            '/gmd:distributor' .
+            '/gmd:MD_Distributor' .
+            '/gmd:distributorFormat' .
+            '/gmd:MD_Format' .
+            '/gmd:name' .
+            '/gco:CharacterString';
 
         return self::querySingle($xml, $query);
     }
@@ -855,14 +855,14 @@ class ISOMetadataExtractorUtil
     protected static function extractFileDecompressionTechnique(\SimpleXmlElement $xml)
     {
         $query = '/gmi:MI_Metadata' .
-                 '/gmd:distributionInfo' .
-                 '/gmd:MD_Distribution' .
-                 '/gmd:distributor' .
-                 '/gmd:MD_Distributor' .
-                 '/gmd:distributorFormat' .
-                 '/gmd:MD_Format' .
-                 '/gmd:fileDecompressionTechnique' .
-                 '/gco:CharacterString';
+            '/gmd:distributionInfo' .
+            '/gmd:MD_Distribution' .
+            '/gmd:distributor' .
+            '/gmd:MD_Distributor' .
+            '/gmd:distributorFormat' .
+            '/gmd:MD_Format' .
+            '/gmd:fileDecompressionTechnique' .
+            '/gco:CharacterString';
 
         return self::querySingle($xml, $query);
     }
@@ -875,7 +875,7 @@ class ISOMetadataExtractorUtil
      *
      * @return string|null Item queried in xpath.
      */
-    protected static function querySingle(\SimpleXmlElement $xml, $xpath)
+    protected static function querySingle(\SimpleXmlElement $xml, string $xpath)
     {
         $query = @$xml->xpath($xpath);
 
@@ -912,7 +912,7 @@ class ISOMetadataExtractorUtil
      *
      * @return string|null Item queried in xpath.
      */
-    protected static function querySingleGml(\SimpleXmlElement $xml, $xpath)
+    protected static function querySingleGml(\SimpleXmlElement $xml, string $xpath)
     {
         $query = @$xml->xpath($xpath);
 
@@ -936,7 +936,7 @@ class ISOMetadataExtractorUtil
      *
      * @return array Result of items queried in xpath.
      */
-    protected static function queryMultiple(\SimpleXmlElement $xml, $xpath)
+    protected static function queryMultiple(\SimpleXmlElement $xml, string $xpath)
     {
         $query = @$xml->xpath($xpath);
 
@@ -958,12 +958,12 @@ class ISOMetadataExtractorUtil
     /**
      * Picks an item from a bar delimited list.
      *
-     * @param string  $list   A bar delimited list of strings.
-     * @param integer $offset The array offset of the desired position in the list.
+     * @param string|null $list   A bar delimited list of strings.
+     * @param integer     $offset The array offset of the desired position in the list.
      *
      * @return string|null The item at the given offset, or null.
      */
-    private static function getDelimitedItem($list, $offset)
+    private static function getDelimitedItem(?string $list, int $offset)
     {
         // If null input given for list, return null.
         if (null === $list) {
@@ -1026,7 +1026,7 @@ class ISOMetadataExtractorUtil
      *
      * @return null|string
      */
-    private static function getXmlAttribute(\SimpleXMLElement $xmlObject, $attribute)
+    private static function getXmlAttribute(\SimpleXMLElement $xmlObject, string $attribute)
     {
         if (isset($xmlObject[$attribute])) {
             return (string) $xmlObject[$attribute];

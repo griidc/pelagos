@@ -1,13 +1,18 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Command;
+namespace App\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\Person;
+
+use App\Entity\DatasetSubmission;
+use App\Entity\Dataset;
+use App\Entity\Person;
+
+use App\Util\RabbitPublisher;
 
 /**
  * This command marks a dataset as cold-stored.
@@ -16,8 +21,41 @@ use Pelagos\Entity\Person;
  * supplied manifest file, then re-triggers filer/hasher in an expected way for
  * a replaced datafile.
  */
-class ColdStorageFlagCommand extends ContainerAwareCommand
+class ColdStorageFlagCommand extends Command
 {
+    /**
+     * The Command name.
+     *
+     * @var string $defaultName
+     */
+    protected static $defaultName = 'pelagos:dataset-flag-coldstorage';
+
+    /**
+     * A Doctrine ORM EntityManager instance.
+     *
+     * @var EntityManagerInterface $entityManager
+     */
+    protected $entityManager;
+
+    /**
+     * Utility Rabbitmq producer instance.
+     *
+     * @var RabbitPublisher $publisher
+     */
+    protected $publisher;
+
+    /**
+     * Class constructor for dependency injection.
+     *
+     * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
+     * @param RabbitPublisher        $publisher     A Rabbitmq producer instance.
+     */
+    public function __construct(EntityManagerInterface $entityManager, RabbitPublisher $publisher)
+    {
+        $this->entityManager = $entityManager;
+        $this->publisher = $publisher;
+        parent::__construct();
+    }
 
     /**
      * Symfony command config section.
@@ -27,7 +65,6 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('dataset:flag-coldstorage')
             ->setDescription('Marks dataset in input file is cold-stored and updates datafile')
             ->addArgument('infofile', InputArgument::REQUIRED, 'Filename of the coldinfo-formatted textfile required.');
     }
@@ -47,8 +84,7 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
-        $systemPerson = $entityManager->find(Person::class, 0);
+        $systemPerson = $this->entityManager->find(Person::class, 0);
 
         $infoFileName = $input->getArgument('infofile');
         if (file_exists($infoFileName)) {
@@ -70,7 +106,7 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
                 $output->writeln("stubFileName: ($stubFileName)");
                 $output->writeln("Attempting to flag $udi as Cold Stored.");
 
-                $datasets = $entityManager->getRepository('Pelagos\Entity\Dataset')->findBy(array('udi' => $udi));
+                $datasets = $this->entityManager->getRepository(Dataset::class)->findBy(array('udi' => $udi));
 
                 if (count($datasets) == 0) {
                     throw new \Exception('Could not find a dataset with the udi provided.');
@@ -99,13 +135,14 @@ class ColdStorageFlagCommand extends ContainerAwareCommand
                     $datasetSubmission->setDatasetFileTransferType(DatasetSubmission::TRANSFER_TYPE_SFTP);
                     $datasetSubmission->setDatasetFileUri($stubFileName);
 
-                    $entityManager->persist($datasetSubmission);
-                    $entityManager->flush($datasetSubmission);
+                    $this->entityManager->persist($datasetSubmission);
+                    $this->entityManager->flush($datasetSubmission);
 
                     //Use rabbitmq to process dataset file and persist the file details. This will
                     //Trigger filer and hasher (via filer) to complete the process.
-                    $this->getContainer()->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(
+                    $this->publisher->publish(
                         $dataset->getDatasetSubmission()->getId(),
+                        RabbitPublisher::DATASET_SUBMISSION_PRODUCER,
                         'dataset.' . DatasetSubmission::TRANSFER_TYPE_SFTP
                     );
                 }

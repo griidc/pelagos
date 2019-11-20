@@ -1,17 +1,16 @@
 <?php
 
+namespace App\Consumer;
 
-namespace Pelagos\Bundle\AppBundle\Rabbit\Consumer;
-
-use Doctrine\ORM\EntityManager;
-
+use Doctrine\ORM\EntityManagerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Symfony\Bridge\Monolog\Logger;
-use Pelagos\Util\DataStore;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\Dataset;
+
+use App\Util\DataStore;
+use App\Entity\DatasetSubmission;
+use App\Entity\Dataset;
 
 /**
  * A consumer of dataset hash file request messages.
@@ -23,11 +22,10 @@ use Pelagos\Entity\Dataset;
  */
 class DatasetFileHasherConsumer implements ConsumerInterface
 {
-
     /**
      * The entity manager.
      *
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -48,12 +46,12 @@ class DatasetFileHasherConsumer implements ConsumerInterface
     /**
      * Constructor.
      *
-     * @param EntityManager $entityManager The entity manager.
-     * @param DataStore     $dataStore     The data store service.
-     * @param Logger        $logger        A Monolog logger.
+     * @param EntityManagerInterface $entityManager The entity manager.
+     * @param DataStore              $dataStore     The data store service.
+     * @param Logger                 $logger        A Monolog logger.
      */
     public function __construct(
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         DataStore $dataStore,
         Logger $logger
     ) {

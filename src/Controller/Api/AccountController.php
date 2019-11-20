@@ -1,19 +1,22 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\Api;
+namespace App\Controller\Api;
 
-use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\Routing\Annotation\Route;
+
+use FOS\RestBundle\Controller\Annotations\View;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-
-use Pelagos\Entity\Account;
-use Pelagos\Bundle\AppBundle\Security\AccountVoter;
 
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
+use App\Entity\Account;
+use App\Security\Voter\AccountVoter;
+use App\Util\POSIXifyAccount;
 
 /**
  * The Account API controller.
@@ -44,13 +47,18 @@ class AccountController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/{id}/incoming-directory")
+     * @Route(
+     *     "/api/account/{id}/incoming-directory",
+     *     name="pelagos_api_account_get_incoming_directory",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return array The incoming directory.
      */
-    public function getIncomingDirectoryAction(Request $request, $id)
+    public function getIncomingDirectoryAction(Request $request, int $id)
     {
         if ('self' == $id) {
             if (!$this->getUser() instanceof Account) {
@@ -92,7 +100,7 @@ class AccountController extends EntityController
      *
      * @return array
      */
-    protected function readDirectory($baseDirectory, $subDirectory = null)
+    protected function readDirectory(string $baseDirectory, string $subDirectory = null)
     {
         if (preg_match('/^\./', $subDirectory)) {
             throw new BadRequestHttpException(
@@ -147,8 +155,10 @@ class AccountController extends EntityController
     /**
      * Request a user to be converted to POSIX.
      *
-     * @throws BadRequestHttpException In event POSIX cannot be requested.
-     * @throws AccessDeniedException   If user isn't logged in or does not have an account.
+     * @param POSIXifyAccount $posixifyAccount Posixify account instance.
+     *
+     * @throws AccessDeniedException   When the user is not logged in.
+     * @throws BadRequestHttpException When there was a problem.
      *
      * @ApiDoc(
      *   section = "Account",
@@ -159,13 +169,18 @@ class AccountController extends EntityController
      *   }
      * )
      *
-     * @Rest\Patch("/self/make-posix")
+     * @Route(
+     *     "/api/account/self/make-posix",
+     *     name="pelagos_api_account_make_posix",
+     *     methods={"PATCH"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
-     * @return Response A response object with an empty body and a "no content" status code.
+     * @return \Symfony\Component\HttpFoundation\Response A response object with an empty body and a "no content" status code.
      */
-    public function makePosixAction()
+    public function makePosixAction(POSIXifyAccount $posixifyAccount)
     {
         if (!($this->getUser() instanceof Account)) {
             throw new AccessDeniedException('User is either not logged in or does not have an account');
@@ -173,7 +188,7 @@ class AccountController extends EntityController
 
         // Call utility class to POSIX-enable this Account.
         try {
-            $this->get('pelagos.util.posixify_account')->POSIXifyAccount($this->getUser());
+            $posixifyAccount->POSIXifyAccount($this->getUser());
         } catch (\Exception $e) {
             throw new BadRequestHttpException(
                 'There was a problem. '

@@ -1,10 +1,10 @@
-{% extends "PelagosAppBundle:template:UI.html.twig" %}
+{% extends "template/UI.html.twig" %}
 {% block title %}Dataset Publication Link{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
 
-    <link href="{{ asset('build/css/publink.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/publink.css') }}" rel="stylesheet" />
 {% endblock %}
 
 {% block javascripts %}
@@ -13,10 +13,9 @@
     {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js"></script>
 
-        <script type="text/javascript" src="{{ asset('build/js/publink.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('js/publink.js') }}"></script>
 
-        <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-        <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+
     {% endif %}
 {% endblock %}
 

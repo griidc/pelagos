@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Dataset Entity class.
  *
- * @ORM\Entity(repositoryClass="Pelagos\Entity\DatasetRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\DatasetRepository")
  */
 class Dataset extends Entity
 {
@@ -211,11 +211,11 @@ class Dataset extends Entity
     /**
      * Sets the UDI for this Dataset.
      *
-     * @param string $udi The UDI for this Dataset.
+     * @param string|null $udi The UDI for this Dataset.
      *
      * @return void
      */
-    public function setUdi($udi)
+    public function setUdi(?string $udi)
     {
         $this->udi = $udi;
     }
@@ -431,7 +431,7 @@ class Dataset extends Entity
      *
      * @return void
      */
-    public function setIdentifiedStatus($identifiedStatus)
+    public function setIdentifiedStatus(int $identifiedStatus)
     {
         $this->identifiedStatus = $identifiedStatus;
     }
@@ -453,7 +453,7 @@ class Dataset extends Entity
      *
      * @return void
      */
-    public function setDatasetSubmissionStatus($datasetSubmissionStatus)
+    public function setDatasetSubmissionStatus(int $datasetSubmissionStatus)
     {
         $this->datasetSubmissionStatus = $datasetSubmissionStatus;
     }
@@ -475,7 +475,7 @@ class Dataset extends Entity
      *
      * @return void
      */
-    public function setDatasetStatus($datasetStatus)
+    public function setDatasetStatus(string $datasetStatus)
     {
         $this->datasetStatus = $datasetStatus;
     }
@@ -497,7 +497,7 @@ class Dataset extends Entity
      *
      * @return void
      */
-    public function setAvailabilityStatus($availabilityStatus)
+    public function setAvailabilityStatus(int $availabilityStatus)
     {
         $this->availabilityStatus = $availabilityStatus;
     }
@@ -543,11 +543,11 @@ class Dataset extends Entity
     /**
      * Sets the issue tracking ticket for this Dataset.
      *
-     * @param string $issueTrackingTicket The identifier for an issue tracking ticket related to this Dataset.
+     * @param string|null $issueTrackingTicket The identifier for an issue tracking ticket related to this Dataset.
      *
      * @return void
      */
-    public function setIssueTrackingTicket($issueTrackingTicket)
+    public function setIssueTrackingTicket(?string $issueTrackingTicket)
     {
         $this->issueTrackingTicket = $issueTrackingTicket;
     }

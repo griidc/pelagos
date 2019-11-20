@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\helpers;
+namespace App\Tests\Helpers;
 
 use Symfony\Component\Validator\ConstraintViolation;
 

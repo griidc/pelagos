@@ -1,7 +1,8 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\Api;
+namespace App\Controller\Api;
 
+use App\Util\PubLinkUtil;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -10,12 +11,14 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 use Doctrine\Common\Collections\Collection;
 
-use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\Routing\Annotation\Route;
+
+use FOS\RestBundle\Controller\Annotations\View;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Pelagos\Entity\Publication;
-use Pelagos\Entity\PublicationCitation;
+use App\Entity\Publication;
+use App\Entity\PublicationCitation;
 
 /**
  * The Publication api controller.
@@ -43,9 +46,14 @@ class PublicationController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("/count")
+     * @Route(
+     *     "/api/publications/count",
+     *     name="pelagos_api_publications_count",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View()
+     * @View()
      *
      * @return integer
      */
@@ -76,9 +84,14 @@ class PublicationController extends EntityController
      *   }
      * )
      *
-     * @Rest\Get("")
+     * @Route(
+     *     "/api/publications",
+     *     name="pelagos_api_publications_get_collection",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
      *
      * @return Response
      */
@@ -90,7 +103,8 @@ class PublicationController extends EntityController
     /**
      * Fetch and cache a citation for a given DOI.
      *
-     * @param Request $request A Symfony http request object, data includes the doi.
+     * @param Request     $request     A Symfony http request object, data includes the doi.
+     * @param PubLinkUtil $pubLinkUtil The publication link utility.
      *
      * @ApiDoc(
      *   section = "Publications",
@@ -109,22 +123,27 @@ class PublicationController extends EntityController
      * @throws NotFoundHttpException   If external DOI service couldn't site this type of DOI (dataset doi).
      * @throws \Exception              Upon other DOI pull failure.
      *
+     * @Route(
+     *     "/api/publications",
+     *     name="pelagos_api_publications_post",
+     *     methods={"POST"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return PublicationCitation
      */
-    public function postAction(Request $request)
+    public function postAction(Request $request, PubLinkUtil $pubLinkUtil)
     {
         //query for a current publication/citation.
 
         $doi = $request->request->get('doi');
-        $pubLinkUtil = $this->get('pelagos.util.publink');
-        $entityHandler = $this->get('pelagos.entity.handler');
 
         if (false === preg_match('/^10\./', $doi)) {
             throw new BadRequestHttpException('Invalid format or missing DOI.');
         }
 
         // Attempt to get publication by DOI.
-        $publications = $entityHandler->getBy(Publication::class, array('doi' => $doi));
+        $publications = $this->entityHandler->getBy(Publication::class, array('doi' => $doi));
         if (gettype($publications) == 'array') {
             // Case 1 - Data was previously cached.  Return cached copy instead, but lie a little about creation.
             if (count($publications) == 1) {
@@ -139,15 +158,13 @@ class PublicationController extends EntityController
             } elseif (count($publications) == 0) {
                 $citationStruct = $pubLinkUtil->fetchCitation($doi);
                 if (200 == $citationStruct['status']) {
-                    $entityHandler = $this->get('pelagos.entity.handler');
-
                     $publication = new Publication($doi);
-                    $entityHandler->create($publication);
+                    $this->entityHandler->create($publication);
 
                     $publicationCitation = $citationStruct['citation'];
                     $publicationCitation->setPublication($publication);
 
-                    $entityHandler->create($publicationCitation);
+                    $this->entityHandler->create($publicationCitation);
 
                     return $this->makeCreatedResponse('pelagos_api_publications_get', $publication->getId());
                 } elseif (404 == $citationStruct['status']) {
@@ -172,11 +189,18 @@ class PublicationController extends EntityController
      *
      * @param integer $id Entity ID for Publication.
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @View(serializerEnableMaxDepthChecks = true)
+     *
+     * @Route(
+     *     "/api/publications/{id}",
+     *     name="pelagos_api_publications_get",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
      *
      * @return Publication
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         return $this->handleGetOne(Publication::class, $id);
     }
@@ -200,14 +224,19 @@ class PublicationController extends EntityController
      * @throws NotFoundHttpException If cached citation could not be retrieved.
      * @throws \Exception            If more than one cached publication found by DOI.
      *
+     * @Route(
+     *     "/api/publications/cached/citation",
+     *     name="pelagos_api_publications_get_cached_citation",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
      * @return PublicationCitation|null
      */
     public function getCachedCitationAction(Request $request)
     {
         $doi = $request->query->get('doi');
-        $entityHandler = $this->get('pelagos.entity.handler');
-
-        $publications = $entityHandler->getBy(Publication::class, array('doi' => $doi));
+        $publications = $this->entityHandler->getBy(Publication::class, array('doi' => $doi));
         if (gettype($publications) == 'array') {
             if (count($publications) == 1) {
                 return new JsonResponse($publications[0]->getCitations()[0]->getCitationText());

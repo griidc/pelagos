@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 /**
  * An abstract api for classes that contain a RoleInterface attribute.

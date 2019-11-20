@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Event;
+namespace App\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
@@ -40,12 +40,12 @@ class LogActionItemEvent extends Event
     /**
      * Constructor.
      *
-     * @param string  $actionName        The name of the action this event is for.
-     * @param string  $subjectEntityName The subject name it is an entity.
-     * @param integer $subjectEntityId   The subject Id if subject entity name exists.
-     * @param array   $payLoad           The additional information for the event.
+     * @param string       $actionName        The name of the action this event is for.
+     * @param string|null  $subjectEntityName The subject name it is an entity.
+     * @param integer|null $subjectEntityId   The subject Id if subject entity name exists.
+     * @param array        $payLoad           The additional information for the event.
      */
-    public function __construct($actionName, $subjectEntityName, $subjectEntityId, array $payLoad)
+    public function __construct(string $actionName, ?string $subjectEntityName, ?int $subjectEntityId, array $payLoad)
     {
         $this->actionName = $actionName;
         $this->subjectEntityName = $subjectEntityName;

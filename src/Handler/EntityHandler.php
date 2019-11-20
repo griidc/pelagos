@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Handler;
+namespace App\Handler;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -8,24 +8,24 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Id\AssignedGenerator;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Common\Collections\Collection;
 
-use Pelagos\Entity\Entity;
-use Pelagos\Entity\Account;
-use Pelagos\Entity\Password;
-use Pelagos\Entity\Person;
+use App\Entity\Entity;
+use App\Entity\Account;
+use App\Entity\Password;
+use App\Entity\Person;
 
-use Pelagos\Event\EntityEventDispatcher;
+use App\Event\EntityEventDispatcher;
 
-use Pelagos\Exception\UnmappedPropertyException;
+use App\Exception\UnmappedPropertyException;
 
-use Pelagos\Bundle\AppBundle\Security\PelagosEntityVoter;
-use Pelagos\Bundle\AppBundle\Security\EntityProperty;
+use App\Security\Voter\PelagosEntityVoter;
+use App\Security\EntityProperty;
 
 /**
  * A handler for entities.
@@ -35,7 +35,7 @@ class EntityHandler
     /**
      * The entity manager to use in this entity handler.
      *
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -73,13 +73,13 @@ class EntityHandler
     /**
      * Constructor for EntityHandler.
      *
-     * @param EntityManager                 $entityManager         The entity manager to use.
+     * @param EntityManagerInterface        $entityManager         The entity manager to use.
      * @param TokenStorageInterface         $tokenStorage          The token storage to use.
      * @param AuthorizationCheckerInterface $authorizationChecker  The authorization checker to use.
      * @param EntityEventDispatcher         $entityEventDispatcher The entity event dispatcher.
      */
     public function __construct(
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         TokenStorageInterface $tokenStorage,
         AuthorizationCheckerInterface $authorizationChecker,
         EntityEventDispatcher $entityEventDispatcher
@@ -98,7 +98,7 @@ class EntityHandler
      *
      * @return Entity|null The entity.
      */
-    public function get($entityClass, $id)
+    public function get(string $entityClass, int $id)
     {
         return $this->entityManager
             ->getRepository($entityClass)
@@ -117,7 +117,7 @@ class EntityHandler
      * @return Collection|array A collection of entities or an array depending on the hydrator.
      */
     public function getAll(
-        $entityClass,
+        string $entityClass,
         array $orderBy = array(),
         array $properties = array(),
         $hydrator = null
@@ -141,7 +141,7 @@ class EntityHandler
      * @return Collection|array A collection of entities or an array depending on the hydrator.
      */
     public function getBy(
-        $entityClass,
+        string $entityClass,
         array $criteria,
         array $orderBy = array(),
         array $properties = array(),
@@ -181,7 +181,7 @@ class EntityHandler
      *
      * @return intger
      */
-    public function count($entityClass, array $criteria)
+    public function count(string $entityClass, array $criteria)
     {
         // Create query builder for this type of entity.
         $qb = $this->entityManager->getRepository($entityClass)->createQueryBuilder('e');
@@ -322,7 +322,7 @@ class EntityHandler
      *
      * @return array List of all distinct values for $property for $entityClass.
      */
-    public function getDistinctVals($entityClass, $property)
+    public function getDistinctVals(string $entityClass, string $property)
     {
         $entity = new $entityClass;
         if (!$this->authorizationChecker->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -333,16 +333,13 @@ class EntityHandler
         }
         $class = $this->entityManager->getClassMetadata($entityClass);
         if (!$class->hasField($property) && !$class->hasAssociation($property)) {
-            $exception = new UnmappedPropertyException;
-            $exception->setClassName($entityClass);
-            $exception->setPropertyName($property);
-            throw $exception;
+            throw new UnmappedPropertyException($entityClass, $property);
         }
         $this->entityManager
             ->getConfiguration()
             ->addCustomHydrationMode(
                 'COLUMN_HYDRATOR',
-                'Pelagos\DoctrineExtensions\Hydrators\ColumnHydrator'
+                'App\DoctrineExtensions\Hydrators\ColumnHydrator'
             );
         // Get distinct vals
         $query = $this->entityManager
@@ -473,7 +470,7 @@ class EntityHandler
      *
      * @return void
      */
-    protected function processProperties($entityClass, array $properties, QueryBuilder $qb, array &$joins)
+    protected function processProperties(string $entityClass, array $properties, QueryBuilder $qb, array &$joins)
     {
         // An array to hold all the entity aliases their properties to hydrate.
         $hydrate = array();
@@ -536,7 +533,7 @@ class EntityHandler
      *
      * @return ClassMetadata
      */
-    protected function processEntityAlias($entityClass, $alias, array &$hydrate, array &$joins)
+    protected function processEntityAlias(string $entityClass, string $alias, array &$hydrate, array &$joins)
     {
         // Split the entity alias on _ and loop through the nodes.
         foreach (explode('_', $alias) as $node) {
@@ -578,7 +575,7 @@ class EntityHandler
      *
      * @return array The entity alias and the property.
      */
-    protected function buildAliasedProperty($property, array &$joins)
+    protected function buildAliasedProperty(string $property, array &$joins)
     {
         // Initialize the alias to 'e', the root entity.
         $alias = 'e';

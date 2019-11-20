@@ -1,8 +1,9 @@
 <?php
-namespace Pelagos\Util;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
+namespace App\Util;
+
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
 
 /**
  * This is a Metadata utility class.
@@ -39,7 +40,7 @@ class Metadata
         $xml = null;
         if ($dataset->getDatasetSubmission() instanceof DatasetSubmission) {
             $xml = $this->twig->render(
-                'PelagosAppBundle:MetadataGenerator:MI_Metadata.xml.twig',
+                'MetadataGenerator/MI_Metadata.xml.twig',
                 array(
                     'dataset' => $dataset,
                     'boundingBoxArray' => $boundingBoxArray,
@@ -74,7 +75,7 @@ class Metadata
      *
      * @return array of (validity boolean, array of errors, and array of warnings).
      */
-    public function validateIso($xml, $schema = 'https://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd')
+    public function validateIso(string $xml, string $schema = 'https://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd')
     {
         $errorList = array();
         $warningList = array();

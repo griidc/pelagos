@@ -1,10 +1,11 @@
 <?php
 
-namespace Pelagos\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator\Constraints as CustomAssert;
 
 /**
  * Base entity class for the representation of typed Role classes.
@@ -30,7 +31,7 @@ abstract class AbstractRole extends Entity implements RoleInterface
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
-     * @Assert\NoAngleBrackets(
+     * @CustomAssert\NoAngleBrackets(
      *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
@@ -56,7 +57,7 @@ abstract class AbstractRole extends Entity implements RoleInterface
      *
      * @return void
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
@@ -80,7 +81,7 @@ abstract class AbstractRole extends Entity implements RoleInterface
      *
      * @return void
      */
-    public function setWeight($weight)
+    public function setWeight(int $weight)
     {
         if (is_int($weight) and $weight > 0 or
             is_string($weight) and ctype_digit($weight) and (integer) $weight > 0

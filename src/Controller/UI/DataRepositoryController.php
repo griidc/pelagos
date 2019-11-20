@@ -1,47 +1,48 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller\UI;
+namespace App\Controller\UI;
 
-use Pelagos\Bundle\AppBundle\Security\EntityProperty;
+use App\Entity\DataRepository;
+use App\Form\DataRepositoryType;
+use App\Form\PersonDataRepositoryType;
 
-use Pelagos\Bundle\AppBundle\Form\DataRepositoryType;
-use Pelagos\Bundle\AppBundle\Form\PersonDataRepositoryType;
+use Symfony\Component\Routing\Annotation\Route;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
  */
-class DataRepositoryController extends UIController implements OptionalReadOnlyInterface
+class DataRepositoryController extends AbstractController
 {
     /**
      * The Funding Org action.
      *
-     * @param string $id The id of the entity to retrieve.
+     * @param integer $id The id of the entity to retrieve.
      *
-     * @throws NotFoundException When the Funding Organization is not found.
+     * @throws NotFoundHttpException When the Funding Organization is not found.
      *
-     * @Route("/data-repository/{id}")
+     * @Route("/data-repository/{id}", name="pelagos_app_ui_datarepository_default")
      *
      * @return Response A Response instance.
      */
-    public function defaultAction($id)
+    public function defaultAction(int $id)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('PelagosAppBundle:template:AdminOnly.html.twig');
+            return $this->render('template/AdminOnly.html.twig');
         }
 
         $ui = array();
 
         if ($id !== null) {
-            $dataRepository = $this->entityHandler->get('Pelagos:DataRepository', $id);
+            $dataRepository = $this->getDoctrine()->getRepository(DataRepository::class)->find($id);
 
-            if (!$dataRepository instanceof \Pelagos\Entity\DataRepository) {
-                throw $this->createNotFoundException('The Data Repository was not found');
+            if (!$dataRepository instanceof DataRepository) {
+                throw new NotFoundHttpException('The Data Repository was not found');
             }
 
             foreach ($dataRepository->getPersonDataRepositories() as $personDataRepository) {
@@ -54,15 +55,14 @@ class DataRepositoryController extends UIController implements OptionalReadOnlyI
                 $ui['PersonDataRepositoryForms'][$personDataRepository->getId()] = $formView;
             }
         } else {
-            $dataRepository = new \Pelagos\Entity\DataRepository;
+            $dataRepository = new DataRepository;
         }
 
         $form = $this->get('form.factory')->createNamed(null, DataRepositoryType::class, $dataRepository);
 
         $ui['DataRepository'] = $dataRepository;
         $ui['form'] = $form->createView();
-        $ui['entityService'] = $this->entityHandler;
 
-        return $this->render('PelagosAppBundle:template:DataRepository.html.twig', $ui);
+        return $this->render('template/DataRepository.html.twig', $ui);
     }
 }

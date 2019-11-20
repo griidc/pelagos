@@ -1,14 +1,13 @@
 <?php
 
-namespace Pelagos\Event;
+namespace App\Event;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DIF;
-use Pelagos\Entity\Metadata;
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Entity\DIF;
 
 /**
  * Doctrine Listener class for Dataset related events.
@@ -37,16 +36,15 @@ class DoctrineDatasetListener
     /**
      * Method to update dataset title and abstract when DIF, Dataset Submission, or Metadata changes.
      *
-     * @param mixed         $entity        A Doctrine entity.
-     * @param EntityManager $entityManager The Doctrine entity manager.
+     * @param mixed                  $entity        A Doctrine entity.
+     * @param EntityManagerInterface $entityManager The Doctrine entity manager.
      *
      * @return void
      */
-    protected function updateDataset($entity, EntityManager $entityManager)
+    protected function updateDataset($entity, EntityManagerInterface $entityManager)
     {
         if ($entity instanceof DIF
             or $entity instanceof DatasetSubmission
-            or $entity instanceof Metadata
             ) {
             $dataset = $entity->getDataset();
 

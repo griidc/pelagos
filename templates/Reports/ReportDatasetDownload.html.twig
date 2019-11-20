@@ -1,9 +1,9 @@
-{% extends "PelagosAppBundle:template:UI.html.twig" %}
+{% extends "template/UI.html.twig" %}
 
 {% block javascripts %}
     {{ parent() }}
 
-    <script type="text/javascript" src="{{ asset('build/js/downloadReport.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/downloadReport.js') }}"></script>
 {% endblock %}
 
 {% block body %}

@@ -1,4 +1,4 @@
-{% extends "PelagosAppBundle:template:UI.html.twig" %}
+{% extends "template/UI.html.twig" %}
 {% block title %}External Download Log Tool{% endblock %}
 
 {% block javascripts %}
@@ -6,8 +6,8 @@
 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js"></script>
 
-    <script type="text/javascript" src="{{ asset('build/js/pelagosNoty.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('build/js/external-download-log.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/pelagosNoty.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/external-download-log.js') }}"></script>
 {% endblock %}
 
 {% block body %}
