@@ -219,7 +219,8 @@ abstract class EntityController extends AbstractFOSRestController
      * @param Request $request  The request object.
      * @param string  $method   The HTTP method.
      *
-     * @throws BadRequestHttpException When there is an error.
+     * @throws BadRequestHttpException When no valid parameters are passed.
+     * @throws BadRequestHttpException When invalid data is submitted.
      *
      * @return Entity The updated entity.
      */
@@ -258,7 +259,9 @@ abstract class EntityController extends AbstractFOSRestController
      * @param Request      $request     The request object.
      * @param integer|null $id          The id of the entity to validate against.
      *
-     * @throws BadRequestHttpException When property is not valid.
+     * @throws BadRequestHttpException When no property is supplied.
+     * @throws BadRequestHttpException When more than one property is supplied.
+     * @throws BadRequestHttpException The supplied property is not valid for the resource.
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
