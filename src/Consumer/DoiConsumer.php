@@ -49,6 +49,13 @@ class DoiConsumer implements ConsumerInterface
     protected $entityEventDispatcher;
 
     /**
+     * Utility class for DOI.
+     *
+     * @var DOIutil
+     */
+    protected $doiUtil;
+
+    /**
      * Delay time in seconds for API.
      */
     const DELAY_TIME = 600;
@@ -59,15 +66,18 @@ class DoiConsumer implements ConsumerInterface
      * @param EntityManagerInterface $entityManager         The entity manager.
      * @param Logger                 $logger                A Monolog logger.
      * @param EntityEventDispatcher  $entityEventDispatcher The entity event dispatcher.
+     * @param DOIutil                $doiUtil               Instance of Utility class DOI.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         Logger $logger,
-        EntityEventDispatcher $entityEventDispatcher
+        EntityEventDispatcher $entityEventDispatcher,
+        DOIutil $doiUtil
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->entityEventDispatcher = $entityEventDispatcher;
+        $this->doiUtil = $doiUtil;
     }
 
     /**
@@ -137,12 +147,10 @@ class DoiConsumer implements ConsumerInterface
         if ($this->doiAlreadyExists($dataset, $loggingContext)) {
             $this->logger->info('DOI Already issued for this dataset', $loggingContext);
         } else {
-            $doiUtil = new DOIutil();
-
-            $generatedDOI = $doiUtil->generateDoi();
+            $generatedDOI = $this->doiUtil->generateDoi();
 
             try {
-                $doiUtil->createDOI(
+                $this->doiUtil->createDOI(
                     $generatedDOI,
                     'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi(),
                     $dataset->getAuthors(),
@@ -188,8 +196,6 @@ class DoiConsumer implements ConsumerInterface
         $updateMsg = ConsumerInterface::MSG_ACK;
         $doi = $dataset->getDoi();
 
-        $doiUtil = new DOIutil();
-
         if (!$this->doiAlreadyExists($dataset, $loggingContext)) {
             $this->issueDoi($dataset, $loggingContext);
         }
@@ -212,7 +218,7 @@ class DoiConsumer implements ConsumerInterface
                 $dataset->getDif()->getApprovedDate() instanceof \Datetime) {
                 $pubYear = $dataset->getDif()->getApprovedDate()->format('Y');
             }
-            $doiUtil->updateDOI(
+            $this->doiUtil->updateDOI(
                 $doi->getDoi(),
                 $doiUrl,
                 $creator,
@@ -256,8 +262,7 @@ class DoiConsumer implements ConsumerInterface
         $this->logger->info('Attempting to delete DOI', $loggingContext);
         $deleteMsg = ConsumerInterface::MSG_ACK;
         try {
-            $doiUtil = new DOIutil();
-            $doiUtil->deleteDOI($doi);
+            $this->doiUtil->deleteDOI($doi);
         } catch (HttpClientErrorException $exception) {
             $this->logger->error('Error deleting DOI: ' . $exception->getMessage(), $loggingContext);
             $deleteMsg = ConsumerInterface::MSG_REJECT;
@@ -287,8 +292,7 @@ class DoiConsumer implements ConsumerInterface
         if ($doi instanceof DOI) {
             do {
                 try {
-                    $doiUtil = new DOIutil();
-                    $doiUtil->getDOIMetadata($doi->getDoi());
+                    $this->doiUtil->getDOIMetadata($doi->getDoi());
                 } catch (HttpClientErrorException $exception) {
                     //DOI exist, but is not found in REST API/Datacite.
                     $this->logger->error('Error getting DOI: ' . $exception->getMessage(), $loggingContext);
