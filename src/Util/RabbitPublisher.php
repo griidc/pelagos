@@ -83,7 +83,10 @@ class RabbitPublisher
             $publisher = $this->doiProducer;
         } elseif ($producerName === self::FILE_HASHER_PRODUCER) {
             $publisher = $this->datasetFileHasherProducer;
+        } elseif ($producerName === self::CREATE_HOMEDIR_PRODUCER) {
+            $publisher = $this->createHomeDirProducer;
         }
+
         if ($publisher) {
             $publisher->publish($id, $routingKey);
         }
