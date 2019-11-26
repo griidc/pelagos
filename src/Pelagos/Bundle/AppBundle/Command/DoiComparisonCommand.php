@@ -410,6 +410,7 @@ class DoiComparisonCommand extends ContainerAwareCommand
      */
     private function isUrlValid(string $url, string $needle): bool
     {
+        $url = str_replace('https://data.gulfresearchinitiative.org/', '', $url);
         if (strpos($url, $needle) !== false) {
             return true;
         }
