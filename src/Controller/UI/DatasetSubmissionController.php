@@ -18,7 +18,7 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
+use Doctrine\ORM\EntityManagerInterface;
 use App\Form\DatasetSubmissionType;
 use App\Form\DatasetSubmissionXmlFileType;
 
@@ -99,15 +99,16 @@ class DatasetSubmissionController extends AbstractController
     /**
      * The default action for Dataset Submission.
      *
-     * @param Request $request The Symfony request object.
+     * @param Request                $request       The Symfony request object.
+     * @param EntityManagerInterface $entityManager A Pelagos EntityManager.
      *
      * @throws BadRequestHttpException When xmlUploadForm is submitted without a file.
      *
-     * @Route("/dataset-submission", name="pelagos_app_ui_datasetsubmission_default", methods={"GET"})
+     * @Route("/dataset-submission", name="pelagos_app_ui_datasetsubmission_default", methods={"GET", "POST"})
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(Request $request)
+    public function defaultAction(Request $request, EntityManagerInterface $entityManager)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
@@ -150,7 +151,7 @@ class DatasetSubmissionController extends AbstractController
                     }
 
                     try {
-                        $this->loadFromXml($xmlURI, $datasetSubmission);
+                        $this->loadFromXml($xmlURI, $datasetSubmission, $entityManager);
                         $xmlStatus['success'] = true;
                     } catch (InvalidMetadataException $e) {
                         $xmlStatus['errors'] = $e->getErrors();
@@ -454,14 +455,15 @@ class DatasetSubmissionController extends AbstractController
     /**
      * Load XML into Dataset from file.
      *
-     * @param UploadedFile|string $xmlURI            The file containing the XML.
-     * @param DatasetSubmission   $datasetSubmission The dataset submission that will be populated with XML data.
+     * @param UploadedFile|string    $xmlURI            The file containing the XML.
+     * @param DatasetSubmission      $datasetSubmission The dataset submission that will be populated with XML data.
+     * @param EntityManagerInterface $entityManager     A Pelagos EntityManager.
      *
      * @throws InvalidMetadataException When the file is not Simple XML.
      *
      * @return void
      */
-    private function loadFromXml($xmlURI, DatasetSubmission $datasetSubmission)
+    private function loadFromXml($xmlURI, DatasetSubmission $datasetSubmission, EntityManagerInterface $entityManager)
     {
         $xml = simplexml_load_file($xmlURI, 'SimpleXMLElement', (LIBXML_NOERROR | LIBXML_NOWARNING));
 
@@ -471,7 +473,7 @@ class DatasetSubmissionController extends AbstractController
             ISOMetadataExtractorUtil::populateDatasetSubmissionWithXMLValues(
                 $xml,
                 $datasetSubmission,
-                $this->get('doctrine.orm.entity_manager')
+                $entityManager
             );
 
             // If there are no contacts, add an empty contact.
