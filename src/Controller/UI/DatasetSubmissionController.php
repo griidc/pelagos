@@ -17,6 +17,7 @@ use Symfony\Component\Form\Form;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\DatasetSubmissionType;
@@ -598,7 +599,13 @@ class DatasetSubmissionController extends AbstractController
             if (null === $distributionPoint->getDataCenter()) {
                 $distributionPoint->setRoleCode(self::DEFAULT_DISTRIBUTION_POINT_ROLECODE);
                 $distributionPoint->setDataCenter($defaultDistributionContacts[0]);
-                $distributionPoint->setDistributionUrl($this->generateUrl('pelagos_homepage', [], 0) . 'data/' . $udi);
+                $distributionPoint->setDistributionUrl(
+                    $this->generateUrl(
+                        'pelagos_app_ui_dataland_default',
+                        ['udi' => $udi],
+                        UrlGeneratorInterface::ABSOLUTE_URL
+                    )
+                );
             }
         } else {
             throw new \Exception('There is none or more than one default distribution contact(s)');
