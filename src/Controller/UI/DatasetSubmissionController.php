@@ -598,7 +598,7 @@ class DatasetSubmissionController extends AbstractController
             if (null === $distributionPoint->getDataCenter()) {
                 $distributionPoint->setRoleCode(self::DEFAULT_DISTRIBUTION_POINT_ROLECODE);
                 $distributionPoint->setDataCenter($defaultDistributionContacts[0]);
-                $distributionPoint->setDistributionUrl($this->generateUrl('pelagos_homepage') . '/data/' . $udi);
+                $distributionPoint->setDistributionUrl($this->generateUrl('pelagos_homepage', [], 0) . 'data/' . $udi);
             }
         } else {
             throw new \Exception('There is none or more than one default distribution contact(s)');
