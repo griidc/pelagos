@@ -30,8 +30,8 @@ drupal_add_js('//cdn.jsdelivr.net/openlayers/2.13.1/OpenLayers.js',array('type'=
 
 drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false&key='.$config['google_maps_api_key'],array('type'=>'external'));
 
-drupal_add_js('/includes/geoviz/geoviz.js',array('type'=>'external'));
-drupal_add_js('/includes/geoviz/mapWizard.js',array('type'=>'external'));
+drupal_add_js('includes/geoviz/geoviz.js',array('type'=>'external'));
+drupal_add_js('includes/geoviz/mapWizard.js',array('type'=>'external'));
 
 if (array_key_exists('action',$_GET) and $_GET['action'] == 'help') {
     require 'help.html';
