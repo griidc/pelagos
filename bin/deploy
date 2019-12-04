@@ -13,5 +13,8 @@ composer install --no-dev --optimize-autoloader
 yarn install
 yarn run encore prod
 
+# Dump ENV into compiled format
+bin/console dump-env prod
+
 # Rebuild Supervisor config for RabbitMQ consumers and start them
 bin/console rabbitmq-supervisor:rebuild --wait-for-supervisord
