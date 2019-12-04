@@ -88,7 +88,6 @@ class MetadataController extends EntityController
         }
 
         $generatedXmlMetadata = $metadataUtility->getXmlRepresentation($dataset, $boundingBoxArray);
-        $metadataFilename = preg_replace('/:/', '-', $dataset->getUdi()) . '-metadata.xml';
 
         $response = new Response($generatedXmlMetadata);
         $response->headers->set('Content-Type', 'text/xml');
