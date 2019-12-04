@@ -296,7 +296,7 @@ class AccountController extends AbstractController
             try {
                 $account->setPassword(
                     $password,
-                    (bool) $_ENV['ACCOUNT_LESS_STRICT_PASSWORD_RULES']
+                    $this->getParameter('account_less_strict_password_rules')
                 );
             } catch (PasswordException $e) {
                 return $this->render(
@@ -420,7 +420,7 @@ class AccountController extends AbstractController
         try {
             $account->setPassword(
                 $password,
-                (bool) $_ENV['ACCOUNT_LESS_STRICT_PASSWORD_RULES']
+                $this->getParameter('account_less_strict_password_rules')
             );
         } catch (PasswordException $e) {
             return $this->render(
