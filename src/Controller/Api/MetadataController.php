@@ -2,7 +2,6 @@
 
 namespace App\Controller\Api;
 
-
 use FOS\RestBundle\Controller\Annotations\View;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -15,13 +14,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 use App\Entity\Dataset;
-use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
-use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Exception\InvalidGmlException;
 use App\Util\Geometry;
 use App\Util\Metadata;
-
 
 /**
  * The Metadata api controller.
@@ -31,7 +27,9 @@ class MetadataController extends EntityController
     /**
      * Get a single Metadata for a given id.
      *
-     * @param Request $request The request object.
+     * @param Request  $request         The request object.
+     * @param Geometry $geoUtil         Geometry Utility.
+     * @param Metadata $metadataUtility Metadata Utility.
      *
      * @ApiDoc(
      *   section = "Metadata",
