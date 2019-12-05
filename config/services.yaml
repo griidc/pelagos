@@ -12,7 +12,6 @@ parameters:
     router.request_context.host: "%env(HOSTNAME)%"
     router.request_context.scheme: "https"
     router.request_context.base_url: '%env(REQUEST_CONTEXT_BASE_URL)%'
-    account_less_strict_password_rules: '%env(ACCOUNT_LESS_STRICT_PASSWORD_RULES)%'
 
 services:
     # default configuration for services in *this* file
@@ -185,3 +184,7 @@ services:
             int $posixStartingUidNumber: "%env(POSIX_STARTING_UID)%"
             int $posixGidNumber: "%env(POSIX_GID)%"
             string $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
+
+    App\Controller\UI\AccountController:
+        bind:
+            bool $passwordRules: '%env(ACCOUNT_LESS_STRICT_PASSWORD_RULES)%'

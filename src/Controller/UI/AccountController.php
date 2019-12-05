@@ -38,17 +38,26 @@ class AccountController extends AbstractController
     protected $validator;
 
     /**
+     * Boolean value for account_less_strict_password_rules.
+     *
+     * @var boolean
+     */
+    protected $passwordRules;
+
+    /**
      * Constructor for this Controller, to set up default services.
      *
      * @param EntityHandler      $entityHandler The entity handler.
      * @param ValidatorInterface $validator     The validator interface.
+     * @param boolean            $passwordRules Boolean value for account_less_strict_password_rules.
      *
      * @return void
      */
-    public function __construct(EntityHandler $entityHandler, ValidatorInterface $validator)
+    public function __construct(EntityHandler $entityHandler, ValidatorInterface $validator, bool $passwordRules)
     {
         $this->entityHandler = $entityHandler;
         $this->validator = $validator;
+        $this->passwordRules = $passwordRules;
     }
 
     /**
@@ -296,7 +305,7 @@ class AccountController extends AbstractController
             try {
                 $account->setPassword(
                     $password,
-                    $this->getParameter('account_less_strict_password_rules')
+                    $this->passwordRules
                 );
             } catch (PasswordException $e) {
                 return $this->render(
@@ -420,7 +429,7 @@ class AccountController extends AbstractController
         try {
             $account->setPassword(
                 $password,
-                $this->getParameter('account_less_strict_password_rules')
+                $this->passwordRules
             );
         } catch (PasswordException $e) {
             return $this->render(
