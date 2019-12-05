@@ -32,13 +32,22 @@ class MdAppController extends AbstractController
     protected $entityHandler;
 
     /**
+     * JIRA issue tracking base url.
+     *
+     * @var string
+     */
+    protected $issueTrackingBaseUrl;
+
+    /**
      * Class constructor.
      *
-     * @param EntityHandler $entityHandler Pelagos EntityHandler instance.
+     * @param EntityHandler $entityHandler        Pelagos EntityHandler instance.
+     * @param string        $issueTrackingBaseUrl JIRA issue tracking base url.
      */
-    public function __construct(EntityHandler $entityHandler)
+    public function __construct(EntityHandler $entityHandler, string $issueTrackingBaseUrl)
     {
         $this->entityHandler = $entityHandler;
+        $this->issueTrackingBaseUrl = $issueTrackingBaseUrl;
     }
 
     /**
@@ -134,7 +143,7 @@ class MdAppController extends AbstractController
         return $this->render(
             'MdApp/main.html.twig',
             array(
-                'issueTrackingBaseUrl' => $this->getParameter('issue_tracking_base_url'),
+                'issueTrackingBaseUrl' => $this->issueTrackingBaseUrl,
                 'm_dataset' => array(
                     'submitted' => $this->entityHandler->getBy(
                         Dataset::class,

@@ -31,13 +31,31 @@ class DownloadController extends AbstractController
     protected $entityHandler;
 
     /**
+     * The download base directory path.
+     *
+     * @var string
+     */
+    protected $downloadBaseDir;
+
+    /**
+     * The download base url.
+     *
+     * @var string
+     */
+    protected $downloadBaseUrl;
+
+    /**
      * DownloadController constructor.
      *
-     * @param EntityHandler $entityHandler The entity handler.
+     * @param EntityHandler $entityHandler   The entity handler.
+     * @param string        $downloadBaseDir The download base directory path.
+     * @param string        $downloadBaseUrl The download base url.
      */
-    public function __construct(EntityHandler $entityHandler)
+    public function __construct(EntityHandler $entityHandler, string $downloadBaseDir, string $downloadBaseUrl)
     {
         $this->entityHandler = $entityHandler;
+        $this->downloadBaseDir = $downloadBaseDir;
+        $this->downloadBaseUrl = $downloadBaseUrl;
     }
 
     /**
@@ -96,15 +114,13 @@ class DownloadController extends AbstractController
         $uniqueDirectory = uniqid(
             preg_replace('/\s/', '_', $username) . '_'
         );
-        $downloadBaseDirectory = $this->getParameter('download_base_directory');
-        $downloadDirectory = $downloadBaseDirectory . '/' . $uniqueDirectory;
+        $downloadDirectory = $this->downloadBaseDir . '/' . $uniqueDirectory;
         mkdir($downloadDirectory, 0755);
         $datasetFileName  = $dataset->getDatasetSubmission()->getDatasetFileName();
         symlink(
             $downloadFileInfo->getRealPath(),
             $downloadDirectory . '/' . $datasetFileName
         );
-        $downloadBaseUrl = $this->getParameter('download_base_url');
 
         if ($this->getUser()) {
             $type = get_class($this->getUser());
@@ -129,7 +145,7 @@ class DownloadController extends AbstractController
             ),
             'file_download'
         );
-        $response = new Response(json_encode(['downloadUrl' => $downloadBaseUrl . '/' . $uniqueDirectory . '/' . $datasetFileName]));
+        $response = new Response(json_encode(['downloadUrl' => $this->downloadBaseUrl . '/' . $uniqueDirectory . '/' . $datasetFileName]));
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;

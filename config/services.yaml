@@ -4,9 +4,6 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    download_base_directory: '%env(DOWNLOAD_BASE_DIRECTORY)%'
-    download_base_url: '%env(DOWNLOAD_BASE_URL)%'
-    issue_tracking_base_url: '%env(ISSUE_TRACKING_BASE_URL)%'
     homedir_prefix: '%env(HOMEDIR_PREFIX)%'
     locale: en
     router.request_context.host: "%env(HOSTNAME)%"
@@ -184,3 +181,16 @@ services:
             int $posixStartingUidNumber: "%env(POSIX_STARTING_UID)%"
             int $posixGidNumber: "%env(POSIX_GID)%"
             string $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
+
+    App\Controller\UI\AccountController:
+        bind:
+            bool $passwordRules: '%env(ACCOUNT_LESS_STRICT_PASSWORD_RULES)%'
+
+    App\Controller\DownloadController:
+        bind:
+            string $downloadBaseDir: '%env(DOWNLOAD_BASE_DIRECTORY)%'
+            string $downloadBaseUrl: '%env(DOWNLOAD_BASE_URL)%'
+
+    App\Controller\UI\MdAppController:
+        bind:
+            string $issueTrackingBaseUrl: '%env(ISSUE_TRACKING_BASE_URL)%'
