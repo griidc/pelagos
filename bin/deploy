@@ -1,8 +1,5 @@
 #/bin/sh
 
-# Disable Symfony debug mode
-export SYMFONY_DEBUG=0
-
 # Stop RabbitMQ consumers
 bin/console rabbitmq-supervisor:control stop --wait-for-supervisord
 
