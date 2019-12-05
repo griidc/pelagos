@@ -938,7 +938,7 @@ function loadPOCs(researchGroup,ppoc,spoc)
             var researchGroupLocked = $("#researchGroup option[value=" + researchGroup + "]").attr("locked");
             if (researchGroupLocked == "true") {
                 $("#status").val("closedout");
-            } else {
+            } else if ($("#status").val() == "closedout") {
                 $("#status").val(0);
             }
 
