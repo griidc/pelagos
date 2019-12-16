@@ -23,6 +23,7 @@
         "jquery.cookie": "^1.4.1",
         "qtip2": "2.2.0",
         "query-string": "^6.8.1",
+        "serialize-javascript": "^2.1.1",
         "vex-js": "^4.1.0"
     }
 }
