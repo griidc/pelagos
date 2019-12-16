@@ -32,12 +32,12 @@ function getHtmlForDownload(data)
     if (data.remotelyHosted) {
         let additionalInfo;
             if (data.dataset.availability === 5) {
-                additionalInfo = `<p style="color:#A00">This dataset is restricted for download but is hosted by another 
-                website so availability status is not guaranteed to be accurate.<br>To obtain access to this dataset, 
+                additionalInfo = `<p style="color:#A00">This dataset is restricted for download but is hosted by another
+                website so availability status is not guaranteed to be accurate.<br>To obtain access to this dataset,
                 please click the location link above and follow any instructions provided.</p>`
             } else {
-                additionalInfo = `<p>To download this dataset, please use the location link above. 
-                Note, this dataset is not hosted at GRIIDC; the site is not under GRIIDC control and 
+                additionalInfo = `<p>To download this dataset, please use the location link above.
+                Note, this dataset is not hosted at GRIIDC; the site is not under GRIIDC control and
                 GRIIDC is not responsible for the information or links you may find there.</p>`
         }
 
@@ -45,13 +45,13 @@ function getHtmlForDownload(data)
                             <h3 style="text-align:center;">The dataset you selected is hosted by an external repository.</h3>
                             <div style="border: 1px solid #aaa; padding: 10px; margin-top: 20px; margin-bottom: 10px; border-radius: 4px;">
                                 <p style="margin-top:0; margin-bottom: 0">
-                                All materials on this website are made available to GRIIDC and in turn to you "as-is." 
+                                All materials on this website are made available to GRIIDC and in turn to you "as-is."
                                 By downloading files, you agree to the <a href=https://data.gulfresearchinitiative.org/terms-and-conditions>GRIIDC Terms of Service</a>.
                                 </p>
                                 <p style="margin-top:0">
                                 This particular dataset is not hosted directly by GRIIDC, so additional terms and conditions may be
                                 imposed by the hosting entity.
-                                </p>       
+                                </p>
                             </div>
                             <div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px;">
                                 <strong>UDI:</strong> ${data.dataset.udi}<br />
@@ -66,7 +66,7 @@ function getHtmlForDownload(data)
         dialogBoxHtml = `<div id="dataset_download_content">
                              <div style="border: 1px solid #aaa; padding: 10px; margin-top: 20px; margin-bottom: 10px; border-radius: 4px;">
                                  <p style="margin-top:0; margin-bottom: 0">
-                                 All materials on this website are made available to GRIIDC and in turn to you "as-is." 
+                                 All materials on this website are made available to GRIIDC and in turn to you "as-is."
                                  By downloading files, you agree to the <a href=https://data.gulfresearchinitiative.org/terms-and-conditions>GRIIDC Terms of Service</a>.
                                  </p>
                              </div>
@@ -106,8 +106,8 @@ function testDownload(fileSize) {
             if (Math.round(time) != 1) unit += "s";
             $('#dl_time').html(Math.round(time) + " " + unit + " (based on your current connection speed)");
             if (fileSize > 5000000000 && unit == "hours" && time >= 24) {
-                showDialog(`Notice: This dataset will take approximately  ${Math.round(time)} hours to download. 
-                            Please contact GRIIDC (<a href=mailto:griidc@gomri.org>griidc@gomri.org</a>) 
+                showDialog(`Notice: This dataset will take approximately  ${Math.round(time)} hours to download.
+                            Please contact GRIIDC (<a href=mailto:griidc@gomri.org>griidc@gomri.org</a>)
                             if you would like to arrange alternative data delivery.`);
             }
         },
