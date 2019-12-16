@@ -237,6 +237,9 @@
     "phobetor/rabbitmq-supervisor-bundle": {
         "version": "3.2.1"
     },
+    "php": {
+        "version": "7.3"
+    },
     "php-amqplib/php-amqplib": {
         "version": "v2.10.0"
     },

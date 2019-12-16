@@ -2,7 +2,6 @@
     "devDependencies": {
         "@fortawesome/fontawesome-free": "^5.11.1",
         "@symfony/webpack-encore": "^0.23.0",
-        "copy-webpack-plugin": "^4.6.0",
         "core-js": "^3.0.0",
         "regenerator-runtime": "^0.13.2",
         "webpack-notifier": "^1.6.0"
