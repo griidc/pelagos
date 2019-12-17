@@ -29,7 +29,7 @@ class SearchPageController extends AbstractController
      */
     public function defaultAction(Request $request, Search $searchUtil)
     {
-        if ($this->debug) {
+        if ($this->getParameter('kernel.debug')) {
             $results = array();
             $count = 0;
             $requestParams = $this->getRequestParams($request);
