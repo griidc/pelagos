@@ -60,7 +60,7 @@ class AccountController extends EntityController
      */
     public function getIncomingDirectoryAction(Request $request, int $id)
     {
-        if ('self' == $id) {
+        if (-1 == $id) {
             if (!$this->getUser() instanceof Account) {
                 throw new BadRequestHttpException('You are not logged in with an Account.');
             }
