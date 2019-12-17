@@ -87,7 +87,7 @@ function testDownload(fileSize) {
     let start = new Date().getTime();
     $.ajax({
         type: "GET",
-        "url": Routing.generate("pelagos_homepage") + "/images/testfile.bin?id=" + start,
+        "url": Routing.getBaseUrl() + "/images/testfile.bin?id=" + start,
         success: function(msg) {
             end = new Date().getTime();
             diff = (end - start) / 1000;
