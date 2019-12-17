@@ -1,0 +1,28 @@
+{% extends "template/UI.html.twig" %}
+{% block title %}End Review Tool{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js"></script>
+
+    <script type="text/javascript" src="{{ asset('js/common.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/pelagosNoty.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/endReviewTool.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+    <h2> End review tool</h2>
+        {% if app.session.flashbag %}
+            {% for label, messages in app.session.flashbag.all %}
+                {% for message in messages %}
+                    <div class="pelagosNoty" text="{{message}}" type="{{label}}"></div>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+        <div id="confirmationText" style="display: none;">Are you sure you want to end review for the dataset</div>
+{% endblock %}

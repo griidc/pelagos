@@ -1,0 +1,8 @@
+{% extends "template/UI.html.twig" %}
+
+{% block body %}
+    <div class="messages error">
+        <h2 class="element-invisible">Error message</h2>
+        The link you have selected has expired. Please visit <a href="{{ path('pelagos_app_ui_account_default') }}">Account Creation</a> to request a new account.
+    </div>
+{% endblock %}

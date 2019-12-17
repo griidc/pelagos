@@ -1,8 +1,0 @@
-<div class="innerForm">
-    {% if is_granted('CAN_EDIT', Entity) %}
-        <img class="editimg" src="{{ asset('build/images/application_edit.png') }}">
-    {% endif %}
-    {% if is_granted('CAN_DELETE', Entity) %}
-        <img class="deleteimg" src="{{ asset('build/images/delete.png') }}">
-    {% endif %}
-</div>

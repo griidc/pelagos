@@ -1,5 +1,0 @@
-pelagos_api:
-    type: rest
-    prefix: api
-    name_prefix: pelagos_api_
-    resource: "@PelagosAppBundle/Resources/config/routing_api.yml"

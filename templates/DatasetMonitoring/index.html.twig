@@ -1,0 +1,86 @@
+{% extends "template/UI.html.twig" %}
+{% block title %}Dataset Monitoring{% endblock title %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/themes/default/style.min.css" rel="stylesheet" />
+
+    <link href="{{ asset('css/dataset-monitoring.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/scrollbars.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/projects.css') }}" rel="stylesheet" />
+{% endblock stylesheets %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/jstree.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.15.5/js/jquery.tablesorter.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+
+    <script type="text/javascript" src="{{ asset('js/dataset-monitoring.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/tree.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/dotgraph.js') }}"></script>
+
+
+{% endblock javascripts %}
+
+{% block body %}
+    <div class="display-table">
+
+        <div class="display-table-row">
+            <div class="display-table-cell">
+                <h1>Dataset Monitoring</h1>
+            </div>
+        </div>
+
+        <div class="display-table-row">
+            <div class="display-table-cell" style="height:100%">
+                <div id="container">
+                    <div id="left">
+                        <div id="menu">
+                            <div class="viewport" style="padding-right: 25px;" >
+                                <div class="overview">
+                                    <script type="text/javascript">
+                                        var tree = {
+                                                    theme: "pelagos",
+                                                    max_depth: 2,
+                                                    expand_to_depth: 0,
+                                                    animation: 250,
+                                                    type: "ra",
+
+                                                    rfp_color: "#00A",
+                                                    rfp_action: "updateHash(\{\{fundSrc.id\}\});showProjects('fundSrc',\{\{fundSrc.id\}\});",
+
+                                                    project_color: "#00A",
+                                                    project_action: "updateHash(\{\{project.fundingCycle.id\}\},\{\{project.id\}\});showProjects('projectId',\{\{project.id\}\});",
+
+                                                    researcher_color: "#00A",
+                                                    researcher_action: "location.href='#';showProjects('peopleId',\{\{person.id\}\});",
+
+                                                    afteropen: "$(window).trigger('hashchange');"
+                                                   }
+
+                                        insertTree(tree);
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="right">
+                        <div id="content">
+                            <div class="viewport">
+                                <div class="overview"></div>
+                                <div class="spinner">
+                                    <div>
+                                        <img src="{{ asset('images/spinner.gif') }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
