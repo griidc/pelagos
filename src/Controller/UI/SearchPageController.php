@@ -29,37 +29,41 @@ class SearchPageController extends AbstractController
      */
     public function defaultAction(Request $request, Search $searchUtil)
     {
-        $results = array();
-        $count = 0;
-        $requestParams = $this->getRequestParams($request);
-        $researchGroupsInfo = array();
-        $fundingOrgInfo = array();
-        $statusInfo = array();
+        if ($this->debug) {
+            $results = array();
+            $count = 0;
+            $requestParams = $this->getRequestParams($request);
+            $researchGroupsInfo = array();
+            $fundingOrgInfo = array();
+            $statusInfo = array();
 
-        if (!empty($requestParams['query'])) {
-            $buildQuery = $searchUtil->buildQuery($requestParams);
-            $results = $searchUtil->findDatasets($buildQuery);
-            $count = $searchUtil->getCount($buildQuery);
-            $researchGroupsInfo = $searchUtil->getResearchGroupAggregations($buildQuery);
-            $fundingOrgInfo = $searchUtil->getFundingOrgAggregations($buildQuery);
-            $statusInfo = $searchUtil->getStatusAggregations($buildQuery);
+            if (!empty($requestParams['query'])) {
+                $buildQuery = $searchUtil->buildQuery($requestParams);
+                $results = $searchUtil->findDatasets($buildQuery);
+                $count = $searchUtil->getCount($buildQuery);
+                $researchGroupsInfo = $searchUtil->getResearchGroupAggregations($buildQuery);
+                $fundingOrgInfo = $searchUtil->getFundingOrgAggregations($buildQuery);
+                $statusInfo = $searchUtil->getStatusAggregations($buildQuery);
+            }
+
+            return $this->render(
+                'Search/default.html.twig',
+                array(
+                    'query' => $requestParams['query'],
+                    'field' => $requestParams['field'],
+                    'results' => $results,
+                    'count' => $count,
+                    'page' => $requestParams['page'],
+                    'researchGroupsInfo' => $researchGroupsInfo,
+                    'fundingOrgInfo' => $fundingOrgInfo,
+                    'statusInfo' => $statusInfo,
+                    'collectionStartDate' => $requestParams['collectionStartDate'],
+                    'collectionEndDate' => $requestParams['collectionEndDate'],
+                )
+            );
         }
 
-        return $this->render(
-            'Search/default.html.twig',
-            array(
-                'query' => $requestParams['query'],
-                'field' => $requestParams['field'],
-                'results' => $results,
-                'count' => $count,
-                'page' => $requestParams['page'],
-                'researchGroupsInfo' => $researchGroupsInfo,
-                'fundingOrgInfo' => $fundingOrgInfo,
-                'statusInfo' => $statusInfo,
-                'collectionStartDate' => $requestParams['collectionStartDate'],
-                'collectionEndDate' => $requestParams['collectionEndDate'],
-                )
-        );
+        return $this->render('bundles/TwigBundle/Exception/error404.html.twig');
     }
 
     /**
