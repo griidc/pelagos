@@ -1,9 +1,0 @@
-<form class="entityForm" entityType="Person"
-{% include '@templates/forms/permissionsBlock.html.twig' with {'Entity': Person} %}
-_action="{{path('pelagos_api_people_post')}}">
-
-    {{ form_widget(form) }}
-
-    {% include '@templates/forms/innerForm.html.twig' with {'Entity': Person} %}
-
-</form>

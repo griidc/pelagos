@@ -1,0 +1,11 @@
+<form class="entityForm" entityType="FundingOrganization"
+{% include 'template/forms/permissionsBlock.html.twig' with {'Entity': FundingOrganization} %}
+_action="{{path('pelagos_api_funding_organizations_post')}}">
+
+    <input type="hidden" name="id" value="{{FundingOrganization.getId}}">
+
+    {{ form_widget(form) }}
+
+    {% include 'template/forms/innerForm.html.twig' with {'Entity': FundingOrganization} %}
+
+</form>

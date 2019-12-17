@@ -1,0 +1,87 @@
+{% extends "template/UI.html.twig" %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript" src="{{ asset('js/FundingOrganization.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/entity/FundingCycle.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+    <table border="0" width="100%">
+        <tr>
+            <td width="25%" valign="top">
+                <div id="fundingOrganizationLogo">
+
+                    <label for="logo">Logo:</label>
+                    <p>
+                        <img
+                        {% if FundingOrganization.getLogo %}
+                                src="{{path('pelagos_api_funding_organizations_put_logo', {'id': FundingOrganization.getId}) }}"
+                        {% endif %}
+                        >
+                    </p>
+                    {% if FundingOrganization.getId %}
+                         <span style="display:none;">
+                            <input id="fileupload" type="file" name="logo" data-url="{{path('pelagos_api_funding_organizations_put_logo', {'id': FundingOrganization.getId}) }}">
+                        </span>
+                        <button id="logobutton" type="button">Change Logo</button>
+                    {% endif %}
+                </div>
+            </td>
+            <td style="padding:10px;" width="50%" valign="top">
+                <div id="orgdetails">
+                    <h2>Funding Organization Details</h2>
+                    {% include 'template/forms/FundingOrganization.html.twig' %}
+                </div>
+            </td>
+            <td width="25%" valign="top">
+                <div id="leadership">
+                    {% include 'template/PersonFundingOrganizationLeadership.html.twig' %}
+                </div>
+            </td>
+        </tr>
+        {% if FundingOrganization.getFundingCycles | length > 0 %}
+            <tr>
+                <td></td>
+                <td><h2>Funding Cycles</h2></td>
+            </tr>
+            {% for FundingCycle in FundingCycles %}
+            <tr>
+                <td width="25%" valign="top">
+
+                </td>
+                <td>
+                    <div>
+                        <p>
+                            {% include 'template/forms/FundingCycle.html.twig' with {'FundingCycle' : FundingCycle, 'form' : FundingCycleForms[FundingCycle.getId]} %}
+                        </p>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+        {% if FundingOrganization.getPersonFundingOrganizations | length > 0 %}
+            {% set PersonFundingOrganizationDeletable = true %}
+            <tr>
+                <td></td>
+                <td><h2>People</h2></td>
+            </tr>
+            {% set PersonFundingOrganizationEditable = true %}
+            {% for PersonFundingOrganization in FundingOrganization.getPersonFundingOrganizations | sortBy(["role.weight","person.lastName","person.firstName"]) %}
+            <tr>
+                <td width="25%" valign="top">
+
+                </td>
+                <td>
+                    <div>
+                        <p>
+                            {% include 'template/forms/PersonFundingOrganization.html.twig' with {'PersonFundingOrganization': PersonFundingOrganization, 'form' : PersonFundingOrganizationForms[PersonFundingOrganization.getId]}%}
+                        </p>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+    </table>
+{% endblock %}

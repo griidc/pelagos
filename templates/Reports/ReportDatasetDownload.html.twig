@@ -1,0 +1,14 @@
+{% extends "template/UI.html.twig" %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript" src="{{ asset('js/downloadReport.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+    <h2> Dataset Download Report</h2>
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
+{% endblock %}
