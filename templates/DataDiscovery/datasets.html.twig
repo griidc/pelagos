@@ -1,0 +1,74 @@
+<div id="tabs">
+    {% if counts.available > 0 or counts.restricted > 0 or counts.inReview > 0 or counts.identified > 0 %}
+
+        <div id="tablist" class="row">
+            <div class="cell">
+                <ul>
+                        <li style="text-align:center"><a href="#tab-1">Available<br />({{ counts.available}})</a></li>
+                        <li style="text-align:center"><a href="#tab-2">Available with<br />Restrictions ({{ counts.restricted }})</a></li>
+                        <li style="text-align:center"><a href="#tab-3">Unavailable, Pending<br />Review ({{ counts.inReview }})</a></li>
+                        <li style="text-align:center"><a href="#tab-4">Unavailable &amp;<br />Expected Soon ({{ counts.identified }})</a></li>
+                </ul>
+            </div>
+        </div>
+            <div id="tab-1" class="tab row">
+                <div class="cell">
+                    <div class="viewport">
+                        <div class="overview">
+                            <table class="datasets" tabIndex="0">
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div> <!-- overview -->
+                    </div> <!-- viewport -->
+                </div> <!-- cell -->
+            </div> <!-- tab1 -->
+
+            <div id="tab-2" class="tab row" style="height:100%; padding:0">
+                <div class="cell">
+                    <div class="viewport">
+                        <div class="overview">
+                            <table class="datasets" tabIndex="1">
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div> <!-- overview -->
+                    </div> <!-- viewport -->
+                </div> <!-- cell -->
+            </div> <!-- tab2 -->
+
+            <div id="tab-3" class="tab row">
+                <div class="cell">
+                    <div class="viewport">
+                        <div class="overview">
+                            <table class="datasets" tabIndex="2">
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div> <!-- overview -->
+                    </div> <!-- viewport -->
+                </div> <!-- cell -->
+            </div> <!-- tab3 -->
+
+            <div id="tab-4" class="tab row" style="height:100%; padding:0">
+                <div class="cell">
+                    <div class="viewport">
+                        <div class="overview">
+                            <table class="datasets" tabIndex="3">
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div> <!-- overview -->
+                    </div> <!-- viewport -->
+                </div> <!-- cell -->
+            </div> <!-- tab4 -->
+    {% else %}
+        <div id="no-datasets" class="row">
+            <div class="cell">
+                <div style="color:red; padding:10px; text-align:center; font-weight:bold; font-size:150%;">There were no datasets found that match your search criteria.</div>
+            </div>
+        </div>
+
+    {% endif %}
+</div>
+{% include 'DataDiscovery/template-dataset-row.html.twig' %}

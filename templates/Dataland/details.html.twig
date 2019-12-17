@@ -1,0 +1,70 @@
+{% if dataset.datasetStatus == constant('App\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
+    <h2>Suggested Citation:</h2>
+    <div>
+        {{ dataset.citation|default }}
+    </div>
+{% endif %}
+
+<h2>Abstract:</h2>
+<div>
+    {{ dataset.abstract|default }}
+</div>
+
+{% if dataset.datasetStatus == constant('App\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
+
+    {% if dataset.datasetSubmission.purpose|default %}
+        <h2>Purpose:</h2>
+        <div>
+            {{ dataset.datasetSubmission.purpose }}
+        </div>
+    {% endif %}
+
+    {% if dataset.datasetSubmission.themeKeywords|default %}
+        <h2>Theme Keywords:</h2>
+        <div>
+            {% set keywords = [] %}
+            {% for keyword in dataset.datasetSubmission.themeKeywords %}
+                {% set keywords = keywords|merge([keyword|trim('"')]) %}
+            {% endfor %}
+            {{ keywords|join(', ') }}
+        </div>
+    {% endif %}
+
+    {% if dataset.datasetSubmission.distributionFormatName|default %}
+        <h2>File Format:</h2>
+        <div>
+            {{ dataset.datasetSubmission.distributionFormatName }}
+        </div>
+    {% endif %}
+
+    {% if dataset.datasetSubmission.isDatasetFileInColdStorage %}
+        <h2>Cold Storage:</h2>
+        <div>
+            NOTE: Due to the large size of this dataset it has been archived
+            to cold storage. The dataset file has been replaced by a manifest
+            file with instructions on how to request this data:
+            {{ dataset.datasetSubmission.datasetFilename|default }} ({{ dataset.datasetSubmission.datasetFileSize|formatBytes }}).
+        </div>
+    {% endif %}
+
+    {% if dataset.datasetSubmission.datasetFilename|default %}
+        <h2>Filename:</h2>
+        <div>
+            {% if dataset.datasetSubmission.isDatasetFileInColdStorage %}
+                {{ dataset.datasetSubmission.datasetFileColdStorageOriginalFilename|default }}
+                ({{ dataset.datasetSubmission.datasetFileColdStorageArchivesize|formatBytes }})
+            {% else %}
+                    {{ dataset.datasetSubmission.datasetFilename|default }} ({{ dataset.datasetSubmission.datasetFileSize|formatBytes }})
+            {% endif %}
+        </div>
+    {% endif %}
+
+
+    {% if downloads is not null %}
+        <h2>Dataset Downloads:</h2>
+        <div>
+            {{ downloads }}
+        </div>
+    {% endif %}
+
+{% endif %}

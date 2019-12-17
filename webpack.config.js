@@ -1,52 +1,56 @@
-// webpack.config.js
 var Encore = require('@symfony/webpack-encore');
 
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+// Manually configure the runtime environment if not already configured yet by the "encore" command.
+// It's useful when you use tools that rely on webpack.config.js file.
+if (!Encore.isRuntimeEnvironmentConfigured()) {
+    Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
+}
 
 Encore
-    // the project directory where all compiled assets will be stored
-    .setOutputPath('web/build/')
+    // directory where compiled assets will be stored
+    .setOutputPath('public/build/')
 
-    // the public path used by the web server to access the previous directory
+    // public path used by the web server to access the output path
     .setPublicPath(Encore.isProduction() ? '/pelagos-symfony/build' : '/build')
 
-    // will create web/build/app.js and web/build/app.css
-    .createSharedEntry('common', './assets/js/common.js')
+    // only needed for CDN's or sub-directory deploy
+    .setManifestKeyPrefix('build/')
+
+    /*
+     * ENTRY CONFIG
+     *
+     * Add 1 entry for each "page" of your app
+     * (including one that's included on every page - e.g. "app")
+     *
+     * Each entry will result in one JavaScript file (e.g. app.js)
+     * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
+     */
+    .createSharedEntry('app', './assets/js/app.js')
     .addEntry('layout', './assets/js/layout.js')
     .addEntry('downloadBox', './assets/js/downloadBox.js')
 
-    // allow sass/scss files to be processed
-    //.enableSassLoader()
-
-    // allow legacy applications to use $/jQuery as a global variable
-    .autoProvidejQuery()
-
-    .enableSourceMaps(!Encore.isProduction())
-
-    // empty the outputPath dir before each build
-    .cleanupOutputBeforeBuild()
-
-    // show OS notifications when builds finish/fail
-    //.enableBuildNotifications()
-
-    // Add or change path of build asset location
-    .setManifestKeyPrefix('build/')
-
-    // create hashed filenames (e.g. app.abc123.css)
-    .enableVersioning(Encore.isProduction())
+    // will require an extra script tag for runtime.js
+    // but, you probably want this, unless you're building a single-page app
+    //.enableSingleRuntimeChunk()
 
     // No runtime.js needed.
     .disableSingleRuntimeChunk()
 
-    .addPlugin(new CopyWebpackPlugin([
-        // copies to {output}/static
-        {from: './assets/images', to: 'images'},
-        {from: './src/Pelagos/Bundle/AppBundle/Resources/public/js', to: 'js'},
-        {from: './src/Pelagos/Bundle/AppBundle/Resources/public/css', to: 'css'},
-        {from: './src/Pelagos/Bundle/AppBundle/Resources/public/images', to: 'images'},
-        {from: './src/Pelagos/Bundle/AppBundle/Resources/public/js/entity', to: 'js/entity'},
-    ]))
+    /*
+     * FEATURE CONFIG
+     *
+     * Enable & configure other features below. For a full
+     * list of features, see:
+     * https://symfony.com/doc/current/frontend.html#adding-more-features
+     */
+    .cleanupOutputBeforeBuild()
+    .enableBuildNotifications()
+    .enableSourceMaps(!Encore.isProduction())
+    // enables hashed filenames (e.g. app.abc123.css)
+    .enableVersioning(Encore.isProduction())
+
+    // uncomment if you're having problems with a jQuery plugin
+    .autoProvidejQuery()
 ;
 
-// export the final configuration
 module.exports = Encore.getWebpackConfig();
