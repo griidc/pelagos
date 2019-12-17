@@ -490,7 +490,7 @@ $(document).ready(function(){
     });
     // File browser for SFTP/GridFTP
     $(".fileBrowserButton").fileBrowser({
-        url: Routing.generate("pelagos_api_account_get_incoming_directory", { id: "self" })
+        url: Routing.generate("pelagos_api_account_get_incoming_directory", { id: "-1" })
     });
 
     // SFTP/GridFTP and HTTP/FTP
