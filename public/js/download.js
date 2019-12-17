@@ -115,4 +115,6 @@ function testDownload(fileSize) {
             $("#dl_time").html("Failed to calculate");
         }
     });
+
+    return "Calculating...";
 }
