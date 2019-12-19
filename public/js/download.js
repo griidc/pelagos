@@ -9,15 +9,17 @@ function startDownload(id)
             className: "vex-theme-os",
             unsafeMessage: getHtmlForDownload(data),
             buttons: [
-                $.extend({}, vex.dialog.buttons.YES, { text: "Download", click: function($vexContent, event) {
+                $.extend({}, vex.dialog.buttons.YES, {
+                    text: "Download", click: function ($vexContent, event) {
                         if (!data.remotelyHosted) {
                             $.getJSON(Routing.generate("pelagos_app_download_http", {"id": id}), function (data) {
                             }).done(function (data) {
                                 window.location = `${data.downloadUrl}`;
                             });
                         }
-                    }}),
-                $.extend({}, vex.dialog.buttons.NO, { text: "Cancel" })
+                    }
+                }),
+                $.extend({}, vex.dialog.buttons.NO, {text: "Cancel"})
             ]
         });
         if (data.remotelyHosted) {
@@ -39,7 +41,7 @@ function getHtmlForDownload(data)
                 additionalInfo = `<p>To download this dataset, please use the location link above.
                 Note, this dataset is not hosted at GRIIDC; the site is not under GRIIDC control and
                 GRIIDC is not responsible for the information or links you may find there.</p>`
-        }
+            }
 
         dialogBoxHtml = `<div id="dataset_download_content">
                             <h3 style="text-align:center;">The dataset you selected is hosted by an external repository.</h3>
