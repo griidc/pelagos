@@ -25,7 +25,7 @@
                     {% else %}
                         <img width="40px" height="40px" id="metadatadl-dis" src="{{ asset('images/xmlc-bw.png') }}">
                     {% endif %}
-                    {% if dataset.datasetSubmission.ErddapUrl %}
+                    {% if dataset.datasetSubmission.ErddapUrl and TEMPORYDISABLED%}
                         <br /><a href="{{ dataset.datasetSubmission.ErddapUrl }}" border="0" target="_blank"><img src="{{ asset('images/button_erddap.png') }}" id="erddaplink"></a>
                     {% endif %}
                 {% else %}
