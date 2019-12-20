@@ -198,3 +198,9 @@ services:
     App\Controller\Api\DatasetPublicationController:
         bind:
             FOS\ElasticaBundle\Persister\ObjectPersister $objectPersister: "@fos_elastica.object_persister.pelagos.dataset"
+
+    App\Util\MailerLoggerUtil:
+        arguments: ["@logger"]
+        tags:
+            - { name: monolog.logger, channel: mailer }
+            - { name: "swiftmailer.default.plugin" }

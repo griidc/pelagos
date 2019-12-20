@@ -1,2 +1,2 @@
 monolog:
-    channels: ['filer', 'retriever', 'dataset_file_hasher','doi_issue', 'create_homedir']
+    channels: ['mailer', 'filer', 'retriever', 'dataset_file_hasher','doi_issue', 'create_homedir']
