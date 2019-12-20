@@ -45,6 +45,14 @@ class DatasetSubmissionListener extends EventListener
             array('dataset' => $dataset),
             $this->getDMs($dataset, $datasetSubmission->getSubmitter())
         );
+
+        // email DRPMS(s)
+        $template = $this->twig->load('Email/data-managers.dataset-submitted.email.twig');
+        $this->sendMailMsg(
+            $template,
+            array('dataset' => $dataset),
+            $this->getAllDRPMs()
+        );
     }
 
     /**
