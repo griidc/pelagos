@@ -5,7 +5,7 @@
     <br>
     The password for your GRIIDC account expired on {{ expireTimeStamp | date("F jS \\a\\t g:i a T") }}. Please click on the link below to reset your password.<br>
     <br>
-    <a href="https://{{ hostname }}/pelagos-symfony{{ path('pelagos_app_ui_account_passwordreset') }}">https://{{ hostname }}/pelagos-symfony{{ path('pelagos_app_ui_account_passwordreset') }}</a><br>
+    <a href="https://{{ hostname }}{{ path('pelagos_app_ui_account_passwordreset') }}">https://{{ hostname }}{{ path('pelagos_app_ui_account_passwordreset') }}</a><br>
     <br>
     Thank you,<br>
     <br>
@@ -19,7 +19,7 @@ Dear {{ person.getFirstName }} {{ person.getLastName }},
 
 The password for your GRIIDC account has expired. Please use the link below to reset your password.
 
-https://{{ hostname }}/pelagos-symfony{{ path('pelagos_app_ui_account_passwordreset') }}
+https://{{ hostname }}{{ path('pelagos_app_ui_account_passwordreset') }}
 
 Thank you,
 
