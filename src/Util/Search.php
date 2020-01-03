@@ -58,6 +58,11 @@ class Search
      */
     const ELASTIC_INDEX_MAPPING_THEME_KEYWORDS = 'datasetSubmission.themeKeywords';
 
+    /**
+     * Elastic index mapping for udi.
+     */
+    const ELASTIC_INDEX_MAPPING_UDI = 'udi';
+
     const AVAILABILITY_STATUSES = array(
         1 => [DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE],
         2 => [DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION, DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL],
@@ -419,6 +424,7 @@ class Search
                 $fieldsBoolQuery->addShould($datasetSubmissionQuery);
             }
         } else {
+            $fieldsBoolQuery->addShould($this->getUdiQuery($queryTerm));
             $fieldsBoolQuery->addShould($this->getTitleQuery($queryTerm));
             $fieldsBoolQuery->addShould($this->getAbstractQuery($queryTerm));
             $datasetSubmissionBoolQuery->addShould($this->getThemeKeywordsQuery($queryTerm));
@@ -677,5 +683,22 @@ class Search
         $collectionEndDateRange->addField('collectionEndDate', ['lte' => $collectionDates['endDate']]);
 
         return $collectionEndDateRange;
+    }
+
+    /**
+     * Get the UDI query.
+     *
+     * @param string $queryTerm Query term that needs to be searched upon.
+     *
+     * @return Query\Match
+     */
+    private function getUdiQuery(string $queryTerm): Query\Match
+    {
+        // Add title field to the query
+        $udiQuery = new Query\Match();
+        $udiQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_UDI, $queryTerm);
+        $udiQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_UDI, 8);
+
+        return $udiQuery;
     }
 }

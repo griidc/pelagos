@@ -78,6 +78,8 @@ fos_elastica:
             types:
                 dataset:
                     properties:
+                        udi:
+                            type: 'text'
                         title:
                             type: 'text'
                         abstract:
