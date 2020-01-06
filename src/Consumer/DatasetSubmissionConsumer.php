@@ -182,6 +182,6 @@ class DatasetSubmissionConsumer implements ConsumerInterface
         // Log processing complete.
         $this->logger->info('Dataset file processing complete', $loggingContext);
         // Publish an AMQP message to trigger dataset file hashing.
-        $this->publisher->publish($datasetSubmission->getId(), RabbitPublisher::FILE_HASHER_PRODUCER);
+        $this->publisher->publish((int)$datasetSubmission->getId(), RabbitPublisher::FILE_HASHER_PRODUCER);
     }
 }
