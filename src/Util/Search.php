@@ -694,7 +694,6 @@ class Search
      */
     private function getUdiQuery(string $queryTerm): Query\MatchPhrase
     {
-        // Add title field to the query
         $udiQuery = new Query\MatchPhrase();
         $udiQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_UDI, $queryTerm);
         $udiQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_UDI, 4);
