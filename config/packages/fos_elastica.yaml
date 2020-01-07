@@ -110,6 +110,11 @@ fos_elastica:
                         collectionEndDate:
                             property_path: false
                             type: 'date'
+                        doi:
+                            type: 'nested'
+                            properties:
+                                doi:
+                                    type: 'text'
                     persistence:
                         driver: orm
                         model: App\Entity\Dataset
