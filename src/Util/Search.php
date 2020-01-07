@@ -424,7 +424,7 @@ class Search
                 $fieldsBoolQuery->addShould($datasetSubmissionQuery);
             }
         } else {
-            $fieldsBoolQuery->addShould($this->getUdiQuery($queryTerm));
+            $queryTerm = $this->doesUdiExistInQueryTerm($queryTerm, $fieldsBoolQuery);
             $fieldsBoolQuery->addShould($this->getTitleQuery($queryTerm));
             $fieldsBoolQuery->addShould($this->getAbstractQuery($queryTerm));
             $datasetSubmissionBoolQuery->addShould($this->getThemeKeywordsQuery($queryTerm));
@@ -690,15 +690,36 @@ class Search
      *
      * @param string $queryTerm Query term that needs to be searched upon.
      *
-     * @return Query\Match
+     * @return Query\MatchPhrase
      */
-    private function getUdiQuery(string $queryTerm): Query\Match
+    private function getUdiQuery(string $queryTerm): Query\MatchPhrase
     {
         // Add title field to the query
-        $udiQuery = new Query\Match();
+        $udiQuery = new Query\MatchPhrase();
         $udiQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_UDI, $queryTerm);
-        $udiQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_UDI, 8);
+        $udiQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_UDI, 4);
 
         return $udiQuery;
+    }
+
+    /**
+     * To check if udi exists in the search term.
+     *
+     * @param string          $queryTerm       Query term that needs to be checked if udi exists.
+     * @param Query\BoolQuery $fieldsBoolQuery The fields elastic boolean query that udi query is added to.
+     *
+     * @return string
+     */
+    private function doesUdiExistInQueryTerm(string $queryTerm, Query\BoolQuery $fieldsBoolQuery): string
+    {
+        $udiRegEx = '/\b([A-Z\d]{2}\.x\d\d\d\.\d\d\d[:.]\d\d\d\d)\b/i';
+        if (preg_match_all($udiRegEx, $queryTerm, $matches)) {
+            trim(preg_replace($udiRegEx, '', $queryTerm));
+            $queryTerm = $matches[1][0];
+            // Replacing the 11th position to ":"
+            $queryTerm = substr_replace($queryTerm, ':', 11, 1);
+            $fieldsBoolQuery->addShould($this->getUdiQuery($queryTerm));
+        }
+        return $queryTerm;
     }
 }
