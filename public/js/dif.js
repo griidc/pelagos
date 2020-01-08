@@ -287,7 +287,18 @@ $(document).ready(function()
             }
         });
     }
+
+    var select = $('select#researchGroup');
+        select.html(select.find('option').sort(function(x, y) {
+            if ($(x).text() > $(y).text()) {
+                return 1;
+            } else {
+                return -1;
+            }
+    }));
+    $("select option:contains(PLEASE SELECT A PROJECT)").prependTo($("select#researchGroup"));
 });
+
 
 function difStatus(id, status)
 {
