@@ -334,7 +334,7 @@ class DatasetSubmission extends Entity
             'description' => 'energy, water and waste systems and communications infrastructure and services. Examples: hydroelectricity, geothermal, solar and nuclear sources of energy, water purification and distribution, sewage collection and disposal, electricity and gas distribution, data communication, telecommunication, radio, communication networks',
         ],
     ];
-    
+
     /**
      * Valid values for self::$remotelyHostedFunction.
      *
@@ -1004,7 +1004,7 @@ class DatasetSubmission extends Entity
      * @ORM\Column(type="text", nullable=true)
      */
     protected $erddapUrl;
-    
+
     /**
      * Remotely Hosted Dataset Name.
      *
@@ -1013,7 +1013,7 @@ class DatasetSubmission extends Entity
      * @ORM\Column(type="text", nullable=true)
      */
     protected $remotelyHostedName;
-    
+
     /**
      * Remotely Hosted Dataset Description.
      *
@@ -1022,7 +1022,7 @@ class DatasetSubmission extends Entity
      * @ORM\Column(type="text", nullable=true)
      */
     protected $remotelyHostedDescription;
-    
+
     /**
      * Remotely Hosted Dataset Function.
      *
@@ -2650,7 +2650,7 @@ class DatasetSubmission extends Entity
             )
         );
     }
-    
+
     /**
      * Gets the valid choices for Online Function codes.
      *
@@ -2770,7 +2770,7 @@ class DatasetSubmission extends Entity
             return null;
         }
     }
-    
+
     /**
      * Getter for the datasetFileUri url protocol.
      *
@@ -2797,7 +2797,7 @@ class DatasetSubmission extends Entity
     {
         $this->erddapUrl = $erddapUrl;
     }
-    
+
     /**
      * Getter for the Remotely Hosted Name.
      *
@@ -2807,7 +2807,7 @@ class DatasetSubmission extends Entity
     {
         return $this->remotelyHostedName;
     }
-    
+
     /**
      * Setter for the Remotely Hosted Name.
      *
@@ -2819,7 +2819,7 @@ class DatasetSubmission extends Entity
     {
         $this->remotelyHostedName = $remotelyHostedName;
     }
-    
+
     /**
      * Getter for the Remotely Hosted Description.
      *
@@ -2829,7 +2829,7 @@ class DatasetSubmission extends Entity
     {
         return $this->remotelyHostedDescription;
     }
-    
+
     /**
      * Setter for the Remotely Hosted Description.
      *
@@ -2841,7 +2841,7 @@ class DatasetSubmission extends Entity
     {
         $this->remotelyHostedDescription = $remotelyHostedDescription;
     }
-    
+
     /**
      * Getter for the Remotely Hosted Function.
      *
@@ -2851,7 +2851,7 @@ class DatasetSubmission extends Entity
     {
         return $this->remotelyHostedFunction;
     }
-    
+
     /**
      * Setter for the Remotely Hosted Function.
      *
