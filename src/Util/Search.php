@@ -728,7 +728,8 @@ class Search
         $doiQuery->setQuery($doiNestedQuery);
         return $doiQuery;
     }
-  
+
+    /**
      * Get the UDI query.
      *
      * @param string $queryTerm Query term that needs to be searched upon.
