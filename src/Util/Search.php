@@ -59,6 +59,11 @@ class Search
     const ELASTIC_INDEX_MAPPING_THEME_KEYWORDS = 'datasetSubmission.themeKeywords';
 
     /**
+     * Elastic index mapping for dataset DOI.
+     */
+    const ELASTIC_INDEX_MAPPING_DOI = 'doi.doi';
+    
+    /**
      * Elastic index mapping for udi.
      */
     const ELASTIC_INDEX_MAPPING_UDI = 'udi';
@@ -424,6 +429,7 @@ class Search
                 $fieldsBoolQuery->addShould($datasetSubmissionQuery);
             }
         } else {
+            $queryTerm = $this->doesDoiExistInQueryTerm($queryTerm, $fieldsBoolQuery);
             $queryTerm = $this->doesUdiExistInQueryTerm($queryTerm, $fieldsBoolQuery);
             $fieldsBoolQuery->addShould($this->getTitleQuery($queryTerm));
             $fieldsBoolQuery->addShould($this->getAbstractQuery($queryTerm));
@@ -683,6 +689,44 @@ class Search
         $collectionEndDateRange->addField('collectionEndDate', ['lte' => $collectionDates['endDate']]);
 
         return $collectionEndDateRange;
+    }
+
+    /**
+     * To check if DOI exists in the search term.
+     *
+     * @param string          $queryTerm       Query term that needs to be checked if DOI exists.
+     * @param Query\BoolQuery $fieldsBoolQuery The fields elastic boolean query that DOI query is added to.
+     *
+     * @return string
+     */
+    private function doesDoiExistInQueryTerm(string $queryTerm, Query\BoolQuery $fieldsBoolQuery): string
+    {
+        $doiRegEx = '!\b(?:[Dd][Oo][Ii]\s*:\s*)?(10.\d{4,9}/[-._;()/:A-Z0-9a-z]+)\b!';
+        if (preg_match_all($doiRegEx, $queryTerm, $matches)) {
+            trim(preg_replace($doiRegEx, '', $queryTerm));
+            $queryTerm = $matches[1][0];
+            $fieldsBoolQuery->addShould($this->getDoiQuery($queryTerm));
+        }
+        return $queryTerm;
+    }
+
+    /**
+     * Get the DOI query.
+     *
+     * @param string $queryTerm Query term that needs to be searched upon.
+     *
+     * @return Query\Nested
+     */
+    private function getDoiQuery(string $queryTerm): Query\Nested
+    {
+        // Query against dataset DOIs.
+        $doiQuery = new Query\Nested();
+        $doiQuery->setPath('doi');
+        $doiNestedQuery = new Query\MatchPhrase();
+        $doiNestedQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_DOI, $queryTerm);
+        $doiNestedQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_DOI, 4);
+        $doiQuery->setQuery($doiNestedQuery);
+        return $doiQuery;
     }
 
     /**
