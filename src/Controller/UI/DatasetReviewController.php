@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-use App\Form\DatasetSubmissionType;
+use App\Form\DatasetSubmissionReviewType;
 
 use App\Handler\EntityHandler;
 
@@ -299,7 +299,7 @@ class DatasetReviewController extends AbstractController
 
         $form = $this->get('form.factory')->createNamed(
             null,
-            DatasetSubmissionType::class,
+            DatasetSubmissionReviewType::class,
             $datasetSubmission,
             array(
                 'action' => $this->generateUrl('pelagos_app_ui_datasetreview_post', array('id' => $datasetSubmissionId)),
@@ -481,7 +481,7 @@ class DatasetReviewController extends AbstractController
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
         $form = $this->get('form.factory')->createNamed(
             null,
-            DatasetSubmissionType::class,
+            DatasetSubmissionReviewType::class,
             $datasetSubmission
         );
 
