@@ -813,6 +813,10 @@ class DatasetSubmission extends Entity
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
+     *
+     * @Assert\NotBlank(
+     *     message="The dataset submission data methods field is required."
+     * )
      */
     protected $suppMethods;
 
