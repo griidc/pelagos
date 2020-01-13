@@ -88,4 +88,12 @@ class SearchPageController extends AbstractController
             )
         );
     }
+
+    /**
+     * @Route("/search-react-app/{reactRouting}", name="reach_search_app", defaults={"reactRouting": null})
+     */
+    public function index()
+    {
+        return $this->render('Search/base.html.twig');
+    }
 }

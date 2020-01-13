@@ -16,6 +16,10 @@ Encore
     // only needed for CDN's or sub-directory deploy
     .setManifestKeyPrefix('build/')
 
+
+    // Enable React
+    .enableReactPreset()
+
     /*
      * ENTRY CONFIG
      *
@@ -28,6 +32,7 @@ Encore
     .createSharedEntry('app', './assets/js/app.js')
     .addEntry('layout', './assets/js/layout.js')
     .addEntry('downloadBox', './assets/js/downloadBox.js')
+    .addEntry('search-app', './assets/js/search-app.js')
 
     // will require an extra script tag for runtime.js
     // but, you probably want this, unless you're building a single-page app

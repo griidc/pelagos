@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+{% block head %}
+    <title>GRIIDC | {% block title %}Search Datasets{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+{% block stylesheets %}
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
+    <link href="{{ asset('build/search-app.css') }}" rel="stylesheet" />
+
+{% endblock stylesheets %}
+{% endblock %}
+
+</head>
+
+<body>
+
+<header>
+    <h2><a href="#" class="logo"><img src="{{ asset('images/griidc-logo.png') }}" alt="GRIIDC logo"></a></h2>
+    <nav>
+{#	        <span class="navbar-toggle" id="js-navbar-toggle">#}
+{#	            <i class="fa fa-bars"></i>#}
+{#	        </span>#}
+        <ul class="main-nav" id="js-menu">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Search Data</a></li>
+            <li><a href="#">Submit Data</a></li>
+            <li><a href="#">Tracking &amp; Stats</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Help</a></li>
+            <li><a href="#">Research</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section class="hero">
+
+</section>
+
+<footer>
+    <ul>
+        <li><a href="#"><i class="fa fa-twitter-square"></i></a></li>
+        <li><a href="#"><i class="fa fa-facebook-square"></i></a></li>
+        <li><a href="#"><i class="fa fa-phone-square"></i></a></li>
+        <li><a href="#"><i class="fa fa-envelope-square"></i></a></li>
+        <li><a href="#"><i class="fa fa-github-square"></i></a></li>
+    </ul>
+    <p>Harte Research Institute for Gulf of Mexico Studies | Texas A&amp;M University-Corpus Christi
+        <br>Copyright © 2019 The Gulf of Mexico Research Initiative</p>
+</footer>
+
+</body>
+{% block javascripts %}
+    <script src="{{ asset('build/search-app.js') }}"></script>
+
+{#        <script type="text/javascript">#}
+{#            let mainNav = document.getElementById('js-menu');#}
+{#            let navBarToggle = document.getElementById('js-navbar-toggle');#}
+{#            navBarToggle.addEventListener('click', function () {#}
+{#                mainNav.classList.toggle('active');#}
+{#            });#}
+{#        </script>#}
+{% endblock %}
+</html>
