@@ -43,6 +43,7 @@ services:
         bind:
             string $fromAddress: "%env(MAILER_FROM_ADDR)%"
             string $fromName: "%env(MAILER_FROM_NAME)%"
+            string $bccAddress: "%env(BCC_MAILER_ADDR)%"
 
     App\Util\MdappLogger:
         bind:
