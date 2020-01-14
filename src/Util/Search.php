@@ -139,6 +139,30 @@ class Search
         // Bool query to get range temporal extent dates
         $collectionDateBoolQuery = new Query\BoolQuery();
 
+        // Check if exclude term exists in the given query term
+        $mustNotQueryTerm = '';
+        if (preg_match_all('/-\b(\w*\w*)\b/', $queryTerm, $matches)) {
+            $mustNotQueryTerm = $matches[1][0];
+            $queryTerm = str_replace($mustNotQueryTerm, '', $queryTerm);
+        }
+
+        // If exclude term exists add the must not query
+        if ($mustNotQueryTerm) {
+            $mustNotMultiMatch = new Query\MultiMatch();
+            $mustNotMultiMatch->setFields(
+                [
+                    self::ELASTIC_INDEX_MAPPING_ABSTRACT,
+                    self::ELASTIC_INDEX_MAPPING_TITLE,
+                    self::ELASTIC_INDEX_MAPPING_UDI,
+                    self::ELASTIC_INDEX_MAPPING_DOI,
+                    self::ELASTIC_INDEX_MAPPING_AUTHORS,
+                    self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS
+                ]
+            );
+            $mustNotMultiMatch->setQuery($mustNotQueryTerm);
+            $subMainQuery->addMustNot($mustNotMultiMatch);
+        }
+
         // Search exact phrase if query string has double quotes
         if (preg_match('/"/', $queryTerm)) {
             $subMainQuery->addMust($this->getExactMatchQuery($queryTerm));
