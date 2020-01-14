@@ -1055,3 +1055,7 @@ function checkSpatial(isNonSpatial) {
     }
 }
 
+$( document ).ready(function() {
+    $('#suppMethods').attr("required", true);
+    $('label[for="suppMethods"]').addClass("required emRequired");
+});
