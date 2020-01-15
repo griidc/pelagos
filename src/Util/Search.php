@@ -801,7 +801,7 @@ class Search
     private function splitQueryTerms(string $queryTerm): array
     {
         $splitUpQueryTerms = array();
-        if (preg_match_all('/-\b(\w*)\b/', $queryTerm, $matches)) {
+        if (preg_match_all('/\s-\b(\w*)\b/', $queryTerm, $matches)) {
             $splitUpQueryTerms = array(
                 'mustNotMatch' => '',
                 'mustMatch' => ''
