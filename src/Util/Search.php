@@ -184,7 +184,7 @@ class Search
 
         $mainQuery->setQuery($subMainQuery);
         $mainQuery->setFrom(($page - 1) * 10);
-
+        
         return $mainQuery;
     }
 
@@ -655,7 +655,6 @@ class Search
         // Add theme keywords to the query
         $themeKeywordsQuery = new Query\Match();
         $themeKeywordsQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS, $queryTerm);
-        $themeKeywordsQuery->setFieldOperator(self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS, 'and');
         $themeKeywordsQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS, 2);
         return $themeKeywordsQuery;
     }
@@ -672,7 +671,6 @@ class Search
         // Add datasetSubmission author field to the query
         $authorQuery = new Query\Match();
         $authorQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_AUTHORS, $queryTerm);
-        $authorQuery->setFieldOperator(self::ELASTIC_INDEX_MAPPING_AUTHORS, 'and');
         $authorQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_AUTHORS, 2);
         return $authorQuery;
     }
