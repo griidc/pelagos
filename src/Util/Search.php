@@ -141,9 +141,10 @@ class Search
 
         // Check if exclude term exists in the given query term
         $mustNotQueryTerm = '';
-        if (preg_match_all('/-\b(\w*\w*)\b/', $queryTerm, $matches)) {
-            $mustNotQueryTerm = $matches[1][0];
-            $queryTerm = str_replace($mustNotQueryTerm, '', $queryTerm);
+        $splitUpQueryTerms = $this->splitQueryTerms($queryTerm);
+        if (!emptyArray($splitUpQueryTerms)) {
+            $queryTerm = $splitUpQueryTerms['mustMatch'];
+            $mustNotQueryTerm = $splitUpQueryTerms['mustNotMatch'];
         }
 
         // If exclude term exists add the must not query
@@ -788,5 +789,30 @@ class Search
             $fieldsBoolQuery->addShould($this->getUdiQuery($queryTerm));
         }
         return $queryTerm;
+    }
+
+    /**
+     * Split the query terms into must match and must not match terms.
+     *
+     * @param string $queryTerm Query term that needs to be searched upon.
+     *
+     * @return array
+     */
+    private function splitQueryTerms(string $queryTerm): array
+    {
+        $splitUpQueryTerms = array();
+        if (preg_match_all('/-\b(\w*)\b/', $queryTerm, $matches)) {
+            $splitUpQueryTerms = array(
+                'mustNotMatch' => '',
+                'mustMatch' => ''
+            );
+            foreach ($matches[1] as $match) {
+                $splitUpQueryTerms['mustNotMatch'] = trim($splitUpQueryTerms['mustNotMatch'] . ' ' . $match);
+            }
+            $splitUpQueryTerms['mustMatch'] = str_replace('-', '', $queryTerm);
+            $splitUpQueryTerms['mustMatch'] = str_replace($splitUpQueryTerms['mustNotMatch'], '', $splitUpQueryTerms['mustMatch']);
+        }
+
+        return $splitUpQueryTerms;
     }
 }
