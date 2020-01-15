@@ -142,7 +142,7 @@ class Search
         // Check if exclude term exists in the given query term
         $mustNotQueryTerm = '';
         $splitUpQueryTerms = $this->splitQueryTerms($queryTerm);
-        if (!emptyArray($splitUpQueryTerms)) {
+        if (!empty($splitUpQueryTerms)) {
             $queryTerm = $splitUpQueryTerms['mustMatch'];
             $mustNotQueryTerm = $splitUpQueryTerms['mustNotMatch'];
         }
