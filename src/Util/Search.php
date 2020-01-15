@@ -144,24 +144,15 @@ class Search
         $splitUpQueryTerms = $this->splitQueryTerms($queryTerm);
         if (!empty($splitUpQueryTerms)) {
             $queryTerm = $splitUpQueryTerms['mustMatch'];
-            $mustNotQueryTerm = $splitUpQueryTerms['mustNotMatch'];
+            $mustNotQueryTerms = $splitUpQueryTerms['mustNotMatch'];
         }
 
         // If exclude term exists add the must not query
-        if ($mustNotQueryTerm) {
-            $mustNotMultiMatch = new Query\MultiMatch();
-            $mustNotMultiMatch->setFields(
-                [
-                    self::ELASTIC_INDEX_MAPPING_ABSTRACT,
-                    self::ELASTIC_INDEX_MAPPING_TITLE,
-                    self::ELASTIC_INDEX_MAPPING_UDI,
-                    self::ELASTIC_INDEX_MAPPING_DOI,
-                    self::ELASTIC_INDEX_MAPPING_AUTHORS,
-                    self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS
-                ]
-            );
-            $mustNotMultiMatch->setQuery($mustNotQueryTerm);
-            $subMainQuery->addMustNot($mustNotMultiMatch);
+        if (!empty($mustNotQueryTerms)) {
+            foreach ($mustNotQueryTerms as $mustNotQueryTerm) {
+                $mustNotBoolQuery = $this->getMustNotIncludeTermsQuery($mustNotQueryTerm);
+                $subMainQuery->addMustNot($mustNotBoolQuery);
+            }
         }
 
         // Search exact phrase if query string has double quotes
@@ -806,13 +797,44 @@ class Search
                 'mustNotMatch' => '',
                 'mustMatch' => ''
             );
-            foreach ($matches[1] as $match) {
-                $splitUpQueryTerms['mustNotMatch'] = trim($splitUpQueryTerms['mustNotMatch'] . ' ' . $match);
-            }
-            $splitUpQueryTerms['mustMatch'] = str_replace('-', '', $queryTerm);
-            $splitUpQueryTerms['mustMatch'] = str_replace($splitUpQueryTerms['mustNotMatch'], '', $splitUpQueryTerms['mustMatch']);
+            $splitUpQueryTerms['mustMatch'] = str_replace($matches[0], '', $queryTerm);
+            $splitUpQueryTerms['mustNotMatch'] = $matches[1];
         }
 
         return $splitUpQueryTerms;
+    }
+
+    /**
+     * Get must not include terms query.
+     *
+     * @param string $mustNotQueryTerm Query term that needs to be searched upon.
+     *
+     * @return Query\BoolQuery
+     */
+    private function getMustNotIncludeTermsQuery(string $mustNotQueryTerm): Query\BoolQuery
+    {
+        $mustNotBoolQuery = new Query\BoolQuery();
+
+        $mustNotMultiMatch = new Query\MultiMatch();
+        $mustNotMultiMatch->setFields(
+            [
+                self::ELASTIC_INDEX_MAPPING_ABSTRACT,
+                self::ELASTIC_INDEX_MAPPING_TITLE,
+            ]
+        );
+        $mustNotMultiMatch->setQuery($mustNotQueryTerm);
+        $mustNotBoolQuery->addShould($mustNotMultiMatch);
+
+        $datasetSubmissionQuery = new Query\Nested();
+        $datasetSubmissionQuery->setPath('datasetSubmission');
+
+        // Bool query to add fields in datasetSubmission
+        $datasetSubmissionBoolQuery = new Query\BoolQuery();
+        $datasetSubmissionBoolQuery->addShould($this->getThemeKeywordsQuery($mustNotQueryTerm));
+        $datasetSubmissionBoolQuery->addShould($this->getDSubAuthorQuery($mustNotQueryTerm));
+        $datasetSubmissionQuery->setQuery($datasetSubmissionBoolQuery);
+        $mustNotBoolQuery->addShould($datasetSubmissionQuery);
+
+        return $mustNotBoolQuery;
     }
 }
