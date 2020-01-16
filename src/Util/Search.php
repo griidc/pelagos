@@ -139,6 +139,22 @@ class Search
         // Bool query to get range temporal extent dates
         $collectionDateBoolQuery = new Query\BoolQuery();
 
+        // Check if exclude term exists in the given query term
+        $mustNotQueryTerm = '';
+        $splitUpQueryTerms = $this->splitQueryTerms($queryTerm);
+        if (!empty($splitUpQueryTerms)) {
+            $queryTerm = $splitUpQueryTerms['mustMatch'];
+            $mustNotQueryTerms = $splitUpQueryTerms['mustNotMatch'];
+        }
+
+        // If exclude term exists add the must not query
+        if (!empty($mustNotQueryTerms)) {
+            foreach ($mustNotQueryTerms as $mustNotQueryTerm) {
+                $mustNotBoolQuery = $this->getMustNotIncludeTermsQuery($mustNotQueryTerm);
+                $subMainQuery->addMustNot($mustNotBoolQuery);
+            }
+        }
+
         // Search exact phrase if query string has double quotes
         if (preg_match('/"/', $queryTerm)) {
             $subMainQuery->addMust($this->getExactMatchQuery($queryTerm));
@@ -168,7 +184,7 @@ class Search
 
         $mainQuery->setQuery($subMainQuery);
         $mainQuery->setFrom(($page - 1) * 10);
-
+        
         return $mainQuery;
     }
 
@@ -639,7 +655,6 @@ class Search
         // Add theme keywords to the query
         $themeKeywordsQuery = new Query\Match();
         $themeKeywordsQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS, $queryTerm);
-        $themeKeywordsQuery->setFieldOperator(self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS, 'and');
         $themeKeywordsQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS, 2);
         return $themeKeywordsQuery;
     }
@@ -656,7 +671,6 @@ class Search
         // Add datasetSubmission author field to the query
         $authorQuery = new Query\Match();
         $authorQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_AUTHORS, $queryTerm);
-        $authorQuery->setFieldOperator(self::ELASTIC_INDEX_MAPPING_AUTHORS, 'and');
         $authorQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_AUTHORS, 2);
         return $authorQuery;
     }
@@ -764,5 +778,61 @@ class Search
             $fieldsBoolQuery->addShould($this->getUdiQuery($queryTerm));
         }
         return $queryTerm;
+    }
+
+    /**
+     * Split the query terms into must match and must not match terms.
+     *
+     * @param string $queryTerm Query term that needs to be searched upon.
+     *
+     * @return array
+     */
+    private function splitQueryTerms(string $queryTerm): array
+    {
+        $splitUpQueryTerms = array();
+        if (preg_match_all('/(?:\s(?<!\b)|^)-\b(\w*)\b/', $queryTerm, $matches)) {
+            $splitUpQueryTerms = array(
+                'mustNotMatch' => '',
+                'mustMatch' => ''
+            );
+            $splitUpQueryTerms['mustMatch'] = str_replace($matches[0], '', $queryTerm);
+            $splitUpQueryTerms['mustNotMatch'] = $matches[1];
+        }
+
+        return $splitUpQueryTerms;
+    }
+
+    /**
+     * Get must not include terms query.
+     *
+     * @param string $mustNotQueryTerm Query term that needs to be searched upon.
+     *
+     * @return Query\BoolQuery
+     */
+    private function getMustNotIncludeTermsQuery(string $mustNotQueryTerm): Query\BoolQuery
+    {
+        $mustNotBoolQuery = new Query\BoolQuery();
+
+        $mustNotMultiMatch = new Query\MultiMatch();
+        $mustNotMultiMatch->setFields(
+            [
+                self::ELASTIC_INDEX_MAPPING_ABSTRACT,
+                self::ELASTIC_INDEX_MAPPING_TITLE,
+            ]
+        );
+        $mustNotMultiMatch->setQuery($mustNotQueryTerm);
+        $mustNotBoolQuery->addShould($mustNotMultiMatch);
+
+        $datasetSubmissionQuery = new Query\Nested();
+        $datasetSubmissionQuery->setPath('datasetSubmission');
+
+        // Bool query to add fields in datasetSubmission
+        $datasetSubmissionBoolQuery = new Query\BoolQuery();
+        $datasetSubmissionBoolQuery->addShould($this->getThemeKeywordsQuery($mustNotQueryTerm));
+        $datasetSubmissionBoolQuery->addShould($this->getDSubAuthorQuery($mustNotQueryTerm));
+        $datasetSubmissionQuery->setQuery($datasetSubmissionBoolQuery);
+        $mustNotBoolQuery->addShould($datasetSubmissionQuery);
+
+        return $mustNotBoolQuery;
     }
 }
