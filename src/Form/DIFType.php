@@ -105,7 +105,7 @@ class DIFType extends AbstractType
             ->add('abstract', TextareaType::class, array(
                 'attr' => array(
                     'rows' => 6,
-                    'placeholder' => 'Please provide a brief narrative describing: What, where, why, how, and when the data will be or have been collected/generated?  (4000 Character Maximum',
+                    'placeholder' => 'Please provide a brief narrative describing what, where, why, how, and when the data will be or have been collected or generated (4000 character maximum)',
                     'maxlength' => 4000,
                 ),
                 'label' => 'Dataset Abstract:',
