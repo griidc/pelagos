@@ -136,6 +136,7 @@ services:
     App\Consumer\CreateHomedirConsumer:
         bind:
             Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.create_homedir'
+            $fsType: "%env(FILESYSTEM_TYPE)%"
 
     consumer.dataset_submission.filer:
         class: App\Consumer\DatasetSubmissionConsumer

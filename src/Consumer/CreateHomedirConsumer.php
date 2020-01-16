@@ -33,17 +33,27 @@ class CreateHomedirConsumer implements ConsumerInterface
     protected $entityManager;
 
     /**
+     * The Filesystem type, NFS or Linux.
+     *
+     * @var string A string of 'Linux' or 'NFS'
+     */
+    protected $fsType;
+
+    /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager The entity manager.
      * @param Logger                 $logger        A Monolog logger.
+     * @param string                 $fsType        Filesystem type, NFS or Linux.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        Logger $logger
+        Logger $logger,
+        string $fsType
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
+        $this->fsType = $fsType;
     }
 
    /**
@@ -55,8 +65,11 @@ class CreateHomedirConsumer implements ConsumerInterface
     */
     public function execute(AMQPMessage $message)
     {
-        return($this->processNFS($message));
-        //return($this->processNormalFS($message));
+        if ('NFS' === $this->fsType) {
+            return($this->processNFS($message));
+        } else {
+            return($this->processNormalFS($message));
+        }
     }
 
    /**
