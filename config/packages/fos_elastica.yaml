@@ -99,6 +99,7 @@ fos_elastica:
                                                     type: 'keyword'
                         datasetSubmission:
                             type: 'nested'
+                            include_in_parent: true
                             properties:
                                 authors:
                                     type: 'text'
