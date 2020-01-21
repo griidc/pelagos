@@ -1,0 +1,84 @@
+.bg {
+    background-color: #f8f8f8 !important;
+}
+
+.padding-y {
+    padding-top: 32px;
+    padding-bottom: 32px;
+}
+
+article:after, .form-group:after {
+    display: block;
+    clear: both;
+    content: "";
+}
+
+.card-group-item {
+    border-bottom: 1px solid #dee2e6;
+}
+
+.card-group-item .card-header {
+    border-bottom: 0;
+    background-color: #f9f9f9;
+}
+
+.card-header .title {
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+
+.title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 200px;
+    display: inline-block;
+}
+
+html {
+    font-size: 15px;
+}
+
+.card-product {
+    margin-bottom: 1rem;
+}
+
+.card-product:hover .btn-overlay {
+    opacity: 1;
+}
+
+.card-product:hover {
+    -webkit-box-shadow: 0 4px 15px rgba(153, 153, 153, 0.3);
+    box-shadow: 0 4px 15px rgba(153, 153, 153, 0.3);
+    -webkit-transition: .5s;
+    transition: .5s;
+}
+
+.btn-space {
+    margin-right: 5px;
+}
+
+.form-options-input {
+    border: none;
+    background: transparent;
+}
+
+.form-options-input-group input:focus,
+.form-options-input-group select:focus,
+.form-options-input-group button:focus {
+    outline: none;
+}
+
+.form-options-input-group {
+    border: 1px solid #ced4da;
+    padding: 10px;
+    background-color: #fff;
+}
+
+.form-options-input-group .btn {
+    padding: .25rem .25rem;
+}
+
+.card-product:hover {
+    cursor: pointer;
+}
