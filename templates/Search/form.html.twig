@@ -1,69 +1,101 @@
-<form id="searchForm" name="searchForm" action="{{ path('pelagos_app_ui_searchpage_default') }}" method="get" class="search-form">
-    <div id="custom-search-input">
-        <div class="col-md-2">
-            <input type="text"
-                   id="collectionStartDate"
-                   name="collectionStartDate"
-                   class="input-group form-control"
-                   value="{{ (collectionStartDate) ? collectionStartDate : null }}"
-                   placeholder="yyyy-mm-dd">
-            <input type="text"
-                   id="collectionEndDate"
-                   name="collectionEndDate"
-                   class="input-group form-control"
-                   value="{{ (collectionEndDate) ? collectionEndDate : null }}"
-                   placeholder="yyyy-mm-dd">
-        </div>
-        <div class="col-md-2">
-            <select class="input-group form-control" name="field" id="field">
-                    <option
-                            {% if field is empty %}
-                                selected
-                            {% endif %}
-                            value>
-                        -- All --
-                    </option>
-                    <option
-                            value={{ constant('App\\Util\\Search::ELASTIC_INDEX_MAPPING_TITLE') }}
-                            {% if field is defined and field is not empty and field == constant('App\\Util\\Search::ELASTIC_INDEX_MAPPING_TITLE') %}
-                            selected
-                            {% endif %}>
-                        Title
-                    </option>
-                    <option
-                            value={{ constant('App\\Util\\Search::ELASTIC_INDEX_MAPPING_ABSTRACT') }}
-                             {% if field is defined and field is not empty and field == constant('App\\Util\\Search::ELASTIC_INDEX_MAPPING_ABSTRACT')%}
-                            selected
-                            {% endif %}>
-                        Abstract
-                    </option>
-                    <option
-                            value={{ constant('App\\Util\\Search::ELASTIC_INDEX_MAPPING_AUTHORS') }}
-                             {% if field is defined and field is not empty and field == constant('App\\Util\\Search::ELASTIC_INDEX_MAPPING_AUTHORS')%}
-                            selected
-                            {% endif %}>
-                        Author
-                    </option>
-                    <option
-                            value={{ constant('App\\Util\\Search::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS') }}
-                             {% if field is defined and field is not empty and field == constant('App\\Util\\Search::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS')%}
-                            selected
-                            {% endif %}>
-                        Theme Keywords
-                    </option>
-            </select>
-        </div>
-        <div class="input-group col-md-4">
-            <input type="search" id="searchBox" name="query" class="search-query form-control" placeholder="Search..."
-                   value = "{{ query|default }}">
-            {% if page is defined and page is not null%}
-                <input type="hidden" id="pageNo" name="page" value="{{ page | default }}">
-            {% endif %}
-            <span class="input-group-btn">
-                <button id="searchSubmit" class="btn btn-danger" type="submit">
-                    <span class=" glyphicon glyphicon-search"></span>
-                </button>
-            </span>
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content bg pt-5">
+    <div class="container">
+        <div class="card card-header">
+            <form id="searchForm" name="searchForm" action="{{ path('pelagos_app_ui_searchpage_default') }}" method="get">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <input type="search"
+                               name="query"
+                               class="form-control"
+                               placeholder="Search.."
+                               id="searchBox"
+                               value = "{{ query|default }}">
+                        {% if page is defined and page is not null%}
+                            <input type="hidden" id="pageNo" name="page" value="{{ page | default }}">
+                        {% endif %}
+                    </div>
+                    <div class="col-sm-3 btn-toolbar">
+                        <button id="searchSubmit" type="submit" class="btn btn-primary mx-2 w-50">Search
+                            <i class="fa fa-search"></i></button>
+                        <button type="reset" class="btn btn-dark mx-2 w-25">Clear</button>
+                    </div>
+                </div>
+                <div class="pt-3 mt-3 d-flex flex-row justify-content-around">
+                    <div class="pl-5 pt-1">
+                                <span class="form-options-input-group">
+                                    <select class="form-options-input" name="field" id="field">
+                                            <option
+                                                    {% if field is empty %}
+                                                        selected
+                                                    {% endif %}
+                                                    value>
+                                                -- All --
+                                            </option>
+                                            <option
+                                                    value={{ constant('App\\Util\\Search::ELASTIC_INDEX_MAPPING_TITLE') }}
+                                                    {% if field is defined and field is not empty and field == constant('App\\Util\\Search::ELASTIC_INDEX_MAPPING_TITLE') %}
+                                                    selected
+                                                    {% endif %}>
+                                                Title
+                                            </option>
+                                            <option
+                                                    value={{ constant('App\\Util\\Search::ELASTIC_INDEX_MAPPING_ABSTRACT') }}
+                                                     {% if field is defined and field is not empty and field == constant('App\\Util\\Search::ELASTIC_INDEX_MAPPING_ABSTRACT') %}
+                                                    selected
+                                                    {% endif %}>
+                                                Abstract
+                                            </option>
+                                            <option
+                                                    value={{ constant('App\\Util\\Search::ELASTIC_INDEX_MAPPING_AUTHORS') }}
+                                                     {% if field is defined and field is not empty and field == constant('App\\Util\\Search::ELASTIC_INDEX_MAPPING_AUTHORS') %}
+                                                    selected
+                                                    {% endif %}>
+                                                Author
+                                            </option>
+                                            <option
+                                                    value={{ constant('App\\Util\\Search::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS') }}
+                                                     {% if field is defined and field is not empty and field == constant('App\\Util\\Search::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS') %}
+                                                    selected
+                                                    {% endif %}>
+                                                Theme Keywords
+                                            </option>
+                                    </select>
+			  		            </span>
+                    </div>
+                    <div>
+                        <span class="pt-1 pl-2 pr-2">From</span>
+                        <span class="form-options-input-group">
+					                <input type="text"
+                                           class="pr-2 form-options-input"
+                                           id="collectionStartDate"
+                                           name="collectionStartDate"
+                                           value="{{ (collectionStartDate) ? collectionStartDate : null }}"
+                                           placeholder="yyyy-mm-dd">
+					                <button class="btn btn-default">
+                		                <i class="far fa-calendar-alt"></i>
+            		                </button>
+            		     </span>
+                        <span class="pt-1 pr-2 pl-3">To</span>
+                        <span class="form-options-input-group">
+						            <input
+                                            type="text"
+                                            class="pl-2 form-options-input"
+                                            id="collectionEndDate"
+                                            name="collectionEndDate"
+                                            value="{{ (collectionEndDate) ? collectionEndDate : null }}"
+                                            placeholder="yyyy-mm-dd">
+						            <span class="ml-1">
+                                        <button class="btn btn-default">
+                			                <i class="far fa-calendar-alt"></i>
+            			                </button>
+						            </span>
+					    </span>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
-</form>
+</section>
+
+<!-- ========================= SECTION CONTENT ========================= -->

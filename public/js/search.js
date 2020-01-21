@@ -184,6 +184,10 @@ $(document).ready(function () {
     $(".disabled").click(function (e) {
         e.preventDefault();
     })
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
 });
 
 function getUrl(urlPelagos, parsed) {

@@ -1,108 +1,54 @@
-<div class="container-fluid" style="margin-top: 50px;">
-    <div class="col-md-offset-4">
-        <h2 data-content="{{ count }}" id="count">
-            {{ count }} results found for: <span class="text-navy">"{{ query }}"</span>
-        </h2>
-    </div>
+<!-- ========================= SECTION CONTENT ========================= -->
 
-    <div class="row">
-        <div class="search-form">
-            {% include 'Search/form.html.twig' %}
+<section class="section-content bg pt-5">
+    <div class="container">
+        <div class="row d-flex flex-row justify-content-center">
+            <h3>
+                Found {{ count }} results for: "{{ query }}"
+            </h3>
         </div>
     </div>
+</section>
 
-
-    <div class="row">
-        <div class="col-md-2 col-xs-2">
-
-            <div class="aggregations">
-                <h5 style="margin-bottom: 5px;"><strong style="color: #337ab7;">Dataset Status</strong></h5>
-                <ul class="browse-list list-unstyled long-list" style="margin-bottom: 0;" id="status-facet">
-
-                    {% for status in statusInfo %}
-                        {% if status.count != 0 %}
-                        <li>
-                            <div class="checkbox block facet-aggregation" style="margin-top: 0; margin-bottom: 0;">
-                                <label>
-                                    <input class="status-checkbox" type="checkbox" id="status_{{ status.id }}">
-                                    <span class="groupName">{{ status.name }} </span> ({{ status.count }})
-                                    <div class="tooltiptext" style="display:none">
-                                        <p>{{ status.name }} </p>
-                                    </div>
-                                </label>
-                            </div>
-                        </li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-                <h5 style="margin-bottom: 5px;"><strong style="color: #337ab7;">Funding Organizations</strong></h5>
-                <ul class="browse-list list-unstyled long-list" style="margin-bottom: 0;" id="fundorg-facet">
-
-                    {% for org in fundingOrgInfo %}
-
-                        <li for="{{ org.id }}">
-                            <div class="checkbox block facet-aggregation" style="margin-top: 0; margin-bottom: 0;">
-                                <label>
-                                    <input class="fo-checkbox" type="checkbox" id="fo_{{ org.id }}">
-                                    <span class="groupName">{{ org.shortName }} </span> ({{ org.count }})
-                                    <div class="tooltiptext" style="display:none">
-                                        <p>{{ org.name }}</p>
-                                    </div>
-                                </label>
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <h5 style="margin-bottom: 5px;"><strong style="color: #337ab7;">Research Groups</strong></h5>
-                <ul class="browse-list list-unstyled long-list" style="margin-bottom: 0;" id="resgrp-facet">
-
-                    {% for group in researchGroupsInfo %}
-
-                        <li for="{{ group.id }}">
-                            <div class="checkbox block facet-aggregation" style="margin-top: 0; margin-bottom: 0;">
-                                <label>
-                                    <input class="rg-checkbox" type="checkbox" id="rg_{{ group.id }}">
-                                    <span class="groupName">{{group.shortName}} </span> ({{ group.count }})
-                                    <div class="tooltiptext" style="display:none">
-                                        <p>{{ group.name }}</p>
-                                    </div>
-                                </label>
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-
-        <div class="col-md-10 col-xs-10">
-            <div class="breadcrumbs"></div>
-            <div class="clearfix"></div>
-            <table class="table">
-                <tbody>
+<section class="section-content bg padding-y">
+    <div class="container">
+        <div class="row">
+            {% include 'Search/facets.html.twig' %}
+            <main class="col-sm-9 overflow-auto">
                 {% for result in results %}
                     {% include 'Search/dataset-row.html.twig'  %}
                 {% endfor %}
-                </tbody>
-            </table>
-            <div class="clearfix"></div>
+            </main>
         </div>
-
-        <div class="text-center">
-            <div class="btn-group">
-                <div class="wrapper">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <nav aria-label="Search results pages">
-                                    <ul id="search-pagination" class="pagination"></ul>
-                                </nav>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="clearfix" style="margin-bottom: 100px;"></div>
     </div>
-</div>
+</section>
 
+<!-- ========================= NAVIGATION ========================= -->
+<nav aria-label="Bootstrap 4 Navigation" class="bg" style="margin-bottom: 100px">
+
+    <ul class="pagination justify-content-center">
+
+        <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Prev</a></li>
+
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+
+        <li class="page-item"><a class="page-link" href="#">4</a></li>
+
+        <li class="page-item"><a class="page-link" href="#">5</a></li>
+
+        <li class="page-item"><a class="page-link" href="#">6</a></li>
+
+        <li class="page-item"><a class="page-link" href="#">7</a></li>
+
+        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+
+    </ul>
+
+</nav>
+<!-- ========================= NAVIGATION========================= -->
+
+<!-- ========================= SECTION CONTENT END// ========================= -->

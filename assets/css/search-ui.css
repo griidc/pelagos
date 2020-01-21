@@ -52,6 +52,7 @@ html {
     box-shadow: 0 4px 15px rgba(153, 153, 153, 0.3);
     -webkit-transition: .5s;
     transition: .5s;
+    cursor: pointer;
 }
 
 .btn-space {
@@ -79,6 +80,15 @@ html {
     padding: .25rem .25rem;
 }
 
-.card-product:hover {
-    cursor: pointer;
+label {
+    font-weight: normal !important;
+}
+
+.card-body a{
+    font-size: 1.05em;
+    text-decoration: none !important;
+    color: black !important;
+}
+.card-body a:hover {
+    text-decoration: none !important;
 }
