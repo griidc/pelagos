@@ -85,7 +85,7 @@ class CreateHomedirConsumer implements ConsumerInterface
     {
         $outputLines = array();
         $status = true;
-        $id = posix_getpwnam($user);
+        $id = posix_getpwnam($user)['uid'];
         exec("/usr/bin/nfs4_setfacl -a A::$id:$acl $path", $outputLines, $returnValue);
         if ($returnValue != 0) {
             $this->logger->error("Error setting nfs4_facl (A::$id:$acl) on $path. (user: $user)");
