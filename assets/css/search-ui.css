@@ -68,6 +68,24 @@ label {
     text-decoration: none !important;
     color: black !important;
 }
+
 .card-body a:hover {
     text-decoration: none !important;
+}
+
+.form-options-input {
+    border: none;
+    background: transparent;
+}
+
+.form-options-input-group input:focus,
+.form-options-input-group select:focus,
+.form-options-input-group button:focus {
+    outline: none;
+}
+
+.form-options-input-group {
+    border: 1px solid #ced4da;
+    padding: 10px;
+    background-color: #fff;
 }
