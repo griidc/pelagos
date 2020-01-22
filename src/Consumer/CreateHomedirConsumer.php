@@ -65,10 +65,10 @@ class CreateHomedirConsumer implements ConsumerInterface
     */
     public function execute(AMQPMessage $message)
     {
-        if ('NFS' === $this->filesystemType) {
-            return($this->processNFS($message));
-        } else {
+        if ('Linux' === $this->filesystemType) {
             return($this->processNormalFS($message));
+        } else {
+            return($this->processNFS($message));
         }
     }
 
