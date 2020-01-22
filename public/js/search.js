@@ -126,15 +126,6 @@ $(document).ready(function () {
         });
     }
 
-    // load qTip descriptions
-    $(".groupName").hover().each(function() {
-        $(this).qtip({
-            content: {
-                text: $.trim($(this).next(".tooltiptext").text())
-            }
-        });
-    });
-
     // set up DatePickers
     $("#collectionStartDate").datepicker({
         dateFormat: "yy-mm-dd",
@@ -147,6 +138,7 @@ $(document).ready(function () {
             $("#collectionEndDate").datepicker("option", "minDate", selectedDate);
         }
     });
+
     $("#collectionEndDate").datepicker({
         dateFormat: "yy-mm-dd",
         changeMonth: true,
@@ -159,35 +151,39 @@ $(document).ready(function () {
         }
     });
 
-    jQuery.validator.addMethod("trueISODate", function(value, element) {
-        var regPattern = /^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/
-        return this.optional(element) || ((Date.parse(value)) && regPattern.test(value));
-    });
+    // jQuery.validator.addMethod("trueISODate", function(value, element) {
+    //     var regPattern = /^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/
+    //     return this.optional(element) || ((Date.parse(value)) && regPattern.test(value));
+    // });
 
-    searchForm.validate({
-        rules: {
-            collectionStartDate: "trueISODate",
-            collectionEndDate: "trueISODate",
-        },
-        messages: {
-            collectionStartDate: "Collection Start Date is not a valid ISO date",
-            collectionEndDate: "Collection End Date is not a valid ISO date",
-        },
-        ignore: ".ignore,.prototype",
-        submitHandler: function (form) {
-            if ($(".ignore").valid()) {
-                form.submit();
-            }
-        }
-    });
+    // searchForm.validate({
+    //     rules: {
+    //         collectionStartDate: "trueISODate",
+    //         collectionEndDate: "trueISODate",
+    //     },
+    //     messages: {
+    //         collectionStartDate: "Collection Start Date is not a valid ISO date",
+    //         collectionEndDate: "Collection End Date is not a valid ISO date",
+    //     },
+    //     ignore: ".ignore,.prototype",
+    //     submitHandler: function (form) {
+    //         if ($(".ignore").valid()) {
+    //             form.submit();
+    //         }
+    //     }
+    // });
     
     $(".disabled").click(function (e) {
         e.preventDefault();
-    })
+    });
 
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
+    $("#collection-start-btn").click(function (e) {
+        $("#collectionStartDate").datepicker('show');
+    });
+
+    $("#collection-end-btn").click(function (e) {
+        $("#collectionEndDate").datepicker('show');
+    });
 });
 
 function getUrl(urlPelagos, parsed) {

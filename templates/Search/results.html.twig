@@ -3,7 +3,7 @@
 <section class="section-content bg pt-5">
     <div class="container">
         <div class="row d-flex flex-row justify-content-center">
-            <h3>
+            <h3 data-content="{{ count }}" id="count">
                 Found {{ count }} results for: "{{ query }}"
             </h3>
         </div>
@@ -24,7 +24,7 @@
 </section>
 
 <!-- ========================= NAVIGATION ========================= -->
-<nav aria-label="Bootstrap 4 Navigation" class="bg" style="margin-bottom: 100px">
+<nav aria-label="Bootstrap 4 Navigation" class="bg justify-content-center" style="margin-bottom: 100px;">
 
     <ul class="pagination justify-content-center">
 
