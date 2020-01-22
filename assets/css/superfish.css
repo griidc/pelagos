@@ -6,7 +6,7 @@
 }
 .sf-menu {
     line-height: 1.0;
-    z-index: 497;
+    z-index: 97;
 }
 .sf-menu ul {
     left: 0;
@@ -20,7 +20,7 @@
 .sf-menu li {
     float: left;
     position: relative;
-    z-index: 498;
+    z-index: 98;
 }
 .sf-menu a,
 .sf-menu span.nolink {
@@ -31,7 +31,7 @@
 .sf-menu li.sfHover,
 .sf-menu li:hover ul,
 .sf-menu li.sfHover ul {
-    z-index: 499;
+    z-index: 99;
 }
 .sf-menu li:hover > ul,
 .sf-menu li.sfHover > ul {

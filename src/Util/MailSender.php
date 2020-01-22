@@ -27,9 +27,16 @@ class MailSender
     /**
      * A NamedAddress holding email from name/email information.
      *
-     * @var NamedAddress
+     * @var string
      */
     protected $from;
+
+    /**
+     * Bcc email address to send all emails from the system.
+     *
+     * @var string
+     */
+    protected $bccAddress;
     
     /**
      * This is the class constructor to handle dependency injections.
@@ -38,16 +45,19 @@ class MailSender
      * @param \Twig_Environment $twig        Twig engine.
      * @param string            $fromAddress Sender's email address.
      * @param string            $fromName    Sender's name to include in email.
+     * @param string            $bccAddress  BCC Email address.
      */
     public function __construct(
         Swift_Mailer  $mailer,
         Environment $twig,
         string $fromAddress,
-        string $fromName
+        string $fromName,
+        string $bccAddress
     ) {
         $this->twig = $twig;
         $this->mailer = $mailer;
         $this->from = array($fromAddress => $fromName);
+        $this->bccAddress = $bccAddress;
     }
 
     /**
@@ -73,6 +83,7 @@ class MailSender
             ->setSubject($emailTwigTemplate->renderBlock('subject', $mailData))
             ->setFrom($this->from)
             ->setTo($toAddresses)
+            ->setBcc($this->bccAddress)
             ->setBody($emailTwigTemplate->renderBlock('body_html', $mailData), 'text/html')
             ->addPart($emailTwigTemplate->renderBlock('body_text', $mailData), 'text/plain');
         foreach ($attachments as $attachment) {
