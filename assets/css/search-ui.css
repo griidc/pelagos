@@ -59,27 +59,6 @@ html {
     margin-right: 5px;
 }
 
-.form-options-input {
-    border: none;
-    background: transparent;
-}
-
-.form-options-input-group input:focus,
-.form-options-input-group select:focus,
-.form-options-input-group button:focus {
-    outline: none;
-}
-
-.form-options-input-group {
-    border: 1px solid #ced4da;
-    padding: 10px;
-    background-color: #fff;
-}
-
-.form-options-input-group .btn {
-    padding: .25rem .25rem;
-}
-
 label {
     font-weight: normal !important;
 }

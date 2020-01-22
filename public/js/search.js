@@ -124,6 +124,16 @@ $(document).ready(function () {
         $(".next").click(function (e) {
            e.preventDefault();
         });
+
+        $(".pagination.bootpag").addClass("justify-content-center");
+
+        $(".pagination.bootpag li").each(function () {
+            $(this).addClass("page-item");
+        })
+
+        $(".pagination.bootpag li a").each(function () {
+            $(this).addClass("page-link");
+        })
     }
 
     // set up DatePickers
