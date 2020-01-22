@@ -7,17 +7,19 @@
             </header>
             <div class="filter-content">
                 <div class="card-body">
-                    {% for status in statusInfo %}
-                        {% if status.count != 0 %}
-                            <label class="form-check">
-                                <input class="form-check-input" value="" type="checkbox" id="status_{{ status.id }}">
-                                <span class="form-check-label">
-                                    <span class="float-right badge badge-light round">{{ status.count }}</span>
-                                    {{ status.name|trim }}
-                                </span>
-                            </label>
-                        {% endif %}
-                    {% endfor %}
+                    <form id="status-facet">
+                        {% for status in statusInfo %}
+                            {% if status.count != 0 %}
+                                <label class="form-check">
+                                    <input class="form-check-input facet-aggregation" value="" type="checkbox" id="status_{{ status.id }}">
+                                    <span class="form-check-label">
+                                        <span class="float-right badge badge-light round">{{ status.count }}</span>
+                                        {{ status.name|trim }}
+                                    </span>
+                                </label>
+                            {% endif %}
+                        {% endfor %}
+                    </form>
                 </div>
             </div>
         </article>
@@ -29,15 +31,17 @@
             </header>
             <div style="" class="filter-content">
                 <div class="card-body">
-                    {% for org in fundingOrgInfo %}
-                        <label class="form-check">
-                            <input class="form-check-input" value="" type="checkbox" id="fo_{{ org.id }}">
-                            <span class="form-check-label" data-toggle="tooltip" title="{{ org.name |trim}}">
-                                <span class="float-right badge badge-light round">{{ org.count }}</span>
-                                {{ org.shortName |trim }}
-                            </span>
-                        </label>
-                    {% endfor %}
+                    <form id="fundorg-facet">
+                        {% for org in fundingOrgInfo %}
+                            <label class="form-check">
+                                <input class="form-check-input facet-aggregation" value="" type="checkbox" id="fo_{{ org.id }}">
+                                <span class="form-check-label" data-toggle="tooltip" title="{{ org.name |trim}}">
+                                    <span class="float-right badge badge-light round">{{ org.count }}</span>
+                                    {{ org.shortName |trim }}
+                                </span>
+                            </label>
+                        {% endfor %}
+                    </form>
                 </div>
             </div>
         </article>
@@ -49,26 +53,26 @@
             </header>
             <div class="filter-content">
                 <div class="card-body">
-                    <form class="pb-3">
-                        <div class="input-group">
-                            <input class="form-control" placeholder="Search" type="text">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fa fa-search"></i></button>
-                            </div>
+                    <div class="input-group pb-3">
+                        <input class="form-control" placeholder="Search" type="text">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button">
+                                <i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                    <form id="resgrp-facet">
+                        <div style="overflow-y: scroll; height: 10rem">
+                            {% for group in researchGroupsInfo %}
+                                <label class="form-check">
+                                    <input class="form-check-input facet-aggregation" value="" type="checkbox" id="rg_{{ group.id }}">
+                                    <span class="form-check-label" data-toggle="tooltip" title="{{ group.name |trim}}">
+                                        <span class="float-right badge badge-light round">{{ group.count }}</span>
+                                        {{group.shortName |trim}}
+                                    </span>
+                                </label>
+                            {% endfor %}
                         </div>
                     </form>
-                    <div style="overflow-y: scroll; height: 10rem">
-                        {% for group in researchGroupsInfo %}
-                            <label class="form-check">
-                                <input class="form-check-input" value="" type="checkbox" id="rg_{{ group.id }}">
-                                <span class="form-check-label" data-toggle="tooltip" title="{{ group.name |trim}}">
-                                <span class="float-right badge badge-light round">{{ group.count }}</span>
-                                {{group.shortName |trim}}
-                            </span>
-                            </label>
-                        {% endfor %}
-                    </div>
                 </div>
             </div>
         </article>
