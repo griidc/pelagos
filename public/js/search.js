@@ -46,7 +46,6 @@ $(document).ready(function () {
         }
     }
 
-
     let rgIdsArray = [];
     let foIdsArray = [];
     let statusArray = [];
@@ -173,6 +172,7 @@ $(document).ready(function () {
         $("#collectionEndDate").datepicker('show');
     });
 
+    // Filters the research group facet list with the keyword entered in the facet-search textbox
     let researchGroupList = [];
     $("form#resgrp-facet :input").each(function(){
         researchGroupList[$(this).parent()[0].id] = this.value.toLowerCase();
@@ -188,6 +188,21 @@ $(document).ready(function () {
             }
         })
     });
+
+    // Research groups facet list is sorted by checked boxes
+    var list = $("form#resgrp-facet div"),
+        origOrder = list.children();
+
+    var i, checked = document.createDocumentFragment(),
+        unchecked = document.createDocumentFragment();
+    for (i = 0; i < origOrder.length; i++) {
+        if (origOrder[i].getElementsByTagName("input")[0].checked) {
+            checked.appendChild(origOrder[i]);
+        } else {
+            unchecked.appendChild(origOrder[i]);
+        }
+    }
+    list.append(checked).append(unchecked);
 });
 
 function getUrl(urlPelagos, parsed) {
