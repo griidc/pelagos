@@ -54,7 +54,7 @@
             <div class="filter-content">
                 <div class="card-body">
                     <div class="input-group pb-3">
-                        <input class="form-control" placeholder="Search" type="text">
+                        <input class="form-control" placeholder="Search" type="text" id="research-grp-filter">
                         <div class="input-group-append">
                             <button class="btn btn-primary" type="button">
                                 <i class="fa fa-search"></i></button>
@@ -63,8 +63,8 @@
                     <form id="resgrp-facet">
                         <div style="overflow-y: scroll; height: 10rem">
                             {% for group in researchGroupsInfo %}
-                                <label class="form-check">
-                                    <input class="form-check-input facet-aggregation" value="" type="checkbox" id="rg_{{ group.id }}">
+                                <label class="form-check" id="{{ group.id }}">
+                                    <input class="form-check-input facet-aggregation" value="{{group.shortName}}" type="checkbox" id="rg_{{ group.id }}">
                                     <span class="form-check-label" data-toggle="tooltip" title="{{ group.name |trim}}">
                                         <span class="float-right badge badge-light round">{{ group.count }}</span>
                                         {{group.shortName |trim}}

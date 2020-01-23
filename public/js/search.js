@@ -172,6 +172,22 @@ $(document).ready(function () {
     $("#collection-end-btn").click(function (e) {
         $("#collectionEndDate").datepicker('show');
     });
+
+    let researchGroupList = [];
+    $("form#resgrp-facet :input").each(function(){
+        researchGroupList[$(this).parent()[0].id] = this.value.toLowerCase();
+    });
+
+    $("#research-grp-filter").keyup(function () {
+        let filter = this.value.toLowerCase();
+        researchGroupList.forEach((txtValue, index) => {
+            if (txtValue.toString().toLowerCase().indexOf(filter) > -1) {
+                $("#" + index).css("display", "");
+            } else {
+                $("#" + index).css("display", "none");
+            }
+        })
+    });
 });
 
 function getUrl(urlPelagos, parsed) {
