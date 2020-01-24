@@ -36,7 +36,7 @@ article:after, .form-group:after {
 }
 
 html {
-    font-size: 14px;
+    font-size: 15px;
 }
 
 .card-product {
@@ -90,6 +90,6 @@ label {
     background-color: #fff;
 }
 
-.section-content {
-    font-family: Verdana,Geneva,sans-serif;
+#pelagos-content {
+    font-family: "Lato", Arial, sans-serif;
 }
