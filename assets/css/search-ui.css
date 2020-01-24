@@ -36,7 +36,7 @@ article:after, .form-group:after {
 }
 
 html {
-    font-size: 15px;
+    font-size: 14px;
 }
 
 .card-product {
@@ -88,4 +88,8 @@ label {
     border: 1px solid #ced4da;
     padding: 10px;
     background-color: #fff;
+}
+
+.section-content {
+    font-family: Verdana,Geneva,sans-serif;
 }
