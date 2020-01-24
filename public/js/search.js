@@ -46,7 +46,6 @@ $(document).ready(function () {
         }
     }
 
-
     let rgIdsArray = [];
     let foIdsArray = [];
     let statusArray = [];
@@ -124,16 +123,17 @@ $(document).ready(function () {
         $(".next").click(function (e) {
            e.preventDefault();
         });
-    }
 
-    // load qTip descriptions
-    $(".groupName").hover().each(function() {
-        $(this).qtip({
-            content: {
-                text: $.trim($(this).next(".tooltiptext").text())
-            }
-        });
-    });
+        $(".pagination.bootpag").addClass("justify-content-center");
+
+        $(".pagination.bootpag li").each(function () {
+            $(this).addClass("page-item");
+        })
+
+        $(".pagination.bootpag li a").each(function () {
+            $(this).addClass("page-link");
+        })
+    }
 
     // set up DatePickers
     $("#collectionStartDate").datepicker({
@@ -147,6 +147,7 @@ $(document).ready(function () {
             $("#collectionEndDate").datepicker("option", "minDate", selectedDate);
         }
     });
+
     $("#collectionEndDate").datepicker({
         dateFormat: "yy-mm-dd",
         changeMonth: true,
@@ -158,32 +159,50 @@ $(document).ready(function () {
             $("#collectionStartDate").datepicker("option", "maxDate", selectedDate);
         }
     });
-
-    jQuery.validator.addMethod("trueISODate", function(value, element) {
-        var regPattern = /^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/
-        return this.optional(element) || ((Date.parse(value)) && regPattern.test(value));
-    });
-
-    searchForm.validate({
-        rules: {
-            collectionStartDate: "trueISODate",
-            collectionEndDate: "trueISODate",
-        },
-        messages: {
-            collectionStartDate: "Collection Start Date is not a valid ISO date",
-            collectionEndDate: "Collection End Date is not a valid ISO date",
-        },
-        ignore: ".ignore,.prototype",
-        submitHandler: function (form) {
-            if ($(".ignore").valid()) {
-                form.submit();
-            }
-        }
-    });
     
     $(".disabled").click(function (e) {
         e.preventDefault();
-    })
+    });
+
+    $("#collection-start-btn").click(function (e) {
+        $("#collectionStartDate").datepicker('show');
+    });
+
+    $("#collection-end-btn").click(function (e) {
+        $("#collectionEndDate").datepicker('show');
+    });
+
+    // Filters the research group facet list with the keyword entered in the facet-search textbox
+    let researchGroupList = [];
+    $("form#resgrp-facet :input").each(function(){
+        researchGroupList[$(this).parent()[0].id] = this.value.toLowerCase();
+    });
+
+    $("#research-grp-filter").keyup(function () {
+        let filter = this.value.toLowerCase();
+        researchGroupList.forEach((txtValue, index) => {
+            if (txtValue.toString().toLowerCase().indexOf(filter) > -1) {
+                $("#" + index).css("display", "");
+            } else {
+                $("#" + index).css("display", "none");
+            }
+        })
+    });
+
+    // Research groups facet list is sorted by checked boxes
+    var list = $("form#resgrp-facet div"),
+        origOrder = list.children();
+
+    var i, checked = document.createDocumentFragment(),
+        unchecked = document.createDocumentFragment();
+    for (i = 0; i < origOrder.length; i++) {
+        if (origOrder[i].getElementsByTagName("input")[0].checked) {
+            checked.appendChild(origOrder[i]);
+        } else {
+            unchecked.appendChild(origOrder[i]);
+        }
+    }
+    list.append(checked).append(unchecked);
 });
 
 function getUrl(urlPelagos, parsed) {
