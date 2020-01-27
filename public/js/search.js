@@ -173,7 +173,6 @@ $(document).ready(function () {
     });
 
     $("#search-clear").click(function (e) {
-        e.preventDefault();
         window.location.href = Routing.generate("pelagos_app_ui_searchpage_default");
     });
 
