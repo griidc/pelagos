@@ -119,8 +119,7 @@ class DatasetPublicationController extends EntityController
             $doi = $datasetPublication['publication']['doi'];
             $linkCreator = $datasetPublication['creator']['firstName'] .
                 ' ' . $datasetPublication['creator']['lastName'];
-            $createdOn = $datasetPublication['creationTimeStamp']->
-                setTimezone(new \DateTimeZone('America/Chicago'))->format('m/d/y H:i:s') . ' CDT';
+            $createdOn = $datasetPublication['creationTimeStamp'];
             $data[] = array(
                     'id' => $linkId,
                     'fc' => $fc,
