@@ -2,9 +2,15 @@
     <div class="card-body">
         <div class="row">
             <article class="col-sm-12">
-                <span class="badge badge-success">Badge 1</span>
-                <span class="badge badge-secondary">Badge 2</span>
-                <span class="badge badge-primary">Badge 3</span>
+                {% if result.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE') %}
+                    <span class="badge badge-secondary">Identified</span>
+                {% elseif result.availabilityStatus in [constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION'), constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL')] %}
+                    <span class="badge badge-primary">Submitted</span>
+                {% elseif result.availabilityStatus in [constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED'), constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED')] %}
+                    <span class="badge badge-danger">Restricted</span>
+                {% elseif result.availabilityStatus in [constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE'), constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED')] %}
+                    <span class="badge badge-success">Available</span>
+                {% endif %}
                 <p>
                     <a class="search-result"
                        href="{{ path('pelagos_app_ui_dataland_default', {'udi' : result.udi } ) }}" target="_blank">
