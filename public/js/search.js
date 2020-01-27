@@ -159,7 +159,7 @@ $(document).ready(function () {
             $("#collectionStartDate").datepicker("option", "maxDate", selectedDate);
         }
     });
-    
+
     $(".disabled").click(function (e) {
         e.preventDefault();
     });
@@ -170,6 +170,10 @@ $(document).ready(function () {
 
     $("#collection-end-btn").click(function (e) {
         $("#collectionEndDate").datepicker('show');
+    });
+
+    $("#search-clear").click(function (e) {
+        window.location.href = Routing.generate("pelagos_app_ui_searchpage_default");
     });
 
     // Filters the research group facet list with the keyword entered in the facet-search textbox
