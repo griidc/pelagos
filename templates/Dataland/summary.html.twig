@@ -26,8 +26,8 @@
                         <img width="40px" height="40px" id="metadatadl-dis" src="{{ asset('images/xmlc-bw.png') }}">
                     {% endif %}
                     {% set TEMPORYDISABLED = true %}
-                    {% if dataset.datasetSubmission.ErddapUrl and not TEMPORYDISABLED%}
-                        <br /><a href="{{ dataset.datasetSubmission.ErddapUrl }}" border="0" target="_blank"><img src="{{ asset('images/button_erddap.png') }}" id="erddaplink"></a>
+                    {% if dataset.datasetSubmission.ErddapUrl%}
+                    <br /><button class="ui-button ui-widget ui-corner-all"><a href="{{dataset.datasetSubmission.ErddapUrl}}" target=_blank>ERDDAP</a></button></div>
                     {% endif %}
                 {% else %}
                     <img width="40px" height="40px" id="downloaddsdenmd" src="{{ asset('images/download-package-grey.png') }}">
