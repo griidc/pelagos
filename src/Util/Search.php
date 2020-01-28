@@ -58,12 +58,27 @@ class Search
      */
     const ELASTIC_INDEX_MAPPING_THEME_KEYWORDS = 'datasetSubmission.themeKeywords';
 
+    /**
+     * Elastic index mapping for dataset DOI.
+     */
+    const ELASTIC_INDEX_MAPPING_DOI = 'doi.doi';
+    
+    /**
+     * Elastic index mapping for udi.
+     */
+    const ELASTIC_INDEX_MAPPING_UDI = 'udi';
+
     const AVAILABILITY_STATUSES = array(
         1 => [DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE],
         2 => [DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION, DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL],
         3 => [DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED, DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED],
         4 => [DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE, DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED]
     );
+
+    /**
+     * Index boost for Title, Authors, Theme Keywords.
+     */
+    const BOOST = '^2';
 
     /**
      * Constructor.
@@ -129,6 +144,22 @@ class Search
         // Bool query to get range temporal extent dates
         $collectionDateBoolQuery = new Query\BoolQuery();
 
+        // Check if exclude term exists in the given query term
+        $mustNotQueryTerm = '';
+        $splitUpQueryTerms = $this->splitQueryTerms($queryTerm);
+        if (!empty($splitUpQueryTerms)) {
+            $queryTerm = $splitUpQueryTerms['mustMatch'];
+            $mustNotQueryTerms = $splitUpQueryTerms['mustNotMatch'];
+        }
+
+        // If exclude term exists add the must not query
+        if (!empty($mustNotQueryTerms)) {
+            foreach ($mustNotQueryTerms as $mustNotQueryTerm) {
+                $mustNotBoolQuery = $this->getMustNotIncludeTermsQuery($mustNotQueryTerm);
+                $subMainQuery->addMustNot($mustNotBoolQuery);
+            }
+        }
+
         // Search exact phrase if query string has double quotes
         if (preg_match('/"/', $queryTerm)) {
             $subMainQuery->addMust($this->getExactMatchQuery($queryTerm));
@@ -158,7 +189,7 @@ class Search
 
         $mainQuery->setQuery($subMainQuery);
         $mainQuery->setFrom(($page - 1) * 10);
-
+        
         return $mainQuery;
     }
 
@@ -398,33 +429,27 @@ class Search
         // Bool query to add all fields
         $fieldsBoolQuery = new Query\BoolQuery();
 
-        // Create nested for datasetSubmission fields
-        $datasetSubmissionQuery = new Query\Nested();
-        $datasetSubmissionQuery->setPath('datasetSubmission');
-
-        // Bool query to add fields in datasetSubmission
-        $datasetSubmissionBoolQuery = new Query\BoolQuery();
         if ($specificField) {
-            if ($specificField === self::ELASTIC_INDEX_MAPPING_TITLE) {
-                $fieldsBoolQuery->addShould($this->getTitleQuery($queryTerm));
-            } elseif ($specificField === self::ELASTIC_INDEX_MAPPING_ABSTRACT) {
-                $fieldsBoolQuery->addShould($this->getAbstractQuery($queryTerm));
-            } elseif ($specificField === self::ELASTIC_INDEX_MAPPING_AUTHORS) {
-                $datasetSubmissionBoolQuery->addShould($this->getDSubAuthorQuery($queryTerm));
-                $datasetSubmissionQuery->setQuery($datasetSubmissionBoolQuery);
-                $fieldsBoolQuery->addShould($datasetSubmissionQuery);
-            } elseif ($specificField === self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS) {
-                $datasetSubmissionBoolQuery->addShould($this->getThemeKeywordsQuery($queryTerm));
-                $datasetSubmissionQuery->setQuery($datasetSubmissionBoolQuery);
-                $fieldsBoolQuery->addShould($datasetSubmissionQuery);
-            }
+            $specificFieldMatchQuery = new Query\Match();
+            $specificFieldMatchQuery->setFieldQuery($specificField, $queryTerm);
+            $specificFieldMatchQuery->setFieldOperator($specificField, 'and');
+            $fieldsBoolQuery->addShould($specificFieldMatchQuery);
         } else {
-            $fieldsBoolQuery->addShould($this->getTitleQuery($queryTerm));
-            $fieldsBoolQuery->addShould($this->getAbstractQuery($queryTerm));
-            $datasetSubmissionBoolQuery->addShould($this->getThemeKeywordsQuery($queryTerm));
-            $datasetSubmissionBoolQuery->addShould($this->getDSubAuthorQuery($queryTerm));
-            $datasetSubmissionQuery->setQuery($datasetSubmissionBoolQuery);
-            $fieldsBoolQuery->addShould($datasetSubmissionQuery);
+            $queryTerm = $this->doesDoiExistInQueryTerm($queryTerm, $fieldsBoolQuery);
+            $queryTerm = $this->doesUdiExistInQueryTerm($queryTerm, $fieldsBoolQuery);
+            $fieldsMultiMatchQuery = new Query\MultiMatch();
+            $fieldsMultiMatchQuery->setQuery($queryTerm);
+            $fieldsMultiMatchQuery->setOperator('and');
+            $fieldsMultiMatchQuery->setType('cross_fields');
+            $fieldsMultiMatchQuery->setFields(
+                [
+                    self::ELASTIC_INDEX_MAPPING_TITLE . self::BOOST,
+                    self::ELASTIC_INDEX_MAPPING_ABSTRACT,
+                    self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS . self::BOOST,
+                    self::ELASTIC_INDEX_MAPPING_AUTHORS . self::BOOST
+                ]
+            );
+            $fieldsBoolQuery->addShould($fieldsMultiMatchQuery);
         }
 
         return $fieldsBoolQuery;
@@ -581,75 +606,6 @@ class Search
     }
 
     /**
-     * Get the Title query.
-     *
-     * @param string $queryTerm Query term that needs to be searched upon.
-     *
-     * @return Query\Match
-     */
-    private function getTitleQuery(string $queryTerm): Query\Match
-    {
-        // Add title field to the query
-        $titleQuery = new Query\Match();
-        $titleQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_TITLE, $queryTerm);
-        $titleQuery->setFieldOperator(self::ELASTIC_INDEX_MAPPING_TITLE, 'and');
-        $titleQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_TITLE, 2);
-
-        return $titleQuery;
-    }
-
-    /**
-     * Get the Abstract query.
-     *
-     * @param string $queryTerm Query term that needs to be searched upon.
-     *
-     * @return Query\Match
-     */
-    private function getAbstractQuery(string $queryTerm): Query\Match
-    {
-        // Add abstract field to the query
-        $abstractQuery = new Query\Match();
-        $abstractQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_ABSTRACT, $queryTerm);
-        $abstractQuery->setFieldOperator(self::ELASTIC_INDEX_MAPPING_ABSTRACT, 'and');
-
-        return $abstractQuery;
-    }
-
-    /**
-     * Get the Theme keywords query.
-     *
-     * @param string $queryTerm Query term that needs to be searched upon.
-     *
-     * @return Query\Match
-     */
-    private function getThemeKeywordsQuery(string $queryTerm): Query\Match
-    {
-        // Add theme keywords to the query
-        $themeKeywordsQuery = new Query\Match();
-        $themeKeywordsQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS, $queryTerm);
-        $themeKeywordsQuery->setFieldOperator(self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS, 'and');
-        $themeKeywordsQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS, 2);
-        return $themeKeywordsQuery;
-    }
-
-    /**
-     * Get the Dataset Submission Author query.
-     *
-     * @param string $queryTerm Query term that needs to be searched upon.
-     *
-     * @return Query\Match
-     */
-    private function getDSubAuthorQuery(string $queryTerm): Query\Match
-    {
-        // Add datasetSubmission author field to the query
-        $authorQuery = new Query\Match();
-        $authorQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_AUTHORS, $queryTerm);
-        $authorQuery->setFieldOperator(self::ELASTIC_INDEX_MAPPING_AUTHORS, 'and');
-        $authorQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_AUTHORS, 2);
-        return $authorQuery;
-    }
-
-    /**
      * Added start date range for collection.
      *
      * @param array $collectionDates Data collection range start date.
@@ -677,5 +633,125 @@ class Search
         $collectionEndDateRange->addField('collectionEndDate', ['lte' => $collectionDates['endDate']]);
 
         return $collectionEndDateRange;
+    }
+
+    /**
+     * To check if DOI exists in the search term.
+     *
+     * @param string          $queryTerm       Query term that needs to be checked if DOI exists.
+     * @param Query\BoolQuery $fieldsBoolQuery The fields elastic boolean query that DOI query is added to.
+     *
+     * @return string
+     */
+    private function doesDoiExistInQueryTerm(string $queryTerm, Query\BoolQuery $fieldsBoolQuery): string
+    {
+        $doiRegEx = '!\b(?:[Dd][Oo][Ii]\s*:\s*)?(10.\d{4,9}/[-._;()/:A-Z0-9a-z]+)\b!';
+        if (preg_match_all($doiRegEx, $queryTerm, $matches)) {
+            trim(preg_replace($doiRegEx, '', $queryTerm));
+            $queryTerm = $matches[1][0];
+            $fieldsBoolQuery->addShould($this->getDoiQuery($queryTerm));
+        }
+        return $queryTerm;
+    }
+
+    /**
+     * Get the DOI query.
+     *
+     * @param string $queryTerm Query term that needs to be searched upon.
+     *
+     * @return Query\Nested
+     */
+    private function getDoiQuery(string $queryTerm): Query\Nested
+    {
+        // Query against dataset DOIs.
+        $doiQuery = new Query\Nested();
+        $doiQuery->setPath('doi');
+        $doiNestedQuery = new Query\MatchPhrase();
+        $doiNestedQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_DOI, $queryTerm);
+        $doiNestedQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_DOI, 4);
+        $doiQuery->setQuery($doiNestedQuery);
+        return $doiQuery;
+    }
+
+    /**
+     * Get the UDI query.
+     *
+     * @param string $queryTerm Query term that needs to be searched upon.
+     *
+     * @return Query\MatchPhrase
+     */
+    private function getUdiQuery(string $queryTerm): Query\MatchPhrase
+    {
+        $udiQuery = new Query\MatchPhrase();
+        $udiQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_UDI, $queryTerm);
+        $udiQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_UDI, 4);
+
+        return $udiQuery;
+    }
+
+    /**
+     * To check if udi exists in the search term.
+     *
+     * @param string          $queryTerm       Query term that needs to be checked if udi exists.
+     * @param Query\BoolQuery $fieldsBoolQuery The fields elastic boolean query that udi query is added to.
+     *
+     * @return string
+     */
+    private function doesUdiExistInQueryTerm(string $queryTerm, Query\BoolQuery $fieldsBoolQuery): string
+    {
+        $udiRegEx = '/\b([A-Z\d]{2}\.x\d\d\d\.\d\d\d[:.]\d\d\d\d)\b/i';
+        if (preg_match_all($udiRegEx, $queryTerm, $matches)) {
+            trim(preg_replace($udiRegEx, '', $queryTerm));
+            $queryTerm = $matches[1][0];
+            // Replacing the 11th position to ":"
+            $queryTerm = substr_replace($queryTerm, ':', 11, 1);
+            $fieldsBoolQuery->addShould($this->getUdiQuery($queryTerm));
+        }
+        return $queryTerm;
+    }
+
+    /**
+     * Split the query terms into must match and must not match terms.
+     *
+     * @param string $queryTerm Query term that needs to be searched upon.
+     *
+     * @return array
+     */
+    private function splitQueryTerms(string $queryTerm): array
+    {
+        $splitUpQueryTerms = array();
+        if (preg_match_all('/(?:\s(?<!\b)|^)-\b(\w*)\b/', $queryTerm, $matches)) {
+            $splitUpQueryTerms = array(
+                'mustNotMatch' => '',
+                'mustMatch' => ''
+            );
+            $splitUpQueryTerms['mustMatch'] = str_replace($matches[0], '', $queryTerm);
+            $splitUpQueryTerms['mustNotMatch'] = $matches[1];
+        }
+
+        return $splitUpQueryTerms;
+    }
+
+    /**
+     * Get must not include terms query.
+     *
+     * @param string $mustNotQueryTerm Query term that needs to be searched upon.
+     *
+     * @return Query\MultiMatch
+     */
+    private function getMustNotIncludeTermsQuery(string $mustNotQueryTerm): Query\MultiMatch
+    {
+        $mustNotMultiMatch = new Query\MultiMatch();
+        $mustNotMultiMatch->setFields(
+            [
+                self::ELASTIC_INDEX_MAPPING_ABSTRACT,
+                self::ELASTIC_INDEX_MAPPING_TITLE,
+                self::ELASTIC_INDEX_MAPPING_THEME_KEYWORDS,
+                self::ELASTIC_INDEX_MAPPING_AUTHORS
+            ]
+        );
+        $mustNotMultiMatch->setQuery($mustNotQueryTerm);
+
+        return $mustNotMultiMatch;
     }
 }
