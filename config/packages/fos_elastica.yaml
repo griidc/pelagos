@@ -78,6 +78,8 @@ fos_elastica:
             types:
                 dataset:
                     properties:
+                        udi:
+                            type: 'text'
                         title:
                             type: 'text'
                         abstract:
@@ -97,6 +99,7 @@ fos_elastica:
                                                     type: 'keyword'
                         datasetSubmission:
                             type: 'nested'
+                            include_in_parent: true
                             properties:
                                 authors:
                                     type: 'text'
@@ -110,6 +113,11 @@ fos_elastica:
                         collectionEndDate:
                             property_path: false
                             type: 'date'
+                        doi:
+                            type: 'nested'
+                            properties:
+                                doi:
+                                    type: 'text'
                     persistence:
                         driver: orm
                         model: App\Entity\Dataset
