@@ -43,6 +43,7 @@ services:
         bind:
             string $fromAddress: "%env(MAILER_FROM_ADDR)%"
             string $fromName: "%env(MAILER_FROM_NAME)%"
+            string $bccAddress: "%env(MAILER_BCC_ADDR)%"
 
     App\Util\MdappLogger:
         bind:
@@ -135,6 +136,7 @@ services:
     App\Consumer\CreateHomedirConsumer:
         bind:
             Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.create_homedir'
+            $filesystemType: "%env(FILESYSTEM_TYPE)%"
 
     consumer.dataset_submission.filer:
         class: App\Consumer\DatasetSubmissionConsumer
