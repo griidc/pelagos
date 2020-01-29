@@ -9,14 +9,22 @@ use Psr\Log\LogLevel;
 use Swift_Events_SendEvent;
 use Swift_Events_SendListener;
 
+/**
+ * A utility to log Swift e-mails.
+ */
 class MailerLoggerUtil implements Swift_Events_SendListener
 {
+     /**
+      * A Monolog logger.
+      *
+      * @var Logger
+      */
     protected $logger;
 
     /**
      * MailerLoggerUtil constructor.
      *
-     * @param LoggerInterface $logger
+     * @param LoggerInterface $logger The Logger Interface.
      */
     public function __construct(LoggerInterface  $logger)
     {
@@ -24,28 +32,46 @@ class MailerLoggerUtil implements Swift_Events_SendListener
     }
 
     /**
-     * @param Swift_Events_SendEvent $evt
+     * This function runs before a mail message is send.
+     *
+     * @param Swift_Events_SendEvent $event The SwiftMailer Event.
+     *
+     * @return void
      */
-    public function beforeSendPerformed(Swift_Events_SendEvent $evt)
-    : void
+    public function beforeSendPerformed(Swift_Events_SendEvent $event) : void
     {
-        // ...
+        $this->logMailMessage($event);
     }
 
     /**
-     * @param Swift_Events_SendEvent $evt
+     * This function runs when a mail message is send.
+     *
+     * @param Swift_Events_SendEvent $event The SwiftMailer Event.
+     *
+     * @return void
      */
-    public function sendPerformed(Swift_Events_SendEvent $evt)
-    : void
+    public function sendPerformed(Swift_Events_SendEvent $event) : void
     {
-        $level   = $this->getLogLevel($evt);
-        $message = $evt->getMessage();
+        $this->logMailMessage($event);
+    }
+
+    /**
+     * Log the Swift Mail message to logger.
+     *
+     * @param Swift_Events_SendEvent $event The SwiftMailer Event.
+     *
+     * @return void
+     */
+    private function logMailMessage(Swift_Events_SendEvent $event) : void
+    {
+        $level   = $this->getLogLevel($event);
+        $message = $event->getMessage();
 
         $this->logger->log(
             $level,
-            $message->getSubject().' - '.$message->getId(),
+            $message->getSubject() . ' - ' . $message->getId(),
             [
-                'result'  => $evt->getResult(),
+                'result'  => $event->getResult(),
                 'subject' => $message->getSubject(),
                 'to'      => $message->getTo(),
             ]
@@ -53,21 +79,23 @@ class MailerLoggerUtil implements Swift_Events_SendListener
     }
 
     /**
-     * @param Swift_Events_SendEvent $evt
+     * Returns the LogLevel according to Swift Event Result.
+     *
+     * @param Swift_Events_SendEvent $event The SwiftMailer Event.
      *
      * @return string
      */
-    private function getLogLevel(Swift_Events_SendEvent $evt)
+    private function getLogLevel(Swift_Events_SendEvent $event)
     : string
     {
-        switch ($evt->getResult()) {
+        switch ($event->getResult()) {
             // Sending has yet to occur
             case Swift_Events_SendEvent::RESULT_PENDING:
-                return LogLevel::DEBUG;
+                return LogLevel::WARNING;
 
             // Email is spooled, ready to be sent
             case Swift_Events_SendEvent::RESULT_SPOOLED:
-                return LogLevel::DEBUG;
+                return LogLevel::NOTICE;
 
             // Sending failed
             default:
