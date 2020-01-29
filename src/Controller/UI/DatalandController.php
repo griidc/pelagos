@@ -10,11 +10,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\RequestContext;
 
 use App\Exception\InvalidGmlException;
 
@@ -57,6 +59,8 @@ class DatalandController extends AbstractController
      */
     public function __construct(EntityHandler $entityHandler, Geometry $geoUtil, Metadata $metadataUtil)
     {
+        
+        
         $this->entityHandler = $entityHandler;
         $this->geoUtil = $geoUtil;
         $this->metadataUtil = $metadataUtil;
@@ -73,6 +77,12 @@ class DatalandController extends AbstractController
      */
     public function defaultAction(string $udi)
     {
+        
+        $context = new RequestContext();
+        $context->fromRequest(Request::createFromGlobals());
+        
+        dump($context);
+        
         $dataset = $this->getDataset($udi);
 
         $rawXml = null;

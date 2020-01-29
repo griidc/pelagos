@@ -102,6 +102,7 @@ function updateTree(tree) {
                     var nodeId = "";
                     var url = "";
                     if (node.parents.length == 0) {
+                        Routing.setBaseUrl("");
                         if (tree.type == 'ra') {
                             url = Routing.generate("pelagos_api_tree_get_funding_organizations");
                         } else {
