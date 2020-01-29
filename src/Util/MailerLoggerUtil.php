@@ -4,10 +4,11 @@ namespace App\Util;
 
 use Symfony\Bridge\Monolog\Logger;
 
-use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Swift_Events_SendEvent;
 use Swift_Events_SendListener;
+
+
 
 /**
  * A utility to log Swift e-mails.
@@ -26,7 +27,7 @@ class MailerLoggerUtil implements Swift_Events_SendListener
      *
      * @param LoggerInterface $logger The Logger Interface.
      */
-    public function __construct(LoggerInterface $logger)
+    public function __construct(Logger $logger)
     {
         $this->logger = $logger;
     }
