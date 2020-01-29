@@ -85,30 +85,37 @@ class MailerLoggerUtil implements Swift_Events_SendListener
      *
      * @return string
      */
-    private function getLogLevel(Swift_Events_SendEvent $event)
-    : string
+    private function getLogLevel(Swift_Events_SendEvent $event) : string
     {
         switch ($event->getResult()) {
             // Sending has yet to occur
             case Swift_Events_SendEvent::RESULT_PENDING:
                 return LogLevel::WARNING;
+                break;
 
             // Email is spooled, ready to be sent
             case Swift_Events_SendEvent::RESULT_SPOOLED:
                 return LogLevel::NOTICE;
+                break;
+
 
             // Sending failed
-            default:
             case Swift_Events_SendEvent::RESULT_FAILED:
                 return LogLevel::CRITICAL;
+                break;
 
             // Sending worked, but there were some failures
             case Swift_Events_SendEvent::RESULT_TENTATIVE:
                 return LogLevel::ERROR;
+                break;
 
             // Sending was successful
             case Swift_Events_SendEvent::RESULT_SUCCESS:
                 return LogLevel::INFO;
+                break;
+
+            default:
+                break;
         }
     }
 }
