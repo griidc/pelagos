@@ -92,9 +92,9 @@ class RouterModifier implements RouterInterface
      *
      * @param mixed $pathinfo The path.
      *
-     * @return boolean
+     * @return array
      */
-    public function match($pathinfo) : string
+    public function match($pathinfo) : array
     {
         return $this->innerRouter->match($pathinfo);
     }
