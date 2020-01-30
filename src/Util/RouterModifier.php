@@ -19,13 +19,21 @@ class RouterModifier implements RouterInterface
     protected $innerRouter;
 
     /**
+     * The list of routes to have their baseUrl removed.
+     *
+     * @var array
+     */
+    protected $excludeRoutes;
+
+    /**
      * Constructor.
      *
      * @param RouterInterface $innerRouter The inner Router Interface.
      */
-    public function __construct(RouterInterface $innerRouter)
+    public function __construct(RouterInterface $innerRouter, array $excludeRoutes)
     {
         $this->innerRouter = $innerRouter;
+        $this->excludeRoutes = $excludeRoutes;
     }
 
     /**
@@ -71,13 +79,11 @@ class RouterModifier implements RouterInterface
      */
     public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH) : string
     {
-        $removeContextPos = strpos($name, '.removeBaseUrl');
-        if ($removeContextPos) {
+        if (in_array($name, $this->excludeRoutes)) {
             $context = $this->getContext();
             $oldContext = $context;
             $context->setBaseUrl('');
             $context = $this->setContext($context);
-            $name = substr($name, 0, $removeContextPos);
             $generate = $this->innerRouter->generate($name, $parameters, $referenceType);
             $context = $this->setContext($oldContext);
         } else {
