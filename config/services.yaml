@@ -202,7 +202,6 @@ services:
             FOS\ElasticaBundle\Persister\ObjectPersister $objectPersister: "@fos_elastica.object_persister.pelagos.dataset"
 
     App\Util\MailerLoggerUtil:
-        bind:
-            Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.mailer'
         tags:
+            - { name: monolog.logger, channel: mailer }
             - { name: "swiftmailer.default.plugin" }
