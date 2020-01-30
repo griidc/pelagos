@@ -3,48 +3,99 @@
 namespace App\Util;
 
 use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
-
-class RouterModifier implements RouterInterface {
-    
+/**
+ * This class is a custom router modifier.
+ */
+class RouterModifier implements RouterInterface
+{
+    /**
+     * The original (inner) Router Interface.
+     *
+     * @var RouterInterface
+     */
     protected $innerRouter;
-    
-    public function __construct(RouterInterface $innerRouter) {
+
+    /**
+     * Constructor.
+     *
+     * @param RouterInterface $innerRouter The inner Router Interface.
+     */
+    public function __construct(RouterInterface $innerRouter)
+    {
         $this->innerRouter = $innerRouter;
     }
-    
-    public function setContext(RequestContext $context)
+
+    /**
+     * RequestContext setter.
+     *
+     * @param RequestContext $context The Request Context.
+     *
+     * @return void
+     */
+    public function setContext(RequestContext $context) : void
     {
         $this->innerRouter->setContext($context);
     }
-    
-    public function getContext()
+
+    /**
+     * RequestContext Getter.
+     *
+     * @return RequestContext
+     */
+    public function getContext() : RequestContext
     {
         return $this->innerRouter->getContext();
     }
-    
+
+    /**
+     * RouteCollection Getter.
+     *
+     * @return RouteCollection
+     */
     public function getRouteCollection()
     {
         return $this->innerRouter->getRouteCollection();
     }
-    
-    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
+
+    /**
+     * URL Generator.
+     *
+     * @param mixed $name          The Request Context.
+     * @param mixed $parameters    The Request Context.
+     * @param mixed $referenceType The Request Context.
+     *
+     * @return string
+     */
+    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH) : string
     {
-        $removeContextPos = strpos($name,'.removeBaseUrl');
+        $removeContextPos = strpos($name, '.removeBaseUrl');
         if ($removeContextPos) {
             $context = $this->getContext();
+            $oldContext = $context;
             $context->setBaseUrl('');
             $context = $this->setContext($context);
             $name = substr($name, 0, $removeContextPos);
+            $generate = $this->innerRouter->generate($name, $parameters, $referenceType);
+            $context = $this->setContext($oldContext);
+        } else {
+            $generate = $this->innerRouter->generate($name, $parameters, $referenceType);
         }
-        
-        return $this->innerRouter->generate($name, $parameters, $referenceType);
+
+        return $generate;
     }
-    
-    public function match($pathinfo)
+
+    /**
+     * Url Matcher.
+     *
+     * @param mixed $pathinfo The path.
+     *
+     * @return boolean
+     */
+    public function match($pathinfo) : string
     {
-        $parameters = $this->innerRouter->match($pathinfo);
-        return $parameters;
+        return $this->innerRouter->match($pathinfo);
     }
 }
