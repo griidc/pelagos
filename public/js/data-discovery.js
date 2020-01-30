@@ -250,7 +250,6 @@ function createRow(data, row)
         var sel = getSelection().toString();
         if(!sel){
             var UDI = $(row).attr("udi");
-            Routing.setBaseUrl("");
             url = Routing.generate("pelagos_app_ui_dataland_default", {udi: UDI});
             window.open(url);
         }
