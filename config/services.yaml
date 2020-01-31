@@ -207,3 +207,6 @@ services:
         decorates: 'router.default'
         arguments: ['@App\Util\RouterModifier.inner']
 
+    App\Util\MailerLoggerUtil:
+        tags:
+            - { name: "swiftmailer.default.plugin" }

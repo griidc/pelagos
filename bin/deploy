@@ -13,5 +13,12 @@ yarn run encore prod
 # Dump ENV into compiled format
 composer dump-env prod
 
+# Warn of any pending migrations, but don't apply them.
+bin/console doctrine:migrations:status
+
 # Rebuild Supervisor config for RabbitMQ consumers and start them
 bin/console rabbitmq-supervisor:rebuild --wait-for-supervisord
+
+# Rebuild elasticsearch indexes
+bin/console fos:elastica:reset
+bin/console fos:elastica:populate

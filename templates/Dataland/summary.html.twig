@@ -27,7 +27,7 @@
                     {% endif %}
                     {% set TEMPORYDISABLED = true %}
                     {% if dataset.datasetSubmission.ErddapUrl and not TEMPORYDISABLED%}
-                        <br /><a href="{{ dataset.datasetSubmission.ErddapUrl }}" border="0" target="_blank"><img src="{{ asset('images/button_erddap.png') }}" id="erddaplink"></a>
+                        <img src="{{ asset('images/ERDDAP-logo.png') }}" id="erddaplink" width="40px" height="40px" data-link="{{ dataset.datasetSubmission.ErddapUrl }}">
                     {% endif %}
                 {% else %}
                     <img width="40px" height="40px" id="downloaddsdenmd" src="{{ asset('images/download-package-grey.png') }}">
