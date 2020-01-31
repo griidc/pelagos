@@ -18,14 +18,14 @@ class MailerLoggerUtil implements Swift_Events_SendListener
      /**
       * A Monolog logger.
       *
-      * @var Logger
+      * @var LoggerInterface
       */
     protected $logger;
 
     /**
      * MailerLoggerUtil constructor.
      *
-     * @param LoggerInterface $logger The Logger Interface.
+     * @param LoggerInterface $mailerLogger The Logger Interface.
      */
     public function __construct(LoggerInterface $mailerLogger)
     {
