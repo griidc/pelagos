@@ -28,7 +28,8 @@ class RouterModifier implements RouterInterface
     /**
      * Constructor.
      *
-     * @param RouterInterface $innerRouter The inner Router Interface.
+     * @param RouterInterface $innerRouter   The inner Router Interface.
+     * @param array           $excludeRoutes Array containing list of routes.
      */
     public function __construct(RouterInterface $innerRouter, array $excludeRoutes)
     {
