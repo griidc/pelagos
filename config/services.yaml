@@ -203,5 +203,4 @@ services:
 
     App\Util\MailerLoggerUtil:
         tags:
-            - { name: monolog.logger, channel: mailer }
             - { name: "swiftmailer.default.plugin" }

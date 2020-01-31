@@ -27,9 +27,9 @@ class MailerLoggerUtil implements Swift_Events_SendListener
      *
      * @param LoggerInterface $logger The Logger Interface.
      */
-    public function __construct(LoggerInterface $logger)
+    public function __construct(LoggerInterface $mailerLogger)
     {
-        $this->logger = $logger;
+        $this->logger = $mailerLogger;
     }
 
     /**
