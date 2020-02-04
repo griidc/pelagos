@@ -88,10 +88,9 @@ class DoctrineDatasetListener
     public function postUpdate(Dataset $dataset, LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();
-        $entityManager = $args->getObjectManager();
         if ($entity instanceof Dataset) {
-            if ($entity->getDatasetSubmission() instanceof DatasetSubmission) {
-                if (in_array(
+            if (($entity->getDatasetSubmission() instanceof DatasetSubmission and
+                in_array(
                     $entity->getAvailabilityStatus(),
                     [
                         DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL,
@@ -101,13 +100,10 @@ class DoctrineDatasetListener
                         DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE
                     ]
                 )
-                ) {
-                    $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'update');
-                }
-            } else {
-                if ($entity->getDif() instanceof DIF and $entity->getIdentifiedStatus() === DIF::STATUS_APPROVED) {
-                    $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'issue');
-                }
+                ) or
+                ($entity->getDif() instanceof DIF and $entity->getIdentifiedStatus() === DIF::STATUS_APPROVED)
+            ) {
+                $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'doi');
             }
         }
     }
