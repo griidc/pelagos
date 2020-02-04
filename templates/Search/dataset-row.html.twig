@@ -2,30 +2,30 @@
     <div class="card-body">
         <div class="row">
             <article class="col-sm-12">
-                {% if result.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE') %}
+                {% if result.transformed.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE') %}
                     <span class="badge badge-secondary">Identified</span>
-                {% elseif result.availabilityStatus in [constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION'), constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL')] %}
+                {% elseif result.transformed.availabilityStatus in [constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION'), constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL')] %}
                     <span class="badge badge-primary">Submitted</span>
-                {% elseif result.availabilityStatus in [constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED'), constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED')] %}
+                {% elseif result.transformed.availabilityStatus in [constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED'), constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED')] %}
                     <span class="badge badge-danger">Restricted</span>
-                {% elseif result.availabilityStatus in [constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE'), constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED')] %}
+                {% elseif result.transformed.availabilityStatus in [constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE'), constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED')] %}
                     <span class="badge badge-success">Available</span>
                 {% endif %}
                 <p>
                     <a class="search-result"
-                       href="{{ path('pelagos_app_ui_dataland_default', {'udi' : result.udi } ) }}" target="_blank">
-                        {% if result.datasetSubmission.authors is defined and result.datasetSubmission.authors is not null %}
-                            {{ result.datasetSubmission.authors }}.
+                       href="{{ path('pelagos_app_ui_dataland_default', {'udi' : result.transformed.udi } ) }}" target="_blank">
+                        {% if result.transformed.datasetSubmission.authors is defined and result.transformed.datasetSubmission.authors is not null %}
+                            {{ result.transformed.datasetSubmission.authors }}.
                         {% endif %}
-                        {% if result.referenceDateYear is defined and result.referenceDateYear is not null%}
-                            {{ result.referenceDateYear }}.
+                        {% if result.transformed.referenceDateYear is defined and result.transformed.referenceDateYear is not null%}
+                            {{ result.transformed.referenceDateYear }}.
                         {% endif %}
-                        {{ result.title }}.
-                        {{ result.researchGroup.name }}.
-                        {% if result.doi.doi is defined and result.doi.doi is not null %}
-                            DOI: {{ result.doi.doi }}.
+                        {{ result.transformed.title }}.
+                        {{ result.transformed.researchGroup.name }}.
+                        {% if result.transformed.doi.doi is defined and result.transformed.doi.doi is not null %}
+                            DOI: {{ result.transformed.doi.doi }}.
                         {% endif %}
-                        UDI: {{ result.udi }}
+                        UDI: {{ result.transformed.udi }}
                     </a>
                 </p>
             </article>

@@ -61,7 +61,11 @@ class SearchPageController extends AbstractController
             $researchGroupsInfo = $searchUtil->getResearchGroupAggregations($buildQuery);
             $fundingOrgInfo = $searchUtil->getFundingOrgAggregations($buildQuery);
             $statusInfo = $searchUtil->getStatusAggregations($buildQuery);
-            $this->dispatchSearchTermsLogEvent($requestParams, $count);
+            $elasticScoreFirstResult = null;
+            if (!empty($results)) {
+                $elasticScoreFirstResult = $results[0]->getResult()->getHit()['_score'];
+            }
+            $this->dispatchSearchTermsLogEvent($requestParams, $count, $elasticScoreFirstResult);
         }
 
         return $this->render(
@@ -108,12 +112,13 @@ class SearchPageController extends AbstractController
     /**
      * This dispatches a search term log event.
      *
-     * @param array   $requestParams The request passed from datasetAction.
-     * @param integer $numOfResults  Number of results returned by a search.
+     * @param array   $requestParams           The request passed from datasetAction.
+     * @param integer $numOfResults            Number of results returned by a search.
+     * @param integer $elasticScoreFirstResult Elastic score of the first result.
      *
      * @return void
      */
-    protected function dispatchSearchTermsLogEvent(array $requestParams, int $numOfResults): void
+    protected function dispatchSearchTermsLogEvent(array $requestParams, int $numOfResults, int $elasticScoreFirstResult = null): void
     {
         //get logged in user's id
         $clientInfo = array(
@@ -152,6 +157,7 @@ class SearchPageController extends AbstractController
                     'clientInfo' => $clientInfo,
                     'searchQueryParams' => $searchQueryParams,
                     'numResults' => $numOfResults,
+                    'elasticScoreFirstResult' => $elasticScoreFirstResult
                 )
             ),
             'search_terms_log'

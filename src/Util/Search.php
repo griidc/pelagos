@@ -101,7 +101,7 @@ class Search
      */
     public function findDatasets(Query $query): array
     {
-        return $this->finder->find($query);
+        return $this->finder->findHybrid($query);
     }
 
     /**
