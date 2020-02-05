@@ -82,11 +82,14 @@ class RouterModifier implements RouterInterface
     {
         if (in_array($name, $this->excludeRoutes)) {
             $context = $this->getContext();
-            $oldContext = $context;
+            $oldBaseUrl = (string) $context->getBaseUrl();
             $context->setBaseUrl('');
             $context = $this->setContext($context);
             $generate = $this->innerRouter->generate($name, $parameters, $referenceType);
-            $context = $this->setContext($oldContext);
+            // Set the baseUrl back in context.
+            $context = $this->getContext();
+            $context->setBaseUrl($oldBaseUrl);
+            $context = $this->setContext($context);
         } else {
             $generate = $this->innerRouter->generate($name, $parameters, $referenceType);
         }
