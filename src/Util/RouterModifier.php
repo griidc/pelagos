@@ -90,7 +90,6 @@ class RouterModifier implements RouterInterface
             $context = $this->getContext();
             $context->setBaseUrl($oldBaseUrl);
             $context = $this->setContext((string) $context);
-
         } else {
             $generate = $this->innerRouter->generate($name, $parameters, $referenceType);
         }
