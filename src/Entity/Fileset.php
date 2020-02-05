@@ -8,10 +8,22 @@ use Doctrine\Common\Collections\Collection;
 /**
  * Fileset Entity class.
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\Repository\FilesetRepository")
  */
 class Fileset
 {
+
+    /**
+     * Doctrine identifier for Fileset entity.
+     *
+     * @var integer
+     *
+     * @ORM\Id()
+     * @ORM\GeneratedValue()
+     * @ORM\Column(type="integer")
+     */
+    protected $id;
+
     /**
      * Collection of files.
      *
@@ -20,6 +32,16 @@ class Fileset
      * @ORM\OneToMany(targetEntity="File", mappedBy="Fileset", cascade={"persist"}, orphanRemoval=true)
      */
     protected $files;
+
+    /**
+     * Getter for identifier for Fileset entity.
+     *
+     * @return integer|null
+     */
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
     /**
      * Getter for files.
