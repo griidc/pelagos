@@ -3,7 +3,7 @@ doctrine:
         # configure these for your database server
         driver: 'pdo_pgsql'
         charset: utf8
-        server_version: 12
+        server_version: 9.6
         url: '%env(resolve:DATABASE_URL)%'
         mapping_types:
             citext: citext
