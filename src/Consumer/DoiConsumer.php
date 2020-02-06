@@ -99,7 +99,7 @@ class DoiConsumer implements ConsumerInterface
             $loggingContext = array('doi' => $doi);
             $this->logger->info('DOI Consumer Started', $loggingContext);
             $msgStatus = $this->deleteDoi($doi, $loggingContext);
-        } else {
+        } elseif (preg_match('/^doi/', $routingKey)) {
             $datasetId = $message->body;
             $loggingContext = array('dataset_id' => $datasetId);
             $this->logger->info('DOI Consumer Started', $loggingContext);
@@ -115,17 +115,17 @@ class DoiConsumer implements ConsumerInterface
             if (null !== $dataset->getUdi()) {
                 $loggingContext['udi'] = $dataset->getUdi();
             }
-
-            if (preg_match('/^doi/', $routingKey)) {
-                if ($this->doiAlreadyExists($dataset, $loggingContext)) {
-                    $this->logger->info('DOI Already issued for this dataset', $loggingContext);
-                    $msgStatus = $this->updateDoi($dataset, $loggingContext);
-                } else {
-                    $msgStatus = $this->issueDoi($dataset, $loggingContext);
-                }
+            if ($this->doiAlreadyExists($dataset, $loggingContext)) {
+                $this->logger->info('DOI Already issued for this dataset', $loggingContext);
+                $msgStatus = $this->updateDoi($dataset, $loggingContext);
+            } else {
+                $msgStatus = $this->issueDoi($dataset, $loggingContext);
             }
+            
             $this->entityManager->persist($dataset);
             $this->entityManager->flush();
+        } else {
+            $this->logger->warning("Unknown routing key: $routingKey");
         }
 
         return $msgStatus;
