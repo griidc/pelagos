@@ -116,14 +116,6 @@ class DoiConsumer implements ConsumerInterface
                 $loggingContext['udi'] = $dataset->getUdi();
             }
 
-            if (preg_match('/^issue/', $routingKey)) {
-                $msgStatus = $this->issueDoi($dataset, $loggingContext);
-            } elseif (preg_match('/^update/', $routingKey)) {
-                $msgStatus = $this->updateDoi($dataset, $loggingContext);
-            } else {
-                $this->logger->warning("Unknown routing key: $routingKey", $loggingContext);
-            }
-
             if (preg_match('/^doi/', $routingKey)) {
                 if ($this->doiAlreadyExists($dataset, $loggingContext)) {
                     $this->logger->info('DOI Already issued for this dataset', $loggingContext);
