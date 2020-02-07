@@ -4,10 +4,12 @@ namespace App\Twig;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
+use Twig\Extension\AbstractExtension;
+
 /**
  * Custom Twig extensions.
  */
-class TwigEntityExtensions extends \Twig_Extension
+class TwigEntityExtensions extends AbstractExtension
 {
     /**
      * Return the name of this extension set.

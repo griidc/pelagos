@@ -10,10 +10,12 @@ use App\Util\MaintenanceMode;
 
 use Symfony\Component\HttpKernel\KernelInterface;
 
+use Twig\Extension\AbstractExtension;
+
 /**
  * Custom Twig extensions for Pelagos.
  */
-class Extensions extends \Twig_Extension
+class Extensions extends AbstractExtension
 {
     /**
      * The kernel root path.
