@@ -47,42 +47,44 @@ class SearchPageController extends AbstractController
      */
     public function defaultAction(Request $request, Search $searchUtil)
     {
-        $results = array();
-        $count = 0;
-        $requestParams = $this->getRequestParams($request);
-        $researchGroupsInfo = array();
-        $fundingOrgInfo = array();
-        $statusInfo = array();
+//        $results = array();
+//        $count = 0;
+//        $requestParams = $this->getRequestParams($request);
+//        $researchGroupsInfo = array();
+//        $fundingOrgInfo = array();
+//        $statusInfo = array();
+//
+//        if (!empty($requestParams['query'])) {
+//            $buildQuery = $searchUtil->buildQuery($requestParams);
+//            $results = $searchUtil->findDatasets($buildQuery);
+//            $count = $searchUtil->getCount($buildQuery);
+//            $researchGroupsInfo = $searchUtil->getResearchGroupAggregations($buildQuery);
+//            $fundingOrgInfo = $searchUtil->getFundingOrgAggregations($buildQuery);
+//            $statusInfo = $searchUtil->getStatusAggregations($buildQuery);
+//            $elasticScoreFirstResult = null;
+//            if (!empty($results)) {
+//                $elasticScoreFirstResult = $results[0]->getResult()->getHit()['_score'];
+//            }
+//            $this->dispatchSearchTermsLogEvent($requestParams, $count, $elasticScoreFirstResult);
+//        }
+//
+//        return $this->render(
+//            'Search/default.html.twig',
+//            array(
+//                'query' => $requestParams['query'],
+//                'field' => $requestParams['field'],
+//                'results' => $results,
+//                'count' => $count,
+//                'page' => $requestParams['page'],
+//                'researchGroupsInfo' => $researchGroupsInfo,
+//                'fundingOrgInfo' => $fundingOrgInfo,
+//                'statusInfo' => $statusInfo,
+//                'collectionStartDate' => $requestParams['collectionStartDate'],
+//                'collectionEndDate' => $requestParams['collectionEndDate'],
+//            )
+//        );
+        return $this->render('Search/vue-index.html.twig');
 
-        if (!empty($requestParams['query'])) {
-            $buildQuery = $searchUtil->buildQuery($requestParams);
-            $results = $searchUtil->findDatasets($buildQuery);
-            $count = $searchUtil->getCount($buildQuery);
-            $researchGroupsInfo = $searchUtil->getResearchGroupAggregations($buildQuery);
-            $fundingOrgInfo = $searchUtil->getFundingOrgAggregations($buildQuery);
-            $statusInfo = $searchUtil->getStatusAggregations($buildQuery);
-            $elasticScoreFirstResult = null;
-            if (!empty($results)) {
-                $elasticScoreFirstResult = $results[0]->getResult()->getHit()['_score'];
-            }
-            $this->dispatchSearchTermsLogEvent($requestParams, $count, $elasticScoreFirstResult);
-        }
-
-        return $this->render(
-            'Search/default.html.twig',
-            array(
-                'query' => $requestParams['query'],
-                'field' => $requestParams['field'],
-                'results' => $results,
-                'count' => $count,
-                'page' => $requestParams['page'],
-                'researchGroupsInfo' => $researchGroupsInfo,
-                'fundingOrgInfo' => $fundingOrgInfo,
-                'statusInfo' => $statusInfo,
-                'collectionStartDate' => $requestParams['collectionStartDate'],
-                'collectionEndDate' => $requestParams['collectionEndDate'],
-            )
-        );
     }
 
     /**

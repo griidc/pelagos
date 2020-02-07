@@ -16,6 +16,9 @@ Encore
     // only needed for CDN's or sub-directory deploy
     .setManifestKeyPrefix('build/')
 
+    // Enable Vue js
+    .enableVueLoader()
+
     /*
      * ENTRY CONFIG
      *
@@ -29,6 +32,7 @@ Encore
     .addEntry('layout', './assets/js/layout.js')
     .addEntry('downloadBox', './assets/js/downloadBox.js')
     .addEntry('search', './assets/js/search.js')
+    .addEntry('search-app', './assets/js/vue/index.js')
 
     // enables Sass/SCSS support
     .enableSassLoader()
