@@ -82,6 +82,10 @@ var dlmap = new GeoViz();
             window.location = Routing.generate("pelagos_app_ui_dataland_metadata", {"udi": udi});
         });
 
+        $("#erddaplink").button().click(function() {
+            window.open($(this).attr("data-link"), "_blank");
+        });
+
         $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
             show: {
                 event: "mouseenter focus",

@@ -1,2 +1,39 @@
 monolog:
-    channels: ['filer', 'retriever', 'dataset_file_hasher','doi_issue', 'create_homedir']
+    channels: ['mailer', 'filer', 'retriever', 'dataset_file_hasher','doi_issue', 'create_homedir']
+
+    handlers:
+        mailer:
+            level:    debug
+            type:     stream
+            path:     "%kernel.logs_dir%/mailer.log"
+            channels: [mailer]
+
+        filer:
+            type: stream
+            path: "%kernel.logs_dir%/filer.log"
+            level: info
+            channels: [filer]
+
+        retriever:
+            type: stream
+            path: "%kernel.logs_dir%/retriever.log"
+            level: info
+            channels: [retriever]
+
+        dataset_file_hasher:
+            type: stream
+            path: "%kernel.logs_dir%/dataset_file_hasher.log"
+            level: info
+            channels: [dataset_file_hasher]
+
+        doi_issue:
+            type: stream
+            path: "%kernel.logs_dir%/doi_issue.log"
+            level: info
+            channels: [doi_issue]
+
+        create_homedir:
+            type: stream
+            path: "%kernel.logs_dir%/create_homedir.log"
+            level: info
+            channels: [create_homedir]
