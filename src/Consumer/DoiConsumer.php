@@ -99,7 +99,7 @@ class DoiConsumer implements ConsumerInterface
             $loggingContext = array('doi' => $doi);
             $this->logger->info('DOI Consumer Started', $loggingContext);
             $msgStatus = $this->deleteDoi($doi, $loggingContext);
-        } elseif (preg_match('/^doi/', $routingKey)) {
+        } else {
             $datasetId = $message->body;
             $loggingContext = array('dataset_id' => $datasetId);
             $this->logger->info('DOI Consumer Started', $loggingContext);
@@ -115,17 +115,16 @@ class DoiConsumer implements ConsumerInterface
             if (null !== $dataset->getUdi()) {
                 $loggingContext['udi'] = $dataset->getUdi();
             }
-            if ($this->doiAlreadyExists($dataset, $loggingContext)) {
-                $this->logger->info('DOI Already issued for this dataset', $loggingContext);
+
+            if (preg_match('/^issue/', $routingKey)) {
+                $msgStatus = $this->issueDoi($dataset, $loggingContext);
+            } elseif (preg_match('/^update/', $routingKey)) {
                 $msgStatus = $this->updateDoi($dataset, $loggingContext);
             } else {
-                $msgStatus = $this->issueDoi($dataset, $loggingContext);
+                $this->logger->warning("Unknown routing key: $routingKey", $loggingContext);
             }
-            
             $this->entityManager->persist($dataset);
             $this->entityManager->flush();
-        } else {
-            $this->logger->warning("Unknown routing key: $routingKey");
         }
 
         return $msgStatus;
@@ -145,35 +144,38 @@ class DoiConsumer implements ConsumerInterface
         $this->logger->info('Attempting to issue DOI', $loggingContext);
 
         $issueMsg = ConsumerInterface::MSG_ACK;
+        if ($this->doiAlreadyExists($dataset, $loggingContext)) {
+            $this->logger->info('DOI Already issued for this dataset', $loggingContext);
+        } else {
+            $generatedDOI = $this->doiUtil->generateDoi();
 
-        $generatedDOI = $this->doiUtil->generateDoi();
+            try {
+                $this->doiUtil->createDOI(
+                    $generatedDOI,
+                    'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi(),
+                    $dataset->getAuthors(),
+                    $dataset->getTitle(),
+                    $dataset->getReferenceDateYear(),
+                    'Harte Research Institute'
+                );
 
-        try {
-            $this->doiUtil->createDOI(
-                $generatedDOI,
-                'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi(),
-                $dataset->getAuthors(),
-                $dataset->getTitle(),
-                $dataset->getReferenceDateYear(),
-                'Harte Research Institute'
-            );
+                $doi = new DOI($generatedDOI);
+                $doi->setCreator($dataset->getModifier());
+                $doi->setModifier($dataset->getModifier());
+                $dataset->setDoi($doi);
 
-            $doi = new DOI($generatedDOI);
-            $doi->setCreator($dataset->getModifier());
-            $doi->setModifier($dataset->getModifier());
-            $dataset->setDoi($doi);
-
-            $loggingContext['doi'] = $doi->getDoi();
-            // Log processing complete.
-            $this->logger->info('DOI Issued', $loggingContext);
-        } catch (HttpClientErrorException $exception) {
-            $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
-            $issueMsg = ConsumerInterface::MSG_REJECT;
-        } catch (HttpServerErrorException $exception) {
-            $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
-            //server down. wait for 10 minutes and retry.
-            sleep(self::DELAY_TIME);
-            $issueMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
+                $loggingContext['doi'] = $doi->getDoi();
+                // Log processing complete.
+                $this->logger->info('DOI Issued', $loggingContext);
+            } catch (HttpClientErrorException $exception) {
+                $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
+                $issueMsg = ConsumerInterface::MSG_REJECT;
+            } catch (HttpServerErrorException $exception) {
+                $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
+                //server down. wait for 10 minutes and retry.
+                sleep(self::DELAY_TIME);
+                $issueMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
+            }
         }
 
         return $issueMsg;
@@ -193,6 +195,10 @@ class DoiConsumer implements ConsumerInterface
         $this->logger->info('Attempting to update DOI', $loggingContext);
         $updateMsg = ConsumerInterface::MSG_ACK;
         $doi = $dataset->getDoi();
+
+        if (!$this->doiAlreadyExists($dataset, $loggingContext)) {
+            $this->issueDoi($dataset, $loggingContext);
+        }
 
         try {
             // Set dataland pages for available datasets and tombstone pages for unavailable datasets.

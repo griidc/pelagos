@@ -57,5 +57,6 @@ old_sound_rabbit_mq:
             queue_options:
                 name: 'doi_issue'
                 routing_keys:
-                    - 'doi'
+                    - 'issue'
+                    - 'update'
                     - 'delete'
