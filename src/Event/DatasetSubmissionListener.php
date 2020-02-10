@@ -29,6 +29,10 @@ class DatasetSubmissionListener extends EventListener
             )
         );
 
+        // Publish message requesting DOI generation.
+        // Producer passed in via constructor is that of the doi_issue producer.
+        $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'update');
+
         // email User
         $template = $this->twig->load('Email/user.dataset-created.email.twig');
 
@@ -70,6 +74,8 @@ class DatasetSubmissionListener extends EventListener
                 $dataset->getUdi()
             )
         );
+
+        $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'update');
 
         // email User
         $template = $this->twig->load('Email/user.dataset-created.email.twig');
@@ -179,6 +185,8 @@ class DatasetSubmissionListener extends EventListener
                 ' started review for ' . $dataset->getUdi() . ' (' . $datasetSubmissionPrev->getDatasetStatus() .
                 ' ->InReview)');
         }
+        // Publish DOI for accepted and unrestricted datasets
+        $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'update');
     }
 
     /**
@@ -213,6 +221,8 @@ class DatasetSubmissionListener extends EventListener
             $datasetSubmission->getModifier()->getAccount()->getUsername() .
             ' accepted dataset ' . $dataset->getUdi() . ' (In Review->Accepted)'
         );
+        // Publish DOI for accepted and unrestricted datasets
+        $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'update');
     }
 
     /**
