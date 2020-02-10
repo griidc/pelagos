@@ -3,7 +3,6 @@ var $ = jQuery.noConflict();
 var valid_publication = false;
 var valid_dataset = false;
 var last_retrieved = { dataset: "", publication: "" };
-var doiForm;
 
 $(document).ready(function() {
     jQuery.validator.addMethod("doiFormat", function(value, element) {
