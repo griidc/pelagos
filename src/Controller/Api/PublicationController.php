@@ -138,7 +138,7 @@ class PublicationController extends EntityController
 
         $doi = $request->request->get('doi');
 
-        if (false === preg_match('/^10\./', $doi)) {
+        if (false == preg_match('/^10\..*/', $doi)) {
             throw new BadRequestHttpException('Invalid format or missing DOI.');
         }
 

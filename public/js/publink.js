@@ -3,14 +3,36 @@ var $ = jQuery.noConflict();
 var valid_publication = false;
 var valid_dataset = false;
 var last_retrieved = { dataset: "", publication: "" };
+var doiForm;
 
 $(document).ready(function() {
-    $('#retrieve_publication').button().click(function () {
-        retrievePublicationCitation();
+    jQuery.validator.addMethod("doiFormat", function(value, element) {
+        var regPattern = /^10.\d{4,9}\/[-._;()\/:A-Z0-9]+$/i
+        return this.optional(element) || (regPattern.test(value));
+    },function (params, element) {
+        return "Please enter a valid DOI"
     });
-    $('#retrieve_dataset').button().click(function () {
-        retrieveDatasetCitation();
+
+    $("#doiForm").validate({
+        submitHandler: function(form) {
+            retrievePublicationCitation();
+        },
+        rules: {
+            doi: {
+                    doiFormat: false
+            }
+        }
     });
+
+    $("#udiForm").validate({
+        submitHandler: function(form) {
+            retrieveDatasetCitation();
+        }
+    });
+
+    $('#retrieve_publication').button();
+    $('#retrieve_dataset').button();
+
     $('#link').button().click(function () {
         $.ajax({
             // Build route based on previously stored values of ID numbers.
