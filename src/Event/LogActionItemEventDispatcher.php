@@ -37,13 +37,13 @@ class LogActionItemEventDispatcher
     public function dispatch(array $data, string $eventName)
     {
         $this->eventDispatcher->dispatch(
-            'pelagos.logactionitem.' . $eventName,
             new LogActionItemEvent(
                 $data['actionName'],
                 $data['subjectEntityName'],
                 $data['subjectEntityId'],
                 $data['payLoad']
-            )
+            ),
+            'pelagos.logactionitem.' . $eventName
         );
     }
 }
