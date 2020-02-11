@@ -334,9 +334,6 @@
             "ref": "aaddfdf43cdecd4cf91f992052d76c2cadc04543"
         }
     },
-    "simplethings/entity-audit-bundle": {
-        "version": "v1.0.9"
-    },
     "squizlabs/php_codesniffer": {
         "version": "3.0",
         "recipe": {
