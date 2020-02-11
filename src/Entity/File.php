@@ -12,17 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
 class File extends Entity
 {
     /**
-     * Doctrine identifier for File entity.
-     *
-     * @var integer
-     *
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    protected $id;
-
-    /**
      * Fileset which contains this file.
      *
      * @var Fileset
@@ -94,16 +83,6 @@ class File extends Entity
      * @ORM\Column(type="text", nullable=true)
      */
     protected $filePath;
-
-    /**
-     * Getter for id.
-     *
-     * @return integer|null
-     */
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     /**
      * Getter for Fileset.
