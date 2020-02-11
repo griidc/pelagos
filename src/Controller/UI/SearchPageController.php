@@ -2,12 +2,13 @@
 
 namespace App\Controller\UI;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+
+use App\Entity\Account;
+use App\Event\LogActionItemEventDispatcher;
 
 use App\Util\Search;
 
@@ -16,6 +17,23 @@ use App\Util\Search;
  */
 class SearchPageController extends AbstractController
 {
+
+    /**
+     * The log action item entity event dispatcher.
+     *
+     * @var LogActionItemEventDispatcher
+     */
+    protected $logActionItemEventDispatcher;
+
+    /**
+     * Constructor for this Controller, to set up default services.
+     *
+     * @param LogActionItemEventDispatcher $logActionItemEventDispatcher The log action item event dispatcher.
+     */
+    public function __construct(LogActionItemEventDispatcher $logActionItemEventDispatcher)
+    {
+        $this->logActionItemEventDispatcher = $logActionItemEventDispatcher;
+    }
 
     /**
      * The default action for Dataset Review.
@@ -43,6 +61,11 @@ class SearchPageController extends AbstractController
             $researchGroupsInfo = $searchUtil->getResearchGroupAggregations($buildQuery);
             $fundingOrgInfo = $searchUtil->getFundingOrgAggregations($buildQuery);
             $statusInfo = $searchUtil->getStatusAggregations($buildQuery);
+            $elasticScoreFirstResult = null;
+            if (!empty($results)) {
+                $elasticScoreFirstResult = $results[0]->getResult()->getHit()['_score'];
+            }
+            $this->dispatchSearchTermsLogEvent($requestParams, $count, $elasticScoreFirstResult);
         }
 
         return $this->render(
@@ -81,7 +104,63 @@ class SearchPageController extends AbstractController
                 'rgId' => ($request->get('resGrp')) ? str_replace('rg_', '', $request->get('resGrp')) : null,
                 'funOrgId' => ($request->get('fundOrg')) ? str_replace('fo_', '', $request->get('fundOrg')) : null,
                 'status' => $request->get('status') ? str_replace('status_', '', $request->get('status')) : null,
+            ),
+            'sessionId' => $request->getSession()->getId()
+        );
+    }
+
+    /**
+     * This dispatches a search term log event.
+     *
+     * @param array   $requestParams           The request passed from datasetAction.
+     * @param integer $numOfResults            Number of results returned by a search.
+     * @param integer $elasticScoreFirstResult Elastic score of the first result.
+     *
+     * @return void
+     */
+    protected function dispatchSearchTermsLogEvent(array $requestParams, int $numOfResults, int $elasticScoreFirstResult = null): void
+    {
+        //get logged in user's id
+        $clientInfo = array(
+            'sessionId' => $requestParams['sessionId']
+        );
+        if ($this->getUser() instanceof Account) {
+            $clientInfo['userType'] = 'GoMRI';
+            $clientInfo['userId'] = $this->getUser()->getUserId();
+        } else {
+            $clientInfo['userType'] = 'Non-GoMRI';
+            $clientInfo['userId'] = 'anonymous';
+        }
+
+        //get form inputs and facets
+        $searchQueryParams = array(
+            'inputFormTerms' => array(
+                'searchTerms' => $requestParams['query'] ,
+                'specificFieldType' => $requestParams['field'],
+                'dataCollectionStartDate' => $requestParams['collectionStartDate'],
+                'dataCollectionEndDate' => $requestParams['collectionEndDate'],
+            ),
+            'aggregations' => array(
+                'datasetStatus' => $requestParams['options']['status'],
+                'fundingOrganizations' => $requestParams['options']['funOrgId'],
+                'researchGroups' => $requestParams['options']['rgId']
             )
+        );
+
+        //dispatch the event
+        $this->logActionItemEventDispatcher->dispatch(
+            array(
+                'actionName' => 'New Search',
+                'subjectEntityName' => null,
+                'subjectEntityId' => null,
+                'payLoad' => array(
+                    'clientInfo' => $clientInfo,
+                    'searchQueryParams' => $searchQueryParams,
+                    'numResults' => $numOfResults,
+                    'elasticScoreFirstResult' => $elasticScoreFirstResult
+                )
+            ),
+            'search_terms_log'
         );
     }
 }

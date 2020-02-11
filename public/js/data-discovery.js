@@ -167,6 +167,8 @@ function addRows() {
         var row = document.createElement("tr");
         $(row).attr("udi", data["udi"]);
         $(row).attr("datasetid", dataset["_id"]);
+        $(row).attr("data-link", ($("#template-data-row-available").attr("data-link-url")).replace("~udi~", data["udi"]));
+
         if (data["geometry"]) {
             $(row).hover(function () {
                 //show geometries on the map on hovering on the row
@@ -249,8 +251,7 @@ function createRow(data, row)
         // If copying text to clipboard, don't assume it is a "click" in order to improve the user experience.
         var sel = getSelection().toString();
         if(!sel){
-            var UDI = $(row).attr("udi");
-            url = Routing.generate("pelagos_app_ui_dataland_default", {udi: UDI});
+            var url = $(row).attr("data-link");
             window.open(url);
         }
     });
