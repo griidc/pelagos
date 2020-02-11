@@ -251,7 +251,7 @@ class Extensions extends AbstractExtension
 
             // XSL template.
             $xslDoc = new \DOMDocument();
-            $xslDoc->load($this->kernelRootDir . '/../templates/xsl/' . $xsl);
+            $xslDoc->load($this->kernelRootDir . '/templates/xsl/' . $xsl);
 
             // The Processor.
             $proc = new \XSLTProcessor();
