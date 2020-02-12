@@ -2,7 +2,7 @@
 
 namespace App\Event;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 use App\Entity\Entity;
 
@@ -39,8 +39,8 @@ class EntityEventDispatcher
     public function dispatch(Entity $entity, string $entityEventName)
     {
         $this->eventDispatcher->dispatch(
-            'pelagos.entity.' . $entity->getUnderscoredName() . '.' . $entityEventName,
-            new EntityEvent($entity)
+            new EntityEvent($entity),
+            'pelagos.entity.' . $entity->getUnderscoredName() . '.' . $entityEventName
         );
     }
 }
