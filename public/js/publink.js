@@ -6,7 +6,7 @@ var last_retrieved = { dataset: "", publication: "" };
 
 $(document).ready(function() {
     jQuery.validator.addMethod("doiFormat", function(value, element) {
-        var regPattern = /^10.\d{4,9}\/[-._;()\/:A-Z0-9]+$/i
+        var regPattern = /^10\..+\/.*$/i
         return this.optional(element) || (regPattern.test(value));
     },function (params, element) {
         return "Please enter a valid DOI"
@@ -18,7 +18,7 @@ $(document).ready(function() {
         },
         rules: {
             doi: {
-                    doiFormat: false
+                    doiFormat: true
             }
         }
     });
