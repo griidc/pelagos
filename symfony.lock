@@ -105,6 +105,9 @@
     "elasticsearch/elasticsearch": {
         "version": "v6.7.2"
     },
+    "exsyst/swagger": {
+        "version": "v0.4.1"
+    },
     "friendsofsymfony/elastica-bundle": {
         "version": "5.0",
         "recipe": {
@@ -159,6 +162,45 @@
     "hamcrest/hamcrest-php": {
         "version": "v2.0.0"
     },
+    "hoa/compiler": {
+        "version": "3.17.08.08"
+    },
+    "hoa/consistency": {
+        "version": "1.17.05.02"
+    },
+    "hoa/event": {
+        "version": "1.17.01.13"
+    },
+    "hoa/exception": {
+        "version": "1.17.01.16"
+    },
+    "hoa/file": {
+        "version": "1.17.07.11"
+    },
+    "hoa/iterator": {
+        "version": "2.17.01.10"
+    },
+    "hoa/math": {
+        "version": "1.17.05.16"
+    },
+    "hoa/protocol": {
+        "version": "1.17.01.14"
+    },
+    "hoa/regex": {
+        "version": "1.17.01.13"
+    },
+    "hoa/stream": {
+        "version": "1.17.02.21"
+    },
+    "hoa/ustring": {
+        "version": "4.17.01.16"
+    },
+    "hoa/visitor": {
+        "version": "2.17.01.16"
+    },
+    "hoa/zformat": {
+        "version": "1.17.01.10"
+    },
     "hylianshield/alphabet": {
         "version": "1.0.0"
     },
@@ -171,19 +213,16 @@
     "jms/metadata": {
         "version": "1.7.0"
     },
-    "jms/parser-lib": {
-        "version": "1.0.0"
-    },
     "jms/serializer": {
         "version": "1.14.0"
     },
     "jms/serializer-bundle": {
-        "version": "2.0",
+        "version": "3.0",
         "recipe": {
             "repo": "github.com/symfony/recipes-contrib",
             "branch": "master",
-            "version": "2.0",
-            "ref": "fe60ce509ef04a3f40da96e3979bc8d9b13b2372"
+            "version": "3.0",
+            "ref": "384cec52df45f3bfd46a09930d6960a58872b268"
         },
         "files": [
             "config/packages/dev/jms_serializer.yaml",
@@ -197,9 +236,6 @@
     "kriswallsmith/buzz": {
         "version": "v0.16.1"
     },
-    "michelf/php-markdown": {
-        "version": "1.9.0"
-    },
     "mockery/mockery": {
         "version": "1.3.1"
     },
@@ -207,12 +243,12 @@
         "version": "1.25.3"
     },
     "nelmio/api-doc-bundle": {
-        "version": "2.13",
+        "version": "3.0",
         "recipe": {
             "repo": "github.com/symfony/recipes-contrib",
             "branch": "master",
-            "version": "2.13",
-            "ref": "d13bb99357ebcd2ffb6fe808a64961f5bc1c7546"
+            "version": "3.0",
+            "ref": "c8e0c38e1a280ab9e37587a8fa32b251d5bc1c94"
         },
         "files": [
             "config/packages/nelmio_api_doc.yaml",
@@ -295,11 +331,14 @@
     "php-http/stopwatch-plugin": {
         "version": "1.3.0"
     },
-    "phpcollection/phpcollection": {
-        "version": "0.5.0"
+    "phpdocumentor/reflection-common": {
+        "version": "2.0.0"
     },
-    "phpoption/phpoption": {
-        "version": "1.7.2"
+    "phpdocumentor/reflection-docblock": {
+        "version": "4.3.4"
+    },
+    "phpdocumentor/type-resolver": {
+        "version": "1.0.1"
     },
     "phpseclib/phpseclib": {
         "version": "2.0.23"
@@ -550,6 +589,9 @@
     "symfony/property-access": {
         "version": "v4.4.4"
     },
+    "symfony/property-info": {
+        "version": "v4.4.4"
+    },
     "symfony/routing": {
         "version": "4.2",
         "recipe": {
@@ -716,6 +758,9 @@
     "twig/twig": {
         "version": "v2.12.3"
     },
+    "webmozart/assert": {
+        "version": "1.6.0"
+    },
     "willdurand/hateoas": {
         "version": "2.12.0"
     },
@@ -733,5 +778,8 @@
     },
     "zendframework/zend-eventmanager": {
         "version": "3.2.1"
+    },
+    "zircote/swagger-php": {
+        "version": "2.0.15"
     }
 }
