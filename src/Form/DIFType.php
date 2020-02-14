@@ -285,9 +285,6 @@ class DIFType extends AbstractType
             $researchGroups = $this->tokenStorage->getToken()->getUser()->getPerson()->getResearchGroups();
         }
 
-        $researchGroups = $this->entityManager->getRepository(ResearchGroup::class)->findAll();
-
-
         $event->getForm()->add('researchGroup', EntityType::class, array(
             'class' => ResearchGroup::class,
             'choices' => $researchGroups,
