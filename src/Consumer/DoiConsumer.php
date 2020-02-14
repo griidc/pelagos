@@ -89,7 +89,7 @@ class DoiConsumer implements ConsumerInterface
      */
     public function execute(AMQPMessage $message)
     {
-        $this->logger->info('Request received, waiting...', $loggingContext);
+        $this->logger->info('Request received, waiting...');
 
         sleep(6);
 
