@@ -228,10 +228,10 @@ class DoiConsumer implements ConsumerInterface
             );
 
             $loggingContext['update-data'] = array(
-                "title" => $dataset->getTitle(),
-                "url" => $doiUrl,
-                "creator" => $creator,
-                "year" => $pubYear,
+                'title' => $dataset->getTitle(),
+                'url' => $doiUrl,
+                'creator' => $creator,
+                'year' => $pubYear,
             );
 
             $doi->setModifier($dataset->getModifier());
