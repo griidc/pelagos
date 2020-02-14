@@ -20,16 +20,15 @@ security:
             pattern: ^/account
             stateless: true
             # allow anonymous access
-            anonymous: ~
+            anonymous: lazy
             # use a Person Token, if present
             simple_preauth:
                 authenticator: App\Security\PersonTokenAuthenticator
                 provider: person_token
 
         main:
-            logout_on_user_change: true
             # allow anonymous access
-            anonymous: ~
+            anonymous: lazy
             #guard authentication
             guard:
                authenticators:
