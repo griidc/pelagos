@@ -22,7 +22,7 @@
         "jms/serializer-bundle": "^2.0",
         "jsor/doctrine-postgis": "^1.1",
         "kriswallsmith/buzz": "0.16.*",
-        "nelmio/api-doc-bundle": "^2.11",
+        "nelmio/api-doc-bundle": "^3.0",
         "opensoft/doctrine-postgres-types": "^1.2",
         "phayes/geophp": "^1.2",
         "phobetor/rabbitmq-supervisor-bundle": "^3.0",
