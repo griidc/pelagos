@@ -19,7 +19,7 @@
         "friendsofsymfony/rest-bundle": "^2.5",
         "guzzlehttp/guzzle": "~6.0",
         "hylianshield/base32-crockford": "^1.0",
-        "jms/serializer-bundle": "^2.0",
+        "jms/serializer-bundle": "^3.0",
         "jsor/doctrine-postgis": "^1.1",
         "kriswallsmith/buzz": "0.16.*",
         "nelmio/api-doc-bundle": "^3.0",
@@ -45,7 +45,7 @@
         "symfony/webpack-encore-bundle": "^1.1",
         "symfony/yaml": "4.4.*",
         "twig/extensions": "^1.5",
-        "willdurand/hateoas-bundle": "^1.1"
+        "willdurand/hateoas-bundle": "^2.1"
     },
     "require-dev": {
         "mockery/mockery": "^1.0",
