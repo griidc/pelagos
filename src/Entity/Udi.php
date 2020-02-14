@@ -3,29 +3,46 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
+ * Entity class to keep list of issued UDI's.
+ *
  * @ORM\Entity(repositoryClass="App\Repository\UdiRepository")
  *
  * @UniqueEntity(
- *     fields={"emailAddress"},
- *     errorPath="emailAddress",
- *     message="A Person with this email address already exists"
+ *     fields={"uniqueDataIdentifier"},
+ *     errorPath="uniqueDataIdentifier",
+ *     message="This UDI already exists"
  * )
  *
  */
 class Udi extends Entity
 {
     /**
-     * @ORM\Column(type="text")
+     * A string containing the UDI.
+     *
+     * @ORM\Column(type="text", nullable=false, unique=true)
      */
-    private $uniqueDataIdentifier;
+    protected $uniqueDataIdentifier;
 
-    public function getUniqueDataIdentifier(): ?string
+    /**
+     * Get the UDI.
+     *
+     * @return string The clear text password.
+     */
+    public function getUniqueDataIdentifier(): string
     {
         return $this->uniqueDataIdentifier;
     }
 
+    /**
+     * Set the UDI.
+     *
+     * @param string $uniqueDataIdentifier The UDi string.
+     *
+     * @return self
+     */
     public function setUniqueDataIdentifier(string $uniqueDataIdentifier): self
     {
         $this->uniqueDataIdentifier = $uniqueDataIdentifier;
