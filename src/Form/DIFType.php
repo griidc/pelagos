@@ -279,11 +279,11 @@ class DIFType extends AbstractType
     public function onPreSetData(FormEvent $event)
     {
         $researchGroups = array();
-//        if ($this->authorizationChecker->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-//            $researchGroups = $this->entityManager->getRepository(ResearchGroup::class)->findAll();
-//        } elseif ($this->tokenStorage->getToken()->getUser() instanceof Account) {
-//            $researchGroups = $this->tokenStorage->getToken()->getUser()->getPerson()->getResearchGroups();
-//        }
+        if ($this->authorizationChecker->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            $researchGroups = $this->entityManager->getRepository(ResearchGroup::class)->findAll();
+        } elseif ($this->tokenStorage->getToken()->getUser() instanceof Account) {
+            $researchGroups = $this->tokenStorage->getToken()->getUser()->getPerson()->getResearchGroups();
+        }
 
         $researchGroups = $this->entityManager->getRepository(ResearchGroup::class)->findAll();
 
