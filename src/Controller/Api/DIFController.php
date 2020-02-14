@@ -153,14 +153,14 @@ class DIFController extends EntityController
      *         in="formData",
      *         description="Primary Data Point of Contact:",
      *         required=false,
-     *         type="choice"
+     *         type="string"
      *     ),
      *     @SWG\Parameter(
      *         name="secondaryPointOfContact",
      *         in="formData",
      *         description="Additional Data Point of Contact:",
      *         required=false,
-     *         type="choice"
+     *         type="string"
      *     ),
      *     @SWG\Parameter(
      *         name="abstract",
@@ -230,7 +230,7 @@ class DIFController extends EntityController
      *         in="formData",
      *         description="Approximate Dataset Size:",
      *         required=false,
-     *         type="choice"
+     *         type="string"
      *     ),
      *     @SWG\Parameter(
      *         name="variablesObserved",
@@ -286,14 +286,14 @@ class DIFController extends EntityController
      *         in="formData",
      *         description="Start Date:",
      *         required=false,
-     *         type="date"
+     *         type="string"
      *     ),
      *     @SWG\Parameter(
      *         name="estimatedEndDate",
      *         in="formData",
      *         description="End Date:",
      *         required=false,
-     *         type="date"
+     *         type="string"
      *     ),
      *     @SWG\Parameter(
      *         name="spatialExtentDescription",
@@ -356,7 +356,7 @@ class DIFController extends EntityController
      *         in="formData",
      *         description="",
      *         required=false,
-     *         type="choice"
+     *         type="string"
      *     ),
      *     @SWG\Parameter(
      *         name="ethicalIssuesExplanation",
@@ -377,7 +377,7 @@ class DIFController extends EntityController
      *         in="formData",
      *         description="Project Title:",
      *         required=false,
-     *         type="choice"
+     *         type="string"
      *     ),
      *     @SWG\Response(
      *         response="201",
@@ -403,28 +403,28 @@ class DIFController extends EntityController
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new DIF in the Location header.
      */
-//    public function postAction(Request $request, EntityEventDispatcher $entityEventDispatcher, Udi $udiUtil)
-//    {
-//        // Create a new Dataset.
-//        $dataset = new Dataset;
-//        // Set the creator for the Dataset.
-//        $dataset->setCreator($this->getUser()->getPerson());
-//        // Create a new DIF for the Dataset.
-//        $dif = new DIF($dataset);
-//        // Handle the post (DIF will be created and Dataset creation will cascade).
-//        $this->handlePost(DIFType::class, DIF::class, $request, $dif);
-//        // Mint an UDI for the Dataset.
-//        $udi = $udiUtil->mintUdi($dataset);
-//        // Update the Dataset with the new UDI.
-//        $this->entityHandler->update($dataset);
-//        // If the "Save and Continue Later" button was pressed.
-//        if ($request->request->get('button') === 'save') {
-//            // Dispatch an event to indicate a DIF has been saved but not submitted.
-//            $entityEventDispatcher->dispatch($dif, 'saved_not_submitted');
-//        }
-//        // Return a created response, adding the UDI as a custom response header.
-//        return $this->makeCreatedResponse('pelagos_api_difs_get', $dif->getId(), array('X-UDI' => $udi));
-//    }
+    public function postAction(Request $request, EntityEventDispatcher $entityEventDispatcher, Udi $udiUtil)
+    {
+        // Create a new Dataset.
+        $dataset = new Dataset;
+        // Set the creator for the Dataset.
+        $dataset->setCreator($this->getUser()->getPerson());
+        // Create a new DIF for the Dataset.
+        $dif = new DIF($dataset);
+        // Handle the post (DIF will be created and Dataset creation will cascade).
+        $this->handlePost(DIFType::class, DIF::class, $request, $dif);
+        // Mint an UDI for the Dataset.
+        $udi = $udiUtil->mintUdi($dataset);
+        // Update the Dataset with the new UDI.
+        $this->entityHandler->update($dataset);
+        // If the "Save and Continue Later" button was pressed.
+        if ($request->request->get('button') === 'save') {
+            // Dispatch an event to indicate a DIF has been saved but not submitted.
+            $entityEventDispatcher->dispatch($dif, 'saved_not_submitted');
+        }
+        // Return a created response, adding the UDI as a custom response header.
+        return $this->makeCreatedResponse('pelagos_api_difs_get', $dif->getId(), array('X-UDI' => $udi));
+    }
 
     /**
      * Replace a DIF with the submitted data.
