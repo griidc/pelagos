@@ -6,10 +6,12 @@ use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
+
 /**
  * This class is a custom router modifier.
  */
-class RouterModifier implements RouterInterface
+class RouterModifier implements RouterInterface, ServiceSubscriberInterface
 {
     /**
      * The original (inner) Router Interface.
@@ -107,5 +109,12 @@ class RouterModifier implements RouterInterface
     public function match($pathinfo) : array
     {
         return $this->innerRouter->match($pathinfo);
+    }
+    
+    public static function getSubscribedServices()
+    {
+        return [
+            'routing.loader' => RouterModifier::class,
+        ];
     }
 }

@@ -153,14 +153,14 @@ class DIFController extends EntityController
      *         in="formData",
      *         description="Primary Data Point of Contact:",
      *         required=false,
-     *         type="choice"
+     *         type="string"
      *     ),
      *     @SWG\Parameter(
      *         name="secondaryPointOfContact",
      *         in="formData",
      *         description="Additional Data Point of Contact:",
      *         required=false,
-     *         type="choice"
+     *         type="string"
      *     ),
      *     @SWG\Parameter(
      *         name="abstract",
@@ -230,7 +230,7 @@ class DIFController extends EntityController
      *         in="formData",
      *         description="Approximate Dataset Size:",
      *         required=false,
-     *         type="choice"
+     *         type="string"
      *     ),
      *     @SWG\Parameter(
      *         name="variablesObserved",
@@ -286,14 +286,14 @@ class DIFController extends EntityController
      *         in="formData",
      *         description="Start Date:",
      *         required=false,
-     *         type="date"
+     *         type="string"
      *     ),
      *     @SWG\Parameter(
      *         name="estimatedEndDate",
      *         in="formData",
      *         description="End Date:",
      *         required=false,
-     *         type="date"
+     *         type="string"
      *     ),
      *     @SWG\Parameter(
      *         name="spatialExtentDescription",
@@ -356,7 +356,7 @@ class DIFController extends EntityController
      *         in="formData",
      *         description="",
      *         required=false,
-     *         type="choice"
+     *         type="string"
      *     ),
      *     @SWG\Parameter(
      *         name="ethicalIssuesExplanation",
@@ -377,7 +377,7 @@ class DIFController extends EntityController
      *         in="formData",
      *         description="Project Title:",
      *         required=false,
-     *         type="choice"
+     *         type="string"
      *     ),
      *     @SWG\Response(
      *         response="201",
