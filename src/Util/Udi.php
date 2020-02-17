@@ -5,6 +5,7 @@ namespace App\Util;
 use Doctrine\ORM\EntityManagerInterface;
 
 use App\Entity\Dataset;
+use App\Entity\Udi as UdiEntity;
 
 /**
  * A utility class for UDIs.
@@ -50,26 +51,31 @@ class Udi
         $udi = sprintf('%s.x%03d.000:', $udiPrefix, $researchGroupId);
 
         // Get the dataset with the highest sequence for the same Funding Cycle and Research Group.
-        $query = $this->entityManager->getRepository(Dataset::class)->createQueryBuilder('d')
-            ->where('d.udi LIKE :udi')
-            ->orderBy('d.udi', 'DESC')
+        $query = $this->entityManager->getRepository(UdiEntity::class)->createQueryBuilder('u')
+            ->where('u.uniqueDataIdentifier LIKE :udi')
+            ->orderBy('u.uniqueDataIdentifier', 'DESC')
             ->setParameter('udi', "$udi%")
             ->getQuery();
 
-        $datasets = $query->getResult();
+        $udis = $query->getResult();
 
-        if (count($datasets) == 0) {
+        if (count($udis) == 0) {
             // If this is the first dataset for this Research Group, we start at 1.
             $sequence = 1;
         } else {
             // Grab the sequence from the UID.
-            preg_match('/:(\d{4})$/', $datasets[0]->getUdi(), $matches);
+            preg_match('/:(\d{4})$/', $udis[0]->getUdi(), $matches);
             $lastSequence = $matches[1];
             // Add one.
             $sequence = (intval($lastSequence) + 1);
         }
         // Append the sequence to the UDI.
         $udi .= sprintf('%04d', $sequence);
+
+        $udiEntity = new UdiEntity($udi);
+        $this->entityManager->persist($udiEntity);
+        $this->entityManager->flush($udiEntity);
+
         $dataset->setUdi($udi);
         return $udi;
     }

@@ -27,26 +27,24 @@ class Udi extends Entity
     protected $uniqueDataIdentifier;
 
     /**
-     * Get the UDI.
+     * Constructor.
      *
-     * @return string The clear text password.
+     * @param string $uniqueDataIdentifier The UDI string.
+     *
+     * Sets to UDI identifier for the UDI entity.
      */
-    public function getUniqueDataIdentifier(): string
+    public function __construct(string $uniqueDataIdentifier): void
     {
-        return $this->uniqueDataIdentifier;
+        $this->uniqueDataIdentifier = $uniqueDataIdentifier;
     }
 
     /**
-     * Set the UDI.
+     * A Pretty Print sort of formatting in the string context.
      *
-     * @param string $uniqueDataIdentifier The UDi string.
-     *
-     * @return self
+     * @return string The formatted UDI string.
      */
-    public function setUniqueDataIdentifier(string $uniqueDataIdentifier): self
+    public function __toString(): string
     {
-        $this->uniqueDataIdentifier = $uniqueDataIdentifier;
-
-        return $this;
+        return (string) $this->uniqueDataIdentifier;
     }
 }
