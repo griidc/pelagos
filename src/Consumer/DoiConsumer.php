@@ -89,6 +89,10 @@ class DoiConsumer implements ConsumerInterface
      */
     public function execute(AMQPMessage $message)
     {
+        $this->logger->info('Request received, waiting...');
+
+        sleep(6);
+
         // phpcs:disable
         $routingKey = $message->delivery_info['routing_key'];
         // phpcs:enable
@@ -121,7 +125,7 @@ class DoiConsumer implements ConsumerInterface
             } else {
                 $msgStatus = $this->issueDoi($dataset, $loggingContext);
             }
-            
+
             $this->entityManager->persist($dataset);
             $this->entityManager->flush();
         } else {
@@ -204,6 +208,8 @@ class DoiConsumer implements ConsumerInterface
                 $doiUrl = 'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi();
             }
 
+            $loggingContext['availabilitystatus'] = $dataset->getAvailabilityStatus();
+
             $creator = ($dataset->getAuthors()) ? $dataset->getAuthors() : '(:tba)';
 
             // PublicationYear field can not be null, as it is a required field when the DOI is published
@@ -219,6 +225,13 @@ class DoiConsumer implements ConsumerInterface
                 $dataset->getTitle(),
                 $pubYear,
                 'Harte Research Institute'
+            );
+
+            $loggingContext['update-data'] = array(
+                'title' => $dataset->getTitle(),
+                'url' => $doiUrl,
+                'creator' => $creator,
+                'year' => $pubYear,
             );
 
             $doi->setModifier($dataset->getModifier());
