@@ -15,12 +15,13 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *     errorPath="uniqueDataIdentifier",
  *     message="This UDI already exists"
  * )
- *
  */
 class Udi extends Entity
 {
     /**
      * A string containing the UDI.
+     *
+     * @var string
      *
      * @ORM\Column(type="text", nullable=false, unique=true)
      */

@@ -7,13 +7,15 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**
- * @method Udi|null find($id, $lockMode = null, $lockVersion = null)
- * @method Udi|null findOneBy(array $criteria, array $orderBy = null)
- * @method Udi[]    findAll()
- * @method Udi[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * Udi Entity Repository class.
  */
 class UdiRepository extends ServiceEntityRepository
 {
+    /**
+     * Constructor.
+     *
+     * @param ManagerRegistry $registry The Registry Manager.
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Udi::class);
