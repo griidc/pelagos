@@ -59,7 +59,7 @@ class Udi
 
         $udis = $query->getResult();
 
-        if (count($udis) == 0) {
+        if (count($udis) === 0) {
             // If this is the first dataset for this Research Group, we start at 1.
             $sequence = 1;
         } else {
