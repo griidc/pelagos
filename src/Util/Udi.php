@@ -64,7 +64,7 @@ class Udi
             $sequence = 1;
         } else {
             // Grab the sequence from the UID.
-            preg_match('/:(\d{4})$/', $udis[0]->getUdi(), $matches);
+            preg_match('/:(\d{4})$/', $udis[0], $matches);
             $lastSequence = $matches[1];
             // Add one.
             $sequence = (intval($lastSequence) + 1);

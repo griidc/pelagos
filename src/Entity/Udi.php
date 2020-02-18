@@ -34,7 +34,7 @@ class Udi extends Entity
      *
      * Sets to UDI identifier for the UDI entity.
      */
-    public function __construct(string $uniqueDataIdentifier): void
+    public function __construct(string $uniqueDataIdentifier)
     {
         $this->uniqueDataIdentifier = $uniqueDataIdentifier;
     }
