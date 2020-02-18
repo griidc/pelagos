@@ -163,8 +163,9 @@ class DIFController extends EntityController
     /**
      * Replace a DIF with the submitted data.
      *
-     * @param integer $id      The id of the DIF to replace.
-     * @param Request $request The request object.
+     * @param integer               $id                    The id of the DIF to replace.
+     * @param Request               $request               The request object.
+     * @param EntityEventDispatcher $entityEventDispatcher The event Dispatcher.
      *
      * @ApiDoc(
      *   section = "DIFs",
@@ -182,9 +183,15 @@ class DIFController extends EntityController
      *
      * @return Response A Response object with an empty body and a "no content" status code.
      */
-    public function putAction(int $id, Request $request)
+    public function putAction(int $id, Request $request, EntityEventDispatcher $entityEventDispatcher)
     {
         $this->handleUpdate(DIFType::class, DIF::class, $id, $request, 'PUT');
+        // If the "Save and Continue Later" button was pressed.
+        if ($request->request->get('button') === 'save') {
+            $dif = $this->handleGetOne(DIF::class, $id);
+            // Dispatch an event to indicate a DIF has been saved but not submitted.
+            $entityEventDispatcher->dispatch($dif, 'saved_not_submitted');
+        }
         return $this->makeNoContentResponse();
     }
 
