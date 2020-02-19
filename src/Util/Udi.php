@@ -74,11 +74,15 @@ class Udi
                 preg_match('/:(\d{4})$/', $datasets[0]->getUdi(), $matches);
                 $lastDatasetSequence = intval($matches[1]);
 
-                // Grab the last sequence from the UDI list.
-                preg_match('/:(\d{4})$/', $udis[0], $matches);
-                $lastUdiSequence = intval($matches[1]);
-                $lastSequence = max($lastDatasetSequence, $lastUdiSequence);
+                if (count($udis) !== 0) {
+                    // Grab the last sequence from the UDI list.
+                    preg_match('/:(\d{4})$/', $udis[0], $matches);
+                    $lastUdiSequence = intval($matches[1]);
+                } else {
+                    $lastUdiSequence = 0;
+                }
 
+                $lastSequence = max($lastDatasetSequence, $lastUdiSequence);
                 // Add one.
                 $sequence = ($lastSequence + 1);
         }
