@@ -16,7 +16,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *     message="This UDI already exists"
  * )
  */
-class Udi extends Entity
+class Udi
 {
     /**
      * A string containing the UDI.
@@ -24,6 +24,7 @@ class Udi extends Entity
      * @var string
      *
      * @ORM\Column(type="text", nullable=false, unique=true)
+     * @ORM\Id
      */
     protected $uniqueDataIdentifier;
 

@@ -51,39 +51,36 @@ class Udi
         $udi = sprintf('%s.x%03d.000:', $udiPrefix, $researchGroupId);
 
         // Get the dataset with the highest sequence for the same Funding Cycle and Research Group.
-        $query = $this->entityManager->getRepository(Dataset::class)->createQueryBuilder('d')
+        $datasets = $this->entityManager->getRepository(Dataset::class)->createQueryBuilder('d')
             ->where('d.udi LIKE :udi')
             ->orderBy('d.udi', 'DESC')
             ->setParameter('udi', "$udi%")
-            ->getQuery();
+            ->getQuery()
+            ->getResult();
 
-        $datasets = $query->getResult();
-
-        if (count($datasets) === 0) {
-            // Get a list of UDI's issued.
-            $query = $this->entityManager->getRepository(UdiEntity::class)->createQueryBuilder('u')
+        // Get a list of UDI's issued.
+        $udis = $this->entityManager->getRepository(UdiEntity::class)->createQueryBuilder('u')
                 ->where('u.uniqueDataIdentifier LIKE :udi')
                 ->orderBy('u.uniqueDataIdentifier', 'DESC')
                 ->setParameter('udi', "$udi%")
-                ->getQuery();
+                ->getQuery()
+                ->getResult();
 
-            $udis = $query->getResult();
-
-            if (count($udis) !== 0) {
-                // Grab the sequence from the UID.
-                preg_match('/:(\d{4})$/', $udis[0], $matches);
-                $lastSequence = $matches[1];
-                // Add one.
-                $sequence = (intval($lastSequence) + 1);
-            } else {
-                // If this is the first dataset for this Research Group, we start at 1.
-                $sequence = 1;
-            }
+        if (count($datasets) === 0 and count($udis) === 0) {
+            // If this is the first dataset for this Research Group, we start at 1.
+            $sequence = 1;
         } else {
-            preg_match('/:(\d{4})$/', $datasets[0]->getUdi(), $matches);
-            $lastSequence = $matches[1];
-            // Add one.
-            $sequence = (intval($lastSequence) + 1);
+                // Find the latest dataset submitted.
+                preg_match('/:(\d{4})$/', $datasets[0]->getUdi(), $matches);
+                $lastDatasetSequence = intval($matches[1]);
+
+                // Grab the last sequence from the UDI list.
+                preg_match('/:(\d{4})$/', $udis[0], $matches);
+                $lastUdiSequence = intval($matches[1]);
+                $lastSequence = max($lastDatasetSequence, $lastUdiSequence);
+
+                // Add one.
+                $sequence = ($lastSequence + 1);
         }
         // Append the sequence to the UDI.
         $udi .= sprintf('%04d', $sequence);
