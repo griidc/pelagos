@@ -70,9 +70,13 @@ class Udi
             // If this is the first dataset for this Research Group, we start at 1.
             $sequence = 1;
         } else {
-            // Find the latest dataset submitted.
-            preg_match('/:(\d{4})$/', $datasets[0]->getUdi(), $matches);
-            $lastDatasetSequence = intval($matches[1]);
+            if (count($datasets) !== 0) {
+                // Find the latest dataset submitted.
+                preg_match('/:(\d{4})$/', $datasets[0]->getUdi(), $matches);
+                $lastDatasetSequence = intval($matches[1]);
+            } else {
+                $lastDatasetSequence = 0;
+            }
 
             if (count($udis) !== 0) {
                 // Grab the last sequence from the UDI list.
