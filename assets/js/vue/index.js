@@ -2,13 +2,17 @@ import Vue from "vue";
 import SearchApp from "./SearchApp";
 import '../../scss/bootstrap.scss';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import '../../css/search-ui.css';
+// import '../../css/search-ui.css';
 
-new Vue({
-    components: { SearchApp },
-    template: "<SearchApp/>",
-    created() {
-        console.log('hello')
-    }
-}).$mount("#app");
+window.addEventListener("load", function(event) {
+    // here is the Vue code
+    new Vue({
+        el: '#search-app',
+        components: { SearchApp },
+        template: "<SearchApp/>",
+        created() {
+            console.log('hello')
+        }
+    });
+});
 

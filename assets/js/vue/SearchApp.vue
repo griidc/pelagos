@@ -3,7 +3,7 @@
         <section class="section-content bg pt-5">
             <div class="container">
                 <div class="card card-header">
-                    <form id="searchForm" name="searchForm" method="get" :action="fosrouting.generate('pelagos_app_ui_searchpage_default')">
+                    <form id="searchForm" name="searchForm" method="get" v-bind:action="searchFormRoute">
                         <div class="row">
                             <div class="col-sm-9">
                                 <input type="search"
@@ -80,17 +80,17 @@
 </template>
 
 <script>
+    const routes = require('../../../public/js/fos_js_routes.json');
+    import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min.js';
+    Routing.setRoutingData(routes);
     export default {
         name: "SearchApp",
         data() {
             return {
-                fosrouting: Routing
+                searchFormRoute: Routing.generate('pelagos_app_ui_searchpage_default'),
             }
         }
     };
-    const routes = require('../../../public/js/fos_js_routes.json');
-    import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min.js';
-    Routing.setRoutingData(routes);
 </script>
 
 <style>
