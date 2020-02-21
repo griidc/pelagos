@@ -162,11 +162,11 @@ class RemotelyHostedDatasetsController extends AbstractController
     /**
      * Check to see if the remotely-hosted fields are all populated.
      *
-     * @param DatasetSubmission $datasetSubmission
+     * @param DatasetSubmission $datasetSubmission A DatasetSubmission.
      *
      * @return array $errors Containing strings of each unpopulated attribute, or empty array for compliant.
      */
-    public function remotelyHostedPrerequsiteCheck($datasetSubmission)
+    public function remotelyHostedPrerequsiteCheck(DatasetSubmission$datasetSubmission) : array
     {
         $errors = array();
 
@@ -196,10 +196,10 @@ class RemotelyHostedDatasetsController extends AbstractController
                     }
                 }
             }
-            if(!in_array($datasetSubmission->getDatasetFileUri(), $distributionUrls)) {
+            if (!in_array($datasetSubmission->getDatasetFileUri(), $distributionUrls)) {
                 $errors[] = 'Dataset File URI does not match distribution URL';
             }
         }
-    return $errors;
+        return $errors;
     }
 }
