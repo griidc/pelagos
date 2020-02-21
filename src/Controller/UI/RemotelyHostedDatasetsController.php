@@ -179,10 +179,10 @@ class RemotelyHostedDatasetsController extends AbstractController
             if (empty($datasetSubmission->getRemotelyHostedName())) {
                 $errors[] = 'Missing Remotely-Hosted name.';
             }
-            if (empty($datasetSubmission->getRemotelyHostedDescription)) {
+            if (empty($datasetSubmission->getRemotelyHostedDescription())) {
                 $errors[] = 'Missing Remotly-Hosted Description';
             }
-            if (empty($datasetSubmission->getRemotelyHostedFunction)) {
+            if (empty($datasetSubmission->getRemotelyHostedFunction())) {
                 $errors[] = 'Missing Remotly-Hosted Function';
             }
 
