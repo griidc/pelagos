@@ -1,42 +1,17 @@
-{#<!DOCTYPE html>#}
-{#<html>#}
-{#<head>#}
-{#    <meta charset="UTF-8">#}
-{#    <title>Symfony 4 with Vue.js</title>#}
-{#    {{ encore_entry_link_tags('search-app') }}#}
-{#</head>#}
-{#<body>#}
-{#    <div id="search-app"></div>#}
-{#    {{ encore_entry_script_tags('search-app') }}#}
-{#</body>#}
-{#</html>#}
-
 {% extends "base.html.twig" %}
 {% block title %}Search{% endblock %}
 
 {%block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('build/search.css') }}">
     {{ encore_entry_link_tags('search-app') }}
 
 {%endblock stylesheets  %}
 
 {% block body %}
-{#    <div class="bootstrap">#}
-{#        {% include 'Search/form.html.twig' %}#}
-{#        {% if query is null %}#}
-{#            {% include 'Search/alt-text.html.twig' %}#}
-{#        {% else %}#}
-{#            {% include 'Search/results.html.twig' %}#}
-{#        {% endif %}#}
-{#    </div>#}
     <div id="search-app"></div>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
     {{ encore_entry_script_tags('search-app') }}
-        <script type="text/javascript" src="{{ asset('build/search.js') }}"></script>
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootpag/1.0.7/jquery.bootpag.min.js"></script>
-        <script type="text/javascript" src="{{ asset('js/search.js') }}"></script>
 {% endblock %}
