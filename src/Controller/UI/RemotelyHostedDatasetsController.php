@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
+use App\Entity\DistributionPoint;
 
 /**
  * The Remotely Hosted Datasets list controller.
@@ -86,8 +87,10 @@ class RemotelyHostedDatasetsController extends AbstractController
             $dataset = $datasets[0];
             $datasetSubmission = $dataset->getDatasetSubmission();
             $datasetStatus = $dataset->getDatasetStatus();
-
-            if ($datasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
+            $preReqs = $this->remotelyHostedPrerequsiteCheck($datasetSubmission);
+            if (count($preReqs > 0)) {
+                $message = implode(', ', $preReqs);
+            } elseif ($datasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
                 if (DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED !== $datasetSubmission->getDatasetFileTransferStatus()) {
                     $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
 
@@ -154,5 +157,49 @@ class RemotelyHostedDatasetsController extends AbstractController
             ),
             'remotelyhosted_update_log'
         );
+    }
+
+    /**
+     * Check to see if the remotely-hosted fields are all populated.
+     *
+     * @param DatasetSubmission $datasetSubmission
+     *
+     * @return array $errors Containing strings of each unpopulated attribute, or empty array for compliant.
+     */
+    public function remotelyHostedPrerequsiteCheck($datasetSubmission)
+    {
+        $errors = array();
+
+        if (!$datasetSubmission instanceof DatasetSubmission) {
+            $errors[] = 'Missing Dataset Submission';
+        } else {
+            if (empty($datasetSubmission->getDatasetFileUri())) {
+                $errors[] = 'Missing Dataset File URL';
+            }
+            if (empty($datasetSubmission->getRemotelyHostedName())) {
+                $errors[] = 'Missing Remotely-Hosted name.';
+            }
+            if (empty($datasetSubmission->getRemotelyHostedDescription)) {
+                $errors[] = 'Missing Remotly-Hosted Description';
+            }
+            if (empty($datasetSubmission->getRemotelyHostedFunction)) {
+                $errors[] = 'Missing Remotly-Hosted Function';
+            }
+
+            //(At least one) Distribution URL Matched the Files->Dataset File URL?
+            $distributionUrls = array();
+            foreach ($datasetSubmission->getDistributionPoints() as $distributionPoint) {
+                if ($distributionPoint instanceof DistributionPoint) {
+                    $distributionUrl = $distributionPoint->getDistributionUrl();
+                    if (!empty($distributionUrl)) {
+                        $distributionUrls[] = $distributionUrl;
+                    }
+                }
+            }
+            if(!in_array($datasetSubmission->getDatasetFileUri(), $distributionUrls)) {
+                $errors[] = 'Dataset File URI does not match distribution URL';
+            }
+        }
+    return $errors;
     }
 }
