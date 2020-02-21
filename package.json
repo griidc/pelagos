@@ -1,7 +1,8 @@
 {
     "devDependencies": {
         "@fortawesome/fontawesome-free": "^5.11.1",
-        "@symfony/webpack-encore": "^0.23.0",
+        "@symfony/webpack-encore": "symfony/webpack-encore",
+        "autoprefixer": "^9.7.4",
         "core-js": "^3.0.0",
         "node-sass": "^4.13.1",
         "regenerator-runtime": "^0.13.2",
@@ -23,8 +24,12 @@
         "jquery-ui": "^1.12.1",
         "jquery-ui-themes": "^1.12.0",
         "jquery.cookie": "^1.4.1",
+        "postcss-loader": "^3.0.0",
         "qtip2": "2.2.0",
         "query-string": "^6.8.1",
         "vex-js": "^4.1.0"
-    }
+    },
+    "browserslist": [
+        "defaults"
+    ]
 }
