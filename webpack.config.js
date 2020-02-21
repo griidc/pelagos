@@ -17,7 +17,9 @@ Encore
     .setManifestKeyPrefix('build/')
 
     // Enable Vue js
-    .enableVueLoader()
+    .enableVueLoader(() => {}, {
+        useJsx: true,
+    })
 
     /*
      * ENTRY CONFIG
@@ -32,7 +34,7 @@ Encore
     .addEntry('layout', './assets/js/layout.js')
     .addEntry('downloadBox', './assets/js/downloadBox.js')
     .addEntry('search', './assets/js/search.js')
-    .addEntry('search-app', './assets/js/vue/index.js')
+    .addEntry('search-app', './assets/js/search2.js')
 
     // enables Sass/SCSS support
     .enableSassLoader()
