@@ -34,33 +34,34 @@ function insertTree(tree) {
     }
     trees[tree.name] = tree;
 
-    document.write('<div class="treecontainer">');
-    document.write('    <div class="treetype-wrapper">');
-    document.write('        <span class="treetype">');
+    var treeContainer = $("#ds-treecontainer");
+
+    treeContainer.append('    <div class="treetype-wrapper">');
+    treeContainer.append('        <span class="treetype">');
 
     if (typeof tree === 'undefined' || typeof tree.start === 'undefined') {
-        document.write('            <strong>' + tree.label + '</strong>');
+        treeContainer.append('            <strong>' + tree.label + '</strong>');
         var on_filter_by_change = '';
         if (typeof tree.on_filter_by_change !== 'undefined') {
             on_filter_by_change = tree.on_filter_by_change;
         }
-        document.write('            <select id="treetype-selector" onchange="' + on_filter_by_change + 'trees[\'' + tree.name + '\'].selected=null;trees[\'' + tree.name + '\'].type=this.value;updateTree(trees[\'' + tree.name + '\']);">');
-        document.write('                <option value="ra"');
+        treeContainer.append('            <select id="treetype-selector" onchange="' + on_filter_by_change + 'trees[\'' + tree.name + '\'].selected=null;trees[\'' + tree.name + '\'].type=this.value;updateTree(trees[\'' + tree.name + '\']);">');
+        treeContainer.append('                <option value="ra"');
         if (tree.type == "ra") document.write(' selected');
-        document.write('>Research Award</option>');
-        document.write('                <option value="re"');
-        if (tree.type == "re") document.write(' selected');
-        document.write('>Researcher</option>');
-        document.write('            </select>');
+        treeContainer.append('>Research Award</option>');
+        treeContainer.append('                <option value="re"');
+        if (tree.type == "re") treeContainer.append(' selected');
+        treeContainer.append('>Researcher</option>');
+        treeContainer.append('            </select>');
     }
     else if (typeof tree.title !== 'undefined') {
-        document.write('            <strong>' + tree.title + '</strong>');
+        treeContainer.append('            <strong>' + tree.title + '</strong>');
     }
 
-    document.write('        </span>');
-    document.write('    </div>');
-    document.write('    <div id="' + tree.name + '"></div>');
-    document.write('</div>');
+    treeContainer.append('        </span>');
+    treeContainer.append('    </div>');
+    treeContainer.append('    <div id="' + tree.name + '"></div>');
+    treeContainer.append('</div>');
 
     $(document).ready(function() {
         updateTree(tree);
@@ -109,7 +110,7 @@ function updateTree(tree) {
                         }
                     } else {
                         nodeId = node['id'];
-                        
+
                         if (tree.type == 'ra') {
                             var matchFundingCycleId = nodeId.match(/^projects_funding-cycle_(\d+)$/);
                             if (null !== matchFundingCycleId) {
