@@ -2,45 +2,30 @@
     <section class="section-content bg pt-5">
         <div class="container">
             <div class="card card-header">
-                <form id="searchForm" name="searchForm" method="get" v-bind:action="searchFormRoute" v-on:submit.prevent="onSubmit">
+                <b-form id="searchForm" name="searchForm" method="get" @submit.prevent="onSubmit" v-if="show">
                     <div class="row">
                         <div class="col-sm-9">
-                            <input type="search"
+                            <b-form-input type="search"
                                    name="query"
                                    class="form-control"
                                    placeholder="Search.."
                                    id="searchBox"
                                    required
-                                   v-model="query">
-                            <input type="hidden" id="pageNo" name="page" v-model="pageNo">
+                                   v-model="form.query">
+                            </b-form-input>
+                            <input type="hidden" id="pageNo" name="page" v-model="form.pageNo">
                         </div>
                         <div class="col-sm-3 btn-toolbar">
                             <button id="searchSubmit" type="submit" class="btn btn-primary mx-2 w-50">Search
                                 <i class="fa fa-search pl-2"></i></button>
-                            <button type="button" id="search-clear" class="btn btn-dark mx-2 w-25">Clear</button>
+                            <button type="reset" id="search-clear" class="btn btn-dark mx-2 w-25">Clear</button>
                         </div>
                     </div>
                     <div class="pt-3 mt-3 d-flex flex-row justify-content-around">
                         <div class="pl-5 pt-1">
-                            <span class="form-options-input-group">
-                                <select class="form-options-input" name="field" id="field" v-model="field">
-                                    <option>
-                                        -- All --
-                                    </option>
-                                    <option>
-                                        Title
-                                    </option>
-                                    <option>
-                                        Abstract
-                                    </option>
-                                    <option>
-                                        Author
-                                    </option>
-                                    <option>
-                                        Theme Keywords
-                                    </option>
-                                    {{ field }}
-                                </select>
+                            <span>
+                                <b-form-select name="field" id="field" v-model="form.field" :options="fields">
+                                </b-form-select>
                             </span>
                         </div>
                         <div class="form-inline">
@@ -51,8 +36,8 @@
                                        id="collectionStartDate"
                                        name="collectionStartDate"
                                        placeholder="yyyy-mm-dd"
-                                       v-model="collectionStartDate">
-                                {{collectionStartDate}}
+                                       v-model="form.collectionStartDate">
+                                {{form.collectionStartDate}}
                                 <span class="input-group-append">
                                      <button class="btn btn-primary" type="button" id="collection-start-btn">
                                         <i class="far fa-calendar-alt"></i>
@@ -67,8 +52,8 @@
                                         id="collectionEndDate"
                                         name="collectionEndDate"
                                         placeholder="yyyy-mm-dd"
-                                        v-model="collectionEndDate">
-                                {{collectionEndDate}}
+                                        v-model="form.collectionEndDate">
+                                {{form.collectionEndDate}}
                                 <span class="input-group-append">
                                     <button class="btn btn-primary date-input" type="button" id="collection-end-btn">
                                         <i class="far fa-calendar-alt"></i>
@@ -77,7 +62,7 @@
                             </span>
                         </div>
                     </div>
-                </form>
+                </b-form>
             </div>
         </div>
     </section>
@@ -90,22 +75,26 @@
         data: function() {
             return {
                 searchFormRoute: Routing.generate('pelagos_app_ui_searchpage_results'),
-                query : '',
-                pageNo : 1,
-                field : ['-- All --' , 'Title', 'Abstract', 'Author', 'Theme Keywords'],
-                collectionStartDate: '',
-                collectionEndDate: ''
+                form: {
+                    query : '',
+                    pageNo : 1,
+                    field : '',
+                    collectionStartDate: '',
+                    collectionEndDate: '',
+                },
+                fields: [{ text: '-- All --', value: null } , 'Title', 'Abstract', 'Author', 'Theme Keywords'],
+                show: true
             }
         },
         methods: {
             onSubmit: function () {
-                console.log(this.query);
+                let searchQuery = Object.keys(this.form).map(key => key + '=' + this.form[key]).join('&');
+                console.log(searchQuery);
                 axios
-                    .get(Routing.generate('pelagos_app_ui_searchpage_results'))
+                    .get(Routing.generate('pelagos_app_ui_searchpage_results') + "?" + searchQuery)
                     .then(response => (console.log(response.data)));
             }
         }
-
     }
 </script>
 

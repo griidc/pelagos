@@ -1,12 +1,15 @@
 import Vue from "vue";
 import SearchApp from "./vue/SearchApp";
-import '../scss/bootstrap.scss';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../css/search-ui.css';
-// import axios from "axios";
-// import VueAxios from 'vue-axios';
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
+
 window.addEventListener("load", function(event) {
-    // Vue.use(VueAxios, axios);
+
+    Vue.use(BootstrapVue);
+    Vue.use(IconsPlugin);
 
     // here is the Vue code
     new Vue({
@@ -17,5 +20,4 @@ window.addEventListener("load", function(event) {
             console.log('hello')
         }
     });
-
 });

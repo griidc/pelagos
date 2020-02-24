@@ -22,6 +22,7 @@
     "dependencies": {
         "axios": "^0.19.2",
         "bootstrap": "^4.4.1",
+        "bootstrap-vue": "^2.5.0",
         "jquery": "^3.4.1",
         "jquery-migrate": "^3.1.0",
         "jquery-ui": "^1.12.1",
@@ -29,7 +30,6 @@
         "jquery.cookie": "^1.4.1",
         "qtip2": "2.2.0",
         "query-string": "^6.8.1",
-        "vex-js": "^4.1.0",
-        "vue-axios": "^2.1.5"
+        "vex-js": "^4.1.0"
     }
 }
