@@ -84,7 +84,55 @@ class SearchPageController extends AbstractController
 //            )
 //        );
         return $this->render('Search/vue-index.html.twig');
+    }
 
+    /**
+     * The default action for Dataset Review.
+     *
+     * @param Request $request    The Symfony request object.
+     * @param Search  $searchUtil Search utility class object.
+     *
+     * @Route("/search/results", name="pelagos_app_ui_searchpage_results")
+     *
+     * @return Response
+     */
+    public function getSearchResults(Request $request, Search $searchUtil)
+    {
+        $results = array();
+        $count = 0;
+        $requestParams = $this->getRequestParams($request);
+        $researchGroupsInfo = array();
+        $fundingOrgInfo = array();
+        $statusInfo = array();
+
+        if (!empty($requestParams['query'])) {
+            $buildQuery = $searchUtil->buildQuery($requestParams);
+            $results = $searchUtil->findDatasets($buildQuery);
+            $count = $searchUtil->getCount($buildQuery);
+            $researchGroupsInfo = $searchUtil->getResearchGroupAggregations($buildQuery);
+            $fundingOrgInfo = $searchUtil->getFundingOrgAggregations($buildQuery);
+            $statusInfo = $searchUtil->getStatusAggregations($buildQuery);
+            $elasticScoreFirstResult = null;
+            if (!empty($results)) {
+                $elasticScoreFirstResult = $results[0]->getResult()->getHit()['_score'];
+            }
+//            $this->dispatchSearchTermsLogEvent($requestParams, $count, $elasticScoreFirstResult);
+        }
+
+        return $this->json(
+            array(
+                'query' => $requestParams['query'],
+                'field' => $requestParams['field'],
+                'results' => $results,
+                'count' => $count,
+                'page' => $requestParams['page'],
+                'researchGroupsInfo' => $researchGroupsInfo,
+                'fundingOrgInfo' => $fundingOrgInfo,
+                'statusInfo' => $statusInfo,
+                'collectionStartDate' => $requestParams['collectionStartDate'],
+                'collectionEndDate' => $requestParams['collectionEndDate'],
+            )
+        );
     }
 
     /**

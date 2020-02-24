@@ -3,8 +3,11 @@ import SearchApp from "./vue/SearchApp";
 import '../scss/bootstrap.scss';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../css/search-ui.css';
-
+// import axios from "axios";
+// import VueAxios from 'vue-axios';
 window.addEventListener("load", function(event) {
+    // Vue.use(VueAxios, axios);
+
     // here is the Vue code
     new Vue({
         el: '#search-app',
@@ -14,4 +17,5 @@ window.addEventListener("load", function(event) {
             console.log('hello')
         }
     });
+
 });
