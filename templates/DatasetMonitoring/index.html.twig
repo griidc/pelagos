@@ -41,28 +41,8 @@
                         <div id="menu">
                             <div class="viewport" style="padding-right: 25px;" >
                                 <div class="overview">
-                                    <script type="text/javascript">
-                                        var tree = {
-                                                    theme: "pelagos",
-                                                    max_depth: 2,
-                                                    expand_to_depth: 0,
-                                                    animation: 250,
-                                                    type: "ra",
-
-                                                    rfp_color: "#00A",
-                                                    rfp_action: "updateHash(\{\{fundSrc.id\}\});showProjects('fundSrc',\{\{fundSrc.id\}\});",
-
-                                                    project_color: "#00A",
-                                                    project_action: "updateHash(\{\{project.fundingCycle.id\}\},\{\{project.id\}\});showProjects('projectId',\{\{project.id\}\});",
-
-                                                    researcher_color: "#00A",
-                                                    researcher_action: "location.href='#';showProjects('peopleId',\{\{person.id\}\});",
-
-                                                    afteropen: "$(window).trigger('hashchange');"
-                                                   }
-
-                                        insertTree(tree);
-                                    </script>
+                                    <div id="ds-treecontainer" class="treecontainer">
+                                    </div>
                                 </div>
                             </div>
                         </div>

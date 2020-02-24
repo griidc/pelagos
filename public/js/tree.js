@@ -36,32 +36,36 @@ function insertTree(tree) {
 
     var treeContainer = $("#ds-treecontainer");
 
-    treeContainer.append('    <div class="treetype-wrapper">');
-    treeContainer.append('        <span class="treetype">');
+    treeHTML = '';
+
+    treeHTML += '    <div class="treetype-wrapper">';
+    treeHTML += '        <span class="treetype">';
 
     if (typeof tree === 'undefined' || typeof tree.start === 'undefined') {
-        treeContainer.append('            <strong>' + tree.label + '</strong>');
+        treeHTML += '            <strong>' + tree.label + '</strong>';
         var on_filter_by_change = '';
         if (typeof tree.on_filter_by_change !== 'undefined') {
             on_filter_by_change = tree.on_filter_by_change;
         }
-        treeContainer.append('            <select id="treetype-selector" onchange="' + on_filter_by_change + 'trees[\'' + tree.name + '\'].selected=null;trees[\'' + tree.name + '\'].type=this.value;updateTree(trees[\'' + tree.name + '\']);">');
-        treeContainer.append('                <option value="ra"');
-        if (tree.type == "ra") document.write(' selected');
-        treeContainer.append('>Research Award</option>');
-        treeContainer.append('                <option value="re"');
-        if (tree.type == "re") treeContainer.append(' selected');
-        treeContainer.append('>Researcher</option>');
-        treeContainer.append('            </select>');
+        treeHTML += '            <select id="treetype-selector" onchange="' + on_filter_by_change + 'trees[\'' + tree.name + '\'].selected=null;trees[\'' + tree.name + '\'].type=this.value;updateTree(trees[\'' + tree.name + '\']);">';
+        treeHTML += '                <option value="ra"';
+        if (tree.type == "ra") treeHTML += ' selected';
+        treeHTML += '>Research Award</option>';
+        treeHTML += '                <option value="re"';
+        if (tree.type == "re") treeHTML += ' selected';
+        treeHTML += '>Researcher</option>';
+        treeHTML += '            </select>';
     }
     else if (typeof tree.title !== 'undefined') {
-        treeContainer.append('            <strong>' + tree.title + '</strong>');
+        treeHTML += '            <strong>' + tree.title + '</strong>';
     }
 
-    treeContainer.append('        </span>');
-    treeContainer.append('    </div>');
-    treeContainer.append('    <div id="' + tree.name + '"></div>');
-    treeContainer.append('</div>');
+    treeHTML += '        </span>';
+    treeHTML += '    </div>';
+    treeHTML += '    <div id="' + tree.name + '"></div>';
+    treeHTML += '</div>';
+
+    treeContainer.html(treeHTML);
 
     $(document).ready(function() {
         updateTree(tree);
