@@ -85,22 +85,26 @@ class RemotelyHostedDatasetsController extends AbstractController
 
         if (!empty($datasets)) {
             $dataset = $datasets[0];
-            $datasetSubmission = $dataset->getDatasetSubmission();
             $datasetStatus = $dataset->getDatasetStatus();
-            $preReqs = $this->remotelyHostedPrerequsiteCheck($datasetSubmission);
-            if (count($preReqs) > 0) {
-                $message = implode(', ', $preReqs);
-            } elseif ($datasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
-                if (DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED !== $datasetSubmission->getDatasetFileTransferStatus()) {
-                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
+            $datasetSubmission = $dataset->getDatasetSubmission();
+            if (null !== $datasetSubmission) {
+                $preReqs = $this->remotelyHostedPrerequsiteCheck($datasetSubmission);
+                if (count($preReqs) > 0) {
+                    $message = implode(', ', $preReqs);
+                } elseif ($datasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
+                    if (DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED !== $datasetSubmission->getDatasetFileTransferStatus()) {
+                        $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
 
-                    $this->dispatchLogEvent($dataset, $this->getUser()->getUserId());
-                    return new Response('Dataset UDI ' . $udi . ' has been successfully set to remotely hosted.', Response::HTTP_OK);
+                        $this->dispatchLogEvent($dataset, $this->getUser()->getUserId());
+                        return new Response('Dataset UDI ' . $udi . ' has been successfully set to remotely hosted.', Response::HTTP_OK);
+                    } else {
+                        $message = 'Dataset UDI ' . $udi . ' is already set to remotely hosted.';
+                    }
                 } else {
-                    $message = 'Dataset UDI ' . $udi . ' is already set to remotely hosted.';
+                    $message = 'Unable to set dataset UDI ' . $udi . ' to remotely hosted. Dataset status must be ACCEPTED.';
                 }
             } else {
-                $message = 'Unable to set dataset UDI ' . $udi . ' to remotely hosted. Dataset status must be ACCEPTED.';
+                $message = 'Dataset is missing submission.';
             }
         } else {
             $message = 'Invalid UDI!';
@@ -166,40 +170,37 @@ class RemotelyHostedDatasetsController extends AbstractController
      *
      * @return array $errors Containing strings of each unpopulated attribute, or empty array for compliant.
      */
-    public function remotelyHostedPrerequsiteCheck(DatasetSubmission$datasetSubmission) : array
+    public function remotelyHostedPrerequsiteCheck(DatasetSubmission$datasetSubmission): array
     {
         $errors = array();
 
-        if (!$datasetSubmission instanceof DatasetSubmission) {
-            $errors[] = 'Missing Dataset Submission';
-        } else {
-            if (empty($datasetSubmission->getDatasetFileUri())) {
-                $errors[] = 'Missing Dataset File URL';
-            }
-            if (empty($datasetSubmission->getRemotelyHostedName())) {
-                $errors[] = 'Missing Remotely-Hosted name.';
-            }
-            if (empty($datasetSubmission->getRemotelyHostedDescription())) {
-                $errors[] = 'Missing Remotly-Hosted Description';
-            }
-            if (empty($datasetSubmission->getRemotelyHostedFunction())) {
-                $errors[] = 'Missing Remotly-Hosted Function';
-            }
+        if (empty($datasetSubmission->getDatasetFileUri())) {
+            $errors[] = 'Missing Dataset File URL.';
+        }
+        if (empty($datasetSubmission->getRemotelyHostedName())) {
+            $errors[] = 'Missing Remotely-Hosted name.';
+        }
+        if (empty($datasetSubmission->getRemotelyHostedDescription())) {
+            $errors[] = 'Missing Remotly-Hosted Description.';
+        }
+        if (empty($datasetSubmission->getRemotelyHostedFunction())) {
+            $errors[] = 'Missing Remotly-Hosted Function.';
+        }
 
-            //(At least one) Distribution URL Matched the Files->Dataset File URL?
-            $distributionUrls = array();
-            foreach ($datasetSubmission->getDistributionPoints() as $distributionPoint) {
-                if ($distributionPoint instanceof DistributionPoint) {
-                    $distributionUrl = $distributionPoint->getDistributionUrl();
-                    if (!empty($distributionUrl)) {
-                        $distributionUrls[] = $distributionUrl;
-                    }
+        //(At least one) Distribution URL Matched the Files->Dataset File URL?
+        $distributionUrls = array();
+        foreach ($datasetSubmission->getDistributionPoints() as $distributionPoint) {
+            if ($distributionPoint instanceof DistributionPoint) {
+                $distributionUrl = $distributionPoint->getDistributionUrl();
+                if (!empty($distributionUrl)) {
+                    $distributionUrls[] = $distributionUrl;
                 }
             }
-            if (!in_array($datasetSubmission->getDatasetFileUri(), $distributionUrls)) {
-                $errors[] = 'Dataset File URI does not match distribution URL';
-            }
         }
+        if (!in_array($datasetSubmission->getDatasetFileUri(), $distributionUrls)) {
+            $errors[] = 'Dataset File URI does not match distribution URL.';
+        }
+
         return $errors;
     }
 }
