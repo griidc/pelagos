@@ -65,7 +65,7 @@ function insertTree(tree) {
     treeHTML += '    <div id="' + tree.name + '"></div>';
     treeHTML += '</div>';
 
-    treeContainer.html(treeHTML);
+    treeContainer.innerHTML = treeHTML;
 
     $(document).ready(function() {
         updateTree(tree);
