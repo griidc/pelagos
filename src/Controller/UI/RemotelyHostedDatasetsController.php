@@ -170,7 +170,7 @@ class RemotelyHostedDatasetsController extends AbstractController
      *
      * @return array $errors Containing strings of each unpopulated attribute, or empty array for compliant.
      */
-    public function remotelyHostedPrerequsiteCheck(DatasetSubmission$datasetSubmission): array
+    public function remotelyHostedPrerequsiteCheck(DatasetSubmission $datasetSubmission): array
     {
         $errors = array();
 
