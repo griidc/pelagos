@@ -34,7 +34,7 @@ function insertTree(tree) {
     }
     trees[tree.name] = tree;
 
-    var treeContainer = $("#ds-treecontainer");
+    let treeContainer = document.getElementById("ds-treecontainer");
 
     treeHTML = '';
 
