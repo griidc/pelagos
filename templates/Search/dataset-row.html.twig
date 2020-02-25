@@ -17,8 +17,8 @@
                         {% if result.transformed.datasetSubmission.authors is defined and result.transformed.datasetSubmission.authors is not null %}
                             {{ result.transformed.datasetSubmission.authors }}.
                         {% endif %}
-                        {% if result.transformed.referenceDateYear is defined and result.transformed.referenceDateYear is not null%}
-                            {{ result.transformed.referenceDateYear }}.
+                        {% if result.transformed.acceptedDate is defined and result.transformed.acceptedDate is not null%}
+                            {{ result.transformed.acceptedDate| date('Y') }}.
                         {% endif %}
                         {{ result.transformed.title }}.
                         {{ result.transformed.researchGroup.name }}.
