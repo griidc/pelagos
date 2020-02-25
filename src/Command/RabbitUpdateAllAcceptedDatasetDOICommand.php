@@ -86,7 +86,7 @@ class RabbitUpdateAllAcceptedDatasetDOICommand extends Command
             'identifiedStatus' => DIF::STATUS_APPROVED));
 
         foreach ($datasets as $dataset) {
-            $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'update');
+            $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'doi');
             echo 'Requesting DOI update for dataset ' . $dataset->getId() . ' (' . $dataset->getUdi() . ")\n";
         }
     }

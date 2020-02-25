@@ -24,6 +24,17 @@
                     </gmd:dateType>
                 </gmd:CI_Date>
             </gmd:date>
+            {% if dataset.doi %}
+                <gmd:identifier>
+                    <gmd:MD_Identifier>
+                        <gmd:code>
+                            <gmx:Anchor xlink:href="https://dx.doi.org/{{dataset.doi}}" xlink:title="DOI" xlink:actuate="onRequest">
+                                {{dataset.doi}}
+                            </gmx:Anchor>
+                        </gmd:code>
+                    </gmd:MD_Identifier>
+                </gmd:identifier>
+            {% endif %}
         </gmd:CI_Citation>
     </gmd:citation>
     <gmd:abstract>

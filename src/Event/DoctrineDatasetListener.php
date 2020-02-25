@@ -2,6 +2,8 @@
 
 namespace App\Event;
 
+use App\Util\RabbitPublisher;
+use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 
@@ -14,6 +16,23 @@ use App\Entity\DIF;
  */
 class DoctrineDatasetListener
 {
+    /**
+     * Custom rabbitmq publisher.
+     *
+     * @var RabbitPublisher
+     */
+    protected $publisher;
+
+    /**
+     * DoctrineDatasetListener constructor.
+     *
+     * @param RabbitPublisher $publisher An AMQP/RabbitMQ Producer.
+     */
+    public function __construct(RabbitPublisher $publisher)
+    {
+        $this->publisher = $publisher;
+    }
+
     /**
      * On flush pass entity to updateDataset to update the related Dataset, if necessary.
      *
@@ -47,7 +66,6 @@ class DoctrineDatasetListener
             or $entity instanceof DatasetSubmission
             ) {
             $dataset = $entity->getDataset();
-
             if ($dataset instanceof Dataset) {
                 $dataset->updateTitle();
                 $dataset->updateAbstract();
@@ -55,6 +73,37 @@ class DoctrineDatasetListener
                 $entityManager->persist($dataset);
                 $classMetadata = $entityManager->getClassMetadata(Dataset::class);
                 $entityManager->getUnitOfWork()->recomputeSingleEntityChangeSet($classMetadata, $dataset);
+            }
+        }
+    }
+
+    /**
+     * Post update method for dataset entity, to publish/update Doi.
+     *
+     * @param Dataset            $dataset An instance of Dataset entity.
+     * @param LifecycleEventArgs $args    Doctrine life cycle event args.
+     *
+     * @return void
+     */
+    public function postUpdate(Dataset $dataset, LifecycleEventArgs $args): void
+    {
+        $entity = $args->getObject();
+        if ($entity instanceof Dataset) {
+            if (($entity->getDatasetSubmission() instanceof DatasetSubmission and
+                in_array(
+                    $entity->getAvailabilityStatus(),
+                    [
+                        DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL,
+                        DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
+                        DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
+                        DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED,
+                        DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE
+                    ]
+                )
+                ) or
+                ($entity->getDif() instanceof DIF and $entity->getIdentifiedStatus() === DIF::STATUS_APPROVED)
+            ) {
+                $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'doi');
             }
         }
     }

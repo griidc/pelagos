@@ -76,6 +76,7 @@ services:
     App\Event\DoctrineDatasetListener:
         tags:
             - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.orm.entity_listener, event: postUpdate, entity: App\Entity\Dataset }
 
     App\Event\DoctrineDataCenterListener:
         tags:

@@ -573,7 +573,10 @@ class Dataset extends Entity
         $title = preg_replace('/\.$/', '', $title);
         $udi = $this->getUdi();
         $author = $this->getAuthors();
-        $year = $this->getReferenceDateYear();
+        $year = null;
+        if ($this->getAcceptedDate() instanceof \Datetime) {
+            $year = $this->getAcceptedDate()->format('Y');
+        }
         $doi = $this->getDoi();
 
         $citationString = $author . ' (' . $year . ') ' . $title . '.' .
