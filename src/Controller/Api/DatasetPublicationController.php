@@ -17,7 +17,9 @@ use FOS\RestBundle\Controller\Annotations\View;
 
 use FOS\ElasticaBundle\Persister\ObjectPersister;
 
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Nelmio\ApiDocBundle\Annotation\Operation;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
 
 use App\Entity\Dataset;
 use App\Entity\DatasetPublication;
@@ -33,21 +35,19 @@ class DatasetPublicationController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Publication to Dataset Association",
-     *   input = {
-     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCountType",
-     *     "name": "",
-     *     "options": {
-     *       "label": "Publication to Dataset Associations",
-     *       "data_class": "Pelagos\Entity\DatasetPublication"
-     *     }
-     *   },
-     *   statusCodes = {
-     *     200 = "A count of Publication to Dataset Associations was successfully returned.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Publication to Dataset Association"},
+     *     summary="Get a count of Publication to Dataset Associations.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="A count of Publication to Dataset Associations was successfully returned."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/dataset_publications/count",
@@ -68,17 +68,26 @@ class DatasetPublicationController extends EntityController
    /**
     * Get a collection of PublicationDatasets.
     *
-    * @ApiDoc(
-    *   section = "Publication to Dataset Association",
-    *   parameters = {
-    *     {"name"="someProperty", "dataType"="string", "required"=false, "description"="Filter by someProperty"}
-    *   },
-    *   output = "array<Pelagos\Entity\DatasetPublication>",
-    *   statusCodes = {
-    *     200 = "The requested collection of PublicationDatasets was successfully retrieved.",
-    *     500 = "An internal error has occurred.",
-    *   }
-    * )
+    * @Operation(
+     *     tags={"Publication to Dataset Association"},
+     *     summary="Get a collection of PublicationDatasets.",
+     *     @SWG\Parameter(
+     *         name="someProperty",
+     *         in="body",
+     *         description="Filter by someProperty",
+     *         required=false,
+     *         @SWG\Schema(type="string")
+     *     ),
+     *     @SWG\Response(
+     *         response="200",
+     *         description="The requested collection of PublicationDatasets was successfully retrieved."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
+     * )
+     *
     *
     * @Route(
     *     "/api/dataset_publications",
@@ -143,22 +152,38 @@ class DatasetPublicationController extends EntityController
      * @throws UniqueConstraintViolationException If entity handler re-throws a this exception that is not uniq_dataset_publication.
      * @throws BadRequestHttpException If link already exists.
      *
-     * @ApiDoc(
-     *   section = "Publication to Dataset Association",
-     *   parameters = {
-     *                    {"name"="dataset",
-     *                      "dataType"="integer",
-     *                      "required"=true,
-     *                      "description"="Numeric ID of Dataset to be linked."}
-     *                },
-     *   statusCodes = {
-     *     204 = "The Publication has been linked to the Dataset.",
-     *     400 = "The request could not be processed. (see message for reason)",
-     *     404 = "The Publication requested could not be found.",
-     *     403 = "The authenticated user was not authorized to create a Publication to Dataset link.",
-     *     500 = "An internal error has occurred."
-     *   }
+     * @Operation(
+     *     tags={"Publication to Dataset Association"},
+     *     summary="Link a Publication to a Dataset by their respective IDs.",
+     *     @SWG\Parameter(
+     *         name="dataset",
+     *         in="body",
+     *         description="Numeric ID of Dataset to be linked.",
+     *         required=false,
+     *         @SWG\Schema(type="integer")
+     *     ),
+     *     @SWG\Response(
+     *         response="204",
+     *         description="The Publication has been linked to the Dataset."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="The request could not be processed. (see message for reason)"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The Publication requested could not be found."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to create a Publication to Dataset link."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/dataset_publications/{id}",
@@ -214,14 +239,23 @@ class DatasetPublicationController extends EntityController
     *
     * @param integer $id The id of the Publication to Dataset Association to delete.
     *
-    * @ApiDoc(
-    *   section = "Publication to Dataset Association",
-    *   statusCodes = {
-    *     204 = "The Publication to Dataset Association was successfully deleted.",
-    *     404 = "The requested Publication to Dataset Association was not found.",
-    *     500 = "An internal error has occurred.",
-    *   }
-    * )
+    * @Operation(
+     *     tags={"Publication to Dataset Association"},
+     *     summary="Delete a Publication to Dataset Association.",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="The Publication to Dataset Association was successfully deleted."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Publication to Dataset Association was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
+     * )
+     *
     *
     * @Route(
     *     "/api/dataset_publications/{id}",

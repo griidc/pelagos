@@ -15,7 +15,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use FOS\RestBundle\Controller\Annotations\View;
 
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Nelmio\ApiDocBundle\Annotation\Operation;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
 
 use App\Entity\Publication;
 use App\Entity\PublicationCitation;
@@ -30,21 +32,19 @@ class PublicationController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Publications",
-     *   input = {
-     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCountType",
-     *     "name": "",
-     *     "options": {
-     *       "label": "Publications",
-     *       "data_class": "Pelagos\Entity\Publication"
-     *     }
-     *   },
-     *   statusCodes = {
-     *     200 = "A count of Publications was successfully returned.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Publications"},
+     *     summary="Get a count of Publications.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="A count of Publications was successfully returned."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/publications/count",
@@ -67,22 +67,19 @@ class PublicationController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Publications",
-     *   input = {
-     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCollectionType",
-     *     "name": "",
-     *     "options": {
-     *       "label": "Publications",
-     *       "data_class": "Pelagos\Entity\Publication"
-     *     }
-     *   },
-     *   output = "array<Pelagos\Entity\Publication>",
-     *   statusCodes = {
-     *     200 = "The requested collection of Publications was successfully retrieved.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Publications"},
+     *     summary="Get a collection of Publications.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="The requested collection of Publications was successfully retrieved."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/publications",
@@ -106,15 +103,23 @@ class PublicationController extends EntityController
      * @param Request     $request     A Symfony http request object, data includes the doi.
      * @param PubLinkUtil $pubLinkUtil The publication link utility.
      *
-     * @ApiDoc(
-     *   section = "Publications",
-     *   output = "Pelagos\Entity\PublicationCitation",
-     *   statusCodes = {
-     *     200 = "The requested Dataset was successfully retrieved.",
-     *     404 = "The requested Dataset was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Publications"},
+     *     summary="Fetch and cache a citation for a given DOI.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="The requested Dataset was successfully retrieved."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Dataset was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @throws BadRequestHttpException If DOI in request is missing or not 10.something format.
      * @throws \Exception              Upon internal unexpected result.
@@ -210,15 +215,23 @@ class PublicationController extends EntityController
      *
      * @param Request $request A Symfony http request object, data includes the doi.
      *
-     * @ApiDoc(
-     *   section = "Publications",
-     *   output = "Pelagos\Entity\PublicationCitation",
-     *   statusCodes = {
-     *     200 = "The requested cached Publication citation was successfully retrieved.",
-     *     404 = "The requested cached Publication citation was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Publications"},
+     *     summary="Retrieve a cached citation for a given DOI.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="The requested cached Publication citation was successfully retrieved."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested cached Publication citation was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @throws \Exception            Upon internal unexpected result.
      * @throws NotFoundHttpException If cached citation could not be retrieved.

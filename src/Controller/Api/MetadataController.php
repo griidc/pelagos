@@ -4,7 +4,9 @@ namespace App\Controller\Api;
 
 use FOS\RestBundle\Controller\Annotations\View;
 
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Nelmio\ApiDocBundle\Annotation\Operation;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,19 +33,34 @@ class MetadataController extends EntityController
      * @param Geometry $geoUtil         Geometry Utility.
      * @param Metadata $metadataUtility Metadata Utility.
      *
-     * @ApiDoc(
-     *   section = "Metadata",
-     *   parameters = {
-     *     {"name"="someProperty", "dataType"="string", "required"=true, "description"="Filter by someProperty"}
-     *   },
-     *   output = "XML",
-     *   statusCodes = {
-     *     200 = "The requested Metadata was successfully retrieved.",
-     *     415 = "String could not be parsed as XML.",
-     *     404 = "The requested Dataset was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Metadata"},
+     *     summary="Get a single Metadata for a given id.",
+     *     @SWG\Parameter(
+     *         name="someProperty",
+     *         in="body",
+     *         description="Filter by someProperty",
+     *         required=false,
+     *         @SWG\Schema(type="string")
+     *     ),
+     *     @SWG\Response(
+     *         response="200",
+     *         description="The requested Metadata was successfully retrieved."
+     *     ),
+     *     @SWG\Response(
+     *         response="415",
+     *         description="String could not be parsed as XML."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Dataset was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @throws \Exception              When more than one dataset is found.
      * @throws NotFoundHttpException   When dataset is not found, or no metadata is available.
