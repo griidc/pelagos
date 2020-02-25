@@ -107,18 +107,20 @@ class SearchPageController extends AbstractController
 
         if (!empty($requestParams['query'])) {
             $buildQuery = $searchUtil->buildQuery($requestParams);
-            $results = $searchUtil->findDatasets($buildQuery);
+            $resultsBeforeHydration = $searchUtil->findDatasets($buildQuery);
+            foreach ($resultsBeforeHydration as $result) {
+                array_push($results, $result->getResult()->getHit()['_source']);
+            }
             $count = $searchUtil->getCount($buildQuery);
             $researchGroupsInfo = $searchUtil->getResearchGroupAggregations($buildQuery);
             $fundingOrgInfo = $searchUtil->getFundingOrgAggregations($buildQuery);
             $statusInfo = $searchUtil->getStatusAggregations($buildQuery);
             $elasticScoreFirstResult = null;
-            if (!empty($results)) {
-                $elasticScoreFirstResult = $results[0]->getResult()->getHit()['_score'];
-            }
+//            if (!empty($results)) {
+//                $elasticScoreFirstResult = $results[0]->getResult()->getHit()['_score'];
+//            }
 //            $this->dispatchSearchTermsLogEvent($requestParams, $count, $elasticScoreFirstResult);
         }
-
         return $this->json(
             array(
                 'query' => $requestParams['query'],
