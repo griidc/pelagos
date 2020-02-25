@@ -29,7 +29,7 @@
         "php-amqplib/rabbitmq-bundle": "^1.9",
         "php-http/guzzle6-adapter": "^1.1",
         "php-http/httplug-bundle": "^1.10",
-        "sensio/framework-extra-bundle": "^4.0",
+        "sensio/framework-extra-bundle": "^5.0",
         "symfony/asset": "4.4.*",
         "symfony/console": "4.4.*",
         "symfony/dotenv": "4.4.*",
