@@ -109,12 +109,6 @@ class DatasetRestrictionsController extends AbstractController
 
         $datasets = $entityHandler->getBy(Dataset::class, array('id' => $id));
 
-        // RabbitMQ message to update the DOI for the dataset.
-        $rabbitMessage = array(
-            'body' => $id,
-            'routing_key' => 'update'
-        );
-
         if (!empty($datasets)) {
             $dataset = $datasets[0];
             $datasetSubmission = $dataset->getDatasetSubmission();
@@ -133,10 +127,6 @@ class DatasetRestrictionsController extends AbstractController
                 } catch (PersistenceException $exception) {
                     throw new PersistenceException($exception->getMessage());
                 }
-
-                if ($datasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
-                    $this->publishDoiForAccepted($rabbitMessage);
-                }
             } else {
                 // Send 500 response code if restriction key is null
                 throw new BadRequestHttpException('Restiction key is null');
@@ -145,24 +135,6 @@ class DatasetRestrictionsController extends AbstractController
         // Send 204(okay) if the restriction key is not null and updated is successful
 
         return new Response('', 204);
-    }
-
-    /**
-     * Method to publish doi for accepted datasets.
-     *
-     * @param array $rabbitMessage The rabbitMq message that needs to be published.
-     *
-     * @return void
-     */
-    private function publishDoiForAccepted(array $rabbitMessage)
-    {
-       // Publish the message to DoiConsumer to update the DOI.
-
-        $this->publisher->publish(
-            $rabbitMessage['body'],
-            RabbitPublisher::DOI_PRODUCER,
-            $rabbitMessage['routing_key']
-        );
     }
 
     /**
