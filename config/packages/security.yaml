@@ -30,7 +30,6 @@ security:
             # https://symfony.com/doc/current/security.html#firewalls-authentication
 
         main:
-            logout_on_user_change: true
             # allow anonymous access
             anonymous: lazy
             #guard authentication
