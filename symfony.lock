@@ -114,7 +114,7 @@
             "repo": "github.com/symfony/recipes-contrib",
             "branch": "master",
             "version": "5.0",
-            "ref": "a5638a07d11c8eef6f0280a20d6d1ddd91ad62ec"
+            "ref": "46c9cd2c1e07f0fcfd97e96f12b03b2e0845c4cd"
         },
         "files": [
             "config/packages/fos_elastica.yaml"
@@ -541,7 +541,7 @@
             "repo": "github.com/symfony/recipes",
             "branch": "master",
             "version": "3.3",
-            "ref": "5f5bdd0f0bd94eedc40ebf637d3c9fe9e48c9689"
+            "ref": "877bdb4223245783d00ed1f7429aa7ebc606d914"
         },
         "files": [
             "config/packages/dev/monolog.yaml",
@@ -615,7 +615,7 @@
             "repo": "github.com/symfony/recipes",
             "branch": "master",
             "version": "4.4",
-            "ref": "30efd98dd3b4ead6e9ad4713b1efc43bbe94bf77"
+            "ref": "7b4408dc203049666fe23fabed23cbadc6d8440f"
         },
         "files": [
             "config/packages/security.yaml"
