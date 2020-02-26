@@ -123,16 +123,20 @@ class SearchPageController extends AbstractController
         }
         return $this->json(
             array(
-                'query' => $requestParams['query'],
-                'field' => $requestParams['field'],
+                'formValues' => array (
+                    'query' => $requestParams['query'],
+                    'field' => $requestParams['field'],
+                    'page' => $requestParams['page'],
+                    'collectionStartDate' => $requestParams['collectionStartDate'],
+                    'collectionEndDate' => $requestParams['collectionEndDate'],
+                ),
                 'results' => $results,
                 'count' => $count,
-                'page' => $requestParams['page'],
-                'researchGroupsInfo' => $researchGroupsInfo,
-                'fundingOrgInfo' => $fundingOrgInfo,
-                'statusInfo' => $statusInfo,
-                'collectionStartDate' => $requestParams['collectionStartDate'],
-                'collectionEndDate' => $requestParams['collectionEndDate'],
+                'facetInfo' => array (
+                    'researchGroupsInfo' => $researchGroupsInfo,
+                    'fundingOrgInfo' => $fundingOrgInfo,
+                    'statusInfo' => $statusInfo,
+                ),
             )
         );
     }

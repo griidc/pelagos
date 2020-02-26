@@ -105,19 +105,24 @@
                     collectionStartDate: '',
                     collectionEndDate: '',
                 },
-                fields: [{ text: '-- All --', value: null } , 'Title', 'Abstract', 'Author', 'Theme Keywords'],
+                fields: [{ text: '-- All --', value: '' } , 'Title', 'Abstract', 'Author', 'Theme Keywords'],
                 showResults: false,
                 resultSet: Object
             }
         },
         methods: {
             onSubmit: function () {
-                this.showResults = true;
                 let searchQuery = Object.keys(this.form).map(key => key + '=' + this.form[key]).join('&');
-                console.log(searchQuery);
+                console.log(Routing.generate('pelagos_app_ui_searchpage_results') + "?" + searchQuery);
                 axios
                     .get(Routing.generate('pelagos_app_ui_searchpage_results') + "?" + searchQuery)
-                    .then(response => (this.resultSet = response.data.results));
+                    .then(response => {
+                        if (response.data.count > 0) {
+                            this.showResults = true;
+                            this.resultSet = response.data;
+                            console.log(response.data);
+                        }
+                    });
             }
         }
     }
