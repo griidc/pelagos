@@ -9,7 +9,8 @@
                     <span class="badge badge-success" v-else-if="resultRowData.availabilityStatus === 7 || resultRowData.availabilityStatus === 10">Available</span>
                     <p>
                         <a class="search-result"
-                           href="#" target="_blank">
+                           :href="url" target="_blank">
+                            {{ resultRowData.datasetSubmission.authors }}.
                             {{ resultRowData.year }}.
                             {{ resultRowData.title }}.
                             {{ resultRowData.researchGroup.id }}.
@@ -29,6 +30,11 @@
         props: {
             resultRowData: {
                 type: Object
+            }
+        },
+        data: function () {
+            return {
+                url: Routing.generate("pelagos_app_ui_dataland_default", {'udi' : this.resultRowData.udi } )
             }
         }
     }

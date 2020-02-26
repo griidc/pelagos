@@ -1,6 +1,7 @@
 import Vue from "vue";
 import SearchApp from "./vue/SearchApp";
-import '../scss/bootstrap.scss';
+// import '../scss/bootstrap.scss';
+import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../css/search-ui.css';

@@ -32,34 +32,24 @@
                             <div class="form-inline">
                             <span class="input-group">
                                 <label for="collectionStartDate" class="pl-2 pr-2">From</label>
-                                <input type="text"
+                                <b-form-datepicker type="text"
                                        class="pr-2 form-control"
                                        id="collectionStartDate"
                                        name="collectionStartDate"
                                        placeholder="yyyy-mm-dd"
                                        v-model="form.collectionStartDate">
-                                {{form.collectionStartDate}}
-                                <span class="input-group-append">
-                                     <button class="btn btn-primary" type="button" id="collection-start-btn">
-                                        <i class="far fa-calendar-alt"></i>
-                                    </button>
-                                </span>
+                                </b-form-datepicker>
                             </span>
                                 <span class="input-group">
                                 <label for="collectionEndDate" class="pr-2 pl-3">To</label>
-                                <input
+                                <b-form-datepicker
                                         type="text"
-                                        class="form-control date-input"
                                         id="collectionEndDate"
+                                        class="form-control date-input"
                                         name="collectionEndDate"
                                         placeholder="yyyy-mm-dd"
                                         v-model="form.collectionEndDate">
-                                {{form.collectionEndDate}}
-                                <span class="input-group-append">
-                                    <button class="btn btn-primary date-input" type="button" id="collection-end-btn">
-                                        <i class="far fa-calendar-alt"></i>
-                                    </button>
-                                </span>
+                                </b-form-datepicker>
                             </span>
                             </div>
                         </div>
@@ -99,13 +89,18 @@
             return {
                 searchFormRoute: Routing.generate('pelagos_app_ui_searchpage_results'),
                 form: {
-                    query : '',
-                    pageNo : 1,
-                    field : '',
+                    query: '',
+                    pageNo: 1,
+                    field: '',
                     collectionStartDate: '',
                     collectionEndDate: '',
                 },
-                fields: [{ text: '-- All --', value: '' } , 'Title', 'Abstract', 'Author', 'Theme Keywords'],
+                fields: [
+                    { text: '-- All --', value: '' },
+                    {text: 'Title', value: 'title'},
+                    {text: 'Abstract', value: 'abstract'},
+                    {text: 'Author', value: 'datasetSubmission.authors'},
+                    {text: 'Theme Keywords', value: 'datasetSubmission.themeKeywords'}],
                 showResults: false,
                 resultSet: Object
             }
@@ -117,6 +112,7 @@
                 axios
                     .get(Routing.generate('pelagos_app_ui_searchpage_results') + "?" + searchQuery)
                     .then(response => {
+                        console.log('hi');
                         if (response.data.count > 0) {
                             this.showResults = true;
                             this.resultSet = response.data;

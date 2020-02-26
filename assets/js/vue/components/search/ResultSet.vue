@@ -20,7 +20,7 @@
                         </div>
                     </aside>
                     <main class="col-sm-9 overflow-auto">
-                        <ResultRow :resultRowData="resultRow" v-for="resultRow in results.resultData"/>
+                        <ResultRow :resultRowData="resultRow" v-for="resultRow in results.resultData" v-bind:key="resultRow.udi"/>
                     </main>
                 </div>
             </div>
