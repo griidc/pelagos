@@ -130,7 +130,7 @@ class SearchPageController extends AbstractController
                     'collectionStartDate' => $requestParams['collectionStartDate'],
                     'collectionEndDate' => $requestParams['collectionEndDate'],
                 ),
-                'results' => $results,
+                'resultData' => $results,
                 'count' => $count,
                 'facetInfo' => array (
                     'researchGroupsInfo' => $researchGroupsInfo,

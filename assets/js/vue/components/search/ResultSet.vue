@@ -12,12 +12,16 @@
         <section class="section-content bg padding-y">
             <div class="container">
                 <div class="row">
-                    <FacetGroups :facets="results.facetInfo"/>
-<!--                    <main class="col-sm-9 overflow-auto">-->
-<!--                        {% for result in results %}-->
-<!--                        {% include 'Search/dataset-row.html.twig'  %}-->
-<!--                        {% endfor %}-->
-<!--                    </main>-->
+                    <aside class="col-sm-3">
+                        <div class="card card-filter">
+                            <Facet :facet-info="results.facetInfo.statusInfo" :facet-name="datasetStatus"/>
+                            <Facet :facet-info="results.facetInfo.fundingOrgInfo" :facet-name="fundingOrg"/>
+                            <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="researchGroup"/>
+                        </div>
+                    </aside>
+                    <main class="col-sm-9 overflow-auto">
+                        <ResultRow :resultRowData="resultRow" v-for="resultRow in results.resultData"/>
+                    </main>
                 </div>
             </div>
         </section>
@@ -25,13 +29,21 @@
 </template>
 
 <script>
-    import FacetGroups from "./FacetGroups";
+    import Facet from "./Facet";
+    import ResultRow from "./ResultRow";
     export default {
         name: "ResultSet",
-        components: { FacetGroups },
+        components: {ResultRow, Facet },
         props: {
             results: {
                 type: Object
+            }
+        },
+        data: function () {
+            return {
+                datasetStatus: 'status',
+                fundingOrg: 'fundingOrg',
+                researchGroup: 'researchGroup'
             }
         }
     }
