@@ -44,7 +44,7 @@ class SearchPageController extends AbstractController
      */
     public function defaultAction()
     {
-        return $this->render('Search/vue-index.html.twig');
+        return $this->render('Search/index.html.twig');
     }
 
     /**

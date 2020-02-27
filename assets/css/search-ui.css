@@ -17,11 +17,6 @@ article:after, .form-group:after {
     border-bottom: 1px solid #dee2e6;
 }
 
-/*.card-group-item .card-header {*/
-/*    border-bottom: 0;*/
-/*    background-color: #f9f9f9;*/
-/*}*/
-
 .card-header .title {
     margin-bottom: 0;
     line-height: 1.5;

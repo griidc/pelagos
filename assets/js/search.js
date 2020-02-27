@@ -1,12 +1,21 @@
-require('../scss/bootstrap.scss');
-require('@fortawesome/fontawesome-free/css/all.min.css');
-require('../css/search-ui.css');
+import Vue from "vue";
+import SearchApp from "./vue/SearchApp";
+// import '../scss/bootstrap.scss';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import '../css/search-ui.css';
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 
-global.queryString = require('query-string');
+window.addEventListener("load", function(event) {
 
-const $ = require('jquery');
+    Vue.use(BootstrapVue);
+    Vue.use(IconsPlugin);
 
-global.$ = global.jQuery = $;
-require('jquery-ui-themes/themes/smoothness/jquery-ui.min.css');
-
-require('jquery-ui/ui/widgets/datepicker');
+    // here is the Vue code
+    new Vue({
+        el: '#search-app',
+        components: { SearchApp },
+        template: `<SearchApp/>`
+    });
+});
