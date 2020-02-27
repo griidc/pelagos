@@ -38,51 +38,12 @@ class SearchPageController extends AbstractController
     /**
      * The default action for Dataset Review.
      *
-     * @param Request $request    The Symfony request object.
-     * @param Search  $searchUtil Search utility class object.
-     *
      * @Route("/search", name="pelagos_app_ui_searchpage_default")
      *
      * @return Response
      */
-    public function defaultAction(Request $request, Search $searchUtil)
+    public function defaultAction()
     {
-//        $results = array();
-//        $count = 0;
-//        $requestParams = $this->getRequestParams($request);
-//        $researchGroupsInfo = array();
-//        $fundingOrgInfo = array();
-//        $statusInfo = array();
-//
-//        if (!empty($requestParams['query'])) {
-//            $buildQuery = $searchUtil->buildQuery($requestParams);
-//            $results = $searchUtil->findDatasets($buildQuery);
-//            $count = $searchUtil->getCount($buildQuery);
-//            $researchGroupsInfo = $searchUtil->getResearchGroupAggregations($buildQuery);
-//            $fundingOrgInfo = $searchUtil->getFundingOrgAggregations($buildQuery);
-//            $statusInfo = $searchUtil->getStatusAggregations($buildQuery);
-//            $elasticScoreFirstResult = null;
-//            if (!empty($results)) {
-//                $elasticScoreFirstResult = $results[0]->getResult()->getHit()['_score'];
-//            }
-//            $this->dispatchSearchTermsLogEvent($requestParams, $count, $elasticScoreFirstResult);
-//        }
-//
-//        return $this->render(
-//            'Search/default.html.twig',
-//            array(
-//                'query' => $requestParams['query'],
-//                'field' => $requestParams['field'],
-//                'results' => $results,
-//                'count' => $count,
-//                'page' => $requestParams['page'],
-//                'researchGroupsInfo' => $researchGroupsInfo,
-//                'fundingOrgInfo' => $fundingOrgInfo,
-//                'statusInfo' => $statusInfo,
-//                'collectionStartDate' => $requestParams['collectionStartDate'],
-//                'collectionEndDate' => $requestParams['collectionEndDate'],
-//            )
-//        );
         return $this->render('Search/vue-index.html.twig');
     }
 
@@ -116,10 +77,10 @@ class SearchPageController extends AbstractController
             $fundingOrgInfo = $searchUtil->getFundingOrgAggregations($buildQuery);
             $statusInfo = $searchUtil->getStatusAggregations($buildQuery);
             $elasticScoreFirstResult = null;
-//            if (!empty($results)) {
-//                $elasticScoreFirstResult = $results[0]->getResult()->getHit()['_score'];
-//            }
-//            $this->dispatchSearchTermsLogEvent($requestParams, $count, $elasticScoreFirstResult);
+            if (!empty($results)) {
+                $elasticScoreFirstResult = $resultsBeforeHydration[0]->getResult()->getHit()['_score'];
+            }
+            $this->dispatchSearchTermsLogEvent($requestParams, $count, $elasticScoreFirstResult);
         }
         return $this->json(
             array(
