@@ -118,21 +118,21 @@
         methods: {
             onSubmit: function () {
                 let searchQuery = Object.keys(this.form).map(key => key + '=' + this.form[key]).join('&');
-                console.log(Routing.generate('pelagos_app_ui_searchpage_results') + "?" + searchQuery);
                 axios
                     .get(Routing.generate('pelagos_app_ui_searchpage_results') + "?" + searchQuery)
                     .then(response => {
                         if (response.data.count > 0) {
                             this.showResults = true;
                             this.resultSet = response.data;
-                            console.log(response.data);
                         } else {
                             this.noResults = true;
                         }
                     });
             },
             facetCheckBoxValues: function (value) {
-                
+                let facetArray = value.split("=");
+                this.form[facetArray[0]] = facetArray[1];
+                this.onSubmit();
             },
             changePageNo: function (newPageNo) {
                 this.form.page = newPageNo;

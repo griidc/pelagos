@@ -157,9 +157,9 @@ class SearchPageController extends AbstractController
             'collectionStartDate' => $request->get('collectionStartDate'),
             'collectionEndDate' => $request->get('collectionEndDate'),
             'options' => array(
-                'rgId' => ($request->get('resGrp')) ? str_replace('rg_', '', $request->get('resGrp')) : null,
-                'funOrgId' => ($request->get('fundOrg')) ? str_replace('fo_', '', $request->get('fundOrg')) : null,
-                'status' => $request->get('status') ? str_replace('status_', '', $request->get('status')) : null,
+                'rgId' => $request->get('researchGroup'),
+                'funOrgId' => $request->get('fundingOrg'),
+                'status' => $request->get('status'),
             ),
             'sessionId' => $request->getSession()->getId()
         );
