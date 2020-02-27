@@ -112,12 +112,13 @@
                     {text: 'Theme Keywords', value: 'datasetSubmission.themeKeywords'}],
                 showResults: false,
                 noResults: false,
-                resultSet: Object
+                resultSet: Object,
+                route: window.location.hash,
             }
         },
         methods: {
             onSubmit: function () {
-                let searchQuery = Object.keys(this.form).map(key => key + '=' + this.form[key]).join('&');
+                const searchQuery = Object.keys(this.form).map(key => key + '=' + this.form[key]).join('&');
                 axios
                     .get(Routing.generate('pelagos_app_ui_searchpage_results') + "?" + searchQuery)
                     .then(response => {
@@ -128,6 +129,7 @@
                             this.noResults = true;
                         }
                     });
+                window.location.hash = searchQuery;
             },
             facetCheckBoxValues: function (value) {
                 let facetArray = value.split("=");
@@ -139,6 +141,13 @@
                 this.onSubmit();
             }
         },
+        mounted() {
+            if (this.route) {
+               const someVaribale = this.route.split("#")[1].split("&").map(value => value.split("="));
+               this.form = Object.fromEntries(someVaribale);
+               this.onSubmit();
+            }
+        }
     }
 </script>
 
