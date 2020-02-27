@@ -1,7 +1,5 @@
 <template>
-    <div class="bootstrap">
-        <SearchForm/>
-    </div>
+    <SearchForm/>
 </template>
 
 <script>

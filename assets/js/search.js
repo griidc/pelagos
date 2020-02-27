@@ -1,8 +1,6 @@
 import Vue from "vue";
 import SearchApp from "./vue/SearchApp";
-// import '../scss/bootstrap.scss';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css';
+import '../scss/bootstrap.scss';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../css/search-ui.css';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
@@ -16,6 +14,8 @@ window.addEventListener("load", function(event) {
     new Vue({
         el: '#search-app',
         components: { SearchApp },
-        template: `<SearchApp/>`
+        template: `<div class="bootstrap">
+                    <SearchApp/>
+                   </div>`
     });
 });
