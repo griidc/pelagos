@@ -13,7 +13,7 @@
                             {{ resultRowData.datasetSubmission.authors }}.
                             {{ resultRowData.year }}.
                             {{ resultRowData.title }}.
-                            {{ resultRowData.researchGroup.id }}.
+                            {{ resultRowData.researchGroup.name }}.
                             DOI: {{ resultRowData.doi.doi }}.
                             UDI: {{ resultRowData.udi }}
                         </a>

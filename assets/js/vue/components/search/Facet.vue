@@ -19,7 +19,7 @@
                 <form>
                     <div style="overflow-y: scroll; height: 10rem">
                         <label class="form-check" v-for="facet in filteredFacets">
-                            <input class="form-check-input facet-aggregation" value="" type="checkbox" :id="createIdForFacets(facet.id, facetName)">
+                            <input class="form-check-input facet-aggregation" :value="facet.id" type="checkbox" :id="facetName + '_' + facet.id" v-model="listOfCheckedFacets" @change="facetChange">
                             <span class="form-check-label" v-if="facetName === 'status'">
                                 <span class="float-right badge badge-light round">{{ facet.count }}</span>
                                 {{ facet.name }}
@@ -49,12 +49,13 @@
         },
         data: function() {
           return {
-              researchGroupSearch: ''
+              researchGroupSearch: '',
+              listOfCheckedFacets: []
           }
         },
         methods: {
-            createIdForFacets: function (id, facetName) {
-                return `${facetName}_${id}`;
+            facetChange: function () {
+                this.$emit('facetClicked', this.facetName + '=' + this.listOfCheckedFacets.join(","));
             }
         },
         computed: {

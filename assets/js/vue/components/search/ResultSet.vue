@@ -14,9 +14,9 @@
                 <div class="row">
                     <aside class="col-sm-3">
                         <div class="card card-filter">
-                            <Facet :facet-info="results.facetInfo.statusInfo" :facet-name="datasetStatus"/>
-                            <Facet :facet-info="results.facetInfo.fundingOrgInfo" :facet-name="fundingOrg"/>
-                            <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="researchGroup"/>
+                            <Facet :facet-info="results.facetInfo.statusInfo" :facet-name="datasetStatus" v-on="$listeners"/>
+                            <Facet :facet-info="results.facetInfo.fundingOrgInfo" :facet-name="fundingOrg" v-on="$listeners"/>
+                            <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="researchGroup" v-on="$listeners"/>
                         </div>
                     </aside>
                     <main class="col-sm-9 overflow-auto">
@@ -25,6 +25,14 @@
                 </div>
             </div>
         </section>
+        <b-pagination
+                v-model="currentPage"
+                :total-rows="rows"
+                :per-page="perPage"
+                aria-controls="my-table"
+                class="bg justify-content-center"
+                style="margin-bottom: 100px;">
+        </b-pagination>
     </div>
 </template>
 
@@ -43,7 +51,24 @@
             return {
                 datasetStatus: 'status',
                 fundingOrg: 'fundingOrg',
-                researchGroup: 'researchGroup'
+                researchGroup: 'researchGroup',
+                facetCheckBoxes: {
+                    status: '',
+                    fundingOrg: '',
+                    researchGroup: ''
+                },
+                currentPage: 1,
+                perPage: 10,
+            }
+        },
+        computed: {
+            rows: function () {
+                return this.results.count;
+            }
+        },
+        watch: {
+            currentPage: function (value) {
+                this.$emit('pagination', value);
             }
         }
     }

@@ -14,7 +14,7 @@
                                               required
                                               v-model="form.query">
                                 </b-form-input>
-                                <input type="hidden" id="pageNo" name="page" v-model="form.pageNo">
+                                <input type="hidden" id="pageNo" name="page" v-model="form.page">
                             </div>
                             <div class="col-sm-3 btn-toolbar">
                                 <button id="searchSubmit" type="submit" class="btn btn-primary mx-2 w-50">Search
@@ -57,7 +57,16 @@
                 </div>
             </div>
         </section>
-        <ResultSet v-if="showResults" :results="resultSet"/>
+        <ResultSet v-if="showResults" :results="resultSet" @facetClicked="facetCheckBoxValues" @pagination="changePageNo"/>
+        <section class="section-content bg pt-5" v-else-if="noResults">
+            <div class="container">
+                <div class="row d-flex flex-row justify-content-center">
+                    <h3 id="count">
+                        No results found!
+                    </h3>
+                </div>
+            </div>
+        </section>
         <section class="section-content pt-3 bg" v-else>
             <div class="container">
                 <article class="card card-product">
@@ -90,7 +99,7 @@
                 searchFormRoute: Routing.generate('pelagos_app_ui_searchpage_results'),
                 form: {
                     query: '',
-                    pageNo: 1,
+                    page: 1,
                     field: '',
                     collectionStartDate: '',
                     collectionEndDate: '',
@@ -102,6 +111,7 @@
                     {text: 'Author', value: 'datasetSubmission.authors'},
                     {text: 'Theme Keywords', value: 'datasetSubmission.themeKeywords'}],
                 showResults: false,
+                noResults: false,
                 resultSet: Object
             }
         },
@@ -112,15 +122,23 @@
                 axios
                     .get(Routing.generate('pelagos_app_ui_searchpage_results') + "?" + searchQuery)
                     .then(response => {
-                        console.log('hi');
                         if (response.data.count > 0) {
                             this.showResults = true;
                             this.resultSet = response.data;
                             console.log(response.data);
+                        } else {
+                            this.noResults = true;
                         }
                     });
+            },
+            facetCheckBoxValues: function (value) {
+                
+            },
+            changePageNo: function (newPageNo) {
+                this.form.page = newPageNo;
+                this.onSubmit();
             }
-        }
+        },
     }
 </script>
 
