@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div ref="formContainer">
         <section class="section-content bg pt-5">
             <div class="container">
                 <div class="card card-header">
@@ -119,7 +119,34 @@
         methods: {
             onSubmit: function () {
                 const searchQuery = Object.keys(this.form).map(key => key + '=' + this.form[key]).join('&');
-                axios
+                let loader = null;
+                let thisComponent = this;
+                const axiosInstance = axios.create({});
+                axiosInstance.interceptors.request.use(function (config) {
+                    loader = thisComponent.$loading.show({
+                        container: thisComponent.$refs.formContainer,
+                        loader: 'bars',
+                        color: '#007bff',
+                    });
+                    return config;
+                }, function (error) {
+                    return Promise.reject(error);
+                });
+
+                function hideLoader(){
+                    loader && loader.hide();
+                    loader = null;
+                }
+
+                axiosInstance.interceptors.response.use(function (response) {
+                    hideLoader();
+                    return response;
+                }, function (error) {
+                    hideLoader();
+                    return Promise.reject(error);
+                });
+
+                axiosInstance
                     .get(Routing.generate('pelagos_app_ui_searchpage_results') + "?" + searchQuery)
                     .then(response => {
                         if (response.data.count > 0) {
@@ -128,8 +155,8 @@
                         } else {
                             this.noResults = true;
                         }
-                    });
-                window.location.hash = searchQuery;
+                        window.location.hash = searchQuery;
+                    })
             },
             facetCheckBoxValues: function (value) {
                 let facetArray = value.split("=");

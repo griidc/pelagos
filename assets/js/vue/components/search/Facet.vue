@@ -17,7 +17,7 @@
                     </div>
                 </div>
                 <form>
-                    <div style="overflow-y: scroll; height: 10rem">
+                    <div v-bind:style="facetName === 'researchGroup' ? 'overflow-y: scroll; height: 10rem;': ''">
                         <label class="form-check" v-for="facet in filteredFacets">
                             <input class="form-check-input facet-aggregation" :value="facet.id" type="checkbox" :id="facetName + '_' + facet.id" v-model="listOfCheckedFacets" @change="facetChange">
                             <span class="form-check-label" v-if="facetName === 'status'">

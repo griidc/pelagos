@@ -30,6 +30,7 @@
         "jquery.cookie": "^1.4.1",
         "qtip2": "2.2.0",
         "query-string": "^6.8.1",
-        "vex-js": "^4.1.0"
+        "vex-js": "^4.1.0",
+        "vue-loading-overlay": "^3.3.0"
     }
 }
