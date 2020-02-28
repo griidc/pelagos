@@ -60,28 +60,22 @@ class SearchPageController extends AbstractController
     public function getSearchResults(Request $request, Search $searchUtil)
     {
         $results = array();
-        $count = 0;
         $requestParams = $this->getRequestParams($request);
-        $researchGroupsInfo = array();
-        $fundingOrgInfo = array();
-        $statusInfo = array();
-
-        if (!empty($requestParams['query'])) {
-            $buildQuery = $searchUtil->buildQuery($requestParams);
-            $resultsBeforeHydration = $searchUtil->findDatasets($buildQuery);
-            foreach ($resultsBeforeHydration as $result) {
-                array_push($results, $result->getResult()->getHit()['_source']);
-            }
-            $count = $searchUtil->getCount($buildQuery);
-            $researchGroupsInfo = $searchUtil->getResearchGroupAggregations($buildQuery);
-            $fundingOrgInfo = $searchUtil->getFundingOrgAggregations($buildQuery);
-            $statusInfo = $searchUtil->getStatusAggregations($buildQuery);
-            $elasticScoreFirstResult = null;
-            if (!empty($results)) {
-                $elasticScoreFirstResult = $resultsBeforeHydration[0]->getResult()->getHit()['_score'];
-            }
-            $this->dispatchSearchTermsLogEvent($requestParams, $count, $elasticScoreFirstResult);
+        $buildQuery = $searchUtil->buildQuery($requestParams);
+        $resultsBeforeHydration = $searchUtil->findDatasets($buildQuery);
+        foreach ($resultsBeforeHydration as $result) {
+            array_push($results, $result->getResult()->getHit()['_source']);
         }
+        $count = $searchUtil->getCount($buildQuery);
+        $researchGroupsInfo = $searchUtil->getResearchGroupAggregations($buildQuery);
+        $fundingOrgInfo = $searchUtil->getFundingOrgAggregations($buildQuery);
+        $statusInfo = $searchUtil->getStatusAggregations($buildQuery);
+        $elasticScoreFirstResult = null;
+        if (!empty($results)) {
+            $elasticScoreFirstResult = $resultsBeforeHydration[0]->getResult()->getHit()['_score'];
+        }
+        $this->dispatchSearchTermsLogEvent($requestParams, $count, $elasticScoreFirstResult);
+
         return $this->json(
             array(
                 'formValues' => array (

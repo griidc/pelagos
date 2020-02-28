@@ -81,6 +81,7 @@
                             oil spill in the Gulf of Mexico; however, some datasets are related
                             to other topics and locations around the world.
                         </p>
+                        <b-button block variant="primary" @click="onSubmit">Show All Datasets</b-button>
                     </div>
                 </article>
             </div>

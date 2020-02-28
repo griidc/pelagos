@@ -145,7 +145,7 @@ class Search
         $collectionDateBoolQuery = new Query\BoolQuery();
 
         // Check if exclude term exists in the given query term
-        $mustNotQueryTerm = '';
+        $mustNotQueryTerms = '';
         $splitUpQueryTerms = $this->splitQueryTerms($queryTerm);
         if (!empty($splitUpQueryTerms)) {
             $queryTerm = $splitUpQueryTerms['mustMatch'];
@@ -187,7 +187,12 @@ class Search
         // Add dataset availability status agg to mainQuery
         $mainQuery->addAggregation($this->getStatusAggregationQuery($requestTerms));
 
-        $mainQuery->setQuery($subMainQuery);
+        if ($queryTerm) {
+            $mainQuery->setQuery($subMainQuery);
+        } else {
+            $mainQuery->setQuery(new Query\MatchAll());
+        }
+
         $mainQuery->setFrom(($page - 1) * 10);
         
         return $mainQuery;
