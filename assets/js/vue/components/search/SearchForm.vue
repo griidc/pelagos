@@ -3,7 +3,7 @@
         <section class="section-content bg pt-5">
             <div class="container">
                 <div class="card card-header">
-                    <b-form id="searchForm" name="searchForm" method="get" @submit.prevent="onSubmit">
+                    <b-form id="searchForm" name="searchForm" method="get" @submit.prevent="onSubmit" @reset.prevent="onReset">
                         <div class="row">
                             <div class="col-sm-9">
                                 <b-form-input type="search"
@@ -97,15 +97,9 @@
         data: function() {
             return {
                 searchFormRoute: Routing.generate('pelagos_app_ui_searchpage_results'),
-                form: {
-                    query: '',
-                    page: 1,
-                    field: '',
-                    collectionStartDate: '',
-                    collectionEndDate: '',
-                },
+                form: initialFormValues(),
                 fields: [
-                    { text: '-- All --', value: '' },
+                    {text: '-- All --', value: '' },
                     {text: 'Title', value: 'title'},
                     {text: 'Abstract', value: 'abstract'},
                     {text: 'Author', value: 'datasetSubmission.authors'},
@@ -158,6 +152,12 @@
                         window.location.hash = searchQuery;
                     })
             },
+            onReset: function () {
+                this.form = initialFormValues();
+                this.showResults = false;
+                this.noResults = false;
+                window.location.hash = '';
+            },
             facetCheckBoxValues: function (value) {
                 let facetArray = value.split("=");
                 this.form[facetArray[0]] = facetArray[1];
@@ -166,7 +166,7 @@
             changePageNo: function (newPageNo) {
                 this.form.page = newPageNo;
                 this.onSubmit();
-            }
+            },
         },
         mounted() {
             if (this.route) {
@@ -174,6 +174,16 @@
                this.form = Object.fromEntries(someVaribale);
                this.onSubmit();
             }
+        }
+    }
+
+    function initialFormValues() {
+        return {
+                query: '',
+                page: 1,
+                field: '',
+                collectionStartDate: '',
+                collectionEndDate: '',
         }
     }
 </script>
