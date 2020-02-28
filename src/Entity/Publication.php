@@ -22,6 +22,25 @@ class Publication extends Entity
     const FRIENDLY_NAME = 'Publication';
 
     /**
+     * A class constant for citation style, now hardcoded.
+     */
+    const CITATION_STYLE_APA = 'apa';
+
+    /**
+     * Class constant for locale, now hardcoded.
+     */
+    const CITATION_LOCALE = 'utf-8';
+
+    /**
+     * Citation Text.
+     *
+     * @var $citationText string
+     *
+     * @var string
+     */
+    private $citationText;
+
+    /**
      * DOI.
      *
      * @var string
@@ -29,15 +48,6 @@ class Publication extends Entity
      * @ORM\Column(type="citext")
      */
     protected $doi;
-
-    /**
-     * Citations for this Publication.
-     *
-     * @var Collection
-     *
-     * @ORM\OneToMany(targetEntity="PublicationCitation", mappedBy="publication")
-     */
-    protected $citations;
 
     /**
      * Collection of DatasetPublication.
@@ -71,24 +81,24 @@ class Publication extends Entity
     }
 
     /**
-     * Sets the Citation object.
+     * Sets the Citation text.
      *
-     * @param Collection $citations A collection of Pelagos Citations.
+     * @param string $citationText A citation as an APA formatted UTF-8 locale string.
      *
      * @return void
      */
-    public function setCitations(Collection $citations)
+    public function setCitationText(string $citationText)
     {
-        $this->citations = $citations;
+        $this->citationText = $citationText;
     }
 
     /**
-     * Gets the Citation object.
+     * Gets the Citation text.
      *
-     * @return Citation A publication citation.
+     * @return string The citation text.
      */
-    public function getCitations()
+    public function getCitationText()
     {
-        return $this->citations;
+        return $this->citationText;
     }
 }
