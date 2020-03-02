@@ -90,7 +90,7 @@ class RemotelyHostedDatasetsController extends AbstractController
             if ($datasetSubmission instanceof DatasetSubmission) {
                 $preReqs = $this->remotelyHostedPrerequsiteCheck($datasetSubmission);
                 if (count($preReqs) > 0) {
-                    $message = 'CONFIRM:' . implode(', ', $preReqs);
+                    $message = implode(', ', $preReqs);
                 } elseif ($datasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
                     if (DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED !== $datasetSubmission->getDatasetFileTransferStatus()) {
                         $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
@@ -109,8 +109,8 @@ class RemotelyHostedDatasetsController extends AbstractController
         } else {
             $message = 'Invalid UDI!';
         }
-        //return 202 Accepted for accepted but not processed request
-        return new Response($message, Response::HTTP_ACCEPTED);
+        // returning the unassigned 432 code for these error cases.
+        return new Response($message, 432);
     }
 
     /**
