@@ -50,11 +50,11 @@ $(document).ready(function(){
                 //reset table
                 $("#remotelyHostedDatasetsTable").pelagosDataTable();
             }
-        }.fail(function(data, textStatus, jqXHR){
+        }).fail(function(data, textStatus, jqXHR){
                 n.modal = true;
                 n.type = warning;
-        )};
-    };
+        })
+    });
 
     //enable/disable button on field input
     $("#udiInput").on("input", function() {
