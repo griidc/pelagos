@@ -90,7 +90,7 @@ class RemotelyHostedDatasetsController extends AbstractController
             if ($datasetSubmission instanceof DatasetSubmission) {
                 $preReqs = $this->remotelyHostedPrerequsiteCheck($datasetSubmission);
                 if (count($preReqs) > 0) {
-                    $message = implode(', ', $preReqs);
+                    $message = 'CONFIRM:' . implode(', ', $preReqs);
                 } elseif ($datasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
                     if (DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED !== $datasetSubmission->getDatasetFileTransferStatus()) {
                         $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);

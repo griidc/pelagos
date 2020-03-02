@@ -25,28 +25,57 @@ $(document).ready(function(){
             url: Routing.generate("pelagos_app_ui_remotelyhosteddatasets_post", {udi : $("#udiInput").val().trim()}),
         }).done(function(data, textStatus, jqXHR){
             var messageType = "success";
+            var modalBool = false;
             //return informative message for 202 code
             if (202 === jqXHR.status) {
+                console.log(data);
                 messageType = "warning";
+                if (data.includes("CONFIRM:")) {
+                    data = data.replace("CONFIRM:","");
+                    var confirmBool = true;
+                }
             } else {
                 //reset table
                 $("#remotelyHostedDatasetsTable").pelagosDataTable();
             }
-            var n = noty(
-            {
-                layout: "top",
-                theme: "relax",
-                type: messageType,
-                text: data,
-                timeout: 4000,
-                modal: false,
-                animation: {
-                    open: "animated fadeIn", // Animate.css class names
-                    close: "animated fadeOut", // Animate.css class names
-                    easing: "swing", // unavailable - no need
-                    speed: 500 // unavailable - no need
-                }
-            });
+            if (confirmBool) {
+                var n = noty(
+                {
+                    layout: "top",
+                    theme: "relax",
+                    type: messageType,
+                    text: data,
+                    modal: true,
+                    animation: {
+                        open: "animated fadeIn", // Animate.css class names
+                        close: "animated fadeOut", // Animate.css class names
+                        easing: "swing", // unavailable - no need
+                        speed: 500 // unavailable - no need
+                    },
+                    buttons: [
+                        {addClass: "btn btn-primary", text: "Continue", onClick: function($noty) {
+                            $noty.close();
+                          }
+                        },
+                    ]
+                });
+            } else {
+                var n = noty(
+                {
+                    layout: "top",
+                    theme: "relax",
+                    type: messageType,
+                    text: data,
+                    timeout: 4000,
+                    modal: false,
+                    animation: {
+                        open: "animated fadeIn", // Animate.css class names
+                        close: "animated fadeOut", // Animate.css class names
+                        easing: "swing", // unavailable - no need
+                        speed: 500 // unavailable - no need
+                    }
+                });
+            }
         });
     });
 
