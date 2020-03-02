@@ -87,7 +87,7 @@ class RemotelyHostedDatasetsController extends AbstractController
             $dataset = $datasets[0];
             $datasetStatus = $dataset->getDatasetStatus();
             $datasetSubmission = $dataset->getDatasetSubmission();
-            if (null !== $datasetSubmission) {
+            if ($datasetSubmission instanceof DatasetSubmission) {
                 $preReqs = $this->remotelyHostedPrerequsiteCheck($datasetSubmission);
                 if (count($preReqs) > 0) {
                     $message = implode(', ', $preReqs);
@@ -131,7 +131,7 @@ class RemotelyHostedDatasetsController extends AbstractController
         if (!empty($datasets)) {
             $dataset = $datasets[0];
             $datasetSubmission = $dataset->getDatasetSubmission();
-            if (null !== $datasetSubmission) {
+            if ($datasetSubmission instanceof DatasetSubmission) {
                 $responseMsg = $datasetSubmission->getDatasetFileUri();
             }
         }
