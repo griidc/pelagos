@@ -33,7 +33,6 @@ Encore
     .createSharedEntry('app', './assets/js/app.js')
     .addEntry('layout', './assets/js/layout.js')
     .addEntry('downloadBox', './assets/js/downloadBox.js')
-    .addEntry('search', './assets/js/search.js')
     .addEntry('search-app', './assets/js/search.js')
 
     // enables Sass/SCSS support

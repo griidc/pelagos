@@ -58,15 +58,6 @@
             </div>
         </section>
         <ResultSet v-if="showResults" :results="resultSet" @facetClicked="facetCheckBoxValues" @pagination="changePageNo"/>
-        <section class="section-content bg pt-5" v-else-if="noResults">
-            <div class="container">
-                <div class="row d-flex flex-row justify-content-center">
-                    <h3 id="count">
-                        No results found!
-                    </h3>
-                </div>
-            </div>
-        </section>
         <section class="section-content pt-3 bg" v-else>
             <div class="container">
                 <article class="card card-product">
@@ -143,12 +134,8 @@
                 axiosInstance
                     .get(Routing.generate('pelagos_app_ui_searchpage_results') + "?" + searchQuery)
                     .then(response => {
-                        if (response.data.count > 0) {
-                            this.showResults = true;
-                            this.resultSet = response.data;
-                        } else {
-                            this.noResults = true;
-                        }
+                        this.resultSet = response.data;
+                        this.showResults = true;
                         window.location.hash = searchQuery;
                     })
             },

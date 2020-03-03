@@ -1,9 +1,9 @@
 <template>
-    <div>
+    <div v-if="results.count > 0">
         <section class="section-content bg pt-5">
             <div class="container">
                 <div class="row d-flex flex-row justify-content-center">
-                    <h3 id="count">
+                    <h3>
                         Found {{ results.count }} results for: "{{ results.formValues.query }}"
                     </h3>
                 </div>
@@ -33,6 +33,17 @@
                 class="bg justify-content-center"
                 style="margin-bottom: 100px;">
         </b-pagination>
+    </div>
+    <div v-else>
+        <section class="section-content bg pt-5" >
+            <div class="container">
+                <div class="row d-flex flex-row justify-content-center">
+                    <h3>
+                        No results found!
+                    </h3>
+                </div>
+            </div>
+        </section>
     </div>
 </template>
 
