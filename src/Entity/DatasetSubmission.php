@@ -1029,6 +1029,15 @@ class DatasetSubmission extends Entity
     protected $remotelyHostedFunction;
 
     /**
+     * The Point of Contact for this Dataset Submission.
+     *
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\DatasetLinks", mappedBy="datasetSubmission", orphanRemoval=true)
+     */
+    private $datasetLinks;
+
+    /**
      * Constructor.
      *
      * Initializes collections to empty collections.
@@ -1044,6 +1053,7 @@ class DatasetSubmission extends Entity
         $this->datasetContacts = new ArrayCollection;
         $this->metadataContacts = new ArrayCollection;
         $this->distributionPoints = new ArrayCollection();
+        $this->datasetLinks = new ArrayCollection();
         if ($entity instanceof DIF) {
             if (null === $datasetPPOc) {
                 throw new \Exception('Constructor requires PersonDatasetSubmissionDatasetContact if passed a DIF entity');
@@ -2860,5 +2870,36 @@ class DatasetSubmission extends Entity
     public function setRemotelyHostedFunction(?string $remotelyHostedFunction)
     {
         $this->remotelyHostedFunction = $remotelyHostedFunction;
+    }
+
+    /**
+     * @return Collection|DatasetLinks[]
+     */
+    public function getDatasetLinks(): Collection
+    {
+        return $this->datasetLinks;
+    }
+
+    public function addDatasetLink(DatasetLinks $datasetLink): self
+    {
+        if (!$this->datasetLinks->contains($datasetLink)) {
+            $this->datasetLinks[] = $datasetLink;
+            $datasetLink->setDatasetSubmission($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDatasetLink(DatasetLinks $datasetLink): self
+    {
+        if ($this->datasetLinks->contains($datasetLink)) {
+            $this->datasetLinks->removeElement($datasetLink);
+            // set the owning side to null (unless already changed)
+            if ($datasetLink->getDatasetSubmission() === $this) {
+                $datasetLink->setDatasetSubmission(null);
+            }
+        }
+
+        return $this;
     }
 }

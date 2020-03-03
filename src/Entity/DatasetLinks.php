@@ -92,6 +92,16 @@ class DatasetLinks extends Entity
     protected $protocol;
 
     /**
+     * Protocol for the Dataset Link.
+     *
+     * @var string
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\DatasetSubmission", inversedBy="datasetLinks")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $datasetSubmission;
+
+    /**
      * Get the URL for the Dataset Link.
      *
      * @return string
@@ -207,6 +217,18 @@ class DatasetLinks extends Entity
     public function setProtocol(?string $protocol): self
     {
         $this->protocol = $protocol;
+
+        return $this;
+    }
+
+    public function getDatasetSubmission(): ?DatasetSubmission
+    {
+        return $this->datasetSubmission;
+    }
+
+    public function setDatasetSubmission(?DatasetSubmission $datasetSubmission): self
+    {
+        $this->datasetSubmission = $datasetSubmission;
 
         return $this;
     }
