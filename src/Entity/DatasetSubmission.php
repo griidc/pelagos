@@ -1033,7 +1033,7 @@ class DatasetSubmission extends Entity
      *
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="App\Entity\DatasetLinks", mappedBy="datasetSubmission", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\DatasetLinks", mappedBy="datasetSubmission", orphanRemoval=true, cascade={"persist"})
      */
     private $datasetLinks;
 
@@ -1084,6 +1084,7 @@ class DatasetSubmission extends Entity
             }
 
             $this->addDistributionPoint(new DistributionPoint());
+            $this->addDatasetLink(new DatasetLinks());
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
             $this->setSequence($entity->getDataset()->getDatasetSubmissionHistory()->first()->getSequence() + 1);
@@ -1164,6 +1165,14 @@ class DatasetSubmission extends Entity
                 $newDistributionPoint->setRoleCode($distributionPoint->getRoleCode());
                 $newDistributionPoint->setDataCenter($distributionPoint->getDataCenter());
                 $this->addDistributionPoint($newDistributionPoint);
+            }
+            
+            // Copy the original Dataset Submission's Dataset Links.
+            foreach ($entity->getDatasetLinks() as $datasetLink) {
+                $newDatasetLink = new DistributionPoint();
+                $newDatasetLink->setUrl($datasetLink->getUrl());
+                
+                $this->addDatasetLink($newDatasetLink);
             }
         } else {
             throw new \Exception('Class constructor requires a DIF or a DatasetSubmission. A ' . get_class($entity) . ' was passed.');

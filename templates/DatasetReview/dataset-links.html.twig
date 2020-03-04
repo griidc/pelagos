@@ -1,0 +1,63 @@
+<fieldset>
+    <legend>Dataset Links</legend>
+    <div id="dataset-links">
+        {% for link in form.datasetLinks %}
+        <table class="tab-table dataset-links">
+            <tr>
+                <td>
+                    <span class="helpSection">
+                        <img class="info" src="{{ asset('images/info32.png') }}">
+                        <div class="tooltiptext">
+                            Please a ....
+                        </div>
+                    </span>
+                    {{ form_row(link.url) }}
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
+                    <span class="helpSection">
+                        <img class="info" src="{{ asset('images/info32.png') }}">
+                        <div class="tooltiptext">
+                            Please a ....
+                        </div>
+                    </span>
+                    {{ form_row(link.name) }}
+                </td>
+            </tr>
+        </table>
+        {% endfor %}
+    </div>
+    
+    <button id="addLink" type="button">Add Link</button>
+</fieldset>
+
+<div id="contact-brototype">
+    {% set link = form.datasetLinks.vars.prototype %}
+    <table class="tab-table dataset-links">
+            <tr>
+                <td>
+                    <span class="helpSection">
+                        <img class="info" src="{{ asset('images/info32.png') }}">
+                        <div class="tooltiptext">
+                            Please a ....
+                        </div>
+                    </span>
+                    {{ form_row(link.url) }}
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
+                    <span class="helpSection">
+                        <img class="info" src="{{ asset('images/info32.png') }}">
+                        <div class="tooltiptext">
+                            Please a ....
+                        </div>
+                    </span>
+                    {{ form_row(link.name) }}
+                </td>
+            </tr>
+        </table>
+</div>

@@ -29,6 +29,10 @@
                     <img class="tabimg">
                 </li>
                 <li>
+                    <a class="dstablink" href="#ds-datasetlinks">Dataset Links</a>
+                    <img class="tabimg">
+                </li>
+                <li>
                     <a class="dstablink" href="#ds-distribution-contact">Distribution Contact</a>
                     <img class="tabimg">
                 </li>
@@ -64,6 +68,10 @@
 
             <div id="ds-distribution" class="ds-metadata">
                 {% include 'DatasetReview/distribution-info.html.twig' %}
+            </div>
+            
+            <div id="ds-datasetlinks" class="ds-metadata">
+                {% include 'DatasetReview/dataset-links.html.twig' %}
             </div>
 
             <div id="ds-distribution-contact" class="ds-metadata">

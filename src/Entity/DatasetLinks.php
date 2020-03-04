@@ -49,7 +49,7 @@ class DatasetLinks extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $url;
 
@@ -58,7 +58,7 @@ class DatasetLinks extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $name;
 
@@ -67,7 +67,7 @@ class DatasetLinks extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $description;
 
@@ -78,7 +78,7 @@ class DatasetLinks extends Entity
      
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $functionCode;
 
@@ -106,7 +106,7 @@ class DatasetLinks extends Entity
      *
      * @return string
      */
-    public function getUrl(): string
+    public function getUrl(): ?string
     {
         return $this->url;
     }
@@ -178,7 +178,7 @@ class DatasetLinks extends Entity
      *
      * @return string
      */
-    public function getfunctionCode(): string
+    public function getfunctionCode(): ?string
     {
         return $this->functionCode;
     }
@@ -221,6 +221,11 @@ class DatasetLinks extends Entity
         return $this;
     }
 
+    /**
+     * Get the choice list for restrictions.
+     *
+     * @return string|null
+     */
     public function getDatasetSubmission(): ?DatasetSubmission
     {
         return $this->datasetSubmission;
@@ -231,5 +236,22 @@ class DatasetLinks extends Entity
         $this->datasetSubmission = $datasetSubmission;
 
         return $this;
+    }
+    
+    /**
+     * Get the choice list for Role Code types.
+     *
+     * @return array
+     */
+    public static function getFunctionCodeChoices()
+    {
+        return array_flip(
+            array_map(
+                function ($type) {
+                    return $type['name'];
+                },
+                static::ONLINE_FUNCTION_CODES
+            )
+        );
     }
 }
