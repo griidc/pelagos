@@ -19,19 +19,18 @@ $(document).ready(function(){
     $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");
 
     // generic noty
-    var n = noty(
+    var notyJson =
     {
         layout: "top",
         theme: "relax",
-        type: success,
-        text: data,
+        type: "success",
         animation: {
             open: "animated fadeIn", // Animate.css class names
             close: "animated fadeOut", // Animate.css class names
             easing: "swing", // unavailable - no need
             speed: 500 // unavailable - no need
         }
-    });
+    };
 
     $("#updateButton").button().click(function(){
 
@@ -39,21 +38,27 @@ $(document).ready(function(){
             type: "POST",
             url: Routing.generate("pelagos_app_ui_remotelyhosteddatasets_post", {udi : $("#udiInput").val().trim()}),
             // common noty
-        }).done(function(data, textStatus, jqXHR){
-            //return informative message for 202 code
-            if (202 === jqXHR.status) {
-                // modal: false, timeout: 4000
-                n.modal = false;
-                n.timeout = 4000;
-            } else {
-                unset(n);
-                //reset table
-                $("#remotelyHostedDatasetsTable").pelagosDataTable();
-            }
-        }).fail(function(data, textStatus, jqXHR){
-                n.modal = true;
-                n.type = warning;
-        })
+            success: function(jqXHR, textStatus, errorThrown) {
+                notyJson.modal = false;
+                notyJson.timeout = 4000;
+                notyJson.text = jqXHR.responseText;
+            },
+            statusCode: {
+                432: function(jqXHR, textStatus, errorThrown) {
+                    notyJson.modal = true;
+                    notyJson.type = "warning";
+                    notyJson.text = jqXHR.responseText;
+                },
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                notyJson.modal = true;
+                notyJson.type = "error";
+                notyJson.text = "Error:" + jqXHR.statusText + " (" + jqXHR.status + ")";
+            },
+            complete: function(jqXHR, textStatus) {
+                noty(notyJson);
+            },
+        });
     });
 
     //enable/disable button on field input
