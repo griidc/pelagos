@@ -11,7 +11,6 @@
                                               class="form-control"
                                               placeholder="Search.."
                                               id="searchBox"
-                                              required
                                               v-model="form.query">
                                 </b-form-input>
                                 <input type="hidden" id="pageNo" name="page" v-model="form.page">
@@ -81,7 +80,6 @@
                             oil spill in the Gulf of Mexico; however, some datasets are related
                             to other topics and locations around the world.
                         </p>
-                        <b-button block variant="primary" @click="onSubmit">Show All Datasets</b-button>
                     </div>
                 </article>
             </div>
