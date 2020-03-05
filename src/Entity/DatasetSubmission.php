@@ -1171,6 +1171,10 @@ class DatasetSubmission extends Entity
             foreach ($entity->getDatasetLinks() as $datasetLink) {
                 $newDatasetLink = new DatasetLink();
                 $newDatasetLink->setUrl($datasetLink->getUrl());
+                $newDatasetLink->setName($datasetLink->getName());
+                $newDatasetLink->setDescription($datasetLink->getDescription());
+                $newDatasetLink->setFunctionCode($datasetLink->getfunctionCode());
+                $newDatasetLink->setProtocol($datasetLink->getProtocol());
 
                 $this->addDatasetLink($newDatasetLink);
             }

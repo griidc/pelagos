@@ -118,7 +118,7 @@ class DatasetLink extends Entity
      *
      * @return void
      */
-    public function setUrl(string $url): self
+    public function setUrl(?string $url): self
     {
         $this->url = $url;
 
@@ -142,7 +142,7 @@ class DatasetLink extends Entity
      *
      * @return self
      */
-    public function setName(string $name): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
@@ -166,7 +166,7 @@ class DatasetLink extends Entity
      *
      * @return self
      */
-    public function setDescription(string $string): self
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
 
@@ -190,7 +190,7 @@ class DatasetLink extends Entity
      *
      * @return self
      */
-    public function setFunctionCode(string $functionCode): self
+    public function setFunctionCode(?string $functionCode): self
     {
         $this->functionCode = $functionCode;
 

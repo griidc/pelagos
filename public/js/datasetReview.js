@@ -114,6 +114,43 @@ $(document).ready(function(){
             });
         });
 
+    var datasetLinksCount = 0;
+
+    // Count the highest index in dataset contacts.
+    $("table.dataset-links[index]").each(function() {
+        var value = parseFloat($(this).attr("index"));
+        datasetLinksCount = (value > datasetLinksCount) ? value : datasetLinksCount;
+    });
+
+    $("#addLink")
+        .button()
+        .click(function(){
+            datasetLinksCount++;
+
+            console.log('click');
+
+            var newLink = $("#links-prototype table")
+                .clone(true)
+                .find(":input[id][name]")
+                .removeClass("prototype error")
+                .removeAttr("disabled")
+                .attr("name", function() {
+                    return $(this).attr("name").replace(/__name__/g, datasetLinksCount);
+                })
+                .attr("id", function() {
+                    return $(this).attr("id").replace(/__name__/g, datasetLinksCount);
+                })
+                .end()
+                .find("label[for]")
+                .attr("for", function() {
+                    return $(this).attr("for").replace(/__name__/g, datasetLinksCount);
+                })
+                .end()
+                .fadeIn("slow");
+
+            $("#dataset-links").append(newLink);
+        });
+
     $(".deletebutton")
         .button()
         .hover(function() {

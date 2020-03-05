@@ -2,7 +2,9 @@
     <legend>Dataset Links</legend>
     <div id="dataset-links">
         {% for link in form.datasetLinks %}
-        <table class="tab-table dataset-links">
+        <fieldset>
+            <legend>Link: {{ loop.index }}</legend>
+            <table class="tab-table dataset-links" index="{{link.vars.name}}">
             <tr>
                 <td>
                     <span class="helpSection">
@@ -59,15 +61,18 @@
                 </td>
             </tr>
         </table>
+        </fieldset>
         {% endfor %}
     </div>
 
     <button id="addLink" type="button">Add Link</button>
 </fieldset>
 
-<div id="contact-prototype">
+<div id="links-prototype">
     {% set link = form.datasetLinks.vars.prototype %}
+    <fieldset>
     <table class="tab-table dataset-links">
+    <legend>New Link:</legend>
         <tr>
             <td>
                 <span class="helpSection">
@@ -76,7 +81,7 @@
                         Please enter a value.
                     </div>
                 </span>
-                {{ form_row(link.url) }}
+                {{ form_row(link.url, {"attr": {"class": "prototype", "disabled": "disabled"}}) }}
             </td>
         </tr>
         <tr>
@@ -87,7 +92,7 @@
                         Please enter a value.
                     </div>
                 </span>
-                {{ form_row(link.name) }}
+                {{ form_row(link.name, {"attr": {"class": "prototype", "disabled": "disabled"}}) }}
             </td>
         </tr>
         <tr>
@@ -98,7 +103,7 @@
                         Please enter a value.
                     </div>
                 </span>
-                {{ form_row(link.description) }}
+                {{ form_row(link.description, {"attr": {"class": "prototype", "disabled": "disabled"}}) }}
             </td>
         </tr>
         <tr>
@@ -109,7 +114,7 @@
                         Please enter a value.
                     </div>
                 </span>
-                {{ form_row(link.functionCode) }}
+                {{ form_row(link.functionCode, {"attr": {"class": "prototype", "disabled": "disabled"}}) }}
             </td>
         </tr>
         <tr>
@@ -120,8 +125,9 @@
                         Please enter a value.
                     </div>
                 </span>
-                {{ form_row(link.protocol) }}
+                {{ form_row(link.protocol, {"attr": {"class": "prototype", "disabled": "disabled"}}) }}
             </td>
         </tr>
     </table>
+    </fieldset>
 </div>
