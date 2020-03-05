@@ -88,8 +88,8 @@ function retrievePublicationCitation() {
                     url: jqXHR.getResponseHeader("location"),
                     method: "GET"
                 }).done(function (data) {
-                    $('#publication .pelagos-citation').html(data.citations[0].citationText);
-                    $('#publicationId').html(data.citations[0].id);
+                    $('#publication .pelagos-citation').html(data.citationText);
+                    $('#publicationId').html(data.id);
                     $('#publication .pelagos-citation').removeClass('pelagos-error');
                     // always show the citation div, in case it has been faded out
                     $('#publication .pelagos-citation').show();
