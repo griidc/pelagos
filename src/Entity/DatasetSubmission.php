@@ -1033,7 +1033,7 @@ class DatasetSubmission extends Entity
      *
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="App\Entity\DatasetLinks", mappedBy="datasetSubmission", orphanRemoval=true, cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="App\Entity\DatasetLink", mappedBy="datasetSubmission", orphanRemoval=true, cascade={"persist"})
      */
     private $datasetLinks;
 
@@ -1084,7 +1084,7 @@ class DatasetSubmission extends Entity
             }
 
             $this->addDistributionPoint(new DistributionPoint());
-            $this->addDatasetLink(new DatasetLinks());
+            $this->addDatasetLink(new DatasetLink());
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
             $this->setSequence($entity->getDataset()->getDatasetSubmissionHistory()->first()->getSequence() + 1);
@@ -2882,14 +2882,14 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * @return Collection|DatasetLinks[]
+     * @return Collection|DatasetLink[]
      */
     public function getDatasetLinks(): Collection
     {
         return $this->datasetLinks;
     }
 
-    public function addDatasetLink(DatasetLinks $datasetLink): self
+    public function addDatasetLink(DatasetLink $datasetLink): self
     {
         if (!$this->datasetLinks->contains($datasetLink)) {
             $this->datasetLinks[] = $datasetLink;
@@ -2899,7 +2899,7 @@ class DatasetSubmission extends Entity
         return $this;
     }
 
-    public function removeDatasetLink(DatasetLinks $datasetLink): self
+    public function removeDatasetLink(DatasetLink $datasetLink): self
     {
         if ($this->datasetLinks->contains($datasetLink)) {
             $this->datasetLinks->removeElement($datasetLink);

@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity(repositoryClass="App\Repository\DatasetLinksRepository")
  */
-class DatasetLinks extends Entity
+class DatasetLink extends Entity
 {
     /**
      * Valid values for self::$functionCode.

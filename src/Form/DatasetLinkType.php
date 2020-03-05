@@ -7,7 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use App\Entity\DatasetLinks;
+use App\Entity\DatasetLink;
 
 class DatasetLinkType extends AbstractType
 {
@@ -29,7 +29,7 @@ class DatasetLinkType extends AbstractType
             ->add('functionCode', Type\ChoiceType::class, array(
                 'label' => 'Role:',
                 'required' => false,
-                'choices' => DatasetLinks::getFunctionCodeChoices(),
+                'choices' => DatasetLink::getFunctionCodeChoices(),
                 'empty_data' => 'functionCode',
                 'expanded' => false,
                 'preferred_choices' => function ($role, $value) {
@@ -46,7 +46,7 @@ class DatasetLinkType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => DatasetLinks::class,
+            'data_class' => DatasetLink::class,
         ]);
     }
 }

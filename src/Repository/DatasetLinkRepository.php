@@ -12,7 +12,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
  * @method DatasetLinks[]    findAll()
  * @method DatasetLinks[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class DatasetLinksRepository extends ServiceEntityRepository
+class DatasetLinkRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

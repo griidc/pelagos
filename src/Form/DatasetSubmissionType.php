@@ -11,7 +11,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use App\Entity\DatasetSubmission;
-use App\Entity\DatasetLinks;
+use App\Entity\DatasetLink;
 use App\Entity\DistributionPoint;
 use App\Entity\Entity;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
@@ -232,7 +232,7 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Dataset Links',
                 'entry_type' => DatasetLinkType::class,
                 'entry_options' => array(
-                    'data_class' => DatasetLinks::class,
+                    'data_class' => DatasetLink::class,
                 ),
                 'by_reference' => false,
                 'allow_add' => true,
