@@ -15,15 +15,15 @@ final class Version20200305163604 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
+        // Will set to not-null after data is populated in.
         $this->addSql('ALTER TABLE publication ADD citation_text citext');
 
         // Migrate the attribute in: (we can safely assume there was only 1 Citation per PublicationCitation)
         $this->addSql('UPDATE publication SET citation_text = (SELECT citation_text FROM publication_citation WHERE publication_id = publication.id)');
+        $this->addSql('ALTER TABLE publication ALTER citation_text SET NOT NULL');
 
         $this->addSql('DROP SEQUENCE publication_citation_id_seq CASCADE');
         $this->addSql('DROP TABLE publication_citation');
-
-
     }
 
     public function down(Schema $schema) : void

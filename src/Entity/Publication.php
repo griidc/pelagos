@@ -45,7 +45,7 @@ class Publication extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="citext", nullable=true)
+     * @ORM\Column(type="citext")
      */
     protected $doi;
 
