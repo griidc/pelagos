@@ -2886,6 +2886,8 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Getter for the Dataset Links.
+     *
      * @return Collection|DatasetLink[]
      */
     public function getDatasetLinks(): Collection
@@ -2893,6 +2895,13 @@ class DatasetSubmission extends Entity
         return $this->datasetLinks;
     }
 
+    /**
+     * Adder for dataset link.
+     *
+     * @param DatasetLink $datasetLink A dataset link.
+     *
+     * @return self
+     */
     public function addDatasetLink(DatasetLink $datasetLink): self
     {
         if (!$this->datasetLinks->contains($datasetLink)) {
@@ -2903,6 +2912,13 @@ class DatasetSubmission extends Entity
         return $this;
     }
 
+    /**
+     * Remover for dataset link.
+     *
+     * @param DatasetLink $datasetLink A dataset link.
+     *
+     * @return self
+     */
     public function removeDatasetLink(DatasetLink $datasetLink): self
     {
         if ($this->datasetLinks->contains($datasetLink)) {

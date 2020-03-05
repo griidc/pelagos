@@ -9,8 +9,21 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use App\Entity\DatasetLink;
 
+/**
+ * A form for creating Dataset Links.
+ */
 class DatasetLinkType extends AbstractType
 {
+    /**
+     * Builds the form.
+     *
+     * @param FormBuilderInterface $builder The form builder.
+     * @param array                $options The options.
+     *
+     * @see FormTypeExtensionInterface::buildForm()
+     *
+     * @return void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -39,10 +52,16 @@ class DatasetLinkType extends AbstractType
             ->add('protocol', Type\TextType::class, array(
                 'label' => 'Link Protocol:',
                 'required' => false,
-            ))
-        ;
+            ));
     }
 
+    /**
+     * Configures the options for this type.
+     *
+     * @param OptionsResolver $resolver The resolver for the options.
+     *
+     * @return void
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

@@ -74,9 +74,9 @@ class DatasetLink extends Entity
     /**
      * Function code for the Dataset Link.
      *
-     * @see ONLINE_FUNCTION_CODES
-
      * @var string
+     *
+     * @see ONLINE_FUNCTION_CODES
      *
      * @ORM\Column(type="text", nullable=true)
      */
@@ -116,7 +116,7 @@ class DatasetLink extends Entity
      *
      * @param string $url The URL for this Dataset Link.
      *
-     * @return void
+     * @return self
      */
     public function setUrl(?string $url): self
     {
@@ -162,7 +162,7 @@ class DatasetLink extends Entity
     /**
      * Set the description for the Dataset Link.
      *
-     * @param string $string The description for the Dataset Link.
+     * @param string $description The description for the Dataset Link.
      *
      * @return self
      */
@@ -231,6 +231,13 @@ class DatasetLink extends Entity
         return $this->datasetSubmission;
     }
 
+    /**
+     * Set the dataset submission for this link.
+     *
+     * @param DatasetSubmission|null $datasetSubmission The dataset submission for this link.
+     *
+     * @return self
+     */
     public function setDatasetSubmission(?DatasetSubmission $datasetSubmission): self
     {
         $this->datasetSubmission = $datasetSubmission;
