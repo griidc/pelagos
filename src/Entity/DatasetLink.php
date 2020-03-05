@@ -43,7 +43,7 @@ class DatasetLink extends Entity
             'code' => '005',
         ],
     ];
-    
+
     /**
      * Url for the Dataset Link.
      *
@@ -75,7 +75,7 @@ class DatasetLink extends Entity
      * Function code for the Dataset Link.
      *
      * @see ONLINE_FUNCTION_CODES
-     
+
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
@@ -237,7 +237,7 @@ class DatasetLink extends Entity
 
         return $this;
     }
-    
+
     /**
      * Get the choice list for Role Code types.
      *

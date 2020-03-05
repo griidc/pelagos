@@ -27,10 +27,10 @@ class DatasetLinkType extends AbstractType
                 'required' => false,
             ))
             ->add('functionCode', Type\ChoiceType::class, array(
-                'label' => 'Role:',
+                'label' => 'Link Function Code:',
                 'required' => false,
                 'choices' => DatasetLink::getFunctionCodeChoices(),
-                'empty_data' => 'functionCode',
+                'empty_data' => 'download',
                 'expanded' => false,
                 'preferred_choices' => function ($role, $value) {
                     return $value === 'Function Code';

@@ -1033,7 +1033,7 @@ class DatasetSubmission extends Entity
      *
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="App\Entity\DatasetLink", mappedBy="datasetSubmission", orphanRemoval=true, cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="App\Entity\DatasetLink", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
      */
     private $datasetLinks;
 
@@ -1166,12 +1166,12 @@ class DatasetSubmission extends Entity
                 $newDistributionPoint->setDataCenter($distributionPoint->getDataCenter());
                 $this->addDistributionPoint($newDistributionPoint);
             }
-            
+
             // Copy the original Dataset Submission's Dataset Links.
             foreach ($entity->getDatasetLinks() as $datasetLink) {
-                $newDatasetLink = new DistributionPoint();
+                $newDatasetLink = new DatasetLink();
                 $newDatasetLink->setUrl($datasetLink->getUrl());
-                
+
                 $this->addDatasetLink($newDatasetLink);
             }
         } else {
