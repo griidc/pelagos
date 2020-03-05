@@ -29,7 +29,7 @@ class Publication extends Entity
     /**
      * Class constant for locale, now hardcoded.
      */
-    const CITATION_LOCALE = 'utf-8';
+    const CITATION_LOCALE = 'en-US';
 
     /**
      * Citation Text.
