@@ -36,7 +36,7 @@ class Publication extends Entity
      *
      * @var $citationText string
      *
-     * @var string
+     * @ORM\Column(type="citext")
      */
     private $citationText;
 
