@@ -41,7 +41,7 @@ $(document).ready(function(){
             success: function(jqXHR, textStatus, errorThrown) {
                 notyJson.modal = false;
                 notyJson.timeout = 4000;
-                notyJson.text = jqXHR.responseText;
+                notyJson.text = 'Dataset has been marked as Remotely Hosted.';
             },
             statusCode: {
                 432: function(jqXHR, textStatus, errorThrown) {
