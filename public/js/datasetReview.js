@@ -160,8 +160,8 @@ $(document).ready(function(){
         })
         .click(function(){
             var deleteTable = this;
-            $(this).parents("#dataset-contacts table").fadeOut("slow", function() {
-                $(deleteTable).parents("#dataset-contacts table")
+            $(this).parents("#dataset-contacts table,#dataset-links *").fadeOut("slow", function() {
+                $(deleteTable).parents("#dataset-contacts table,#dataset-links *")
                     .find(".error").remove()
                     .end()
                     .find(":input").trigger("blur")
