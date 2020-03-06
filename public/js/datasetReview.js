@@ -127,8 +127,6 @@ $(document).ready(function(){
         .click(function(){
             datasetLinksCount++;
 
-            console.log('click');
-
             var newLink = $("#links-prototype table")
                 .clone(true)
                 .find(":input[id][name]")
