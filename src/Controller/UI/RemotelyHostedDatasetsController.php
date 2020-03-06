@@ -88,29 +88,42 @@ class RemotelyHostedDatasetsController extends AbstractController
             $datasetStatus = $dataset->getDatasetStatus();
             $datasetSubmission = $dataset->getDatasetSubmission();
             if ($datasetSubmission instanceof DatasetSubmission) {
-                $preReqs = $this->remotelyHostedPrerequsiteCheck($datasetSubmission);
+                $preReqs = array();
+                // For the following conditions, do not even attempt setting to Remotely Hosted.
+
+                // Dataset must be in Accepted status.
+                if (Dataset::DATASET_STATUS_ACCEPTED !== $datasetStatus) {
+                    $preReqs[] = 'Unable to set dataset UDI ' . $udi . ' to remotely hosted. Dataset status must be ACCEPTED.';
+                }
+
+                // Dataset can't already be set to Remotely Hosted.
+                if (DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED === $datasetSubmission->getDatasetFileTransferStatus()) {
+                    $preReqs[] = 'Dataset UDI ' . $udi . ' is already set to remotely hosted.';
+                }
+
+                // Additional business rules must be met.
+                $preReqs = array_merge($preReqs, $this->remotelyHostedPrerequsiteCheck($datasetSubmission));
+
+                // Only if the previous preconditions are met, mark as Remotely Hosted.
                 if (count($preReqs) > 0) {
                     $message = implode(', ', $preReqs);
-                } elseif ($datasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
-                    if (DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED !== $datasetSubmission->getDatasetFileTransferStatus()) {
-                        $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
-
-                        $this->dispatchLogEvent($dataset, $this->getUser()->getUserId());
-                        return new Response('Dataset UDI ' . $udi . ' has been successfully set to remotely hosted.', Response::HTTP_OK);
-                    } else {
-                        $message = 'Dataset UDI ' . $udi . ' is already set to remotely hosted.';
-                    }
+                    $responseCode = 432;
                 } else {
-                    $message = 'Unable to set dataset UDI ' . $udi . ' to remotely hosted. Dataset status must be ACCEPTED.';
+                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
+                    $this->dispatchLogEvent($dataset, $this->getUser()->getUserId());
+                    $message = 'Dataset UDI ' . $udi . ' has been successfully set to remotely hosted.';
+                    $responseCode = Response::HTTP_OK;
                 }
             } else {
                 $message = 'Dataset is missing submission.';
+                $responseCode = 432;
             }
         } else {
             $message = 'Invalid UDI!';
+            $responseCode = 432;
         }
         // returning the unassigned 432 code for these error cases.
-        return new Response($message, 432);
+        return new Response($message, $responseCode);
     }
 
     /**
