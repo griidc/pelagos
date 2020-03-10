@@ -10,10 +10,13 @@ use App\Util\MaintenanceMode;
 
 use Symfony\Component\HttpKernel\KernelInterface;
 
+use Twig\Extension\AbstractExtension;
+use Twig\Environment;
+
 /**
  * Custom Twig extensions for Pelagos.
  */
-class Extensions extends \Twig_Extension
+class Extensions extends AbstractExtension
 {
     /**
      * The kernel root path.
@@ -37,7 +40,7 @@ class Extensions extends \Twig_Extension
      */
     public function __construct(KernelInterface $kernel, MaintenanceMode $maintenanceMode)
     {
-        $this->kernelRootDir = $kernel->getRootDir();
+        $this->kernelRootDir = $kernel->getProjectDir();
         $this->maintenanceMode = $maintenanceMode;
     }
 
@@ -82,7 +85,7 @@ class Extensions extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            new \Twig_SimpleFilter(
+            new \Twig\TwigFilter(
                 'evaluate',
                 array(self::class, 'evaluate'),
                 array(
@@ -93,19 +96,19 @@ class Extensions extends \Twig_Extension
                     )
                 )
             ),
-            new \Twig_SimpleFilter(
+            new \Twig\TwigFilter(
                 'submittedDIFs',
                 array(self::class, 'submittedDIFs')
             ),
-            new \Twig_SimpleFilter(
+            new \Twig\TwigFilter(
                 'transformXml',
                 array($this, 'transformXml')
             ),
-            new \Twig_SimpleFilter(
+            new \Twig\TwigFilter(
                 'role',
                 array(self::class, 'role')
             ),
-            new \Twig_SimpleFilter(
+            new \Twig\TwigFilter(
                 'formatBytes',
                 array(self::class, 'formatBytes')
             ),
@@ -157,13 +160,13 @@ class Extensions extends \Twig_Extension
     /**
      * Evaluate Twig commands in a string.
      *
-     * @param \Twig_Environment $environment The Twig environment.
-     * @param array             $context     The Twig context.
-     * @param string            $string      The string to evaluate.
+     * @param Environment $environment The Twig environment.
+     * @param array       $context     The Twig context.
+     * @param string      $string      The string to evaluate.
      *
      * @return string The evaluated string.
      */
-    public static function evaluate(\Twig_Environment $environment, array $context, string $string)
+    public static function evaluate(Environment $environment, array $context, string $string)
     {
         $loader = $environment->getLoader();
         $parsed = self::parseString($environment, $context, $string);
@@ -207,15 +210,15 @@ class Extensions extends \Twig_Extension
     /**
      * Parse Twig commands in a string.
      *
-     * @param \Twig_Environment $environment The Twig environment.
-     * @param array             $context     The Twig context.
-     * @param string            $string      The string to parse.
+     * @param Environment $environment The Twig environment.
+     * @param array       $context     The Twig context.
+     * @param string      $string      The string to parse.
      *
      * @return string The parsed string.
      */
-    protected static function parseString(\Twig_Environment $environment, array $context, string $string)
+    protected static function parseString(Environment $environment, array $context, string $string)
     {
-        $environment->setLoader(new \Twig_Loader_Array());
+        $environment->setLoader(new \Twig\Loader\ArrayLoader);
         $template = $environment->createTemplate($string);
         return $template->render($context);
     }
@@ -248,7 +251,7 @@ class Extensions extends \Twig_Extension
 
             // XSL template.
             $xslDoc = new \DOMDocument();
-            $xslDoc->load($this->kernelRootDir . '/../templates/xsl/' . $xsl);
+            $xslDoc->load($this->kernelRootDir . '/templates/xsl/' . $xsl);
 
             // The Processor.
             $proc = new \XSLTProcessor();

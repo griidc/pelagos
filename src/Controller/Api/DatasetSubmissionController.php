@@ -11,7 +11,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use FOS\RestBundle\Controller\Annotations\View;
 
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Nelmio\ApiDocBundle\Annotation\Operation;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
 
 use App\Util\UrlValidation;
 use App\Entity\DatasetSubmission;
@@ -27,22 +29,19 @@ class DatasetSubmissionController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Dataset Submission",
-     *   input = {
-     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCollectionType",
-     *     "name": "",
-     *     "options": {
-     *       "label": "Dataset Submission",
-     *       "data_class": "Pelagos\Entity\DatasetSubmission"
-     *     }
-     *   },
-     *   output = "array<Pelagos\Entity\DatasetSubmission>",
-     *   statusCodes = {
-     *     200 = "The requested collection of Dataset Submissions was successfully retrieved.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Dataset Submission"},
+     *     summary="Get a collection of Dataset Submissions.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="The requested collection of Dataset Submissions was successfully retrieved."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/dataset_submission",
@@ -65,15 +64,23 @@ class DatasetSubmissionController extends EntityController
      *
      * @param integer $id The id of the Dataset Submission to return.
      *
-     * @ApiDoc(
-     *   section = "Dataset Submission",
-     *   output = "Pelagos\Entity\DatasetSubmission",
-     *   statusCodes = {
-     *     200 = "The requested Dataset Submission was successfully retrieved.",
-     *     404 = "The requested Dataset Submission was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Dataset Submission"},
+     *     summary="Get a single Dataset Submission for a given id.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="The requested Dataset Submission was successfully retrieved."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Dataset Submission was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/dataset_submission/{id}",
@@ -96,16 +103,27 @@ class DatasetSubmissionController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Dataset Submission",
-     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType", "name" = ""},
-     *   statusCodes = {
-     *     201 = "The Dataset Submission was successfully created.",
-     *     400 = "The request could not be processed due to validation or other errors.",
-     *     403 = "The authenticated user was not authorized to create the Dataset Submission.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Dataset Submission"},
+     *     summary="Create a new Dataset Submission from the submitted data.",
+     *     @SWG\Response(
+     *         response="201",
+     *         description="The Dataset Submission was successfully created."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="The request could not be processed due to validation or other errors."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to create the Dataset Submission."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/dataset_submission",
@@ -131,17 +149,31 @@ class DatasetSubmissionController extends EntityController
      *
      * @throws BadRequestHttpException When the submission has already been submitted.
      *
-     * @ApiDoc(
-     *   section = "Dataset Submission",
-     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType", "name" = ""},
-     *   statusCodes = {
-     *     204 = "The Dataset Submission was successfully replaced.",
-     *     400 = "The request could not be processed due to validation or other errors.",
-     *     403 = "The authenticated user was not authorized to edit the Dataset Submission.",
-     *     404 = "The requested Dataset Submission was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Dataset Submission"},
+     *     summary="Replace a Dataset Submission with the submitted data.",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="The Dataset Submission was successfully replaced."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="The request could not be processed due to validation or other errors."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to edit the Dataset Submission."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Dataset Submission was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/dataset_submission/{id}",
@@ -176,17 +208,31 @@ class DatasetSubmissionController extends EntityController
      *
      * @throws BadRequestHttpException When the submission has already been submitted.
      *
-     * @ApiDoc(
-     *   section = "Dataset Submission",
-     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType", "name" = ""},
-     *   statusCodes = {
-     *     204 = "The Dataset Submission was successfully updated.",
-     *     400 = "The request could not be processed due to validation or other errors.",
-     *     403 = "The authenticated user was not authorized to edit the Dataset Submission.",
-     *     404 = "The requested Dataset Submission was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Dataset Submission"},
+     *     summary="Update a Dataset Submission with the submitted data.",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="The Dataset Submission was successfully updated."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="The request could not be processed due to validation or other errors."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to edit the Dataset Submission."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Dataset Submission was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/dataset_submission/{id}",
@@ -218,15 +264,27 @@ class DatasetSubmissionController extends EntityController
      *
      * @param integer $id The id of the Dataset Submission to delete.
      *
-     * @ApiDoc(
-     *   section = "Dataset Submission",
-     *   statusCodes = {
-     *     204 = "The Dataset Submission was successfully deleted.",
-     *     403 = "You do not have sufficient privileges to delete this Dataset Submission.",
-     *     404 = "The requested Dataset Submission was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Dataset Submission"},
+     *     summary="Delete a Dataset Submission.",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="The Dataset Submission was successfully deleted."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="You do not have sufficient privileges to delete this Dataset Submission."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Dataset Submission was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/dataset_submission/{id}",

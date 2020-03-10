@@ -7,6 +7,9 @@ var $ = jQuery.noConflict();
 var myGeoViz = new GeoViz();
 
 $(document).ready(function() {
+    // Add tree when the document is done loading.
+    addTree();
+
     if (typeof($.cookie) == "function" && $.cookie("expanded") == 1) {
         expand();
     }

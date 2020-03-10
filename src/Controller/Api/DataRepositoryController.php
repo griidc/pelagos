@@ -11,7 +11,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use FOS\RestBundle\Controller\Annotations\View;
 
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Nelmio\ApiDocBundle\Annotation\Operation;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
 
 use App\Entity\DataRepository;
 use App\Form\DataRepositoryType;
@@ -26,21 +28,19 @@ class DataRepositoryController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Data Repositories",
-     *   input = {
-     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCountType",
-     *     "name": "",
-     *     "options": {
-     *       "label": "Data Repositories",
-     *       "data_class": "Pelagos\Entity\DataRepository"
-     *     }
-     *   },
-     *   statusCodes = {
-     *     200 = "A count of Data Repositories was successfully returned.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Data Repositories"},
+     *     summary="Get a count of Data Repositories.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="A count of Data Repositories was successfully returned."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/data-repositories/count",
@@ -63,17 +63,30 @@ class DataRepositoryController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Data Repositories",
-     *   parameters = {
-     *     {"name"="someProperty", "dataType"="string", "required"="true"}
-     *   },
-     *   statusCodes = {
-     *     200 = "Validation was performed successfully (regardless of validity).",
-     *     400 = "Bad parameters were passed in the query string.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Data Repositories"},
+     *     summary="Validate a value for a property of a Data Repository.",
+     *     @SWG\Parameter(
+     *         name="someProperty",
+     *         in="body",
+     *         description="todo",
+     *         required=false,
+     *         @SWG\Schema(type="string")
+     *     ),
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Validation was performed successfully (regardless of validity)."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Bad parameters were passed in the query string."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/data-repositories/validateProperty",
@@ -97,16 +110,34 @@ class DataRepositoryController extends EntityController
      * @param integer $id      The id of the existing Data Repository.
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Data Repositories",
-     *   parameters = {{"name"="someProperty", "dataType"="string", "required"="true"}},
-     *   statusCodes = {
-     *     200 = "Validation was performed successfully (regardless of validity).",
-     *     400 = "Bad parameters were passed in the query string.",
-     *     404 = "The requested Data Repository was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Data Repositories"},
+     *     summary="Validate a value for a property of an existing Data Repository.",
+     *     @SWG\Parameter(
+     *         name="someProperty",
+     *         in="body",
+     *         description="todo",
+     *         required=false,
+     *         @SWG\Schema(type="string")
+     *     ),
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Validation was performed successfully (regardless of validity)."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Bad parameters were passed in the query string."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Data Repository was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/data-repositories/{id}/validateProperty",
@@ -129,22 +160,19 @@ class DataRepositoryController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Data Repositories",
-     *   input = {
-     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCollectionType",
-     *     "name": "",
-     *     "options": {
-     *       "label": "Data Repositories",
-     *       "data_class": "Pelagos\Entity\DataRepository"
-     *     }
-     *   },
-     *   output = "array<Pelagos\Entity\DataRepository>",
-     *   statusCodes = {
-     *     200 = "The requested collection of Data Repositories was successfully retrieved.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Data Repositories"},
+     *     summary="Get a collection of Data Repositories.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="The requested collection of Data Repositories was successfully retrieved."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/data-repositories",
@@ -167,15 +195,23 @@ class DataRepositoryController extends EntityController
      *
      * @param integer $id The id of the Data Repository to return.
      *
-     * @ApiDoc(
-     *   section = "Data Repositories",
-     *   output = "Pelagos\Entity\DataRepository",
-     *   statusCodes = {
-     *     200 = "The requested Data Repository was successfully retrieved.",
-     *     404 = "The requested Data Repository was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Data Repositories"},
+     *     summary="Get a single Data Repository for a given id.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="The requested Data Repository was successfully retrieved."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Data Repository was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/data-repositories/{id}",
@@ -199,17 +235,31 @@ class DataRepositoryController extends EntityController
      * @param integer $id      The id of the Data Repository to replace.
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Data Repositories",
-     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\DataRepositoryType", "name" = ""},
-     *   statusCodes = {
-     *     204 = "The Data Repository was successfully replaced.",
-     *     400 = "The request could not be processed due to validation or other errors.",
-     *     403 = "The authenticated user was not authorized to edit the Data Repository.",
-     *     404 = "The requested Data Repository was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Data Repositories"},
+     *     summary="Replace a Data Repository with the submitted data.",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="The Data Repository was successfully replaced."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="The request could not be processed due to validation or other errors."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to edit the Data Repository."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Data Repository was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/data-repositories/{id}",
@@ -232,17 +282,31 @@ class DataRepositoryController extends EntityController
      * @param integer $id      The id of the Data Repository to update.
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Data Repositories",
-     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\DataRepositoryType", "name" = ""},
-     *   statusCodes = {
-     *     204 = "The Data Repository was successfully updated.",
-     *     400 = "The request could not be processed due to validation or other errors.",
-     *     403 = "The authenticated user was not authorized to edit the Data Repository.",
-     *     404 = "The requested Data Repository was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Data Repositories"},
+     *     summary="Update a Data Repository with the submitted data.",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="The Data Repository was successfully updated."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="The request could not be processed due to validation or other errors."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to edit the Data Repository."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Data Repository was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/data-repositories/{id}",
