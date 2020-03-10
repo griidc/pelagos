@@ -38,14 +38,26 @@ class SearchPageController extends AbstractController
     /**
      * The default action for Dataset Review.
      *
-     * @param Request $request    The Symfony request object.
-     * @param Search  $searchUtil Search utility class object.
-     *
      * @Route("/search", name="pelagos_app_ui_searchpage_default")
      *
      * @return Response
      */
-    public function defaultAction(Request $request, Search $searchUtil)
+    public function defaultAction()
+    {
+        return $this->render('Search/index.html.twig');
+    }
+
+    /**
+     * The default action for Dataset Review.
+     *
+     * @param Request $request    The Symfony request object.
+     * @param Search  $searchUtil Search utility class object.
+     *
+     * @Route("/search/results", name="pelagos_app_ui_searchpage_results")
+     *
+     * @return Response
+     */
+    public function getSearchResults(Request $request, Search $searchUtil)
     {
         $results = array();
         $count = 0;
@@ -56,31 +68,36 @@ class SearchPageController extends AbstractController
 
         if (!empty($requestParams['query'])) {
             $buildQuery = $searchUtil->buildQuery($requestParams);
-            $results = $searchUtil->findDatasets($buildQuery);
+            $resultsBeforeHydration = $searchUtil->findDatasets($buildQuery);
+            foreach ($resultsBeforeHydration as $result) {
+                array_push($results, $result->getResult()->getHit()['_source']);
+            }
             $count = $searchUtil->getCount($buildQuery);
             $researchGroupsInfo = $searchUtil->getResearchGroupAggregations($buildQuery);
             $fundingOrgInfo = $searchUtil->getFundingOrgAggregations($buildQuery);
             $statusInfo = $searchUtil->getStatusAggregations($buildQuery);
             $elasticScoreFirstResult = null;
             if (!empty($results)) {
-                $elasticScoreFirstResult = $results[0]->getResult()->getHit()['_score'];
+                $elasticScoreFirstResult = $resultsBeforeHydration[0]->getResult()->getHit()['_score'];
             }
             $this->dispatchSearchTermsLogEvent($requestParams, $count, $elasticScoreFirstResult);
         }
-
-        return $this->render(
-            'Search/default.html.twig',
+        return $this->json(
             array(
-                'query' => $requestParams['query'],
-                'field' => $requestParams['field'],
-                'results' => $results,
+                'formValues' => array (
+                    'query' => $requestParams['query'],
+                    'field' => $requestParams['field'],
+                    'page' => $requestParams['page'],
+                    'collectionStartDate' => $requestParams['collectionStartDate'],
+                    'collectionEndDate' => $requestParams['collectionEndDate'],
+                ),
+                'resultData' => $results,
                 'count' => $count,
-                'page' => $requestParams['page'],
-                'researchGroupsInfo' => $researchGroupsInfo,
-                'fundingOrgInfo' => $fundingOrgInfo,
-                'statusInfo' => $statusInfo,
-                'collectionStartDate' => $requestParams['collectionStartDate'],
-                'collectionEndDate' => $requestParams['collectionEndDate'],
+                'facetInfo' => array (
+                    'researchGroupsInfo' => $researchGroupsInfo,
+                    'fundingOrgInfo' => $fundingOrgInfo,
+                    'statusInfo' => $statusInfo,
+                ),
             )
         );
     }
@@ -101,9 +118,9 @@ class SearchPageController extends AbstractController
             'collectionStartDate' => $request->get('collectionStartDate'),
             'collectionEndDate' => $request->get('collectionEndDate'),
             'options' => array(
-                'rgId' => ($request->get('resGrp')) ? str_replace('rg_', '', $request->get('resGrp')) : null,
-                'funOrgId' => ($request->get('fundOrg')) ? str_replace('fo_', '', $request->get('fundOrg')) : null,
-                'status' => $request->get('status') ? str_replace('status_', '', $request->get('status')) : null,
+                'rgId' => $request->get('researchGroup'),
+                'funOrgId' => $request->get('fundingOrg'),
+                'status' => $request->get('status'),
             ),
             'sessionId' => $request->getSession()->getId()
         );

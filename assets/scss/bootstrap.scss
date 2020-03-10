@@ -1,3 +1,9 @@
-div.bootstrap {
-    @import "~bootstrap";
+div.bootstrap, .tooltip {
+    @import '~bootstrap';
+    @import '~bootstrap-vue';
+}
+
+.tooltip {
+    font-family: "Lato", Arial, sans-serif;
+    font-size: 15px;
 }
