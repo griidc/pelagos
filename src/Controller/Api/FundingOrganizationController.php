@@ -10,7 +10,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use FOS\RestBundle\Controller\Annotations\View;
 
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Nelmio\ApiDocBundle\Annotation\Operation;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
 
 use App\Entity\FundingOrganization;
 use App\Form\FundingOrganizationType;
@@ -25,21 +27,19 @@ class FundingOrganizationController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Funding Organizations",
-     *   input = {
-     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCountType",
-     *     "name": "",
-     *     "options": {
-     *       "label": "Funding Organizations",
-     *       "data_class": "Pelagos\Entity\FundingOrganization"
-     *     }
-     *   },
-     *   statusCodes = {
-     *     200 = "A count of Funding Organizations was successfully returned.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Funding Organizations"},
+     *     summary="Get a count of Funding Organizations.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="A count of Funding Organizations was successfully returned."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/funding-organizations/count",
@@ -62,17 +62,30 @@ class FundingOrganizationController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Funding Organizations",
-     *   parameters = {
-     *     {"name"="someProperty", "dataType"="string", "required"="true"}
-     *   },
-     *   statusCodes = {
-     *     200 = "Validation was performed successfully (regardless of validity).",
-     *     400 = "Bad parameters were passed in the query string.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Funding Organizations"},
+     *     summary="Validate a value for a property of a Funding Organization.",
+     *     @SWG\Parameter(
+     *         name="someProperty",
+     *         in="body",
+     *         description="todo",
+     *         required=false,
+     *         @SWG\Schema(type="string")
+     *     ),
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Validation was performed successfully (regardless of validity)."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Bad parameters were passed in the query string."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/funding-organizations/validateProperty",
@@ -96,16 +109,34 @@ class FundingOrganizationController extends EntityController
      * @param integer $id      The id of the existing Funding Organization.
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Funding Organizations",
-     *   parameters = {{"name"="someProperty", "dataType"="string", "required"="true"}},
-     *   statusCodes = {
-     *     200 = "Validation was performed successfully (regardless of validity).",
-     *     400 = "Bad parameters were passed in the query string.",
-     *     404 = "The requested Funding Organization was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Funding Organizations"},
+     *     summary="Validate a value for a property of an existing Funding Organization.",
+     *     @SWG\Parameter(
+     *         name="someProperty",
+     *         in="body",
+     *         description="todo",
+     *         required=false,
+     *         @SWG\Schema(type="string")
+     *     ),
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Validation was performed successfully (regardless of validity)."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Bad parameters were passed in the query string."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Funding Organization was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/funding-organizations/{id}/validateProperty",
@@ -128,22 +159,19 @@ class FundingOrganizationController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Funding Organizations",
-     *   input = {
-     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCollectionType",
-     *     "name": "",
-     *     "options": {
-     *       "label": "Funding Organizations",
-     *       "data_class": "Pelagos\Entity\FundingOrganization"
-     *     }
-     *   },
-     *   output = "array<Pelagos\Entity\FundingOrganization>",
-     *   statusCodes = {
-     *     200 = "The requested collection of Funding Organizations was successfully retrieved.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Funding Organizations"},
+     *     summary="Get a collection of Funding Organizations.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="The requested collection of Funding Organizations was successfully retrieved."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/funding-organizations",
@@ -170,15 +198,23 @@ class FundingOrganizationController extends EntityController
      *
      * @param integer $id The id of the Funding Organization to return.
      *
-     * @ApiDoc(
-     *   section = "Funding Organizations",
-     *   output = "Pelagos\Entity\FundingOrganization",
-     *   statusCodes = {
-     *     200 = "The requested Funding Organization was successfully retrieved.",
-     *     404 = "The requested Funding Organization was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Funding Organizations"},
+     *     summary="Get a single Funding Organization for a given id.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="The requested Funding Organization was successfully retrieved."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Funding Organization was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/funding-organizations/{id}",
@@ -210,16 +246,27 @@ class FundingOrganizationController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Funding Organizations",
-     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\FundingOrganizationType", "name" = ""},
-     *   statusCodes = {
-     *     201 = "The Funding Organization was successfully created.",
-     *     400 = "The request could not be processed due to validation or other errors.",
-     *     403 = "The authenticated user was not authorized to create the Funding Organization.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Funding Organizations"},
+     *     summary="Create a new Funding Organization from the submitted data.",
+     *     @SWG\Response(
+     *         response="201",
+     *         description="The Funding Organization was successfully created."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="The request could not be processed due to validation or other errors."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to create the Funding Organization."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/funding-organizations",
@@ -243,17 +290,31 @@ class FundingOrganizationController extends EntityController
      * @param integer $id      The id of the Funding Organization to replace.
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Funding Organizations",
-     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\FundingOrganizationType", "name" = ""},
-     *   statusCodes = {
-     *     204 = "The Funding Organization was successfully replaced.",
-     *     400 = "The request could not be processed due to validation or other errors.",
-     *     403 = "The authenticated user was not authorized to edit the Funding Organization.",
-     *     404 = "The requested Funding Organization was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Funding Organizations"},
+     *     summary="Replace a Funding Organization with the submitted data.",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="The Funding Organization was successfully replaced."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="The request could not be processed due to validation or other errors."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to edit the Funding Organization."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Funding Organization was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/funding-organizations/{id}",
@@ -276,17 +337,31 @@ class FundingOrganizationController extends EntityController
      * @param integer $id      The id of the Funding Organization to update.
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Funding Organizations",
-     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\FundingOrganizationType", "name" = ""},
-     *   statusCodes = {
-     *     204 = "The Funding Organization was successfully updated.",
-     *     400 = "The request could not be processed due to validation or other errors.",
-     *     403 = "The authenticated user was not authorized to edit the Funding Organization.",
-     *     404 = "The requested Funding Organization was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Funding Organizations"},
+     *     summary="Update a Funding Organization with the submitted data.",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="The Funding Organization was successfully updated."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="The request could not be processed due to validation or other errors."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to edit the Funding Organization."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Funding Organization was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/funding-organizations/{id}",
@@ -308,14 +383,23 @@ class FundingOrganizationController extends EntityController
      *
      * @param integer $id The id of the Funding Organization to delete.
      *
-     * @ApiDoc(
-     *   section = "Funding Organizations",
-     *   statusCodes = {
-     *     204 = "The Funding Organization was successfully deleted.",
-     *     404 = "The requested Funding Organization was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Funding Organizations"},
+     *     summary="Delete a Funding Organization.",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="The Funding Organization was successfully deleted."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Funding Organization was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/funding-organizations/{id}",
@@ -337,13 +421,19 @@ class FundingOrganizationController extends EntityController
      *
      * @param integer $id The id of the Funding Organization to get the logo for.
      *
-     * @ApiDoc(
-     *   section = "Funding Organizations",
-     *   statusCodes = {
-     *     200 = "Returned when successful.",
-     *     404 = "Returned when the Funding Organization is not found or it does not have a logo."
-     *   }
+     * @Operation(
+     *     tags={"Funding Organizations"},
+     *     summary="Get the logo for a Funding Organization.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Returned when successful."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Returned when the Funding Organization is not found or it does not have a logo."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/funding-organizations/{id}/logo",
@@ -365,16 +455,26 @@ class FundingOrganizationController extends EntityController
      * @param integer $id      The id of the Funding Organization to replace the logo for.
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Funding Organizations",
-     *   parameters = {
-     *     {"name"="logo", "dataType"="file", "required"="true"}
-     *   },
-     *   statusCodes = {
-     *     204 = "Returned when the logo is successfully set or replaced.",
-     *     404 = "Returned when the Funding Organization is not found."
-     *   }
+     * @Operation(
+     *     tags={"Funding Organizations"},
+     *     summary="Set or replace the logo of a Funding Organization via multipart/form-data POST.",
+     *     @SWG\Parameter(
+     *         name="logo",
+     *         in="formData",
+     *         description="todo",
+     *         required=false,
+     *         type="file"
+     *     ),
+     *     @SWG\Response(
+     *         response="204",
+     *         description="Returned when the logo is successfully set or replaced."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Returned when the Funding Organization is not found."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/funding-organizations/{id}/logo",
@@ -396,13 +496,19 @@ class FundingOrganizationController extends EntityController
      * @param integer $id      The id of the Funding Organization to replace the logo for.
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Funding Organizations",
-     *   statusCodes = {
-     *     204 = "Returned when the logo is successfully set or replaced.",
-     *     404 = "Returned when the Funding Organization is not found."
-     *   }
+     * @Operation(
+     *     tags={"Funding Organizations"},
+     *     summary="Set or replace the logo of a Funding Organization via HTTP PUT file upload.",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="Returned when the logo is successfully set or replaced."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Returned when the Funding Organization is not found."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/funding-organizations/{id}/logo",

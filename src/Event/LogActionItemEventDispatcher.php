@@ -2,7 +2,7 @@
 
 namespace App\Event;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * A generic dispatcher.
@@ -37,13 +37,13 @@ class LogActionItemEventDispatcher
     public function dispatch(array $data, string $eventName)
     {
         $this->eventDispatcher->dispatch(
-            'pelagos.logactionitem.' . $eventName,
             new LogActionItemEvent(
                 $data['actionName'],
                 $data['subjectEntityName'],
                 $data['subjectEntityId'],
                 $data['payLoad']
-            )
+            ),
+            'pelagos.logactionitem.' . $eventName
         );
     }
 }

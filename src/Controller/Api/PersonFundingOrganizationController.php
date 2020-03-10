@@ -10,7 +10,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use FOS\RestBundle\Controller\Annotations\View;
 
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Nelmio\ApiDocBundle\Annotation\Operation;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
 
 use App\Entity\PersonFundingOrganization;
 use App\Form\PersonFundingOrganizationType;
@@ -25,21 +27,19 @@ class PersonFundingOrganizationController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Person to Funding Organization Associations",
-     *   input = {
-     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCountType",
-     *     "name": "",
-     *     "options": {
-     *       "label": "Person to Funding Organization Associations",
-     *       "data_class": "Pelagos\Entity\PersonFundingOrganization"
-     *     }
-     *   },
-     *   statusCodes = {
-     *     200 = "A count of Person to Funding Organization Associations was successfully returned.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Person to Funding Organization Associations"},
+     *     summary="Get a count of Person to Funding Organization Associations.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="A count of Person to Funding Organization Associations was successfully returned."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/person-funding-organizations/count",
@@ -62,15 +62,30 @@ class PersonFundingOrganizationController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Person to Funding Organization Associations",
-     *   parameters = {{"name"="someProperty", "dataType"="string", "required"="true"}},
-     *   statusCodes = {
-     *     200 = "Validation was performed successfully (regardless of validity).",
-     *     400 = "Bad parameters were passed in the query string.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Person to Funding Organization Associations"},
+     *     summary="Validate a value for a property of a Person to Funding Organization Association.",
+     *     @SWG\Parameter(
+     *         name="someProperty",
+     *         in="body",
+     *         description="todo",
+     *         required=false,
+     *         @SWG\Schema(type="string")
+     *     ),
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Validation was performed successfully (regardless of validity)."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Bad parameters were passed in the query string."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/person-funding-organizations/validateProperty",
@@ -94,16 +109,34 @@ class PersonFundingOrganizationController extends EntityController
      * @param integer $id      The id of the existing Person to Funding Organization Association.
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Person to Funding Organization Associations",
-     *   parameters = {{"name"="someProperty", "dataType"="string", "required"="true"}},
-     *   statusCodes = {
-     *     200 = "Validation was performed successfully (regardless of validity).",
-     *     400 = "Bad parameters were passed in the query string.",
-     *     404 = "The requested Person to Funding Organization Association was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Person to Funding Organization Associations"},
+     *     summary="Validate a value for a property of an existing Person to Funding Organization Association.",
+     *     @SWG\Parameter(
+     *         name="someProperty",
+     *         in="body",
+     *         description="todo",
+     *         required=false,
+     *         @SWG\Schema(type="string")
+     *     ),
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Validation was performed successfully (regardless of validity)."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Bad parameters were passed in the query string."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Person to Funding Organization Association was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/person-funding-organizations/{id}/validateProperty",
@@ -126,22 +159,19 @@ class PersonFundingOrganizationController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Person to Funding Organization Associations",
-     *   input = {
-     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCollectionType",
-     *     "name": "",
-     *     "options": {
-     *       "label": "Person to Funding Organization Associations",
-     *       "data_class": "Pelagos\Entity\PersonFundingOrganization"
-     *     }
-     *   },
-     *   output = "array<Pelagos\Entity\PersonFundingOrganization>",
-     *   statusCodes = {
-     *     200 = "The requested collection of Person to Funding Organization Associations was successfully retrieved.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Person to Funding Organization Associations"},
+     *     summary="Get a collection of Person to Funding Organization Associations.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="The requested collection of Person to Funding Organization Associations was successfully retrieved."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/person-funding-organizations",
@@ -164,15 +194,23 @@ class PersonFundingOrganizationController extends EntityController
      *
      * @param integer $id The id of the Person to Funding Organization Association to return.
      *
-     * @ApiDoc(
-     *   section = "Person to Funding Organization Associations",
-     *   output = "Pelagos\Entity\PersonFundingOrganization",
-     *   statusCodes = {
-     *     200 = "The requested Person to Funding Organization Association was successfully retrieved.",
-     *     404 = "The requested Person to Funding Organization Association was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Person to Funding Organization Associations"},
+     *     summary="Get a single Person to Funding Organization Association for a given id.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="The requested Person to Funding Organization Association was successfully retrieved."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Person to Funding Organization Association was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/person-funding-organizations/{id}",
@@ -195,16 +233,27 @@ class PersonFundingOrganizationController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Person to Funding Organization Associations",
-     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\PersonFundingOrganizationType", "name" = ""},
-     *   statusCodes = {
-     *     201 = "The Person to Funding Organization Association was successfully created.",
-     *     400 = "The request could not be processed due to validation or other errors.",
-     *     403 = "The authenticated user was not authorized to create the Person to Funding Organization Association.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Person to Funding Organization Associations"},
+     *     summary="Create a new Person to Funding Organization Association from the submitted data.",
+     *     @SWG\Response(
+     *         response="201",
+     *         description="The Person to Funding Organization Association was successfully created."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="The request could not be processed due to validation or other errors."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to create the Person to Funding Organization Association."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/person-funding-organizations",
@@ -228,17 +277,31 @@ class PersonFundingOrganizationController extends EntityController
      * @param integer $id      The id of the Person to Funding Organization Association to replace.
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Person to Funding Organization Associations",
-     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\PersonFundingOrganizationType", "name" = ""},
-     *   statusCodes = {
-     *     204 = "The Person to Funding Organization Association was successfully replaced.",
-     *     400 = "The request could not be processed due to validation or other errors.",
-     *     403 = "The authenticated user was not authorized to edit the Person to Funding Organization Association.",
-     *     404 = "The requested Person to Funding Organization Association was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Person to Funding Organization Associations"},
+     *     summary="Replace a Person to Funding Organization Association with the submitted data.",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="The Person to Funding Organization Association was successfully replaced."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="The request could not be processed due to validation or other errors."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to edit the Person to Funding Organization Association."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Person to Funding Organization Association was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/person-funding-organizations/{id}",
@@ -261,17 +324,31 @@ class PersonFundingOrganizationController extends EntityController
      * @param integer $id      The id of the Person to Funding Organization Association to update.
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Person to Funding Organization Associations",
-     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\PersonFundingOrganizationType", "name" = ""},
-     *   statusCodes = {
-     *     204 = "The Person to Funding Organization Association was successfully updated.",
-     *     400 = "The request could not be processed due to validation or other errors.",
-     *     403 = "The authenticated user was not authorized to edit the Person to Funding Organization Association.",
-     *     404 = "The requested Person to Funding Organization Association was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Person to Funding Organization Associations"},
+     *     summary="Update a Person to Funding Organization Association with the submitted data.",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="The Person to Funding Organization Association was successfully updated."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="The request could not be processed due to validation or other errors."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to edit the Person to Funding Organization Association."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Person to Funding Organization Association was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/person-funding-organizations/{id}",
@@ -293,15 +370,27 @@ class PersonFundingOrganizationController extends EntityController
      *
      * @param integer $id The id of the Person to Funding Organization Association to delete.
      *
-     * @ApiDoc(
-     *   section = "Person to Funding Organization Associations",
-     *   statusCodes = {
-     *     204 = "The Person to Funding Organization Association was successfully deleted.",
-     *     403 = "The authenticated user was not authorized to delete the Person to Funding Organization Association.",
-     *     404 = "The requested Person to Funding Organization Association was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Person to Funding Organization Associations"},
+     *     summary="Delete a Person to Funding Organization Association.",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="The Person to Funding Organization Association was successfully deleted."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to delete the Person to Funding Organization Association."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Person to Funding Organization Association was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/person-funding-organizations/{id}",

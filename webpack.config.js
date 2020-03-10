@@ -30,19 +30,22 @@ Encore
      * Each entry will result in one JavaScript file (e.g. app.js)
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
-    .createSharedEntry('app', './assets/js/app.js')
+    .addEntry('app', './assets/js/app.js')
     .addEntry('layout', './assets/js/layout.js')
     .addEntry('downloadBox', './assets/js/downloadBox.js')
     .addEntry('search-app', './assets/js/search.js')
 
     // enables Sass/SCSS support
     .enableSassLoader()
+    .enablePostCssLoader()
+
     // will require an extra script tag for runtime.js
     // but, you probably want this, unless you're building a single-page app
-    //.enableSingleRuntimeChunk()
+    .enableSingleRuntimeChunk()
 
-    // No runtime.js needed.
-    .disableSingleRuntimeChunk()
+    // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
+    .splitEntryChunks()
+
 
     /*
      * FEATURE CONFIG
@@ -56,6 +59,12 @@ Encore
     .enableSourceMaps(!Encore.isProduction())
     // enables hashed filenames (e.g. app.abc123.css)
     .enableVersioning(Encore.isProduction())
+
+    // enables @babel/preset-env polyfills
+    .configureBabelPresetEnv((config) => {
+        config.useBuiltIns = 'usage';
+        config.corejs = 3;
+    })
 
     // uncomment if you're having problems with a jQuery plugin
     .autoProvidejQuery()

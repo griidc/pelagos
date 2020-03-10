@@ -9,7 +9,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use FOS\RestBundle\Controller\Annotations\View;
 
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Nelmio\ApiDocBundle\Annotation\Operation;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
 
 use App\Entity\FundingCycle;
 use App\Form\FundingCycleType;
@@ -24,21 +26,19 @@ class FundingCycleController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Funding Cycles",
-     *   input = {
-     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCountType",
-     *     "name": "",
-     *     "options": {
-     *       "label": "Funding Cycles",
-     *       "data_class": "Pelagos\Entity\FundingCycle"
-     *     }
-     *   },
-     *   statusCodes = {
-     *     200 = "A count of Funding Cycles was successfully returned.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Funding Cycles"},
+     *     summary="Get a count of Funding Cycles.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="A count of Funding Cycles was successfully returned."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route("/api/funding-cycles/count", name="pelagos_api_funding_cycles_count", methods={"GET"}, defaults={"_format"="json"})
      *
@@ -56,15 +56,30 @@ class FundingCycleController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Funding Cycles",
-     *   parameters = {{"name"="someProperty", "dataType"="string", "required"="true"}},
-     *   statusCodes = {
-     *     200 = "Validation was performed successfully (regardless of validity).",
-     *     400 = "Bad parameters were passed in the query string.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Funding Cycles"},
+     *     summary="Validate a value for a property of a Funding Cycle.",
+     *     @SWG\Parameter(
+     *         name="someProperty",
+     *         in="body",
+     *         description="todo",
+     *         required=false,
+     *         @SWG\Schema(type="string")
+     *     ),
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Validation was performed successfully (regardless of validity)."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Bad parameters were passed in the query string."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/funding-cycles/validateProperty",
@@ -88,16 +103,34 @@ class FundingCycleController extends EntityController
      * @param integer $id      The id of the existing Funding Cycle.
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Funding Cycles",
-     *   parameters = {{"name"="someProperty", "dataType"="string", "required"="true"}},
-     *   statusCodes = {
-     *     200 = "Validation was performed successfully (regardless of validity).",
-     *     400 = "Bad parameters were passed in the query string.",
-     *     404 = "The requested Funding Cycle was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Funding Cycles"},
+     *     summary="Validate a value for a property of an existing Funding Cycle.",
+     *     @SWG\Parameter(
+     *         name="someProperty",
+     *         in="body",
+     *         description="todo",
+     *         required=false,
+     *         @SWG\Schema(type="string")
+     *     ),
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Validation was performed successfully (regardless of validity)."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Bad parameters were passed in the query string."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Funding Cycle was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/funding-cycles/{id}/validateProperty",
@@ -120,22 +153,19 @@ class FundingCycleController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Funding Cycles",
-     *   input = {
-     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCollectionType",
-     *     "name": "",
-     *     "options": {
-     *       "label": "Funding Cycles",
-     *       "data_class": "Pelagos\Entity\FundingCycle"
-     *     }
-     *   },
-     *   output = "array<Pelagos\Entity\FundingCycle>",
-     *   statusCodes = {
-     *     200 = "The requested collection of Funding Cycles was successfully retrieved.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Funding Cycles"},
+     *     summary="Get a collection of Funding Cycles.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="The requested collection of Funding Cycles was successfully retrieved."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/funding-cycles",
@@ -158,15 +188,23 @@ class FundingCycleController extends EntityController
      *
      * @param integer $id The id of the Funding Cycle to return.
      *
-     * @ApiDoc(
-     *   section = "Funding Cycles",
-     *   output = "Pelagos\Entity\FundingCycle",
-     *   statusCodes = {
-     *     200 = "The requested Funding Cycle was successfully retrieved.",
-     *     404 = "The requested Funding Cycle was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Funding Cycles"},
+     *     summary="Get a single Funding Cycle for a given id.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="The requested Funding Cycle was successfully retrieved."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Funding Cycle was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @View(serializerEnableMaxDepthChecks = true)
      *
@@ -189,16 +227,27 @@ class FundingCycleController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Funding Cycles",
-     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\FundingCycleType", "name" = ""},
-     *   statusCodes = {
-     *     201 = "The Funding Cycle was successfully created.",
-     *     400 = "The request could not be processed due to validation or other errors.",
-     *     403 = "The authenticated user was not authorized to create the Funding Cycle.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Funding Cycles"},
+     *     summary="Create a new Funding Cycle from the submitted data.",
+     *     @SWG\Response(
+     *         response="201",
+     *         description="The Funding Cycle was successfully created."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="The request could not be processed due to validation or other errors."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to create the Funding Cycle."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/funding-cycles",
@@ -222,17 +271,31 @@ class FundingCycleController extends EntityController
      * @param integer $id      The id of the Funding Cycle to replace.
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Funding Cycles",
-     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\FundingCycleType", "name" = ""},
-     *   statusCodes = {
-     *     204 = "The Funding Cycle was successfully replaced.",
-     *     400 = "The request could not be processed due to validation or other errors.",
-     *     403 = "The authenticated user was not authorized to edit the Funding Cycle.",
-     *     404 = "The requested Funding Cycle was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Funding Cycles"},
+     *     summary="Replace a Funding Cycle with the submitted data.",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="The Funding Cycle was successfully replaced."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="The request could not be processed due to validation or other errors."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to edit the Funding Cycle."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Funding Cycle was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/funding-cycles/{id}",
@@ -255,17 +318,31 @@ class FundingCycleController extends EntityController
      * @param integer $id      The id of the Funding Cycle to update.
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "Funding Cycles",
-     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\FundingCycleType", "name" = ""},
-     *   statusCodes = {
-     *     204 = "The Funding Cycle was successfully updated.",
-     *     400 = "The request could not be processed due to validation or other errors.",
-     *     403 = "The authenticated user was not authorized to edit the Funding Cycle.",
-     *     404 = "The requested Funding Cycle was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Funding Cycles"},
+     *     summary="Update a Funding Cycle with the submitted data.",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="The Funding Cycle was successfully updated."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="The request could not be processed due to validation or other errors."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to edit the Funding Cycle."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Funding Cycle was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/funding-cycles/{id}",
@@ -287,15 +364,27 @@ class FundingCycleController extends EntityController
      *
      * @param integer $id The id of the Funding Cycle to delete.
      *
-     * @ApiDoc(
-     *   section = "Funding Cycles",
-     *   statusCodes = {
-     *     204 = "The Funding Cycle was successfully deleted.",
-     *     403 = "The authenticated user was not authorized to delete the Funding Cycle.",
-     *     404 = "The requested Funding Cycle was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"Funding Cycles"},
+     *     summary="Delete a Funding Cycle.",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="The Funding Cycle was successfully deleted."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to delete the Funding Cycle."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Funding Cycle was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/funding-cycles/{id}",
