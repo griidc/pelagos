@@ -138,40 +138,7 @@ class Search
 
         $mainQuery = new Query();
 
-        // Bool query to combine field query and filter query
-        $subMainQuery = new Query\BoolQuery();
-
-        // Bool query to get range temporal extent dates
-        $collectionDateBoolQuery = new Query\BoolQuery();
-
-        // Check if exclude term exists in the given query term
-        $mustNotQueryTerm = '';
-        $splitUpQueryTerms = $this->splitQueryTerms($queryTerm);
-        if (!empty($splitUpQueryTerms)) {
-            $queryTerm = $splitUpQueryTerms['mustMatch'];
-            $mustNotQueryTerms = $splitUpQueryTerms['mustNotMatch'];
-        }
-
-        // If exclude term exists add the must not query
-        if (!empty($mustNotQueryTerms)) {
-            foreach ($mustNotQueryTerms as $mustNotQueryTerm) {
-                $mustNotBoolQuery = $this->getMustNotIncludeTermsQuery($mustNotQueryTerm);
-                $subMainQuery->addMustNot($mustNotBoolQuery);
-            }
-        }
-
-        // Search exact phrase if query string has double quotes
-        if (preg_match('/"/', $queryTerm)) {
-            $subMainQuery->addMust($this->getExactMatchQuery($queryTerm));
-        } else {
-            $subMainQuery->addMust($this->getFieldsQuery($queryTerm, $specificField, $collectionDateRange));
-        }
-
-        if (!empty($collectionDateRange)) {
-            $collectionDateBoolQuery->addMust($this->getCollectionStartDateQuery($collectionDateRange));
-            $collectionDateBoolQuery->addMust($this->getCollectionEndDateQuery($collectionDateRange));
-            $subMainQuery->addFilter($collectionDateBoolQuery);
-        }
+        $subMainQuery = $this->getSubMainQuery($queryTerm, $specificField, $collectionDateRange);
 
         // Add facet filters
         if (!empty($requestTerms['options']['funOrgId'])
@@ -186,7 +153,6 @@ class Search
 
         // Add dataset availability status agg to mainQuery
         $mainQuery->addAggregation($this->getStatusAggregationQuery($requestTerms));
-
         $mainQuery->setQuery($subMainQuery);
         $mainQuery->setFrom(($page - 1) * 10);
         
@@ -753,5 +719,58 @@ class Search
         $mustNotMultiMatch->setQuery($mustNotQueryTerm);
 
         return $mustNotMultiMatch;
+    }
+
+    /**
+     * Get sub main query.
+     *
+     * @param string|null $queryTerm           Query term that needs to be searched upon.
+     * @param string|null $specificField       Specific field option to filter the results.
+     * @param array|null  $collectionDateRange Date range option to filter the results.
+     *
+     * @return Query\BoolQuery
+     */
+    private function getSubMainQuery(string $queryTerm = null, string $specificField = null, array $collectionDateRange = null): Query\BoolQuery
+    {
+        // Bool query to combine field query and filter query
+        $subMainQuery = new Query\BoolQuery();
+
+        // Bool query to get range temporal extent dates
+        $collectionDateBoolQuery = new Query\BoolQuery();
+
+        if ($queryTerm) {
+            // Check if exclude term exists in the given query term
+            $mustNotQueryTerms = '';
+            $splitUpQueryTerms = $this->splitQueryTerms($queryTerm);
+            if (!empty($splitUpQueryTerms)) {
+                $queryTerm = $splitUpQueryTerms['mustMatch'];
+                $mustNotQueryTerms = $splitUpQueryTerms['mustNotMatch'];
+            }
+
+            // If exclude term exists add the must not query
+            if (!empty($mustNotQueryTerms)) {
+                foreach ($mustNotQueryTerms as $mustNotQueryTerm) {
+                    $mustNotBoolQuery = $this->getMustNotIncludeTermsQuery($mustNotQueryTerm);
+                    $subMainQuery->addMustNot($mustNotBoolQuery);
+                }
+            }
+
+            // Search exact phrase if query string has double quotes
+            if (preg_match('/"/', $queryTerm)) {
+                $subMainQuery->addMust($this->getExactMatchQuery($queryTerm));
+            } else {
+                $subMainQuery->addMust($this->getFieldsQuery($queryTerm, $specificField, $collectionDateRange));
+            }
+        } else {
+            $subMainQuery->addMust(new Query\MatchAll());
+        }
+
+        if (!empty($collectionDateRange)) {
+            $collectionDateBoolQuery->addMust($this->getCollectionStartDateQuery($collectionDateRange));
+            $collectionDateBoolQuery->addMust($this->getCollectionEndDateQuery($collectionDateRange));
+            $subMainQuery->addFilter($collectionDateBoolQuery);
+        }
+
+        return $subMainQuery;
     }
 }

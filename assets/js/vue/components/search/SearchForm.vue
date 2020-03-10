@@ -11,7 +11,6 @@
                                               class="form-control"
                                               placeholder="Search.."
                                               id="searchBox"
-                                              required
                                               v-model="form.query">
                                 </b-form-input>
                                 <input type="hidden" id="pageNo" name="page" v-model="form.page">
