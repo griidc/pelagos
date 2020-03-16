@@ -762,7 +762,9 @@ class Search
                 $subMainQuery->addMust($this->getFieldsQuery($queryTerm, $specificField, $collectionDateRange));
             }
         } else {
-            $subMainQuery->addMust(new Query\MatchAll());
+            $allDatasetsQuery = new Query\Term();
+            $allDatasetsQuery->setTerm('identifiedStatus', 2);
+            $subMainQuery->addMust($allDatasetsQuery);
         }
 
         if (!empty($collectionDateRange)) {
