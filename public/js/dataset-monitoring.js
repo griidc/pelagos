@@ -1,6 +1,8 @@
 var $ = jQuery.noConflict();
 
 $(document).ready(function() {
+    addTree();
+
     $("#menu .overview").width($("#menu .viewport").width() - 15);
 
     // Due to a bug in hashChange (old version, no newer compatible with current jQuery),
@@ -151,4 +153,25 @@ function updateHash(fund_src,project_id) {
     } else {
         location.href = "#" + fund_src;
     }
+}
+
+function addTree() {
+    insertTree({
+        theme: "pelagos",
+        max_depth: 2,
+        expand_to_depth: 0,
+        animation: 250,
+        type: "ra",
+
+        rfp_color: "#00A",
+        rfp_action: "updateHash(\{\{fundSrc.id\}\});showProjects('fundSrc',\{\{fundSrc.id\}\});",
+
+        project_color: "#00A",
+        project_action: "updateHash(\{\{project.fundingCycle.id\}\},\{\{project.id\}\});showProjects('projectId',\{\{project.id\}\});",
+
+        researcher_color: "#00A",
+        researcher_action: "location.href='#';showProjects('peopleId',\{\{person.id\}\});",
+
+        afteropen: "$(window).trigger('hashchange');"
+    });
 }

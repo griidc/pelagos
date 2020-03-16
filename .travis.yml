@@ -47,7 +47,7 @@ install:
 script:
   - ./vendor/bin/simple-phpunit
   - ./vendor/bin/phpcs --version
-  - ./vendor/bin/phpcs --colors --standard=coding-standards/GRIIDC --extensions=php --ignore=./src/Migrations/* -s -n ./src
+  - ./vendor/bin/phpcs
 
 notifications:
   email: false
