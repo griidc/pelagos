@@ -147,7 +147,7 @@ class PublicationController extends EntityController
             // Case 1 - Data was previously cached.  Return cached copy instead, but lie a little about creation.
             if (count($publications) == 1) {
                 $publication = $publications[0];
-                $citationAge = $publication->getModificationTimeStamp();
+                // If ever needed, citation age is $publication->getModificationTimeStamp();
 
                 return $this->makeCreatedResponse('pelagos_api_publications_get', $publication->getId());
             // Does not exist in cache.  Pull from external DOI resolver, cache and return citation.
