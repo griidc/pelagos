@@ -1,0 +1,17 @@
+{% extends "base.html.twig" %}
+{% block title %}Search{% endblock %}
+
+{%block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('search-app') }}
+
+{%endblock stylesheets  %}
+
+{% block body %}
+    <div id="search-app"></div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('search-app') }}
+{% endblock %}
