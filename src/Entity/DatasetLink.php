@@ -222,9 +222,9 @@ class DatasetLink extends Entity
     }
 
     /**
-     * Get the choice list for restrictions.
+     * The Dataset Submission for this Link..
      *
-     * @return string|null
+     * @return DatasetSubmission|null
      */
     public function getDatasetSubmission(): ?DatasetSubmission
     {
