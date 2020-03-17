@@ -3,13 +3,13 @@
 
 {%block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('build/search.css') }}">
+    {{ encore_entry_link_tags('search') }}
 {%endblock stylesheets  %}
 
 {% block javascripts %}
     {{ parent() }}
 
-    <script type="text/javascript" src="{{ asset('build/search.js') }}"></script>
+    {{ encore_entry_script_tags('search') }}
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootpag/1.0.7/jquery.bootpag.min.js"></script>
     <script type="text/javascript" src="{{ asset('js/search.js') }}"></script>
 {% endblock %}
