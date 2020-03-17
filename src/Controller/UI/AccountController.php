@@ -12,6 +12,7 @@ use App\Entity\Entity;
 use App\Entity\Password;
 use App\Entity\Person;
 use App\Entity\PersonToken;
+use App\Exception\PasswordException;
 use App\Event\EntityEventDispatcher;
 use App\Handler\EntityHandler;
 use App\Util\Factory\UserIdFactory;
