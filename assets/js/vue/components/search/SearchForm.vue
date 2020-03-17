@@ -153,14 +153,19 @@
                 this.form.page = newPageNo;
                 this.onSubmit();
             },
+            detectHashChange: function () {
+                this.route = window.location.hash;
+                const urlHashSplit = this.route.split("#")[1].split("&").map(value => value.split("="));
+                this.form = Object.fromEntries(urlHashSplit);
+                this.onSubmit();
+            }
         },
         mounted() {
             if (this.route) {
-               const someVaribale = this.route.split("#")[1].split("&").map(value => value.split("="));
-               this.form = Object.fromEntries(someVaribale);
-               this.onSubmit();
+               this.detectHashChange();
             }
-        }
+            window.addEventListener('hashchange', this.detectHashChange);
+        },
     }
 
     function initialFormValues() {
