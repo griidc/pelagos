@@ -36,5 +36,6 @@
         "query-string": "^6.8.1",
         "vex-js": "^4.1.0",
         "vue-loading-overlay": "^3.3.0"
-    }
+    },
+    "version": "0.0.0"
 }
