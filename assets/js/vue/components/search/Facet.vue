@@ -68,6 +68,9 @@
                         splitFacets.forEach((value) => {
                             this.listOfCheckedFacets.push(value);
                         });
+                    } else {
+                        this.listOfCheckedFacets = [];
+
                     }
                 }
             }
