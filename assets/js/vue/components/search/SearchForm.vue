@@ -56,7 +56,7 @@
                 </div>
             </div>
         </section>
-        <ResultSet v-if="showResults" :results="resultSet" @facetClicked="facetCheckBoxValues" @pagination="changePageNo"/>
+        <ResultSet v-if="showResults" :results="resultSet" @facetClicked="facetCheckBoxValues" @pagination="changePageNo" :formValues="form"/>
         <section class="section-content pt-3 bg" v-else>
             <div class="container">
                 <article class="card card-product">
@@ -155,9 +155,11 @@
             },
             detectHashChange: function () {
                 this.route = window.location.hash;
-                const urlHashSplit = this.route.split("#")[1].split("&").map(value => value.split("="));
-                this.form = Object.fromEntries(urlHashSplit);
-                this.onSubmit();
+                if (this.route) {
+                    const urlHashSplit = this.route.split("#")[1].split("&").map(value => value.split("="));
+                    this.form = Object.fromEntries(urlHashSplit);
+                    this.onSubmit();
+                }
             }
         },
         mounted() {
@@ -175,6 +177,9 @@
                 field: '',
                 collectionStartDate: '',
                 collectionEndDate: '',
+                status: '',
+                fundingOrg: '',
+                researchGroup: ''
         }
     }
 </script>

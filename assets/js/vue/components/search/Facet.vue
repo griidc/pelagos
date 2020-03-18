@@ -45,6 +45,9 @@
             },
             facetName: {
                 type: String
+            },
+            formValues: {
+                type: Object
             }
         },
         data: function() {
@@ -56,6 +59,17 @@
         methods: {
             facetChange: function () {
                 this.$emit('facetClicked', this.facetName + '=' + this.listOfCheckedFacets.join(","));
+            },
+            facetCheckBox: function () {
+                if (this.facetName in this.formValues) {
+                    if (this.formValues[this.facetName]) {
+                        let splitFacets = this.formValues[this.facetName].split(",");
+                        this.listOfCheckedFacets = [];
+                        splitFacets.forEach((value) => {
+                            this.listOfCheckedFacets.push(value);
+                        });
+                    }
+                }
             }
         },
         computed: {
@@ -72,6 +86,14 @@
                     return this.facetInfo;
                 }
             }
+        },
+        created() {
+            this.facetCheckBox();
+        },
+        watch: {
+            formValues: function () {
+                this.facetCheckBox();
+            },
         }
     }
 </script>
