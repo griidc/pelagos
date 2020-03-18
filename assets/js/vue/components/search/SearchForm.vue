@@ -21,36 +21,32 @@
                                 <button type="reset" id="search-clear" class="btn btn-dark mx-2 w-25">Clear</button>
                             </div>
                         </div>
-                        <div class="pt-3 mt-3 d-flex flex-row justify-content-around">
-                            <div class="pl-5 pt-1">
-                            <span>
+                        <div class="pt-3 mt-3 form-inline">
+                            <span class="input-group pl-5 pt-1" v-b-tooltip.hover.bottom title="Search only in selected field" po>
+                                <label class="pl-2 pr-2" for="field" >Search in Field</label>
                                 <b-form-select name="field" id="field" v-model="form.field" :options="fields">
                                 </b-form-select>
                             </span>
-                            </div>
-                            <div class="form-inline">
-                            <span class="input-group">
+                            <span class="input-group pl-5 pt-1">
                                 <label for="collectionStartDate" class="pl-2 pr-2">From</label>
                                 <b-form-datepicker type="text"
-                                       class="pr-2 form-control"
-                                       id="collectionStartDate"
-                                       name="collectionStartDate"
-                                       placeholder="yyyy-mm-dd"
-                                       v-model="form.collectionStartDate">
+                                                   class="pr-2 form-control"
+                                                   id="collectionStartDate"
+                                                   name="collectionStartDate"
+                                                   placeholder="yyyy-mm-dd"
+                                                   v-model="form.collectionStartDate">
                                 </b-form-datepicker>
                             </span>
-                                <span class="input-group">
+                            <span class="input-group">
                                 <label for="collectionEndDate" class="pr-2 pl-3">To</label>
-                                <b-form-datepicker
-                                        type="text"
-                                        id="collectionEndDate"
-                                        class="form-control date-input"
-                                        name="collectionEndDate"
-                                        placeholder="yyyy-mm-dd"
-                                        v-model="form.collectionEndDate">
+                                <b-form-datepicker type="text"
+                                                   id="collectionEndDate"
+                                                   class="form-control date-input"
+                                                   name="collectionEndDate"
+                                                   placeholder="yyyy-mm-dd"
+                                                   v-model="form.collectionEndDate">
                                 </b-form-datepicker>
                             </span>
-                            </div>
                         </div>
                     </b-form>
                 </div>
