@@ -42,6 +42,7 @@ class PublicationController extends EntityController
      *   response="500",
      *   description="An internal error has occurred."
      * )
+     *)
      *
      * @Route(
      *     "/api/publications/count",
@@ -75,13 +76,14 @@ class PublicationController extends EntityController
      *   response="500",
      *   description="An internal error has occurred."
      * )
+     * )
      *
      * @Route(
      *     "/api/publications",
      *     name="pelagos_api_publications_get_collection",
      *     methods={"GET"},
      *     defaults={"_format"="json"}
-     *     )
+     * )
      *
      * @View(serializerEnableMaxDepthChecks = true)
      *
@@ -109,10 +111,10 @@ class PublicationController extends EntityController
          response="404",
          description="The requested Dataset was not found."
      * ),
-     *
      * @SWG\Response(
      *   response="500",
      *   description="An internal error has occurred."
+     * )
      * )
      *
      * @throws BadRequestHttpException If DOI in request is missing or not 10.something format.
@@ -127,7 +129,7 @@ class PublicationController extends EntityController
      *     name="pelagos_api_publications_post",
      *     methods={"POST"},
      *     defaults={"_format"="json"}
-     *     )
+     * )
      *
      * @return Publication
      */
@@ -220,6 +222,7 @@ class PublicationController extends EntityController
      *   response="500",
      *   description="An internal error has occurred."
      * )
+     * )
      *
      * @throws \Exception            Upon internal unexpected result.
      * @throws NotFoundHttpException If cached citation could not be retrieved.
@@ -230,8 +233,8 @@ class PublicationController extends EntityController
      *     name="pelagos_api_publications_get_cached_citation",
      *     methods={"GET"},
      *     defaults={"_format"="json"}
-     *     )
-     *
+     * )
+
      * @return Publication|null
      */
     public function getCachedCitationAction(Request $request)
