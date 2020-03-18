@@ -5,7 +5,7 @@
                 <div class="card card-header">
                     <b-form id="searchForm" name="searchForm" method="get" @submit.prevent="onSubmit" @reset.prevent="onReset">
                         <div class="row">
-                            <div class="col-sm-9">
+                            <div class="col-xl-9">
                                 <b-form-input type="search"
                                               name="query"
                                               class="form-control"
@@ -15,7 +15,7 @@
                                 </b-form-input>
                                 <input type="hidden" id="pageNo" name="page" v-model="form.page">
                             </div>
-                            <div class="col-sm-3 btn-toolbar">
+                            <div class="col-xl-3 btn-toolbar">
                                 <button id="searchSubmit" type="submit" class="btn btn-primary mx-2 w-50">Search
                                     <i class="fa fa-search pl-2"></i></button>
                                 <button type="reset" id="search-clear" class="btn btn-dark mx-2 w-25">Clear</button>
