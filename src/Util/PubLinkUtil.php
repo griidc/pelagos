@@ -2,7 +2,7 @@
 
 namespace App\Util;
 
-use App\Entity\PublicationCitation;
+use App\Entity\Publication;
 
 use App\Handler\EntityHandler;
 
@@ -30,7 +30,7 @@ class PubLinkUtil
      *
      * @return array
      */
-    public function fetchCitation(string $doi, $style = PublicationCitation::CITATION_STYLE_APA, $locale = 'en-US')
+    public function fetchCitation(string $doi, $style = Publication::CITATION_STYLE_APA, $locale = Publication::CITATION_LOCALE)
     {
         try {
             // Try using doi.dx first
@@ -39,14 +39,12 @@ class PubLinkUtil
             // Try using CrossRef direct.
             $curlCitation = $this->curlCitation($doi, $style, $locale, true);
         }
-        
+
         $curlResponse = $curlCitation['curlResponse'];
         $status = $curlCitation['status'];
         $errorText = $curlCitation['errorText'];
 
-        $citation = new PublicationCitation($curlResponse, $style, $locale);
-
-        return array('citation' => $citation, 'status' => $status, 'errorText' => $errorText);
+        return array('citation' => $curlResponse, 'status' => $status, 'errorText' => $errorText);
     }
 
     /**
@@ -61,7 +59,7 @@ class PubLinkUtil
      *
      * @return array
      */
-    private function curlCitation(string $doi, $style = PublicationCitation::CITATION_STYLE_APA, $locale = 'en-US', $useCrossRef = false)
+    private function curlCitation(string $doi, $style = Publication::CITATION_STYLE_APA, $locale = Publication::CITATION_LOCALE, $useCrossRef = false)
     {
         $ch = curl_init();
 
@@ -87,7 +85,7 @@ class PubLinkUtil
         curl_close($ch);
         $status = $curlInfo['http_code'];
         $contentType = $curlInfo['content_type'];
-        
+
         if (!preg_match('/text\/bibliography/', $contentType) and !$useCrossRef) {
             throw new \Exception('The citation is not in text\bibliography format');
         }
