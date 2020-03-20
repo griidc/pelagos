@@ -98,6 +98,7 @@
                 noResults: false,
                 resultSet: Object,
                 route: window.location.hash,
+                submitted: false,
             }
         },
         methods: {
@@ -136,7 +137,9 @@
                         this.resultSet = response.data;
                         this.showResults = true;
                         window.location.hash = searchQuery;
-                    })
+                        this.route = window.location.hash;
+                        this.submitted = true;
+                    });
             },
             onReset: function () {
                 this.form = initialFormValues();
@@ -155,19 +158,30 @@
             },
             detectHashChange: function () {
                 this.route = window.location.hash;
-                if (this.route) {
-                    const urlHashSplit = this.route.split("#")[1].split("&").map(value => value.split("="));
-                    this.form = Object.fromEntries(urlHashSplit);
-                    this.onSubmit();
-                }
-            }
+                this.submitted = false;
+            },
         },
         mounted() {
             if (this.route) {
-               this.detectHashChange();
+                const urlHashSplit = decodeURI(this.route).split("#")[1].split("&").map(value => value.split("="));
+                this.form = Object.fromEntries(urlHashSplit);
+                this.onSubmit();
             }
             window.addEventListener('hashchange', this.detectHashChange);
         },
+        watch: {
+            route: function (value) {
+                if (!this.submitted) {
+                    if (this.route) {
+                        const urlHashSplit = this.route.split("#")[1].split("&").map(value => value.split("="));
+                        this.form = Object.fromEntries(urlHashSplit);
+                        this.onSubmit();
+                    } else {
+                        this.onReset();
+                    }
+                }
+            }
+        }
     }
 
     function initialFormValues() {
