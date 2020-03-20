@@ -4,54 +4,98 @@
             <div class="container">
                 <div class="card card-header">
                     <b-form id="searchForm" name="searchForm" method="get" @submit.prevent="onSubmit" @reset.prevent="onReset">
-                        <div class="row">
-                            <div class="col-xl-9">
-                                <b-form-input type="search"
-                                              name="query"
-                                              class="form-control"
-                                              placeholder="Search.."
-                                              id="searchBox"
-                                              v-model="form.query">
-                                </b-form-input>
-                                <input type="hidden" id="pageNo" name="page" v-model="form.page">
-                            </div>
-                            <div class="col-xl-3 btn-toolbar">
-                                <button id="searchSubmit" type="submit" class="btn btn-primary mx-2 w-50">Search
-                                    <i class="fa fa-search pl-2"></i></button>
-                                <button type="reset" id="search-clear" class="btn btn-dark mx-2 w-25">Clear</button>
-                            </div>
-                        </div>
-                        <div class="pt-3 mt-3 d-flex flex-row justify-content-around">
-                            <div class="pl-5 pt-1">
-                            <span>
-                                <b-form-select name="field" id="field" v-model="form.field" :options="fields">
-                                </b-form-select>
-                            </span>
-                            </div>
-                            <div class="form-inline">
-                            <span class="input-group">
-                                <label for="collectionStartDate" class="pl-2 pr-2">From</label>
-                                <b-form-datepicker type="text"
-                                       class="pr-2 form-control"
-                                       id="collectionStartDate"
-                                       name="collectionStartDate"
-                                       placeholder="yyyy-mm-dd"
-                                       v-model="form.collectionStartDate">
-                                </b-form-datepicker>
-                            </span>
-                                <span class="input-group">
-                                <label for="collectionEndDate" class="pr-2 pl-3">To</label>
-                                <b-form-datepicker
-                                        type="text"
-                                        id="collectionEndDate"
-                                        class="form-control date-input"
-                                        name="collectionEndDate"
-                                        placeholder="yyyy-mm-dd"
-                                        v-model="form.collectionEndDate">
-                                </b-form-datepicker>
-                            </span>
-                            </div>
-                        </div>
+<!--                        <div class="row">-->
+<!--                            <div class="col-lg-9">-->
+<!--                                <b-form-input type="search"-->
+<!--                                              name="query"-->
+<!--                                              class="form-control"-->
+<!--                                              placeholder="Search.."-->
+<!--                                              id="searchBox"-->
+<!--                                              v-model="form.query">-->
+<!--                                </b-form-input>-->
+<!--                                <input type="hidden" id="pageNo" name="page" v-model="form.page">-->
+<!--                            </div>-->
+<!--                            <div class="col-lg-3 btn-toolbar">-->
+<!--                                <button id="searchSubmit" type="submit" class="btn btn-primary mx-2 w-50">Search-->
+<!--                                    <i class="fa fa-search pl-2"></i></button>-->
+<!--                                <button type="reset" id="search-clear" class="btn btn-dark mx-2 w-25">Clear</button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="pt-3 mt-3 d-flex flex-row justify-content-around">-->
+<!--                            <div class="pl-5 pt-1">-->
+<!--                            <span>-->
+<!--                                <b-form-select name="field" id="field" v-model="form.field" :options="fields">-->
+<!--                                </b-form-select>-->
+<!--                            </span>-->
+<!--                            </div>-->
+<!--                            <div class="form-inline">-->
+<!--                            <span class="input-group">-->
+<!--                                <label for="collectionStartDate" class="pl-2 pr-2">From</label>-->
+<!--                                <b-form-datepicker type="text"-->
+<!--                                       class="pr-2 form-control"-->
+<!--                                       id="collectionStartDate"-->
+<!--                                       name="collectionStartDate"-->
+<!--                                       placeholder="yyyy-mm-dd"-->
+<!--                                       v-model="form.collectionStartDate">-->
+<!--                                </b-form-datepicker>-->
+<!--                            </span>-->
+<!--                                <span class="input-group">-->
+<!--                                <label for="collectionEndDate" class="pr-2 pl-3">To</label>-->
+<!--                                <b-form-datepicker-->
+<!--                                        type="text"-->
+<!--                                        id="collectionEndDate"-->
+<!--                                        class="form-control date-input"-->
+<!--                                        name="collectionEndDate"-->
+<!--                                        placeholder="yyyy-mm-dd"-->
+<!--                                        v-model="form.collectionEndDate">-->
+<!--                                </b-form-datepicker>-->
+<!--                            </span>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+                        <b-form-group
+                                id="input-group-1">
+                            <b-form-input type="search"
+                                          name="query"
+                                          class="form-control"
+                                          placeholder="Search.."
+                                          id="searchBox"
+                                          v-model="form.query">
+                            </b-form-input>
+                            <input type="hidden" id="pageNo" name="page" v-model="form.page">
+                        </b-form-group>
+
+                        <b-form-group id="input-group-2" label="Search in Field:" label-for="field">
+                            <b-form-select
+                                    name="field"
+                                    id="field"
+                                    v-model="form.field"
+                                    :options="fields">
+                            </b-form-select>
+                        </b-form-group>
+
+                        <b-form-group id="input-group-4">
+                            <label for="collectionStartDate">From</label>
+                            <b-form-datepicker type="text"
+                                   class="pr-2 form-control"
+                                   id="collectionStartDate"
+                                   name="collectionStartDate"
+                                   placeholder="yyyy-mm-dd"
+                                   v-model="form.collectionStartDate">
+                            </b-form-datepicker>
+                            <label for="collectionEndDate">To</label>
+                            <b-form-datepicker
+                                    type="text"
+                                    id="collectionEndDate"
+                                    class="form-control date-input"
+                                    name="collectionEndDate"
+                                    placeholder="yyyy-mm-dd"
+                                    v-model="form.collectionEndDate">
+                            </b-form-datepicker>
+                        </b-form-group>
+                        <button id="searchSubmit" type="submit" class="btn btn-primary w-50">Search
+                            <i class="fa fa-search pl-2"></i></button>
+                        <button type="reset" id="search-clear" class="btn btn-dark w-25">Clear</button>
                     </b-form>
                 </div>
             </div>
