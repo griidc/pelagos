@@ -30,7 +30,7 @@ class DatasetLinkType extends AbstractType
             ->add('url', Type\TextType::class, array(
                 'label' => 'Link Url:',
                 'required' => false,
-				'attr'  => array('class' => 'dataLinkUrl'),
+                'attr'  => array('class' => 'dataLinkUrl'),
             ))
             ->add('name', Type\TextType::class, array(
                 'label' => 'Link Name:',
