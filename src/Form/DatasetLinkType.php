@@ -35,6 +35,7 @@ class DatasetLinkType extends AbstractType
             ->add('name', Type\TextType::class, array(
                 'label' => 'Link Name:',
                 'required' => false,
+                'attr'  => array('list' => 'dataLinkNames'),
             ))
             ->add('description', Type\TextType::class, array(
                 'label' => 'Link Description:',
@@ -45,9 +46,6 @@ class DatasetLinkType extends AbstractType
                 'required' => false,
                 'choices' => DatasetLink::getFunctionCodeChoices(),
                 'expanded' => false,
-                'preferred_choices' => function ($role, $value) {
-                    return $value === 'Function Code';
-                },
             ))
             ->add('protocol', Type\TextType::class, array(
                 'label' => 'Link Protocol:',
