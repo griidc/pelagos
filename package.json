@@ -2,11 +2,16 @@
     "devDependencies": {
         "@fortawesome/fontawesome-free": "^5.11.1",
         "@symfony/webpack-encore": "symfony/webpack-encore",
+        "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
+        "@vue/babel-preset-jsx": "^1.1.2",
         "autoprefixer": "^9.7.4",
         "core-js": "^3.0.0",
         "node-sass": "^4.13.1",
         "regenerator-runtime": "^0.13.2",
         "sass-loader": "^7.0.1",
+        "vue": "^2.6.11",
+        "vue-loader": "^15.0.11",
+        "vue-template-compiler": "^2.6.11",
         "webpack-notifier": "^1.6.0"
     },
     "license": "UNLICENSED",
@@ -18,7 +23,9 @@
         "build": "encore production --progress"
     },
     "dependencies": {
+        "axios": "^0.19.2",
         "bootstrap": "^4.4.1",
+        "bootstrap-vue": "^2.5.0",
         "jquery": "^3.4.1",
         "jquery-migrate": "^3.1.0",
         "jquery-ui": "^1.12.1",
@@ -27,6 +34,7 @@
         "postcss-loader": "^3.0.0",
         "qtip2": "2.2.0",
         "query-string": "^6.8.1",
-        "vex-js": "^4.1.0"
+        "vex-js": "^4.1.0",
+        "vue-loading-overlay": "^3.3.0"
     }
 }

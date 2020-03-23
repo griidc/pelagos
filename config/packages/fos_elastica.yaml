@@ -89,6 +89,8 @@ fos_elastica:
                             properties:
                                 id:
                                     type: 'keyword'
+                                name:
+                                    type: 'text'
                                 fundingCycle:
                                     type: 'nested'
                                     properties:
@@ -118,6 +120,8 @@ fos_elastica:
                             properties:
                                 doi:
                                     type: 'text'
+                        identifiedStatus:
+                            type: 'integer'
                     persistence:
                         driver: orm
                         model: App\Entity\Dataset

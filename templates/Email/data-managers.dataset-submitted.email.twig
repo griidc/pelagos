@@ -4,7 +4,7 @@
     {% set submitterGroupsAndRepos = dataset.datasetSubmission.submitter.dataRepositoryNames | merge(dataset.datasetSubmission.submitter.researchGroupNames) %}
     Dear {{ recipient.firstName }} {{ recipient.lastName }},<br>
     <br>
-    A dataset has been submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} for the dataset {{dataset.udi}}. This dataset has been assigned the doi:{{dataset.doi|default}}. {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} is a member of {{ submitterGroupsAndRepos | join (', ') }} and the dataset is associated with {{dataset.researchGroup.name}}.<br>
+    A dataset has been submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} for the dataset {{dataset.udi}}. This dataset has been assigned the doi:{{dataset.doi.doi|default}}. {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} is a member of {{ submitterGroupsAndRepos | join (', ') }} and the dataset is associated with {{dataset.researchGroup.name}}.<br>
     <br>
     Thank you,<br>
     <br>
@@ -17,7 +17,7 @@
     {% set submitterGroupsAndRepos = dataset.datasetSubmission.submitter.researchGroupNames | merge(dataset.datasetSubmission.submitter.dataRepositoryNames) %}
 Dear {{ recipient.firstName }} {{ recipient.lastName }},
 
-A dataset has been submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} for the dataset {{dataset.udi}}. This dataset has been assigned the doi:{{dataset.doi|default}}. {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} is a member of {{ submitterGroupsAndRepos | join (', ') }} and the dataset is associated with {{dataset.researchGroup.name}}.
+A dataset has been submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} for the dataset {{dataset.udi}}. This dataset has been assigned the doi:{{dataset.doi.doi|default}}. {{dataset.datasetSubmission.submitter.firstName}} {{dataset.datasetSubmission.submitter.lastName}} is a member of {{ submitterGroupsAndRepos | join (', ') }} and the dataset is associated with {{dataset.researchGroup.name}}.
 
 Thank you,
 

@@ -17,11 +17,6 @@ article:after, .form-group:after {
     border-bottom: 1px solid #dee2e6;
 }
 
-.card-group-item .card-header {
-    border-bottom: 0;
-    background-color: #f9f9f9;
-}
-
 .card-header .title {
     margin-bottom: 0;
     line-height: 1.5;
@@ -63,33 +58,21 @@ label {
     font-weight: normal !important;
 }
 
-.card-body a{
+a.search-result {
     font-size: 1.05em;
     text-decoration: none !important;
     color: black !important;
 }
 
-.card-body a:hover {
+.search-result a:hover {
     text-decoration: none !important;
-}
-
-.form-options-input {
-    border: none;
-    background: transparent;
-}
-
-.form-options-input-group input:focus,
-.form-options-input-group select:focus,
-.form-options-input-group button:focus {
-    outline: none;
-}
-
-.form-options-input-group {
-    border: 1px solid #ced4da;
-    padding: 10px;
-    background-color: #fff;
 }
 
 #pelagos-content {
     font-family: "Lato", Arial, sans-serif;
+}
+div.bootstrap .custom-select{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
