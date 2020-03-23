@@ -20,8 +20,12 @@
                                 </div>
                                 <div class="row mt-3 form-group form-inline pt-3">
                                     <div class="col-lg search-field-options">
-                                        <b-form-select name="field" id="field" v-model="form.field" :options="fields">
-                                        </b-form-select>
+                                        <span class="input-group" v-b-tooltip.hover.bottom title="Search only in selected field">
+                                            <label class="pl-2 pr-2" for="field" >Search in Field</label>
+                                            <b-form-select name="field" id="field" v-model="form.field" :options="fields">
+                                            </b-form-select>
+                                        </span>
+
                                     </div>
                                     <div class="col-lg collection-start-date">
                                         <span class="input-group">
