@@ -24,10 +24,16 @@
                                 <span class="float-right badge badge-light round">{{ facet.count }}</span>
                                 {{ facet.name }}
                             </span>
-                            <span class="form-check-label" v-b-tooltip.hover :title="facet.name" v-else>
+                            <span class="form-check-label"
+                                  v-tooltip="{
+                                    content: facet.name,
+                                    placement:'top'
+                                    }"
+                                  v-else>
                                 <span class="float-right badge badge-light round">{{ facet.count }}</span>
                                  {{ facet.shortName ? facet.shortName : facet.name }}
                             </span>
+
                         </label>
                     </div>
                 </form>
