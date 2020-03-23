@@ -30,6 +30,7 @@ class DatasetLinkType extends AbstractType
             ->add('url', Type\TextType::class, array(
                 'label' => 'Link Url:',
                 'required' => false,
+				'attr'  => array('class' => 'dataLinkUrl'),
             ))
             ->add('name', Type\TextType::class, array(
                 'label' => 'Link Name:',
@@ -43,7 +44,6 @@ class DatasetLinkType extends AbstractType
                 'label' => 'Link Function Code:',
                 'required' => false,
                 'choices' => DatasetLink::getFunctionCodeChoices(),
-                'empty_data' => 'download',
                 'expanded' => false,
                 'preferred_choices' => function ($role, $value) {
                     return $value === 'Function Code';

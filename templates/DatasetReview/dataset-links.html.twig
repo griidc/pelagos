@@ -13,10 +13,8 @@
                             Please enter a ....
                         </div>
                     </span>
-                    {% if not loop.first %}
                     <button class="deletebutton" type="button">Delete Link</button>
-                    {% endif %}
-                    {{ form_row(link.url) }}
+                     {{ form_row(link.url) }}
                 </td>
             </tr>
             <tr>
@@ -85,7 +83,7 @@
                     </div>
                 </span>
                 <button class="deletebutton" type="button">Delete Link</button>
-                {{ form_row(link.url, {"attr": {"class": "prototype", "disabled": "disabled"}}) }}
+                {{ form_row(link.url, {"attr": {"class": "prototype dataLinkUrl", "disabled": "disabled"}}) }}
             </td>
         </tr>
         <tr>

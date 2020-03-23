@@ -69,6 +69,23 @@ $(document).ready(function(){
         }
     });
 
+
+    jQuery.validator.addClassRules('dataLinkUrl', {
+        "validURL" : true,
+        remote: {
+            url: remoteURL
+        },
+        remote: {
+            url: remoteURL,
+            type: "GET",
+            data: {
+              erddapUrl: function() {
+                return $(".dataLinkUrl", this).val();
+              }
+            }
+        }
+    });
+
     var datasetContactsCount = 0;
 
     // Count the highest index in dataset contacts.
