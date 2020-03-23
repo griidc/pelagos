@@ -99,7 +99,7 @@ class DatasetLink extends Entity
      * @ORM\ManyToOne(targetEntity="App\Entity\DatasetSubmission", inversedBy="datasetLinks")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $datasetSubmission;
+    protected $datasetSubmission;
 
     /**
      * Get the URL for the Dataset Link.
