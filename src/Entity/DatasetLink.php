@@ -192,6 +192,10 @@ class DatasetLink extends Entity
      */
     public function setFunctionCode(?string $functionCode): self
     {
+        if (!empty(functionCode) and !in_array($functionCode, self::ONLINE_FUNCTION_CODES)) {
+            throw new \InvalidArgumentException('Function Code must be one of: ' . implode(', ', self::ONLINE_FUNCTION_CODES));
+        }
+
         $this->functionCode = $functionCode;
 
         return $this;
