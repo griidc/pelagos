@@ -45,6 +45,20 @@ class DatasetLink extends Entity
     ];
 
     /**
+     * Link name codes for Link Data List.
+     */
+    const LINK_NAME_CODES = [
+        'erddap' => [
+            'name' => 'ERDDAP',
+            'description' => 'An ERDDAP link.',
+        ],
+        'ncei' => [
+            'name' => 'NCEI',
+            'description' => 'An NCEI link.',
+        ],
+    ];
+
+    /**
      * Url for the Dataset Link.
      *
      * @var string
@@ -262,6 +276,23 @@ class DatasetLink extends Entity
                     return $type['name'];
                 },
                 static::ONLINE_FUNCTION_CODES
+            )
+        );
+    }
+
+    /**
+     * Get the choice list for Role Code types.
+     *
+     * @return array
+     */
+    public static function getLinkNameCodeChoices()
+    {
+        return array_flip(
+            array_map(
+                function ($type) {
+                    return $type['name'];
+                },
+                static::LINK_NAME_CODES
             )
         );
     }

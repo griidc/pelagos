@@ -21,6 +21,7 @@ use App\Event\EntityEventDispatcher;
 
 use App\Entity\Account;
 use App\Entity\Dataset;
+use App\Entity\DatasetLink;
 use App\Entity\DatasetSubmission;
 use App\Entity\DatasetSubmissionReview;
 use App\Entity\Entity;
@@ -405,6 +406,7 @@ class DatasetReviewController extends AbstractController
                 'showForceDownload' => $showForceDownload,
                 'researchGroupList' => $researchGroupList,
                 'mode' => $this->mode,
+                'linkoptions' => DatasetLink::getLinkNameCodeChoices(),
             )
         );
     }

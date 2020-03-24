@@ -70,8 +70,9 @@
 </fieldset>
 
 <datalist id="dataLinkNames">
-    <option>ERDDAP</option>
-    <option>NCEI</option>
+{% for name, value in linkoptions %}
+    <option>{{name}}</option>
+{% endfor %}
 </datalist>
 
 <div id="links-prototype">

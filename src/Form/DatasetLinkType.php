@@ -29,21 +29,21 @@ class DatasetLinkType extends AbstractType
         $builder
             ->add('url', Type\TextType::class, array(
                 'label' => 'Link Url:',
-                'required' => false,
+                'required' => true,
                 'attr'  => array('class' => 'dataLinkUrl'),
             ))
             ->add('name', Type\TextType::class, array(
                 'label' => 'Link Name:',
-                'required' => false,
+                'required' => true,
                 'attr'  => array('list' => 'dataLinkNames'),
             ))
             ->add('description', Type\TextType::class, array(
                 'label' => 'Link Description:',
-                'required' => false,
+                'required' => true,
             ))
             ->add('functionCode', Type\ChoiceType::class, array(
                 'label' => 'Link Function Code:',
-                'required' => false,
+                'required' => true,
                 'choices' => DatasetLink::getFunctionCodeChoices(),
                 'expanded' => false,
             ))
