@@ -173,7 +173,7 @@
             route: function (value) {
                 if (!this.submitted) {
                     if (this.route) {
-                        const urlHashSplit = this.route.split("#")[1].split("&").map(value => value.split("="));
+                        const urlHashSplit = decodeURI(this.route).split("#")[1].split("&").map(value => value.split("="));
                         this.form = Object.fromEntries(urlHashSplit);
                         this.onSubmit();
                     } else {
