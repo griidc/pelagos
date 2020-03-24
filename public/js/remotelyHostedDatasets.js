@@ -18,35 +18,46 @@ $(document).ready(function(){
 
     $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");
 
+    // generic noty
+    var notyJson =
+    {
+        layout: "top",
+        theme: "relax",
+        type: "success",
+        animation: {
+            open: "animated fadeIn", // Animate.css class names
+            close: "animated fadeOut", // Animate.css class names
+            easing: "swing", // unavailable - no need
+            speed: 500 // unavailable - no need
+        }
+    };
+
     $("#updateButton").button().click(function(){
 
         $.ajax({
             type: "POST",
             url: Routing.generate("pelagos_app_ui_remotelyhosteddatasets_post", {udi : $("#udiInput").val().trim()}),
-        }).done(function(data, textStatus, jqXHR){
-            var messageType = "success";
-            //return informative message for 202 code
-            if (202 === jqXHR.status) {
-                messageType = "warning";
-            } else {
-                //reset table
-                $("#remotelyHostedDatasetsTable").pelagosDataTable();
-            }
-            var n = noty(
-            {
-                layout: "top",
-                theme: "relax",
-                type: messageType,
-                text: data,
-                timeout: 4000,
-                modal: false,
-                animation: {
-                    open: "animated fadeIn", // Animate.css class names
-                    close: "animated fadeOut", // Animate.css class names
-                    easing: "swing", // unavailable - no need
-                    speed: 500 // unavailable - no need
-                }
-            });
+            // common noty
+            success: function(jqXHR, textStatus, errorThrown) {
+                notyJson.modal = false;
+                notyJson.timeout = 4000;
+                notyJson.text = 'Dataset has been marked as Remotely Hosted.';
+            },
+            statusCode: {
+                432: function(jqXHR, textStatus, errorThrown) {
+                    notyJson.modal = true;
+                    notyJson.type = "warning";
+                    notyJson.text = jqXHR.responseText;
+                },
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                notyJson.modal = true;
+                notyJson.type = "error";
+                notyJson.text = "Error:" + jqXHR.statusText + " (" + jqXHR.status + ")";
+            },
+            complete: function(jqXHR, textStatus) {
+                noty(notyJson);
+            },
         });
     });
 
