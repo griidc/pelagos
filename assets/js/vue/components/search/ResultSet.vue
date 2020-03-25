@@ -14,9 +14,9 @@
                 <div class="row">
                     <aside class="col-sm-3">
                         <div class="card card-filter">
-                            <Facet :facet-info="results.facetInfo.statusInfo" :facet-name="datasetStatus" v-on="$listeners"/>
-                            <Facet :facet-info="results.facetInfo.fundingOrgInfo" :facet-name="fundingOrg" v-on="$listeners"/>
-                            <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="researchGroup" v-on="$listeners"/>
+                            <Facet :facet-info="results.facetInfo.statusInfo" :facet-name="datasetStatus" v-on="$listeners" :formValues="formValues"/>
+                            <Facet :facet-info="results.facetInfo.fundingOrgInfo" :facet-name="fundingOrg" v-on="$listeners" :formValues="formValues"/>
+                            <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="researchGroup" v-on="$listeners" :formValues="formValues"/>
                         </div>
                     </aside>
                     <main class="col-sm-9 overflow-auto">
@@ -55,6 +55,9 @@
         components: {ResultRow, Facet },
         props: {
             results: {
+                type: Object
+            },
+            formValues: {
                 type: Object
             }
         },

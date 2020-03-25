@@ -52,7 +52,7 @@
                 </div>
             </div>
         </section>
-        <ResultSet v-if="showResults" :results="resultSet" @facetClicked="facetCheckBoxValues" @pagination="changePageNo"/>
+        <ResultSet v-if="showResults" :results="resultSet" @facetClicked="facetCheckBoxValues" @pagination="changePageNo" :formValues="form"/>
         <section class="section-content pt-3 bg" v-else>
             <div class="container">
                 <article class="card card-product">
@@ -94,6 +94,7 @@
                 noResults: false,
                 resultSet: Object,
                 route: window.location.hash,
+                submitted: false,
             }
         },
         methods: {
@@ -132,7 +133,9 @@
                         this.resultSet = response.data;
                         this.showResults = true;
                         window.location.hash = searchQuery;
-                    })
+                        this.route = window.location.hash;
+                        this.submitted = true;
+                    });
             },
             onReset: function () {
                 this.form = initialFormValues();
@@ -149,12 +152,30 @@
                 this.form.page = newPageNo;
                 this.onSubmit();
             },
+            detectHashChange: function () {
+                this.route = window.location.hash;
+                this.submitted = false;
+            },
         },
         mounted() {
             if (this.route) {
-               const someVaribale = this.route.split("#")[1].split("&").map(value => value.split("="));
-               this.form = Object.fromEntries(someVaribale);
-               this.onSubmit();
+                const urlHashSplit = decodeURI(this.route).split("#")[1].split("&").map(value => value.split("="));
+                this.form = Object.fromEntries(urlHashSplit);
+                this.onSubmit();
+            }
+            window.addEventListener('hashchange', this.detectHashChange);
+        },
+        watch: {
+            route: function (value) {
+                if (!this.submitted) {
+                    if (this.route) {
+                        const urlHashSplit = decodeURI(this.route).split("#")[1].split("&").map(value => value.split("="));
+                        this.form = Object.fromEntries(urlHashSplit);
+                        this.onSubmit();
+                    } else {
+                        this.onReset();
+                    }
+                }
             }
         }
     }
@@ -166,6 +187,9 @@
                 field: '',
                 collectionStartDate: '',
                 collectionEndDate: '',
+                status: '',
+                fundingOrg: '',
+                researchGroup: ''
         }
     }
 </script>
