@@ -20,7 +20,9 @@
                                 </div>
                                 <div class="row mt-3 form-group form-inline pt-3">
                                     <div class="col-lg search-field-options">
-                                        <span class="input-group" v-b-tooltip.hover.bottom title="Search only in selected field">
+                                        <span class="input-group" v-tooltip="{
+                                                content: 'Search only in selected field',
+                                                placement:'top'}">
                                             <label class="pl-2 pr-2" for="field" >Search in Field</label>
                                             <b-form-select name="field" id="field" v-model="form.field" :options="fields">
                                             </b-form-select>
