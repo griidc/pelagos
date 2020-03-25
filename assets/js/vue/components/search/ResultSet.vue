@@ -12,14 +12,14 @@
         <section class="section-content bg padding-y">
             <div class="container">
                 <div class="row">
-                    <aside class="col-sm-3">
+                    <aside class="col-lg-3">
                         <div class="card card-filter">
                             <Facet :facet-info="results.facetInfo.statusInfo" :facet-name="datasetStatus" v-on="$listeners" :formValues="formValues"/>
                             <Facet :facet-info="results.facetInfo.fundingOrgInfo" :facet-name="fundingOrg" v-on="$listeners" :formValues="formValues"/>
                             <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="researchGroup" v-on="$listeners" :formValues="formValues"/>
                         </div>
                     </aside>
-                    <main class="col-sm-9 overflow-auto">
+                    <main class="col-lg-9 overflow-auto pt-5">
                         <ResultRow :resultRowData="resultRow" v-for="resultRow in results.resultData" v-bind:key="resultRow.udi"/>
                     </main>
                 </div>
