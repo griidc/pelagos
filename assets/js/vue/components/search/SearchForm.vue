@@ -69,10 +69,10 @@
         <ResultSet v-if="showResults" :results="resultSet" @facetClicked="facetCheckBoxValues" @pagination="changePageNo" :formValues="form"/>
         <section class="section-content pt-3 bg" v-else>
             <div class="container">
-                <article class="card card-product">
+                <article class="card">
                     <div class="card-body text-center">
                         <h5 class="card-title">
-                            GRIIDC Data Sets
+                            GRIIDC Datasets
                         </h5>
                         <p class="card-text">
                             Choose from thousands of scientific datasets from various fields
