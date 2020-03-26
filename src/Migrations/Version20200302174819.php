@@ -27,7 +27,6 @@ final class Version20200302174819 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('CREATE SEQUENCE revisions_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE revisions (id SERIAL NOT NULL, "timestamp" TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, username VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
 
