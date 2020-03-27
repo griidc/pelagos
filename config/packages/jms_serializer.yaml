@@ -2,7 +2,7 @@ jms_serializer:
     property_naming:
         id: 'jms_serializer.identical_property_naming_strategy'
     visitors:
-        xml:
+        xml_serialization:
             format_output: '%kernel.debug%'
 #    metadata:
 #        auto_detection: false

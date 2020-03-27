@@ -5,12 +5,33 @@ var valid_dataset = false;
 var last_retrieved = { dataset: "", publication: "" };
 
 $(document).ready(function() {
-    $('#retrieve_publication').button().click(function () {
-        retrievePublicationCitation();
+    jQuery.validator.addMethod("doiFormat", function(value, element) {
+        var regPattern = /^10\..+\/.*$/i
+        return this.optional(element) || (regPattern.test(value));
+    },function (params, element) {
+        return "Please enter a valid DOI"
     });
-    $('#retrieve_dataset').button().click(function () {
-        retrieveDatasetCitation();
+
+    $("#doiForm").validate({
+        submitHandler: function(form) {
+            retrievePublicationCitation();
+        },
+        rules: {
+            doi: {
+                    doiFormat: true
+            }
+        }
     });
+
+    $("#udiForm").validate({
+        submitHandler: function(form) {
+            retrieveDatasetCitation();
+        }
+    });
+
+    $('#retrieve_publication').button();
+    $('#retrieve_dataset').button();
+
     $('#link').button().click(function () {
         $.ajax({
             // Build route based on previously stored values of ID numbers.
@@ -67,8 +88,8 @@ function retrievePublicationCitation() {
                     url: jqXHR.getResponseHeader("location"),
                     method: "GET"
                 }).done(function (data) {
-                    $('#publication .pelagos-citation').html(data.citations[0].citationText);
-                    $('#publicationId').html(data.citations[0].id);
+                    $('#publication .pelagos-citation').html(data.citationText);
+                    $('#publicationId').html(data.id);
                     $('#publication .pelagos-citation').removeClass('pelagos-error');
                     // always show the citation div, in case it has been faded out
                     $('#publication .pelagos-citation').show();

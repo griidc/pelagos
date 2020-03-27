@@ -76,6 +76,7 @@ services:
     App\Event\DoctrineDatasetListener:
         tags:
             - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.orm.entity_listener, event: postUpdate, entity: App\Entity\Dataset }
 
     App\Event\DoctrineDataCenterListener:
         tags:
@@ -173,7 +174,7 @@ services:
 
     App\Event\MaintenanceModeListener:
         bind:
-            bool $maintenanceMode: "%env(MAINTENANCE_MODE)%"
+            bool $maintenanceMode: "%env(bool:MAINTENANCE_MODE)%"
             bool $debug: '%kernel.debug%'
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
@@ -186,7 +187,7 @@ services:
 
     App\Controller\UI\AccountController:
         bind:
-            bool $passwordRules: '%env(ACCOUNT_LESS_STRICT_PASSWORD_RULES)%'
+            bool $passwordRules: '%env(bool:ACCOUNT_LESS_STRICT_PASSWORD_RULES)%'
 
     App\Controller\DownloadController:
         bind:

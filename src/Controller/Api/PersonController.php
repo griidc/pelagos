@@ -10,7 +10,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use FOS\RestBundle\Controller\Annotations\View;
 
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Nelmio\ApiDocBundle\Annotation\Operation;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
 
 use App\Entity\Person;
 use App\Form\PersonType;
@@ -26,21 +28,19 @@ class PersonController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "People",
-     *   input = {
-     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCountType",
-     *     "name": "",
-     *     "options": {
-     *       "label": "People",
-     *       "data_class": "Pelagos\Entity\Person"
-     *     }
-     *   },
-     *   statusCodes = {
-     *     200 = "A count of People was successfully returned.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"People"},
+     *     summary="Get a count of People.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="A count of People was successfully returned."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route("/api/people/count", name="pelagos_api_people_count", methods={"GET"}, defaults={"_format"="json"})
      *
@@ -58,15 +58,30 @@ class PersonController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "People",
-     *   parameters = {{"name"="someProperty", "dataType"="string", "required"="true"}},
-     *   statusCodes = {
-     *     200 = "Validation was performed successfully (regardless of validity).",
-     *     400 = "Bad parameters were passed in the query string.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"People"},
+     *     summary="Validate a value for a property of a Person.",
+     *     @SWG\Parameter(
+     *         name="someProperty",
+     *         in="body",
+     *         description="todo",
+     *         required=false,
+     *         @SWG\Schema(type="string")
+     *     ),
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Validation was performed successfully (regardless of validity)."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Bad parameters were passed in the query string."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/people/validateProperty",
@@ -90,16 +105,34 @@ class PersonController extends EntityController
      * @param integer $id      The id of the existing Person.
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "People",
-     *   parameters = {{"name"="someProperty", "dataType"="string", "required"="true"}},
-     *   statusCodes = {
-     *     200 = "Validation was performed successfully (regardless of validity).",
-     *     400 = "Bad parameters were passed in the query string.",
-     *     404 = "The requested Person was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"People"},
+     *     summary="Validate a value for a property of an existing Person.",
+     *     @SWG\Parameter(
+     *         name="someProperty",
+     *         in="body",
+     *         description="todo",
+     *         required=false,
+     *         @SWG\Schema(type="string")
+     *     ),
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Validation was performed successfully (regardless of validity)."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Bad parameters were passed in the query string."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Person was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/people/{id}/validateProperty",
@@ -122,16 +155,27 @@ class PersonController extends EntityController
      *
      * @param string $property The property for which the distinct values are being requested.
      *
-     * @ApiDoc(
-     *   section = "People",
-     *   statusCodes = {
-     *     200 = "The list of distinct values was returned successfully.",
-     *     400 = "An invalid property for Person was requested.",
-     *     403 = "The authenticated user was not authorized to retrieve a list of
-                  distinct values for properties of Person.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"People"},
+     *     summary="Get the distinct values for a property of a Person.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="The list of distinct values was returned successfully."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="An invalid property for Person was requested."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to retrieve a list of distinct values for properties of Person."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/people/getDistinctVals/{property}",
@@ -154,22 +198,19 @@ class PersonController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "People",
-     *   input = {
-     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCollectionType",
-     *     "name": "",
-     *     "options": {
-     *       "label": "People",
-     *       "data_class": "Pelagos\Entity\Person"
-     *     }
-     *   },
-     *   output = "array<Pelagos\Entity\Person>",
-     *   statusCodes = {
-     *     200 = "The requested collection of People was successfully retrieved.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"People"},
+     *     summary="Get a collection of People.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="The requested collection of People was successfully retrieved."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/people",
@@ -192,15 +233,23 @@ class PersonController extends EntityController
      *
      * @param integer $id The id of the Person to return.
      *
-     * @ApiDoc(
-     *   section = "People",
-     *   output = "Pelagos\Entity\Person",
-     *   statusCodes = {
-     *     200 = "The requested Person was successfully retrieved.",
-     *     404 = "The requested Person was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"People"},
+     *     summary="Get a single Person for a given id.",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="The requested Person was successfully retrieved."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Person was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @View(serializerEnableMaxDepthChecks = true)
      *
@@ -223,16 +272,27 @@ class PersonController extends EntityController
      *
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "People",
-     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\PersonType", "name" = ""},
-     *   statusCodes = {
-     *     201 = "The Person was successfully created.",
-     *     400 = "The request could not be processed due to validation or other errors.",
-     *     403 = "The authenticated user was not authorized to create the Person.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"People"},
+     *     summary="Create a new Person from the submitted data.",
+     *     @SWG\Response(
+     *         response="201",
+     *         description="The Person was successfully created."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="The request could not be processed due to validation or other errors."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to create the Person."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/people",
@@ -256,17 +316,31 @@ class PersonController extends EntityController
      * @param integer $id      The id of the Person to replace.
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "People",
-     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\PersonType", "name" = ""},
-     *   statusCodes = {
-     *     204 = "The Person was successfully replaced.",
-     *     400 = "The request could not be processed due to validation or other errors.",
-     *     403 = "The authenticated user was not authorized to edit the Person.",
-     *     404 = "The requested Person was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"People"},
+     *     summary="Replace a Person with the submitted data.",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="The Person was successfully replaced."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="The request could not be processed due to validation or other errors."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to edit the Person."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Person was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/people/{id}",
@@ -289,17 +363,31 @@ class PersonController extends EntityController
      * @param integer $id      The id of the Person to update.
      * @param Request $request The request object.
      *
-     * @ApiDoc(
-     *   section = "People",
-     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\PersonType", "name" = ""},
-     *   statusCodes = {
-     *     204 = "The Person was successfully updated.",
-     *     400 = "The request could not be processed due to validation or other errors.",
-     *     403 = "The authenticated user was not authorized to edit the Person.",
-     *     404 = "The requested Person was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"People"},
+     *     summary="Update a Person with the submitted data.",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="The Person was successfully updated."
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="The request could not be processed due to validation or other errors."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="The authenticated user was not authorized to edit the Person."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Person was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @Route(
      *     "/api/people/{id}",
@@ -321,15 +409,27 @@ class PersonController extends EntityController
      *
      * @param integer $id The id of the Person to delete.
      *
-     * @ApiDoc(
-     *   section = "People",
-     *   statusCodes = {
-     *     204 = "The Person was successfully deleted.",
-     *     403 = "You do not have sufficient privileges to delete this Person.",
-     *     404 = "The requested Person was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
+     * @Operation(
+     *     tags={"People"},
+     *     summary="Delete a Person.",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="The Person was successfully deleted."
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="You do not have sufficient privileges to delete this Person."
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="The requested Person was not found."
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="An internal error has occurred."
+     *     )
      * )
+     *
      *
      * @throws BadRequestHttpException When the person is not deletable due to
      * association with primary point of contact in DIF.

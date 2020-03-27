@@ -1,0 +1,7 @@
+{% for link in form.datasetLinks %}
+    <input type="hidden" id="dataLinkUrl" name="{{link.url.vars.full_name}}" value="{{link.vars.data.url|default}}">
+    <input type="hidden" id="dataLinkName" name="{{link.name.vars.full_name}}" value="{{link.vars.data.name|default}}">
+    <input type="hidden" id="dataLinkDescription" name="{{link.description.vars.full_name}}" value="{{link.vars.data.description|default}}">
+    <input type="hidden" id="dataLinkFunctionCode" name="{{link.functionCode.vars.full_name}}" value="{{link.vars.data.functionCode|default}}">
+    <input type="hidden" id="dataLinkProtocol" name="{{link.protocol.vars.full_name}}" value="{{link.vars.data.protocol|default}}">
+{% endfor %}
