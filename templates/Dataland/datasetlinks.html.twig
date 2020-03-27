@@ -3,10 +3,10 @@
     {% set linkcodes = constant('App\\Entity\\DatasetLink::ONLINE_FUNCTION_CODES') %}
     {% for link in dataset.datasetSubmission.datasetLinks %}
         <p>
-            <b>Name:</b>{{ link.name }}<br>
-            <b>Description:</b>{{ link.description }}<br>
-            <b>Function:</b>{{ attribute(linkcodes[link.functionCode], 'name') }}<br>
-            <b>URL:</b>
+            <b>Name:</b> {{ link.name }}<br>
+            <b>Description:</b> {{ link.description }}<br>
+            <b>Function:</b> {{ attribute(linkcodes[link.functionCode], 'name') }}<br>
+            <b>URL: </b>
             <a href="{{ link.url }}" target="_blank">
                 {{ link.url }}
             </a>
