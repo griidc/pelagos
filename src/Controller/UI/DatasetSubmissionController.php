@@ -263,6 +263,9 @@ class DatasetSubmissionController extends AbstractController
             foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
                 $this->entityHandler->update($metadataContact);
             }
+            foreach ($datasetSubmission->getDatasetLinks() as $datasetLink) {
+                $this->entityHandler->update($datasetLink);
+            }
 
             $this->entityEventDispatcher->dispatch(
                 $datasetSubmission,

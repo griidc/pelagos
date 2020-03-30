@@ -112,9 +112,11 @@ fos_elastica:
                         collectionStartDate:
                             property_path: false
                             type: 'date'
+                            format: 'yyyy-MM-dd HH:mm:ss'
                         collectionEndDate:
                             property_path: false
                             type: 'date'
+                            format: 'yyyy-MM-dd HH:mm:ss'
                         doi:
                             type: 'nested'
                             properties:

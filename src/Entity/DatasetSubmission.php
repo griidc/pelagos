@@ -1029,6 +1029,15 @@ class DatasetSubmission extends Entity
     protected $remotelyHostedFunction;
 
     /**
+     * The Point of Contact for this Dataset Submission.
+     *
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\DatasetLink", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
+     */
+    private $datasetLinks;
+
+    /**
      * Constructor.
      *
      * Initializes collections to empty collections.
@@ -1044,6 +1053,7 @@ class DatasetSubmission extends Entity
         $this->datasetContacts = new ArrayCollection;
         $this->metadataContacts = new ArrayCollection;
         $this->distributionPoints = new ArrayCollection();
+        $this->datasetLinks = new ArrayCollection();
         if ($entity instanceof DIF) {
             if (null === $datasetPPOc) {
                 throw new \Exception('Constructor requires PersonDatasetSubmissionDatasetContact if passed a DIF entity');
@@ -1074,6 +1084,7 @@ class DatasetSubmission extends Entity
             }
 
             $this->addDistributionPoint(new DistributionPoint());
+            $this->addDatasetLink(new DatasetLink());
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
             $this->setSequence($entity->getDataset()->getDatasetSubmissionHistory()->first()->getSequence() + 1);
@@ -1154,6 +1165,18 @@ class DatasetSubmission extends Entity
                 $newDistributionPoint->setRoleCode($distributionPoint->getRoleCode());
                 $newDistributionPoint->setDataCenter($distributionPoint->getDataCenter());
                 $this->addDistributionPoint($newDistributionPoint);
+            }
+
+            // Copy the original Dataset Submission's Dataset Links.
+            foreach ($entity->getDatasetLinks() as $datasetLink) {
+                $newDatasetLink = new DatasetLink();
+                $newDatasetLink->setUrl($datasetLink->getUrl());
+                $newDatasetLink->setName($datasetLink->getName());
+                $newDatasetLink->setDescription($datasetLink->getDescription());
+                $newDatasetLink->setFunctionCode($datasetLink->getfunctionCode());
+                $newDatasetLink->setProtocol($datasetLink->getProtocol());
+
+                $this->addDatasetLink($newDatasetLink);
             }
         } else {
             throw new \Exception('Class constructor requires a DIF or a DatasetSubmission. A ' . get_class($entity) . ' was passed.');
@@ -2860,5 +2883,52 @@ class DatasetSubmission extends Entity
     public function setRemotelyHostedFunction(?string $remotelyHostedFunction)
     {
         $this->remotelyHostedFunction = $remotelyHostedFunction;
+    }
+
+    /**
+     * Getter for the Dataset Links.
+     *
+     * @return Collection|DatasetLink[]
+     */
+    public function getDatasetLinks(): Collection
+    {
+        return $this->datasetLinks;
+    }
+
+    /**
+     * Adder for dataset link.
+     *
+     * @param DatasetLink $datasetLink A dataset link.
+     *
+     * @return self
+     */
+    public function addDatasetLink(DatasetLink $datasetLink): self
+    {
+        if (!$this->datasetLinks->contains($datasetLink)) {
+            $this->datasetLinks[] = $datasetLink;
+            $datasetLink->setDatasetSubmission($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remover for dataset link.
+     *
+     * @param DatasetLink $datasetLink A dataset link.
+     *
+     * @return self
+     */
+    public function removeDatasetLink(DatasetLink $datasetLink): self
+    {
+        if ($this->datasetLinks->contains($datasetLink)) {
+            $this->datasetLinks->removeElement($datasetLink);
+            // set the owning side to null (unless already changed)
+            if ($datasetLink->getDatasetSubmission() === $this) {
+                $datasetLink->setDatasetSubmission(null);
+            }
+        }
+
+        return $this;
     }
 }

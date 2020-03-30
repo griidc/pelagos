@@ -2,63 +2,77 @@
     <div ref="formContainer">
         <section class="section-content bg pt-5">
             <div class="container">
-                <div class="card card-header">
+                <div class="search-form">
                     <b-form id="searchForm" name="searchForm" method="get" @submit.prevent="onSubmit" @reset.prevent="onReset">
                         <div class="row">
-                            <div class="col-sm-9">
-                                <b-form-input type="search"
-                                              name="query"
-                                              class="form-control"
-                                              placeholder="Search.."
-                                              id="searchBox"
-                                              v-model="form.query">
-                                </b-form-input>
-                                <input type="hidden" id="pageNo" name="page" v-model="form.page">
-                            </div>
-                            <div class="col-sm-3 btn-toolbar">
-                                <button id="searchSubmit" type="submit" class="btn btn-primary mx-2 w-50">Search
-                                    <i class="fa fa-search pl-2"></i></button>
-                                <button type="reset" id="search-clear" class="btn btn-dark mx-2 w-25">Clear</button>
-                            </div>
-                        </div>
-                        <div class="pt-3 mt-3 form-inline">
-                            <span class="input-group pl-5 pt-1" v-b-tooltip.hover.bottom title="Search only in selected field" po>
-                                <label class="pl-2 pr-2" for="field" >Search in Field</label>
-                                <b-form-select name="field" id="field" v-model="form.field" :options="fields">
-                                </b-form-select>
-                            </span>
-                            <span class="input-group pl-5 pt-1">
-                                <label for="collectionStartDate" class="pl-2 pr-2">From</label>
-                                <b-form-datepicker type="text"
+                            <div class="col-lg-9">
+                                <div class="row">
+                                    <div class="col-lg">
+                                        <b-form-input type="search"
+                                                      name="query"
+                                                      class="form-control"
+                                                      placeholder="Search.."
+                                                      id="searchBox"
+                                                      v-model="form.query">
+                                        </b-form-input>
+                                        <input type="hidden" id="pageNo" name="page" v-model="form.page">
+                                    </div>
+                                </div>
+                                <div class="row mt-3 form-group form-inline pt-3">
+                                    <div class="col-lg search-field-options">
+                                        <span class="input-group" v-tooltip="{
+                                                content: 'Search only in selected field',
+                                                placement:'top'}">
+                                            <label class="pl-2 pr-2" for="field" >Search in Field</label>
+                                            <b-form-select name="field" id="field" v-model="form.field" :options="fields">
+                                            </b-form-select>
+                                        </span>
+
+                                    </div>
+                                    <div class="col-lg collection-start-date">
+                                        <span class="input-group">
+                                            <label for="collectionStartDate" class="pl-2 pr-2">From</label>
+                                            <b-form-datepicker type="text"
                                                    class="pr-2 form-control"
                                                    id="collectionStartDate"
                                                    name="collectionStartDate"
                                                    placeholder="yyyy-mm-dd"
                                                    v-model="form.collectionStartDate">
-                                </b-form-datepicker>
-                            </span>
-                            <span class="input-group">
-                                <label for="collectionEndDate" class="pr-2 pl-3">To</label>
-                                <b-form-datepicker type="text"
-                                                   id="collectionEndDate"
-                                                   class="form-control date-input"
-                                                   name="collectionEndDate"
-                                                   placeholder="yyyy-mm-dd"
-                                                   v-model="form.collectionEndDate">
-                                </b-form-datepicker>
-                            </span>
+                                            </b-form-datepicker>
+                                        </span>
+                                    </div>
+                                    <div class="col-lg collection-end-date">
+                                        <span class="input-group">
+                                            <label for="collectionEndDate" class="pr-2 pl-3">To</label>
+                                            <b-form-datepicker
+                                                    type="text"
+                                                    id="collectionEndDate"
+                                                    class="form-control date-input"
+                                                    name="collectionEndDate"
+                                                    placeholder="yyyy-mm-dd"
+                                                    v-model="form.collectionEndDate">
+                                            </b-form-datepicker>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 button-toolbar">
+                                <button id="searchSubmit" type="submit" class="btn btn-primary search-button">Search
+                                    <i class="fa fa-search pl-2"></i></button>
+                                <button type="reset" id="search-clear" class="btn btn-dark clear-button">Clear</button>
+                            </div>
                         </div>
                     </b-form>
                 </div>
             </div>
         </section>
-        <ResultSet v-if="showResults" :results="resultSet" @facetClicked="facetCheckBoxValues" @pagination="changePageNo"/>
+        <ResultSet v-if="showResults" :results="resultSet" @facetClicked="facetCheckBoxValues" @pagination="changePageNo" :formValues="form"/>
         <section class="section-content pt-3 bg" v-else>
             <div class="container">
-                <article class="card card-product">
+                <article class="card">
                     <div class="card-body text-center">
                         <h5 class="card-title">
-                            GRIIDC Data Sets
+                            GRIIDC Datasets
                         </h5>
                         <p class="card-text">
                             Choose from thousands of scientific datasets from various fields
@@ -94,6 +108,7 @@
                 noResults: false,
                 resultSet: Object,
                 route: window.location.hash,
+                submitted: false,
             }
         },
         methods: {
@@ -132,7 +147,9 @@
                         this.resultSet = response.data;
                         this.showResults = true;
                         window.location.hash = searchQuery;
-                    })
+                        this.route = window.location.hash;
+                        this.submitted = true;
+                    });
             },
             onReset: function () {
                 this.form = initialFormValues();
@@ -149,12 +166,30 @@
                 this.form.page = newPageNo;
                 this.onSubmit();
             },
+            detectHashChange: function () {
+                this.route = window.location.hash;
+                this.submitted = false;
+            },
         },
         mounted() {
             if (this.route) {
-               const someVaribale = this.route.split("#")[1].split("&").map(value => value.split("="));
-               this.form = Object.fromEntries(someVaribale);
-               this.onSubmit();
+                const urlHashSplit = decodeURI(this.route).split("#")[1].split("&").map(value => value.split("="));
+                this.form = Object.fromEntries(urlHashSplit);
+                this.onSubmit();
+            }
+            window.addEventListener('hashchange', this.detectHashChange);
+        },
+        watch: {
+            route: function (value) {
+                if (!this.submitted) {
+                    if (this.route) {
+                        const urlHashSplit = decodeURI(this.route).split("#")[1].split("&").map(value => value.split("="));
+                        this.form = Object.fromEntries(urlHashSplit);
+                        this.onSubmit();
+                    } else {
+                        this.onReset();
+                    }
+                }
             }
         }
     }
@@ -166,10 +201,63 @@
                 field: '',
                 collectionStartDate: '',
                 collectionEndDate: '',
+                status: '',
+                fundingOrg: '',
+                researchGroup: ''
         }
     }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+    .search-form {
+        padding: 0.75rem 1.25rem;
+        margin-bottom: 0;
+        background-color: rgba(0, 0, 0, 0.03);
+        border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
+        background-clip: border-box;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+    }
 
+    @media (max-width: 992px) {
+        .search-form {
+            .button-toolbar{
+                margin-top: 1rem !important;
+                padding-top: 1rem !important;
+                .search-button {
+                    width: 50%;
+                }
+                .clear-button {
+                    width: 49%;
+                }
+            }
+            .search-field-options {
+                margin-bottom: 0.5rem !important;
+                padding-bottom: 0.5rem !important;
+                select {
+                    width: 100% !important;
+                }
+            }
+            .collection-start-date {
+                margin-bottom: 0.5rem !important;
+                padding-bottom: 0.5rem !important;
+            }
+        }
+    }
+
+    @media (min-width: 992px) {
+        .search-form {
+            .button-toolbar {
+                .search-button {
+                    margin-right: 0.5rem;
+                    width: 50%;
+                }
+                .clear-button {
+                    margin-right: 0.5rem;
+                    margin-left: 0.5rem;
+                    width: 30%;
+                }
+            }
+        }
+
+    }
 </style>

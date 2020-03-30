@@ -69,6 +69,23 @@ $(document).ready(function(){
         }
     });
 
+
+    jQuery.validator.addClassRules('dataLinkUrl', {
+        "validURL" : true,
+        remote: {
+            url: remoteURL
+        },
+        remote: {
+            url: remoteURL,
+            type: "GET",
+            data: {
+              erddapUrl: function() {
+                return $(".dataLinkUrl", this).val();
+              }
+            }
+        }
+    });
+
     var datasetContactsCount = 0;
 
     // Count the highest index in dataset contacts.
@@ -114,6 +131,41 @@ $(document).ready(function(){
             });
         });
 
+    var datasetLinksCount = 0;
+
+    // Count the highest index in dataset contacts.
+    $("table.dataset-links[index]").each(function() {
+        var value = parseFloat($(this).attr("index"));
+        datasetLinksCount = (value > datasetLinksCount) ? value : datasetLinksCount;
+    });
+
+    $("#addLink")
+        .button()
+        .click(function(){
+            datasetLinksCount++;
+
+            var newLink = $("#links-prototype table")
+                .clone(true)
+                .find(":input[id][name]")
+                .removeClass("prototype error")
+                .removeAttr("disabled")
+                .attr("name", function() {
+                    return $(this).attr("name").replace(/__name__/g, datasetLinksCount);
+                })
+                .attr("id", function() {
+                    return $(this).attr("id").replace(/__name__/g, datasetLinksCount);
+                })
+                .end()
+                .find("label[for]")
+                .attr("for", function() {
+                    return $(this).attr("for").replace(/__name__/g, datasetLinksCount);
+                })
+                .end()
+                .fadeIn("slow");
+
+            $("#dataset-links").append(newLink);
+        });
+
     $(".deletebutton")
         .button()
         .hover(function() {
@@ -123,8 +175,8 @@ $(document).ready(function(){
         })
         .click(function(){
             var deleteTable = this;
-            $(this).parents("#dataset-contacts table").fadeOut("slow", function() {
-                $(deleteTable).parents("#dataset-contacts table")
+            $(this).parents("#dataset-contacts table,#dataset-links *").fadeOut("slow", function() {
+                $(deleteTable).parents("#dataset-contacts table,#dataset-links *")
                     .find(".error").remove()
                     .end()
                     .find(":input").trigger("blur")
