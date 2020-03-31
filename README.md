@@ -19,19 +19,19 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Installation
 
-Pelagos is a [Symfony 4.3+](https://symfony.com/doc/4.3/index.html) project, please follow the normal configuration regarding setting up your webserver for a Symfony project.
+Pelagos is a [Symfony 4.4+](https://symfony.com/doc/4.3/index.html) project, please follow the normal configuration regarding setting up your webserver for a Symfony project.
 
 To install fullfill prerequisites then run:
 * `composer install`
 * `yarn install`
-* `yarn run encore production`
+* `yarn build`
 
 ## Contributors
 
 See the list of [contributors](https://github.com/griidc/pelagos/contributors) who participated in this project.
 
 ## License
-Copyright 2019 Texas A&M University-Corpus Christi
+Copyright 2020 Texas A&M University-Corpus Christi
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
