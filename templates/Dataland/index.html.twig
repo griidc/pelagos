@@ -60,10 +60,9 @@
                     <li><a href="#tabs-1">Details</a></li>
                     <li><a href="#tabs-2">Metadata</a></li>
                     <li {{ dataset.datasetPublications|length == 0 ? ' disabled' : '' }}>
-                    <a href="#tabs-3">Publications</a></li>
-                    <!--
-                    <li><a href="#tabs-4">Manifest</a></li>
-                    -->
+                        <a href="#tabs-3">Publications</a>
+                    </li>
+                    <li><a href="#tabs-4">Dataset Links</a></li>
                 </ul>
                 <div class="tabb" id="tabs-1">
                     {% include 'Dataland/details.html.twig' %}
@@ -89,6 +88,9 @@
                 </div>
                 <div class="tabb" id="tabs-3">
                     {% include 'Dataland/publications.html.twig' %}
+                </div>
+                <div class="tabb" id="tabs-4">
+                    {% include 'Dataland/datasetlinks.html.twig' %}
                 </div>
             </div>
         </div>
