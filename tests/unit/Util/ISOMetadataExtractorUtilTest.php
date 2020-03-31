@@ -230,6 +230,7 @@ class ISOMetadataExtractorUtilTest extends TestCase
                                 'getRemotelyHostedName' => 'remote name',
                                 'getRemotelyHostedDescription' => 'remote description',
                                 'getRemotelyHostedFunction' => 'download',
+                                'getDatasetLinks' => new ArrayCollection(),
                             )
                         ),
                     )
@@ -318,6 +319,7 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getDatasetFileColdStorageArchiveSha256Hash' => 'abc123',
                 'getDatasetFileColdStorageArchiveSize' => '100',
                 'getDatasetFileColdStorageOriginalFilename' => 'filename.txt',
+                'getDatasetLinks' => new ArrayCollection(),
             )
         );
 

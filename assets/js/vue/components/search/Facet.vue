@@ -24,10 +24,16 @@
                                 <span class="float-right badge badge-light round">{{ facet.count }}</span>
                                 {{ facet.name }}
                             </span>
-                            <span class="form-check-label" v-b-tooltip.hover :title="facet.name" v-else>
+                            <span class="form-check-label"
+                                  v-tooltip="{
+                                    content: facet.name,
+                                    placement:'top'
+                                    }"
+                                  v-else>
                                 <span class="float-right badge badge-light round">{{ facet.count }}</span>
                                  {{ facet.shortName ? facet.shortName : facet.name }}
                             </span>
+
                         </label>
                     </div>
                 </form>
@@ -45,6 +51,9 @@
             },
             facetName: {
                 type: String
+            },
+            formValues: {
+                type: Object
             }
         },
         data: function() {
@@ -56,6 +65,20 @@
         methods: {
             facetChange: function () {
                 this.$emit('facetClicked', this.facetName + '=' + this.listOfCheckedFacets.join(","));
+            },
+            facetCheckBox: function () {
+                if (this.facetName in this.formValues) {
+                    if (this.formValues[this.facetName]) {
+                        let splitFacets = this.formValues[this.facetName].split(",");
+                        this.listOfCheckedFacets = [];
+                        splitFacets.forEach((value) => {
+                            this.listOfCheckedFacets.push(value);
+                        });
+                    } else {
+                        this.listOfCheckedFacets = [];
+
+                    }
+                }
             }
         },
         computed: {
@@ -72,6 +95,14 @@
                     return this.facetInfo;
                 }
             }
+        },
+        created() {
+            this.facetCheckBox();
+        },
+        watch: {
+            formValues: function () {
+                this.facetCheckBox();
+            },
         }
     }
 </script>

@@ -1,0 +1,141 @@
+<fieldset>
+    <legend>Dataset Links</legend>
+    <div id="dataset-links">
+        {% for link in form.datasetLinks %}
+        <fieldset>
+            <legend>Link: {{ loop.index }}</legend>
+            <table class="tab-table dataset-links" index="{{link.vars.name}}">
+            <tr>
+                <td>
+                    <span class="helpSection">
+                        <img class="info" src="{{ asset('images/info32.png') }}">
+                        <div class="tooltiptext">
+                            Please enter a ....
+                        </div>
+                    </span>
+                    <button class="deletebutton" type="button">Delete Link</button>
+                     {{ form_row(link.url) }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="helpSection">
+                        <img class="info" src="{{ asset('images/info32.png') }}">
+                        <div class="tooltiptext">
+                            Please enter a ....
+                        </div>
+                    </span>
+                    {{ form_row(link.name) }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="helpSection">
+                        <img class="info" src="{{ asset('images/info32.png') }}">
+                        <div class="tooltiptext">
+                            Please enter a ....
+                        </div>
+                    </span>
+                    {{ form_row(link.description) }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="helpSection">
+                        <img class="info" src="{{ asset('images/info32.png') }}">
+                        <div class="tooltiptext">
+                            Please enter a ....
+                        </div>
+                    </span>
+                    {{ form_row(link.functionCode) }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="helpSection">
+                        <img class="info" src="{{ asset('images/info32.png') }}">
+                        <div class="tooltiptext">
+                            Please enter a ....
+                        </div>
+                    </span>
+                    {{ form_row(link.protocol) }}
+                </td>
+            </tr>
+        </table>
+        </fieldset>
+        {% endfor %}
+    </div>
+
+    <button id="addLink" type="button">Add Link</button>
+</fieldset>
+
+<datalist id="dataLinkNames">
+{% for name, value in linkoptions %}
+    <option>{{name}}</option>
+{% endfor %}
+</datalist>
+
+<div id="links-prototype">
+    {% set link = form.datasetLinks.vars.prototype %}
+    <fieldset>
+    <table class="tab-table dataset-links">
+    <legend>New Link:</legend>
+        <tr>
+            <td>
+                <span class="helpSection">
+                    <img class="info" src="{{ asset('images/info32.png') }}">
+                    <div class="tooltiptext">
+                        Please enter a value.
+                    </div>
+                </span>
+                <button class="deletebutton" type="button">Delete Link</button>
+                {{ form_row(link.url, {"attr": {"class": "prototype dataLinkUrl", "disabled": "disabled"}}) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="helpSection">
+                    <img class="info" src="{{ asset('images/info32.png') }}">
+                    <div class="tooltiptext">
+                        Please enter a value.
+                    </div>
+                </span>
+                {{ form_row(link.name, {"attr": {"class": "prototype", "disabled": "disabled"}}) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="helpSection">
+                    <img class="info" src="{{ asset('images/info32.png') }}">
+                    <div class="tooltiptext">
+                        Please enter a value.
+                    </div>
+                </span>
+                {{ form_row(link.description, {"attr": {"class": "prototype", "disabled": "disabled"}}) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="helpSection">
+                    <img class="info" src="{{ asset('images/info32.png') }}">
+                    <div class="tooltiptext">
+                        Please enter a value.
+                    </div>
+                </span>
+                {{ form_row(link.functionCode, {"attr": {"class": "prototype", "disabled": "disabled"}}) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="helpSection">
+                    <img class="info" src="{{ asset('images/info32.png') }}">
+                    <div class="tooltiptext">
+                        Please enter a value.
+                    </div>
+                </span>
+                {{ form_row(link.protocol, {"attr": {"class": "prototype", "disabled": "disabled"}}) }}
+            </td>
+        </tr>
+    </table>
+    </fieldset>
+</div>

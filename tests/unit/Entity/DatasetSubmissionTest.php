@@ -4,6 +4,7 @@ namespace App\Tests\Entity;
 
 use App\Entity\DataCenter;
 use App\Entity\Dataset;
+use App\Entity\DatasetLink;
 use App\Entity\DatasetSubmission;
 use App\Entity\DatasetSubmissionReview;
 use App\Entity\DIF;
@@ -959,5 +960,46 @@ class DatasetSubmissionTest extends TestCase
         );
         $this->datasetSubmission->setRemotelyHostedFunction(null);
         $this->assertNull($this->datasetSubmission->getRemotelyHostedFunction());
+    }
+    
+    /**
+     * Test the adder, remover and getter for Distribution Points.
+     *
+     * @return void
+     */
+    public function testAddRemoveAndGetDatasetLink()
+    {
+        //setup
+        $this->mockDatasetLink = \Mockery::mock(
+            DatasetLink::class,
+            array(
+                'getDatasetSubmission' => $this->datasetSubmission,
+                'setDatasetSubmission' => new DatasetLink(),
+                'getUrl' => 'www.bla.null',
+            )
+        );
+
+        //remove default distribution point initially created in dataset submission entity
+        $defaultDatasetLink = $this->datasetSubmission->getDatasetLinks()->first();
+        if (null !== $defaultDatasetLink) {
+            $this->datasetSubmission->removeDatasetLink($defaultDatasetLink);
+        }
+
+        //test adder
+        $this->datasetSubmission->addDatasetLink($this->mockDatasetLink);
+        $this->assertEquals(
+            1,
+            $this->datasetSubmission->getDatasetLinks()->count()
+        );
+
+        //test getter
+        $this->assertSame($this->datasetSubmission->getDatasetLinks()->first(), $this->mockDatasetLink);
+
+        //test remover
+        $this->datasetSubmission->removeDatasetLink($this->mockDatasetLink);
+        $this->assertEquals(
+            0,
+            $this->datasetSubmission->getDatasetLinks()->count()
+        );
     }
 }

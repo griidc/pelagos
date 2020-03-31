@@ -172,4 +172,9 @@ table.dataTable.stripe tbody tr:hover {
     display:none;
 }
 
+#links-prototype
+{
+    display:none;
+}
+
 
