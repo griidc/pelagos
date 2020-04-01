@@ -148,13 +148,13 @@ class DataStore
             if (200 !== $status) {
                 throw new \Exception("File could not be downloaded from $fileUri ($status)");
             }
-            $contentType = $result->getHeader('Content-Type')[0];
-            if (preg_match('#^text/html#', $contentType)) {
+            $contentType = $result->getHeader('Content-Type');
+            if (!empty($contentType) and preg_match('#^text/html#', $contentType[0])) {
                 throw new HtmlFoundException("HTML file found at $fileUri");
             }
-            $contentDisposition = $result->getHeader('Content-Disposition')[0];
+            $contentDisposition = $result->getHeader('Content-Disposition');
             // Match quoted or unquoted file names.
-            if (preg_match('/^attachment;\s*filename=(?:"([^"]+)"|(.+))$/', $contentDisposition, $matches)) {
+            if (!empty($contentDisposition) and preg_match('/^attachment;\s*filename=(?:"([^"]+)"|(.+))$/', $contentDisposition[0], $matches)) {
                 if (!empty($matches[1])) {
                     // We found a quoted file name.
                     $fileName = $matches[1];
