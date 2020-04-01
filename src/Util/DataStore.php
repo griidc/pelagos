@@ -145,7 +145,7 @@ class DataStore
             $client = new GuzzleClient();
             $result = $client->request('HEAD', $fileUri);
             $status = $result->getStatusCode();
-            if (200 !== $status)) {
+            if (200 !== $status) {
                 throw new \Exception("File could not be downloaded from $fileUri ($status)");
             }
             $contentType = $result->getHeader('Content-Type');
