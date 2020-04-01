@@ -2,6 +2,8 @@
 
 namespace App\Util;
 
+use GuzzleHttp\Client as GuzzleClient;
+
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
@@ -140,10 +142,10 @@ class DataStore
         if (preg_match('/^http/', $fileUri)) {
             // Decode any characters escaped in the URL.
             $fileName = urldecode($fileName);
-            $browser = new \Buzz\Browser();
-            $result = $browser->head($fileUri);
-            $status = $result->getHeaders()[0];
-            if (!preg_match('/200/', $status)) {
+            $client = new GuzzleClient();
+            $result = $client->request('HEAD', $fileUri);
+            $status = $result->getStatusCode();
+            if (200 !== $status)) {
                 throw new \Exception("File could not be downloaded from $fileUri ($status)");
             }
             $contentType = $result->getHeader('Content-Type');
