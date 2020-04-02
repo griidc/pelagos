@@ -1,125 +1,150 @@
 <!DOCTYPE html>
-<html>
+<html style="height:100%;">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     {% block head %}
-        <title>National Academies - Gulf Research Program | {% block title %}GRIIDC{% endblock %}</title>
+        <title>GRIIDC - NAS GRP | {% block title %}Pelagos{% endblock %}</title>
 
-        <link rel="icon" type="image/x-icon" href="{{ asset('images/griidc_fav.png') }}"/>
-        <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-              integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-              crossorigin="anonymous">
+        <link rel="icon" type="image/x-icon" href="{{ asset('images/griidc_fav.png') }}" />
+
         <!-- Global site tag (gtag.js) - Google Analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id={{ google_analytics_id }}"></script>
-        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-                integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-                crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-                integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-                crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-                integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-                crossorigin="anonymous"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{google_analytics_id}}"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
-
-            function gtag() {
-                dataLayer.push(arguments);
-            }
-
+            function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
 
-            gtag('config', '{{ google_analytics_id }}', {
+            gtag('config', '{{google_analytics_id}}', {
                 'page_path': '{{ app.request.pathinfo }}'
             });
         </script>
-        <!---!-->
 
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('nas-app') }}
+    <link href="//cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.css" rel="stylesheet" />
+
+        {% if isMaintenanceMode() %}
+    <link href="{{ asset('css/griidc_site_banner_screen.css') }}" rel="stylesheet" />
+        {% endif %}
+    {% endblock stylesheets  %}
     {% endblock %}
 </head>
-<body>
-        {% block htmlbody %}
-                <header class="main_menu home_menu">
-                    <div class="container global-nav">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <nav class="navbar navbar-expand-lg navbar-light">
-                                    <a class="navbar-brand" href="#"> <img src="{{ asset('images/nas-grp-logo.png') }}" alt="nas logo"
-                                                                           style="width: 233px; margin-top: 5px"> </a>
-                                    <a class="navbar-brand" href="#"> <img src="{{ asset('images/griidc-logo.png') }}" alt="griidc logo"
-                                                                           style="width: 233px"> </a>
-                                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                                            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                                        <span class="navbar-toggler-icon"></span>
-                                    </button>
-                                    <div class="collapse navbar-collapse main-menu-item" id="navbarNav">
-                                        <ul class="navbar-nav">
-                                            <li class="nav-item active">
-                                                <a class="nav-link" href="#">Home</a>
-                                            </li>
-                                            <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    Search Data
-                                                </a>
-                                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                                    <a class="dropdown-item" href="#">Placeholder</a>
-                                                    <a class="dropdown-item" href="#">Placeholder</a>
-                                                    <a class="dropdown-item" href="#">Placeholder</a>
-                                                </div>
-                                            </li>
-                                            <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    Submit Data
-                                                </a>
-                                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                                    <a class="dropdown-item" href="#">How to submit Data</a>
-                                                    <a class="dropdown-item" href="#">DIF</a>
-                                                    <a class="dropdown-item" href="#">Dataset Submission</a>
-                                                </div>
-                                            </li>
-                                            <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    Tracking & Stats
-                                                </a>
-                                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                                    <a class="dropdown-item" href="#">GRIIDC Stats</a>
-                                                    <a class="dropdown-item" href="#">Dataset Monitoring</a>
-                                                </div>
-                                            </li>
-                                            <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    About Us
-                                                </a>
-                                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                                    <a class="dropdown-item" href="#">About GRIIDC</a>
-                                                    <a class="dropdown-item" href="#">About NAS-GRP</a>
-                                                    <a class="dropdown-item" href="#">Meet the Team</a>
-                                                    <a class="dropdown-item" href="#">GRIIDC Services</a>
-                                                    <a class="dropdown-item" href="#">Terms & Conditions</a>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </nav>
+<body class="html page-pelagos-full">
+{% block htmlbody %}
+    <ul class="atlassian-btns">
+        <li>
+            <a href="#" id="atlwdg-issue" class="atlwdg-trigger">
+                Report Issue
+            </a>
+        </li>
+        <li>
+            <a href="#" id="atlwdg-suggest" class="atlwdg-trigger">
+                Suggest Improvement
+            </a>
+        </li>
+    </ul>
+    <div id="page-wrapper">
+        <div id="page">
+            {% if isMaintenanceMode() %}
+                <div id="siteBannerHeaderBanner" class="toolbar clearfix toolbar-processed overlay-displace-top" style="background-color:{{ getMaintenanceModeColor() }}">
+                    {{ getMaintenanceModeText()}}
+                </div>
+                <div id="siteBannerFooterBanner" class="toolbar clearfix toolbar-processed overlay-displace-top" style="background-color:{{ getMaintenanceModeColor() }}">
+                    {{ getMaintenanceModeText()}}.</div>
+            {% endif %}
+            <div id="header"><div class="section clearfix">
+
+                    <div class="region region-header">
+                        <div id="block-pelagos-pelagos-login-logout-links" class="block block-pelagos">
+                            <div class="content">
+                                {% if is_granted('ROLE_USER') %}
+                                    <a style="text-decoration: underline;">
+                                        Logged in as: {{ app.user.username }}
+                                    </a>
+                                    |
+                                    <a href="{{ path('security_logout') }}">  Log out</a>
+                                {% else %}
+                                    <a href="{{ path('security_login', {destination: app.request.uri}) }}">Log in</a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
-                </header>
-                <section>
-                    <div class="container">
-                        <div id="pelagos-content">
-                            {% block body %}{% endblock %}
+
+                    <div id="branding" class="container">
+                        <div id="logo-wrapper">
+                            <a href="http://gulfresearchinitiative.org" title="National Academies | Gulf Research Program" rel="home" id="logo">
+                                <img src="{{asset('images/nas-grp-logo.png')}}" alt="Home" style="width: 233px; height: 80px">
+                            </a>
+                        </div>
+
+                        <div id="name-and-slogan">
+
+                            <div id="site-slogan">Investigating the effect of oil spills <br> on the environment and public health.</div>
+                        </div>
+
+                        <div id="griidc-logo-wrapper">
+                            <a href="/" title="Home" rel="home" id="logo">
+                                <img src="{{asset('images/griidc-logo.png')}}" alt="GRIIDC">
+                            </a>
                         </div>
                     </div>
+                </div>
+            </div>
+            {% block menu %}
+                {% include "Menus/main.html.twig" %}
+            {% endblock menu %}
+            <div id="main-wrapper">
+                <div id="pelagos-container">
+                    <div id="pelagos-container-row">
+                        <div id="pelagos-container-cell">
+                            <div id="pelagos-wrapper">
+                                <div id="pelagos-wrapper-row">
+                                    <div id="pelagos-content">
+                                        <h1 style="margin: 0 auto;">{% block pagetitle %}{% endblock %}</h1>
+                                        {% block body %}{% endblock %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                </section>
+            {#END Main Content #}
+        </div>{#End div page#}
+    </div> {#End div wrapper#}
+{% endblock htmlbody %}
 
-        {% endblock htmlbody %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('nas-app') }}
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.hoverintent/1.9.0/jquery.hoverIntent.min.js"></script>
+
+    <script type="text/javascript" src="https://griidc.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-2rfjj7/b/29/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=8b54034b"></script>
+
+    <script type="text/javascript" src="https://griidc.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-2rfjj7/b/29/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=a5e3f887"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            window.ATL_JQ_PAGE_PROPS =  {
+                "8b54034b" : {
+                    "triggerFunction": function(showCollectorDialog) {
+                        $("#atlwdg-issue").click(function(e) {
+                            e.preventDefault();
+                            showCollectorDialog();
+                        });
+                    }
+                },
+                "a5e3f887" : {
+                    "triggerFunction": function(showCollectorDialog) {
+                        $("#atlwdg-suggest").click(function(e) {
+                            e.preventDefault();
+                            showCollectorDialog();
+                        });
+                    }
+                },
+            };
+        });
+    </script>
+{% endblock %}
 </body>
 </html>
