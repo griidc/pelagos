@@ -80,10 +80,10 @@
  
     --color-headerTop: var(--color-brown--tan);
     --color-headerMiddle: var(--color-blue--blueBird);
-    --color-headerBottom:#002d38;
+    --color-headerBottom:var(--color-blue--boston);
     
     --color-main: var(--color-blue--boston);
-    --color-menu: var(--color-blue--geyser);
+    --color-menu: var(--color-blue--blueBird);
 
 
 }
