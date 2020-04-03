@@ -79,11 +79,11 @@
     --color-error: #8c2e0b;
  
     --color-headerTop: var(--color-brown--tan);
-    --color-headerMiddle: var(--color-blue--blueBird);
-    --color-headerBottom:var(--color-blue--boston);
+    --color-headerMiddle: var(--color-blue--boston);
+    --color-headerBottom:var(--color-blue--blueBird);
     
-    --color-main: var(--color-blue--boston);
-    --color-menu: var(--color-blue--blueBird);
+    --color-main: var(--color-blue--blueBird);
+    --color-menu: var(--color-blue--boston);
 
 
 }
@@ -4287,7 +4287,9 @@ body.modal-is-open {
 /* .global-nav__top-logo-nam {
     background-image: url(../assets/images/08d587b58a329ec76fc30d4313144b16.png);
     background-position: 0 0
-} */ /*
+} */ 
+
+/*
 
 .global-nav__top-logo-nam:hover {
     background-position: -216px 0
