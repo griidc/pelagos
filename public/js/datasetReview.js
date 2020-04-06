@@ -233,7 +233,7 @@ $(document).ready(function(){
             btnPrevious.show();
             btnPrevious.button("enable");
         }
-        if (activeTab === 7) {
+        if (activeTab === 8) {
             btnNext.button("disable");
             btnNext.hide();
         } else {
