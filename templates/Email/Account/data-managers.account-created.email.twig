@@ -4,7 +4,7 @@
     Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},<br>
     <br>
     This email is being sent to notify you that {{account.person.FirstName}} {{account.person.LastName}} has completed
-    the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)
+    the GRIIDC
     account creation process. {{account.person.FirstName}} {{account.person.LastName}} is a member of
     {{ account.person.ResearchGroupNames | join(', ') }}.<br />
     <br>
@@ -19,7 +19,7 @@
 
 {% block body_text %}
 This email is being sent to notify you that {{account.person.FirstName}} {{account.person.LastName}} has completed
-the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)
+the GRIIDC
 account creation process. {{account.person.FirstName}} {{account.person.LastName}} is a member of
 {{ account.person.ResearchGroupNames | join(', ') }}.
 
