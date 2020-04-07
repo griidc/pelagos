@@ -580,7 +580,7 @@ class Dataset extends Entity
         $doi = $this->getDoi();
 
         $citationString = $author . ' (' . $year . ') ' . $title . '.' .
-            ' Distributed by: Gulf of Mexico Research Initiative Information and Data Cooperative '
+            ' Distributed by: GRIIDC '
             . '(GRIIDC), Harte Research Institute, Texas A&M University-Corpus Christi. ';
 
         if ($doi instanceof DOI) {

@@ -1,7 +1,7 @@
 # Pelagos [![Build Status](https://api.travis-ci.com/griidc/pelagos.svg)](https://travis-ci.com/griidc/pelagos)
 
 Pelagos is a system for maintaining a repository of scientific research data.
-Developed and maintained by the The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC).
+Developed and maintained by the The GRIIDC.
 URL: https://data.gulfresearchinitiative.org/
 ## Getting Started
 
