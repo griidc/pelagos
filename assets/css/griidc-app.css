@@ -30,3 +30,20 @@
     -moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
     box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
 }
+
+table.datasets tr:hover td {
+    background-color: var(--color-table-striped);
+}
+
+table.datasets tr td.highlight {
+    background-color:  var(--color-table-striped);
+}
+
+.datasets tr:nth-child(odd) {
+    background-color: #f6f5f4;
+}
+
+table.dataTable.stripe tbody tr:hover {
+    cursor: pointer;
+    background-color: var(--color-table-striped);
+}
