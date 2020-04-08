@@ -1,3 +1,6 @@
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
+@import url(https://fonts.googleapis.com/css?family=Merriweather:400,700,400italic,700italic);
+
 body {height:100%}
 
 html, body {
@@ -5,10 +8,10 @@ html, body {
     padding: 0;
 }
 body {
-    font-family: var(--body-fonts);
+    font-family: "Merriweather", Arial, serif;
     font-size: 15px;
     font-weight: 400;
-    color: var(--color-black);
+    color: #000;
     line-height: 23px;
     margin: 0 8px;
 }
@@ -62,14 +65,14 @@ h1 {
     font-family: inherit;
     font-size: 1.733em;
     font-weight: 400;
-    color: var(--color-darkGrey);
+    color: #252525;
 }
 
 h2 {
-    font-family: var(--body-fonts);
+    font-family: "Lato", Arial, sans-serif;
     font-size: 1.467em;
     font-weight: 400;
-    color: var(--color-main);
+    color: #004250;
     margin-top: 1.25em;
     margin-bottom: 1em;
 }
@@ -80,7 +83,7 @@ label {
 }
 
 div.error, .error {
-    color: var(--color-error);
+    color: #8c2e0b;
 }
 
 p {
@@ -98,32 +101,31 @@ a.extlink:after {
 }
 
 #page-wrapper {
-    background-color: var(--color-white);
+    background-color: #fff;
     overflow-x: hidden;
 }
 
 div#header {
-    height: var(--headerHeight);
-    background-color: var(--color-header);
+    height: 110px;
 }
 div#header .region-header {
-    background-color: var(--color-headerTop);
+    background-color: #becacd;
     height: 18px;
     text-align: right;
     padding: 2px 10px 8px;
 }
 div#header .region-header a {
-    font-family: var(--main-fonts);
+    font-family: 'Lato';
     font-weight: 600;
     text-transform: uppercase;
-    color: var(--color-main);
+    color: #004250;
 }
 div#header #logo-wrapper {
     position: relative;
     top: -11px;
 }
 div#header #name-and-slogan {
-    font-family: var(--main-fonts);
+    font-family: 'Lato';
     font-weight: 600;
     font-size: 16px;
     line-height: 1.25em;
@@ -139,10 +141,10 @@ div#header #griidc-logo-wrapper {
 
 #navigation {
     width: 100%;
-    background-color: var(--color-main);
+    background-color: #004250;
 }
 #navigation:before {
-    background-color: var(--color-headerMiddle);
+    background-color: #3f626a;
     content: '';
     display: block;
     height: 18px;
@@ -159,7 +161,7 @@ div#header #griidc-logo-wrapper {
 }
 
 #main-wrapper {
-    background-color: var(--color-grey);
+    background-color: #ebebeb;
 }
 
 #content-wrapper {
@@ -171,7 +173,7 @@ div#header #griidc-logo-wrapper {
 }
 
 #content-bottom {
-    background-color: var(--color-grey);
+    background-color: #ebebeb;
 }
 #content-bottom .leading-by-example {
     padding: 30px 20px;
@@ -179,7 +181,7 @@ div#header #griidc-logo-wrapper {
 }
 #content-bottom .leading-by-example h2 {
     margin-top: 12px;
-    font-family: var(--body-fonts);
+    font-family: 'Merriweather';
     font-weight: 100;
     text-align: center;
     font-size: 26px;
@@ -331,7 +333,7 @@ div#header #griidc-logo-wrapper {
     text-align: center;
     font-weight: 600;
     cursor: pointer;
-    color: var(--color-main);
+    color: #004250;
     font-size: 0.875em;
     width: 100%;
     margin-bottom: -22px;
@@ -352,20 +354,20 @@ div#header #griidc-logo-wrapper {
 }
 
 #pelagos-menu-1 a, #pelagos-menu-1 span.nolink {
-    background: var(--color-main);
-    color: var(--color-white);
+    background: #004250;
+    color: #fff;
     display: block;
     padding: 6px 21px;
     text-decoration: none;
     font-weight: 100;
-    font-family: var(--main-fonts);
+    font-family: 'Lato';
     font-size: 14px;
     text-transform: uppercase;
     border: none;
 }
 
 #pelagos-menu-1 ul.menu li li a:link, #pelagos-menu-1 ul.menu li li a:visited, #pelagos-menu-1 ul.menu li li span {
-    color: var(--color-white);
+    color: #fff;
     border-right: 0;
     font-weight: normal;
     line-height: 24px;
@@ -374,7 +376,7 @@ div#header #griidc-logo-wrapper {
 #pelagos-menu-1 {
     float: left;
     line-height: 28px;
-    background: var(--color-main);
+    background: #004250;
     margin-bottom: 0;
 }
 #pelagos-menu-1 .block {
@@ -396,7 +398,7 @@ div#header #griidc-logo-wrapper {
     cursor: default;
 }
 #pelagos-menu-1 span:active {
-    background: var(--color-main);
+    background: #004250;
 }
 #pelagos-menu-1 li {
     display: inline;
@@ -406,7 +408,7 @@ div#header #griidc-logo-wrapper {
     height: 1%;
 }
 #pelagos-menu-1 li > ul > li {
-    border-top: 1px solid var(--color-menu);
+    border-top: 1px solid #c2deea;
 }
 #pelagos-menu-1 li > ul > li a {
     text-transform: capitalize;
@@ -428,7 +430,7 @@ div#header #griidc-logo-wrapper {
 #pelagos-menu-1 ul.menu ul {
     padding: 0;
     list-style: none;
-    background: var(--color-main);
+    background: #004250;
 }
 #pelagos-menu-1 ul.menu li ul {
     position: absolute;
@@ -447,7 +449,7 @@ div#header #griidc-logo-wrapper {
 #pelagos-menu-1 ul.menu li li span:active,
 #pelagos-menu-1 ul.menu li li a:active,
 #pelagos-menu-1 ul.menu li li a:hover {
-    background: var(--color-menu);
+    background: #c2deea;
     text-decoration: none;
 }
 
@@ -458,7 +460,7 @@ div#header #griidc-logo-wrapper {
 #pelagos-menu-1 a:active, #pelagos-menu-1 span.nolink:active,
 #pelagos-menu-1 ul.menu li li.expanded ul.menu a,
 #pelagos-menu-1 ul.menu li li.expanded ul.menu span {
-    background: var(--color-main);
+    background: #004250;
 }
 
 #pelagos-menu-1 ul.menu li li.expanded ul.menu span:active,
@@ -466,14 +468,14 @@ div#header #griidc-logo-wrapper {
 #pelagos-menu-1 ul.menu li li.expanded ul.menu a:hover,
 #pelagos-menu-1 ul.menu li li.expanded ul.menu a:active,
 #pelagos-menu-1 a:hover, #pelagos-menu-1 span.nolink:hover {
-    background: var(--color-menu);
+    background: #c2deea;
 }
 
 #pelagos-menu-1 ul.menu li li.expanded ul.menu li.expanded a,
 #pelagos-menu-1 ul.menu li li.expanded ul.menu li.expanded span,
 #pelagos-menu-1 ul.menu li li.expanded a,
 #pelagos-menu-1 ul.menu li li.expanded span {
-    background: var(--color-main) url("/build/images/menu_arrow.png") 100% 50% no-repeat;
+    background: #004250 url("/build/images/menu_arrow.png") 100% 50% no-repeat;
 }
 #pelagos-menu-1 ul.menu li li.expanded ul.menu li.expanded a:active,
 #pelagos-menu-1 ul.menu li li.expanded ul.menu li.expanded a:hover,
@@ -483,7 +485,7 @@ div#header #griidc-logo-wrapper {
 #pelagos-menu-1 ul.menu li li.expanded span:hover,
 #pelagos-menu-1 ul.menu li li.expanded a:active,
 #pelagos-menu-1 ul.menu li li.expanded a:hover {
-    background: var(--color-menu) url("/build/images/menu_arrow.png") 100% 50% no-repeat;
+    background: #c2deea url("/build/images/menu_arrow.png") 100% 50% no-repeat;
 }
 
 #pelagos-menu-1 ul.menu li li li:hover ul,
