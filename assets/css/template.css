@@ -103,7 +103,8 @@ a.extlink:after {
 }
 
 div#header {
-    height: 110px;
+    height: var(--headerHeight);
+    background-color: var(--color-header);
 }
 div#header .region-header {
     background-color: var(--color-headerTop);
