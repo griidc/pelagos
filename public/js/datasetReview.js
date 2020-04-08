@@ -233,7 +233,7 @@ $(document).ready(function(){
             btnPrevious.show();
             btnPrevious.button("enable");
         }
-        if (activeTab === 7) {
+        if (activeTab === 8) {
             btnNext.button("disable");
             btnNext.hide();
         } else {
@@ -822,15 +822,18 @@ function areTabsValid()
             $(this).find(":input").on("change blur keyup", function () {
                 $("#dtabs .ds-metadata").each(function () {
                     var label = $(this).attr("aria-labelledby");
+
                     $(this).find(":input").not(".prototype, button").each(function () {
                         $(this).valid()
                     });
-                    if ($(this).find(":input").not(".prototype, button").valid()) {
-                        $("#" + label).next("img").prop("src", imgCheck);
-                    } else {
-                        $("#" + label).next("img").prop("src", imgWarning);
-                        isValid = false;
-                    }
+                    $(this).find(":input").not(".prototype, button").each(function () {
+                        if ($(this).valid) {
+                            $("#" + label).next("img").prop("src", imgCheck);
+                        } else {
+                            $("#" + label).next("img").prop("src", imgWarning);
+                            isValid = false;
+                        }
+                    });
                 });
             });
         });
