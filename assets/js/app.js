@@ -7,6 +7,7 @@
 const $ = require('jquery');
 global.$ = global.jQuery = $;
 
+require('../css/griidc.css');
 require('../css/template.css');
 require('../css/superfish-navbar.css');
 require('../css/superfish.css');
