@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends is_nas_grp ? 'nas-grp-base.html.twig' : 'base.html.twig' %}
 
 {% block stylesheets %}
     {{ parent() }}
