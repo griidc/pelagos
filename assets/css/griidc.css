@@ -19,10 +19,14 @@
     --weightBold: 700;
 
     --headerHeight: 110px;
-    --color-header: #000;
+    --color-header: #fff;
 
     --color-teal: #004250;
     --color-lightBlue: #c2deea;
+    --color-dark-cyan: #3f626a;
+    --color-light-cyan: #becacd;
+    --color-dark-green: #002d38;
+
     --color-pink: #ffbdaf;
     --color-grey: #ebebeb;
     --color-darkGrey: #252525;
@@ -33,12 +37,13 @@
 
     --color-error: #8c2e0b;
 
-    --color-headerTop:#becacd;
-    --color-headerMiddle:#3f626a;
-    --color-headerBottom:#002d38;
+    --color-headerTop: var(--color-light-cyan);
+    --color-headerMiddle: var(--color-dark-cyan);
+    --color-headerBottom: var(--color-dark-green);
 
     --color-main: var(--color-teal);
     --color-menu: var(--color-lightBlue);
 
-
+    --atlassion-button-main: var(--color-teal);
+    --atlassion-button-bg: var(--color-dark-cyan);
 }
