@@ -87,4 +87,7 @@
     --color-main: var(--color-blue--blueBird);
     --color-menu: var(--color-blue--boston);
     --color-table-striped: var(--color-brown--tan);
+
+    --atlassion-button-main: var(--color-blue--blueBird);
+    --atlassion-button-bg: var(--color-blue--boston);
 }
