@@ -45,7 +45,7 @@ class Fileset extends Entity
     }
 
     /**
-     * Remover for Distribution Point.
+     * Remover for File entity.
      *
      * @param File $file Single file to be removed.
      *
