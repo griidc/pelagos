@@ -25,6 +25,13 @@ class FilesetTest extends TestCase
     protected $mockFile;
 
     /**
+     * The default File.
+     *
+     * @var File
+     */
+    protected $defaultFile;
+
+    /**
      * Setup for PHPUnit tests.
      *
      * This instantiates an instance of Fileset.
@@ -35,35 +42,36 @@ class FilesetTest extends TestCase
     {
         $this->fileset = new Fileset;
         $this->mockFile = \Mockery::mock(File::class, array('setFileset' => null));
+        $this->defaultFile = $this->fileset->getFiles()->first();
     }
 
-//    /**
-//     * Test Adding files to fileset.
-//     *
-//     * @return void
-//     */
-//    public function testAddFileToFileset()
-//    {
-//        $this->fileset->addFile($this->mockFile);
-//        $this->assertSame($this->mockFile, $this->fileset->getFiles()->first());
-//    }
-//
-//    public function testRemoveFileToFileset()
-//    {
-//        $this->fileset->addFile($this->mockFile);
-//        $this->assertSame(1, $this->fileset->getFiles()->count());;
-//        $this->fileset->removeFile($this->mockFile);
-//        $this->assertSame(0, $this->fileset->getFiles()->count());;
-//    }
-//
-//    /**
-//     * Test instance of files collection.
-//     *
-//     * @return void
-//     */
-//    public function testFilesCollection()
-//    {
-//        $this->fileset->addFile($this->mockFile);
-//        $this->assertInstanceOf(Collection::class, $this->fileset->getFiles());
-//    }
+    /**
+     * Test Adding files to fileset.
+     *
+     * @return void
+     */
+    public function testAddFileToFileset()
+    {
+        if (null !== $this->defaultFile) {
+            $this->fileset->removeFile($this->defaultFile);
+        }
+        $this->fileset->addFile($this->mockFile);
+        $this->assertEquals($this->mockFile, $this->fileset->getFiles()->first());
+    }
+
+    public function testRemoveFileToFileset()
+    {
+        $this->fileset->removeFile($this->defaultFile);
+        $this->assertSame(0, $this->fileset->getFiles()->count());;
+    }
+
+    /**
+     * Test instance of files collection.
+     *
+     * @return void
+     */
+    public function testFilesCollection()
+    {
+        $this->assertInstanceOf(Collection::class, $this->fileset->getFiles());
+    }
 }
