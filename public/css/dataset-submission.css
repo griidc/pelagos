@@ -112,6 +112,11 @@ fieldset
     display: inline;
 }
 
+table.dataTable.stripe tbody tr:hover {
+    cursor: pointer;
+    background-color: var(--color-table-striped);
+}
+
 .helpSection img
 {
     opacity:.5;
