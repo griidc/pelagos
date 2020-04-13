@@ -7,6 +7,14 @@ table.datasets td {
     padding: 5px 10px;
 }
 
+table.datasets tr:hover td {
+    background-color: var(--color-table-striped);
+}
+
+table.datasets tr td.highlight {
+    background-color: var(--color-table-striped);
+}
+
 table.datasets .checkbox {
     width: 1em;
     text-align: center;
