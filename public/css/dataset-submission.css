@@ -114,7 +114,7 @@ fieldset
 
 table.dataTable.stripe tbody tr:hover {
     cursor: pointer;
-    background-color: #becacd;
+    background-color: var(--color-table-striped);
 }
 
 .helpSection img
