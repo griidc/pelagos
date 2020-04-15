@@ -6,26 +6,7 @@
 
     <link href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.1/themes/default/style.min.css" rel="stylesheet" />
 
-    <link href="{{ asset('css/dif.css') }}" rel="stylesheet" />
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js"></script>
-
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js"></script>
-    <script type="text/javascript" src="//maps.google.com/maps/api/js?v=3&key={{ google_maps_api_key }}"></script>
-
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.1/jstree.min.js"></script>
-
-    <script type="text/javascript" src="{{ asset('js/common.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/geoviz.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/mapWizard.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/dif.js') }}"></script>
-
+    {{ encore_entry_link_tags('dif') }}
 
 {% endblock %}
 
@@ -139,4 +120,23 @@
 <div id="noresults" title="Search...">No Results Found.</div>
 <div class="modal" id="spinner"></div>
 <img id="imgCancel" src="{{ asset('images/cancel.png') }}" style="display:none">
+
+    {% block javascripts %}
+        {{ parent() }}
+        {{ encore_entry_script_tags('dif') }}
+
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js"></script>
+
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js"></script>
+        <script type="text/javascript" src="//maps.google.com/maps/api/js?v=3&key={{ google_maps_api_key }}"></script>
+
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.1/jstree.min.js"></script>
+
+        <script type="text/javascript" src="{{ asset('js/common.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('js/geoviz.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('js/mapWizard.js') }}"></script>
+
+    {% endblock %}
+
 {% endblock %}

@@ -35,6 +35,7 @@ Encore
     .addEntry('downloadBox', './assets/js/downloadBox.js')
     .addEntry('search-app', './assets/js/search.js')
     .addEntry('nas-app', './assets/js/nas-app.js')
+    .addEntry('dif', './assets/js/dif.js')
 
     // enables Sass/SCSS support
     .enableSassLoader()
