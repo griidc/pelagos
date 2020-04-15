@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 
@@ -20,6 +21,15 @@ class Fileset extends Entity
      * @ORM\OneToMany(targetEntity="File", mappedBy="Fileset", cascade={"persist"}, orphanRemoval=true)
      */
     protected $files;
+
+    /**
+     * Fileset constructor.
+     */
+    public function __construct()
+    {
+        $this->files = new ArrayCollection();
+        $this->addFile(new File());
+    }
 
     /**
      * Getter for files.
@@ -45,7 +55,7 @@ class Fileset extends Entity
     }
 
     /**
-     * Remover for Distribution Point.
+     * Remover for File entity.
      *
      * @param File $file Single file to be removed.
      *
