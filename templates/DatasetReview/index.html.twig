@@ -5,7 +5,8 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    
+    {{ encore_entry_link_tags('datasetReview-app') }}
+
     <link href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="//cdn.datatables.net/select/1.0.1/css/select.dataTables.min.css" rel="stylesheet" />
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
@@ -19,6 +20,7 @@
 
 {% block javascripts %}
     {{ parent() }}
+    {{ encore_entry_script_tags('datasetReview-app') }}
 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js"></script>
     <script type="text/javascript" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.js"></script>
@@ -37,7 +39,7 @@
     <script type="text/javascript" src="{{ asset('js/mapWizard.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/common.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/fileBrowser.js') }}"></script>
-    
+
 
 {% endblock %}
 
