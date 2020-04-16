@@ -126,7 +126,7 @@ class Extensions extends AbstractExtension
     /**
      * Does the template exist, or else return base template.
      *
-     * @return boolean If in maintenance mode.
+     * @return string Filename of basepath, or default.
      */
     public function doesTwigFileExist(string $file, $default) : string
     {
