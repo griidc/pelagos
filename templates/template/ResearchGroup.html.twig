@@ -3,8 +3,8 @@
 {% block javascripts %}
     {{ parent() }}
 
-    <script type="text/javascript" src="{{ asset('js/ResearchGroup.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/entity/ResearchGroup.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/ResearchGroup.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/entity/ResearchGroup.js') }}"></script>
 
 
 {% endblock %}
@@ -79,7 +79,7 @@
             {% endif %}
             </table>
             {% if newResearchGroupPerson is defined and is_granted('CAN_CREATE', newResearchGroupPerson) %}
-                <img class="addimg" src="{{ asset('images/add.png') }}">
+                <img class="addimg" src="{{ asset('build/images/add.png') }}">
             {% endif %}
         </div>
     </div>
