@@ -91,6 +91,13 @@ Encore
         }
     )
 
+    .copyFiles(
+        {
+            from: './assets/static/html/geoviz',
+            to: 'html/geoviz/[name].[ext]'
+        }
+    )
+
     .enableIntegrityHashes()
 ;
 
