@@ -978,6 +978,13 @@ class DatasetSubmissionTest extends TestCase
                 'getUrl' => 'www.bla.null',
             )
         );
+        
+        //test adder
+        $this->datasetSubmission->addDatasetLink($this->mockDatasetLink);
+        $this->assertEquals(
+            1,
+            $this->datasetSubmission->getDatasetLinks()->count()
+        );
 
         //remove default distribution point initially created in dataset submission entity
         $defaultDatasetLink = $this->datasetSubmission->getDatasetLinks()->first();
@@ -985,7 +992,7 @@ class DatasetSubmissionTest extends TestCase
             $this->datasetSubmission->removeDatasetLink($defaultDatasetLink);
         }
 
-        //test adder
+        //test adder again
         $this->datasetSubmission->addDatasetLink($this->mockDatasetLink);
         $this->assertEquals(
             1,
