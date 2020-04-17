@@ -69,6 +69,29 @@ Encore
 
     // uncomment if you're having problems with a jQuery plugin
     .autoProvidejQuery()
+
+    .copyFiles(
+        {
+            from: './assets/static/js',
+            to: 'js/[name].[hash:8].[ext]'
+        }
+    )
+
+    .copyFiles(
+        {
+            from: './assets/static/css',
+            to: 'css/[name].[hash:8].[ext]'
+        }
+    )
+
+    .copyFiles(
+        {
+            from: './assets/static/images',
+            to: 'images/[name].[hash:8].[ext]'
+        }
+    )
+
+    .enableIntegrityHashes()
 ;
 
 module.exports = Encore.getWebpackConfig();
