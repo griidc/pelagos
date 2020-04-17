@@ -73,8 +73,8 @@ var dlmap = new GeoViz();
         });
 
         $("#downloaddsdenrestricted").button().click(function() {
-            $("#download_dialog").dialog('option', 'title', 'Dataset Not Available');
-            $("#download_dialog").html('The dataset is restricted for download.');
+            $("#download_dialog").dialog('option', 'title', 'Restricted Access Dataset');
+            $("#download_dialog").html('The author has restricted access of this dataset. Please contact the author to request the dataset. Please contact griidc@gomri.org with any questions.The author has restricted access of this dataset. Please contact the author to request the dataset. Please contact griidc@gomri.org with any questions.');
             $("#download_dialog").dialog('open');
         });
 
