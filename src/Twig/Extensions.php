@@ -126,9 +126,12 @@ class Extensions extends AbstractExtension
     /**
      * Does the template exist, or else return base template.
      *
+     * @param string $file    The file name (or part) template to be used.
+     * @param string $default The file name of the default template if $file does not exist.
+     *
      * @return string Filename of basepath, or default.
      */
-    public function doesTwigFileExist(string $file, $default) : string
+    public function doesTwigFileExist(string $file, string $default) : string
     {
         if (empty($file)) {
             return $default;
