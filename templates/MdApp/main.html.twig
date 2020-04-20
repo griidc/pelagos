@@ -6,7 +6,7 @@
 
     <link href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css" rel="stylesheet" />
 
-    <link href="{{ asset('css/mdapp.css') }}" rel="stylesheet" />
+    <link href="{{ asset('build/css/mdapp.css') }}" rel="stylesheet" />
 {% endblock %}
 
 {% block javascripts %}
@@ -15,8 +15,8 @@
     <script type="text/javascript" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js"></script>
 
-    <script type="text/javascript" src="{{ asset('js/mdapp.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/pelagosNoty.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/mdapp.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/pelagosNoty.js') }}"></script>
 
 
 {% endblock %}
@@ -70,7 +70,7 @@
                             <td style="position:relative;">
                                 <div>
                                     <button id="jiraLinkEditButton" class="jlink">
-                                        <img src="{{ asset('images/edit.png') }}">
+                                        <img src="{{ asset('build/images/edit.png') }}">
                                     </button>&nbsp;
                                     <a href="{{ issueTrackingBaseUrl }}/{{ dta.issueTrackingTicket }}" target="_BLANK">{{ dta.issueTrackingTicket }}</a>
                                     <table class="jiraForm">
@@ -117,7 +117,7 @@
 </div>
 <div id='log'>
     <div id="log_close">
-        <input type="image" src="{{ asset('images/close.gif') }}" onclick="jQuery('#log').hide();">
+        <input type="image" src="{{ asset('build/images/close.gif') }}" onclick="jQuery('#log').hide();">
     </div>
     <div id='log_title'>Log replaces by js</div>
     <div id='log_content'>

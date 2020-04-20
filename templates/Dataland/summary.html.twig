@@ -14,24 +14,24 @@
             <div>
                 {% if dl_ok == 1 %}
                     {% if dataset_available %}
-                        <img width="40px" height="40px" id="downloadds" src="{{ asset('images/download-package.png') }}">
+                        <img width="40px" height="40px" id="downloadds" src="{{ asset('build/images/download-package.png') }}">
                     {% elseif dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED') %}
-                        <img width="40px" height="40px" id="downloaddsdenrestricted" src="{{ asset('images/download-package.png') }}">
+                        <img width="40px" height="40px" id="downloaddsdenrestricted" src="{{ asset('build/images/download-package.png') }}">
                     {% else %}
-                        <img width="40px" height="40px" id="downloaddsden" src="{{ asset('images/download-package-grey.png') }}">
+                        <img width="40px" height="40px" id="downloaddsden" src="{{ asset('build/images/download-package-grey.png') }}">
                     {% endif %}
                     {% if dataset.datasetStatus == constant('App\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
-                        <img width="40px" height="40px" id="metadatadl" src="{{ asset('images/xmlc.png') }}">
+                        <img width="40px" height="40px" id="metadatadl" src="{{ asset('build/images/xmlc.png') }}">
                     {% else %}
-                        <img width="40px" height="40px" id="metadatadl-dis" src="{{ asset('images/xmlc-bw.png') }}">
+                        <img width="40px" height="40px" id="metadatadl-dis" src="{{ asset('build/images/xmlc-bw.png') }}">
                     {% endif %}
                     {% set TEMPORYDISABLED = true %}
                     {% if dataset.datasetSubmission.ErddapUrl and not TEMPORYDISABLED%}
-                        <img src="{{ asset('images/ERDDAP-logo.png') }}" id="erddaplink" width="40px" height="40px" data-link="{{ dataset.datasetSubmission.ErddapUrl }}">
+                        <img src="{{ asset('build/images/ERDDAP-logo.png') }}" id="erddaplink" width="40px" height="40px" data-link="{{ dataset.datasetSubmission.ErddapUrl }}">
                     {% endif %}
                 {% else %}
-                    <img width="40px" height="40px" id="downloaddsdenmd" src="{{ asset('images/download-package-grey.png') }}">
-                    <img width="40px" height="40px" id="metadatadl-dis" src="{{ asset('images/xmlc-bw.png') }}">
+                    <img width="40px" height="40px" id="downloaddsdenmd" src="{{ asset('build/images/download-package-grey.png') }}">
+                    <img width="40px" height="40px" id="metadatadl-dis" src="{{ asset('build/images/xmlc-bw.png') }}">
                 {% endif %}
             </div>
         </div>

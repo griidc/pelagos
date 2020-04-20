@@ -4,7 +4,7 @@
     {% block head %}
         <title>GRIIDC - NAS GRP | {% block title %}Pelagos{% endblock %}</title>
 
-        <link rel="icon" type="image/x-icon" href="{{ asset('images/griidc_fav.png') }}" />
+        <link rel="icon" type="image/x-icon" href="{{ asset('build/images/griidc_fav.png') }}" />
 
         <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id={{google_analytics_id}}"></script>
@@ -23,7 +23,7 @@
     <link href="//cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.css" rel="stylesheet" />
 
         {% if isMaintenanceMode() %}
-    <link href="{{ asset('css/griidc_site_banner_screen.css') }}" rel="stylesheet" />
+    <link href="{{ asset('build/css/griidc_site_banner_screen.css') }}" rel="stylesheet" />
         {% endif %}
     {% endblock stylesheets  %}
     {% endblock %}
@@ -72,7 +72,7 @@
                     <div id="branding" class="container">
                         <div id="logo-wrapper">
                             <a href="http://gulfresearchinitiative.org" title="National Academies | Gulf Research Program" rel="home" id="logo">
-                                <img src="{{asset('images/nas-grp-logo.png')}}" alt="Home" style="width: 233px;margin-top:-12px">
+                                <img src="{{asset('build/images/nas-grp-logo.png')}}" alt="Home" style="width: 233px;margin-top:-12px">
                             </a>
                         </div>
 
@@ -82,7 +82,7 @@
 
                         <div id="griidc-logo-wrapper">
                             <a href="/" title="Home" rel="home" id="logo">
-                                <img src="{{asset('images/griidc-logo.png')}}" alt="GRIIDC">
+                                <img src="{{asset('build/images/griidc-logo.png')}}" alt="GRIIDC">
                             </a>
                         </div>
                     </div>
