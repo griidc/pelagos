@@ -72,6 +72,16 @@
             }
         %}
     </gmd:descriptiveKeywords>
+    <gmd:resourceConstraints xlink:title="CC0 License">
+        <gmd:MD_LegalConstraints>
+            <gmd:useConstraints>
+                <gmd:MD_RestrictionCode codeList="https://data.noaa.gov/resources/iso19139/schema/resources/Codelist/gmxCodelists.xml#MD_RestrictionCode" codeListValue="licenceUnrestricted">licenceUnrestricted</gmd:MD_RestrictionCode>
+            </gmd:useConstraints>
+            <gmd:otherConstraints>
+                <gco:CharacterString>This information is released under the Creative Commons license - No Rights Reserved - CC0 1.0 Universial (https://creativecommons.org/publicdomain/zero/1.0/). The person who associated a work with this deed has dedicated the work to the public domain by waiving all of his or her rights to the work worldwide under copyright law, including all related and neighboring rights, to the extent allowed by law. You can copy, modify, distribute and perform the work, even for commercial purposes, all without asking permission.</gco:CharacterString>
+            </gmd:otherConstraints>
+        </gmd:MD_LegalConstraints>
+    </gmd:resourceConstraints>
     <gmd:language>
         <gco:CharacterString>eng; USA</gco:CharacterString>
     </gmd:language>
@@ -156,14 +166,4 @@
     <gmd:supplementalInformation>
         <gco:CharacterString><![CDATA[{{dataset.datasetSubmission.suppParams | raw}}|{{dataset.datasetSubmission.suppMethods | raw}}|{{dataset.datasetSubmission.suppInstruments | raw}}|{{dataset.datasetSubmission.suppSampScalesRates | raw}}|{{dataset.datasetSubmission.suppErrorAnalysis | raw}}|{{dataset.datasetSubmission.suppProvenance | raw}}]]></gco:CharacterString>
     </gmd:supplementalInformation>
-    <gmd:resourceConstraints xlink:title="CC0 License">
-        <gmd:MD_LegalConstraints>
-            <gmd:useConstraints>
-                <gmd:MD_RestrictionCode codeList="https://data.noaa.gov/resources/iso19139/schema/resources/Codelist/gmxCodelists.xml#MD_RestrictionCode" codeListValue="licenceUnrestricted">licenceUnrestricted</gmd:MD_RestrictionCode>
-            </gmd:useConstraints>
-            <gmd:otherConstraints>
-                <gco:CharacterString>This information is released under the Creative Commons license - No Rights Reserved - CC0 1.0 Universial (https://creativecommons.org/publicdomain/zero/1.0/). The person who associated a work with this deed has dedicated the work to the public domain by waiving all of his or her rights to the work worldwide under copyright law, including all related and neighboring rights, to the extent allowed by law. You can copy, modify, distribute and perform the work, even for commercial purposes, all without asking permission.</gco:CharacterString>
-            </gmd:otherConstraints>
-        </gmd:MD_LegalConstraints>
-    </gmd:resourceConstraints>
 </gmd:MD_DataIdentification>
