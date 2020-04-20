@@ -1,4 +1,4 @@
-{% extends is_nas_grp ? 'nas-grp-base.html.twig' : 'base.html.twig' %}
+{% extends custom_base_template | orTemplateIfNotExists('base.html.twig') %}
 
 {% block stylesheets %}
     {{ parent() }}
