@@ -82,7 +82,7 @@ function MapWizard(json)
         $("#"+json.descField).hide();
 
         $(document.body).append('<div id="divMapWizard">');
-        $("#divMapWizard").load('build/html/geoviz/wizard_dialog.html');
+        $("#divMapWizard").load('geoviz/wizard_dialog.html');
 
         $(gmlField).change(function() {
             smlGeoViz.goHome();
@@ -117,7 +117,7 @@ function MapWizard(json)
             var wizPromise = this;
             //Synchonous load of HTML, then append to DIV
             $.ajax({
-                url: 'build/html/geoviz/wizard_map.html',
+                url: 'geoviz/wizard_map.html',
                 success: function(html) {
                     $("#divMapWizard").append(html);
                 }
