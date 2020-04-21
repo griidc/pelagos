@@ -4,7 +4,7 @@
 {% block stylesheets %}
     {{ parent() }}
 
-    <link href="{{ asset('css/stats.css') }}" rel="stylesheet" />
+    <link href="{{ asset('build/css/stats.css') }}" rel="stylesheet" />
 {% endblock %}
 
 {% block javascripts %}
@@ -15,8 +15,8 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.time.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.pie.min.js"></script>
 
-    <script type="text/javascript" src="{{ asset('js/jquery.flot.barnumbers.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/stats.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/jquery.flot.barnumbers.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/stats.js') }}"></script>
 
 
 {% endblock %}

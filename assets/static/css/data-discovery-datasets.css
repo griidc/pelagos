@@ -8,11 +8,11 @@ table.datasets td {
 }
 
 table.datasets tr:hover td {
-    background-color: #DFD;
+    background-color: var(--color-table-striped);
 }
 
 table.datasets tr td.highlight {
-    background-color: #DFD;
+    background-color: var(--color-table-striped);
 }
 
 table.datasets .checkbox {

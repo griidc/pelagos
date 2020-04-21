@@ -34,6 +34,7 @@ Encore
     .addEntry('layout', './assets/js/layout.js')
     .addEntry('downloadBox', './assets/js/downloadBox.js')
     .addEntry('search-app', './assets/js/search.js')
+    .addEntry('nas-app', './assets/js/nas-app.js')
 
     // enables Sass/SCSS support
     .enableSassLoader()
@@ -68,6 +69,16 @@ Encore
 
     // uncomment if you're having problems with a jQuery plugin
     .autoProvidejQuery()
+
+    .copyFiles(
+        {
+            from: './assets/static',
+            to: '[path]/[name].[hash:8].[ext]',
+            includeSubdirectories: true
+        }
+    )
+
+    .enableIntegrityHashes()
 ;
 
 module.exports = Encore.getWebpackConfig();

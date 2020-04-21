@@ -8,22 +8,22 @@
                 <table>
                     <tr>
                         <td>
-                            <img src="{{ asset('images/icon-datasets.png') }}">
+                            <img src="{{ asset('build/images/icon-datasets.png') }}">
                             <div class="count">{{datasets|default}}</div>
                             <div class="label">Datasets</div>
                         </td>
                         <td>
-                            <img src="{{ asset('images/icon-filesize.png') }}">
+                            <img src="{{ asset('build/images/icon-filesize.png') }}">
                             <div class="count">{{totalsize|formatBytes(1)|number_format(1)|default}}</div>
                             <div class="label">TB Of Data</div>
                         </td>
                         <td>
-                            <img src="{{ asset('images/icon-projects.png') }}">
+                            <img src="{{ asset('build/images/icon-projects.png') }}">
                             <div class="count">{{researchGroups|default}}</div>
                             <div class="label">Research Groups</div>
                         </td>
                         <td>
-                            <img src="{{ asset('images/icon-researchers.png') }}">
+                            <img src="{{ asset('build/images/icon-researchers.png') }}">
                             <div class="count">{{people|default}}</div>
                             <div class="label">People</div>
                         </td>

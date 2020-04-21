@@ -4,7 +4,7 @@
     Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},<br>
     <br>
     This email is being sent to notify you that {{account.person.FirstName}} {{account.person.LastName}} has completed
-    the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)
+    the GRIIDC
     account creation process. {{account.person.FirstName}} {{account.person.LastName}} is a member of
     {{ account.person.ResearchGroupNames | join(', ') }}.<br />
     <br>
@@ -12,14 +12,13 @@
     <br>
     The GRIIDC Team<br>
     <br>
-    *You are receiving this email because you are identified as a data manager for a Gulf of Mexico Research
-    Initiative Research Consortium. If you believe you should not be receiving this email please notify
+    *You are receiving this email because you are identified as a data manager for this research group. If you believe you should not be receiving this email please notify
     <a href="mailto:griidc@gomri.org">griidc@gomri.org</a>.*
 {% endblock %}
 
 {% block body_text %}
 This email is being sent to notify you that {{account.person.FirstName}} {{account.person.LastName}} has completed
-the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)
+the GRIIDC
 account creation process. {{account.person.FirstName}} {{account.person.LastName}} is a member of
 {{ account.person.ResearchGroupNames | join(', ') }}.
 
@@ -28,7 +27,6 @@ Thank you,
 
 The GRIIDC Team
 
-*You are receiving this email because you are identified as a data manager for a Gulf of Mexico Research
-Initiative Research Consortium. If you believe you should not be receiving this email please notify
+*You are receiving this email because you are identified as a data manager for this research group. If you believe you should not be receiving this email please notify
 griidc@gomri.org.*
 {% endblock %}

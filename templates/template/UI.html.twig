@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends custom_base_template | orTemplateIfNotExists('base.html.twig') %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -8,7 +8,7 @@
     <link href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.3.0/animate.min.css" rel="stylesheet" />
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
 
-    <link href="{{ asset('css/entity.css') }}" rel="stylesheet" />
+    <link href="{{ asset('build/css/entity.css') }}" rel="stylesheet" />
 {% endblock %}
 
 {% block javascripts %}
@@ -22,7 +22,7 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.7/jquery.fileupload.min.js"></script>
 
-    <script type="text/javascript" src="{{ asset('js/common.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/entityForm.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/ui.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/common.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/entityForm.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/ui.js') }}"></script>
 {% endblock %}
