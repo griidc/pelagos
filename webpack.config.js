@@ -72,22 +72,9 @@ Encore
 
     .copyFiles(
         {
-            from: './assets/static/js',
-            to: 'js/[name].[hash:8].[ext]'
-        }
-    )
-
-    .copyFiles(
-        {
-            from: './assets/static/css',
-            to: 'css/[name].[hash:8].[ext]'
-        }
-    )
-
-    .copyFiles(
-        {
-            from: './assets/static/images',
-            to: 'images/[name].[hash:8].[ext]'
+            from: './assets/static',
+            to: '[path]/[name].[hash:8].[ext]',
+            includeSubdirectories: true
         }
     )
 
