@@ -28,8 +28,12 @@ class DatasetCitationUtil
         }
         $doi = $dataset->getDoi();
 
-        $citationString = $author . ' (' . $year . ') ' . $title . '.' .
-            ' Distributed by: GRIIDC '
+        $citationString = '';
+
+        $citationString .= (!empty($author) ? "$author. " : '');
+        $citationString .= (!empty($year) ? "($year). " : '');
+        $citationString .= "$title . ";
+        $citationString .= 'Distributed by: GRIIDC '
             . '(GRIIDC), Harte Research Institute, Texas A&M University-Corpus Christi. ';
 
         if ($doi instanceof DOI) {
