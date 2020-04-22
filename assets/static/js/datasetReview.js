@@ -49,12 +49,6 @@ $(document).ready(function(){
             referenceDate: "trueISODate",
             temporalExtentBeginPosition: "trueISODate",
             temporalExtentEndPosition: "trueISODate",
-            erddapUrl: {
-                "validURL" : true,
-                remote: {
-                    url: remoteURL
-                }
-            }
         },
         messages: {
             referenceDate: "It is not a valid ISO date",
@@ -72,9 +66,6 @@ $(document).ready(function(){
 
     jQuery.validator.addClassRules('dataLinkUrl', {
         "validURL" : true,
-        remote: {
-            url: remoteURL
-        },
         remote: {
             url: remoteURL,
             type: "GET",

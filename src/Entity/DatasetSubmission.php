@@ -993,15 +993,6 @@ class DatasetSubmission extends Entity
     protected $distributionPoints;
 
     /**
-     * ERDDAPP Url for the dataset.
-     *
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected $erddapUrl;
-
-    /**
      * Remotely Hosted Dataset Name.
      *
      * @var string
@@ -1126,7 +1117,6 @@ class DatasetSubmission extends Entity
             $this->setTemporalExtentNilReasonType($entity->getTemporalExtentNilReasonType());
             $this->setDistributionFormatName($entity->getDistributionFormatName());
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
-            $this->setErddapUrl($entity->getErddapUrl());
             $this->setRemotelyHostedName($entity->getRemotelyHostedName());
             $this->setRemotelyHostedDescription($entity->getRemotelyHostedDescription());
             $this->setRemotelyHostedFunction($entity->getRemotelyHostedFunction());
@@ -2764,6 +2754,24 @@ class DatasetSubmission extends Entity
         return $this->distributionPoints;
     }
 
+     /**
+     * Getter for the erddap url link.
+     *
+     * @return Collection|null
+     */
+    private function getErdappUrlLink() : ?DatasetLink
+    {
+        $datasetLinks = $this->getDatasetLinks()->filter(function(DatasetLink $datasetLink) {
+            return $datasetLink->getName() == "ERDDAP";
+        });
+
+        if ($datasetLinks->count() > 0) {
+            return $datasetLinks->first();
+        }
+
+        return null;
+    }
+
     /**
      * Getter for the erddap url.
      *
@@ -2771,7 +2779,13 @@ class DatasetSubmission extends Entity
      */
     public function getErddapUrl(): ?string
     {
-        return $this->erddapUrl;
+        $erddapLink = $this->getErdappUrlLink();
+
+        if ($erddapLink instanceof DatasetLink) {
+            return $erddapLink->getUrl();
+        }
+
+        return null;
     }
 
     /**
@@ -2781,12 +2795,13 @@ class DatasetSubmission extends Entity
      */
     public function getErddapUrlProtocol() : ?string
     {
-        if ($this->erddapUrl !== null) {
-            preg_match('/^(.*?):.*$/', $this->erddapUrl, $matches);
-            return $matches[1];
-        } else {
-            return null;
+        $erddapLink = $this->getErdappUrlLink();
+
+        if ($erddapLink instanceof DatasetLink) {
+            return $erddapLink->getProtocol();
         }
+
+        return null;
     }
 
     /**
@@ -2802,18 +2817,6 @@ class DatasetSubmission extends Entity
         } else {
             return null;
         }
-    }
-
-    /**
-     * Setter for the erddap url.
-     *
-     * @param string|null $erddapUrl Erddap url.
-     *
-     * @return void
-     */
-    public function setErddapUrl(?string $erddapUrl)
-    {
-        $this->erddapUrl = $erddapUrl;
     }
 
     /**
