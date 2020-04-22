@@ -2759,10 +2759,10 @@ class DatasetSubmission extends Entity
      *
      * @return DatasetLink|null
      */
-    private function getErdappUrlLink() : ?DatasetLink
+    public function getErdappDatasetLink() : ?DatasetLink
     {
         $datasetLinks = $this->getDatasetLinks()->filter(function (DatasetLink $datasetLink) {
-            return $datasetLink->getName() == "ERDDAP";
+            return $datasetLink->getName() === DatasetLink::LINK_NAME_CODES["erddap"]["name"];
         });
 
         if ($datasetLinks->count() > 0) {
@@ -2779,7 +2779,7 @@ class DatasetSubmission extends Entity
      */
     public function getErddapUrl(): ?string
     {
-        $erddapLink = $this->getErdappUrlLink();
+        $erddapLink = $this->getErdappDatasetLink();
 
         if ($erddapLink instanceof DatasetLink) {
             return $erddapLink->getUrl();
@@ -2795,7 +2795,7 @@ class DatasetSubmission extends Entity
      */
     public function getErddapUrlProtocol() : ?string
     {
-        $erddapLink = $this->getErdappUrlLink();
+        $erddapLink = $this->getErdappDatasetLink();
 
         if ($erddapLink instanceof DatasetLink) {
             return $erddapLink->getProtocol();
