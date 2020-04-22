@@ -1,5 +1,7 @@
 <?php
 
+use Twig\Environment;
+
 namespace App\Util;
 
 use App\Entity\Dataset;
@@ -9,7 +11,6 @@ use App\Entity\Dataset;
  */
 class DatasetCitationUtil
 {
-
     /**
      * Creates the and return the Dataset Citation Text.
      *
@@ -22,7 +23,7 @@ class DatasetCitationUtil
         $title = $dataset->getTitle();
         $title = preg_replace('/\.$/', '', $title);
         $udi = $dataset->getUdi();
-        $author = $this->getAuthors();
+        $author = $dataset->getAuthors();
         $year = null;
         if ($dataset->getAcceptedDate() instanceof \Datetime) {
             $year = $dataset->getAcceptedDate()->format('Y');
