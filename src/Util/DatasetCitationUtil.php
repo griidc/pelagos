@@ -1,7 +1,5 @@
 <?php
 
-use Twig\Environment;
-
 namespace App\Util;
 
 use App\Entity\Dataset;
