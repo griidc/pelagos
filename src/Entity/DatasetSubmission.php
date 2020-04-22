@@ -2755,13 +2755,13 @@ class DatasetSubmission extends Entity
     }
 
      /**
-     * Getter for the erddap url link.
+     * Getter for the (first) erddap url link.
      *
-     * @return Collection|null
+     * @return DatasetLink|null
      */
     private function getErdappUrlLink() : ?DatasetLink
     {
-        $datasetLinks = $this->getDatasetLinks()->filter(function(DatasetLink $datasetLink) {
+        $datasetLinks = $this->getDatasetLinks()->filter(function (DatasetLink $datasetLink) {
             return $datasetLink->getName() == "ERDDAP";
         });
 
