@@ -116,7 +116,41 @@ class Extensions extends AbstractExtension
                 'maintenanceModeColor',
                 [$this, 'maintenanceModeColor']
             ),
+            new \Twig\TwigFilter(
+                'orTemplateIfNotExists',
+                [$this, 'doesTwigFileExist']
+            ),
         );
+    }
+
+    /**
+     * Does the template exist, or else return base template.
+     *
+     * @param string $file    The file name (or part) template to be used.
+     * @param string $default The file name of the default template if $file does not exist.
+     *
+     * @return string Filename of basepath, or default.
+     */
+    public function doesTwigFileExist(string $file, string $default) : string
+    {
+        if (empty($file)) {
+            return $default;
+        }
+        $filePath = $this->kernelRootDir . '/templates/' . $file ;
+        if (file_exists($filePath)) {
+            return $file;
+        }
+        if (file_exists($filePath . '.twig')) {
+            return $file . '.twig';
+        }
+        if (file_exists($filePath . '.html')) {
+            return $file . '.html';
+        }
+        if (file_exists($filePath . '.html.twig')) {
+            return $file . '.html.twig';
+        }
+
+        return $default;
     }
 
     /**
