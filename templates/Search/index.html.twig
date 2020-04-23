@@ -1,4 +1,4 @@
-{% extends "base.html.twig" %}
+{% extends custom_base_template | orTemplateIfNotExists('base.html.twig') %}
 {% block title %}Search{% endblock %}
 
 {%block stylesheets %}

@@ -20,10 +20,7 @@
 </head>
 
 <body>
-<div>
-
-</div>
-<!--::menu part start::-->
+<!--::Navigation Menu::-->
 <header class="main_menu home_menu bootstrap">
     <div class="container global-nav">
         <div class="row">
@@ -45,7 +42,30 @@
         </div>
     </div>
 </header>
+
+<!--::Application Content::-->
+<div class="page-wrapper">
+    <div id="page">
+        <div id="main-wrapper">
+            <div id="pelagos-container">
+                <div id="pelagos-container-row">
+                    <div id="pelagos-container-cell">
+                        <div id="pelagos-wrapper">
+                            <div id="pelagos-wrapper-row">
+                                <div id="pelagos-content">
+                                    <h1 style="margin: 0 auto;">{% block pagetitle %}{% endblock %}</h1>
+                                    {% block body %}{% endblock %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+
 {% block javascripts %}
     {{ encore_entry_script_tags('nas-app') }}
 
