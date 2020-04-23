@@ -7,13 +7,14 @@
 const $ = require('jquery');
 global.$ = global.jQuery = $;
 
-require('../css/nas-grp.css');
+require('../scss/nas-grp.scss');
 require('../css/template.css');
 require('../css/jira-buttons.css');
 require('../css/superfish-navbar.css');
 require('../css/superfish.css');
 require('../css/pelagos-module.css');
 require('../css/messages.css');
+import '../scss/bootstrap.scss';
 
 const routes = require('../../public/js/fos_js_routes.json');
 import Routing from '../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min.js';
