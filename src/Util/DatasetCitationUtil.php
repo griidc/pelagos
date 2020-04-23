@@ -19,7 +19,6 @@ class DatasetCitationUtil
     public static function getCitation(Dataset $dataset) :string
     {
         $title = $dataset->getTitle();
-        $title = preg_replace('/\.$/', '', $title);
         $udi = $dataset->getUdi();
         $author = $dataset->getAuthors();
         $year = null;
@@ -32,7 +31,7 @@ class DatasetCitationUtil
 
         $citationString .= (!empty($author) ? "$author. " : '');
         $citationString .= (!empty($year) ? "($year). " : '');
-        $citationString .= "$title . ";
+        $citationString .= "$title. ";
         $citationString .= 'Distributed by: GRIIDC '
             . '(GRIIDC), Harte Research Institute, Texas A&M University-Corpus Christi. ';
 
