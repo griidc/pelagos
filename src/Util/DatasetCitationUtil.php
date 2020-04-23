@@ -32,13 +32,12 @@ class DatasetCitationUtil
         $citationString .= (!empty($author) ? "$author. " : '');
         $citationString .= (!empty($year) ? "($year). " : '');
         $citationString .= "$title. ";
-        $citationString .= 'Distributed by: GRIIDC '
-            . '(GRIIDC), Harte Research Institute, Texas A&M University-Corpus Christi. ';
+        $citationString .= 'Distributed by: GRIIDC, Harte Research Institute, Texas A&M University-Corpus Christi. ';
 
         if ($doi instanceof DOI) {
             $citationString .= 'doi:' . $doi->getDoi();
         } else {
-            $citationString .= "Available from: http://data.gulfresearchinitiative.org/data/$udi";
+            $citationString .= "Available from: https://data.gulfresearchinitiative.org/data/$udi";
         }
         return $citationString;
     }
