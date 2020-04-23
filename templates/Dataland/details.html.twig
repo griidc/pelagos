@@ -1,7 +1,7 @@
 {% if dataset.datasetStatus == constant('App\\Entity\\Dataset::DATASET_STATUS_ACCEPTED') %}
     <h2>Suggested Citation:</h2>
     <div>
-        {% include 'Dataland/datasetCitation.html.twig' %}
+        {{ dataset.citation }}
     </div>
 {% endif %}
 
