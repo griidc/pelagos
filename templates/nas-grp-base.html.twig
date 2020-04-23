@@ -20,8 +20,32 @@
 </head>
 
 <body>
+{% if isMaintenanceMode() %}
+    <div class="header-dev sticky-top" style="background-color:{{ getMaintenanceModeColor() }}">
+        {{ getMaintenanceModeText()}}.
+    </div>
+    <div id="siteBannerFooterBanner" class="toolbar clearfix toolbar-processed overlay-displace-top" style="background-color:{{ getMaintenanceModeColor() }}">
+        {{ getMaintenanceModeText()}}.
+    </div>
+{% endif %}
+
+<!--Login and Atlassian buttons-->
+<div class="login-bar">
+    {% if is_granted('ROLE_USER') %}
+        <a style="text-decoration: underline;">
+            Logged in as: {{ app.user.username }}
+        </a>
+        |
+        <a href="{{ path('security_logout') }}">  Log out</a>
+    {% else %}
+        <a href="{{ path('security_login', {destination: app.request.uri}) }}">Log in</a>
+    {% endif %}
+</div>
+
 <!--::Navigation Menu::-->
 <header class="main_menu home_menu bootstrap">
+    <div class="global-nav-before">
+    </div>
     <div class="container global-nav">
         <div class="row">
             <div class="col-lg-12">
@@ -44,17 +68,19 @@
 </header>
 
 <!--::Application Content::-->
-<div class="page-wrapper">
-    <div id="page">
-        <div id="main-wrapper">
-            <div id="pelagos-container">
-                <div id="pelagos-container-row">
-                    <div id="pelagos-container-cell">
-                        <div id="pelagos-wrapper">
-                            <div id="pelagos-wrapper-row">
-                                <div id="pelagos-content">
-                                    <h1 style="margin: 0 auto;">{% block pagetitle %}{% endblock %}</h1>
-                                    {% block body %}{% endblock %}
+<div class="page-pelagos-full">
+    <div class="page-wrapper">
+        <div id="page">
+            <div id="main-wrapper">
+                <div id="pelagos-container">
+                    <div id="pelagos-container-row">
+                        <div id="pelagos-container-cell">
+                            <div id="pelagos-wrapper">
+                                <div id="pelagos-wrapper-row">
+                                    <div id="pelagos-content">
+                                        <h1 style="margin: 0 auto;">{% block pagetitle %}{% endblock %}</h1>
+                                        {% block body %}{% endblock %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -64,7 +90,6 @@
         </div>
     </div>
 </div>
-
 
 {% block javascripts %}
     {{ encore_entry_script_tags('nas-app') }}
