@@ -31,17 +31,17 @@
 
 <!--Login and Atlassian buttons-->
 <div class="login-bar">
-    <span>
-    </span>
-    <span class="jira-buttons">
-        <button>
+    <div class="login-empty-box">
+    </div>
+    <div class="jira-buttons-box">
+        <button id="atlwdg-issue" class="atlwdg-trigger">
             Report Issue
         </button>
-        <button>
+        <button id="atlwdg-suggest" class="atlwdg-trigger">
             Suggest Improvement
         </button>
-    </span>
-    <span class="login-info">
+    </div>
+    <div class="login-info-box">
         {% if is_granted('ROLE_USER') %}
             <a style="text-decoration: underline;">
                 Logged in as: {{ app.user.username }}
@@ -51,7 +51,7 @@
         {% else %}
             <a href="{{ path('security_login', {destination: app.request.uri}) }}">Log in</a>
         {% endif %}
-    </span>
+    </div>
 
 </div>
 
