@@ -3,6 +3,7 @@
 namespace App\Util;
 
 use App\Entity\Dataset;
+use App\Entity\DOI;
 
 /**
  * A utility to create a Dataset Citation Text.
