@@ -9,8 +9,6 @@ global.$ = global.jQuery = $;
 
 require('../scss/nas-grp.scss');
 require('../css/template.css');
-require('../css/jira-buttons.css');
-require('../css/superfish-navbar.css');
 require('../css/superfish.css');
 require('../css/pelagos-module.css');
 require('../css/messages.css');

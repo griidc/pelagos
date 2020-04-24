@@ -31,15 +31,28 @@
 
 <!--Login and Atlassian buttons-->
 <div class="login-bar">
-    {% if is_granted('ROLE_USER') %}
-        <a style="text-decoration: underline;">
-            Logged in as: {{ app.user.username }}
-        </a>
-        |
-        <a href="{{ path('security_logout') }}">  Log out</a>
-    {% else %}
-        <a href="{{ path('security_login', {destination: app.request.uri}) }}">Log in</a>
-    {% endif %}
+    <span>
+    </span>
+    <span class="jira-buttons">
+        <button>
+            Report Issue
+        </button>
+        <button>
+            Suggest Improvement
+        </button>
+    </span>
+    <span class="login-info">
+        {% if is_granted('ROLE_USER') %}
+            <a style="text-decoration: underline;">
+                Logged in as: {{ app.user.username }}
+            </a>
+                |
+            <a href="{{ path('security_logout') }}">  Log out</a>
+        {% else %}
+            <a href="{{ path('security_login', {destination: app.request.uri}) }}">Log in</a>
+        {% endif %}
+    </span>
+
 </div>
 
 <!--::Navigation Menu::-->
