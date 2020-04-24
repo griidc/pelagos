@@ -35,8 +35,6 @@ class DatasetCitationUtil
         $citationString .= "$title. ";
         $citationString .= 'Distributed by: GRIIDC, Harte Research Institute, Texas A&M University-Corpus Christi. ';
 
-        dump($doi);
-
         if ($doi instanceof DOI) {
             $citationString .= 'doi:' . $doi->getDoi();
         } else {
