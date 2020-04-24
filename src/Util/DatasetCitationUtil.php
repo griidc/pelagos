@@ -3,6 +3,7 @@
 namespace App\Util;
 
 use App\Entity\Dataset;
+use App\Entity\DOI;
 
 /**
  * A utility to create a Dataset Citation Text.
@@ -33,6 +34,8 @@ class DatasetCitationUtil
         $citationString .= (!empty($year) ? "($year). " : '');
         $citationString .= "$title. ";
         $citationString .= 'Distributed by: GRIIDC, Harte Research Institute, Texas A&M University-Corpus Christi. ';
+
+        dump($doi);
 
         if ($doi instanceof DOI) {
             $citationString .= 'doi:' . $doi->getDoi();
