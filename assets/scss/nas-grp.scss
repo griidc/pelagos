@@ -222,6 +222,10 @@ img {
   position: sticky;
 }
 
+#main-wrapper {
+  height: 900px !important;
+}
+
 /** Responsive styles for other devices **/
 
 @media (max-width: 991px) {

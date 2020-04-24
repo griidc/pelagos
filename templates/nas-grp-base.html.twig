@@ -20,6 +20,8 @@
 </head>
 
 <body>
+{% block htmlbody %}
+
 {% if isMaintenanceMode() %}
     <div class="header-dev sticky-top" style="background-color:{{ getMaintenanceModeColor() }}">
         {{ getMaintenanceModeText()}}.
@@ -155,6 +157,6 @@
         });
     </script>
 {% endblock %}
+{% endblock htmlbody %}
 </body>
-
 </html>
