@@ -7,6 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
+use JMS\Serializer\Annotation as Serializer;
+
 use App\Util\DatasetCitationUtil;
 
 /**
@@ -566,6 +568,9 @@ class Dataset extends Entity
 
     /**
      * Get a citation for this Dataset.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("citation")
      *
      * @return string
      */
