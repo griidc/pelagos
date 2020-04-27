@@ -16,6 +16,8 @@ final class Version20200422204033 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
         $this->addSql('ALTER TABLE dataset_submission DROP erddap_url');
+
+        $this->addSql("UPDATE dataset SET accepted_date = (select min(creation_time_stamp) from dataset_submission where dataset_status = 'Accepted' and dataset.id = dataset_id group by dataset_id, dataset_status order by dataset_id)");
     }
 
     public function down(Schema $schema) : void
