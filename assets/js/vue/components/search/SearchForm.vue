@@ -77,9 +77,7 @@
                         <p class="card-text">
                             Choose from thousands of scientific datasets from various fields
                             including oceanography, biology, ecology, chemistry, social science,
-                            and others. Datasets are primarily focused on the Deepwater Horizon
-                            oil spill in the Gulf of Mexico; however, some datasets are related
-                            to other topics and locations around the world.
+                            and others.
                         </p>
                     </div>
                 </article>
