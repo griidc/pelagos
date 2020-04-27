@@ -31,7 +31,7 @@ class DatasetCitationUtil
         $citationString = '';
 
         $citationString .= (!empty($author) ? "$author. " : '');
-        $citationString .= (!empty($year) ? "($year). " : '');
+        $citationString .= (!empty($year) ? "$year. " : '');
         $citationString .= "$title. ";
         $citationString .= 'Distributed by: GRIIDC, Harte Research Institute, Texas A&M University-Corpus Christi. ';
 
