@@ -49,7 +49,7 @@ Thank you for your submission. Please email <a href="mailto:griidc@gomri.org?sub
                 <b>Point of Contact Name:</b>
             </td>
             <td>
-                {{ DatasetSubmission.getPointOfContactName }}
+                {{ DatasetSubmission.getPointOfContactName | default }}
             </td>
         </tr>
         <tr>
@@ -57,7 +57,7 @@ Thank you for your submission. Please email <a href="mailto:griidc@gomri.org?sub
                 <b>Point of Contact E-Mail:</b>
             </td>
             <td>
-                {{ DatasetSubmission.getPointOfContactEmail }}
+                {{ DatasetSubmission.getPointOfContactEmail | default }}
             </td>
         </tr>
         <tr>

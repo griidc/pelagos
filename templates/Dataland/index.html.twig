@@ -62,7 +62,7 @@
                     <li {{ dataset.datasetPublications|length == 0 ? ' disabled' : '' }}>
                         <a href="#tabs-3">Publications</a>
                     </li>
-                    <li {{ dataset.datasetSubmission.datasetLinks|length == 0 ? ' disabled' : '' }}>
+                    <li {{ dataset.datasetSubmission.datasetLinks|default|length == 0 ? ' disabled' : '' }}>
                         <a href="#tabs-4">Additional Resources</a>
                     </li>
                 </ul>
