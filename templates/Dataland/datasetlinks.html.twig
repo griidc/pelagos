@@ -1,7 +1,7 @@
 <h2>Dataset Links:</h2>
 <div>
     {% set linkcodes = constant('App\\Entity\\DatasetLink::ONLINE_FUNCTION_CODES') %}
-    {% for link in dataset.datasetSubmission.datasetLinks %}
+    {% for link in dataset.datasetSubmission.datasetLinks|default %}
         <p>
             <b>Name:</b> {{ link.name }}<br>
             <b>Description:</b> {{ link.description }}<br>

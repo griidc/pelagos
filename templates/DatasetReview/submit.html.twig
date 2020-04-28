@@ -49,7 +49,7 @@
                     <b>Point of Contact Name:</b>
                 </td>
                 <td>
-                    {{ DatasetSubmission.getPointOfContactName }}
+                    {{ DatasetSubmission.getPointOfContactName | default }}
                 </td>
             </tr>
             <tr>
@@ -57,7 +57,7 @@
                     <b>Point of Contact E-Mail:</b>
                 </td>
                 <td>
-                    {{ DatasetSubmission.getPointOfContactEmail }}
+                    {{ DatasetSubmission.getPointOfContactEmail | default}}
                 </td>
             </tr>
             <tr>

@@ -1586,9 +1586,9 @@ class DatasetSubmission extends Entity
      *
      * @see self::getDatasetContacts()
      *
-     * @return string
+     * @return string|null
      */
-    public function getPointOfContactName() : string
+    public function getPointOfContactName() : ? string
     {
         if ($this->getDatasetContacts()->isEmpty()) {
             if (property_exists(self::class, 'pointOfContactName')) {
@@ -1614,9 +1614,9 @@ class DatasetSubmission extends Entity
      *
      * @see self::getDatasetContacts()
      *
-     * @return string
+     * @return string|null
      */
-    public function getPointOfContactEmail() : string
+    public function getPointOfContactEmail() : ? string
     {
         if ($this->getDatasetContacts()->isEmpty()) {
             if (property_exists(self::class, 'pointOfContactEmail')) {
