@@ -650,16 +650,4 @@ class ISOMetadataExtractorUtilTest extends TestCase
         $this->assertEquals($mockTemporalNilReason, $this->datasetSubmission->getTemporalExtentNilReasonType());
 
     }
-
-    /**
-     * Test for erddap attribute setter and getter.
-     *
-     * @return void
-     */
-    public function testCanGetAndSetErddapUrl(): void
-    {
-        $erddapUrl = 'https://xyz';
-        $this->datasetSubmission->setErddapUrl($erddapUrl);
-        $this->assertEquals($erddapUrl, $this->datasetSubmission->getErddapUrl());
-    }
 }

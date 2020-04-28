@@ -911,23 +911,6 @@ class DatasetSubmissionTest extends TestCase
     }
 
     /**
-     * Test the setter and getter for ErddapUrl and generated ErddapUrlProtocol.
-     *
-     * @return void
-     */
-    public function testCanSetAndGetErddapUrl()
-    {
-        $testProtocol = 'abcd';
-        $testUrl = "$testProtocol://hostname.site.tld";
-        $this->datasetSubmission->setErddapUrl($testUrl);
-        $this->assertEquals($testUrl, $this->datasetSubmission->getErddapUrl());
-        $this->assertEquals($testProtocol, $this->datasetSubmission->getErddapUrlProtocol());
-
-        $this->datasetSubmission->setErddapUrl(null);
-        $this->assertNull($this->datasetSubmission->getErddapUrlProtocol());
-    }
-    
-    /**
      * Test Remotely Hosted.
      *
      * @return void
@@ -942,7 +925,7 @@ class DatasetSubmissionTest extends TestCase
         );
         $this->datasetSubmission->setRemotelyHostedName(null);
         $this->assertNull($this->datasetSubmission->getRemotelyHostedName());
-        
+
         $remotelyHostedName = 'Remotely Hosted Description';
         $this->datasetSubmission->setRemotelyHostedDescription($remotelyHostedName);
         $this->assertEquals(
@@ -951,7 +934,7 @@ class DatasetSubmissionTest extends TestCase
         );
         $this->datasetSubmission->setRemotelyHostedDescription(null);
         $this->assertNull($this->datasetSubmission->getRemotelyHostedDescription());
-        
+
         $remotelyHostedName = 'download';
         $this->datasetSubmission->setRemotelyHostedFunction($remotelyHostedName);
         $this->assertEquals(
@@ -961,7 +944,7 @@ class DatasetSubmissionTest extends TestCase
         $this->datasetSubmission->setRemotelyHostedFunction(null);
         $this->assertNull($this->datasetSubmission->getRemotelyHostedFunction());
     }
-    
+
     /**
      * Test the adder, remover and getter for Distribution Points.
      *
@@ -978,7 +961,7 @@ class DatasetSubmissionTest extends TestCase
                 'getUrl' => 'www.bla.null',
             )
         );
-        
+
         //test adder
         $this->datasetSubmission->addDatasetLink($this->mockDatasetLink);
         $this->assertEquals(
