@@ -82,8 +82,7 @@ class AdjustAcceptedDateCommand extends Command
                 $datasetSubmissionHistory = $dataset->getDatasetSubmissionHistory();
                 $lastAcceptedDate = $dataset->getAcceptedDate();
 
-                $mydate = $lastAcceptedDate->format('c');
-
+                // $mydate = $lastAcceptedDate->format('c');
                 // echo "$mydate,";
 
                 foreach ($datasetSubmissionHistory as $datasetSubmission) {
@@ -93,8 +92,7 @@ class AdjustAcceptedDateCommand extends Command
                     }
                 }
 
-                $mydate = $newAcceptedDate->format('c');
-
+                // $mydate = $newAcceptedDate->format('c');
                 // echo "$mydate \n";
 
                 if ($lastAcceptedDate <> $newAcceptedDate) {
