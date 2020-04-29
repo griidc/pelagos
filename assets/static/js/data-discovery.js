@@ -59,6 +59,7 @@ $(document).ready(function() {
     filterButton.button();
     filterButton.button("disable");
     $("#clear-button").button();
+    $("#searchlink-button").button();
     $("#filter-input").on("keyup change paste input propertychange", function(e) {
         enableFilterButton();
     });
