@@ -77,13 +77,12 @@ class AdjustAcceptedDateCommand extends Command
             $udi = $dataset->getUdi();
 
             if ($datasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
-                // echo "$udi,";
-
                 $datasetSubmissionHistory = $dataset->getDatasetSubmissionHistory();
                 $lastAcceptedDate = $dataset->getAcceptedDate();
 
-                // $mydate = $lastAcceptedDate->format('c');
-                // echo "$mydate,";
+                $frmtlastAcceptedDate = $lastAcceptedDate->format('Y-m-d H:i:s');
+                
+                $newAcceptedDate = $lastAcceptedDate;
 
                 foreach ($datasetSubmissionHistory as $datasetSubmission) {
                     $lastDatasetStatus = $datasetSubmission->getDatasetStatus();
@@ -92,16 +91,17 @@ class AdjustAcceptedDateCommand extends Command
                     }
                 }
 
-                // $mydate = $newAcceptedDate->format('c');
-                // echo "$mydate \n";
+                $frmtnewAcceptedDate = $newAcceptedDate->format('Y-m-d H:i:s');
 
-                if ($lastAcceptedDate <> $newAcceptedDate) {
+                if ($lastAcceptedDate > $newAcceptedDate) {
+                    
+                    echo "$udi,$frmtlastAcceptedDate,$frmtnewAcceptedDate \n";
                     //echo "$udi is different\n";
 
-                    $dataset->setAcceptedDate($newAcceptedDate);
+                    // $dataset->setAcceptedDate($newAcceptedDate);
 
-                    $this->entityManager->persist($dataset);
-                    $this->entityManager->flush($dataset);
+                    // $this->entityManager->persist($dataset);
+                    // $this->entityManager->flush($dataset);
 
                     $datasetCount++;
                 }
