@@ -80,4 +80,20 @@ class ResearchGroupController extends AbstractController
 
         return $this->render('template/ResearchGroup.html.twig', $ui);
     }
+
+    /**
+     * The Research Group Ladning page action.
+     *
+     * @param integer       $id            The id of the entity to retrieve.
+     *
+     * @throws NotFoundHttpException When the research group was not found.
+     *
+     * @Route("/research-group/about/{id}", name="pelagos_app_ui_researchgroup_about")
+     *
+     * @return Response A Response instance.
+     */
+    public function landingPageAction(int $id)
+    {
+        return $this->render('ResearchGroup/index.html.twig', ['researchGroupId' => $id]);
+    }
 }
