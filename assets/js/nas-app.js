@@ -7,7 +7,6 @@
 const $ = require('jquery');
 global.$ = global.jQuery = $;
 
-require('../css/messages.css');
 require('../css/template.css');
 require('../css/superfish.css');
 require('../css/pelagos-module.css');
