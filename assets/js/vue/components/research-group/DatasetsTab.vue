@@ -1,21 +1,19 @@
 <template>
-    <b-tab title="Datasets">
-        <b-card-text>
-            <b-card class="card-product" v-for="datasetInfo in datasetsRetrievedInfo">
-                <b-link class="dataset-row" target="_blank" :href="datasetInfo.dataland">
-                    <b-card-body>
-                        <div class="row">
-                            <article class="col-lg-12">
-                                <b-card-text>
-                                    {{ datasetInfo.citation }}
-                                </b-card-text>
-                            </article>
-                        </div>
-                    </b-card-body>
-                </b-link>
-            </b-card>
-        </b-card-text>
-    </b-tab>
+    <b-card-text>
+        <b-card class="card-product" v-for="datasetInfo in datasetsRetrievedInfo">
+            <b-link class="dataset-row" target="_blank" :href="datasetInfo.dataland">
+                <b-card-body>
+                    <div class="row">
+                        <article class="col-lg-12">
+                            <b-card-text>
+                                {{ datasetInfo.citation }}
+                            </b-card-text>
+                        </article>
+                    </div>
+                </b-card-body>
+            </b-link>
+        </b-card>
+    </b-card-text>
 </template>
 
 <script>

@@ -3,9 +3,15 @@
         <hr>
         <b-card no-body>
             <b-tabs pills card v-if="showData" lazy>
-                <InfoTab :info="researchGroupData"/>
-                <DatasetsTab :datasets="researchGroupData.datasets" />
-                <PeopleTab :personResearchGroups="researchGroupData.personResearchGroups" />
+                <b-tab title="Info">
+                    <InfoTab :info="researchGroupData"/>
+                </b-tab>
+                <b-tab title="Datasets" class="bg-light">
+                    <DatasetsTab :datasets="researchGroupData.datasets" />
+                </b-tab>
+                <b-tab title="People" class="bg-light">
+                    <PeopleTab :personResearchGroups="researchGroupData.personResearchGroups" />
+                </b-tab>
                 <b-tab title="Publications">
                     <b-card-text>
                         Alesia Ferguson, Helena Solo-Gabriele, Kristina Mena. 2020.

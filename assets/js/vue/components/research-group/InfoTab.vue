@@ -1,16 +1,14 @@
 <template>
-    <b-tab title="Info" active>
-        <b-card-text>
-            <h4>{{ info.name }}</h4>
-            <hr>
-            <h6 style="font-weight: bold">Description</h6>
-            <p>{{ info.description }}</p>
-            <h6 style="font-weight: bold">Funding Organization</h6>
-            <p>{{ info.fundingCycle.fundingOrganization.name }}</p>
-            <h6 style="font-weight: bold">Funding Cycle</h6>
-            <p>{{ info.fundingCycle.name }}</p>
-        </b-card-text>
-    </b-tab>
+    <b-card-text>
+        <h4>{{ info.name }}</h4>
+        <hr>
+        <h6 style="font-weight: bold">Description</h6>
+        <p>{{ info.description }}</p>
+        <h6 style="font-weight: bold">Funding Organization</h6>
+        <p>{{ info.fundingCycle.fundingOrganization.name }}</p>
+        <h6 style="font-weight: bold">Funding Cycle</h6>
+        <p>{{ info.fundingCycle.name }}</p>
+    </b-card-text>
 </template>
 
 <script>
