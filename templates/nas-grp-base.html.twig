@@ -17,6 +17,21 @@
             {% endif %}
         {% endblock stylesheets %}
     {% endblock %}
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ google_analytics_id }}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', '{{ google_analytics_id }}', {
+            'page_path': '{{ app.request.pathinfo }}'
+        });
+    </script>
 </head>
 
 <body>
@@ -139,21 +154,6 @@
         });
     </script>
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{ google_analytics_id }}"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-
-        gtag('js', new Date());
-
-        gtag('config', '{{ google_analytics_id }}', {
-            'page_path': '{{ app.request.pathinfo }}'
-        });
-    </script>
 {% endblock %}
 {% endblock htmlbody %}
 </body>
