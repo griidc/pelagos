@@ -993,15 +993,6 @@ class DatasetSubmission extends Entity
     protected $distributionPoints;
 
     /**
-     * ERDDAPP Url for the dataset.
-     *
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected $erddapUrl;
-
-    /**
      * Remotely Hosted Dataset Name.
      *
      * @var string
@@ -1126,7 +1117,6 @@ class DatasetSubmission extends Entity
             $this->setTemporalExtentNilReasonType($entity->getTemporalExtentNilReasonType());
             $this->setDistributionFormatName($entity->getDistributionFormatName());
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
-            $this->setErddapUrl($entity->getErddapUrl());
             $this->setRemotelyHostedName($entity->getRemotelyHostedName());
             $this->setRemotelyHostedDescription($entity->getRemotelyHostedDescription());
             $this->setRemotelyHostedFunction($entity->getRemotelyHostedFunction());
@@ -1313,7 +1303,9 @@ class DatasetSubmission extends Entity
                 //Setting the status to in-review.
                 $this->status = self::STATUS_COMPLETE;
                 $this->setDatasetStatus(Dataset::DATASET_STATUS_ACCEPTED);
-                $this->getDataset()->setAcceptedDate(new \DateTime('now', new \DateTimeZone('UTC')));
+                if (!($this->getDataset()->getAcceptedDate() instanceof \DateTime)) {
+                    $this->getDataset()->setAcceptedDate(new \DateTime('now', new \DateTimeZone('UTC')));
+                }
                 $this->getDataset()->setDatasetSubmission($this);
                 break;
             case ($eventName === self::DATASET_REQUEST_REVISIONS):
@@ -1594,9 +1586,9 @@ class DatasetSubmission extends Entity
      *
      * @see self::getDatasetContacts()
      *
-     * @return string
+     * @return string|null
      */
-    public function getPointOfContactName() : string
+    public function getPointOfContactName() : ? string
     {
         if ($this->getDatasetContacts()->isEmpty()) {
             if (property_exists(self::class, 'pointOfContactName')) {
@@ -1622,9 +1614,9 @@ class DatasetSubmission extends Entity
      *
      * @see self::getDatasetContacts()
      *
-     * @return string
+     * @return string|null
      */
-    public function getPointOfContactEmail() : string
+    public function getPointOfContactEmail() : ? string
     {
         if ($this->getDatasetContacts()->isEmpty()) {
             if (property_exists(self::class, 'pointOfContactEmail')) {
@@ -2764,6 +2756,24 @@ class DatasetSubmission extends Entity
         return $this->distributionPoints;
     }
 
+     /**
+     * Getter for the (first) erddap url link.
+     *
+     * @return DatasetLink|null
+     */
+    public function getErdappDatasetLink() : ?DatasetLink
+    {
+        $datasetLinks = $this->getDatasetLinks()->filter(function (DatasetLink $datasetLink) {
+            return $datasetLink->getName() === DatasetLink::LINK_NAME_CODES["erddap"]["name"];
+        });
+
+        if ($datasetLinks->count() > 0) {
+            return $datasetLinks->first();
+        }
+
+        return null;
+    }
+
     /**
      * Getter for the erddap url.
      *
@@ -2771,7 +2781,13 @@ class DatasetSubmission extends Entity
      */
     public function getErddapUrl(): ?string
     {
-        return $this->erddapUrl;
+        $erddapLink = $this->getErdappDatasetLink();
+
+        if ($erddapLink instanceof DatasetLink) {
+            return $erddapLink->getUrl();
+        }
+
+        return null;
     }
 
     /**
@@ -2781,12 +2797,13 @@ class DatasetSubmission extends Entity
      */
     public function getErddapUrlProtocol() : ?string
     {
-        if ($this->erddapUrl !== null) {
-            preg_match('/^(.*?):.*$/', $this->erddapUrl, $matches);
-            return $matches[1];
-        } else {
-            return null;
+        $erddapLink = $this->getErdappDatasetLink();
+
+        if ($erddapLink instanceof DatasetLink) {
+            return $erddapLink->getProtocol();
         }
+
+        return null;
     }
 
     /**
@@ -2802,18 +2819,6 @@ class DatasetSubmission extends Entity
         } else {
             return null;
         }
-    }
-
-    /**
-     * Setter for the erddap url.
-     *
-     * @param string|null $erddapUrl Erddap url.
-     *
-     * @return void
-     */
-    public function setErddapUrl(?string $erddapUrl)
-    {
-        $this->erddapUrl = $erddapUrl;
     }
 
     /**
