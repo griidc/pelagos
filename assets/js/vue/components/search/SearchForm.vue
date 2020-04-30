@@ -60,6 +60,8 @@
                                 <button id="searchSubmit" type="submit" class="btn btn-primary search-button">Search
                                     <i class="fa fa-search pl-2"></i></button>
                                 <button type="reset" id="search-clear" class="btn btn-dark clear-button">Clear</button>
+                                <div class="mt-3 pt-3 empty-button-div"></div>
+                                <button type="button" id="map-search" class="btn btn-info map-search-button ml-5" @click="dataDiscovery()">Map Search</button>
                             </div>
                         </div>
                     </b-form>
@@ -77,9 +79,7 @@
                         <p class="card-text">
                             Choose from thousands of scientific datasets from various fields
                             including oceanography, biology, ecology, chemistry, social science,
-                            and others. Datasets are primarily focused on the Deepwater Horizon
-                            oil spill in the Gulf of Mexico; however, some datasets are related
-                            to other topics and locations around the world.
+                            and others.
                         </p>
                     </div>
                 </article>
@@ -170,6 +170,9 @@
                 this.route = window.location.hash;
                 this.submitted = false;
             },
+            dataDiscovery: function () {
+                window.location.href = Routing.generate("pelagos_app_ui_datadiscovery_default");
+            }
         },
         mounted() {
             if (this.route) {
@@ -228,6 +231,14 @@
                 }
                 .clear-button {
                     width: 49%;
+                }
+                .map-search-button {
+                    margin-top: 1rem;
+                    width: 100% !important;
+                    margin-left: 0 !important;
+                }
+                .empty-button-div {
+                    margin-top: 0 !important;
                 }
             }
             .search-field-options {

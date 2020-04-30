@@ -1,6 +1,0 @@
-{{ dataset.Authors }} ({{ dataset.AcceptedDate|date("Y") }}) {{ dataset.title }}. Distributed by: GRIIDC, Harte Research Institute, Texas A&M University-Corpus Christi.
-{% if dataset.doi %}
-    {{ dataset.doi }}
-{% else %}
-    Available from: http://data.gulfresearchinitiative.org/data/{{dataset.udi}}
-{% endif %}

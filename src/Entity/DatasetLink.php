@@ -50,7 +50,7 @@ class DatasetLink extends Entity
     const LINK_NAME_CODES = [
         'erddap' => [
             'name' => 'ERDDAP',
-            'description' => 'An ERDDAP link.',
+            'description' => "ERDDAP's version of the OPeNDAP .html web page for this dataset. Specify a subset of the dataset and download the data via OPeNDAP or in many different file types.",
         ],
         'ncei' => [
             'name' => 'NCEI',
