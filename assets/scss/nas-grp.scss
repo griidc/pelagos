@@ -372,3 +372,12 @@ img {
     align-items: flex-start;
   }
 }
+
+/* Font for applications */
+#pelagos-content {
+  font-family: var(--type-font--lato) !important;
+}
+
+.ui-widget {
+  font-family: var(--type-font--lato) !important;
+}
