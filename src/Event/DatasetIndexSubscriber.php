@@ -2,6 +2,7 @@
 
 namespace App\Event;
 
+use App\Twig\Extensions as TwigExtentions;
 use FOS\ElasticaBundle\Event\TransformEvent;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -86,6 +87,14 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
                 $document->set('year', $dataset->getDatasetSubmission()->getModificationTimeStamp()->format('Y'));
                 $document->set('updatedDateTime', $dataset->getDatasetSubmission()->getModificationTimeStamp()->format('Ymd\THis\Z'));
             }
+            // Populate file size and format values
+            $document->set('fileSize', $dataset->getDatasetSubmission()->getDatasetFileSize());
+            if ($dataset->getDatasetSubmission()->isDatasetFileInColdStorage()) {
+                $document->set('fileSize', TwigExtentions::formatBytes($dataset->getDatasetSubmission()->getDatasetFileColdStorageArchiveSize(), 2));
+            } else {
+                $document->set('fileSize', TwigExtentions::formatBytes($dataset->getDatasetSubmission()->getDatasetFileSize(), 2));
+            }
+            $document->set('fileFormat', $dataset->getDatasetSubmission()->getDistributionFormatName());
         } elseif ($dataset->hasDif()) {
             $document->set('updatedDateTime', $dataset->getDif()->getModificationTimeStamp()->format('Ymd\THis\Z'));
         } else {
