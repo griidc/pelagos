@@ -412,3 +412,7 @@ function addTree() {
         deselect_action: "$('#by-input').val(''); $('#id-input').val(''); showDatasets('','');"
     });
 }
+
+function navigateToNewsearch() {
+    window.parent.location=Routing.generate('pelagos_app_ui_searchpage_default');
+}
