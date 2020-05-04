@@ -61,7 +61,7 @@
                                     <i class="fa fa-search pl-2"></i></button>
                                 <button type="reset" id="search-clear" class="btn btn-dark clear-button">Clear</button>
                                 <div class="mt-3 pt-3 empty-button-div"></div>
-                                <button type="button" id="map-search" class="btn btn-info map-search-button ml-5" @click="dataDiscovery()">Map Search</button>
+                                <button type="button" id="map-search" class="btn map-search-button" @click="dataDiscovery()">Map Search</button>
                             </div>
                         </div>
                     </b-form>
@@ -219,6 +219,13 @@
         border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
         background-clip: border-box;
         border: 1px solid rgba(0, 0, 0, 0.125);
+        .button-toolbar {
+            .map-search-button {
+                color: var(--color-white);
+                background-color: var(--color-headerMiddle);
+                border-color: var(--color-headerMiddle);
+            }
+        }
     }
 
     @media (max-width: 992px) {
@@ -267,8 +274,10 @@
                     margin-left: 0.5rem;
                     width: 30%;
                 }
+                .map-search-button {
+                    margin-left: 4.1rem;
+                }
             }
         }
-
     }
 </style>
