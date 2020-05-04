@@ -245,18 +245,14 @@ input.ui-button {
 .teal-button
 {
     background-image:none;
-    background-color:darkcyan;
+    background-color:var(--color-headerMiddle);
+    border-color:var(--color-headerMiddle);
     color:white;
 }
 .teal-button:hover
 {
     background-image:none;
-    background-color:darkcyan;
-    color:white;
-}
-.teal-button:active
-{
-    background-image:none;
-    background-color:darkcyan;
+    background-color:var(--color-headerMiddle);
+    border-color:var(--color-headerMiddle);
     color:white;
 }
