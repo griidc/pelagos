@@ -10,27 +10,27 @@
             </div>
             <b-card-title>{{ resultRowData.title }}</b-card-title>
             <b-card-text class="d-flex justify-content-between" >
-                <div>
-                    Authors: {{ resultRowData.datasetSubmission.authors }}
+                <div v-if="Object.keys(resultRowData.datasetSubmission).length > 0">
+                    <div v-if="resultRowData.datasetSubmission.authors">
+                        Authors: {{ resultRowData.datasetSubmission.authors }}
+                    </div>
+                    <div v-if="resultRowData.acceptedDate">
+                        Published on {{ resultRowData.acceptedDate }}
+                    </div>
+                    <div v-if="resultRowData.fileFormat">
+                        File Format: {{ resultRowData.fileFormat }}
+                    </div>
                 </div>
                 <div>
-                    DOI: {{ resultRowData.doi.doi }}
-                </div>
-            </b-card-text>
-            <b-card-text class="d-flex justify-content-between" >
-                <div>
-                    Published on {{ resultRowData.year }}
-                </div>
-                <div>
-                    UDI: {{ resultRowData.udi }}
-                </div>
-            </b-card-text>
-            <b-card-text class="d-flex justify-content-between" >
-                <div>
-                    File Format: {{ resultRowData.fileFormat }}
-                </div>
-                <div>
-                    File Size: {{ resultRowData.fileSize }}
+                    <div v-if="resultRowData.doi.doi">
+                        DOI: {{ resultRowData.doi.doi }}
+                    </div>
+                    <div>
+                        UDI: {{ resultRowData.udi }}
+                    </div>
+                    <div v-if="resultRowData.fileSize">
+                        File Size: {{ resultRowData.fileSize }}
+                    </div>
                 </div>
             </b-card-text>
         </b-link>

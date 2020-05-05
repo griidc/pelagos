@@ -83,6 +83,7 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
             if ($dataset->getAcceptedDate() instanceof \DateTime) {
                 $document->set('year', $dataset->getAcceptedDate()->format('Y'));
                 $document->set('updatedDateTime', $dataset->getAcceptedDate()->format('Ymd\THis\Z'));
+                $document->set('acceptedDate', $dataset->getAcceptedDate()->format('Y-m-d'));
             } else {
                 $document->set('year', $dataset->getDatasetSubmission()->getModificationTimeStamp()->format('Y'));
                 $document->set('updatedDateTime', $dataset->getDatasetSubmission()->getModificationTimeStamp()->format('Ymd\THis\Z'));
