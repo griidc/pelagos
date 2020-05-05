@@ -136,6 +136,7 @@
     transform: scale(1, 0);
     display: block;
     margin-top: -1px;
+    padding: 0 !important;
 
     .dropdown-item {
       padding: 8px 20px !important;
@@ -147,10 +148,6 @@
     transform: scale(1);
     display: block;
   }
-}
-
-#help-sub-menu {
-  left: -80% !important;
 }
 
 .global-nav-before {
@@ -245,7 +242,7 @@ img {
   .main_menu .navbar .main-menu-item .navbar-nav a {
     padding: 10px 22px;
     color: var(--color-neutral--charcoal);
-    background-color: var(--color-white);
+    //background-color: var(--color-white);
     margin-bottom: 2px;
   }
 
@@ -263,10 +260,6 @@ img {
     .dropdown-menu {
       left: -20% !important;
     }
-  }
-
-  #help-sub-menu {
-    left: -80% !important;
   }
 }
 
@@ -398,7 +391,9 @@ img {
     }
     .dropdown-menu {
       float: left !important;
-      padding: 0;
     }
+  }
+  #help-sub-menu {
+    left: -150% !important;
   }
 }
