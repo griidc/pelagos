@@ -253,6 +253,20 @@ img {
   .login-bar {
     flex-wrap: wrap;
   }
+
+  .navbar-collapse {
+    z-index: 9999 !important;
+    position: absolute;
+    left: 0;
+    top: 70px;
+    width: 100%;
+    box-shadow: 0 7px 11px 0 rgba(0, 0, 0, 0.2);
+  }
+  .collapsing {
+    -webkit-transition: none;
+    transition: none;
+    display: none;
+  }
 }
 
 @media only screen and (min-width: 992px) and (max-width: 1200px) {
@@ -266,15 +280,6 @@ img {
 @media (max-width: 576px) {
   .navbar-brand {
     max-width: 150px;
-  }
-
-  .navbar-collapse {
-    z-index: 9999 !important;
-    position: absolute;
-    left: 0;
-    top: 56px;
-    width: 100%;
-    box-shadow: 0 7px 11px 0 rgba(0, 0, 0, 0.2);
   }
 
   .dropdown-menu {
@@ -312,15 +317,6 @@ img {
     max-width: 125px;
   }
 
-  .navbar-collapse {
-    z-index: 9999 !important;
-    position: absolute;
-    left: 0;
-    top: 55px;
-    width: 100%;
-    box-shadow: 0 7px 11px 0 rgba(0, 0, 0, 0.2);
-  }
-
   .dropdown {
     .dropdown-menu {
       transform: scale(1, 0);
@@ -344,15 +340,6 @@ img {
 @media only screen and (min-width: 768px) and (max-width: 991px) {
   .navbar-brand {
     max-width: 125px;
-  }
-
-  .navbar-collapse {
-    z-index: 9999 !important;
-    position: absolute;
-    left: 0;
-    top: 55px;
-    width: 100%;
-    box-shadow: 0 7px 11px 0 rgba(0, 0, 0, 0.2);
   }
 
   .dropdown {
