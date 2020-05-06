@@ -69,11 +69,14 @@ class AdjustAcceptedDateCommand extends Command
         
         $filename = $input->getArgument('csvfile');
         
-        $csv = array_map('str_getcsv', file($filename));
+        $csvData = array();
         
-        var_dump($csv);
-        
-        return 1;
+        $file = fopen($filename, 'r');
+        while (($data = fgetcsv($file)) !== FALSE) {
+          $csvData['udi'][] = $data[0];
+          $csvData['date'][] = $data[1];
+        }
+        fclose($file);
 
         $datasets = $this->entityManager
             ->getRepository(Dataset::class)
@@ -84,6 +87,12 @@ class AdjustAcceptedDateCommand extends Command
         foreach ($datasets as $dataset) {
             $datasetStatus = $dataset->getDatasetStatus();
             $udi = $dataset->getUdi();
+            
+            $inCsv = in_array($udi, $csvData['udi']);
+            
+            if ($inCsv) {
+                continue;
+            }
 
             if ($datasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
                 $datasetSubmissionHistory = $dataset->getDatasetSubmissionHistory();
@@ -102,7 +111,7 @@ class AdjustAcceptedDateCommand extends Command
 
                 $frmtnewAcceptedDate = $newAcceptedDate->format('Y-m-d H:i:s');
 
-                if ($lastAcceptedDate > $newAcceptedDate) {
+                if ($lastAcceptedDate <> $newAcceptedDate) {
                     
                     echo "$udi,$frmtlastAcceptedDate,$frmtnewAcceptedDate \n";
                     //echo "$udi is different\n";
