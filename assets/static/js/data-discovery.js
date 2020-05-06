@@ -59,8 +59,13 @@ $(document).ready(function() {
     filterButton.button();
     filterButton.button("disable");
     $("#clear-button").button();
+    $("#searchlink-button").button();
     $("#filter-input").on("keyup change paste input propertychange", function(e) {
         enableFilterButton();
+    });
+
+    document.getElementById("searchlink-button").addEventListener("click", function() {
+        window.parent.location=Routing.generate('pelagos_app_ui_searchpage_default');
     });
 });
 //end document ready
