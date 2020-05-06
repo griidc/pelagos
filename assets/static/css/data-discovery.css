@@ -241,3 +241,18 @@ input.ui-button {
 #expand-collapse.collapsed {
     left: -12px;
 }
+
+.teal-button
+{
+    background-image:none;
+    background-color:var(--color-headerMiddle);
+    border-color:var(--color-headerMiddle);
+    color:white;
+}
+.teal-button:hover
+{
+    background-image:none;
+    background-color:var(--color-headerMiddle);
+    border-color:var(--color-headerMiddle);
+    color:white;
+}
