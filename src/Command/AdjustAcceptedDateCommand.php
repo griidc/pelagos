@@ -39,6 +39,7 @@ class AdjustAcceptedDateCommand extends Command
     {
         $this
             ->setDescription('Sets the accepted to first accepted dateset per dataset.')
+            ->addArgument('csvfile', InputArgument::REQUIRED, 'The CSV files with UDIs.')
         ;
     }
 
@@ -65,6 +66,14 @@ class AdjustAcceptedDateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        
+        $filename = $input->getArgument('csvfile');
+        
+        $csv = array_map('str_getcsv', file($filename));
+        
+        var_dump($csv);
+        
+        return 1;
 
         $datasets = $this->entityManager
             ->getRepository(Dataset::class)
