@@ -139,7 +139,6 @@ $(function() {
 
     $("#regForm").validate({
         rules: {
-            referenceDate: "trueISODate",
             temporalExtentBeginPosition: "trueISODate",
             temporalExtentEndPosition: "trueISODate",
         },
@@ -278,12 +277,6 @@ $(function() {
         });
 
     }
-
-    // set up DatePickers
-    $("#referenceDate").datepicker({
-        dateFormat: "yy-mm-dd",
-        autoSize:true,
-    });
 
     $("#temporalExtentBeginPosition").datepicker({
         dateFormat: "yy-mm-dd",

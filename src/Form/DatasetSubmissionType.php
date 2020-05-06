@@ -104,23 +104,6 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Short Title',
                 'required' => false,
             ))
-            ->add('referenceDate', Type\DateType::class, array(
-                'label' => 'Date',
-                'required' => true,
-                'attr' => array('placeholder' => 'yyyy-mm-dd'),
-                'widget' => 'single_text',
-                'html5' => false,
-                'format' => 'yyyy-MM-dd',
-                'required' => true,
-                'model_timezone' => 'UTC',
-                'view_timezone' => 'UTC',
-            ))
-            ->add('referenceDateType', Type\ChoiceType::class, array(
-                'label' => 'Date Type',
-                'choices' => DatasetSubmission::getReferenceDateTypeChoices(),
-                'placeholder' => '[Please Select a Date Type]',
-                'required' => true,
-            ))
             ->add('purpose', Type\TextareaType::class, array(
                 'label' => 'Purpose',
                 'required' => true,
