@@ -94,11 +94,14 @@ class AdjustAcceptedDateCommand extends Command
                 continue;
             }
 
-            if ($datasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
+            // if ($datasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
                 $datasetSubmissionHistory = $dataset->getDatasetSubmissionHistory();
                 $lastAcceptedDate = $dataset->getAcceptedDate();
 
-                $frmtlastAcceptedDate = $lastAcceptedDate->format('Y-m-d H:i:s');
+                $frmtlastAcceptedDate = null;
+                if ($lastAcceptedDate instanceof \Datetime) {
+                    $frmtlastAcceptedDate = $lastAcceptedDate->format('Y-m-d H:i:s');
+                }
                 
                 $newAcceptedDate = $lastAcceptedDate;
 
@@ -109,7 +112,10 @@ class AdjustAcceptedDateCommand extends Command
                     }
                 }
 
-                $frmtnewAcceptedDate = $newAcceptedDate->format('Y-m-d H:i:s');
+                $frmtnewAcceptedDate = null;
+                if ($newAcceptedDate instanceof \Datetime) {
+                    $frmtnewAcceptedDate = $newAcceptedDate->format('Y-m-d H:i:s');
+                }
 
                 if ($lastAcceptedDate <> $newAcceptedDate) {
                     
@@ -123,7 +129,7 @@ class AdjustAcceptedDateCommand extends Command
 
                     $datasetCount++;
                 }
-            }
+            // }
         }
 
         $io->note("Proccesed $datasetCount datasets");
