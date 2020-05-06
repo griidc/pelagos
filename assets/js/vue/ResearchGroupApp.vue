@@ -1,8 +1,8 @@
 <template>
     <div class="container-xl" ref="formContainer">
         <hr>
-        <b-card no-body>
-            <b-tabs pills card v-if="showData" lazy>
+        <b-card no-body class="main-card">
+            <b-tabs pills fill justified card v-if="showData" lazy vertical class="vh-100">
                 <b-tab title="Info">
                     <InfoTab :info="researchGroupData"/>
                 </b-tab>
@@ -85,5 +85,7 @@
 </script>
 
 <style scoped>
-
+    .main-card {
+        overflow-y: scroll;
+    }
 </style>

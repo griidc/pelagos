@@ -1,6 +1,6 @@
 <template>
-    <b-card-text>
-        <b-card class="card-product" v-for="dataset in datasets">
+    <b-card-text class="vh-100">
+        <b-card class="card-product" v-for="dataset in datasets" v-bind:key="dataset.id">
             <b-link class="dataset-row" target="_blank" :href="getDatalandRoute(dataset.udi)">
                 <b-card-body>
                     <div class="row">
