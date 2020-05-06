@@ -1,6 +1,5 @@
 import Vue from "vue";
 import '../scss/bootstrap.scss';
-import '@fortawesome/fontawesome-free/css/all.min.css';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';

@@ -1,5 +1,5 @@
 <template>
-    <div class="container-xl">
+    <div class="container-xl" ref="formContainer">
         <hr>
         <b-card no-body>
             <b-tabs pills card v-if="showData" lazy>
