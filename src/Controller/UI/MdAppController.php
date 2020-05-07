@@ -137,8 +137,7 @@ class MdAppController extends AbstractController
         $objNeeded = array(
             'udi',
             'issueTrackingTicket',
-            'datasetSubmission.submissionTimeStamp',
-            'datasetSubmission.metadataFileName');
+            'datasetSubmission.submissionTimeStamp');
 
         return $this->render(
             'MdApp/main.html.twig',
