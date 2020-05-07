@@ -22,22 +22,11 @@ Routing.setRoutingData(routes);
 global.Routing = Routing;
 
 $( document ).ready(function() {
-    $("#pelagos-menu-1").hoverIntent(hoverIn, hoverOut, 'li');
 
     $(window).resize(function(){
         setContentHeight();
     }).resize();
 });
-
-function hoverIn() {
-    $(this).find("ul").removeClass("sf-hidden");
-    $(this).addClass("sfHover");
-}
-
-function hoverOut() {
-    $(this).find("ul").addClass("sf-hidden");
-    $(this).removeClass("sfHover");
-}
 
 function setContentHeight() {
     var winHeight = $(window).height();
