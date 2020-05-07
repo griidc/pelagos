@@ -21,6 +21,21 @@ import Routing from '../../vendor/friendsofsymfony/jsrouting-bundle/Resources/pu
 Routing.setRoutingData(routes);
 global.Routing = Routing;
 
+function toggleDropdown (event) {
+    const dropdown = $(event.target).closest('.dropdown'),
+        menu = $('.dropdown-menu', dropdown);
+    setTimeout(function() {
+        const shouldOpen = event.type !== 'click' && dropdown.is(':hover');
+        menu.toggleClass('show', shouldOpen);
+        dropdown.toggleClass('show', shouldOpen);
+        $('[data-toggle="dropdown"]', dropdown).attr('aria-expanded', shouldOpen);
+    }, event.type === 'mouseleave' || event.type === 'mouseenter' ? 300 : 0);
+}
+
+$('body')
+    .on('mouseenter mouseleave','.dropdown', toggleDropdown)
+    .on('click', '.dropdown-menu a', toggleDropdown);
+
 $( document ).ready(function() {
 
     $(window).resize(function(){
