@@ -80,7 +80,7 @@ class DatasetSubmission extends Entity
     const TRANSFER_TYPE_HTTP = 'HTTP';
 
     /**
-     * Valid values for $datasetFileTransferType and $metadataFileTransferType.
+     * Valid values for $datasetFileTransferType.
      */
     const TRANSFER_TYPES = array(
         self::TRANSFER_TYPE_UPLOAD => 'Direct Upload',
@@ -114,7 +114,7 @@ class DatasetSubmission extends Entity
     const TRANSFER_STATUS_REMOTELY_HOSTED = 'RemotelyHosted';
 
     /**
-     * Valid values for $datasetFileTransferStatus and $metadataFileTransferStatus.
+     * Valid values for $datasetFileTransferStatus.
      */
     const TRANSFER_STATUSES = array(
         self::TRANSFER_STATUS_NONE => 'Not Yet Transferred',
@@ -680,67 +680,6 @@ class DatasetSubmission extends Entity
     protected $datasetFileUrlStatusCode;
 
     /**
-     * The metadata file transfer type.
-     *
-     * Legacy DB column: metadata_server_type
-     *
-     * @var string
-     *
-     * @see TRANSFER_TYPES class constant for valid values.
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected $metadataFileTransferType;
-
-    /**
-     * The metadata file URI.
-     *
-     * This specifies the location of the source metadata file and can be a file, http(s), or ftp URI.
-     *
-     * Legacy DB column: url_metadata
-     *
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected $metadataFileUri;
-
-    /**
-     * The metadata file transfer status.
-     *
-     * Legacy DB column: metadata_dl_status
-     *
-     * @var string
-     *
-     * @see TRANSFER_STATUSES class constant for valid values.
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected $metadataFileTransferStatus;
-
-    /**
-     * The metadata file name.
-     *
-     * Legacy DB column: dataset_metadata
-     *
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected $metadataFileName;
-
-    /**
-     * The metadata file sha256 hash.
-     *
-     * Legacy DB column: metadata_file_hash
-     *
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected $metadataFileSha256Hash;
-
-    /**
      * Status of the dataset.
      *
      * Legacy DB column: metadata_status
@@ -1091,11 +1030,6 @@ class DatasetSubmission extends Entity
             $this->setDatasetFileName($entity->getDatasetFileName());
             $this->setDatasetFileSize($entity->getDatasetFileSize());
             $this->setDatasetFileSha256Hash($entity->getDatasetFileSha256Hash());
-            $this->setMetadataFileTransferType($entity->getMetadataFileTransferType());
-            $this->setMetadataFileUri($entity->getMetadataFileUri());
-            $this->setMetadataFileTransferStatus($entity->getMetadataFileTransferStatus());
-            $this->setMetadataFileName($entity->getMetadataFileName());
-            $this->setMetadataFileSha256Hash($entity->getMetadataFileSha256Hash());
             $this->setDatasetStatus($entity->getDatasetStatus());
             $this->setReferenceDate($entity->getReferenceDate());
             $this->setReferenceDateType($entity->getReferenceDateType());
@@ -1944,120 +1878,6 @@ class DatasetSubmission extends Entity
     public function getDatasetFileUrlStatusCode() : ?string
     {
         return $this->datasetFileUrlStatusCode;
-    }
-
-    /**
-     * Set the metadata file transfer type.
-     *
-     * @param string|null $metadataFileTransferType The metadata file transfer type.
-     *
-     * @see TRANSFER_TYPES class constant for valid values.
-     *
-     * @return void
-     */
-    public function setMetadataFileTransferType(?string $metadataFileTransferType)
-    {
-        $this->metadataFileTransferType = $metadataFileTransferType;
-    }
-
-    /**
-     * Get the metadata file transfer type.
-     *
-     * @return string|null
-     */
-    public function getMetadataFileTransferType() : ?string
-    {
-        return $this->metadataFileTransferType;
-    }
-
-    /**
-     * Set the metadata file URI.
-     *
-     * @param string|null $metadataFileUri The metadata file URI.
-     *
-     * @return void
-     */
-    public function setMetadataFileUri(?string $metadataFileUri)
-    {
-        $this->metadataFileUri = $metadataFileUri;
-    }
-
-    /**
-     * Get the metadata file URI.
-     *
-     * @return string|null
-     */
-    public function getMetadataFileUri() : ?string
-    {
-        return $this->metadataFileUri;
-    }
-
-    /**
-     * Set the metadata file transfer status.
-     *
-     * @param string|null $metadataFileTransferStatus The metadata file transfer status.
-     *
-     * @see TRANSFER_STATUSES class constant for valid values.
-     *
-     * @return void
-     */
-    public function setMetadataFileTransferStatus(?string $metadataFileTransferStatus)
-    {
-        $this->metadataFileTransferStatus = $metadataFileTransferStatus;
-    }
-
-    /**
-     * Get the metadata file transfer status.
-     *
-     * @return string|null
-     */
-    public function getMetadataFileTransferStatus() : ?string
-    {
-        return $this->metadataFileTransferStatus;
-    }
-
-    /**
-     * Set the metadata file name.
-     *
-     * @param string|null $metadataFileName The metadata file name.
-     *
-     * @return void
-     */
-    public function setMetadataFileName(?string $metadataFileName)
-    {
-        $this->metadataFileName = $metadataFileName;
-    }
-
-    /**
-     * Get the metadata file name.
-     *
-     * @return string|null
-     */
-    public function getMetadataFileName() : ?string
-    {
-        return $this->metadataFileName;
-    }
-
-    /**
-     * Set the metadata file sha256 hash.
-     *
-     * @param string|null $metadataFileSha256Hash The metadata file sha256 hash.
-     *
-     * @return void
-     */
-    public function setMetadataFileSha256Hash(?string $metadataFileSha256Hash)
-    {
-        $this->metadataFileSha256Hash = $metadataFileSha256Hash;
-    }
-
-    /**
-     * Get the metadata file sha256 hash.
-     *
-     * @return string|null
-     */
-    public function getMetadataFileSha256Hash() : ?string
-    {
-        return $this->metadataFileSha256Hash;
     }
 
     /**
