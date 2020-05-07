@@ -21,23 +21,23 @@ import Routing from '../../vendor/friendsofsymfony/jsrouting-bundle/Resources/pu
 Routing.setRoutingData(routes);
 global.Routing = Routing;
 
-$( document ).ready(function() {
-    $("#pelagos-menu-1").hoverIntent(hoverIn, hoverOut, 'li');
+function toggleDropdown (event) {
+    const dropdown = $(event.target).closest('.dropdown'),
+        menu = $('.dropdown-menu', dropdown);
+    setTimeout(function() {
+        const shouldOpen = event.type !== 'click' && dropdown.is(':hover');
+        menu.toggleClass('show', shouldOpen);
+        dropdown.toggleClass('show', shouldOpen);
+        $('[data-toggle="dropdown"]', dropdown).attr('aria-expanded', shouldOpen);
+    }, event.type === 'mouseleave' || event.type === 'mouseenter' ? 300 : 0);
+}
 
+$( document ).ready(function() {
+    $(".dropdown").hoverIntent(toggleDropdown);
     $(window).resize(function(){
         setContentHeight();
     }).resize();
 });
-
-function hoverIn() {
-    $(this).find("ul").removeClass("sf-hidden");
-    $(this).addClass("sfHover");
-}
-
-function hoverOut() {
-    $(this).find("ul").addClass("sf-hidden");
-    $(this).removeClass("sfHover");
-}
 
 function setContentHeight() {
     var winHeight = $(window).height();
