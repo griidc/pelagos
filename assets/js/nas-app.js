@@ -32,12 +32,8 @@ function toggleDropdown (event) {
     }, event.type === 'mouseleave' || event.type === 'mouseenter' ? 300 : 0);
 }
 
-$('body')
-    .on('mouseenter mouseleave','.dropdown', toggleDropdown)
-    .on('click', '.dropdown-menu a', toggleDropdown);
-
 $( document ).ready(function() {
-
+    $(".dropdown").hoverIntent(toggleDropdown);
     $(window).resize(function(){
         setContentHeight();
     }).resize();
