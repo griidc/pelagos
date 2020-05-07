@@ -61,7 +61,7 @@
             <a style="text-decoration: underline;">
                 Logged in as: {{ app.user.username }}
             </a>
-                |
+             &nbsp; | &nbsp;
             <a href="{{ path('security_logout') }}" style="text-decoration: underline; color: inherit">  Log out</a>
         {% else %}
             <a href="{{ path('security_login', {destination: app.request.uri}) }}" style="text-decoration: underline; color: inherit">Log in </a>
