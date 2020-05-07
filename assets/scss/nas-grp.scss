@@ -370,6 +370,14 @@ img {
   font-family: var(--type-font--lato) !important;
 }
 
+.qtip-tipped {
+  font-family: var(--type-font--lato) !important;
+}
+
+.ui-button {
+  font-weight: bold !important;
+}
+
 @media only screen and (min-width: 992px) {
   header.bootstrap {
     .nav-link {
