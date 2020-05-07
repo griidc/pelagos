@@ -349,40 +349,6 @@ class DatasetSubmissionTest extends TestCase
     }
 
     /**
-     * Test metadata file attributes.
-     *
-     * @return void
-     */
-    public function testMetadataFileAttributes()
-    {
-        $this->datasetSubmission->setMetadataFileTransferType(DatasetSubmission::TRANSFER_TYPE_UPLOAD);
-        $this->assertEquals(
-            DatasetSubmission::TRANSFER_TYPE_UPLOAD,
-            $this->datasetSubmission->getMetadataFileTransferType()
-        );
-        $this->datasetSubmission->setMetadataFileUri('foobar');
-        $this->assertEquals(
-            'foobar',
-            $this->datasetSubmission->getMetadataFileUri()
-        );
-        $this->datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
-        $this->assertEquals(
-            DatasetSubmission::TRANSFER_STATUS_COMPLETED,
-            $this->datasetSubmission->getMetadataFileTransferStatus()
-        );
-        $this->datasetSubmission->setMetadataFileName('foobar.baz');
-        $this->assertEquals(
-            'foobar.baz',
-            $this->datasetSubmission->getMetadataFileName()
-        );
-        $this->datasetSubmission->setMetadataFileSha256Hash('cafe');
-        $this->assertEquals(
-            'cafe',
-            $this->datasetSubmission->getMetadataFileSha256hash()
-        );
-    }
-
-    /**
      * Test dataset status.
      *
      * @return void
