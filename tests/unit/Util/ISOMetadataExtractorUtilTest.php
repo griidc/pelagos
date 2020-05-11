@@ -185,8 +185,6 @@ class ISOMetadataExtractorUtilTest extends TestCase
                                 'getMetadataFileName' => 'metadata file name from mock dataset submission',
                                 'getMetadataFileSha256Hash' => 'metadata file sha256 from mock dataset submission',
                                 'getDatasetStatus' => 'metadata status from mock dataset submission',
-                                'getReferenceDate' => $this->testingDatetime,
-                                'getReferenceDateType' => 'creation',
                                 'getPurpose' => 'purpose from mock dataset submission',
                                 'getSuppParams' => 'SuppParams from mock dataset submission',
                                 'getSuppMethods' => 'SuppMethods from mock dataset submission',
@@ -284,8 +282,6 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getMetadataFileName' => 'metadata file name from mock dataset submission',
                 'getMetadataFileSha256Hash' => 'metadata file sha256 from mock dataset submission',
                 'getDatasetStatus' => 'metadata status from mock dataset submission',
-                'getReferenceDate' => $this->testingDatetime,
-                'getReferenceDateType' => 'creation',
                 'getPurpose' => 'purpose from mock dataset submission',
                 'getSuppParams' => 'SuppParams from mock dataset submission',
                 'getSuppMethods' => 'SuppMethods from mock dataset submission',
@@ -387,8 +383,6 @@ class ISOMetadataExtractorUtilTest extends TestCase
         $this->assertEquals('test scale', $this->datasetSubmission->getSuppSampScalesRates());
         $this->assertEquals('test error', $this->datasetSubmission->getSuppErrorAnalysis());
         $this->assertEquals('test provenance', $this->datasetSubmission->getSuppProvenance());
-        $this->assertEquals(new \DateTime('2016-10-21', new \DateTimeZone('UTC')), $this->datasetSubmission->getReferenceDate());
-        $this->assertEquals('publication', $this->datasetSubmission->getReferenceDateType());
         $this->assertEquals(array('test keyword 1', 'test keyword 2', 'test keyword 3'), $this->datasetSubmission->getThemeKeywords());
         $this->assertEquals(array('test place 1', 'test place 2', 'test place 3'), $this->datasetSubmission->getPlaceKeywords());
         $this->assertEquals(array('oceans', 'economy'), $this->datasetSubmission->getTopicKeywords());
@@ -547,14 +541,6 @@ class ISOMetadataExtractorUtilTest extends TestCase
         $this->assertEquals(
             'SuppProvenance from mock dataset submission',
             $this->datasetSubmission->getSuppProvenance()
-        );
-        $this->assertEquals(
-            $this->testingDatetime,
-            $this->datasetSubmission->getReferenceDate()
-        );
-        $this->assertEquals(
-            'creation',
-            $this->datasetSubmission->getReferenceDateType()
         );
         $this->assertEquals(
             array('theme', 'keywords', 'from', 'mock', 'dataset'),

@@ -55,8 +55,6 @@ class ISOMetadataExtractorUtil
         self::setIfHas($datasetSubmission, 'setSuppSampScalesRates', self::extractSuppSampScalesRates($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setSuppErrorAnalysis', self::extractSuppErrorAnalysis($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setSuppProvenance', self::extractSuppProvenance($xmlMetadata));
-        self::setIfHas($datasetSubmission, 'setReferenceDate', self::extractReferenceDate($xmlMetadata));
-        self::setIfHas($datasetSubmission, 'setReferenceDateType', self::extractReferenceType($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setThemeKeywords', self::extractThemeKeywords($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setPlaceKeywords', self::extractPlaceKeywords($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setTopicKeywords', self::extractTopicKeywords($xmlMetadata));

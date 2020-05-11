@@ -411,39 +411,6 @@ class DatasetSubmissionTest extends TestCase
     }
 
     /**
-     * Test reference date and type.
-     *
-     * @return void
-     */
-    public function testReferenceDateAndType()
-    {
-        $this->datasetSubmission->setReferenceDate(null);
-        $referenceDate = new \DateTime;
-        $this->datasetSubmission->setReferenceDate($referenceDate);
-        $this->assertSame(
-            $referenceDate,
-            $this->datasetSubmission->getReferenceDate()
-        );
-        $referenceDateType = array_keys(DatasetSubmission::REFERENCE_DATE_TYPES)[0];
-        $this->datasetSubmission->setReferenceDateType($referenceDateType);
-        $this->assertEquals(
-            $referenceDateType,
-            $this->datasetSubmission->getReferenceDateType()
-        );
-    }
-
-    /**
-     * Test attempting to set a bad referenceDateType.
-     *
-     * @return void
-     */
-    public function testBadReferenceDateType()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->datasetSubmission->setReferenceDateType('foobar');
-    }
-
-    /**
      * Test purpose.
      *
      * @return void
@@ -654,21 +621,6 @@ class DatasetSubmissionTest extends TestCase
             $fileDecompressionTechnique,
             $this->datasetSubmission->getFileDecompressionTechnique()
         );
-    }
-
-    /**
-     * Test getting the choice list for referenceDateType.
-     *
-     * @return void
-     */
-    public function testGetReferenceDateTypeChoices()
-    {
-        $referenceDateTypeChoices = DatasetSubmission::getReferenceDateTypeChoices();
-        $this->assertInternalType('array', $referenceDateTypeChoices);
-        foreach ($referenceDateTypeChoices as $index => $value) {
-            $this->assertInternalType('string', $index);
-            $this->assertInternalType('string', $value);
-        }
     }
 
     /**

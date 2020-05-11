@@ -180,26 +180,6 @@ class DatasetSubmission extends Entity
     const AVAILABILITY_STATUS_PUBLICLY_AVAILABLE = 10;
 
     /**
-     * Valid values for self::$referenceDateType.
-     *
-     * The array keys are the values to be set in self::referenceDateType.
-     */
-    const REFERENCE_DATE_TYPES = [
-        'creation' => [
-            'name' => 'Creation',
-            'description' => 'The date that identifies when the resource was brought into existence.'
-        ],
-        'publication' => [
-            'name' => 'Publication',
-            'description' => 'The date that identifies when the resource was issued.'
-        ],
-        'revision' => [
-            'name' => 'Revision',
-            'description' => 'The date that identifies when the resource was improved or amended.'
-        ],
-    ];
-
-    /**
      * Valid values for self::$temporalExtent.
      *
      * The array keys are the values to be set in self::temporalExtent.
@@ -754,34 +734,6 @@ class DatasetSubmission extends Entity
     protected $datasetStatus = Dataset::DATASET_STATUS_NONE;
 
     /**
-     * The reference date for this dataset.
-     *
-     * @var \DateTime
-     *
-     * @ORM\Column(type="datetimetz", nullable=true)
-     *
-     * @Assert\NotBlank(
-     *     message="The dataset submission reference date field is required."
-     * )
-     */
-    protected $referenceDate;
-
-    /**
-     * The type of the reference date for this dataset.
-     *
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
-     *
-     * @see REFERENCE_DATE_CHOICES class constant for valid values.
-     *
-     * @Assert\NotBlank(
-     *     message="The dataset submission reference date type field is required."
-     * )
-     */
-    protected $referenceDateType;
-
-    /**
      * The purpose of this dataset.
      *
      * @var string
@@ -1097,8 +1049,6 @@ class DatasetSubmission extends Entity
             $this->setMetadataFileName($entity->getMetadataFileName());
             $this->setMetadataFileSha256Hash($entity->getMetadataFileSha256Hash());
             $this->setDatasetStatus($entity->getDatasetStatus());
-            $this->setReferenceDate($entity->getReferenceDate());
-            $this->setReferenceDateType($entity->getReferenceDateType());
             $this->setPurpose($entity->getPurpose());
             $this->setSuppParams($entity->getSuppParams());
             $this->setSuppMethods($entity->getSuppMethods());
@@ -2105,60 +2055,6 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * Set the dataset's reference date.
-     *
-     * @param \DateTime|null $referenceDate The dataset's reference date.
-     *
-     * @return void
-     */
-    public function setReferenceDate(\DateTime $referenceDate = null)
-    {
-        if ($referenceDate != null) {
-            $referenceDate->setTimeZone(new \DateTimeZone('UTC'));
-        }
-        $this->referenceDate = $referenceDate;
-    }
-
-    /**
-     * Get the dataset's reference date.
-     *
-     * @return \DateTime
-     */
-    public function getReferenceDate() : ?\DateTime
-    {
-        return $this->referenceDate;
-    }
-
-    /**
-     * Set reference date type.
-     *
-     * @param string|null $referenceDateType The designated type of dataset reference.
-     *
-     * @see REFERENCE_DATE_TYPES class constant for possible values.
-     *
-     * @throws \InvalidArgumentException When $referenceDateType is not a valid value.
-     *
-     * @return void
-     */
-    public function setReferenceDateType(?string $referenceDateType)
-    {
-        if (null !== $referenceDateType and !array_key_exists($referenceDateType, static::REFERENCE_DATE_TYPES)) {
-            throw new \InvalidArgumentException("'$referenceDateType' is not a valid value for referenceDateType");
-        }
-        $this->referenceDateType = $referenceDateType;
-    }
-
-    /**
-     * Get the type of reference date associated with this submission.
-     *
-     * @return string|null
-     */
-    public function getReferenceDateType() : ?string
-    {
-        return $this->referenceDateType;
-    }
-
-    /**
      * Sets the purpose.
      *
      * @param string|null $purpose The purpose of the dataset.
@@ -2608,23 +2504,6 @@ class DatasetSubmission extends Entity
             return;
         }
         $this->getDataset()->updateAvailabilityStatus();
-    }
-
-    /**
-     * Gets the valid choices for reference date types.
-     *
-     * @return array
-     */
-    public static function getReferenceDateTypeChoices() : array
-    {
-        return array_flip(
-            array_map(
-                function ($type) {
-                    return $type['name'];
-                },
-                static::REFERENCE_DATE_TYPES
-            )
-        );
     }
 
     /**
