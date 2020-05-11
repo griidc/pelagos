@@ -82,7 +82,7 @@ function MapWizard(json)
         $("#"+json.descField).hide();
 
         $(document.body).append('<div id="divMapWizard">');
-        $("#divMapWizard").load(Routing.getBaseUrl() + 'geoviz/wizard_dialog.html');
+        $("#divMapWizard").load(Routing.getBaseUrl() + '/geoviz/wizard_dialog.html');
 
         $(gmlField).change(function() {
             smlGeoViz.goHome();
