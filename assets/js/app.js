@@ -15,6 +15,7 @@ require('../css/superfish.css');
 require('../css/pelagos-module.css');
 require('../css/messages.css');
 require('../css/griidc-app.css');
+import '../scss/bootstrap.scss';
 
 const routes = require('../../public/js/fos_js_routes.json');
 import Routing from '../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min.js';
