@@ -35,17 +35,21 @@
                 <tr width="100%">
                     <td>
                         <div class="dotchart_legend" style="position: relative;">
-                            <span id="a"><strong>Dataset with status:</strong>
+                            <span><strong>Dataset with status:</strong>
                                 <img src="{{ asset('build/images/green-circle.png') }}"> Available:
+                                <span id="a"></span>
                             </span>
-                            <span id="r">
+                            <span>
                                 <img src="{{ asset('build/images/yellow-circle.png') }}"> Submitted:
+                                <span id="r"></span>
                             </span>
-                            <span id="i">
-                            <img src="{{ asset('build/images/empty-circle.png') }}"> Identified:
+                            <span>
+                                <img src="{{ asset('build/images/empty-circle.png') }}"> Identified:
+                                <span id="i"></span>
                             </span>
-                            <div id="tot" style="position:absolute; right:0; bottom:0;">
+                            <div style="position:absolute; right:0; bottom:0;">
                                 <strong>Total Datasets:</strong>
+                                <span id="tot"></span>
                             </div>
                         </div>
                     </td>
