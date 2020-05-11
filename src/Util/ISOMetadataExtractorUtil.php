@@ -602,28 +602,6 @@ class ISOMetadataExtractorUtil
     }
 
     /**
-     * Extracts referenceDateType from XML metadata.
-     *
-     * @param \SimpleXmlElement $xml The XML to extract from.
-     *
-     * @return string|null Returns the reference date type as a string, or null.
-     */
-    protected static function extractReferenceType(\SimpleXmlElement $xml)
-    {
-        $query = '/gmi:MI_Metadata' .
-            '/gmd:identificationInfo' .
-            '/gmd:MD_DataIdentification' .
-            '/gmd:citation' .
-            '/gmd:CI_Citation' .
-            '/gmd:date' .
-            '/gmd:CI_Date' .
-            '/gmd:dateType' .
-            '/gmd:CI_DateTypeCode';
-
-        return self::querySingle($xml, $query);
-    }
-
-    /**
      * Extracts theme keywords from XML metadata.
      *
      * @param \SimpleXmlElement $xml The XML to extract from.
