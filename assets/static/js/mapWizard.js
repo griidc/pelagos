@@ -117,7 +117,7 @@ function MapWizard(json)
             var wizPromise = this;
             //Synchonous load of HTML, then append to DIV
             $.ajax({
-                url: 'geoviz/wizard_map.html',
+                url: Routing.getBaseUrl() + '/geoviz/wizard_map.html',
                 success: function(html) {
                     $("#divMapWizard").append(html);
                 }
