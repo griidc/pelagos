@@ -216,17 +216,23 @@ class DoiConsumer implements ConsumerInterface
             $creator = ($dataset->getAuthors()) ? $dataset->getAuthors() : '(:tba)';
 
             // PublicationYear field can not be null, as it is a required field when the DOI is published
-            $pubYear = $dataset->getAcceptedDate();
-            if (!($pubYear instanceof \DateTime) and
-                $dataset->getDif()->getApprovedDate() instanceof \Datetime) {
-                $pubYear = $dataset->getDif()->getApprovedDate()->format('Y');
+            $publicationYear = '';
+            $acceptedDate = $dataset->getAcceptedDate();
+            if ($acceptedDate instanceof \DateTime) {
+                $publicationYear = $acceptedDate->format('Y');
+            } else {
+                $difApprovedDate = $dataset->getDif()->getApprovedDate();
+                if ($difApprovedDate instanceof \Datetime) {
+                    $publicationYear = $dataset->getDif()->getApprovedDate()->format('Y');
+                }
             }
+
             $this->doiUtil->updateDOI(
                 $doi->getDoi(),
                 $doiUrl,
                 $creator,
                 $dataset->getTitle(),
-                $pubYear,
+                $publicationYear,
                 'Harte Research Institute'
             );
 
