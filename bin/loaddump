@@ -149,4 +149,7 @@ if [ $ELASTICA_INDEX -eq 1 ]; then
     echo "Populated Elasticsearch index"
 fi
 
+echo "DRMPizing current user"
+bin/console pelagos:DRPMize `/usr/bin/whoami`
+
 bin/console rabbitmq-supervisor:control start

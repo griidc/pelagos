@@ -55,8 +55,6 @@ class ISOMetadataExtractorUtil
         self::setIfHas($datasetSubmission, 'setSuppSampScalesRates', self::extractSuppSampScalesRates($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setSuppErrorAnalysis', self::extractSuppErrorAnalysis($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setSuppProvenance', self::extractSuppProvenance($xmlMetadata));
-        self::setIfHas($datasetSubmission, 'setReferenceDate', self::extractReferenceDate($xmlMetadata));
-        self::setIfHas($datasetSubmission, 'setReferenceDateType', self::extractReferenceType($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setThemeKeywords', self::extractThemeKeywords($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setPlaceKeywords', self::extractPlaceKeywords($xmlMetadata));
         self::setIfHas($datasetSubmission, 'setTopicKeywords', self::extractTopicKeywords($xmlMetadata));
@@ -601,28 +599,6 @@ class ISOMetadataExtractorUtil
         } else {
             return null;
         }
-    }
-
-    /**
-     * Extracts referenceDateType from XML metadata.
-     *
-     * @param \SimpleXmlElement $xml The XML to extract from.
-     *
-     * @return string|null Returns the reference date type as a string, or null.
-     */
-    protected static function extractReferenceType(\SimpleXmlElement $xml)
-    {
-        $query = '/gmi:MI_Metadata' .
-            '/gmd:identificationInfo' .
-            '/gmd:MD_DataIdentification' .
-            '/gmd:citation' .
-            '/gmd:CI_Citation' .
-            '/gmd:date' .
-            '/gmd:CI_Date' .
-            '/gmd:dateType' .
-            '/gmd:CI_DateTypeCode';
-
-        return self::querySingle($xml, $query);
     }
 
     /**

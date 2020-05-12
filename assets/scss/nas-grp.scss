@@ -1,0 +1,330 @@
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
+
+:root {
+  --color-blue--geyser:#dce4e8;
+  --color-blue--bali-hai:#869eaa;
+  --color-blue--surf:#00b7c6;
+  --color-blue--blueboy:#61a2d8;
+  --color-blue--carolina:#50a0bb;
+  --color-blue--boston:#3a85b3;
+  --color-blue--bahama:#005991;
+  --color-blue--rhine:#13465e;
+  --color-blue--blueBird:#043751;
+  --color-blue--imperial:#003f5c;
+  --color-brown--tan:#f1efe8;
+  --color-brown--bone:#f3f1eb;
+  --color-brown--merino:#e1dace;
+  --color-brown--sand:#ddd5c7;
+  --color-brown--wood:#bc9b6a;
+  --color-green--iguana:#73af7a;
+  --color-green--forest:#1d7b5c;
+  --color-red--garnet:#a93344;
+  --color-yellow--pure:#f6d200;
+  --color-yellow--gold:#dcaf27;
+  --color-neutral--white-lilac:#eee;
+  --color-neutral--pastel:#ccc;
+  --color-neutral--dusty:#767676;
+  --color-neutral--granite:#666;
+  --color-neutral--jet:#333;
+  --color-neutral--charcoal:#222;
+  --box-shadow--charcoal:rgba(34, 34, 34, 0.25);
+  --color-society--sciences:#ab840d;
+  --color-society--engineering:#005991;
+  --color-society--medicine:#1d7b5c;
+  --type-font--fallback:-apple-system,"BlinkMacSystemFont","Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Open Sans","Helvetica Neue",sans-serif;
+  --type-font--lato:"Lato", var(--type-font--fallback);
+  --type-size--huge:1.375rem;
+  --type-size--intro:1.3rem;
+  --type-size--small:.8em;
+  --type-size--1:1.375rem;
+  --type-size--2:1.5rem;
+  --type-size--3:1.25rem;
+  --type-size--4:1rem;
+  --type-size--5:.75rem;
+  --type-size--6:.625rem;
+  --lato--light:300;
+  --lato--regular:400;
+  --lato--bold:700;
+  --lato--black:900;
+  --body-fonts:var(--type-font--lato);
+  --main-fonts:var(--type-font--lato);
+  --baseFontSize:15px;
+  --baseFontFamily:var(--body-fonts);
+  --baseLineHeight:1.533em;
+  --altFontFamily:var(--main-fonts);
+  --headingsFontFamily:inherit;
+  --headingsFontWeight:bold;
+  --headingsColor:inherit;
+  --altHeadingsFontFamily:var(--altFontFamily);
+  --weightRegular:400;
+  --weightBold:700;
+  --headerHeight:110px;
+  --color-header:var(--color-brown--tan);
+  --color-teal:#004250;
+  --color-lightBlue:#c2deea;
+  --color-pink:#ffbdaf;
+  --color-grey:#ebebeb;
+  --color-darkGrey:#252525;
+  --color-white:#fff;
+  --color-black: #000000;
+  --color-froth-white:#fafafa;
+  --color-gradientStart:#022f3a;
+  --color-gradientEnd:#4f6e74;
+  --color-error:#8c2e0b;
+  --color-headerTop:var(--color-brown--tan);
+  --color-headerMiddle:var(--color-blue--boston);
+  --color-headerBottom:var(--color-blue--blueBird);
+  --color-main:var(--color-blue--blueBird);
+  --color-menu:var(--color-blue--boston);
+  --color-table-striped:var(--color-brown--tan);
+  --atlassion-button-main:var(--color-blue--blueBird);
+  --atlassion-button-bg:var(--color-blue--boston);
+}
+
+/* Menu bar style */
+
+.main_menu {
+  left: 0;
+  top: 0;
+  width: 100%;
+
+  &:after {
+    position: absolute;
+    right: 0;
+    top: 0;
+    content: "";
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-white);
+    z-index: -1;
+    opacity: .9;
+  }
+
+  .navbar {
+    .navbar-toggler {
+      border: 0 solid transparent;
+    }
+
+    .main-menu-item {
+      justify-content: flex-end;
+
+      .navbar-nav a {
+        color: var(--color-black);
+        text-transform: uppercase;
+        font-size: .85rem;
+        font-weight: var(--lato--bold);
+
+        &:hover {
+          color: var(--color-blue--boston);
+        }
+      }
+    }
+  }
+}
+
+.dropdown {
+  .dropdown-menu {
+    left: -20% !important;
+    background-color: var(--color-froth-white);
+    border-top: 6px solid transparent;
+    border-left: none;
+    border-right: 6px solid;
+    border-bottom: 6px solid transparent;
+    overflow: hidden;
+    transform-origin: top center;
+    margin-top: -1px;
+    padding: 0 !important;
+
+    .dropdown-item {
+      padding: 8px 20px !important;
+      background-color: var(--color-blue--boston);
+    }
+  }
+}
+
+.global-nav-before {
+  content: "";
+  top: 0;
+  right: 0;
+  left: 0;
+  height: .6rem;
+  background-image: linear-gradient(90deg, var(--color-blue--boston) 0,
+          var(--color-blue--boston) 35%, var(--color-society--engineering) 64%,
+          var(--color-society--medicine) 81%, var(--color-yellow--gold));
+}
+
+img {
+  max-width: 100%;
+}
+
+.login-bar {
+  position: relative;
+  margin: 0;
+  padding: 2px 10px 8px;
+  background-color: var(--color-headerTop);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.jira-buttons-box {
+  display: flex;
+  flex-direction: row;
+  & button {
+    color: var(--color-white);
+    border-style: solid;
+    border-top-color: initial;
+    border-right-color: var(--atlassion-button-main);
+    border-bottom-color: var(--atlassion-button-main);
+    border-left-color: var(--atlassion-button-main);
+    font-size: 9pt;
+    font-family: sans-serif;
+    font-weight: normal;
+    padding: 0 5px;
+    border-width: 0px 1px 1px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    border-radius: 0 0 5px 5px;
+    background-color: var(--atlassion-button-bg);
+    cursor: pointer;
+    border-top-width: 0;
+    position: relative!important;
+    white-space: nowrap;
+    line-height: 23px;
+  }
+}
+
+.login-info-box {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  font-family: var(--main-fonts);
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-main);
+}
+
+.header-dev{
+  text-align: center;
+  color: var(--color-black);
+  top: 0;
+  left: 0;
+  right: 0;
+  width: auto;
+  height: 20px;
+  position: sticky;
+}
+
+#main-wrapper {
+  height: 100vh !important;
+}
+
+/** Responsive styles for other devices **/
+
+@media (max-width: 991px) {
+  .main_menu {
+    padding: 15px 0;
+  }
+
+  .main_menu .navbar .main-menu-item .navbar-nav {
+    margin-left: 0%;
+    background-color: var(--color-white);
+  }
+
+  .main_menu .navbar .main-menu-item .navbar-nav a {
+    padding: 10px 22px;
+    color: var(--color-neutral--charcoal);
+    margin-bottom: 2px;
+  }
+
+  .login-info-box {
+    font-size: 0.75rem;
+  }
+
+  .login-bar {
+    flex-wrap: wrap;
+  }
+
+  .navbar-collapse {
+    z-index: 9999 !important;
+    position: absolute;
+    left: 0;
+    top: 70px;
+    width: 100%;
+    box-shadow: 0 7px 11px 0 rgba(0, 0, 0, 0.2);
+  }
+  .collapsing {
+    -webkit-transition: none;
+    transition: none;
+    display: none;
+  }
+}
+
+@media only screen and (min-width: 992px) and (max-width: 1200px) {
+  .dropdown {
+    .dropdown-menu {
+      left: -20% !important;
+    }
+  }
+}
+
+@media only screen and (min-width: 0px) and (max-width: 991px) {
+  .navbar-brand {
+    max-width: 150px;
+  }
+
+  .dropdown-menu {
+    border: 0px solid rgba(0, 0, 0, 0.15) !important;
+    background-color: var(--color-white);
+  }
+
+  .dropdown {
+    .dropdown-menu {
+      display: none;
+      margin-top: 0px;
+      text-align: center;
+
+      .dropdown-item {
+        padding: 10px 15px;
+      }
+    }
+  }
+
+  .login-bar {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+}
+
+/* Font for applications */
+#pelagos-content {
+  font-family: var(--type-font--lato) !important;
+}
+
+.ui-widget {
+  font-family: var(--type-font--lato) !important;
+}
+
+.qtip-tipped {
+  font-family: var(--type-font--lato) !important;
+}
+
+.ui-button {
+  font-weight: bold !important;
+}
+
+@media only screen and (min-width: 992px) {
+  header.bootstrap {
+    .nav-link {
+      padding: 0 1rem;
+    }
+    .dropdown-menu {
+      float: left !important;
+    }
+  }
+  #help-sub-menu {
+    left: -150% !important;
+  }
+}

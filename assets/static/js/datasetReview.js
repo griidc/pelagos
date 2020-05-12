@@ -46,12 +46,10 @@ $(document).ready(function(){
 
     regForm.validate({
         rules: {
-            referenceDate: "trueISODate",
             temporalExtentBeginPosition: "trueISODate",
             temporalExtentEndPosition: "trueISODate",
         },
         messages: {
-            referenceDate: "It is not a valid ISO date",
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
             temporalExtentEndPosition: "End Date is not a valid ISO date",
         },
@@ -231,12 +229,6 @@ $(document).ready(function(){
             btnNext.show();
             btnNext.button("enable");
         }
-    });
-
-    // set up DatePickers
-    $("#referenceDate").datepicker({
-        dateFormat: "yy-mm-dd",
-        autoSize:true,
     });
 
     $("#temporalExtentBeginPosition").datepicker({

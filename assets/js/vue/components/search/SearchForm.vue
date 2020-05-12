@@ -60,6 +60,8 @@
                                 <button id="searchSubmit" type="submit" class="btn btn-primary search-button">Search
                                     <i class="fa fa-search pl-2"></i></button>
                                 <button type="reset" id="search-clear" class="btn btn-dark clear-button">Clear</button>
+                                <div class="mt-3 pt-3 empty-button-div"></div>
+                                <button type="button" id="map-search" class="btn map-search-button" @click="dataDiscovery()">Map Search</button>
                             </div>
                         </div>
                     </b-form>
@@ -168,6 +170,9 @@
                 this.route = window.location.hash;
                 this.submitted = false;
             },
+            dataDiscovery: function () {
+                window.location.href = Routing.generate("pelagos_app_ui_datadiscovery_default");
+            }
         },
         mounted() {
             if (this.route) {
@@ -214,6 +219,13 @@
         border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
         background-clip: border-box;
         border: 1px solid rgba(0, 0, 0, 0.125);
+        .button-toolbar {
+            .map-search-button {
+                color: var(--color-white);
+                background-color: var(--color-headerMiddle);
+                border-color: var(--color-headerMiddle);
+            }
+        }
     }
 
     @media (max-width: 992px) {
@@ -226,6 +238,14 @@
                 }
                 .clear-button {
                     width: 49%;
+                }
+                .map-search-button {
+                    margin-top: 1rem;
+                    width: 100% !important;
+                    margin-left: 0 !important;
+                }
+                .empty-button-div {
+                    margin-top: 0 !important;
                 }
             }
             .search-field-options {
@@ -254,8 +274,10 @@
                     margin-left: 0.5rem;
                     width: 30%;
                 }
+                .map-search-button {
+                    margin-left: 4.1rem;
+                }
             }
         }
-
     }
 </style>

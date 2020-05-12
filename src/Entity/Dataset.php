@@ -389,22 +389,6 @@ class Dataset extends Entity
     }
 
     /**
-     * Get reference date shortcut, to get Authors from DatasetSubmission.
-     *
-     * @return string|null
-     */
-    public function getReferenceDateYear()
-    {
-        if ($this->hasDatasetSubmission()
-            and $this->getDatasetSubmission()->getReferenceDate() instanceof \Datetime
-        ) {
-            return $this->getDatasetSubmission()->getReferenceDate()->format('Y');
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * Set the DOI for this Dataset.
      *
      * @param DOI $doi The DOI entity for this Dataset.
