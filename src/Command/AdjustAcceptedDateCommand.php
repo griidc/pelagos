@@ -73,10 +73,14 @@ class AdjustAcceptedDateCommand extends Command
         
         $file = fopen($filename, 'r');
         while (($data = fgetcsv($file)) !== FALSE) {
-          $csvData['udi'][] = $data[0];
-          $csvData['date'][] = $data[1];
+          array_push($csvData, array('udi' => $data[0], 'date' => $data[1]));
+          //$csvData[] = array('udi' => $data[0], 'date' => $data[1]);
         }
         fclose($file);
+        
+        // var_dump($csvData);
+        
+        // return 1;
 
         $datasets = $this->entityManager
             ->getRepository(Dataset::class)
@@ -88,16 +92,35 @@ class AdjustAcceptedDateCommand extends Command
             $datasetStatus = $dataset->getDatasetStatus();
             $udi = $dataset->getUdi();
             
-            $inCsv = in_array($udi, $csvData['udi']);
+            $inCsv = array_search($udi, array_column($csvData, 'udi'));
+            
+            //$inCsv = in_array($udi, $csvData['udi']);
+            
+            // if ($inCsv) {
+                // continue;
+            // }
             
             if ($inCsv) {
-                continue;
+                $csvDate = $csvData[$inCsv]['date'];
+                
+                $timeZone = new \DateTimeZone('America/Chicago');
+            
+                $originalDate = new \DateTime($csvDate, new \DateTimeZone('UTC'));
+                $originalDate->setTimezone($timeZone);
+                
+                $frmtoriginalDate = $originalDate->format('Y-m-d H:i:s');
+            } else {
+                $frmtoriginalDate= '';
             }
 
-            // if ($datasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
+            //if ($datasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
                 $datasetSubmissionHistory = $dataset->getDatasetSubmissionHistory();
                 $lastAcceptedDate = $dataset->getAcceptedDate();
-
+                
+                if (empty($lastAcceptedDate)) {
+                    continue;
+                }
+                
                 $frmtlastAcceptedDate = null;
                 if ($lastAcceptedDate instanceof \Datetime) {
                     $frmtlastAcceptedDate = $lastAcceptedDate->format('Y-m-d H:i:s');
@@ -108,7 +131,7 @@ class AdjustAcceptedDateCommand extends Command
                 foreach ($datasetSubmissionHistory as $datasetSubmission) {
                     $lastDatasetStatus = $datasetSubmission->getDatasetStatus();
                     if ($lastDatasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
-                        $newAcceptedDate = $datasetSubmission->getModificationTimeStamp(true);
+                        $newAcceptedDate = $datasetSubmission->getModificationTimeStamp(false);
                     }
                 }
 
@@ -117,9 +140,9 @@ class AdjustAcceptedDateCommand extends Command
                     $frmtnewAcceptedDate = $newAcceptedDate->format('Y-m-d H:i:s');
                 }
 
-                if ($lastAcceptedDate <> $newAcceptedDate) {
+                //if ($lastAcceptedDate <> $newAcceptedDate) {
                     
-                    echo "$udi,$frmtlastAcceptedDate,$frmtnewAcceptedDate \n";
+                    echo "$udi,$frmtlastAcceptedDate,$frmtnewAcceptedDate,$frmtoriginalDate \n";
                     //echo "$udi is different\n";
 
                     // $dataset->setAcceptedDate($newAcceptedDate);
@@ -128,8 +151,8 @@ class AdjustAcceptedDateCommand extends Command
                     // $this->entityManager->flush($dataset);
 
                     $datasetCount++;
-                }
-            // }
+                //}
+            //}
         }
 
         $io->note("Proccesed $datasetCount datasets");
