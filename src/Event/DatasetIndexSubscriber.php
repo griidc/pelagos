@@ -8,6 +8,7 @@ use FOS\ElasticaBundle\Event\TransformEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 use App\Entity\Dataset;
+use App\Entity\DOI;
 use App\Util\Geometry;
 
 use App\Exception\InvalidGmlException;
@@ -118,6 +119,12 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
                 $document->set('collectionStartDate', $collectionStartDate->format('Y-m-d H:i:s'));
                 $document->set('collectionEndDate', $collectionEndDate->format('Y-m-d H:i:s'));
             }
+        }
+
+        // For DIF only, set DOI to a DOI with empty string as the doi value.
+        if (false === $dataset->hasDatasetSubmission()) {
+                $doi = new DOI('');
+                $document->set('doi', $doi);
         }
     }
 
