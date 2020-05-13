@@ -131,7 +131,7 @@ class AdjustAcceptedDateCommand extends Command
                 foreach ($datasetSubmissionHistory as $datasetSubmission) {
                     $lastDatasetStatus = $datasetSubmission->getDatasetStatus();
                     if ($lastDatasetStatus === Dataset::DATASET_STATUS_ACCEPTED) {
-                        $newAcceptedDate = $datasetSubmission->getModificationTimeStamp(false);
+                        $newAcceptedDate = $datasetSubmission->getModificationTimeStamp(true);
                     }
                 }
 
