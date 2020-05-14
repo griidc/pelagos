@@ -1,7 +1,5 @@
 <template>
     <b-card class="card-product">
-        <b-link class="search-result"
-                :href="url" target="_blank">
             <div>
                 <span class="badge badge-secondary"
                       v-if="resultRowData.availabilityStatus === 0"
@@ -61,7 +59,6 @@
                     </div>
                 </div>
             </b-card-text>
-        </b-link>
     </b-card>
 </template>
 
