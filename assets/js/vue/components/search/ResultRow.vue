@@ -49,7 +49,9 @@
         },
         methods: {
             openUrl: function(url) {
-                window.open(url, '_blank');
+                if ("" === window.getSelection().toString()) {
+                    window.open(url, '_BLANK');
+                }
             }
         }
     }
