@@ -87,6 +87,7 @@
   left: 0;
   top: 0;
   width: 100%;
+  border-bottom: 1px solid var(--color-darkGrey);
 
   &:after {
     position: absolute;
@@ -137,7 +138,7 @@
 
     .dropdown-item {
       padding: 8px 20px !important;
-      background-color: var(--color-blue--boston);
+      background-color: var(--color-white);
     }
   }
 }
