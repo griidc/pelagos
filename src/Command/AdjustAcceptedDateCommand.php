@@ -96,7 +96,7 @@ class AdjustAcceptedDateCommand extends Command
             
             //$inCsv = in_array($udi, $csvData['udi']);
             
-            // if ($inCsv) {
+            // if (!$inCsv) {
                 // continue;
             // }
             
@@ -117,9 +117,9 @@ class AdjustAcceptedDateCommand extends Command
                 $datasetSubmissionHistory = $dataset->getDatasetSubmissionHistory();
                 $lastAcceptedDate = $dataset->getAcceptedDate();
                 
-                if (empty($lastAcceptedDate)) {
-                    continue;
-                }
+                // if (empty($lastAcceptedDate)) {
+                    // continue;
+                // }
                 
                 $frmtlastAcceptedDate = null;
                 if ($lastAcceptedDate instanceof \Datetime) {
@@ -142,7 +142,9 @@ class AdjustAcceptedDateCommand extends Command
 
                 //if ($lastAcceptedDate <> $newAcceptedDate) {
                     
-                    echo "$udi,$frmtlastAcceptedDate,$frmtnewAcceptedDate,$frmtoriginalDate \n";
+                    //echo "$udi,$frmtlastAcceptedDate,$frmtnewAcceptedDate,$frmtoriginalDate \n";
+                    //echo "$udi,$frmtlastAcceptedDate,$frmtoriginalDate \n";
+                    echo "$udi,$frmtlastAcceptedDate,$frmtnewAcceptedDate \n";
                     //echo "$udi is different\n";
 
                     // $dataset->setAcceptedDate($newAcceptedDate);
