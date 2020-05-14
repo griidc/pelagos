@@ -77,6 +77,13 @@
             return {
                 url: Routing.generate("pelagos_app_ui_dataland_default", {'udi' : this.resultRowData.udi } )
             }
+        },
+        methods: {
+            openUrl: function(url) {
+                if ("" === window.getSelection().toString()) {
+                    window.open(url, '_BLANK');
+                }
+            }
         }
     }
 </script>
