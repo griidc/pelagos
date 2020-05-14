@@ -1,5 +1,5 @@
 <template>
-    <b-card class="card-product">
+    <b-card class="card-product" @click="openUrl(url)">
             <div>
                 <span class="badge badge-secondary"
                       v-if="resultRowData.availabilityStatus === 0"
