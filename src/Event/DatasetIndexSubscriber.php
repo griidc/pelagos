@@ -121,8 +121,15 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
             }
         }
 
-        // For DIF only, set DOI to a DOI with empty string as the doi value.
-        if (false === $dataset->hasDatasetSubmission()) {
+        // If it doesn't have a submission, (and a draft submission does not count as a submission)
+        // thus the dataset only has a DIF (in any DIF status, including draft), set DOI to a DOI
+        // with empty string as the doi value.
+        if ((false === $dataset->hasDatasetSubmission()) or
+            (
+                true === $dataset->hasDatasetSubmission() and
+                $dataset->getDatasetSubmission()->getStatus() === 'DatasetSubmission::STATUS_UNSUBMITTED'
+            )
+        ) {
                 $doi = new DOI('');
                 $document->set('doi', $doi);
         }
