@@ -130,7 +130,7 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
                 $dataset->getDatasetSubmission()->getStatus() === 'DatasetSubmission::STATUS_UNSUBMITTED'
             )
         ) {
-                $doi = new DOI('');
+                $doi = $dataset->getDoi();
                 $document->set('doi', $doi);
         }
     }
