@@ -78,7 +78,7 @@
         methods: {
             openUrl: function(url) {
                 if ("" === window.getSelection().toString()) {
-                    window.open(url, '_BLANK');
+                    window.open(url, '_blank');
                 }
             }
         }
