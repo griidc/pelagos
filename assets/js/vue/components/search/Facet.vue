@@ -93,16 +93,16 @@
                 let datasetStatusTooltip = "";
                 switch (true) {
                     case (datasetStatus === "Available"):
-                        datasetStatusTooltip = "This dataset is available for download";
+                        datasetStatusTooltip = "This dataset is available for download.";
                         break;
                     case (datasetStatus === "Restricted"):
-                        datasetStatusTooltip = "This dataset is restricted for download";
+                        datasetStatusTooltip = "This dataset is restricted for download.";
                         break;
                     case (datasetStatus === "Submitted"):
-                        datasetStatusTooltip = "This dataset has been submitted and is not available for download";
+                        datasetStatusTooltip = "This dataset has been submitted and is not available for download.";
                         break;
                     case (datasetStatus === "Identified"):
-                        datasetStatusTooltip = "This dataset has not been submitted and is not available for download";
+                        datasetStatusTooltip = "This dataset has not been submitted and is not available for download.";
                         break;
                 }
                 return datasetStatusTooltip;
