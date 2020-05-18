@@ -61,4 +61,30 @@
     div.bootstrap h4 {
         font-size: 1.3rem !important;
     }
+
+    .card-product {
+        margin-bottom: 1rem;
+    }
+
+    .card-product:hover .btn-overlay {
+        opacity: 1;
+    }
+
+    .card-product:hover {
+        -webkit-box-shadow: 0 4px 15px rgba(153, 153, 153, 0.3);
+        box-shadow: 0 4px 15px rgba(153, 153, 153, 0.3);
+        -webkit-transition: .5s;
+        transition: .5s;
+        cursor: pointer;
+    }
+
+    a.search-result {
+        font-size: 1.05em;
+        text-decoration: none !important;
+        color: black !important;
+    }
+
+    .search-result a:hover {
+        text-decoration: none !important;
+    }
 </style>
