@@ -117,11 +117,6 @@ fos_elastica:
                             property_path: false
                             type: 'date'
                             format: 'yyyy-MM-dd HH:mm:ss'
-                        doi:
-                            type: 'nested'
-                            properties:
-                                doi:
-                                    type: 'text'
                         identifiedStatus:
                             type: 'integer'
                     persistence:
