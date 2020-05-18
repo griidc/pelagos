@@ -1,4 +1,6 @@
 @import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
+@import 'nas-colors.scss';
+@import 'bootstrap.scss';
 
 :root {
   --color-blue--geyser:#dce4e8;
@@ -81,7 +83,7 @@
   --atlassion-button-bg:var(--color-blue--boston);
 }
 
-/* Menu bar style */
+/* Menu bar style
 
 .main_menu {
   left: 0;
@@ -123,6 +125,8 @@
   }
 }
 
+
+
 .dropdown {
   .dropdown-menu {
     left: -20% !important;
@@ -142,6 +146,8 @@
     }
   }
 }
+
+ */
 
 .global-nav-before {
   content: "";
@@ -228,16 +234,9 @@ img {
     padding: 15px 0;
   }
 
-  .main_menu .navbar .main-menu-item .navbar-nav {
-    margin-left: 0%;
-    background-color: var(--color-white);
-  }
+ 
 
-  .main_menu .navbar .main-menu-item .navbar-nav a {
-    padding: 10px 22px;
-    color: var(--color-neutral--charcoal);
-    margin-bottom: 2px;
-  }
+  
 
   .login-info-box {
     font-size: 0.75rem;
@@ -247,14 +246,7 @@ img {
     flex-wrap: wrap;
   }
 
-  .navbar-collapse {
-    z-index: 9999 !important;
-    position: absolute;
-    left: 0;
-    top: 70px;
-    width: 100%;
-    box-shadow: 0 7px 11px 0 rgba(0, 0, 0, 0.2);
-  }
+ 
   .collapsing {
     -webkit-transition: none;
     transition: none;
@@ -263,34 +255,14 @@ img {
 }
 
 @media only screen and (min-width: 992px) and (max-width: 1200px) {
-  .dropdown {
-    .dropdown-menu {
-      left: -20% !important;
-    }
-  }
+ 
 }
 
 @media only screen and (min-width: 0px) and (max-width: 991px) {
-  .navbar-brand {
-    max-width: 150px;
-  }
+  
 
-  .dropdown-menu {
-    border: 0px solid rgba(0, 0, 0, 0.15) !important;
-    background-color: var(--color-white);
-  }
-
-  .dropdown {
-    .dropdown-menu {
-      display: none;
-      margin-top: 0px;
-      text-align: center;
-
-      .dropdown-item {
-        padding: 10px 15px;
-      }
-    }
-  }
+  
+ 
 
   .login-bar {
     flex-wrap: wrap;
