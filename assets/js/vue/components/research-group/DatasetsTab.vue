@@ -1,15 +1,15 @@
 <template>
     <b-card-text class="vh-100">
-        <ResultRow :resultRowData="dataset" v-for="dataset in datasets" v-bind:key="dataset.udi"/>
+        <DatasetRow :datasetRowData="dataset" v-for="dataset in datasets" v-bind:key="dataset.udi"/>
     </b-card-text>
 </template>
 
 <script>
     const axios = require('axios');
-    import ResultRow from "./../search/ResultRow";
+    import DatasetRow from "./../search/DatasetRow";
     export default {
         name: "DatasetsTab",
-        components: { ResultRow },
+        components: { DatasetRow },
         props: {
             datasets: {}
         },

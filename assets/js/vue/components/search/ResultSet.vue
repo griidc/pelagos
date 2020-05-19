@@ -20,7 +20,7 @@
                         </div>
                     </aside>
                     <main class="col-lg-9 overflow-auto pt-5">
-                        <ResultRow :resultRowData="resultRow" v-for="resultRow in results.resultData" v-bind:key="resultRow.udi"/>
+                        <DatasetRow :datasetRowData="resultRow" v-for="resultRow in results.resultData" v-bind:key="resultRow.udi"/>
                     </main>
                 </div>
             </div>
@@ -49,10 +49,10 @@
 
 <script>
     import Facet from "./Facet";
-    import ResultRow from "./ResultRow";
+    import DatasetRow from "./DatasetRow";
     export default {
         name: "ResultSet",
-        components: {ResultRow, Facet },
+        components: { DatasetRow, Facet },
         props: {
             results: {
                 type: Object
