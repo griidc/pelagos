@@ -6,10 +6,10 @@
                 <b-tab title="Overview">
                     <OverviewTab :overview="researchGroupData"/>
                 </b-tab>
-                <b-tab title="Datasets" class="bg-light">
+                <b-tab title="Datasets">
                     <DatasetsTab :datasets="researchGroupData.datasets" />
                 </b-tab>
-                <b-tab title="People" class="bg-light">
+                <b-tab title="People">
                     <PeopleTab :personResearchGroups="researchGroupData.personResearchGroups" />
                 </b-tab>
                 <b-tab title="Publications">
