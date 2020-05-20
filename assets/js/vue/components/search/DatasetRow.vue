@@ -8,7 +8,7 @@
                 <span class="badge badge-danger" v-else-if="datasetRowData.availabilityStatus === 5 || datasetRowData.availabilityStatus === 8">Restricted</span>
                 <span class="badge badge-success" v-else-if="datasetRowData.availabilityStatus === 7 || datasetRowData.availabilityStatus === 10">Available</span>
             </div>
-            <b-card-title>{{ datasetRowData.title }}</b-card-title>
+            <b-card-title style="font-size: 1.3rem !important;">{{ datasetRowData.title }}</b-card-title>
             <b-card-text class="d-flex justify-content-between" >
                 <div v-if="Object.keys(datasetRowData.datasetSubmission).length > 0">
                     <div v-if="datasetRowData.datasetSubmission.authors">
@@ -54,14 +54,6 @@
 </script>
 
 <style scoped>
-    div.bootstrap p {
-        margin-bottom: 0 !important;
-    }
-
-    div.bootstrap h4 {
-        font-size: 1.3rem !important;
-    }
-
     .card-product {
         margin-bottom: 1rem;
     }
@@ -71,9 +63,7 @@
     }
 
     .card-product:hover {
-        -webkit-box-shadow: 0 4px 15px rgba(153, 153, 153, 0.3);
         box-shadow: 0 4px 15px rgba(153, 153, 153, 0.3);
-        -webkit-transition: .5s;
         transition: .5s;
         cursor: pointer;
     }
