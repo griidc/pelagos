@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Twig\Extensions as TwigExtentions;
 use Doctrine\Common\Collections\Collection;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -335,17 +336,34 @@ class ResearchGroup extends Entity
                 'id' => $dataset->getId(),
                 'title' => $dataset->getTitle(),
                 'udi' => $dataset->getUdi(),
-                'citation' => $dataset->getCitation(),
+                'availabilityStatus' => $dataset->getAvailabilityStatus(),
+                'doi' => array(
+                    'doi' => ($dataset->getDoi()) ? $dataset->getDoi()->getDoi() : ''
+                ),
+                'acceptedDate' => ($dataset->getAcceptedDate()) ? $dataset->getAcceptedDate()->format('Y-m-d') : ''
             );
             if (null !== $dataset->getDif()) {
                 $datasetArray['dif'] = array(
                     'id' => $dataset->getDif()->getId(),
                     'status' => $dataset->getDif()->getStatus(),
                     'title' => $dataset->getDif()->getTitle(),
-                    'citation' => $dataset->getCitation(),
                 );
             } else {
                 $datasetArray['dif'] = null;
+            }
+            if ($dataset->hasDatasetSubmission()) {
+                $datasetArray['datasetSubmission'] = array(
+                    'authors' =>  $dataset->getDatasetSubmission()->getAuthors(),
+                    'themeKeywords' => $dataset->getDatasetSubmission()->getThemeKeywords()
+                );
+                $datasetArray['fileFormat'] = $dataset->getDatasetSubmission()->getDistributionFormatName();
+                if ($dataset->getDatasetSubmission()->isDatasetFileInColdStorage()) {
+                    $datasetArray['fileSize'] = TwigExtentions::formatBytes($dataset->getDatasetSubmission()->getDatasetFileColdStorageArchiveSize(), 2);
+                } else {
+                    $datasetArray['fileSize'] = TwigExtentions::formatBytes($dataset->getDatasetSubmission()->getDatasetFileSize(), 2);
+                }
+            } else {
+                $datasetArray['datasetSubmission'] = null;
             }
             $datasets[] = $datasetArray;
         }
