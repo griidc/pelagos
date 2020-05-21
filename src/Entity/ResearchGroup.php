@@ -347,6 +347,7 @@ class ResearchGroup extends Entity
                     'id' => $dataset->getDif()->getId(),
                     'status' => $dataset->getDif()->getStatus(),
                     'title' => $dataset->getDif()->getTitle(),
+
                 );
             } else {
                 $datasetArray['dif'] = null;
@@ -365,6 +366,11 @@ class ResearchGroup extends Entity
             } else {
                 $datasetArray['datasetSubmission'] = null;
             }
+            $datasetArray['publications'] = array();
+            foreach ($dataset->getDatasetPublications() as $datasetPublication) {
+                array_push($datasetArray['publications'], $datasetPublication->getPublication());
+            }
+
             $datasets[] = $datasetArray;
         }
         return $datasets;
