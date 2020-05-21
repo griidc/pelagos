@@ -123,7 +123,7 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
 
         // Only if dataset has submission, (and a draft submission does not count as a submission)
         // set the DOI.
-        if ($dataset->hasDatasetSubmission() and $dataset->getDatasetSubmission()->getStatus() !== 'DatasetSubmission::STATUS_UNSUBMITTED') {
+        if ($dataset->hasDatasetSubmission() and $dataset->getDatasetSubmission()->getStatus() === 'DatasetSubmission::STATUS_COMPLETE') {
             $datasetDoi = $dataset->getDoi();
             // Following nullcheck needed in case Consumer hasn't fetched DOI yet.
             if ($datasetDoi instanceof DOI) {

@@ -22,7 +22,7 @@
                     </div>
                 </div>
                 <div>
-                    <div v-if="datasetRowData.doi.doi">
+                    <div v-if="datasetRowData.doi">
                         DOI: {{ datasetRowData.doi.doi }}
                     </div>
                     <div>
