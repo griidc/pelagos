@@ -347,7 +347,6 @@ class ResearchGroup extends Entity
                     'id' => $dataset->getDif()->getId(),
                     'status' => $dataset->getDif()->getStatus(),
                     'title' => $dataset->getDif()->getTitle(),
-
                 );
             } else {
                 $datasetArray['dif'] = null;
