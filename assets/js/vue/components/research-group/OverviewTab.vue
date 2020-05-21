@@ -4,7 +4,7 @@
         <hr>
         <h6 class="overview-label">Project Director(s): </h6>
         <p v-for="director in getDirectors()">
-            {{ director.person.firstName + director.person.lastName }}
+            {{ director.person.firstName + " " + director.person.lastName }}
             ({{ director.person.organization }})
         </p>
         <h6 class="overview-label">Funding Organization</h6>
