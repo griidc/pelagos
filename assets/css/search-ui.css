@@ -30,22 +30,6 @@ article:after, .form-group:after {
     display: inline-block;
 }
 
-.card-product {
-    margin-bottom: 1rem;
-}
-
-.card-product:hover .btn-overlay {
-    opacity: 1;
-}
-
-.card-product:hover {
-    -webkit-box-shadow: 0 4px 15px rgba(153, 153, 153, 0.3);
-    box-shadow: 0 4px 15px rgba(153, 153, 153, 0.3);
-    -webkit-transition: .5s;
-    transition: .5s;
-    cursor: pointer;
-}
-
 .btn-space {
     margin-right: 5px;
 }
@@ -54,15 +38,6 @@ label {
     font-weight: normal !important;
 }
 
-a.search-result {
-    font-size: 1.05em;
-    text-decoration: none !important;
-    color: black !important;
-}
-
-.search-result a:hover {
-    text-decoration: none !important;
-}
 
 #pelagos-content {
     font-family: "Lato", Arial, sans-serif;

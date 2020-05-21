@@ -19,8 +19,17 @@
                 <form>
                     <div v-bind:style="facetName === 'researchGroup' ? 'overflow-y: scroll; height: 20rem;': ''">
                         <label class="form-check" v-for="facet in filteredFacets">
-                            <input class="form-check-input facet-aggregation" :value="facet.id" type="checkbox" :id="facetName + '_' + facet.id" v-model="listOfCheckedFacets" @change="facetChange">
-                            <span class="form-check-label" v-if="facetName === 'status'">
+                            <input class="form-check-input facet-aggregation"
+                                   :value="facet.id" type="checkbox"
+                                   :id="facetName + '_' + facet.id"
+                                   v-model="listOfCheckedFacets"
+                                   @change="facetChange">
+                            <span class="form-check-label"
+                                  v-if="facetName === 'status'"
+                                  v-tooltip="{
+                                    content: statusTooltip(facet.name),
+                                    placement:'top'
+                                    }">
                                 <span class="float-right badge badge-light round">{{ facet.count }}</span>
                                 {{ facet.name }}
                             </span>
@@ -79,6 +88,24 @@
 
                     }
                 }
+            },
+            statusTooltip: function (datasetStatus) {
+                let datasetStatusTooltip = "";
+                switch (true) {
+                    case (datasetStatus === "Available"):
+                        datasetStatusTooltip = "This dataset is available for download.";
+                        break;
+                    case (datasetStatus === "Restricted"):
+                        datasetStatusTooltip = "This dataset is restricted for download.";
+                        break;
+                    case (datasetStatus === "Submitted"):
+                        datasetStatusTooltip = "This dataset has been submitted and is not available for download.";
+                        break;
+                    case (datasetStatus === "Identified"):
+                        datasetStatusTooltip = "This dataset has not been submitted and is not available for download.";
+                        break;
+                }
+                return datasetStatusTooltip;
             }
         },
         computed: {
