@@ -131,7 +131,7 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
                 $doi['doi'] = $doiText;
                 $document->set('doi', $doi);
             }
-         }
+        }
     }
 
     /**
