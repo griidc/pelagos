@@ -873,7 +873,7 @@ class DatasetSubmission extends Entity
      *
      * @var \DateTime
      *
-     * @ORM\Column(type="datetimetz", nullable=true)
+     * @ORM\Column(type="date", nullable=true)
      */
     protected $temporalExtentBeginPosition;
 
@@ -882,7 +882,7 @@ class DatasetSubmission extends Entity
      *
      * @var \DateTime
      *
-     * @ORM\Column(type="datetimetz", nullable=true)
+     * @ORM\Column(type="date", nullable=true)
      */
     protected $temporalExtentEndPosition;
 
