@@ -1,7 +1,5 @@
 <template>
-    <b-card class="card-product">
-        <b-link class="search-result"
-                :href="url" target="_blank">
+    <b-card class="card-product" @click="openUrl(url)">
             <div>
                 <span class="badge badge-secondary" v-if="datasetRowData.availabilityStatus === 0">Identified</span>
                 <span class="badge badge-primary" v-else-if="datasetRowData.availabilityStatus === 2 || datasetRowData.availabilityStatus === 4">Submitted</span>
@@ -33,7 +31,6 @@
                     </div>
                 </div>
             </b-card-text>
-        </b-link>
     </b-card>
 </template>
 
@@ -48,6 +45,13 @@
         data: function () {
             return {
                 url: Routing.generate("pelagos_app_ui_dataland_default", {'udi' : this.datasetRowData.udi } )
+            }
+        },
+        methods: {
+            openUrl: function(url) {
+                if ("" === window.getSelection().toString()) {
+                    window.open(url, '_blank');
+                }
             }
         }
     }
