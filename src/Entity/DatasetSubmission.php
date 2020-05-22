@@ -2364,9 +2364,6 @@ class DatasetSubmission extends Entity
      */
     public function setTemporalExtentBeginPosition(\DateTime $temporalExtentBeginPosition = null)
     {
-        if ($temporalExtentBeginPosition != null) {
-            $temporalExtentBeginPosition->setTimeZone(new \DateTimeZone('UTC'));
-        }
         $this->temporalExtentBeginPosition = $temporalExtentBeginPosition;
     }
 
@@ -2389,9 +2386,6 @@ class DatasetSubmission extends Entity
      */
     public function setTemporalExtentEndPosition(\DateTime $temporalExtentEndPosition = null)
     {
-        if ($temporalExtentEndPosition != null) {
-            $temporalExtentEndPosition->setTimeZone(new \DateTimeZone('UTC'));
-        }
         $this->temporalExtentEndPosition = $temporalExtentEndPosition;
     }
 
