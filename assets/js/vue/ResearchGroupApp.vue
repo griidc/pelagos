@@ -85,7 +85,5 @@
 </script>
 
 <style scoped>
-    .main-card {
-        overflow-y: scroll;
-    }
+
 </style>
