@@ -365,6 +365,11 @@ class ResearchGroup extends Entity
             } else {
                 $datasetArray['datasetSubmission'] = null;
             }
+            $datasetArray['publications'] = array();
+            foreach ($dataset->getDatasetPublications() as $datasetPublication) {
+                array_push($datasetArray['publications'], $datasetPublication->getPublication());
+            }
+
             $datasets[] = $datasetArray;
         }
         return $datasets;
