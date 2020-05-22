@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <div>
-                    <div v-if="datasetRowData.doi.doi">
+                    <div v-if="datasetRowData.availabilityStatus !== 0 && datasetRowData.doi.doi">
                         DOI: {{ datasetRowData.doi.doi }}
                     </div>
                     <div>
