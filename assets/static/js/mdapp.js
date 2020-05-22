@@ -36,14 +36,6 @@ $(document).ready(function(){
         initJiraLinks();
     });
 
-    $("#FileUploadButton").click(function() {
-        if ($("#newMetadataFile").val() == '') {
-            alert('Please select a file');
-        } else {
-            $("#MdappFileUploadForm").submit();
-        }
-    });
-
     initJiraLinks();
 });
 
