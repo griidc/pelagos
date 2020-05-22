@@ -113,8 +113,8 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
 
         if ($dataset->hasDatasetSubmission()) {
             if ($dataset->getDatasetSubmission()->getTemporalExtentBeginPosition() and $dataset->getDatasetSubmission()->getTemporalExtentEndPosition()) {
-                $collectionStartDate = $dataset->getDatasetSubmission()->getTemporalExtentBeginPosition()->setTimezone(new \DateTimeZone('UTC'));
-                $collectionEndDate = $dataset->getDatasetSubmission()->getTemporalExtentEndPosition()->setTimezone(new \DateTimeZone('UTC'));
+                $collectionStartDate = $dataset->getDatasetSubmission()->getTemporalExtentBeginPosition();
+                $collectionEndDate = $dataset->getDatasetSubmission()->getTemporalExtentEndPosition());
                 $document->set('collectionStartDate', $collectionStartDate->format('Y-m-d H:i:s'));
                 $document->set('collectionEndDate', $collectionEndDate->format('Y-m-d H:i:s'));
             }
