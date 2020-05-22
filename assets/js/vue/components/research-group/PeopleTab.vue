@@ -25,7 +25,7 @@
 </script>
 
 <style scoped>
-    .card-product {
-        margin-top: 10px;
+    .card-columns {
+        column-gap: 1rem !important;
     }
 </style>
