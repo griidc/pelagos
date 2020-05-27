@@ -15,7 +15,6 @@ require('../css/superfish.css');
 require('../css/pelagos-module.css');
 require('../css/messages.css');
 require('../css/griidc-app.css');
-//import '../scss/bootstrap.scss';
 import '../scss/griidc.scss';
 
 const routes = require('../../public/js/fos_js_routes.json');
