@@ -372,6 +372,9 @@ class ResearchGroup extends Entity
 
             $datasets[] = $datasetArray;
         }
+        $array_column = array_column($datasets, 'id');
+        array_multisort($array_column, SORT_DESC, $datasets);
+
         return $datasets;
     }
 
