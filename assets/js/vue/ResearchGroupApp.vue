@@ -3,13 +3,13 @@
         <hr>
         <b-card no-body class="main-card">
             <b-tabs pills fill justified card v-if="showData" lazy vertical class="vh-100">
-                <b-tab title="Info">
-                    <InfoTab :info="researchGroupData"/>
+                <b-tab title="Overview">
+                    <OverviewTab :overview="researchGroupData"/>
                 </b-tab>
-                <b-tab title="Datasets" class="bg-light">
+                <b-tab title="Datasets">
                     <DatasetsTab :datasets="researchGroupData.datasets" />
                 </b-tab>
-                <b-tab title="People" class="bg-light">
+                <b-tab title="People">
                     <PeopleTab :personResearchGroups="researchGroupData.personResearchGroups" />
                 </b-tab>
                 <b-tab title="Publications">
@@ -26,12 +26,12 @@
 
 <script>
     const axios = require('axios');
-    import InfoTab from "./components/research-group/InfoTab";
+    import OverviewTab from "./components/research-group/OverviewTab";
     import DatasetsTab from "./components/research-group/DatasetsTab";
     import PeopleTab from "./components/research-group/PeopleTab";
     export default {
         name: "ResearchGroupApp",
-        components: { InfoTab, DatasetsTab, PeopleTab},
+        components: { OverviewTab, DatasetsTab, PeopleTab},
         props: {
             id: {
                 type: Number
@@ -85,7 +85,5 @@
 </script>
 
 <style scoped>
-    .main-card {
-        overflow-y: scroll;
-    }
+
 </style>
