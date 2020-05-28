@@ -24,8 +24,9 @@
     }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
     .card-columns {
         column-gap: 1rem !important;
+        column-count: 2 !important;
     }
 </style>
