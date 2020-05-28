@@ -44,7 +44,7 @@
         },
         data: function () {
             return {
-                url: Routing.generate("pelagos_app_ui_dataland_default", {'udi' : this.datasetRowData.udi } )
+                url: this.datasetRowData.uri
             }
         },
         methods: {
