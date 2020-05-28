@@ -9,7 +9,7 @@
             <b-card-title style="font-size: 1.3rem !important;">{{ datasetRowData.title }}</b-card-title>
             <b-card-text class="d-flex justify-content-between" >
                 <div v-if="Object.keys(datasetRowData.datasetSubmission).length > 0">
-                    <div v-if="datasetRowData.datasetSubmission.authors">
+                    <div v-if="datasetRowData.datasetSubmission.authors" style="width: 80%">
                         Authors: {{ datasetRowData.datasetSubmission.authors }}
                     </div>
                     <div v-if="datasetRowData.acceptedDate">
@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <div>
-                    <div v-if="datasetRowData.doi.doi">
+                    <div v-if="datasetRowData.availabilityStatus !== 0 && datasetRowData.doi.doi">
                         DOI: {{ datasetRowData.doi.doi }}
                     </div>
                     <div>
@@ -70,15 +70,5 @@
         box-shadow: 0 4px 15px rgba(153, 153, 153, 0.3);
         transition: .5s;
         cursor: pointer;
-    }
-
-    a.search-result {
-        font-size: 1.05em;
-        text-decoration: none !important;
-        color: black !important;
-    }
-
-    .search-result a:hover {
-        text-decoration: none !important;
     }
 </style>
