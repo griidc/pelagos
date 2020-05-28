@@ -1,8 +1,8 @@
 <template>
     <div>
-        <b-card class="card-product" @click="openUrl(publication.doi)" v-for="publication in publicationRow.publications" v-bind:key="publication.id">
+        <b-card class="card-product" @click="openUrl(publicationRow.doi)">
             <b-card-text class="d-flex justify-content-between" >
-                {{ publication.citationText }}
+                {{ publicationRow.citationText }}
             </b-card-text>
         </b-card>
     </div>

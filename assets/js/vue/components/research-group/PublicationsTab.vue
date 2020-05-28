@@ -1,6 +1,6 @@
 <template>
     <b-card-group>
-        <PublicationRow :publicationRow="dataset" v-for="dataset in datasets" v-bind:key="dataset.id"/>
+        <PublicationRow :publicationRow="publication" v-for="publication in getPublications()" v-bind:key="publication.id"/>
     </b-card-group>
 </template>
 
@@ -12,6 +12,21 @@
         props: {
             datasets: {}
         },
+        methods: {
+            getPublications: function () {
+                let publications = [];
+                let publicationId = [];
+                this.datasets.forEach(dataset => {
+                    dataset.publications.forEach(publication => {
+                        if (!publicationId.includes(publication.id)) {
+                            publications.push(publication);
+                            publicationId.push(publication.id);
+                        }
+                    })
+                })
+                return publications;
+            }
+        }
     }
 </script>
 
