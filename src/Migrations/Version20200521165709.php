@@ -34,9 +34,5 @@ final class Version20200521165709 extends AbstractMigration
         $this->addSql('ALTER TABLE dataset_submission ALTER temporal_extent_begin_position DROP DEFAULT');
         $this->addSql('ALTER TABLE dataset_submission ALTER temporal_extent_end_position TYPE TIMESTAMP(0) WITH TIME ZONE');
         $this->addSql('ALTER TABLE dataset_submission ALTER temporal_extent_end_position DROP DEFAULT');
-
-        $this->addSql("UPDATE dataset_submission SET temporal_extent_begin_position = temporal_extent_begin_position AT TIME ZONE '+10'");
-
-        $this->addSql("UPDATE dataset_submission SET temporal_extent_end_position = temporal_extent_end_position AT TIME ZONE '+10'");
     }
 }
