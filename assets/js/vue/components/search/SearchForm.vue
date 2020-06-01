@@ -61,7 +61,7 @@
                                     <i class="fa fa-search pl-2"></i></button>
                                 <button type="reset" id="search-clear" class="btn btn-dark clear-button">Clear</button>
                                 <div class="mt-3 pt-3 empty-button-div"></div>
-                                <button type="button" id="map-search" class="btn map-search-button" @click="dataDiscovery()">Map Search</button>
+                                <button type="button" id="map-search" class="btn-secondary map-search-button" @click="dataDiscovery()">Map Search</button>
                             </div>
                         </div>
                     </b-form>
@@ -221,9 +221,6 @@
         border: 1px solid rgba(0, 0, 0, 0.125);
         .button-toolbar {
             .map-search-button {
-                color: var(--color-white);
-                background-color: var(--color-headerMiddle);
-                border-color: var(--color-headerMiddle);
             }
         }
     }
