@@ -23,6 +23,7 @@
         "build": "encore production --progress"
     },
     "dependencies": {
+        "@babel/preset-env": "7.9.0",
         "axios": "^0.19.2",
         "bootstrap": "^4.4.1",
         "bootstrap-vue": "^2.5.0",

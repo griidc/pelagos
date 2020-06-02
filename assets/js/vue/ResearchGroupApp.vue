@@ -2,22 +2,18 @@
     <div class="container-xl" ref="formContainer">
         <hr>
         <b-card no-body class="main-card">
-            <b-tabs pills fill justified card v-if="showData" lazy vertical class="vh-100">
-                <b-tab title="Info">
-                    <InfoTab :info="researchGroupData"/>
+            <b-tabs pills fill justified card v-if="showData" lazy vertical class="min-vh-100">
+                <b-tab title="Overview">
+                    <OverviewTab :overview="researchGroupData"/>
                 </b-tab>
-                <b-tab title="Datasets" class="bg-light">
+                <b-tab title="Datasets">
                     <DatasetsTab :datasets="researchGroupData.datasets" />
                 </b-tab>
-                <b-tab title="People" class="bg-light">
+                <b-tab title="People">
                     <PeopleTab :personResearchGroups="researchGroupData.personResearchGroups" />
                 </b-tab>
                 <b-tab title="Publications">
-                    <b-card-text>
-                        Alesia Ferguson, Helena Solo-Gabriele, Kristina Mena. 2020.
-                        Child specific and beach characteristic dataset. Distributed by: GRIIDC,
-                        Harte Research Institute, Texas A&M University-Corpus Christi. doi:10.7266/n7-rq3z-hq57
-                    </b-card-text>
+                    <PublicationsTab :datasets="researchGroupData.datasets" />
                 </b-tab>
             </b-tabs>
         </b-card>
@@ -25,13 +21,14 @@
 </template>
 
 <script>
+    import PublicationsTab from "./components/research-group/PublicationsTab";
     const axios = require('axios');
-    import InfoTab from "./components/research-group/InfoTab";
+    import OverviewTab from "./components/research-group/OverviewTab";
     import DatasetsTab from "./components/research-group/DatasetsTab";
     import PeopleTab from "./components/research-group/PeopleTab";
     export default {
         name: "ResearchGroupApp",
-        components: { InfoTab, DatasetsTab, PeopleTab},
+        components: { PublicationsTab, OverviewTab, DatasetsTab, PeopleTab },
         props: {
             id: {
                 type: Number
@@ -85,7 +82,5 @@
 </script>
 
 <style scoped>
-    .main-card {
-        overflow-y: scroll;
-    }
+
 </style>
