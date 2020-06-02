@@ -10,7 +10,7 @@
             <b-card-title style="font-size: 1.3rem !important;">{{ datasetRowData.title }}</b-card-title>
             <b-card-text class="d-flex justify-content-between" >
                 <div v-if="Object.keys(datasetRowData.datasetSubmission).length > 0">
-                    <div v-if="datasetRowData.datasetSubmission.authors" style="width: 80%">
+                    <div v-if="datasetRowData.datasetSubmission.authors" style="max-width: 400px">
                         Authors: {{ datasetRowData.datasetSubmission.authors }}
                     </div>
                     <div v-if="datasetRowData.acceptedDate">
