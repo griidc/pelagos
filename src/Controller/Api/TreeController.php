@@ -21,6 +21,7 @@ use App\Entity\ResearchGroup;
 use App\Entity\Person;
 
 use App\Util\DatasetIndex;
+use App\Util\FundingOrgFilter;
 
 /**
  * The Tree API controller.
@@ -115,7 +116,7 @@ class TreeController extends EntityController
      *
      * @return string
      */
-    public function getFundingOrganizationsAction(Request $request, DatasetIndex $datasetIndex)
+    public function getFundingOrganizationsAction(Request $request, DatasetIndex $datasetIndex, FundingOrgFilter $fundingOrgFilter)
     {
         $tree = $this->buildTreeConfig($request);
         $filter = false;
@@ -141,8 +142,8 @@ class TreeController extends EntityController
             $criteria['id'] = array_keys($fundingOrganizations);
         }
 
-        if (true === true) { // To be replaced with check if needs to be filtered.
-            $criteria['id'] = array(0 => 15); // To be replaced by function getIdArray or something.
+        if ($fundingOrgFilter->isActive()) {
+            $criteria['id'] = $fundingOrgFilter->getFilterIdArray();
         }
 
         return $this->render(
