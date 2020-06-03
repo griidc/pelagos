@@ -134,13 +134,13 @@
                         {% if not dataset.datasetSubmission.temporalExtentBeginPosition|date('Y-m-d') |default %}
                             {% set begin = 'N/A' %}
                         {% else %}
-                            {% set begin = dataset.datasetSubmission.temporalExtentBeginPosition|date('Y-m-d', 'UTC') %}
+                            {% set begin = dataset.datasetSubmission.temporalExtentBeginPosition|date('Y-m-d') %}
                         {% endif %}
 
                         {% if not dataset.datasetSubmission.temporalExtentEndPosition|date('Y-m-d') |default %}
                             {% set end = 'N/A' %}
                         {% else %}
-                            {% set end = dataset.datasetSubmission.temporalExtentEndPosition|date('Y-m-d', 'UTC') %}
+                            {% set end = dataset.datasetSubmission.temporalExtentEndPosition|date('Y-m-d') %}
                         {% endif %}
 
                         <tr>
