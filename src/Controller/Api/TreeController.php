@@ -140,6 +140,11 @@ class TreeController extends EntityController
             }
             $criteria['id'] = array_keys($fundingOrganizations);
         }
+
+        if (true === true) { // To be replaced with check if needs to be filtered.
+            $criteria['id'] = array(0 => 15); // To be replaced by function getIdArray or something.
+        }
+
         return $this->render(
             'Api/Tree/research_awards.json.twig',
             array(
