@@ -17,14 +17,14 @@ class FundingOrgFilter
      * @var EntityManagerInterface
      */
     protected $entityManager;
-    
+
     /**
      * An array of the funding organization to filter by.
      *
      * @var array
      */
     protected $fundingOrganizations;
-    
+
     /**
      * Constructor.
      *
@@ -36,10 +36,10 @@ class FundingOrgFilter
         array $fundingOrgs
     ) {
         $this->entityManager = $entityManager;
-        
+
         $this->shortNamesToIdArray($fundingOrgs);
     }
-    
+
      /**
      * Set array of ID to filter by.
      *
@@ -53,7 +53,7 @@ class FundingOrgFilter
             ->getRepository(FundingOrganization::class)
             ->findBy(array('shortName' => $fundingOrgs));
     }
-    
+
     /**
      * Returns true is you need to filter by Funding Organization.
      *
@@ -62,16 +62,15 @@ class FundingOrgFilter
     public function isActive() :bool
     {
         return !empty($this->fundingOrganizations);
-        
     }
-    
+
     public function getFilterIdArray() :array
     {
-       $ids = array();
-       foreach ($this->fundingOrganizations as $fundingOrganization) {
-          $ids[] = $fundingOrganization->getId();
-       }
-       
-       return $ids;
+        $ids = array();
+        foreach ($this->fundingOrganizations as $fundingOrganization) {
+            $ids[] = $fundingOrganization->getId();
+        }
+
+        return $ids;
     }
 }
