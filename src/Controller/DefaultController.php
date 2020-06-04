@@ -24,13 +24,13 @@ class DefaultController extends AbstractController
      */
     public function index()
     {
-        if ($this->getParameter('kernel.debug')) {
+        if ($this->getParameter('kernel.debug') or (!empty($this->getParameter('custom_template')))) {
             return $this->render('Default/index.html.twig');
         } else {
             return $this->redirect('/', 302);
         }
     }
-    
+
     /**
      * The admin action.
      *
