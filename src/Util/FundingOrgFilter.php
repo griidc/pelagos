@@ -78,4 +78,23 @@ class FundingOrgFilter
 
         return $ids;
     }
+    
+    /**
+     * Returns true is you need to filter by Funding Organization.
+     *
+     * @return array List of ID's to filter on.
+     */
+    public function getResearchGroupsIdArray() :array
+    {
+        $ids = array();
+        foreach ($this->fundingOrganizations as $fundingOrganization) {
+            foreach ($fundingOrganization->getFundingCycles() as $fundingCycle) {
+                foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
+                    $ids[] = $researchGroup->getId();
+                }
+            }
+        }
+
+        return $ids;
+    }
 }
