@@ -340,7 +340,7 @@ class Search
         ];
 
         // Remove any element with a count of 0.
-        foreach ($statusInfo as $key=>$value) {
+        foreach ($statusInfo as $key => $value) {
             if (0 === $statusInfo[$key]['count']) {
                 unset($statusInfo[$key]);
             }
