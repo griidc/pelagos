@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\FundingOrganization;
 
 /**
- * A utility to create and issue DOI from Datacite REST API.
+ * A utility to determine if and which Funding Organizations need to be filtered by.
  */
 class FundingOrgFilter
 {
@@ -41,7 +41,7 @@ class FundingOrgFilter
     }
 
      /**
-     * Set array of ID to filter by.
+     * Set array of FOs to filter by.
      *
      * @param array $fundingOrgs List of Funding Organizations Short Names.
      *
@@ -64,6 +64,11 @@ class FundingOrgFilter
         return !empty($this->fundingOrganizations);
     }
 
+    /**
+     * Returns true is you need to filter by Funding Organization.
+     *
+     * @return array List of ID's to filter on.
+     */
     public function getFilterIdArray() :array
     {
         $ids = array();
