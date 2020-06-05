@@ -17,6 +17,7 @@ use Doctrine\Common\Collections\Collection;
 
 use App\Entity\Entity;
 use App\Entity\Account;
+use App\Entity\Dataset;
 use App\Entity\Password;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
@@ -193,12 +194,17 @@ class EntityHandler
             return;
         }
 
-        $fundingOrgIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
+        $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
 
         switch ($entityClass) {
             case ResearchGroup::class:
-                $qb->andWhere('e.id IN (:fos)');
-                $qb->setParameter('fos', $fundingOrgIds);
+                $qb->andWhere('e.id IN (:rgs)');
+                $qb->setParameter('rgs', $researchGroupIds);
+                break;
+            case Dataset::class:
+                $qb->innerJoin('e.researchGroup', 'rg');
+                $qb->andWhere('rg.id IN (:rgs)');
+                $qb->setParameter('rgs', $researchGroupIds);
                 break;
         }
     }
