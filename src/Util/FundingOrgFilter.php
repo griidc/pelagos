@@ -40,7 +40,7 @@ class FundingOrgFilter
         $this->shortNamesToIdArray($fundingOrgs);
     }
 
-     /**
+    /**
      * Set array of FOs to filter by.
      *
      * @param array $fundingOrgs List of Funding Organizations Short Names.
