@@ -32,7 +32,7 @@ class DIFController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function index(Request $request, FormFactoryInterface $formFactory, $id = null, FundingOrgFilter $fundingOrgFilter)
+    public function index(Request $request, FormFactoryInterface $formFactory, FundingOrgFilter $fundingOrgFilter, $id = null)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
@@ -41,6 +41,8 @@ class DIFController extends AbstractController
 
         $researchGroupIds = array();
         if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER') and !$fundingOrgFilter->isActive()) {
+            $researchGroupIds = $fundingOrgFilter->getResearchGroupsIdArray();
+        } elseif ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER') and $fundingOrgFilter->isActive()) {
             $researchGroupIds = array('*');
         } elseif ($this->getUser() instanceof Account) {
             $researchGroups = $this->getUser()->getPerson()->getResearchGroups();
