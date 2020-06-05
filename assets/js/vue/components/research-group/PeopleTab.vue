@@ -28,5 +28,8 @@
     .card-columns {
         column-gap: 1rem !important;
         column-count: 2 !important;
+        .card {
+            height: 200px;
+        }
     }
 </style>
