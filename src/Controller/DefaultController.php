@@ -32,10 +32,12 @@ class DefaultController extends AbstractController
             if ($this->getParameter('custom_template')) {
                 if (strpos($this->getParameter('custom_template'), 'nas-grp-base') !== false) {
                     $researchGroups = array();
-                    if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-                        $researchGroups = $this->container->get('doctrine')->getRepository(ResearchGroup::class)->findAll();
-                    } elseif ($this->tokenStorage->getToken()->getUser() instanceof Account) {
-                        $researchGroups = $this->tokenStorage->getToken()->getUser()->getPerson()->getResearchGroups();
+                    if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+                        if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+                            $researchGroups = $this->container->get('doctrine')->getRepository(ResearchGroup::class)->findAll();
+                        } elseif ($this->tokenStorage->getToken()->getUser() instanceof Account) {
+                            $researchGroups = $this->tokenStorage->getToken()->getUser()->getPerson()->getResearchGroups();
+                        }
                     }
 
                     return $this->render('Default/nas-grp-index.html.twig', array(
