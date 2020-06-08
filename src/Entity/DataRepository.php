@@ -14,10 +14,17 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use App\Exception\NotDeletableException;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+
 /**
  * Entity class to represent a Data Repository.
  *
  * @ORM\Entity
+ *
+ * @ApiResource(
+ *     collectionOperations={"get"},
+ *     itemOperations={"get"}
+ * )
  *
  * @UniqueEntity(
  *     fields={"name"},

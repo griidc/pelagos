@@ -17,10 +17,18 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use App\Exception\NotDeletableException;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+
 /**
  * Entity class to represent a Person.
  *
  * @ORM\Entity
+ *
+ * @ApiResource(
+ *     collectionOperations={"get"},
+ *     itemOperations={"get"}
+ * )
+ *
  *
  * @Assert\GroupSequence({
  *     "id",

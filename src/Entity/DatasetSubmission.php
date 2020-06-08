@@ -8,6 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+
 /**
  * Dataset Submission Entity class.
  *
@@ -31,6 +33,11 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  *     jira_ticket - probably belongs in Dataset entity?
  *
  * @ORM\Entity
+ *
+ * @ApiResource(
+ *     collectionOperations={"get"},
+ *     itemOperations={"get"}
+ * )
  */
 class DatasetSubmission extends Entity
 {

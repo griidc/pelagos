@@ -12,10 +12,17 @@ use Hateoas\Configuration\Annotation as Hateoas;
 
 use App\Exception\NotDeletableException;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+
 /**
  * Entity class to represent a Funding Organization.
  *
  * @ORM\Entity
+ *
+ * @ApiResource(
+ *     collectionOperations={"get"},
+ *     itemOperations={"get"}
+ * )
  *
  * @UniqueEntity(
  *     fields={"name"},

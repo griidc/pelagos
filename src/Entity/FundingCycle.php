@@ -14,10 +14,17 @@ use JMS\Serializer\Annotation as Serializer;
 
 use App\Exception\NotDeletableException;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+
 /**
  * Entity class to represent a Funding Cycle.
  *
  * @ORM\Entity
+ *
+ * @ApiResource(
+ *     collectionOperations={"get"},
+ *     itemOperations={"get"}
+ * )
  *
  * @Assert\GroupSequence({
  *     "id",

@@ -10,10 +10,17 @@ use App\Validator\Constraints as CustomAssert;
 
 use Hateoas\Configuration\Annotation as Hateoas;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+
 /**
  * Entity class to represent a Person to Research Group Association.
  *
  * @ORM\Entity
+ *
+ * @ApiResource(
+ *     collectionOperations={"get"},
+ *     itemOperations={"get"}
+ * )
  *
  * @UniqueEntity(
  *     fields={"person", "researchGroup"},

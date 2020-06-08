@@ -14,12 +14,19 @@ use JMS\Serializer\Annotation as Serializer;
 
 use App\Exception\PasswordException;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+
 /**
  * Entity class to represent an Account.
  *
  * This class defines an Account, which is a set of credentials for a Person.
  *
  * @ORM\Entity
+ *
+ * @ApiResource(
+ *     collectionOperations={"get"},
+ *     itemOperations={"get"}
+ * )
  */
 class Account extends Entity implements UserInterface, EquatableInterface
 {

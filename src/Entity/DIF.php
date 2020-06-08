@@ -10,10 +10,17 @@ use Hateoas\Configuration\Annotation as Hateoas;
 
 use JMS\Serializer\Annotation as Serializer;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+
 /**
  * DIF Entity class.
  *
  * @ORM\Entity
+ *
+ * @ApiResource(
+ *     collectionOperations={"get"},
+ *     itemOperations={"get"}
+ * )
  *
  * @Hateoas\Relation(
  *   "self",

@@ -9,10 +9,18 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use App\Util\DatasetCitationUtil;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+
 /**
  * Dataset Entity class.
  *
  * @ORM\Entity(repositoryClass="App\Repository\DatasetRepository")
+ *
+ * @ApiResource(
+ *     collectionOperations={"get"},
+ *     itemOperations={"get"}
+ * )
+ *
  */
 class Dataset extends Entity
 {
