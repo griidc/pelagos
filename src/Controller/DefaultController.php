@@ -17,6 +17,29 @@ use App\Entity\Dataset;
  */
 class DefaultController extends AbstractController
 {
+
+    /**
+     * The index action.
+     *
+     * @Route("/", name="pelagos_nas_homepage", condition="'%custom_template%' matches '/nas-grp-base/'")
+     *
+     * @return Response A Response instance.
+     */
+    public function nasIndex()
+    {
+        $researchGroups = array();
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+                $researchGroups = $this->container->get('doctrine')->getRepository(ResearchGroup::class)->findAll();
+            } elseif ($this->tokenStorage->getToken()->getUser() instanceof Account) {
+                $researchGroups = $this->tokenStorage->getToken()->getUser()->getPerson()->getResearchGroups();
+            }
+        }
+        return $this->render('Default/nas-grp-index.html.twig', array(
+            'researchGroups' => $researchGroups,
+        ));
+    }
+
     /**
      * The index action.
      *
@@ -29,22 +52,6 @@ class DefaultController extends AbstractController
         if ($this->getParameter('kernel.debug')) {
             return $this->render('Default/index.html.twig');
         } else {
-            if ($this->getParameter('custom_template')) {
-                if (strpos($this->getParameter('custom_template'), 'nas-grp-base') !== false) {
-                    $researchGroups = array();
-                    if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
-                        if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-                            $researchGroups = $this->container->get('doctrine')->getRepository(ResearchGroup::class)->findAll();
-                        } elseif ($this->tokenStorage->getToken()->getUser() instanceof Account) {
-                            $researchGroups = $this->tokenStorage->getToken()->getUser()->getPerson()->getResearchGroups();
-                        }
-                    }
-
-                    return $this->render('Default/nas-grp-index.html.twig', array(
-                        'researchGroups' => $researchGroups,
-                    ));
-                }
-            }
             return $this->redirect('/', 302);
         }
     }
