@@ -2,15 +2,39 @@
 
 namespace App\Repository;
 
-use App\Entity\DatasetSubmission;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query;
+
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Util\FundingOrgFilter;
 
 /**
  * Dataset Entity Repository class.
  */
-class DatasetRepository extends EntityRepository
+class DatasetRepository extends ServiceEntityRepository
 {
+    /**
+     * Utility to filter by funding organization.
+     *
+     * @var FundingOrgFilter
+     */
+    private $fundingOrgFilter;
+
+    /**
+     * Constructor.
+     *
+     * @param ManagerRegistry  $registry         The Registry Manager.
+     * @param FundingOrgFilter $fundingOrgFilter Utility to filter by funding organization.
+     */
+    public function __construct(ManagerRegistry $registry, FundingOrgFilter $fundingOrgFilter)
+    {
+        parent::__construct($registry, Dataset::class);
+
+        $this->fundingOrgFilter = $fundingOrgFilter;
+    }
+
     /**
      * Count the number of registered Datasets.
      *
@@ -143,9 +167,21 @@ class DatasetRepository extends EntityRepository
      */
     public function createSortedQueryBuilder(string $alias, string $indexBy = null)
     {
-        return $this->_em->createQueryBuilder()
-            ->select($alias)
-            ->from($this->_entityName, $alias, $indexBy)
-            ->orderBy($alias . '.id');
+        $qb = $this->_em->createQueryBuilder()
+        ->select($alias)
+        ->from($this->_entityName, $alias, $indexBy);
+
+        if ($this->fundingOrgFilter->isActive()) {
+            $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
+
+            $qb
+            ->innerJoin($alias . '.researchGroup', 'rg')
+            ->andWhere('rg.id IN (:rgs)')
+            ->setParameter('rgs', $researchGroupIds);
+        }
+
+        $qb->orderBy($alias . '.id');
+
+        return $qb;
     }
 }
