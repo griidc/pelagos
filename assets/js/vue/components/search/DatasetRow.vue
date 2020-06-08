@@ -5,17 +5,18 @@
                 <span class="badge badge-primary" v-else-if="datasetRowData.availabilityStatus === 2 || datasetRowData.availabilityStatus === 4">Submitted</span>
                 <span class="badge badge-danger" v-else-if="datasetRowData.availabilityStatus === 5 || datasetRowData.availabilityStatus === 8">Restricted</span>
                 <span class="badge badge-success" v-else-if="datasetRowData.availabilityStatus === 7 || datasetRowData.availabilityStatus === 10">Available</span>
+                <span class="badge badge-warning" v-if="datasetRowData.availabilityStatus === 7">Remotely Hosted</span>
             </div>
             <b-card-title style="font-size: 1.3rem !important;">{{ datasetRowData.title }}</b-card-title>
             <b-card-text class="d-flex justify-content-between" >
                 <div v-if="Object.keys(datasetRowData.datasetSubmission).length > 0">
-                    <div v-if="datasetRowData.datasetSubmission.authors" style="width: 80%">
+                    <div v-if="datasetRowData.datasetSubmission.authors" style="max-width: 400px">
                         Authors: {{ datasetRowData.datasetSubmission.authors }}
                     </div>
                     <div v-if="datasetRowData.acceptedDate">
                         Published on {{ datasetRowData.acceptedDate }}
                     </div>
-                    <div v-if="datasetRowData.fileFormat">
+                    <div v-if="datasetRowData.availabilityStatus !== 7 && datasetRowData.fileFormat">
                         File Format: {{ datasetRowData.fileFormat }}
                     </div>
                 </div>
@@ -26,7 +27,7 @@
                     <div>
                         UDI: {{ datasetRowData.udi }}
                     </div>
-                    <div v-if="datasetRowData.fileSize">
+                    <div v-if="datasetRowData.availabilityStatus !== 7 && datasetRowData.fileSize">
                         File Size: {{ datasetRowData.fileSize }}
                     </div>
                 </div>

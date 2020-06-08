@@ -62,7 +62,7 @@ class Search
      * Elastic index mapping for dataset DOI.
      */
     const ELASTIC_INDEX_MAPPING_DOI = 'doi.doi';
-    
+
     /**
      * Elastic index mapping for udi.
      */
@@ -155,7 +155,7 @@ class Search
         $mainQuery->addAggregation($this->getStatusAggregationQuery($requestTerms));
         $mainQuery->setQuery($subMainQuery);
         $mainQuery->setFrom(($page - 1) * 10);
-        
+
         return $mainQuery;
     }
 
@@ -338,6 +338,13 @@ class Search
                 )
             ],
         ];
+
+        // Remove any element with a count of 0.
+        foreach ($statusInfo as $key => $value) {
+            if (0 === $statusInfo[$key]['count']) {
+                unset($statusInfo[$key]);
+            }
+        }
 
         //Sorting based on highest count
         array_multisort(array_column($statusInfo, 'count'), SORT_DESC, $statusInfo);
@@ -581,7 +588,7 @@ class Search
     private function getCollectionStartDateQuery(array $collectionDates): Query\Range
     {
         $collectionStartDateRange = new Query\Range();
-        $collectionStartDate = new \DateTime($collectionDates['startDate'], new \DateTimeZone('UTC'));
+        $collectionStartDate = new \DateTime($collectionDates['startDate']);
         $collectionStartDateRange->addField('collectionStartDate', ['gte' => $collectionStartDate->format('Y-m-d H:i:s')]);
 
         return $collectionStartDateRange;
@@ -597,7 +604,7 @@ class Search
     private function getCollectionEndDateQuery(array $collectionDates): Query\Range
     {
         $collectionEndDateRange = new Query\Range();
-        $collectionEndDate = new \DateTime($collectionDates['endDate'], new \DateTimeZone('UTC'));
+        $collectionEndDate = new \DateTime($collectionDates['endDate']);
         $collectionEndDateRange->addField('collectionEndDate', ['lte' => $collectionEndDate->format('Y-m-d H:i:s')]);
 
         return $collectionEndDateRange;
