@@ -38,7 +38,7 @@ class DefaultController extends AbstractController
                         $researchGroups = $this->tokenStorage->getToken()->getUser()->getPerson()->getResearchGroups();
                     }
 
-                    return $this->render('Default/nas-grp-index.html.twig',  array(
+                    return $this->render('Default/nas-grp-index.html.twig', array(
                         'researchGroups' => $researchGroups,
                     ));
                 }
