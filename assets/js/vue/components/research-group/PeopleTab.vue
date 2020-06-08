@@ -11,7 +11,7 @@
                     <div>
                         {{ person.label }}
                     </div>
-                    <div class="text-overflow"
+                    <div class="text-truncate text-width"
                          v-tooltip="{
                                     content: person.person.organization,
                                     placement:'top'
@@ -47,10 +47,7 @@
         }
     }
 
-    .text-overflow {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    .text-width {
         max-width: 250px;
     }
 </style>
