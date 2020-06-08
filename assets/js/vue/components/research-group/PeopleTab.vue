@@ -11,7 +11,7 @@
                     <div>
                         {{ person.label }}
                     </div>
-                    <div class="text-truncate text-width"
+                    <div class="text-truncate org-name-width"
                          v-tooltip="{
                                     content: person.person.organization,
                                     placement:'top'
@@ -47,7 +47,7 @@
         }
     }
 
-    .text-width {
+    .org-name-width {
         max-width: 250px;
     }
 </style>
