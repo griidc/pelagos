@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Account;
+use App\Entity\ResearchGroup;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -25,33 +26,23 @@ class DefaultController extends AbstractController
      */
     public function index()
     {
-//        if ($this->getParameter('kernel.debug')) {
-//            return $this->render('Default/index.html.twig');
-//        } else
-            if ($this->getParameter('custom_template')) {
-            if (strpos($this->getParameter('custom_template'), 'nas-grp-base') !== false) {
-                $researchGroupIds = array();
-                if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-                    $researchGroupIds = array('*');
-                } elseif ($this->getUser() instanceof Account) {
-                    $researchGroups = $this->getUser()->getPerson()->getResearchGroups();
-                    $researchGroupIds = array_map(
-                        function ($researchGroup) {
-                            return $researchGroup->getId();
-                        },
-                        $researchGroups
-                    );
-                }
-                if (0 === count($researchGroupIds)) {
-                    $researchGroupIds = array('!*');
-                }
-
-                return $this->render('Default/nas-grp-index.html.twig',  array(
-                    'research_groups' => implode(',', $researchGroupIds),
-                ));
-            }
-
+        if ($this->getParameter('kernel.debug')) {
+            return $this->render('Default/index.html.twig');
         } else {
+            if ($this->getParameter('custom_template')) {
+                if (strpos($this->getParameter('custom_template'), 'nas-grp-base') !== false) {
+                    $researchGroups = array();
+                    if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+                        $researchGroups = $this->container->get('doctrine')->getRepository(ResearchGroup::class)->findAll();
+                    } elseif ($this->tokenStorage->getToken()->getUser() instanceof Account) {
+                        $researchGroups = $this->tokenStorage->getToken()->getUser()->getPerson()->getResearchGroups();
+                    }
+
+                    return $this->render('Default/nas-grp-index.html.twig',  array(
+                        'researchGroups' => $researchGroups,
+                    ));
+                }
+            }
             return $this->redirect('/', 302);
         }
     }
