@@ -83,8 +83,9 @@ class TreeController extends EntityController
     /**
      * Gets the Funding Organization and Funding Cycle nodes.
      *
-     * @param Request      $request      The request object.
-     * @param DatasetIndex $datasetIndex Dataset index object.
+     * @param Request          $request          The request object.
+     * @param DatasetIndex     $datasetIndex     Dataset index object.
+     * @param FundingOrgFilter $fundingOrgFilter The funding organization filter utility.
      *
      * @Operation(
      *     tags={"Tree"},
@@ -238,7 +239,8 @@ class TreeController extends EntityController
     /**
      * Gets the Researcher letter nodes.
      *
-     * @param Request $request The request object.
+     * @param Request          $request          The request object.
+     * @param FundingOrgFilter $fundingOrgFilter The funding organization filter utility.
      *
      * @Operation(
      *     tags={"Tree"},
@@ -292,8 +294,8 @@ class TreeController extends EntityController
         if ($fundingOrgFilter->isActive()) {
             $qb->innerJoin('person.personResearchGroups', 'prg');
             $qb->innerJoin('prg.researchGroup', 'rg');
-            $qb->where('rg.id IN (:fos)');
-            $qb->setParameter('fos', $fundingOrgFilter->getResearchGroupsIdArray());
+            $qb->where('rg.id IN (:rgs)');
+            $qb->setParameter('rgs', $fundingOrgFilter->getResearchGroupsIdArray());
         }
 
         $query = $qb->getQuery();
@@ -311,8 +313,9 @@ class TreeController extends EntityController
     /**
      * Gets the Researcher nodes whose last name starts with a letter.
      *
-     * @param Request $request The request object.
-     * @param string  $letter  The letter for which to return Researchers whose last name starts with.
+     * @param Request          $request          The request object.
+     * @param string           $letter           The letter for which to return Researchers whose last name starts with.
+     * @param FundingOrgFilter $fundingOrgFilter The funding organization filter utility.
      *
      * @Operation(
      *     tags={"Tree"},
@@ -366,8 +369,8 @@ class TreeController extends EntityController
         if ($fundingOrgFilter->isActive()) {
             $qb->innerJoin('person.personResearchGroups', 'prg');
             $qb->innerJoin('prg.researchGroup', 'rg');
-            $qb->andWhere('rg.id IN (:fos)');
-            $qb->setParameter('fos', $fundingOrgFilter->getResearchGroupsIdArray());
+            $qb->andWhere('rg.id IN (:rgs)');
+            $qb->setParameter('rgs', $fundingOrgFilter->getResearchGroupsIdArray());
         }
 
         $query = $qb->getQuery();
