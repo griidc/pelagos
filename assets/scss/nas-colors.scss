@@ -1,0 +1,76 @@
+@import '~bootstrap/scss/functions';
+
+// Brand Colors;
+$boston: #3a85b3;
+$blueBird: #043751;
+$tan: #f1efe8;
+$iguana: #73af7a;
+$forest: #1d7b5c;
+$garnet: #a93344;
+$gold: #dcaf27;
+
+$sciences: #ab840d;
+$engineering: #005991;
+$medicine: #1d7b5c;
+
+$white: #fff;
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #043751;
+$gray-700: #495057;
+$gray-800: #343a40;
+$gray-900: #212529;
+$black: #000;
+
+$theme-colors: (
+    primary: $boston,
+    secondary: $blueBird,
+    success: $forest,
+    info: $iguana,
+    warning: $gold,
+    danger: $garnet,
+    light: $gray-100,
+    dark: $gray-800,
+    header: $tan
+);
+
+$colors: (
+    blue: $boston,
+    indigo: $blueBird,
+    red: $garnet,
+    tan: $tan,
+    yellow: $gold,
+    green: $forest,
+    black: $black,
+    white: $white,
+    gray: $gray-600,
+    gray-dark: $gray-800
+);
+
+$grays: (
+    100: $gray-100,
+    200: $gray-200,
+    300: $gray-300,
+    400: $gray-400,
+    500: $gray-500,
+    600: $gray-600,
+    700: $gray-700,
+    800: $gray-800,
+    900: $gray-900
+);
+
+$theme-color-interval: 8%;
+
+$font-family-sans-serif: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+$font-family-base: $font-family-sans-serif;
+
+$navbar-light-color: $black;
+
+$navbar-light-active-color: $black;
+
+$navbar-light-hover-color: theme-color('primary');
+
+$dropdown-link-hover-color: theme-color('primary');
