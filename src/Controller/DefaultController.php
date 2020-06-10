@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Account;
+use App\Entity\ResearchGroup;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -15,6 +17,29 @@ use App\Entity\Dataset;
  */
 class DefaultController extends AbstractController
 {
+
+    /**
+     * The index action.
+     *
+     * @Route("/", name="pelagos_nas_homepage", condition="'%custom_template%' matches '/nas-grp-base/'")
+     *
+     * @return Response A Response instance.
+     */
+    public function nasIndex()
+    {
+        $researchGroups = array();
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+                $researchGroups = $this->container->get('doctrine')->getRepository(ResearchGroup::class)->findAll();
+            } elseif ($this->tokenStorage->getToken()->getUser() instanceof Account) {
+                $researchGroups = $this->tokenStorage->getToken()->getUser()->getPerson()->getResearchGroups();
+            }
+        }
+        return $this->render('Default/nas-grp-index.html.twig', array(
+            'researchGroups' => $researchGroups,
+        ));
+    }
+
     /**
      * The index action.
      *
