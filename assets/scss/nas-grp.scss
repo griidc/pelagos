@@ -84,6 +84,15 @@
   --atlassion-button-bg:var(--color-blue--boston);
 }
 
+/* Menu bar style */
+
+.main_menu {
+  .navbar {
+      .navbar-nav a {
+        font-size: .85rem;
+      }
+  }
+}
 /* Menu bar style  */
 
 .global-nav-before {
@@ -95,10 +104,6 @@
   background-image: linear-gradient(90deg, $boston 0,
           $boston 35%, $engineering 64%,
           $medicine 81%, $gold);
-}
-
-img {
-  max-width: 100%;
 }
 
 .login-bar {
@@ -139,25 +144,9 @@ img {
 }
 
 .login-info-box {
-  position: absolute;
   top: 0;
   right: 0;
-  display: flex;
-  font-family: $font-family-base;
-  font-weight: 600;
-  text-transform: uppercase;
   color: theme-color('secondary');
-}
-
-.header-dev{
-  text-align: center;
-  color: color('black');
-  top: 0;
-  left: 0;
-  right: 0;
-  width: auto;
-  height: 20px;
-  position: sticky;
 }
 
 #main-wrapper {
@@ -171,14 +160,33 @@ img {
     padding: 15px 0;
   }
 
+  .main_menu .navbar .main-menu-item .navbar-nav {
+    margin-left: 0%;
+    background-color: var(--color-white);
+  }
+
+  .main_menu .navbar .main-menu-item .navbar-nav a {
+    padding: 10px 22px;
+    margin-bottom: 2px;
+  }
+
   .login-info-box {
-    font-size: 0.75rem;
+      font-size: 0.75rem;
   }
 
   .login-bar {
     flex-wrap: wrap;
   }
- 
+
+  .navbar-collapse {
+    z-index: 9999 !important;
+    position: absolute;
+    left: 0;
+    top: 70px;
+    width: 100%;
+    box-shadow: 0 7px 11px 0 rgba(0, 0, 0, 0.2);
+  }
+
   .collapsing {
     -webkit-transition: none;
     transition: none;
@@ -186,11 +194,11 @@ img {
   }
 }
 
-@media only screen and (min-width: 992px) and (max-width: 1200px) {
- 
-}
-
 @media only screen and (min-width: 0px) and (max-width: 991px) {
+  .navbar-brand {
+    max-width: 150px;
+  }
+
   .login-bar {
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -216,11 +224,12 @@ img {
 }
 
 @media only screen and (min-width: 992px) {
-  header.bootstrap {
+  .main_menu {
     .nav-link {
-      padding: 0 1rem;
+      padding: 0 1rem !important;
     }
     .dropdown-menu {
+      left: -20% !important;
       float: left !important;
     }
   }
