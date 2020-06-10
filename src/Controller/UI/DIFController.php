@@ -40,9 +40,7 @@ class DIFController extends AbstractController
         $form = $formFactory->createNamed(null, DIFType::class, $dif);
 
         $researchGroupIds = array();
-        if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER') and !$fundingOrgFilter->isActive()) {
-            $researchGroupIds = $fundingOrgFilter->getResearchGroupsIdArray();
-        } elseif ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER') and $fundingOrgFilter->isActive()) {
+        if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             $researchGroupIds = array('*');
         } elseif ($this->getUser() instanceof Account) {
             $researchGroups = $this->getUser()->getPerson()->getResearchGroups();
@@ -53,9 +51,10 @@ class DIFController extends AbstractController
                 $researchGroups
             );
         }
+
         if ($fundingOrgFilter->isActive()) {
             $filterResearchGroupsIds = $fundingOrgFilter->getResearchGroupsIdArray();
-            $researchGroupIds = array_intersect_key($researchGroupIds, $filterResearchGroupsIds);
+            $researchGroupIds = array_intersect($researchGroupIds, $filterResearchGroupsIds);
         }
 
         if (0 === count($researchGroupIds)) {
