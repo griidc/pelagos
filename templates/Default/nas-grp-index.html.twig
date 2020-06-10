@@ -1,8 +1,8 @@
 {% extends "base.html.twig" %}
+
 {% block stylesheets %}
     {{ parent() }}
     <link href="{{ asset('build/css/nas-home.css') }}" rel="stylesheet" />
-
 {% endblock %}
 
 {% block body %}
@@ -19,7 +19,6 @@
                         quam molestias corporis quod, ea minima accusamus.</p>
                 </div>
             </div>
-
 
             {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') or is_granted('ROLE_RESEARCH_GROUP_DATA') %}
                 <div class="p-3 mx-auto">
@@ -107,5 +106,4 @@
             </div>
         </footer>
     </div>
-
 {% endblock %}
