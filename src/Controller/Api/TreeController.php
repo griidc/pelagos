@@ -21,6 +21,7 @@ use App\Entity\ResearchGroup;
 use App\Entity\Person;
 
 use App\Util\DatasetIndex;
+use App\Util\FundingOrgFilter;
 
 /**
  * The Tree API controller.
@@ -82,8 +83,9 @@ class TreeController extends EntityController
     /**
      * Gets the Funding Organization and Funding Cycle nodes.
      *
-     * @param Request      $request      The request object.
-     * @param DatasetIndex $datasetIndex Dataset index object.
+     * @param Request          $request          The request object.
+     * @param DatasetIndex     $datasetIndex     Dataset index object.
+     * @param FundingOrgFilter $fundingOrgFilter The funding organization filter utility.
      *
      * @Operation(
      *     tags={"Tree"},
@@ -115,7 +117,7 @@ class TreeController extends EntityController
      *
      * @return string
      */
-    public function getFundingOrganizationsAction(Request $request, DatasetIndex $datasetIndex)
+    public function getFundingOrganizationsAction(Request $request, DatasetIndex $datasetIndex, FundingOrgFilter $fundingOrgFilter)
     {
         $tree = $this->buildTreeConfig($request);
         $filter = false;
@@ -140,6 +142,11 @@ class TreeController extends EntityController
             }
             $criteria['id'] = array_keys($fundingOrganizations);
         }
+
+        if ($fundingOrgFilter->isActive()) {
+            $criteria['id'] = $fundingOrgFilter->getFilterIdArray();
+        }
+
         return $this->render(
             'Api/Tree/research_awards.json.twig',
             array(
@@ -232,7 +239,8 @@ class TreeController extends EntityController
     /**
      * Gets the Researcher letter nodes.
      *
-     * @param Request $request The request object.
+     * @param Request          $request          The request object.
+     * @param FundingOrgFilter $fundingOrgFilter The funding organization filter utility.
      *
      * @Operation(
      *     tags={"Tree"},
@@ -264,7 +272,7 @@ class TreeController extends EntityController
      *
      * @return string
      */
-    public function getLettersAction(Request $request)
+    public function getLettersAction(Request $request, FundingOrgFilter $fundingOrgFilter)
     {
         $this->doctrineOrmEntityManager
             ->getConfiguration()
@@ -278,11 +286,19 @@ class TreeController extends EntityController
 
         $firstLetterLastName = $qb->expr()->upper($qb->expr()->substring('person.lastName', 1, 1));
 
-        $query = $qb
+        $qb
             ->select($firstLetterLastName)
             ->distinct()
-            ->orderBy($firstLetterLastName)
-            ->getQuery();
+            ->orderBy($firstLetterLastName);
+
+        if ($fundingOrgFilter->isActive()) {
+            $qb->innerJoin('person.personResearchGroups', 'prg');
+            $qb->innerJoin('prg.researchGroup', 'rg');
+            $qb->where('rg.id IN (:rgs)');
+            $qb->setParameter('rgs', $fundingOrgFilter->getResearchGroupsIdArray());
+        }
+
+        $query = $qb->getQuery();
         $letters = $query->getResult('COLUMN_HYDRATOR');
 
         return $this->render(
@@ -297,8 +313,9 @@ class TreeController extends EntityController
     /**
      * Gets the Researcher nodes whose last name starts with a letter.
      *
-     * @param Request $request The request object.
-     * @param string  $letter  The letter for which to return Researchers whose last name starts with.
+     * @param Request          $request          The request object.
+     * @param string           $letter           The letter for which to return Researchers whose last name starts with.
+     * @param FundingOrgFilter $fundingOrgFilter The funding organization filter utility.
      *
      * @Operation(
      *     tags={"Tree"},
@@ -330,13 +347,13 @@ class TreeController extends EntityController
      *
      * @return string
      */
-    public function getPeopleAction(Request $request, string $letter)
+    public function getPeopleAction(Request $request, string $letter, FundingOrgFilter $fundingOrgFilter)
     {
         $qb = $this->doctrineOrmEntityManager
             ->getRepository(Person::class)
             ->createQueryBuilder('person');
 
-        $query = $qb
+        $qb
             ->select('person')
             ->where(
                 $qb->expr()->eq(
@@ -347,8 +364,16 @@ class TreeController extends EntityController
             )
             ->orderBy('person.lastName')
             ->addOrderBy('person.firstName')
-            ->setParameter('letter', "$letter")
-            ->getQuery();
+            ->setParameter('letter', "$letter");
+
+        if ($fundingOrgFilter->isActive()) {
+            $qb->innerJoin('person.personResearchGroups', 'prg');
+            $qb->innerJoin('prg.researchGroup', 'rg');
+            $qb->andWhere('rg.id IN (:rgs)');
+            $qb->setParameter('rgs', $fundingOrgFilter->getResearchGroupsIdArray());
+        }
+
+        $query = $qb->getQuery();
         $people = $query->getResult(Query::HYDRATE_ARRAY);
 
         return $this->render(
