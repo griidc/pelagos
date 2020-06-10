@@ -5,7 +5,7 @@ fos_elastica:
     indexes:
         pelagos:
             client: default
-            index_name: "%env(PELAGOS_NAME)%"
+            index_name: "%env(DISCOVERY_INDEX)%"
             types:
                 dataset:
                     properties:
