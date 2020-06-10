@@ -1,5 +1,8 @@
 @import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
 
+@import 'nas-colors.scss';
+@import 'bootstrap.scss';
+
 :root {
   --color-blue--geyser:#dce4e8;
   --color-blue--bali-hai:#869eaa;
@@ -84,64 +87,14 @@
 /* Menu bar style */
 
 .main_menu {
-  left: 0;
-  top: 0;
-  width: 100%;
-  border-bottom: 1px solid var(--color-darkGrey);
-
-  &:after {
-    position: absolute;
-    right: 0;
-    top: 0;
-    content: "";
-    width: 100%;
-    height: 100%;
-    background-color: var(--color-white);
-    z-index: -1;
-    opacity: .9;
-  }
-
   .navbar {
-    .navbar-toggler {
-      border: 0 solid transparent;
-    }
-
-    .main-menu-item {
-      justify-content: flex-end;
-
       .navbar-nav a {
-        color: var(--color-black);
-        text-transform: uppercase;
         font-size: .85rem;
-        font-weight: var(--lato--bold);
-
-        &:hover {
-          color: var(--color-blue--boston);
-        }
       }
-    }
   }
 }
 
-.dropdown {
-  .dropdown-menu {
-    left: -20% !important;
-    background-color: var(--color-froth-white);
-    border-top: 6px solid transparent;
-    border-left: none;
-    border-right: 6px solid;
-    border-bottom: 6px solid transparent;
-    overflow: hidden;
-    transform-origin: top center;
-    margin-top: -1px;
-    padding: 0 !important;
-
-    .dropdown-item {
-      padding: 8px 20px !important;
-      background-color: var(--color-white);
-    }
-  }
-}
+/* Menu bar style  */
 
 .global-nav-before {
   content: "";
@@ -149,20 +102,16 @@
   right: 0;
   left: 0;
   height: .6rem;
-  background-image: linear-gradient(90deg, var(--color-blue--boston) 0,
-          var(--color-blue--boston) 35%, var(--color-society--engineering) 64%,
-          var(--color-society--medicine) 81%, var(--color-yellow--gold));
-}
-
-img {
-  max-width: 100%;
+  background-image: linear-gradient(90deg, $boston 0,
+          $boston 35%, $engineering 64%,
+          $medicine 81%, $gold);
 }
 
 .login-bar {
   position: relative;
   margin: 0;
   padding: 2px 10px 8px;
-  background-color: var(--color-headerTop);
+  background-color: theme-color('header');
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -173,12 +122,12 @@ img {
   display: flex;
   flex-direction: row;
   & button {
-    color: var(--color-white);
+    color: color('white');
     border-style: solid;
     border-top-color: initial;
-    border-right-color: var(--atlassion-button-main);
-    border-bottom-color: var(--atlassion-button-main);
-    border-left-color: var(--atlassion-button-main);
+    border-right-color: theme-color('secondary');
+    border-bottom-color: theme-color('secondary');
+    border-left-color: theme-color('secondary');
     font-size: 9pt;
     font-family: sans-serif;
     font-weight: normal;
@@ -186,7 +135,7 @@ img {
     border-width: 0px 1px 1px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     border-radius: 0 0 5px 5px;
-    background-color: var(--atlassion-button-bg);
+    background-color: theme-color('primary');
     cursor: pointer;
     border-top-width: 0;
     position: relative!important;
@@ -196,25 +145,9 @@ img {
 }
 
 .login-info-box {
-  position: absolute;
   top: 0;
   right: 0;
-  display: flex;
-  font-family: var(--main-fonts);
-  font-weight: 600;
-  text-transform: uppercase;
-  color: var(--color-main);
-}
-
-.header-dev{
-  text-align: center;
-  color: var(--color-black);
-  top: 0;
-  left: 0;
-  right: 0;
-  width: auto;
-  height: 20px;
-  position: sticky;
+  color: theme-color('secondary');
 }
 
 #main-wrapper {
@@ -235,12 +168,11 @@ img {
 
   .main_menu .navbar .main-menu-item .navbar-nav a {
     padding: 10px 22px;
-    color: var(--color-neutral--charcoal);
     margin-bottom: 2px;
   }
 
   .login-info-box {
-    font-size: 0.75rem;
+      font-size: 0.75rem;
   }
 
   .login-bar {
@@ -255,6 +187,7 @@ img {
     width: 100%;
     box-shadow: 0 7px 11px 0 rgba(0, 0, 0, 0.2);
   }
+
   .collapsing {
     -webkit-transition: none;
     transition: none;
@@ -262,34 +195,9 @@ img {
   }
 }
 
-@media only screen and (min-width: 992px) and (max-width: 1200px) {
-  .dropdown {
-    .dropdown-menu {
-      left: -20% !important;
-    }
-  }
-}
-
 @media only screen and (min-width: 0px) and (max-width: 991px) {
   .navbar-brand {
     max-width: 150px;
-  }
-
-  .dropdown-menu {
-    border: 0px solid rgba(0, 0, 0, 0.15) !important;
-    background-color: var(--color-white);
-  }
-
-  .dropdown {
-    .dropdown-menu {
-      display: none;
-      margin-top: 0px;
-      text-align: center;
-
-      .dropdown-item {
-        padding: 10px 15px;
-      }
-    }
   }
 
   .login-bar {
@@ -317,11 +225,12 @@ img {
 }
 
 @media only screen and (min-width: 992px) {
-  header.bootstrap {
+  .main_menu {
     .nav-link {
-      padding: 0 1rem;
+      padding: 0 1rem !important;
     }
     .dropdown-menu {
+      left: -20% !important;
       float: left !important;
     }
   }

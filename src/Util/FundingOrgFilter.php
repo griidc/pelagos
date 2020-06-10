@@ -37,18 +37,6 @@ class FundingOrgFilter
     ) {
         $this->entityManager = $entityManager;
 
-        $this->shortNamesToIdArray($fundingOrgs);
-    }
-
-     /**
-     * Set array of FOs to filter by.
-     *
-     * @param array $fundingOrgs List of Funding Organizations Short Names.
-     *
-     * @return void
-     */
-    private function shortNamesToIdArray(array $fundingOrgs)
-    {
         $this->fundingOrganizations = $this->entityManager
             ->getRepository(FundingOrganization::class)
             ->findBy(array('shortName' => $fundingOrgs));
