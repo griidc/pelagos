@@ -26,6 +26,7 @@ use App\Entity\Account;
 use App\Entity\DIF;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
+use App\Util\FundingOrgFilter;
 
 /**
  * A form for creating a DIF.
@@ -54,20 +55,30 @@ class DIFType extends AbstractType
     protected $tokenStorage;
 
     /**
+     * Utility to filter by funding organization.
+     *
+     * @var FundingOrgFilter
+     */
+    private $fundingOrgFilter;
+
+    /**
      * Constructor.
      *
      * @param EntityManagerInterface        $entityManager        The entity manager to use.
      * @param AuthorizationCheckerInterface $authorizationChecker The authorization checker to use.
      * @param TokenStorageInterface         $tokenStorage         The token storage to use.
+     * @param FundingOrgFilter              $fundingOrgFilter     Utility to filter by funding organization.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         AuthorizationCheckerInterface $authorizationChecker,
-        TokenStorageInterface $tokenStorage
+        TokenStorageInterface $tokenStorage,
+        FundingOrgFilter $fundingOrgFilter
     ) {
         $this->entityManager = $entityManager;
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenStorage = $tokenStorage;
+        $this->fundingOrgFilter = $fundingOrgFilter;
     }
 
     /**
@@ -283,6 +294,17 @@ class DIFType extends AbstractType
             $researchGroups = $this->entityManager->getRepository(ResearchGroup::class)->findAll();
         } elseif ($this->tokenStorage->getToken()->getUser() instanceof Account) {
             $researchGroups = $this->tokenStorage->getToken()->getUser()->getPerson()->getResearchGroups();
+        }
+
+        if ($this->fundingOrgFilter->isActive()) {
+            $filterResearchGroupsIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
+            $researchGroupsFiltered = array();
+            foreach ($researchGroups as $researchGroup) {
+                if (in_array($researchGroup->getId(), $filterResearchGroupsIds)) {
+                    $researchGroupsFiltered[] = $researchGroup;
+                }
+            }
+            $researchGroups = $researchGroupsFiltered;
         }
 
         $event->getForm()->add('researchGroup', EntityType::class, array(
