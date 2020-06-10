@@ -62,7 +62,7 @@ class Search
      * Elastic index mapping for dataset DOI.
      */
     const ELASTIC_INDEX_MAPPING_DOI = 'doi.doi';
-    
+
     /**
      * Elastic index mapping for udi.
      */
@@ -155,7 +155,7 @@ class Search
         $mainQuery->addAggregation($this->getStatusAggregationQuery($requestTerms));
         $mainQuery->setQuery($subMainQuery);
         $mainQuery->setFrom(($page - 1) * 10);
-        
+
         return $mainQuery;
     }
 
@@ -338,6 +338,13 @@ class Search
                 )
             ],
         ];
+
+        // Remove any element with a count of 0.
+        foreach ($statusInfo as $key => $value) {
+            if (0 === $statusInfo[$key]['count']) {
+                unset($statusInfo[$key]);
+            }
+        }
 
         //Sorting based on highest count
         array_multisort(array_column($statusInfo, 'count'), SORT_DESC, $statusInfo);
