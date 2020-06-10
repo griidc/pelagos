@@ -50,12 +50,13 @@ class DIFController extends AbstractController
                 },
                 $researchGroups
             );
+
+            if ($fundingOrgFilter->isActive()) {
+                $filterResearchGroupsIds = $fundingOrgFilter->getResearchGroupsIdArray();
+                $researchGroupIds = array_intersect($researchGroupIds, $filterResearchGroupsIds);
+            }
         }
 
-        if ($fundingOrgFilter->isActive()) {
-            $filterResearchGroupsIds = $fundingOrgFilter->getResearchGroupsIdArray();
-            $researchGroupIds = array_intersect($researchGroupIds, $filterResearchGroupsIds);
-        }
 
         if (0 === count($researchGroupIds)) {
             $researchGroupIds = array('!*');
