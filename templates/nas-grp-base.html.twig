@@ -38,7 +38,7 @@
 {% block htmlbody %}
 
 {% if isMaintenanceMode() %}
-    <div class="header-dev sticky-top" style="background-color:{{ getMaintenanceModeColor() }}">
+    <div class="bootstrap sticky-top w-auto text-center" style="background-color:{{ getMaintenanceModeColor() }}; text-align: center">
         {{ getMaintenanceModeText()}}.
     </div>
     <div id="siteBannerFooterBanner" class="toolbar clearfix toolbar-processed overlay-displace-top" style="background-color:{{ getMaintenanceModeColor() }}">
@@ -56,18 +56,19 @@
             Suggest Improvement
         </button>
     </div>
-    <div class="login-info-box">
-        {% if is_granted('ROLE_USER') %}
-            <a style="text-decoration: underline;">
-                Logged in as: {{ app.user.username }}
-            </a>
-             &nbsp; | &nbsp;
-            <a href="{{ path('security_logout') }}" style="text-decoration: underline; color: inherit">  Log out</a>
-        {% else %}
-            <a href="{{ path('security_login', {destination: app.request.uri}) }}" style="text-decoration: underline; color: inherit">Log in </a>
-        {% endif %}
+    <div class="bootstrap">
+        <div class="login-info-box font-weight-bold text-uppercase position-absolute d-flex">
+            {% if is_granted('ROLE_USER') %}
+                <a style="text-decoration: underline;">
+                    Logged in as: {{ app.user.username }}
+                </a>
+                &nbsp; | &nbsp;
+                <a href="{{ path('security_logout') }}" style="text-decoration: underline; color: inherit">  Log out</a>
+            {% else %}
+                <a href="{{ path('security_login', {destination: app.request.uri}) }}" style="text-decoration: underline; color: inherit">Log in </a>
+            {% endif %}
+        </div>
     </div>
-
 </div>
 
 <!--::Navigation Menu::-->
