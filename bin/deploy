@@ -7,6 +7,15 @@ PELAGOS)
     echo 'Setting Encore PublicPath to PELAGOS'
     export publicpath="--publicpath /pelagos-symfony/build"
     ;;
+NAS)
+    echo 'Setting Encore PublicPath to NAS'
+    export publicpath="--publicpath /build"
+    ;;
+*)
+    echo 'Please specify a Build Environment!'
+    echo 'Options: [PELAGOS, NAS]'
+    exit;
+    ;;
 esac
 
 # Stop RabbitMQ consumers
