@@ -1,5 +1,14 @@
 #/bin/sh
 
+args=("$@")
+
+case ${args[0]} in
+PELAGOS)
+    echo 'Setting Encore PublicPath to PELAGOS'
+    export publicpath="--publicpath /pelagos-symfony/build"
+    ;;
+esac
+
 # Stop RabbitMQ consumers
 bin/console rabbitmq-supervisor:control stop --wait-for-supervisord
 
@@ -8,7 +17,7 @@ composer install --no-dev --optimize-autoloader
 
 # Handle Yarn
 yarn install
-yarn run encore prod
+yarn run encore prod $publicpath
 
 # Dump ENV into compiled format
 composer dump-env prod
