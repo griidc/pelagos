@@ -42,10 +42,21 @@ class DatasetRepository extends ServiceEntityRepository
      */
     public function countRegistered()
     {
-        return $this->createQueryBuilder('dataset')
+        $qb = $this->createQueryBuilder('dataset')
             ->select('COUNT(dataset)')
             ->where('dataset.datasetSubmissionStatus = :datasetSubmissionStatus')
-            ->setParameter('datasetSubmissionStatus', DatasetSubmission::STATUS_COMPLETE)
+            ->setParameter('datasetSubmissionStatus', DatasetSubmission::STATUS_COMPLETE);
+            
+        if ($this->fundingOrgFilter->isActive()) {
+            $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
+
+            $qb
+            ->innerJoin('dataset.researchGroup', 'rg')
+            ->andWhere('rg.id IN (:rgs)')
+            ->setParameter('rgs', $researchGroupIds);
+        }
+            
+        return $qb
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -57,11 +68,22 @@ class DatasetRepository extends ServiceEntityRepository
      */
     public function totalDatasetSize() : int
     {
-        return $this->createQueryBuilder('dataset')
+        $qb = $this->createQueryBuilder('dataset')
             ->select('SUM(COALESCE(datasetSubmission.datasetFileColdStorageArchiveSize,datasetSubmission.datasetFileSize))')
             ->join('dataset.datasetSubmission', 'datasetSubmission')
             ->where('dataset.datasetSubmissionStatus = :datasetSubmissionStatus')
-            ->setParameter('datasetSubmissionStatus', DatasetSubmission::STATUS_COMPLETE)
+            ->setParameter('datasetSubmissionStatus', DatasetSubmission::STATUS_COMPLETE);
+        
+        if ($this->fundingOrgFilter->isActive()) {
+            $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
+
+            $qb
+            ->innerJoin('dataset.researchGroup', 'rg')
+            ->andWhere('rg.id IN (:rgs)')
+            ->setParameter('rgs', $researchGroupIds);
+        }
+        
+        return $qb
             ->getQuery()
             ->getSingleScalarResult();
     }

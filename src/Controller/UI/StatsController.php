@@ -73,36 +73,20 @@ class StatsController extends AbstractController
      */
     private function getStatistics(?int &$totalDatasets, ?string &$totalSize, ?int &$peopleCount, ?int &$researchGroupCount) : void
     {
-        // Recreate a Query Builder for the Person Repository.
-        $queryBuilder = $this->entityManager
-            ->getRepository(Person::class)
-            ->createQueryBuilder('person');
-
         // Get the people count.
-        $peopleCount = $queryBuilder
-            ->select($queryBuilder->expr()->count('person.id'))
-            ->where(
-                $queryBuilder->expr()->gt(
-                    'person.id',
-                    $queryBuilder->expr()->literal(0)
-                )
-            )
-            ->getQuery()->getSingleScalarResult();
-
-        // Recreate a Query Builder for the Research Group Repository
-        $queryBuilder = $this->entityManager
-            ->getRepository(ResearchGroup::class)
-            ->createQueryBuilder('researchGroup');
+        $peopleCount = $this->entityManager
+            ->getRepository(Person::class)
+            ->countPeople();
 
         // Get the research group count.
-        $researchGroupCount = $queryBuilder
-            ->select($queryBuilder->expr()->count('researchGroup.id'))
-            ->getQuery()->getSingleScalarResult();
+        $researchGroupCount = $this->entityManager
+            ->getRepository(ResearchGroup::class)
+            ->countResearchGroups();
 
-        $datasets = $this->entityManager->getRepository(Dataset::class);
+        $datasetRespository = $this->entityManager->getRepository(Dataset::class);
 
-        $totalDatasets = $datasets->countRegistered();
-        $totalSize = $datasets->totalDatasetSize();
+        $totalDatasets = $datasetRespository->countRegistered();
+        $totalSize = $datasetRespository->totalDatasetSize();
     }
 
     /**
@@ -137,52 +121,13 @@ class StatsController extends AbstractController
      */
     public function getDatasetOverTimeAction()
     {
-
-        $queryBuilder = $this->entityManager
+        $registeredDatasets = $this->entityManager
             ->getRepository(DatasetSubmission::class)
-            ->createQueryBuilder('datasetSubmission');
+            ->getRegisteredDatasets();
 
-
-        $query = $queryBuilder
-            ->select('datasetSubmission.creationTimeStamp')
-            ->where('datasetSubmission.id IN (
-                        SELECT MIN(subDatasetSubmission.id)
-                        FROM ' . DatasetSubmission::class . ' subDatasetSubmission
-                        WHERE subDatasetSubmission.datasetFileUri is not null
-                        GROUP BY subDatasetSubmission.dataset
-                    )')
-            ->orderBy('datasetSubmission.creationTimeStamp')
-            ->getQuery();
-
-        $registeredDatasets = $query->getResult(Query::HYDRATE_ARRAY);
-
-        $query = $queryBuilder
-            ->select('datasetSubmission.creationTimeStamp')
-            ->where('datasetSubmission.id IN (
-                SELECT MIN(subDatasetSubmission.id)
-                FROM ' . DatasetSubmission::class . ' subDatasetSubmission
-                WHERE subDatasetSubmission.datasetFileUri is not null
-                AND subDatasetSubmission.datasetStatus = :metadatastatus
-                AND subDatasetSubmission.restrictions = :restrictedstatus
-                AND (
-                    subDatasetSubmission.datasetFileTransferStatus = :transerstatuscompleted
-                    OR subDatasetSubmission.datasetFileTransferStatus = :transerstatusremotelyhosted
-                )
-                GROUP BY subDatasetSubmission.dataset
-            )')
-            ->setParameters(
-                array(
-                    'metadatastatus' => Dataset::DATASET_STATUS_ACCEPTED,
-                    'restrictedstatus' => DatasetSubmission::RESTRICTION_NONE,
-                    'transerstatuscompleted' => DatasetSubmission::TRANSFER_STATUS_COMPLETED,
-                    'transerstatusremotelyhosted' => DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED,
-                )
-            )
-            ->orderBy('datasetSubmission.creationTimeStamp')
-        ->getQuery();
-
-
-        $availableDatasets = $query->getResult(Query::HYDRATE_ARRAY);
+        $availableDatasets = $this->entityManager
+            ->getRepository(DatasetSubmission::class)
+            ->getAvailableDatasets();
 
         $registered = array();
         foreach ($registeredDatasets as $index => $value) {
