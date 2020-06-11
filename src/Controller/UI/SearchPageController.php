@@ -65,13 +65,7 @@ class SearchPageController extends AbstractController
         $buildQuery = $searchUtil->buildQuery($requestParams);
         $resultsBeforeHydration = $searchUtil->findDatasets($buildQuery);
         foreach ($resultsBeforeHydration as $result) {
-            $resultData = $result->getResult()->getData();
-            $resultData['uri'] = $this->generateUrl(
-                'pelagos_app_ui_dataland_default',
-                ['udi' => $resultData['udi']],
-                UrlGeneratorInterface::ABSOLUTE_URL
-            );
-            array_push($results, $resultData);
+            array_push($results, $result->getResult()->getData());
         }
         $count = $searchUtil->getCount($buildQuery);
         $researchGroupsInfo = $searchUtil->getResearchGroupAggregations($buildQuery);
