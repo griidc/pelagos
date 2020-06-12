@@ -53,6 +53,4 @@ class ResearchGroupRepository extends ServiceEntityRepository
         
         return $queryBuilder->getQuery()->getSingleScalarResult();
     }
-    
-    
 }

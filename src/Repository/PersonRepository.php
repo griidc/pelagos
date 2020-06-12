@@ -61,6 +61,4 @@ class PersonRepository extends ServiceEntityRepository
         
         return $queryBuilder->getQuery()->getSingleScalarResult();
     }
-    
-    
 }

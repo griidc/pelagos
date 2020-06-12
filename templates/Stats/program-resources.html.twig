@@ -14,7 +14,7 @@
                         </td>
                         <td>
                             <img src="{{ asset('build/images/icon-filesize.png') }}">
-                            <div class="count">{{totalsize|formatBytes(1)|number_format(1)|default}}</div>
+                            <div class="count">{{totalsize|formatBytes(1, "TB")|number_format(1)|default}}</div>
                             <div class="label">TB Of Data</div>
                         </td>
                         <td>
