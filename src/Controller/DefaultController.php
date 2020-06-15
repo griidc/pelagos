@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Account;
 use App\Entity\ResearchGroup;
+use App\Util\FundingOrgFilter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -21,20 +22,20 @@ class DefaultController extends AbstractController
     /**
      * The index action.
      *
+     * @param FundingOrgFilter $fundingOrgFilter The funding organization filter utility.
+     *
      * @Route("/", name="pelagos_nas_homepage", condition="'%custom_template%' matches '/nas-grp-base/'")
      *
      * @return Response A Response instance.
      */
-    public function nasIndex()
+    public function nasIndex(FundingOrgFilter $fundingOrgFilter)
     {
         $researchGroups = array();
-        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            if ($this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-                $researchGroups = $this->container->get('doctrine')->getRepository(ResearchGroup::class)->findAll();
-            } elseif ($this->tokenStorage->getToken()->getUser() instanceof Account) {
-                $researchGroups = $this->tokenStorage->getToken()->getUser()->getPerson()->getResearchGroups();
-            }
+
+        if ($fundingOrgFilter->isActive()) {
+            $researchGroups = $this->get('doctrine')->getRepository(ResearchGroup::class)->findBy(array('id' => $fundingOrgFilter->getResearchGroupsIdArray() ));
         }
+
         return $this->render('Default/nas-grp-index.html.twig', array(
             'researchGroups' => $researchGroups,
         ));
