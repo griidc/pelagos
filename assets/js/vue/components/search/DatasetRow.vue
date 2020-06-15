@@ -51,7 +51,7 @@
         methods: {
             openUrl: function(url) {
                 if ("" === window.getSelection().toString()) {
-                    window.open(url, '_blank');
+                    window.open('/data/' + this.datasetRowData.udi, '_blank');
                 }
             }
         }
