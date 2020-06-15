@@ -15,7 +15,6 @@
                         v-model="currentPage"
                         :total-rows="rows"
                         :per-page="perPage"
-                        aria-controls="my-table"
                         class="bg justify-content-center">
                 </b-pagination>
                 <div class="row">
@@ -36,7 +35,6 @@
                 v-model="currentPage"
                 :total-rows="rows"
                 :per-page="perPage"
-                aria-controls="my-table"
                 class="bg justify-content-center"
                 style="margin-bottom: 100px;">
         </b-pagination>
