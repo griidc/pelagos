@@ -11,6 +11,13 @@
         </section>
         <section class="section-content bg padding-y">
             <div class="container">
+                <b-pagination
+                        v-model="currentPage"
+                        :total-rows="rows"
+                        :per-page="perPage"
+                        aria-controls="my-table"
+                        class="bg justify-content-center">
+                </b-pagination>
                 <div class="row">
                     <aside class="col-lg-3">
                         <div class="card card-filter">
