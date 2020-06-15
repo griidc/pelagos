@@ -128,6 +128,7 @@ class Search
         $page = ($requestTerms['page']) ? $requestTerms['page'] : 1;
         $queryTerm = $requestTerms['query'];
         $specificField = $requestTerms['field'];
+        $perPage = $requestTerms['perPage'];
         $collectionDateRange = array();
         if ($requestTerms['collectionStartDate'] and $requestTerms['collectionEndDate']) {
             $collectionDateRange = array(
@@ -155,6 +156,7 @@ class Search
         $mainQuery->addAggregation($this->getStatusAggregationQuery($requestTerms));
         $mainQuery->setQuery($subMainQuery);
         $mainQuery->setFrom(($page - 1) * 10);
+        $mainQuery->setSize($perPage);
 
         return $mainQuery;
     }

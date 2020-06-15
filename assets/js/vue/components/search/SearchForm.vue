@@ -206,7 +206,8 @@
                 collectionEndDate: '',
                 status: '',
                 fundingOrg: '',
-                researchGroup: ''
+                researchGroup: '',
+                perPage: 10
         }
     }
 </script>

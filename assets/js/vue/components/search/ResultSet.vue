@@ -28,7 +28,7 @@
         <b-pagination
                 v-model="currentPage"
                 :total-rows="rows"
-                :per-page="perPage"
+                :per-page="formValues.perPage"
                 aria-controls="my-table"
                 class="bg justify-content-center"
                 style="margin-bottom: 100px;">
@@ -72,7 +72,6 @@
                     researchGroup: ''
                 },
                 currentPage: 1,
-                perPage: 10,
             }
         },
         computed: {
