@@ -1,6 +1,6 @@
 <template>
     <div v-if="results.count > 0">
-        <section class="section-content bg pt-5">
+        <section class="section-content bg pt-3">
             <div class="container">
                 <div class="row d-flex flex-row justify-content-center">
                     <h3>
@@ -25,7 +25,7 @@
                             <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="researchGroup" v-on="$listeners" :formValues="formValues"/>
                         </div>
                     </aside>
-                    <main class="col-lg-9 overflow-auto pt-5">
+                    <main class="col-lg-9 overflow-auto">
                         <DatasetRow :datasetRowData="resultRow" v-for="resultRow in results.resultData" v-bind:key="resultRow.udi"/>
                     </main>
                 </div>
