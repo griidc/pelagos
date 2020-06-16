@@ -12,19 +12,20 @@
         <section class="section-content bg padding-y">
             <div class="container">
                 <div class="row d-flex flex-row justify-content-between">
-                    <div></div>
+                    <div class="empty-div"></div>
                     <b-pagination
                             v-model="currentPage"
                             :total-rows="rows"
-                            :per-page="perPage"
-                            class="bg justify-content-center pl-5">
+                            :per-page="formValues.perPage"
+                            class="bg justify-content-center pl-5 ml-5">
                     </b-pagination>
-                    <b-dropdown size="sm" text="Per Page" class="mx-2 mb-2 pr-2 pb-2" variant="white">
-                        <b-dropdown-item-button active>10</b-dropdown-item-button>
-                        <b-dropdown-item-button>25</b-dropdown-item-button>
-                        <b-dropdown-item-button>50</b-dropdown-item-button>
-                        <b-dropdown-item-button>100</b-dropdown-item-button>
-                    </b-dropdown>
+                    <div class="form-inline mx-2 mb-2 pr-2 pb-2">
+                        <label for="perPageResults" class="pr-2">Per Page: </label>
+                        <b-form-select
+                                name="perPageResults"
+                                v-model="perPage"
+                                :options="perPageOptions"></b-form-select>
+                    </div>
                 </div>
 
                 <div class="row">
@@ -87,6 +88,13 @@
                     researchGroup: ''
                 },
                 currentPage: 1,
+                perPage: this.formValues.perPage,
+                perPageOptions: [
+                    { value: 10, text: '10' },
+                    { value: 25, text: '25' },
+                    { value: 50, text: '50' },
+                    { value: 100, text: '100' }
+                ]
             }
         },
         computed: {
@@ -97,8 +105,11 @@
         watch: {
             currentPage: function (value) {
                 this.$emit('pagination', value);
+            },
+            perPage: function (value) {
+                this.$emit('noOfResults', value);
             }
-        }
+        },
     }
 </script>
 

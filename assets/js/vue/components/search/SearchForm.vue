@@ -68,7 +68,13 @@
                 </div>
             </div>
         </section>
-        <ResultSet v-if="showResults" :results="resultSet" @facetClicked="facetCheckBoxValues" @pagination="changePageNo" :formValues="form"/>
+        <ResultSet
+                v-if="showResults"
+                :results="resultSet"
+                @facetClicked="facetCheckBoxValues"
+                @pagination="changePageNo"
+                @noOfResults="changeNoOfResults"
+                :formValues="form"/>
         <section class="section-content pt-3 bg" v-else>
             <div class="container">
                 <article class="card">
@@ -164,6 +170,10 @@
             },
             changePageNo: function (newPageNo) {
                 this.form.page = newPageNo;
+                this.onSubmit();
+            },
+            changeNoOfResults: function (noOfResults) {
+                this.form.perPage = noOfResults;
                 this.onSubmit();
             },
             detectHashChange: function () {
