@@ -2,10 +2,10 @@
     <b-card class="card-product" @click="openUrl(url)">
             <div>
                 <span class="badge badge-secondary" v-if="datasetRowData.availabilityStatus === 0">Identified</span>
-                <span class="badge badge-primary" v-else-if="datasetRowData.availabilityStatus === 2 || datasetRowData.availabilityStatus === 4">Submitted</span>
-                <span class="badge badge-danger" v-else-if="datasetRowData.availabilityStatus === 5 || datasetRowData.availabilityStatus === 8">Restricted</span>
-                <span class="badge badge-success" v-else-if="datasetRowData.availabilityStatus === 7 || datasetRowData.availabilityStatus === 10">Available</span>
-                <span class="badge badge-warning" v-if="datasetRowData.availabilityStatus === 7">Remotely Hosted</span>
+                <span class="badge badge-submitted" v-else-if="datasetRowData.availabilityStatus === 2 || datasetRowData.availabilityStatus === 4">Submitted</span>
+                <span class="badge badge-restricted" v-else-if="datasetRowData.availabilityStatus === 5 || datasetRowData.availabilityStatus === 8">Restricted</span>
+                <span class="badge badge-available" v-else-if="datasetRowData.availabilityStatus === 7 || datasetRowData.availabilityStatus === 10">Available</span>
+                <span class="badge badge-remotlyhosted" v-if="datasetRowData.availabilityStatus === 7">Remotely Hosted</span>
             </div>
             <b-card-title style="font-size: 1.3rem !important;">{{ datasetRowData.title }}</b-card-title>
             <b-card-text class="d-flex justify-content-between" >
