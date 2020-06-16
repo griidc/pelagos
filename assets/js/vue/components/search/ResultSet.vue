@@ -1,6 +1,6 @@
 <template>
     <div v-if="results.count > 0">
-        <section class="section-content bg pt-5">
+        <section class="section-content bg pt-3">
             <div class="container">
                 <div class="row d-flex flex-row justify-content-center">
                     <h3>
@@ -11,6 +11,12 @@
         </section>
         <section class="section-content bg padding-y">
             <div class="container">
+                <b-pagination
+                        v-model="currentPage"
+                        :total-rows="rows"
+                        :per-page="perPage"
+                        class="bg justify-content-center">
+                </b-pagination>
                 <div class="row">
                     <aside class="col-lg-3">
                         <div class="card card-filter">
@@ -19,7 +25,7 @@
                             <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="researchGroup" v-on="$listeners" :formValues="formValues"/>
                         </div>
                     </aside>
-                    <main class="col-lg-9 overflow-auto pt-5">
+                    <main class="col-lg-9 overflow-auto">
                         <DatasetRow :datasetRowData="resultRow" v-for="resultRow in results.resultData" v-bind:key="resultRow.udi"/>
                     </main>
                 </div>
@@ -29,7 +35,6 @@
                 v-model="currentPage"
                 :total-rows="rows"
                 :per-page="perPage"
-                aria-controls="my-table"
                 class="bg justify-content-center"
                 style="margin-bottom: 100px;">
         </b-pagination>
