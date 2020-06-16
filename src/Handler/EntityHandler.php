@@ -17,8 +17,10 @@ use Doctrine\Common\Collections\Collection;
 
 use App\Entity\Entity;
 use App\Entity\Account;
+use App\Entity\Dataset;
 use App\Entity\Password;
 use App\Entity\Person;
+use App\Entity\ResearchGroup;
 
 use App\Event\EntityEventDispatcher;
 
@@ -26,6 +28,7 @@ use App\Exception\UnmappedPropertyException;
 
 use App\Security\Voter\PelagosEntityVoter;
 use App\Security\EntityProperty;
+use App\Util\FundingOrgFilter;
 
 /**
  * A handler for entities.
@@ -71,23 +74,33 @@ class EntityHandler
     );
 
     /**
+     * Utility to filter by funding organization.
+     *
+     * @var FundingOrgFilter
+     */
+    private $fundingOrgFilter;
+
+    /**
      * Constructor for EntityHandler.
      *
      * @param EntityManagerInterface        $entityManager         The entity manager to use.
      * @param TokenStorageInterface         $tokenStorage          The token storage to use.
      * @param AuthorizationCheckerInterface $authorizationChecker  The authorization checker to use.
      * @param EntityEventDispatcher         $entityEventDispatcher The entity event dispatcher.
+     * @param FundingOrgFilter              $fundingOrgFilter      Utility to filter by funding organization.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         TokenStorageInterface $tokenStorage,
         AuthorizationCheckerInterface $authorizationChecker,
-        EntityEventDispatcher $entityEventDispatcher
+        EntityEventDispatcher $entityEventDispatcher,
+        FundingOrgFilter $fundingOrgFilter
     ) {
         $this->entityManager = $entityManager;
         $this->tokenStorage = $tokenStorage;
         $this->authorizationChecker = $authorizationChecker;
         $this->entityEventDispatcher = $entityEventDispatcher;
+        $this->fundingOrgFilter = $fundingOrgFilter;
     }
 
     /**
@@ -165,12 +178,35 @@ class EntityHandler
         foreach ($joins as $entityProperty => $alias) {
             $qb->leftJoin($entityProperty, $alias);
         }
+        // Filter by Funding Organization is needed.
+        $this->filterByFundingOrganization($qb, $entityClass);
         // Eliminate duplicates.
         $qb->distinct();
         // Get the query.
         $query = $qb->getQuery();
         // Return the result using the requested hydrator.
         return $query->getResult($hydrator);
+    }
+
+    private function filterByFundingOrganization(QueryBuilder $qb, string $entityClass)
+    {
+        if (!$this->fundingOrgFilter->isActive()) {
+            return;
+        }
+
+        $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
+
+        switch ($entityClass) {
+            case ResearchGroup::class:
+                $qb->andWhere('e.id IN (:rgs)');
+                $qb->setParameter('rgs', $researchGroupIds);
+                break;
+            case Dataset::class:
+                $qb->innerJoin('e.researchGroup', 'rg');
+                $qb->andWhere('rg.id IN (:rgs)');
+                $qb->setParameter('rgs', $researchGroupIds);
+                break;
+        }
     }
 
     /**

@@ -37,6 +37,7 @@
         "query-string": "^6.8.1",
         "v-tooltip": "^2.0.3",
         "vex-js": "^4.1.0",
-        "vue-loading-overlay": "^3.3.0"
+        "vue-loading-overlay": "^3.3.0",
+        "yargs": "^15.3.1"
     }
 }

@@ -18,11 +18,6 @@
                 datasetsRetrievedInfo: []
             }
         },
-        methods: {
-            getDatalandRoute: function (udi) {
-                return Routing.generate("pelagos_app_ui_dataland_default", {'udi' : udi });
-            }
-        }
     }
 </script>
 
