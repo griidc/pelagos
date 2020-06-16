@@ -42,10 +42,21 @@ class DatasetRepository extends ServiceEntityRepository
      */
     public function countRegistered()
     {
-        return $this->createQueryBuilder('dataset')
+        $qb = $this->createQueryBuilder('dataset')
             ->select('COUNT(dataset)')
             ->where('dataset.datasetSubmissionStatus = :datasetSubmissionStatus')
-            ->setParameter('datasetSubmissionStatus', DatasetSubmission::STATUS_COMPLETE)
+            ->setParameter('datasetSubmissionStatus', DatasetSubmission::STATUS_COMPLETE);
+
+        if ($this->fundingOrgFilter->isActive()) {
+            $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
+
+            $qb
+            ->innerJoin('dataset.researchGroup', 'rg')
+            ->andWhere('rg.id IN (:rgs)')
+            ->setParameter('rgs', $researchGroupIds);
+        }
+
+        return $qb
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -57,11 +68,22 @@ class DatasetRepository extends ServiceEntityRepository
      */
     public function totalDatasetSize() : int
     {
-        return $this->createQueryBuilder('dataset')
+        $qb = $this->createQueryBuilder('dataset')
             ->select('SUM(COALESCE(datasetSubmission.datasetFileColdStorageArchiveSize,datasetSubmission.datasetFileSize))')
             ->join('dataset.datasetSubmission', 'datasetSubmission')
             ->where('dataset.datasetSubmissionStatus = :datasetSubmissionStatus')
-            ->setParameter('datasetSubmissionStatus', DatasetSubmission::STATUS_COMPLETE)
+            ->setParameter('datasetSubmissionStatus', DatasetSubmission::STATUS_COMPLETE);
+
+        if ($this->fundingOrgFilter->isActive()) {
+            $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
+
+            $qb
+            ->innerJoin('dataset.researchGroup', 'rg')
+            ->andWhere('rg.id IN (:rgs)')
+            ->setParameter('rgs', $researchGroupIds);
+        }
+
+        return $qb
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -183,5 +205,41 @@ class DatasetRepository extends ServiceEntityRepository
         $qb->orderBy($alias . '.id');
 
         return $qb;
+    }
+
+    /**
+     * Return number of dataset in specified range.
+     *
+     * @param int|null $lower The lower limit or null.
+     * @param int|null $upper The upper limit.
+     *
+     * @return integer
+     */
+    public function getDatasetByFileSizeRange(int $lower = null, int $upper = null)
+    {
+        $qb = $this->createQueryBuilder('dataset');
+        $qb->select('count(dataset.id)');
+        $qb->join('dataset.datasetSubmission', 'ds');
+
+        if (!empty($lower)) {
+            $qb->andWhere('COALESCE(ds.datasetFileColdStorageArchiveSize, ds.datasetFileSize) > :lower');
+            $qb->setParameter('lower', $lower);
+        }
+        if (!empty($upper)) {
+            $qb->andWhere('COALESCE(ds.datasetFileColdStorageArchiveSize, ds.datasetFileSize) <= :upper');
+            $qb->setParameter('upper', $upper);
+        }
+
+        if ($this->fundingOrgFilter->isActive()) {
+            $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
+
+            $qb
+            ->innerJoin('dataset.researchGroup', 'rg')
+            ->andWhere('rg.id IN (:rgs)')
+            ->setParameter('rgs', $researchGroupIds);
+        }
+
+        $query = $qb->getQuery();
+        return $query->getSingleScalarResult();
     }
 }
