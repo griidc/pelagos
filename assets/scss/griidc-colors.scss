@@ -21,6 +21,8 @@ $darkGrey: #252525;
 $olive-drab: #6E7645;
 $red-brown: #6E3219;
 
+$boston: #3a85b3;
+
 $error: #8c2e0b;
 
 // Default Colors
@@ -50,7 +52,7 @@ $gradientStart: #022f3a;
 $gradientEnd: #4f6e74;
 
 $theme-colors: (
-    "primary":    #3a85b3,
+    "primary":    $boston,
     "secondary":  $lightBlue,
     "header":     $teal,
 );
