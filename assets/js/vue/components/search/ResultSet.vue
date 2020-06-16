@@ -11,12 +11,22 @@
         </section>
         <section class="section-content bg padding-y">
             <div class="container">
-                <b-pagination
-                        v-model="currentPage"
-                        :total-rows="rows"
-                        :per-page="perPage"
-                        class="bg justify-content-center">
-                </b-pagination>
+                <div class="row d-flex flex-row justify-content-between">
+                    <div></div>
+                    <b-pagination
+                            v-model="currentPage"
+                            :total-rows="rows"
+                            :per-page="perPage"
+                            class="bg justify-content-center pl-5">
+                    </b-pagination>
+                    <b-dropdown size="sm" text="Per Page" class="mx-2 mb-2 pr-2 pb-2" variant="white">
+                        <b-dropdown-item-button active>10</b-dropdown-item-button>
+                        <b-dropdown-item-button>25</b-dropdown-item-button>
+                        <b-dropdown-item-button>50</b-dropdown-item-button>
+                        <b-dropdown-item-button>100</b-dropdown-item-button>
+                    </b-dropdown>
+                </div>
+
                 <div class="row">
                     <aside class="col-lg-3">
                         <div class="card card-filter">
