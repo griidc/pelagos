@@ -13,6 +13,7 @@ use App\Form\DIFType;
 
 use App\Entity\Account;
 use App\Entity\DIF;
+use App\Util\FundingOrgFilter;
 
 /**
  * The DIF controller for the Pelagos UI App Bundle.
@@ -22,15 +23,16 @@ class DIFController extends AbstractController
     /**
      * The default action for the DIF.
      *
-     * @param Request              $request     The Symfony request object.
-     * @param FormFactoryInterface $formFactory The form factory.
-     * @param string|null          $id          The id of the DIF to load.
+     * @param Request              $request          The Symfony request object.
+     * @param FormFactoryInterface $formFactory      The form factory.
+     * @param string|null          $id               The id of the DIF to load.
+     * @param FundingOrgFilter     $fundingOrgFilter Utility to filter by funding organization.
      *
      * @Route("/dif/{id}", name="pelagos_app_ui_dif_default")
      *
      * @return Response A Response instance.
      */
-    public function index(Request $request, FormFactoryInterface $formFactory, $id = null)
+    public function index(Request $request, FormFactoryInterface $formFactory, FundingOrgFilter $fundingOrgFilter, $id = null)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
@@ -48,7 +50,14 @@ class DIFController extends AbstractController
                 },
                 $researchGroups
             );
+
+            if ($fundingOrgFilter->isActive()) {
+                $filterResearchGroupsIds = $fundingOrgFilter->getResearchGroupsIdArray();
+                $researchGroupIds = array_intersect($researchGroupIds, $filterResearchGroupsIds);
+            }
         }
+
+
         if (0 === count($researchGroupIds)) {
             $researchGroupIds = array('!*');
         }

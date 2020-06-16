@@ -3,12 +3,26 @@
         <b-card-text>
             <b-card class="card-product" no-body v-for="person in personResearchGroups" v-bind:key="person.id">
                 <b-card-body>
-                    <p>
-                        <strong>{{ person.person.firstName + " " + person.person.lastName }}</strong> <br> <br>
-                        {{ person.label }} <br>
-                        {{ person.person.organization }} <br>
-                        {{ person.person.emailAddress }} <br>
-                    </p>
+                    <div>
+                        <p>
+                            <strong>{{ person.person.firstName + " " + person.person.lastName }}</strong> <br> <br>
+                        </p>
+                    </div>
+                    <div>
+                        {{ person.label }}
+                    </div>
+                    <div class="text-truncate org-name-width"
+                         v-tooltip="{
+                                    content: person.person.organization,
+                                    placement:'top'
+                                    }"
+                    >
+                        {{ person.person.organization }}
+                    </div>
+                    <div>
+                        {{ person.person.emailAddress }}
+                    </div>
+
                 </b-card-body>
             </b-card>
         </b-card-text>
@@ -28,5 +42,12 @@
     .card-columns {
         column-gap: 1rem !important;
         column-count: 2 !important;
+        .card {
+            height: 200px;
+        }
+    }
+
+    .org-name-width {
+        max-width: 250px;
     }
 </style>

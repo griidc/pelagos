@@ -31,6 +31,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  *     jira_ticket - probably belongs in Dataset entity?
  *
  * @ORM\Entity
+ *
+ * @ORM\Entity(repositoryClass="App\Repository\DatasetSubmissionRepository")
  */
 class DatasetSubmission extends Entity
 {

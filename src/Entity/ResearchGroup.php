@@ -22,6 +22,8 @@ use App\Exception\NotDeletableException;
  *
  * @ORM\Entity
  *
+ * @ORM\Entity(repositoryClass="App\Repository\ResearchGroupRepository")
+ *
  * @Assert\GroupSequence({
  *     "id",
  *     "unique_id",

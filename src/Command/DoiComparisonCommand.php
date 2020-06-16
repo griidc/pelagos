@@ -4,6 +4,7 @@ namespace App\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -108,7 +109,12 @@ class DoiComparisonCommand extends Command
      */
     protected function configure()
     {
-        $this->setDescription('DOI comparison tool.');
+        $this->setDescription('DOI comparison tool.')
+            ->addArgument(
+                'emailRecipientList',
+                InputArgument::IS_ARRAY | InputArgument::REQUIRED,
+                'Email recipient list for Doi comparison report'
+            );
     }
 
     /**
@@ -121,6 +127,7 @@ class DoiComparisonCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $emailRecipientList = $input->getArgument('emailRecipientList');
         $response = null;
         $doiJson = array();
         $doiData = array();
@@ -157,7 +164,7 @@ class DoiComparisonCommand extends Command
             }
         }
 
-        $this->syncConditions($doiData);
+        $this->syncConditions($doiData, $emailRecipientList);
     }
 
     /**
@@ -220,11 +227,12 @@ class DoiComparisonCommand extends Command
     /**
      * Checks sync conditions for Dois.
      *
-     * @param array $doiData Dois metadata from Datacite.
+     * @param array $doiData            Dois metadata from Datacite.
+     * @param array $emailRecipientList Email recipient list for DOI comparison report.
      *
      * @return void
      */
-    private function syncConditions(array $doiData): void
+    private function syncConditions(array $doiData, array $emailRecipientList): void
     {
         foreach ($doiData as $doi) {
             if ($doi['udi']) {
@@ -241,12 +249,11 @@ class DoiComparisonCommand extends Command
                 $this->compareFields($doi);
             }
         }
-
         if (!empty($this->outOfSyncDoi)) {
             $this->mailer->sendEmailMessage(
                 $this->twig->load('Email/data-repository-managers.out-of-sync-doi.email.twig'),
                 array('dois' => $this->outOfSyncDoi),
-                array('griidc@gomri.org' => 'GRIIDC')
+                $emailRecipientList
             );
         }
     }

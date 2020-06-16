@@ -9,6 +9,7 @@ parameters:
     router.request_context.host: "%env(HOSTNAME)%"
     router.request_context.scheme: "https"
     router.request_context.base_url: '%env(REQUEST_CONTEXT_BASE_URL)%'
+    custom_template: '%env(CUSTOM_BASE_TEMPLATE)%'
 
 services:
     # default configuration for services in *this* file
@@ -211,3 +212,7 @@ services:
     App\Util\MailerLoggerUtil:
         tags:
             - { name: "swiftmailer.default.plugin" }
+            
+    App\Util\FundingOrgFilter:
+        bind:
+            array $fundingOrgs: "%env(json:FILTER_BY_FUNDING_ORG)%"
