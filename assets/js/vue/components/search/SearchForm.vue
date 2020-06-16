@@ -57,7 +57,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-3 button-toolbar">
-                                <button id="searchSubmit" type="submit" class="btn btn-primary search-button">Search
+                                <button id="searchSubmit" type="submit" class="btn btn-alternate search-button">Search
                                     <i class="fa fa-search pl-2"></i></button>
                                 <button type="reset" id="search-clear" class="btn btn-dark clear-button">Clear</button>
                                 <div class="mt-3 pt-3 empty-button-div"></div>
