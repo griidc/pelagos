@@ -35,7 +35,7 @@ class ResearchGroupRepository extends ServiceEntityRepository
     }
     
     /**
-     * Count the number of people.
+     * Count the number of Reseach Groups.
      *
      * @return integer
      */
