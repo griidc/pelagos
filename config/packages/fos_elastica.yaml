@@ -124,6 +124,11 @@ fos_elastica:
                                     type: 'text'
                         identifiedStatus:
                             type: 'integer'
+                        publications:
+                            type: 'nested'
+                            properties:
+                                doi:
+                                    type: 'text'
                     persistence:
                         driver: orm
                         model: App\Entity\Dataset

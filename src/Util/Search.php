@@ -68,6 +68,11 @@ class Search
      */
     const ELASTIC_INDEX_MAPPING_UDI = 'udi';
 
+    /**
+     * Elastic index mapping for publication dois.
+     */
+    const ELASTIC_INDEX_MAPPING_PUB_DOI = 'publications.doi';
+
     const AVAILABILITY_STATUSES = array(
         1 => [DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE],
         2 => [DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION, DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL],
@@ -625,6 +630,7 @@ class Search
             trim(preg_replace($doiRegEx, '', $queryTerm));
             $queryTerm = $matches[1][0];
             $fieldsBoolQuery->addShould($this->getDoiQuery($queryTerm));
+            $fieldsBoolQuery->addShould($this->getPubDoiQuery($queryTerm));
         }
         return $queryTerm;
     }
@@ -646,6 +652,23 @@ class Search
         $doiNestedQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_DOI, 4);
         $doiQuery->setQuery($doiNestedQuery);
         return $doiQuery;
+    }
+
+    /**
+     * Get the Publication doi query.
+     *
+     * @param string $queryTerm Query term that needs to be searched upon.
+     *
+     * @return Query\Nested
+     */
+    private function getPubDoiQuery(string $queryTerm): Query\Nested
+    {
+        $pubDoiNestedQuery = new Query\Nested();
+        $pubDoiNestedQuery->setPath('publications');
+        $pubDoiQuery = new Query\MatchPhrase();
+        $pubDoiQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_PUB_DOI, $queryTerm);
+        $pubDoiNestedQuery->setQuery($pubDoiQuery);
+        return $pubDoiNestedQuery;
     }
 
     /**
