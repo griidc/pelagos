@@ -89,6 +89,13 @@
             </gmd:otherConstraints>
         </gmd:MD_LegalConstraints>
     </gmd:resourceConstraints>
+    {% for publication in dataset.publications %}
+        {% include "MetadataGenerator/AggregationInfo.xml.twig" with
+            {
+                "publication" : publication,
+            }
+        %}
+    {% endfor %}
     <gmd:language>
         <gco:CharacterString>eng; USA</gco:CharacterString>
     </gmd:language>
