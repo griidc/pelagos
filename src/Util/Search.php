@@ -113,7 +113,7 @@ class Search
      */
     public function getCount(Query $query): int
     {
-        return $this->getPaginator($query)->getNbResults();
+        return $this->finder->createPaginatorAdapter($query)->getTotalHits(true);
     }
 
     /**
@@ -128,6 +128,7 @@ class Search
         $page = ($requestTerms['page']) ? $requestTerms['page'] : 1;
         $queryTerm = $requestTerms['query'];
         $specificField = $requestTerms['field'];
+        $perPage = $requestTerms['perPage'];
         $collectionDateRange = array();
         if ($requestTerms['collectionStartDate'] and $requestTerms['collectionEndDate']) {
             $collectionDateRange = array(
@@ -155,6 +156,7 @@ class Search
         $mainQuery->addAggregation($this->getStatusAggregationQuery($requestTerms));
         $mainQuery->setQuery($subMainQuery);
         $mainQuery->setFrom(($page - 1) * 10);
+        $mainQuery->setSize($perPage);
 
         return $mainQuery;
     }
@@ -216,7 +218,8 @@ class Search
         }
 
         //Sorting based on highest count
-        array_multisort(array_column($researchGroupsInfo, 'count'), SORT_DESC, $researchGroupsInfo);
+        $array_column = array_column($researchGroupsInfo, 'count');
+        array_multisort($array_column, SORT_DESC, $researchGroupsInfo);
 
         return $researchGroupsInfo;
     }
@@ -265,7 +268,8 @@ class Search
             );
         }
         //Sorting based on highest count
-        array_multisort(array_column($fundingOrgInfo, 'count'), SORT_DESC, $fundingOrgInfo);
+        $array_column = array_column($fundingOrgInfo, 'count');
+        array_multisort($array_column, SORT_DESC, $fundingOrgInfo);
 
         return $fundingOrgInfo;
     }
@@ -347,7 +351,8 @@ class Search
         }
 
         //Sorting based on highest count
-        array_multisort(array_column($statusInfo, 'count'), SORT_DESC, $statusInfo);
+        $array_column = array_column($statusInfo, 'count');
+        array_multisort($array_column, SORT_DESC, $statusInfo);
 
         return $statusInfo;
     }
