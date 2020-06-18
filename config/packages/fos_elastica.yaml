@@ -127,6 +127,11 @@ fos_elastica:
                         coldStorage:
                             property_path: false
                             type: 'boolean'
+                        publications:
+                            type: 'nested'
+                            properties:
+                                doi:
+                                    type: 'text'
                     persistence:
                         driver: orm
                         model: App\Entity\Dataset
