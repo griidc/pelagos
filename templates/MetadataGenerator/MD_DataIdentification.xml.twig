@@ -21,7 +21,7 @@
                 <gmd:identifier>
                     <gmd:MD_Identifier>
                         <gmd:code>
-                            <gmx:Anchor xlink:href="https://dx.doi.org/{{dataset.doi}}" xlink:title="DOI" xlink:actuate="onRequest">
+                            <gmx:Anchor xlink:href="https://dx.doi.org/{{dataset.doi.doi}}" xlink:title="DOI" xlink:actuate="onRequest">
                                 {{dataset.doi}}
                             </gmx:Anchor>
                         </gmd:code>
@@ -89,6 +89,13 @@
             </gmd:otherConstraints>
         </gmd:MD_LegalConstraints>
     </gmd:resourceConstraints>
+    {% for publication in dataset.publications %}
+        {% include "MetadataGenerator/AggregationInfo.xml.twig" with
+            {
+                "publication" : publication,
+            }
+        %}
+    {% endfor %}
     <gmd:language>
         <gco:CharacterString>eng; USA</gco:CharacterString>
     </gmd:language>
