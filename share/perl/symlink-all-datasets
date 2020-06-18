@@ -1,4 +1,12 @@
 #!/usr/bin/perl -w
+# Usage Notes:
+# This is intended to be scheduled via cron, and run as the pelagos user
+# Cron Example: (all datasets)
+# 30 6    * * sat,sun,mon    pelagos /opt/griidc/share/perl/symlink-all-datasets/symlink-all-datasets /san/home/DRPM-DSREV
+# Cron Example: (filter by RG name, in this case, C-IMAGE)
+# #00 * * * * pelagos /opt/griidc/util/symlink-all-datasets/symlink-all-datasets ~jdoe/download/ "researchGroup.name=*(C-IMAGE*"
+# Cron Example: (filter by RG ID)
+# 06 * * * * pelagos /opt/griidc/util/symlink-all-datasets/symlink-all-datasets ~jdoe/download/ researchGroup.id=260
 
 use strict;
 use Config::IniFiles;
