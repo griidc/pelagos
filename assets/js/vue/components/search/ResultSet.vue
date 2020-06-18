@@ -41,27 +41,25 @@
                     </main>
                 </div>
             </div>
-        </section>
-
-        <div class="container">
-            <div class="row d-flex flex-row justify-content-between" style="margin-bottom: 100px;">
-                <div class="empty-div"></div>
-                <b-pagination
-                        v-model="currentPage"
-                        :total-rows="rows"
-                        :per-page="formValues.perPage"
-                        class="bg justify-content-center pl-5 ml-5">
-                </b-pagination>
-                <div class="form-inline mx-2 mb-2 pr-2 pb-2">
-                    <label for="perPageResults" class="pr-2">Per Page: </label>
-                    <b-form-select
-                            name="perPageResults"
-                            v-model="perPage"
-                            :options="perPageOptions"></b-form-select>
+            <div class="container">
+                <div class="row d-flex flex-row justify-content-between" style="margin-bottom: 100px;">
+                    <div class="empty-div"></div>
+                    <b-pagination
+                            v-model="currentPage"
+                            :total-rows="rows"
+                            :per-page="formValues.perPage"
+                            class="bg justify-content-center pl-5 ml-5">
+                    </b-pagination>
+                    <div class="form-inline mx-2 mb-2 pr-2 pb-2">
+                        <label for="perPageResults" class="pr-2">Per Page: </label>
+                        <b-form-select
+                                name="perPageResults"
+                                v-model="perPage"
+                                :options="perPageOptions"></b-form-select>
+                    </div>
                 </div>
             </div>
-        </div>
-
+        </section>
     </div>
     <div v-else>
         <section class="section-content bg pt-5" >
