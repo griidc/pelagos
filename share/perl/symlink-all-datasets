@@ -59,17 +59,6 @@ foreach my $dataset (@$datasets) {
                                         details => [ "mkdir $dest/$dataset->{udi}" ] };
                     }
                 }
-                # determine file system type where UDI directory resides
-                my $fstype = `stat -f -L -c %T $dest/$dataset->{udi}`;
-                chomp($fstype);
-                if ($fstype eq 'nfs') {
-                    # Give Apache write access via nfs facls
-                    system("nfs4_setfacl -a A::apache\@tamucc.edu:rwaDxtcy $dest/$dataset->{udi}");
-                }
-                else {
-                    # Give Apache write access via standard facls
-                    system("setfacl -m u:apache:rwx $dest/$dataset->{udi}");
-                }
                 my $linkname = "$dest/$dataset->{udi}/$dataset->{datasetSubmission}->{datasetFileName}";
                 # create symlink unless it already exists
                 unless (-e $linkname) {
