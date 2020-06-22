@@ -112,11 +112,8 @@
             filteredFacets: function () {
                 if (this.facetName === 'researchGroup') {
                     return this.facetInfo.filter(facetItem => {
-                        if (facetItem.shortName) {
-                            return facetItem.shortName.toLowerCase().indexOf(this.researchGroupSearch.toLowerCase()) > -1;
-                        } else {
-                            return facetItem.name.toLowerCase().indexOf(this.researchGroupSearch.toLowerCase()) > -1;
-                        }
+                        const facetItemName = facetItem.shortName + facetItem.name;
+                        return facetItemName.toLowerCase().indexOf(this.researchGroupSearch.toLowerCase()) > -1;
                     })
                 } else {
                     return this.facetInfo;
