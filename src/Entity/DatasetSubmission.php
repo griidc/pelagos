@@ -38,6 +38,8 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *     collectionOperations={"get"},
  *     itemOperations={"get"}
  * )
+ *
+ * @ORM\Entity(repositoryClass="App\Repository\DatasetSubmissionRepository")
  */
 class DatasetSubmission extends Entity
 {

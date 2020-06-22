@@ -5,7 +5,7 @@ fos_elastica:
     indexes:
         pelagos:
             client: default
-            index_name: "%env(PELAGOS_NAME)%"
+            index_name: "%env(DISCOVERY_INDEX)%"
             types:
                 dataset:
                     properties:
@@ -124,6 +124,14 @@ fos_elastica:
                                     type: 'text'
                         identifiedStatus:
                             type: 'integer'
+                        coldStorage:
+                            property_path: false
+                            type: 'boolean'
+                        publications:
+                            type: 'nested'
+                            properties:
+                                doi:
+                                    type: 'text'
                     persistence:
                         driver: orm
                         model: App\Entity\Dataset

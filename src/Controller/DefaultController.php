@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Account;
+use App\Entity\ResearchGroup;
+use App\Util\FundingOrgFilter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -15,6 +18,29 @@ use App\Entity\Dataset;
  */
 class DefaultController extends AbstractController
 {
+
+    /**
+     * The index action.
+     *
+     * @param FundingOrgFilter $fundingOrgFilter The funding organization filter utility.
+     *
+     * @Route("/", name="pelagos_nas_homepage", condition="'%custom_template%' matches '/nas-grp-base/'")
+     *
+     * @return Response A Response instance.
+     */
+    public function nasIndex(FundingOrgFilter $fundingOrgFilter)
+    {
+        $researchGroups = array();
+
+        if ($fundingOrgFilter->isActive()) {
+            $researchGroups = $this->get('doctrine')->getRepository(ResearchGroup::class)->findBy(array('id' => $fundingOrgFilter->getResearchGroupsIdArray() ));
+        }
+
+        return $this->render('Default/nas-grp-index.html.twig', array(
+            'researchGroups' => $researchGroups,
+        ));
+    }
+
     /**
      * The index action.
      *

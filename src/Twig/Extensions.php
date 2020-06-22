@@ -303,7 +303,7 @@ class Extensions extends AbstractExtension
      *
      * @return string
      */
-    public static function formatBytes($bytes, int $precision = 2) : string
+    public static function formatBytes($bytes, int $precision = 2, $unit = null) : string
     {
         if (empty($bytes)) {
             $bytes = 0;
@@ -311,7 +311,9 @@ class Extensions extends AbstractExtension
         $units = array('B','KB','MB','GB','TB');
         for ($e = (count($units) - 1); $e > 0; $e--) {
             $one = pow(1000, $e);
-            if ($bytes >= $one) {
+            if (!empty($unit) and $units[$e] == $unit) {
+                return round(($bytes / $one), $precision) . ' ' . $units[$e];
+            } elseif (empty($unit) and $bytes >= $one) {
                 return round(($bytes / $one), $precision) . ' ' . $units[$e];
             }
         }

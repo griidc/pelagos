@@ -57,18 +57,24 @@
                                 </div>
                             </div>
                             <div class="col-lg-3 button-toolbar">
-                                <button id="searchSubmit" type="submit" class="btn btn-primary search-button">Search
+                                <button id="searchSubmit" type="submit" class="btn btn-alternate search-button">Search
                                     <i class="fa fa-search pl-2"></i></button>
                                 <button type="reset" id="search-clear" class="btn btn-dark clear-button">Clear</button>
                                 <div class="mt-3 pt-3 empty-button-div"></div>
-                                <button type="button" id="map-search" class="btn map-search-button" @click="dataDiscovery()">Map Search</button>
+                                <button type="button" id="map-search" class="btn btn-dark map-search-button" @click="dataDiscovery()">Map Search</button>
                             </div>
                         </div>
                     </b-form>
                 </div>
             </div>
         </section>
-        <ResultSet v-if="showResults" :results="resultSet" @facetClicked="facetCheckBoxValues" @pagination="changePageNo" :formValues="form"/>
+        <ResultSet
+                v-if="showResults"
+                :results="resultSet"
+                @facetClicked="facetCheckBoxValues"
+                @pagination="changePageNo"
+                @noOfResults="changeNoOfResults"
+                :formValues="form"/>
         <section class="section-content pt-3 bg" v-else>
             <div class="container">
                 <article class="card">
@@ -166,6 +172,10 @@
                 this.form.page = newPageNo;
                 this.onSubmit();
             },
+            changeNoOfResults: function (noOfResults) {
+                this.form.perPage = noOfResults;
+                this.onSubmit();
+            },
             detectHashChange: function () {
                 this.route = window.location.hash;
                 this.submitted = false;
@@ -206,7 +216,8 @@
                 collectionEndDate: '',
                 status: '',
                 fundingOrg: '',
-                researchGroup: ''
+                researchGroup: '',
+                perPage: 10
         }
     }
 </script>
@@ -219,13 +230,6 @@
         border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
         background-clip: border-box;
         border: 1px solid rgba(0, 0, 0, 0.125);
-        .button-toolbar {
-            .map-search-button {
-                color: var(--color-white);
-                background-color: var(--color-headerMiddle);
-                border-color: var(--color-headerMiddle);
-            }
-        }
     }
 
     @media (max-width: 992px) {

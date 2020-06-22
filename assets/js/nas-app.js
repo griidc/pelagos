@@ -11,7 +11,6 @@ require('../css/template.css');
 require('../css/superfish.css');
 require('../css/pelagos-module.css');
 require('../css/messages.css');
-import '../scss/bootstrap.scss';
 import 'bootstrap';
 require('../scss/nas-grp.scss');
 

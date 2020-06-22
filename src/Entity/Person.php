@@ -29,6 +29,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *     itemOperations={"get"}
  * )
  *
+ * @ORM\Entity(repositoryClass="App\Repository\PersonRepository")
  *
  * @Assert\GroupSequence({
  *     "id",
