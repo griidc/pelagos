@@ -1,6 +1,5 @@
 import Vue from "vue";
 import SearchApp from "./vue/SearchApp";
-import '../scss/bootstrap.scss';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../css/search-ui.css';
 import Loading from 'vue-loading-overlay';

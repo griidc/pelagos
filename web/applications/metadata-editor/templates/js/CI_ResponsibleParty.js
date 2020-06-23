@@ -3,7 +3,7 @@ var lastdata{{instanceName}} = [];
 var forced = false;
 
 jQuery(function() {
-    if (document.getElementById("CRIP2_{{instanceName}}").value == 'Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)')
+    if (document.getElementById("CRIP2_{{instanceName}}").value == 'GRIIDC')
     { 
         forced = true;
         jQuery('#CRPF_{{instanceName}}').click();
@@ -45,7 +45,7 @@ function prefill_{{instanceName}}(what)
 {
 	if (what.checked)
 	{
-		addHiddenElement_{{instanceName}}("CRIP2_{{instanceName}}","Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)");
+		addHiddenElement_{{instanceName}}("CRIP2_{{instanceName}}","GRIIDC");
 		addHiddenElement_{{instanceName}}("CITP1_{{instanceName}}","+1-361-825-3604");
 		addHiddenElement_{{instanceName}}("CITP2_{{instanceName}}","+1-361-825-2050");
 		addHiddenElement_{{instanceName}}("CIAD1_{{instanceName}}","6300 Ocean Drive\r\nUnit 5869");

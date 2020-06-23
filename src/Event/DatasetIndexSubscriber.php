@@ -2,6 +2,7 @@
 
 namespace App\Event;
 
+use App\Twig\Extensions as TwigExtentions;
 use FOS\ElasticaBundle\Event\TransformEvent;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -82,9 +83,23 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
             if ($dataset->getAcceptedDate() instanceof \DateTime) {
                 $document->set('year', $dataset->getAcceptedDate()->format('Y'));
                 $document->set('updatedDateTime', $dataset->getAcceptedDate()->format('Ymd\THis\Z'));
+                $document->set('acceptedDate', $dataset->getAcceptedDate()->format('Y-m-d'));
             } else {
                 $document->set('year', $dataset->getDatasetSubmission()->getModificationTimeStamp()->format('Y'));
                 $document->set('updatedDateTime', $dataset->getDatasetSubmission()->getModificationTimeStamp()->format('Ymd\THis\Z'));
+            }
+            // Populate file size and format values
+            $document->set('fileSize', $dataset->getDatasetSubmission()->getDatasetFileSize());
+            if ($dataset->getDatasetSubmission()->isDatasetFileInColdStorage()) {
+                $document->set('fileSize', TwigExtentions::formatBytes($dataset->getDatasetSubmission()->getDatasetFileColdStorageArchiveSize(), 2));
+            } else {
+                $document->set('fileSize', TwigExtentions::formatBytes($dataset->getDatasetSubmission()->getDatasetFileSize(), 2));
+            }
+            $document->set('fileFormat', $dataset->getDatasetSubmission()->getDistributionFormatName());
+            if ($dataset->getDatasetSubmission()->isDatasetFileInColdStorage()) {
+                $document->set('coldStorage', true);
+            } else {
+                $document->set('coldStorage', false);
             }
         } elseif ($dataset->hasDif()) {
             $document->set('updatedDateTime', $dataset->getDif()->getModificationTimeStamp()->format('Ymd\THis\Z'));
@@ -103,8 +118,10 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
 
         if ($dataset->hasDatasetSubmission()) {
             if ($dataset->getDatasetSubmission()->getTemporalExtentBeginPosition() and $dataset->getDatasetSubmission()->getTemporalExtentEndPosition()) {
-                $document->set('collectionStartDate', $dataset->getDatasetSubmission()->getTemporalExtentBeginPosition()->format('Y-m-d'));
-                $document->set('collectionEndDate', $dataset->getDatasetSubmission()->getTemporalExtentEndPosition()->format('Y-m-d'));
+                $collectionStartDate = $dataset->getDatasetSubmission()->getTemporalExtentBeginPosition();
+                $collectionEndDate = $dataset->getDatasetSubmission()->getTemporalExtentEndPosition();
+                $document->set('collectionStartDate', $collectionStartDate->format('Y-m-d H:i:s'));
+                $document->set('collectionEndDate', $collectionEndDate->format('Y-m-d H:i:s'));
             }
         }
     }

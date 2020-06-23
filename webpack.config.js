@@ -1,4 +1,5 @@
 var Encore = require('@symfony/webpack-encore');
+var arguments = require('yargs').argv;
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -11,7 +12,7 @@ Encore
     .setOutputPath('public/build/')
 
     // public path used by the web server to access the output path
-    .setPublicPath(Encore.isProduction() ? '/pelagos-symfony/build' : '/build')
+    .setPublicPath(arguments.publicpath ? arguments.publicpath : '/build')
 
     // only needed for CDN's or sub-directory deploy
     .setManifestKeyPrefix('build/')
@@ -34,6 +35,8 @@ Encore
     .addEntry('layout', './assets/js/layout.js')
     .addEntry('downloadBox', './assets/js/downloadBox.js')
     .addEntry('search-app', './assets/js/search.js')
+    .addEntry('nas-app', './assets/js/nas-app.js')
+    .addEntry('research-group', './assets/js/research-group.js')
 
     // enables Sass/SCSS support
     .enableSassLoader()
@@ -68,6 +71,16 @@ Encore
 
     // uncomment if you're having problems with a jQuery plugin
     .autoProvidejQuery()
+
+    .copyFiles(
+        {
+            from: './assets/static',
+            to: '[path]/[name].[hash:8].[ext]',
+            includeSubdirectories: true
+        }
+    )
+
+    .enableIntegrityHashes()
 ;
 
 module.exports = Encore.getWebpackConfig();

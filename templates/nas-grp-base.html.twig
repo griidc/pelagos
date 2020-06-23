@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ google_analytics_id }}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', '{{ google_analytics_id }}', {
+            'page_path': '{{ app.request.pathinfo }}'
+        });
+    </script>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% block head %}
+        <title>GRIIDC - NAS GRP | {% block title %}Pelagos{% endblock %}</title>
+        <link rel="icon" type="image/x-icon" href="{{ asset('build/images/griidc_fav.png') }}"/>
+
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('nas-app') }}
+            <link href="//cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.css" rel="stylesheet"/>
+
+            {% if isMaintenanceMode() %}
+                <link href="{{ asset('build/css/griidc_site_banner_screen.css') }}" rel="stylesheet"/>
+            {% endif %}
+        {% endblock stylesheets %}
+    {% endblock %}
+</head>
+
+<body>
+{% block htmlbody %}
+
+{% if isMaintenanceMode() %}
+    <div class="bootstrap sticky-top w-auto text-center" style="background-color:{{ getMaintenanceModeColor() }}; text-align: center">
+        {{ getMaintenanceModeText()}}.
+    </div>
+    <div id="siteBannerFooterBanner" class="toolbar clearfix toolbar-processed overlay-displace-top" style="background-color:{{ getMaintenanceModeColor() }}">
+        {{ getMaintenanceModeText()}}.
+    </div>
+{% endif %}
+
+<!--Login and Atlassian buttons-->
+<div class="login-bar">
+    <div class="jira-buttons-box">
+        <button id="atlwdg-issue" class="atlwdg-trigger">
+            Report Issue
+        </button>
+        <button id="atlwdg-suggest" class="atlwdg-trigger">
+            Suggest Improvement
+        </button>
+    </div>
+    <div class="bootstrap">
+        <div class="login-info-box font-weight-bold text-uppercase position-absolute d-flex">
+            {% if is_granted('ROLE_USER') %}
+                <a style="text-decoration: underline;">
+                    Logged in as: {{ app.user.username }}
+                </a>
+                &nbsp; | &nbsp;
+                <a href="{{ path('security_logout') }}" style="text-decoration: underline; color: inherit">  Log out</a>
+            {% else %}
+                <a href="{{ path('security_login', {destination: app.request.uri}) }}" style="text-decoration: underline; color: inherit">Log in </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!--::Navigation Menu::-->
+    <div class="bootstrap">
+        <header class="main_menu home_menu border-bottom border-dark">
+            <div class="global-nav-before">
+            </div>
+            <div class="container global-nav">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <nav class="navbar navbar-expand-lg navbar-light">
+                            <a class="navbar-brand" href="https://www.nationalacademies.org/gulf/gulf-research-program" target="_blank">
+                                <img src="{{ asset('build/images/nas-grp-logo.png') }}" alt="logo" style="width: 233px; margin-top: 5px" class="mw-100">
+                            </a>
+                            <a class="navbar-brand" href="https://data.gulfresearchinitiative.org/" target="_blank">
+                                <img src="{{ asset('build/images/griidc-logo.png') }}" alt="logo" class="mw-100">
+                            </a>
+                            <button class="navbar-toggler border border-white" type="button" data-toggle="collapse" data-target="#navbarNav"
+                                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            {% block menu %}
+                                {% include "Menus/nas-main.html.twig" %}
+                            {% endblock menu %}
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </div>
+
+<!--::Application Content::-->
+<div class="page-pelagos-full">
+    <div class="page-wrapper">
+        <div id="page">
+            <div id="main-wrapper">
+                <div id="pelagos-container">
+                    <div id="pelagos-container-row">
+                        <div id="pelagos-container-cell">
+                            <div id="pelagos-wrapper">
+                                <div id="pelagos-wrapper-row">
+                                    <div id="pelagos-content">
+                                        <h1 style="margin: 0 auto;">{% block pagetitle %}{% endblock %}</h1>
+                                        {% block body %}{% endblock %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('nas-app') }}
+
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.hoverintent/1.9.0/jquery.hoverIntent.min.js"></script>
+
+    <script type="text/javascript"
+            src="https://griidc.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-2rfjj7/b/29/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=8b54034b"></script>
+
+    <script type="text/javascript"
+            src="https://griidc.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-2rfjj7/b/29/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=a5e3f887"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.ATL_JQ_PAGE_PROPS = {
+                "8b54034b": {
+                    "triggerFunction": function (showCollectorDialog) {
+                        $("#atlwdg-issue").click(function (e) {
+                            e.preventDefault();
+                            showCollectorDialog();
+                        });
+                    }
+                },
+                "a5e3f887": {
+                    "triggerFunction": function (showCollectorDialog) {
+                        $("#atlwdg-suggest").click(function (e) {
+                            e.preventDefault();
+                            showCollectorDialog();
+                        });
+                    }
+                },
+            };
+        });
+    </script>
+
+{% endblock %}
+{% endblock htmlbody %}
+</body>
+</html>

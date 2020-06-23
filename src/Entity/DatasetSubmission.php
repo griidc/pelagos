@@ -31,6 +31,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  *     jira_ticket - probably belongs in Dataset entity?
  *
  * @ORM\Entity
+ *
+ * @ORM\Entity(repositoryClass="App\Repository\DatasetSubmissionRepository")
  */
 class DatasetSubmission extends Entity
 {
@@ -80,7 +82,7 @@ class DatasetSubmission extends Entity
     const TRANSFER_TYPE_HTTP = 'HTTP';
 
     /**
-     * Valid values for $datasetFileTransferType and $metadataFileTransferType.
+     * Valid values for $datasetFileTransferType.
      */
     const TRANSFER_TYPES = array(
         self::TRANSFER_TYPE_UPLOAD => 'Direct Upload',
@@ -114,7 +116,7 @@ class DatasetSubmission extends Entity
     const TRANSFER_STATUS_REMOTELY_HOSTED = 'RemotelyHosted';
 
     /**
-     * Valid values for $datasetFileTransferStatus and $metadataFileTransferStatus.
+     * Valid values for $datasetFileTransferStatus.
      */
     const TRANSFER_STATUSES = array(
         self::TRANSFER_STATUS_NONE => 'Not Yet Transferred',
@@ -178,26 +180,6 @@ class DatasetSubmission extends Entity
      * The dataset is publicly available.
      */
     const AVAILABILITY_STATUS_PUBLICLY_AVAILABLE = 10;
-
-    /**
-     * Valid values for self::$referenceDateType.
-     *
-     * The array keys are the values to be set in self::referenceDateType.
-     */
-    const REFERENCE_DATE_TYPES = [
-        'creation' => [
-            'name' => 'Creation',
-            'description' => 'The date that identifies when the resource was brought into existence.'
-        ],
-        'publication' => [
-            'name' => 'Publication',
-            'description' => 'The date that identifies when the resource was issued.'
-        ],
-        'revision' => [
-            'name' => 'Revision',
-            'description' => 'The date that identifies when the resource was improved or amended.'
-        ],
-    ];
 
     /**
      * Valid values for self::$temporalExtent.
@@ -680,67 +662,6 @@ class DatasetSubmission extends Entity
     protected $datasetFileUrlStatusCode;
 
     /**
-     * The metadata file transfer type.
-     *
-     * Legacy DB column: metadata_server_type
-     *
-     * @var string
-     *
-     * @see TRANSFER_TYPES class constant for valid values.
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected $metadataFileTransferType;
-
-    /**
-     * The metadata file URI.
-     *
-     * This specifies the location of the source metadata file and can be a file, http(s), or ftp URI.
-     *
-     * Legacy DB column: url_metadata
-     *
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected $metadataFileUri;
-
-    /**
-     * The metadata file transfer status.
-     *
-     * Legacy DB column: metadata_dl_status
-     *
-     * @var string
-     *
-     * @see TRANSFER_STATUSES class constant for valid values.
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected $metadataFileTransferStatus;
-
-    /**
-     * The metadata file name.
-     *
-     * Legacy DB column: dataset_metadata
-     *
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected $metadataFileName;
-
-    /**
-     * The metadata file sha256 hash.
-     *
-     * Legacy DB column: metadata_file_hash
-     *
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected $metadataFileSha256Hash;
-
-    /**
      * Status of the dataset.
      *
      * Legacy DB column: metadata_status
@@ -752,34 +673,6 @@ class DatasetSubmission extends Entity
      * @ORM\Column(type="text", nullable=false)
      */
     protected $datasetStatus = Dataset::DATASET_STATUS_NONE;
-
-    /**
-     * The reference date for this dataset.
-     *
-     * @var \DateTime
-     *
-     * @ORM\Column(type="datetimetz", nullable=true)
-     *
-     * @Assert\NotBlank(
-     *     message="The dataset submission reference date field is required."
-     * )
-     */
-    protected $referenceDate;
-
-    /**
-     * The type of the reference date for this dataset.
-     *
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
-     *
-     * @see REFERENCE_DATE_CHOICES class constant for valid values.
-     *
-     * @Assert\NotBlank(
-     *     message="The dataset submission reference date type field is required."
-     * )
-     */
-    protected $referenceDateType;
 
     /**
      * The purpose of this dataset.
@@ -921,7 +814,7 @@ class DatasetSubmission extends Entity
      *
      * @var \DateTime
      *
-     * @ORM\Column(type="datetimetz", nullable=true)
+     * @ORM\Column(type="date", nullable=true)
      */
     protected $temporalExtentBeginPosition;
 
@@ -930,7 +823,7 @@ class DatasetSubmission extends Entity
      *
      * @var \DateTime
      *
-     * @ORM\Column(type="datetimetz", nullable=true)
+     * @ORM\Column(type="date", nullable=true)
      */
     protected $temporalExtentEndPosition;
 
@@ -991,15 +884,6 @@ class DatasetSubmission extends Entity
      * @ORM\OneToMany(targetEntity="DistributionPoint", mappedBy="datasetSubmission", cascade={"persist"}, orphanRemoval=true)
      */
     protected $distributionPoints;
-
-    /**
-     * ERDDAPP Url for the dataset.
-     *
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected $erddapUrl;
 
     /**
      * Remotely Hosted Dataset Name.
@@ -1093,7 +977,6 @@ class DatasetSubmission extends Entity
             }
 
             $this->addDistributionPoint(new DistributionPoint());
-            $this->addDatasetLink(new DatasetLink());
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
             $this->setSequence($entity->getDataset()->getDatasetSubmissionHistory()->first()->getSequence() + 1);
@@ -1110,14 +993,7 @@ class DatasetSubmission extends Entity
             $this->setDatasetFileName($entity->getDatasetFileName());
             $this->setDatasetFileSize($entity->getDatasetFileSize());
             $this->setDatasetFileSha256Hash($entity->getDatasetFileSha256Hash());
-            $this->setMetadataFileTransferType($entity->getMetadataFileTransferType());
-            $this->setMetadataFileUri($entity->getMetadataFileUri());
-            $this->setMetadataFileTransferStatus($entity->getMetadataFileTransferStatus());
-            $this->setMetadataFileName($entity->getMetadataFileName());
-            $this->setMetadataFileSha256Hash($entity->getMetadataFileSha256Hash());
             $this->setDatasetStatus($entity->getDatasetStatus());
-            $this->setReferenceDate($entity->getReferenceDate());
-            $this->setReferenceDateType($entity->getReferenceDateType());
             $this->setPurpose($entity->getPurpose());
             $this->setSuppParams($entity->getSuppParams());
             $this->setSuppMethods($entity->getSuppMethods());
@@ -1136,7 +1012,6 @@ class DatasetSubmission extends Entity
             $this->setTemporalExtentNilReasonType($entity->getTemporalExtentNilReasonType());
             $this->setDistributionFormatName($entity->getDistributionFormatName());
             $this->setFileDecompressionTechnique($entity->getFileDecompressionTechnique());
-            $this->setErddapUrl($entity->getErddapUrl());
             $this->setRemotelyHostedName($entity->getRemotelyHostedName());
             $this->setRemotelyHostedDescription($entity->getRemotelyHostedDescription());
             $this->setRemotelyHostedFunction($entity->getRemotelyHostedFunction());
@@ -1323,7 +1198,9 @@ class DatasetSubmission extends Entity
                 //Setting the status to in-review.
                 $this->status = self::STATUS_COMPLETE;
                 $this->setDatasetStatus(Dataset::DATASET_STATUS_ACCEPTED);
-                $this->getDataset()->setAcceptedDate(new \DateTime('now', new \DateTimeZone('UTC')));
+                if (!($this->getDataset()->getAcceptedDate() instanceof \DateTime)) {
+                    $this->getDataset()->setAcceptedDate(new \DateTime('now', new \DateTimeZone('UTC')));
+                }
                 $this->getDataset()->setDatasetSubmission($this);
                 break;
             case ($eventName === self::DATASET_REQUEST_REVISIONS):
@@ -1604,9 +1481,9 @@ class DatasetSubmission extends Entity
      *
      * @see self::getDatasetContacts()
      *
-     * @return string
+     * @return string|null
      */
-    public function getPointOfContactName() : string
+    public function getPointOfContactName() : ? string
     {
         if ($this->getDatasetContacts()->isEmpty()) {
             if (property_exists(self::class, 'pointOfContactName')) {
@@ -1632,9 +1509,9 @@ class DatasetSubmission extends Entity
      *
      * @see self::getDatasetContacts()
      *
-     * @return string
+     * @return string|null
      */
-    public function getPointOfContactEmail() : string
+    public function getPointOfContactEmail() : ? string
     {
         if ($this->getDatasetContacts()->isEmpty()) {
             if (property_exists(self::class, 'pointOfContactEmail')) {
@@ -1965,120 +1842,6 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * Set the metadata file transfer type.
-     *
-     * @param string|null $metadataFileTransferType The metadata file transfer type.
-     *
-     * @see TRANSFER_TYPES class constant for valid values.
-     *
-     * @return void
-     */
-    public function setMetadataFileTransferType(?string $metadataFileTransferType)
-    {
-        $this->metadataFileTransferType = $metadataFileTransferType;
-    }
-
-    /**
-     * Get the metadata file transfer type.
-     *
-     * @return string|null
-     */
-    public function getMetadataFileTransferType() : ?string
-    {
-        return $this->metadataFileTransferType;
-    }
-
-    /**
-     * Set the metadata file URI.
-     *
-     * @param string|null $metadataFileUri The metadata file URI.
-     *
-     * @return void
-     */
-    public function setMetadataFileUri(?string $metadataFileUri)
-    {
-        $this->metadataFileUri = $metadataFileUri;
-    }
-
-    /**
-     * Get the metadata file URI.
-     *
-     * @return string|null
-     */
-    public function getMetadataFileUri() : ?string
-    {
-        return $this->metadataFileUri;
-    }
-
-    /**
-     * Set the metadata file transfer status.
-     *
-     * @param string|null $metadataFileTransferStatus The metadata file transfer status.
-     *
-     * @see TRANSFER_STATUSES class constant for valid values.
-     *
-     * @return void
-     */
-    public function setMetadataFileTransferStatus(?string $metadataFileTransferStatus)
-    {
-        $this->metadataFileTransferStatus = $metadataFileTransferStatus;
-    }
-
-    /**
-     * Get the metadata file transfer status.
-     *
-     * @return string|null
-     */
-    public function getMetadataFileTransferStatus() : ?string
-    {
-        return $this->metadataFileTransferStatus;
-    }
-
-    /**
-     * Set the metadata file name.
-     *
-     * @param string|null $metadataFileName The metadata file name.
-     *
-     * @return void
-     */
-    public function setMetadataFileName(?string $metadataFileName)
-    {
-        $this->metadataFileName = $metadataFileName;
-    }
-
-    /**
-     * Get the metadata file name.
-     *
-     * @return string|null
-     */
-    public function getMetadataFileName() : ?string
-    {
-        return $this->metadataFileName;
-    }
-
-    /**
-     * Set the metadata file sha256 hash.
-     *
-     * @param string|null $metadataFileSha256Hash The metadata file sha256 hash.
-     *
-     * @return void
-     */
-    public function setMetadataFileSha256Hash(?string $metadataFileSha256Hash)
-    {
-        $this->metadataFileSha256Hash = $metadataFileSha256Hash;
-    }
-
-    /**
-     * Get the metadata file sha256 hash.
-     *
-     * @return string|null
-     */
-    public function getMetadataFileSha256Hash() : ?string
-    {
-        return $this->metadataFileSha256Hash;
-    }
-
-    /**
      * Set the status of the metadata.
      *
      * @param string|null $datasetStatus The status of the metadata.
@@ -2120,60 +1883,6 @@ class DatasetSubmission extends Entity
             return null;
         }
         return $this->dataset->getUdi() . '.' . sprintf('%03d', $this->sequence);
-    }
-
-    /**
-     * Set the dataset's reference date.
-     *
-     * @param \DateTime|null $referenceDate The dataset's reference date.
-     *
-     * @return void
-     */
-    public function setReferenceDate(\DateTime $referenceDate = null)
-    {
-        if ($referenceDate != null) {
-            $referenceDate->setTimeZone(new \DateTimeZone('UTC'));
-        }
-        $this->referenceDate = $referenceDate;
-    }
-
-    /**
-     * Get the dataset's reference date.
-     *
-     * @return \DateTime
-     */
-    public function getReferenceDate() : ?\DateTime
-    {
-        return $this->referenceDate;
-    }
-
-    /**
-     * Set reference date type.
-     *
-     * @param string|null $referenceDateType The designated type of dataset reference.
-     *
-     * @see REFERENCE_DATE_TYPES class constant for possible values.
-     *
-     * @throws \InvalidArgumentException When $referenceDateType is not a valid value.
-     *
-     * @return void
-     */
-    public function setReferenceDateType(?string $referenceDateType)
-    {
-        if (null !== $referenceDateType and !array_key_exists($referenceDateType, static::REFERENCE_DATE_TYPES)) {
-            throw new \InvalidArgumentException("'$referenceDateType' is not a valid value for referenceDateType");
-        }
-        $this->referenceDateType = $referenceDateType;
-    }
-
-    /**
-     * Get the type of reference date associated with this submission.
-     *
-     * @return string|null
-     */
-    public function getReferenceDateType() : ?string
-    {
-        return $this->referenceDateType;
     }
 
     /**
@@ -2486,9 +2195,6 @@ class DatasetSubmission extends Entity
      */
     public function setTemporalExtentBeginPosition(\DateTime $temporalExtentBeginPosition = null)
     {
-        if ($temporalExtentBeginPosition != null) {
-            $temporalExtentBeginPosition->setTimeZone(new \DateTimeZone('UTC'));
-        }
         $this->temporalExtentBeginPosition = $temporalExtentBeginPosition;
     }
 
@@ -2511,9 +2217,6 @@ class DatasetSubmission extends Entity
      */
     public function setTemporalExtentEndPosition(\DateTime $temporalExtentEndPosition = null)
     {
-        if ($temporalExtentEndPosition != null) {
-            $temporalExtentEndPosition->setTimeZone(new \DateTimeZone('UTC'));
-        }
         $this->temporalExtentEndPosition = $temporalExtentEndPosition;
     }
 
@@ -2626,23 +2329,6 @@ class DatasetSubmission extends Entity
             return;
         }
         $this->getDataset()->updateAvailabilityStatus();
-    }
-
-    /**
-     * Gets the valid choices for reference date types.
-     *
-     * @return array
-     */
-    public static function getReferenceDateTypeChoices() : array
-    {
-        return array_flip(
-            array_map(
-                function ($type) {
-                    return $type['name'];
-                },
-                static::REFERENCE_DATE_TYPES
-            )
-        );
     }
 
     /**
@@ -2774,6 +2460,24 @@ class DatasetSubmission extends Entity
         return $this->distributionPoints;
     }
 
+     /**
+     * Getter for the (first) erddap url link.
+     *
+     * @return DatasetLink|null
+     */
+    public function getErdappDatasetLink() : ?DatasetLink
+    {
+        $datasetLinks = $this->getDatasetLinks()->filter(function (DatasetLink $datasetLink) {
+            return $datasetLink->getName() === DatasetLink::LINK_NAME_CODES["erddap"]["name"];
+        });
+
+        if ($datasetLinks->count() > 0) {
+            return $datasetLinks->first();
+        }
+
+        return null;
+    }
+
     /**
      * Getter for the erddap url.
      *
@@ -2781,7 +2485,13 @@ class DatasetSubmission extends Entity
      */
     public function getErddapUrl(): ?string
     {
-        return $this->erddapUrl;
+        $erddapLink = $this->getErdappDatasetLink();
+
+        if ($erddapLink instanceof DatasetLink) {
+            return $erddapLink->getUrl();
+        }
+
+        return null;
     }
 
     /**
@@ -2791,12 +2501,13 @@ class DatasetSubmission extends Entity
      */
     public function getErddapUrlProtocol() : ?string
     {
-        if ($this->erddapUrl !== null) {
-            preg_match('/^(.*?):.*$/', $this->erddapUrl, $matches);
-            return $matches[1];
-        } else {
-            return null;
+        $erddapLink = $this->getErdappDatasetLink();
+
+        if ($erddapLink instanceof DatasetLink) {
+            return $erddapLink->getProtocol();
         }
+
+        return null;
     }
 
     /**
@@ -2812,18 +2523,6 @@ class DatasetSubmission extends Entity
         } else {
             return null;
         }
-    }
-
-    /**
-     * Setter for the erddap url.
-     *
-     * @param string|null $erddapUrl Erddap url.
-     *
-     * @return void
-     */
-    public function setErddapUrl(?string $erddapUrl)
-    {
-        $this->erddapUrl = $erddapUrl;
     }
 
     /**

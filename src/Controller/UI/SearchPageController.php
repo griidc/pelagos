@@ -6,6 +6,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use App\Entity\Account;
 use App\Event\LogActionItemEventDispatcher;
@@ -64,7 +65,7 @@ class SearchPageController extends AbstractController
         $buildQuery = $searchUtil->buildQuery($requestParams);
         $resultsBeforeHydration = $searchUtil->findDatasets($buildQuery);
         foreach ($resultsBeforeHydration as $result) {
-            array_push($results, $result->getResult()->getHit()['_source']);
+            array_push($results, $result->getResult()->getData());
         }
         $count = $searchUtil->getCount($buildQuery);
         $researchGroupsInfo = $searchUtil->getResearchGroupAggregations($buildQuery);
@@ -109,6 +110,7 @@ class SearchPageController extends AbstractController
             'query' => $request->get('query'),
             'page' => $request->get('page'),
             'field' => $request->get('field'),
+            'perPage' => $request->get('perPage'),
             'collectionStartDate' => $request->get('collectionStartDate'),
             'collectionEndDate' => $request->get('collectionEndDate'),
             'options' => array(

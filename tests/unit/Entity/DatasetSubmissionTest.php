@@ -349,40 +349,6 @@ class DatasetSubmissionTest extends TestCase
     }
 
     /**
-     * Test metadata file attributes.
-     *
-     * @return void
-     */
-    public function testMetadataFileAttributes()
-    {
-        $this->datasetSubmission->setMetadataFileTransferType(DatasetSubmission::TRANSFER_TYPE_UPLOAD);
-        $this->assertEquals(
-            DatasetSubmission::TRANSFER_TYPE_UPLOAD,
-            $this->datasetSubmission->getMetadataFileTransferType()
-        );
-        $this->datasetSubmission->setMetadataFileUri('foobar');
-        $this->assertEquals(
-            'foobar',
-            $this->datasetSubmission->getMetadataFileUri()
-        );
-        $this->datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
-        $this->assertEquals(
-            DatasetSubmission::TRANSFER_STATUS_COMPLETED,
-            $this->datasetSubmission->getMetadataFileTransferStatus()
-        );
-        $this->datasetSubmission->setMetadataFileName('foobar.baz');
-        $this->assertEquals(
-            'foobar.baz',
-            $this->datasetSubmission->getMetadataFileName()
-        );
-        $this->datasetSubmission->setMetadataFileSha256Hash('cafe');
-        $this->assertEquals(
-            'cafe',
-            $this->datasetSubmission->getMetadataFileSha256hash()
-        );
-    }
-
-    /**
      * Test dataset status.
      *
      * @return void
@@ -408,39 +374,6 @@ class DatasetSubmissionTest extends TestCase
             'T1.x123.000:0001.001',
             $this->datasetSubmission->getDatasetSubmissionId()
         );
-    }
-
-    /**
-     * Test reference date and type.
-     *
-     * @return void
-     */
-    public function testReferenceDateAndType()
-    {
-        $this->datasetSubmission->setReferenceDate(null);
-        $referenceDate = new \DateTime;
-        $this->datasetSubmission->setReferenceDate($referenceDate);
-        $this->assertSame(
-            $referenceDate,
-            $this->datasetSubmission->getReferenceDate()
-        );
-        $referenceDateType = array_keys(DatasetSubmission::REFERENCE_DATE_TYPES)[0];
-        $this->datasetSubmission->setReferenceDateType($referenceDateType);
-        $this->assertEquals(
-            $referenceDateType,
-            $this->datasetSubmission->getReferenceDateType()
-        );
-    }
-
-    /**
-     * Test attempting to set a bad referenceDateType.
-     *
-     * @return void
-     */
-    public function testBadReferenceDateType()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->datasetSubmission->setReferenceDateType('foobar');
     }
 
     /**
@@ -654,21 +587,6 @@ class DatasetSubmissionTest extends TestCase
             $fileDecompressionTechnique,
             $this->datasetSubmission->getFileDecompressionTechnique()
         );
-    }
-
-    /**
-     * Test getting the choice list for referenceDateType.
-     *
-     * @return void
-     */
-    public function testGetReferenceDateTypeChoices()
-    {
-        $referenceDateTypeChoices = DatasetSubmission::getReferenceDateTypeChoices();
-        $this->assertInternalType('array', $referenceDateTypeChoices);
-        foreach ($referenceDateTypeChoices as $index => $value) {
-            $this->assertInternalType('string', $index);
-            $this->assertInternalType('string', $value);
-        }
     }
 
     /**
@@ -911,23 +829,6 @@ class DatasetSubmissionTest extends TestCase
     }
 
     /**
-     * Test the setter and getter for ErddapUrl and generated ErddapUrlProtocol.
-     *
-     * @return void
-     */
-    public function testCanSetAndGetErddapUrl()
-    {
-        $testProtocol = 'abcd';
-        $testUrl = "$testProtocol://hostname.site.tld";
-        $this->datasetSubmission->setErddapUrl($testUrl);
-        $this->assertEquals($testUrl, $this->datasetSubmission->getErddapUrl());
-        $this->assertEquals($testProtocol, $this->datasetSubmission->getErddapUrlProtocol());
-
-        $this->datasetSubmission->setErddapUrl(null);
-        $this->assertNull($this->datasetSubmission->getErddapUrlProtocol());
-    }
-    
-    /**
      * Test Remotely Hosted.
      *
      * @return void
@@ -942,7 +843,7 @@ class DatasetSubmissionTest extends TestCase
         );
         $this->datasetSubmission->setRemotelyHostedName(null);
         $this->assertNull($this->datasetSubmission->getRemotelyHostedName());
-        
+
         $remotelyHostedName = 'Remotely Hosted Description';
         $this->datasetSubmission->setRemotelyHostedDescription($remotelyHostedName);
         $this->assertEquals(
@@ -951,7 +852,7 @@ class DatasetSubmissionTest extends TestCase
         );
         $this->datasetSubmission->setRemotelyHostedDescription(null);
         $this->assertNull($this->datasetSubmission->getRemotelyHostedDescription());
-        
+
         $remotelyHostedName = 'download';
         $this->datasetSubmission->setRemotelyHostedFunction($remotelyHostedName);
         $this->assertEquals(
@@ -961,7 +862,7 @@ class DatasetSubmissionTest extends TestCase
         $this->datasetSubmission->setRemotelyHostedFunction(null);
         $this->assertNull($this->datasetSubmission->getRemotelyHostedFunction());
     }
-    
+
     /**
      * Test the adder, remover and getter for Distribution Points.
      *
@@ -979,13 +880,20 @@ class DatasetSubmissionTest extends TestCase
             )
         );
 
+        //test adder
+        $this->datasetSubmission->addDatasetLink($this->mockDatasetLink);
+        $this->assertEquals(
+            1,
+            $this->datasetSubmission->getDatasetLinks()->count()
+        );
+
         //remove default distribution point initially created in dataset submission entity
         $defaultDatasetLink = $this->datasetSubmission->getDatasetLinks()->first();
         if (null !== $defaultDatasetLink) {
             $this->datasetSubmission->removeDatasetLink($defaultDatasetLink);
         }
 
-        //test adder
+        //test adder again
         $this->datasetSubmission->addDatasetLink($this->mockDatasetLink);
         $this->assertEquals(
             1,

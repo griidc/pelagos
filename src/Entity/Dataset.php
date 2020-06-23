@@ -7,6 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
+use App\Util\DatasetCitationUtil;
+
 /**
  * Dataset Entity class.
  *
@@ -387,22 +389,6 @@ class Dataset extends Entity
     }
 
     /**
-     * Get reference date shortcut, to get Authors from DatasetSubmission.
-     *
-     * @return string|null
-     */
-    public function getReferenceDateYear()
-    {
-        if ($this->hasDatasetSubmission()
-            and $this->getDatasetSubmission()->getReferenceDate() instanceof \Datetime
-        ) {
-            return $this->getDatasetSubmission()->getReferenceDate()->format('Y');
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * Set the DOI for this Dataset.
      *
      * @param DOI $doi The DOI entity for this Dataset.
@@ -569,26 +555,7 @@ class Dataset extends Entity
      */
     public function getCitation()
     {
-        $title = $this->getTitle();
-        $title = preg_replace('/\.$/', '', $title);
-        $udi = $this->getUdi();
-        $author = $this->getAuthors();
-        $year = null;
-        if ($this->getAcceptedDate() instanceof \Datetime) {
-            $year = $this->getAcceptedDate()->format('Y');
-        }
-        $doi = $this->getDoi();
-
-        $citationString = $author . ' (' . $year . ') ' . $title . '.' .
-            ' Distributed by: Gulf of Mexico Research Initiative Information and Data Cooperative '
-            . '(GRIIDC), Harte Research Institute, Texas A&M University-Corpus Christi. ';
-
-        if ($doi instanceof DOI) {
-            $citationString .= 'doi:' . $doi->getDoi();
-        } else {
-            $citationString .= "Available from: http://data.gulfresearchinitiative.org/data/$udi";
-        }
-        return $citationString;
+        return DatasetCitationUtil::getCitation($this);
     }
 
     /**

@@ -152,36 +152,37 @@
                     </gmd:onLine>
                 </gmd:MD_DigitalTransferOptions>
             </gmd:distributorTransferOptions>
-            {% if dataset.datasetSubmission.erddapUrl %}
-                <gmd:distributorTransferOptions>
-                    <gmd:MD_DigitalTransferOptions>
-                        <gmd:onLine>
-                            <gmd:CI_OnlineResource>
-                                <gmd:linkage>
-                                    <gmd:URL>{{ dataset.datasetSubmission.erddapUrl }}</gmd:URL>
-                                </gmd:linkage>
-                                <gmd:protocol>
-                                    <gco:CharacterString>{{ dataset.datasetSubmission.erddapUrlProtocol  }}</gco:CharacterString>
-                                </gmd:protocol>
-                                <gmd:name>
-                                    ERDDAP Data Subset Form
-                                </gmd:name>
-                                <gmd:description>
-                                    ERDDAP's version of the OPeNDAP .html web page for this dataset.
-                                    Specify a subset of the dataset and download the data via OPeNDAP
-                                    or in many different file types.
-                                </gmd:description>
-                                <gmd:function>
-                                    <gmd:CI_OnLineFunctionCode
-                                            codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode"
-                                            codeListValue="download" codeSpace="001">
-                                        download
-                                    </gmd:CI_OnLineFunctionCode>
-                                </gmd:function>
-                            </gmd:CI_OnlineResource>
-                        </gmd:onLine>
-                    </gmd:MD_DigitalTransferOptions>
-                </gmd:distributorTransferOptions>
+            {% if dataset.datasetSubmission.datasetLinks %}
+                {% set linkcodes = constant('App\\Entity\\DatasetLink::ONLINE_FUNCTION_CODES') %}
+                {% for link in dataset.datasetSubmission.datasetLinks %}
+                    <gmd:distributorTransferOptions>
+                        <gmd:MD_DigitalTransferOptions>
+                            <gmd:onLine>
+                                <gmd:CI_OnlineResource>
+                                    <gmd:linkage>
+                                        <gmd:URL>{{ link.url }}</gmd:URL>
+                                    </gmd:linkage>
+                                    <gmd:protocol>
+                                        <gco:CharacterString>{{ link.protocol  }}</gco:CharacterString>
+                                    </gmd:protocol>
+                                    <gmd:name>
+                                        <gco:CharacterString>{{ link.name  }}</gco:CharacterString>
+                                    </gmd:name>
+                                    <gmd:description>
+                                        <gco:CharacterString>{{ link.description  }}</gco:CharacterString>
+                                    </gmd:description>
+                                    <gmd:function>
+                                        <gmd:CI_OnLineFunctionCode
+                                                codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode"
+                                                codeListValue="{{ link.functionCode }}" codeSpace="{{ attribute(linkcodes[link.functionCode], 'code') }}">
+                                                {{ link.functionCode }}
+                                        </gmd:CI_OnLineFunctionCode>
+                                    </gmd:function>
+                                </gmd:CI_OnlineResource>
+                            </gmd:onLine>
+                        </gmd:MD_DigitalTransferOptions>
+                    </gmd:distributorTransferOptions>
+                {% endfor %}
             {% endif %}
         </gmd:MD_Distributor>
     </gmd:distributor>

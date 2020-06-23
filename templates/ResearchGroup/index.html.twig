@@ -1,0 +1,17 @@
+{% extends 'base.html.twig'%}
+{% block title %}Research Group{% endblock %}
+
+{%block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('research-group') }}
+
+{%endblock stylesheets  %}
+
+{% block body %}
+    <div id="research-group" data-name="{{ researchGroupId }}"></div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('research-group') }}
+{% endblock %}

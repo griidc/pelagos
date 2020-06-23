@@ -10,17 +10,10 @@
             <gmd:date>
                 <gmd:CI_Date>
                     <gmd:date>
-                        <gco:Date>{{ dataset.datasetSubmission.referenceDate | date("Y-m-d", "UTC") }}</gco:Date>
+                        <gco:Date>{{ dataset.acceptedDate | date("Y-m-d", "UTC") }}</gco:Date>
                     </gmd:date>
                     <gmd:dateType>
-                        {% if dataset.datasetSubmission.referenceDateType == "creation" %}
-                            {% set codespace = "001" %}
-                        {% elseif dataset.datasetSubmission.referenceDateType == "publication" %}
-                            {% set codespace = "002" %}
-                        {% elseif dataset.datasetSubmission.referenceDateType == "revision" %}
-                            {% set codespace = "003" %}
-                        {% endif %}
-                        <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="{{dataset.datasetSubmission.referenceDateType}}" codeSpace="{{codespace|default}}">{{dataset.datasetSubmission.referenceDateType}}</gmd:CI_DateTypeCode>
+                        <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication" codeSpace="003">publication</gmd:CI_DateTypeCode>
                     </gmd:dateType>
                 </gmd:CI_Date>
             </gmd:date>
@@ -28,7 +21,7 @@
                 <gmd:identifier>
                     <gmd:MD_Identifier>
                         <gmd:code>
-                            <gmx:Anchor xlink:href="https://dx.doi.org/{{dataset.doi}}" xlink:title="DOI" xlink:actuate="onRequest">
+                            <gmx:Anchor xlink:href="https://dx.doi.org/{{dataset.doi.doi}}" xlink:title="DOI" xlink:actuate="onRequest">
                                 {{dataset.doi}}
                             </gmx:Anchor>
                         </gmd:code>
@@ -72,6 +65,37 @@
             }
         %}
     </gmd:descriptiveKeywords>
+    <gmd:resourceConstraints xlink:title="Cite As">
+        <gmd:MD_Constraints>
+            <gmd:useLimitation>
+                <gco:CharacterString><![CDATA[{{dataset.citation|raw}}]]></gco:CharacterString>
+            </gmd:useLimitation>
+        </gmd:MD_Constraints>
+    </gmd:resourceConstraints>
+    <gmd:resourceConstraints xlink:title="CC0 License">
+        <gmd:MD_LegalConstraints>
+            <gmd:useConstraints>
+                <gmd:MD_RestrictionCode codeList="https://data.noaa.gov/resources/iso19139/schema/resources/Codelist/gmxCodelists.xml#MD_RestrictionCode" codeListValue="licenceUnrestricted">licenceUnrestricted</gmd:MD_RestrictionCode>
+            </gmd:useConstraints>
+            <gmd:otherConstraints>
+                <gco:CharacterString>This information is released under the Creative Commons license - No Rights Reserved - CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/). The person who associated a work with this deed has dedicated the work to the public domain by waiving all of his or her rights to the work worldwide under copyright law, including all related and neighboring rights, to the extent allowed by law. You can copy, modify, distribute and perform the work, even for commercial purposes, all without asking permission.</gco:CharacterString>
+            </gmd:otherConstraints>
+        </gmd:MD_LegalConstraints>
+    </gmd:resourceConstraints>
+    <gmd:resourceConstraints xlink:title="Liability and Warranty">
+        <gmd:MD_LegalConstraints>
+            <gmd:otherConstraints>
+                <gco:CharacterString>All materials on this website are made available to GRIIDC and in turn to you "as-is." Content may only be submitted by an individual who represents and warrants that s/he has sufficient rights to be able to make the content available under a CC0 waiver. There is no warranty (expressed or implied) to these materials, their title, accuracy, non-infringement of third party rights, or fitness for any particular purpose, including the performance or results you may obtain from their use. Use these materials at your own risk.  Under no circumstances shall GRIIDC be liable for any direct, incidental, special, consequential, indirect, or punitive damages that result from the use or the inability to use either this website or the materials available via this website. If you are dissatisfied with any website feature, content, or terms of use, your sole and exclusive remedy is to discontinue use.</gco:CharacterString>
+            </gmd:otherConstraints>
+        </gmd:MD_LegalConstraints>
+    </gmd:resourceConstraints>
+    {% for publication in dataset.publications %}
+        {% include "MetadataGenerator/AggregationInfo.xml.twig" with
+            {
+                "publication" : publication,
+            }
+        %}
+    {% endfor %}
     <gmd:language>
         <gco:CharacterString>eng; USA</gco:CharacterString>
     </gmd:language>

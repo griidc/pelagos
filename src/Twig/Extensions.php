@@ -116,7 +116,41 @@ class Extensions extends AbstractExtension
                 'maintenanceModeColor',
                 [$this, 'maintenanceModeColor']
             ),
+            new \Twig\TwigFilter(
+                'orTemplateIfNotExists',
+                [$this, 'doesTwigFileExist']
+            ),
         );
+    }
+
+    /**
+     * Does the template exist, or else return base template.
+     *
+     * @param string $file    The file name (or part) template to be used.
+     * @param string $default The file name of the default template if $file does not exist.
+     *
+     * @return string Filename of basepath, or default.
+     */
+    public function doesTwigFileExist(string $file, string $default) : string
+    {
+        if (empty($file)) {
+            return $default;
+        }
+        $filePath = $this->kernelRootDir . '/templates/' . $file ;
+        if (file_exists($filePath)) {
+            return $file;
+        }
+        if (file_exists($filePath . '.twig')) {
+            return $file . '.twig';
+        }
+        if (file_exists($filePath . '.html')) {
+            return $file . '.html';
+        }
+        if (file_exists($filePath . '.html.twig')) {
+            return $file . '.html.twig';
+        }
+
+        return $default;
     }
 
     /**
@@ -269,7 +303,7 @@ class Extensions extends AbstractExtension
      *
      * @return string
      */
-    public static function formatBytes($bytes, int $precision = 2) : string
+    public static function formatBytes($bytes, int $precision = 2, $unit = null) : string
     {
         if (empty($bytes)) {
             $bytes = 0;
@@ -277,7 +311,9 @@ class Extensions extends AbstractExtension
         $units = array('B','KB','MB','GB','TB');
         for ($e = (count($units) - 1); $e > 0; $e--) {
             $one = pow(1000, $e);
-            if ($bytes >= $one) {
+            if (!empty($unit) and $units[$e] == $unit) {
+                return round(($bytes / $one), $precision) . ' ' . $units[$e];
+            } elseif (empty($unit) and $bytes >= $one) {
                 return round(($bytes / $one), $precision) . ' ' . $units[$e];
             }
         }

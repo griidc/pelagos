@@ -514,8 +514,6 @@ class DatasetSubmissionController extends AbstractController
             'suppSampScalesRates',
             'suppErrorAnalysis',
             'suppProvenance',
-            'referenceDate',
-            'referenceDateType',
             'spatialExtent',
             'spatialExtentDescription',
             'temporalExtentDesc',

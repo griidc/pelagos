@@ -3,7 +3,7 @@
 {% block stylesheets %}
     {{ parent() }}
 
-    <link href="{{ asset('css/login.css') }}" rel="stylesheet" />
+    <link href="{{ asset('build/css/login.css') }}" rel="stylesheet" />
 {% endblock %}
 
 {% block javascripts %}
@@ -11,7 +11,7 @@
 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js"></script>
 
-    <script type="text/javascript" src="{{ asset('js/pelagosNoty.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/pelagosNoty.js') }}"></script>
 
     <script type="text/javascript">
         $(document).ready(function(){
@@ -63,11 +63,11 @@
                 </form>
                 </div>
                 <div id="sidebar">
-                    <p class="fl-panel fl-note fl-bevel-white fl-font-size-80">You have reached the Gulf of Mexico Research Initiative Data and Information Cooperative (GRIIDC) site.</p>
-                    <p>Accounts are governed by rules of Texas A&M University-Corpus Christi. Accounts are issued to individuals and shall not be shared.</p>
+                    <p class="fl-panel fl-note fl-bevel-white fl-font-size-80">You have reached the GRIIDC site.</p>
+                    <p>Accounts are governed by rules of Texas A&M University–Corpus Christi. Accounts are issued to individuals and shall not be shared.</p>
                     <p>User authentication is required to access these pages.</p>
                     <p>If you need to access GRIIDC pages and are not a registered user, please <a href="{{ path('pelagos_app_ui_account_default') }}">request an account</a>.</p>
-                    <p>Texas A&amp;M University-Corpus Christi</p>
+                    <p>Texas A&amp;M University–Corpus Christi</p>
                     <ul>
                         <li>Unauthorized use is prohibited.</li>
                         <li>Usage may be subject to security testing and monitoring.</li>

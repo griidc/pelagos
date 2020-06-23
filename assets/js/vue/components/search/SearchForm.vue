@@ -57,16 +57,24 @@
                                 </div>
                             </div>
                             <div class="col-lg-3 button-toolbar">
-                                <button id="searchSubmit" type="submit" class="btn btn-primary search-button">Search
+                                <button id="searchSubmit" type="submit" class="btn btn-alternate search-button">Search
                                     <i class="fa fa-search pl-2"></i></button>
                                 <button type="reset" id="search-clear" class="btn btn-dark clear-button">Clear</button>
+                                <div class="mt-3 pt-3 empty-button-div"></div>
+                                <button type="button" id="map-search" class="btn btn-dark map-search-button" @click="dataDiscovery()">Map Search</button>
                             </div>
                         </div>
                     </b-form>
                 </div>
             </div>
         </section>
-        <ResultSet v-if="showResults" :results="resultSet" @facetClicked="facetCheckBoxValues" @pagination="changePageNo" :formValues="form"/>
+        <ResultSet
+                v-if="showResults"
+                :results="resultSet"
+                @facetClicked="facetCheckBoxValues"
+                @pagination="changePageNo"
+                @noOfResults="changeNoOfResults"
+                :formValues="form"/>
         <section class="section-content pt-3 bg" v-else>
             <div class="container">
                 <article class="card">
@@ -77,9 +85,7 @@
                         <p class="card-text">
                             Choose from thousands of scientific datasets from various fields
                             including oceanography, biology, ecology, chemistry, social science,
-                            and others. Datasets are primarily focused on the Deepwater Horizon
-                            oil spill in the Gulf of Mexico; however, some datasets are related
-                            to other topics and locations around the world.
+                            and others.
                         </p>
                     </div>
                 </article>
@@ -166,10 +172,17 @@
                 this.form.page = newPageNo;
                 this.onSubmit();
             },
+            changeNoOfResults: function (noOfResults) {
+                this.form.perPage = noOfResults;
+                this.onSubmit();
+            },
             detectHashChange: function () {
                 this.route = window.location.hash;
                 this.submitted = false;
             },
+            dataDiscovery: function () {
+                window.location.href = Routing.generate("pelagos_app_ui_datadiscovery_default");
+            }
         },
         mounted() {
             if (this.route) {
@@ -203,7 +216,8 @@
                 collectionEndDate: '',
                 status: '',
                 fundingOrg: '',
-                researchGroup: ''
+                researchGroup: '',
+                perPage: 10
         }
     }
 </script>
@@ -228,6 +242,14 @@
                 }
                 .clear-button {
                     width: 49%;
+                }
+                .map-search-button {
+                    margin-top: 1rem;
+                    width: 100% !important;
+                    margin-left: 0 !important;
+                }
+                .empty-button-div {
+                    margin-top: 0 !important;
                 }
             }
             .search-field-options {
@@ -256,8 +278,10 @@
                     margin-left: 0.5rem;
                     width: 30%;
                 }
+                .map-search-button {
+                    margin-left: 4.1rem;
+                }
             }
         }
-
     }
 </style>

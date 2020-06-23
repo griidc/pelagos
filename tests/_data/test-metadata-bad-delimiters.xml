@@ -241,7 +241,7 @@
                     <gmd:distributorContact>
                         <gmd:CI_ResponsibleParty>
                             <gmd:organisationName>
-                                <gco:CharacterString>Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)</gco:CharacterString>
+                                <gco:CharacterString>GRIIDC</gco:CharacterString>
                             </gmd:organisationName>
                             <gmd:contactInfo>
                                 <gmd:CI_Contact>

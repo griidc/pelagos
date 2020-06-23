@@ -15,10 +15,10 @@
 {% block stylesheets %}
     {{ parent() }}
 
-    <link href="{{ asset('css/dataland-details.css') }}" rel="stylesheet" />
-    <link href="{{ asset('css/status.css') }}" rel="stylesheet" />
-    <link href="{{ asset('css/xmlverbatim.css') }}" rel="stylesheet" />
-    <link href="{{ asset('css/download.css') }}" rel="stylesheet" />
+    <link href="{{ asset('build/css/dataland-details.css') }}" rel="stylesheet" />
+    <link href="{{ asset('build/css/status.css') }}" rel="stylesheet" />
+    <link href="{{ asset('build/css/xmlverbatim.css') }}" rel="stylesheet" />
+    <link href="{{ asset('build/css/download.css') }}" rel="stylesheet" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/vex-js/4.1.0/css/vex.css" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/vex-js/4.1.0/css/vex-theme-os.css" />
 {% endblock %}
@@ -28,9 +28,9 @@
 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js"></script>
     <script type="text/javascript" src="//maps.google.com/maps/api/js?v=3&key={{ google_maps_api_key }}"></script>
-    <script type="text/javascript" src="{{ asset('js/geoviz.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/dataland.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/download.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/geoviz.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/dataland.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/download.js') }}"></script>
 
     {{ encore_entry_script_tags('downloadBox') }}
 {% endblock %}
@@ -43,7 +43,7 @@
                     <div id="dlolmap" style="width: 640px;height: 480px;"
                         wkt="{{wkt|default}}"
                         description= {{ (dataset.datasetStatus == constant('App\\Entity\\Dataset::DATASET_STATUS_ACCEPTED')) ? dataset.datasetSubmission.spatialExtentDescription : "" }}
-                        labimage="{{ asset('images/labonly.png') }}">
+                        labimage="{{ asset('build/images/labonly.png') }}">
                     </div>
                 </td>
                 <td style="padding:10px;" width="60%" valign="top">
@@ -60,10 +60,11 @@
                     <li><a href="#tabs-1">Details</a></li>
                     <li><a href="#tabs-2">Metadata</a></li>
                     <li {{ dataset.datasetPublications|length == 0 ? ' disabled' : '' }}>
-                    <a href="#tabs-3">Publications</a></li>
-                    <!--
-                    <li><a href="#tabs-4">Manifest</a></li>
-                    -->
+                        <a href="#tabs-3">Publications</a>
+                    </li>
+                    <li {{ dataset.datasetSubmission.datasetLinks|default|length == 0 ? ' disabled' : '' }}>
+                        <a href="#tabs-4">Additional Resources</a>
+                    </li>
                 </ul>
                 <div class="tabb" id="tabs-1">
                     {% include 'Dataland/details.html.twig' %}
@@ -89,6 +90,9 @@
                 </div>
                 <div class="tabb" id="tabs-3">
                     {% include 'Dataland/publications.html.twig' %}
+                </div>
+                <div class="tabb" id="tabs-4">
+                    {% include 'Dataland/datasetlinks.html.twig' %}
                 </div>
             </div>
         </div>
