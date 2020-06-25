@@ -1,0 +1,100 @@
+#!/usr/bin/perl -w
+# Usage Notes:
+# This is intended to be scheduled via cron, and run as the pelagos user
+# Cron Example: (all datasets)
+# 30 6    * * sat,sun,mon    pelagos /opt/griidc/share/perl/symlink-all-datasets/symlink-all-datasets /san/home/DRPM-DSREV
+# Cron Example: (filter by RG name, in this case, C-IMAGE)
+# #00 * * * * pelagos /opt/griidc/util/symlink-all-datasets/symlink-all-datasets ~jdoe/download/ "researchGroup.name=*(C-IMAGE*"
+# Cron Example: (filter by RG ID)
+# 06 * * * * pelagos /opt/griidc/util/symlink-all-datasets/symlink-all-datasets ~jdoe/download/ researchGroup.id=260
+
+use strict;
+use Config::IniFiles;
+use File::Path qw(remove_tree);
+use LWP::Simple;
+use JSON;
+
+unless (@ARGV > 0) {
+    print "Must specify destination\n";
+    exit;
+}
+
+my $dest = $ARGV[0];
+
+$dest =~ s/\/+$//;
+
+unless (-d $dest) {
+    print "$dest does not exist or is not a directory\n";
+    exit;
+}
+
+my $apiUrl = 'https://data.gulfresearchinitiative.org/api/datasets?_properties=id,udi,datasetSubmission.datasetFileName';
+
+if (@ARGV > 1) {
+    $apiUrl .= "&$ARGV[1]";
+}
+
+my $datasets = from_json(get($apiUrl));
+
+my $conf = Config::IniFiles->new( -file => '/etc/opt/pelagos.ini');
+
+# clean out $dest first
+remove_tree($dest, {keep_root => 1});
+
+my $ret = 0;
+
+foreach my $dataset (@$datasets) {
+    my @errors;
+    # check that udi is set
+    if (!exists $dataset->{'udi'} or
+        !defined $dataset->{'udi'} or
+        $dataset->{'udi'} =~ /^\s*$/) {
+        push @errors, { type => 'udi is null or empty' };
+    }
+    else {
+        my $datafile = $conf->val('paths', 'data_download') . "/$dataset->{udi}/$dataset->{udi}.dat";
+        # check that the file exists on disk
+        if (-f $datafile) {
+            # check that datasetFileName is set
+            if (exists $dataset->{'datasetSubmission'}->{'datasetFileName'} and
+                defined $dataset->{'datasetSubmission'}->{'datasetFileName'} and
+                $dataset->{'datasetSubmission'}->{'datasetFileName'} !~ /^\s*$/) {
+
+                # create directory unless it already exists
+                unless (-d "$dest/$dataset->{udi}") {
+                    unless (mkdir("$dest/$dataset->{udi}")) {
+                        push @errors, { type => 'could not create directory',
+                                        details => [ "mkdir $dest/$dataset->{udi}" ] };
+                    }
+                }
+                my $linkname = "$dest/$dataset->{udi}/$dataset->{datasetSubmission}->{datasetFileName}";
+                # create symlink unless it already exists
+                unless (-e $linkname) {
+                    unless (symlink($datafile,$linkname)) {
+                        push @errors, { type => 'could not create symlink',
+                                        details => [ "ln -s $datafile $linkname" ] };
+                    }
+                }
+            }
+        }
+    }
+
+    if (@errors) {
+        print STDERR "\n$dataset->{udi}:\n";
+        $ret = 1;
+    }
+    for my $error (@errors) {
+        print STDERR "    $error->{type}";
+        print STDERR ':' if exists $error->{'details'};
+        print STDERR "\n";
+        if (exists $error->{'details'}) {
+            for my $line (@{$error->{'details'}}) {
+                print STDERR "        $line\n";
+            }
+        }
+    }
+}
+
+print "\n" if $ret;
+
+exit $ret;

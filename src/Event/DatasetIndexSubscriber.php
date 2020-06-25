@@ -96,6 +96,11 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
                 $document->set('fileSize', TwigExtentions::formatBytes($dataset->getDatasetSubmission()->getDatasetFileSize(), 2));
             }
             $document->set('fileFormat', $dataset->getDatasetSubmission()->getDistributionFormatName());
+            if ($dataset->getDatasetSubmission()->isDatasetFileInColdStorage()) {
+                $document->set('coldStorage', true);
+            } else {
+                $document->set('coldStorage', false);
+            }
         } elseif ($dataset->hasDif()) {
             $document->set('updatedDateTime', $dataset->getDif()->getModificationTimeStamp()->format('Ymd\THis\Z'));
         } else {
