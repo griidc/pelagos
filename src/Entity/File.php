@@ -119,11 +119,11 @@ class File extends Entity
     /**
      * Setter for File Name.
      *
-     * @param string $fileName Name of the file.
+     * @param string|null $fileName Name of the file.
      *
      * @return void
      */
-    public function setFileName(string $fileName): void
+    public function setFileName(?string $fileName): void
     {
         $this->fileName = $fileName;
     }
@@ -141,11 +141,11 @@ class File extends Entity
     /**
      * Setter for File Size.
      *
-     * @param integer $fileSize Size of the file.
+     * @param integer|null $fileSize Size of the file.
      *
      * @return void
      */
-    public function setFileSize(int $fileSize): void
+    public function setFileSize(?int $fileSize): void
     {
         $this->fileSize = $fileSize;
     }
@@ -163,11 +163,11 @@ class File extends Entity
     /**
      * Setter for File Hash.
      *
-     * @param string $fileSha256Hash Hash of the file.
+     * @param string|null $fileSha256Hash Hash of the file.
      *
      * @return void
      */
-    public function setFileSha256Hash(string $fileSha256Hash): void
+    public function setFileSha256Hash(?string $fileSha256Hash): void
     {
         $this->fileSha256Hash = $fileSha256Hash;
     }
@@ -229,11 +229,11 @@ class File extends Entity
     /**
      * Setter for File Description.
      *
-     * @param string $description Description of the file.
+     * @param string|null $description Description of the file.
      *
      * @return void
      */
-    public function setDescription(string $description): void
+    public function setDescription(?string $description): void
     {
         $this->description = $description;
     }
@@ -251,11 +251,11 @@ class File extends Entity
     /**
      * Setter for File path.
      *
-     * @param string $filePath Path/Location of the file.
+     * @param string|null $filePath Path/Location of the file.
      *
      * @return void
      */
-    public function setFilePath(string $filePath): void
+    public function setFilePath(?string $filePath): void
     {
         $this->filePath = $filePath;
     }
