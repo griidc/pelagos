@@ -70,7 +70,8 @@ class DatasetSubmissionType extends AbstractType
                 'multiple' => false,
             ))
             ->add('datasetFileUri', Type\HiddenType::class, array(
-                'required' => true,
+                'required' => false,
+                'mapped' => false,
                 'attr' => array(
                     'data-msg-required' => 'You must provide a dataset file using one of the methods below.'
                 ),

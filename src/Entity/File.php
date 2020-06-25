@@ -16,7 +16,7 @@ class File extends Entity
      *
      * @var Fileset
      *
-     * @ORM\ManyToOne(targetEntity="Fileset", inversedBy="File")
+     * @ORM\ManyToOne(targetEntity="Fileset", inversedBy="files")
      * @ORM\JoinColumn(nullable=false)
      */
     protected $fileset;
@@ -109,9 +109,9 @@ class File extends Entity
     /**
      * Getter for File Name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getFileName(): string
+    public function getFileName(): ? string
     {
         return $this->fileName;
     }
@@ -131,9 +131,9 @@ class File extends Entity
     /**
      * Getter for File Size.
      *
-     * @return integer
+     * @return integer|null
      */
-    public function getFileSize(): int
+    public function getFileSize(): ? int
     {
         return $this->fileSize;
     }
@@ -153,9 +153,9 @@ class File extends Entity
     /**
      * Getter for File Hash.
      *
-     * @return string
+     * @return string|null
      */
-    public function getFileSha256Hash(): string
+    public function getFileSha256Hash(): ? string
     {
         return $this->fileSha256Hash;
     }
@@ -175,9 +175,9 @@ class File extends Entity
     /**
      * Getter for File UploadedAt.
      *
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getUploadedAt(): \DateTime
+    public function getUploadedAt(): ? \DateTime
     {
         return $this->uploadedAt;
     }
@@ -219,9 +219,9 @@ class File extends Entity
     /**
      * Getter for File Description.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDescription(): string
+    public function getDescription(): ? string
     {
         return $this->description;
     }
@@ -241,9 +241,9 @@ class File extends Entity
     /**
      * Getter for File path.
      *
-     * @return string
+     * @return string|null
      */
-    public function getFilePath(): string
+    public function getFilePath(): ? string
     {
         return $this->filePath;
     }

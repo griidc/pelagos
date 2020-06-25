@@ -547,9 +547,6 @@ class DatasetSubmission extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NotBlank(
-     *     message="The dataset submission dataset file transfer type must be set."
-     * )
      */
     protected $datasetFileTransferType;
 
@@ -564,9 +561,6 @@ class DatasetSubmission extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NotBlank(
-     *     message="The dataset submission must include a dataset file."
-     * )
      */
     protected $datasetFileUri;
 
@@ -941,8 +935,9 @@ class DatasetSubmission extends Entity
      * @throws \Exception When a DIF is passed without a PersonDatasetSubmissionDatasetContact.
      * @throws \Exception When an entity is passed that is not a DIF or DatasetSubmission.
      */
-    public function __construct(Entity $entity, PersonDatasetSubmissionDatasetContact $datasetPPOc = null)
+    public function __construct(Entity $entity, Fileset $fileset = null, PersonDatasetSubmissionDatasetContact $datasetPPOc = null)
     {
+        dump('new datasetsub');
         $this->datasetContacts = new ArrayCollection;
         $this->metadataContacts = new ArrayCollection;
         $this->distributionPoints = new ArrayCollection();
@@ -977,6 +972,9 @@ class DatasetSubmission extends Entity
             }
 
             $this->addDistributionPoint(new DistributionPoint());
+
+            // Fileset
+            $this->setFileset($fileset);
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
             $this->setSequence($entity->getDataset()->getDatasetSubmissionHistory()->first()->getSequence() + 1);
@@ -1020,7 +1018,7 @@ class DatasetSubmission extends Entity
             $this->setDatasetFileColdStorageArchiveSha256Hash($entity->getDatasetFileColdStorageArchiveSha256Hash());
             $this->setDatasetFileColdStorageArchiveSize($entity->getDatasetFileColdStorageArchiveSize());
             $this->setDatasetFileColdStorageOriginalFilename($entity->getDatasetFileColdStorageOriginalFilename());
-
+            $this->setFileset($entity->getFileset());
             //Submitter should always be the user who has submitted the dataset.
             if (!in_array($entity->getDatasetStatus(), [ Dataset::DATASET_STATUS_NONE, Dataset::DATASET_STATUS_BACK_TO_SUBMITTER])) {
                 $this->submitter = $entity->getSubmitter();
@@ -1584,7 +1582,7 @@ class DatasetSubmission extends Entity
      */
     public function setDatasetFileUri(?string $datasetFileUri)
     {
-        $this->datasetFileUri = $datasetFileUri;
+        $this->fileset->getFiles()->first()->setFilePath($datasetFileUri);
     }
 
     /**
@@ -1594,7 +1592,7 @@ class DatasetSubmission extends Entity
      */
     public function getDatasetFileUri() : ?string
     {
-        return $this->datasetFileUri;
+        return $this->fileset->getFiles()->first()->getFilePath();
     }
 
     /**
@@ -1631,7 +1629,7 @@ class DatasetSubmission extends Entity
      */
     public function setDatasetFileName(?string $datasetFileName)
     {
-        $this->datasetFileName = $datasetFileName;
+        $this->fileset->getFiles()->first()->setFileName($datasetFileName);
     }
 
     /**
@@ -1641,7 +1639,7 @@ class DatasetSubmission extends Entity
      */
     public function getDatasetFileName() : ?string
     {
-        return $this->datasetFileName;
+        return $this->fileset->getFiles()->first()->getFileName();
     }
 
     /**
@@ -1653,7 +1651,7 @@ class DatasetSubmission extends Entity
      */
     public function setDatasetFileSize(?int $datasetFileSize)
     {
-        $this->datasetFileSize = $datasetFileSize;
+        $this->fileset->getFiles()->first()->setFileSize($datasetFileSize);
     }
 
     /**
@@ -1663,7 +1661,7 @@ class DatasetSubmission extends Entity
      */
     public function getDatasetFileSize() : ?int
     {
-        return $this->datasetFileSize;
+        return $this->fileset->getFiles()->first()->getFileSize();
     }
 
     /**
@@ -1675,7 +1673,7 @@ class DatasetSubmission extends Entity
      */
     public function setDatasetFileSha256Hash(?string $datasetFileSha256Hash)
     {
-        $this->datasetFileSha256Hash = $datasetFileSha256Hash;
+        $this->fileset->getFiles()->first()->setFileSha256Hash($datasetFileSha256Hash);
     }
 
     /**
@@ -1685,7 +1683,7 @@ class DatasetSubmission extends Entity
      */
     public function getDatasetFileSha256Hash() : ?string
     {
-        return $this->datasetFileSha256Hash;
+        return $this->fileset->getFiles()->first()->getFileSha256Hash();
     }
 
     /**
