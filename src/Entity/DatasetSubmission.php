@@ -935,9 +935,8 @@ class DatasetSubmission extends Entity
      * @throws \Exception When a DIF is passed without a PersonDatasetSubmissionDatasetContact.
      * @throws \Exception When an entity is passed that is not a DIF or DatasetSubmission.
      */
-    public function __construct(Entity $entity, Fileset $fileset = null, PersonDatasetSubmissionDatasetContact $datasetPPOc = null)
+    public function __construct(Entity $entity, PersonDatasetSubmissionDatasetContact $datasetPPOc = null)
     {
-        dump('new datasetsub');
         $this->datasetContacts = new ArrayCollection;
         $this->metadataContacts = new ArrayCollection;
         $this->distributionPoints = new ArrayCollection();
@@ -974,7 +973,7 @@ class DatasetSubmission extends Entity
             $this->addDistributionPoint(new DistributionPoint());
 
             // Fileset
-            $this->setFileset($fileset);
+            $this->setFileset(new Fileset());
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
             $this->setSequence($entity->getDataset()->getDatasetSubmissionHistory()->first()->getSequence() + 1);

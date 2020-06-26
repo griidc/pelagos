@@ -353,7 +353,6 @@ class ResearchGroup extends Entity
             } else {
                 $datasetArray['dif'] = null;
             }
-            dump($dataset->getDatasetSubmission());
             if ($dataset->hasDatasetSubmission()) {
                 $datasetArray['datasetSubmission'] = array(
                     'authors' =>  $dataset->getDatasetSubmission()->getAuthors(),

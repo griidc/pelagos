@@ -2,7 +2,6 @@
 
 namespace App\Controller\UI;
 
-use App\Entity\Fileset;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -165,8 +164,7 @@ class DatasetSubmissionController extends AbstractController
                     if ($dif->getStatus() == DIF::STATUS_APPROVED) {
                         // This is the first submission, so create a new one based on the DIF.
                         $personDatasetSubmissionDatasetContact = new PersonDatasetSubmissionDatasetContact;
-                        $fileset = new Fileset();
-                        $datasetSubmission = new DatasetSubmission($dif, $fileset, $personDatasetSubmissionDatasetContact);
+                        $datasetSubmission = new DatasetSubmission($dif, $personDatasetSubmissionDatasetContact);
                         $datasetSubmission->setSequence(1);
 
                         $createFlag = true;
@@ -180,8 +178,7 @@ class DatasetSubmissionController extends AbstractController
                     and $dataset->getDatasetStatus() === Dataset::DATASET_STATUS_BACK_TO_SUBMITTER
                 ) {
                     // The latest submission is complete, so create new one based on it.
-                    $fileset = new Fileset();
-                    $datasetSubmission = new DatasetSubmission($datasetSubmission, $fileset);
+                    $datasetSubmission = new DatasetSubmission($datasetSubmission);
                     $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_BACK_TO_SUBMITTER);
                     $createFlag = true;
                 }
