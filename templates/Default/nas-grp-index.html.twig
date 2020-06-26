@@ -3,6 +3,7 @@
 {% block stylesheets %}
     {{ parent() }}
     <link href="{{ asset('build/css/nas-home.css') }}" rel="stylesheet" />
+
 {% endblock %}
 
 {% block body %}
@@ -22,18 +23,28 @@
             
             <div class="p-3 mx-auto">
                 <div>
-                    <h4>Research Groups</h4>
+                    <h4>Funding Cycles</h4>
                 </div>
-                <div class="dropdown show">
-                    <a class="btn btn-dark dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Please select a research group
+
+                <div class="dropdown">
+                    <a class="btn btn-dark dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
+                        Please select a Funding Cycle
                     </a>
 
-                    <div class="dropdown-menu scrollable-menu overflow-auto" aria-labelledby="dropdownMenuLink">
-                        {% for researchGroup in researchGroups %}
-                            <a class="dropdown-item" href="{{ path('pelagos_app_ui_researchgroup_about', { id: researchGroup.getId}) }}" target="_blank">{{ researchGroup.name }}</a>
+                    <ul class="dropdown-menu scrollable-menu overflow-auto" aria-labelledby="dropdownMenuLink">
+                        {% for fundingCycle in fundingCycles %}
+                            <li class="dropdown-submenu">
+                            <a class="dropdown-toggle">{{ fundingCycle.name }}</a>
+                            <ul class="dropdown-submenu overflow-auto">
+                            {% for researchGroup in fundingCycle.researchGroups %}
+                                <li class="dropdown-item">
+                                    <a>{{ researchGroup.name }}</a>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                            </li>
                         {% endfor %}
-                    </div>
+                    </ul>
                 </div>
             </div>
 

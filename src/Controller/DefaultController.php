@@ -2,16 +2,18 @@
 
 namespace App\Controller;
 
-use App\Entity\Account;
-use App\Entity\ResearchGroup;
-use App\Util\FundingOrgFilter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-use App\Entity\DatasetSubmission;
+use App\Entity\Account;
 use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Entity\FundingCycle;
+use App\Entity\ResearchGroup;
+
+use App\Util\FundingOrgFilter;
 
 /**
  * This is the default controller.
@@ -30,14 +32,15 @@ class DefaultController extends AbstractController
      */
     public function nasIndex(FundingOrgFilter $fundingOrgFilter)
     {
-        $researchGroups = array();
-
+        $filter = array();
         if ($fundingOrgFilter->isActive()) {
-            $researchGroups = $this->get('doctrine')->getRepository(ResearchGroup::class)->findBy(array('id' => $fundingOrgFilter->getResearchGroupsIdArray() ));
+            $filter = array('fundingOrganization' => $fundingOrgFilter->getFilterIdArray());
         }
+        
+        $fundingCycles = $this->get('doctrine')->getRepository(FundingCycle::class)->findBy($filter, array('name' => 'ASC'));
 
         return $this->render('Default/nas-grp-index.html.twig', array(
-            'researchGroups' => $researchGroups,
+            'fundingCycles' => $fundingCycles,
         ));
     }
 
