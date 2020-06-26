@@ -354,20 +354,20 @@ class ResearchGroup extends Entity
                 $datasetArray['dif'] = null;
             }
             dump($dataset->getDatasetSubmission());
-//            if ($dataset->hasDatasetSubmission()) {
-//                $datasetArray['datasetSubmission'] = array(
-//                    'authors' =>  $dataset->getDatasetSubmission()->getAuthors(),
-//                    'themeKeywords' => $dataset->getDatasetSubmission()->getThemeKeywords()
-//                );
-//                $datasetArray['fileFormat'] = $dataset->getDatasetSubmission()->getDistributionFormatName();
-//                if ($dataset->getDatasetSubmission()->isDatasetFileInColdStorage()) {
-//                    $datasetArray['fileSize'] = TwigExtentions::formatBytes($dataset->getDatasetSubmission()->getDatasetFileColdStorageArchiveSize(), 2);
-//                } else {
-//                    $datasetArray['fileSize'] = TwigExtentions::formatBytes($dataset->getDatasetSubmission()->getDatasetFileSize(), 2);
-//                }
-//            } else {
-//                $datasetArray['datasetSubmission'] = null;
-//            }
+            if ($dataset->hasDatasetSubmission()) {
+                $datasetArray['datasetSubmission'] = array(
+                    'authors' =>  $dataset->getDatasetSubmission()->getAuthors(),
+                    'themeKeywords' => $dataset->getDatasetSubmission()->getThemeKeywords()
+                );
+                $datasetArray['fileFormat'] = $dataset->getDatasetSubmission()->getDistributionFormatName();
+                if ($dataset->getDatasetSubmission()->isDatasetFileInColdStorage()) {
+                    $datasetArray['fileSize'] = TwigExtentions::formatBytes($dataset->getDatasetSubmission()->getDatasetFileColdStorageArchiveSize(), 2);
+                } else {
+                    $datasetArray['fileSize'] = TwigExtentions::formatBytes($dataset->getDatasetSubmission()->getDatasetFileSize(), 2);
+                }
+            } else {
+                $datasetArray['datasetSubmission'] = null;
+            }
             $datasetArray['publications'] = array();
             foreach ($dataset->getDatasetPublications() as $datasetPublication) {
                 array_push($datasetArray['publications'], $datasetPublication->getPublication());
