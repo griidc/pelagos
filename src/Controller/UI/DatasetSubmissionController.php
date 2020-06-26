@@ -254,7 +254,6 @@ class DatasetSubmissionController extends AbstractController
                     mkdir($incomingDirectory, 0755, true);
                 }
             }
-
             $this->entityHandler->update($datasetSubmission);
 
             foreach ($datasetSubmission->getDistributionPoints() as $distributionPoint) {
@@ -269,6 +268,7 @@ class DatasetSubmissionController extends AbstractController
             foreach ($datasetSubmission->getDatasetLinks() as $datasetLink) {
                 $this->entityHandler->update($datasetLink);
             }
+            $this->entityHandler->update($datasetSubmission->getFileset()->getFiles()->first());
 
             $this->entityEventDispatcher->dispatch(
                 $datasetSubmission,
