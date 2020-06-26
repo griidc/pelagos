@@ -76,20 +76,7 @@
                 @noOfResults="changeNoOfResults"
                 :formValues="form"/>
         <section class="section-content pt-3 bg" v-else>
-            <div class="container">
-                <article class="card">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">
-                            GRIIDC Datasets
-                        </h5>
-                        <p class="card-text">
-                            Choose from thousands of scientific datasets from various fields
-                            including oceanography, biology, ecology, chemistry, social science,
-                            and others.
-                        </p>
-                    </div>
-                </article>
-            </div>
+            <div class="container" />
         </section>
     </div>
 </template>
