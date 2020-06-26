@@ -110,6 +110,7 @@ class SearchPageController extends AbstractController
             'query' => $request->get('query'),
             'page' => $request->get('page'),
             'field' => $request->get('field'),
+            'perPage' => $request->get('perPage'),
             'collectionStartDate' => $request->get('collectionStartDate'),
             'collectionEndDate' => $request->get('collectionEndDate'),
             'options' => array(

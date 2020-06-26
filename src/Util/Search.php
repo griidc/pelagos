@@ -68,6 +68,11 @@ class Search
      */
     const ELASTIC_INDEX_MAPPING_UDI = 'udi';
 
+    /**
+     * Elastic index mapping for publication dois.
+     */
+    const ELASTIC_INDEX_MAPPING_PUB_DOI = 'publications.doi';
+
     const AVAILABILITY_STATUSES = array(
         1 => [DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE],
         2 => [DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION, DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL],
@@ -113,7 +118,7 @@ class Search
      */
     public function getCount(Query $query): int
     {
-        return $this->getPaginator($query)->getNbResults();
+        return $this->finder->createPaginatorAdapter($query)->getTotalHits(true);
     }
 
     /**
@@ -128,6 +133,7 @@ class Search
         $page = ($requestTerms['page']) ? $requestTerms['page'] : 1;
         $queryTerm = $requestTerms['query'];
         $specificField = $requestTerms['field'];
+        $perPage = $requestTerms['perPage'];
         $collectionDateRange = array();
         if ($requestTerms['collectionStartDate'] and $requestTerms['collectionEndDate']) {
             $collectionDateRange = array(
@@ -155,6 +161,7 @@ class Search
         $mainQuery->addAggregation($this->getStatusAggregationQuery($requestTerms));
         $mainQuery->setQuery($subMainQuery);
         $mainQuery->setFrom(($page - 1) * 10);
+        $mainQuery->setSize($perPage);
 
         return $mainQuery;
     }
@@ -216,7 +223,8 @@ class Search
         }
 
         //Sorting based on highest count
-        array_multisort(array_column($researchGroupsInfo, 'count'), SORT_DESC, $researchGroupsInfo);
+        $array_column = array_column($researchGroupsInfo, 'count');
+        array_multisort($array_column, SORT_DESC, $researchGroupsInfo);
 
         return $researchGroupsInfo;
     }
@@ -265,7 +273,8 @@ class Search
             );
         }
         //Sorting based on highest count
-        array_multisort(array_column($fundingOrgInfo, 'count'), SORT_DESC, $fundingOrgInfo);
+        $array_column = array_column($fundingOrgInfo, 'count');
+        array_multisort($array_column, SORT_DESC, $fundingOrgInfo);
 
         return $fundingOrgInfo;
     }
@@ -347,7 +356,8 @@ class Search
         }
 
         //Sorting based on highest count
-        array_multisort(array_column($statusInfo, 'count'), SORT_DESC, $statusInfo);
+        $array_column = array_column($statusInfo, 'count');
+        array_multisort($array_column, SORT_DESC, $statusInfo);
 
         return $statusInfo;
     }
@@ -625,6 +635,7 @@ class Search
             trim(preg_replace($doiRegEx, '', $queryTerm));
             $queryTerm = $matches[1][0];
             $fieldsBoolQuery->addShould($this->getDoiQuery($queryTerm));
+            $fieldsBoolQuery->addShould($this->getPubDoiQuery($queryTerm));
         }
         return $queryTerm;
     }
@@ -646,6 +657,23 @@ class Search
         $doiNestedQuery->setFieldBoost(self::ELASTIC_INDEX_MAPPING_DOI, 4);
         $doiQuery->setQuery($doiNestedQuery);
         return $doiQuery;
+    }
+
+    /**
+     * Get the Publication doi query.
+     *
+     * @param string $queryTerm Query term that needs to be searched upon.
+     *
+     * @return Query\Nested
+     */
+    private function getPubDoiQuery(string $queryTerm): Query\Nested
+    {
+        $pubDoiNestedQuery = new Query\Nested();
+        $pubDoiNestedQuery->setPath('publications');
+        $pubDoiQuery = new Query\MatchPhrase();
+        $pubDoiQuery->setFieldQuery(self::ELASTIC_INDEX_MAPPING_PUB_DOI, $queryTerm);
+        $pubDoiNestedQuery->setQuery($pubDoiQuery);
+        return $pubDoiNestedQuery;
     }
 
     /**

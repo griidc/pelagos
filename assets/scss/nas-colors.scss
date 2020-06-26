@@ -12,6 +12,7 @@ $blue:     #007bff;
 $yellow:   #ffc107;
 $green:    #28a745;
 $red:      #dc3545;
+$iceBlue:  #dcf3ff;
 
 $sciences:    #ab840d;
 $engineering: #005991;
@@ -38,7 +39,8 @@ $theme-colors: (
     "submitted":     $blue,
     "identified":    $gray-600,
     "restricted":    $red,
-    "remotlyhosted": $yellow
+    "remotlyhosted": $yellow,
+    "coldstorage":   $iceBlue
 );
 
 $colors: (
