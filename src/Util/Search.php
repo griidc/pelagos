@@ -86,6 +86,11 @@ class Search
     const BOOST = '^2';
 
     /**
+     * Default value for aggregation size to get all aggregation terms.
+     */
+    const DEFAULT_AGGREGATION_TERM_SIZE = 99999;
+
+    /**
      * Constructor.
      *
      * @param TransformedFinder      $finder        The finder interface object.
@@ -453,7 +458,7 @@ class Search
         // Add researchGroup id field to the aggregation
         $researchGroupAgg = new Aggregation\Terms('researchGrpId');
         $researchGroupAgg->setField('researchGroup.id');
-        $researchGroupAgg->setSize(500);
+        $researchGroupAgg->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
 
         if (!empty($requestTerms['options']['funOrgId'])) {
             $fundOrgFilter = new Aggregation\Filter('fundOrgFilter');
@@ -483,7 +488,7 @@ class Search
         // Add funding Org id field to the aggregation
         $fundingOrgAgg = new Aggregation\Terms('fundingOrgId');
         $fundingOrgAgg->setField('researchGroup.fundingCycle.fundingOrganization.id');
-        $fundingOrgAgg->setSize(10);
+        $fundingOrgAgg->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
 
 
         // Add funding Org agg to nested agg
