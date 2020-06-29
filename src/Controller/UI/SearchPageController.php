@@ -71,6 +71,7 @@ class SearchPageController extends AbstractController
         $researchGroupsInfo = $searchUtil->getResearchGroupAggregations($buildQuery);
         $fundingOrgInfo = $searchUtil->getFundingOrgAggregations($buildQuery);
         $statusInfo = $searchUtil->getStatusAggregations($buildQuery);
+        $fundingCycleInfo = $searchUtil->getFundingCycleAggregations($buildQuery);
         $elasticScoreFirstResult = null;
         if (!empty($results)) {
             $elasticScoreFirstResult = $resultsBeforeHydration[0]->getResult()->getHit()['_score'];
@@ -92,6 +93,7 @@ class SearchPageController extends AbstractController
                     'researchGroupsInfo' => $researchGroupsInfo,
                     'fundingOrgInfo' => $fundingOrgInfo,
                     'statusInfo' => $statusInfo,
+                    'fundingCycleInfo' => $fundingCycleInfo
                 ),
             )
         );

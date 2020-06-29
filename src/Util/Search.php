@@ -2,6 +2,7 @@
 
 namespace App\Util;
 
+use App\Entity\FundingCycle;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Elastica\Aggregation;
@@ -193,7 +194,6 @@ class Search
     public function getResearchGroupAggregations(Query $query): array
     {
         $userPaginator = $this->getPaginator($query);
-
         $researchGroupBucket = array_column(
             $this->findKey($userPaginator->getAdapter()->getAggregations(), 'researchGrpId')['buckets'],
             'doc_count',
@@ -368,6 +368,54 @@ class Search
     }
 
     /**
+     * Get the funding cycle aggregations for the query.
+     *
+     * @param Query $query The query built based on the search terms and parameters.
+     *
+     * @return array
+     */
+    public function getFundingCycleAggregations(Query $query): array
+    {
+        $userPaginator = $this->getPaginator($query);
+        $fundingCycleBucket = array_column(
+            $this->findKey($userPaginator->getAdapter()->getAggregations(), 'fundingCycleId')['buckets'],
+            'doc_count',
+            'key'
+        );
+
+        return $this->getFundingCycleInfo($fundingCycleBucket);
+    }
+
+    /**
+     * Get funding cycle information for the aggregations.
+     *
+     * @param array $aggregations Aggregations for each funding cycle id.
+     *
+     * @return array
+     */
+    private function getFundingCycleInfo(array $aggregations): array
+    {
+        $fundingCycleInfo = array();
+
+        $fundingCycles = $this->entityManager
+            ->getRepository(FundingCycle::class)
+            ->findBy(array('id' => array_keys($aggregations)));
+
+        foreach ($fundingCycles as $fundingCycle) {
+            $fundingCycleInfo[$fundingCycle->getId()] = array(
+                'id' => $fundingCycle->getId(),
+                'name' => $fundingCycle->getName(),
+                'count' => $aggregations[$fundingCycle->getId()]
+            );
+        }
+        //Sorting based on highest count
+        $array_column = array_column($fundingCycleInfo, 'count');
+        array_multisort($array_column, SORT_DESC, $fundingCycleInfo);
+
+        return $fundingCycleInfo;
+    }
+
+    /**
      * Find the bucket name of the aggregation.
      *
      * @param array  $aggregations Array of aggregations.
@@ -482,6 +530,9 @@ class Search
 
         // Add nested field path for funding cycle field
         $nestedFcAgg = new Aggregation\Nested('nestedFunCyc', 'researchGroup.fundingCycle');
+        $fundingCycleTerms = new Aggregation\Terms('fundingCycleId');
+        $fundingCycleTerms->setField('researchGroup.fundingCycle.id');
+        $fundingCycleTerms->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
 
         // Add nested field path for funding org field
         $nestedFoAgg = new Aggregation\Nested('nestedFunOrg', 'researchGroup.fundingCycle.fundingOrganization');
@@ -496,6 +547,9 @@ class Search
 
         // Add funding org to funding cycle agg
         $nestedFcAgg->addAggregation($nestedFoAgg);
+
+        // Add funding cycle terms to funding cycle agg
+        $nestedFcAgg->addAggregation($fundingCycleTerms);
         // Add Nested fundingOrg agg to nested research group agg
         $nestedRgAgg->addAggregation($nestedFcAgg);
 

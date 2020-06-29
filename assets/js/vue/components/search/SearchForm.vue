@@ -151,6 +151,7 @@
                     .get(Routing.generate('pelagos_app_ui_searchpage_results') + "?" + searchQuery)
                     .then(response => {
                         this.resultSet = response.data;
+                        console.log(this.resultSet);
                         this.showResults = true;
                         window.location.hash = searchQuery;
                         this.route = window.location.hash;
