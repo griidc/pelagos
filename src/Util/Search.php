@@ -538,11 +538,9 @@ class Search
             $fundingCycleFilter->addAggregation($researchGroupAgg);
             // Add research group agg to nested
             $nestedRgAgg->addAggregation($fundingCycleFilter);
-        }
-        else {
+        } else {
             $nestedRgAgg->addAggregation($researchGroupAgg);
         }
-
 
         // Add nested field path for funding cycle field
         $nestedFcAgg = new Aggregation\Nested('nestedFunCyc', 'researchGroup.fundingCycle');
