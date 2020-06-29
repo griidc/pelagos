@@ -37,7 +37,28 @@ class DefaultController extends AbstractController
             $filter = array('fundingOrganization' => $fundingOrgFilter->getFilterIdArray());
         }
         
-        $fundingCycles = $this->get('doctrine')->getRepository(FundingCycle::class)->findBy($filter, array('name' => 'ASC'));
+        $results = $this->get('doctrine')->getRepository(FundingCycle::class)->findBy($filter, array('name' => 'ASC'));
+        
+        $fundingCycles = array();
+        
+        foreach ($results as $fundingCycle)
+        {
+            $data = array();
+            $data['id'] = $fundingCycle->getId();
+            $data['name'] = $fundingCycle->getName();
+            
+            foreach ($fundingCycle->getResearchGroups() as $researchGroup) 
+            {
+                $rg['id'] = $researchGroup->getId();
+                $rg['name'] = $researchGroup->getName();
+                $data['researchGroups'][] = $rg;
+            }
+            
+            $fundingCycles[] = $data;
+            
+        }
+        
+        dump($fundingCycles);
 
         return $this->render('Default/nas-grp-index.html.twig', array(
             'fundingCycles' => $fundingCycles,

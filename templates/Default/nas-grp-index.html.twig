@@ -3,6 +3,9 @@
 {% block stylesheets %}
     {{ parent() }}
     <link href="{{ asset('build/css/nas-home.css') }}" rel="stylesheet" />
+    
+    {{ parent() }}
+    {{ encore_entry_link_tags('grp-home') }}
 
 {% endblock %}
 
@@ -25,27 +28,9 @@
                 <div>
                     <h4>Funding Cycles</h4>
                 </div>
-
-                <div class="dropdown">
-                    <a class="btn btn-dark dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
-                        Please select a Funding Cycle
-                    </a>
-
-                    <ul class="dropdown-menu scrollable-menu overflow-auto" aria-labelledby="dropdownMenuLink">
-                        {% for fundingCycle in fundingCycles %}
-                            <li class="dropdown-submenu">
-                            <a class="dropdown-toggle">{{ fundingCycle.name }}</a>
-                            <ul class="dropdown-submenu overflow-auto">
-                            {% for researchGroup in fundingCycle.researchGroups %}
-                                <li class="dropdown-item">
-                                    <a>{{ researchGroup.name }}</a>
-                                </li>
-                            {% endfor %}
-                            </ul>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
+                
+                <div id="picklist" />
+                
             </div>
 
             <div class="card text-white bg-secondary my-5 py-4 text-center">
@@ -115,4 +100,14 @@
             </div>
         </footer>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    
+    <script>
+      window.fundingCycles = {{ fundingCycles | json_encode | raw }}
+    </script>
+    
+    {{ encore_entry_script_tags('grp-home') }}
 {% endblock %}
