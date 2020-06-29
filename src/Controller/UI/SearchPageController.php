@@ -119,6 +119,7 @@ class SearchPageController extends AbstractController
                 'rgId' => $request->get('researchGroup'),
                 'funOrgId' => $request->get('fundingOrg'),
                 'status' => $request->get('status'),
+                'fundingCycleId' => $request->get('fundingCycle')
             ),
             'sessionId' => $request->getSession()->getId()
         );
