@@ -32,7 +32,8 @@
                     <aside class="col-lg-3">
                         <div class="card card-filter">
                             <Facet :facet-info="results.facetInfo.statusInfo" :facet-name="datasetStatus" v-on="$listeners" :formValues="formValues"/>
-                            <Facet :facet-info="results.facetInfo.fundingOrgInfo" :facet-name="fundingOrg" v-on="$listeners" :formValues="formValues"/>
+                            <Facet :facet-info="results.facetInfo.fundingCycleInfo" :facet-name="fundingCycle" v-on="$listeners" :formValues="formValues" v-if="template === 'nas-grp-base.html.twig'"/>
+                            <Facet :facet-info="results.facetInfo.fundingOrgInfo" :facet-name="fundingOrg" v-on="$listeners" :formValues="formValues" v-else/>
                             <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="researchGroup" v-on="$listeners" :formValues="formValues"/>
                         </div>
                     </aside>
@@ -86,6 +87,9 @@
             },
             formValues: {
                 type: Object
+            },
+            template: {
+                type: String
             }
         },
         data: function () {
@@ -93,6 +97,7 @@
                 datasetStatus: 'status',
                 fundingOrg: 'fundingOrg',
                 researchGroup: 'researchGroup',
+                fundingCycle: 'fundingCycle',
                 facetCheckBoxes: {
                     status: '',
                     fundingOrg: '',

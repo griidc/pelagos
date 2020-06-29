@@ -5,6 +5,7 @@
                 <strong v-if="facetName === 'status'">Dataset Status</strong>
                 <strong v-else-if="facetName === 'fundingOrg'">Funding Organizations</strong>
                 <strong v-else-if="facetName === 'researchGroup'">Research Groups</strong>
+                <strong v-else-if="facetName === 'fundingCycle'">Funding Cycle</strong>
             </h6>
         </header>
         <div class="filter-content">

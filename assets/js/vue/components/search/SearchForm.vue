@@ -74,7 +74,8 @@
                 @facetClicked="facetCheckBoxValues"
                 @pagination="changePageNo"
                 @noOfResults="changeNoOfResults"
-                :formValues="form"/>
+                :formValues="form"
+                :template="template"/>
         <section class="section-content pt-3 bg" v-else>
             <div class="container">
                 <article class="card">
@@ -205,6 +206,11 @@
                     }
                 }
             }
+        },
+        props: {
+            template: {
+                type: String
+            }
         }
     }
 
@@ -218,6 +224,7 @@
                 status: '',
                 fundingOrg: '',
                 researchGroup: '',
+                fundingCycle: '',
                 perPage: 10
         }
     }
