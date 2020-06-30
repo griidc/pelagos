@@ -36,29 +36,24 @@ class DefaultController extends AbstractController
         if ($fundingOrgFilter->isActive()) {
             $filter = array('fundingOrganization' => $fundingOrgFilter->getFilterIdArray());
         }
-        
+
         $results = $this->get('doctrine')->getRepository(FundingCycle::class)->findBy($filter, array('name' => 'ASC'));
-        
+
         $fundingCycles = array();
-        
-        foreach ($results as $fundingCycle)
-        {
+
+        foreach ($results as $fundingCycle) {
             $data = array();
             $data['id'] = $fundingCycle->getId();
             $data['name'] = $fundingCycle->getName();
-            
-            foreach ($fundingCycle->getResearchGroups() as $researchGroup) 
-            {
+
+            foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
                 $rg['id'] = $researchGroup->getId();
                 $rg['name'] = $researchGroup->getName();
                 $data['researchGroups'][] = $rg;
             }
-            
+
             $fundingCycles[] = $data;
-            
         }
-        
-        dump($fundingCycles);
 
         return $this->render('Default/nas-grp-index.html.twig', array(
             'fundingCycles' => $fundingCycles,
@@ -80,7 +75,7 @@ class DefaultController extends AbstractController
             return $this->redirect('/', 302);
         }
     }
-    
+
     /**
      * The admin action.
      *
