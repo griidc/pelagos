@@ -17,7 +17,7 @@
                     </div>
                 </div>
                 <form>
-                    <div v-bind:style="facetName === 'researchGroup' ? 'overflow-y: scroll; height: 20rem;': ''">
+                    <div v-bind:class="facetScrollable">
                         <label class="form-check" v-for="facet in filteredFacets">
                             <input class="form-check-input facet-aggregation"
                                    :value="facet.id" type="checkbox"
@@ -118,6 +118,12 @@
                 } else {
                     return this.facetInfo;
                 }
+            },
+            facetScrollable: function () {
+                const scrollableClass = 'scrollable-facet';
+                if (this.facetInfo.length > 10) {
+                    return scrollableClass;
+                }
             }
         },
         created() {
@@ -132,5 +138,9 @@
 </script>
 
 <style scoped>
-
+    .scrollable-facet {
+        height: auto;
+        max-height: 20rem;
+        overflow-y: auto;
+    }
 </style>
