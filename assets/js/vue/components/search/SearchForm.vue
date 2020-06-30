@@ -76,7 +76,20 @@
                 @noOfResults="changeNoOfResults"
                 :formValues="form"/>
         <section class="section-content pt-3 bg" v-else>
-            <div class="container" />
+            <div v-show="showSearchTextBlock" class="container">
+                <article class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">
+                            GRIIDC Datasets
+                        </h5>
+                        <p class="card-text">
+                            Choose from thousands of scientific datasets from various fields
+                            including oceanography, biology, ecology, chemistry, social science,
+                            and others.
+                        </p>
+                    </div>
+                </article>
+            </div>
         </section>
     </div>
 </template>
@@ -102,6 +115,7 @@
                 resultSet: Object,
                 route: window.location.hash,
                 submitted: false,
+                showSearchTextBlock: window.PELAGOS_TEMPLATE_PROPS.showSearchTextBlock,
             }
         },
         methods: {
