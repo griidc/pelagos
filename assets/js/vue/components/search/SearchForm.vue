@@ -74,8 +74,7 @@
                 @facetClicked="facetCheckBoxValues"
                 @pagination="changePageNo"
                 @noOfResults="changeNoOfResults"
-                :formValues="form"
-                :template="template"/>
+                :formValues="form"/>
         <section class="section-content pt-3 bg" v-else>
             <div class="container">
                 <article class="card">
@@ -152,7 +151,6 @@
                     .get(Routing.generate('pelagos_app_ui_searchpage_results') + "?" + searchQuery)
                     .then(response => {
                         this.resultSet = response.data;
-                        console.log(this.resultSet);
                         this.showResults = true;
                         window.location.hash = searchQuery;
                         this.route = window.location.hash;
@@ -207,11 +205,6 @@
                 }
             }
         },
-        props: {
-            template: {
-                type: String
-            }
-        }
     }
 
     function initialFormValues() {

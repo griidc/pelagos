@@ -17,16 +17,8 @@ window.addEventListener("load", function(event) {
     new Vue({
         el: '#search-app',
         components: { SearchApp },
-        data() {
-            return {
-               customBaseTemplate: ''
-            }
-        },
-        beforeMount() {
-            this.customBaseTemplate = this.$el.attributes['data-name'].value;
-        },
         template: `<div class="bootstrap">
-                    <SearchApp :template="this.customBaseTemplate"/>
+                    <SearchApp/>
                    </div>`
     });
 });
