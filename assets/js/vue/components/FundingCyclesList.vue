@@ -16,7 +16,6 @@
         <select @change="selectResearchGroup" class="form-control" :disabled="researchGroupDisabled">
             <option v-for="researchGroup in researchGroups" :value="researchGroup.id" :key="researchGroup.id">{{ researchGroup.name }}</option>
         </select>
-
     </div>
 </template>
 

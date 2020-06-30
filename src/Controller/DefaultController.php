@@ -12,7 +12,6 @@ use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\FundingCycle;
 use App\Entity\ResearchGroup;
-
 use App\Util\FundingOrgFilter;
 
 /**
