@@ -76,7 +76,7 @@
                 @noOfResults="changeNoOfResults"
                 :formValues="form"/>
         <section class="section-content pt-3 bg" v-else>
-            <div v-show="showSearchTextBlock" class="container">
+            <div v-show="!hideSearchTextBlock" class="container">
                 <article class="card">
                     <div class="card-body text-center">
                         <h5 class="card-title">
@@ -115,7 +115,15 @@
                 resultSet: Object,
                 route: window.location.hash,
                 submitted: false,
-                showSearchTextBlock: window.PELAGOS_TEMPLATE_PROPS.showSearchTextBlock,
+            }
+        },
+        computed: {
+            hideSearchTextBlock: function () {
+                if (typeof window.PELAGOS_TEMPLATE_PROPS !== 'undefined') {
+                    return window.PELAGOS_TEMPLATE_PROPS.hideSearchTextBlock;
+                } else {
+                    return false;
+                }
             }
         },
         methods: {
