@@ -76,7 +76,7 @@
                 @noOfResults="changeNoOfResults"
                 :formValues="form"/>
         <section class="section-content pt-3 bg" v-else>
-            <div v-show="!hideSearchTextBlock" class="container">
+            <div v-show="!displayTextBlock" class="container">
                 <article class="card">
                     <div class="card-body text-center">
                         <h5 class="card-title">
