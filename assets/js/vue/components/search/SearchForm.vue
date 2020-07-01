@@ -118,7 +118,7 @@
             }
         },
         computed: {
-            hideSearchTextBlock: function () {
+            displayTextBlock: function () {
                 if (typeof window.PELAGOS_TEMPLATE_PROPS !== 'undefined') {
                     return window.PELAGOS_TEMPLATE_PROPS.hideSearchTextBlock;
                 } else {
