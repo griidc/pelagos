@@ -45,7 +45,7 @@
                 })
             },
             selectResearchGroup: function(event) {
-                if (event.target.value != "") {
+                if (event.target.value) {
                     window.open("/research-group/about/" + event.target.value, '_blank');
                 }
             }
