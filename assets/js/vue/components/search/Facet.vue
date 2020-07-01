@@ -52,6 +52,7 @@
 </template>
 
 <script>
+    const maxFacetsToDisplay = 10;
     export default {
         name: "FacetGroups",
         props: {
@@ -121,7 +122,7 @@
             },
             facetScrollable: function () {
                 const scrollableClass = 'scrollable-facet';
-                if (this.facetInfo.length > 10) {
+                if (this.facetInfo.length > maxFacetsToDisplay) {
                     return scrollableClass;
                 }
             }
