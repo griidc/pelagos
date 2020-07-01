@@ -31,10 +31,10 @@
                 <div class="row">
                     <aside class="col-lg-3">
                         <div class="card card-filter">
-                            <Facet :facet-info="results.facetInfo.statusInfo" :facet-name="datasetStatus" v-on="$listeners" :formValues="formValues"/>
-                            <Facet :facet-info="results.facetInfo.fundingCycleInfo" :facet-name="fundingCycle" v-on="$listeners" :formValues="formValues" v-if="showFundingCycleFacet()"/>
-                            <Facet :facet-info="results.facetInfo.fundingOrgInfo" :facet-name="fundingOrg" v-on="$listeners" :formValues="formValues" v-else/>
-                            <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="researchGroup" v-on="$listeners" :formValues="formValues"/>
+                            <Facet :facet-info="results.facetInfo.statusInfo" :facet-name="facetLabels.status" v-on="$listeners" :formValues="formValues"/>
+                            <Facet :facet-info="results.facetInfo.fundingCycleInfo" :facet-name="facetLabels.fundingCycle" v-on="$listeners" :formValues="formValues" v-if="showFundingCycleFacet()"/>
+                            <Facet :facet-info="results.facetInfo.fundingOrgInfo" :facet-name="facetLabels.fundingOrg" v-on="$listeners" :formValues="formValues" v-else/>
+                            <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="facetLabels.researchGroup" v-on="$listeners" :formValues="formValues"/>
                         </div>
                     </aside>
                     <main class="col-lg-9 overflow-auto">
@@ -91,10 +91,24 @@
         },
         data: function () {
             return {
-                datasetStatus: 'status',
-                fundingOrg: 'fundingOrg',
-                researchGroup: 'researchGroup',
-                fundingCycle: 'fundingCycle',
+                facetLabels: {
+                    status: {
+                        label: 'Dataset Status',
+                        queryParam: 'status'
+                    },
+                    fundingCycle: {
+                        label: 'Funding Cycles',
+                        queryParam: 'fundingCycle'
+                    },
+                    fundingOrg: {
+                        label: 'Funding Organizations',
+                        queryParam: 'fundingOrg'
+                    },
+                    researchGroup: {
+                        label: 'Research Groups',
+                        queryParam: 'researchGroup'
+                    }
+                },
                 facetCheckBoxes: {
                     status: '',
                     fundingOrg: '',
