@@ -68,6 +68,7 @@ class DefaultController extends AbstractController
             $researchGroups[] = array(
                 'id' => $researchGroup->getId(),
                 'name' => $researchGroup->getName(),
+                'shortName' => $researchGroup->getShortName(),
                 'projectDirectors' => $this->getProjectDirectorList($researchGroup)
             );
         }
@@ -88,7 +89,11 @@ class DefaultController extends AbstractController
         foreach ($researchGroup->getPersonResearchGroups() as $personResearchGroup) {
             if ($personResearchGroup instanceof PersonResearchGroup
                 and $personResearchGroup->getRole()->getName() === ResearchGroupRole::LEADERSHIP) {
-                $projectDirectors[] = $personResearchGroup->getPerson();
+                $projectDirectors[] = array(
+                    'id' => $personResearchGroup->getPerson()->getId(),
+                    'name' => $personResearchGroup->getPerson()->getFirstName()
+                        . ' ' . $personResearchGroup->getPerson()->getLastName()
+                );
             }
         }
         return $projectDirectors;
