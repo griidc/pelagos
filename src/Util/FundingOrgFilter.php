@@ -85,4 +85,14 @@ class FundingOrgFilter
 
         return $ids;
     }
+
+    /**
+     * Return the list of funding organizations.
+     *
+     * @return array
+     */
+    public function getFundingOrganizations(): array
+    {
+        return $this->fundingOrganizations;
+    }
 }

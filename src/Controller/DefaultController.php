@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\PersonResearchGroup;
+use App\Entity\ResearchGroupRole;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -31,33 +33,65 @@ class DefaultController extends AbstractController
      */
     public function nasIndex(FundingOrgFilter $fundingOrgFilter)
     {
-        $filter = array();
-        if ($fundingOrgFilter->isActive()) {
-            $filter = array('fundingOrganization' => $fundingOrgFilter->getFilterIdArray());
-        }
-
-        $fundingCycles = $this->get('doctrine')->getRepository(FundingCycle::class)->findBy($filter, array('name' => 'ASC'));
-
         $fundingCycleList = array();
+        if ($fundingOrgFilter->isActive()) {
+            $fundingOrganizations = $fundingOrgFilter->getFundingOrganizations();
 
-        foreach ($fundingCycles as $fundingCycle) {
-            $tempArray = array();
-            $tempArray['id'] = $fundingCycle->getId();
-            $tempArray['name'] = $fundingCycle->getName();
-
-            foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
-                $tempArray['researchGroups'][] = array(
-                    'id' => $researchGroup->getId(),
-                    'name' => $researchGroup->getName(),
-                );
+            foreach ($fundingOrganizations as $fundingOrganization) {
+                foreach ($fundingOrganization->getFundingCycles() as $fundingCycle) {
+                    $fundingCycleList[] = array(
+                        'id' => $fundingCycle->getId(),
+                        'name' => $fundingCycle->getName(),
+                        'researchGroups' => $this->getResearchGroupsArray($fundingCycle)
+                    );
+                }
             }
-
-            $fundingCycleList[] = $tempArray;
         }
 
         return $this->render('Default/nas-grp-index.html.twig', array(
             'fundingCycles' => $fundingCycleList,
         ));
+    }
+
+    /**
+     * Get research groups array in the funding cycle.
+     *
+     * @param FundingCycle $fundingCycle An instance of Funding cycle entity.
+     *
+     * @return array
+     */
+    private function getResearchGroupsArray(FundingCycle $fundingCycle): array
+    {
+        $researchGroups = array();
+
+        foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
+            $researchGroups[] = array(
+                'id' => $researchGroup->getId(),
+                'name' => $researchGroup->getName(),
+                'projectDirectors' => $this->getProjectDirectorList($researchGroup)
+            );
+        }
+        return $researchGroups;
+    }
+
+    /**
+     * Get the list of project directors in the research group.
+     *
+     * @param ResearchGroup $researchGroup An instance of Research group entity.
+     *
+     * @return array
+     */
+    private function getProjectDirectorList(ResearchGroup $researchGroup): array
+    {
+        $projectDirectors = array();
+
+        foreach ($researchGroup->getPersonResearchGroups() as $personResearchGroup) {
+            if ($personResearchGroup instanceof PersonResearchGroup
+                and $personResearchGroup->getRole()->getName() === ResearchGroupRole::LEADERSHIP) {
+                $projectDirectors[] = $personResearchGroup->getPerson();
+            }
+        }
+        return $projectDirectors;
     }
 
     /**
