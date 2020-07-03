@@ -33,19 +33,21 @@ class DefaultController extends AbstractController
      */
     public function nasIndex(FundingOrgFilter $fundingOrgFilter)
     {
-        $fundingCycleList = array();
+        $filter = array();
         if ($fundingOrgFilter->isActive()) {
-            $fundingOrganizations = $fundingOrgFilter->getFundingOrganizations();
+            $filter = array('fundingOrganization' => $fundingOrgFilter->getFilterIdArray());
+        }
 
-            foreach ($fundingOrganizations as $fundingOrganization) {
-                foreach ($fundingOrganization->getFundingCycles() as $fundingCycle) {
-                    $fundingCycleList[] = array(
-                        'id' => $fundingCycle->getId(),
-                        'name' => $fundingCycle->getName(),
-                        'researchGroups' => $this->getResearchGroupsArray($fundingCycle)
-                    );
-                }
-            }
+        $fundingCycles = $this->get('doctrine')->getRepository(FundingCycle::class)->findBy($filter, array('name' => 'ASC'));
+
+        $fundingCycleList = array();
+
+        foreach ($fundingCycles as $fundingCycle) {
+            $fundingCycleList[] = array(
+                'id' => $fundingCycle->getId(),
+                'name' => $fundingCycle->getName(),
+                'researchGroups' => $this->getResearchGroupsArray($fundingCycle)
+            );
         }
 
         return $this->render('Default/nas-grp-index.html.twig', array(
