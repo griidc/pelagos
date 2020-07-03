@@ -213,7 +213,7 @@
                     }
                 }
             }
-        }
+        },
     }
 
     function initialFormValues() {
@@ -226,6 +226,7 @@
                 status: '',
                 fundingOrg: '',
                 researchGroup: '',
+                fundingCycle: '',
                 perPage: 10
         }
     }
