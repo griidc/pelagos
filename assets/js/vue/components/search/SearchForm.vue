@@ -76,7 +76,7 @@
                 @noOfResults="changeNoOfResults"
                 :formValues="form"/>
         <section class="section-content pt-3 bg" v-else>
-            <div class="container">
+            <div v-show="!displayTextBlock" class="container">
                 <article class="card">
                     <div class="card-body text-center">
                         <h5 class="card-title">
@@ -115,6 +115,15 @@
                 resultSet: Object,
                 route: window.location.hash,
                 submitted: false,
+            }
+        },
+        computed: {
+            displayTextBlock: function () {
+                if (typeof window.PELAGOS_TEMPLATE_PROPS !== 'undefined') {
+                    return window.PELAGOS_TEMPLATE_PROPS.hideSearchTextBlock;
+                } else {
+                    return false;
+                }
             }
         },
         methods: {
@@ -204,7 +213,7 @@
                     }
                 }
             }
-        }
+        },
     }
 
     function initialFormValues() {
@@ -217,6 +226,7 @@
                 status: '',
                 fundingOrg: '',
                 researchGroup: '',
+                fundingCycle: '',
                 perPage: 10
         }
     }
