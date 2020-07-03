@@ -16,7 +16,7 @@
 
             <select @change="selectResearchGroup" class="form-control" :disabled="researchGroupDisabled">
                 <option value="" selected>[Please select a Research Groups]</option>
-                <option v-for="researchGroup in researchGroups" :value="researchGroup.id" :key="researchGroup.id">{{ researchGroup.name }}</option>
+                <option v-for="researchGroup in researchGroups" :value="researchGroup.id" :key="researchGroup.id">{{ researchGroup.name | truncateResearchGroupName }}</option>
             </select>
         </div>
         <div class="col-6">
@@ -29,6 +29,7 @@
 </template>
 
 <script>
+    const truncateLength = 50;
     export default {
         name: "FundingCyclesList",
         props: {
@@ -96,6 +97,13 @@
             selectedProjectDirector: function () {
                this.openResearchGroupLandingPage(this.selectedProjectDirector);
             }
+        },
+        filters: {
+            truncateResearchGroupName: function (text) {
+                let regex = new RegExp('^.{' + truncateLength + '}\\S*');
+                let split = text.match(regex);
+                return (split ? split[0] + '...' : text);
+            },
         }
     };
 </script>
