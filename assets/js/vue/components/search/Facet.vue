@@ -2,14 +2,12 @@
     <article class="card-group-item">
         <header class="card-header">
             <h6 class="title">
-                <strong v-if="facetName === 'status'">Dataset Status</strong>
-                <strong v-else-if="facetName === 'fundingOrg'">Funding Organizations</strong>
-                <strong v-else-if="facetName === 'researchGroup'">Research Groups</strong>
+                <strong> {{ facetName.label }}</strong>
             </h6>
         </header>
         <div class="filter-content">
             <div class="card-body">
-                <div class="input-group pb-3" v-show="facetName === 'researchGroup'">
+                <div class="input-group pb-3" v-show="facetName.queryParam === 'researchGroup'">
                     <input class="form-control" placeholder="Search" type="text" v-model="researchGroupSearch">
                     <div class="input-group-append">
                         <button class="btn btn-primary" type="button">
@@ -21,11 +19,11 @@
                         <label class="form-check" v-for="facet in filteredFacets">
                             <input class="form-check-input facet-aggregation"
                                    :value="facet.id" type="checkbox"
-                                   :id="facetName + '_' + facet.id"
+                                   :id="facetName.queryParam + '_' + facet.id"
                                    v-model="listOfCheckedFacets"
                                    @change="facetChange">
                             <span class="form-check-label"
-                                  v-if="facetName === 'status'"
+                                  v-if="facetName.queryParam === 'status'"
                                   v-tooltip="{
                                     content: statusTooltip(facet.name),
                                     placement:'top'
@@ -60,7 +58,7 @@
                 type: Array
             },
             facetName: {
-                type: String
+                type: Object
             },
             formValues: {
                 type: Object
@@ -74,12 +72,12 @@
         },
         methods: {
             facetChange: function () {
-                this.$emit('facetClicked', this.facetName + '=' + this.listOfCheckedFacets.join(","));
+                this.$emit('facetClicked', this.facetName.queryParam + '=' + this.listOfCheckedFacets.join(","));
             },
             facetCheckBox: function () {
-                if (this.facetName in this.formValues) {
-                    if (this.formValues[this.facetName]) {
-                        let splitFacets = this.formValues[this.facetName].split(",");
+                if (this.facetName.queryParam in this.formValues) {
+                    if (this.formValues[this.facetName.queryParam]) {
+                        let splitFacets = this.formValues[this.facetName.queryParam].split(",");
                         this.listOfCheckedFacets = [];
                         splitFacets.forEach((value) => {
                             this.listOfCheckedFacets.push(value);
@@ -111,7 +109,7 @@
         },
         computed: {
             filteredFacets: function () {
-                if (this.facetName === 'researchGroup') {
+                if (this.facetName.queryParam === 'researchGroup') {
                     return this.facetInfo.filter(facetItem => {
                         const facetItemName = facetItem.shortName + facetItem.name;
                         return facetItemName.toLowerCase().indexOf(this.researchGroupSearch.toLowerCase()) > -1;

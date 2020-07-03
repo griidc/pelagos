@@ -94,6 +94,8 @@ fos_elastica:
                                 fundingCycle:
                                     type: 'nested'
                                     properties:
+                                        id:
+                                            type: 'keyword'
                                         fundingOrganization:
                                             type: 'nested'
                                             properties:
