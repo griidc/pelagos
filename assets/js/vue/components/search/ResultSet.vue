@@ -139,7 +139,11 @@
         },
         methods: {
             showFundingCycleFacet: function () {
-                return window.PELAGOS_TEMPLATE_PROPS.fundingCycleFacet;
+                if (typeof window.PELAGOS_TEMPLATE_PROPS !== 'undefined') {
+                    return window.PELAGOS_TEMPLATE_PROPS.fundingCycleFacet;
+                } else {
+                    return false;
+                }
             }
         }
     }
