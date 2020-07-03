@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <div class="col-6">
+        <div class="col-6 border-right">
             <label class="col-form-label-lg">
                 Funding Cycles
             </label>
@@ -41,7 +41,7 @@
                 selectedProjectDirector: null,
                 researchGroups: [],
                 researchGroupDisabled: true,
-                projectDirectorsOptions: [{ value: null, text: '[Please select an option]' },],
+                projectDirectorsOptions: [{ value: null, text: '[Please select an associated Project Director]' }],
                 projectDirectorIds: []
             }
         },
@@ -50,7 +50,7 @@
                 this.researchGroups = [];
                 this.researchGroupDisabled = true;
                 this.fundingCycles.forEach(fundingCycle => {
-                    if (fundingCycle.id === event.target.value) {
+                    if (fundingCycle.id === Number(event.target.value)) {
                         this.researchGroups = fundingCycle.researchGroups;
                         this.researchGroupDisabled = false;
                     }
@@ -64,38 +64,20 @@
             populateProjectDirectors: function () {
                 this.fundingCycles.forEach(fundingCycle => {
                     fundingCycle.researchGroups.forEach(researchGroup => {
-                        if (researchGroup.projectDirectors.length > 1) {
-                            researchGroup.projectDirectors.forEach(projectDirector => {
-                                if (this.projectDirectorIds.indexOf(projectDirector.id) > -1) {
-                                    this.projectDirectorIds.push(projectDirector.id);
-                                    this.makeProjectDirectorOption(researchGroup.id, projectDirector.name);
-                                } else {
-                                    this.projectDirectorIds.push(projectDirector.id);
-                                    this.makeProjectDirectorOption(
-                                        researchGroup.id,
-                                        projectDirector.name + ' - ' + researchGroup.shortName
-                                    );
-                                }
-                            })
-                        } else {
-                            if (this.projectDirectorIds.indexOf(researchGroup.projectDirectors[0].id) > -1) {
-                                this.projectDirectorIds.push(researchGroup.projectDirectors[0].id);
-                                this.makeProjectDirectorOption(
-                                    researchGroup.id,
-                                    researchGroup.projectDirectors[0].name
-                                );
+                        researchGroup.projectDirectors.forEach(projectDirector => {
+                            if (this.projectDirectorIds.indexOf(projectDirector.id) === -1) {
+                                this.projectDirectorIds.push(projectDirector.id);
+                                this.makeProjectDirectorOption(researchGroup.id, projectDirector.name);
                             } else {
-                                this.projectDirectorIds.push(researchGroup.projectDirectors[0].id);
+                                this.projectDirectorIds.push(projectDirector.id);
                                 this.makeProjectDirectorOption(
                                     researchGroup.id,
-                                    researchGroup.projectDirectors[0].name + ' - ' + researchGroup.shortName
+                                    projectDirector.name + ' - ' + researchGroup.shortName
                                 );
                             }
-
-                        }
+                        })
                     })
                 })
-                console.log(this.projectDirectorIds);
             },
             openResearchGroupLandingPage: function (researchGroupId) {
                 window.open("/research-group/about/" + researchGroupId, '_blank');
@@ -119,5 +101,7 @@
 </script>
 
 <style scoped>
-
+    .border-right {
+        border-right: 1px solid black;
+    }
 </style>
