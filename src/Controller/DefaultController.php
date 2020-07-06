@@ -130,8 +130,10 @@ class DefaultController extends AbstractController
     private function getDuplicateProjectDirs(array $leadershipPersonIdList): array
     {
         $duplicates = array();
-        foreach(array_count_values($leadershipPersonIdList) as $value => $count) {
-            if($count > 1) $duplicates[] = $value;
+        foreach (array_count_values($leadershipPersonIdList) as $value => $count) {
+            if ($count > 1) {
+                $duplicates[] = $value;
+            }
         }
         return $duplicates;
     }
