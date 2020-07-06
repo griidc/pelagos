@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\PersonResearchGroup;
 use App\Entity\ResearchGroupRole;
+use App\Repository\PersonResearchGroupRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -40,6 +41,15 @@ class DefaultController extends AbstractController
 
         $fundingCycles = $this->get('doctrine')->getRepository(FundingCycle::class)->findBy($filter, array('name' => 'ASC'));
 
+        $leadershipPersons = $this->get('doctrine')->getRepository(PersonResearchGroup::class)->getLeadershipPeople();
+
+        $leadershipPersonIdList = array();
+        foreach ($leadershipPersons as $leadershipPerson) {
+            $leadershipPersonIdList[] = $leadershipPerson->getPerson()->getId();
+        }
+        $duplicateProjectDirectors = $this->getDuplicateProjectDirs($leadershipPersonIdList);
+        $projectDirectorList = $this->getProjectDirectorList($leadershipPersons, $duplicateProjectDirectors);
+
         $fundingCycleList = array();
 
         foreach ($fundingCycles as $fundingCycle) {
@@ -52,6 +62,7 @@ class DefaultController extends AbstractController
 
         return $this->render('Default/nas-grp-index.html.twig', array(
             'fundingCycles' => $fundingCycleList,
+            'projectDirectors' => $projectDirectorList
         ));
     }
 
@@ -70,35 +81,59 @@ class DefaultController extends AbstractController
             $researchGroups[] = array(
                 'id' => $researchGroup->getId(),
                 'name' => $researchGroup->getName(),
-                'shortName' => $researchGroup->getShortName(),
-                'projectDirectors' => $this->getProjectDirectorList($researchGroup)
             );
         }
         return $researchGroups;
     }
 
     /**
-     * Get the list of project directors in the research group.
+     * Get the list of project directors.
      *
-     * @param ResearchGroup $researchGroup An instance of Research group entity.
+     * @param array $leadershipPersons Collection of Persons with Leadership role.
+     * @param array $duplicates        Array with duplicate person Ids.
      *
      * @return array
      */
-    private function getProjectDirectorList(ResearchGroup $researchGroup): array
+    private function getProjectDirectorList(array $leadershipPersons, array $duplicates): array
     {
         $projectDirectors = array();
 
-        foreach ($researchGroup->getPersonResearchGroups() as $personResearchGroup) {
-            if ($personResearchGroup instanceof PersonResearchGroup
-                and $personResearchGroup->getRole()->getName() === ResearchGroupRole::LEADERSHIP) {
+        foreach ($leadershipPersons as $leadershipPerson) {
+            if (!in_array($leadershipPerson->getPerson()->getId(), $duplicates)) {
                 $projectDirectors[] = array(
-                    'id' => $personResearchGroup->getPerson()->getId(),
-                    'name' => $personResearchGroup->getPerson()->getFirstName()
-                        . ' ' . $personResearchGroup->getPerson()->getLastName()
+                    'id' => $leadershipPerson->getPerson()->getId(),
+                    'name' => $leadershipPerson->getPerson()->getFirstName()
+                        . ' ' . $leadershipPerson->getPerson()->getLastName(),
+                    'researchGroupId' => $leadershipPerson->getResearchGroup()->getId()
+                );
+            } else {
+                $projectDirectors[] = array(
+                    'id' => $leadershipPerson->getPerson()->getId(),
+                    'name' => $leadershipPerson->getPerson()->getFirstName()
+                        . ' ' . $leadershipPerson->getPerson()->getLastName()
+                        . ' - ' . $leadershipPerson->getResearchGroup()->getShortName(),
+                    'researchGroupId' => $leadershipPerson->getResearchGroup()->getId()
                 );
             }
         }
+
         return $projectDirectors;
+    }
+
+    /**
+     * Returns person Ids which are duplicate.
+     *
+     * @param array $leadershipPersonIdList Haystack array to find duplicates.
+     *
+     * @return array
+     */
+    private function getDuplicateProjectDirs(array $leadershipPersonIdList): array
+    {
+        $duplicates = array();
+        foreach(array_count_values($leadershipPersonIdList) as $value => $count) {
+            if($count > 1) $duplicates[] = $value;
+        }
+        return $duplicates;
     }
 
     /**

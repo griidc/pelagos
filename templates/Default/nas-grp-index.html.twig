@@ -98,7 +98,8 @@
     {{ parent() }}
     
     <script>
-      window.fundingCycles = {{ fundingCycles | json_encode | raw }}
+        window.fundingCycles = {{ fundingCycles | json_encode | raw }}
+        window.projectDirectors = {{ projectDirectors | json_encode | raw }}
     </script>
     
     {{ encore_entry_script_tags('grp-home') }}

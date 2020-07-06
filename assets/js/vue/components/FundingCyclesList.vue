@@ -4,26 +4,25 @@
             <label class="col-form-label-lg">
                 Funding Cycles
             </label>
-
-            <select @change="populateResearchGroups" class="form-control">
-                <option value="" selected>[Please select a Funding Cycle]</option>
-                <option v-for="fundingCycle in fundingCycles" :value="fundingCycle.id" :key="fundingCycle.id">{{ fundingCycle.name }}</option>
-            </select>
+            <b-form-select v-model="selectedFundingCycle" :options="fundingCycleOptions" class="w-75"></b-form-select>
 
             <label class="col-form-label-lg">
                 Research Groups
             </label>
+            <div class="form-inline">
+                <b-form-select v-model="selectedResearchGroup" :options="researchGroupOptions" :disabled="disableResearchGroups" class="w-75"></b-form-select>
+                <b-button class="form-control ml-3" variant="primary" @click="researchGroupButton" :disabled="disableResGrpBtn">Go</b-button>
+            </div>
 
-            <select @change="selectResearchGroup" class="form-control" :disabled="researchGroupDisabled">
-                <option value="" selected>[Please select a Research Groups]</option>
-                <option v-for="researchGroup in researchGroups" :value="researchGroup.id" :key="researchGroup.id">{{ researchGroup.name | truncate(50) }}</option>
-            </select>
         </div>
         <div class="col-6">
             <label class="col-form-label-lg">
                     Search for Research Group Page By
             </label>
-            <b-form-select v-model="selectedProjectDirector" :options="projectDirectorsOptions"></b-form-select>
+            <div class="form-inline">
+                <b-form-select v-model="selectedProjectDirector" :options="projectDirectorsOptions"></b-form-select>
+                <b-button class="form-control ml-3" variant="primary" @click="projectDirectorButton" :disabled="disableProjDirBtn">Go</b-button>
+            </div>
         </div>
     </div>
 </template>
@@ -34,67 +33,80 @@
         props: {
             fundingCycles: {
                 type: Array,
+            },
+            projectDirectors: {
+                type: Array
             }
         },
         data() {
             return {
                 selectedProjectDirector: null,
-                researchGroups: [],
-                researchGroupDisabled: true,
                 projectDirectorsOptions: [{ value: null, text: '[Please select an associated Project Director]' }],
-                projectDirectorIds: []
+                selectedResearchGroup: null,
+                researchGroupOptions: [{ value: null, text: '[Please select a Research Group]' }],
+                selectedFundingCycle: null,
+                fundingCycleOptions: [{ value: null, text: '[Please select a Funding Cycle]' }],
+                disableResearchGroups: true,
+                disableResGrpBtn: true,
+                disableProjDirBtn: true,
             }
         },
         methods: {
-            populateResearchGroups: function(event) {
-                this.researchGroups = [];
-                this.researchGroupDisabled = true;
+            populateResearchGroups: function(fundingCycleId) {
+                this.researchGroupOptions = [{ value: null, text: '[Please select a Research Group]' }];
                 this.fundingCycles.forEach(fundingCycle => {
-                    if (fundingCycle.id === Number(event.target.value)) {
-                        this.researchGroups = fundingCycle.researchGroups;
-                        this.researchGroupDisabled = false;
+                    if (fundingCycle.id === Number(fundingCycleId)) {
+                        fundingCycle.researchGroups.forEach(researchGroup => {
+                            this.researchGroupOptions.push({
+                                value: researchGroup.id,
+                                text: this.$options.filters.truncate(researchGroup.name, 50)
+                            })
+                        })
                     }
                 })
+                this.disableResearchGroups = false;
             },
-            selectResearchGroup: function(event) {
-                if (event.target.value) {
-                    this.openResearchGroupLandingPage(event.target.value);
+            researchGroupButton: function() {
+                this.openResearchGroupLandingPage(this.selectedResearchGroup);
+            },
+            openResearchGroupLandingPage: function (researchGroupId) {
+                if (researchGroupId) {
+                    window.open("/research-group/about/" + researchGroupId, '_blank');
                 }
             },
-            populateProjectDirectors: function () {
+            populateFundingCycles: function () {
                 this.fundingCycles.forEach(fundingCycle => {
-                    fundingCycle.researchGroups.forEach(researchGroup => {
-                        researchGroup.projectDirectors.forEach(projectDirector => {
-                            if (this.projectDirectorIds.indexOf(projectDirector.id) === -1) {
-                                this.projectDirectorIds.push(projectDirector.id);
-                                this.makeProjectDirectorOption(researchGroup.id, projectDirector.name);
-                            } else {
-                                this.projectDirectorIds.push(projectDirector.id);
-                                this.makeProjectDirectorOption(
-                                    researchGroup.id,
-                                    projectDirector.name + ' - ' + researchGroup.shortName
-                                );
-                            }
-                        })
+                    this.fundingCycleOptions.push({
+                        value: fundingCycle.id,
+                        text: fundingCycle.name
                     })
                 })
             },
-            openResearchGroupLandingPage: function (researchGroupId) {
-                window.open("/research-group/about/" + researchGroupId, '_blank');
+            projectDirectorButton: function () {
+                this.openResearchGroupLandingPage(this.selectedProjectDirector);
             },
-            makeProjectDirectorOption: function (id, name) {
-                this.projectDirectorsOptions.push({
-                    value: id,
-                    text: name
+            populateProjectDirectors: function () {
+                this.projectDirectors.forEach(projectDirector => {
+                    this.projectDirectorsOptions.push({
+                        value: projectDirector.researchGroupId,
+                        text: projectDirector.name
+                    })
                 })
             }
         },
         created() {
+            this.populateFundingCycles();
             this.populateProjectDirectors();
         },
         watch: {
+            selectedFundingCycle: function () {
+                this.populateResearchGroups(this.selectedFundingCycle);
+            },
+            selectedResearchGroup: function () {
+                this.disableResGrpBtn = !this.selectedResearchGroup;
+            },
             selectedProjectDirector: function () {
-               this.openResearchGroupLandingPage(this.selectedProjectDirector);
+                this.disableProjDirBtn = !this.selectedProjectDirector;
             }
         },
         filters: {
