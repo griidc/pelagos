@@ -4,13 +4,21 @@
             <label class="col-form-label-lg">
                 Funding Cycles
             </label>
-            <b-form-select v-model="selectedFundingCycle" :options="fundingCycleOptions" class="w-75"></b-form-select>
+            <b-form-select v-model="selectedFundingCycle" :options="fundingCycleOptions" class="w-75">
+                <template v-slot:first>
+                    <b-form-select-option :value="null" disabled>-- Please select a Funding Cycle --</b-form-select-option>
+                </template>
+            </b-form-select>
 
             <label class="col-form-label-lg">
                 Research Groups
             </label>
             <div class="form-inline">
-                <b-form-select v-model="selectedResearchGroup" :options="researchGroupOptions" :disabled="disableResearchGroups" class="w-75"></b-form-select>
+                <b-form-select v-model="selectedResearchGroup" :options="researchGroupOptions" :disabled="disableResearchGroups" class="w-75">
+                    <template v-slot:first>
+                        <b-form-select-option :value="null" disabled>-- Please select a Research Group --</b-form-select-option>
+                    </template>
+                </b-form-select>
                 <b-button class="form-control ml-3" variant="primary" @click="researchGroupButton" :disabled="disableResGrpBtn">Go</b-button>
             </div>
 
@@ -20,7 +28,11 @@
                     Search for Research Group Page By
             </label>
             <div class="form-inline">
-                <b-form-select v-model="selectedProjectDirector" :options="projectDirectorsOptions"></b-form-select>
+                <b-form-select v-model="selectedProjectDirector" :options="projectDirectorsOptions" class="w-75">
+                    <template v-slot:first>
+                        <b-form-select-option :value="null" disabled>-- Please select an associated Project Director --</b-form-select-option>
+                    </template>
+                </b-form-select>
                 <b-button class="form-control ml-3" variant="primary" @click="projectDirectorButton" :disabled="disableProjDirBtn">Go</b-button>
             </div>
         </div>
@@ -41,11 +53,11 @@
         data() {
             return {
                 selectedProjectDirector: null,
-                projectDirectorsOptions: [{ value: null, text: '[Please select an associated Project Director]' }],
+                projectDirectorsOptions: [],
                 selectedResearchGroup: null,
-                researchGroupOptions: [{ value: null, text: '[Please select a Research Group]' }],
+                researchGroupOptions: [],
                 selectedFundingCycle: null,
-                fundingCycleOptions: [{ value: null, text: '[Please select a Funding Cycle]' }],
+                fundingCycleOptions: [],
                 disableResearchGroups: true,
                 disableResGrpBtn: true,
                 disableProjDirBtn: true,
@@ -55,13 +67,12 @@
             populateResearchGroups: function(fundingCycleId) {
                 this.researchGroupOptions = [];
                 this.selectedResearchGroup = null;
-                this.researchGroupOptions.push({ value: null, text: '[Please select a Research Group]' });
                 this.fundingCycles.forEach(fundingCycle => {
                     if (fundingCycle.id === Number(fundingCycleId)) {
                         fundingCycle.researchGroups.forEach(researchGroup => {
                             this.researchGroupOptions.push({
                                 value: researchGroup.id,
-                                text: this.$options.filters.truncate(researchGroup.name, 50)
+                                text: this.$options.filters.truncate(researchGroup.name, 100)
                             })
                         })
                     }
