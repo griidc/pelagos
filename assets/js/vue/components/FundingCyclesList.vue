@@ -53,7 +53,9 @@
         },
         methods: {
             populateResearchGroups: function(fundingCycleId) {
-                this.researchGroupOptions = [{ value: null, text: '[Please select a Research Group]' }];
+                this.researchGroupOptions = [];
+                this.selectedResearchGroup = null;
+                this.researchGroupOptions.push({ value: null, text: '[Please select a Research Group]' });
                 this.fundingCycles.forEach(fundingCycle => {
                     if (fundingCycle.id === Number(fundingCycleId)) {
                         fundingCycle.researchGroups.forEach(researchGroup => {
@@ -64,7 +66,7 @@
                         })
                     }
                 })
-                this.disableResearchGroups = false;
+                this.disableResearchGroups = this.researchGroupOptions.length <= 1;
             },
             researchGroupButton: function() {
                 this.openResearchGroupLandingPage(this.selectedResearchGroup);
