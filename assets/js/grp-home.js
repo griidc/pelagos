@@ -10,8 +10,9 @@ new Vue({
     data() {
         return {
             fundingCycles: window.fundingCycles,
+            projectDirectors: window.projectDirectors
         };
     },
-    template: `<FundingCyclesList :fundingCycles="fundingCycles" />`,
+    template: `<FundingCyclesList :fundingCycles="fundingCycles" :projectDirectors="projectDirectors"/>`,
 }).$mount('#picklist');
 
