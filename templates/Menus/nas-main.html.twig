@@ -3,15 +3,8 @@
         <li class="nav-item">
             <a class="nav-link" href="{{ path('pelagos_homepage')}}" >Home</a>
         </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle font-weight-bold text-uppercase" href="#" id="navbarDropdown"
-               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Search Data
-            </a>
-            <div class="dropdown-menu p-0 overflow-hidden" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item font-weight-bold text-uppercase px-4 py-2" href="{{ path('pelagos_app_ui_searchpage_default') }}">Search GRIIDC Data</a>
-                <a class="dropdown-item font-weight-bold text-uppercase px-4 py-2" href="https://erddap.griidc.org/erddap" target="_top">GRIIDC ERDDAP</a>
-            </div>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ path('pelagos_app_ui_searchpage_default') }}">Search Data</a>
         </li>
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
@@ -42,6 +35,7 @@
                 <a class="dropdown-item font-weight-bold text-uppercase px-4 py-2" href="{{ path('pelagos_app_ui_account_default') }}">Account Request</a>
                 <a class="dropdown-item font-weight-bold text-uppercase px-4 py-2" href="{{ path('pelagos_app_ui_account_password') }}">Password Reset</a>
                 <a class="dropdown-item font-weight-bold text-uppercase px-4 py-2" href="{{ path('pelagos_app_ui_account_forgotusername') }}">Forgot Username</a>
+                <a class="dropdown-item font-weight-bold text-uppercase px-4 py-2" href="https://data.gulfresearchinitiative.org/training-user-guides" target="_blank">User Guides</a>
             </div>
         </li>
     </ul>

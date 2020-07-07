@@ -2,7 +2,8 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link href="{{ asset('build/css/nas-home.css') }}" rel="stylesheet" />
+    {{ encore_entry_link_tags('grp-home') }}
+
 {% endblock %}
 
 {% block body %}
@@ -14,32 +15,19 @@
                     <img class="img-fluid rounded mb-4 mb-lg-0" src="{{ asset("build/images/home.jpg") }}" alt="Oil spill image">
                 </div>
                 <div class="col-lg-5">
-                    <h1 class="font-weight-light">NASGRP - GRIIDC</h1>
+                    <h1 class="font-weight-light">GRP - GRIIDC</h1>
                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem magni quas ex numquam, maxime minus
                         quam molestias corporis quod, ea minima accusamus.</p>
                 </div>
             </div>
             
             <div class="p-3 mx-auto">
-                <div>
-                    <h4>Research Groups</h4>
-                </div>
-                <div class="dropdown show">
-                    <a class="btn btn-dark dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Please select a research group
-                    </a>
-
-                    <div class="dropdown-menu scrollable-menu overflow-auto" aria-labelledby="dropdownMenuLink">
-                        {% for researchGroup in researchGroups %}
-                            <a class="dropdown-item" href="{{ path('pelagos_app_ui_researchgroup_about', { id: researchGroup.getId}) }}" target="_blank">{{ researchGroup.name }}</a>
-                        {% endfor %}
-                    </div>
-                </div>
+                <div id="picklist" />
             </div>
 
             <div class="card text-white bg-secondary my-5 py-4 text-center">
                 <div class="card-body">
-                    <p class="text-white m-0">Ensure Data legacy or some other tagline!</p>
+                    <p class="text-white m-0">Ensuring a data and information legacy that promotes continual scientific discovery and public awareness of the Gulf of Mexico ecosystem.</p>
                 </div>
             </div>
 
@@ -100,8 +88,18 @@
 
         <footer class="py-5 bg-dark">
             <div class="container">
-                <p class="m-0 text-center text-white">Copyright &copy; NASGRP - GRIIDC 2020</p>
+                <p class="m-0 text-center text-white">Copyright &copy; GRP - GRIIDC 2020</p>
             </div>
         </footer>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    
+    <script>
+      window.fundingCycles = {{ fundingCycles | json_encode | raw }}
+    </script>
+    
+    {{ encore_entry_script_tags('grp-home') }}
 {% endblock %}

@@ -20,7 +20,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     {% block head %}
-        <title>GRIIDC - NAS GRP | {% block title %}Pelagos{% endblock %}</title>
+        <title>GRIIDC - GRP | {% block title %}Pelagos{% endblock %}</title>
         <link rel="icon" type="image/x-icon" href="{{ asset('build/images/griidc_fav.png') }}"/>
 
         {% block stylesheets %}
@@ -157,6 +157,10 @@
                 },
             };
         });
+    </script>
+
+    <script>
+        window.PELAGOS_TEMPLATE_PROPS = {"hideSearchTextBlock": true, "fundingCycleFacet": true};
     </script>
 
 {% endblock %}
