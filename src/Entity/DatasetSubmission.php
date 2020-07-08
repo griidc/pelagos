@@ -1020,7 +1020,7 @@ class DatasetSubmission extends Entity
             $this->setDatasetFileColdStorageArchiveSha256Hash($entity->getDatasetFileColdStorageArchiveSha256Hash());
             $this->setDatasetFileColdStorageArchiveSize($entity->getDatasetFileColdStorageArchiveSize());
             $this->setDatasetFileColdStorageOriginalFilename($entity->getDatasetFileColdStorageOriginalFilename());
-            $this->setFileset($entity->getFileset());
+
             //Submitter should always be the user who has submitted the dataset.
             if (!in_array($entity->getDatasetStatus(), [ Dataset::DATASET_STATUS_NONE, Dataset::DATASET_STATUS_BACK_TO_SUBMITTER])) {
                 $this->submitter = $entity->getSubmitter();
@@ -1062,6 +1062,13 @@ class DatasetSubmission extends Entity
 
                 $this->addDatasetLink($newDatasetLink);
             }
+
+            // Copy the fileSet
+            $newFileset = new Fileset();
+            foreach ($entity->getFileset() as $file) {
+                $newFileset->addFile($file);
+            }
+            $this->setFileset($newFileset);
         } else {
             throw new \Exception('Class constructor requires a DIF or a DatasetSubmission. A ' . get_class($entity) . ' was passed.');
         }
