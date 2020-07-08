@@ -251,7 +251,7 @@ class DatasetSubmissionController extends AbstractController
                     mkdir($incomingDirectory, 0755, true);
                 }
             }
-            
+
             $this->entityHandler->update($datasetSubmission);
 
             foreach ($datasetSubmission->getDistributionPoints() as $distributionPoint) {
