@@ -547,6 +547,9 @@ class DatasetSubmission extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
+     * @Assert\NotBlank(
+     *     message="The dataset submission dataset file transfer type must be set."
+     * )
      */
     protected $datasetFileTransferType;
 
@@ -561,6 +564,9 @@ class DatasetSubmission extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
+     * @Assert\NotBlank(
+     *     message="The dataset submission must include a dataset file."
+     * )
      */
     protected $datasetFileUri;
 
@@ -987,9 +993,6 @@ class DatasetSubmission extends Entity
             $this->setDatasetFileTransferType($entity->getDatasetFileTransferType());
             $this->setDatasetFileUri($entity->getDatasetFileUri());
             $this->setDatasetFileTransferStatus($entity->getDatasetFileTransferStatus());
-            $this->setDatasetFileName($entity->getDatasetFileName());
-            $this->setDatasetFileSize($entity->getDatasetFileSize());
-            $this->setDatasetFileSha256Hash($entity->getDatasetFileSha256Hash());
             $this->setDatasetStatus($entity->getDatasetStatus());
             $this->setPurpose($entity->getPurpose());
             $this->setSuppParams($entity->getSuppParams());
@@ -1581,7 +1584,7 @@ class DatasetSubmission extends Entity
      */
     public function setDatasetFileUri(?string $datasetFileUri)
     {
-        $this->fileset->getFiles()->first()->setFilePath($datasetFileUri);
+        $this->datasetFileUri = $datasetFileUri;
     }
 
     /**
@@ -1591,7 +1594,7 @@ class DatasetSubmission extends Entity
      */
     public function getDatasetFileUri() : ?string
     {
-        return $this->fileset->getFiles()->first()->getFilePath();
+        return $this->datasetFileUri;
     }
 
     /**
