@@ -3,6 +3,8 @@
 namespace App\Tests\Util;
 
 use App\Entity\Dataset;
+use App\Entity\File;
+use App\Entity\Fileset;
 use PHPUnit\Framework\TestCase;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -112,6 +114,20 @@ class ISOMetadataExtractorUtilTest extends TestCase
     protected $testingDatetime;
 
     /**
+     * Mock object for File entity instance.
+     *
+     * @var File
+     */
+    protected $mockFile;
+
+    /**
+     * Mock object for Fileset entity instance.
+     *
+     * @var Fileset
+     */
+    protected $mockFileset;
+
+    /**
      * The directory that contains the test data.
      *
      * @var string
@@ -150,6 +166,20 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getRole' => array_keys(PersonDatasetSubmission::ROLES)[0],
                 'getPerson' => $this->mockPerson,
                 'getId' => 8675309,
+            )
+        );
+
+        $this->mockFile = \Mockery::mock(
+          File::class,
+            array(
+                'setFileset' => \Mockery::mock(Fileset::class)
+            )
+        );
+
+        $this->mockFileset = \Mockery::mock(
+            Fileset::class,
+            array(
+                'getFiles' => new ArrayCollection(array($this->mockFile))
             )
         );
 
@@ -224,9 +254,7 @@ class ISOMetadataExtractorUtilTest extends TestCase
                                 'getRemotelyHostedDescription' => 'remote description',
                                 'getRemotelyHostedFunction' => 'download',
                                 'getDatasetLinks' => new ArrayCollection(),
-                                'getFileset' => \Mockery::mock(
-                                    'App\Entity\Fileset'
-                                )
+                                'getFileset' => $this->mockFileset
                             )
                         ),
                     )
@@ -309,9 +337,7 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getDatasetFileColdStorageArchiveSize' => '100',
                 'getDatasetFileColdStorageOriginalFilename' => 'filename.txt',
                 'getDatasetLinks' => new ArrayCollection(),
-                'getFileset' => \Mockery::mock(
-                    'App\Entity\Fileset'
-                )
+                'getFileset' => $this->mockFileset
             )
         );
 

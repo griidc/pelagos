@@ -1065,7 +1065,7 @@ class DatasetSubmission extends Entity
 
             // Copy the fileSet
             $newFileset = new Fileset();
-            foreach ($entity->getFileset() as $file) {
+            foreach ($entity->getFileset()->getFiles() as $file) {
                 $newFileset->addFile($file);
             }
             $this->setFileset($newFileset);
