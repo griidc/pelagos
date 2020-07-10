@@ -4,6 +4,7 @@ import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
 import ResearchGroupApp from "./vue/ResearchGroupApp";
 import VTooltip from 'v-tooltip';
+import filters from "./vue/utils/filters";
 
 window.addEventListener("load", function(event) {
 
@@ -11,6 +12,9 @@ window.addEventListener("load", function(event) {
     Vue.use(IconsPlugin);
     Vue.use(Loading);
     Vue.use(VTooltip);
+    Vue.filter('truncate', (text, length) => {
+        return filters.truncate(text, length);
+    });
 
     // here is the Vue code
     new Vue({

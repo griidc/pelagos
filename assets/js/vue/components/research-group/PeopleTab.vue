@@ -1,31 +1,19 @@
 <template>
     <b-card-group columns>
-        <b-card-text>
-            <b-card class="card-product" no-body v-for="person in personResearchGroups" v-bind:key="person.id">
-                <b-card-body>
-                    <div>
-                        <p>
-                            <strong>{{ person.person.firstName + " " + person.person.lastName }}</strong> <br> <br>
-                        </p>
-                    </div>
-                    <div>
-                        {{ person.label }}
-                    </div>
-                    <div class="text-truncate org-name-width"
-                         v-tooltip="{
-                                    content: person.person.organization,
-                                    placement:'top'
-                                    }"
-                    >
-                        {{ person.person.organization }}
-                    </div>
-                    <div>
-                        {{ person.person.emailAddress }}
-                    </div>
-
-                </b-card-body>
-            </b-card>
-        </b-card-text>
+        <b-card class="card-product"
+                v-for="person in personResearchGroups"
+                :key="person.id"
+                :title="person.person.firstName + ' ' + person.person.lastName"
+                :sub-title="person.label"
+                :footer="person.person.emailAddress"
+                footer-tag="footer">
+            <b-card-text v-tooltip="{
+                            content: person.person.organization,
+                            placement:'top'
+                            }">
+                {{ person.person.organization | truncate(50) }}
+            </b-card-text>
+        </b-card>
     </b-card-group>
 </template>
 
@@ -42,12 +30,17 @@
     .card-columns {
         column-gap: 1rem !important;
         column-count: 2 !important;
-        .card {
-            height: 200px;
-        }
+    }
+    .card-product {
+        margin-bottom: 1rem;
     }
 
-    .org-name-width {
-        max-width: 250px;
+    .card-product:hover .btn-overlay {
+        opacity: 1;
+    }
+
+    .card-product:hover {
+        box-shadow: 0 4px 15px rgba(153, 153, 153, 0.3);
+        transition: .5s;
     }
 </style>
