@@ -38,6 +38,7 @@ Encore
     .addEntry('nas-app', './assets/js/nas-app.js')
     .addEntry('research-group', './assets/js/research-group.js')
     .addEntry('grp-home', './assets/js/grp-home.js')
+    .addEntry('test', './assets/js/test.js')
 
     // enables Sass/SCSS support
     .enableSassLoader()
