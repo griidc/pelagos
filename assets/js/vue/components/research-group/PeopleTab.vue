@@ -39,6 +39,9 @@
     .card-columns {
         column-gap: 1rem !important;
         column-count: 2 !important;
+        .card {
+            height: 12em;
+        }
     }
     .card-product {
         margin-bottom: 1rem;
@@ -51,5 +54,11 @@
     .card-product:hover {
         box-shadow: 0 4px 15px rgba(153, 153, 153, 0.3);
         transition: .5s;
+    }
+
+    @media (max-width: 992px) {
+        .card-columns {
+            column-count: 1 !important;
+        }
     }
 </style>
