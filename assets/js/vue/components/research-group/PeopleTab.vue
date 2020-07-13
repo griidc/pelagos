@@ -1,17 +1,18 @@
 <template>
     <b-card-group columns>
         <b-card class="card-product"
-                v-for="person in personResearchGroups"
+                v-for="person in sortedPeople"
                 :key="person.id"
                 :title="person.person.firstName + ' ' + person.person.lastName"
-                :sub-title="person.label"
-                :footer="person.person.emailAddress"
-                footer-tag="footer">
+                :sub-title="person.label">
             <b-card-text v-tooltip="{
                             content: person.person.organization,
                             placement:'top'
                             }">
-                {{ person.person.organization | truncate(50) }}
+                {{ person.person.organization | truncate(75) }}
+            </b-card-text>
+            <b-card-text>
+                {{ person.person.emailAddress }}
             </b-card-text>
         </b-card>
     </b-card-group>
@@ -22,6 +23,14 @@
         name: "PeopleTab",
         props: {
             personResearchGroups: {},
+        },
+        data() {
+            return {
+                sortedPeople: []
+            }
+        },
+        created() {
+            this.sortedPeople = this.$options.filters.sort('person.lastName', this.personResearchGroups);
         }
     }
 </script>

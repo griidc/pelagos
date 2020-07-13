@@ -15,6 +15,9 @@ window.addEventListener("load", function(event) {
     Vue.filter('truncate', (text, length) => {
         return filters.truncate(text, length);
     });
+    Vue.filter('sort', (valuePath, array) => {
+        return filters.sort(valuePath, array);
+    })
 
     // here is the Vue code
     new Vue({
