@@ -45,6 +45,7 @@
     }
     .card-product {
         margin-bottom: 1rem;
+        transition: .5s;
     }
 
     .card-product:hover .btn-overlay {
