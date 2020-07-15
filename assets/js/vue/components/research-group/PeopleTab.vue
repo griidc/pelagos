@@ -4,7 +4,7 @@
                 v-for="person in sortedPeople"
                 :key="person.id"
                 :title="person.person.firstName + ' ' + person.person.lastName"
-                :sub-title="person.label" style="min-width: 18rem">
+                :sub-title="person.label" style="min-width: 18rem; max-width: 27rem">
             <b-card-text v-tooltip="{
                             content: person.person.organization,
                             placement:'top'
