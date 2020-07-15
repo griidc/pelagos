@@ -165,6 +165,18 @@ class DefaultController extends AbstractController
     {
         return $this->render('Default/admin.html.twig');
     }
+    
+    /**
+     * The demo action.
+     *
+     * @Route("/demo", name="pelagos_demo")
+     *
+     * @return Response
+     */
+    public function demo()
+    {
+        return $this->render('Default/demo.html.twig');
+    }
 
     /**
      * Get the sitemap.xml containing all dataset urls.

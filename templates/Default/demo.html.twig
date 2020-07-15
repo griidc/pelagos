@@ -1,0 +1,26 @@
+{% extends "template/UI.html.twig" %}
+
+{% block title %}Demo Page{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('demo') }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    
+    {{ encore_entry_script_tags('demo') }}
+{% endblock %}
+
+{% block body %}
+
+    <div class="dx-viewport">
+        <div class="demo-container">
+            <div id="filedemo">
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
