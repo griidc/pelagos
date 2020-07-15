@@ -24,6 +24,7 @@ use Swagger\Annotations as SWG;
 use App\Entity\Dataset;
 use App\Entity\DatasetPublication;
 use App\Entity\Publication;
+use App\Util\RabbitPublisher;
 
 /**
  * The Publication api controller.
@@ -194,7 +195,7 @@ class DatasetPublicationController extends EntityController
      *
      * @return Response A HTTP Response object.
      */
-    public function linkAction(int $id, Request $request, ObjectPersister $objectPersister)
+    public function linkAction(int $id, Request $request, ObjectPersister $objectPersister, RabbitPublisher $publisher)
     {
         $datasetId = $request->query->get('dataset');
 
@@ -223,6 +224,7 @@ class DatasetPublicationController extends EntityController
             // When a dataset to publication link is made the related dataset is reindex by Elastica.
             // This is done because of the way their relationship works, and change is not detected.
             $objectPersister->insertOne($dataPub->getDataset());
+            $publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'doi');
         } catch (UniqueConstraintViolationException $e) {
             if (preg_match('/uniq_dataset_publication/', $e->getMessage())) {
                 throw new BadRequestHttpException('Link already exists.');
