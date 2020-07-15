@@ -121,7 +121,7 @@
             selectedProjectDirector: function () {
                 this.disableProjDirBtn = !this.selectedProjectDirector;
             }
-        }
+        },
     };
 </script>
 
