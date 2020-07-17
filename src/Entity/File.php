@@ -16,7 +16,7 @@ class File extends Entity
      *
      * @var Fileset
      *
-     * @ORM\ManyToOne(targetEntity="Fileset", inversedBy="File")
+     * @ORM\ManyToOne(targetEntity="Fileset", inversedBy="files")
      * @ORM\JoinColumn(nullable=false)
      */
     protected $fileset;
@@ -109,9 +109,9 @@ class File extends Entity
     /**
      * Getter for File Name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getFileName(): string
+    public function getFileName(): ? string
     {
         return $this->fileName;
     }
@@ -119,11 +119,11 @@ class File extends Entity
     /**
      * Setter for File Name.
      *
-     * @param string $fileName Name of the file.
+     * @param string|null $fileName Name of the file.
      *
      * @return void
      */
-    public function setFileName(string $fileName): void
+    public function setFileName(?string $fileName): void
     {
         $this->fileName = $fileName;
     }
@@ -131,9 +131,9 @@ class File extends Entity
     /**
      * Getter for File Size.
      *
-     * @return integer
+     * @return integer|null
      */
-    public function getFileSize(): int
+    public function getFileSize(): ? int
     {
         return $this->fileSize;
     }
@@ -141,11 +141,11 @@ class File extends Entity
     /**
      * Setter for File Size.
      *
-     * @param integer $fileSize Size of the file.
+     * @param integer|null $fileSize Size of the file.
      *
      * @return void
      */
-    public function setFileSize(int $fileSize): void
+    public function setFileSize(?int $fileSize): void
     {
         $this->fileSize = $fileSize;
     }
@@ -153,9 +153,9 @@ class File extends Entity
     /**
      * Getter for File Hash.
      *
-     * @return string
+     * @return string|null
      */
-    public function getFileSha256Hash(): string
+    public function getFileSha256Hash(): ? string
     {
         return $this->fileSha256Hash;
     }
@@ -163,11 +163,11 @@ class File extends Entity
     /**
      * Setter for File Hash.
      *
-     * @param string $fileSha256Hash Hash of the file.
+     * @param string|null $fileSha256Hash Hash of the file.
      *
      * @return void
      */
-    public function setFileSha256Hash(string $fileSha256Hash): void
+    public function setFileSha256Hash(?string $fileSha256Hash): void
     {
         $this->fileSha256Hash = $fileSha256Hash;
     }
@@ -175,9 +175,9 @@ class File extends Entity
     /**
      * Getter for File UploadedAt.
      *
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getUploadedAt(): \DateTime
+    public function getUploadedAt(): ? \DateTime
     {
         return $this->uploadedAt;
     }
@@ -219,9 +219,9 @@ class File extends Entity
     /**
      * Getter for File Description.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDescription(): string
+    public function getDescription(): ? string
     {
         return $this->description;
     }
@@ -229,11 +229,11 @@ class File extends Entity
     /**
      * Setter for File Description.
      *
-     * @param string $description Description of the file.
+     * @param string|null $description Description of the file.
      *
      * @return void
      */
-    public function setDescription(string $description): void
+    public function setDescription(?string $description): void
     {
         $this->description = $description;
     }
@@ -241,9 +241,9 @@ class File extends Entity
     /**
      * Getter for File path.
      *
-     * @return string
+     * @return string|null
      */
-    public function getFilePath(): string
+    public function getFilePath(): ? string
     {
         return $this->filePath;
     }
@@ -251,11 +251,11 @@ class File extends Entity
     /**
      * Setter for File path.
      *
-     * @param string $filePath Path/Location of the file.
+     * @param string|null $filePath Path/Location of the file.
      *
      * @return void
      */
-    public function setFilePath(string $filePath): void
+    public function setFilePath(?string $filePath): void
     {
         $this->filePath = $filePath;
     }

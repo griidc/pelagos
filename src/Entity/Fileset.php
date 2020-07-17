@@ -18,7 +18,7 @@ class Fileset extends Entity
      *
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="File", mappedBy="Fileset", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="File", mappedBy="fileset", cascade={"persist"}, orphanRemoval=true)
      */
     protected $files;
 
