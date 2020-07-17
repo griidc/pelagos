@@ -182,7 +182,7 @@ class DOIutil
         string $title,
         string $publicationYear,
         string $publisher,
-        array $publicationDois,
+        array  $publicationDois,
         string $status = DOI::STATE_FINDABLE
     ) {
         $client = new Client();
