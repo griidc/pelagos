@@ -1,0 +1,34 @@
+{% extends "base.html.twig" %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('test') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+ 
+    {{ encore_entry_script_tags('test') }}
+{% endblock %}
+
+{% block body %}
+    <div class="bootstrap">
+        <div class="container">
+            <h3 class="badge badge-secondary">DropZone test</h3>
+            <div id="dropzonetest" class="w-100 p-3 border border-dark" />
+        </div>
+    </div>
+
+    <div class="d-none">
+        <div id="preview-template" class="dz-preview dz-file-preview">
+          <div class="dz-details">
+            <div class="dz-filename"><span data-dz-name></span></div>
+            <div class="dz-size" data-dz-size></div>
+          </div>
+          <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
+          <div class="dz-success-mark"><span>✔</span></div>
+          <div class="dz-error-mark"><span>✘</span></div>
+          <div class="dz-error-message"><span data-dz-errormessage></span></div>
+        </div>
+    </div>
+{% endblock %}

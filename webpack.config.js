@@ -39,6 +39,7 @@ Encore
     .addEntry('research-group', './assets/js/research-group.js')
     .addEntry('grp-home', './assets/js/grp-home.js')
     .addEntry('demo', './assets/js/demo.js')
+    .addEntry('test', './assets/js/test.js')
 
     // enables Sass/SCSS support
     .enableSassLoader()
