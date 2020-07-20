@@ -5,3 +5,7 @@ var myDropzone = new Dropzone("div#dropzonetest", {
     autoQueue: false,
     previewTemplate: document.querySelector('#preview-template').innerHTML,
 });
+
+myDropzone.on("addedfile", function(file) {
+    console.log(this.files);
+});
