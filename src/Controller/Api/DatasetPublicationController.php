@@ -270,9 +270,8 @@ class DatasetPublicationController extends EntityController
      */
     public function deleteAction(int $id, RabbitPublisher $publisher)
     {
-        $datasetPublication = $this->handleGetOne(DatasetPublication::class, $id);
+        $datasetPublication = $this->handleDelete(DatasetPublication::class, $id);
         $dataset = $datasetPublication->getDataset();
-        $this->handleDelete(DatasetPublication::class, $id);
         $publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'doi');
 
         return $this->makeNoContentResponse();
