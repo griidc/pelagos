@@ -1,41 +1,47 @@
 <template>
-    <div class="row">
-        <div class="col-6 border-right">
-            <label class="col-form-label-lg">
-                Funding Cycles
-            </label>
-            <b-form-select v-model="selectedFundingCycle" :options="fundingCycleOptions" class="w-75">
-                <template v-slot:first>
-                    <b-form-select-option :value="null" disabled>-- Please select a Funding Cycle --</b-form-select-option>
-                </template>
-            </b-form-select>
+    <div class="border border-dark p-3">
+        <h4 class="text-center">View Project Overview By:</h4>
+        <div class="row">
+            <div class="col-6 border-right">
+                <b-form-group>
+                    <label class="col-form-label">
+                        Grant Awards
+                    </label>
+                    <br>
+                    <b-form-select v-model="selectedFundingCycle" :options="fundingCycleOptions" class="w-75">
+                        <template v-slot:first>
+                            <b-form-select-option :value="null" disabled>-- Please select a Grant Award --</b-form-select-option>
+                        </template>
+                    </b-form-select>
+                </b-form-group>
+                <label class="col-form-label">
+                    Projects
+                </label>
+                <div class="form-inline">
+                    <b-form-select v-model="selectedResearchGroup" :options="researchGroupOptions" :disabled="disableResearchGroups" class="w-75">
+                        <template v-slot:first>
+                            <b-form-select-option :value="null" disabled>-- Please select a Project --</b-form-select-option>
+                        </template>
+                    </b-form-select>
+                    <b-button class="form-control ml-3" variant="secondary" @click="researchGroupButton" :disabled="disableResGrpBtn">Go</b-button>
+                </div>
 
-            <label class="col-form-label-lg">
-                Research Groups
-            </label>
-            <div class="form-inline">
-                <b-form-select v-model="selectedResearchGroup" :options="researchGroupOptions" :disabled="disableResearchGroups" class="w-75">
-                    <template v-slot:first>
-                        <b-form-select-option :value="null" disabled>-- Please select a Research Group --</b-form-select-option>
-                    </template>
-                </b-form-select>
-                <b-button class="form-control ml-3" variant="primary" @click="researchGroupButton" :disabled="disableResGrpBtn">Go</b-button>
             </div>
+            <div class="col-6">
+                <label class="col-form-label">
+                    Project Director
+                </label>
+                <div class="form-inline">
+                    <b-form-select v-model="selectedProjectDirector" :options="projectDirectorsOptions" class="w-75">
+                        <template v-slot:first>
+                            <b-form-select-option :value="null" disabled>-- Please select an associated Project Director --</b-form-select-option>
+                        </template>
+                    </b-form-select>
+                    <b-button class="form-control ml-3" variant="secondary" @click="projectDirectorButton" :disabled="disableProjDirBtn">Go</b-button>
+                </div>
+            </div>
+        </div>
 
-        </div>
-        <div class="col-6">
-            <label class="col-form-label-lg">
-                    Search for Research Group Page By
-            </label>
-            <div class="form-inline">
-                <b-form-select v-model="selectedProjectDirector" :options="projectDirectorsOptions" class="w-75">
-                    <template v-slot:first>
-                        <b-form-select-option :value="null" disabled>-- Please select an associated Project Director --</b-form-select-option>
-                    </template>
-                </b-form-select>
-                <b-button class="form-control ml-3" variant="primary" @click="projectDirectorButton" :disabled="disableProjDirBtn">Go</b-button>
-            </div>
-        </div>
     </div>
 </template>
 
