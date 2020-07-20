@@ -6,12 +6,12 @@
       current-path="Widescreen"
     >
       <DxPermissions
-        :create="true"
+        :create="false"
         :copy="true"
         :move="true"
         :delete="true"
         :rename="true"
-        :upload="true"
+        :upload="false"
         :download="true"
       />
     </DxFileManager>

@@ -17,9 +17,24 @@
 {% block body %}
 
     <div class="dx-viewport">
-        <div class="demo-container">
+        <div id="dropzonetest" class="demo-container">
             <div id="filedemo">
             </div>
+        </div>
+    </div>
+    
+    
+
+    <div class="d-none">
+        <div id="preview-template" class="dz-file-preview list-group">
+          <div class="dz-details">
+            <!-- <div class="dz-filename list-group-item"><span data-dz-name></span><div class="dz-size" data-dz-size></div></div> -->
+            
+          </div>
+          <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
+          <div class="dz-success-mark"><span>✔</span></div>
+          <div class="dz-error-mark"><span>✘</span></div>
+          <div class="dz-error-message"><span data-dz-errormessage></span></div>
         </div>
     </div>
 

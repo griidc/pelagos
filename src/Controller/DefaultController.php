@@ -181,11 +181,11 @@ class DefaultController extends AbstractController
     /*
      * The test action.
      *
-     * @Route("/test", name="pelagos_test")
+     * @Route("/demo2", name="pelagos_test")
      *
      * @return Response
      */
-    public function test()
+    public function testAction()
     {
         return $this->render('Default/test.html.twig');
     }
