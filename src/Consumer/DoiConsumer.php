@@ -2,6 +2,7 @@
 
 namespace App\Consumer;
 
+use App\Entity\DatasetPublication;
 use Doctrine\ORM\EntityManagerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 
@@ -226,6 +227,11 @@ class DoiConsumer implements ConsumerInterface
                     $pubYear = $dataset->getDif()->getApprovedDate()->format('Y');
                 }
             }
+            $publicationDois = [];
+            $datasetPublications = $dataset->getPublications();
+            foreach ($datasetPublications as $datasetPublication) {
+                $publicationDois[] = $datasetPublication->getDoi();
+            }
 
             $this->doiUtil->updateDOI(
                 $doi->getDoi(),
@@ -233,7 +239,8 @@ class DoiConsumer implements ConsumerInterface
                 $creator,
                 $dataset->getTitle(),
                 $pubYear,
-                'Harte Research Institute'
+                'Harte Research Institute',
+                $publicationDois
             );
 
             $loggingContext['update-data'] = array(

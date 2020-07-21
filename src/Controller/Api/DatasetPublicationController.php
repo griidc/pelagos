@@ -24,6 +24,7 @@ use Swagger\Annotations as SWG;
 use App\Entity\Dataset;
 use App\Entity\DatasetPublication;
 use App\Entity\Publication;
+use App\Util\RabbitPublisher;
 
 /**
  * The Publication api controller.
@@ -148,10 +149,10 @@ class DatasetPublicationController extends EntityController
      * @param integer         $id              Publication ID.
      * @param Request         $request         A Request object.
      * @param ObjectPersister $objectPersister The object persister.
+     * @param RabbitPublisher $publisher       Rabbitmq utility class instance.
      *
+     * @return Response A HTTP Response object.
      * @throws UniqueConstraintViolationException If entity handler re-throws a this exception that is not uniq_dataset_publication.
-     * @throws BadRequestHttpException If link already exists.
-     *
      * @Operation(
      *     tags={"Publication to Dataset Association"},
      *     summary="Link a Publication to a Dataset by their respective IDs.",
@@ -192,9 +193,8 @@ class DatasetPublicationController extends EntityController
      *     defaults={"_format"="json"}
      *     )
      *
-     * @return Response A HTTP Response object.
      */
-    public function linkAction(int $id, Request $request, ObjectPersister $objectPersister)
+    public function linkAction(int $id, Request $request, ObjectPersister $objectPersister, RabbitPublisher $publisher)
     {
         $datasetId = $request->query->get('dataset');
 
@@ -223,6 +223,7 @@ class DatasetPublicationController extends EntityController
             // When a dataset to publication link is made the related dataset is reindex by Elastica.
             // This is done because of the way their relationship works, and change is not detected.
             $objectPersister->insertOne($dataPub->getDataset());
+            $publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'doi');
         } catch (UniqueConstraintViolationException $e) {
             if (preg_match('/uniq_dataset_publication/', $e->getMessage())) {
                 throw new BadRequestHttpException('Link already exists.');
@@ -234,12 +235,14 @@ class DatasetPublicationController extends EntityController
         return $this->makeNoContentResponse();
     }
 
-   /**
-    * Delete a Publication to Dataset Association.
-    *
-    * @param integer $id The id of the Publication to Dataset Association to delete.
-    *
-    * @Operation(
+    /**
+     * Delete a Publication to Dataset Association.
+     *
+     * @param integer         $id        The id of the Publication to Dataset Association to delete.
+     * @param RabbitPublisher $publisher Rabbitmq utility class instance.
+     *
+     * @return Response A response object with an empty body and a "no content" status code.
+     * @Operation(
      *     tags={"Publication to Dataset Association"},
      *     summary="Delete a Publication to Dataset Association.",
      *     @SWG\Response(
@@ -256,19 +259,21 @@ class DatasetPublicationController extends EntityController
      *     )
      * )
      *
-    *
-    * @Route(
-    *     "/api/dataset_publications/{id}",
-    *     name="pelagos_api_dataset_publications_delete",
-    *     methods={"DELETE"},
-    *     defaults={"_format"="json"}
-    *     )
-    *
-    * @return Response A response object with an empty body and a "no content" status code.
-    */
-    public function deleteAction(int $id)
+     *
+     * @Route(
+     *     "/api/dataset_publications/{id}",
+     *     name="pelagos_api_dataset_publications_delete",
+     *     methods={"DELETE"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
+     */
+    public function deleteAction(int $id, RabbitPublisher $publisher)
     {
-        $this->handleDelete(DatasetPublication::class, $id);
+        $datasetPublication = $this->handleDelete(DatasetPublication::class, $id);
+        $dataset = $datasetPublication->getDataset();
+        $publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'doi');
+
         return $this->makeNoContentResponse();
     }
 }
