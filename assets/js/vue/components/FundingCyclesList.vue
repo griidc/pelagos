@@ -1,5 +1,5 @@
 <template>
-    <div class="border border-dark p-3">
+    <div class="border p-3 card-product">
         <h4 class="text-center">View Project Overview By:</h4>
         <div class="row">
             <div class="col-6 border-right">
