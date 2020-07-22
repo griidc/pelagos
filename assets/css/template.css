@@ -1,8 +1,7 @@
-body {height:100%}
-
 html, body {
     margin: 0;
     padding: 0;
+    height:100%
 }
 body {
     font-family: var(--body-fonts);
@@ -502,4 +501,23 @@ div#header #griidc-logo-wrapper {
 
 table.datasets td {
     padding: 10px !important;
+}
+
+.pelagos-page {
+  display: flex;
+  flex-flow: column;
+  height: 100vh;
+}
+
+.pelagos-header {
+  flex: 0 1 auto;
+}
+
+.pelagos-main {
+  flex: 1 1 auto;
+  border: 5px solid red;
+}
+
+.pelagos-footer {
+    flex: 0 1 2em;
 }
