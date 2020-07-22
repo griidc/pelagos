@@ -151,7 +151,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      *
      * @return array  Return the data array
      */
-    protected function getData(array $options)
+    protected function getData(array $options): array
     {
         $datasets = $options['researchGroup']->getDatasets();
         $reportData = array();
@@ -184,12 +184,14 @@ class ReportResearchGroupDatasetStatusController extends ReportController
     }
 
     /**
-     * @param $datasets
-     * @param $options
+     * Get data for version one report.
+     *
+     * @param Collection $datasets  Collection of Datasets.
+     * @param array      $options   Options for report.
      *
      * @return array
      */
-    private function getVersionOneReport($datasets, $options): array
+    private function getVersionOneReport(Collection $datasets, array $options): array
     {
         $datasetCount = $this->getDatasetCount($datasets);
         //extra headers to be put in the report
@@ -248,7 +250,9 @@ class ReportResearchGroupDatasetStatusController extends ReportController
     }
 
     /**
-     * @param Collection $datasets
+     * Getter for dataset count and dataset count string.
+     *
+     * @param Collection $datasets Collection of datasets.
      *
      * @return array
      */
@@ -265,12 +269,14 @@ class ReportResearchGroupDatasetStatusController extends ReportController
     }
 
     /**
-     * @param $datasets
-     * @param $options
+     * Get data for version two report.
+     *
+     * @param Collection $datasets Collection of datasets.
+     * @param array      $options  Options for report.
      *
      * @return array
      */
-    private function getVersionTwoReport($datasets, $options): array
+    private function getVersionTwoReport(Collection $datasets, array $options): array
     {
         $datasetCount = $this->getDatasetCount($datasets);
         //extra headers to be put in the report
