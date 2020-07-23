@@ -4,57 +4,27 @@
 {% block stylesheets %}
     {{ parent() }}
     {{ encore_entry_link_tags('stats') }}
-    <style>
-    .bg-purple {
-  background: rgb(48,0,50);
-}
-.bg-gray {
-  background: rgb(74,74,74);
-}
-.bg-blue {
-  background: rgb(50,101,196);
-}
-.bg-red {
-  background: rgb(196,50,53);
-}
-</style>
-    
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
     
     {{ encore_entry_script_tags('stats') }}
+    
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.resize.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.time.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.pie.min.js"></script>
+
+    <script type="text/javascript" src="{{ asset('build/js/jquery.flot.barnumbers.js') }}"></script>
 {% endblock %}
 
 {% block body %}
-<div class="bootstrap">
-    <div class="container-fluid d-md-flex flex-column h-100">
-         <div class="d-flex flex-column h-100 border border-dark">
-             <div id="outer" class="d-flex flex-column flex-grow vh-50">
-                <div id="one" class="">
-                    header content
-                    <br> another line
-                    <br> And another
-                </div>
-                <div id="two" class="bg-info h-100 flex-grow-1">
-                    main content that I want to expand to cover remaining available height
-                </div>
-                <div id="three" class="">
-                    footer content 40px height
-                </div>
-             </div>
+    <div class="bootstrap">
+        <div class="container-fluid">
+             {% include "Stats/charts.html.twig" %}
          </div>
-     </div>
-</div>
-    
-    
-<!-- https://stackoverflow.com/questions/90178/make-a-div-fill-the-height-of-the-remaining-screen-space -->
-
-
-
-<!-- https://www.whitebyte.info/programming/css/how-to-make-a-div-take-the-remaining-height -->
-    
+    </div>
 {% endblock %}
 
 

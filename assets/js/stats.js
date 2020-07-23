@@ -1,10 +1,21 @@
 const $ = require('jquery');
 global.$ = global.jQuery = $;
 
+import '../css/stats.css';
+
 import 'bootstrap';
 
 var flotConfig;
 var overviewSections;
+var style = getComputedStyle(document.body);
+var theme = {};
+
+theme.main = style.getPropertyValue('--color-main');
+theme.secondary = style.getPropertyValue('--color-menu');
+theme.dark = style.getPropertyValue('--color-headerMiddle');
+theme.light = style.getPropertyValue('--color-headerTop');
+
+console.log(theme);
 
 $(document).ready(function() {
     overviewSections = {
@@ -12,12 +23,12 @@ $(document).ready(function() {
             url: Routing.generate("pelagos_app_ui_stats_getdatasetovertime"),
             xaxis: { mode: "time" },
             yaxis: { position: "right" },
-            colors: [ "#b8dcf1", "#bfcacd", "#004250" ],
+            colors: [ theme.secondary, theme.light, theme.main ],
             legend: { position: "nw" }
         },
         "dataset-size-ranges": {
             url: Routing.generate("pelagos_app_ui_stats_getdatasetsizeranges"),
-            colors: [ "#3f626a", "#3f626a", "#3f626a", "#3f626a", "#3f626a", "#3f626a" ],
+            colors: [ theme.dark, theme.dark, theme.dark, theme.dark, theme.dark, theme.dark ],
             xaxis: {
                 ticks: true,
                 min: 0,
