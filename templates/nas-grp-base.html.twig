@@ -34,9 +34,9 @@
     {% endblock %}
 </head>
 
-<body style="height=90%">
+<body>
 {% block htmlbody %}
-<div class="pelagos-page">
+
 {% if isMaintenanceMode() %}
     <div class="bootstrap sticky-top w-auto text-center" style="background-color:{{ getMaintenanceModeColor() }}; text-align: center">
         {{ getMaintenanceModeText()}}.
@@ -46,34 +46,33 @@
     </div>
 {% endif %}
 
-<header class="pelagos-header">
-    <!--Login and Atlassian buttons-->
-    <div class="login-bar">
-        <div class="jira-buttons-box">
-            <button id="atlwdg-issue" class="atlwdg-trigger">
-                Report Issue
-            </button>
-            <button id="atlwdg-suggest" class="atlwdg-trigger">
-                Suggest Improvement
-            </button>
-        </div>
-        <div class="bootstrap">
-            <div class="login-info-box font-weight-bold text-uppercase position-absolute d-flex">
-                {% if is_granted('ROLE_USER') %}
-                    <a style="text-decoration: underline;">
-                        Logged in as: {{ app.user.username }}
-                    </a>
-                    &nbsp; | &nbsp;
-                    <a href="{{ path('security_logout') }}" style="text-decoration: underline; color: inherit">  Log out</a>
-                {% else %}
-                    <a href="{{ path('security_login', {destination: app.request.uri}) }}" style="text-decoration: underline; color: inherit">Log in </a>
-                {% endif %}
-            </div>
+<!--Login and Atlassian buttons-->
+<div class="login-bar">
+    <div class="jira-buttons-box">
+        <button id="atlwdg-issue" class="atlwdg-trigger">
+            Report Issue
+        </button>
+        <button id="atlwdg-suggest" class="atlwdg-trigger">
+            Suggest Improvement
+        </button>
+    </div>
+    <div class="bootstrap">
+        <div class="login-info-box font-weight-bold text-uppercase position-absolute d-flex">
+            {% if is_granted('ROLE_USER') %}
+                <a style="text-decoration: underline;">
+                    Logged in as: {{ app.user.username }}
+                </a>
+                &nbsp; | &nbsp;
+                <a href="{{ path('security_logout') }}" style="text-decoration: underline; color: inherit">  Log out</a>
+            {% else %}
+                <a href="{{ path('security_login', {destination: app.request.uri}) }}" style="text-decoration: underline; color: inherit">Log in </a>
+            {% endif %}
         </div>
     </div>
+</div>
 
-    <!--::Navigation Menu::-->
-    <div class="bootstrap inner_fixed">
+<!--::Navigation Menu::-->
+    <div class="bootstrap">
         <header class="main_menu home_menu border-bottom border-dark">
             <div class="global-nav-before">
             </div>
@@ -100,19 +99,29 @@
             </div>
         </header>
     </div>
-</header>
 
-<main class="pelagos-main">
-    <!--::Application Content::-->
-    <div class="page-pelagos-full">
-        {% block body %}{% endblock %}
+<!--::Application Content::-->
+<div class="page-pelagos-full">
+    <div class="page-wrapper">
+        <div id="page">
+            <div id="main-wrapper">
+                <div id="pelagos-container">
+                    <div id="pelagos-container-row">
+                        <div id="pelagos-container-cell">
+                            <div id="pelagos-wrapper">
+                                <div id="pelagos-wrapper-row">
+                                    <div id="pelagos-content">
+                                        <h1 style="margin: 0 auto;">{% block pagetitle %}{% endblock %}</h1>
+                                        {% block body %}{% endblock %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</main>
-
-<footer class="pelagos-footer">
-    {% block footer %}{% endblock %}
-</footer>
-
 </div>
 
 {% block javascripts %}
