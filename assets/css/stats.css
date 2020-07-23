@@ -42,7 +42,6 @@
     line-height: 100%;
 }
 
-
 #summary-of-records-legend {
     margin-right: 7px;
     margin-left: 24px;
@@ -70,7 +69,6 @@
     display: none;
 }
 
-
 #dataset-size-ranges-legend {
     margin-right: 7px;
     margin-left: 24px;
@@ -97,7 +95,6 @@
 #dataset-size-ranges-legend td.legendColorBox {
     display: none;
 }
-
 
 #program-resources table {
     margin-left: auto;

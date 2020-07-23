@@ -15,8 +15,6 @@ theme.secondary = style.getPropertyValue('--color-menu');
 theme.dark = style.getPropertyValue('--color-headerMiddle');
 theme.light = style.getPropertyValue('--color-headerTop');
 
-console.log(theme);
-
 $(document).ready(function() {
     overviewSections = {
         "total-records-over-time": {
