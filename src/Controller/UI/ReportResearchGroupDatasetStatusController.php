@@ -126,7 +126,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      *
      * @Route(
      *     "/report-researchgroup/dataset-monitoring",
-     *     name="pelagos_app_ui_datasetsubmission_post",
+     *     name="pelagos_app_ui_reportresearchgroupdatasetstatus_post",
      *     methods={"POST"}
      *     )
      *
