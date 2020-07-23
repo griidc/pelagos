@@ -15,6 +15,8 @@ require('../css/superfish.css');
 require('../css/pelagos-module.css');
 require('../css/messages.css');
 require('../css/griidc-app.css');
+const axios = require('axios');
+global.axios = axios;
 import '../scss/griidc.scss';
 
 const routes = require('../../public/js/fos_js_routes.json');

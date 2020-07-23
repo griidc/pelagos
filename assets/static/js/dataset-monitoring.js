@@ -144,7 +144,38 @@ function showProjects(by,id) {
     })
     .always(function() {
         $("#right .spinner").hide();
+        addPdfUrl();
+        addCsvUrl()
     });
+}
+
+const addPdfUrl = () => {
+    const pdfElementIds = document.getElementsByClassName('awesome-icon-pdf');
+
+    for (let i = 0; i < pdfElementIds.length ; i++) {
+        const url = pdfElementIds[i].dataset.url;
+        pdfElementIds[i].addEventListener("click", function (event) {
+                window.open(url);
+            },
+            false);
+    }
+}
+
+const addCsvUrl = () => {
+    const csvElementIds = document.getElementsByClassName('awesome-icon-csv');
+    for (let i = 0; i < csvElementIds.length ; i++) {
+        csvElementIds[i].addEventListener("click", function (event) {
+                axios.create({})
+                    .post(Routing.generate("pelagos_app_ui_reportresearchgroupdatasetstatus_post"), {ResearchGroupSelector: csvElementIds[i].dataset.researchGroupId})
+                    .then(response => {
+                        console.log(response)
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+            false);
+    }
 }
 
 function updateHash(fund_src,project_id) {
