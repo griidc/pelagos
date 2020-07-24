@@ -306,6 +306,7 @@ class DOIutil
                 'inactive',
                 '2019',
                 'none supplied',
+                [],
                 DOI::STATE_REGISTERED
             );
         }
