@@ -4,6 +4,7 @@ namespace App\Controller\UI;
 
 use App\Form\ReportResearchGroupDatasetStatusType;
 use App\Entity\ResearchGroup;
+use App\Entity\Dataset;
 
 use App\Handler\EntityHandler;
 use Doctrine\Common\Collections\Collection;
@@ -313,7 +314,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
                     'doi'=> $dataset->getDoi(),
                     'title' => $dataset->getTitle(),
                     'primaryPointOfContact' => $ppocString,
-                    'datasetStatus' => $datasetStatus,
+                    'datasetStatus' => $this->getDatasetStatus($dataset),
                     'restricted' => ($dataset->isRestricted()) ? 'YES' : 'NO',
                 );
                 $dataArray[] = $dataRow;
@@ -325,5 +326,36 @@ class ReportResearchGroupDatasetStatusController extends ReportController
             'labels' => $labels,
             'dataArray' => $dataArray
         );
+    }
+
+    /**
+     * Get custom dataset status string for the version two report.
+     *
+     * @param Dataset $dataset An instance of dataset entity.
+     *
+     * @return string
+     */
+    private function getDatasetStatus(Dataset $dataset): string
+    {
+        switch (true) {
+            case ($dataset->getStatus() === 'NoDif'):
+                return 'Unapproved DIF';
+                break;
+            case ($dataset->getStatus() === 'DIF'):
+                return 'Approved DIF';
+                break;
+            case ($dataset->getStatus() === 'In Review'):
+                return 'In Review';
+                break;
+            case ($dataset->getStatus() === 'Back to Submitter'):
+                return 'Revisions Requested';
+                break;
+            case (in_array($dataset->getStatus(), ['Completed', 'Completed, Restricted'])):
+                return 'Completed';
+                break;
+            case ($dataset->getStatus() === 'Submitted'):
+                return 'Submitted';
+                break;
+        }
     }
 }
