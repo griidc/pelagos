@@ -1,71 +1,69 @@
 <template>
-    <div ref="formContainer">
+    <div ref="formContainer" class="container">
         <section class="section-content bg pt-5">
-            <div class="container">
-                <div class="search-form">
-                    <b-form id="searchForm" name="searchForm" method="get" @submit.prevent="onSubmit" @reset.prevent="onReset">
-                        <div class="row">
-                            <div class="col-lg-9">
-                                <div class="row">
-                                    <div class="col-lg">
-                                        <b-form-input type="search"
-                                                      name="query"
-                                                      class="form-control"
-                                                      placeholder="Search.."
-                                                      id="searchBox"
-                                                      v-model="form.query">
-                                        </b-form-input>
-                                        <input type="hidden" id="pageNo" name="page" v-model="form.page">
-                                    </div>
-                                </div>
-                                <div class="row mt-3 form-group form-inline pt-3">
-                                    <div class="col-lg search-field-options">
-                                        <span class="input-group" v-tooltip="{
-                                                content: 'Search only in selected field',
-                                                placement:'top'}">
-                                            <label class="pl-2 pr-2" for="field" >Search in Field</label>
-                                            <b-form-select name="field" id="field" v-model="form.field" :options="fields">
-                                            </b-form-select>
-                                        </span>
-
-                                    </div>
-                                    <div class="col-lg collection-start-date">
-                                        <span class="input-group">
-                                            <label for="collectionStartDate" class="pl-2 pr-2">From</label>
-                                            <b-form-datepicker type="text"
-                                                   class="pr-2 form-control"
-                                                   id="collectionStartDate"
-                                                   name="collectionStartDate"
-                                                   placeholder="yyyy-mm-dd"
-                                                   v-model="form.collectionStartDate">
-                                            </b-form-datepicker>
-                                        </span>
-                                    </div>
-                                    <div class="col-lg collection-end-date">
-                                        <span class="input-group">
-                                            <label for="collectionEndDate" class="pr-2 pl-3">To</label>
-                                            <b-form-datepicker
-                                                    type="text"
-                                                    id="collectionEndDate"
-                                                    class="form-control date-input"
-                                                    name="collectionEndDate"
-                                                    placeholder="yyyy-mm-dd"
-                                                    v-model="form.collectionEndDate">
-                                            </b-form-datepicker>
-                                        </span>
-                                    </div>
+            <div class="search-form">
+                <b-form id="searchForm" name="searchForm" method="get" @submit.prevent="onSubmit" @reset.prevent="onReset">
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <div class="row">
+                                <div class="col-lg">
+                                    <b-form-input type="search"
+                                                  name="query"
+                                                  class="form-control"
+                                                  placeholder="Search.."
+                                                  id="searchBox"
+                                                  v-model="form.query">
+                                    </b-form-input>
+                                    <input type="hidden" id="pageNo" name="page" v-model="form.page">
                                 </div>
                             </div>
-                            <div class="col-lg-3 button-toolbar">
-                                <button id="searchSubmit" type="submit" class="btn btn-alternate search-button">Search
-                                    <i class="fa fa-search pl-2"></i></button>
-                                <button type="reset" id="search-clear" class="btn btn-dark clear-button">Clear</button>
-                                <div class="mt-3 pt-3 empty-button-div"></div>
-                                <button type="button" id="map-search" class="btn btn-dark map-search-button" @click="dataDiscovery()">Map Search</button>
+                            <div class="row mt-3 form-group form-inline pt-3">
+                                <div class="col-lg search-field-options">
+                                    <span class="input-group" v-tooltip="{
+                                            content: 'Search only in selected field',
+                                            placement:'top'}">
+                                        <label class="pl-2 pr-2" for="field" >Search in Field</label>
+                                        <b-form-select name="field" id="field" v-model="form.field" :options="fields">
+                                        </b-form-select>
+                                    </span>
+
+                                </div>
+                                <div class="col-lg collection-start-date">
+                                    <span class="input-group">
+                                        <label for="collectionStartDate" class="pl-2 pr-2">From</label>
+                                        <b-form-datepicker type="text"
+                                               class="pr-2 form-control"
+                                               id="collectionStartDate"
+                                               name="collectionStartDate"
+                                               placeholder="yyyy-mm-dd"
+                                               v-model="form.collectionStartDate">
+                                        </b-form-datepicker>
+                                    </span>
+                                </div>
+                                <div class="col-lg collection-end-date">
+                                    <span class="input-group">
+                                        <label for="collectionEndDate" class="pr-2 pl-3">To</label>
+                                        <b-form-datepicker
+                                                type="text"
+                                                id="collectionEndDate"
+                                                class="form-control date-input"
+                                                name="collectionEndDate"
+                                                placeholder="yyyy-mm-dd"
+                                                v-model="form.collectionEndDate">
+                                        </b-form-datepicker>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </b-form>
-                </div>
+                        <div class="col-lg-3 button-toolbar">
+                            <button id="searchSubmit" type="submit" class="btn btn-alternate search-button">Search
+                                <i class="fa fa-search pl-2"></i></button>
+                            <button type="reset" id="search-clear" class="btn btn-dark clear-button">Clear</button>
+                            <div class="mt-3 pt-3 empty-button-div"></div>
+                            <button type="button" id="map-search" class="btn btn-dark map-search-button" @click="dataDiscovery()">Map Search</button>
+                        </div>
+                    </div>
+                </b-form>
             </div>
         </section>
         <ResultSet
@@ -76,7 +74,7 @@
                 @noOfResults="changeNoOfResults"
                 :formValues="form"/>
         <section class="section-content pt-3 bg" v-else>
-            <div v-show="!displayTextBlock" class="container">
+            <div v-show="!displayTextBlock">
                 <article class="card">
                     <div class="card-body text-center">
                         <h5 class="card-title">

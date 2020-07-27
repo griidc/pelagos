@@ -80,3 +80,23 @@ $navbar-light-active-color: $black;
 $navbar-light-hover-color: theme-color('primary');
 
 $dropdown-link-hover-color: theme-color('primary');
+
+$additional-width-default: 25px;
+$additional-width-sm: $additional-width-default * 1;
+$additional-width-md: $additional-width-default * 2;
+$additional-width-lg: $additional-width-default * 4;
+$additional-width-xl: $additional-width-default * 8;
+
+$grid-breakpoints: (
+        xs: 0,
+        sm: 576px + $additional-width-sm,
+        md: 768px + $additional-width-md,
+        lg: 992px + $additional-width-lg,
+        xl: 1200px + $additional-width-xl
+);
+$container-max-widths: (
+        sm: 540px + $additional-width-sm,
+        md: 720px + $additional-width-md,
+        lg: 960px + $additional-width-lg,
+        xl: 1140px + $additional-width-xl
+);
