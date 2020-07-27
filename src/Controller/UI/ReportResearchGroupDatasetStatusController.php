@@ -155,13 +155,16 @@ class ReportResearchGroupDatasetStatusController extends ReportController
     {
         $datasets = $options['researchGroup']->getDatasets();
         $reportData = array();
-
+        $defaultHeaders = $this->getDefaultHeaders();
         if (isset($options['version'])) {
             $reportData = $this->getVersionTwoReport($datasets, $options);
+            $defaultHeaders = $this->getDefaultHeaders();
+            $defaultHeaders[0] = $reportData['additionalHeaders'][0];
+            array_shift($reportData['additionalHeaders']);
         } else {
             $reportData = $this->getVersionOneReport($datasets, $options);
         }
-        return array_merge($this->getDefaultHeaders(), $reportData['additionalHeaders'], $reportData['labels'], $reportData['dataArray']);
+        return array_merge($defaultHeaders, $reportData['additionalHeaders'], $reportData['labels'], $reportData['dataArray']);
     }
 
     /**
@@ -292,7 +295,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
                 'DATASET DOI',
                 'TITLE',
                 'PRIMARY POINT OF CONTACT',
-                'STATUS',
+                'DATASET STATUS',
                 'RESTRICTED',
             )
         );
@@ -301,10 +304,10 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         $dataArray = array();
         if ($datasetCount['number'] > 0) {
             foreach ($datasets as $dataset) {
-                $datasetStatus = $dataset->getStatus();
+                $datasetStatus = $dataset->getDatasetStatus();
                 $ppoc = $dataset->getPrimaryPointOfContact();
-                $ppocString = $ppoc->getLastName() . ', ' .
-                    $ppoc->getFirstName();
+                $ppocString = ($ppoc) ? $ppoc->getLastName() . ', ' .
+                    $ppoc->getFirstName() : null;
                 $dataRow = array(
                     'udi' => $dataset->getUdi(),
                     'doi'=> $dataset->getDoi(),
