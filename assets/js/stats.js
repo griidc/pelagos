@@ -4,6 +4,8 @@ global.$ = global.jQuery = $;
 import '../css/stats.css';
 
 import 'bootstrap';
+import Vue from 'vue';
+import DatasetOverTime from './vue/components/stats/DatasetOverTime';
 
 var flotConfig;
 var overviewSections;
@@ -14,6 +16,19 @@ theme.main = style.getPropertyValue('--color-main');
 theme.secondary = style.getPropertyValue('--color-menu');
 theme.dark = style.getPropertyValue('--color-headerMiddle');
 theme.light = style.getPropertyValue('--color-headerTop');
+
+
+new Vue({
+  el: '#total-datasets-over-time',
+  components: { DatasetOverTime },
+  template: '<DatasetOverTime/>'
+});
+
+
+
+
+
+
 
 $(document).ready(function() {
     overviewSections = {
