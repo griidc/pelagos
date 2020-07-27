@@ -18,6 +18,7 @@ theme.dark = style.getPropertyValue('--color-headerMiddle');
 theme.light = style.getPropertyValue('--color-headerTop');
 
 
+
 new Vue({
   el: '#total-datasets-over-time',
   components: { DatasetOverTime },

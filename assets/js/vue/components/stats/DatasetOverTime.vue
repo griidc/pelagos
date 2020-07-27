@@ -3,7 +3,7 @@
     <DxChart
       id="chart"
       :data-source="dataSource"
-      palette="Violet"
+      palette="Ocean"
     >
       <DxCommonSeriesSettings
         :type="type"
@@ -33,19 +33,10 @@
       </DxTitle>
       <DxTooltip :enabled="true"/>
     </DxChart>
-    <div class="options">
-      <div class="caption">Options</div>
-      <div class="option">
-        <span>Series Type</span>
-        <DxSelectBox
-          :data-source="types"
-          :value.sync="type"
-        />
-      </div>
-    </div>
   </div>
 </template>
 <script>
+
 import {
   DxChart,
   DxSeries,
