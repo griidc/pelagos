@@ -4,6 +4,7 @@ namespace App\Controller\UI;
 
 use App\Form\ReportResearchGroupDatasetStatusType;
 use App\Entity\ResearchGroup;
+use App\Entity\Dataset;
 
 use App\Handler\EntityHandler;
 use Doctrine\Common\Collections\Collection;
@@ -155,13 +156,15 @@ class ReportResearchGroupDatasetStatusController extends ReportController
     {
         $datasets = $options['researchGroup']->getDatasets();
         $reportData = array();
-
+        $defaultHeaders = $this->getDefaultHeaders();
         if (isset($options['version'])) {
             $reportData = $this->getVersionTwoReport($datasets, $options);
+            $defaultHeaders[0] = $reportData['additionalHeaders'][0];
+            array_shift($reportData['additionalHeaders']);
         } else {
             $reportData = $this->getVersionOneReport($datasets, $options);
         }
-        return array_merge($this->getDefaultHeaders(), $reportData['additionalHeaders'], $reportData['labels'], $reportData['dataArray']);
+        return array_merge($defaultHeaders, $reportData['additionalHeaders'], $reportData['labels'], $reportData['dataArray']);
     }
 
     /**
@@ -282,7 +285,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         //extra headers to be put in the report
         $additionalHeaders = array(
             array('DATASET REPORT FOR RESEARCH GROUP:',$options['researchGroup']->getName()),
-            array('DATASET COUNT', $datasetCount['string']),
+            array('DATASET COUNT', $datasetCount['number']),
             array(parent::BLANK_LINE));
 
         //prepare label array
@@ -292,7 +295,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
                 'DATASET DOI',
                 'TITLE',
                 'PRIMARY POINT OF CONTACT',
-                'STATUS',
+                'DATASET STATUS',
                 'RESTRICTED',
             )
         );
@@ -301,16 +304,16 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         $dataArray = array();
         if ($datasetCount['number'] > 0) {
             foreach ($datasets as $dataset) {
-                $datasetStatus = $dataset->getStatus();
+                $datasetStatus = $dataset->getDatasetStatus();
                 $ppoc = $dataset->getPrimaryPointOfContact();
-                $ppocString = $ppoc->getLastName() . ', ' .
-                    $ppoc->getFirstName();
+                $ppocString = ($ppoc) ? $ppoc->getLastName() . ', ' .
+                    $ppoc->getFirstName() : null;
                 $dataRow = array(
                     'udi' => $dataset->getUdi(),
                     'doi'=> $dataset->getDoi(),
                     'title' => $dataset->getTitle(),
                     'primaryPointOfContact' => $ppocString,
-                    'datasetStatus' => $datasetStatus,
+                    'datasetStatus' => $this->getDatasetStatus($dataset),
                     'restricted' => ($dataset->isRestricted()) ? 'YES' : 'NO',
                 );
                 $dataArray[] = $dataRow;
@@ -322,5 +325,36 @@ class ReportResearchGroupDatasetStatusController extends ReportController
             'labels' => $labels,
             'dataArray' => $dataArray
         );
+    }
+
+    /**
+     * Get custom dataset status string for the version two report.
+     *
+     * @param Dataset $dataset An instance of dataset entity.
+     *
+     * @return string
+     */
+    private function getDatasetStatus(Dataset $dataset): string
+    {
+        switch (true) {
+            case ($dataset->getStatus() === 'NoDif'):
+                return 'Unapproved DIF';
+                break;
+            case ($dataset->getStatus() === 'DIF'):
+                return 'Approved DIF';
+                break;
+            case ($dataset->getStatus() === 'In Review'):
+                return 'In Review';
+                break;
+            case ($dataset->getStatus() === 'Back to Submitter'):
+                return 'Revisions Requested';
+                break;
+            case (in_array($dataset->getStatus(), ['Completed', 'Completed, Restricted'])):
+                return 'Completed';
+                break;
+            case ($dataset->getStatus() === 'Submitted'):
+                return 'Submitted';
+                break;
+        }
     }
 }
