@@ -7,15 +7,16 @@
         <span class="awesome-icon awesome-icon-pdf" data-url="/html2pdf?url={{ url(app.request.get('_route'), {'id': id, 'renderer': 'html2pdf'}) }}&format=Letter&orientation=landscape&margin=1cm&download=true&filename={{pdfFilename}}">
             <i class="fas fa-file-pdf"  style="color: red"></i>
         </span>
-        <span class="awesome-icon awesome-icon-csv" data-research-group-id="{{ id }}">
-            <i class="fas fa-file-csv" style="color: green"></i>
-        </span>
-
     {% endif %}
 </div>
 {% for ResearchGroup in researchGroups %}
 <div class="project" project="{{ResearchGroup.id}}">
-    <div class="project-title">{{ResearchGroup.name}}</div>
+    <div class="project-title">
+        {{ResearchGroup.name}}
+        <span class="awesome-icon awesome-icon-csv" data-research-group-id="{{ id }}">
+            <i class="fas fa-file-csv" style="color: green"></i>
+        </span>
+    </div>
     <div class="project-container">
         <div class="fundSrc">
             <span class="attr">Funding Source:</span> {{ResearchGroup.fundingCycle.name}}
