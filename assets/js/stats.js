@@ -5,7 +5,9 @@ import '../css/stats.css';
 
 import 'bootstrap';
 import Vue from 'vue';
-import DatasetOverTime from './vue/components/stats/DatasetOverTime';
+// import DatasetOverTime from './vue/components/stats/DatasetOverTime';
+// import DatasetSizeRanges from './vue/components/stats/DatasetSizeRanges';
+import StatsApp from './vue/Stats.vue';
 
 var flotConfig;
 var overviewSections;
@@ -17,12 +19,13 @@ theme.secondary = style.getPropertyValue('--color-menu');
 theme.dark = style.getPropertyValue('--color-headerMiddle');
 theme.light = style.getPropertyValue('--color-headerTop');
 
-
+// getComputedStyle(document.documentElement)
+    // .getPropertyValue('--my-variable-name');
 
 new Vue({
-  el: '#total-datasets-over-time',
-  components: { DatasetOverTime },
-  template: '<DatasetOverTime/>'
+  el: '#stats',
+  components: { StatsApp },
+  template: '<StatsApp/>'
 });
 
 

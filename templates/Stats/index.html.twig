@@ -10,19 +10,13 @@
     {{ parent() }}
     
     {{ encore_entry_script_tags('stats') }}
-    
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.resize.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.time.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.pie.min.js"></script>
-
-    <script type="text/javascript" src="{{ asset('build/js/jquery.flot.barnumbers.js') }}"></script>
 {% endblock %}
 
 {% block body %}
     <div class="bootstrap">
         <div class="container-fluid">
-             {% include "Stats/charts.html.twig" %}
+             <div id="stats" />
          </div>
+         {% include "Stats/program-resources.html.twig" %}
     </div>
 {% endblock %}

@@ -3,18 +3,21 @@
     <DxChart
       id="chart"
       :data-source="dataSource"
-      palette=myPalette
+      :palette="Material"
     >
       <DxCommonSeriesSettings
         :type="type"
         argument-field="country"
-      />
+      >
+        <DxPoint :visible="false"/>
+      </DxCommonSeriesSettings>
       <DxSeries
         v-for="energy in energySources"
         :key="energy.value"
         :value-field="energy.value"
         :name="energy.name"
       />
+      
       <DxMargin :bottom="20"/>
       <DxArgumentAxis
         :value-margins-enabled="false"
@@ -48,20 +51,12 @@ import {
   DxLegend,
   DxTitle,
   DxSubtitle,
-  DxTooltip
+  DxTooltip,
+  DxPoint
 } from 'devextreme-vue/chart';
 import DxSelectBox from 'devextreme-vue/select-box';
 
 import service from './data.js';
-
-var myPalette = {
-    // Applies in the BarGauge, Chart, Funnel, PieChart, PolarChart, Sankey, and TreeMap with a discrete colorizer
-    simpleSet: ['#60a69f', '#78b6d9', '#6682bb', '#a37182', '#eeba69'], 
-    // Applies in the CircularGauge and LinearGauge
-    indicatingSet: ['#90ba58', '#eeba69', '#a37182'], 
-    // Applies in the VectorMap and TreeMap with a gradient or range colorizer 
-    gradientSet: ['#78b6d9', '#eeba69'] 
-};
 
 export default {
 
@@ -77,7 +72,8 @@ export default {
     DxLegend,
     DxTitle,
     DxSubtitle,
-    DxTooltip
+    DxTooltip,
+    DxPoint
   },
 
   data() {
