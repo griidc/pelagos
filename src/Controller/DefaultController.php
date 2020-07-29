@@ -2,16 +2,20 @@
 
 namespace App\Controller;
 
-use App\Entity\Account;
-use App\Entity\ResearchGroup;
-use App\Util\FundingOrgFilter;
+use App\Entity\PersonResearchGroup;
+use App\Entity\ResearchGroupRole;
+use App\Repository\PersonResearchGroupRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-use App\Entity\DatasetSubmission;
+use App\Entity\Account;
 use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Entity\FundingCycle;
+use App\Entity\ResearchGroup;
+use App\Util\FundingOrgFilter;
 
 /**
  * This is the default controller.
@@ -30,15 +34,108 @@ class DefaultController extends AbstractController
      */
     public function nasIndex(FundingOrgFilter $fundingOrgFilter)
     {
-        $researchGroups = array();
-
+        $filter = array();
         if ($fundingOrgFilter->isActive()) {
-            $researchGroups = $this->get('doctrine')->getRepository(ResearchGroup::class)->findBy(array('id' => $fundingOrgFilter->getResearchGroupsIdArray() ));
+            $filter = array('fundingOrganization' => $fundingOrgFilter->getFilterIdArray());
+        }
+
+        $fundingCycles = $this->get('doctrine')->getRepository(FundingCycle::class)->findBy($filter, array('name' => 'ASC'));
+
+        $leadershipPersons = $this->get('doctrine')->getRepository(PersonResearchGroup::class)->getLeadershipPeople();
+
+        $leadershipPersonIdList = array();
+        foreach ($leadershipPersons as $leadershipPerson) {
+            $leadershipPersonIdList[] = $leadershipPerson->getPerson()->getId();
+        }
+        $duplicateProjectDirectors = $this->getDuplicateProjectDirs($leadershipPersonIdList);
+        $projectDirectorList = $this->getProjectDirectorList($leadershipPersons, $duplicateProjectDirectors);
+
+        $fundingCycleList = array();
+
+        foreach ($fundingCycles as $fundingCycle) {
+            $fundingCycleList[] = array(
+                'id' => $fundingCycle->getId(),
+                'name' => $fundingCycle->getName(),
+                'researchGroups' => $this->getResearchGroupsArray($fundingCycle)
+            );
         }
 
         return $this->render('Default/nas-grp-index.html.twig', array(
-            'researchGroups' => $researchGroups,
+            'fundingCycles' => $fundingCycleList,
+            'projectDirectors' => $projectDirectorList
         ));
+    }
+
+    /**
+     * Get research groups array in the funding cycle.
+     *
+     * @param FundingCycle $fundingCycle An instance of Funding cycle entity.
+     *
+     * @return array
+     */
+    private function getResearchGroupsArray(FundingCycle $fundingCycle): array
+    {
+        $researchGroups = array();
+
+        foreach ($fundingCycle->getResearchGroups() as $researchGroup) {
+            $researchGroups[] = array(
+                'id' => $researchGroup->getId(),
+                'name' => $researchGroup->getName(),
+            );
+        }
+        return $researchGroups;
+    }
+
+    /**
+     * Get the list of project directors.
+     *
+     * @param array $leadershipPersons Collection of Persons with Leadership role.
+     * @param array $duplicates        Array with duplicate person Ids.
+     *
+     * @return array
+     */
+    private function getProjectDirectorList(array $leadershipPersons, array $duplicates): array
+    {
+        $projectDirectors = array();
+
+        foreach ($leadershipPersons as $leadershipPerson) {
+            if (!in_array($leadershipPerson->getPerson()->getId(), $duplicates)) {
+                $projectDirectors[] = array(
+                    'id' => $leadershipPerson->getPerson()->getId(),
+                    'name' => $leadershipPerson->getPerson()->getFirstName()
+                        . ' ' . $leadershipPerson->getPerson()->getLastName(),
+                    'researchGroupId' => $leadershipPerson->getResearchGroup()->getId()
+                );
+            } else {
+                $projectDirectors[] = array(
+                    'id' => $leadershipPerson->getPerson()->getId(),
+                    'name' => $leadershipPerson->getPerson()->getFirstName()
+                        . ' ' . $leadershipPerson->getPerson()->getLastName()
+                        . ' - ' . $leadershipPerson->getResearchGroup()->getShortName(),
+                    'researchGroupId' => $leadershipPerson->getResearchGroup()->getId()
+                );
+            }
+        }
+
+        return $projectDirectors;
+    }
+
+    /**
+     * Returns person Ids which are duplicate.
+     *
+     * @param array $leadershipPersonIdList Haystack array to find duplicates.
+     *
+     * @return array
+     */
+    private function getDuplicateProjectDirs(array $leadershipPersonIdList): array
+    {
+        $duplicates = array();
+        foreach (array_count_values($leadershipPersonIdList) as $value => $count) {
+            if ($count > 1) {
+                $duplicates[] = $value;
+            }
+        }
+        return $duplicates;
     }
 
     /**
@@ -56,7 +153,7 @@ class DefaultController extends AbstractController
             return $this->redirect('/', 302);
         }
     }
-    
+
     /**
      * The admin action.
      *

@@ -47,6 +47,16 @@ class DOIutil
     private $url;
 
     /**
+     * Datacite metadata attribute for relatedIdentifiers type of identifier.
+     */
+    const RELATED_IDENTIFIER_TYPE = 'DOI';
+
+    /**
+     * Datacite metadata attribute for relatedIdentifiers relation type of identifier.
+     */
+    const RELATION_TYPE = 'IsReferencedBy';
+
+    /**
      * Constructor.
      *
      * Sets the REST API username, password, and prefix.
@@ -158,6 +168,7 @@ class DOIutil
      * @param string $publicationYear Published Date for DOI.
      * @param string $publisher       Publisher for DOI.
      * @param string $status          Status of the DOI.
+     * @param array $publicationDois  Publication dois that are referenced.
      *
      * @throws HttpClientErrorException When there was an 4xx error negotiating with REST API.
      * @throws HttpServerErrorException When there was an 5xx error negotiating with REST API.
@@ -171,9 +182,18 @@ class DOIutil
         string $title,
         string $publicationYear,
         string $publisher,
+        array  $publicationDois,
         string $status = DOI::STATE_FINDABLE
     ) {
         $client = new Client();
+        $relatedIdentifiers = array();
+        foreach ($publicationDois as $publicationDoi) {
+            $relatedIdentifiers[] = array(
+                'relatedIdentifier' => $publicationDoi,
+                'relatedIdentifierType' => self::RELATED_IDENTIFIER_TYPE,
+                'relationType' => self::RELATION_TYPE
+            );
+        }
         $defaultBody = [
             'data' => [
                 'id' => $doi,
@@ -187,6 +207,7 @@ class DOIutil
                     ],
                     'publisher' => $publisher,
                     'publicationYear' => $publicationYear,
+                    'relatedIdentifiers' => $relatedIdentifiers,
                     'types' => [
                         'resourceTypeGeneral' => 'Dataset'
                     ],
@@ -285,6 +306,7 @@ class DOIutil
                 'inactive',
                 '2019',
                 'none supplied',
+                [],
                 DOI::STATE_REGISTERED
             );
         }

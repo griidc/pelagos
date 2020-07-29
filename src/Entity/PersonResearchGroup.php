@@ -48,6 +48,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *     excludeIf = "expr(not object.isDeletable() or not service('security.authorization_checker').isGranted(['CAN_DELETE'], object))"
  *   )
  * )
+ * @ORM\Entity(repositoryClass="App\Repository\PersonResearchGroupRepository")
  */
 class PersonResearchGroup extends Entity implements PersonAssociationInterface
 {
