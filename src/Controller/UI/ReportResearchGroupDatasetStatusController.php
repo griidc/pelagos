@@ -159,7 +159,6 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         $defaultHeaders = $this->getDefaultHeaders();
         if (isset($options['version'])) {
             $reportData = $this->getVersionTwoReport($datasets, $options);
-            $defaultHeaders = $this->getDefaultHeaders();
             $defaultHeaders[0] = $reportData['additionalHeaders'][0];
             array_shift($reportData['additionalHeaders']);
         } else {
