@@ -168,10 +168,10 @@ const addCsvUrl = () => {
                 axios.create({})
                     .post(Routing.generate("pelagos_app_ui_reportresearchgroupdatasetstatus_post"), {ResearchGroupSelector: csvElementIds[i].dataset.researchGroupId})
                     .then(response => {
-                        console.log(response)
                     })
                     .catch(function (error) {
-                        console.log(error);
+                        showDialog(`Error: There was an error processing your request.
+                            Please contact GRIIDC (<a href=mailto:griidc@gomri.org>griidc@gomri.org</a>)`);
                     });
             },
             false);
