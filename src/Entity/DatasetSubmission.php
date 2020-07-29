@@ -913,6 +913,15 @@ class DatasetSubmission extends Entity
     protected $remotelyHostedFunction;
 
     /**
+     * Fileset for the datasetSubmission instance.
+     *
+     * @var Fileset
+     *
+     * @ORM\OneToOne(targetEntity="Fileset", cascade={"persist"}, orphanRemoval=true)
+     */
+    protected $fileset;
+
+    /**
      * The Point of Contact for this Dataset Submission.
      *
      * @var Collection
@@ -968,6 +977,9 @@ class DatasetSubmission extends Entity
             }
 
             $this->addDistributionPoint(new DistributionPoint());
+
+            // Fileset
+            $this->setFileset(new Fileset());
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
             $this->setSequence($entity->getDataset()->getDatasetSubmissionHistory()->first()->getSequence() + 1);
@@ -981,9 +993,6 @@ class DatasetSubmission extends Entity
             $this->setDatasetFileTransferType($entity->getDatasetFileTransferType());
             $this->setDatasetFileUri($entity->getDatasetFileUri());
             $this->setDatasetFileTransferStatus($entity->getDatasetFileTransferStatus());
-            $this->setDatasetFileName($entity->getDatasetFileName());
-            $this->setDatasetFileSize($entity->getDatasetFileSize());
-            $this->setDatasetFileSha256Hash($entity->getDatasetFileSha256Hash());
             $this->setDatasetStatus($entity->getDatasetStatus());
             $this->setPurpose($entity->getPurpose());
             $this->setSuppParams($entity->getSuppParams());
@@ -1053,6 +1062,13 @@ class DatasetSubmission extends Entity
 
                 $this->addDatasetLink($newDatasetLink);
             }
+
+            // Copy the fileSet
+            $newFileset = new Fileset();
+            foreach ($entity->getFileset()->getFiles() as $file) {
+                $newFileset->addFile($file);
+            }
+            $this->setFileset($newFileset);
         } else {
             throw new \Exception('Class constructor requires a DIF or a DatasetSubmission. A ' . get_class($entity) . ' was passed.');
         }
@@ -1622,7 +1638,7 @@ class DatasetSubmission extends Entity
      */
     public function setDatasetFileName(?string $datasetFileName)
     {
-        $this->datasetFileName = $datasetFileName;
+        $this->fileset->getFiles()->first()->setFileName($datasetFileName);
     }
 
     /**
@@ -1632,7 +1648,7 @@ class DatasetSubmission extends Entity
      */
     public function getDatasetFileName() : ?string
     {
-        return $this->datasetFileName;
+        return $this->fileset->getFiles()->first()->getFileName();
     }
 
     /**
@@ -1644,7 +1660,7 @@ class DatasetSubmission extends Entity
      */
     public function setDatasetFileSize(?int $datasetFileSize)
     {
-        $this->datasetFileSize = $datasetFileSize;
+        $this->fileset->getFiles()->first()->setFileSize($datasetFileSize);
     }
 
     /**
@@ -1654,7 +1670,7 @@ class DatasetSubmission extends Entity
      */
     public function getDatasetFileSize() : ?int
     {
-        return $this->datasetFileSize;
+        return $this->fileset->getFiles()->first()->getFileSize();
     }
 
     /**
@@ -1666,7 +1682,7 @@ class DatasetSubmission extends Entity
      */
     public function setDatasetFileSha256Hash(?string $datasetFileSha256Hash)
     {
-        $this->datasetFileSha256Hash = $datasetFileSha256Hash;
+        $this->fileset->getFiles()->first()->setFileSha256Hash($datasetFileSha256Hash);
     }
 
     /**
@@ -1676,7 +1692,7 @@ class DatasetSubmission extends Entity
      */
     public function getDatasetFileSha256Hash() : ?string
     {
-        return $this->datasetFileSha256Hash;
+        return $this->fileset->getFiles()->first()->getFileSha256Hash();
     }
 
     /**
@@ -2582,6 +2598,28 @@ class DatasetSubmission extends Entity
     public function setRemotelyHostedFunction(?string $remotelyHostedFunction)
     {
         $this->remotelyHostedFunction = $remotelyHostedFunction;
+    }
+
+    /**
+     * Getter for fileset entity.
+     *
+     * @return Fileset
+     */
+    public function getFileset() : Fileset
+    {
+        return $this->fileset;
+    }
+
+    /**
+     * Setter for fileset entity.
+     *
+     * @param Fileset $fileset The fileset entity associated with this datasetSubmission instance.
+     *
+     * @return void
+     */
+    public function setFileset(Fileset $fileset) : void
+    {
+        $this->fileset = $fileset;
     }
 
     /**
