@@ -1,7 +1,7 @@
 <template>
-    <div ref="formContainer">
-        <section class="section-content bg pt-5">
-            <div class="container">
+    <div ref="formContainer" class="bg">
+        <div class="container">
+            <section class="section-content pt-5">
                 <div class="search-form">
                     <b-form id="searchForm" name="searchForm" method="get" @submit.prevent="onSubmit" @reset.prevent="onReset">
                         <div class="row">
@@ -20,39 +20,39 @@
                                 </div>
                                 <div class="row mt-3 form-group form-inline pt-3">
                                     <div class="col-lg search-field-options">
-                                        <span class="input-group" v-tooltip="{
-                                                content: 'Search only in selected field',
-                                                placement:'top'}">
-                                            <label class="pl-2 pr-2" for="field" >Search in Field</label>
-                                            <b-form-select name="field" id="field" v-model="form.field" :options="fields">
-                                            </b-form-select>
-                                        </span>
+                                    <span class="input-group" v-tooltip="{
+                                            content: 'Search only in selected field',
+                                            placement:'top'}">
+                                        <label class="pl-2 pr-2" for="field" >Search in Field</label>
+                                        <b-form-select name="field" id="field" v-model="form.field" :options="fields">
+                                        </b-form-select>
+                                    </span>
 
                                     </div>
                                     <div class="col-lg collection-start-date">
-                                        <span class="input-group">
-                                            <label for="collectionStartDate" class="pl-2 pr-2">From</label>
-                                            <b-form-datepicker type="text"
-                                                   class="pr-2 form-control"
-                                                   id="collectionStartDate"
-                                                   name="collectionStartDate"
-                                                   placeholder="yyyy-mm-dd"
-                                                   v-model="form.collectionStartDate">
-                                            </b-form-datepicker>
-                                        </span>
+                                    <span class="input-group">
+                                        <label for="collectionStartDate" class="pl-2 pr-2">From</label>
+                                        <b-form-datepicker type="text"
+                                                           class="pr-2 form-control"
+                                                           id="collectionStartDate"
+                                                           name="collectionStartDate"
+                                                           placeholder="yyyy-mm-dd"
+                                                           v-model="form.collectionStartDate">
+                                        </b-form-datepicker>
+                                    </span>
                                     </div>
                                     <div class="col-lg collection-end-date">
-                                        <span class="input-group">
-                                            <label for="collectionEndDate" class="pr-2 pl-3">To</label>
-                                            <b-form-datepicker
-                                                    type="text"
-                                                    id="collectionEndDate"
-                                                    class="form-control date-input"
-                                                    name="collectionEndDate"
-                                                    placeholder="yyyy-mm-dd"
-                                                    v-model="form.collectionEndDate">
-                                            </b-form-datepicker>
-                                        </span>
+                                    <span class="input-group">
+                                        <label for="collectionEndDate" class="pr-2 pl-3">To</label>
+                                        <b-form-datepicker
+                                                type="text"
+                                                id="collectionEndDate"
+                                                class="form-control date-input"
+                                                name="collectionEndDate"
+                                                placeholder="yyyy-mm-dd"
+                                                v-model="form.collectionEndDate">
+                                        </b-form-datepicker>
+                                    </span>
                                     </div>
                                 </div>
                             </div>
@@ -66,31 +66,31 @@
                         </div>
                     </b-form>
                 </div>
-            </div>
-        </section>
-        <ResultSet
-                v-if="showResults"
-                :results="resultSet"
-                @facetClicked="facetCheckBoxValues"
-                @pagination="changePageNo"
-                @noOfResults="changeNoOfResults"
-                :formValues="form"/>
-        <section class="section-content pt-3 bg" v-else>
-            <div v-show="!displayTextBlock" class="container">
-                <article class="card">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">
-                            GRIIDC Datasets
-                        </h5>
-                        <p class="card-text">
-                            Choose from thousands of scientific datasets from various fields
-                            including oceanography, biology, ecology, chemistry, social science,
-                            and others.
-                        </p>
-                    </div>
-                </article>
-            </div>
-        </section>
+            </section>
+            <ResultSet
+                    v-if="showResults"
+                    :results="resultSet"
+                    @facetClicked="facetCheckBoxValues"
+                    @pagination="changePageNo"
+                    @noOfResults="changeNoOfResults"
+                    :formValues="form"/>
+            <section class="section-content pt-3" v-else>
+                <div v-show="!displayTextBlock">
+                    <article class="card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">
+                                GRIIDC Datasets
+                            </h5>
+                            <p class="card-text">
+                                Choose from thousands of scientific datasets from various fields
+                                including oceanography, biology, ecology, chemistry, social science,
+                                and others.
+                            </p>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </div>
     </div>
 </template>
 
