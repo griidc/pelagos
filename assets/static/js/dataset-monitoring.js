@@ -168,6 +168,9 @@ const addCsvUrl = () => {
                 axios.create({})
                     .post(Routing.generate("pelagos_app_ui_reportresearchgroupdatasetstatus_post"), {ResearchGroupSelector: csvElementIds[i].dataset.researchGroupId})
                     .then(response => {
+                        const headerval = response.headers['content-disposition'];
+                        var filename = headerval.split(';')[1].split('=')[1].replace('"', '').replace('"', '');
+                        fileDownload(response.data, filename);
                     })
                     .catch(function (error) {
                         showDialog(`Error: There was an error processing your request.
