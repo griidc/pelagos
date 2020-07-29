@@ -11,6 +11,8 @@ require('../css/template.css');
 require('../css/superfish.css');
 require('../css/pelagos-module.css');
 require('../css/messages.css');
+const axios = require('axios');
+global.axios = axios;
 import 'bootstrap';
 require('../scss/nas-grp.scss');
 
