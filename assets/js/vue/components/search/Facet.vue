@@ -142,4 +142,7 @@
         max-height: 20rem;
         overflow-y: auto;
     }
+    .card-body {
+      padding: 0.625rem !important;
+    }
 </style>

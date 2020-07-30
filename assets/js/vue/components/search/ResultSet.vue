@@ -1,13 +1,13 @@
 <template>
     <div v-if="results.count > 0">
-        <section class="section-content bg pt-3">
+        <section class="section-content pt-3">
             <div class="row d-flex flex-row justify-content-center">
-                <h3>
+                <h5>
                     Found {{ results.count }} results for: "{{ results.formValues.query }}"
-                </h3>
+                </h5>
             </div>
         </section>
-        <section class="section-content bg padding-y">
+        <section class="section-content py-2">
             <div class="row d-flex flex-row justify-content-between">
                 <div class="empty-div"></div>
                 <b-pagination
@@ -26,7 +26,7 @@
             </div>
 
             <div class="row">
-                <aside class="col-lg-3">
+                <aside class="col-xl-3">
                     <div class="card card-filter">
                         <Facet :facet-info="results.facetInfo.statusInfo" :facet-name="facetLabels.status" v-on="$listeners" :formValues="formValues"/>
                         <Facet :facet-info="results.facetInfo.fundingCycleInfo" :facet-name="facetLabels.fundingCycle" v-on="$listeners" :formValues="formValues" v-if="showFundingCycleFacet()"/>
@@ -34,11 +34,11 @@
                         <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="facetLabels.researchGroup" v-on="$listeners" :formValues="formValues"/>
                     </div>
                 </aside>
-                <main class="col-lg-9 overflow-auto mt-2">
+                <main class="col-xl-9 overflow-auto">
                     <DatasetRow :datasetRowData="resultRow" v-for="resultRow in results.resultData" v-bind:key="resultRow.udi"/>
                 </main>
             </div>
-            <div class="row d-flex flex-row justify-content-between" style="margin-bottom: 100px;">
+            <div class="row d-flex flex-row justify-content-between mb-2">
                 <div class="empty-div"></div>
                 <b-pagination
                         v-model="currentPage"
@@ -141,6 +141,11 @@
     }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+  .col-xl-3 {
+    padding-right: 7px !important;
+  }
+  .col-xl-9 {
+    padding-left: 7px !important;
+  }
 </style>
