@@ -675,13 +675,12 @@ class Dataset extends Entity
      */
     public function isRestricted() : bool
     {
-        return in_array(
-            $this->availabilityStatus,
-            array(
-                DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
-                DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED
-            )
-        );
+        $isRestricted = false;
+        if ($this->getDatasetSubmission() instanceof DatasetSubmission and
+            $this->getDatasetSubmission()->getRestrictions() === DatasetSubmission::RESTRICTION_RESTRICTED) {
+            $isRestricted = true;
+        }
+        return $isRestricted;
     }
 
     /**
