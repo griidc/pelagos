@@ -124,29 +124,35 @@ class StatsController extends AbstractController
         $registeredDatasets = $this->entityManager
             ->getRepository(DatasetSubmission::class)
             ->getRegisteredDatasets();
-
+        
         $availableDatasets = $this->entityManager
             ->getRepository(DatasetSubmission::class)
             ->getAvailableDatasets();
 
         $registered = array();
         foreach ($registeredDatasets as $index => $value) {
-            $registered[] = array(($value['creationTimeStamp']->format('U') * 1000), ($index + 1));
-            $index = $index;
+            $registered[] = array('date' => ($value['creationTimeStamp']->format('Y/m/d')), 'registered' => ($index + 1));
+            $index = $index; //new Date(1994, 2, 2)
         }
-        $registered[] = array((time() * 1000), count($registered));
+        //$registered[] = array((time() * 1000), count($registered));
 
         $available = array();
         foreach ($availableDatasets as $index => $value) {
-            $available[] = array(($value['creationTimeStamp']->format('U') * 1000), ($index + 1));
+            $available[] = array('date' => ($value['creationTimeStamp']->format('Y/m/d')), 'available' => ($index + 1));
         }
-        $available[] = array((time() * 1000), count($available));
+        //$available[] = array((time() * 1000), count($available));
 
         $result = array();
-        $result['page'] = 'overview';
-        $result['section'] = 'total-records-over-time';
-        $result['data'][0] = array ('label' => 'Submitted', 'data' => $registered);
-        $result['data'][1] = array ('label' => 'Available', 'data' => $available);
+        // $result['page'] = 'overview';
+        // $result['section'] = 'total-records-over-time';
+        // $result['data'][0] = array ('label' => 'Submitted', 'data' => $registered);
+        // $result['data'][1] = array ('label' => 'Available', 'data' => $available);
+        
+        // $result['Submitted'] = $registered;
+        // $result['Available'] = $available;
+        
+        $result = array_merge($available, $registered);
+        sort($result);
 
         $response = new Response(json_encode($result));
         $response->headers->set('Content-Type', 'application/json');

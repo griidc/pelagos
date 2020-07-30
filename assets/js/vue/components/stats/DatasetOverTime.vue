@@ -2,28 +2,39 @@
   <div id="chart-demo">
     <DxChart
       id="chart"
-      :data-source="dataSource"
-      :palette="Material"
+      data-source="/stats/data/total-records-over-time"
+
     >
       <DxCommonSeriesSettings
-        :type="type"
-        argument-field="country"
+        type="line"
+        argument-field="date"
       >
         <DxPoint :visible="false"/>
       </DxCommonSeriesSettings>
       <DxSeries
-        v-for="energy in energySources"
-        :key="energy.value"
-        :value-field="energy.value"
-        :name="energy.name"
+        key="registered"
+        value-field="registered"
+        name="Registered"
+      />
+      <DxSeries
+        key="available"
+        value-field="available"
+        name="Available"
       />
       
       <DxMargin :bottom="20"/>
       <DxArgumentAxis
-        :value-margins-enabled="false"
         discrete-axis-division-mode="crossLabels"
       >
-        <DxGrid :visible="true"/>
+        <DxTickInterval :years="1"/>
+        <DxMinorTickInterval :months="6"/>
+        <DxTick :visible="false"/>
+        <DxMinorTick :visible="true"/>
+        <DxGrid :visible="false"/>
+        <DxLabel
+            :staggering-spacing="10"
+            display-mode="stagger"
+        />
       </DxArgumentAxis>
       <DxLegend
         vertical-alignment="bottom"
@@ -31,8 +42,8 @@
         item-text-position="bottom"
       />
       <DxExport :enabled="true"/>
-      <DxTitle text="Energy Consumption in 2004">
-        <DxSubtitle text="(Millions of Tons, Oil Equivalent)"/>
+      <DxTitle text="Total Datasets Over Time">
+        <DxSubtitle text="(Test)"/>
       </DxTitle>
       <DxTooltip :enabled="true"/>
     </DxChart>
@@ -52,7 +63,12 @@ import {
   DxTitle,
   DxSubtitle,
   DxTooltip,
-  DxPoint
+  DxPoint,
+  DxTick,
+  DxTickInterval,
+  DxMinorTickInterval,
+  DxMinorTick,
+  DxLabel
 } from 'devextreme-vue/chart';
 import DxSelectBox from 'devextreme-vue/select-box';
 
@@ -73,12 +89,18 @@ export default {
     DxTitle,
     DxSubtitle,
     DxTooltip,
-    DxPoint
+    DxPoint,
+    DxTick,
+    DxTickInterval,
+    DxMinorTickInterval,
+    DxMinorTick,
+    DxLabel
   },
 
   data() {
     return {
-      dataSource: service.getCountriesInfo(),
+      dataSource: service.getData(),
+      sources: service.getDataType(),
       energySources: service.getEnergySources(),
       types: ['line', 'stackedline', 'fullstackedline'],
       type: 'line'
