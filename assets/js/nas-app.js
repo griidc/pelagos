@@ -13,8 +13,6 @@ require('../css/pelagos-module.css');
 require('../css/messages.css');
 const axios = require('axios');
 global.axios = axios;
-const fileDownload = require('js-file-download');
-global.fileDownload = fileDownload;
 import 'bootstrap';
 require('../scss/nas-grp.scss');
 
