@@ -157,7 +157,7 @@ const addPdfUrl = () => {
         pdfElementIds[i].addEventListener("click", function (event) {
                 window.open(url);
             },
-            false);
+        false);
     }
 }
 
@@ -166,10 +166,9 @@ const addCsvUrl = () => {
     for (let i = 0; i < csvElementIds.length ; i++) {
         const url = csvElementIds[i].dataset.url;
         csvElementIds[i].addEventListener("click", function (event) {
-            window.open(url);
-                
+                window.open(url);
             },
-            false);
+        false);
     }
 }
 
