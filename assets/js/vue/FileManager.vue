@@ -1,83 +1,68 @@
 <template>
-    <div>
-        <DxFileManager
-                :file-system-provider="remoteProvider"
-                :on-selected-file-opened="displayImagePopup"
-                current-path="Widescreen"
-        >
-            <DxPermissions
-                    :create="true"
-                    :copy="true"
-                    :move="true"
-                    :delete="true"
-                    :rename="true"
-                    :upload="true"
-                    :download="true"
-            />
-        </DxFileManager>
-
-        <DxPopup
-                :close-on-outside-click="true"
-                :visible.sync="popupVisible"
-                :title.sync="imageItemToDisplay.name"
-                max-height="600"
-                class="photo-popup-content"
-        >
-            <img
-                    :src="imageItemToDisplay.url"
-                    class="photo-popup-image"
-            >
-        </DxPopup>
-    </div>
+  <div>
+    <DxFileManager :file-system-provider="customProvider" :ref="fileManagerRefName">
+<!--      <DxPermissions-->
+<!--          :create="true"-->
+<!--          :copy="true"-->
+<!--          :move="true"-->
+<!--          :delete="true"-->
+<!--          :rename="true"-->
+<!--          :upload="true"-->
+<!--          :download="true"-->
+<!--      />-->
+    </DxFileManager>
+  </div>
 </template>
 
 <script>
-    import 'devextreme/dist/css/dx.common.css';
-    import 'devextreme/dist/css/dx.light.css';
-    import { DxFileManager, DxPermissions } from 'devextreme-vue/file-manager';
-    import { DxPopup } from 'devextreme-vue/popup';
-    import RemoteFileSystemProvider from 'devextreme/file_management/remote_provider';
+import 'devextreme/dist/css/dx.common.css';
+import 'devextreme/dist/css/dx.light.css';
+import { DxFileManager, DxPermissions } from "devextreme-vue/file-manager";
+import ObjectFileSystemProvider from "devextreme/file_management/object_provider";
+import CustomFileSystemProvider from "devextreme/file_management/custom_provider";
+import { fileItems } from "../data.js";
 
-    const remoteProvider = new RemoteFileSystemProvider({
-        endpointUrl: 'https://js.devexpress.com/Demos/Mvc/api/file-manager-file-system-images'
-    });
+let objectProvider = null;
+createObjectProvider(fileItems);
 
-    export default {
-        name: "FileManager",
-        components: {
-            DxFileManager,
-            DxPermissions,
-            DxPopup
-        },
+const customProvider = new CustomFileSystemProvider({
+  getItems: parentDir => objectProvider.getItems(parentDir),
+  createDirectory: (parentDir, dirName) =>
+      objectProvider.createDirectory(parentDir, dirName),
+  renameItem: item => objectProvider.renameItem(item),
+  deleteItem: item => objectProvider.deleteItems([item]),
+  copyItem: (item, destDir) => objectProvider.copyItems([item], destDir),
+  moveItem: (item, destDir) => objectProvider.moveItems([item], destDir),
+  uploadFileChunk: (file, uploadInfo, destDir) =>
+      objectProvider.uploadFileChunk(file, uploadInfo, destDir),
+  abortFileUpload: (file, uploadInfo, destDir) =>
+      objectProvider.abortFileUpload(file, uploadInfo, destDir),
+  downloadItems: items => objectProvider.downloadItems(items)
+});
 
-        data() {
-            return {
-                remoteProvider,
-                popupVisible: false,
-                imageItemToDisplay: {}
-            };
-        },
+function createObjectProvider(data) {
+  objectProvider = new ObjectFileSystemProvider({
+    data: data
+  });
+}
 
-        methods: {
-            displayImagePopup(e) {
-                this.imageItemToDisplay = {
-                    name: e.fileItem.name,
-                    url: e.fileItem.dataItem.url
-                };
-                this.popupVisible = true;
-            }
-        }
+export default {
+  components: {
+    DxFileManager,
+    DxPermissions,
+  },
+
+  data() {
+    return {
+      customProvider,
+      fileManagerRefName: "fileManager"
     };
+  },
+
+  props: {
+    id: {
+      type: Number
+    }
+  },
+};
 </script>
-
-<style>
-    .photo-popup-content {
-        text-align: center;
-    }
-    .photo-popup-content .photo-popup-image {
-        height: 100%;
-        max-width: 100%;
-    }
-</style>
-
-

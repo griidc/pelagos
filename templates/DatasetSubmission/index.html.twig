@@ -15,6 +15,7 @@
     <link href="{{ asset('build/css/fileBrowser.css') }}" rel="stylesheet" />
     <link href="{{ asset('build/css/dataset-submission.css') }}" rel="stylesheet" />
     <link href="{{ asset('build/css/dataset-submission-uploader.css') }}" rel="stylesheet" />
+    {{ encore_entry_link_tags('file-manager') }}
 {% endblock %}
 
 {% block javascripts %}
@@ -39,7 +40,7 @@
     <script type="text/javascript" src="{{ asset('build/js/mapWizard.js') }}"></script>
     <script type="text/javascript" src="{{ asset('build/js/dataset-submission.js') }}"></script>
     <script type="text/javascript" src="{{ asset('build/js/datasetsWithApprovedDifs.js') }}"></script>
-
+    {{ encore_entry_script_tags('file-manager') }}
 
 {% endblock %}
 
