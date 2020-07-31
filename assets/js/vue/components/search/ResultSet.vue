@@ -1,20 +1,20 @@
 <template>
     <div v-if="results.count > 0">
-        <section class="section-content bg pt-3">
+        <section class="section-content pt-3">
             <div class="row d-flex flex-row justify-content-center">
-                <h3>
+                <h5>
                     Found {{ results.count }} results for: "{{ results.formValues.query }}"
-                </h3>
+                </h5>
             </div>
         </section>
-        <section class="section-content bg padding-y">
+        <section class="section-content pb-2">
             <div class="row d-flex flex-row justify-content-between">
                 <div class="empty-div"></div>
                 <b-pagination
                         v-model="currentPage"
                         :total-rows="rows"
                         :per-page="formValues.perPage"
-                        class="bg justify-content-center pl-5 ml-5">
+                        class="justify-content-center pl-5 ml-5">
                 </b-pagination>
                 <div class="form-inline mx-2 mb-2 pr-2 pb-2">
                     <label for="perPageResults" class="pr-2">Per Page: </label>
@@ -34,17 +34,17 @@
                         <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="facetLabels.researchGroup" v-on="$listeners" :formValues="formValues"/>
                     </div>
                 </aside>
-                <main class="col-lg-9 overflow-auto mt-2">
+                <main class="col-lg-9 overflow-auto">
                     <DatasetRow :datasetRowData="resultRow" v-for="resultRow in results.resultData" v-bind:key="resultRow.udi"/>
                 </main>
             </div>
-            <div class="row d-flex flex-row justify-content-between" style="margin-bottom: 100px;">
+            <div class="row d-flex flex-row justify-content-between mb-2">
                 <div class="empty-div"></div>
                 <b-pagination
                         v-model="currentPage"
                         :total-rows="rows"
                         :per-page="formValues.perPage"
-                        class="bg justify-content-center pl-5 ml-5">
+                        class="justify-content-center pl-5 ml-5">
                 </b-pagination>
                 <div class="form-inline mx-2 mb-2 pr-2 pb-2">
                     <label for="perPageResults" class="pr-2">Per Page: </label>
@@ -57,7 +57,7 @@
         </section>
     </div>
     <div v-else>
-        <section class="section-content bg pt-5" >
+        <section class="section-content pt-5">
             <div class="row d-flex flex-row justify-content-center">
                 <h3>
                     No results found!
@@ -141,6 +141,23 @@
     }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+  .col-lg-3 {
+    padding-right: 7px !important;
+  }
 
+  .col-lg-9 {
+    padding-left: 7px !important;
+  }
+
+  @media (max-width: 1092px) {
+    .col-lg-3 {
+      padding-right: 15px !important;
+    }
+
+    .col-lg-9 {
+      padding-left: 15px !important;
+      margin-top: 10px;
+    }
+  }
 </style>

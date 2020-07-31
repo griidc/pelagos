@@ -1,7 +1,7 @@
 <template>
     <div ref="formContainer" class="bg">
         <div class="container">
-            <section class="section-content pt-5">
+            <section class="section-content pt-2">
                 <div class="search-form">
                     <b-form id="searchForm" name="searchForm" method="get" @submit.prevent="onSubmit" @reset.prevent="onReset">
                         <div class="row">
@@ -242,7 +242,7 @@
         border: 1px solid rgba(0, 0, 0, 0.125);
     }
 
-    @media (max-width: 992px) {
+    @media (max-width: 1092px) {
         .search-form {
             .button-toolbar{
                 margin-top: 1rem !important;
@@ -276,7 +276,7 @@
         }
     }
 
-    @media (min-width: 992px) {
+    @media (min-width: 1092px) {
         .search-form {
             .button-toolbar {
                 .search-button {
