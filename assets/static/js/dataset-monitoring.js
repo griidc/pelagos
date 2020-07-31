@@ -164,18 +164,10 @@ const addPdfUrl = () => {
 const addCsvUrl = () => {
     const csvElementIds = document.getElementsByClassName('awesome-icon-csv');
     for (let i = 0; i < csvElementIds.length ; i++) {
+        const url = csvElementIds[i].dataset.url;
         csvElementIds[i].addEventListener("click", function (event) {
-                axios.create({})
-                    .post(Routing.generate("pelagos_app_ui_reportresearchgroupdatasetstatus_post"), {ResearchGroupSelector: csvElementIds[i].dataset.researchGroupId})
-                    .then(response => {
-                        const headerval = response.headers['content-disposition'];
-                        var filename = headerval.split(';')[1].split('=')[1].replace('"', '').replace('"', '');
-                        fileDownload(response.data, filename);
-                    })
-                    .catch(function (error) {
-                        showDialog(`Error: There was an error processing your request.
-                            Please contact GRIIDC (<a href=mailto:griidc@gomri.org>griidc@gomri.org</a>)`);
-                    });
+            window.open(url);
+                
             },
             false);
     }

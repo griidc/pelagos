@@ -13,7 +13,7 @@
 <div class="project" project="{{ResearchGroup.id}}">
     <div class="project-title">
         {{ResearchGroup.name}}
-        <span class="awesome-icon awesome-icon-csv" data-research-group-id="{{ id }}">
+        <span class="awesome-icon awesome-icon-csv" data-url="{{ url('pelagos_app_ui_reportresearchgroupdatasetstatus_get', {researchGroupId:ResearchGroup.id}) }}" data-research-group-id="{{ id }}">
             <i class="fas fa-file-csv" style="color: green"></i>
         </span>
     </div>

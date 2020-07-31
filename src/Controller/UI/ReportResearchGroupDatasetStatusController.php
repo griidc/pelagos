@@ -78,6 +78,107 @@ class ReportResearchGroupDatasetStatusController extends ReportController
     }
 
     /**
+     * Research group dataset status report for dataset monitoring.
+     *
+     * @param Request       $request         Message information for this Request.
+     * @param EntityHandler $entityHandler   The entity handler.
+     *
+     * @Route(
+     *     "/report-researchgroup/dataset-monitoring",
+     *     name="pelagos_app_ui_reportresearchgroupdatasetstatus_datasetmonitoringreport",
+     *     methods={"GET"}
+     *     )
+     *
+     * @return Response|StreamedResponse A Symfony Response instance.
+     */
+    public function datasetMonitoringReportAction(Request $request, EntityHandler $entityHandler)
+    {
+        $researchGroupId = $request->query->get('researchGroup');
+        
+        // Checks authorization of users
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('template/AdminOnly.html.twig');
+        }
+        //  fetch all the Research Groups
+        $allResearchGroups = $entityHandler->getAll(ResearchGroup::class, array('name' => 'ASC'));
+        //  put all the names in an array with the associated doctrine id
+        $researchGroupNames = array();
+        foreach ($allResearchGroups as $rg) {
+            $researchGroupNames[$rg->getName()] = $rg->getId();
+        }
+        $form = $this->get('form.factory')->createNamed(
+            null,
+            ReportResearchGroupDatasetStatusType::class,
+            $researchGroupNames
+        );
+
+        $form->handleRequest($request);
+
+        return $this->render(
+            'Reports/ReportResearchGroupDatasetStatus.html.twig',
+            array('form' => $form->createView())
+        );
+    }
+
+    /**
+     * The post action for Dataset Submission.
+     *
+     * @param Request       $request         The Symfony request object.
+     *
+     * @Route(
+     *     "/report-researchgroup/dataset-monitoring",
+     *     name="pelagos_app_ui_reportresearchgroupdatasetstatus_post",
+     *     methods={"POST"}
+     *     )
+     *
+     * @return Response A Response instance.
+     */
+    public function postAction(Request $request)
+    {
+        $researchGroupId = $request->get('ResearchGroupSelector');
+        $researchGroup = $this->container->get('doctrine')->getRepository(ResearchGroup::class)
+            ->findOneBy(array('id' => $researchGroupId));
+
+        return $this->writeCsvResponse(
+            $this->getData(['researchGroup' => $researchGroup, 'version' => 2]),
+            $this->createCsvReportFileName($researchGroup->getName(), $researchGroupId)
+        );
+    }
+    
+     /**
+     * The post action for Dataset Submission.
+     *
+     * @param Request       $request         The Symfony request object.
+     *
+     * @Route(
+     *     "/report-researchgroup/dataset-monitoring/{researchGroupId}",
+     *     name="pelagos_app_ui_reportresearchgroupdatasetstatus_get",
+     *     methods={"GET"}
+     *     )
+     *
+     * @return Response A Response instance.
+     */
+    public function getAction(Request $request, $researchGroupId)
+    {
+        return $this->getStuff($researchGroupId);
+    }
+    
+    /**
+     * The post action for Dataset Submission.
+     *
+     */
+    private function getStuff($researchGroupId)
+    {
+        $researchGroup = $this->container->get('doctrine')->getRepository(ResearchGroup::class)
+            ->findOneBy(array('id' => $researchGroupId));
+
+        return $this->writeCsvResponse(
+            $this->getData(['researchGroup' => $researchGroup, 'version' => 2]),
+            $this->createCsvReportFileName($researchGroup->getName(), $researchGroupId)
+        );
+    }
+
+    /**
      * This method gets data for the report.
      *
      * @param array|NULL $options Additional parameters needed to run the query.
