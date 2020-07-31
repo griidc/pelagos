@@ -136,19 +136,14 @@ class ReportResearchGroupDatasetStatusController extends ReportController
     public function postAction(Request $request)
     {
         $researchGroupId = $request->get('ResearchGroupSelector');
-        $researchGroup = $this->container->get('doctrine')->getRepository(ResearchGroup::class)
-            ->findOneBy(array('id' => $researchGroupId));
-
-        return $this->writeCsvResponse(
-            $this->getData(['researchGroup' => $researchGroup, 'version' => 2]),
-            $this->createCsvReportFileName($researchGroup->getName(), $researchGroupId)
-        );
+        return $this->getReport($researchGroupId);
     }
     
      /**
      * The post action for Dataset Submission.
      *
      * @param Request       $request         The Symfony request object.
+     * @param Integer       $researchGroupId The Research Group ID.
      *
      * @Route(
      *     "/report-researchgroup/dataset-monitoring/{researchGroupId}",
@@ -160,14 +155,17 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      */
     public function getAction(Request $request, $researchGroupId)
     {
-        return $this->getStuff($researchGroupId);
+        return $this->getReport($researchGroupId);
     }
     
     /**
      * The post action for Dataset Submission.
      *
+     * @param Integer $researchGroupId The Research Group ID.
+     *
+     * @return Response A Response instance.
      */
-    private function getStuff($researchGroupId)
+    private function getReport($researchGroupId)
     {
         $researchGroup = $this->container->get('doctrine')->getRepository(ResearchGroup::class)
             ->findOneBy(array('id' => $researchGroupId));
