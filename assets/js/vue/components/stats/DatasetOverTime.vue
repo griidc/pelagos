@@ -5,11 +5,24 @@
       data-source="/stats/data/total-records-over-time"
 
     >
+        <DxArgumentAxis
+            :aggregation-interval="100" <!-- A new interval every 100 units -->
+            aggregation-interval="day">  <!-- A new interval every day -->
+            <DxAggregationInterval :days="5"/> <!-- A new interval every five days -->
+        </DxArgumentAxis>
+        <DxLoadingIndicator
+            :enabled="true"
+        />
       <DxCommonSeriesSettings
         type="line"
         argument-field="date"
+        valueField="available"
       >
         <DxPoint :visible="false"/>
+        <DxLabel
+                :visible="true"
+                :customize-text="Number"
+            />
       </DxCommonSeriesSettings>
       <DxSeries
         key="registered"
@@ -29,11 +42,12 @@
         <DxTickInterval :years="1"/>
         <DxMinorTickInterval :months="6"/>
         <DxTick :visible="false"/>
-        <DxMinorTick :visible="true"/>
+        <DxMinorTick :visible="false"/>
         <DxGrid :visible="false"/>
         <DxLabel
             :staggering-spacing="10"
             display-mode="stagger"
+            format="monthAndDay"  
         />
       </DxArgumentAxis>
       <DxLegend
@@ -68,7 +82,10 @@ import {
   DxTickInterval,
   DxMinorTickInterval,
   DxMinorTick,
-  DxLabel
+  DxLabel,
+  DxLoadingIndicator,
+  DxZoomAndPan,
+  DxAggregationInterval
 } from 'devextreme-vue/chart';
 import DxSelectBox from 'devextreme-vue/select-box';
 
@@ -94,7 +111,10 @@ export default {
     DxTickInterval,
     DxMinorTickInterval,
     DxMinorTick,
-    DxLabel
+    DxLabel,
+    DxLoadingIndicator,
+    DxZoomAndPan,
+    DxAggregationInterval
   },
 
   data() {
