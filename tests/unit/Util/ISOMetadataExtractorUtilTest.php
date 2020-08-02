@@ -170,9 +170,23 @@ class ISOMetadataExtractorUtilTest extends TestCase
         );
 
         $this->mockFile = \Mockery::mock(
-          File::class,
+            File::class,
             array(
-                'setFileset' => \Mockery::mock(Fileset::class)
+                'setFileset' => \Mockery::mock(Fileset::class),
+                'setFileName' => 'foobar.baz',
+                'getFileName' => 'foobar.baz',
+                'setFileSize' => 1234,
+                'getFileSize' => 1234,
+                'setFileSha256Hash' => 'cafe',
+                'getFileSha256Hash' => 'cafe',
+                'getUploadedAt' => null,
+                'setUploadedAt' => null,
+                'getUploadedBy' => $this->mockPerson,
+                'setUploadedBy' => null,
+                'getDescription' => 'blah',
+                'setDescription' => 'blah',
+                'getFilePath' => 'path/to/file',
+                'setFilePath' => null
             )
         );
 

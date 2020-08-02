@@ -52,7 +52,7 @@ class FilesetTest extends TestCase
      */
     public function testAddFileToFileset()
     {
-        if (null !== $this->defaultFile) {
+        if (!$this->fileset->getFiles()->isEmpty()) {
             $this->fileset->removeFile($this->defaultFile);
         }
         $this->fileset->addFile($this->mockFile);
@@ -61,7 +61,7 @@ class FilesetTest extends TestCase
 
     public function testRemoveFileToFileset()
     {
-        $this->fileset->removeFile($this->defaultFile);
+        $this->fileset->removeFile($this->mockFile);
         $this->assertSame(0, $this->fileset->getFiles()->count());;
     }
 

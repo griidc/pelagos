@@ -9,8 +9,11 @@ use App\Entity\DatasetSubmission;
 use App\Entity\DatasetSubmissionReview;
 use App\Entity\DIF;
 use App\Entity\DistributionPoint;
+use App\Entity\File;
+use App\Entity\Fileset;
 use App\Entity\Person;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
+use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 
 use Doctrine\Common\Collections\Collection;
@@ -64,6 +67,20 @@ class DatasetSubmissionTest extends TestCase
     protected $mockDatasetSubmissionReview;
 
     /**
+     * Mock object for Fileset entity instance.
+     *
+     * @var Fileset
+     */
+    protected $mockFileset;
+
+    /**
+     * Mock object for File entity instance.
+     *
+     * @var File
+     */
+    protected $mockFile;
+
+    /**
      * Setup for PHPUnit tests.
      *
      * This instantiates an instance of DatasetSubmission and sets its properties.
@@ -115,7 +132,25 @@ class DatasetSubmissionTest extends TestCase
                 'setPrimaryContact' => null
             )
         );
+        $this->mockFile = \Mockery::mock(
+            File::class,
+            array(
+                'setFileset' => \Mockery::mock(Fileset::class),
+                'setFileName' => 'foobar.baz',
+                'getFileName' => 'foobar.baz',
+                'setFileSize' => 1234,
+                'getFileSize' => 1234,
+                'setFileSha256Hash' => 'cafe',
+                'getFileSha256Hash' => 'cafe'
+            )
+        );
 
+        $this->mockFileset = \Mockery::mock(
+            Fileset::class,
+            array(
+                'getFiles' => new ArrayCollection(array($this->mockFile))
+            )
+        );
         $this->datasetSubmission = new DatasetSubmission(
             $this->mockDif,
             $this->mockPersonDatasetSubmissionDatasetContact
@@ -125,6 +160,8 @@ class DatasetSubmissionTest extends TestCase
             $this->mockDif,
             $this->mockPersonDatasetSubmissionDatasetContact
         );
+
+        $this->datasetSubmission->setFileset($this->mockFileset);
     }
 
     /**
