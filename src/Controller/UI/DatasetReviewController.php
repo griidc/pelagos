@@ -535,6 +535,7 @@ class DatasetReviewController extends AbstractController
             foreach ($datasetSubmission->getDatasetLinks() as $datasetLink) {
                 $this->entityHandler->update($datasetLink);
             }
+            $this->entityHandler->update($datasetSubmission->getFileset()->getFiles()->first());
 
             // update MDAPP logs after action is executed.
             $this->entityEventDispatcher->dispatch(
