@@ -2,13 +2,14 @@
   <DxChart
     id="chart"
     data-source="/stats/data/dataset-size-ranges"
+    palette="Ocean"
   >
     <DxSeries
       argument-field="label"
       value-field="count"
       name="Data Sizes"
       type="bar"
-      color="green"
+      
     >
         <DxLabel :visible="true">
             <DxConnector :visible="true"/>
@@ -34,7 +35,6 @@ import {
     DxTitle,
     DxSubtitle
 } from 'devextreme-vue/chart';
-import { dataSource } from './data2.js';
 
 export default {
   components: {

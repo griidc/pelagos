@@ -3,7 +3,7 @@
     <DxChart
       id="chart"
       data-source="/stats/data/total-records-over-time"
-
+        palette="Ocean"
     >
         
         <DxLoadingIndicator
@@ -24,7 +24,7 @@
         key="registered"
         value-field="registered"
         name="Registered"
-        color="green"
+        
       />
       <DxSeries
         key="available"
@@ -85,8 +85,6 @@ import {
   DxAggregationInterval
 } from 'devextreme-vue/chart';
 import DxSelectBox from 'devextreme-vue/select-box';
-
-import service from './data.js';
 
 export default {
 
