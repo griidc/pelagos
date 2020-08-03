@@ -1,9 +1,9 @@
 <template>
     <div class="row">
-        <div class="col-xl-12 border border-dark">
+        <div class="col-xl-12">
             <dataset-over-time />
         </div>
-        <div class="col-xl-12 border border-dark">
+        <div class="col-xl-12">
             <dataset-size-ranges />
         </div>
         <div class="col-xl-12 border border-dark">
