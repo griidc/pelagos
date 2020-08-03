@@ -35,13 +35,12 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      *
      * @param Request       $request         Message information for this Request.
      * @param EntityHandler $entityHandler   The entity handler.
-     * @param integer       $researchGroupId The identifier for the Research Group subject of the report.
      *
      * @Route("/report-researchgroup-dataset-status", name="pelagos_app_ui_reportresearchgroupdatasetstatus_default")
      *
      * @return Response|StreamedResponse A Symfony Response instance.
      */
-    public function defaultAction(Request $request, EntityHandler $entityHandler, int $researchGroupId = null)
+    public function defaultAction(Request $request, EntityHandler $entityHandler)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -84,16 +83,16 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      *
      * @param Request       $request         Message information for this Request.
      * @param EntityHandler $entityHandler   The entity handler.
+     * @param integer|null  $id              Research group id.
      *
      * @Route(
-     *     "/report-researchgroup/dataset-monitoring",
+     *     "/report-researchgroup/dataset-monitoring/{id}",
      *     name="pelagos_app_ui_reportresearchgroupdatasetstatus_datasetmonitoringreport",
-     *     methods={"GET"}
      *     )
      *
      * @return Response|StreamedResponse A Symfony Response instance.
      */
-    public function datasetMonitoringReportAction(Request $request, EntityHandler $entityHandler)
+    public function datasetMonitoringReportAction(Request $request, EntityHandler $entityHandler, int $id = null)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -114,6 +113,16 @@ class ReportResearchGroupDatasetStatusController extends ReportController
 
         $form->handleRequest($request);
 
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $researchGroupId = $request->get('ResearchGroupSelector');
+                return $this->getReport($researchGroupId);
+            }
+        }
+
+        if ($id) {
+            return $this->getReport($id);
+        }
         return $this->render(
             'Reports/ReportResearchGroupDatasetStatus.html.twig',
             array('form' => $form->createView())
@@ -121,21 +130,14 @@ class ReportResearchGroupDatasetStatusController extends ReportController
     }
 
     /**
-     * The post action for Dataset Submission.
+     * Generate report action for Dataset Research group.
      *
-     * @param Request       $request         The Symfony request object.
-     *
-     * @Route(
-     *     "/report-researchgroup/dataset-monitoring",
-     *     name="pelagos_app_ui_reportresearchgroupdatasetstatus_post",
-     *     methods={"POST"}
-     *     )
+     * @param Integer $researchGroupId The Research Group ID.
      *
      * @return Response A Response instance.
      */
-    public function postAction(Request $request)
+    private function getReport(int $researchGroupId)
     {
-        $researchGroupId = $request->get('ResearchGroupSelector');
         $researchGroup = $this->container->get('doctrine')->getRepository(ResearchGroup::class)
             ->findOneBy(array('id' => $researchGroupId));
 
