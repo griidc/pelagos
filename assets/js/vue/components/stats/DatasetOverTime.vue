@@ -5,20 +5,16 @@
       data-source="/stats/data/total-records-over-time"
 
     >
-        <DxArgumentAxis
-            :aggregation-interval="100" <!-- A new interval every 100 units -->
-            aggregation-interval="day">  <!-- A new interval every day -->
-            <DxAggregationInterval :days="5"/> <!-- A new interval every five days -->
-        </DxArgumentAxis>
+        
         <DxLoadingIndicator
             :enabled="true"
         />
       <DxCommonSeriesSettings
         type="line"
         argument-field="date"
-        valueField="available"
+
       >
-        <DxPoint :visible="false"/>
+        <DxPoint :visible="true"/>
         <DxLabel
                 :visible="true"
                 :customize-text="Number"
@@ -28,6 +24,7 @@
         key="registered"
         value-field="registered"
         name="Registered"
+        color="green"
       />
       <DxSeries
         key="available"
@@ -37,11 +34,11 @@
       
       <DxMargin :bottom="20"/>
       <DxArgumentAxis
-        discrete-axis-division-mode="crossLabels"
+        
       >
         <DxTickInterval :years="1"/>
         <DxMinorTickInterval :months="6"/>
-        <DxTick :visible="false"/>
+        <DxTick :visible="true"/>
         <DxMinorTick :visible="false"/>
         <DxGrid :visible="false"/>
         <DxLabel

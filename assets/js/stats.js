@@ -12,12 +12,13 @@ import StatsApp from './vue/Stats.vue';
 var flotConfig;
 var overviewSections;
 var style = getComputedStyle(document.body);
-var theme = {};
+// var theme = {};
 
-theme.main = style.getPropertyValue('--color-main');
-theme.secondary = style.getPropertyValue('--color-menu');
-theme.dark = style.getPropertyValue('--color-headerMiddle');
-theme.light = style.getPropertyValue('--color-headerTop');
+// theme.primary = style.getPropertyValue('--primary');
+// theme.secondary = style.getPropertyValue('--secondary');
+// theme.alternate = style.getPropertyValue('--alternate');
+
+// console.log(theme);
 
 // getComputedStyle(document.documentElement)
     // .getPropertyValue('--my-variable-name');

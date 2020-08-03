@@ -225,16 +225,19 @@ class StatsController extends AbstractController
             $datasetCount = $repository->getDatasetByFileSizeRange($lower, $upper);
 
             $dataSizes[] = array('label' => $range['label'],
-                'data' => array(array($index * 0.971 + 0.171, $datasetCount)),
-                'bars' => array('barWidth' => 0.8),
+                'count' => $datasetCount,
+                //'data' => array(array($index * 0.971 + 0.171, $datasetCount)),
+                //'bars' => array('barWidth' => 0.8),
             );
         }
 
-        $datasetSizeRanges = array(
-            'page' => 'overview',
-            'section' => 'dataset-size-ranges',
-            'data' => $dataSizes,
-        );
+        // $datasetSizeRanges = array(
+            // 'page' => 'overview',
+            // 'section' => 'dataset-size-ranges',
+            // 'data' => $dataSizes,
+        // );
+        
+        $datasetSizeRanges = $dataSizes;
 
         $response = new Response(json_encode($datasetSizeRanges));
         $response->headers->set('Content-Type', 'application/json');
