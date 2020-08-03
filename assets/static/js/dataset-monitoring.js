@@ -157,24 +157,18 @@ const addPdfUrl = () => {
         pdfElementIds[i].addEventListener("click", function (event) {
                 window.open(url);
             },
-            false);
+        false);
     }
 }
 
 const addCsvUrl = () => {
     const csvElementIds = document.getElementsByClassName('awesome-icon-csv');
     for (let i = 0; i < csvElementIds.length ; i++) {
+        const url = csvElementIds[i].dataset.url;
         csvElementIds[i].addEventListener("click", function (event) {
-                axios.create({})
-                    .post(Routing.generate("pelagos_app_ui_reportresearchgroupdatasetstatus_post"), {ResearchGroupSelector: csvElementIds[i].dataset.researchGroupId})
-                    .then(response => {
-                    })
-                    .catch(function (error) {
-                        showDialog(`Error: There was an error processing your request.
-                            Please contact GRIIDC (<a href=mailto:griidc@gomri.org>griidc@gomri.org</a>)`);
-                    });
+                window.open(url);
             },
-            false);
+        false);
     }
 }
 
