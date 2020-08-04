@@ -1,6 +1,6 @@
 <template>
   <div>
-    <DxFileManager :file-system-provider="customProvider" :ref="fileManagerRefName">
+    <DxFileManager :file-system-provider="files">
 <!--      <DxPermissions-->
 <!--          :create="true"-->
 <!--          :copy="true"-->
@@ -20,7 +20,6 @@ import 'devextreme/dist/css/dx.light.css';
 import { DxFileManager, DxPermissions } from "devextreme-vue/file-manager";
 import ObjectFileSystemProvider from "devextreme/file_management/object_provider";
 import CustomFileSystemProvider from "devextreme/file_management/custom_provider";
-const axios = require('axios');
 
 export default {
   components: {
@@ -30,54 +29,40 @@ export default {
 
   data() {
     return {
-      customProvider: {},
+      // customProvider: {},
       fileManagerRefName: "fileManager",
-      fileItems: []
     };
   },
 
   props: {
-    id: {
-      type: Number
-    }
+    files: {}
   },
   created() {
-    this.getFileItems();
-  },
-  methods: {
-    getFileItems: function () {
-      const axiosInstance = axios.create({});
-      axiosInstance
-          .get(Routing.generate('pelagos_app_ui_files_get') + "/" + this.id)
-          .then(response => {
-            this.fileItems = response.data;
-          }).catch(error => {
-            console.log(error);
-          });
-    }
-  },
-  watch: {
-    fileItems: function () {
-      if (this.fileItems) {
-        let objectProvider = new ObjectFileSystemProvider({
-          data: this.fileItems
-        });
 
-        this.customProvider = new CustomFileSystemProvider({
-          getItems: parentDir => objectProvider.getItems(parentDir),
-          // createDirectory: (parentDir, dirName) =>
-          //     objectProvider.createDirectory(parentDir, dirName),
-          // renameItem: item => objectProvider.renameItem(item),
-          // deleteItem: item => objectProvider.deleteItems([item]),
-          // copyItem: (item, destDir) => objectProvider.copyItems([item], destDir),
-          // moveItem: (item, destDir) => objectProvider.moveItems([item], destDir),
-          // uploadFileChunk: (file, uploadInfo, destDir) =>
-          //     objectProvider.uploadFileChunk(file, uploadInfo, destDir),
-          // abortFileUpload: (file, uploadInfo, destDir) =>
-          //     objectProvider.abortFileUpload(file, uploadInfo, destDir),
-          // downloadItems: items => objectProvider.downloadItems(items)
-        });
-      }
+  },
+  // created() {
+  //   let objectProvider = new ObjectFileSystemProvider({
+  //     data: this.files
+  //   });
+  //
+  //   this.customProvider = new CustomFileSystemProvider({
+  //     getItems: parentDir => objectProvider.getItems(parentDir),
+  //     // createDirectory: (parentDir, dirName) =>
+  //     //     objectProvider.createDirectory(parentDir, dirName),
+  //     // renameItem: item => objectProvider.renameItem(item),
+  //     // deleteItem: item => objectProvider.deleteItems([item]),
+  //     // copyItem: (item, destDir) => objectProvider.copyItems([item], destDir),
+  //     // moveItem: (item, destDir) => objectProvider.moveItems([item], destDir),
+  //     // uploadFileChunk: (file, uploadInfo, destDir) =>
+  //     //     objectProvider.uploadFileChunk(file, uploadInfo, destDir),
+  //     // abortFileUpload: (file, uploadInfo, destDir) =>
+  //     //     objectProvider.abortFileUpload(file, uploadInfo, destDir),
+  //     // downloadItems: items => objectProvider.downloadItems(items)
+  //   });
+  // },
+  watch: {
+    files: function () {
+      console.log(this.files);
     }
   }
 };
