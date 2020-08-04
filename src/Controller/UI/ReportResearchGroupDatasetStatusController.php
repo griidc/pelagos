@@ -94,10 +94,6 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      */
     public function datasetMonitoringReportAction(Request $request, EntityHandler $entityHandler, int $id = null)
     {
-        // Checks authorization of users
-        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            return $this->render('template/AdminOnly.html.twig');
-        }
         //  fetch all the Research Groups
         $allResearchGroups = $entityHandler->getAll(ResearchGroup::class, array('name' => 'ASC'));
         //  put all the names in an array with the associated doctrine id
