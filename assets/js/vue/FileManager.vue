@@ -1,15 +1,15 @@
 <template>
   <div>
-    <DxFileManager :file-system-provider="files">
-<!--      <DxPermissions-->
-<!--          :create="true"-->
-<!--          :copy="true"-->
-<!--          :move="true"-->
-<!--          :delete="true"-->
-<!--          :rename="true"-->
-<!--          :upload="true"-->
-<!--          :download="true"-->
-<!--      />-->
+    <DxFileManager :file-system-provider="customProvider">
+      <DxPermissions
+          :create="true"
+          :copy="true"
+          :move="true"
+          :delete="true"
+          :rename="true"
+          :upload="true"
+          :download="true"
+      />
     </DxFileManager>
   </div>
 </template>
@@ -29,7 +29,7 @@ export default {
 
   data() {
     return {
-      // customProvider: {},
+      customProvider: {},
       fileManagerRefName: "fileManager",
     };
   },
@@ -38,28 +38,25 @@ export default {
     files: {}
   },
   created() {
+    let objectProvider = new ObjectFileSystemProvider({
+      data: this.files
+    });
 
+    this.customProvider = new CustomFileSystemProvider({
+      getItems: parentDir => objectProvider.getItems(parentDir),
+      createDirectory: (parentDir, dirName) =>
+        objectProvider.createDirectory(parentDir, dirName),
+      renameItem: (item, name) => objectProvider.renameItem(item, name),
+      deleteItem: item => objectProvider.deleteItems([item]),
+      copyItem: (item, destDir) => objectProvider.copyItems([item], destDir),
+      moveItem: (item, destDir) => objectProvider.moveItems([item], destDir),
+      uploadFileChunk: (file, uploadInfo, destDir) =>
+          objectProvider.uploadFileChunk(file, uploadInfo, destDir),
+      abortFileUpload: (file, uploadInfo, destDir) =>
+          objectProvider.abortFileUpload(file, uploadInfo, destDir),
+      downloadItems: items => objectProvider.downloadItems(items)
+    });
   },
-  // created() {
-  //   let objectProvider = new ObjectFileSystemProvider({
-  //     data: this.files
-  //   });
-  //
-  //   this.customProvider = new CustomFileSystemProvider({
-  //     getItems: parentDir => objectProvider.getItems(parentDir),
-  //     // createDirectory: (parentDir, dirName) =>
-  //     //     objectProvider.createDirectory(parentDir, dirName),
-  //     // renameItem: item => objectProvider.renameItem(item),
-  //     // deleteItem: item => objectProvider.deleteItems([item]),
-  //     // copyItem: (item, destDir) => objectProvider.copyItems([item], destDir),
-  //     // moveItem: (item, destDir) => objectProvider.moveItems([item], destDir),
-  //     // uploadFileChunk: (file, uploadInfo, destDir) =>
-  //     //     objectProvider.uploadFileChunk(file, uploadInfo, destDir),
-  //     // abortFileUpload: (file, uploadInfo, destDir) =>
-  //     //     objectProvider.abortFileUpload(file, uploadInfo, destDir),
-  //     // downloadItems: items => objectProvider.downloadItems(items)
-  //   });
-  // },
   watch: {
     files: function () {
       console.log(this.files);
