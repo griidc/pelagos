@@ -132,7 +132,6 @@ class StatsController extends AbstractController
         $registered = array();
         foreach ($registeredDatasets as $index => $value) {
             $registered[] = array('date' => ($value['creationTimeStamp']->format('Y/m/d')), 'registered' => ($index + 1));
-            $index = $index;
         }
 
         $available = array();

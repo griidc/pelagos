@@ -12,11 +12,7 @@
                 type="line"
                 argument-field="date"
             >
-                <DxPoint :visible="true"/>
-                <DxLabel
-                    :visible="true"
-                    :customize-text="Number"
-                />
+                <DxPoint :visible="false"/>
             </DxCommonSeriesSettings>
             <DxSeries
                 key="registered"
@@ -31,17 +27,22 @@
 
             <DxMargin :bottom="20"/>
             <DxArgumentAxis
+                format="date"
             >
-                <DxTickInterval :years="1"/>
-                <DxMinorTickInterval :months="6"/>
+                <DxTickInterval :years="0.1"/>
+                <DxMinorTickInterval :months="0.6"/>
                 <DxTick :visible="false"/>
                 <DxMinorTick :visible="false"/>
                 <DxGrid :visible="false"/>
                 <DxLabel
                     :staggering-spacing="10"
                     display-mode="stagger"
-                    format="monthAndDay"
-                />
+                >
+                    <DxFormat
+                        type="monthAndYear"
+                    />
+                
+                </DxLabel>
             </DxArgumentAxis>
             <DxLegend
                 vertical-alignment="bottom"
@@ -78,12 +79,12 @@ import {
   DxLabel,
   DxLoadingIndicator,
   DxZoomAndPan,
-  DxAggregationInterval
+  DxAggregationInterval,
+  DxFormat
 } from 'devextreme-vue/chart';
 import DxSelectBox from 'devextreme-vue/select-box';
 
 export default {
-
   components: {
     DxSelectBox,
     DxChart,
@@ -105,18 +106,9 @@ export default {
     DxLabel,
     DxLoadingIndicator,
     DxZoomAndPan,
-    DxAggregationInterval
+    DxAggregationInterval,
+    DxFormat
   },
-
-  data() {
-    return {
-      dataSource: service.getData(),
-      sources: service.getDataType(),
-      energySources: service.getEnergySources(),
-      types: ['line', 'stackedline', 'fullstackedline'],
-      type: 'line'
-    };
-  }
 };
 </script>
 

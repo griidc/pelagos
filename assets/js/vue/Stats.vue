@@ -6,9 +6,6 @@
         <div class="col-xl-12">
             <dataset-size-ranges />
         </div>
-        <div class="col-xl-12 border border-dark">
-            <div id="bla" />
-        </div>
     </div>
 </template>
 

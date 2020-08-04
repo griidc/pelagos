@@ -18,7 +18,14 @@
         <DxValueAxis
             value-type="numeric"
             type="continuous"
-        />
+            title="Number of Datasets"
+            precision="1"
+            format="decimal"
+        >
+            <DxTick 
+            :visible="true"
+            />
+        </DxValueAxis>
         <DxTitle text="Dataset Size Ranges">
             <DxSubtitle text="(number of datasets)"/>
         </DxTitle>
@@ -32,7 +39,8 @@ import {
     DxConnector,
     DxValueAxis,
     DxTitle,
-    DxSubtitle
+    DxSubtitle,
+    DxTick
 } from 'devextreme-vue/chart';
 
 export default {
@@ -43,7 +51,8 @@ export default {
     DxConnector,
     DxValueAxis,
     DxTitle,
-    DxSubtitle
+    DxSubtitle,
+    DxTick
   }
 };
 </script>
