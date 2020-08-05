@@ -13,7 +13,7 @@
                 {{ overview.fundingCycle.fundingOrganization.name }}
             </a>
         </p>
-        <h6 class="font-weight-bold">Funding Cycle</h6>
+        <h6 class="font-weight-bold">{{ getFcLabel() }}</h6>
         <p>
             <a :href="overview.fundingCycle.url">
                 {{ overview.fundingCycle.name }}
@@ -39,6 +39,10 @@
                         return person;
                     }
                 });
+            },
+            getFcLabel: function () {
+                // Base template specific labels:
+                return (PELAGOS_TEMPLATE_PROPS.BaseTemplateName === 'GRP' ? "Grant Award" : "Funding Cycle");
             }
         }
     }
