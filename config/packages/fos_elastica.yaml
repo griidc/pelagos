@@ -101,6 +101,21 @@ fos_elastica:
                                             properties:
                                                 id:
                                                     type: 'keyword'
+                                personResearchGroups:
+                                    type: 'nested'
+                                    properties:
+                                        role:
+                                            type: 'nested'
+                                            properties:
+                                                name:
+                                                    type: 'text'
+                                        person:
+                                            type: 'nested'
+                                            properties:
+                                                firstName:
+                                                    type: 'text'
+                                                lastName:
+                                                    type: 'text'
                         datasetSubmission:
                             type: 'nested'
                             include_in_parent: true
