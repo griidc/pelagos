@@ -71,15 +71,6 @@
     import Facet from "./Facet";
     import DatasetRow from "./DatasetRow";
 
-    // Conditional, GRP-specific labels
-    if (PELAGOS_TEMPLATE_PROPS.BaseTemplateName === 'GRP') {
-        var fundingCycleAlias = 'Grant Awards';
-        var researchGroupAlias = 'Projects';
-    } else {
-        var fundingCycleAlias = 'Funding Cycles';
-        var researchGroupAlias = 'Research Groups';
-    }
-
     export default {
         name: "ResultSet",
         components: { DatasetRow, Facet },
@@ -99,7 +90,7 @@
                         queryParam: 'status'
                     },
                     fundingCycle: {
-                        label: fundingCycleAlias,
+                        label: (PELAGOS_TEMPLATE_PROPS.BaseTemplateName === 'GRP' ? "Grant Awards" : "Funding Cycles"),
                         queryParam: 'fundingCycle'
                     },
                     fundingOrg: {
@@ -107,7 +98,7 @@
                         queryParam: 'fundingOrg'
                     },
                     researchGroup: {
-                        label: researchGroupAlias,
+                        label: (PELAGOS_TEMPLATE_PROPS.BaseTemplateName === 'GRP' ? "Projects" : "Research Groups"),
                         queryParam: 'researchGroup'
                     }
                 },
