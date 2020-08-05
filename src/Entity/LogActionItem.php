@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Entity class to represent a Data Repository Role.
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\Repository\LogActionItemRepository")
  */
 class LogActionItem extends Entity
 {

@@ -1,7 +1,7 @@
 <div id="program-resources" class="stats-overview-cell stats-section">
     <div style="height:100%; width:100%; display:table;">
         <div style="display:table-row;">
-            <div class="caption" style="display:table-cell;">Program Resources</div>
+            <div class="caption" style="display:table-cell;">Repository Summary</div>
         </div>
         <div style="display:table-row;">
             <div style="display:table-cell;">
@@ -26,6 +26,11 @@
                             <img src="{{ asset('build/images/icon-researchers.png') }}">
                             <div class="count">{{people|default}}</div>
                             <div class="label">People</div>
+                        </td>
+                        <td>
+                            <img src="{{ asset('build/images/downloads.png') }}">
+                            <div class="count">{{totalDownloads|default}}</div>
+                            <div class="label">Total Downloads</div>
                         </td>
                     </tr>
                 </table>
