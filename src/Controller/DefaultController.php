@@ -95,8 +95,8 @@ class DefaultController extends AbstractController
         foreach ($leadershipPersons as $leadershipPerson) {
             $projectDirectors[] = array(
                 'id' => $leadershipPerson->getPerson()->getId(),
-                'name' => $leadershipPerson->getPerson()->getFirstName()
-                    . ' ' . $leadershipPerson->getPerson()->getLastName()
+                'name' => $leadershipPerson->getPerson()->getLastName()
+                    . ', ' . $leadershipPerson->getPerson()->getFirstName()
                     . ' - ' . $leadershipPerson->getResearchGroup()->getShortName(),
                 'researchGroupId' => $leadershipPerson->getResearchGroup()->getId()
             );
