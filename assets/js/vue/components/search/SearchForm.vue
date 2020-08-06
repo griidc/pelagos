@@ -97,6 +97,8 @@
 <script>
     const axios = require('axios');
     import ResultSet from "./ResultSet";
+    import templateSwitch from "../../utils/template-switch.js"
+
     export default {
         name: "SearchForm",
         components: { ResultSet },
@@ -115,15 +117,7 @@
                 resultSet: Object,
                 route: window.location.hash,
                 submitted: false,
-            }
-        },
-        computed: {
-            displayTextBlock: function () {
-                if (typeof window.PELAGOS_TEMPLATE_PROPS !== 'undefined') {
-                    return window.PELAGOS_TEMPLATE_PROPS.hideSearchTextBlock;
-                } else {
-                    return false;
-                }
+                displayTextBlock: templateSwitch.isGrpTemplate()
             }
         },
         methods: {
