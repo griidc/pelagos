@@ -97,7 +97,7 @@ class DefaultController extends AbstractController
                 'id' => $leadershipPerson->getPerson()->getId(),
                 'name' => $leadershipPerson->getPerson()->getLastName()
                     . ', ' . $leadershipPerson->getPerson()->getFirstName()
-                    . ' - ' . $leadershipPerson->getResearchGroup()->getShortName(),
+                    . ' - ' . $leadershipPerson->getResearchGroup()->getFundingCycle()->getName(),
                 'researchGroupId' => $leadershipPerson->getResearchGroup()->getId()
             );
         }
