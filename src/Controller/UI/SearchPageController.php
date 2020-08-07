@@ -163,6 +163,7 @@ class SearchPageController extends AbstractController
                 'datasetStatus' => $requestParams['options']['status'],
                 'fundingOrganizations' => $requestParams['options']['funOrgId'],
                 'researchGroups' => $requestParams['options']['rgId'],
+                'fundingCycles' => $requestParams['options']['fundingCycleId'],
                 'projectDirectors' => $requestParams['options']['projectDirectorId']
             )
         );
