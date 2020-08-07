@@ -825,7 +825,7 @@ class Dataset extends Entity
         foreach ($this->getResearchGroup()->getPersonResearchGroups() as $personResearchGroup) {
             if ($personResearchGroup instanceof PersonResearchGroup
                 and $personResearchGroup->getRole()->getName() === ResearchGroupRole::LEADERSHIP) {
-               $collection->add($personResearchGroup->getPerson());
+                $collection->add($personResearchGroup->getPerson());
             }
         }
         return $collection;

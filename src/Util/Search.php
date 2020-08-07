@@ -638,7 +638,7 @@ class Search
         $projectDirectorTerms->setField('projectDirectors.id');
         $projectDirectorTerms->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
 
-        return $projectDirectorAgg->addAggregation($projectDirectorTerms);;
+        return $projectDirectorAgg->addAggregation($projectDirectorTerms);
     }
 
     /**
