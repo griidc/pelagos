@@ -2,7 +2,6 @@
 
 namespace App\Util;
 
-use App\Entity\FundingCycle;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Elastica\Aggregation;
@@ -13,7 +12,9 @@ use FOS\ElasticaBundle\Finder\TransformedFinder;
 use Pagerfanta\Pagerfanta;
 
 use App\Entity\DatasetSubmission;
+use App\Entity\FundingCycle;
 use App\Entity\FundingOrganization;
+use App\Entity\Person;
 use App\Entity\ResearchGroup;
 
 use RecursiveArrayIterator;
@@ -166,6 +167,7 @@ class Search
 
         // Add dataset availability status agg to mainQuery
         $mainQuery->addAggregation($this->getStatusAggregationQuery($requestTerms));
+        $mainQuery->addAggregation($this->getProjectDirectorAggregationQuery());
         $mainQuery->setQuery($subMainQuery);
         $mainQuery->setFrom(($page - 1) * 10);
         $mainQuery->setSize($perPage);
@@ -417,6 +419,54 @@ class Search
     }
 
     /**
+     * Get the project director aggregations for the query.
+     *
+     * @param Query $query The query built based on the search terms and parameters.
+     *
+     * @return array
+     */
+    public function getProjectDirectorAggregations(Query $query): array
+    {
+        $userPaginator = $this->getPaginator($query);
+        $projectDirectorBucket = array_column(
+            $this->findKey($userPaginator->getAdapter()->getAggregations(), 'projectDirectorId')['buckets'],
+            'doc_count',
+            'key'
+        );
+
+        return $this->getProjectDirectorInfo($projectDirectorBucket);
+    }
+
+    /**
+     * Get project director information for the aggregations.
+     *
+     * @param array $aggregations Aggregations for each project director id.
+     *
+     * @return array
+     */
+    private function getProjectDirectorInfo(array $aggregations): array
+    {
+        $projectDirectorInfo = array();
+
+        $people = $this->entityManager
+            ->getRepository(Person::class)
+            ->findBy(array('id' => array_keys($aggregations)));
+
+        foreach ($people as $projectDirector) {
+            $projectDirectorInfo[$projectDirector->getId()] = array(
+                'id' => $projectDirector->getId(),
+                'name' => $projectDirector->getFullName(),
+                'count' => $aggregations[$projectDirector->getId()]
+            );
+        }
+        //Sorting based on highest count
+        $array_column = array_column($projectDirectorInfo, 'count');
+        array_multisort($array_column, SORT_DESC, $projectDirectorInfo);
+
+        return $projectDirectorInfo;
+    }
+
+    /**
      * Find the bucket name of the aggregation.
      *
      * @param array  $aggregations Array of aggregations.
@@ -571,13 +621,29 @@ class Search
     }
 
     /**
-     * Get status aggregations for the query.
+     * Get project director aggregations for the query.
      *
-     * @param array $requestTerms Options for the query.
+     * @return Aggregation\Nested
+     */
+    private function getProjectDirectorAggregationQuery(): Aggregation\Nested
+    {
+        // Add nested field path for project director field
+        $projectDirectorAgg = new Aggregation\Nested('directors', 'projectDirectors');
+
+        // Add project director id field to the aggregation
+        $projectDirectorTerms = new Aggregation\Terms('projectDirectorId');
+        $projectDirectorTerms->setField('projectDirectors.id');
+        $projectDirectorTerms->setSize(self::DEFAULT_AGGREGATION_TERM_SIZE);
+
+        return $projectDirectorAgg->addAggregation($projectDirectorTerms);;
+    }
+
+    /**
+     * Get status aggregations for the query.
      *
      * @return Aggregation\Terms
      */
-    private function getStatusAggregationQuery(array $requestTerms): Aggregation\Terms
+    private function getStatusAggregationQuery(): Aggregation\Terms
     {
         $availabilityStatusAgg = new Aggregation\Terms('status');
         $availabilityStatusAgg->setField('availabilityStatus');

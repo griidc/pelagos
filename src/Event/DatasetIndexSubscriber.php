@@ -126,10 +126,6 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
                 $document->set('collectionEndDate', $collectionEndDate->format('Y-m-d H:i:s'));
             }
         }
-
-        if (!empty($dataset->getResearchGroup()->getProjectDirectors())) {
-            $document->set('projectDirector', $dataset->getResearchGroup()->getProjectDirectors());
-        }
     }
 
     /**

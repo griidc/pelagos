@@ -134,9 +134,13 @@ fos_elastica:
                             properties:
                                 doi:
                                     type: 'text'
-                        projectDirector:
-                            property_path: false
-                            type: 'object'
+                        projectDirectors:
+                            type: 'nested'
+                            properties:
+                                id:
+                                    type: 'keyword'
+                                fullName:
+                                    type: 'text'
                     persistence:
                         driver: orm
                         model: App\Entity\Dataset

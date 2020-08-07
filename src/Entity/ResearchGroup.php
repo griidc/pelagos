@@ -832,26 +832,4 @@ class ResearchGroup extends Entity
     {
         $this->shortName = $shortName;
     }
-
-    /**
-     * Get list of project directors for elastic search indexing.
-     *
-     * @return array|null
-     */
-    public function getProjectDirectors(): ? array
-    {
-        $projectDirectors = [];
-        foreach ($this->getPersonResearchGroups() as $personResearchGroup) {
-            if ($personResearchGroup instanceof PersonResearchGroup
-                and $personResearchGroup->getRole()->getName() === ResearchGroupRole::LEADERSHIP) {
-                $projectDirectors[] = array(
-                    'id' => $personResearchGroup->getPerson()->getId(),
-                    'name' => $personResearchGroup->getPerson()->getFirstName()
-                        . ' ' . $personResearchGroup->getPerson()->getLastName()
-                );
-            }
-        }
-
-        return $projectDirectors;
-    }
 }
