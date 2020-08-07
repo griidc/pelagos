@@ -157,7 +157,8 @@ class Search
         if (!empty($requestTerms['options']['funOrgId'])
             || !empty($requestTerms['options']['rgId'])
             || !empty($requestTerms['options']['status']
-            || !empty($requestTerms['options']['fundingCycleId']))
+            || !empty($requestTerms['options']['fundingCycleId'])
+            || !empty($requestTerms['options']['projectDirectorId']))
         ) {
             $mainQuery->setPostFilter($this->getFiltersQuery($requestTerms));
         }
@@ -711,7 +712,7 @@ class Search
             $fundingCycNestedQuery = new Query\Nested();
             $fundingCycNestedQuery->setPath('researchGroup.fundingCycle');
 
-            // Add funding Org id field to the aggregation
+            // Add funding cycle id field to the aggregation
             $fundingCycleTerms = new Query\Terms();
             $fundingCycleTerms->setTerms(
                 'researchGroup.fundingCycle.id',
@@ -722,6 +723,21 @@ class Search
             $postFilterBoolQuery->addMust($fundingCycNestedQuery);
         }
 
+        if (!empty($requestTerms['options']['projectDirectorId'])) {
+            // Add nested field path for project director field
+            $projectDirectorNestedQuery = new Query\Nested();
+            $projectDirectorNestedQuery->setPath('projectDirectors');
+
+            // Add project director id field to the aggregation
+            $projectDirectorTermsQuery = new Query\Terms();
+            $projectDirectorTermsQuery->setTerms(
+                'projectDirectors.id',
+                explode(',', $requestTerms['options']['projectDirectorId'])
+            );
+
+            $projectDirectorNestedQuery->setQuery($projectDirectorTermsQuery);
+            $postFilterBoolQuery->addMust($projectDirectorNestedQuery);
+        }
         $filterBoolQuery->addMust($postFilterBoolQuery);
 
         return $filterBoolQuery;

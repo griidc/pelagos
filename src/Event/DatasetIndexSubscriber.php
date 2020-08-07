@@ -2,8 +2,6 @@
 
 namespace App\Event;
 
-use App\Entity\PersonResearchGroup;
-use App\Entity\ResearchGroupRole;
 use App\Twig\Extensions as TwigExtentions;
 use FOS\ElasticaBundle\Event\TransformEvent;
 

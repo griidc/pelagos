@@ -121,7 +121,8 @@ class SearchPageController extends AbstractController
                 'rgId' => $request->get('researchGroup'),
                 'funOrgId' => $request->get('fundingOrg'),
                 'status' => $request->get('status'),
-                'fundingCycleId' => $request->get('fundingCycle')
+                'fundingCycleId' => $request->get('fundingCycle'),
+                'projectDirectorId' => $request->get('projectDirector')
             ),
             'sessionId' => $request->getSession()->getId()
         );
@@ -161,7 +162,8 @@ class SearchPageController extends AbstractController
             'aggregations' => array(
                 'datasetStatus' => $requestParams['options']['status'],
                 'fundingOrganizations' => $requestParams['options']['funOrgId'],
-                'researchGroups' => $requestParams['options']['rgId']
+                'researchGroups' => $requestParams['options']['rgId'],
+                'projectDirectors' => $requestParams['options']['projectDirectorId']
             )
         );
 
