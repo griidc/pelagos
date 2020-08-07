@@ -227,7 +227,8 @@
                 fundingOrg: '',
                 researchGroup: '',
                 fundingCycle: '',
-                perPage: 10
+                perPage: 10,
+                projectDirector: ''
         }
     }
 </script>

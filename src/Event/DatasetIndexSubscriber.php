@@ -2,6 +2,8 @@
 
 namespace App\Event;
 
+use App\Entity\PersonResearchGroup;
+use App\Entity\ResearchGroupRole;
 use App\Twig\Extensions as TwigExtentions;
 use FOS\ElasticaBundle\Event\TransformEvent;
 
@@ -123,6 +125,10 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
                 $document->set('collectionStartDate', $collectionStartDate->format('Y-m-d H:i:s'));
                 $document->set('collectionEndDate', $collectionEndDate->format('Y-m-d H:i:s'));
             }
+        }
+
+        if (!empty($dataset->getResearchGroup()->getProjectDirectors())) {
+            $document->set('projectDirector', $dataset->getResearchGroup()->getProjectDirectors());
         }
     }
 
