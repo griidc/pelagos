@@ -28,7 +28,6 @@ class Fileset extends Entity
     public function __construct()
     {
         $this->files = new ArrayCollection();
-        $this->addFile(new File());
     }
 
     /**

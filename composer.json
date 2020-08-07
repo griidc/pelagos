@@ -45,7 +45,8 @@
         "symfony/webpack-encore-bundle": "^1.1",
         "symfony/yaml": "4.4.*",
         "twig/extensions": "^1.5",
-        "willdurand/hateoas-bundle": "^2.1"
+        "willdurand/hateoas-bundle": "^2.1",
+        "ext-json": "*"
     },
     "require-dev": {
         "mockery/mockery": "^1.0",

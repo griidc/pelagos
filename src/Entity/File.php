@@ -185,11 +185,11 @@ class File extends Entity
     /**
      * Setter for File UploadedAt.
      *
-     * @param \DateTime $uploadedAt File uploaded timestamp.
+     * @param \DateTime|null $uploadedAt File uploaded timestamp.
      *
      * @return void
      */
-    public function setUploadedAt(\DateTime $uploadedAt): void
+    public function setUploadedAt(?\DateTime $uploadedAt): void
     {
         $this->uploadedAt = $uploadedAt;
     }
@@ -199,7 +199,7 @@ class File extends Entity
      *
      * @return Person
      */
-    public function getUploadedBy(): Person
+    public function getUploadedBy(): ? Person
     {
         return $this->uploadedBy;
     }
@@ -207,11 +207,11 @@ class File extends Entity
     /**
      * Setter for File UploadedBy.
      *
-     * @param Person $uploadedBy Person who uploaded the file.
+     * @param Person|null $uploadedBy Person who uploaded the file.
      *
      * @return void
      */
-    public function setUploadedBy(Person $uploadedBy): void
+    public function setUploadedBy(?Person $uploadedBy): void
     {
         $this->uploadedBy = $uploadedBy;
     }

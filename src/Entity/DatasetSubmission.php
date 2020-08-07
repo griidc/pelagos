@@ -1062,11 +1062,18 @@ class DatasetSubmission extends Entity
 
                 $this->addDatasetLink($newDatasetLink);
             }
-
             // Copy the fileSet
             $newFileset = new Fileset();
             foreach ($entity->getFileset()->getFiles() as $file) {
-                $newFileset->addFile($file);
+                $newFile = new File();
+                $newFile->setFileName($file->getFileName());
+                $newFile->setFileSize($file->getFileSize());
+                $newFile->setFileSha256Hash($file->getFileSha256Hash());
+                $newFile->setUploadedAt($file->getUploadedAt());
+                $newFile->setUploadedBy($file->getUploadedBy());
+                $newFile->setDescription($file->getDescription());
+                $newFile->setFilePath($file->getFilePath());
+                $newFileset->addFile($newFile);
             }
             $this->setFileset($newFileset);
         } else {
@@ -1648,7 +1655,10 @@ class DatasetSubmission extends Entity
      */
     public function getDatasetFileName() : ?string
     {
-        return $this->fileset->getFiles()->first()->getFileName();
+        if ($this->fileset instanceof Fileset) {
+            return $this->fileset->getFiles()->first()->getFileName();
+        }
+        return null;
     }
 
     /**
@@ -1670,7 +1680,10 @@ class DatasetSubmission extends Entity
      */
     public function getDatasetFileSize() : ?int
     {
-        return $this->fileset->getFiles()->first()->getFileSize();
+        if ($this->fileset instanceof Fileset) {
+            return $this->fileset->getFiles()->first()->getFileSize();
+        }
+        return null;
     }
 
     /**
@@ -1692,7 +1705,10 @@ class DatasetSubmission extends Entity
      */
     public function getDatasetFileSha256Hash() : ?string
     {
-        return $this->fileset->getFiles()->first()->getFileSha256Hash();
+        if ($this->fileset instanceof Fileset) {
+            return $this->fileset->getFiles()->first()->getFileSha256Hash();
+        }
+        return null;
     }
 
     /**
