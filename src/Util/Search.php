@@ -167,7 +167,9 @@ class Search
         $mainQuery->addAggregation($this->getAggregationsQuery($requestTerms));
 
         // Add dataset availability status agg to mainQuery
-        $mainQuery->addAggregation($this->getStatusAggregationQuery($requestTerms));
+        $mainQuery->addAggregation($this->getStatusAggregationQuery());
+
+        // Add project director aggregation to the mainQuery
         $mainQuery->addAggregation($this->getProjectDirectorAggregationQuery());
         $mainQuery->setQuery($subMainQuery);
         $mainQuery->setFrom(($page - 1) * 10);
