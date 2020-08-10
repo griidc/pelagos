@@ -2,7 +2,7 @@
 {% for project in projects %}
     {
         "id": "datasets_projectId_{{project.ID}}",
-        "text": "{{project.getName | raw}}",
+        "text": "{{project.getName | trim('"')}}",
         "li_attr": {
             "style": "color:{{tree.project_color}}",
             "id": "datasets_projectId_{{project.ID}}"
