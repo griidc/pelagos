@@ -83,7 +83,7 @@
                         })
                     }
                 })
-                this.disableResearchGroups = this.researchGroupOptions.length <= 1;
+                this.disableResearchGroups = this.researchGroupOptions.length < 1;
             },
             researchGroupButton: function() {
                 this.openResearchGroupLandingPage(this.selectedResearchGroup);
