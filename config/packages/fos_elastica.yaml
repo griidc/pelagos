@@ -139,8 +139,6 @@ fos_elastica:
                             properties:
                                 id:
                                     type: 'keyword'
-                                fullName:
-                                    type: 'text'
                     persistence:
                         driver: orm
                         model: App\Entity\Dataset

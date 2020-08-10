@@ -458,7 +458,7 @@ class Search
         foreach ($people as $projectDirector) {
             $projectDirectorInfo[$projectDirector->getId()] = array(
                 'id' => $projectDirector->getId(),
-                'name' => $projectDirector->getFullName(),
+                'name' => $projectDirector->getLastName() . ', ' . $projectDirector->getFirstName(),
                 'count' => $aggregations[$projectDirector->getId()]
             );
         }

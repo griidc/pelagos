@@ -929,14 +929,4 @@ class Person extends Entity
         }
         return $researchGroups;
     }
-
-    /**
-     * Returns a full name for elastic configuration.
-     *
-     * @return string
-     */
-    public function getFullName(): string
-    {
-        return $this->getFirstName() . ' ' . $this->getLastName();
-    }
 }
