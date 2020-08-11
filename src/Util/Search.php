@@ -463,8 +463,12 @@ class Search
             );
         }
         //Sorting based on highest count
-        $array_column = array_column($projectDirectorInfo, 'count');
-        array_multisort($array_column, SORT_DESC, $projectDirectorInfo);
+        $array_column1 = array_column($projectDirectorInfo, 'count');
+        $array_column2 = array_column($projectDirectorInfo, 'name');
+        array_multisort(
+            $array_column1, SORT_DESC,
+            $array_column2, SORT_ASC, $projectDirectorInfo
+        );
 
         return $projectDirectorInfo;
     }
