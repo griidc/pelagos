@@ -842,11 +842,11 @@ class ResearchGroup extends Entity
     public function getProjectDirectors(): Collection
     {
         $projectDirectors = new ArrayCollection();
-       foreach ($this->getPersonResearchGroups() as $personResearchGroup) {
-           if ($personResearchGroup->getRole()->getName() === ResearchGroupRole::LEADERSHIP) {
-               $projectDirectors->add($personResearchGroup->getPerson());
-           }
+        foreach ($this->getPersonResearchGroups() as $personResearchGroup) {
+            if ($personResearchGroup->getRole()->getName() === ResearchGroupRole::LEADERSHIP) {
+                $projectDirectors->add($personResearchGroup->getPerson());
+            }
         }
-       return $projectDirectors;
+        return $projectDirectors;
     }
 }
