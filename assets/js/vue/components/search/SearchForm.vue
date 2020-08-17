@@ -97,6 +97,7 @@
 <script>
     const axios = require('axios');
     import ResultSet from "./ResultSet";
+    import templateSwitch from "../../utils/template-switch.js"
     export default {
         name: "SearchForm",
         components: { ResultSet },

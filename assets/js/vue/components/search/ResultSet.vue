@@ -70,6 +70,7 @@
 <script>
     import Facet from "./Facet";
     import DatasetRow from "./DatasetRow";
+    import templateSwitch from "../../utils/template-switch.js";
 
     export default {
         name: "ResultSet",
