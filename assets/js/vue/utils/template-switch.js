@@ -14,10 +14,10 @@ const griidc = {
 
 export default {
     getLabel: (name) => {
-        if (PELAGOS_TEMPLATE_PROPS.BaseTemplateName === 'GRP') {
-            return grp[name];
-        } else {
+        if (PELAGOS_TEMPLATE_PROPS === undefined || PELAGOS_TEMPLATE_PROPS.BaseTemplateName === undefined || PELAGOS_TEMPLATE_PROPS.BaseTemplateName === 'GRIIDC') {
             return griidc[name];
+        } else {
+            return grp[name];
         }
     },
     isGrpTemplate: () => {
