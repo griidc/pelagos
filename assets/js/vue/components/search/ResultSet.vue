@@ -31,6 +31,7 @@
                         <Facet :facet-info="results.facetInfo.statusInfo" :facet-name="facetLabels.status" v-on="$listeners" :formValues="formValues"/>
                         <Facet :facet-info="results.facetInfo.fundingCycleInfo" :facet-name="facetLabels.fundingCycle" v-on="$listeners" :formValues="formValues" v-if="showFundingCycleFacet"/>
                         <Facet :facet-info="results.facetInfo.fundingOrgInfo" :facet-name="facetLabels.fundingOrg" v-on="$listeners" :formValues="formValues" v-else/>
+                        <Facet :facet-info="results.facetInfo.projectDirectorInfo" :facet-name="facetLabels.projectDirector" v-on="$listeners" :formValues="formValues" v-show="showFundingCycleFacet()"/>
                         <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="facetLabels.researchGroup" v-on="$listeners" :formValues="formValues"/>
                     </div>
                 </aside>
@@ -101,12 +102,11 @@
                     researchGroup: {
                         label: templateSwitch.getLabel('researchGroup'),
                         queryParam: 'researchGroup'
+                    },
+                    projectDirector: {
+                        label: 'Project Directors',
+                        queryParam: 'projectDirector'
                     }
-                },
-                facetCheckBoxes: {
-                    status: '',
-                    fundingOrg: '',
-                    researchGroup: ''
                 },
                 currentPage: 1,
                 perPage: this.formValues.perPage,

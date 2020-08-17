@@ -812,4 +812,22 @@ class Dataset extends Entity
 
         return $datasetSubmission;
     }
+
+    /**
+     * Gets Project Directors associated with this Dataset.
+     *
+     * @return ArrayCollection
+     */
+    public function getProjectDirectors(): ArrayCollection
+    {
+        $collection = new ArrayCollection;
+
+        foreach ($this->getResearchGroup()->getPersonResearchGroups() as $personResearchGroup) {
+            if ($personResearchGroup instanceof PersonResearchGroup
+                and $personResearchGroup->getRole()->getName() === ResearchGroupRole::LEADERSHIP) {
+                $collection->add($personResearchGroup->getPerson());
+            }
+        }
+        return $collection;
+    }
 }
