@@ -29,7 +29,7 @@
                 <aside class="col-lg-3">
                     <div class="card card-filter">
                         <Facet :facet-info="results.facetInfo.statusInfo" :facet-name="facetLabels.status" v-on="$listeners" :formValues="formValues"/>
-                        <Facet :facet-info="results.facetInfo.fundingCycleInfo" :facet-name="facetLabels.fundingCycle" v-on="$listeners" :formValues="formValues" v-if="showFundingCycleFacet()"/>
+                        <Facet :facet-info="results.facetInfo.fundingCycleInfo" :facet-name="facetLabels.fundingCycle" v-on="$listeners" :formValues="formValues" v-if="showFundingCycleFacet"/>
                         <Facet :facet-info="results.facetInfo.fundingOrgInfo" :facet-name="facetLabels.fundingOrg" v-on="$listeners" :formValues="formValues" v-else/>
                         <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="facetLabels.researchGroup" v-on="$listeners" :formValues="formValues"/>
                     </div>
@@ -90,7 +90,7 @@
                         queryParam: 'status'
                     },
                     fundingCycle: {
-                        label: (PELAGOS_TEMPLATE_PROPS.BaseTemplateName === 'GRP' ? "Grant Awards" : "Funding Cycles"),
+                        label: templateSwitch.getLabel('fundingCycle'),
                         queryParam: 'fundingCycle'
                     },
                     fundingOrg: {
@@ -98,7 +98,7 @@
                         queryParam: 'fundingOrg'
                     },
                     researchGroup: {
-                        label: (PELAGOS_TEMPLATE_PROPS.BaseTemplateName === 'GRP' ? "Projects" : "Research Groups"),
+                        label: templateSwitch.getLabel('researchGroup'),
                         queryParam: 'researchGroup'
                     }
                 },
@@ -114,7 +114,8 @@
                     { value: 25, text: '25' },
                     { value: 50, text: '50' },
                     { value: 100, text: '100' }
-                ]
+                    ],
+                    showFundingCycleFacet: templateSwitch.isGrpTemplate(),
             }
         },
         computed: {
@@ -130,15 +131,6 @@
                 this.$emit('noOfResults', value);
             }
         },
-        methods: {
-            showFundingCycleFacet: function () {
-                if (typeof window.PELAGOS_TEMPLATE_PROPS !== 'undefined') {
-                    return window.PELAGOS_TEMPLATE_PROPS.fundingCycleFacet;
-                } else {
-                    return false;
-                }
-            }
-        }
     }
 </script>
 
