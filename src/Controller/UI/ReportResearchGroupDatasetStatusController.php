@@ -565,12 +565,12 @@ class ReportResearchGroupDatasetStatusController extends ReportController
     {
         $lastUpdate = 'N/A';
         if ($dataset->getDatasetSubmission() instanceof DatasetSubmission) {
-            $lastUpdate = $dataset->getDatasetSubmission()->getSubmissionTimeStamp()->format(ReportController::INREPORT_TIMESTAMPFORMAT);
+            $lastUpdate = $dataset->getDatasetSubmission()->getSubmissionTimeStamp()->format('Y-m-d H:i');
         } elseif ($dataset->getDif() instanceof DIF) {
             if ($dataset->getDif()->getApprovedDate()) {
-                $lastUpdate = $dataset->getDif()->getApprovedDate()->format(ReportController::INREPORT_TIMESTAMPFORMAT);
+                $lastUpdate = $dataset->getDif()->getApprovedDate()->format('Y-m-d H:i');
             } else {
-                $lastUpdate = $dataset->getDif()->getModificationTimeStamp()->format(ReportController::INREPORT_TIMESTAMPFORMAT);
+                $lastUpdate = $dataset->getDif()->getModificationTimeStamp()->format('Y-m-d H:i');
             }
         }
 
