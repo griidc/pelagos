@@ -84,11 +84,11 @@ class ResearchGroupController extends AbstractController
     /**
      * The Research Group Ladning page action.
      *
-     * @param integer       $id            The id of the entity to retrieve.
+     * @param integer $id The id of the entity to retrieve.
      *
      * @throws NotFoundHttpException When the research group was not found.
      *
-     * @Route("/research-group/about/{id}", name="pelagos_app_ui_researchgroup_about")
+     * @Route("/research-group/about/{id}", name="pelagos_app_ui_researchgroup_about", requirements={"id"="\d+"})
      *
      * @return Response A Response instance.
      */
