@@ -217,7 +217,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         $researchGroupName = $researchGroup->getName();
 
         if ($version === self::REPORT_VERSION_THREE and $researchGroup instanceof ResearchGroup) {
-            $researchGroupName = $researchGroup->getName() . '_' .
+            $researchGroupName = $researchGroup->getFundingCycle()->getName() . '_' .
                 $this->getProjectDirectorLastName($researchGroup) . '_' .
                 $researchGroup->getShortName() . '_' .
                 $udi = sprintf('%s.x%03d', $researchGroup->getFundingCycle()->getUdiPrefix(), $researchGroup->getId());
