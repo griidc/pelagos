@@ -7,8 +7,8 @@
         </header>
         <div class="filter-content">
             <div class="card-body">
-                <div class="input-group pb-3" v-show="facetName.queryParam === 'researchGroup'">
-                    <input class="form-control" placeholder="Search" type="text" v-model="researchGroupSearch">
+                <div class="input-group pb-3" v-show="['researchGroup', 'projectDirector'].includes(facetName.queryParam)">
+                    <input class="form-control" placeholder="Search" type="text" v-model="facetSearch">
                     <div class="input-group-append">
                         <button class="btn btn-primary" type="button">
                             <i class="fa fa-search"></i></button>
@@ -50,99 +50,103 @@
 </template>
 
 <script>
-    const maxFacetsToDisplay = 10;
-    export default {
-        name: "FacetGroups",
-        props: {
-            facetInfo : {
-                type: Array
-            },
-            facetName: {
-                type: Object
-            },
-            formValues: {
-                type: Object
-            }
+const maxFacetsToDisplay = 10;
+export default {
+    name: "FacetGroups",
+    props: {
+        facetInfo : {
+            type: Array
         },
-        data: function() {
-          return {
-              researchGroupSearch: '',
-              listOfCheckedFacets: []
-          }
+        facetName: {
+            type: Object
         },
-        methods: {
-            facetChange: function () {
-                this.$emit('facetClicked', this.facetName.queryParam + '=' + this.listOfCheckedFacets.join(","));
-            },
-            facetCheckBox: function () {
-                if (this.facetName.queryParam in this.formValues) {
-                    if (this.formValues[this.facetName.queryParam]) {
-                        let splitFacets = this.formValues[this.facetName.queryParam].split(",");
-                        this.listOfCheckedFacets = [];
-                        splitFacets.forEach((value) => {
-                            this.listOfCheckedFacets.push(value);
-                        });
-                    } else {
-                        this.listOfCheckedFacets = [];
-
-                    }
-                }
-            },
-            statusTooltip: function (datasetStatus) {
-                let datasetStatusTooltip = "";
-                switch (true) {
-                    case (datasetStatus === "Available"):
-                        datasetStatusTooltip = "This dataset is available for download.";
-                        break;
-                    case (datasetStatus === "Restricted"):
-                        datasetStatusTooltip = "This dataset is restricted for download.";
-                        break;
-                    case (datasetStatus === "Submitted"):
-                        datasetStatusTooltip = "This dataset has been submitted and is not available for download.";
-                        break;
-                    case (datasetStatus === "Identified"):
-                        datasetStatusTooltip = "This dataset has not been submitted and is not available for download.";
-                        break;
-                }
-                return datasetStatusTooltip;
-            }
+        formValues: {
+            type: Object
+        }
+    },
+    data: function() {
+        return {
+            facetSearch: '',
+            listOfCheckedFacets: []
+        }
+    },
+    methods: {
+        facetChange: function () {
+            this.$emit('facetClicked', this.facetName.queryParam + '=' + this.listOfCheckedFacets.join(","));
         },
-        computed: {
-            filteredFacets: function () {
-                if (this.facetName.queryParam === 'researchGroup') {
-                    return this.facetInfo.filter(facetItem => {
-                        const facetItemName = facetItem.shortName + facetItem.name;
-                        return facetItemName.toLowerCase().indexOf(this.researchGroupSearch.toLowerCase()) > -1;
-                    })
+        facetCheckBox: function () {
+            if (this.facetName.queryParam in this.formValues) {
+                if (this.formValues[this.facetName.queryParam]) {
+                    let splitFacets = this.formValues[this.facetName.queryParam].split(",");
+                    this.listOfCheckedFacets = [];
+                    splitFacets.forEach((value) => {
+                        this.listOfCheckedFacets.push(value);
+                    });
                 } else {
-                    return this.facetInfo;
-                }
-            },
-            facetScrollable: function () {
-                const scrollableClass = 'scrollable-facet';
-                if (this.facetInfo.length > maxFacetsToDisplay) {
-                    return scrollableClass;
+                    this.listOfCheckedFacets = [];
+
                 }
             }
         },
-        created() {
+        statusTooltip: function (datasetStatus) {
+            let datasetStatusTooltip = "";
+            switch (true) {
+                case (datasetStatus === "Available"):
+                    datasetStatusTooltip = "This dataset is available for download.";
+                    break;
+                case (datasetStatus === "Restricted"):
+                    datasetStatusTooltip = "This dataset is restricted for download.";
+                    break;
+                case (datasetStatus === "Submitted"):
+                    datasetStatusTooltip = "This dataset has been submitted and is not available for download.";
+                    break;
+                case (datasetStatus === "Identified"):
+                    datasetStatusTooltip = "This dataset has not been submitted and is not available for download.";
+                    break;
+            }
+            return datasetStatusTooltip;
+        }
+    },
+    computed: {
+        filteredFacets: function () {
+            if (this.facetName.queryParam === 'researchGroup') {
+                return this.facetInfo.filter(facetItem => {
+                    const facetItemName = facetItem.shortName + facetItem.name;
+                    return facetItemName.toLowerCase().indexOf(this.facetSearch.toLowerCase()) > -1;
+                })
+            } else if (this.facetName.queryParam === 'projectDirector') {
+                return this.facetInfo.filter(facetItem => {
+                    return facetItem.name.toLowerCase().indexOf(this.facetSearch.toLowerCase()) > -1;
+                });
+            } else {
+                return this.facetInfo;
+            }
+        },
+        facetScrollable: function () {
+            const scrollableClass = 'scrollable-facet';
+            if (this.facetInfo.length > maxFacetsToDisplay) {
+                return scrollableClass;
+            }
+        }
+    },
+    created() {
+        this.facetCheckBox();
+    },
+    watch: {
+        formValues: function () {
             this.facetCheckBox();
         },
-        watch: {
-            formValues: function () {
-                this.facetCheckBox();
-            },
-        }
     }
+}
 </script>
 
 <style scoped>
-    .scrollable-facet {
-        height: auto;
-        max-height: 20rem;
-        overflow-y: auto;
-    }
-    .card-body {
-      padding: 0.625rem !important;
-    }
+.scrollable-facet {
+    height: auto;
+    max-height: 20rem;
+    overflow-y: auto;
+}
+.card-body {
+    padding: 0.625rem !important;
+}
 </style>
