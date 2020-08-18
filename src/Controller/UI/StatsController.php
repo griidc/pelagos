@@ -105,13 +105,14 @@ class StatsController extends AbstractController
      */
     public function getStatisticsJson()
     {
-        $this->getStatistics($totalDatasets, $totalSize, $peopleCount, $researchGroupCount);
+        $this->getStatistics($totalDatasets, $totalSize, $peopleCount, $researchGroupCount, $totalDownloadCount);
 
         $result = array();
         $result['totalDatasets'] = $totalDatasets;
         $result['totalSize'] = TwigExtentions::formatBytes($totalSize, 1);
         $result['peopleCount'] = $peopleCount;
         $result['researchGroupCount'] = $researchGroupCount;
+        $result['totalDownloadCount'] = $totalDownloadCount;
 
         $response = new Response(json_encode($result));
         $response->headers->set('Content-Type', 'application/json');
