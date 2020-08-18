@@ -156,7 +156,7 @@
 
 /** Responsive styles for other devices **/
 
-@media (max-width: 991px) {
+@media (max-width: 1091px) {
   .main_menu {
     padding: 15px 0;
   }
@@ -195,7 +195,7 @@
   }
 }
 
-@media only screen and (min-width: 0px) and (max-width: 991px) {
+@media only screen and (min-width: 0px) and (max-width: 1091px) {
   .navbar-brand {
     max-width: 150px;
   }
@@ -224,7 +224,7 @@
   font-weight: bold !important;
 }
 
-@media only screen and (min-width: 992px) {
+@media only screen and (min-width: 1092px) {
   .main_menu {
     .nav-link {
       padding: 0 1rem !important;

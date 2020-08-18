@@ -4,6 +4,9 @@ namespace App\Controller\UI;
 
 use App\Form\ReportResearchGroupDatasetStatusType;
 use App\Entity\ResearchGroup;
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Entity\DIF;
 
 use App\Handler\EntityHandler;
 use Doctrine\Common\Collections\Collection;
@@ -30,17 +33,32 @@ class ReportResearchGroupDatasetStatusController extends ReportController
     const MAXRESEARCHGROUPLENGTH = 46;
 
     /**
+     * Report version number 1.
+     */
+    const REPORT_VERSION_ONE = 1;
+
+    /*
+     * Report version number 2.
+     */
+    const REPORT_VERSION_TWO = 2;
+
+    /**
+     * Report version number 3.
+     */
+    const REPORT_VERSION_THREE = 3;
+
+
+    /**
      * The default action.
      *
      * @param Request       $request         Message information for this Request.
      * @param EntityHandler $entityHandler   The entity handler.
-     * @param integer       $researchGroupId The identifier for the Research Group subject of the report.
      *
      * @Route("/report-researchgroup-dataset-status", name="pelagos_app_ui_reportresearchgroupdatasetstatus_default")
      *
      * @return Response|StreamedResponse A Symfony Response instance.
      */
-    public function defaultAction(Request $request, EntityHandler $entityHandler, int $researchGroupId = null)
+    public function defaultAction(Request $request, EntityHandler $entityHandler)
     {
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
@@ -68,7 +86,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
 
                 return $this->writeCsvResponse(
                     $this->getData(['researchGroup' => $researchGroup]),
-                    $this->createCsvReportFileName($researchGroup->getName(), $researchGroupId)
+                    $this->createCsvReportFileName($researchGroup->getName(), $researchGroupId, self::REPORT_VERSION_ONE)
                 );
             }
         }
@@ -83,21 +101,26 @@ class ReportResearchGroupDatasetStatusController extends ReportController
      *
      * @param Request       $request         Message information for this Request.
      * @param EntityHandler $entityHandler   The entity handler.
+     * @param integer|null  $id              Research group id.
      *
      * @Route(
-     *     "/report-researchgroup/dataset-monitoring",
+     *     "/report-researchgroup/dataset-monitoring/{id}",
      *     name="pelagos_app_ui_reportresearchgroupdatasetstatus_datasetmonitoringreport",
-     *     methods={"GET"}
      *     )
      *
      * @return Response|StreamedResponse A Symfony Response instance.
      */
-    public function datasetMonitoringReportAction(Request $request, EntityHandler $entityHandler)
+    public function datasetMonitoringReportAction(Request $request, EntityHandler $entityHandler, int $id = null)
     {
+        if ($id) {
+            return $this->getReport($id, self::REPORT_VERSION_TWO);
+        }
+        
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('template/AdminOnly.html.twig');
         }
+
         //  fetch all the Research Groups
         $allResearchGroups = $entityHandler->getAll(ResearchGroup::class, array('name' => 'ASC'));
         //  put all the names in an array with the associated doctrine id
@@ -113,6 +136,13 @@ class ReportResearchGroupDatasetStatusController extends ReportController
 
         $form->handleRequest($request);
 
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $researchGroupId = $request->get('ResearchGroupSelector');
+                return $this->getReport($researchGroupId, self::REPORT_VERSION_TWO);
+            }
+        }
+
         return $this->render(
             'Reports/ReportResearchGroupDatasetStatus.html.twig',
             array('form' => $form->createView())
@@ -120,27 +150,82 @@ class ReportResearchGroupDatasetStatusController extends ReportController
     }
 
     /**
-     * The post action for Dataset Submission.
+     * Research group dataset status report for dataset monitoring.
      *
-     * @param Request       $request         The Symfony request object.
+     * @param Request       $request         Message information for this Request.
+     * @param EntityHandler $entityHandler   The entity handler.
+     * @param string|null   $id              Research group id.
      *
      * @Route(
-     *     "/report-researchgroup/dataset-monitoring",
-     *     name="pelagos_app_ui_reportresearchgroupdatasetstatus_post",
-     *     methods={"POST"}
+     *     "/report-researchgroup/grp-report/{id}",
+     *     name="pelagos_app_ui_reportresearchgroupdatasetstatus_grpresearchgroupreport",
      *     )
+     *
+     * @return Response|StreamedResponse A Symfony Response instance.
+     */
+    public function getGrpResearchGroupReport(Request $request, EntityHandler $entityHandler, string $id = null)
+    {
+        if (isset($id) and is_int($id)) {
+            return $this->getReport($id, self::REPORT_VERSION_THREE);
+        }
+
+        // Checks authorization of users
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render('template/AdminOnly.html.twig');
+        }
+
+        //  fetch all the Research Groups
+        $allResearchGroups = $entityHandler->getAll(ResearchGroup::class, array('name' => 'ASC'));
+        //  put all the names in an array with the associated doctrine id
+        $researchGroupNames = array();
+        foreach ($allResearchGroups as $rg) {
+            $researchGroupNames[$rg->getName()] = $rg->getId();
+        }
+        $form = $this->get('form.factory')->createNamed(
+            null,
+            ReportResearchGroupDatasetStatusType::class,
+            $researchGroupNames
+        );
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $researchGroupId = $request->get('ResearchGroupSelector');
+                return $this->getReport($researchGroupId, self::REPORT_VERSION_THREE);
+            }
+        }
+
+        return $this->render(
+            'Reports/ReportResearchGroupDatasetStatus.html.twig',
+            array('form' => $form->createView())
+        );
+    }
+
+    /**
+     * Generate report action for Dataset Research group.
+     *
+     * @param integer $researchGroupId The Research Group ID.
+     * @param integer $version         Report version.
      *
      * @return Response A Response instance.
      */
-    public function postAction(Request $request)
+    private function getReport(int $researchGroupId, int $version)
     {
-        $researchGroupId = $request->get('ResearchGroupSelector');
         $researchGroup = $this->container->get('doctrine')->getRepository(ResearchGroup::class)
             ->findOneBy(array('id' => $researchGroupId));
+        $researchGroupName = $researchGroup->getName();
+
+        if ($version === self::REPORT_VERSION_THREE and $researchGroup instanceof ResearchGroup) {
+            $researchGroupName = $researchGroup->getFundingCycle()->getName() . '_' .
+                $this->getProjectDirectorLastName($researchGroup) . '_' .
+                $researchGroup->getShortName() . '_' .
+                $udi = sprintf('%s.x%03d', $researchGroup->getFundingCycle()->getUdiPrefix(), $researchGroup->getId());
+        }
 
         return $this->writeCsvResponse(
-            $this->getData(['researchGroup' => $researchGroup, 'version' => 2]),
-            $this->createCsvReportFileName($researchGroup->getName(), $researchGroupId)
+            $this->getData(['researchGroup' => $researchGroup, 'version' => $version]),
+            $this->createCsvReportFileName($researchGroupName, $researchGroupId, $version)
         );
     }
 
@@ -154,32 +239,46 @@ class ReportResearchGroupDatasetStatusController extends ReportController
     protected function getData(array $options): array
     {
         $datasets = $options['researchGroup']->getDatasets();
-        $reportData = array();
-
-        if (isset($options['version'])) {
+        $defaultHeaders = $this->getDefaultHeaders();
+        if (isset($options['version']) and $options['version'] === self::REPORT_VERSION_TWO) {
             $reportData = $this->getVersionTwoReport($datasets, $options);
+            $defaultHeaders[0] = $reportData['additionalHeaders'][0];
+            array_shift($reportData['additionalHeaders']);
+        } elseif (isset($options['version']) and $options['version'] === self::REPORT_VERSION_THREE) {
+            $reportData = $this->getVersionThreeReport($datasets, $options);
+            $defaultHeaders[0] = $reportData['additionalHeaders'][0];
+            array_shift($reportData['additionalHeaders']);
         } else {
             $reportData = $this->getVersionOneReport($datasets, $options);
         }
-        return array_merge($this->getDefaultHeaders(), $reportData['additionalHeaders'], $reportData['labels'], $reportData['dataArray']);
+        return array_merge($defaultHeaders, $reportData['additionalHeaders'], $reportData['labels'], $reportData['dataArray']);
     }
 
     /**
      * Create a CSV download filename that contains the truncated research group name and the date/timeto.
      *
-     * @param string $researchGroupName The name of the Research Group which is the subject of the report.
-     * @param string $researchGroupId   The ID of the Research Group which is the subject of the report.
+     * @param string  $researchGroupName The name of the Research Group which is the subject of the report.
+     * @param string  $researchGroupId   The ID of the Research Group which is the subject of the report.
+     * @param integer $version           Report version number.
      *
      * @return string
      */
-    private function createCsvReportFileName(string $researchGroupName, string $researchGroupId)
+    private function createCsvReportFileName(string $researchGroupName, string $researchGroupId, int $version)
     {
         $nowDateTimeString = date(self::REPORTFILENAMEDATETIMEFORMAT);
-        $researchGroupNameSubstring = substr($researchGroupName, 0, self::MAXRESEARCHGROUPLENGTH);
-        $tempFileName = $researchGroupNameSubstring . '_' . $researchGroupId
-            . '_'
+
+        if ($version === self::REPORT_VERSION_THREE) {
+            $tempFileName = $researchGroupName . '_'
             . $nowDateTimeString
             . '.csv';
+        } else {
+            $researchGroupNameSubstring = substr($researchGroupName, 0, self::MAXRESEARCHGROUPLENGTH);
+            $tempFileName = $researchGroupNameSubstring . '_' . $researchGroupId
+                . '_'
+                . $nowDateTimeString
+                . '.csv';
+        }
+
         return str_replace(' ', '_', $tempFileName);
     }
 
@@ -282,7 +381,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         //extra headers to be put in the report
         $additionalHeaders = array(
             array('DATASET REPORT FOR RESEARCH GROUP:',$options['researchGroup']->getName()),
-            array('DATASET COUNT', $datasetCount['string']),
+            array('DATASET COUNT', $datasetCount['number']),
             array(parent::BLANK_LINE));
 
         //prepare label array
@@ -292,7 +391,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
                 'DATASET DOI',
                 'TITLE',
                 'PRIMARY POINT OF CONTACT',
-                'STATUS',
+                'DATASET STATUS',
                 'RESTRICTED',
             )
         );
@@ -301,16 +400,16 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         $dataArray = array();
         if ($datasetCount['number'] > 0) {
             foreach ($datasets as $dataset) {
-                $datasetStatus = $dataset->getStatus();
+                $datasetStatus = $dataset->getDatasetStatus();
                 $ppoc = $dataset->getPrimaryPointOfContact();
-                $ppocString = $ppoc->getLastName() . ', ' .
-                    $ppoc->getFirstName();
+                $ppocString = ($ppoc) ? $ppoc->getLastName() . ', ' .
+                    $ppoc->getFirstName() : null;
                 $dataRow = array(
                     'udi' => $dataset->getUdi(),
                     'doi'=> $dataset->getDoi(),
                     'title' => $dataset->getTitle(),
                     'primaryPointOfContact' => $ppocString,
-                    'datasetStatus' => $datasetStatus,
+                    'datasetStatus' => $this->getDatasetStatus($dataset),
                     'restricted' => ($dataset->isRestricted()) ? 'YES' : 'NO',
                 );
                 $dataArray[] = $dataRow;
@@ -322,5 +421,182 @@ class ReportResearchGroupDatasetStatusController extends ReportController
             'labels' => $labels,
             'dataArray' => $dataArray
         );
+    }
+
+    /**
+     * Get custom dataset status string for the version two report.
+     *
+     * @param Dataset $dataset An instance of dataset entity.
+     *
+     * @return string
+     */
+    private function getDatasetStatus(Dataset $dataset): string
+    {
+        switch (true) {
+            case ($dataset->getStatus() === 'NoDif'):
+                return 'Unapproved DIF';
+                break;
+            case ($dataset->getStatus() === 'DIF'):
+                return 'Approved DIF';
+                break;
+            case ($dataset->getStatus() === 'In Review'):
+                return 'In Review';
+                break;
+            case ($dataset->getStatus() === 'Back to Submitter'):
+                return 'Revisions Requested';
+                break;
+            case (in_array($dataset->getStatus(), ['Completed', 'Completed, Restricted'])):
+                return 'Completed';
+                break;
+            case ($dataset->getStatus() === 'Submitted'):
+                return 'Submitted';
+                break;
+        }
+    }
+
+    /**
+     * Get project directors last name.
+     *
+     * @param ResearchGroup $researchGroup The research group entity instance.
+     *
+     * @return string
+     */
+    private function getProjectDirectorLastName(ResearchGroup $researchGroup): string
+    {
+        $projectDirectorLastName = '';
+        foreach ($researchGroup->getProjectDirectors() as $projectDirector) {
+            if ($projectDirectorLastName) {
+                $projectDirectorLastName = $projectDirectorLastName . '_' . $projectDirector->getLastName();
+            } else {
+                $projectDirectorLastName = $projectDirector->getLastName();
+            }
+        }
+
+        return $projectDirectorLastName;
+    }
+
+    /**
+     * Get data for version three report.
+     *
+     * @param Collection $datasets Collection of datasets.
+     * @param array      $options  Options for report.
+     *
+     * @return array
+     */
+    private function getVersionThreeReport(Collection $datasets, array $options): array
+    {
+        $datasetCount = $this->getDatasetCount($datasets);
+        //extra headers to be put in the report
+        $additionalHeaders = array(
+            array('DATASET REPORT FOR PROJECT:', $options['researchGroup']->getName()),
+            array('PROJECT DIRECTOR', $this->getProjectDirectorName($options['researchGroup'])),
+            array('GRANT AWARD', $options['researchGroup']->getFundingCycle()->getName()),
+            array('DATASET COUNT', $datasetCount['number']),
+            array(parent::BLANK_LINE));
+
+        //prepare label array
+        $labels = array(
+            'labels' => array(
+                'DATASET UDI',
+                'DATASET DOI',
+                'TITLE',
+                'PRIMARY POINT OF CONTACT',
+                'SUBMITTER',
+                'LAST UPDATE',
+                'DATASET STATUS',
+                'RESTRICTED',
+            )
+        );
+
+        //prepare data array
+        $dataArray = array();
+        if ($datasetCount['number'] > 0) {
+            foreach ($datasets as $dataset) {
+                $datasetStatus = $dataset->getDatasetStatus();
+                $ppoc = $dataset->getPrimaryPointOfContact();
+                $ppocString = ($ppoc) ? $ppoc->getLastName() . ', ' .
+                    $ppoc->getFirstName() : null;
+                $dataRow = array(
+                    'udi' => $dataset->getUdi(),
+                    'doi'=> $dataset->getDoi(),
+                    'title' => $dataset->getTitle(),
+                    'primaryPointOfContact' => $ppocString,
+                    'submitter' => $this->getSubmitter($dataset),
+                    'lastUpdate' => $this->getLastUpdate($dataset),
+                    'datasetStatus' => $this->getDatasetStatus($dataset),
+                    'restricted' => ($dataset->isRestricted()) ? 'YES' : 'NO',
+                );
+                $dataArray[] = $dataRow;
+            }
+        }
+
+        return array(
+            'additionalHeaders' => $additionalHeaders,
+            'labels' => $labels,
+            'dataArray' => $dataArray
+        );
+    }
+
+    /**
+     * Get dataset submission submitter name.
+     *
+     * @param Dataset $dataset
+     *
+     * @return string
+     */
+    private function getSubmitter(Dataset $dataset): string
+    {
+        $submitter = '';
+        if ($dataset->getDatasetSubmission() instanceof DatasetSubmission) {
+            $submitter = $dataset->getDatasetSubmission()->getSubmitter()->getLastName() . ', ' .
+                $dataset->getDatasetSubmission()->getSubmitter()->getLastName();
+        }
+        return $submitter;
+    }
+
+    /**
+     * Get dataset's last update date.
+     *
+     * @param Dataset $dataset Instance of Dataset entity.
+     *
+     * @return string
+     */
+    private function getLastUpdate(Dataset $dataset): string
+    {
+        $lastUpdate = 'N/A';
+        if ($dataset->getDatasetSubmission() instanceof DatasetSubmission) {
+            $lastUpdate = $dataset->getDatasetSubmission()->getSubmissionTimeStamp()->format('Y-m-d H:i');
+        } elseif ($dataset->getDif() instanceof DIF) {
+            if ($dataset->getDif()->getApprovedDate()) {
+                $lastUpdate = $dataset->getDif()->getApprovedDate()->format('Y-m-d H:i');
+            } else {
+                $lastUpdate = $dataset->getDif()->getModificationTimeStamp()->format('Y-m-d H:i');
+            }
+        }
+
+        return $lastUpdate;
+    }
+
+    /**
+     * Get project director names.
+     *
+     * @param ResearchGroup $researchGroup Instance of Research group entity.
+     *
+     * @return string
+     */
+    private function getProjectDirectorName(ResearchGroup $researchGroup): string
+    {
+        $projectDirectorNames = '';
+        foreach ($researchGroup->getProjectDirectors() as $projectDirector) {
+            if ($projectDirectorNames) {
+                $projectDirectorNames = $projectDirectorNames . ', ' .
+                    $projectDirector->getLastName() . ', ' .
+                    $projectDirector->getFirstName();
+            } else {
+                $projectDirectorNames = $projectDirector->getLastName() . ', ' .
+                    $projectDirector->getFirstName();
+            }
+        }
+        return $projectDirectorNames;
     }
 }

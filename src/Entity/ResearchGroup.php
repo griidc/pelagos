@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Twig\Extensions as TwigExtentions;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -831,5 +832,21 @@ class ResearchGroup extends Entity
     public function setShortName(?string $shortName) : void
     {
         $this->shortName = $shortName;
+    }
+
+    /**
+     * Returns a collection of project directors (Person entity).
+     *
+     * @return Collection
+     */
+    public function getProjectDirectors(): Collection
+    {
+        $projectDirectors = new ArrayCollection();
+        foreach ($this->getPersonResearchGroups() as $personResearchGroup) {
+            if ($personResearchGroup->getRole()->getName() === ResearchGroupRole::LEADERSHIP) {
+                $projectDirectors->add($personResearchGroup->getPerson());
+            }
+        }
+        return $projectDirectors;
     }
 }

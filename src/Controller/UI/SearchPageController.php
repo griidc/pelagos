@@ -72,6 +72,7 @@ class SearchPageController extends AbstractController
         $fundingOrgInfo = $searchUtil->getFundingOrgAggregations($buildQuery);
         $statusInfo = $searchUtil->getStatusAggregations($buildQuery);
         $fundingCycleInfo = $searchUtil->getFundingCycleAggregations($buildQuery);
+        $projectDirectorInfo = $searchUtil->getProjectDirectorAggregations($buildQuery);
         $elasticScoreFirstResult = null;
         if (!empty($results)) {
             $elasticScoreFirstResult = $resultsBeforeHydration[0]->getResult()->getHit()['_score'];
@@ -93,7 +94,8 @@ class SearchPageController extends AbstractController
                     'researchGroupsInfo' => $researchGroupsInfo,
                     'fundingOrgInfo' => $fundingOrgInfo,
                     'statusInfo' => $statusInfo,
-                    'fundingCycleInfo' => $fundingCycleInfo
+                    'fundingCycleInfo' => $fundingCycleInfo,
+                    'projectDirectorInfo' => $projectDirectorInfo
                 ),
             )
         );
@@ -119,7 +121,8 @@ class SearchPageController extends AbstractController
                 'rgId' => $request->get('researchGroup'),
                 'funOrgId' => $request->get('fundingOrg'),
                 'status' => $request->get('status'),
-                'fundingCycleId' => $request->get('fundingCycle')
+                'fundingCycleId' => $request->get('fundingCycle'),
+                'projectDirectorId' => $request->get('projectDirector')
             ),
             'sessionId' => $request->getSession()->getId()
         );
@@ -159,7 +162,9 @@ class SearchPageController extends AbstractController
             'aggregations' => array(
                 'datasetStatus' => $requestParams['options']['status'],
                 'fundingOrganizations' => $requestParams['options']['funOrgId'],
-                'researchGroups' => $requestParams['options']['rgId']
+                'researchGroups' => $requestParams['options']['rgId'],
+                'fundingCycles' => $requestParams['options']['fundingCycleId'],
+                'projectDirectors' => $requestParams['options']['projectDirectorId']
             )
         );
 

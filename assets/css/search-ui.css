@@ -2,11 +2,6 @@
     background-color: #f8f8f8 !important;
 }
 
-.padding-y {
-    padding-top: 32px;
-    padding-bottom: 32px;
-}
-
 article:after, .form-group:after {
     display: block;
     clear: both;

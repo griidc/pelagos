@@ -45,3 +45,7 @@
 #pelagos-content table {
     border-collapse: collapse;
 }
+
+.awesome-icon {
+    cursor: pointer;
+}

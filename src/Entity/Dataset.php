@@ -675,13 +675,12 @@ class Dataset extends Entity
      */
     public function isRestricted() : bool
     {
-        return in_array(
-            $this->availabilityStatus,
-            array(
-                DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
-                DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED
-            )
-        );
+        $isRestricted = false;
+        if ($this->getDatasetSubmission() instanceof DatasetSubmission and
+            $this->getDatasetSubmission()->getRestrictions() === DatasetSubmission::RESTRICTION_RESTRICTED) {
+            $isRestricted = true;
+        }
+        return $isRestricted;
     }
 
     /**
@@ -812,5 +811,23 @@ class Dataset extends Entity
         }
 
         return $datasetSubmission;
+    }
+
+    /**
+     * Gets Project Directors associated with this Dataset.
+     *
+     * @return ArrayCollection
+     */
+    public function getProjectDirectors(): ArrayCollection
+    {
+        $collection = new ArrayCollection;
+
+        foreach ($this->getResearchGroup()->getPersonResearchGroups() as $personResearchGroup) {
+            if ($personResearchGroup instanceof PersonResearchGroup
+                and $personResearchGroup->getRole()->getName() === ResearchGroupRole::LEADERSHIP) {
+                $collection->add($personResearchGroup->getPerson());
+            }
+        }
+        return $collection;
     }
 }
