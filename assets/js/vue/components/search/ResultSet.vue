@@ -31,7 +31,7 @@
                         <Facet :facet-info="results.facetInfo.statusInfo" :facet-name="facetLabels.status" v-on="$listeners" :formValues="formValues"/>
                         <Facet :facet-info="results.facetInfo.fundingCycleInfo" :facet-name="facetLabels.fundingCycle" v-on="$listeners" :formValues="formValues" v-if="showFundingCycleFacet"/>
                         <Facet :facet-info="results.facetInfo.fundingOrgInfo" :facet-name="facetLabels.fundingOrg" v-on="$listeners" :formValues="formValues" v-else/>
-                        <Facet :facet-info="results.facetInfo.projectDirectorInfo" :facet-name="facetLabels.projectDirector" v-on="$listeners" :formValues="formValues" v-show="showFundingCycleFacet()"/>
+                        <Facet :facet-info="results.facetInfo.projectDirectorInfo" :facet-name="facetLabels.projectDirector" v-on="$listeners" :formValues="formValues" v-show="showFundingCycleFacet"/>
                         <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="facetLabels.researchGroup" v-on="$listeners" :formValues="formValues"/>
                     </div>
                 </aside>
@@ -116,7 +116,7 @@
                     { value: 50, text: '50' },
                     { value: 100, text: '100' }
                     ],
-                    showFundingCycleFacet: templateSwitch.isGrpTemplate(),
+                showFundingCycleFacet: templateSwitch.getFlag('showFundingCycles')
             }
         },
         computed: {

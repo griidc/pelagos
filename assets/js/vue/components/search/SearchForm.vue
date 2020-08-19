@@ -116,7 +116,7 @@
                 resultSet: Object,
                 route: window.location.hash,
                 submitted: false,
-                displayTextBlock: templateSwitch.isGrpTemplate()
+                displayTextBlock: templateSwitch.isBaseTemplate('GRP')
             }
         },
         methods: {
