@@ -3,17 +3,18 @@ import FileManager from "./vue/FileManager";
 const fileManagerElement = document.getElementById("file-manager-app");
 import axios from "axios";
 
-if (fileManagerElement) {
+if (fileManagerElement.dataset.id) {
     new Vue({
         el: '#file-manager-app',
         data() {
             return {
                 fileItems: this.getFileItems(),
-                showFileManager: false
+                showFileManager: false,
+                datasetSubmissionId: Number(fileManagerElement.dataset.id)
             }
         },
         components: { FileManager },
-        template: `<FileManager v-if="showFileManager" :files="fileItems" />`,
+        template: `<FileManager v-if="showFileManager" :files="fileItems" :datasetSubId="datasetSubmissionId"/>`,
         methods: {
             getFileItems: function () {
                 const axiosInstance = axios.create({});
