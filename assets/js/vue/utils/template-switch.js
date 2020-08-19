@@ -3,20 +3,20 @@ const grpLabels = {
     fundingCycle: 'Grant Awards',
     researchGroup:  'Projects',
     fundingOrg: 'Funding Organizations',
-    showFundingCyclesFlag: false
 };
 const grpFlags = {
-    showFundingCycles: false
+    showFundingCycles: false,
+    showProjectDirector: true
 };
 const griidcLabels = {
     status: 'Dataset Status',
     fundingCycle: 'Funding Cycles',
     researchGroup:  'Research Groups',
     fundingOrg: 'Funding Organizations',
-    showFundingCycles: true
 };
 const griidcFlags = {
-    showFundingCycles: true
+    showFundingCycles: true,
+    showProjectDirector: false
 };
 
 export default {
