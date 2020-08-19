@@ -18,7 +18,7 @@ if (fileManagerElement) {
             getFileItems: function () {
                 const axiosInstance = axios.create({});
                 axiosInstance
-                    .get(Routing.generate('pelagos_app_ui_files_get') + "/" + Number(fileManagerElement.dataset.id))
+                    .get(Routing.generate('pelagos_api_get_files_dataset_submission') + "/" + Number(fileManagerElement.dataset.id))
                     .then(response => {
                         // this.fileItems = Object.assign({}, response.data)
                         this.fileItems = response.data;
