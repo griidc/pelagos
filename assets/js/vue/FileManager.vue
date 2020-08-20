@@ -1,7 +1,7 @@
 <template>
     <div>
         <DxFileManager :file-system-provider="customProvider">
-            <DxUpload :chunk-size="500000"/>
+            <DxUpload :chunk-size="10000000"/>
             <DxPermissions
                 :create="true"
                 :copy="true"
@@ -59,10 +59,20 @@ export default {
             moveItem: (item, destDir) => objectProvider.moveItems([item], destDir),
             uploadFileChunk: (file, uploadInfo, destDir) => {
                 const axiosInstance = axios.create({});
+                let formData = new FormData();
+                formData.append("file", file);
+                formData.append("chunkCount", uploadInfo['chunkCount']);
+                formData.append("chunkIndex", uploadInfo['chunkIndex']);
                 axiosInstance
-                    .post(Routing.generate('pelagos_api_post_files_dataset_submission') + "/" + this.datasetSubId, {
-                        file: this.makeFileObject(file, uploadInfo)
-                    })
+                    .post(
+                        Routing.generate('pelagos_api_post_files_dataset_submission') + "/" + this.datasetSubId,
+                        formData,
+                        {
+                            headers: {
+                            'Content-Type': 'multipart/form-data'
+                            }
+                        }
+                    )
                     .then(response => {
                         console.log('success');
                     }).catch(error => {
