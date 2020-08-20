@@ -88,19 +88,19 @@
             return {
                 facetLabels: {
                     status: {
-                        label: 'Dataset Status',
+                        label: templateSwitch.getProperty('status'),
                         queryParam: 'status'
                     },
                     fundingCycle: {
-                        label: templateSwitch.getLabel('fundingCycle'),
+                        label: templateSwitch.getProperty('fundingCycle'),
                         queryParam: 'fundingCycle'
                     },
                     fundingOrg: {
-                        label: 'Funding Organizations',
+                        label: templateSwitch.getProperty('fundingOrg'),
                         queryParam: 'fundingOrg'
                     },
                     researchGroup: {
-                        label: templateSwitch.getLabel('researchGroup'),
+                        label: templateSwitch.getProperty('researchGroup'),
                         queryParam: 'researchGroup'
                     },
                     projectDirector: {
@@ -116,8 +116,8 @@
                     { value: 50, text: '50' },
                     { value: 100, text: '100' }
                     ],
-                showFundingCycleFacet: templateSwitch.getFlag('showFundingCycles'),
-                showProjectDirectorFacet: templateSwitch.getFlag('showProjectDirector')
+                showFundingCycleFacet: templateSwitch.getProperty('showFundingCycles'),
+                showProjectDirectorFacet: templateSwitch.getProperty('showProjectDirector')
             }
         },
         computed: {
