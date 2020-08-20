@@ -1,7 +1,7 @@
 <template>
     <div>
         <DxFileManager :file-system-provider="customProvider">
-            <DxUpload :chunk-size="500000" />
+            <DxUpload :chunk-size="500000"/>
             <DxPermissions
                 :create="true"
                 :copy="true"
@@ -58,23 +58,34 @@ export default {
             copyItem: (item, destDir) => objectProvider.copyItems([item], destDir),
             moveItem: (item, destDir) => objectProvider.moveItems([item], destDir),
             uploadFileChunk: (file, uploadInfo, destDir) => {
-              console.log(uploadInfo);
-              const axiosInstance = axios.create({});
-              axiosInstance
-                  .post(Routing.generate('pelagos_api_post_files_dataset_submission') + "/" + this.datasetSubId, {
-                    files: file
-                  })
-                  .then(response => {
-                    console.log('success');
-                  }).catch(error => {
-                console.log(error);
-              });
-              objectProvider.uploadFileChunk(file, uploadInfo, destDir)
+                const axiosInstance = axios.create({});
+                axiosInstance
+                    .post(Routing.generate('pelagos_api_post_files_dataset_submission') + "/" + this.datasetSubId, {
+                        file: this.makeFileObject(file, uploadInfo)
+                    })
+                    .then(response => {
+                        console.log('success');
+                    }).catch(error => {
+                        console.log(error);
+                });
+                objectProvider.uploadFileChunk(file, uploadInfo, destDir)
             },
             abortFileUpload: (file, uploadInfo, destDir) =>
                 objectProvider.abortFileUpload(file, uploadInfo, destDir),
             downloadItems: items => objectProvider.downloadItems(items)
         });
     },
+    methods: {
+        makeFileObject(file, chunkInfo) {
+            return {
+                name: file.name,
+                size: file.size,
+                lastModified: file.lastModified,
+                lastModifiedDate: file.lastModifiedDate,
+                chunkCount: chunkInfo.chunkCount,
+                chunkIndex: chunkInfo.chunkIndex
+            }
+        }
+    }
 };
 </script>
