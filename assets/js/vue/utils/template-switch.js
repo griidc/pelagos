@@ -48,9 +48,9 @@ export default {
     },
     isBaseTemplate: (name) => {
         if (PELAGOS_TEMPLATE_PROPS === undefined) {
-            return undefined;
+            return false;
         } else if (PELAGOS_TEMPLATE_PROPS.BaseTemplateName === undefined) {
-            return undefined;
+            return false;
         } else if (PELAGOS_TEMPLATE_PROPS.BaseTemplateName === name) {
             return true
         } else {
