@@ -6,12 +6,12 @@ use App\Entity\DatasetSubmission;
 use App\Entity\Fileset;
 
 use App\Util\FileUploader;
+
 use FOS\RestBundle\Controller\Annotations\View;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * Files API Controller.
@@ -77,9 +77,7 @@ class FilesController extends EntityController
     public function postFiles(Request $request, FileUploader $fileUploader)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        dump($request->files);
-//        $file = new File();
-//        $fileUploader->upload($file);
+        $fileUploader->upload($request);
 
         return $this->makeNoContentResponse();
     }

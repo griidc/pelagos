@@ -1,4 +1,7 @@
 {
+    "behat/transliterator": {
+        "version": "v1.3.0"
+    },
     "clue/stream-filter": {
         "version": "v1.4.1"
     },
@@ -143,6 +146,9 @@
         "files": [
             "config/packages/fos_rest.yaml"
         ]
+    },
+    "gedmo/doctrine-extensions": {
+        "version": "v2.4.42"
     },
     "guzzlehttp/guzzle": {
         "version": "6.5.2"
