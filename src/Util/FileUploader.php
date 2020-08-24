@@ -40,6 +40,7 @@ class FileUploader
         $chunkIndex = $request->get('chunkIndex');
         $uploadedFile = $request->files->get('file');
         $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
+        $newFilename = Urlizer::urlize($originalFilename).'-'.uniqid().'.'.$uploadedFile->guessExtension();
 
         if ($totalChunks > 1) {
             $chunksFolder = $this->chunksDirectory . DIRECTORY_SEPARATOR . $originalFilename;
@@ -51,15 +52,19 @@ class FileUploader
                 $chunksFolder,
                 $chunkIndex
             );
-            if ($totalChunks === ($chunkIndex + 1)) {
+
+            if ((int)$totalChunks === ($chunkIndex + 1)) {
                 //combine chunks
                 $targetDirectory = $this->uploadDirectory . DIRECTORY_SEPARATOR . $this->generateGuid();
                 $this->isFolder($targetDirectory);
-                $newFilename = Urlizer::urlize($originalFilename).'-'.uniqid().'.'.$uploadedFile->guessExtension();
                 $targetFile = fopen($targetDirectory . DIRECTORY_SEPARATOR . $newFilename, 'wb');
 
-                for ($i = 1; $i <= $totalChunks; $i++) {
-                    $chunk = fopen($chunksFolder . DIRECTORY_SEPARATOR . $i, 'rb');
+                for ($i = 0; $i < $totalChunks; $i++) {
+                    $chunk = fopen(
+                        $chunksFolder .
+                        DIRECTORY_SEPARATOR .
+                        $i,
+                        'rb');
                     stream_copy_to_stream($chunk, $targetFile);
                     fclose($chunk);
                     unlink($chunksFolder . DIRECTORY_SEPARATOR . $i);
@@ -69,7 +74,6 @@ class FileUploader
                 rmdir($chunksFolder);
             }
         } else {
-            $newFilename = Urlizer::urlize($originalFilename).'-'.uniqid().'.'.$uploadedFile->guessExtension();
             $targetDirectory = $this->uploadDirectory . DIRECTORY_SEPARATOR . $this->generateGuid();
             $this->isFolder($targetDirectory);
             $uploadedFile->move(
