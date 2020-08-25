@@ -36,14 +36,15 @@ class FileUploader
      */
     public function upload(Request $request): void
     {
-        $totalChunks = $request->get('chunkCount');
-        $chunkIndex = $request->get('chunkIndex');
+        $totalChunks = $request->get('dztotalchunkcount');
+        $chunkIndex = $request->get('dzchunkindex');
         $uploadedFile = $request->files->get('file');
         $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
         $newFilename = Urlizer::urlize($originalFilename).'-'.uniqid().'.'.$uploadedFile->guessExtension();
+        $uuid = $request->get('dzuuid');
 
         if ($totalChunks > 1) {
-            $chunksFolder = $this->chunksDirectory . DIRECTORY_SEPARATOR . $originalFilename;
+            $chunksFolder = $this->chunksDirectory . DIRECTORY_SEPARATOR . $uuid;
             $this->isFolder($chunksFolder);
             if (!file_exists($chunksFolder)) {
                 mkdir($chunksFolder, 0755, true);
@@ -55,7 +56,7 @@ class FileUploader
 
             if ((int)$totalChunks === ($chunkIndex + 1)) {
                 //combine chunks
-                $targetDirectory = $this->uploadDirectory . DIRECTORY_SEPARATOR . $this->generateGuid();
+                $targetDirectory = $this->uploadDirectory . DIRECTORY_SEPARATOR . $uuid;
                 $this->isFolder($targetDirectory);
                 $targetFile = fopen($targetDirectory . DIRECTORY_SEPARATOR . $newFilename, 'wb');
 
@@ -75,37 +76,13 @@ class FileUploader
                 rmdir($chunksFolder);
             }
         } else {
-            $targetDirectory = $this->uploadDirectory . DIRECTORY_SEPARATOR . $this->generateGuid();
+            $targetDirectory = $this->uploadDirectory . DIRECTORY_SEPARATOR . $uuid;
             $this->isFolder($targetDirectory);
             $uploadedFile->move(
                 $targetDirectory,
                 $newFilename
             );
         }
-    }
-
-    /**
-     * Generate random GUID.
-     *
-     * @return string
-     */
-    private function generateGuid() : string
-    {
-        if (function_exists('com_create_guid') === true) {
-            return trim(com_create_guid(), '{}');
-        }
-
-        return sprintf(
-            '%04X%04X-%04X-%04X-%04X-%04X%04X%04X',
-            mt_rand(0, 65535),
-            mt_rand(0, 65535),
-            mt_rand(0, 65535),
-            mt_rand(16384, 20479),
-            mt_rand(32768, 49151),
-            mt_rand(0, 65535),
-            mt_rand(0, 65535),
-            mt_rand(0, 65535)
-        );
     }
 
     /**
