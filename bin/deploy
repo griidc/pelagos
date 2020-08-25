@@ -59,6 +59,7 @@ if [[ "$gitresult" =~ "error: pathspec" ]]; then
     echo "Error - I could not find the branch: $branch. Not deploying."
     exit 1
 fi
+git pull
 echo 'Setting Encore PublicPath for GRIIDC site.'
 export publicpath="--publicpath /pelagos-symfony/build"
 echo $publicpath
@@ -68,6 +69,7 @@ deploy
 cd /opt/grp
 git fetch
 git checkout $branch
+git pull
 echo 'Setting Encore PublicPath for GRP Site.'
 export publicpath="--publicpath /build"
 echo $publicpath
