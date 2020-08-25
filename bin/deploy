@@ -42,7 +42,7 @@ cd /opt/pelagos
 git fetch
 # in future, detect local diff on any site and quit if found.
 git checkout $branch
-if [[ "$gitresult" =~ "$error: pathspec".* ]]; then
+if [[ "$gitresult" =~ "^error: pathspec".* ]]; then
     echo "Error. Branch $branch not found."
     exit 1
 fi
