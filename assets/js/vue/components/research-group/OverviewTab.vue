@@ -41,7 +41,7 @@
                     }
                 });
             },
-            getFCLabel: function () { return templateSwitch.getLabel('fundingCycle') }
+            getFCLabel: function () { return templateSwitch.getProperty('fundingCycle') }
         }
     }
 </script>
