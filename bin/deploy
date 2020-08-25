@@ -41,9 +41,9 @@ export prevDir=$PWD
 cd /opt/pelagos
 git fetch
 # in future, detect local diff on any site and quit if found.
-gitresult=`git checkout $branch`
-if [[ "$gitresult" =~ "^error: pathspec".* ]]; then
-    echo "Error. Branch $branch not found."
+gitresult=`git checkout $branch 2>&1`
+if [[ "$gitresult" =~ "error: pathspec" ]]; then
+    echo "Error - I could not find the branch: $branch. Not deploying."
     exit 1
 fi
 echo 'Setting Encore PublicPath for GRIIDC site.'
