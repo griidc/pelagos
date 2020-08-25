@@ -20,6 +20,7 @@ use App\Form\DatasetSubmissionType;
 
 use App\Entity\DatasetSubmission;
 use App\Entity\Dataset;
+use App\Entity\DatasetLink;
 
 /**
  * The DIF controller for the Pelagos UI App Bundle.
@@ -220,6 +221,7 @@ class SideBySideController extends AbstractController
                 'showForceDownload' => false,
                 'researchGroupList' => $researchGroupList,
                 'mode' => 'view',
+                'linkoptions' => DatasetLink::getLinkNameCodeChoices(),
             )
         );
     }
