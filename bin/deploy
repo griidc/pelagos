@@ -25,6 +25,14 @@ function deploy {
     bin/console fos:elastica:populate
 }
 
+function checkdiff {
+    diff=`git diff`
+    if [ ! -z "$diff" ]
+    then
+        echo "Local changes found in $PWD. Not deploying."
+        exit 1
+    fi
+}
 
 if [ $# -eq 0 ]
   then
@@ -37,10 +45,15 @@ branch=$1
 # Save current directory before setting.
 export prevDir=$PWD
 
+# check for local changes
+cd /opt/pelagos
+checkdiff
+cd /opt/grp
+checkdiff
+
 # PELAGOS
 cd /opt/pelagos
 git fetch
-# in future, detect local diff on any site and quit if found.
 gitresult=`git checkout $branch 2>&1`
 if [[ "$gitresult" =~ "error: pathspec" ]]; then
     echo "Error - I could not find the branch: $branch. Not deploying."
