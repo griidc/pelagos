@@ -8,15 +8,15 @@
             value-field="count"
             name="Data Sizes"
             type="bar"
-            :color="$parent.getPrimaryColor()"
+            :color="$parent.getThemeColor('primary')"
         >
             <DxLabel 
                 :visible="true"
-                :backgroundColor="$parent.getSecondaryColor()"
+                :backgroundColor="$parent.getThemeColor('secondary')"
             >
                 <DxConnector 
                 :visible="true"
-                :color="$parent.getSecondaryColor()"
+                :color="$parent.getThemeColor('secondary')"
                 />
             </DxLabel>
         </DxSeries>

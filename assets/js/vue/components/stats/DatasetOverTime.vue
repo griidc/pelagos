@@ -16,13 +16,13 @@
             key="registered"
             value-field="registered"
             name="Registered"
-            :color="$parent.getPrimaryColor()"
+            :color="$parent.getThemeColor('primary')"
         />
         <DxSeries
             key="available"
             value-field="available"
             name="Available"
-            :color="$parent.getSecondaryColor()"
+            :color="$parent.getThemeColor('alternate')"
         />
         <DxMargin :bottom="20"/>
         <DxArgumentAxis

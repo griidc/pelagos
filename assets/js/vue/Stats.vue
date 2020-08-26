@@ -22,12 +22,9 @@
         name: "StatsApp",
         components: { DatasetOverTime, DatasetSizeRanges, RepositorySummary },
           methods: {
-            getPrimaryColor: function () {
-                return getComputedStyle(document.body).getPropertyValue('--primary');
+            getThemeColor: function(color) {
+                return getComputedStyle(document.body).getPropertyValue("--" + color);
             },
-            getSecondaryColor: function () {
-                return getComputedStyle(document.body).getPropertyValue('--secondary');
-            }
           }
     }
 </script>
