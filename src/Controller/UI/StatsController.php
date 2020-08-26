@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
+use App\Entity\LogActionItem;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
 
@@ -48,7 +49,7 @@ class StatsController extends AbstractController
      */
     public function defaultAction()
     {
-        $this->getStatistics($totalDatasets, $totalSize, $peopleCount, $researchGroupCount);
+        $this->getStatistics($totalDatasets, $totalSize, $peopleCount, $researchGroupCount, $totalDownloads);
 
         return $this->render(
             'Stats/index.html.twig',
@@ -57,6 +58,7 @@ class StatsController extends AbstractController
                 'totalsize' => $totalSize,
                 'people' => $peopleCount,
                 'researchGroups' => $researchGroupCount,
+                'totalDownloads' => $totalDownloads,
             )
         );
     }
@@ -68,10 +70,11 @@ class StatsController extends AbstractController
      * @param string|null  $totalSize          The total size of data.
      * @param integer|null $peopleCount        The total count of people.
      * @param integer|null $researchGroupCount The total count of research groups.
+     * @param integer|null $totalDownloads     The total number of downloads.
      *
      * @return void
      */
-    private function getStatistics(?int &$totalDatasets, ?string &$totalSize, ?int &$peopleCount, ?int &$researchGroupCount) : void
+    private function getStatistics(?int &$totalDatasets, ?string &$totalSize, ?int &$peopleCount, ?int &$researchGroupCount, ?int &$totalDownloads) : void
     {
         // Get the people count.
         $peopleCount = $this->entityManager
@@ -87,6 +90,10 @@ class StatsController extends AbstractController
 
         $totalDatasets = $datasetRespository->countRegistered();
         $totalSize = $datasetRespository->totalDatasetSize();
+
+        $logActionItemRepository = $this->entityManager->getRepository(LogActionItem::class);
+
+        $totalDownloads = $logActionItemRepository->countDownloads();
     }
 
     /**
@@ -98,13 +105,14 @@ class StatsController extends AbstractController
      */
     public function getStatisticsJson()
     {
-        $this->getStatistics($totalDatasets, $totalSize, $peopleCount, $researchGroupCount);
+        $this->getStatistics($totalDatasets, $totalSize, $peopleCount, $researchGroupCount, $totalDownloadCount);
 
         $result = array();
         $result['totalDatasets'] = $totalDatasets;
         $result['totalSize'] = TwigExtentions::formatBytes($totalSize, 1);
         $result['peopleCount'] = $peopleCount;
         $result['researchGroupCount'] = $researchGroupCount;
+        $result['totalDownloadCount'] = $totalDownloadCount;
 
         $response = new Response(json_encode($result));
         $response->headers->set('Content-Type', 'application/json');

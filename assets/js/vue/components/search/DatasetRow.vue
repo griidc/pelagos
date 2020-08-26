@@ -11,7 +11,7 @@
             <b-card-title style="font-size: 1.3rem !important;">{{ datasetRowData.title }}</b-card-title>
             <b-card-text class="d-flex justify-content-between" >
                 <div v-if="Object.keys(datasetRowData.datasetSubmission).length > 0">
-                    <div v-if="datasetRowData.datasetSubmission.authors" style="max-width: 400px">
+                    <div v-if="datasetRowData.datasetSubmission.authors" style="max-width: 550px">
                         Authors: {{ datasetRowData.datasetSubmission.authors }}
                     </div>
                     <div v-if="datasetRowData.acceptedDate">
@@ -62,6 +62,7 @@
 <style scoped>
     .card-product {
         margin-bottom: 1rem;
+        transition: .5s;
     }
 
     .card-product:hover .btn-overlay {
@@ -72,5 +73,8 @@
         box-shadow: 0 4px 15px rgba(153, 153, 153, 0.3);
         transition: .5s;
         cursor: pointer;
+    }
+    .card-body {
+      padding: 0.625rem !important;
     }
 </style>
