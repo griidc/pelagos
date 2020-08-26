@@ -3,14 +3,17 @@
 namespace App\Controller\Api;
 
 use App\Entity\DatasetSubmission;
+use App\Entity\File;
 use App\Entity\Fileset;
 
 use App\Util\FileUploader;
 
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations\View;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -60,8 +63,10 @@ class FilesController extends EntityController
     /**
      * Process a post of a file or a file chunk.
      *
-     * @param Request       $request      The Symfony request object.
-     * @param FileUploader  $fileUploader File upload handler service.
+     * @param Request                $request       The Symfony request object.
+     * @param FileUploader           $fileUploader  File upload handler service.
+     * @param EntityManagerInterface $entityManager Entity manager interface instance.
+     * @param string                 $id            Dataset submission id.
      *
      * @View()
      *
@@ -74,10 +79,33 @@ class FilesController extends EntityController
      *
      * @return Response The result of the post.
      */
-    public function postFiles(Request $request, FileUploader $fileUploader)
+    public function postFiles(Request $request, FileUploader $fileUploader, EntityManagerInterface $entityManager, string $id)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $fileUploader->upload($request);
+        try {
+            $file = $fileUploader->upload($request);
+            if ($file['chunk'] === false) {
+                $datasetSubmission = $entityManager->getRepository(DatasetSubmission::class)->find($id);
+                if ($datasetSubmission instanceof DatasetSubmission) {
+                    $fileset = $datasetSubmission->getFileset();
+                    if ($fileset instanceof Fileset) {
+                        $newFile = new File();
+                        $newFile->setFileName($file['name']);
+                        $newFile->setFileSize($file['size']);
+                        $newFile->setUploadedAt(new \DateTime('now'));
+                        $newFile->setUploadedBy($this->getUser()->getPerson());
+                        $newFile->setFilePath($file['path']);
+                        $fileset->addFile($newFile);
+                        $entityManager->persist($fileset);
+                        $entityManager->flush();
+                    }
+                }
+                $entityManager->persist($datasetSubmission);
+                $entityManager->flush();
+            }
+        } catch (\Exception $exception) {
+            throw new BadRequestHttpException($exception->getMessage());
+        }
 
         return $this->makeNoContentResponse();
     }

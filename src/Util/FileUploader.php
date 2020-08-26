@@ -3,6 +3,8 @@
 namespace App\Util;
 
 use Gedmo\Sluggable\Util\Urlizer;
+use phpDocumentor\Reflection\DocBlock\Tags\Var_;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
 class FileUploader
@@ -30,25 +32,28 @@ class FileUploader
     /**
      * File uploader service.
      *
-     * @param Request $request
+     * @param Request $request Symfony request instance.
      *
-     * @return void
+     * @return array
      */
-    public function upload(Request $request): void
+    public function upload(Request $request): array
     {
+        dump($request);
         $totalChunks = $request->get('dztotalchunkcount');
         $chunkIndex = $request->get('dzchunkindex');
+        /** @var UploadedFile $uploadedFile */
         $uploadedFile = $request->files->get('file');
         $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
-        $newFilename = Urlizer::urlize($originalFilename).'-'.uniqid().'.'.$uploadedFile->guessExtension();
+        $fileExtension = $uploadedFile->guessExtension();
+        $newFilename = Urlizer::urlize($originalFilename).'-'.uniqid().'.'.$fileExtension;
         $uuid = $request->get('dzuuid');
+        $targetDirectory = '';
+        $fileSize = $uploadedFile->getSize();
 
         if ($totalChunks > 1) {
             $chunksFolder = $this->chunksDirectory . DIRECTORY_SEPARATOR . $uuid;
             $this->isFolder($chunksFolder);
-            if (!file_exists($chunksFolder)) {
-                mkdir($chunksFolder, 0755, true);
-            }
+            $isChunk = true;
             $uploadedFile->move(
                 $chunksFolder,
                 $chunkIndex
@@ -56,6 +61,7 @@ class FileUploader
 
             if ((int)$totalChunks === ($chunkIndex + 1)) {
                 //combine chunks
+                $isChunk = false;
                 $targetDirectory = $this->uploadDirectory . DIRECTORY_SEPARATOR . $uuid;
                 $this->isFolder($targetDirectory);
                 $targetFile = fopen($targetDirectory . DIRECTORY_SEPARATOR . $newFilename, 'wb');
@@ -75,6 +81,12 @@ class FileUploader
                 fclose($targetFile);
                 rmdir($chunksFolder);
             }
+            $fileMetadata = array(
+                'chunk' => $isChunk,
+                'path' => $targetDirectory . DIRECTORY_SEPARATOR . $newFilename,
+                'name' => $originalFilename . '.' . $fileExtension,
+                'size' => $fileSize,
+            );
         } else {
             $targetDirectory = $this->uploadDirectory . DIRECTORY_SEPARATOR . $uuid;
             $this->isFolder($targetDirectory);
@@ -82,7 +94,16 @@ class FileUploader
                 $targetDirectory,
                 $newFilename
             );
+
+            $fileMetadata = array(
+                'chunk' => false,
+                'path' => $targetDirectory . DIRECTORY_SEPARATOR . $newFilename,
+                'name' => $originalFilename . '.' . $fileExtension,
+                'size' => $fileSize,
+            );
         }
+
+        return $fileMetadata;
     }
 
     /**
