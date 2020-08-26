@@ -90,7 +90,11 @@
             <tr>
                 <td valign="top">
                     {% if dataset.researchGroup.fundingCycle %}
-                        <b>Funding Source:</b><br/>
+                        {% if custom_base_template|default == 'nas-grp-base.html.twig' %}
+                            <b>Grant Award:</b><br/>
+                        {% else %}
+                            <b>Funding Source:</b><br/>
+                        {% endif %}
                         {{ dataset.researchGroup.fundingCycle.name }}
                     {% endif %}
                 </td>
