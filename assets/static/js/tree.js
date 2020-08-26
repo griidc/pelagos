@@ -50,7 +50,13 @@ function insertTree(tree) {
         treeHTML += '            <select id="treetype-selector" onchange="' + on_filter_by_change + 'trees[\'' + tree.name + '\'].selected=null;trees[\'' + tree.name + '\'].type=this.value;updateTree(trees[\'' + tree.name + '\']);">';
         treeHTML += '                <option value="ra"';
         if (tree.type == "ra") treeHTML += ' selected';
-        treeHTML += '>Research Award</option>';
+        if (typeof PELAGOS_TEMPLATE_PROPS !== 'undefined'
+                && PELAGOS_TEMPLATE_PROPS.BaseTemplateName !== 'undefined'
+                && PELAGOS_TEMPLATE_PROPS.BaseTemplateName === 'GRP') {
+            treeHTML += '>Grant Award</option>';
+        } else {
+            treeHTML += '>Research Award</option>';
+        }
         treeHTML += '                <option value="re"';
         if (tree.type == "re") treeHTML += ' selected';
         treeHTML += '>Researcher</option>';
