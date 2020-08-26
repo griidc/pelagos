@@ -10,8 +10,14 @@
             type="bar"
             :color="$parent.getPrimaryColor()"
         >
-            <DxLabel :visible="true">
-                <DxConnector :visible="true"/>
+            <DxLabel 
+                :visible="true"
+                :backgroundColor="$parent.getSecondaryColor()"
+            >
+                <DxConnector 
+                :visible="true"
+                :color="$parent.getSecondaryColor()"
+                />
             </DxLabel>
         </DxSeries>
 
