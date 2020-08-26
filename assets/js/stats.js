@@ -14,9 +14,6 @@ theme.primary = style.getPropertyValue('--primary');
 theme.secondary = style.getPropertyValue('--secondary');
 theme.alternate = style.getPropertyValue('--alternate');
 
-// getComputedStyle(document.documentElement)
-    // .getPropertyValue('--my-variable-name');
-
 new Vue({
   el: '#stats',
   components: { StatsApp },

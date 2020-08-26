@@ -1,61 +1,49 @@
 <template>
-    <div id="chart-demo">
-        <DxChart
-          id="chart"
-          data-source="/stats/data/total-records-over-time"
-            palette="Ocean"
+    <DxChart
+      id="chart"
+      data-source="/stats/data/total-records-over-time"
+    >
+        <DxLoadingIndicator
+            :enabled="true"
+        />
+        <DxCommonSeriesSettings
+            type="line"
+            argument-field="date"
         >
-            <DxLoadingIndicator
-                :enabled="true"
-            />
-            <DxCommonSeriesSettings
-                type="line"
-                argument-field="date"
+            <DxPoint :visible="false"/>
+        </DxCommonSeriesSettings>
+        <DxSeries
+            key="registered"
+            value-field="registered"
+            name="Registered"
+            :color="$parent.getPrimaryColor()"
+        />
+        <DxSeries
+            key="available"
+            value-field="available"
+            name="Available"
+            :color="$parent.getSecondaryColor()"
+        />
+        <DxMargin :bottom="20"/>
+        <DxArgumentAxis
+            format="date"
+        >
+            <DxTick :visible="false"/>
+            <DxMinorTick :visible="false"/>
+            <DxGrid :visible="false"/>
+            <DxLabel
+                :staggering-spacing="10"
+                display-mode="stagger"
             >
-                <DxPoint :visible="false"/>
-            </DxCommonSeriesSettings>
-            <DxSeries
-                key="registered"
-                value-field="registered"
-                name="Registered"
-            />
-            <DxSeries
-                key="available"
-                value-field="available"
-                name="Available"
-            />
-
-            <DxMargin :bottom="20"/>
-            <DxArgumentAxis
-                format="date"
-            >
-                <DxTickInterval :years="0.1"/>
-                <DxMinorTickInterval :months="0.6"/>
-                <DxTick :visible="false"/>
-                <DxMinorTick :visible="false"/>
-                <DxGrid :visible="false"/>
-                <DxLabel
-                    :staggering-spacing="10"
-                    display-mode="stagger"
-                >
-                    <DxFormat
-                        type="monthAndYear"
-                    />
-                
-                </DxLabel>
-            </DxArgumentAxis>
-            <DxLegend
-                vertical-alignment="bottom"
-                horizontal-alignment="center"
-                item-text-position="bottom"
-            />
-            <DxExport :enabled="true"/>
-            <DxTitle text="Total Datasets Over Time">
-                <DxSubtitle text="(Test)"/>
-            </DxTitle>
-            <DxTooltip :enabled="true"/>
-        </DxChart>
-    </div>
+                <DxFormat
+                    type="monthAndYear"
+                />
+            </DxLabel>
+        </DxArgumentAxis>
+        <DxTitle text="Total Datasets Over Time">
+        </DxTitle>
+        <DxTooltip :enabled="true"/>
+    </DxChart>
 </template>
 
 <script>
@@ -82,11 +70,9 @@ import {
   DxAggregationInterval,
   DxFormat
 } from 'devextreme-vue/chart';
-import DxSelectBox from 'devextreme-vue/select-box';
 
 export default {
   components: {
-    DxSelectBox,
     DxChart,
     DxSeries,
     DxArgumentAxis,
@@ -108,32 +94,10 @@ export default {
     DxZoomAndPan,
     DxAggregationInterval,
     DxFormat
-  },
+  }
 };
 </script>
 
 <style>
-.options {
-    padding: 20px;
-    background-color: rgba(191, 191, 191, 0.15);
-    margin-top: 20px;
-}
 
-.option {
-    margin-top: 10px;
-}
-
-.caption {
-    font-size: 18px;
-    font-weight: 500;
-}
-
-.option > span {
-    margin-right: 10px;
-}
-
-.option > .dx-widget {
-    display: inline-block;
-    vertical-align: middle;
-}
 </style>

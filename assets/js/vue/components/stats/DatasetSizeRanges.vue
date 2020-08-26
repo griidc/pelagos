@@ -2,13 +2,13 @@
     <DxChart
         id="chart"
         data-source="/stats/data/dataset-size-ranges"
-        palette="Ocean"
     >
         <DxSeries
             argument-field="label"
             value-field="count"
             name="Data Sizes"
             type="bar"
+            :color="$parent.getPrimaryColor()"
         >
             <DxLabel :visible="true">
                 <DxConnector :visible="true"/>
@@ -29,6 +29,9 @@
         <DxTitle text="Dataset Size Ranges">
             <DxSubtitle text="(number of datasets)"/>
         </DxTitle>
+        <DxLegend
+            :visible="false"
+        />
     </DxChart>
 </template>
 <script>
@@ -40,7 +43,8 @@ import {
     DxValueAxis,
     DxTitle,
     DxSubtitle,
-    DxTick
+    DxTick,
+    DxLegend
 } from 'devextreme-vue/chart';
 
 export default {
@@ -52,7 +56,8 @@ export default {
     DxValueAxis,
     DxTitle,
     DxSubtitle,
-    DxTick
+    DxTick,
+    DxLegend
   }
 };
 </script>
