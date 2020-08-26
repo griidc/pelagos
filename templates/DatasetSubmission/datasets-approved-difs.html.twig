@@ -36,7 +36,11 @@ set properties = [
     >
     <thead>
         <tr>
-            <th>Research Group</th>
+            {% if custom_base_template|default == 'nas-grp-base.html.twig' %}
+                <th>Project</th>
+            {% else %}
+                <th>Research Group</th>
+            {% endif %}
             <th>Dataset UDI</th>
             <th>Dataset Title</th>
         </tr>
