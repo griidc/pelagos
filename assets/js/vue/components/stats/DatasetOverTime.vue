@@ -22,7 +22,7 @@
             key="available"
             value-field="available"
             name="Available"
-            :color="$parent.getThemeColor('alternate')"
+            :color="$parent.getThemeColor('secondary')"
         />
         <DxMargin :bottom="20"/>
         <DxArgumentAxis
