@@ -1,7 +1,7 @@
 <template>
-    <div id="program-resources" style="height:100%; width:100%; display:table;padding:100px;">
+    <div id="program-resources" style="height:100%; width:100%; display:table;padding:50px;">
         <div style="display:table-row;">
-            <div class="caption" style="display:table-cell;">Repository Summary</div>
+            <div class="summaryLabel" style="display:table-cell;">Repository Summary</div>
         </div>
         <div style="display:table-row;">
             <div style="display:table-cell;">
@@ -69,5 +69,17 @@
 </script>
 
 <style scoped>
+.summaryLabel {
+    white-space:pre;
+    font-size:28px;
+    font-family:'Segoe UI Light', 'Helvetica Neue Light', 'Segoe UI', 'Helvetica Neue', 'Trebuchet MS', Verdana, sans-serif;
+    font-weight:200;
+    fill:#232323;
+    cursor:default;
+    color: #324b52;
+    text-align: center;
+    line-height: 100%;
+    padding: 50px;
+}
 
 </style>

@@ -139,12 +139,12 @@ class StatsController extends AbstractController
 
         $registered = array();
         foreach ($registeredDatasets as $index => $value) {
-            $registered[] = array('date' => ($value['creationTimeStamp']->format('Y/m/d')), 'registered' => ($index + 1));
+            $registered[] = array('date' => ($value['creationTimeStamp']->format('Y-m-d')), 'registered' => ($index + 1));
         }
 
         $available = array();
         foreach ($availableDatasets as $index => $value) {
-            $available[] = array('date' => ($value['creationTimeStamp']->format('Y/m/d')), 'available' => ($index + 1));
+            $available[] = array('date' => ($value['creationTimeStamp']->format('Y-m-d')), 'available' => ($index + 1));
         }
 
         $result = array();

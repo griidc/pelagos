@@ -9,6 +9,7 @@
         <DxCommonSeriesSettings
             type="line"
             argument-field="date"
+            
         >
             <DxPoint :visible="false"/>
         </DxCommonSeriesSettings>
@@ -26,22 +27,37 @@
         />
         <DxMargin :bottom="20"/>
         <DxArgumentAxis
-            format="date"
+            argument-type="datetime"
         >
-            <DxTick :visible="false"/>
-            <DxMinorTick :visible="false"/>
-            <DxGrid :visible="false"/>
-            <DxLabel
-                :staggering-spacing="10"
-                display-mode="stagger"
-            >
+            <DxGrid :visible="true"/>
+            <DxTick :visible="true"/>
+            <DxMinorTick :visible="true"/>
+            <DxTickInterval :months="6"/>
+            <DxMinorTickInterval :months="1"/>
+            <DxLabel>
                 <DxFormat
                     type="monthAndYear"
                 />
             </DxLabel>
         </DxArgumentAxis>
+        <DxValueAxis
+            value-type="numeric"
+            type="continuous"
+            title="Number of Datasets"
+            precision="1"
+            format="decimal"
+        >
+            <DxTick 
+            :visible="true"
+            />
+        </DxValueAxis>
         <DxTitle text="Total Datasets Over Time">
         </DxTitle>
+        <DxLegend
+            position="inside"
+            horizontal-alignment="left"
+            vertical-alignment="top"
+        />
         <DxTooltip :enabled="true"/>
     </DxChart>
 </template>
@@ -68,7 +84,8 @@ import {
   DxLoadingIndicator,
   DxZoomAndPan,
   DxAggregationInterval,
-  DxFormat
+  DxFormat,
+  DxValueAxis,
 } from 'devextreme-vue/chart';
 
 export default {
@@ -93,7 +110,8 @@ export default {
     DxLoadingIndicator,
     DxZoomAndPan,
     DxAggregationInterval,
-    DxFormat
+    DxFormat,
+    DxValueAxis,
   }
 };
 </script>

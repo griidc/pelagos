@@ -20,7 +20,7 @@
                 />
             </DxLabel>
         </DxSeries>
-
+        <DxMargin :bottom="100"/>
         <DxValueAxis
             value-type="numeric"
             type="continuous"
@@ -33,7 +33,6 @@
             />
         </DxValueAxis>
         <DxTitle text="Dataset Size Ranges">
-            <DxSubtitle text="(number of datasets)"/>
         </DxTitle>
         <DxLegend
             :visible="false"
@@ -50,7 +49,8 @@ import {
     DxTitle,
     DxSubtitle,
     DxTick,
-    DxLegend
+    DxLegend,
+    DxMargin
 } from 'devextreme-vue/chart';
 
 export default {
@@ -63,7 +63,8 @@ export default {
     DxTitle,
     DxSubtitle,
     DxTick,
-    DxLegend
+    DxLegend,
+    DxMargin
   }
 };
 </script>
