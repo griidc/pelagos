@@ -9,7 +9,7 @@
                     <tr>
                         <td>
                             <img src="~images/icon-datasets.png">
-                            <div class="count">{{datasets}}</div>
+                            <div class="count">{{(datasets == 0) ? '-' : datasets}}</div>
                             <div class="label">Datasets</div>
                         </td>
                         <td>
@@ -40,15 +40,16 @@
 </template>
 
 <script>
+    const axios = require('axios');
     export default {
         name: "RepositorySummary",
         data() {
             return {
-                datasets: '-',
-                totalsize: '-',
-                totalDownloads: '-',
-                researchGroups: '-',
-                people: '-',
+                datasets: 0,
+                totalsize: 0,
+                totalDownloads: 0,
+                researchGroups: 0,
+                people: 0,
             }
         },
         created () {

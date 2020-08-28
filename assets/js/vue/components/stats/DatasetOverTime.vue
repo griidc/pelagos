@@ -17,13 +17,13 @@
             key="registered"
             value-field="registered"
             name="Registered"
-            :color="$parent.getThemeColor('primary')"
+            :color="this.getThemeColor('primary')"
         />
         <DxSeries
             key="available"
             value-field="available"
             name="Available"
-            :color="$parent.getThemeColor('secondary')"
+            :color="this.getThemeColor('secondary')"
         />
         <DxMargin :bottom="20"/>
         <DxArgumentAxis
@@ -63,33 +63,9 @@
 </template>
 
 <script>
-import {
-  DxChart,
-  DxSeries,
-  DxArgumentAxis,
-  DxCommonSeriesSettings,
-  DxExport,
-  DxGrid,
-  DxMargin,
-  DxLegend,
-  DxTitle,
-  DxSubtitle,
-  DxTooltip,
-  DxPoint,
-  DxTick,
-  DxTickInterval,
-  DxMinorTickInterval,
-  DxMinorTick,
-  DxLabel,
-  DxLoadingIndicator,
-  DxZoomAndPan,
-  DxAggregationInterval,
-  DxFormat,
-  DxValueAxis,
-} from 'devextreme-vue/chart';
+import {themeFunctions} from '@/vue/mixins/themeFunctions';
 
-export default {
-  components: {
+import {
     DxChart,
     DxSeries,
     DxArgumentAxis,
@@ -112,7 +88,35 @@ export default {
     DxAggregationInterval,
     DxFormat,
     DxValueAxis,
-  }
+} from 'devextreme-vue/chart';
+
+export default {
+    name: "DatasetOverTime",
+    components: {
+        DxChart,
+        DxSeries,
+        DxArgumentAxis,
+        DxCommonSeriesSettings,
+        DxExport,
+        DxGrid,
+        DxMargin,
+        DxLegend,
+        DxTitle,
+        DxSubtitle,
+        DxTooltip,
+        DxPoint,
+        DxTick,
+        DxTickInterval,
+        DxMinorTickInterval,
+        DxMinorTick,
+        DxLabel,
+        DxLoadingIndicator,
+        DxZoomAndPan,
+        DxAggregationInterval,
+        DxFormat,
+        DxValueAxis,
+    },
+    mixins: [themeFunctions]
 };
 </script>
 

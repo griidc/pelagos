@@ -8,15 +8,15 @@
             value-field="count"
             name="Data Sizes"
             type="bar"
-            :color="$parent.getThemeColor('primary')"
+            :color="this.getThemeColor('primary')"
         >
             <DxLabel 
                 :visible="true"
-                :backgroundColor="$parent.getThemeColor('secondary')"
+                :backgroundColor="this.getThemeColor('secondary')"
             >
                 <DxConnector 
                 :visible="true"
-                :color="$parent.getThemeColor('secondary')"
+                :color="this.getThemeColor('secondary')"
                 />
             </DxLabel>
         </DxSeries>
@@ -40,6 +40,8 @@
     </DxChart>
 </template>
 <script>
+import {themeFunctions} from '@/vue/mixins/themeFunctions';
+
 import {
     DxChart,
     DxSeries,
@@ -54,18 +56,20 @@ import {
 } from 'devextreme-vue/chart';
 
 export default {
-  components: {
-    DxChart,
-    DxSeries,
-    DxLabel,
-    DxConnector,
-    DxValueAxis,
-    DxTitle,
-    DxSubtitle,
-    DxTick,
-    DxLegend,
-    DxMargin
-  }
+    name: "GivemeName",
+    components: {
+        DxChart,
+        DxSeries,
+        DxLabel,
+        DxConnector,
+        DxValueAxis,
+        DxTitle,
+        DxSubtitle,
+        DxTick,
+        DxLegend,
+        DxMargin
+    },
+    mixins: [themeFunctions]
 };
 </script>
 <style>

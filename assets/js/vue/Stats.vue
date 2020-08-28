@@ -13,7 +13,6 @@
 </template>
 
 <script>
-    const axios = require('axios');
     import DatasetOverTime from "./components/stats/DatasetOverTime";
     import DatasetSizeRanges from "./components/stats/DatasetSizeRanges";
     import RepositorySummary from "./components/stats/RepositorySummary";
@@ -21,11 +20,6 @@
     export default {
         name: "StatsApp",
         components: { DatasetOverTime, DatasetSizeRanges, RepositorySummary },
-          methods: {
-            getThemeColor: function(color) {
-                return getComputedStyle(document.body).getPropertyValue("--" + color);
-            },
-          }
     }
 </script>
 
