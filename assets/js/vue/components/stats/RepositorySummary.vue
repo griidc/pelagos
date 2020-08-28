@@ -71,7 +71,6 @@
 <style scoped>
 .summaryLabel {
     font-size:28px;
-    font-family:'Segoe UI Light', 'Helvetica Neue Light', 'Segoe UI', 'Helvetica Neue', 'Trebuchet MS', Verdana, sans-serif;
     font-weight:200;
     cursor:default;
     text-align: center;
@@ -91,14 +90,14 @@
 
 .display-table-cell {
     display: table-cell;
-    margin: 100px;
 }
 
 #program-resources {
     height:100%;
     width:100%;
     display:table;
-    padding:20px;
+    padding-bottom:20px;
+    font-family:'Segoe UI Light', 'Helvetica Neue Light', 'Segoe UI', 'Helvetica Neue', 'Trebuchet MS', Verdana, sans-serif;
 }
 
 #program-resources table {
@@ -120,12 +119,12 @@
     font-size: 30px;
     font-weight: 600;
     line-height: 1.33em;
-    font-family: "Lato", Arial, sans-serif;
 }
 
 #program-resources .label {
-    font-size: 14px;
+    font-size: 18px;
     text-transform: uppercase;
+    
 }
 
 </style>
