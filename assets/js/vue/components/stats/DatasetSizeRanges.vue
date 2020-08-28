@@ -20,7 +20,7 @@
                 />
             </DxLabel>
         </DxSeries>
-        <DxMargin :bottom="100"/>
+        <DxMargin :bottom="20"/>
         <DxValueAxis
             value-type="numeric"
             type="continuous"

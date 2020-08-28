@@ -1,5 +1,5 @@
 <template>
-    <div id="program-resources" style="height:100%; width:100%; display:table;padding:50px;">
+    <div id="program-resources">
         <div style="display:table-row;">
             <div class="summaryLabel" style="display:table-cell;">Repository Summary</div>
         </div>
@@ -70,16 +70,62 @@
 
 <style scoped>
 .summaryLabel {
-    white-space:pre;
     font-size:28px;
     font-family:'Segoe UI Light', 'Helvetica Neue Light', 'Segoe UI', 'Helvetica Neue', 'Trebuchet MS', Verdana, sans-serif;
     font-weight:200;
-    fill:#232323;
     cursor:default;
-    color: #324b52;
     text-align: center;
     line-height: 100%;
-    padding: 50px;
+    padding: 20px;
+}
+
+.display-table {
+    display: table;
+    width: 100%;
+    height: 100vh;
+}
+
+.display-table-row {
+    display: table-row;
+}
+
+.display-table-cell {
+    display: table-cell;
+    margin: 100px;
+}
+
+#program-resources {
+    height:100%;
+    width:100%;
+    display:table;
+    padding:20px;
+}
+
+#program-resources table {
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: normal;
+    border-collapse: collapse;
+    border-spacing: 0px;
+}
+
+#program-resources table td {
+    text-align: center;
+    border: none;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+#program-resources .count {
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1.33em;
+    font-family: "Lato", Arial, sans-serif;
+}
+
+#program-resources .label {
+    font-size: 14px;
+    text-transform: uppercase;
 }
 
 </style>
