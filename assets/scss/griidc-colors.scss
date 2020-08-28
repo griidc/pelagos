@@ -63,7 +63,11 @@ $theme-colors: (
     "identified":    $gray-600,
     "restricted":    $red,
     "remotlyhosted": $yellow,
-    "coldstorage":   $iceBlue
+    "coldstorage":   $iceBlue,
+    "chart-primary":   $teal,
+    "chart-secondary":   $light-cyan,
+    "chart-alternate":   $dark-green,
+    
 );
 
 $colors: (

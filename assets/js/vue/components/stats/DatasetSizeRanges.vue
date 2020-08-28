@@ -8,15 +8,15 @@
             value-field="count"
             name="Data Sizes"
             type="bar"
-            :color="this.getThemeColor('primary')"
+            :color="this.getThemeColor('chart-secondary')"
         >
             <DxLabel 
                 :visible="true"
-                :backgroundColor="this.getThemeColor('secondary')"
+                :backgroundColor="this.getThemeColor('chart-alternate')"
             >
                 <DxConnector 
                 :visible="true"
-                :color="this.getThemeColor('secondary')"
+                :color="this.getThemeColor('chart-alternate')"
                 />
             </DxLabel>
         </DxSeries>

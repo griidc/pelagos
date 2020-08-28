@@ -9,27 +9,27 @@
                     <tr>
                         <td>
                             <img src="~images/icon-datasets.png">
-                            <div class="count">{{(datasets == 0) ? '-' : datasets}}</div>
+                            <div class="count">{{ (datasets == 0) ? '-' : datasets }}</div>
                             <div class="label">Datasets</div>
                         </td>
                         <td>
                             <img src="~images/icon-filesize.png">
-                            <div class="count">{{totalsize}}</div>
+                            <div class="count">{{ (totalsize == 0) ? '-' : totalsize }}</div>
                             <div class="label">TB Of Data</div>
                         </td>
                         <td>
                             <img src="~images/icon-downloads.png">
-                            <div class="count">{{totalDownloads}}</div>
+                            <div class="count">{{ (totalDownloads == 0) ? '-' : totalDownloads }}</div>
                             <div class="label">Total Downloads</div>
                         </td>
                         <td>
                             <img src="~images/icon-projects.png">
-                            <div class="count">{{researchGroups}}</div>
+                            <div class="count">{{ (researchGroups == 0) ? '-' : researchGroups }}</div>
                             <div class="label">Research Groups</div>
                         </td>
                         <td>
                             <img src="~images/icon-researchers.png">
-                            <div class="count">{{people}}</div>
+                            <div class="count">{{ (people  == 0) ? '-' : people }}</div>
                             <div class="label">People</div>
                         </td>
                     </tr>

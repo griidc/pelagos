@@ -13,9 +13,9 @@
 </template>
 
 <script>
-    import DatasetOverTime from "./components/stats/DatasetOverTime";
-    import DatasetSizeRanges from "./components/stats/DatasetSizeRanges";
-    import RepositorySummary from "./components/stats/RepositorySummary";
+    import DatasetOverTime from "@/vue/components/stats/DatasetOverTime";
+    import DatasetSizeRanges from "@/vue/components/stats/DatasetSizeRanges";
+    import RepositorySummary from "@/vue/components/stats/RepositorySummary";
 
     export default {
         name: "StatsApp",
