@@ -1,15 +1,11 @@
 <template>
     <DxChart
-      id="chart"
+      id="dot-chart"
       data-source="/stats/data/total-records-over-time"
     >
-        <DxLoadingIndicator
-            :enabled="true"
-        />
         <DxCommonSeriesSettings
             type="line"
             argument-field="date"
-            
         >
             <DxPoint :visible="false"/>
         </DxCommonSeriesSettings>
@@ -44,11 +40,14 @@
             value-type="numeric"
             type="continuous"
             title="Number of Datasets"
-            precision="1"
-            format="decimal"
         >
-            <DxTick 
-            :visible="true"
+            <DxLabel>
+                <DxFormat
+                    type="decimal"
+                />
+            </DxLabel>
+            <DxTick
+                :visible="true"
             />
         </DxValueAxis>
         <DxTitle text="Total Datasets Over Time">
@@ -70,12 +69,10 @@ import {
     DxSeries,
     DxArgumentAxis,
     DxCommonSeriesSettings,
-    DxExport,
     DxGrid,
     DxMargin,
     DxLegend,
     DxTitle,
-    DxSubtitle,
     DxTooltip,
     DxPoint,
     DxTick,
@@ -84,8 +81,6 @@ import {
     DxMinorTick,
     DxLabel,
     DxLoadingIndicator,
-    DxZoomAndPan,
-    DxAggregationInterval,
     DxFormat,
     DxValueAxis,
 } from 'devextreme-vue/chart';
@@ -97,12 +92,10 @@ export default {
         DxSeries,
         DxArgumentAxis,
         DxCommonSeriesSettings,
-        DxExport,
         DxGrid,
         DxMargin,
         DxLegend,
         DxTitle,
-        DxSubtitle,
         DxTooltip,
         DxPoint,
         DxTick,
@@ -111,8 +104,6 @@ export default {
         DxMinorTick,
         DxLabel,
         DxLoadingIndicator,
-        DxZoomAndPan,
-        DxAggregationInterval,
         DxFormat,
         DxValueAxis,
     },

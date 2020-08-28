@@ -1,8 +1,11 @@
 <template>
     <DxChart
-        id="chart"
+        id="dsr-chart"
         data-source="/stats/data/dataset-size-ranges"
     >
+        <DxLoadingIndicator
+            :enabled="true"
+        />
         <DxSeries
             argument-field="label"
             value-field="count"
@@ -10,11 +13,11 @@
             type="bar"
             :color="this.getThemeColor('chart-secondary')"
         >
-            <DxLabel 
+            <DxLabel
                 :visible="true"
                 :backgroundColor="this.getThemeColor('chart-alternate')"
             >
-                <DxConnector 
+                <DxConnector
                 :visible="true"
                 :color="this.getThemeColor('chart-alternate')"
                 />
@@ -25,11 +28,14 @@
             value-type="numeric"
             type="continuous"
             title="Number of Datasets"
-            precision="1"
-            format="decimal"
         >
-            <DxTick 
-            :visible="true"
+            <DxLabel>
+                <DxFormat
+                    type="decimal"
+                />
+            </DxLabel>
+            <DxTick
+                :visible="true"
             />
         </DxValueAxis>
         <DxTitle text="Dataset Size Ranges">
@@ -52,11 +58,13 @@ import {
     DxSubtitle,
     DxTick,
     DxLegend,
-    DxMargin
+    DxMargin,
+    DxLoadingIndicator,
+    DxFormat
 } from 'devextreme-vue/chart';
 
 export default {
-    name: "GivemeName",
+    name: "DatasetSizeRanges",
     components: {
         DxChart,
         DxSeries,
@@ -67,13 +75,14 @@ export default {
         DxSubtitle,
         DxTick,
         DxLegend,
-        DxMargin
+        DxMargin,
+        DxLoadingIndicator,
+        DxFormat
     },
     mixins: [themeFunctions]
 };
 </script>
+
 <style>
-#chart {
-    height: 440px;
-}
+
 </style>

@@ -125,7 +125,6 @@
 #program-resources .label {
     font-size: 18px;
     text-transform: uppercase;
-    
-}
 
+}
 </style>
