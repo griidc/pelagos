@@ -1,39 +1,31 @@
 <template>
-    <div id="program-resources">
-        <div style="display:table-row;">
-            <div class="summaryLabel" style="display:table-cell;">Repository Summary</div>
-        </div>
-        <div style="display:table-row;">
-            <div style="display:table-cell;">
-                <table>
-                    <tr>
-                        <td>
-                            <img src="~images/icon-datasets.png">
-                            <div class="count">{{ (datasets == 0) ? '-' : datasets }}</div>
-                            <div class="label">Datasets</div>
-                        </td>
-                        <td>
-                            <img src="~images/icon-filesize.png">
-                            <div class="count">{{ (totalsize == 0) ? '-' : totalsize }}</div>
-                            <div class="label">TB Of Data</div>
-                        </td>
-                        <td>
-                            <img src="~images/icon-downloads.png">
-                            <div class="count">{{ (totalDownloads == 0) ? '-' : totalDownloads }}</div>
-                            <div class="label">Total Downloads</div>
-                        </td>
-                        <td>
-                            <img src="~images/icon-projects.png">
-                            <div class="count">{{ (researchGroups == 0) ? '-' : researchGroups }}</div>
-                            <div class="label">Research Groups</div>
-                        </td>
-                        <td>
-                            <img src="~images/icon-researchers.png">
-                            <div class="count">{{ (people  == 0) ? '-' : people }}</div>
-                            <div class="label">People</div>
-                        </td>
-                    </tr>
-                </table>
+    <div id="program-resources" class="text-center">
+        <div class="summaryLabel text-center">Repository Summary</div>
+        <div class="row">
+            <div class="col-sm">
+                <img src="~images/icon-datasets.png">
+                <div class="count">{{ (datasets == 0) ? '-' : datasets }}</div>
+                <div class="label">Datasets</div>
+            </div>
+            <div class="col-sm">
+                <img src="~images/icon-filesize.png">
+                <div class="count">{{ (totalsize == 0) ? '-' : totalsize }}</div>
+                <div class="label">TB Of Data</div>
+            </div>
+            <div class="col-sm">
+                <img src="~images/icon-downloads.png">
+                <div class="count">{{ (totalDownloads == 0) ? '-' : totalDownloads }}</div>
+                <div class="label">Total Downloads</div>
+            </div>
+            <div class="col-sm">
+                <img src="~images/icon-projects.png">
+                <div class="count">{{ (researchGroups == 0) ? '-' : researchGroups }}</div>
+                <div class="label">Research Groups</div>
+            </div>
+            <div class="col-sm">
+                <img src="~images/icon-researchers.png">
+                <div class="count">{{ (people  == 0) ? '-' : people }}</div>
+                <div class="label">People</div>
             </div>
         </div>
     </div>
@@ -70,50 +62,16 @@
 </script>
 
 <style scoped>
-.summaryLabel {
-    font-size:28px;
-    font-weight:200;
-    cursor:default;
-    text-align: center;
-    line-height: 100%;
-    padding: 20px;
-}
-
-.display-table {
-    display: table;
-    width: 100%;
-    height: 100vh;
-}
-
-.display-table-row {
-    display: table-row;
-}
-
-.display-table-cell {
-    display: table-cell;
-}
-
 #program-resources {
-    height:100%;
-    width:100%;
-    display:table;
     padding-bottom:20px;
     font-family:'Segoe UI Light', 'Helvetica Neue Light', 'Segoe UI', 'Helvetica Neue', 'Trebuchet MS', Verdana, sans-serif;
 }
 
-#program-resources table {
-    margin-left: auto;
-    margin-right: auto;
-    font-weight: normal;
-    border-collapse: collapse;
-    border-spacing: 0px;
-}
-
-#program-resources table td {
-    text-align: center;
-    border: none;
-    padding-left: 20px;
-    padding-right: 20px;
+#program-resource .summaryLabel {
+    font-size:28px;
+    font-weight:200;
+    cursor:default;
+    padding: 20px;
 }
 
 #program-resources .count {
