@@ -39,10 +39,32 @@ if (fileManagerElement.dataset.id) {
     let myDropzone = new Dropzone("div#dropzone-uploader", {
         url: Routing.generate('pelagos_api_post_files_dataset_submission') + "/" + datasetSubmissionId,
         chunking: true,
-        chunkSize: 1024*1024,
+        chunkSize: 50000,
         forceChunking: false,
         parallelChunkUploads: true,
         retryChunks: true,
-        retryChunksLimit: 3
+        retryChunksLimit: 3,
+        chunksUploaded: function(file, done) {
+            // All chunks have been uploaded. Perform any other actions
+            let currentFile = file;
+
+            const axiosInstance = axios.create({});
+            let formData = new FormData();
+            formData.append("file", currentFile);
+            axiosInstance
+                .post(
+                    Routing.generate('pelagos_api_combine_chunks')
+                    + "/"
+                    + datasetSubmissionId
+                    + "?dzuuid=" + currentFile.upload.uuid
+                    + "&dztotalchunkcount=" + currentFile.upload.totalChunkCount,
+                    formData)
+                .then(response => {
+                    done();
+                }).catch(error => {
+                    currentFile.accepted = false;
+                    myDropzone._errorProcessing([currentFile], error.message);
+            });
+    },
     });
 }

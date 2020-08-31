@@ -83,30 +83,75 @@ class FilesController extends EntityController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         try {
-            $file = $fileUploader->upload($request);
-            if ($file['chunk'] === false) {
-                $datasetSubmission = $entityManager->getRepository(DatasetSubmission::class)->find($id);
-                if ($datasetSubmission instanceof DatasetSubmission) {
-                    $fileset = $datasetSubmission->getFileset();
-                    if ($fileset instanceof Fileset) {
-                        $newFile = new File();
-                        $newFile->setFileName($file['name']);
-                        $newFile->setFileSize($file['size']);
-                        $newFile->setUploadedAt(new \DateTime('now'));
-                        $newFile->setUploadedBy($this->getUser()->getPerson());
-                        $newFile->setFilePath($file['path']);
-                        $fileset->addFile($newFile);
-                        $entityManager->persist($fileset);
-                        $entityManager->flush();
-                    }
-                }
-                $entityManager->persist($datasetSubmission);
-                $entityManager->flush();
+            $fileMetadata = $fileUploader->upload($request);
+            if ($fileMetadata['chunk'] === false) {
+                $this->updateFileEntity($fileMetadata, $entityManager, $id);
             }
         } catch (\Exception $exception) {
             throw new BadRequestHttpException($exception->getMessage());
         }
 
         return $this->makeNoContentResponse();
+    }
+
+    /**
+     * Combine file chunks.
+     *
+     * @param Request                $request       The Symfony request object.
+     * @param FileUploader           $fileUploader  File upload handler service.
+     * @param EntityManagerInterface $entityManager Entity manager interface instance.
+     * @param string                 $id            Dataset submission id.
+     *
+     * @View()
+     *
+     * @Route(
+     *     "/api/files_dataset_submission/combine-chunks/{id}",
+     *     name="pelagos_api_combine_chunks",
+     *     methods={"POST"},
+     *     defaults={"_format"="json"}
+     *     )
+     *
+     * @return Response The result of the post.
+     */
+    public function combineChunks(Request $request, FileUploader $fileUploader, EntityManagerInterface $entityManager, string $id)
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        try {
+            $fileMetadata = $fileUploader->combineChunks($request);
+            $this->updateFileEntity($fileMetadata, $entityManager, $id);
+        } catch (\Exception $exception) {
+            throw new BadRequestHttpException($exception->getMessage());
+        }
+        return $this->makeNoContentResponse();
+    }
+
+    /**
+     * Update Fileset entity.
+     *
+     * @param array                  $fileMetadata  File metadata for the uploaded file.
+     * @param EntityManagerInterface $entityManager Entity manager interface instance.
+     * @param string                 $id            Dataset submission id.
+     *
+     * @return void
+     */
+    private function updateFileEntity(array $fileMetadata, EntityManagerInterface $entityManager, string $id): void
+    {
+        $datasetSubmission = $entityManager->getRepository(DatasetSubmission::class)->find($id);
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            $fileset = $datasetSubmission->getFileset();
+            if ($fileset instanceof Fileset) {
+                $newFile = new File();
+                $newFile->setFileName($fileMetadata['name']);
+                $newFile->setFileSize($fileMetadata['size']);
+                $newFile->setUploadedAt(new \DateTime('now'));
+                $newFile->setUploadedBy($this->getUser()->getPerson());
+                $newFile->setFilePath($fileMetadata['path']);
+                $fileset->addFile($newFile);
+                $entityManager->persist($fileset);
+                $entityManager->flush();
+            }
+        }
+        $entityManager->persist($datasetSubmission);
+        $entityManager->flush();
     }
 }
