@@ -3,6 +3,9 @@
       id="dot-chart"
       data-source="/stats/data/total-records-over-time"
     >
+        <DxLoadingIndicator
+            :enabled="true"
+        />
         <DxCommonSeriesSettings
             type="line"
             argument-field="date"

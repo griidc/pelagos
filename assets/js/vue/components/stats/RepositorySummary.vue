@@ -67,7 +67,7 @@
     font-family:'Segoe UI Light', 'Helvetica Neue Light', 'Segoe UI', 'Helvetica Neue', 'Trebuchet MS', Verdana, sans-serif;
 }
 
-#program-resource .summaryLabel {
+.summaryLabel {
     font-size:28px;
     font-weight:200;
     cursor:default;
