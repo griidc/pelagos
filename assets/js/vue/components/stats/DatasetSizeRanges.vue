@@ -1,7 +1,7 @@
 <template>
     <DxChart
         id="dsr-chart"
-        data-source="/stats/data/dataset-size-ranges"
+        :data-source="datasetUrl"
     >
         <DxLoadingIndicator
             :enabled="true"
@@ -77,7 +77,12 @@ export default {
         DxLoadingIndicator,
         DxFormat
     },
-    mixins: [themeFunctions]
+    mixins: [themeFunctions],
+    data() {
+        return {
+            datasetUrl: Routing.generate("pelagos_app_ui_stats_getdatasetsizeranges"),
+        };
+    },
 };
 </script>
 

@@ -1,7 +1,7 @@
 <template>
     <DxChart
       id="dot-chart"
-      data-source="/stats/data/total-records-over-time"
+      :data-source="datasetUrl"
     >
         <DxLoadingIndicator
             :enabled="true"
@@ -110,7 +110,12 @@ export default {
         DxFormat,
         DxValueAxis,
     },
-    mixins: [themeFunctions]
+    mixins: [themeFunctions],
+    data() {
+        return {
+            datasetUrl: Routing.generate("pelagos_app_ui_stats_getdatasetovertime"),
+        };
+    },
 };
 </script>
 
