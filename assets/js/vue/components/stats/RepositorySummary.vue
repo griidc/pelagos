@@ -64,7 +64,7 @@
 <style scoped>
 #program-resources {
     padding-bottom:20px;
-    font-family:var(--baseFontFamily);
+    font-family:var(--main-fonts);
 }
 
 .summaryLabel {
