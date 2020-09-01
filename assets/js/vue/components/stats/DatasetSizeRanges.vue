@@ -22,7 +22,7 @@
                 :color="this.getThemeProperty('chart-alternate')"
                 />
                 <DxFont
-                    :family="this.getThemeProperty('baseFontFamily')"
+                    :family="this.getThemeProperty('main-fonts')"
                 />
             </DxLabel>
         </DxSeries>
@@ -30,7 +30,7 @@
         <DxArgumentAxis>
             <DxLabel>
                 <DxFont
-                    :family="this.getThemeProperty('baseFontFamily')"
+                    :family="this.getThemeProperty('main-fonts')"
                 />
             </DxLabel>
         </DxArgumentAxis>
@@ -40,7 +40,7 @@
         >
             <DxTitle text="Number of Datasets">
                 <DxFont
-                    :family="this.getThemeProperty('baseFontFamily')"
+                    :family="this.getThemeProperty('main-fonts')"
                 />
             </DxTitle>
             <DxLabel>
@@ -48,7 +48,7 @@
                     type="decimal"
                 />
                 <DxFont
-                    :family="this.getThemeProperty('baseFontFamily')"
+                    :family="this.getThemeProperty('main-fonts')"
                 />
             </DxLabel>
             <DxTick
@@ -57,7 +57,7 @@
         </DxValueAxis>
         <DxTitle text="Dataset Size Ranges">
             <DxFont
-                :family="this.getThemeProperty('baseFontFamily')"
+                :family="this.getThemeProperty('main-fonts')"
             />
         </DxTitle>
         <DxLegend

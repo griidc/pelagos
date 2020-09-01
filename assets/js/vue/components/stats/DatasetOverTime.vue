@@ -14,7 +14,7 @@
             <DxLabel
             >
                 <DxFont
-                    :family="this.getThemeProperty('baseFontFamily')"
+                    :family="this.getThemeProperty('main-fonts')"
                 />
             </DxLabel>
         </DxCommonSeriesSettings>
@@ -44,7 +44,7 @@
                     type="monthAndYear"
                 />
                 <DxFont
-                    :family="this.getThemeProperty('baseFontFamily')"
+                    :family="this.getThemeProperty('main-fonts')"
                 />
             </DxLabel>
         </DxArgumentAxis>
@@ -54,7 +54,7 @@
         >
             <DxTitle text="Total Datasets Over Time">
                 <DxFont
-                    :family="this.getThemeProperty('baseFontFamily')"
+                    :family="this.getThemeProperty('main-fonts')"
                 />
             </DxTitle>
             <DxLabel>
@@ -62,7 +62,7 @@
                     type="decimal"
                 />
                 <DxFont
-                    :family="this.getThemeProperty('baseFontFamily')"
+                    :family="this.getThemeProperty('main-fonts')"
                 />
             </DxLabel>
             <DxTick
@@ -71,7 +71,7 @@
         </DxValueAxis>
         <DxTitle text="Total Datasets Over Time">
             <DxFont
-                :family="this.getThemeProperty('baseFontFamily')"
+                :family="this.getThemeProperty('main-fonts')"
             />
         </DxTitle>
         <DxLegend
@@ -80,7 +80,7 @@
             vertical-alignment="top"
         >
             <DxFont
-                :family="this.getThemeProperty('baseFontFamily')"
+                :family="this.getThemeProperty('main-fonts')"
             />
         </DxLegend>
         <DxTooltip :enabled="true"/>
