@@ -64,7 +64,7 @@
 <style scoped>
 #program-resources {
     padding-bottom:20px;
-    font-family:'Segoe UI Light', 'Helvetica Neue Light', 'Segoe UI', 'Helvetica Neue', 'Trebuchet MS', Verdana, sans-serif;
+    font-family:var(--baseFontFamily);
 }
 
 .summaryLabel {

@@ -11,18 +11,24 @@
             argument-field="date"
         >
             <DxPoint :visible="false"/>
+            <DxLabel
+            >
+                <DxFont
+                    :family="this.getThemeProperty('baseFontFamily')"
+                />
+            </DxLabel>
         </DxCommonSeriesSettings>
         <DxSeries
             key="registered"
             value-field="registered"
             name="Registered"
-            :color="this.getThemeColor('chart-primary')"
+            :color="this.getThemeProperty('chart-primary')"
         />
         <DxSeries
             key="available"
             value-field="available"
             name="Available"
-            :color="this.getThemeColor('chart-secondary')"
+            :color="this.getThemeProperty('chart-secondary')"
         />
         <DxMargin :bottom="20"/>
         <DxArgumentAxis
@@ -37,16 +43,26 @@
                 <DxFormat
                     type="monthAndYear"
                 />
+                <DxFont
+                    :family="this.getThemeProperty('baseFontFamily')"
+                />
             </DxLabel>
         </DxArgumentAxis>
         <DxValueAxis
             value-type="numeric"
             type="continuous"
-            title="Number of Datasets"
         >
+            <DxTitle text="Total Datasets Over Time">
+                <DxFont
+                    :family="this.getThemeProperty('baseFontFamily')"
+                />
+            </DxTitle>
             <DxLabel>
                 <DxFormat
                     type="decimal"
+                />
+                <DxFont
+                    :family="this.getThemeProperty('baseFontFamily')"
                 />
             </DxLabel>
             <DxTick
@@ -54,12 +70,19 @@
             />
         </DxValueAxis>
         <DxTitle text="Total Datasets Over Time">
+            <DxFont
+                :family="this.getThemeProperty('baseFontFamily')"
+            />
         </DxTitle>
         <DxLegend
             position="inside"
             horizontal-alignment="left"
             vertical-alignment="top"
-        />
+        >
+            <DxFont
+                :family="this.getThemeProperty('baseFontFamily')"
+            />
+        </DxLegend>
         <DxTooltip :enabled="true"/>
     </DxChart>
 </template>
@@ -86,6 +109,7 @@ import {
     DxLoadingIndicator,
     DxFormat,
     DxValueAxis,
+    DxFont,
 } from 'devextreme-vue/chart';
 
 export default {
@@ -109,6 +133,7 @@ export default {
         DxLoadingIndicator,
         DxFormat,
         DxValueAxis,
+        DxFont,
     },
     mixins: [themeFunctions],
     data() {

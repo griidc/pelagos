@@ -11,27 +11,44 @@
             value-field="count"
             name="Data Sizes"
             type="bar"
-            :color="this.getThemeColor('chart-secondary')"
+            :color="this.getThemeProperty('chart-secondary')"
         >
             <DxLabel
                 :visible="true"
-                :backgroundColor="this.getThemeColor('chart-alternate')"
+                :backgroundColor="this.getThemeProperty('chart-alternate')"
             >
                 <DxConnector
                 :visible="true"
-                :color="this.getThemeColor('chart-alternate')"
+                :color="this.getThemeProperty('chart-alternate')"
+                />
+                <DxFont
+                    :family="this.getThemeProperty('baseFontFamily')"
                 />
             </DxLabel>
         </DxSeries>
         <DxMargin :bottom="20"/>
+        <DxArgumentAxis>
+            <DxLabel>
+                <DxFont
+                    :family="this.getThemeProperty('baseFontFamily')"
+                />
+            </DxLabel>
+        </DxArgumentAxis>
         <DxValueAxis
             value-type="numeric"
             type="continuous"
-            title="Number of Datasets"
         >
+            <DxTitle text="Number of Datasets">
+                <DxFont
+                    :family="this.getThemeProperty('baseFontFamily')"
+                />
+            </DxTitle>
             <DxLabel>
                 <DxFormat
                     type="decimal"
+                />
+                <DxFont
+                    :family="this.getThemeProperty('baseFontFamily')"
                 />
             </DxLabel>
             <DxTick
@@ -39,6 +56,9 @@
             />
         </DxValueAxis>
         <DxTitle text="Dataset Size Ranges">
+            <DxFont
+                :family="this.getThemeProperty('baseFontFamily')"
+            />
         </DxTitle>
         <DxLegend
             :visible="false"
@@ -59,7 +79,9 @@ import {
     DxLegend,
     DxMargin,
     DxLoadingIndicator,
-    DxFormat
+    DxFormat,
+    DxFont,
+    DxArgumentAxis,
 } from 'devextreme-vue/chart';
 
 export default {
@@ -75,7 +97,9 @@ export default {
         DxLegend,
         DxMargin,
         DxLoadingIndicator,
-        DxFormat
+        DxFormat,
+        DxFont,
+        DxArgumentAxis,
     },
     mixins: [themeFunctions],
     data() {
