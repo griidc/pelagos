@@ -1,13 +1,15 @@
 <template>
-    <div class="row">
-        <div class="col-xl-12">
-            <repository-summary />
-        </div>
-        <div class="col-xl-12">
-            <dataset-over-time />
-        </div>
-        <div class="col-xl-12">
-            <dataset-size-ranges />
+    <div class="dx-viewport">
+        <div class="row">
+            <div class="col-xl-12">
+                <repository-summary />
+            </div>
+            <div class="col-xl-12">
+                <dataset-over-time />
+            </div>
+            <div class="col-xl-12">
+                <dataset-size-ranges />
+            </div>
         </div>
     </div>
 </template>
