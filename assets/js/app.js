@@ -20,11 +20,12 @@ import '../scss/griidc.scss';
 
 const routes = require('../../public/js/fos_js_routes.json');
 import Routing from '../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min.js';
-import templateSwitch from "@/vue/utils/template-switch.js";
-global.templateSwitch =  templateSwitch;
 
 Routing.setRoutingData(routes);
 global.Routing = Routing;
+
+import templateSwitch from "@/vue/utils/template-switch.js";
+global.templateSwitch =  templateSwitch;
 
 $( document ).ready(function() {
     $("#pelagos-menu-1").hoverIntent(hoverIn, hoverOut, 'li');
