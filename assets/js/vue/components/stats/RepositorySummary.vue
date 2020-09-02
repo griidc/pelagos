@@ -20,7 +20,7 @@
             <div class="col-sm">
                 <img src="~images/icon-projects.png">
                 <div class="count">{{ (researchGroups == 0) ? '-' : researchGroups }}</div>
-                <div class="label">Research Groups</div>
+                <div class="label">{{ getRGLabel() }}</div>
             </div>
             <div class="col-sm">
                 <img src="~images/icon-researchers.png">
@@ -32,6 +32,7 @@
 </template>
 
 <script>
+    import templateSwitch from "../../utils/template-switch.js";
     const axios = require('axios');
     export default {
         name: "RepositorySummary",
@@ -57,6 +58,9 @@
                 }).catch(error => {
                     console.log(error);
             });
+        },
+        methods: {
+            getRGLabel: function () { return templateSwitch.getProperty('researchGroup') }
         }
     }
 </script>
