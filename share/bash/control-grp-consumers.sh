@@ -5,7 +5,7 @@
 #
 # This script to be copied to or symlinked at /usr/local/bin and set to executable.
 #
-# This script is called by the pelagos-consumer.service service with either a
+# This script is called by the grp-consumer.service service with either a
 # start or stop argument.
 
 # Get function from functions library
