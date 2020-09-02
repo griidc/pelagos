@@ -1,52 +1,22 @@
-{% extends "template/UI.html.twig" %}
+{% extends "base.html.twig" %}
 {% block title %}System Statistics{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
-
-    <link href="{{ asset('build/css/stats.css') }}" rel="stylesheet" />
+    {{ encore_entry_link_tags('stats') }}
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.resize.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.time.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.pie.min.js"></script>
-
-    <script type="text/javascript" src="{{ asset('build/js/jquery.flot.barnumbers.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('build/js/stats.js') }}"></script>
-
-
+    
+    {{ encore_entry_script_tags('stats') }}
 {% endblock %}
 
 {% block body %}
-    <div class="display-table">
-        <div class="display-table-row">
-            <div class="display-table-cell">
-                <h1>System Statistics (as of {{ 'now'|date('F j, Y') }})</h1>
+    <div class="bootstrap">
+        <div class="container-fluid">
+            <div id="stats">
             </div>
-        </div>
-        <div class="display-table-row">
-            <div id="stats-container" class="display-table-cell">
-                <div id="stats-tabs">
-                    <div style="display: table-cell; height:100%;">
-                        <div class="stats-overview" style="margin-bottom: -10px;">
-                            <div class="stats-overview-row">
-                                {% include "Stats/total-records-over-time.html.twig" %}
-                            </div>
-                        </div>
-                        <div class="stats-overview">
-                            <div class="stats-overview-row">
-                                {% include "Stats/dataset-size-ranges.html.twig" %}
-                                {% include "Stats/program-resources.html.twig" %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </div> 
     </div>
-    <div id="section_canvas_div"></div>
 {% endblock %}

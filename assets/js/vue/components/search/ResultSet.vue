@@ -29,9 +29,9 @@
                 <aside class="col-lg-3">
                     <div class="card card-filter">
                         <Facet :facet-info="results.facetInfo.statusInfo" :facet-name="facetLabels.status" v-on="$listeners" :formValues="formValues"/>
-                        <Facet :facet-info="results.facetInfo.fundingCycleInfo" :facet-name="facetLabels.fundingCycle" v-on="$listeners" :formValues="formValues" v-if="showFundingCycleFacet()"/>
+                        <Facet :facet-info="results.facetInfo.fundingCycleInfo" :facet-name="facetLabels.fundingCycle" v-on="$listeners" :formValues="formValues" v-if="showFundingCycleFacet"/>
                         <Facet :facet-info="results.facetInfo.fundingOrgInfo" :facet-name="facetLabels.fundingOrg" v-on="$listeners" :formValues="formValues" v-else/>
-                        <Facet :facet-info="results.facetInfo.projectDirectorInfo" :facet-name="facetLabels.projectDirector" v-on="$listeners" :formValues="formValues" v-show="showFundingCycleFacet()"/>
+                        <Facet :facet-info="results.facetInfo.projectDirectorInfo" :facet-name="facetLabels.projectDirector" v-on="$listeners" :formValues="formValues" v-show="showProjectDirectorFacet"/>
                         <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="facetLabels.researchGroup" v-on="$listeners" :formValues="formValues"/>
                     </div>
                 </aside>
@@ -71,6 +71,8 @@
 <script>
     import Facet from "./Facet";
     import DatasetRow from "./DatasetRow";
+    import templateSwitch from "../../utils/template-switch.js";
+
     export default {
         name: "ResultSet",
         components: { DatasetRow, Facet },
@@ -86,19 +88,19 @@
             return {
                 facetLabels: {
                     status: {
-                        label: 'Dataset Status',
+                        label: templateSwitch.getProperty('status'),
                         queryParam: 'status'
                     },
                     fundingCycle: {
-                        label: 'Funding Cycles',
+                        label: templateSwitch.getProperty('fundingCycle'),
                         queryParam: 'fundingCycle'
                     },
                     fundingOrg: {
-                        label: 'Funding Organizations',
+                        label: templateSwitch.getProperty('fundingOrg'),
                         queryParam: 'fundingOrg'
                     },
                     researchGroup: {
-                        label: 'Research Groups',
+                        label: templateSwitch.getProperty('researchGroup'),
                         queryParam: 'researchGroup'
                     },
                     projectDirector: {
@@ -113,7 +115,9 @@
                     { value: 25, text: '25' },
                     { value: 50, text: '50' },
                     { value: 100, text: '100' }
-                ]
+                    ],
+                showFundingCycleFacet: templateSwitch.getProperty('showFundingCycles'),
+                showProjectDirectorFacet: templateSwitch.getProperty('showProjectDirector')
             }
         },
         computed: {
@@ -129,15 +133,6 @@
                 this.$emit('noOfResults', value);
             }
         },
-        methods: {
-            showFundingCycleFacet: function () {
-                if (typeof window.PELAGOS_TEMPLATE_PROPS !== 'undefined') {
-                    return window.PELAGOS_TEMPLATE_PROPS.fundingCycleFacet;
-                } else {
-                    return false;
-                }
-            }
-        }
     }
 </script>
 

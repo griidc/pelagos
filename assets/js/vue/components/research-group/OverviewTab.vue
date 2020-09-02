@@ -13,7 +13,7 @@
                 {{ overview.fundingCycle.fundingOrganization.name }}
             </a>
         </p>
-        <h6 class="font-weight-bold">Funding Cycle</h6>
+        <h6 class="font-weight-bold">{{ getFCLabel() }}</h6>
         <p>
             <a :href="overview.fundingCycle.url">
                 {{ overview.fundingCycle.name }}
@@ -25,6 +25,7 @@
 </template>
 
 <script>
+    import templateSwitch from "../../utils/template-switch.js";
     export default {
         name: "OverviewTab",
         props: {
@@ -39,7 +40,8 @@
                         return person;
                     }
                 });
-            }
+            },
+            getFCLabel: function () { return templateSwitch.getProperty('fundingCycle') }
         }
     }
 </script>
