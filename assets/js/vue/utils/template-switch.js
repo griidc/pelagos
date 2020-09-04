@@ -8,6 +8,7 @@ const templateVariables = {
         showFundingCycles: false,
         showProjectDirector: false,
         displayTextBlock: false,
+        researchAwardOption: "Research Award",
     },
     "GRP" : {
         status: "Dataset Status",
@@ -17,6 +18,7 @@ const templateVariables = {
         showFundingCycles: true,
         showProjectDirector: true,
         displayTextBlock: true,
+        researchAwardOption: "Grant Award",
     }
 };
 
