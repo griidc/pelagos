@@ -132,29 +132,25 @@ class StatsController extends AbstractController
         $registeredDatasets = $this->entityManager
             ->getRepository(DatasetSubmission::class)
             ->getRegisteredDatasets();
-
+        
         $availableDatasets = $this->entityManager
             ->getRepository(DatasetSubmission::class)
             ->getAvailableDatasets();
 
         $registered = array();
         foreach ($registeredDatasets as $index => $value) {
-            $registered[] = array(($value['creationTimeStamp']->format('U') * 1000), ($index + 1));
-            $index = $index;
+            $registered[] = array('date' => ($value['creationTimeStamp']->format('Y-m-d')), 'registered' => ($index + 1));
         }
-        $registered[] = array((time() * 1000), count($registered));
 
         $available = array();
         foreach ($availableDatasets as $index => $value) {
-            $available[] = array(($value['creationTimeStamp']->format('U') * 1000), ($index + 1));
+            $available[] = array('date' => ($value['creationTimeStamp']->format('Y-m-d')), 'available' => ($index + 1));
         }
-        $available[] = array((time() * 1000), count($available));
 
         $result = array();
-        $result['page'] = 'overview';
-        $result['section'] = 'total-records-over-time';
-        $result['data'][0] = array ('label' => 'Submitted', 'data' => $registered);
-        $result['data'][1] = array ('label' => 'Available', 'data' => $available);
+
+        $result = array_merge($available, $registered);
+        sort($result);
 
         $response = new Response(json_encode($result));
         $response->headers->set('Content-Type', 'application/json');
@@ -181,36 +177,30 @@ class StatsController extends AbstractController
         $dataSizeRanges = array(
             array(
                 'label' => '< 1 MB',
-                'color' => '#c6c8f9',
                 'range1' => ($dataSizes['MB'])
             ),
             array(
                 'label' => '1 MB - 100 MB',
-                'color' => '#88F',
                 'range0' => ($dataSizes['MB']),
                 'range1' => ($dataSizes['MB'] * 100)
             ),
             array(
                 'label' => '100 MB - 1 GB',
-                'color' => '#90c593',
                 'range0' => ($dataSizes['MB'] * 100),
                 'range1' => ($dataSizes['GB'])
             ),
             array(
                 'label' => '1 GB - 100 GB',
-                'color' => 'yellow',
                 'range0' => ($dataSizes['GB']),
                 'range1' => ($dataSizes['GB'] * 100)
             ),
             array(
                 'label' => '100 GB - 1 TB',
-                'color' => '#f6d493',
                 'range0' => ($dataSizes['GB'] * 100),
                 'range1' => ($dataSizes['TB'])
             ),
             array(
                 'label' => '> 1 TB',
-                'color' => '#f6b4b5',
                 'range0' => ($dataSizes['TB'])
             )
         );
@@ -226,17 +216,13 @@ class StatsController extends AbstractController
 
             $datasetCount = $repository->getDatasetByFileSizeRange($lower, $upper);
 
-            $dataSizes[] = array('label' => $range['label'],
-                'data' => array(array($index * 0.971 + 0.171, $datasetCount)),
-                'bars' => array('barWidth' => 0.8),
+            $dataSizes[] = array(
+                'label' => $range['label'],
+                'count' => $datasetCount,
             );
         }
 
-        $datasetSizeRanges = array(
-            'page' => 'overview',
-            'section' => 'dataset-size-ranges',
-            'data' => $dataSizes,
-        );
+        $datasetSizeRanges = $dataSizes;
 
         $response = new Response(json_encode($datasetSizeRanges));
         $response->headers->set('Content-Type', 'application/json');
