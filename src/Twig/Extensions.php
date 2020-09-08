@@ -131,7 +131,7 @@ class Extensions extends AbstractExtension
      *
      * @return string Filename of basepath, or default.
      */
-    public function doesTwigFileExist(string $file, string $default) : string
+    public function doesTwigFileExist(string $file, string $default = "") : string
     {
         if (empty($file)) {
             return $default;

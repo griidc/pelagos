@@ -7,7 +7,6 @@
 const $ = require('jquery');
 global.$ = global.jQuery = $;
 
-
 require('../css/template.css');
 require('../css/jira-buttons.css');
 require('../css/superfish-navbar.css');
@@ -24,6 +23,9 @@ import Routing from '../../vendor/friendsofsymfony/jsrouting-bundle/Resources/pu
 
 Routing.setRoutingData(routes);
 global.Routing = Routing;
+
+import templateSwitch from "@/vue/utils/template-switch.js";
+global.templateSwitch =  templateSwitch;
 
 $( document ).ready(function() {
     $("#pelagos-menu-1").hoverIntent(hoverIn, hoverOut, 'li');

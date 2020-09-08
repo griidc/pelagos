@@ -1,5 +1,6 @@
 var Encore = require('@symfony/webpack-encore');
 var arguments = require('yargs').argv;
+var path = require('path');
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -38,6 +39,7 @@ Encore
     .addEntry('nas-app', './assets/js/nas-app.js')
     .addEntry('research-group', './assets/js/research-group.js')
     .addEntry('grp-home', './assets/js/grp-home.js')
+    .addEntry('stats', './assets/js/stats.js')
 
     // enables Sass/SCSS support
     .enableSassLoader()
@@ -50,6 +52,10 @@ Encore
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
 
+    .addAliases({
+        '@': path.resolve(__dirname, 'assets', 'js'),
+        'images': path.resolve(__dirname, 'assets', 'images'),
+    })
 
     /*
      * FEATURE CONFIG

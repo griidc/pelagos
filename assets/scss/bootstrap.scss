@@ -3,6 +3,12 @@ div.bootstrap, .tooltip, header.bootstrap {
     @import '~bootstrap-vue';
 }
 
+:root {
+  @each $color, $value in $theme-colors {
+    --#{$color}: #{$value};
+  }
+}
+
 .tooltip {
     font-size: 10px;
     display: block !important;

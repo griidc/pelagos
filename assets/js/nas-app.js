@@ -22,6 +22,9 @@ import Routing from '../../vendor/friendsofsymfony/jsrouting-bundle/Resources/pu
 Routing.setRoutingData(routes);
 global.Routing = Routing;
 
+import templateSwitch from "@/vue/utils/template-switch.js";
+global.templateSwitch =  templateSwitch;
+
 function toggleDropdown (event) {
     const dropdown = $(event.target).closest('.dropdown'),
         menu = $('.dropdown-menu', dropdown);
