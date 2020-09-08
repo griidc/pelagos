@@ -39,7 +39,7 @@ if (fileManagerElement.dataset.id) {
     let myDropzone = new Dropzone("div#dropzone-uploader", {
         url: Routing.generate('pelagos_api_post_files_dataset_submission') + "/" + datasetSubmissionId,
         chunking: true,
-        chunkSize: 50000,
+        chunkSize: 1024*1024,
         forceChunking: false,
         parallelChunkUploads: true,
         retryChunks: true,
@@ -47,18 +47,17 @@ if (fileManagerElement.dataset.id) {
         chunksUploaded: function(file, done) {
             // All chunks have been uploaded. Perform any other actions
             let currentFile = file;
-
             const axiosInstance = axios.create({});
-            let formData = new FormData();
-            formData.append("file", currentFile);
             axiosInstance
                 .post(
                     Routing.generate('pelagos_api_combine_chunks')
                     + "/"
                     + datasetSubmissionId
                     + "?dzuuid=" + currentFile.upload.uuid
-                    + "&dztotalchunkcount=" + currentFile.upload.totalChunkCount,
-                    formData)
+                    + "&dztotalchunkcount=" + currentFile.upload.totalChunkCount
+                    + "&fileName=" + currentFile.name
+                    + "&dztotalfilesize=" + currentFile.upload.dztotalfilesize
+                )
                 .then(response => {
                     done();
                 }).catch(error => {

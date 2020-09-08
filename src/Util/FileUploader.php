@@ -38,43 +38,43 @@ class FileUploader
      */
     public function upload(Request $request): array
     {
-        $fileInfo = $this->getFileInfo($request);
-        $newFilename = Urlizer::urlize($fileInfo['originalFilename']).'-'.uniqid().'.'.$fileInfo['fileExtension'];
-
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $request->files->get('file');
-
+        $fileExtension = $uploadedFile->guessExtension();
+        $fileName = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME) .'.'. $fileExtension;
+        $uuid = $request->get('dzuuid');
+        $totalChunks = $request->get('dztotalchunkcount');
         $targetDirectory = '';
         $fileSize = $uploadedFile->getSize();
-
-        if ($fileInfo['totalChunks'] > 1) {
-            $chunksFolder = $this->chunksDirectory . DIRECTORY_SEPARATOR . $fileInfo['uuid'];
+        $chunksIndex = $request->get('dzchunkindex');
+        if ($totalChunks > 1) {
+            $chunksFolder = $this->chunksDirectory . DIRECTORY_SEPARATOR . $uuid;
             $this->isFolder($chunksFolder);
             $isChunk = true;
             $uploadedFile->move(
                 $chunksFolder,
-                $fileInfo['chunksIndex']
+                $chunksIndex
             );
 
             $fileMetadata = array(
                 'chunk' => $isChunk,
-                'path' => $targetDirectory . DIRECTORY_SEPARATOR . $newFilename,
-                'name' => $fileInfo['originalFilename'] . '.' . $fileInfo['fileExtension'],
-                'size' => $fileSize,
+                'path' => $targetDirectory . DIRECTORY_SEPARATOR . $fileName,
+                'name' => $uploadedFile->getClientOriginalName() . '.' . $fileExtension,
+                'size' => (int)$fileSize,
             );
         } else {
-            $targetDirectory = $this->uploadDirectory . DIRECTORY_SEPARATOR . $fileInfo['fileExtension'];
+            $targetDirectory = $this->uploadDirectory . DIRECTORY_SEPARATOR . $uuid;
             $this->isFolder($targetDirectory);
             $uploadedFile->move(
                 $targetDirectory,
-                $newFilename
+                $fileName
             );
 
             $fileMetadata = array(
                 'chunk' => false,
-                'path' => $targetDirectory . DIRECTORY_SEPARATOR . $newFilename,
-                'name' => $fileInfo['originalFilename'] . '.' . $fileInfo['uuid'],
-                'size' => $fileSize,
+                'path' => $targetDirectory . DIRECTORY_SEPARATOR . $fileName,
+                'name' => $uploadedFile->getClientOriginalName() . '.' . $fileExtension,
+                'size' => (int)$fileSize,
             );
         }
 
@@ -104,17 +104,18 @@ class FileUploader
      */
     public function combineChunks(Request $request): array
     {
-        $fileInfo = $this->getFileInfo($request);
-        $newFilename = Urlizer::urlize($fileInfo['originalFilename']).'-'.uniqid().'.'.$fileInfo['fileExtension'];
+        $uuid = $request->get('dzuuid');
+        $fileName = $request->get('fileName');
+        $totalChunks = $request->get('dztotalchunkcount');
+        $fileSize = $request->get('dztotalfilesize');
 
-        $chunksFolder = $this->chunksDirectory . DIRECTORY_SEPARATOR . $fileInfo['uuid'];
+        $chunksFolder = $this->chunksDirectory . DIRECTORY_SEPARATOR . $uuid;
         //combine chunks
         $isChunk = false;
-        $targetDirectory = $this->uploadDirectory . DIRECTORY_SEPARATOR . $fileInfo['uuid'];
+        $targetDirectory = $this->uploadDirectory . DIRECTORY_SEPARATOR . $uuid;
         $this->isFolder($targetDirectory);
-        $targetFile = fopen($targetDirectory . DIRECTORY_SEPARATOR . $newFilename, 'wb');
-        dump($fileInfo);
-        for ($i = 0; $i < $fileInfo['totalChunks']; $i++) {
+        $targetFile = fopen($targetDirectory . DIRECTORY_SEPARATOR . $fileName, 'wb');
+        for ($i = 0; $i < $totalChunks; $i++) {
             $chunk = fopen(
                 $chunksFolder .
                 DIRECTORY_SEPARATOR .
@@ -131,31 +132,9 @@ class FileUploader
 
         return array(
             'chunk' => $isChunk,
-            'path' => $targetDirectory . DIRECTORY_SEPARATOR . $newFilename,
-            'name' => $fileInfo['originalFilename'] . '.' . $fileInfo['fileExtension'],
-            'size' => $fileInfo['fileSize'],
+            'path' => $targetDirectory . DIRECTORY_SEPARATOR . $fileName,
+            'name' => $fileName,
+            'size' => (int)$fileSize,
         );
-    }
-
-    /**
-     * Retrieves file information from the Uploaded File object.
-     *
-     * @param Request $request Symfony request instance.
-     *
-     * @return array
-     */
-    private function getFileInfo(Request $request): array
-    {
-        /** @var UploadedFile $uploadedFile */
-        $uploadedFile = $request->files->get('file');
-        dump($uploadedFile);
-        return array(
-            'uuid' => $request->get('dzuuid'),
-            'totalChunks' => $request->get('dztotalchunkcount'),
-            'originalFilename' => pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME),
-            'fileExtension' => $uploadedFile->guessExtension(),
-            'chunksIndex' => $request->get('dzchunkindex'),
-            'fileSize' => $uploadedFile->getSize(),
-            );
     }
 }
