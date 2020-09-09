@@ -44,6 +44,7 @@ if (fileManagerElement.dataset.id) {
         parallelChunkUploads: true,
         retryChunks: true,
         retryChunksLimit: 3,
+        maxFileSize: 1000000,
         chunksUploaded: function(file, done) {
             // All chunks have been uploaded. Perform any other actions
             let currentFile = file;
