@@ -216,3 +216,7 @@ services:
     App\Util\FundingOrgFilter:
         bind:
             array $fundingOrgs: "%env(json:FILTER_BY_FUNDING_ORG)%"
+
+    App\Util\FileUploader:
+        bind:
+            $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
