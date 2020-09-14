@@ -40,7 +40,7 @@ if (fileManagerElement.dataset.id) {
         url: Routing.generate('pelagos_api_post_files_dataset_submission') + "/" + datasetSubmissionId,
         chunking: true,
         chunkSize: 1024*1024,
-        forceChunking: false,
+        forceChunking: true,
         parallelChunkUploads: true,
         retryChunks: true,
         retryChunksLimit: 3,

@@ -43,42 +43,21 @@ class FileUploader
         $fileExtension = $uploadedFile->guessExtension();
         $fileName = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME) .'.'. $fileExtension;
         $uuid = $request->get('dzuuid');
-        $totalChunks = $request->get('dztotalchunkcount');
         $targetDirectory = '';
         $fileSize = $uploadedFile->getSize();
         $chunksIndex = $request->get('dzchunkindex');
-        if ($totalChunks > 1) {
-            $chunksFolder = $this->chunksDirectory . DIRECTORY_SEPARATOR . $uuid;
-            $this->isFolder($chunksFolder);
-            $isChunk = true;
-            $uploadedFile->move(
-                $chunksFolder,
-                $chunksIndex
-            );
+        $chunksFolder = $this->chunksDirectory . DIRECTORY_SEPARATOR . $uuid;
+        $this->isFolder($chunksFolder);
+        $uploadedFile->move(
+            $chunksFolder,
+            $chunksIndex
+        );
 
-            $fileMetadata = array(
-                'chunk' => $isChunk,
-                'path' => $targetDirectory . DIRECTORY_SEPARATOR . $fileName,
-                'name' => $uploadedFile->getClientOriginalName() . '.' . $fileExtension,
-                'size' => (int)$fileSize,
-            );
-        } else {
-            $targetDirectory = $this->uploadDirectory . DIRECTORY_SEPARATOR . $uuid;
-            $this->isFolder($targetDirectory);
-            $uploadedFile->move(
-                $targetDirectory,
-                $fileName
-            );
-
-            $fileMetadata = array(
-                'chunk' => false,
-                'path' => $targetDirectory . DIRECTORY_SEPARATOR . $fileName,
-                'name' => $uploadedFile->getClientOriginalName() . '.' . $fileExtension,
-                'size' => (int)$fileSize,
-            );
-        }
-
-        return $fileMetadata;
+        return array(
+            'path' => $targetDirectory . DIRECTORY_SEPARATOR . $fileName,
+            'name' => $uploadedFile->getClientOriginalName() . '.' . $fileExtension,
+            'size' => (int)$fileSize,
+        );
     }
 
     /**
@@ -111,7 +90,6 @@ class FileUploader
 
         $chunksFolder = $this->chunksDirectory . DIRECTORY_SEPARATOR . $uuid;
         //combine chunks
-        $isChunk = false;
         $targetDirectory = $this->uploadDirectory . DIRECTORY_SEPARATOR . $uuid;
         $this->isFolder($targetDirectory);
         $targetFile = fopen($targetDirectory . DIRECTORY_SEPARATOR . $fileName, 'wb');
@@ -131,7 +109,6 @@ class FileUploader
         rmdir($chunksFolder);
 
         return array(
-            'chunk' => $isChunk,
             'path' => $targetDirectory . DIRECTORY_SEPARATOR . $fileName,
             'name' => $fileName,
             'size' => (int)$fileSize,

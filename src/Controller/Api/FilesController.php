@@ -83,10 +83,7 @@ class FilesController extends EntityController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         try {
-            $fileMetadata = $fileUploader->upload($request);
-            if ($fileMetadata['chunk'] === false) {
-                $this->updateFileEntity($fileMetadata, $entityManager, $id);
-            }
+            $fileUploader->upload($request);
         } catch (\Exception $exception) {
             throw new BadRequestHttpException($exception->getMessage());
         }
