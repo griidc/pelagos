@@ -10,7 +10,6 @@ class HashFileHandler implements MessageHandlerInterface
 {
     public function __invoke(HashFile $HashFile)
     {
-
+        //
     }
-
 }
