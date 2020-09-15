@@ -37,7 +37,7 @@ if (fileManagerElement.dataset.id) {
     });
 
     let myDropzone = new Dropzone("div#dropzone-uploader", {
-        url: Routing.generate('pelagos_api_post_files_dataset_submission') + "/" + datasetSubmissionId,
+        url: Routing.generate('pelagos_api_post_chunks'),
         chunking: true,
         chunkSize: 1024*1024,
         forceChunking: true,
