@@ -2,9 +2,7 @@
 
 namespace App\Util;
 
-use Gedmo\Sluggable\Util\Urlizer;
 use League\Flysystem\FilesystemInterface;
-use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
