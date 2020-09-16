@@ -139,6 +139,10 @@ fos_elastica:
                             properties:
                                 id:
                                     type: 'keyword'
+                        sortingDateForDisplay:
+                            property_path: false
+                            type: 'date'
+                            format: 'yyyy-MM-dd'
                     persistence:
                         driver: orm
                         model: App\Entity\Dataset

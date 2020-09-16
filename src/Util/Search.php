@@ -71,6 +71,11 @@ class Search
     const ELASTIC_INDEX_MAPPING_UDI = 'udi';
 
     /**
+     * Elastic index mapping for sorting date used for displaying results.
+     */
+    const ELASTIC_INDEX_MAPPING_SORTING_DATE = 'sortingDateForDisplay';
+
+    /**
      * Elastic index mapping for publication dois.
      */
     const ELASTIC_INDEX_MAPPING_PUB_DOI = 'publications.doi';
@@ -172,6 +177,7 @@ class Search
         // Add project director aggregation to the mainQuery
         $mainQuery->addAggregation($this->getProjectDirectorAggregationQuery());
         $mainQuery->setQuery($subMainQuery);
+        $mainQuery->addSort(array(self::ELASTIC_INDEX_MAPPING_SORTING_DATE => array('order' => 'desc')));
         $mainQuery->setFrom(($page - 1) * 10);
         $mainQuery->setSize($perPage);
 
