@@ -134,6 +134,21 @@ class DefaultController extends AbstractController
     }
 
     /**
+     * The scan action.
+     *
+     * @Route("/scan", name="virus_scan")
+     *
+     * @return Response
+     */
+    public function virusscan()
+    {
+        $socket = (new \Socket\Raw\Factory())->createClient('unix:///run/clamd.scan/clamd.sock');
+        $quahog = new \Xenolope\Quahog\Client($socket);
+        $result = $quahog->scanFile('/home/users/mwilliamson/pelagos/eicar-testfile.txt');
+        return $this->render('Scan/virusscan.html.twig', $result);
+    }
+
+    /**
      * Get the sitemap.xml containing all dataset urls.
      *
      * @Route("/sitemap.xml", name="pelagos_sitemap")
