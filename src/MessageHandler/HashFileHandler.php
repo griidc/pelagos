@@ -62,7 +62,7 @@ class HashFileHandler implements MessageHandlerInterface
         if ($file instanceof File) {
             $filePath = $file->getFilePath();
             try {
-                $fileHash = hash_file('sha256', 'bla');
+                $fileHash = hash_file('sha256', $filePath);
             } catch (\Exception $e) {
                 $this->logger->error(sprintf('Unable to hash file. Message: %s', $e->getMessage()));
                 return;
