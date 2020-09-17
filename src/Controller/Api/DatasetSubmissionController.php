@@ -17,6 +17,7 @@ use Swagger\Annotations as SWG;
 
 use App\Util\UrlValidation;
 use App\Entity\DatasetSubmission;
+use App\Entity\Fileset;
 use App\Form\DatasetSubmissionType;
 
 /**
@@ -350,6 +351,45 @@ class DatasetSubmissionController extends EntityController
             $uuid = $matches[1];
         }
         return array($fileInfo);
+    }
+
+    /**
+     * Return a list of files uploaded for a dataset submission.
+     *
+     * @param integer $id The id of the dataset submission.
+     *
+     * @Route(
+     *     "/api/files_dataset_submission/{id}",
+     *     name="pelagos_api_get_files_dataset_submission",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"},
+     *     requirements={"id"="\d+"}
+     *     )
+     *
+     * @View()
+     *
+     * @return array The list of uploaded files.
+     */
+    public function getFiles(int $id)
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $fileData = array();
+        $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
+
+        if ($datasetSubmission->getFileset() instanceof Fileset) {
+            foreach ($datasetSubmission->getFileset()->getFiles() as $file) {
+                $fileData[] = array(
+                    'name' => $file->getFileName(),
+                    'size' => $file-> getFileSize(),
+                    'dateModified' => $file->getUploadedAt(),
+                    'isDirectory' => false,
+                    'hasSubDirectories' => false
+                );
+            }
+        }
+
+        return $fileData;
     }
 
     /**
