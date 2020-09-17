@@ -177,7 +177,11 @@ class Search
         // Add project director aggregation to the mainQuery
         $mainQuery->addAggregation($this->getProjectDirectorAggregationQuery());
         $mainQuery->setQuery($subMainQuery);
-        $mainQuery->addSort(array(self::ELASTIC_INDEX_MAPPING_SORTING_DATE => array('order' => 'desc')));
+
+        // Add sort when search terms are not present
+        if (empty($queryTerm)) {
+            $mainQuery->addSort(array(self::ELASTIC_INDEX_MAPPING_SORTING_DATE => array('order' => 'desc')));
+        }
         $mainQuery->setFrom(($page - 1) * 10);
         $mainQuery->setSize($perPage);
 
