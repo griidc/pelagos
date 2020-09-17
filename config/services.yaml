@@ -220,3 +220,4 @@ services:
     App\Util\FileUploader:
         bind:
             $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
+            $uploadFilesystem: "@oneup_flysystem.upload_flysystem_filesystem"

@@ -61,32 +61,28 @@ class FilesController extends EntityController
     }
 
     /**
-     * Process a post of a file or a file chunk.
+     * Process a post of a file chunk.
      *
      * @param Request                $request       The Symfony request object.
      * @param FileUploader           $fileUploader  File upload handler service.
      * @param EntityManagerInterface $entityManager Entity manager interface instance.
-     * @param string                 $id            Dataset submission id.
      *
      * @View()
      *
      * @Route(
-     *     "/api/files_dataset_submission/{id}",
-     *     name="pelagos_api_post_files_dataset_submission",
+     *     "/api/files/upload-chunks",
+     *     name="pelagos_api_post_chunks",
      *     methods={"POST"},
      *     defaults={"_format"="json"}
      *     )
      *
      * @return Response The result of the post.
      */
-    public function postFiles(Request $request, FileUploader $fileUploader, EntityManagerInterface $entityManager, string $id)
+    public function postChunks(Request $request, FileUploader $fileUploader, EntityManagerInterface $entityManager)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         try {
-            $fileMetadata = $fileUploader->upload($request);
-            if ($fileMetadata['chunk'] === false) {
-                $this->updateFileEntity($fileMetadata, $entityManager, $id);
-            }
+            $fileUploader->uploadChunk($request);
         } catch (\Exception $exception) {
             throw new BadRequestHttpException($exception->getMessage());
         }
@@ -105,7 +101,7 @@ class FilesController extends EntityController
      * @View()
      *
      * @Route(
-     *     "/api/files_dataset_submission/combine-chunks/{id}",
+     *     "/api/files/combine-chunks/{id}",
      *     name="pelagos_api_combine_chunks",
      *     methods={"POST"},
      *     defaults={"_format"="json"}

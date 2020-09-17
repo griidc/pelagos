@@ -1,0 +1,9 @@
+# Read the documentation: https://github.com/1up-lab/OneupFlysystemBundle/tree/master/Resources/doc/index.md
+oneup_flysystem:
+    adapters:
+        upload_file_adapter:
+            local:
+                directory: '%env(HOMEDIR_PREFIX)%'
+    filesystems:
+        upload_flysystem:
+            adapter: upload_file_adapter
