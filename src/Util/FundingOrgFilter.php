@@ -97,6 +97,9 @@ class FundingOrgFilter
     {
         $filterEnv = $_ENV['FILTER_BY_FUNDING_ORG'];
         $shortNameArray = JSON_DECODE($filterEnv);
+        if (empty($shortNameArray)) {
+            return true;
+        }
         $fundingOrgShortName = $dataset->getResearchGroup()->getFundingCycle()->getFundingOrganization()->getShortName();
         return in_array($fundingOrgShortName, $shortNameArray);
     }

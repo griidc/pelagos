@@ -8,6 +8,7 @@ fos_elastica:
             index_name: "%env(DISCOVERY_INDEX)%"
             types:
                 dataset:
+                    indexable_callback: [ '\App\Util\FundingOrgFilter', 'canIndex']
                     properties:
                         udi: ~
                         title: { boost: 3 }
