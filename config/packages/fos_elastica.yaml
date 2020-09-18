@@ -77,6 +77,7 @@ fos_elastica:
             index_name: "%env(SEARCH_TOOL_INDEX)%"
             types:
                 dataset:
+                    indexable_callback: [ '\App\Util\FundingOrgFilter', 'canIndex']
                     properties:
                         udi:
                             type: 'text'
