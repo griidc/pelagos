@@ -3,7 +3,6 @@
 namespace App\MessageHandler;
 
 use Doctrine\ORM\EntityManagerInterface;
-use League\Flysystem\FilesystemInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
@@ -17,14 +16,14 @@ use App\Repository\FileRepository;
 class HashFileHandler implements MessageHandlerInterface
 {
     /**
-     * The entity handler.
+     * The Entity Manager.
      *
      * @var EntityManagerInterface
      */
     private $entityManager;
 
     /**
-     * The file Repository.
+     * The File Repository.
      *
      * @var FileRepository
      */
@@ -40,9 +39,9 @@ class HashFileHandler implements MessageHandlerInterface
     /**
      * Constructor for this Controller, to set up default services.
      *
-     * @param EntityHandler   $entityHandler           The entity handler.
-     * @param FileRepository  $fileRepository          The file Repository.
-     * @param LoggerInterface $datasetFileHasherLogger Name hinted dataset_file_hasher logger.
+     * @param EntityManagerInterface   $entityManager           The entity handler.
+     * @param FileRepository           $fileRepository          The file Repository.
+     * @param LoggerInterface          $datasetFileHasherLogger Name hinted dataset_file_hasher logger.
      */
     public function __construct(EntityManagerInterface $entityManager, FileRepository $fileRepository, LoggerInterface $datasetFileHasherLogger)
     {
@@ -53,6 +52,8 @@ class HashFileHandler implements MessageHandlerInterface
 
     /**
      * Invoke function to hash a file.
+     *
+     * @param HashFile $hashFile The HasFile message to be handled.
      */
     public function __invoke(HashFile $hashFile)
     {
