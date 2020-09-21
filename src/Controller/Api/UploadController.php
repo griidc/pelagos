@@ -17,12 +17,10 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Files API Controller.
+ * Upload file API Controller.
  */
 class UploadController extends EntityController
 {
-
-
     /**
      * Process a post of a file chunk.
      *
