@@ -5,7 +5,7 @@ namespace App\Message;
 /**
  * Message for virus-scanning files.
  */
-class ScanFile
+class VirusScan
 {
     /**
      * The file ID of the file to be scanned.
