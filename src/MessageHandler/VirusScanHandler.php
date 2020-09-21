@@ -54,7 +54,7 @@ class VirusScanHandler implements MessageHandlerInterface
      */
     public function __invoke(VirusScan $virusScan)
     {
-        $fileId = $hashFile->getFileId();
+        $fileId = $virusScan->getFileId();
         $this->logger->info(sprintf('Scanningg File with ID: %d', $fileId));
         $file = $this->fileRepository->find($fileId);
         if ($file instanceof File) {
@@ -62,14 +62,15 @@ class VirusScanHandler implements MessageHandlerInterface
             try {
                 $socket = (new \Socket\Raw\Factory())->createClient('unix:///run/clamd.scan/clamd.sock');
                 $quahog = new \Xenolope\Quahog\Client($socket);
-                $result = $quahog->scanFile($filePathh);
+                $result = $quahog->scanFile($filePath);
+                $this->logger->info(sprintf('Virus scanned file: %s. Status: %s. Reason: %s.', $result['Filename'], $result['Status'], $result['Reason']));
             } catch (\Exception $e) {
                 $this->logger->error(sprintf('Unable to scan file. Message: %s', $e->getMessage()));
                 // On catch, furter execution prevented, so attributes will not be updated.
                 return;
             }
             //$file->setVirusScanDate($fileHash, '1974-12-02' );
-            //$file->setVirusScanResult($fileHash);
+            //$file->setVirusScanResult($result['Status']);
             //$this->entityManager->flush();
         } else {
             $this->logger->alert(sprintf('File with ID: %d was not found to scan!', $fileId));
