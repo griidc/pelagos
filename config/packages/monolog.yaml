@@ -1,5 +1,5 @@
 monolog:
-    channels: ['mailer', 'filer', 'retriever', 'dataset_file_hasher','doi_issue', 'create_homedir']
+    channels: ['mailer', 'filer', 'retriever', 'dataset_file_hasher','doi_issue', 'create_homedir', 'virus_scan']
 
     handlers:
         mailer:
@@ -37,3 +37,9 @@ monolog:
             path: "%kernel.logs_dir%/create_homedir.log"
             level: info
             channels: [create_homedir]
+
+        virus_scan:
+            type: stream
+            path: "%kernel.logs_dir%/virus_scan.log"
+            level: info
+            channels: [virus_scan]
