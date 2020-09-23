@@ -5,6 +5,9 @@ namespace App\Controller\Api;
 use App\Entity\File;
 use App\Message\DeleteFile;
 use App\Repository\FileRepository;
+
+use FOS\RestBundle\Controller\AbstractFOSRestController;
+
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -13,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * CRUD API for File Entity.
  */
-class FileController extends EntityController
+class FileController extends AbstractFOSRestController
 {
     /**
      * Delete a Dataset and associated Metadata and Difs.
@@ -39,6 +42,12 @@ class FileController extends EntityController
             throw new BadRequestHttpException('File does not exist');
         }
 
-        return $this->makeNoContentResponse();
+        return new Response(
+            null,
+            Response::HTTP_NO_CONTENT,
+            array(
+                'Content-Type' => 'application/x-empty',
+            )
+        );
     }
 }
