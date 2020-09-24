@@ -37,22 +37,21 @@ class HashFileHandlerTest extends KernelTestCase
         
         $fileset = new Fileset();
 
-        $newFile = new File();
-        $newFile->setFileName('testName');
-        $newFile->setFileSize('12345');
-        $newFile->setUploadedAt(new \DateTime('now'));
-        $newFile->setUploadedBy($systemPerson);
-        $newFile->setFilePath($testFilePath);
-        $fileset->addFile($newFile);
+        $file = new File();
+        $file->setFileName('testName');
+        $file->setFileSize('12345');
+        $file->setUploadedAt(new \DateTime('now'));
+        $file->setUploadedBy($systemPerson);
+        $file->setFilePath($testFilePath);
+        $fileset->addFile($file);
        
         $this->entityManager->persist($fileset);
-        $this->entityManager->flush();
  
-        $fileId = $fileset->getFiles()->first()->getId();
+        $fileId = $file->getId() ?? 0;
         
         $this->messengeBus->dispatch(new HashFile($fileId));
         
-        $fileHandlerHash = $newFile->getFileSha256Hash();
+        $fileHandlerHash = $file->getFileSha256Hash();
         $fileHash = hash_file('sha256', $testFilePath);
 
         $this->assertSame($fileHash, $fileHandlerHash);
