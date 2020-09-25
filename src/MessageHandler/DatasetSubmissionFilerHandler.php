@@ -115,7 +115,6 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             // Dispatch entity event.
             $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_processed');
             $this->logger->info('Dataset submission process completed', $loggingContext);
-
         }
     }
 
