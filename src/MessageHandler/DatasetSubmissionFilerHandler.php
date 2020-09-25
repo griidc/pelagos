@@ -81,6 +81,11 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         $this->entityManager = $entityManager;
     }
 
+    /**
+     * Invoke function to process dataset submission filer.
+     *
+     * @param DatasetSubmissionFiler $datasetSubmissionFiler Dataset submission filer message to be handled.
+     */
     public function __invoke(DatasetSubmissionFiler $datasetSubmissionFiler)
     {
         $datasetSubmissionId = $datasetSubmissionFiler->getSubmissionId();
@@ -115,8 +120,10 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
     }
 
     /**
-     * @param File  $file           The file that is being processed
-     * @param array $loggingContext
+     * Method to process a single file.
+     *
+     * @param File  $file           The file that is being processed.
+     * @param array $loggingContext The logging context for the handler.
      *
      * @return void
      */
