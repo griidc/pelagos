@@ -9,6 +9,8 @@ use App\Repository\FileRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -28,18 +30,21 @@ class FileController extends AbstractFOSRestController
      * @param EntityManagerInterface $entityManager  Entity manager interface instance.
      * @Route("/api/file/{id}", name="pelagos_api_datasets_delete", methods={"DELETE"}, defaults={"_format"="json"})
      *
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     *
      * @return Response A response object with an empty body and a "no content" status code.
      */
     public function deleteFile(string $id, FileRepository $fileRepository, MessageBusInterface $messageBus, EntityManagerInterface $entityManager)
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $file = $fileRepository->find((int)$id);
 
         if ($file instanceof File) {
+            $fileset = $file->getFileset();
+            $fileset->removeFile($file);
             $filePath = $file->getFilePath();
             $deleteFileMessage = new DeleteFile($filePath);
             $messageBus->dispatch($deleteFileMessage);
-            $entityManager->remove($file);
+            $entityManager->persist($fileset);
             $entityManager->flush();
         } else {
             throw new BadRequestHttpException('File does not exist');
