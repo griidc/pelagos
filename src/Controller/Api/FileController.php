@@ -4,7 +4,6 @@ namespace App\Controller\Api;
 
 use App\Entity\File;
 use App\Message\DeleteFile;
-use App\Repository\FileRepository;
 
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -12,7 +11,6 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -22,12 +20,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class FileController extends AbstractFOSRestController
 {
     /**
-     * Delete a Dataset and associated Metadata and Difs.
+     * Delete a file.
      *
      * @param File                   $file           File entity instance.
      * @param MessageBusInterface    $messageBus     Symfony messenger bus interface instance.
      * @param EntityManagerInterface $entityManager  Entity manager interface instance.
-     * 
+     *
      * @Route("/api/file/{id}", name="pelagos_api_datasets_delete", methods={"DELETE"}, defaults={"_format"="json"})
      *
      * @IsGranted("IS_AUTHENTICATED_FULLY")
