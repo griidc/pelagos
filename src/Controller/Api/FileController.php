@@ -24,31 +24,26 @@ class FileController extends AbstractFOSRestController
     /**
      * Delete a Dataset and associated Metadata and Difs.
      *
-     * @param string                 $id             The id of the File to delete.
-     * @param FileRepository         $fileRepository File entity Repository instance.
+     * @param File                   $file           File entity instance.
      * @param MessageBusInterface    $messageBus     Symfony messenger bus interface instance.
      * @param EntityManagerInterface $entityManager  Entity manager interface instance.
+     * 
      * @Route("/api/file/{id}", name="pelagos_api_datasets_delete", methods={"DELETE"}, defaults={"_format"="json"})
      *
      * @IsGranted("IS_AUTHENTICATED_FULLY")
+     * @IsGranted("CAN_DELETE", subject="file")
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteFile(string $id, FileRepository $fileRepository, MessageBusInterface $messageBus, EntityManagerInterface $entityManager)
+    public function deleteFile(File $file, MessageBusInterface $messageBus, EntityManagerInterface $entityManager)
     {
-        $file = $fileRepository->find((int)$id);
-
-        if ($file instanceof File) {
-            $fileset = $file->getFileset();
-            $fileset->removeFile($file);
-            $filePath = $file->getFilePath();
-            $deleteFileMessage = new DeleteFile($filePath);
-            $messageBus->dispatch($deleteFileMessage);
-            $entityManager->persist($fileset);
-            $entityManager->flush();
-        } else {
-            throw new BadRequestHttpException('File does not exist');
-        }
+        $fileset = $file->getFileset();
+        $fileset->removeFile($file);
+        $filePath = $file->getFilePath();
+        $deleteFileMessage = new DeleteFile($filePath);
+        $messageBus->dispatch($deleteFileMessage);
+        $entityManager->persist($fileset);
+        $entityManager->flush();
 
         return new Response(
             null,
