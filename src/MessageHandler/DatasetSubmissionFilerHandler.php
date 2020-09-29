@@ -88,7 +88,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
      */
     public function __invoke(DatasetSubmissionFiler $datasetSubmissionFiler)
     {
-        $datasetSubmissionId = $datasetSubmissionFiler->getSubmissionId();
+        $datasetSubmissionId = $datasetSubmissionFiler->getDatasetSubmissionId();
         $datasetSubmission = $this->datasetSubmissionRepository->find($datasetSubmissionId);
         $dataset = $datasetSubmission->getDataset();
         $loggingContext = array(

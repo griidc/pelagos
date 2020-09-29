@@ -29,7 +29,7 @@ class DatasetSubmissionFiler
      *
      * @return integer The dataset submission ID.
      */
-    public function getSubmissionId(): int
+    public function getDatasetSubmissionId(): int
     {
         return $this->datasetSubmissionId;
     }
