@@ -109,8 +109,6 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
                 DatasetSubmission::TRANSFER_STATUS_COMPLETED
             );
             $dataset->updateAvailabilityStatus();
-            $this->entityManager->persist($datasetSubmission);
-            $this->entityManager->persist($dataset);
             $this->entityManager->flush();
             // Dispatch entity event.
             $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_processed');
@@ -148,8 +146,11 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         $this->messageBus->dispatch($hashFile);
 
         // File virus Scan
+        // TODO implement method
+        /*
         $scanFile = new VirusScan($fileId);
         $this->messageBus->dispatch($scanFile);
+        */
 
         // Log processing complete.
         $this->logger->info('Dataset file processing completed', $loggingContext);
