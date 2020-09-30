@@ -164,7 +164,7 @@ class DefaultController extends AbstractController
 
         $datasets = $entityManager->getRepository(Dataset::class)->findBy($criteria);
 
-        $response = new StreamedResponse(function () use (&$datasets) {
+        $response = new StreamedResponse(function () use ($datasets) {
             echo $this->renderView(
                 'Default/sitemap.xml.twig',
                 array(
