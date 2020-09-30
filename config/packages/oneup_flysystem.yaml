@@ -4,6 +4,11 @@ oneup_flysystem:
         upload_file_adapter:
             local:
                 directory: '%env(HOMEDIR_PREFIX)%'
+        data_store_adapter:
+            local:
+                directory: '%env(DATA_STORE_DIRECTORY)%'
     filesystems:
         upload_flysystem:
             adapter: upload_file_adapter
+        datastore_flysystem:
+            adapter: data_store_adapter
