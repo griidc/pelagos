@@ -2,9 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\PersonResearchGroup;
-use App\Entity\ResearchGroupRole;
-use App\Repository\PersonResearchGroupRepository;
+use Doctrine\ORM\EntityManagerInterface;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -14,7 +13,10 @@ use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\FundingCycle;
+use App\Entity\PersonResearchGroup;
 use App\Entity\ResearchGroup;
+use App\Entity\ResearchGroupRole;
+use App\Repository\PersonResearchGroupRepository;
 use App\Util\FundingOrgFilter;
 
 /**
@@ -136,24 +138,33 @@ class DefaultController extends AbstractController
     /**
      * Get the sitemap.xml containing all dataset urls.
      *
+     * @param EntityManagerInterface $entityManager    The Doctrine Entity Manager.
+     * @param FundingOrgFilter       $fundingOrgFilter The funding organization filter utility.
+     *
      * @Route("/sitemap.xml", name="pelagos_sitemap")
      *
      * @return StreamedResponse
      */
-    public function showSiteMapXml()
+    public function showSiteMapXml(EntityManagerInterface $entityManager, FundingOrgFilter $fundingOrgFilter)
     {
-        $response = new StreamedResponse(function () {
+        $criteria = array(
+            'availabilityStatus' =>
+            array(
+                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
+                DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
+            )
+        );
 
-            $datasets = $this->getDoctrine()->getRepository(Dataset::class)->findBy(
-                array(
-                    'availabilityStatus' =>
-                    array(
-                        DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
-                        DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
-                    )
-                )
-            );
+        if ($fundingOrgFilter->isActive()) {
+            $criteria = array_merge($criteria, array(
+                'researchGroup' =>
+                $fundingOrgFilter->getResearchGroupsIdArray()
+            ));
+        }
 
+        $datasets = $entityManager->getRepository(Dataset::class)->findBy($criteria);
+
+        $response = new StreamedResponse(function () use ($datasets) {
             echo $this->renderView(
                 'Default/sitemap.xml.twig',
                 array(
