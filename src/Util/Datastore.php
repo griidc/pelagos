@@ -5,6 +5,7 @@ namespace App\Util;
 use League\Flysystem\FileExistsException;
 use League\Flysystem\FileNotFoundException;
 use League\Flysystem\FilesystemInterface;
+use Ramsey\Uuid\Uuid;
 
 class Datastore
 {
@@ -57,13 +58,17 @@ class Datastore
      */
     public function copyFile(string $filePath): string
     {
-        $destinationPath = self::FILES_DIRECTORY . DIRECTORY_SEPARATOR . basename($filePath);
+        $uuid = Uuid::uuid4();
+        $fileStream = fopen($filePath, 'rb');
+        $destinationPath = self::FILES_DIRECTORY . DIRECTORY_SEPARATOR . $uuid->toString();
         try {
-            $this->datastoreFlysystem->copy($filePath, $destinationPath);
+            $this->datastoreFlysystem->writeStream($destinationPath, $fileStream);
         } catch (FileExistsException $e) {
             // TODO implement logger
-        } catch (FileNotFoundException $e) {
-            // TODO implement logger
+        }
+
+        if (is_resource($fileStream)) {
+            fclose($fileStream);
         }
         return $destinationPath;
     }
