@@ -4,6 +4,8 @@ namespace App\Util;
 
 use League\Flysystem\FileExistsException;
 use League\Flysystem\FilesystemInterface;
+
+use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 
 class Datastore
@@ -19,6 +21,11 @@ class Datastore
     const FILES_DIRECTORY = 'files';
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * Datastore constructor.
      *
      * @param FilesystemInterface $datastoreFlysystem
@@ -26,6 +33,18 @@ class Datastore
     public function __construct(FilesystemInterface $datastoreFlysystem)
     {
         $this->datastoreFlysystem = $datastoreFlysystem;
+    }
+
+    /**
+     * Setting the logger interface.
+     *
+     * @param LoggerInterface $logger
+     *
+     * @return void
+     */
+    public function setLogger(LoggerInterface $logger): void
+    {
+        $this->logger = $logger;
     }
 
     /**
@@ -62,7 +81,7 @@ class Datastore
         try {
             $this->datastoreFlysystem->writeStream($destinationPath, $fileStream);
         } catch (FileExistsException $e) {
-            // TODO implement logger
+            $this->logger->error(sprintf('File already exists. Message: "%s"', $e->getMessage()));
         }
 
         if (is_resource($fileStream)) {
