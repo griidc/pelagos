@@ -55,7 +55,7 @@ class Datastore
      *
      * @return string
      */
-    public function copyFile(resource $fileStream): string
+    public function addFile(resource $fileStream): string
     {
         $uuid = Uuid::uuid4();
         $destinationPath = self::FILES_DIRECTORY . DIRECTORY_SEPARATOR . $uuid->toString();
