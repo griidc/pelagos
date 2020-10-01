@@ -20,13 +20,6 @@ class DeleteFileHandler implements MessageHandlerInterface
     private $logger;
 
     /**
-     * The file Repository.
-     *
-     * @var FileRepository
-     */
-    private $fileRepository;
-
-    /**
      * Datastore Utility instance.
      *
      * @var Datastore
@@ -37,29 +30,23 @@ class DeleteFileHandler implements MessageHandlerInterface
      * Constructor for this Controller, to set up default services.
      *
      * @param LoggerInterface $deleteFileLogger Name hinted delete_file logger.
-     * @param FileRepository  $fileRepository   The file Repository.
      * @param Datastore       $datastore        Datastore utility instance.
      */
-    public function __construct(LoggerInterface $deleteFileLogger, FileRepository $fileRepository, Datastore $datastore)
+    public function __construct(LoggerInterface $deleteFileLogger, Datastore $datastore)
     {
         $this->logger = $deleteFileLogger;
-        $this->fileRepository = $fileRepository;
         $this->datastore = $datastore;
     }
 
     public function __invoke(DeleteFile $deleteFile)
     {
-        $fileId = $deleteFile->getFilePath();
-        $this->logger->info(sprintf('Processing File with ID: %d', $fileId));
-        $file = $this->fileRepository->find($fileId);
-        if ($file instanceof File) {
-            $filePath = $file->getFilePath();
-            try {
-                $this->datastore->deleteFile($filePath);
-            } catch (\Exception $e) {
-                $this->logger->error(sprintf('Unable to delete file. Message: %s', $e->getMessage()));
-                return;
-            }
+        $filePath = $deleteFile->getFilePath();
+        $this->logger->info(sprintf('Processing File with ID: "%s"', $filePath));
+        try {
+            $this->datastore->deleteFile($filePath);
+        } catch (\Exception $e) {
+            $this->logger->error(sprintf('Unable to delete file. Message: "%s"', $e->getMessage()));
+            return;
         }
     }
 }

@@ -78,15 +78,5 @@ class Datastore
     public function deleteFile(string $filePath): void
     {
         $this->datastoreFlysystem->delete($filePath);
-
-    }
-
-    /**
-     * Retrieves all files in a dataset.
-     */
-    public function getAllFiles()
-    {
-        // TODO implement method
-
     }
 }
