@@ -76,10 +76,10 @@ class Datastore
      *
      * @param string $filePath
      *
-     * @return void
+     * @return bool
      */
-    public function deleteFile(string $filePath): void
+    public function deleteFile(string $filePath): bool
     {
-        $this->datastoreFlysystem->delete($filePath);
+        return $this->datastoreFlysystem->delete($filePath);
     }
 }
