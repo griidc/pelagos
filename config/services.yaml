@@ -116,17 +116,6 @@ services:
         bind:
             $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
 
-    App\Util\DataStore:
-        bind:
-            $dataStoreDirectory: "%env(DATA_STORE_DIRECTORY)%"
-            $dataDownloadDirectory: "%env(DATA_DOWNLOAD_DIRECTORY)%"
-            $dataStoreOwner: "%env(DATA_STORE_OWNER)%"
-            $dataStoreGroup: "%env(DATA_STORE_GROUP)%"
-            $dataDownloadBrowserGroup: "%env(DATA_DOWNLOAD_BROWSER_GROUP)%"
-            $webServerUser: "%env(WEB_SERVER_USER)%"
-            $anonFtpUser: "%env(ANONYMOUS_FTP_USER)%"
-            $anonFtpPass: "%env(ANONYMOUS_FTP_PASS)%"
-
     App\Consumer\DoiConsumer:
         bind:
             Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.doi_issue'
@@ -221,3 +210,7 @@ services:
         bind:
             $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
             $uploadFilesystem: "@oneup_flysystem.upload_flysystem_filesystem"
+
+    App\Util\Datastore:
+        bind:
+            $datastoreFlysystem: "@oneup_flysystem.datastore_flysystem_filesystem"
