@@ -8,9 +8,14 @@ use League\Flysystem\FilesystemInterface;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 
+/**
+ * Datastore utility class which manipulates files on disk.
+ */
 class Datastore
 {
     /**
+     * Flysystem interface object for Datastore.
+     *
      * @var FilesystemInterface
      */
     private $datastoreFlysystem;
@@ -21,6 +26,8 @@ class Datastore
     const FILES_DIRECTORY = 'files';
 
     /**
+     * Logger interface instance for Monolog default channel.
+     *
      * @var LoggerInterface
      */
     private $logger;
@@ -38,7 +45,7 @@ class Datastore
     /**
      * Setting the logger interface.
      *
-     * @param LoggerInterface $logger
+     * @param LoggerInterface $logger Monolog logger interface instance.
      *
      * @return void
      */
@@ -50,9 +57,9 @@ class Datastore
     /**
      * Retrieves a file from disk.
      *
-     * @param string $filePath
+     * @param string $filePath The retrieve file path.
      *
-     * @throws \Exception
+     * @throws \Exception Exception thrown when read stream fails.
      *
      * @return resource
      */
@@ -70,7 +77,7 @@ class Datastore
     /**
      * Moves an uploaded file to datastore disk location.
      *
-     * @param resource $fileStream
+     * @param resource $fileStream Resource file stream which needs to be added.
      *
      * @return string
      */
@@ -93,7 +100,7 @@ class Datastore
     /**
      * Deletes a file from the disk.
      *
-     * @param string $filePath
+     * @param string $filePath File path for the file that is to be removed.
      *
      * @return bool
      */
