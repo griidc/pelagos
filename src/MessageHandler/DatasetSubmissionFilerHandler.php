@@ -115,7 +115,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             $this->logger->info('Dataset submission process started', $loggingContext);
             foreach ($fileset->getFiles() as $file) {
                 if ($file instanceof File) {
-                    $this->processFile($file, $loggingContext);
+                    $this->processFile($file);
                 } else {
                     $this->logger->alert('File object does not exist');
                 }
@@ -136,11 +136,10 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
      * Method to process a single file.
      *
      * @param File  $file           The file that is being processed.
-     * @param array $loggingContext The logging context for the handler.
      *
      * @return void
      */
-    private function processFile(File $file, array $loggingContext): void
+    private function processFile(File $file): void
     {
         // Log processing start.
         $fileId = $file->getId();
