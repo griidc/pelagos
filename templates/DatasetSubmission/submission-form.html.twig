@@ -68,30 +68,7 @@
             </div>
 
             <div id="ds-submit" class="ds-metadata">
-                {{ form_widget(form.datasetFileUri, { attr: { class: 'ignore'} }) }}
-                {{ form_widget(form.datasetFileTransferType) }}
-                <div id="dropzone-uploader" class="file-dropzone-area">
-                    <h2>Drag and Drop files here or click to upload</h2>
-                </div>
-                <div id="file-manager-app" data-id={{ datasetSubmission.id }}>
-                </div>
-                <fieldset>
-                    <legend class="section-header">{{ form.restrictions.vars.label }}</legend>
-                    <table class="tab-table">
-                        <tr>
-                            <td width="*">
-                                <span class="helpSection">
-					                <img class="info" src="{{ asset('build/images/info32.png') }}">
-                                    <div class="tooltiptext">
-                                        If data is available to the general public, select "None". Select "Restricted" if data cannot be shared.
-                                    </div>
-                                </span>
-                                {{ form_widget(form.restrictions) }}
-                            </td>
-                        </tr>
-                    </table>
-                </fieldset>
-                {{ form_widget(form.submitButton) }}
+                {% include 'DatasetSubmission/file-submit.html.twig' %}
             </div>
         </div>
     </fieldset>
