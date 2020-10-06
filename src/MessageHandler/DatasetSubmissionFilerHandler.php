@@ -7,10 +7,14 @@ use App\Entity\File;
 use App\Entity\Fileset;
 
 use App\Event\EntityEventDispatcher;
+
 use App\Message\DatasetSubmissionFiler;
 use App\Message\HashFile;
 use App\Message\VirusScan;
+
 use App\Repository\DatasetSubmissionRepository;
+
+use App\Util\Datastore;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -59,6 +63,13 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
     protected $entityManager;
 
     /**
+     * Datastore utility instance for manipulating files on disk.
+     *
+     * @var Datastore
+     */
+    private $datastore;
+
+    /**
      * DatasetSubmissionFilerHandler constructor.
      *
      * @param DatasetSubmissionRepository $datasetSubmissionRepository Dataset Submission Repository.
@@ -66,19 +77,22 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
      * @param MessageBusInterface         $messageBus                  Symfony messenger bus interface instance.
      * @param EntityEventDispatcher       $entityEventDispatcher       The entity event dispatcher.
      * @param EntityManagerInterface      $entityManager               The entity manager.
+     * @param Datastore                   $datastore                   Datastore utility instance.
      */
     public function __construct(
         DatasetSubmissionRepository $datasetSubmissionRepository,
         LoggerInterface $filerLogger,
         MessageBusInterface $messageBus,
         EntityEventDispatcher $entityEventDispatcher,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        Datastore $datastore
     ) {
         $this->datasetSubmissionRepository = $datasetSubmissionRepository;
         $this->logger = $filerLogger;
         $this->messageBus = $messageBus;
         $this->entityEventDispatcher = $entityEventDispatcher;
         $this->entityManager = $entityManager;
+        $this->datastore = $datastore;
     }
 
     /**
@@ -102,7 +116,11 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             // Log processing complete.
             $this->logger->info('Dataset submission process started', $loggingContext);
             foreach ($fileset->getFiles() as $file) {
-                $this->processFile($file, $loggingContext);
+                if ($file instanceof File) {
+                    $this->processFile($file);
+                } else {
+                    $this->logger->alert('File object does not exist');
+                }
             }
 
             $datasetSubmission->setDatasetFileTransferStatus(
@@ -120,26 +138,27 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
      * Method to process a single file.
      *
      * @param File  $file           The file that is being processed.
-     * @param array $loggingContext The logging context for the handler.
      *
      * @return void
      */
-    private function processFile(File $file, array $loggingContext): void
+    private function processFile(File $file): void
     {
         // Log processing start.
         $fileId = $file->getId();
         $loggingContext['file_id'] = $fileId;
+        $filepath = $file->getFilePath();
+
         $this->logger->info('Dataset file processing started', $loggingContext);
 
         // TODO implement method
-        /*
+
         try {
-            $fileInfo = $this->fileManager->moveFile($filePath);
-            $file->setFilePath($fileInfo['filepath']);
+            $newFileDestination = $this->datastore->addFile(fopen($filepath, 'r'));
+            $file->setFilePath($newFileDestination);
         } catch (\Exception $exception) {
-            $this->logger->error('Unable to process file', $loggingContext);
+            $this->logger->error(sprintf('Unable to add file to datastore. Message: "%s"', $exception->getMessage()), $loggingContext);
         }
-        */
+
 
         // File Hashing
         $hashFile = new HashFile($fileId);

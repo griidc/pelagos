@@ -24,9 +24,9 @@ class DeleteFile
     /**
      * The file path getter.
      *
-     * @return integer The file ID.
+     * @return string The file path.
      */
-    public function getFilePath(): int
+    public function getFilePath(): string
     {
         return $this->filePath;
     }
