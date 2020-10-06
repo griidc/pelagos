@@ -116,46 +116,17 @@ services:
         bind:
             $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
 
-    App\Util\DataStore:
-        bind:
-            $dataStoreDirectory: "%env(DATA_STORE_DIRECTORY)%"
-            $dataDownloadDirectory: "%env(DATA_DOWNLOAD_DIRECTORY)%"
-            $dataStoreOwner: "%env(DATA_STORE_OWNER)%"
-            $dataStoreGroup: "%env(DATA_STORE_GROUP)%"
-            $dataDownloadBrowserGroup: "%env(DATA_DOWNLOAD_BROWSER_GROUP)%"
-            $webServerUser: "%env(WEB_SERVER_USER)%"
-            $anonFtpUser: "%env(ANONYMOUS_FTP_USER)%"
-            $anonFtpPass: "%env(ANONYMOUS_FTP_PASS)%"
-
     App\Consumer\DoiConsumer:
         bind:
             Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.doi_issue'
-
-    App\Consumer\DatasetFileHasherConsumer:
-        bind:
-            Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.dataset_file_hasher'
 
     App\Consumer\CreateHomedirConsumer:
         bind:
             Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.create_homedir'
             $filesystemType: "%env(FILESYSTEM_TYPE)%"
 
-    consumer.dataset_submission.filer:
-        class: App\Consumer\DatasetSubmissionConsumer
-        bind:
-            Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.filer'
-
-    consumer.dataset_submission.retriever:
-        class: App\Consumer\DatasetSubmissionConsumer
-        bind:
-            Symfony\Bridge\Monolog\Logger $logger: '@monolog.logger.retriever'
-
-    App\Consumer\DatasetSubmissionConsumer: '@consumer.dataset_submission.filer'
-
     App\Util\RabbitPublisher:
         bind:
-            OldSound\RabbitMqBundle\RabbitMq\Producer $datasetSubProducer: '@old_sound_rabbit_mq.dataset_submission_producer'
-            OldSound\RabbitMqBundle\RabbitMq\Producer $datasetFileHasherProducer: '@old_sound_rabbit_mq.dataset_file_hasher_producer'
             OldSound\RabbitMqBundle\RabbitMq\Producer $doiProducer: '@old_sound_rabbit_mq.doi_issue_producer'
             OldSound\RabbitMqBundle\RabbitMq\Producer $createHomeDirProducer: '@old_sound_rabbit_mq.create_homedir_producer'
 
@@ -220,3 +191,7 @@ services:
     App\Util\FileUploader:
         bind:
             $homedirPrefix: "%env(HOMEDIR_PREFIX)%"
+
+    App\Util\Datastore:
+        bind:
+            $datastoreFlysystem: "@oneup_flysystem.datastore_flysystem_filesystem"
