@@ -7,13 +7,15 @@ use App\Entity\File;
 use App\Entity\Fileset;
 
 use App\Event\EntityEventDispatcher;
+
 use App\Message\DatasetSubmissionFiler;
 use App\Message\HashFile;
 use App\Message\VirusScan;
+
 use App\Repository\DatasetSubmissionRepository;
 
-use App\Repository\FileRepository;
 use App\Util\Datastore;
+
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
