@@ -35,25 +35,15 @@ class Datastore
     /**
      * Datastore constructor.
      *
-     * @param FilesystemInterface $datastoreFlysystem
+     * @param FilesystemInterface $datastoreFlysystem Datastore flystystem instance.
+     * @param LoggerInterface     $logger             Monolog logger interface instance.
      */
-    public function __construct(FilesystemInterface $datastoreFlysystem)
+    public function __construct(FilesystemInterface $datastoreFlysystem, LoggerInterface $logger)
     {
         $this->datastoreFlysystem = $datastoreFlysystem;
-    }
-
-    /**
-     * Setting the logger interface.
-     *
-     * @param LoggerInterface $logger Monolog logger interface instance.
-     *
-     * @return void
-     */
-    public function setLogger(LoggerInterface $logger): void
-    {
         $this->logger = $logger;
     }
-
+    
     /**
      * Retrieves a file from disk.
      *
