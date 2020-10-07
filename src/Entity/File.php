@@ -24,7 +24,7 @@ class File extends Entity
     /**
      * Status value for a File that has been proccessed.
      */
-    const FILE_DONE = 'done';
+    const FILE_PROCESSED = 'processed';
 
     /**
      * Status value for a File that has an error of any kind.
