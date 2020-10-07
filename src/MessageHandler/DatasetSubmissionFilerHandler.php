@@ -153,7 +153,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         // TODO implement method
 
         try {
-            $newFileDestination = $this->datastore->addFile(fopen($filepath, 'r'));
+            $newFileDestination = $this->datastore->addFile(['fileStream' => fopen($filepath, 'r')]);
             $file->setFilePath($newFileDestination);
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to add file to datastore. Message: "%s"', $exception->getMessage()), $loggingContext);
