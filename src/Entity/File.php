@@ -12,6 +12,26 @@ use Doctrine\ORM\Mapping as ORM;
 class File extends Entity
 {
     /**
+     * Status value for a File that has been newly uploaded, not yet proccessed by "Filer".
+     */
+    const FILE_UPLOADED = 'uploaded';
+
+    /**
+     * Status value for a File that has been deleted. (File still exists on disk!)
+     */
+    const FILE_DELETED = 'deleted';
+
+    /**
+     * Status value for a File that has been proccessed.
+     */
+    const FILE_DONE = 'done';
+
+    /**
+     * Status value for a File that has an error of any kind.
+     */
+    const FILE_ERROR = 'error';
+
+    /**
      * Fileset which contains this file.
      *
      * @var Fileset
@@ -83,6 +103,17 @@ class File extends Entity
      * @ORM\Column(type="text", nullable=true)
      */
     protected $filePath;
+
+    /**
+     * The status of this File.
+     *
+     * @var string
+     *
+     * @see FILE_* constants.
+     *
+     * @ORM\Column(type="text")
+     */
+    protected $status = self::FILE_UPLOADED;
 
     /**
      * Getter for Fileset.
@@ -258,5 +289,29 @@ class File extends Entity
     public function setFilePath(?string $filePath): void
     {
         $this->filePath = $filePath;
+    }
+
+    /**
+     * Getter for Status.
+     *
+     * @return string
+     */
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    /**
+     * Setter for Status.
+     *
+     * @param string $status The status of the file.
+     *
+     * @see FILE_* constants.
+     *
+     * @return void
+     */
+    public function setStatus(string $status): void
+    {
+        $this->status = $status;
     }
 }
