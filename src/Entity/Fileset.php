@@ -5,6 +5,8 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Expr\Comparison;
 
 /**
  * Fileset Entity class.
@@ -63,5 +65,26 @@ class Fileset extends Entity
     public function removeFile(File $file)
     {
         $this->files->removeElement($file);
+    }
+
+    /**
+     * Check if the fileset is done processesing.
+     *
+     * @return boolean
+     */
+    public function isDone() :bool
+    {
+        $criteria = Criteria::create()
+            ->where(new Comparison(
+                'status',
+                Comparison::IN,
+                array(
+                    File::FILE_NEW,
+                    File::FILE_IN_PROGRESS
+                )
+            )
+        );
+
+        return count($this->files->matching($criteria)) === 0;
     }
 }
