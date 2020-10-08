@@ -37,7 +37,9 @@ class Fileset extends Entity
      */
     public function getFiles() : Collection
     {
-        return $this->files;
+        return $this->files->filter(function (File $file) {
+            return $file->getStatus() !== File::FILE_DELETED;
+        });
     }
 
     /**
