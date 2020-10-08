@@ -14,7 +14,7 @@ class File extends Entity
     /**
      * Status value for a File that has been newly uploaded, not yet proccessed by "Filer".
      */
-    const FILE_UPLOADED = 'uploaded';
+    const FILE_NEW = 'new';
 
     /**
      * Status value for a File that has been deleted. (File still exists on disk!)
@@ -24,7 +24,12 @@ class File extends Entity
     /**
      * Status value for a File that has been proccessed.
      */
-    const FILE_PROCESSED = 'processed';
+    const FILE_IN_PROGRESS = 'in progress';
+
+    /**
+     * Status value for a File that has been proccessed.
+     */
+    const FILE_DONE = 'done';
 
     /**
      * Status value for a File that has an error of any kind.
