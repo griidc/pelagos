@@ -22,7 +22,7 @@ class File extends Entity
     const FILE_DELETED = 'deleted';
 
     /**
-     * Status value for a File that has been proccessed.
+     * Status value for a File that is being processed by "Filer".
      */
     const FILE_IN_PROGRESS = 'in progress';
 
@@ -118,7 +118,7 @@ class File extends Entity
      *
      * @ORM\Column(type="text")
      */
-    protected $status = self::FILE_UPLOADED;
+    protected $status = self::FILE_NEW;
 
     /**
      * Getter for Fileset.
