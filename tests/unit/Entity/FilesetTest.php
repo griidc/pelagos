@@ -41,7 +41,12 @@ class FilesetTest extends TestCase
     protected function setUp()
     {
         $this->fileset = new Fileset;
-        $this->mockFile = \Mockery::mock(File::class, array('setFileset' => null));
+        $this->mockFile = \Mockery::mock(
+            File::class,
+            array(
+                'setFileset' => null,
+                'getStatus' => 'new'
+                ));
         $this->defaultFile = $this->fileset->getFiles()->first();
     }
 
