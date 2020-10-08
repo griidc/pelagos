@@ -90,6 +90,11 @@ class DatalandController extends AbstractController
                 $wkt = null;
             }
         }
+        
+        $fileset = $dataset->getDatasetSubmission()->getFileset();
+        
+        dd($fileset->isDone());
+        
 
         $downloadCount = null;
         // Remotely hosted datasets are normally also hosted locally anyway, so including.

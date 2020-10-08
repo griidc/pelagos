@@ -75,7 +75,8 @@ class Fileset extends Entity
     public function isDone() :bool
     {
         $criteria = Criteria::create()
-            ->where(new Comparison(
+        ->where(
+            new Comparison(
                 'status',
                 Comparison::IN,
                 array(
