@@ -17,7 +17,7 @@ final class Version20200624193858 extends AbstractMigration
 
         $this->addSql('CREATE SEQUENCE file_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE fileset_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE file (id INT NOT NULL, fileset_id INT NOT NULL, uploaded_by_id INT DEFAULT NULL, creator_id INT DEFAULT NULL, modifier_id INT DEFAULT NULL, file_name TEXT DEFAULT NULL, file_size BIGINT DEFAULT NULL, file_sha256_hash TEXT DEFAULT NULL, uploaded_at TIMESTAMP(0) WITH TIME ZONE DEFAULT NULL, description TEXT DEFAULT NULL, file_path TEXT DEFAULT NULL, creation_time_stamp TIMESTAMP(0) WITH TIME ZONE NOT NULL, modification_time_stamp TIMESTAMP(0) WITH TIME ZONE NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE file (id INT NOT NULL, fileset_id INT NOT NULL, uploaded_by_id INT DEFAULT NULL, creator_id INT DEFAULT NULL, modifier_id INT DEFAULT NULL, file_name TEXT DEFAULT NULL, file_size BIGINT DEFAULT NULL, file_sha256_hash TEXT DEFAULT NULL, uploaded_at TIMESTAMP(0) WITH TIME ZONE DEFAULT NULL, description TEXT DEFAULT NULL, file_path TEXT DEFAULT NULL, status TEXT NOT NULL, creation_time_stamp TIMESTAMP(0) WITH TIME ZONE NOT NULL, modification_time_stamp TIMESTAMP(0) WITH TIME ZONE NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_8C9F3610304051B3 ON file (fileset_id)');
         $this->addSql('CREATE INDEX IDX_8C9F3610A2B28FE8 ON file (uploaded_by_id)');
         $this->addSql('CREATE INDEX IDX_8C9F361061220EA6 ON file (creator_id)');
