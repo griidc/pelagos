@@ -35,7 +35,7 @@ class Fileset extends Entity
      *
      * @return Collection
      */
-    public function getFiles() : Collection
+    public function getAllFiles() : Collection
     {
         return $this->files;
     }
