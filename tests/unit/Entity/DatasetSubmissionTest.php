@@ -148,7 +148,7 @@ class DatasetSubmissionTest extends TestCase
         $this->mockFileset = \Mockery::mock(
             Fileset::class,
             array(
-                'getFiles' => new ArrayCollection(array($this->mockFile))
+                'getAllFiles' => new ArrayCollection(array($this->mockFile))
             )
         );
         $this->datasetSubmission = new DatasetSubmission(

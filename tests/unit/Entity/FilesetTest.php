@@ -45,9 +45,9 @@ class FilesetTest extends TestCase
             File::class,
             array(
                 'setFileset' => null,
-                'getStatus' => 'new'
+                'getStatus' => File::FILE_NEW
                 ));
-        $this->defaultFile = $this->fileset->getFiles()->first();
+        $this->defaultFile = $this->fileset->getAllFiles()->first();
     }
 
     /**
@@ -57,17 +57,17 @@ class FilesetTest extends TestCase
      */
     public function testAddFileToFileset()
     {
-        if (!$this->fileset->getFiles()->isEmpty()) {
+        if (!$this->fileset->getAllFiles()->isEmpty()) {
             $this->fileset->removeFile($this->defaultFile);
         }
         $this->fileset->addFile($this->mockFile);
-        $this->assertEquals($this->mockFile, $this->fileset->getFiles()->first());
+        $this->assertEquals($this->mockFile, $this->fileset->getAllFiles()->first());
     }
 
     public function testRemoveFileToFileset()
     {
         $this->fileset->removeFile($this->mockFile);
-        $this->assertSame(0, $this->fileset->getFiles()->count());;
+        $this->assertSame(0, $this->fileset->getAllFiles()->count());;
     }
 
     /**
@@ -77,6 +77,6 @@ class FilesetTest extends TestCase
      */
     public function testFilesCollection()
     {
-        $this->assertInstanceOf(Collection::class, $this->fileset->getFiles());
+        $this->assertInstanceOf(Collection::class, $this->fileset->getAllFiles());
     }
 }
