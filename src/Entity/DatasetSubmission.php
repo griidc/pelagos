@@ -1064,7 +1064,7 @@ class DatasetSubmission extends Entity
             }
             // Copy the fileSet
             $newFileset = new Fileset();
-            foreach ($entity->getFileset()->getFiles() as $file) {
+            foreach ($entity->getFileset()->getAllFiles() as $file) {
                 $newFile = new File();
                 $newFile->setFileName($file->getFileName());
                 $newFile->setFileSize($file->getFileSize());
@@ -1645,7 +1645,7 @@ class DatasetSubmission extends Entity
      */
     public function setDatasetFileName(?string $datasetFileName)
     {
-        $this->fileset->getFiles()->first()->setFileName($datasetFileName);
+        $this->fileset->getAllFiles()->first()->setFileName($datasetFileName);
     }
 
     /**
@@ -1656,7 +1656,7 @@ class DatasetSubmission extends Entity
     public function getDatasetFileName() : ?string
     {
         if ($this->fileset instanceof Fileset) {
-            return $this->fileset->getFiles()->first()->getFileName();
+            return $this->fileset->getAllFiles()->first()->getFileName();
         }
         return null;
     }
@@ -1670,7 +1670,7 @@ class DatasetSubmission extends Entity
      */
     public function setDatasetFileSize(?int $datasetFileSize)
     {
-        $this->fileset->getFiles()->first()->setFileSize($datasetFileSize);
+        $this->fileset->getAllFiles()->first()->setFileSize($datasetFileSize);
     }
 
     /**
@@ -1681,7 +1681,7 @@ class DatasetSubmission extends Entity
     public function getDatasetFileSize() : ?int
     {
         if ($this->fileset instanceof Fileset) {
-            return $this->fileset->getFiles()->first()->getFileSize();
+            return $this->fileset->getAllFiles()->first()->getFileSize();
         }
         return null;
     }
@@ -1695,7 +1695,7 @@ class DatasetSubmission extends Entity
      */
     public function setDatasetFileSha256Hash(?string $datasetFileSha256Hash)
     {
-        $this->fileset->getFiles()->first()->setFileSha256Hash($datasetFileSha256Hash);
+        $this->fileset->getAllFiles()->first()->setFileSha256Hash($datasetFileSha256Hash);
     }
 
     /**
@@ -1706,7 +1706,7 @@ class DatasetSubmission extends Entity
     public function getDatasetFileSha256Hash() : ?string
     {
         if ($this->fileset instanceof Fileset) {
-            return $this->fileset->getFiles()->first()->getFileSha256Hash();
+            return $this->fileset->getAllFiles()->first()->getFileSha256Hash();
         }
         return null;
     }
