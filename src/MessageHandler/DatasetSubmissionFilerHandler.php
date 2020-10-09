@@ -115,7 +115,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         if ($fileset instanceof Fileset) {
             // Log processing complete.
             $this->logger->info('Dataset submission process started', $loggingContext);
-            foreach ($fileset->getFiles() as $file) {
+            foreach ($fileset->getNewFiles() as $file) {
                 if ($file instanceof File) {
                     $this->processFile($file);
                 } else {

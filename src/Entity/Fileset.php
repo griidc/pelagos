@@ -31,14 +31,48 @@ class Fileset extends Entity
     }
 
     /**
-     * Getter for files.
+     * Getter for all files.
      *
      * @return Collection
      */
     public function getFiles() : Collection
     {
+        return $this->files;
+    }
+
+    /**
+     * Getter for processed files.
+     *
+     * @return Collection
+     */
+    public function getProcessedFiles() : Collection
+    {
         return $this->files->filter(function (File $file) {
-            return $file->getStatus() !== File::FILE_DELETED;
+            return $file->getStatus() === File::FILE_DONE;
+        });
+    }
+
+    /**
+     * Getter for unprocessed/new files.
+     *
+     * @return Collection
+     */
+    public function getNewFiles() : Collection
+    {
+        return $this->files->filter(function (File $file) {
+            return $file->getStatus() === File::FILE_NEW;
+        });
+    }
+
+    /**
+     * Getter for deleted files.
+     *
+     * @return Collection
+     */
+    public function getDeletedFiles() : Collection
+    {
+        return $this->files->filter(function (File $file) {
+            return $file->getStatus() === File::FILE_DELETED;
         });
     }
 

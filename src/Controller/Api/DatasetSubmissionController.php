@@ -378,7 +378,7 @@ class DatasetSubmissionController extends EntityController
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
 
         if ($datasetSubmission->getFileset() instanceof Fileset) {
-            foreach ($datasetSubmission->getFileset()->getFiles() as $file) {
+            foreach ($datasetSubmission->getFileset()->getProcessedFiles() as $file) {
                 $fileData[] = array(
                     'name' => $file->getFileName(),
                     'size' => $file-> getFileSize(),
