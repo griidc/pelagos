@@ -51,11 +51,11 @@ class Datastore
      *
      * @throws \Exception Exception thrown when read stream fails.
      *
-     * @return resource
+     * @return array
      */
-    public function getFile(string $filePath): resource
+    public function getFile(string $filePath): array
     {
-        $resource = $this->datastoreFlysystem->readStream($filePath);
+        $resource['fileStream'] = $this->datastoreFlysystem->readStream($filePath);
 
         if ($resource === false) {
             throw new \Exception(sprintf('Error opening stream for "%s"', $filePath));
@@ -67,16 +67,16 @@ class Datastore
     /**
      * Moves an uploaded file to datastore disk location.
      *
-     * @param resource $fileStream Resource file stream which needs to be added.
+     * @param array $fileStream File stream resource object.
      *
      * @return string
      */
-    public function addFile(resource $fileStream): string
+    public function addFile(array $fileStream): string
     {
         $uuid = Uuid::uuid4();
         $destinationPath = self::FILES_DIRECTORY . DIRECTORY_SEPARATOR . $uuid->toString();
         try {
-            $this->datastoreFlysystem->writeStream($destinationPath, $fileStream);
+            $this->datastoreFlysystem->writeStream($destinationPath, $fileStream['fileStream']);
         } catch (FileExistsException $e) {
             $this->logger->error(sprintf('File already exists. Message: "%s"', $e->getMessage()));
         }
