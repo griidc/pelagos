@@ -47,12 +47,17 @@ class HashFileHandler implements MessageHandlerInterface
     /**
      * Constructor for this Controller, to set up default services.
      *
-     * @param EntityManagerInterface   $entityManager           The entity handler.
-     * @param FileRepository           $fileRepository          The file Repository.
-     * @param LoggerInterface          $datasetFileHasherLogger Name hinted dataset_file_hasher logger.
+     * @param EntityManagerInterface $entityManager           The entity handler.
+     * @param FileRepository         $fileRepository          The file Repository.
+     * @param LoggerInterface        $datasetFileHasherLogger Name hinted dataset_file_hasher logger.
+     * @param Datastore              $dataStore               Datastore utility instance.
      */
-    public function __construct(EntityManagerInterface $entityManager, FileRepository $fileRepository, LoggerInterface $datasetFileHasherLogger, Datastore $dataStore)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        FileRepository $fileRepository,
+        LoggerInterface $datasetFileHasherLogger,
+        Datastore $dataStore
+    ) {
         $this->entityManager = $entityManager;
         $this->fileRepository = $fileRepository;
         $this->logger = $datasetFileHasherLogger;
