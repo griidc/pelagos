@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 
 class FilesetTest extends TestCase
 {
-
     /**
      * Instance of Fileset Entity.
      *
@@ -137,5 +136,47 @@ class FilesetTest extends TestCase
 
         $this->fileset->addFile($mockDeletedFile);
         $this->assertSame($mockDeletedFile, $this->fileset->getDeletedFiles()->first());
+    }
+
+    /**
+     * Testing isDone function.
+     *
+     * @return void
+     */
+    public function testIsDone()
+    {
+        $newFile = \Mockery::mock(
+            File::class,
+            array(
+                'setFileset' => null,
+                'getStatus' => File::FILE_NEW
+            )
+        );
+
+        $doneFile = \Mockery::mock(
+            File::class,
+            array(
+                'setFileset' => null,
+                'getStatus' => File::FILE_DONE
+            )
+        );
+
+        $progressFile = \Mockery::mock(
+            File::class,
+            array(
+                'setFileset' => null,
+                'getStatus' => File::FILE_IN_PROGRESS
+            )
+        );
+
+        $this->fileset->addFile($newFile);
+        $this->assertSame(false, $this->fileset->isDone());
+        $this->fileset->addFile($progressFile);
+        $this->assertSame(false, $this->fileset->isDone());
+        $this->fileset->removeFile($newFile);
+        $this->assertSame(false, $this->fileset->isDone());
+        $this->fileset->removeFile($progressFile);
+        $this->fileset->addFile($doneFile);
+        $this->assertSame(true, $this->fileset->isDone());
     }
 }
