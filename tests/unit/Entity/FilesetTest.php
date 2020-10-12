@@ -44,9 +44,9 @@ class FilesetTest extends TestCase
             File::class,
             array(
                 'setFileset' => null,
-                'getStatus' => 'new'
+                'getStatus' => File::FILE_NEW
                 ));
-        $this->defaultFile = $this->fileset->getFiles()->first();
+        $this->defaultFile = $this->fileset->getAllFiles()->first();
     }
 
     /**
@@ -56,17 +56,23 @@ class FilesetTest extends TestCase
      */
     public function testAddFileToFileset()
     {
-        if (!$this->fileset->getFiles()->isEmpty()) {
+        if (!$this->fileset->getAllFiles()->isEmpty()) {
             $this->fileset->removeFile($this->defaultFile);
         }
         $this->fileset->addFile($this->mockFile);
-        $this->assertEquals($this->mockFile, $this->fileset->getFiles()->first());
+        $this->assertEquals($this->mockFile, $this->fileset->getAllFiles()->first());
     }
 
+    /**
+     * Test removing files from fileset.
+     *
+     * @return void
+     */
     public function testRemoveFileToFileset()
     {
         $this->fileset->removeFile($this->mockFile);
-        $this->assertSame(0, $this->fileset->getFiles()->count());
+
+        $this->assertSame(0, $this->fileset->getAllFiles()->count());;
     }
 
     /**
@@ -76,7 +82,61 @@ class FilesetTest extends TestCase
      */
     public function testFilesCollection()
     {
-        $this->assertInstanceOf(Collection::class, $this->fileset->getFiles());
+        $this->assertInstanceOf(Collection::class, $this->fileset->getAllFiles());
+    }
+
+    /**
+     * Test getter for processed files.
+     *
+     * @return void
+     */
+    public function testGetProcessedFilesCollection()
+    {
+        $mockProcessedFile = \Mockery::mock(
+        File::class,
+        array(
+            'setFileset' => null,
+            'getStatus' => File::FILE_DONE
+        ));
+
+        $this->fileset->addFile($mockProcessedFile);
+        $this->assertSame($mockProcessedFile, $this->fileset->getProcessedFiles()->first());
+    }
+
+    /**
+     * Test getter for new files.
+     *
+     * @return void
+     */
+    public function testGetNewFilesCollection()
+    {
+        $mockNewFile = \Mockery::mock(
+            File::class,
+            array(
+                'setFileset' => null,
+                'getStatus' => File::FILE_NEW
+            ));
+
+        $this->fileset->addFile($mockNewFile);
+        $this->assertSame($mockNewFile, $this->fileset->getNewFiles()->first());
+    }
+
+    /**
+     * Test getter for deleted files.
+     *
+     * @return void
+     */
+    public function testGetDeletedFilesCollection()
+    {
+        $mockDeletedFile = \Mockery::mock(
+            File::class,
+            array(
+                'setFileset' => null,
+                'getStatus' => File::FILE_DELETED
+            ));
+
+        $this->fileset->addFile($mockDeletedFile);
+        $this->assertSame($mockDeletedFile, $this->fileset->getDeletedFiles()->first());
     }
 
     /**
