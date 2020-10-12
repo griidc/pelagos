@@ -71,7 +71,6 @@ class FilesetTest extends TestCase
     public function testRemoveFileToFileset()
     {
         $this->fileset->removeFile($this->mockFile);
-
         $this->assertSame(0, $this->fileset->getAllFiles()->count());;
     }
 
