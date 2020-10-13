@@ -94,6 +94,10 @@ services:
             - { name: kernel.event_listener, event: pelagos.logactionitem.restrictions_log, method: onNewLogCreated }
             - { name: kernel.event_listener, event: pelagos.logactionitem.remotelyhosted_update_log, method: onNewLogCreated }
 
+    App\Event\FileProcessListener:
+        tags:
+            - { name: doctrine.orm.entity_listener, event: preUpdate, entity: App\Entity\File }
+
     App\Util\DOIutil:
         $doiApiUserName: "%env(DOI_API_USER_NAME)%"
         $doiApiPassword: "%env(DOI_API_PASSWORD)%"
