@@ -3,8 +3,10 @@
 <div id="dropzone-uploader" class="file-dropzone-area">
     <h2>Drag and Drop files here or click to upload</h2>
 </div>
-<div id="file-manager-app" data-id={{ datasetSubmission.id }}>
-</div>
+<fieldset>
+    <legend class="section-header">Files</legend>
+    {% include "DatasetSubmission/files.html.twig" %}
+</fieldset>
 <fieldset>
     <legend class="section-header">{{ form.restrictions.vars.label }}</legend>
     <table class="tab-table">

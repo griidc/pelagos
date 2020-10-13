@@ -31,6 +31,16 @@ class Fileset extends Entity
     {
         $this->files = new ArrayCollection();
     }
+    
+    /**
+     * Getter for files.
+     *
+     * @return Collection
+     */
+    public function getFiles() : Collection
+    {
+        return $this->files;
+    }
 
     /**
      * Getter for all files.

@@ -1,0 +1,5 @@
+<div id="file-manager-app" data-id={{ datasetSubmission.id }}>
+</div>
+{% for file in form.fileset.allfiles %}
+    <input type="hidden" id="{{file.vars.full_name}}" name="{{file.filename.vars.full_name}}" value="{{link.vars.data.filename|default}}">
+{% endfor %}

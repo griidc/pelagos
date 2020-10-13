@@ -1,0 +1,12 @@
+<div id="dropzone-uploader" class="file-dropzone-area">
+    <h2>Drag and Drop files here or click to upload</h2>
+</div>
+<div id="file-manager-app" data-id={{ datasetSubmission.id }}>
+</div>
+
+
+{% for file in form.fileset.files %}
+{% dump(file) %}
+{{ form_widget(file) }}
+    
+{% endfor %}

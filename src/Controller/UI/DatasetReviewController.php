@@ -419,6 +419,8 @@ class DatasetReviewController extends AbstractController
         $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_IN_REVIEW);
         $datasetSubmission->setModifier($reviewedBy);
         $eventName = 'start_review';
+        
+        dump($datasetSubmission->getFileset()->getAllFiles());
 
         // Create Dataset submission entity.
 
@@ -474,13 +476,21 @@ class DatasetReviewController extends AbstractController
         // set to default event
         $eventName = 'end_review';
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
+        
+        dd($datasetSubmission->getFileset()->getAllFiles());
+        
+        
         $form = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionType::class,
             $datasetSubmission
         );
+        
+        dump($datasetSubmission->getFileset()->getAllFiles());
 
         $form->handleRequest($request);
+        
+        dump($datasetSubmission->getFileset()->getAllFiles());
 
         if ($form->isSubmitted() and $form->isValid()) {
             $this->processDatasetFileTransferDetails($form, $datasetSubmission);
@@ -528,7 +538,9 @@ class DatasetReviewController extends AbstractController
             foreach ($datasetSubmission->getDatasetLinks() as $datasetLink) {
                 $this->entityHandler->update($datasetLink);
             }
-            $this->entityHandler->update($datasetSubmission->getFileset()->getAllFiles()->first());
+            
+            // dump($datasetSubmission->getFileset()->getAllFiles());
+            //$this->entityHandler->update($datasetSubmission->getFileset()->getAllFiles()->first());
 
             // update MDAPP logs after action is executed.
             $this->entityEventDispatcher->dispatch(

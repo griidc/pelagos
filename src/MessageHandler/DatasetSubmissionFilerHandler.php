@@ -118,6 +118,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             foreach ($fileset->getNewFiles() as $file) {
                 if ($file instanceof File) {
                     $this->processFile($file);
+                    $file->setStatus(File::FILE_DONE);
                 } else {
                     $this->logger->alert('File object does not exist');
                 }
@@ -126,6 +127,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             $datasetSubmission->setDatasetFileTransferStatus(
                 DatasetSubmission::TRANSFER_STATUS_COMPLETED
             );
+            
             $dataset->updateAvailabilityStatus();
             $this->entityManager->flush();
             // Dispatch entity event.

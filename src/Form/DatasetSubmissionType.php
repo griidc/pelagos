@@ -14,6 +14,7 @@ use App\Entity\DatasetSubmission;
 use App\Entity\DatasetLink;
 use App\Entity\DistributionPoint;
 use App\Entity\Entity;
+use App\Entity\Fileset;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
 
@@ -259,6 +260,19 @@ class DatasetSubmissionType extends AbstractType
                 'delete_empty' => true,
                 'required' => true,
             ))
+            ->add('fileset', FilesetType::class)
+            // ->add('fileset', Type\CollectionType::class, array(
+                // 'label' => 'Files',
+                // 'entry_type' => FilesetType::class,
+                // 'entry_options' => array(
+                    // 'data_class' => Fileset::class,
+                // ),
+                // 'by_reference' => false,
+                // 'allow_add' => true,
+                // 'allow_delete' => true,
+                // 'delete_empty' => true,
+                // 'required' => true,
+            // ))
             ->add('isRemotelyHosted', Type\CheckboxType::class, array(
                 'label' => 'Is Remotely Hosted',
                 'mapped' => false,

@@ -1073,7 +1073,9 @@ class DatasetSubmission extends Entity
                 $newFile->setUploadedBy($file->getUploadedBy());
                 $newFile->setDescription($file->getDescription());
                 $newFile->setFilePath($file->getFilePath());
+                $newFile->setStatus($file->getStatus());
                 $newFileset->addFile($newFile);
+                dump($newFile);
             }
             $this->setFileset($newFileset);
         } else {
