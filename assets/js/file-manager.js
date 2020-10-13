@@ -57,7 +57,7 @@ if (fileManagerElement.dataset.id) {
                     + "?dzuuid=" + currentFile.upload.uuid
                     + "&dztotalchunkcount=" + currentFile.upload.totalChunkCount
                     + "&fileName=" + currentFile.name
-                    + "&dztotalfilesize=" + currentFile.upload.dztotalfilesize
+                    + "&dztotalfilesize=" + currentFile.upload.total
                 )
                 .then(response => {
                     done();

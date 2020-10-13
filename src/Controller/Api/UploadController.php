@@ -104,11 +104,9 @@ class UploadController extends EntityController
                 $newFile->setUploadedBy($this->getUser()->getPerson());
                 $newFile->setFilePath($fileMetadata['path']);
                 $fileset->addFile($newFile);
-                $entityManager->persist($fileset);
-                $entityManager->flush();
+                $entityManager->persist($newFile);
             }
         }
-        $entityManager->persist($datasetSubmission);
         $entityManager->flush();
     }
 }

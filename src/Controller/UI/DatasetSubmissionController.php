@@ -260,7 +260,6 @@ class DatasetSubmissionController extends AbstractController
             foreach ($datasetSubmission->getDatasetLinks() as $datasetLink) {
                 $this->entityHandler->update($datasetLink);
             }
-            $this->entityHandler->update($datasetSubmission->getFileset()->getAllFiles()->first());
 
             $this->entityEventDispatcher->dispatch(
                 $datasetSubmission,

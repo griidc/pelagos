@@ -1073,6 +1073,7 @@ class DatasetSubmission extends Entity
                 $newFile->setUploadedBy($file->getUploadedBy());
                 $newFile->setDescription($file->getDescription());
                 $newFile->setFilePath($file->getFilePath());
+                $newFile->setStatus($file->getStatus());
                 $newFileset->addFile($newFile);
             }
             $this->setFileset($newFileset);
@@ -1645,7 +1646,7 @@ class DatasetSubmission extends Entity
      */
     public function setDatasetFileName(?string $datasetFileName)
     {
-        $this->fileset->getAllFiles()->first()->setFileName($datasetFileName);
+        $this->datasetFileName = $datasetFileName;
     }
 
     /**
@@ -1670,7 +1671,7 @@ class DatasetSubmission extends Entity
      */
     public function setDatasetFileSize(?int $datasetFileSize)
     {
-        $this->fileset->getAllFiles()->first()->setFileSize($datasetFileSize);
+        $this->datasetFileSize = $datasetFileSize;
     }
 
     /**
@@ -1695,7 +1696,7 @@ class DatasetSubmission extends Entity
      */
     public function setDatasetFileSha256Hash(?string $datasetFileSha256Hash)
     {
-        $this->fileset->getAllFiles()->first()->setFileSha256Hash($datasetFileSha256Hash);
+        $this->datasetFileSha256Hash = $datasetFileSha256Hash;
     }
 
     /**
