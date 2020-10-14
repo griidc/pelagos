@@ -1,9 +1,10 @@
 import Vue from "vue";
 import FileManager from "./vue/FileManager";
-const fileManagerElement = document.getElementById("file-manager-app");
 import axios from "axios";
 import Dropzone from "dropzone";
 import "../css/file-manager.css";
+
+const fileManagerElement = document.getElementById("file-manager-app");
 
 
 if (fileManagerElement.dataset.id) {
@@ -49,22 +50,29 @@ if (fileManagerElement.dataset.id) {
             // All chunks have been uploaded. Perform any other actions
             let currentFile = file;
             const axiosInstance = axios.create({});
-            axiosInstance
-                .post(
-                    Routing.generate('pelagos_api_combine_chunks')
-                    + "/"
-                    + datasetSubmissionId
-                    + "?dzuuid=" + currentFile.upload.uuid
-                    + "&dztotalchunkcount=" + currentFile.upload.totalChunkCount
-                    + "&fileName=" + currentFile.name
-                    + "&dztotalfilesize=" + currentFile.upload.total
-                )
+
+            axiosInstance.get(Routing.generate('pelagos_api_combine_chunks')
+                + "/"
+                + datasetSubmissionId
+                + "?dzuuid=" + currentFile.upload.uuid
+                + "&dztotalchunkcount=" + currentFile.upload.totalChunkCount
+                + "&fileName=" + currentFile.name
+                + "&dztotalfilesize=" + currentFile.upload.total)
                 .then(response => {
-                    done();
-                }).catch(error => {
-                    currentFile.accepted = false;
-                    myDropzone._errorProcessing([currentFile], error.message);
-            });
+                    axiosInstance
+                        .post(
+                            Routing.generate('pelagos_api_add_file_dataset_submission')
+                            + "/"
+                            + datasetSubmissionId,
+                            response.data
+                        )
+                        .then(response => {
+                            done();
+                        }).catch(error => {
+                            currentFile.accepted = false;
+                            myDropzone._errorProcessing([currentFile], error.message);
+                    });
+                })
     },
     });
 }

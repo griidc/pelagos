@@ -2,23 +2,27 @@
 
 namespace App\Controller\Api;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Form\FormInterface;
+use App\Entity\File;
+use App\Entity\DatasetSubmission;
+use App\Entity\Fileset;
 
-use Symfony\Component\Routing\Annotation\Route;
+use App\Util\UrlValidation;
+
+use App\Form\DatasetSubmissionType;
+
+use Doctrine\ORM\EntityManagerInterface;
 
 use FOS\RestBundle\Controller\Annotations\View;
 
 use Nelmio\ApiDocBundle\Annotation\Operation;
 use Nelmio\ApiDocBundle\Annotation\Model;
+
 use Swagger\Annotations as SWG;
 
-use App\Util\UrlValidation;
-use App\Entity\DatasetSubmission;
-use App\Entity\Fileset;
-use App\Form\DatasetSubmissionType;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The Dataset Submission api controller.
@@ -390,6 +394,44 @@ class DatasetSubmissionController extends EntityController
         }
 
         return $fileData;
+    }
+
+    /**
+     * Adds a file to a dataset submission.
+     *
+     * @param DatasetSubmission      $datasetSubmission The id of the dataset submission.
+     * @param Request                $request           The request body sent with file metadata.
+     * @param EntityManagerInterface $entityManager     Entity manager interface to doctrine operations.
+     *
+     * @Route(
+     *     "/api/files_dataset_submission/{id}",
+     *     name="pelagos_api_add_file_dataset_submission",
+     *     methods={"POST"},
+     *     defaults={"_format"="json"},
+     *     requirements={"id"="\d+"}
+     *     )
+     *
+     * @View()
+     *
+     * @return Response
+     */
+    public function addFile(DatasetSubmission $datasetSubmission, Request $request, EntityManagerInterface $entityManager)
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $fileset = $datasetSubmission->getFileset();
+        if ($fileset instanceof Fileset) {
+            $newFile = new File();
+            $newFile->setFileName($request->get('name'));
+            $newFile->setFileSize($request->get('size'));
+            $newFile->setUploadedAt(new \DateTime('now'));
+            $newFile->setUploadedBy($this->getUser()->getPerson());
+            $newFile->setFilePath($request->get('path'));
+            $fileset->addFile($newFile);
+            $entityManager->persist($newFile);
+            $entityManager->flush();
+        }
+
+        return $this->makeNoContentResponse();
     }
 
     /**
