@@ -124,4 +124,21 @@ class Fileset extends Entity
 
         return count($this->files->matching($criteria)) === 0;
     }
+
+    /**
+     * Returns the total filesize for this fileset.
+     *
+     * @return integer
+     */
+    public function getFileSize() :int
+    {
+        $fileSize = 0;
+        $filesArray = $this->files->toArray();
+
+        foreach ($filesArray as $file) {
+            $fileSize += (int) $file->getFileSize();
+        }
+
+        return $fileSize;
+    }
 }
