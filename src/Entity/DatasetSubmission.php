@@ -571,19 +571,6 @@ class DatasetSubmission extends Entity
     protected $datasetFileUri;
 
     /**
-     * The dataset file transfer status.
-     *
-     * Legacy DB column: dataset_download_status
-     *
-     * @var string
-     *
-     * @see TRANSFER_STATUSES class constant for valid values.
-     *
-     * @ORM\Column(type="text", nullable=true)
-     */
-    protected $datasetFileTransferStatus;
-
-    /**
      * The dataset file name.
      *
      * Legacy DB column: dataset_filename
@@ -992,7 +979,6 @@ class DatasetSubmission extends Entity
             $this->setRestrictions($entity->getRestrictions());
             $this->setDatasetFileTransferType($entity->getDatasetFileTransferType());
             $this->setDatasetFileUri($entity->getDatasetFileUri());
-            $this->setDatasetFileTransferStatus($entity->getDatasetFileTransferStatus());
             $this->setDatasetStatus($entity->getDatasetStatus());
             $this->setPurpose($entity->getPurpose());
             $this->setSuppParams($entity->getSuppParams());
@@ -1613,28 +1599,16 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * Set the dataset file transfer status.
-     *
-     * @param string|null $datasetFileTransferStatus The dataset file transfer status.
-     *
-     * @see TRANSFER_STATUSES class constant for valid values.
-     *
-     * @return void
-     */
-    public function setDatasetFileTransferStatus(?string $datasetFileTransferStatus)
-    {
-        $this->datasetFileTransferStatus = $datasetFileTransferStatus;
-        $this->updateAvailabilityStatus();
-    }
-
-    /**
      * Get the dataset file transfer status.
      *
      * @return string|null
      */
     public function getDatasetFileTransferStatus() : ?string
     {
-        return $this->datasetFileTransferStatus;
+        if ($this->fileset instanceof Fileset and $this->fileset->isDone()) {
+            return self::TRANSFER_STATUS_COMPLETED;
+        }
+        return null;
     }
 
     /**

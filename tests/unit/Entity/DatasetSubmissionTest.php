@@ -141,14 +141,17 @@ class DatasetSubmissionTest extends TestCase
                 'setFileSize' => 1234,
                 'getFileSize' => 1234,
                 'setFileSha256Hash' => 'cafe',
-                'getFileSha256Hash' => 'cafe'
+                'getFileSha256Hash' => 'cafe',
+                'getStatus' => File::FILE_DONE,
+                'setStatus' => File::FILE_DONE
             )
         );
 
         $this->mockFileset = \Mockery::mock(
             Fileset::class,
             array(
-                'getAllFiles' => new ArrayCollection(array($this->mockFile))
+                'getAllFiles' => new ArrayCollection(array($this->mockFile)),
+                'isDone' => true
             )
         );
         $this->datasetSubmission = new DatasetSubmission(
@@ -329,7 +332,7 @@ class DatasetSubmissionTest extends TestCase
             'foobar',
             $this->datasetSubmission->getDatasetFileUri()
         );
-        $this->datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
+
         $this->assertEquals(
             DatasetSubmission::TRANSFER_STATUS_COMPLETED,
             $this->datasetSubmission->getDatasetFileTransferStatus()
