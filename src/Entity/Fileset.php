@@ -133,9 +133,8 @@ class Fileset extends Entity
     public function getFileSize() :int
     {
         $fileSize = 0;
-        $filesArray = $this->files->toArray();
 
-        foreach ($filesArray as $file) {
+        foreach ($this->files as $file) {
             $fileSize += (int) $file->getFileSize();
         }
 
