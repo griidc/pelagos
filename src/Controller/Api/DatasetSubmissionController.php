@@ -420,6 +420,10 @@ class DatasetSubmissionController extends EntityController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $fileset = $datasetSubmission->getFileset();
         if ($fileset instanceof Fileset) {
+            if ($fileset->doesFileExist($request->get('name'))) {
+                $existingFile = $fileset->getExistingFile($request->get('name'));
+                $existingFile->setStatus(FILE::FILE_DELETED);
+            }
             $newFile = new File();
             $newFile->setFileName($request->get('name'));
             $newFile->setFileSize($request->get('size'));

@@ -134,8 +134,8 @@ class Fileset extends Entity
      */
     public function doesFileExist(string $newFileName) : bool
     {
-        return $this->files->exists(function ($key, $value) use ($newFileName) {
-            return $value->getFileName() === $newFileName;
+        return $this->files->exists(function ($key, File $file) use ($newFileName) {
+            return $file->getFileName() === $newFileName;
         });
       
     }
@@ -154,5 +154,26 @@ class Fileset extends Entity
         }
 
         return $fileSize;
+    }
+
+    /**
+     * Gets the existing File entity.
+     *
+     * @param string $fileName Filename key to get the File entity.
+     *
+     * @return File
+     */
+    public function getExistingFile(string $fileName) : File
+    {
+        $criteria = Criteria::create()
+            ->where(
+                new Comparison(
+                    'fileName',
+                    Comparison::EQ,
+                    $fileName
+                )
+            );
+
+        return $this->files->matching($criteria)->first();
     }
 }
