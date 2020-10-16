@@ -124,4 +124,18 @@ class Fileset extends Entity
 
         return count($this->files->matching($criteria)) === 0;
     }
+
+    /**
+     * Checks if file exists.
+     *
+     * @param string $newFileName Filename of the new file to check.
+     *
+     * @return bool
+     */
+    public function doesFileExist(string $newFileName) : bool
+    {
+        return $this->files->exists(function ($key, $value) use ($newFileName) {
+            return $value->getFileName() === $newFileName;
+        });
+    }
 }
