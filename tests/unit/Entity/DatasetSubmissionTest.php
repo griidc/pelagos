@@ -148,7 +148,8 @@ class DatasetSubmissionTest extends TestCase
         $this->mockFileset = \Mockery::mock(
             Fileset::class,
             array(
-                'getAllFiles' => new ArrayCollection(array($this->mockFile))
+                'getAllFiles' => new ArrayCollection(array($this->mockFile)),
+                'getFileSize' => 1234,
             )
         );
         $this->datasetSubmission = new DatasetSubmission(
@@ -339,7 +340,6 @@ class DatasetSubmissionTest extends TestCase
             'foobar.baz',
             $this->datasetSubmission->getDatasetFileName()
         );
-        $this->datasetSubmission->setDatasetFileSize(1234);
         $this->assertEquals(
             1234,
             $this->datasetSubmission->getDatasetFileSize()
