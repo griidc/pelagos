@@ -139,6 +139,26 @@ class FilesetTest extends TestCase
     }
 
     /**
+     * Testing getFileSize function.
+     *
+     * @return void
+     */
+    public function testFileSize()
+    {
+        $file1 = new File();
+        $file1->setFileSize(100);
+
+        $file2  = new File();
+        $file2->setFileSize(200);
+
+        $this->fileset->addFile($file1);
+        $this->fileset->addFile($file2);
+
+        $this->assertSame(300, $this->fileset->getFileSize());
+
+    }
+
+    /**
      * Testing isDone function.
      *
      * @return void
