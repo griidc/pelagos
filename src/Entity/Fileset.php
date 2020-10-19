@@ -5,6 +5,8 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Expr\Comparison;
 
 /**
  * Fileset Entity class.
@@ -31,13 +33,49 @@ class Fileset extends Entity
     }
 
     /**
-     * Getter for files.
+     * Getter for all files.
      *
      * @return Collection
      */
-    public function getFiles() : Collection
+    public function getAllFiles() : Collection
     {
         return $this->files;
+    }
+
+    /**
+     * Getter for processed files.
+     *
+     * @return Collection
+     */
+    public function getProcessedFiles() : Collection
+    {
+        return $this->files->filter(function (File $file) {
+            return $file->getStatus() === File::FILE_DONE;
+        });
+    }
+
+    /**
+     * Getter for unprocessed/new files.
+     *
+     * @return Collection
+     */
+    public function getNewFiles() : Collection
+    {
+        return $this->files->filter(function (File $file) {
+            return $file->getStatus() === File::FILE_NEW;
+        });
+    }
+
+    /**
+     * Getter for deleted files.
+     *
+     * @return Collection
+     */
+    public function getDeletedFiles() : Collection
+    {
+        return $this->files->filter(function (File $file) {
+            return $file->getStatus() === File::FILE_DELETED;
+        });
     }
 
     /**
@@ -63,5 +101,43 @@ class Fileset extends Entity
     public function removeFile(File $file)
     {
         $this->files->removeElement($file);
+    }
+
+    /**
+     * Check if the fileset is done processesing.
+     *
+     * @return boolean
+     */
+    public function isDone() :bool
+    {
+        $criteria = Criteria::create()
+        ->where(
+            new Comparison(
+                'status',
+                Comparison::IN,
+                array(
+                    File::FILE_NEW,
+                    File::FILE_IN_PROGRESS
+                )
+            )
+        );
+
+        return count($this->files->matching($criteria)) === 0;
+    }
+
+    /**
+     * Returns the total filesize for this fileset.
+     *
+     * @return integer
+     */
+    public function getFileSize() :int
+    {
+        $fileSize = 0;
+
+        foreach ($this->files as $file) {
+            $fileSize += (int) $file->getFileSize();
+        }
+
+        return $fileSize;
     }
 }

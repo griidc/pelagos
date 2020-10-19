@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 use Symfony\Component\Form\Form;
@@ -37,8 +38,9 @@ use App\Handler\EntityHandler;
 
 use App\Exception\InvalidMetadataException;
 
+use App\Message\DatasetSubmissionFiler;
+
 use App\Util\ISOMetadataExtractorUtil;
-use App\Util\RabbitPublisher;
 
 /**
  * The Dataset Submission controller for the Pelagos UI App Bundle.
@@ -77,24 +79,15 @@ class DatasetSubmissionController extends AbstractController
     protected $entityEventDispatcher;
 
     /**
-     * Custom rabbitmq publisher.
-     *
-     * @var RabbitPublisher
-     */
-    protected $publisher;
-
-    /**
      * Constructor for this Controller, to set up default services.
      *
      * @param EntityHandler         $entityHandler         The entity handler.
      * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
-     * @param RabbitPublisher       $publisher             Utility class for rabbitmq publisher.
      */
-    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher, RabbitPublisher $publisher)
+    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher)
     {
         $this->entityHandler = $entityHandler;
         $this->entityEventDispatcher = $entityEventDispatcher;
-        $this->publisher = $publisher;
     }
 
     /**
@@ -199,8 +192,9 @@ class DatasetSubmissionController extends AbstractController
     /**
      * The post action for Dataset Submission.
      *
-     * @param Request      $request The Symfony request object.
-     * @param integer|null $id      The id of the Dataset Submission to load.
+     * @param Request             $request    The Symfony request object.
+     * @param integer|null        $id         The id of the Dataset Submission to load.
+     * @param MessageBusInterface $messageBus Message bus interface to dispatch messages.
      *
      * @throws BadRequestHttpException When dataset submission has already been submitted.
      * @throws BadRequestHttpException When DIF has not yet been approved.
@@ -209,7 +203,7 @@ class DatasetSubmissionController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function postAction(Request $request, int $id = null)
+    public function postAction(Request $request, int $id = null, MessageBusInterface $messageBus)
     {
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
 
@@ -266,18 +260,14 @@ class DatasetSubmissionController extends AbstractController
             foreach ($datasetSubmission->getDatasetLinks() as $datasetLink) {
                 $this->entityHandler->update($datasetLink);
             }
-            $this->entityHandler->update($datasetSubmission->getFileset()->getFiles()->first());
 
             $this->entityEventDispatcher->dispatch(
                 $datasetSubmission,
                 $eventName
             );
 
-            foreach ($this->messages as $message) {
-                foreach ($this->messages as $message) {
-                    $this->publisher->publish($message['body'], RabbitPublisher::DATASET_SUBMISSION_PRODUCER, $message['routing_key']);
-                }
-            }
+            $datasetSubmissionFilerMessage = new DatasetSubmissionFiler($datasetSubmission->getId());
+            $messageBus->dispatch($datasetSubmissionFilerMessage);
 
             return $this->render(
                 'DatasetSubmission/submit.html.twig',

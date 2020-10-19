@@ -2,54 +2,35 @@
 
 namespace App\Util;
 
-use League\Flysystem\FilesystemInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
 class FileUploader
 {
     /**
-     * Directory prefix.
+     * The directory where uploaded files will be placed.
      *
      * @var string
      */
-    private $prefix;
+    private $uploadDirectory;
 
     /**
-     * An instance of the Flysystem interface.
+     * The directory where file chunks will be stored.
      *
-     * @var FilesystemInterface
+     * @var string
      */
-    private $flysystem;
+    private $chunksDirectory;
 
-    /**
-     * Relative path for chunks folder.
-     */
-    const CHUNKS_DIRECTORY = 'upload/chunks';
-
-    /**
-     * Relative path for files folder.
-     */
-    const FILES_DIRECTORY = 'upload/files';
-
-    /**
-     * FileUploader constructor.
-     *
-     * @param string              $homedirPrefix    Home directory path prefix.
-     * @param FilesystemInterface $uploadFilesystem Upload flysystem file system interface.
-     */
-    public function __construct(string $homedirPrefix, FilesystemInterface $uploadFilesystem)
+    public function __construct(string $homedirPrefix)
     {
-        $this->prefix = $homedirPrefix;
-        $this->flysystem = $uploadFilesystem;
+        $this->uploadDirectory = $homedirPrefix . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'files';
+        $this->chunksDirectory = $homedirPrefix . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'chunks';
     }
 
     /**
-     * Uploads chunks to filesystem.
+     * File uploader service.
      *
      * @param Request $request Symfony request instance.
-     *
-     * @throws \Exception When chunk upload fails for a file.
      *
      * @return void
      */
@@ -57,23 +38,27 @@ class FileUploader
     {
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $request->files->get('file');
-        $fileExtension = $uploadedFile->guessExtension();
-        $fileName = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME) .'.'. $fileExtension;
         $uuid = $request->get('dzuuid');
         $chunksIndex = $request->get('dzchunkindex');
-        $chunksFolder = self::CHUNKS_DIRECTORY . DIRECTORY_SEPARATOR . $uuid;
-        $stream = fopen($uploadedFile->getPathname(), 'r');
-        $result = $this->flysystem->writeStream(
-            $chunksFolder . DIRECTORY_SEPARATOR . $chunksIndex,
-            $stream
+        $chunksFolder = $this->chunksDirectory . DIRECTORY_SEPARATOR . $uuid;
+        $this->isFolder($chunksFolder);
+        $uploadedFile->move(
+            $chunksFolder,
+            $chunksIndex
         );
+    }
 
-        if ($result === false) {
-            throw new \Exception(sprintf('Could not upload chunk for file "%s"', $fileName));
-        }
-
-        if (is_resource($stream)) {
-            fclose($stream);
+    /**
+     * Checks if folder exists.
+     *
+     * @param string $targetFolder Target Folder path.
+     *
+     * @return void
+     */
+    private function isFolder(string $targetFolder): void
+    {
+        if (!file_exists($targetFolder)) {
+            mkdir($targetFolder, 0755, true);
         }
     }
 
@@ -81,8 +66,6 @@ class FileUploader
      * To combine all the uploaded chunks into a single file.
      *
      * @param Request $request Symfony request instance.
-     *
-     * @throws \Exception When combining chunk fails for a file.
      *
      * @return array
      */
@@ -92,39 +75,29 @@ class FileUploader
         $fileName = $request->get('fileName');
         $totalChunks = $request->get('dztotalchunkcount');
         $fileSize = $request->get('dztotalfilesize');
-        $chunksFolder = $this->prefix . DIRECTORY_SEPARATOR . self::CHUNKS_DIRECTORY . DIRECTORY_SEPARATOR . $uuid;
-        $targetDirectory = self::FILES_DIRECTORY . DIRECTORY_SEPARATOR . $uuid;
 
+        $chunksFolder = $this->chunksDirectory . DIRECTORY_SEPARATOR . $uuid;
+        //combine chunks
+        $targetDirectory = $this->uploadDirectory . DIRECTORY_SEPARATOR . $uuid;
+        $this->isFolder($targetDirectory);
+        $targetFile = fopen($targetDirectory . DIRECTORY_SEPARATOR . $fileName, 'wb');
         for ($i = 0; $i < $totalChunks; $i++) {
-            $chunkStream = fopen(
+            $chunk = fopen(
                 $chunksFolder .
                 DIRECTORY_SEPARATOR .
                 $i,
                 'rb'
             );
-            
-            $result = $this->flysystem->putStream(
-                $targetDirectory . DIRECTORY_SEPARATOR . $fileName,
-                $chunkStream
-            );
-
-            if ($result === false) {
-                throw new \Exception(sprintf('Could not combine chunk for file "%s"', $fileName));
-            }
-
-            if (is_resource($chunkStream)) {
-                fclose($chunkStream);
-            }
-
-            $this->flysystem->delete(
-                self::CHUNKS_DIRECTORY . DIRECTORY_SEPARATOR . $uuid . DIRECTORY_SEPARATOR . $i
-            );
+            stream_copy_to_stream($chunk, $targetFile);
+            fclose($chunk);
+            unlink($chunksFolder . DIRECTORY_SEPARATOR . $i);
         }
-
-        $this->flysystem->deleteDir(self::CHUNKS_DIRECTORY . DIRECTORY_SEPARATOR . $uuid);
+        // Success
+        fclose($targetFile);
+        rmdir($chunksFolder);
 
         return array(
-            'path' => $this->prefix . DIRECTORY_SEPARATOR . $targetDirectory . DIRECTORY_SEPARATOR . $fileName,
+            'path' => $targetDirectory . DIRECTORY_SEPARATOR . $fileName,
             'name' => $fileName,
             'size' => (int)$fileSize,
         );

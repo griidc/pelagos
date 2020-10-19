@@ -2,98 +2,111 @@
 
 namespace App\Controller\Api;
 
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\Request;
+use App\Entity\DatasetSubmission;
+use App\Entity\File;
+use App\Entity\Fileset;
 
-use Symfony\Component\Routing\Annotation\Route;
+use App\Util\FileUploader;
 
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations\View;
 
-use App\Handler\EntityHandler;
-use App\Handler\UploadHandler;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * The upload api controller.
+ * Upload file API Controller.
  */
 class UploadController extends EntityController
 {
     /**
-     * The Upload Handler.
+     * Process a post of a file chunk.
      *
-     * @var uploadHandler
-     */
-    protected $uploadHandler;
-
-    /**
-     * The Entity Handler.
-     *
-     * @var uploadHandler
-     */
-    protected $entityHandler;
-
-    /**
-     * The form factory.
-     *
-     * @var FormFactoryInterface Form factory instance.
-     */
-    protected $formFactory;
-
-    /**
-     * TreeController constructor.
-     *
-     * @param UploadHandler        $uploadHandler The upload handler.
-     * @param EntityHandler        $entityHandler The entity handler.
-     * @param FormFactoryInterface $formFactory   The form factory.
-     */
-    public function __construct(UploadHandler $uploadHandler, EntityHandler $entityHandler, FormFactoryInterface $formFactory)
-    {
-        $this->entityHandler = $entityHandler;
-        $this->formFactory = $formFactory;
-        parent::__construct($entityHandler, $formFactory);
-        $this->uploadHandler = $uploadHandler;
-    }
-
-    /**
-     * Process a post of a file or a file chunk.
-     *
-     * @param Request $request The Symfony request object.
+     * @param Request                $request       The Symfony request object.
+     * @param FileUploader           $fileUploader  File upload handler service.
+     * @param EntityManagerInterface $entityManager Entity manager interface instance.
      *
      * @View()
      *
      * @Route(
-     *     "/api/upload",
-     *     name="pelagos_api_upload_post",
+     *     "/api/files/upload-chunks",
+     *     name="pelagos_api_post_chunks",
      *     methods={"POST"},
      *     defaults={"_format"="json"}
      *     )
      *
-     * @return array The result of the post.
+     * @return Response The result of the post.
      */
-    public function postAction(Request $request)
+    public function postChunks(Request $request, FileUploader $fileUploader, EntityManagerInterface $entityManager)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        return $this->uploadHandler->handleUpload($request);
+        try {
+            $fileUploader->uploadChunk($request);
+        } catch (\Exception $exception) {
+            throw new BadRequestHttpException($exception->getMessage());
+        }
+
+        return $this->makeNoContentResponse();
     }
 
     /**
-     * Delete an uploaded file.
+     * Combine file chunks.
      *
-     * @param string $uuid The UUID of the file to delete.
+     * @param Request                $request       The Symfony request object.
+     * @param FileUploader           $fileUploader  File upload handler service.
+     * @param EntityManagerInterface $entityManager Entity manager interface instance.
+     * @param string                 $id            Dataset submission id.
      *
      * @View()
      *
      * @Route(
-     *     "/api/upload/{uuid}",
-     *     name="pelagos_api_upload_delete",
-     *     methods={"DELETE"},
+     *     "/api/files/combine-chunks/{id}",
+     *     name="pelagos_api_combine_chunks",
+     *     methods={"POST"},
      *     defaults={"_format"="json"}
      *     )
      *
-     * @return array The result of the delete.
+     * @return Response The result of the post.
      */
-    public function deleteAction(string $uuid)
+    public function combineChunks(Request $request, FileUploader $fileUploader, EntityManagerInterface $entityManager, string $id)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        return $this->uploadHandler->handleDelete($uuid);
+        try {
+            $fileMetadata = $fileUploader->combineChunks($request);
+            $this->updateFileEntity($fileMetadata, $entityManager, $id);
+        } catch (\Exception $exception) {
+            throw new BadRequestHttpException($exception->getMessage());
+        }
+        return $this->makeNoContentResponse();
+    }
+
+    /**
+     * Update Fileset entity.
+     *
+     * @param array                  $fileMetadata  File metadata for the uploaded file.
+     * @param EntityManagerInterface $entityManager Entity manager interface instance.
+     * @param string                 $id            Dataset submission id.
+     *
+     * @return void
+     */
+    private function updateFileEntity(array $fileMetadata, EntityManagerInterface $entityManager, string $id): void
+    {
+        $datasetSubmission = $entityManager->getRepository(DatasetSubmission::class)->find($id);
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            $fileset = $datasetSubmission->getFileset();
+            if ($fileset instanceof Fileset) {
+                $newFile = new File();
+                $newFile->setFileName($fileMetadata['name']);
+                $newFile->setFileSize($fileMetadata['size']);
+                $newFile->setUploadedAt(new \DateTime('now'));
+                $newFile->setUploadedBy($this->getUser()->getPerson());
+                $newFile->setFilePath($fileMetadata['path']);
+                $fileset->addFile($newFile);
+                $entityManager->persist($newFile);
+            }
+        }
+        $entityManager->flush();
     }
 }

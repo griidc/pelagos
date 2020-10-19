@@ -186,14 +186,16 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getDescription' => 'blah',
                 'setDescription' => 'blah',
                 'getFilePath' => 'path/to/file',
-                'setFilePath' => null
+                'setFilePath' => null,
+                'getStatus' => File::FILE_DONE,
+                'setStatus' => FILE::FILE_DONE
             )
         );
 
         $this->mockFileset = \Mockery::mock(
             Fileset::class,
             array(
-                'getFiles' => new ArrayCollection(array($this->mockFile))
+                'getAllFiles' => new ArrayCollection(array($this->mockFile))
             )
         );
 
