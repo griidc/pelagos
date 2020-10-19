@@ -137,7 +137,6 @@ class Fileset extends Entity
         return $this->files->exists(function ($key, File $file) use ($newFileName) {
             return $file->getFileName() === $newFileName;
         });
-      
     }
 
     /**
