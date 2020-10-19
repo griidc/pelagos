@@ -69,7 +69,7 @@ class VirusScanHandler implements MessageHandlerInterface
         if ($file instanceof File) {
             $filePath = $file->getFilePath();
             try {
-                $socket = (new SocketFactory())->createClient('unix:///run/clamd.scan/clamd.sock');
+                $socket = (new SocketFactory())->createClient($this->clamdSock);
                 $quahog = new QuahogClient($socket);
                 $result = $quahog->scanFile($filePath);
                 $this->logger->info(sprintf('Virus scanned file id:%s filename: %s. Status: %s. Reason: %s.', $fileId, $result['filename'], $result['status'], $result['reason']));
