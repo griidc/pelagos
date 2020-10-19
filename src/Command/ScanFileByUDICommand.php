@@ -93,7 +93,7 @@ class ScanFileByUDICommand extends Command
         }
 
         $fileset = $datasetSubmission->getFileset();
-        $file = $fileset->getFiles()->first();
+        $file = $fileset->getAllFiles()->first();
         $id = $file->getId();
 
         $this->bus->dispatch(new VirusScan($id));
