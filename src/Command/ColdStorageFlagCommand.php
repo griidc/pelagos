@@ -130,7 +130,6 @@ class ColdStorageFlagCommand extends Command
                     // Set options for a new replacement datafile of the supplied Cold-Storage stubfile.
                     $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
                     $datasetSubmission->setDatasetFileName(null);
-                    $datasetSubmission->setDatasetFileSize(null);
                     $datasetSubmission->setDatasetFileSha256Hash(null);
                     $datasetSubmission->setDatasetFileTransferType(DatasetSubmission::TRANSFER_TYPE_SFTP);
                     $datasetSubmission->setDatasetFileUri($stubFileName);
