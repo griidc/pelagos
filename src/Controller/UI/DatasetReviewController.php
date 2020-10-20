@@ -598,7 +598,6 @@ class DatasetReviewController extends AbstractController
     {
         $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
         $datasetSubmission->setDatasetFileName(null);
-        $datasetSubmission->setDatasetFileSize(null);
         $datasetSubmission->setDatasetFileSha256Hash(null);
         $this->messages[] = array(
             'body' => $datasetSubmission->getId(),
