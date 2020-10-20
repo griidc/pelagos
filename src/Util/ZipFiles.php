@@ -44,7 +44,7 @@ class ZipFiles
                 $this->zip->addFile($file->getFilePath(), $file->getFileName());
             }
             $this->zip->close();
-        } else{
+        } else {
             throw new \Exception('Unable to open zip file');
         }
 
