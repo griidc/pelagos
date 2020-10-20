@@ -32,6 +32,8 @@ class ZipFiles
      * @param Collection|File $files   Files that need to be zipped.
      * @param string          $zipFile Filename of the zipfile.
      *
+     * @throws \Exception When utility class can not open/write to zip file.
+     *
      * @return string
      */
     public function createZipFile(Collection $files, string $zipFile) : string
@@ -43,7 +45,7 @@ class ZipFiles
             }
             $this->zip->close();
         } else{
-            echo "Error";
+            throw new \Exception('Unable to open zip file');
         }
 
         return $zipFile;
