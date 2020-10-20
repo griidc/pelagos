@@ -4,7 +4,7 @@ namespace App\Util;
 
 use App\Entity\File;
 
-use phpDocumentor\Reflection\Types\Collection;
+use Doctrine\Common\Collections\Collection;
 
 use ZipArchive;
 
