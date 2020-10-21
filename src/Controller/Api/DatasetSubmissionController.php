@@ -2,14 +2,6 @@
 
 namespace App\Controller\Api;
 
-use App\Entity\File;
-use App\Entity\DatasetSubmission;
-use App\Entity\Fileset;
-
-use App\Util\UrlValidation;
-
-use App\Form\DatasetSubmissionType;
-
 use Doctrine\ORM\EntityManagerInterface;
 
 use FOS\RestBundle\Controller\Annotations\View;
@@ -23,6 +15,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+
+use App\Entity\File;
+use App\Entity\DatasetSubmission;
+use App\Entity\Fileset;
+
+use App\Util\UrlValidation;
+
+use App\Form\DatasetSubmissionType;
 
 /**
  * The Dataset Submission api controller.
