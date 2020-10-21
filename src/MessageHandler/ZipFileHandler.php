@@ -2,16 +2,13 @@
 
 namespace App\MessageHandler;
 
+use App\Message\ZipFile;
+use App\Repository\FilesetRepository;
+use App\Util\ZipFiles;
 use Doctrine\Common\Collections\ArrayCollection;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
-
-use App\Message\ZipFile;
-
-use App\Repository\FilesetRepository;
-
-use App\Util\ZipFiles;
 
 /**
  * Handler for zipping files for download.
@@ -69,16 +66,16 @@ class ZipFileHandler implements MessageHandlerInterface
      */
     public function __invoke(ZipFile $zipFile)
     {
-       $this->logger->info(sprintf('Zipping files started'));
-       $fileIds = $zipFile->getFileIds();
-       $files = new ArrayCollection($this->filesetRepository->findBy($fileIds));
-       $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR . Uuid::uuid4()->toString() . '.zip';
-       try {
-           $this->zipFiles->createZipFile($files, $destinationPath);
-       } catch (\Exception $exception) {
-           $this->logger->error(sprintf('Unable to zip file. Message: %s', $exception->getMessage()));
-           return;
-       }
-       $this->logger->info(sprintf('Zipping files done'));
+        $this->logger->info(sprintf('Zipping files started'));
+        $fileIds = $zipFile->getFileIds();
+        $files = new ArrayCollection($this->filesetRepository->findBy($fileIds));
+        $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR . Uuid::uuid4()->toString() . '.zip';
+        try {
+            $this->zipFiles->createZipFile($files, $destinationPath);
+        } catch (\Exception $exception) {
+            $this->logger->error(sprintf('Unable to zip file. Message: %s', $exception->getMessage()));
+            return;
+        }
+        $this->logger->info(sprintf('Zipping files done'));
     }
 }
