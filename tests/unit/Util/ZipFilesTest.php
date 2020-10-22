@@ -56,8 +56,19 @@ class ZipFilesTest extends TestCase
         
         $zipFiles->createZipFile($fileset->getAllFiles(), '/tmp/testzip.zip');
         
-        $this->assertFileEquals('/tmp/testzip.zip', $this->testDataDir . 'testzip.zip');
+        $zip = new \ZipArchive;
+        if ($zip->open('/tmp/testzip.zip') === TRUE) {
+            $zip->extractTo('/tmp/');
+            $zip->close();
+        } else {
+            throw new Exception('no worky');
+        }
+        
+        $this->assertFileEquals('/tmp/aa.txt', $this->testDataDir . 'aa.txt');
+        $this->assertFileEquals('/tmp/zz.txt', $this->testDataDir . 'zz.txt');
         
         unlink('/tmp/testzip.zip');
+        unlink('/tmp/aa.txt');
+        unlink('/tmp/zz.txt');
     }
 }
