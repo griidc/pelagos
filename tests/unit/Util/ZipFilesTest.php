@@ -33,7 +33,7 @@ class ZipFilesTest extends TestCase
     }
     
     /**
-     * Tests the populateDatasetSubmissionWithXMLValues method.
+     * Tests the createZipFile method.
      *
      * @return void
      */
@@ -59,9 +59,5 @@ class ZipFilesTest extends TestCase
         $this->assertFileEquals('/tmp/testzip.zip', $this->testDataDir . 'testzip.zip');
         
         unlink('/tmp/testzip.zip');
-        
-        
-    
     }
-    
 }
