@@ -45,7 +45,7 @@ class ZipFiles
             }
             $this->zip->close();
         } else {
-            throw new \Exception('Unable to open zip file');
+            throw new \Exception('Unable to create zip file');
         }
 
         return $zipFile;
