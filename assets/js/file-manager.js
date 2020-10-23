@@ -1,10 +1,10 @@
 import Vue from "vue";
 import FileManager from "./vue/FileManager";
-const fileManagerElement = document.getElementById("file-manager-app");
 import axios from "axios";
 import Dropzone from "dropzone";
 import "../css/file-manager.css";
 
+const fileManagerElement = document.getElementById("file-manager-app");
 
 if (fileManagerElement.dataset.id) {
     const datasetSubmissionId = Number(fileManagerElement.dataset.id);
@@ -45,26 +45,56 @@ if (fileManagerElement.dataset.id) {
         retryChunks: true,
         retryChunksLimit: 3,
         maxFileSize: 1000000,
+        autoQueue: false,
         chunksUploaded: function(file, done) {
             // All chunks have been uploaded. Perform any other actions
             let currentFile = file;
             const axiosInstance = axios.create({});
-            axiosInstance
-                .post(
-                    Routing.generate('pelagos_api_combine_chunks')
-                    + "/"
-                    + datasetSubmissionId
-                    + "?dzuuid=" + currentFile.upload.uuid
-                    + "&dztotalchunkcount=" + currentFile.upload.totalChunkCount
-                    + "&fileName=" + currentFile.name
-                    + "&dztotalfilesize=" + currentFile.upload.total
-                )
+
+            axiosInstance.get(Routing.generate('pelagos_api_combine_chunks')
+                + "/"
+                + datasetSubmissionId
+                + "?dzuuid=" + currentFile.upload.uuid
+                + "&dztotalchunkcount=" + currentFile.upload.totalChunkCount
+                + "&fileName=" + currentFile.name
+                + "&dztotalfilesize=" + currentFile.upload.total)
                 .then(response => {
-                    done();
-                }).catch(error => {
-                    currentFile.accepted = false;
-                    myDropzone._errorProcessing([currentFile], error.message);
+                    axiosInstance
+                        .post(
+                            Routing.generate('pelagos_api_add_file_dataset_submission')
+                            + "/"
+                            + datasetSubmissionId,
+                            response.data
+                        )
+                        .then(response => {
+                            done();
+                        }).catch(error => {
+                            currentFile.accepted = false;
+                            myDropzone._errorProcessing([currentFile], error.message);
+                    });
+                })
+        },
+    });
+
+    myDropzone.on("addedfile", function(file) {
+        const axiosInstance = axios.create({});
+
+        axiosInstance.get(
+            Routing.generate('pelagos_api_check_file_exists_dataset_submission')
+            + "/"
+            + datasetSubmissionId,
+            {
+                params: {
+                    name: file.name
+                }
+            }).then(response => {
+                if (response.data === false) {
+                    myDropzone.enqueueFile(file);
+                } else {
+                    alert('File already exists with same name');
+                }
+            }).catch( error => {
+                alert(error);
             });
-    },
     });
 }
