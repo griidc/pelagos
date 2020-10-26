@@ -42,11 +42,9 @@ class ZipFiles
      */
     public function createZipFile(Collection $files, string $zipFile) : void
     {
-        $options = new Archive();
-        $options->setSendHttpHeaders(true);
-        $zip = new ZipStream($zipFile, $options);
+        $zip = new ZipStream($zipFile);
         foreach ($files as $file) {
-           $zip->addFileFromStream($file->getFileName(), $this->datastoreFlysystem->readStream($file->getFilePath));
+            $zip->addFileFromStream($file->getFileName(), $this->datastoreFlysystem->readStream($file->getFilePath));
         }
         $zip->finish();
     }
