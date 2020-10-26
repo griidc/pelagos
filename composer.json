@@ -22,6 +22,7 @@
         "hylianshield/base32-crockford": "^1.0",
         "jms/serializer-bundle": "^3.0",
         "jsor/doctrine-postgis": "^1.1",
+        "maennchen/zipstream-php": "^2.1",
         "nelmio/api-doc-bundle": "^3.0",
         "oneup/flysystem-bundle": "^3.5",
         "opensoft/doctrine-postgres-types": "^1.2",

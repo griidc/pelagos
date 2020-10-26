@@ -2,28 +2,32 @@
 
 namespace App\Util;
 
-use App\Entity\File;
-
 use Doctrine\Common\Collections\Collection;
 
-use ZipArchive;
+use League\Flysystem\FilesystemInterface;
+
+use ZipStream\Option\Archive;
+use ZipStream\ZipStream;
+
+use App\Entity\File;
 
 class ZipFiles
 {
-
     /**
-     * ZipArchive class instance.
+     * Flysystem interface object for Datastore.
      *
-     * @var ZipArchive
+     * @var FilesystemInterface
      */
-    private $zip;
+    private $datastoreFlysystem;
 
     /**
      * ZipFiles constructor.
+     *
+     * @param FilesystemInterface $datastoreFlysystem Datastore flystystem instance.
      */
-    public function __construct()
+    public function __construct(FilesystemInterface $datastoreFlysystem)
     {
-        $this->zip = new ZipArchive();
+        $this->datastoreFlysystem = $datastoreFlysystem;
     }
 
     /**
@@ -34,20 +38,16 @@ class ZipFiles
      *
      * @throws \Exception When utility class can not open/write to zip file.
      *
-     * @return string
+     * @return void
      */
-    public function createZipFile(Collection $files, string $zipFile) : string
+    public function createZipFile(Collection $files, string $zipFile) : void
     {
-        $flag = (file_exists($zipFile))? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE;
-        if ($this->zip->open($zipFile, $flag) === true) {
-            foreach ($files as $file) {
-                $this->zip->addFile($file->getFilePath(), $file->getFileName());
-            }
-            $this->zip->close();
-        } else {
-            throw new \Exception('Unable to create zip file');
+        $options = new Archive();
+        $options->setSendHttpHeaders(true);
+        $zip = new ZipStream($zipFile, $options);
+        foreach ($files as $file) {
+           $zip->addFileFromStream($file->getFileName(), $this->datastoreFlysystem->readStream($file->getFilePath));
         }
-
-        return $zipFile;
+        $zip->finish();
     }
 }
