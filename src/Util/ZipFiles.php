@@ -18,12 +18,33 @@ class ZipFiles
      */
     private $zip;
 
+     /**
+     * The filename of the temporary zipfile.
+     *
+     * @var zipFile
+     */
+    private $zipFile;
+
+    /**
+     * Temporary file location for zip processing.
+     *
+     * @var tempFileLocation
+     */
+    protected $tempFileLocation = '/tmp/';
+
     /**
      * ZipFiles constructor.
      */
     public function __construct()
     {
         $this->zip = new ZipArchive();
+    }
+
+    /**
+     * ZipFiles destructor.
+     */
+    public function __destruct() {
+        @unlink($this->zipFile);
     }
 
     /**
@@ -49,5 +70,55 @@ class ZipFiles
         }
 
         return $zipFile;
+    }
+
+    /**
+     * Create a new zip file to add files to as stream.
+     *
+     * @return void
+     */
+    public function start() : void
+    {
+        $this->zipFile = tempnam($this->tempFileLocation, 'PELAGOS_ZIP');
+
+        $flag = (file_exists($this->zipFile))? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE;
+        if ($this->zip->open($this->zipFile, $flag) !== true) {
+            throw new \Exception('Unable to create zip file');
+        }
+    }
+
+    /**
+     * Add File to zip.
+     *
+     * @return boolean Return true if success.
+     */
+    public function addFile(string $fileName, array $fileStream) : bool
+    {
+        $stream = $fileStream['fileStream'];
+        $tempFile = tempnam($this->tempFileLocation, 'PELAGOS_TMP');
+        $targetFile = fopen($tempFile, 'wb');
+        stream_copy_to_stream($stream, $targetFile);
+        fclose($stream);
+        fclose($targetFile);
+        $result = $this->zip->addFile($tempFile, $fileName);
+
+        // Close the zip so it will save. Then open it again (in append mode).
+        $this->zip->close();
+        $this->zip->open($this->zipFile);
+        unlink($tempFile);
+
+        return $result;
+    }
+
+    /**
+     * Done with adding file to the zip, and return file stream.
+     *
+     * @return array Return the file stream.
+     */
+    public function finish() : array
+    {
+        $this->zip->close();
+        $fileStream['fileStream'] = fopen($this->zipFile, 'rb');
+        return $fileStream;
     }
 }
