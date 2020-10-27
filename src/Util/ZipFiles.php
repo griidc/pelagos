@@ -9,20 +9,20 @@ use ZipStream\ZipStream;
 class ZipFiles
 {
     /**
-     * Flysystem interface object for Datastore.
+     * Datastore utility instance.
      *
-     * @var FilesystemInterface
+     * @var Datastore
      */
-    private $datastoreFlysystem;
+    private $datastore;
 
     /**
      * ZipFiles constructor.
      *
-     * @param Datastore $datastoreFlysystem Datastore flystystem instance.
+     * @param Datastore $datastore Datastore utility instance.
      */
-    public function __construct(Datastore $datastoreFlysystem)
+    public function __construct(Datastore $datastore)
     {
-        $this->datastoreFlysystem = $datastoreFlysystem;
+        $this->datastore = $datastore;
     }
 
     /**
@@ -39,7 +39,7 @@ class ZipFiles
     {
         $zip = new ZipStream($zipFile);
         foreach ($fileInfo as $file) {
-            $fileStream = $this->datastoreFlysystem->getFile($file['filePath']);
+            $fileStream = $this->datastore->getFile($file['filePath']);
             if ($fileStream and is_resource($fileStream['fileStream'])) {
                 $zip->addFileFromStream($file['fileName'], $fileStream['fileStream']);
             }
