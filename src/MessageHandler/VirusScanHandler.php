@@ -69,7 +69,7 @@ class VirusScanHandler implements MessageHandlerInterface
         $fileId = $virusScan->getFileId();
         $file = $this->fileRepository->find($fileId);
         if ($file instanceof File) {
-            $result = $this->scanner->Scan(file_get_contents($file->getFilePath(), 1024));
+            $result = $this->scanner->Scan(file_get_contents($file->getFilePath()), 1024);
             if ($result['status'] !== 'failed') {
                 $this->logger->info(sprintf('Virus scanned file id:%s filename: %s. Status: %s. Reason: %s.', $fileId, $result['filename'], $result['status'], $result['reason']));
             } else {
