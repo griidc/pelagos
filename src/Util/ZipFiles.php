@@ -2,14 +2,9 @@
 
 namespace App\Util;
 
-use Doctrine\Common\Collections\Collection;
-
 use League\Flysystem\FilesystemInterface;
 
-use ZipStream\Option\Archive;
 use ZipStream\ZipStream;
-
-use App\Entity\File;
 
 class ZipFiles
 {
@@ -23,9 +18,9 @@ class ZipFiles
     /**
      * ZipFiles constructor.
      *
-     * @param FilesystemInterface $datastoreFlysystem Datastore flystystem instance.
+     * @param Datastore $datastoreFlysystem Datastore flystystem instance.
      */
-    public function __construct(FilesystemInterface $datastoreFlysystem)
+    public function __construct(Datastore $datastoreFlysystem)
     {
         $this->datastoreFlysystem = $datastoreFlysystem;
     }
@@ -33,18 +28,21 @@ class ZipFiles
     /**
      * Creates a zip file from collection of files.
      *
-     * @param Collection|File $files   Files that need to be zipped.
-     * @param string          $zipFile Filename of the zipfile.
+     * @param array  $fileInfo Files that need to be zipped.
+     * @param string $zipFile  Filename of the zipfile.
      *
      * @throws \Exception When utility class can not open/write to zip file.
      *
      * @return void
      */
-    public function createZipFile(Collection $files, string $zipFile) : void
+    public function createZipFile(array $fileInfo, string $zipFile) : void
     {
         $zip = new ZipStream($zipFile);
-        foreach ($files as $file) {
-            $zip->addFileFromStream($file->getFileName(), $this->datastoreFlysystem->readStream($file->getFilePath));
+        foreach ($fileInfo as $file) {
+            $fileStream = $this->datastoreFlysystem->getFile($file['filePath']);
+            if ($fileStream and is_resource($fileStream['fileStream'])) {
+                $zip->addFileFromStream($file['fileName'], $fileStream['fileStream']);
+            }
         }
         $zip->finish();
     }
