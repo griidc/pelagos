@@ -2,13 +2,17 @@
 
 namespace App\MessageHandler;
 
-use App\Message\ZipFile;
-use App\Repository\FilesetRepository;
-use App\Util\ZipFiles;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Ramsey\Uuid\Uuid;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+
+use App\Entity\DatasetSubmission;
+
+use App\Message\ZipFile;
+
+use App\Repository\FileRepository;
+
+use App\Util\ZipFiles;
 
 /**
  * Handler for zipping files for download.
@@ -37,26 +41,40 @@ class ZipFileHandler implements MessageHandlerInterface
     private $downloadDirectory;
 
     /**
-     * The Fileset Repository.
+     * The File Repository.
      *
-     * @var FilesetRepository
+     * @var FileRepository
      */
-    private $filesetRepository;
+    private $fileRepository;
+
+    /**
+     * Entity Manager interface instance.
+     *
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
 
     /**
      * ZipFileHandler constructor.
      *
-     * @param LoggerInterface   $logger            Default Monolog logger interface.
-     * @param ZipFiles          $zipFiles          Zipfiles utility instance.
-     * @param string            $downloadDirectory Temporary download directory path.
-     * @param FilesetRepository $filesetRepository Fileset repository to query objects.
+     * @param LoggerInterface        $logger            Default Monolog logger interface.
+     * @param ZipFiles               $zipFiles          Zip files utility instance.
+     * @param string                 $downloadDirectory Temporary download directory path.
+     * @param FileRepository         $fileRepository    File repository to query objects.
+     * @param EntityManagerInterface $entityManager     Entity manager interface instance.
      */
-    public function __construct(LoggerInterface $logger, ZipFiles $zipFiles, string $downloadDirectory, FilesetRepository $filesetRepository)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        ZipFiles $zipFiles,
+        string $downloadDirectory,
+        FileRepository $fileRepository,
+        EntityManagerInterface $entityManager
+    ) {
         $this->logger = $logger;
         $this->zipFiles = $zipFiles;
         $this->downloadDirectory = $downloadDirectory;
-        $this->filesetRepository = $filesetRepository;
+        $this->fileRepository = $fileRepository;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -68,14 +86,18 @@ class ZipFileHandler implements MessageHandlerInterface
     {
         $this->logger->info(sprintf('Zipping files started'));
         $fileIds = $zipFile->getFileIds();
-        $files = new ArrayCollection($this->filesetRepository->findBy($fileIds));
-        $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR . Uuid::uuid4()->toString() . '.zip';
+        $datasetSubmissionId = $zipFile->getDatasetSubmissionId();
+        $datasetSubmission = $this->entityManager->getRepository(DatasetSubmission::class)->find($datasetSubmissionId);
+        $fileInfo = $this->fileRepository->getFileNameAndPath($fileIds);
+        $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR . $datasetSubmission->getDataset()->getUdi() . '.zip';
         try {
-            $this->zipFiles->createZipFile($files, $destinationPath);
+            $this->zipFiles->createZipFile($fileInfo, $destinationPath);
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to zip file. Message: %s', $exception->getMessage()));
             return;
         }
+        $datasetSubmission->getFileset()->setZipFilePath($destinationPath);
+        $this->entityManager->flush();
         $this->logger->info(sprintf('Zipping files done'));
     }
 }
