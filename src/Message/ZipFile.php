@@ -7,7 +7,6 @@ namespace App\Message;
  */
 class ZipFile
 {
-
     /**
      * The file IDs of the to be zipped file.
      *
