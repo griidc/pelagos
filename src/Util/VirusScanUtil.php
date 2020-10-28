@@ -17,7 +17,7 @@ class VirusScanUtil
     /**
      * Constructor for this Controller, to set up default services.
      *
-     * @param string                   $clamdSock               String pointing to socket to clamav daemon.
+     * @param string $clamdSock String pointing to socket to clamav daemon.
      */
     public function __construct(string $clamdSock)
     {
@@ -27,17 +27,18 @@ class VirusScanUtil
     /**
      * Scan a filestream for viruses.
      *
-     * @param mixed $file      A filestream (file handle) to scan.
+     * @param mixed $fileHandle A filesystem resource to scan.
      * @return array
      */
-    public function Scan($fileStream)
+    public function ScanResourceStream($fileHandle)
     {
         try {
             $socket = (new SocketFactory())->createClient($this->clamdSock);
             $quahog = new QuahogClient($socket);
-            $result = $quahog->scanStream($fileStream);
+            $result = $quahog->scanResourceStream($fileHandle, 1024000);
         } catch (\Exception $e) {
             $result['status'] = 'scanfail';
+            $result['reason'] = $e->getMessage();
         }
         return $result;
     }

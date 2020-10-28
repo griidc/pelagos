@@ -69,11 +69,25 @@ class VirusScanHandler implements MessageHandlerInterface
         $fileId = $virusScan->getFileId();
         $file = $this->fileRepository->find($fileId);
         if ($file instanceof File) {
-            $result = $this->scanner->Scan(file_get_contents($file->getFilePath()), 1024);
-            if ($result['status'] !== 'failed') {
-                $this->logger->info(sprintf('Virus scanned file id:%s filename: %s. Status: %s. Reason: %s.', $fileId, $result['filename'], $result['status'], $result['reason']));
+            $filePath = $file->getFilepath();
+            if (file_exists($filePath)) {
+                $fileSize = filesize($filePath);
+                if ($fileSize <= 1047527424) {
+                    $fileHandle = fopen($filePath, 'r');
+                    $result = $this->scanner->ScanResourceStream($fileHandle);
+                    fclose($fileHandle);
+                    if ($result['status'] == 'FOUND') {
+                        $this->logger->warning(sprintf('Virus found in file id:%s filename: %s. VIRUS ID: %s.', $fileId, $filePath, $result['reason']));
+                    } elseif ($result['status'] !== 'failed') {
+                        $this->logger->info(sprintf('Virus scanned file id: %s filename: %s. Status: %s.', $fileId, $filePath, $result['status']));
+                    } else {
+                        $this->logger->warning(sprintf('Unable to scan file. Message: %s', $result['reason']));
+                    }
+                } else {
+                        $this->logger->warning(sprintf('Unable to scan files over 1GB. Not scanning %s.', $filePath));
+                }
             } else {
-                $this->logger->error(sprintf('Unable to scan file. Message: %s', $e->getMessage()));
+                $this->logger->warning(sprintf('Unable to scan missing file: %s.', $filePath));
             }
         }
     }
