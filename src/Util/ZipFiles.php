@@ -2,52 +2,48 @@
 
 namespace App\Util;
 
-use App\Entity\File;
+use League\Flysystem\FilesystemInterface;
 
-use Doctrine\Common\Collections\Collection;
-
-use ZipArchive;
+use ZipStream\ZipStream;
 
 class ZipFiles
 {
-
     /**
-     * ZipArchive class instance.
+     * Datastore utility instance.
      *
-     * @var ZipArchive
+     * @var Datastore
      */
-    private $zip;
+    private $datastore;
 
     /**
      * ZipFiles constructor.
+     *
+     * @param Datastore $datastore Datastore utility instance.
      */
-    public function __construct()
+    public function __construct(Datastore $datastore)
     {
-        $this->zip = new ZipArchive();
+        $this->datastore = $datastore;
     }
 
     /**
      * Creates a zip file from collection of files.
      *
-     * @param Collection|File $files   Files that need to be zipped.
-     * @param string          $zipFile Filename of the zipfile.
+     * @param array  $fileInfo Files that need to be zipped.
+     * @param string $zipFile  Filename of the zipfile.
      *
      * @throws \Exception When utility class can not open/write to zip file.
      *
-     * @return string
+     * @return void
      */
-    public function createZipFile(Collection $files, string $zipFile) : string
+    public function createZipFile(array $fileInfo, string $zipFile) : void
     {
-        $flag = (file_exists($zipFile))? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE;
-        if ($this->zip->open($zipFile, $flag) === true) {
-            foreach ($files as $file) {
-                $this->zip->addFile($file->getFilePath(), $file->getFileName());
+        $zip = new ZipStream($zipFile);
+        foreach ($fileInfo as $file) {
+            $fileStream = $this->datastore->getFile($file['filePath']);
+            if ($fileStream and is_resource($fileStream['fileStream'])) {
+                $zip->addFileFromStream($file['fileName'], $fileStream['fileStream']);
             }
-            $this->zip->close();
-        } else {
-            throw new \Exception('Unable to open zip file');
         }
-
-        return $zipFile;
+        $zip->finish();
     }
 }
