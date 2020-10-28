@@ -98,7 +98,6 @@ class ZipFileHandler implements MessageHandlerInterface
             } else {
                 $this->logger->error('Did not zip file, failed without errors');
             }
-
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to zip file. Message: %s', $exception->getMessage()));
             return;
