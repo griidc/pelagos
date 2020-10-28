@@ -81,8 +81,8 @@ class Datastore
             $this->logger->error(sprintf('File already exists. Message: "%s"', $e->getMessage()));
         }
 
-        if (is_resource($fileStream)) {
-            fclose($fileStream);
+        if (is_resource($fileStream['fileStream'])) {
+            fclose($fileStream['fileStream']);
         }
         return $destinationPath;
     }
