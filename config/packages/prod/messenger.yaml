@@ -1,0 +1,6 @@
+framework:
+    messenger:
+        routing:
+            'App\Message\DatasetSubmissionFilerHandler': async
+            'App\Message\DeleteFileHandler': async
+            'App\Message\HashFile': async
