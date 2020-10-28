@@ -30,7 +30,7 @@ class VirusScanUtil
      * @param mixed $fileHandle A filesystem resource to scan.
      * @return array
      */
-    public function ScanResourceStream($fileHandle)
+    public function scanResourceStream($fileHandle)
     {
         try {
             $socket = (new SocketFactory())->createClient($this->clamdSock);

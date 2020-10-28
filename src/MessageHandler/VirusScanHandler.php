@@ -74,7 +74,7 @@ class VirusScanHandler implements MessageHandlerInterface
                 $fileSize = filesize($filePath);
                 if ($fileSize <= 1047527424) {
                     $fileHandle = fopen($filePath, 'r');
-                    $result = $this->scanner->ScanResourceStream($fileHandle);
+                    $result = $this->scanner->scanResourceStream($fileHandle);
                     fclose($fileHandle);
                     if ($result['status'] == 'FOUND') {
                         $this->logger->warning(sprintf('Virus found in file id:%s filename: %s. VIRUS ID: %s.', $fileId, $filePath, $result['reason']));
