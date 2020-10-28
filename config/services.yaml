@@ -199,7 +199,3 @@ services:
     App\Util\Datastore:
         bind:
             $datastoreFlysystem: "@oneup_flysystem.datastore_flysystem_filesystem"
-
-    App\Util\ZipFiles:
-        bind:
-            $datastoreFlysystem: "@oneup_flysystem.datastore_flysystem_filesystem"
