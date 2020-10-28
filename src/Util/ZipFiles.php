@@ -33,9 +33,9 @@ class ZipFiles
      *
      * @throws \Exception When utility class can not open/write to zip file.
      *
-     * @return void
+     * @return boolean
      */
-    public function createZipFile(array $fileInfo, string $zipFile) : void
+    public function createZipFile(array $fileInfo, string $zipFile) : bool
     {
         $zip = new ZipStream($zipFile);
         foreach ($fileInfo as $file) {
@@ -45,5 +45,7 @@ class ZipFiles
             }
         }
         $zip->finish();
+
+        return true;
     }
 }

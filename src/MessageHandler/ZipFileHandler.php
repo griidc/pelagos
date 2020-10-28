@@ -91,13 +91,19 @@ class ZipFileHandler implements MessageHandlerInterface
         $fileInfo = $this->fileRepository->getFileNameAndPath($fileIds);
         $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR . $datasetSubmission->getDataset()->getUdi() . '.zip';
         try {
-            $this->zipFiles->createZipFile($fileInfo, $destinationPath);
+            $result = $this->zipFiles->createZipFile($fileInfo, $destinationPath);
+            if ($result) {
+                $datasetSubmission->getFileset()->setZipFilePath($destinationPath);
+                $this->entityManager->flush();
+            } else {
+                $this->logger->error('Did not zip file, failed without errors');
+            }
+
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to zip file. Message: %s', $exception->getMessage()));
             return;
         }
-        $datasetSubmission->getFileset()->setZipFilePath($destinationPath);
-        $this->entityManager->flush();
+
         $this->logger->info(sprintf('Zipping files done'));
     }
 }
