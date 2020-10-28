@@ -37,7 +37,7 @@ class VirusScanUtil
             $quahog = new QuahogClient($socket);
             $result = $quahog->scanResourceStream($fileHandle, 1024000);
         } catch (\Exception $e) {
-            $result['status'] = 'scanfail';
+            $result['status'] = 'failed';
             $result['reason'] = $e->getMessage();
         }
         return $result;
