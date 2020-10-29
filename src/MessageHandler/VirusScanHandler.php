@@ -53,7 +53,11 @@ class VirusScanHandler implements MessageHandlerInterface
         } elseif ($result['status'] !== 'failed') {
             $this->logger->info(sprintf('Virus scanned file ID: %s for UDI: %s. Status: %s.', $id, $udi, $result['status']));
         } else {
-            $this->logger->warning(sprintf('Unable to scan file ID: %s for UDI: %s. Message: %s', $id, $udi, $result['reason']));
+            if ($result['reason'] == 'oversize') {
+                $this->logger->warning(sprintf('Filesize limit exceeded. Unable to scan file ID: %s for UDI: %s. Message: %s', $id, $udi, $result['reason']));
+            } else {
+                $this->logger->warning(sprintf('Unable to scan file ID: %s for UDI: %s. Message: %s', $id, $udi, $result['reason']));
+            }
         }
     }
 }
