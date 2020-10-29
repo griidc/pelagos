@@ -35,7 +35,7 @@ class ScanFileForVirus
      * @param string   The UDI associted with the stream.
      * @param int      The fileId associated with the stream.
      */
-    public function __construct(array $stream, string $udi, int $id)
+    public function __construct(array $stream, string $udi, int $id): void
     {
         $this->stream = $stream;
         $this->udi = $udi;
