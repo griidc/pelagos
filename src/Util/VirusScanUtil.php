@@ -32,13 +32,17 @@ class VirusScanUtil
      */
     public function scanResourceStream($fileHandle)
     {
-        try {
-            $socket = (new SocketFactory())->createClient($this->clamdSock);
-            $quahog = new QuahogClient($socket);
-            $result = $quahog->scanResourceStream($fileHandle, 1024000);
-        } catch (\Exception $e) {
-            $result['status'] = 'failed';
-            $result['reason'] = $e->getMessage();
+        if (is_resource($fileHandle)) {
+            try {
+                $socket = (new SocketFactory())->createClient($this->clamdSock);
+                $quahog = new QuahogClient($socket);
+                $result = $quahog->scanResourceStream($fileHandle, 1024000);
+            } catch (\Exception $e) {
+                $result['status'] = 'failed';
+                $result['reason'] = $e->getMessage();
+            }
+        } else {
+            throw new \Exception('stream not a resource');
         }
         return $result;
     }
