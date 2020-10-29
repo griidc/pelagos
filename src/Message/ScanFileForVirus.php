@@ -5,32 +5,32 @@ namespace App\Message;
 /**
  * Message for virus-scanning files.
  */
-class VirusScan
+class ScanFileForVirus
 {
     /**
-     * The file ID of the file to be scanned.
+     * The full filename to be scanned.
      *
      * @var string
      */
-    protected $fileId;
+    protected $filePathAndName;
 
     /**
      * Constructor.
      *
-     * @param int $fileId The file ID of the file to be scanned.
+     * @param string filePathAndName The file ID of the file to be scanned.
      */
-    public function __construct(int $fileId)
+    public function __construct(string $filePathAndName)
     {
-        $this->fileId = $fileId;
+        $this->filePathAndName = $filePathAndName;
     }
 
     /**
      * The file ID getter.
      *
-     * @return integer The file ID.
+     * @return string The full filename to be scanned.
      */
-    public function getFileId(): int
+    public function getFilePathAndName(): string
     {
-        return $this->fileId;
+        return $this->filePathAndName;
     }
 }

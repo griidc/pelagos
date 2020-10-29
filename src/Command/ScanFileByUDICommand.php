@@ -11,7 +11,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 use App\Entity\DatasetSubmission;
 use App\Entity\Dataset;
-use App\Message\VirusScan;
+use App\Message\ScanFileForVirus;
 
 /**
  * This command triggers a file virus scan, by UDI.
@@ -94,9 +94,9 @@ class ScanFileByUDICommand extends Command
 
         $fileset = $datasetSubmission->getFileset();
         $file = $fileset->getAllFiles()->first();
-        $id = $file->getId();
+        $filename = $file->getFilePath();
 
-        $this->bus->dispatch(new VirusScan($id));
-        $output->writeln("Sent virus scan msg to bus with id: $id.");
+        $this->bus->dispatch(new ScanFileForVirus($filename));
+        $output->writeln("Sent virus scan msg to bus for file: $filename.");
     }
 }
