@@ -97,9 +97,14 @@ class ScanFileByUDICommand extends Command
         $id = $file->getId();
 
         if (file_exists($filename)) {
-            $stream = array('fileStream' => fopen($filename, 'r'));
-            $this->bus->dispatch(new ScanFileForVirus($stream, $udi, $id));
-            $output->writeln("Sent virus scan msg to bus for file: $filename.");
+            $fileSize = filesize($filename);
+            if ($fileSize <= 104857600) {
+                $stream = array('fileStream' => fopen($filename, 'r'));
+                $this->bus->dispatch(new ScanFileForVirus($stream, $udi, $id));
+                $output->writeln("Sent virus scan msg to bus for file: $filename.");
+            } else {
+                $output->writeln("Oversize file - 100MB limit. File $filename for UDI $udi, fileID: $id too large ($fileSize) to scan.");
+            }
         } else {
             $output->writeln("File $filename missing for UDI $udi, fileID: $id. Could not scan.");
         }
