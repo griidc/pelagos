@@ -22,7 +22,7 @@ class ZipFiles
      */
     public function start(array $outputFileStream, string $zipFileName): void
     {
-        $options = New Archive();
+        $options = new Archive();
         $options->setOutputStream($outputFileStream['fileStream']);
         $this->zip = new ZipStream($zipFileName, $options);
     }
