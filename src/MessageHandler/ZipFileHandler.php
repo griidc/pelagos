@@ -12,6 +12,7 @@ use App\Message\ZipFile;
 
 use App\Repository\FileRepository;
 
+use App\Util\Datastore;
 use App\Util\ZipFiles;
 
 /**
@@ -55,6 +56,13 @@ class ZipFileHandler implements MessageHandlerInterface
     private $entityManager;
 
     /**
+     * Datastore utility instance.
+     *
+     * @var Datastore
+     */
+    private $datastore;
+
+    /**
      * ZipFileHandler constructor.
      *
      * @param LoggerInterface        $logger            Default Monolog logger interface.
@@ -62,19 +70,22 @@ class ZipFileHandler implements MessageHandlerInterface
      * @param string                 $downloadDirectory Temporary download directory path.
      * @param FileRepository         $fileRepository    File repository to query objects.
      * @param EntityManagerInterface $entityManager     Entity manager interface instance.
+     * @param Datastore              $datastore         Datastore utility instance.
      */
     public function __construct(
         LoggerInterface $logger,
         ZipFiles $zipFiles,
         string $downloadDirectory,
         FileRepository $fileRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        Datastore $datastore
     ) {
         $this->logger = $logger;
         $this->zipFiles = $zipFiles;
         $this->downloadDirectory = $downloadDirectory;
         $this->fileRepository = $fileRepository;
         $this->entityManager = $entityManager;
+        $this->datastore = $datastore;
     }
 
     /**
@@ -88,16 +99,18 @@ class ZipFileHandler implements MessageHandlerInterface
         $fileIds = $zipFile->getFileIds();
         $datasetSubmissionId = $zipFile->getDatasetSubmissionId();
         $datasetSubmission = $this->entityManager->getRepository(DatasetSubmission::class)->find($datasetSubmissionId);
-        $fileInfo = $this->fileRepository->getFileNameAndPath($fileIds);
+        $filesInfo = $this->fileRepository->getFileNameAndPath($fileIds);
         $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR . $datasetSubmission->getDataset()->getUdi() . '.zip';
         try {
-            $result = $this->zipFiles->createZipFile($fileInfo, $destinationPath);
-            if ($result) {
-                $datasetSubmission->getFileset()->setZipFilePath($destinationPath);
-                $this->entityManager->flush();
-            } else {
-                $this->logger->error('Did not zip file, failed without errors');
+            $outputStream = array('fileStream' => fopen($destinationPath, 'w+'));
+            $this->zipFiles->start($outputStream, basename($destinationPath));
+            foreach ($filesInfo as $fileItemInfo) {
+                $this->zipFiles->addFile($fileItemInfo['fileName'], $this->datastore->getFile($fileItemInfo['filePath']));
             }
+            $this->zipFiles->finish();
+            fclose($outputStream['fileStream']);
+            $datasetSubmission->getFileset()->setZipFilePath($destinationPath);
+            $this->entityManager->flush();
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to zip file. Message: %s', $exception->getMessage()));
             return;

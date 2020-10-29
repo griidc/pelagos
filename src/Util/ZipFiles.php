@@ -2,50 +2,53 @@
 
 namespace App\Util;
 
-use League\Flysystem\FilesystemInterface;
-
+use ZipStream\Option\Archive;
 use ZipStream\ZipStream;
 
 class ZipFiles
 {
     /**
-     * Datastore utility instance.
-     *
-     * @var Datastore
+     * @var ZipStream
      */
-    private $datastore;
+    private $zip;
 
     /**
-     * ZipFiles constructor.
+     * Start the file zip.
      *
-     * @param Datastore $datastore Datastore utility instance.
+     * @param array  $outputFileStream Zip output file stream.
+     * @param string $zipFileName      Zip file name.
+     *
+     * @return void
      */
-    public function __construct(Datastore $datastore)
+    public function start(array $outputFileStream, string $zipFileName): void
     {
-        $this->datastore = $datastore;
+        $options = New Archive();
+        $options->setOutputStream($outputFileStream['fileStream']);
+        $this->zip = new ZipStream($zipFileName, $options);
     }
 
     /**
-     * Creates a zip file from collection of files.
+     * Add file to the zip.
      *
-     * @param array  $fileInfo Files that need to be zipped.
-     * @param string $zipFile  Filename of the zipfile.
+     * @param string $fileName   File name of the file that needs to be zipped.
+     * @param array  $fileStream File stream of the file that needs to be zipped.
      *
-     * @throws \Exception When utility class can not open/write to zip file.
-     *
-     * @return boolean
+     * @return void
      */
-    public function createZipFile(array $fileInfo, string $zipFile) : bool
+    public function addFile(string $fileName, array $fileStream): void
     {
-        $zip = new ZipStream($zipFile);
-        foreach ($fileInfo as $file) {
-            $fileStream = $this->datastore->getFile($file['filePath']);
-            if ($fileStream and is_resource($fileStream['fileStream'])) {
-                $zip->addFileFromStream($file['fileName'], $fileStream['fileStream']);
-            }
+        if (!empty($fileStream) and is_resource($fileStream['fileStream'])) {
+            $this->zip->addFileFromStream($fileName, $fileStream['fileStream']);
         }
-        $zip->finish();
+    }
 
-        return true;
+    /**
+     * Finish zipping the file.
+     *
+     * @return void
+     */
+    public function finish(): void
+    {
+        $this->zip->finish();
     }
 }
