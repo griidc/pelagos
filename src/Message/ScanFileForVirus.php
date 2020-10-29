@@ -8,29 +8,67 @@ namespace App\Message;
 class ScanFileForVirus
 {
     /**
-     * The full filename to be scanned.
+     * The stream to be scanned.
      *
-     * @var string
+     * @var resource
      */
-    protected $filePathAndName;
+    protected $stream;
+
+    /**
+     * The UDI of the associated stream, for identification purposes.
+     *
+     * @var string udi
+     */
+    protected $udi;
+
+    /**
+     * The ID of the file assocated with the stream, for identification purposes.
+     *
+     * @var int id
+     */
+    protected $id;
 
     /**
      * Constructor.
      *
-     * @param string filePathAndName The file ID of the file to be scanned.
+     * @param array    The stream and attributes describing the associated file for who's stream is to be scanned.
+     * @param string   The UDI associted with the stream.
+     * @param int      The fileId associated with the stream.
      */
-    public function __construct(string $filePathAndName)
+    public function __construct(array $stream, string $udi, int $id)
     {
-        $this->filePathAndName = $filePathAndName;
+        $this->stream = $stream;
+        $this->udi = $udi;
+        $this->id = $id;
+    }
+
+    /**
+     * The stream getter.
+     *
+     * @return array The filehandle to be scanned.
+     */
+    public function getStream(): array
+    {
+        return $this->stream;
+    }
+
+    /**
+     * The Udi getter.
+     *
+     * @return string The UDI associated with the stream.
+     */
+    public function getUdi(): string
+    {
+        return $this->udi;
     }
 
     /**
      * The file ID getter.
      *
-     * @return string The full filename to be scanned.
+     * @return string The fileId associated with the stream.
      */
-    public function getFilePathAndName(): string
+    public function getId(): int
     {
-        return $this->filePathAndName;
+        return $this->id;
     }
 }

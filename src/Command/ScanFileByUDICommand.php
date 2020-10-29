@@ -95,8 +95,14 @@ class ScanFileByUDICommand extends Command
         $fileset = $datasetSubmission->getFileset();
         $file = $fileset->getAllFiles()->first();
         $filename = $file->getFilePath();
+        $id = $file->getId();
 
-        $this->bus->dispatch(new ScanFileForVirus($filename));
-        $output->writeln("Sent virus scan msg to bus for file: $filename.");
+        if (file_exists($filename)) {
+            $stream = array('fileStream' => fopen($filename, 'r'));
+            $this->bus->dispatch(new ScanFileForVirus($stream, $udi, $id));
+            $output->writeln("Sent virus scan msg to bus for file: $filename.");
+        } else {
+            $output->writeln("File $filename missing for UDI $udi, fileID: $id. Could not scan.");
+        }
     }
 }

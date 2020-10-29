@@ -2,12 +2,12 @@
 
 namespace App\MessageHandler;
 
+use App\Message\ScanFileForVirus;
 use App\Util\VirusScanUtil;
 use Psr\Log\LoggerInterface;
 use Socket\Raw\Factory as SocketFactory;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Xenolope\Quahog\Client as QuahogClient;
-use App\Message\ScanFileForVirus;
 
 class VirusScanHandler implements MessageHandlerInterface
 {
@@ -25,12 +25,11 @@ class VirusScanHandler implements MessageHandlerInterface
      */
     private $scanner;
 
-
     /**
      * Constructor for this Controller, to set up default services.
      *
-     * @param LoggerInterface        $virusScanLogger Name hinted virus_scan logger.
-     * @param VirusScanUtil          $scanner         A stream-based virus-scanning utility instance.
+     * @param LoggerInterface $virusScanLogger Name hinted virus_scan logger.
+     * @param VirusScanUtil   $scanner         A stream-based virus-scanning utility instance.
     */
     public function __construct(LoggerInterface $virusScanLogger, VirusScanUtil $scanner)
     {
@@ -45,25 +44,16 @@ class VirusScanHandler implements MessageHandlerInterface
      */
     public function __invoke(ScanFileForVirus $scanFileForVirusMessage)
     {
-        $filename = $scanFileForVirusMessage->getFilePathAndName();
-        if (file_exists($filename)) {
-            $fileSize = filesize($filename);
-            if ($fileSize <= 1047527424) {
-                $fileHandle = fopen($filename, 'r');
-                $result = $this->scanner->scanResourceStream($fileHandle);
-                fclose($fileHandle);
-                if ($result['status'] == 'FOUND') {
-                    $this->logger->warning(sprintf('Virus found in filename: %s. VIRUS ID: %s.', $filename, $result['reason']));
-                } elseif ($result['status'] !== 'failed') {
-                    $this->logger->info(sprintf('Virus scanned filename: %s. Status: %s.', $filename, $result['status']));
-                } else {
-                    $this->logger->warning(sprintf('Unable to scan filename: %s. Message: %s', $filename, $result['reason']));
-                }
-            } else {
-                    $this->logger->warning(sprintf('Unable to scan files over 1GB. Not scanning filename: %s.', $filename));
-            }
+        $udi = $scanFileForVirusMessage->getUdi();
+        $id = $scanFileForVirusMessage->getId();
+        $streamArray = $scanFileForVirusMessage->getStream();
+        $result = $this->scanner->scanResourceStream($streamArray['fileStream']);
+        if ($result['status'] == 'FOUND') {
+            $this->logger->warning(sprintf('Virus found in file ID: %s for UDI: %s, VIRUS ID: %s.', $id, $udi, $result['reason']));
+        } elseif ($result['status'] !== 'failed') {
+            $this->logger->info(sprintf('Virus scanned file ID: %s for UDI: %s. Status: %s.', $id, $udi, $result['status']));
         } else {
-            $this->logger->warning(sprintf('Unable to scan missing filename: %s.', $filename));
+            $this->logger->warning(sprintf('Unable to scan file ID: %s for UDI: %s. Message: %s', $id, $udi, $result['reason']));
         }
     }
 }
