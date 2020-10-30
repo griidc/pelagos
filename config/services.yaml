@@ -200,6 +200,6 @@ services:
         bind:
             $datastoreFlysystem: "@oneup_flysystem.datastore_flysystem_filesystem"
 
-    App\MessageHandler\ZipFileHandler:
+    App\MessageHandler\ZipDatasetFilesHandler:
         bind:
             $downloadDirectory: "%env(DOWNLOAD_PATH)%"

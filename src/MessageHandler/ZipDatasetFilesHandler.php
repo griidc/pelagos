@@ -8,7 +8,7 @@ use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 use App\Entity\DatasetSubmission;
 
-use App\Message\ZipFile;
+use App\Message\ZipDatasetFiles;
 
 use App\Repository\FileRepository;
 
@@ -18,7 +18,7 @@ use App\Util\ZipFiles;
 /**
  * Handler for zipping files for download.
  */
-class ZipFileHandler implements MessageHandlerInterface
+class ZipDatasetFilesHandler implements MessageHandlerInterface
 {
     /**
      * The monolog logger.
@@ -63,7 +63,7 @@ class ZipFileHandler implements MessageHandlerInterface
     private $datastore;
 
     /**
-     * ZipFileHandler constructor.
+     * ZipDatasetFilesHandler constructor.
      *
      * @param LoggerInterface        $logger            Default Monolog logger interface.
      * @param ZipFiles               $zipFiles          Zip files utility instance.
@@ -91,13 +91,13 @@ class ZipFileHandler implements MessageHandlerInterface
     /**
      * Invoke function to zip files for download.
      *
-     * @param ZipFile $zipFile
+     * @param ZipDatasetFiles $zipDatasetFiles  Symfony message for zip dataset files.
      */
-    public function __invoke(ZipFile $zipFile)
+    public function __invoke(ZipDatasetFiles $zipDatasetFiles)
     {
         $this->logger->info(sprintf('Zipping files started'));
-        $fileIds = $zipFile->getFileIds();
-        $datasetSubmissionId = $zipFile->getDatasetSubmissionId();
+        $fileIds = $zipDatasetFiles->getFileIds();
+        $datasetSubmissionId = $zipDatasetFiles->getDatasetSubmissionId();
         $datasetSubmission = $this->entityManager->getRepository(DatasetSubmission::class)->find($datasetSubmissionId);
         $filesInfo = $this->fileRepository->getFileNameAndPath($fileIds);
         $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR . $datasetSubmission->getDataset()->getUdi() . '.zip';

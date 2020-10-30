@@ -5,7 +5,7 @@ namespace App\Message;
 /**
  * The message for Zip file handler.
  */
-class ZipFile
+class ZipDatasetFiles
 {
     /**
      * The file IDs of the to be zipped file.

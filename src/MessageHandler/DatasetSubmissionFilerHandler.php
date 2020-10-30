@@ -12,7 +12,7 @@ use App\Message\DatasetSubmissionFiler;
 use App\Message\HashFile;
 use App\Message\VirusScan;
 
-use App\Message\ZipFile;
+use App\Message\ZipDatasetFiles;
 use App\Repository\DatasetSubmissionRepository;
 
 use App\Util\Datastore;
@@ -132,7 +132,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             $this->entityManager->flush();
 
             // Dispatch message to zip files
-            $zipFiles = new ZipFile($fileIds, $datasetSubmissionId);
+            $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
             $this->messageBus->dispatch($zipFiles);
 
             // Dispatch entity event.
