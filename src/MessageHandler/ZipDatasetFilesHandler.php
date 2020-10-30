@@ -2,18 +2,14 @@
 
 namespace App\MessageHandler;
 
+use App\Entity\DatasetSubmission;
+use App\Message\ZipDatasetFiles;
+use App\Repository\FileRepository;
+use App\Util\Datastore;
+use App\Util\ZipFiles;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
-
-use App\Entity\DatasetSubmission;
-
-use App\Message\ZipDatasetFiles;
-
-use App\Repository\FileRepository;
-
-use App\Util\Datastore;
-use App\Util\ZipFiles;
 
 /**
  * Handler for zipping files for download.
