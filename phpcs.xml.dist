@@ -10,10 +10,10 @@
     <arg name="extensions" value="php"/>
     <arg value="nps"/>
 
-    <rule ref="PSR2"/>
+    <rule ref="PSR12"/>
 
     <file>src/</file>
-    
+
     <exclude-pattern>*./src/Migrations/*\.(php)$</exclude-pattern>
 
 </ruleset>
