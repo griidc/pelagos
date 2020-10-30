@@ -10,7 +10,7 @@ use App\Event\EntityEventDispatcher;
 
 use App\Message\DatasetSubmissionFiler;
 use App\Message\HashFile;
-use App\Message\VirusScan;
+use App\Message\ScanFileForVirus;
 
 use App\Message\ZipDatasetFiles;
 use App\Repository\DatasetSubmissionRepository;
@@ -43,6 +43,13 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
     private $logger;
 
     /**
+     * The monolog logger for virus events.
+     *
+     * @var LoggerInterface
+     */
+    private $virusScanlogger;
+
+    /**
      * Instance of symfony messenger message bus.
      *
      * @var MessageBusInterface
@@ -71,29 +78,42 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
     private $datastore;
 
     /**
+     * Datastore directory.
+     *
+     * @var string
+     */
+    private $datastoreDirectory;
+
+    /**
      * DatasetSubmissionFilerHandler constructor.
      *
      * @param DatasetSubmissionRepository $datasetSubmissionRepository Dataset Submission Repository.
      * @param LoggerInterface             $filerLogger                 Name hinted filer logger.
+     * @param LoggerInterface             $virusScanLogger             Name hinted virus-scan logger.
      * @param MessageBusInterface         $messageBus                  Symfony messenger bus interface instance.
      * @param EntityEventDispatcher       $entityEventDispatcher       The entity event dispatcher.
      * @param EntityManagerInterface      $entityManager               The entity manager.
      * @param Datastore                   $datastore                   Datastore utility instance.
+     * @param string                      $datastoreDirectory          datastore location.
      */
     public function __construct(
         DatasetSubmissionRepository $datasetSubmissionRepository,
         LoggerInterface $filerLogger,
+        LoggerInterface $virusScanLogger,
         MessageBusInterface $messageBus,
         EntityEventDispatcher $entityEventDispatcher,
         EntityManagerInterface $entityManager,
-        Datastore $datastore
+        Datastore $datastore,
+        string $datastoreDirectory
     ) {
         $this->datasetSubmissionRepository = $datasetSubmissionRepository;
         $this->logger = $filerLogger;
+        $this->virusScanLogger = $virusScanLogger;
         $this->messageBus = $messageBus;
         $this->entityEventDispatcher = $entityEventDispatcher;
         $this->entityManager = $entityManager;
         $this->datastore = $datastore;
+        $this->datastoreDirectory = $datastoreDirectory;
     }
 
     /**
@@ -118,7 +138,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             $this->logger->info('Dataset submission process started', $loggingContext);
             foreach ($fileset->getNewFiles() as $file) {
                 if ($file instanceof File) {
-                    $this->processFile($file);
+                    $this->processFile($file, $loggingContext);
                     $fileIds[] = $file->getId();
                 } else {
                     $this->logger->alert('File object does not exist');
@@ -145,10 +165,11 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
      * Method to process a single file.
      *
      * @param File  $file           The file that is being processed.
+     * @param array $loggingContext The logging context for the related dataset submission.
      *
      * @return void
      */
-    private function processFile(File $file): void
+    private function processFile(File $file, array $loggingContext): void
     {
         // Log processing start.
         $fileId = $file->getId();
@@ -166,17 +187,25 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             $file->setStatus(File::FILE_ERROR);
         }
 
-
         // File Hashing
         $hashFile = new HashFile($fileId);
         $this->messageBus->dispatch($hashFile);
 
         // File virus Scan
-        // TODO implement method
-        /*
-        $scanFile = new VirusScan($fileId);
-        $this->messageBus->dispatch($scanFile);
-        */
+        if ($file instanceof File) {
+            $filename = $this->datastoreDirectory . '/' . $file->getFilePath();
+            $id = $file->getId();
+            if (file_exists($filename)) {
+                $stream = array('fileStream' => fopen($filename, 'r'));
+                // UDI is needed by the ScanFileForVirus for meaningful errors.
+                $this->messageBus->dispatch(new ScanFileForVirus($stream, $loggingContext['udi'], $fileId));
+                $this->virusScanLogger->info("Enqueing virus scan for file: $filename.", $loggingContext);
+            } else {
+                $this->virusScanLogger->warning("File: $filename missing Could not scan.", $loggingContext);
+            }
+        } else {
+            $this->virusScanlogger->alert("No file(s) objects exist for dataset", $loggingContext);
+        }
 
         // Log processing complete.
         $this->logger->info('Dataset file processing completed', $loggingContext);
