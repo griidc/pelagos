@@ -199,4 +199,16 @@ class FilesetTest extends TestCase
         $this->fileset->addFile($doneFile);
         $this->assertSame(true, $this->fileset->isDone());
     }
+
+    /**
+     * Test for zipFilePath setter and getter.
+     *
+     * @return void
+     */
+    public function testCanGetAdSetZipFilePath()
+    {
+        $zipFilePath = '/path/to/file.zip';
+        $this->fileset->setZipFilePath($zipFilePath);
+        $this->assertEquals($zipFilePath, $this->fileset->getZipFilePath());
+    }
 }
