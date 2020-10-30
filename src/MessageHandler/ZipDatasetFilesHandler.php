@@ -95,7 +95,7 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
      */
     public function __invoke(ZipDatasetFiles $zipDatasetFiles)
     {
-        $this->logger->info(sprintf('Zipping files started'));
+        $this->logger->info('Zipping files started');
         $fileIds = $zipDatasetFiles->getFileIds();
         $datasetSubmissionId = $zipDatasetFiles->getDatasetSubmissionId();
         $datasetSubmission = $this->entityManager->getRepository(DatasetSubmission::class)->find($datasetSubmissionId);
