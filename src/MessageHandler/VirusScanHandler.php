@@ -49,7 +49,7 @@ class VirusScanHandler implements MessageHandlerInterface
         $streamArray = $scanFileForVirusMessage->getStream();
         $result = $this->scanner->scanResourceStream($streamArray['fileStream']);
         if ($result['status'] == 'FOUND') {
-            $this->logger->warning(sprintf('Virus found in file ID: %s for UDI: %s, VIRUS ID: %s.', $id, $udi, $result['reason']));
+            $this->logger->alert(sprintf('Virus found in file ID: %s for UDI: %s, VIRUS ID: %s.', $id, $udi, $result['reason']));
         } elseif ($result['status'] !== 'failed') {
             $this->logger->info(sprintf('Virus scanned file ID: %s for UDI: %s. Status: %s.', $id, $udi, $result['status']));
         } else {

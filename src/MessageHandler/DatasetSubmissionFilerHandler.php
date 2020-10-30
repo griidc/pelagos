@@ -194,7 +194,6 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         // File virus Scan
         if ($file instanceof File) {
             $filename = $this->datastoreDirectory . '/' . $file->getFilePath();
-            $id = $file->getId();
             if (file_exists($filename)) {
                 $stream = array('fileStream' => fopen($filename, 'r'));
                 // UDI is needed by the ScanFileForVirus for meaningful errors.
