@@ -2,16 +2,12 @@
 
 namespace App\Entity;
 
+use App\Exception\NotDeletableException;
+use App\Entity\Person;
 use Doctrine\ORM\Mapping as ORM;
-
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-
-use JMS\Serializer\Annotation as Serializer;
-
-use App\Exception\NotDeletableException;
-
-use App\Entity\Person;
 
 /**
  * Abstract class that contains basic properties and methods common to all Pelagos entities.
@@ -376,8 +372,10 @@ abstract class Entity
      */
     public function isSameTypeAndId(Entity $other)
     {
-        if (get_class($this) == get_class($other) &&
-            $this->getId() == $other->getId()) {
+        if (
+            get_class($this) == get_class($other) &&
+            $this->getId() == $other->getId()
+        ) {
             return true;
         }
         return false;

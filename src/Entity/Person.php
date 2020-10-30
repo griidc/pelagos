@@ -2,20 +2,15 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Constraints as Assert;
+use App\Exception\NotDeletableException;
 use App\Validator\Constraints as CustomAssert;
-
-use Hateoas\Configuration\Annotation as Hateoas;
-
-use JMS\Serializer\Annotation as Serializer;
-
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-
-use App\Exception\NotDeletableException;
+use Doctrine\ORM\Mapping as ORM;
+use Hateoas\Configuration\Annotation as Hateoas;
+use JMS\Serializer\Annotation as Serializer;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Entity class to represent a Person.
@@ -761,7 +756,7 @@ class Person extends Entity
     public function getDataRepositories()
     {
         $personDataRepositories = $this->getPersonDataRepositories();
-        $collection = new ArrayCollection;
+        $collection = new ArrayCollection();
         foreach ($personDataRepositories as $personDataRepository) {
             $collection->add($personDataRepository->getDataRepository());
         }

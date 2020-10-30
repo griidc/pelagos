@@ -147,7 +147,7 @@ class File extends Entity
      *
      * @return string|null
      */
-    public function getFileName(): ? string
+    public function getFileName(): ?string
     {
         return $this->fileName;
     }
@@ -169,7 +169,7 @@ class File extends Entity
      *
      * @return integer|null
      */
-    public function getFileSize(): ? int
+    public function getFileSize(): ?int
     {
         return $this->fileSize;
     }
@@ -191,7 +191,7 @@ class File extends Entity
      *
      * @return string|null
      */
-    public function getFileSha256Hash(): ? string
+    public function getFileSha256Hash(): ?string
     {
         return $this->fileSha256Hash;
     }
@@ -213,7 +213,7 @@ class File extends Entity
      *
      * @return \DateTime|null
      */
-    public function getUploadedAt(): ? \DateTime
+    public function getUploadedAt(): ?\DateTime
     {
         return $this->uploadedAt;
     }
@@ -235,7 +235,7 @@ class File extends Entity
      *
      * @return Person
      */
-    public function getUploadedBy(): ? Person
+    public function getUploadedBy(): ?Person
     {
         return $this->uploadedBy;
     }
@@ -257,7 +257,7 @@ class File extends Entity
      *
      * @return string|null
      */
-    public function getDescription(): ? string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -279,7 +279,7 @@ class File extends Entity
      *
      * @return string|null
      */
-    public function getFilePath(): ? string
+    public function getFilePath(): ?string
     {
         return $this->filePath;
     }

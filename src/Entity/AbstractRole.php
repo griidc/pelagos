@@ -2,10 +2,9 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
-use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as CustomAssert;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Base entity class for the representation of typed Role classes.
@@ -75,7 +74,7 @@ abstract class AbstractRole extends Entity implements RoleInterface
     /**
      * Setter for Weight.
      *
-     * @param integer $weight The weight associated with this role.
+     * @param int $weight The weight associated with this role.
      *
      * @throws \InvalidArgumentException When provided weight is not an integer or integer string.
      *
@@ -83,10 +82,11 @@ abstract class AbstractRole extends Entity implements RoleInterface
      */
     public function setWeight(int $weight)
     {
-        if (is_int($weight) and $weight > 0 or
-            is_string($weight) and ctype_digit($weight) and (integer) $weight > 0
+        if (
+            is_int($weight) and $weight > 0 or
+            is_string($weight) and ctype_digit($weight) and (int) $weight > 0
         ) {
-            $this->weight = (integer) $weight;
+            $this->weight = (int) $weight;
         } else {
             throw new \InvalidArgumentException('Weight must be a positive integer');
         }

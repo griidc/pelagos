@@ -2,21 +2,16 @@
 
 namespace App\Entity;
 
+use App\Exception\NotDeletableException;
 use App\Twig\Extensions as TwigExtentions;
+use App\Validator\Constraints as CustomAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
 use Doctrine\ORM\Mapping as ORM;
-
+use Hateoas\Configuration\Annotation as Hateoas;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Validator\Constraints as CustomAssert;
-
-use Hateoas\Configuration\Annotation as Hateoas;
-
-use JMS\Serializer\Annotation as Serializer;
-
-use App\Exception\NotDeletableException;
 
 /**
  * Entity class to represent a Research Group.
@@ -817,7 +812,7 @@ class ResearchGroup extends Entity
      *
      * @return string|null
      */
-    public function getShortName() : ? string
+    public function getShortName(): ?string
     {
         return $this->shortName;
     }
@@ -829,7 +824,7 @@ class ResearchGroup extends Entity
      *
      * @return void
      */
-    public function setShortName(?string $shortName) : void
+    public function setShortName(?string $shortName): void
     {
         $this->shortName = $shortName;
     }

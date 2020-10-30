@@ -46,7 +46,7 @@ class Fileset extends Entity
      *
      * @return Collection
      */
-    public function getAllFiles() : Collection
+    public function getAllFiles(): Collection
     {
         return $this->files;
     }
@@ -56,7 +56,7 @@ class Fileset extends Entity
      *
      * @return Collection
      */
-    public function getProcessedFiles() : Collection
+    public function getProcessedFiles(): Collection
     {
         return $this->files->filter(function (File $file) {
             return $file->getStatus() === File::FILE_DONE;
@@ -68,7 +68,7 @@ class Fileset extends Entity
      *
      * @return Collection
      */
-    public function getNewFiles() : Collection
+    public function getNewFiles(): Collection
     {
         return $this->files->filter(function (File $file) {
             return $file->getStatus() === File::FILE_NEW;
@@ -80,7 +80,7 @@ class Fileset extends Entity
      *
      * @return Collection
      */
-    public function getDeletedFiles() : Collection
+    public function getDeletedFiles(): Collection
     {
         return $this->files->filter(function (File $file) {
             return $file->getStatus() === File::FILE_DELETED;
@@ -117,7 +117,7 @@ class Fileset extends Entity
      *
      * @return boolean
      */
-    public function isDone() :bool
+    public function isDone(): bool
     {
         $criteria = Criteria::create()
         ->where(
@@ -141,7 +141,7 @@ class Fileset extends Entity
      *
      * @return bool
      */
-    public function doesFileExist(string $newFileName) : bool
+    public function doesFileExist(string $newFileName): bool
     {
         return $this->files->exists(function ($key, File $file) use ($newFileName) {
             return $file->getFileName() === $newFileName;
@@ -153,7 +153,7 @@ class Fileset extends Entity
      *
      * @return integer
      */
-    public function getFileSize() :int
+    public function getFileSize(): int
     {
         $fileSize = 0;
 
@@ -171,7 +171,7 @@ class Fileset extends Entity
      *
      * @return File
      */
-    public function getExistingFile(string $fileName) : File
+    public function getExistingFile(string $fileName): File
     {
         $criteria = Criteria::create()
             ->where(

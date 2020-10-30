@@ -2,17 +2,14 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use App\Exception\PasswordException;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-
+use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-
-use JMS\Serializer\Annotation as Serializer;
-
-use App\Exception\PasswordException;
 
 /**
  * Entity class to represent an Account.
@@ -273,8 +270,10 @@ class Account extends Entity implements UserInterface, EquatableInterface
             // check for minimum age.
             $interval = new \DateInterval('PT24H');
             $now = new \DateTime();
-            if (!$this->passwordHistory->isEmpty() and
-                $this->passwordHistory->first()->getModificationTimeStamp()->add($interval) > $now) {
+            if (
+                !$this->passwordHistory->isEmpty() and
+                $this->passwordHistory->first()->getModificationTimeStamp()->add($interval) > $now
+            ) {
                 throw new PasswordException('This password has already been changed within the last 24 hrs');
             }
 
@@ -547,17 +546,21 @@ class Account extends Entity implements UserInterface, EquatableInterface
     {
         $roles = array(self::ROLE_USER);
         foreach ($this->getPerson()->getPersonDataRepositories() as $personDataRepository) {
-            if ($personDataRepository->getRole()->getName() == DataRepositoryRole::MANAGER
+            if (
+                $personDataRepository->getRole()->getName() == DataRepositoryRole::MANAGER
                 and !in_array(self::ROLE_DATA_REPOSITORY_MANAGER, $roles)
             ) {
                 $roles[] = self::ROLE_DATA_REPOSITORY_MANAGER;
-            } elseif ($personDataRepository->getRole()->getName() === DataRepositoryRole::SME
-             and !in_array(self::ROLE_SUBJECT_MATTER_EXPERT, $roles)) {
+            } elseif (
+                $personDataRepository->getRole()->getName() === DataRepositoryRole::SME
+                and !in_array(self::ROLE_SUBJECT_MATTER_EXPERT, $roles)
+            ) {
                 $roles[] = self::ROLE_SUBJECT_MATTER_EXPERT;
             }
         }
         foreach ($this->getPerson()->getPersonResearchGroups() as $personResearchGroup) {
-            if ($personResearchGroup->getRole()->getName() == ResearchGroupRole::DATA
+            if (
+                $personResearchGroup->getRole()->getName() == ResearchGroupRole::DATA
                 and !in_array(self::ROLE_RESEARCH_GROUP_DATA, $roles)
             ) {
                 $roles[] = self::ROLE_RESEARCH_GROUP_DATA;

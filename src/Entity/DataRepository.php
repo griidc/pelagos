@@ -2,17 +2,13 @@
 
 namespace App\Entity;
 
+use App\Exception\NotDeletableException;
+use App\Validator\Constraints as CustomAssert;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-
+use Hateoas\Configuration\Annotation as Hateoas;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Validator\Constraints as CustomAssert;
-
-use Hateoas\Configuration\Annotation as Hateoas;
-
-use Doctrine\Common\Collections\ArrayCollection;
-
-use App\Exception\NotDeletableException;
 
 /**
  * Entity class to represent a Data Repository.

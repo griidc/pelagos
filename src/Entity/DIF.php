@@ -3,12 +3,9 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
-use Symfony\Component\Validator\Constraints as Assert;
-
 use Hateoas\Configuration\Annotation as Hateoas;
-
 use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * DIF Entity class.
@@ -1255,7 +1252,7 @@ class DIF extends Entity
                 'Ethical issues must be one of: ' . implode(', ', self::ETHICAL_ISSUES)
             );
         }
-        
+
         $this->ethicalIssues = $ethicalIssues;
     }
 
@@ -1319,7 +1316,7 @@ class DIF extends Entity
      *
      * @return boolean True if this DIF can be submitted, False otherwise.
      */
-    public function isSubmittable() : bool
+    public function isSubmittable(): bool
     {
         return self::STATUS_UNSUBMITTED === $this->status;
     }

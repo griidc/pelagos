@@ -2,15 +2,12 @@
 
 namespace App\Entity;
 
+use App\Exception\NotDeletableException;
+use App\Validator\Constraints as CustomAssert;
 use Doctrine\ORM\Mapping as ORM;
-
+use Hateoas\Configuration\Annotation as Hateoas;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Validator\Constraints as CustomAssert;
-
-use Hateoas\Configuration\Annotation as Hateoas;
-
-use App\Exception\NotDeletableException;
 
 /**
  * Entity class to represent a Funding Organization.
@@ -784,7 +781,7 @@ class FundingOrganization extends Entity
      *
      * @return string|null
      */
-    public function getShortName() : ? string
+    public function getShortName(): ?string
     {
         return $this->shortName;
     }
@@ -796,7 +793,7 @@ class FundingOrganization extends Entity
      *
      * @return void
      */
-    public function setShortName(?string $shortName) : void
+    public function setShortName(?string $shortName): void
     {
         $this->shortName = $shortName;
     }
