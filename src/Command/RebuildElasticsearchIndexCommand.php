@@ -2,16 +2,13 @@
 
 namespace App\Command;
 
+use App\Entity\Dataset;
 use Doctrine\ORM\EntityManagerInterface;
-
 use FOS\ElasticaBundle\Persister\ObjectPersister;
-
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
-use App\Entity\Dataset;
 
 /**
  * This class re-indexes the elasticsearch index.
@@ -92,9 +89,9 @@ class RebuildElasticsearchIndexCommand extends Command
         foreach ($allDatasets as $dataset) {
             $counter++;
             $output->writeln('indexing ' . $dataset->getUdi());
-            $startTime = new \DateTime;
+            $startTime = new \DateTime();
             $this->pelagosDatasetIndexPersister->insertOne($dataset);
-            $elapsedTime = date_diff($startTime, new \DateTime);
+            $elapsedTime = date_diff($startTime, new \DateTime());
             $elapsedTimeSeconds = $elapsedTime->format('%s');
             $output->writeln('     ' . $dataset->getUdi() . " indexed. ($counter/$count $elapsedTimeSeconds sec)");
         }

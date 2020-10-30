@@ -2,17 +2,14 @@
 
 namespace App\Command;
 
+use App\Entity\Dataset;
+use App\Entity\DIF;
+use App\Util\RabbitPublisher;
 use Doctrine\ORM\EntityManagerInterface;
-
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
-
-use App\Entity\Dataset;
-use App\Entity\DIF;
-
-use App\Util\RabbitPublisher;
 
 /**
  * This command publishes a rabbit message for every accepted dataset forcing update of DOI info.

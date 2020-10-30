@@ -2,16 +2,13 @@
 
 namespace App\Command;
 
+use App\Util\MailSender;
+use App\Entity\Account;
 use Doctrine\ORM\EntityManagerInterface;
-
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Twig\Environment;
-
-use App\Util\MailSender;
-use App\Entity\Account;
 
 /**
  * Notify holders of accounts with soon to expire or expired passwords.
