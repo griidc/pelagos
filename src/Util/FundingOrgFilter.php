@@ -2,9 +2,8 @@
 
 namespace App\Util;
 
-use Doctrine\ORM\EntityManagerInterface;
-
 use App\Entity\FundingOrganization;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * A utility to determine if and which Funding Organizations need to be filtered by.
@@ -47,7 +46,7 @@ class FundingOrgFilter
      *
      * @return bool Is the filter active?
      */
-    public function isActive() :bool
+    public function isActive(): bool
     {
         return !empty($this->fundingOrganizations);
     }
@@ -57,7 +56,7 @@ class FundingOrgFilter
      *
      * @return array List of ID's to filter on.
      */
-    public function getFilterIdArray() :array
+    public function getFilterIdArray(): array
     {
         $ids = array();
         foreach ($this->fundingOrganizations as $fundingOrganization) {
@@ -66,13 +65,13 @@ class FundingOrgFilter
 
         return $ids;
     }
-    
+
     /**
      * Returns true is you need to filter by Funding Organization.
      *
      * @return array List of ID's to filter on.
      */
-    public function getResearchGroupsIdArray() :array
+    public function getResearchGroupsIdArray(): array
     {
         $ids = array();
         foreach ($this->fundingOrganizations as $fundingOrganization) {

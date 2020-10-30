@@ -2,10 +2,9 @@
 
 namespace App\Util;
 
-use Doctrine\ORM\EntityManagerInterface;
-
 use App\Entity\Dataset;
 use App\Entity\Udi as UdiEntity;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * A utility class for UDIs.

@@ -47,7 +47,7 @@ class Metadata
                     'metadataFilename' => preg_replace('/:/', '-', $dataset->getUdi()) . '-metadata.xml',
                 )
             );
-            $tidyXml = new \tidy;
+            $tidyXml = new \tidy();
             $tidyXml->parseString(
                 $xml,
                 array(

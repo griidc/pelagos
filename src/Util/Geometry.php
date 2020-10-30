@@ -2,10 +2,9 @@
 
 namespace App\Util;
 
+use App\Exception\InvalidGmlException;
 use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
-
-use App\Exception\InvalidGmlException;
 
 /**
  * This is a utility class for dealing with envelope calculation.

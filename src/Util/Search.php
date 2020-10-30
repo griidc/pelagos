@@ -2,21 +2,16 @@
 
 namespace App\Util;
 
-use Doctrine\ORM\EntityManagerInterface;
-
-use Elastica\Aggregation;
-use Elastica\Query;
-
-use FOS\ElasticaBundle\Finder\TransformedFinder;
-
-use Pagerfanta\Pagerfanta;
-
 use App\Entity\DatasetSubmission;
 use App\Entity\FundingCycle;
 use App\Entity\FundingOrganization;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
-
+use Doctrine\ORM\EntityManagerInterface;
+use Elastica\Aggregation;
+use Elastica\Query;
+use FOS\ElasticaBundle\Finder\TransformedFinder;
+use Pagerfanta\Pagerfanta;
 use RecursiveArrayIterator;
 use RecursiveIteratorIterator;
 
@@ -154,7 +149,8 @@ class Search
         $subMainQuery = $this->getSubMainQuery($queryTerm, $specificField, $collectionDateRange);
 
         // Add facet filters
-        if (!empty($requestTerms['options']['funOrgId'])
+        if (
+            !empty($requestTerms['options']['funOrgId'])
             || !empty($requestTerms['options']['rgId'])
             || !empty($requestTerms['options']['status']
             || !empty($requestTerms['options']['fundingCycleId'])

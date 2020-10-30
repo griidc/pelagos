@@ -4,7 +4,6 @@ namespace App\Util;
 
 use League\Flysystem\FileExistsException;
 use League\Flysystem\FilesystemInterface;
-
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 
@@ -43,7 +42,7 @@ class Datastore
         $this->datastoreFlysystem = $datastoreFlysystem;
         $this->logger = $logger;
     }
-    
+
     /**
      * Retrieves a file from disk.
      *

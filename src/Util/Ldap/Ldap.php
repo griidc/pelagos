@@ -2,10 +2,9 @@
 
 namespace App\Util\Ldap;
 
-use Symfony\Component\PropertyAccess\PropertyAccess;
-
 use App\Entity\Person;
 use App\Exception\UidNumberInUseInLDAPException;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
  * An LDAP abstraction library.

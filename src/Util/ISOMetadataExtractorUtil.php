@@ -2,14 +2,13 @@
 
 namespace App\Util;
 
-use Doctrine\ORM\EntityManager;
-
 use App\Entity\DataCenter;
 use App\Entity\DatasetSubmission;
 use App\Entity\DistributionPoint;
 use App\Entity\Person;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
+use Doctrine\ORM\EntityManager;
 
 /**
  * A utility class for extracting information from ISO metadata.

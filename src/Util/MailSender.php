@@ -37,7 +37,7 @@ class MailSender
      * @var string
      */
     protected $bccAddress;
-    
+
     /**
      * This is the class constructor to handle dependency injections.
      *
@@ -48,7 +48,7 @@ class MailSender
      * @param string            $bccAddress  BCC Email address.
      */
     public function __construct(
-        Swift_Mailer  $mailer,
+        Swift_Mailer $mailer,
         Environment $twig,
         string $fromAddress,
         string $fromName,

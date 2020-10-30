@@ -45,7 +45,7 @@ class RouterModifier implements RouterInterface, ServiceSubscriberInterface
      *
      * @return void
      */
-    public function setContext(RequestContext $context) : void
+    public function setContext(RequestContext $context): void
     {
         $this->innerRouter->setContext($context);
     }
@@ -55,7 +55,7 @@ class RouterModifier implements RouterInterface, ServiceSubscriberInterface
      *
      * @return RequestContext
      */
-    public function getContext() : RequestContext
+    public function getContext(): RequestContext
     {
         return $this->innerRouter->getContext();
     }
@@ -79,7 +79,7 @@ class RouterModifier implements RouterInterface, ServiceSubscriberInterface
      *
      * @return string
      */
-    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH) : string
+    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH): string
     {
         if (in_array($name, $this->excludeRoutes)) {
             $context = $this->getContext();
@@ -105,11 +105,11 @@ class RouterModifier implements RouterInterface, ServiceSubscriberInterface
      *
      * @return array
      */
-    public function match($pathinfo) : array
+    public function match($pathinfo): array
     {
         return $this->innerRouter->match($pathinfo);
     }
-    
+
      /**
      * Return subscribed services.
      *

@@ -2,16 +2,14 @@
 
 namespace App\Util;
 
+use App\Entity\DOI;
+use App\Exception\HttpClientErrorException;
+use App\Exception\HttpServerErrorException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\ServerException;
-
 use HylianShield\Encoding\Base32CrockfordEncoder;
-
-use App\Entity\DOI;
-use App\Exception\HttpClientErrorException;
-use App\Exception\HttpServerErrorException;
 
 /**
  * A utility to create and issue DOI from Datacite REST API.
@@ -83,7 +81,7 @@ class DOIutil
      *
      * @return string The generated DOI.
      */
-    public function generateDoi() : string
+    public function generateDoi(): string
     {
         $encoder = new Base32CrockfordEncoder();
         // 1099511627775 encodes to the longest 8 character Crockford 32 string.
@@ -182,7 +180,7 @@ class DOIutil
         string $title,
         string $publicationYear,
         string $publisher,
-        array  $publicationDois,
+        array $publicationDois,
         string $status = DOI::STATE_FINDABLE
     ) {
         $client = new Client();
@@ -319,7 +317,7 @@ class DOIutil
      *
      * @return array
      */
-    public function getDoiCollection(int $pageNo) : array
+    public function getDoiCollection(int $pageNo): array
     {
         $url = $this->url . '/dois' . '?client-id=' . strtolower($this->doiusername) . '&page%5Bnumber%5D=' . $pageNo . '&page%5Bsize%5D=1000';
         $header = ['Accept' => 'application/vnd.api+json'];
