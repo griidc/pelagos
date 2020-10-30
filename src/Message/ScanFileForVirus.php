@@ -12,21 +12,21 @@ class ScanFileForVirus
      *
      * @var resource
      */
-    protected $stream;
+    private $stream;
 
     /**
      * The UDI of the associated stream, for identification purposes.
      *
      * @var string udi
      */
-    protected $udi;
+    private $udi;
 
     /**
      * The ID of the file assocated with the stream, for identification purposes.
      *
      * @var int id
      */
-    protected $id;
+    private $id;
 
     /**
      * Constructor.
