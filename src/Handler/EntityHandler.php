@@ -2,33 +2,28 @@
 
 namespace App\Handler;
 
+use App\Entity\Account;
+use App\Entity\Dataset;
+use App\Entity\Entity;
+use App\Entity\Password;
+use App\Entity\Person;
+use App\Entity\ResearchGroup;
+use App\Event\EntityEventDispatcher;
+use App\Exception\UnmappedPropertyException;
+use App\Security\EntityProperty;
+use App\Security\Voter\PelagosEntityVoter;
+use App\Util\FundingOrgFilter;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Id\AssignedGenerator;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query;
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Id\AssignedGenerator;
-use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\Common\Collections\Collection;
-
-use App\Entity\Entity;
-use App\Entity\Account;
-use App\Entity\Dataset;
-use App\Entity\Password;
-use App\Entity\Person;
-use App\Entity\ResearchGroup;
-
-use App\Event\EntityEventDispatcher;
-
-use App\Exception\UnmappedPropertyException;
-
-use App\Security\Voter\PelagosEntityVoter;
-use App\Security\EntityProperty;
-use App\Util\FundingOrgFilter;
 
 /**
  * A handler for entities.
@@ -360,7 +355,7 @@ class EntityHandler
      */
     public function getDistinctVals(string $entityClass, string $property)
     {
-        $entity = new $entityClass;
+        $entity = new $entityClass();
         if (!$this->authorizationChecker->isGranted('IS_AUTHENTICATED_FULLY')) {
             throw new AccessDeniedException(
                 'Only authenticated users may retrieve a list of distinct values ' .
