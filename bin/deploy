@@ -20,7 +20,7 @@ esac
 
 # Stop RabbitMQ consumers
 bin/console rabbitmq-supervisor:control stop --wait-for-supervisord
-supervisorctl stop messenger-consume:*
+bin/console messenger:stop-workers
 
 # Run composer install to make sure all non-dev dependencies are installed and parameters are defined
 composer install --no-dev --optimize-autoloader
