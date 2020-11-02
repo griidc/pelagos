@@ -2,18 +2,15 @@
 
 namespace App\Controller\UI;
 
-use Symfony\Component\Routing\Annotation\Route;
-
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Form\FormFactoryInterface;
-
-use App\Form\DIFType;
-
 use App\Entity\Account;
 use App\Entity\DIF;
+use App\Form\DIFType;
 use App\Util\FundingOrgFilter;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The DIF controller for the Pelagos UI App Bundle.
@@ -36,7 +33,7 @@ class DIFController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        $dif = new DIF;
+        $dif = new DIF();
         $form = $formFactory->createNamed(null, DIFType::class, $dif);
 
         $researchGroupIds = array();

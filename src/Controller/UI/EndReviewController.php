@@ -2,20 +2,17 @@
 
 namespace App\Controller\UI;
 
-use App\Event\EntityEventDispatcher;
-use App\Form\EndReviewType;
-
 use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DatasetSubmissionReview;
-
+use App\Event\EntityEventDispatcher;
+use App\Form\EndReviewType;
 use App\Handler\EntityHandler;
-
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The end review tool helps to end the review of a dataset submission review.
@@ -106,7 +103,8 @@ class EndReviewController extends AbstractController
                     //  then call the reviewEvent function of datasetSubmission to change it's state to end the review,
                     //  store / persist the changes
                     //  and send out the messages
-                    if ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_IN_REVIEW and
+                    if (
+                        $dataset->getDatasetStatus() === Dataset::DATASET_STATUS_IN_REVIEW and
                         $datasetSubmissionReview instanceof DatasetSubmissionReview and
                         empty($datasetSubmissionReview->getReviewEndDateTime())
                     ) {

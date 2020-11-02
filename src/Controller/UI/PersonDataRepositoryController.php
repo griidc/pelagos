@@ -5,11 +5,10 @@ namespace App\Controller\UI;
 use App\Entity\PersonDataRepository;
 use App\Form\PersonDataRepositoryType;
 use App\Handler\EntityHandler;
-
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
@@ -38,7 +37,7 @@ class PersonDataRepositoryController extends AbstractController
         if (isset($id)) {
             $personDataRepository = $entityHandler->get(PersonDataRepository::class, $id);
         } else {
-            $personDataRepository = new \App\Entity\PersonDataRepository;
+            $personDataRepository = new \App\Entity\PersonDataRepository();
         }
 
         $form = $this->get('form.factory')->createNamed(null, PersonDataRepositoryType::class, $personDataRepository);

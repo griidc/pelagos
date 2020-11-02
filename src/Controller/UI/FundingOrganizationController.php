@@ -3,16 +3,15 @@
 namespace App\Controller\UI;
 
 use App\Entity\FundingOrganization;
-use App\Form\FundingOrganizationType;
 use App\Form\FundingCycleType;
+use App\Form\FundingOrganizationType;
 use App\Form\PersonFundingOrganizationType;
 use App\Handler\EntityHandler;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
@@ -67,7 +66,7 @@ class FundingOrganizationController extends AbstractController
                 $ui['FundingCycleForms'][$fundingCycle->getId()] = $formView;
             }
         } else {
-            $fundingOrganization = new \App\Entity\FundingOrganization;
+            $fundingOrganization = new \App\Entity\FundingOrganization();
         }
 
         $form = $this->get('form.factory')->createNamed(null, FundingOrganizationType::class, $fundingOrganization);

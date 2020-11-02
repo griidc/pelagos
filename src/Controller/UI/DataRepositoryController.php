@@ -5,13 +5,11 @@ namespace App\Controller\UI;
 use App\Entity\DataRepository;
 use App\Form\DataRepositoryType;
 use App\Form\PersonDataRepositoryType;
-
-use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
@@ -55,7 +53,7 @@ class DataRepositoryController extends AbstractController
                 $ui['PersonDataRepositoryForms'][$personDataRepository->getId()] = $formView;
             }
         } else {
-            $dataRepository = new DataRepository;
+            $dataRepository = new DataRepository();
         }
 
         $form = $this->get('form.factory')->createNamed(null, DataRepositoryType::class, $dataRepository);

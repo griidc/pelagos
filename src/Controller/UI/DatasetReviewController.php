@@ -2,8 +2,19 @@
 
 namespace App\Controller\UI;
 
+use App\Entity\Account;
+use App\Entity\Dataset;
+use App\Entity\DatasetLink;
+use App\Entity\DatasetSubmission;
+use App\Entity\DatasetSubmissionReview;
+use App\Entity\Entity;
+use App\Entity\PersonDatasetSubmissionDatasetContact;
+use App\Entity\PersonDatasetSubmissionMetadataContact;
+use App\Event\EntityEventDispatcher;
+use App\Form\DatasetSubmissionType;
+use App\Handler\EntityHandler;
+use App\Message\DatasetSubmissionFiler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -13,23 +24,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
-
-use App\Form\DatasetSubmissionType;
-
-use App\Handler\EntityHandler;
-
-use App\Event\EntityEventDispatcher;
-
-use App\Entity\Account;
-use App\Entity\Dataset;
-use App\Entity\DatasetLink;
-use App\Entity\DatasetSubmission;
-use App\Entity\DatasetSubmissionReview;
-use App\Entity\Entity;
-use App\Entity\PersonDatasetSubmissionDatasetContact;
-use App\Entity\PersonDatasetSubmissionMetadataContact;
-
-use App\Message\DatasetSubmissionFiler;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
@@ -350,15 +344,19 @@ class DatasetReviewController extends AbstractController
                     $form->get('datasetFilePath')->setData(
                         preg_replace('#^file://#', '', $datasetSubmission->getDatasetFileUri())
                     );
-                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission and
-                        $datasetSubmission->getDatasetFileUri() === $dataset->getDatasetSubmission()->getDatasetFileUri()) {
+                    if (
+                        $dataset->getDatasetSubmission() instanceof DatasetSubmission and
+                        $datasetSubmission->getDatasetFileUri() === $dataset->getDatasetSubmission()->getDatasetFileUri()
+                    ) {
                         $showForceImport = true;
                     }
                     break;
                 case DatasetSubmission::TRANSFER_TYPE_HTTP:
                     $form->get('datasetFileUrl')->setData($datasetSubmission->getDatasetFileUri());
-                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission and
-                        $datasetSubmission->getDatasetFileUri() === $dataset->getDatasetSubmission()->getDatasetFileUri()) {
+                    if (
+                        $dataset->getDatasetSubmission() instanceof DatasetSubmission and
+                        $datasetSubmission->getDatasetFileUri() === $dataset->getDatasetSubmission()->getDatasetFileUri()
+                    ) {
                         $showForceDownload = true;
                     }
                     break;
@@ -524,7 +522,7 @@ class DatasetReviewController extends AbstractController
             foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
                 $this->entityHandler->update($metadataContact);
             }
-            
+
             foreach ($datasetSubmission->getDatasetLinks() as $datasetLink) {
                 $this->entityHandler->update($datasetLink);
             }
@@ -537,7 +535,7 @@ class DatasetReviewController extends AbstractController
 
             $datasetSubmissionFilerMessage = new DatasetSubmissionFiler($datasetSubmission->getId());
             $messageBus->dispatch($datasetSubmissionFilerMessage);
-            
+
             $reviewedBy = $datasetSubmission->getDatasetSubmissionReview()->getReviewEndedBy()->getFirstName();
 
             //when request revisions is clicked, do not display the changes made in review for the dataset-submission
@@ -575,9 +573,11 @@ class DatasetReviewController extends AbstractController
         if (count($datasetSubmissionHistory) > 1) {
             // Get the previous datasetFileUri. DatasetSubmissionHistory collection is ordered by DESC.
             $previousDatasetFileUri = $datasetSubmissionHistory->get(1)->getDatasetFileUri();
-            if ($datasetSubmission->getDatasetFileUri() !== $previousDatasetFileUri
+            if (
+                $datasetSubmission->getDatasetFileUri() !== $previousDatasetFileUri
                 or $form['datasetFileForceImport']->getData()
-                or $form['datasetFileForceDownload']->getData()) {
+                or $form['datasetFileForceDownload']->getData()
+            ) {
                 // Assume the dataset file is new.
                 $this->newDatasetFile($datasetSubmission);
             }

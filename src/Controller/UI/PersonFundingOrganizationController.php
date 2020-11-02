@@ -4,14 +4,12 @@ namespace App\Controller\UI;
 
 use App\Entity\PersonFundingOrganization;
 use App\Form\PersonFundingOrganizationType;
-
 use App\Handler\EntityHandler;
-use Symfony\Component\Routing\Annotation\Route;
-
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
@@ -46,7 +44,7 @@ class PersonFundingOrganizationController extends AbstractController
                 throw new NotFoundHttpException('The Person Funding Organization was not found');
             }
         } else {
-            $personFundingOrganization = new \App\Entity\PersonFundingOrganization;
+            $personFundingOrganization = new \App\Entity\PersonFundingOrganization();
         }
 
         $form = $this->get('form.factory')->createNamed(null, PersonFundingOrganizationType::class, $personFundingOrganization);

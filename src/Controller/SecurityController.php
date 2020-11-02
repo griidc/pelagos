@@ -2,11 +2,10 @@
 
 namespace App\Controller;
 
+use App\Form\LoginForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-
-use App\Form\LoginForm;
 
 /**
  * This is the controller for the login form.

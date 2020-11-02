@@ -2,9 +2,13 @@
 
 namespace App\Controller\UI;
 
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Exception\InvalidGmlException;
 use App\Handler\EntityHandler;
 use App\Util\DataStore;
 use App\Util\Geometry;
+use App\Util\GmlUtil;
 use App\Util\Metadata;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -12,15 +16,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
 use Symfony\Component\Routing\Annotation\Route;
-
-use App\Exception\InvalidGmlException;
-
-use App\Entity\Dataset;
-use App\Entity\DatasetSubmission;
-use App\Util\GmlUtil;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * The Dataset Monitoring controller.
@@ -164,11 +161,12 @@ class DatalandController extends AbstractController
     {
         $dataset = $this->getDataset($udi);
 
-        if ($dataset->getAvailabilityStatus()
-            === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED) {
-            if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
+        if ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED) {
+            if (
+                $dataset->getDatasetSubmission() instanceof DatasetSubmission
                 and null !== $dataset->getDatasetSubmission()->getDatasetFileUri()
-                and preg_match('/^http/', $dataset->getDatasetSubmission()->getDatasetFileUri())) {
+                and preg_match('/^http/', $dataset->getDatasetSubmission()->getDatasetFileUri())
+            ) {
                 return new RedirectResponse($dataset->getDatasetSubmission()->getDatasetFileUri());
             } else {
                 throw new \Exception("Could not find valid url for remotely hosted dataset: $udi");

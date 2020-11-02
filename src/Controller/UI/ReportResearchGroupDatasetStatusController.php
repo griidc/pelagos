@@ -2,19 +2,17 @@
 
 namespace App\Controller\UI;
 
-use App\Form\ReportResearchGroupDatasetStatusType;
-use App\Entity\ResearchGroup;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
-
+use App\Entity\ResearchGroup;
+use App\Form\ReportResearchGroupDatasetStatusType;
 use App\Handler\EntityHandler;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * A controller for a Report of Research Groups and related Datasets.
@@ -115,7 +113,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
         if ($id) {
             return $this->getReport($id, self::REPORT_VERSION_TWO);
         }
-        
+
         // Checks authorization of users
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('template/AdminOnly.html.twig');
@@ -315,8 +313,10 @@ class ReportResearchGroupDatasetStatusController extends ReportController
                 //  exclude datasets that don't have an approved DIF
                 if ($datasetStatus != 'NoDif') {
                     $datasetTimeStampString = 'N/A';
-                    if ($dataset->getDatasetSubmission() != null &&
-                        $dataset->getDatasetSubmission()->getSubmissionTimeStamp() != null) {
+                    if (
+                        $dataset->getDatasetSubmission() != null &&
+                        $dataset->getDatasetSubmission()->getSubmissionTimeStamp() != null
+                    ) {
                         $datasetTimeStampString = $dataset->getDatasetSubmission()->getSubmissionTimeStamp()
                             ->format(self::REPORTDATETIMEFORMAT);
                     }
@@ -406,7 +406,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
                     $ppoc->getFirstName() : null;
                 $dataRow = array(
                     'udi' => $dataset->getUdi(),
-                    'doi'=> $dataset->getDoi(),
+                    'doi' => $dataset->getDoi(),
                     'title' => $dataset->getTitle(),
                     'primaryPointOfContact' => $ppocString,
                     'datasetStatus' => $this->getDatasetStatus($dataset),
@@ -518,7 +518,7 @@ class ReportResearchGroupDatasetStatusController extends ReportController
                     $ppoc->getFirstName() : null;
                 $dataRow = array(
                     'udi' => $dataset->getUdi(),
-                    'doi'=> $dataset->getDoi(),
+                    'doi' => $dataset->getDoi(),
                     'title' => $dataset->getTitle(),
                     'primaryPointOfContact' => $ppocString,
                     'submitter' => $this->getSubmitter($dataset),

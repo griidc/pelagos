@@ -2,13 +2,11 @@
 
 namespace App\Controller\UI;
 
-use Symfony\Component\Routing\Annotation\Route;
-
+use App\Util\MaintenanceMode;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
-use App\Util\MaintenanceMode;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The DIF controller for the Pelagos UI App Bundle.
@@ -30,16 +28,16 @@ class MaintenanceModeController extends AbstractController
         if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
             return $this->render('template/AdminOnly.html.twig');
         }
-        
+
         $bannerMode = $request->request->get('bannermode');
 
         if ($bannerMode === 'activate') {
             $bannerText = $request->request->get('bannertext');
             $bannerColor = $request->request->get('bannercolor');
-            
+
             $maintenanceMode->activateMaintenanceMode($bannerText, $bannerColor);
         }
-        
+
         if ($bannerMode === 'deactivate') {
             $maintenanceMode->deactivateMaintenanceMode();
         }

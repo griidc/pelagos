@@ -1,21 +1,19 @@
 <?php
+
 namespace App\Controller\UI;
 
 use App\Entity\Dataset;
 use App\Handler\EntityHandler;
 use App\Event\LogActionItemEventDispatcher;
 use App\Exception\PersistenceException;
-
 use App\Util\RabbitPublisher;
 use Doctrine\ORM\EntityManagerInterface;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The Dataset Restrictions Modifier controller.

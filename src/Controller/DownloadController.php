@@ -2,21 +2,17 @@
 
 namespace App\Controller;
 
-use App\Event\LogActionItemEventDispatcher;
-use App\Handler\EntityHandler;
-use App\Util\DataStore;
-use Symfony\Component\Routing\Annotation\Route;
-
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
 use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
-
+use App\Event\LogActionItemEventDispatcher;
+use App\Handler\EntityHandler;
 use App\Twig\Extensions as TwigExtentions;
+use App\Util\DataStore;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The Dataset download controller.

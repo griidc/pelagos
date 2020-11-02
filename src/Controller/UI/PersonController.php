@@ -2,20 +2,17 @@
 
 namespace App\Controller\UI;
 
+use App\Entity\Person;
+use App\Form\PersonFundingOrganizationType;
+use App\Form\PersonResearchGroupType;
+use App\Form\PersonType;
 use App\Handler\EntityHandler;
 use App\Security\EntityProperty;
-
-use App\Form\PersonType;
-use App\Form\PersonResearchGroupType;
-use App\Form\PersonFundingOrganizationType;
-use App\Entity\Person;
-
-use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
@@ -70,7 +67,7 @@ class PersonController extends AbstractController
                 throw new NotFoundHttpException('The person with id of ' . $id . ' could not be found.');
             }
         } else {
-            $person = new \App\Entity\Person;
+            $person = new \App\Entity\Person();
         }
 
         $form = $this->get('form.factory')->createNamed(null, PersonType::class, $person);

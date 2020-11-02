@@ -2,21 +2,18 @@
 
 namespace App\Controller\UI;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query;
-
-use App\Twig\Extensions as TwigExtentions;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
 use App\Entity\LogActionItem;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
+use App\Twig\Extensions as TwigExtentions;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The Dataset Monitoring controller.
@@ -74,7 +71,7 @@ class StatsController extends AbstractController
      *
      * @return void
      */
-    private function getStatistics(?int &$totalDatasets, ?string &$totalSize, ?int &$peopleCount, ?int &$researchGroupCount, ?int &$totalDownloads) : void
+    private function getStatistics(?int &$totalDatasets, ?string &$totalSize, ?int &$peopleCount, ?int &$researchGroupCount, ?int &$totalDownloads): void
     {
         // Get the people count.
         $peopleCount = $this->entityManager
@@ -132,7 +129,7 @@ class StatsController extends AbstractController
         $registeredDatasets = $this->entityManager
             ->getRepository(DatasetSubmission::class)
             ->getRegisteredDatasets();
-        
+
         $availableDatasets = $this->entityManager
             ->getRepository(DatasetSubmission::class)
             ->getAvailableDatasets();

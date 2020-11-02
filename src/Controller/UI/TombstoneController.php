@@ -2,14 +2,13 @@
 
 namespace App\Controller\UI;
 
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Handler\EntityHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-
-use App\Entity\Dataset;
-use App\Entity\DatasetSubmission;
-use App\Handler\EntityHandler;
 
 /**
  * The Dataset Tombstone controller.
@@ -49,8 +48,10 @@ class TombstoneController extends AbstractController
         $dataset = $this->getDataset($udi);
 
         // Don't allow tombstones on available datasets.
-        if (($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) or
-            ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED)) {
+        if (
+            ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) or
+            ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED)
+        ) {
             throw new NotFoundHttpException("No pending state placeholder found for UDI: $udi");
         }
 

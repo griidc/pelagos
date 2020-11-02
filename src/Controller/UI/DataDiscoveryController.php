@@ -2,20 +2,17 @@
 
 namespace App\Controller\UI;
 
+use App\Entity\DatasetSubmission;
+use App\Entity\DIF;
+use App\Event\LogActionItemEventDispatcher;
 use App\Util\DatasetIndex;
 use Elastica\ResultSet;
-
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-
-use App\Entity\DatasetSubmission;
-use App\Entity\DIF;
-use App\Event\LogActionItemEventDispatcher;
 
 /**
  * The Data Discovery controller.

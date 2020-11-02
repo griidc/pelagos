@@ -2,21 +2,16 @@
 
 namespace App\Controller\UI;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
-
-use Symfony\Component\Form\Form;
-
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
-use App\Form\ExternalDownloadLogType;
-
 use App\Entity\Account;
 use App\Entity\Dataset;
-
 use App\Event\LogActionItemEventDispatcher;
+use App\Form\ExternalDownloadLogType;
 use App\Handler\EntityHandler;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The end review tool helps to end the review of a dataset submission review.
