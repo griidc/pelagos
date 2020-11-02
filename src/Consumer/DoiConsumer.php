@@ -2,24 +2,18 @@
 
 namespace App\Consumer;
 
-use App\Entity\DatasetPublication;
-use Doctrine\ORM\EntityManagerInterface;
-use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
-
-use PhpAmqpLib\Message\AMQPMessage;
-
-use Symfony\Bridge\Monolog\Logger;
-
 use App\Entity\Dataset;
+use App\Entity\DatasetPublication;
 use App\Entity\DatasetSubmission;
 use App\Entity\DOI;
-
 use App\Event\EntityEventDispatcher;
-
-use App\Util\DOIutil;
-
 use App\Exception\HttpClientErrorException;
 use App\Exception\HttpServerErrorException;
+use App\Util\DOIutil;
+use Doctrine\ORM\EntityManagerInterface;
+use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
+use PhpAmqpLib\Message\AMQPMessage;
+use Symfony\Bridge\Monolog\Logger;
 
 /**
  * A consumer of DOI messages.
@@ -204,10 +198,12 @@ class DoiConsumer implements ConsumerInterface
 
         try {
             // Set dataland pages for available datasets and tombstone pages for unavailable datasets.
-            if (($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) or
-                ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED)) {
+            if (
+                ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) or
+                ($dataset->getAvailabilityStatus() === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED)
+            ) {
                 $doiUrl = 'https://data.gulfresearchinitiative.org/data/' . $dataset->getUdi();
-                $doi->setPublicDate(new \DateTime);
+                $doi->setPublicDate(new \DateTime());
             } else {
                 $doiUrl = 'https://data.gulfresearchinitiative.org/tombstone/' . $dataset->getUdi();
             }

@@ -3,9 +3,7 @@
 namespace App\Consumer;
 
 use App\Entity\Account;
-
 use Doctrine\ORM\EntityManagerInterface;
-
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Symfony\Bridge\Monolog\Logger;
