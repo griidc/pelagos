@@ -5,6 +5,8 @@ namespace App\Controller\UI;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
+use \DateInterval;
+use \DateTime;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -48,7 +50,7 @@ class GomriReportController extends ReportController
             return $this->render('template/AdminOnly.html.twig');
         }
         $customFileName = 'GomriReport-v2-' .
-            (new \DateTime('now'))->format(self::FILENAME_DATETIMEFORMAT) .
+            (new DateTime('now'))->format(self::FILENAME_DATETIMEFORMAT) .
             '.csv';
         // Add header to CSV.
         return $this->writeCsvResponse(
@@ -79,9 +81,9 @@ class GomriReportController extends ReportController
 
         //prepare body's data
         $dataArray = array();
-        $dateTime = new \DateTime('May 2012');
+        $dateTime = new DateTime('May 2012');
 
-        $now = new \DateTime('now');
+        $now = new DateTime('now');
 
         while ($dateTime < $now) {
             $dataArray[$dateTime->format(MONTH_DAY_FORMAT)] = array(
@@ -94,7 +96,7 @@ class GomriReportController extends ReportController
                 'monthly_available' => 0,
                 'total_available' => 0
             );
-            $dateTime->add(new \DateInterval('P1M'));
+            $dateTime->add(new DateInterval('P1M'));
         }
 
         if ($version === 'v1') {
