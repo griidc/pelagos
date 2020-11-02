@@ -2,28 +2,22 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\Dataset;
+use App\Entity\DIF;
+use App\Event\EntityEventDispatcher;
+use App\Form\DIFType;
+use App\Security\Voter\DIFVoter;
+use App\Util\Udi;
+use FOS\RestBundle\Controller\Annotations\View;
+use Nelmio\ApiDocBundle\Annotation\Operation;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-
-use Nelmio\ApiDocBundle\Annotation\Operation;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
-
-use FOS\RestBundle\Controller\Annotations\View;
-
-use App\Entity\Dataset;
-use App\Entity\DIF;
-
-use App\Event\EntityEventDispatcher;
-
-use App\Form\DIFType;
-use App\Security\Voter\DIFVoter;
-use App\Util\Udi;
 
 /**
  * The DIF api controller.
@@ -406,7 +400,7 @@ class DIFController extends EntityController
     public function postAction(Request $request, EntityEventDispatcher $entityEventDispatcher, Udi $udiUtil)
     {
         // Create a new Dataset.
-        $dataset = new Dataset;
+        $dataset = new Dataset();
         // Set the creator for the Dataset.
         $dataset->setCreator($this->getUser()->getPerson());
         // Create a new DIF for the Dataset.

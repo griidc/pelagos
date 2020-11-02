@@ -2,24 +2,21 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\Dataset;
+use App\Entity\DIF;
+use App\Exception\InvalidGmlException;
+use App\Util\Geometry;
+use App\Util\Metadata;
 use FOS\RestBundle\Controller\Annotations\View;
-
 use Nelmio\ApiDocBundle\Annotation\Operation;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-
-use App\Entity\Dataset;
-use App\Entity\DIF;
-use App\Exception\InvalidGmlException;
-use App\Util\Geometry;
-use App\Util\Metadata;
 
 /**
  * The Metadata api controller.

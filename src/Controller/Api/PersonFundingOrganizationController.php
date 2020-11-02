@@ -2,20 +2,16 @@
 
 namespace App\Controller\Api;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Form\FormInterface;
-
-use Symfony\Component\Routing\Annotation\Route;
-
+use App\Entity\PersonFundingOrganization;
+use App\Form\PersonFundingOrganizationType;
 use FOS\RestBundle\Controller\Annotations\View;
-
 use Nelmio\ApiDocBundle\Annotation\Operation;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
-
-use App\Entity\PersonFundingOrganization;
-use App\Form\PersonFundingOrganizationType;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The PersonFundingOrganization api controller.

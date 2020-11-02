@@ -3,9 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Util\FileUploader;
-
 use FOS\RestBundle\Controller\Annotations\View;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;

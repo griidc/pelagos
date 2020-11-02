@@ -2,21 +2,18 @@
 
 namespace App\Controller\Api;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Annotation\Route;
-
-use FOS\RestBundle\Controller\Annotations\View;
-
-use Nelmio\ApiDocBundle\Annotation\Operation;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
-
 use App\Entity\Person;
 use App\Form\PersonType;
 use App\Entity\DIF;
+use FOS\RestBundle\Controller\Annotations\View;
+use Nelmio\ApiDocBundle\Annotation\Operation;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The Person api controller.
@@ -450,11 +447,11 @@ class PersonController extends EntityController
         $primaryPointOfContactCount = $this->entityHandler->count(DIF::class, array('primaryPointOfContact' => $id));
         $secondaryPointOfContactCount = $this->entityHandler->count(DIF::class, array('secondaryPointOfContact' => $id));
         if ($primaryPointOfContactCount > 0) {
-            throw new BadRequestHttpException('This Person is not deletable because 
+            throw new BadRequestHttpException('This Person is not deletable because
                 there' . ($primaryPointOfContactCount > 1 ? ' are ' : ' is ') . $primaryPointOfContactCount .
                 ' primary point of contact(s) in DIF');
         } elseif ($secondaryPointOfContactCount > 0) {
-            throw new BadRequestHttpException('This Person is not deletable because 
+            throw new BadRequestHttpException('This Person is not deletable because
             there' . ($secondaryPointOfContactCount > 1 ? ' are ' : ' is ') . $secondaryPointOfContactCount .
             ' secondary point of contact(s) in DIF');
         } else {

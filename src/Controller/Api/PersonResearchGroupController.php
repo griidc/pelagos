@@ -2,19 +2,16 @@
 
 namespace App\Controller\Api;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Routing\Annotation\Route;
-
+use App\Entity\PersonResearchGroup;
+use App\Form\PersonResearchGroupType;
 use FOS\RestBundle\Controller\Annotations\View;
-
 use Nelmio\ApiDocBundle\Annotation\Operation;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
-
-use App\Entity\PersonResearchGroup;
-use App\Form\PersonResearchGroupType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * The PersonResearchGroup api controller.

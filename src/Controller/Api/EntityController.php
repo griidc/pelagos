@@ -2,8 +2,12 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\Entity;
+use App\Exception\NotDeletableException;
+use App\Exception\UnmappedPropertyException;
+use App\Handler\EntityHandler;
 use Doctrine\ORM\Query;
-
+use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,14 +15,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
-use FOS\RestBundle\Controller\AbstractFOSRestController;
-
-use App\Handler\EntityHandler;
-
-use App\Entity\Entity;
-use App\Exception\NotDeletableException;
-use App\Exception\UnmappedPropertyException;
 
 /**
  * The Entity api controller.
@@ -111,7 +107,8 @@ abstract class EntityController extends AbstractFOSRestController
         if (isset($permission)) {
             $entities = $this->filterByPermission($entities, $permission);
         }
-        if (count($subResources) > 0
+        if (
+            count($subResources) > 0
             and (
                 count($properties) === 0
                 or count(array_intersect(array_keys($subResources), $properties)) > 0
@@ -161,7 +158,7 @@ abstract class EntityController extends AbstractFOSRestController
     public function handlePost(string $formType, string $entityClass, Request $request, Entity $entity = null)
     {
         if (null === $entity) {
-            $entity = new $entityClass;
+            $entity = new $entityClass();
         }
         $this->processForm($formType, $entity, $request, 'POST');
         $this->entityHandler->create($entity);
@@ -284,7 +281,7 @@ abstract class EntityController extends AbstractFOSRestController
         // If we don't have an ID.
         if ($id === null) {
             // Instantiate a new entity.
-            $entity = new $entityClass;
+            $entity = new $entityClass();
         } else {
             // Get the entity.
             $entity = $this->handleGetOne($entityClass, $id);
@@ -571,8 +568,10 @@ abstract class EntityController extends AbstractFOSRestController
         } else {
             foreach ($entities as $index => $entity) {
                 foreach ($subResources as $subResource => $routeName) {
-                    if (array_key_exists($subResource, $entities[$index])
-                        and null !== $entities[$index][$subResource]) {
+                    if (
+                        array_key_exists($subResource, $entities[$index])
+                        and null !== $entities[$index][$subResource]
+                    ) {
                         $entities[$index][$subResource] = $this->getResourceUrl($routeName, $entity['id']);
                     }
                 }
