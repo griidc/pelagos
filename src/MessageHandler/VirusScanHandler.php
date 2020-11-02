@@ -26,15 +26,37 @@ class VirusScanHandler implements MessageHandlerInterface
     private $scanner;
 
     /**
+     * Datastore utility instance for manipulating files on disk.
+     *
+     * @var Datastore
+     */
+    private $datastore;
+
+    /**
+     * The File Repository.
+     *
+     * @var FileRepository
+     */
+    private $fileRepository;
+
+    /**
      * Constructor for this Controller, to set up default services.
      *
      * @param LoggerInterface $virusScanLogger Name hinted virus_scan logger.
      * @param VirusScanUtil   $scanner         A stream-based virus-scanning utility instance.
+     * @param Datastore       $dataStore       Datastore utility instance.
+     * @param FileRepository  $fileRepository  The file Repository.
     */
-    public function __construct(LoggerInterface $virusScanLogger, VirusScanUtil $scanner)
-    {
+    public function __construct(
+        LoggerInterface $virusScanLogger,
+        VirusScanUtil $scanner,
+        Datastore $datastore,
+        FileRepository $fileRepository
+    ) {
         $this->logger = $virusScanLogger;
         $this->scanner = $scanner;
+        $this->datastore = $datastore;
+        $this->fileRepository = $fileRepository;
     }
 
     /**
@@ -44,12 +66,14 @@ class VirusScanHandler implements MessageHandlerInterface
      */
     public function __invoke(ScanFileForVirus $scanFileForVirusMessage)
     {
-        $udi = $scanFileForVirusMessage->getUdi();
-        $id = $scanFileForVirusMessage->getId();
-        $streamArray = $scanFileForVirusMessage->getStream();
-        $result = $this->scanner->scanResourceStream($streamArray['fileStream']);
+        $fileId = $scanFileForVirusMessage->getId();
+        $file = $this->fileRepository->find($fileId);
+        $fileStream = $this->datastore->getFile($file->getPath());
+        $result = $this->scanner->scanResourceStream($fileStream['fileStream']);
         if ($result['status'] == 'FOUND') {
-            $this->logger->alert(sprintf('Virus found in file ID: %s for UDI: %s, VIRUS ID: %s.', $id, $udi, $result['reason']));
+            $loggingContext['fileId'] = $fileId;
+            $loggingContext['reason'] = $result['reason'];
+            $this->logger->alert('Virus found in file ID: {fileId}, VIRUS ID: {reason}.', $loggingContext);
         } elseif ($result['status'] !== 'failed') {
             $this->logger->info(sprintf('Virus scanned file ID: %s for UDI: %s. Status: %s.', $id, $udi, $result['status']));
         } else {

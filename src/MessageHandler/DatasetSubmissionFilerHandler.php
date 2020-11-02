@@ -192,19 +192,8 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         $this->messageBus->dispatch($hashFile);
 
         // File virus Scan
-        if ($file instanceof File) {
-            $filename = $this->datastoreDirectory . '/' . $file->getFilePath();
-            if (file_exists($filename)) {
-                $stream = array('fileStream' => fopen($filename, 'r'));
-                // UDI is needed by the ScanFileForVirus for meaningful errors.
-                $this->messageBus->dispatch(new ScanFileForVirus($stream, $loggingContext['udi'], $fileId));
-                $this->virusScanLogger->info("Enqueing virus scan for file: $filename.", $loggingContext);
-            } else {
-                $this->virusScanLogger->warning("File: $filename missing Could not scan.", $loggingContext);
-            }
-        } else {
-            $this->virusScanlogger->alert("No file(s) objects exist for dataset", $loggingContext);
-        }
+        $this->messageBus->dispatch(new ScanFileForVirus($fileId));
+        $this->logger->info("Enqueing virus scan for file: $filename.", $loggingContext);
 
         // Log processing complete.
         $this->logger->info('Dataset file processing completed', $loggingContext);
