@@ -2,17 +2,16 @@
 
 namespace App\Form;
 
+use App\Entity\Person;
+use App\Entity\PersonDatasetSubmission;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use App\Entity\Person;
-use App\Entity\PersonDatasetSubmission;
 
 /**
  * A form for creating Person to Dataset Submission links.

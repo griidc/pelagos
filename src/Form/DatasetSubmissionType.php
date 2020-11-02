@@ -2,6 +2,12 @@
 
 namespace App\Form;
 
+use App\Entity\DatasetLink;
+use App\Entity\DatasetSubmission;
+use App\Entity\DistributionPoint;
+use App\Entity\Entity;
+use App\Entity\PersonDatasetSubmissionDatasetContact;
+use App\Entity\PersonDatasetSubmissionMetadataContact;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -9,13 +15,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use App\Entity\DatasetSubmission;
-use App\Entity\DatasetLink;
-use App\Entity\DistributionPoint;
-use App\Entity\Entity;
-use App\Entity\PersonDatasetSubmissionDatasetContact;
-use App\Entity\PersonDatasetSubmissionMetadataContact;
 
 /**
  * A form type for creating a Dataset Submission form.
