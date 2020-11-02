@@ -2,20 +2,19 @@
 
 namespace App\Controller;
 
-use App\Entity\PersonResearchGroup;
-use App\Entity\ResearchGroupRole;
-use App\Repository\PersonResearchGroupRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\Routing\Annotation\Route;
-
 use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\FundingCycle;
+use App\Entity\PersonResearchGroup;
 use App\Entity\ResearchGroup;
+use App\Entity\ResearchGroupRole;
+use App\Repository\PersonResearchGroupRepository;
 use App\Util\FundingOrgFilter;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * This is the default controller.
