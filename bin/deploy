@@ -20,6 +20,7 @@ esac
 
 # Stop RabbitMQ consumers
 bin/console rabbitmq-supervisor:control stop --wait-for-supervisord
+supervisorctl stop messenger-consume:*
 
 # Run composer install to make sure all non-dev dependencies are installed and parameters are defined
 composer install --no-dev --optimize-autoloader
@@ -36,6 +37,9 @@ bin/console doctrine:migrations:status
 
 # Rebuild Supervisor config for RabbitMQ consumers and start them
 bin/console rabbitmq-supervisor:rebuild --wait-for-supervisord
+supervisorctl reread
+supervisorctl update
+supervisorctl start messenger-consume:*
 
 # Rebuild elasticsearch indexes
 bin/console fos:elastica:reset
