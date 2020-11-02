@@ -35,7 +35,7 @@ class FileRepository extends ServiceEntityRepository
      *
      * @return array
      */
-    public function getFileNameAndPath(array $fileIds) : array
+    public function getFileNameAndPath(array $fileIds): array
     {
         $queryBuilder = $this->createQueryBuilder('file');
 

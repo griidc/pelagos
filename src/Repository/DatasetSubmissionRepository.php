@@ -2,13 +2,12 @@
 
 namespace App\Repository;
 
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\Query;
-
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Util\FundingOrgFilter;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query;
 
 /**
  * DatasetSubmission Entity Repository class.
@@ -34,7 +33,7 @@ class DatasetSubmissionRepository extends ServiceEntityRepository
 
         $this->fundingOrgFilter = $fundingOrgFilter;
     }
-    
+
     /**
      * Get Registered Dataset Submissions.
      *
@@ -43,7 +42,7 @@ class DatasetSubmissionRepository extends ServiceEntityRepository
     public function getRegisteredDatasets()
     {
         $queryBuilder = $this->createQueryBuilder('datasetSubmission');
-        
+
         $queryBuilder
             ->select('datasetSubmission.creationTimeStamp')
             ->where('datasetSubmission.id IN (
@@ -53,7 +52,7 @@ class DatasetSubmissionRepository extends ServiceEntityRepository
                         GROUP BY subDatasetSubmission.dataset
                     )')
             ->orderBy('datasetSubmission.creationTimeStamp');
-            
+
         if ($this->fundingOrgFilter->isActive()) {
             $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
 
@@ -66,7 +65,7 @@ class DatasetSubmissionRepository extends ServiceEntityRepository
 
         return $queryBuilder->getQuery()->getResult(Query::HYDRATE_ARRAY);
     }
-    
+
     /**
      * Get Available Dataset Submissions.
      *
@@ -75,7 +74,7 @@ class DatasetSubmissionRepository extends ServiceEntityRepository
     public function getAvailableDatasets()
     {
         $queryBuilder = $this->createQueryBuilder('datasetSubmission');
-        
+
         $queryBuilder
             ->select('datasetSubmission.creationTimeStamp')
             ->where('datasetSubmission.id IN (
@@ -99,7 +98,7 @@ class DatasetSubmissionRepository extends ServiceEntityRepository
                 )
             )
             ->orderBy('datasetSubmission.creationTimeStamp');
-            
+
         if ($this->fundingOrgFilter->isActive()) {
             $researchGroupIds = $this->fundingOrgFilter->getResearchGroupsIdArray();
 
@@ -109,7 +108,7 @@ class DatasetSubmissionRepository extends ServiceEntityRepository
             ->andWhere('rg.id IN (:rgs)')
             ->setParameter('rgs', $researchGroupIds);
         }
-        
+
         return $queryBuilder->getQuery()->getResult(Query::HYDRATE_ARRAY);
     }
 }

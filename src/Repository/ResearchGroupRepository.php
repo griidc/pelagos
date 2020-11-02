@@ -2,12 +2,11 @@
 
 namespace App\Repository;
 
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\Query;
-
 use App\Entity\ResearchGroup;
 use App\Util\FundingOrgFilter;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * Research Group Entity Repository class.
@@ -33,7 +32,7 @@ class ResearchGroupRepository extends ServiceEntityRepository
 
         $this->fundingOrgFilter = $fundingOrgFilter;
     }
-    
+
     /**
      * Count the number of Reseach Groups.
      *
@@ -42,15 +41,15 @@ class ResearchGroupRepository extends ServiceEntityRepository
     public function countResearchGroups()
     {
         $queryBuilder = $this->createQueryBuilder('researchGroup');
-        
+
         $queryBuilder
         ->select($queryBuilder->expr()->count('researchGroup.id'));
-        
+
         if ($this->fundingOrgFilter->isActive()) {
             $queryBuilder->where('researchGroup.id IN (:rgs)');
             $queryBuilder->setParameter('rgs', $this->fundingOrgFilter->getResearchGroupsIdArray());
         }
-        
+
         return $queryBuilder->getQuery()->getSingleScalarResult();
     }
 }

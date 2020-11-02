@@ -2,12 +2,11 @@
 
 namespace App\Repository;
 
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\Query;
-
 use App\Entity\Person;
 use App\Util\FundingOrgFilter;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * Person Entity Repository class.
@@ -33,7 +32,7 @@ class PersonRepository extends ServiceEntityRepository
 
         $this->fundingOrgFilter = $fundingOrgFilter;
     }
-    
+
     /**
      * Count the number of people.
      *
@@ -42,7 +41,7 @@ class PersonRepository extends ServiceEntityRepository
     public function countPeople()
     {
         $queryBuilder = $this->createQueryBuilder('person');
-        
+
         $queryBuilder
         ->select($queryBuilder->expr()->count('person.id'))
         ->where(
@@ -51,14 +50,14 @@ class PersonRepository extends ServiceEntityRepository
                 $queryBuilder->expr()->literal(0)
             )
         );
-        
+
         if ($this->fundingOrgFilter->isActive()) {
             $queryBuilder->innerJoin('person.personResearchGroups', 'prg');
             $queryBuilder->innerJoin('prg.researchGroup', 'rg');
             $queryBuilder->where('rg.id IN (:rgs)');
             $queryBuilder->setParameter('rgs', $this->fundingOrgFilter->getResearchGroupsIdArray());
         }
-        
+
         return $queryBuilder->getQuery()->getSingleScalarResult();
     }
 }
