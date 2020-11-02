@@ -3,7 +3,6 @@
 namespace App\Twig;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
-
 use Twig\Extension\AbstractExtension;
 
 /**

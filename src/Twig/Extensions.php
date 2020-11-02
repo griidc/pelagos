@@ -2,16 +2,12 @@
 
 namespace App\Twig;
 
-use Doctrine\Common\Collections\Collection;
-
 use App\Entity\DIF;
-
 use App\Util\MaintenanceMode;
-
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpKernel\KernelInterface;
-
-use Twig\Extension\AbstractExtension;
 use Twig\Environment;
+use Twig\Extension\AbstractExtension;
 
 /**
  * Custom Twig extensions for Pelagos.
@@ -131,7 +127,7 @@ class Extensions extends AbstractExtension
      *
      * @return string Filename of basepath, or default.
      */
-    public function doesTwigFileExist(string $file, string $default = "") : string
+    public function doesTwigFileExist(string $file, string $default = ""): string
     {
         if (empty($file)) {
             return $default;
@@ -158,7 +154,7 @@ class Extensions extends AbstractExtension
      *
      * @return boolean If in maintenance mode.
      */
-    public function isMaintenanceMode() : bool
+    public function isMaintenanceMode(): bool
     {
         return $this->maintenanceMode->isMaintenanceMode();
     }
@@ -168,7 +164,7 @@ class Extensions extends AbstractExtension
      *
      * @return string|null Returns maintenance mode banner text.
      */
-    public function getMaintenanceModeText() : ? string
+    public function getMaintenanceModeText(): ?string
     {
         return $this->maintenanceMode->getMaintenanceModeText();
     }
@@ -180,7 +176,7 @@ class Extensions extends AbstractExtension
      *
      * @return string|null Returns maintenance mode banner color.
      */
-    public function maintenanceModeColor(string $color = null) : ? string
+    public function maintenanceModeColor(string $color = null): ?string
     {
         $bannerColor = $this->maintenanceMode->getMaintenanceModeColor();
 
@@ -252,7 +248,7 @@ class Extensions extends AbstractExtension
      */
     protected static function parseString(Environment $environment, array $context, string $string)
     {
-        $environment->setLoader(new \Twig\Loader\ArrayLoader);
+        $environment->setLoader(new \Twig\Loader\ArrayLoader());
         $template = $environment->createTemplate($string);
         return $template->render($context);
     }
@@ -303,7 +299,7 @@ class Extensions extends AbstractExtension
      *
      * @return string
      */
-    public static function formatBytes($bytes, int $precision = 2, $unit = null) : string
+    public static function formatBytes($bytes, int $precision = 2, $unit = null): string
     {
         if (empty($bytes)) {
             $bytes = 0;
