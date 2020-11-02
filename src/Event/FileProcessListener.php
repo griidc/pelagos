@@ -3,7 +3,6 @@
 namespace App\Event;
 
 use App\Entity\File;
-
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 class FileProcessListener
@@ -23,8 +22,10 @@ class FileProcessListener
         $unitOfWork = $entityManager->getUnitOfWork();
         $metadata = $entityManager->getClassMetadata(get_class($file));
         if ($file instanceof File) {
-            if (!empty($file->getFileSha256Hash())
-                and ($file->getStatus() === File::FILE_IN_PROGRESS)) {
+            if (
+                !empty($file->getFileSha256Hash())
+                and ($file->getStatus() === File::FILE_IN_PROGRESS)
+            ) {
                 $file->setStatus(File::FILE_DONE);
                 $unitOfWork->recomputeSingleEntityChangeSet($metadata, $file);
             }

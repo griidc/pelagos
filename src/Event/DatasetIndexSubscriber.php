@@ -2,15 +2,12 @@
 
 namespace App\Event;
 
-use App\Twig\Extensions as TwigExtentions;
-use FOS\ElasticaBundle\Event\TransformEvent;
-
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-
 use App\Entity\Dataset;
-use App\Util\Geometry;
-
 use App\Exception\InvalidGmlException;
+use App\Twig\Extensions as TwigExtentions;
+use App\Util\Geometry;
+use FOS\ElasticaBundle\Event\TransformEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * An event subscriber for events related to the dataset index.

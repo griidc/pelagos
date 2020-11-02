@@ -1,23 +1,21 @@
 <?php
+
 namespace App\Event;
 
-use App\Util\RabbitPublisher;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
-use App\Handler\EntityHandler;
 use App\Entity\Account;
 use App\Entity\Dataset;
 use App\Entity\DataRepositoryRole;
 use App\Entity\Person;
 use App\Entity\PersonDataRepository;
 use App\Entity\ResearchGroupRole;
-use App\Util\MailSender;
-
-use Twig\Environment;
-
+use App\Handler\EntityHandler;
 use App\Util\DataStore;
+use App\Util\MailSender;
 use App\Util\MdappLogger;
+use App\Util\RabbitPublisher;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Twig\Environment;
 
 /**
  * Listener class for Dataset Submission-related events.

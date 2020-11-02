@@ -2,14 +2,13 @@
 
 namespace App\Event;
 
+use App\Entity\Dataset;
+use App\Entity\DatasetSubmission;
+use App\Entity\DIF;
 use App\Util\RabbitPublisher;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
-
-use App\Entity\Dataset;
-use App\Entity\DatasetSubmission;
-use App\Entity\DIF;
 
 /**
  * Doctrine Listener class for Dataset related events.
@@ -62,9 +61,10 @@ class DoctrineDatasetListener
      */
     protected function updateDataset($entity, EntityManagerInterface $entityManager)
     {
-        if ($entity instanceof DIF
+        if (
+            $entity instanceof DIF
             or $entity instanceof DatasetSubmission
-            ) {
+        ) {
             $dataset = $entity->getDataset();
             if ($dataset instanceof Dataset) {
                 $dataset->updateTitle();
@@ -89,7 +89,8 @@ class DoctrineDatasetListener
     {
         $entity = $args->getObject();
         if ($entity instanceof Dataset) {
-            if (($entity->getDatasetSubmission() instanceof DatasetSubmission and
+            if (
+                ($entity->getDatasetSubmission() instanceof DatasetSubmission and
                 in_array(
                     $entity->getAvailabilityStatus(),
                     [

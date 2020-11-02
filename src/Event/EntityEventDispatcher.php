@@ -2,9 +2,8 @@
 
 namespace App\Event;
 
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-
 use App\Entity\Entity;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * An entity event dispatcher.

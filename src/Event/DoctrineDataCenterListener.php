@@ -2,11 +2,10 @@
 
 namespace App\Event;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\OnFlushEventArgs;
-
 use App\Entity\DataCenter;
 use App\Entity\DataRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Event\OnFlushEventArgs;
 
 /**
  * Doctrine Listener class for DataRepository update events.
