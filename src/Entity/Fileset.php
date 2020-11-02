@@ -25,6 +25,15 @@ class Fileset extends Entity
     protected $files;
 
     /**
+     * Zipped files path on disk.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $zipFilePath;
+
+    /**
      * Fileset constructor.
      */
     public function __construct()
@@ -174,5 +183,27 @@ class Fileset extends Entity
             );
 
         return $this->files->matching($criteria)->first();
+    }
+
+    /**
+     * Getter for zip file path.
+     *
+     * @return string
+     */
+    public function getZipFilePath(): string
+    {
+        return $this->zipFilePath;
+    }
+
+    /**
+     * Setter for zip file path.
+     *
+     * @param string $zipFilePath Filepath on disk.
+     *
+     * @return void
+     */
+    public function setZipFilePath(string $zipFilePath): void
+    {
+        $this->zipFilePath = $zipFilePath;
     }
 }

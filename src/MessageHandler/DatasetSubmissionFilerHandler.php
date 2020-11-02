@@ -12,6 +12,7 @@ use App\Message\DatasetSubmissionFiler;
 use App\Message\HashFile;
 use App\Message\VirusScan;
 
+use App\Message\ZipDatasetFiles;
 use App\Repository\DatasetSubmissionRepository;
 
 use App\Util\Datastore;
@@ -111,13 +112,14 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             'dataset_submission_id' => $datasetSubmissionId
         );
         $fileset = $datasetSubmission->getFileset();
-
+        $fileIds = array();
         if ($fileset instanceof Fileset) {
             // Log processing complete.
             $this->logger->info('Dataset submission process started', $loggingContext);
             foreach ($fileset->getNewFiles() as $file) {
                 if ($file instanceof File) {
                     $this->processFile($file);
+                    $fileIds[] = $file->getId();
                 } else {
                     $this->logger->alert('File object does not exist');
                 }
@@ -128,6 +130,11 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             );
             $dataset->updateAvailabilityStatus();
             $this->entityManager->flush();
+
+            // Dispatch message to zip files
+            $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
+            $this->messageBus->dispatch($zipFiles);
+
             // Dispatch entity event.
             $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_processed');
             $this->logger->info('Dataset submission process completed', $loggingContext);
