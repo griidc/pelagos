@@ -5,7 +5,6 @@ namespace App\MessageHandler;
 use App\Entity\File;
 use App\Message\DeleteFile;
 use App\Repository\FileRepository;
-
 use App\Util\Datastore;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;

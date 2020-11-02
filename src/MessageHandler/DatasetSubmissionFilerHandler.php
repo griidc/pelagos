@@ -5,21 +5,15 @@ namespace App\MessageHandler;
 use App\Entity\DatasetSubmission;
 use App\Entity\File;
 use App\Entity\Fileset;
-
 use App\Event\EntityEventDispatcher;
-
 use App\Message\DatasetSubmissionFiler;
 use App\Message\HashFile;
 use App\Message\VirusScan;
-
 use App\Message\ZipDatasetFiles;
 use App\Repository\DatasetSubmissionRepository;
-
 use App\Util\Datastore;
-
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
