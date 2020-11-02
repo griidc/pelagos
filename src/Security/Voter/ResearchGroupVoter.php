@@ -2,8 +2,6 @@
 
 namespace App\Security\Voter;
 
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 use App\Entity\Account;
 use App\Entity\ResearchGroup;
 use App\Entity\FundingCycle;
@@ -11,6 +9,7 @@ use App\Entity\FundingOrganization;
 use App\Entity\DataRepository;
 use App\Entity\DataRepositoryRole;
 use App\Entity\ResearchGroupRole;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * A voter to determine if a ResearchGroup can be created or edited.
@@ -37,16 +36,13 @@ class ResearchGroupVoter extends PelagosEntityVoter
         }
 
         // If the attribute isn't one of CAN_EDIT, CAN_DELETE, or CAN_CREATE_DIF_FOR, we cannot vote.
-        if (!in_array($attribute, array(
-            PelagosEntityVoter::CAN_EDIT,
-            PelagosEntityVoter::CAN_DELETE,
-            self::CAN_CREATE_DIF_FOR))
-        ) {
+        if (!in_array($attribute, array(PelagosEntityVoter::CAN_EDIT, PelagosEntityVoter::CAN_DELETE, self::CAN_CREATE_DIF_FOR))) {
             return false;
         }
 
         // Only if the tree is as expected, vote.
-        if (($object
+        if (
+            ($object
                 ->getFundingCycle()
                 instanceof FundingCycle) and
             ($object
@@ -110,11 +106,13 @@ class ResearchGroupVoter extends PelagosEntityVoter
                 }
             );
             // Data Repository Managers can create DIFs for all Research Groups.
-            if ($this->doesUserHaveRole(
-                $userPerson,
-                $personDataRepositories,
-                array(DataRepositoryRole::MANAGER)
-            )) {
+            if (
+                $this->doesUserHaveRole(
+                    $userPerson,
+                    $personDataRepositories,
+                    array(DataRepositoryRole::MANAGER)
+                )
+            ) {
                 return true;
             }
 

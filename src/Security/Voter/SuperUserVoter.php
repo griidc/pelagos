@@ -2,13 +2,11 @@
 
 namespace App\Security\Voter;
 
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
-use App\Entity\Entity;
 use App\Entity\Account;
 use App\Entity\DataRepositoryRole;
-
+use App\Entity\Entity;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * A voter to allow Super Users to do anything.
@@ -64,11 +62,14 @@ class SuperUserVoter extends PelagosEntityVoter
             }
         );
         // Data Repository Managers are Super Users
-        if ($this->doesUserHaveRole(
-            $userPerson,
-            $personDataRepositories,
-            array(DataRepositoryRole::MANAGER)
-        ) and in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_DELETE))) {
+        if (
+            $this->doesUserHaveRole(
+                $userPerson,
+                $personDataRepositories,
+                array(DataRepositoryRole::MANAGER)
+            )
+            and in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_DELETE))
+        ) {
             return true;
         }
         return false;

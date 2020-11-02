@@ -2,12 +2,11 @@
 
 namespace App\Security\Voter;
 
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 use App\Entity\Account;
 use App\Entity\DatasetSubmission;
 use App\Entity\DistributionPoint;
 use App\Entity\PersonDatasetSubmission;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * A voter to determine if a actions are possible by the user on a Dataset Submission.
@@ -27,8 +26,10 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
     protected function supports($attribute, $subject) //phpcs:ignore
     {
         // Abstain if the subject is not an instance of DatasetSubmission.
-        if (!$subject instanceof DatasetSubmission and !$subject instanceof PersonDatasetSubmission
-            and !$subject instanceof DistributionPoint) {
+        if (
+            !$subject instanceof DatasetSubmission and !$subject instanceof PersonDatasetSubmission
+            and !$subject instanceof DistributionPoint
+        ) {
             return false;
         }
 
