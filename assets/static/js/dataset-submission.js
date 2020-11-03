@@ -163,6 +163,17 @@ $(function() {
         }
     });
 
+    var fileTabs = $("#filetabs");
+    fileTabs.tabs();
+    switch ($("#datasetFileTransferType").val()) {
+        case "upload":
+            fileTabs.tabs("option", "active", 0);
+            break;
+        case "HTTP":
+            fileTabs.tabs("option", "active", 1);
+            break;
+    }
+
     document.getElementById("datasetFileTransferType").value = "upload";
     document.getElementById("datasetFileUri").value = "dummy value";
 

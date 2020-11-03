@@ -1,24 +1,82 @@
-{{ form_widget(form.datasetFileUri, { attr: { class: 'ignore'} }) }}
-{{ form_widget(form.datasetFileTransferType) }}
-<div id="dropzone-uploader" class="file-dropzone-area">
-    <h2>Drag and Drop files here or click to upload</h2>
+<div class="invaliddsform">
+    <h1>
+        You have not completed all required fields.
+    </h1>
 </div>
-<div id="file-manager-app" data-id={{ datasetSubmission.id }}>
-</div>
-<fieldset>
-    <legend class="section-header">{{ form.restrictions.vars.label }}</legend>
-    <table class="tab-table">
-        <tr>
-            <td width="*">
+
+<div class="validdsform">
+    <fieldset> <!-- Dataset File Transfer Details -->
+        <legend class="section-header">Dataset File Transfer Details</legend>
+
+        {{ form_widget(form.datasetFileUri, { attr: { class: 'ignore'} }) }}
+        {{ form_widget(form.datasetFileTransferType) }}
+
+        <div style="background: transparent;" id="filetabs">
+            <ul>
+                <li datasetFileTransferType="upload"><a href="#tabs-1">Direct Upload</a></li>
+                <li datasetFileTransferType="HTTP"><a href="#tabs-2">Request Pull from HTTP/FTP Server</a></li>
+            </ul>
+
+            <div id="tabs-1"> <!-- Direct Upload -->
+                You may upload a single dataset file of any size using direct upload.
+                If your upload is interrupted, it will attempt to resume automatically.
+                You may also manually pause your upload and continue later.<br>
+                Note: Even if this window or your web browser has been closed before transfer is complete,
+                you may return to this page, select the same file, and transfer will resume where it left off.
+                <fieldset>
+                    <div id="dropzone-uploader" class="file-dropzone-area">
+                        <h2>Drag and Drop files here or click to upload</h2>
+                    </div>
+                    <div id="file-manager-app" data-id={{ datasetSubmission.id }}>
+                    </div>
+                </fieldset>
+            </div> <!-- tabs-1 -->
+
+            <div id="tabs-2"> <!-- Request Pull from HTTP/FTP Server -->
+                Use this method when you wish to place the dataset file on an HTTP (web) or FTP server at your institution (or elsewhere) and have GRIIDC pull it.
+                <fieldset>
+                    <table class="tab-table">
+                        <tr>
+                            <td width="*">
                                 <span class="helpSection">
-					                <img class="info" src="{{ asset('build/images/info32.png') }}">
+                                    <img class="info" src="{{ asset('build/images/info32.png') }}">
                                     <div class="tooltiptext">
-                                        If data is available to the general public, select "None". Select "Restricted" if data cannot be shared.
+                                        <p><strong>Dataset File URL:</strong></p>
+                                        <p>This is the URL that leads to the data being submitted. Package the components of the datasets (if applicable) to form a single file (e.g. ZIP, TAR).</p>
+                                        <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
                                     </div>
                                 </span>
-                {{ form_widget(form.restrictions) }}
-            </td>
-        </tr>
-    </table>
-</fieldset>
-{{ form_widget(form.submitButton) }}
+                                <div class="fwtextboxcont">
+                                    {{ form_row(form.datasetFileUrl, { attr: { class: 'ignore'} }) }}
+                                </div>
+                                {% if showForceDownload %}
+                                    <div class="file_force">
+                                        {{ form_widget(form.datasetFileForceDownload) }} {{ form_label(form.datasetFileForceDownload) }}
+                                    </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </div> <!-- tabs-2 -->
+
+        </div> <!-- tabs -->
+    </fieldset> <!-- Dataset File Transfer Details -->
+    <fieldset>
+        <legend class="section-header">{{ form.restrictions.vars.label }}</legend>
+        <table class="tab-table">
+            <tr>
+                <td width="*">
+					<span class="helpSection">
+					<img class="info" src="{{ asset('build/images/info32.png') }}">
+					<div class="tooltiptext">
+						If data is available to the general public, select "None". Select "Restricted" if data cannot be shared.
+					</div>
+				</span>
+                    {{ form_widget(form.restrictions) }}
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    {{ form_widget(form.submitButton) }}
+</div>
