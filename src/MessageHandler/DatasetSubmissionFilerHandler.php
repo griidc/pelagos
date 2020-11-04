@@ -10,7 +10,7 @@ use App\Event\EntityEventDispatcher;
 
 use App\Message\DatasetSubmissionFiler;
 use App\Message\HashFile;
-use App\Message\VirusScan;
+use App\Message\ScanFileForVirus;
 
 use App\Message\ZipDatasetFiles;
 use App\Repository\DatasetSubmissionRepository;
@@ -118,7 +118,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             $this->logger->info('Dataset submission process started', $loggingContext);
             foreach ($fileset->getNewFiles() as $file) {
                 if ($file instanceof File) {
-                    $this->processFile($file);
+                    $this->processFile($file, $loggingContext);
                     $fileIds[] = $file->getId();
                 } else {
                     $this->logger->alert('File object does not exist');
@@ -145,10 +145,11 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
      * Method to process a single file.
      *
      * @param File  $file           The file that is being processed.
+     * @param array $loggingContext The logging context for the related dataset submission.
      *
      * @return void
      */
-    private function processFile(File $file): void
+    private function processFile(File $file, array $loggingContext): void
     {
         // Log processing start.
         $fileId = $file->getId();
@@ -166,17 +167,13 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             $file->setStatus(File::FILE_ERROR);
         }
 
-
         // File Hashing
         $hashFile = new HashFile($fileId);
         $this->messageBus->dispatch($hashFile);
 
         // File virus Scan
-        // TODO implement method
-        /*
-        $scanFile = new VirusScan($fileId);
-        $this->messageBus->dispatch($scanFile);
-        */
+        $this->messageBus->dispatch(new ScanFileForVirus($fileId, $loggingContext['udi']));
+        $this->logger->info("Enqueuing virus scan for file: {$file->getFileName()}.", $loggingContext);
 
         // Log processing complete.
         $this->logger->info('Dataset file processing completed', $loggingContext);

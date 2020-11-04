@@ -57,7 +57,7 @@ class Datastore
     {
         $resource['fileStream'] = $this->datastoreFlysystem->readStream($filePath);
 
-        if ($resource === false) {
+        if ($resource['fileStream'] === false) {
             throw new \Exception(sprintf('Error opening stream for "%s"', $filePath));
         }
 

@@ -13,7 +13,7 @@
     <rule ref="PSR2"/>
 
     <file>src/</file>
-    
+
     <exclude-pattern>*./src/Migrations/*\.(php)$</exclude-pattern>
 
 </ruleset>
