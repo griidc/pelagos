@@ -10,9 +10,19 @@ class VirusScanUtil
     /**
      * The ClamAV socket file.
      *
-     * @var string clamSock
+     * @var string
      */
-    private $clamSock;
+    private $clamdSock;
+
+    /**
+     * Scan result status if it fails.
+     */
+    const RESULT_STATUS_FAILED = 'failed';
+
+    /**
+     * Scan result reason when it is oversize.
+     */
+    const RESULT_REASON_OVERSIZE = 'oversize';
 
     /**
      * Constructor for this Controller, to set up default services.
@@ -27,23 +37,27 @@ class VirusScanUtil
     /**
      * Scan a filestream for viruses.
      *
-     * @param mixed $fileHandle A filesystem resource to scan.
+     * @param array $fileHandle A filesystem resource to scan.
+     *
+     * @throws \Exception Exception thrown when stream is not of type resource.
+     *
      * @return array
      */
-    public function scanResourceStream($fileHandle)
+    public function scanResourceStream(array $fileHandle): array
     {
-        if (is_resource($fileHandle)) {
-            $stat = fstat($fileHandle);
+        $result = array();
+        if (is_resource($fileHandle['fileStream'])) {
+            $stat = fstat($fileHandle['fileStream']);
             if ($stat['size'] > 104857600) {
-                $result['status'] = 'failed';
-                $result['reason'] = 'oversize';
+                $result['status'] = self::RESULT_STATUS_FAILED;
+                $result['reason'] = self::RESULT_REASON_OVERSIZE;
             } else {
                 try {
                     $socket = (new SocketFactory())->createClient($this->clamdSock);
                     $quahog = new QuahogClient($socket);
-                    $result = $quahog->scanResourceStream($fileHandle, 1024000);
+                    $result = $quahog->scanResourceStream($fileHandle['fileStream'], 1024000);
                 } catch (\Exception $e) {
-                    $result['status'] = 'failed';
+                    $result['status'] = self::RESULT_STATUS_FAILED;
                     $result['reason'] = $e->getMessage();
                 }
             }

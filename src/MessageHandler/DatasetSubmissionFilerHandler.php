@@ -43,13 +43,6 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
     private $logger;
 
     /**
-     * The monolog logger for virus events.
-     *
-     * @var LoggerInterface
-     */
-    private $virusScanlogger;
-
-    /**
      * Instance of symfony messenger message bus.
      *
      * @var MessageBusInterface
@@ -78,42 +71,29 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
     private $datastore;
 
     /**
-     * Datastore directory.
-     *
-     * @var string
-     */
-    private $datastoreDirectory;
-
-    /**
      * DatasetSubmissionFilerHandler constructor.
      *
      * @param DatasetSubmissionRepository $datasetSubmissionRepository Dataset Submission Repository.
      * @param LoggerInterface             $filerLogger                 Name hinted filer logger.
-     * @param LoggerInterface             $virusScanLogger             Name hinted virus-scan logger.
      * @param MessageBusInterface         $messageBus                  Symfony messenger bus interface instance.
      * @param EntityEventDispatcher       $entityEventDispatcher       The entity event dispatcher.
      * @param EntityManagerInterface      $entityManager               The entity manager.
      * @param Datastore                   $datastore                   Datastore utility instance.
-     * @param string                      $datastoreDirectory          datastore location.
      */
     public function __construct(
         DatasetSubmissionRepository $datasetSubmissionRepository,
         LoggerInterface $filerLogger,
-        LoggerInterface $virusScanLogger,
         MessageBusInterface $messageBus,
         EntityEventDispatcher $entityEventDispatcher,
         EntityManagerInterface $entityManager,
-        Datastore $datastore,
-        string $datastoreDirectory
+        Datastore $datastore
     ) {
         $this->datasetSubmissionRepository = $datasetSubmissionRepository;
         $this->logger = $filerLogger;
-        $this->virusScanLogger = $virusScanLogger;
         $this->messageBus = $messageBus;
         $this->entityEventDispatcher = $entityEventDispatcher;
         $this->entityManager = $entityManager;
         $this->datastore = $datastore;
-        $this->datastoreDirectory = $datastoreDirectory;
     }
 
     /**
@@ -192,8 +172,8 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         $this->messageBus->dispatch($hashFile);
 
         // File virus Scan
-        $this->messageBus->dispatch(new ScanFileForVirus($fileId));
-        $this->logger->info("Enqueing virus scan for file: $filename.", $loggingContext);
+        $this->messageBus->dispatch(new ScanFileForVirus($fileId, $loggingContext['udi']));
+        $this->logger->info("Enqueuing virus scan for file: {$file->getFileName()}.", $loggingContext);
 
         // Log processing complete.
         $this->logger->info('Dataset file processing completed', $loggingContext);

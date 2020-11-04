@@ -15,22 +15,41 @@ class ScanFileForVirus
     private $fileId;
 
     /**
+     * Dataset UDI for the file.
+     *
+     * @var string
+     */
+    private $udi;
+
+    /**
      * Constructor.
      *
-     * @param int $fileId The fileId associated with the stream.
+     * @param integer $fileId The fileId associated with the stream.
+     * @param string  $udi    Associated dataset UDI.
      */
-    public function __construct(int $fileId)
+    public function __construct(int $fileId, string $udi)
     {
         $this->fileId = $fileId;
+        $this->udi = $udi;
     }
 
     /**
      * The file ID getter.
      *
-     * @return string The fileId associated with the stream.
+     * @return integer The fileId associated with the stream.
      */
     public function getFileId(): int
     {
         return $this->fileId;
+    }
+
+    /**
+     * Getter for dataset UDI.
+     *
+     * @return string
+     */
+    public function getUdi(): string
+    {
+        return $this->udi;
     }
 }

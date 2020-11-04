@@ -207,7 +207,3 @@ services:
     App\MessageHandler\ZipDatasetFilesHandler:
         bind:
             $downloadDirectory: "%env(DOWNLOAD_PATH)%"
-
-    App\MessageHandler\DatasetSubmissionFilerHandler:
-        bind:
-            $datastoreDirectory: "%env(DATA_STORE_DIRECTORY)%"
