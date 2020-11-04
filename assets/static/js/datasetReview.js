@@ -182,6 +182,16 @@ $(document).ready(function(){
         }
     });
 
+    var fileTabs = $("#filetabs");
+    fileTabs.tabs();
+    switch ($("#datasetFileTransferType").val()) {
+        case "upload":
+            fileTabs.tabs("option", "active", 0);
+            break;
+        case "HTTP":
+            fileTabs.tabs("option", "active", 1);
+            break;
+    }
 
     var btnPrevious = $("#btn-previous");
     var btnNext = $("#btn-next");
@@ -417,6 +427,33 @@ $(document).ready(function(){
                 }
             }
         });
+    }
+
+    // SFTP/GridFTP and HTTP/FTP
+    $("#datasetFilePath, #datasetFileUrl").on("keyup change", function() {
+        $(this).valid();
+        setDatasetFileUri($(this).val());
+    });
+
+    // set the datasetFileUri and datasetFileTransferType
+    function setDatasetFileUri(datasetFileUri) {
+        // get the datasetFileTransferType from the active tab
+        var datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
+        // set the datasetFileTransferType
+        $("#datasetFileTransferType").val(datasetFileTransferType);
+        if (datasetFileTransferType !== "HTTP") {
+            // clear datasetFileUrl (Request Pull from HTTP/FTP Server tab)
+            $("#datasetFileUrl").val("");
+            // if datasetFileUri is set
+            if (datasetFileUri !== "") {
+                // prepend file uri prefix
+                datasetFileUri = "file://" + datasetFileUri;
+            }
+        }
+        // set datasetFileUri
+        $("#datasetFileUri").val(datasetFileUri);
+        $("#datasetFileUri").valid();
+
     }
 
     $("#temporalInfoQuestion").on("change", function (e) {

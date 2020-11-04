@@ -163,6 +163,17 @@ $(function() {
         }
     });
 
+    var fileTabs = $("#filetabs");
+    fileTabs.tabs();
+    switch ($("#datasetFileTransferType").val()) {
+        case "upload":
+            fileTabs.tabs("option", "active", 0);
+            break;
+        case "HTTP":
+            fileTabs.tabs("option", "active", 1);
+            break;
+    }
+
     document.getElementById("datasetFileTransferType").value = "upload";
     document.getElementById("datasetFileUri").value = "dummy value";
 
@@ -354,6 +365,36 @@ $(function() {
     $(".contactperson").on("select2:unselecting", function(e) {
         $(this).parent().find(".contactinformation span").text("");
     });
+
+    // SFTP/GridFTP and HTTP/FTP
+    $("#datasetFilePath, #datasetFileUrl").on("keyup change", function() {
+        $(this).valid();
+        setDatasetFileUri($(this).val());
+    });
+    $("#datasetFilePath, #datasetFileUrl").change(function() {
+        saveDatasetSubmission();
+    });
+
+    // set the datasetFileUri and datasetFileTransferType
+    function setDatasetFileUri(datasetFileUri) {
+        // get the datasetFileTransferType from the active tab
+        let datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
+        // set the datasetFileTransferType
+        $("#datasetFileTransferType").val(datasetFileTransferType);
+        if (datasetFileTransferType !== "HTTP") {
+            // clear datasetFileUrl (Request Pull from HTTP/FTP Server tab)
+            $("#datasetFileUrl").val("");
+            // if datasetFileUri is set
+            if (datasetFileUri !== "") {
+                // prepend file uri prefix
+                datasetFileUri = "file://" + datasetFileUri;
+            }
+        }
+        // remove datasetFileUri error label
+        $('label.error[for="datasetFileUri"]').remove();
+        // set datasetFileUri
+        $("#datasetFileUri").val(datasetFileUri);
+    }
 
     function select2ContactPerson() {
         $(".contactperson").not("#contact-prototype .contactperson").select2({
