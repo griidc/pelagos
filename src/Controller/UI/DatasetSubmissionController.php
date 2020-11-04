@@ -31,6 +31,7 @@ use App\Entity\DIF;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DistributionPoint;
+use App\Entity\Fileset;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
 
@@ -163,12 +164,9 @@ class DatasetSubmissionController extends AbstractController
                         $createFlag = true;
                     }
                 } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
-                    and $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_NONE
-                    and (
-                        $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_COMPLETED
-                        or $datasetSubmission->getDatasetFileSha256Hash() !== null
-                    )
                     and $dataset->getDatasetStatus() === Dataset::DATASET_STATUS_BACK_TO_SUBMITTER
+                    and $datasetSubmission->getFileset() instanceof Fileset
+                    and $datasetSubmission->getFileset()->isDone()
                 ) {
                     // The latest submission is complete, so create new one based on it.
                     $datasetSubmission = new DatasetSubmission($datasetSubmission);
@@ -224,8 +222,6 @@ class DatasetSubmissionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() and $form->isValid()) {
-            $this->processDatasetFileTransferDetails($form, $datasetSubmission);
-
             $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_SUBMITTED);
 
             $datasetSubmission->submit($this->getUser()->getPerson());
@@ -234,16 +230,6 @@ class DatasetSubmissionController extends AbstractController
                 $eventName = 'resubmitted';
             } else {
                 $eventName = 'submitted';
-            }
-
-            if ($this->getUser()->isPosix()) {
-                $incomingDirectory = $this->getUser()->getHomeDirectory() . '/incoming';
-            } else {
-                $incomingDirectory = $this->getParameter('homedir_prefix') . '/upload/'
-                                         . $this->getUser()->getUserName() . '/incoming';
-                if (!file_exists($incomingDirectory)) {
-                    mkdir($incomingDirectory, 0755, true);
-                }
             }
 
             $this->entityHandler->update($datasetSubmission);
@@ -276,53 +262,6 @@ class DatasetSubmissionController extends AbstractController
         }
         // This should not normally happen.
         return new Response((string) $form->getErrors(true, false));
-    }
-
-    /**
-     * Process the Dataset File Transfer Details and update the Dataset Submission.
-     *
-     * @param Form              $form              The submitted dataset submission form.
-     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
-     *
-     * @return void
-     */
-    protected function processDatasetFileTransferDetails(
-        Form $form,
-        DatasetSubmission $datasetSubmission
-    ) {
-        // If there was a previous Dataset Submission.
-        if ($datasetSubmission->getDataset()->getDatasetSubmission() instanceof DatasetSubmission) {
-            // Get the previous datasetFileUri.
-            $previousDatasetFileUri = $datasetSubmission->getDataset()->getDatasetSubmission()->getDatasetFileUri();
-            // If the datasetFileUri has changed or the user has requested to force import or download.
-            if ($datasetSubmission->getDatasetFileUri() !== $previousDatasetFileUri
-                or $form['datasetFileForceImport']->getData()
-                or $form['datasetFileForceDownload']->getData()) {
-                // Assume the dataset file is new.
-                $this->newDatasetFile($datasetSubmission);
-            }
-        } else {
-            // This is the first submission so the dataset file is new.
-            $this->newDatasetFile($datasetSubmission);
-        }
-    }
-
-    /**
-     * Take appropriate actions when a new dataset file is submitted.
-     *
-     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
-     *
-     * @return void
-     */
-    protected function newDatasetFile(DatasetSubmission $datasetSubmission)
-    {
-        $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-        $datasetSubmission->setDatasetFileName(null);
-        $datasetSubmission->setDatasetFileSha256Hash(null);
-        $this->messages[] = array(
-            'body' => $datasetSubmission->getId(),
-            'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
-        );
     }
 
     /**
@@ -371,29 +310,6 @@ class DatasetSubmissionController extends AbstractController
             )
         );
 
-        $showForceImport = false;
-        $showForceDownload = false;
-        if ($datasetSubmission instanceof DatasetSubmission) {
-            switch ($datasetSubmission->getDatasetFileTransferType()) {
-                case DatasetSubmission::TRANSFER_TYPE_SFTP:
-                    $form->get('datasetFilePath')->setData(
-                        preg_replace('#^file://#', '', $datasetSubmission->getDatasetFileUri())
-                    );
-                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
-                        and $datasetSubmission->getDatasetFileUri() == $dataset->getDatasetSubmission()->getDatasetFileUri()) {
-                        $showForceImport = true;
-                    }
-                    break;
-                case DatasetSubmission::TRANSFER_TYPE_HTTP:
-                    $form->get('datasetFileUrl')->setData($datasetSubmission->getDatasetFileUri());
-                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
-                        and $datasetSubmission->getDatasetFileUri() == $dataset->getDatasetSubmission()->getDatasetFileUri()) {
-                        $showForceDownload = true;
-                    }
-                    break;
-            }
-        }
-
         $xmlFormView = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionXmlFileType::class,
@@ -438,8 +354,6 @@ class DatasetSubmissionController extends AbstractController
                 'xmlStatus' => $xmlStatus,
                 'dataset' => $dataset,
                 'datasetSubmission' => $datasetSubmission,
-                'showForceImport' => $showForceImport,
-                'showForceDownload' => $showForceDownload,
                 'researchGroupList' => $researchGroupList,
                 'datasetSubmissionLockStatus' => $datasetSubmissionLockStatus
             )
