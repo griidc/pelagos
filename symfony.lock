@@ -553,6 +553,9 @@
             "src/Kernel.php"
         ]
     },
+    "symfony/http-client-contracts": {
+        "version": "v2.3.1"
+    },
     "symfony/http-foundation": {
         "version": "v4.4.4"
     },
@@ -627,6 +630,9 @@
             "phpunit.xml.dist",
             "tests/bootstrap.php"
         ]
+    },
+    "symfony/polyfill-intl-grapheme": {
+        "version": "v1.20.0"
     },
     "symfony/polyfill-intl-icu": {
         "version": "v1.13.1"
@@ -707,6 +713,9 @@
     },
     "symfony/stopwatch": {
         "version": "v4.4.4"
+    },
+    "symfony/string": {
+        "version": "v5.1.8"
     },
     "symfony/swiftmailer-bundle": {
         "version": "2.5",
