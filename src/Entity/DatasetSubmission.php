@@ -902,6 +902,15 @@ class DatasetSubmission extends Entity
     protected $remotelyHostedFunction;
 
     /**
+     * Remotely Hosted Dataset URL.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $remotelyHostedUrl;
+
+    /**
      * Fileset for the datasetSubmission instance.
      *
      * @var Fileset
@@ -1004,6 +1013,7 @@ class DatasetSubmission extends Entity
             $this->setRemotelyHostedName($entity->getRemotelyHostedName());
             $this->setRemotelyHostedDescription($entity->getRemotelyHostedDescription());
             $this->setRemotelyHostedFunction($entity->getRemotelyHostedFunction());
+            $this->setRemotelyHostedUrl($entity->getRemotelyHostedUrl());
             $this->setDatasetFileUrlLastCheckedDate($entity->getDatasetFileUrlLastCheckedDate());
             $this->setDatasetFileUrlStatusCode($entity->getDatasetFileUrlStatusCode());
             $this->setDatasetFileColdStorageArchiveSha256Hash($entity->getDatasetFileColdStorageArchiveSha256Hash());
@@ -2661,5 +2671,27 @@ class DatasetSubmission extends Entity
         }
 
         return $this;
+    }
+
+    /**
+     * Getter for remotely hosted url.
+     *
+     * @return string
+     */
+    public function getRemotelyHostedUrl(): string
+    {
+        return $this->remotelyHostedUrl;
+    }
+
+    /**
+     * Setter for remotely hosted url.
+     *
+     * @param string $remotelyHostedUrl Remotely hosted url string.
+     *
+     * @return void
+     */
+    public function setRemotelyHostedUrl(string $remotelyHostedUrl): void
+    {
+        $this->remotelyHostedUrl = $remotelyHostedUrl;
     }
 }
