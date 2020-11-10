@@ -36,6 +36,7 @@ bin/console doctrine:migrations:status
 
 # Rebuild Supervisor config for RabbitMQ consumers and start them
 bin/console rabbitmq-supervisor:rebuild --wait-for-supervisord
+bin/console messenger:stop-workers
 
 # Rebuild elasticsearch indexes
 bin/console fos:elastica:reset
