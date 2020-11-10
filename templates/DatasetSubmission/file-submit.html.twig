@@ -49,11 +49,6 @@
                                 <div class="fwtextboxcont">
                                     {{ form_row(form.datasetFileUrl, { attr: { class: 'ignore'} }) }}
                                 </div>
-                                {% if showForceDownload %}
-                                    <div class="file_force">
-                                        {{ form_widget(form.datasetFileForceDownload) }} {{ form_label(form.datasetFileForceDownload) }}
-                                    </div>
-                                {% endif %}
                             </td>
                         </tr>
                     </table>

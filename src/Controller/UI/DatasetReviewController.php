@@ -26,6 +26,7 @@ use App\Entity\DatasetLink;
 use App\Entity\DatasetSubmission;
 use App\Entity\DatasetSubmissionReview;
 use App\Entity\Entity;
+use App\Entity\Fileset;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
 
@@ -317,54 +318,6 @@ class DatasetReviewController extends AbstractController
             ),
         ));
 
-        // Add file name, hash and filesize.
-        $form->add('datasetFileName', TextType::class, array(
-            'label' => 'Dataset File Name',
-            'required' => false,
-            'attr' => array(
-                'readonly' => 'true'
-            ),
-        ));
-
-        $form->add('datasetFileSize', TextType::class, array(
-            'label' => 'Dataset Filesize',
-            'required' => false,
-            'attr' => array(
-                'readonly' => 'true'
-            ),
-        ));
-
-        $form->add('datasetFileSha256Hash', TextType::class, array(
-            'label' => 'Dataset SHA256 hash',
-            'required' => false,
-            'attr' => array(
-                'readonly' => 'true'
-            ),
-        ));
-
-        $showForceImport = false;
-        $showForceDownload = false;
-        if ($datasetSubmission instanceof DatasetSubmission) {
-            switch ($datasetSubmission->getDatasetFileTransferType()) {
-                case DatasetSubmission::TRANSFER_TYPE_SFTP:
-                    $form->get('datasetFilePath')->setData(
-                        preg_replace('#^file://#', '', $datasetSubmission->getDatasetFileUri())
-                    );
-                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission and
-                        $datasetSubmission->getDatasetFileUri() === $dataset->getDatasetSubmission()->getDatasetFileUri()) {
-                        $showForceImport = true;
-                    }
-                    break;
-                case DatasetSubmission::TRANSFER_TYPE_HTTP:
-                    $form->get('datasetFileUrl')->setData($datasetSubmission->getDatasetFileUri());
-                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission and
-                        $datasetSubmission->getDatasetFileUri() === $dataset->getDatasetSubmission()->getDatasetFileUri()) {
-                        $showForceDownload = true;
-                    }
-                    break;
-            }
-        }
-
         $researchGroupList = array();
         $account = $this->getUser();
         if (null !== $account) {
@@ -394,8 +347,6 @@ class DatasetReviewController extends AbstractController
                 'udi' => $udi,
                 'dataset' => $dataset,
                 'datasetSubmission' => $datasetSubmission,
-                'showForceImport' => $showForceImport,
-                'showForceDownload' => $showForceDownload,
                 'researchGroupList' => $researchGroupList,
                 'mode' => $this->mode,
                 'linkoptions' => DatasetLink::getLinkNameCodeChoices(),
@@ -483,18 +434,6 @@ class DatasetReviewController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() and $form->isValid()) {
-            $this->processDatasetFileTransferDetails($form, $datasetSubmission);
-
-            if ($this->getUser()->isPosix()) {
-                $incomingDirectory = $this->getUser()->getHomeDirectory() . '/incoming';
-            } else {
-                $incomingDirectory = $this->getParameter('homedir_prefix') . '/upload/'
-                    . $this->getUser()->getUserName() . '/incoming';
-                if (!file_exists($incomingDirectory)) {
-                    mkdir($incomingDirectory, 0755, true);
-                }
-            }
-
             switch (true) {
                 case ($form->get('endReviewBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_END_REVIEW);
@@ -559,53 +498,6 @@ class DatasetReviewController extends AbstractController
     }
 
     /**
-     * Process the Dataset File Transfer Details and update the Dataset Submission.
-     *
-     * @param Form              $form              The submitted dataset submission form.
-     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
-     *
-     * @return void
-     */
-    protected function processDatasetFileTransferDetails(
-        Form $form,
-        DatasetSubmission $datasetSubmission
-    ) {
-        $datasetSubmissionHistory = $datasetSubmission->getDataset()->getDatasetSubmissionHistory();
-
-        if (count($datasetSubmissionHistory) > 1) {
-            // Get the previous datasetFileUri. DatasetSubmissionHistory collection is ordered by DESC.
-            $previousDatasetFileUri = $datasetSubmissionHistory->get(1)->getDatasetFileUri();
-            if ($datasetSubmission->getDatasetFileUri() !== $previousDatasetFileUri
-                or $form['datasetFileForceImport']->getData()
-                or $form['datasetFileForceDownload']->getData()) {
-                // Assume the dataset file is new.
-                $this->newDatasetFile($datasetSubmission);
-            }
-        } else {
-            // This is the first submission so the dataset file is new.
-            $this->newDatasetFile($datasetSubmission);
-        }
-    }
-
-    /**
-     * Take appropriate actions when a new dataset file is submitted.
-     *
-     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
-     *
-     * @return void
-     */
-    protected function newDatasetFile(DatasetSubmission $datasetSubmission)
-    {
-        $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-        $datasetSubmission->setDatasetFileName(null);
-        $datasetSubmission->setDatasetFileSha256Hash(null);
-        $this->messages[] = array(
-            'body' => $datasetSubmission->getId(),
-            'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
-        );
-    }
-
-    /**
      * To check the filer status of a previous datasetsubmission/review.
      *
      * @param DatasetSubmission $datasetSubmission A dataset submission instance.
@@ -618,13 +510,8 @@ class DatasetReviewController extends AbstractController
         $statuses = [DatasetSubmission::STATUS_COMPLETE, DatasetSubmission::STATUS_IN_REVIEW];
 
         if (in_array($datasetSubmission->getStatus(), $statuses)) {
-            switch (true) {
-                case ($datasetSubmission->getDatasetFileTransferStatus() === DatasetSubmission::TRANSFER_STATUS_NONE):
-                    return false;
-                    break;
-                case ($datasetSubmission->getDatasetFileTransferStatus() === DatasetSubmission::TRANSFER_STATUS_COMPLETED and empty($datasetSubmission->getDatasetFileSha256Hash())):
-                    return false;
-                    break;
+            if ($datasetSubmission->getFileset() instanceof Fileset) {
+                return $datasetSubmission->getFileset()->isDone();
             }
         }
         return true;
