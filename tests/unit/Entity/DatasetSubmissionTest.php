@@ -947,4 +947,18 @@ class DatasetSubmissionTest extends TestCase
             $this->datasetSubmission->getDatasetLinks()->count()
         );
     }
+
+    /**
+     * Test the setter and getter for remotely hosted url.
+     *
+     * @return void
+     */
+    public function testCanSetAndGetRemotelyHostedUrl()
+    {
+        $remotelyHostedUrl = 'https://path/to/dataset';
+
+        $this->datasetSubmission->setRemotelyHostedUrl($remotelyHostedUrl);
+
+        $this->assertEquals($remotelyHostedUrl, $this->datasetSubmission->getRemotelyHostedUrl());
+    }
 }
