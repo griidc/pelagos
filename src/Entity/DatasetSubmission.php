@@ -2676,9 +2676,9 @@ class DatasetSubmission extends Entity
     /**
      * Getter for remotely hosted url.
      *
-     * @return string
+     * @return string|null
      */
-    public function getRemotelyHostedUrl(): string
+    public function getRemotelyHostedUrl() : ?string
     {
         return $this->remotelyHostedUrl;
     }
@@ -2686,11 +2686,11 @@ class DatasetSubmission extends Entity
     /**
      * Setter for remotely hosted url.
      *
-     * @param string $remotelyHostedUrl Remotely hosted url string.
+     * @param string|null $remotelyHostedUrl Remotely hosted url string.
      *
      * @return void
      */
-    public function setRemotelyHostedUrl(string $remotelyHostedUrl): void
+    public function setRemotelyHostedUrl(?string $remotelyHostedUrl) : void
     {
         $this->remotelyHostedUrl = $remotelyHostedUrl;
     }
