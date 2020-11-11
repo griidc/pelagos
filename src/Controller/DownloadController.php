@@ -74,7 +74,7 @@ class DownloadController extends AbstractController
             $result = array(
                 'dataset' => $this->getDatasetDetails($dataset),
                 'remotelyHosted' => true,
-                'fileUri' => $dataset->getDatasetSubmission()->getDatasetFileUri()
+                'fileUri' => $dataset->getDatasetSubmission()->getRemotelyHostedUrl()
             );
         } else {
             $result = array(

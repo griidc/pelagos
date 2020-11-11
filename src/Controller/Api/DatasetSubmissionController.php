@@ -312,57 +312,6 @@ class DatasetSubmissionController extends EntityController
      * @param integer $id The id of the dataset submission.
      *
      * @Route(
-     *     "/api/dataset_submission/uploaded-files/{id}",
-     *     name="pelagos_api_dataset_submission_get_uploaded_files",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"}
-     *     )
-     *
-     * @View()
-     *
-     * @return array The list of uploaded files.
-     */
-    public function getUploadedFilesAction(int $id)
-    {
-        $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
-        // If the dataset transfer type is not upload.
-        if ($datasetSubmission->getDatasetFileTransferType() !== DatasetSubmission::TRANSFER_TYPE_UPLOAD) {
-            // Return empty file list.
-            return array();
-        }
-        $datasetFileUri = $datasetSubmission->getDatasetFileUri();
-        // If the datasetFileUri is not set.
-        if (empty($datasetFileUri)) {
-            // Return empty file list.
-            return array();
-        }
-        // Initialize file info.
-        $fileInfo = array(
-            'name' => basename($datasetFileUri),
-            'size' => -1,
-            'uuid' => '00000000-0000-0000-0000-000000000000',
-        );
-        // Try to get file info from the file.
-        try {
-            $file = new \SplFileInfo($datasetFileUri);
-            $fileInfo['name'] = $file->getFilename();
-            $fileInfo['size'] = $file->getSize();
-        } catch (\Exception $e) {
-            // Just use defaults if we're unable to get file info (e.g. file has been deleted from disk).
-        }
-        // Match the UUID out of the datsetFileUri.
-        if (preg_match('!/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/!', $datasetFileUri, $matches)) {
-            $uuid = $matches[1];
-        }
-        return array($fileInfo);
-    }
-
-    /**
-     * Return a list of files uploaded for a dataset submission.
-     *
-     * @param integer $id The id of the dataset submission.
-     *
-     * @Route(
      *     "/api/files_dataset_submission/{id}",
      *     name="pelagos_api_get_files_dataset_submission",
      *     methods={"GET"},

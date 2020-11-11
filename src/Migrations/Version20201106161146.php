@@ -17,6 +17,7 @@ final class Version20201106161146 extends AbstractMigration
 
         $this->addSql('ALTER TABLE dataset_submission ADD remotely_hosted_url TEXT DEFAULT NULL');
         $this->addSql("UPDATE dataset_submission SET remotely_hosted_url = dataset_file_uri WHERE dataset_file_uri SIMILAR TO 'https?:\/\/\S*'");
+        $this->addSql("UPDATE dataset_submission SET dataset_file_transfer_status = 'Completed' WHERE dataset_file_transfer_status = 'RemotelyHosted'");
     }
 
     public function down(Schema $schema) : void

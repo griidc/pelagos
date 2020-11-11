@@ -84,10 +84,7 @@ class DatasetSubmissionRepository extends ServiceEntityRepository
                 WHERE subDatasetSubmission.datasetFileUri is not null
                 AND subDatasetSubmission.datasetStatus = :metadatastatus
                 AND subDatasetSubmission.restrictions = :restrictedstatus
-                AND (
-                    subDatasetSubmission.datasetFileTransferStatus = :transerstatuscompleted
-                    OR subDatasetSubmission.datasetFileTransferStatus = :transerstatusremotelyhosted
-                )
+                AND subDatasetSubmission.datasetFileTransferStatus = :transerstatuscompleted
                 GROUP BY subDatasetSubmission.dataset
             )')
             ->setParameters(
@@ -95,7 +92,6 @@ class DatasetSubmissionRepository extends ServiceEntityRepository
                     'metadatastatus' => Dataset::DATASET_STATUS_ACCEPTED,
                     'restrictedstatus' => DatasetSubmission::RESTRICTION_NONE,
                     'transerstatuscompleted' => DatasetSubmission::TRANSFER_STATUS_COMPLETED,
-                    'transerstatusremotelyhosted' => DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED,
                 )
             )
             ->orderBy('datasetSubmission.creationTimeStamp');

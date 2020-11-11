@@ -129,7 +129,6 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
                 DatasetSubmission::TRANSFER_STATUS_COMPLETED
             );
             $dataset->updateAvailabilityStatus();
-            $this->entityManager->flush();
 
             // Dispatch message to zip files
             $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
@@ -138,7 +137,12 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             // Dispatch entity event.
             $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_processed');
             $this->logger->info('Dataset submission process completed', $loggingContext);
+        } else {
+            if ($datasetSubmission->getRemotelyHostedUrl()) {
+                $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_COMPLETED);
+            }
         }
+        $this->entityManager->flush();
     }
 
     /**

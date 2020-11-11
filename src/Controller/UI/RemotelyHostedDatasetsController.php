@@ -97,7 +97,7 @@ class RemotelyHostedDatasetsController extends AbstractController
                 }
 
                 // Dataset can't already be set to Remotely Hosted.
-                if (DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED === $datasetSubmission->getDatasetFileTransferStatus()) {
+                if ($datasetSubmission->isMarkedRemotelyHosted()) {
                     $preReqs[] = 'Dataset UDI ' . $udi . ' is already set to remotely hosted.';
                 }
 
@@ -109,7 +109,6 @@ class RemotelyHostedDatasetsController extends AbstractController
                     $message = implode(', ', $preReqs);
                     $responseCode = 432;
                 } else {
-                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
                     $this->dispatchLogEvent($dataset, $this->getUser()->getUserId());
                     $message = 'Dataset UDI ' . $udi . ' has been successfully set to remotely hosted.';
                     $responseCode = Response::HTTP_OK;
@@ -145,7 +144,7 @@ class RemotelyHostedDatasetsController extends AbstractController
             $dataset = $datasets[0];
             $datasetSubmission = $dataset->getDatasetSubmission();
             if ($datasetSubmission instanceof DatasetSubmission) {
-                $responseMsg = $datasetSubmission->getDatasetFileUri();
+                $responseMsg = $datasetSubmission->getRemotelyHostedUrl();
             }
         }
 
@@ -187,7 +186,7 @@ class RemotelyHostedDatasetsController extends AbstractController
     {
         $errors = array();
 
-        if (empty($datasetSubmission->getDatasetFileUri())) {
+        if (empty($datasetSubmission->getRemotelyHostedUrl())) {
             $errors[] = 'Missing Dataset File URL.';
         }
         if (empty($datasetSubmission->getRemotelyHostedName())) {
@@ -210,7 +209,7 @@ class RemotelyHostedDatasetsController extends AbstractController
                 }
             }
         }
-        if (!in_array($datasetSubmission->getDatasetFileUri(), $distributionUrls)) {
+        if (!in_array($datasetSubmission->getRemotelyHostedUrl(), $distributionUrls)) {
             $errors[] = 'Dataset File URI does not match distribution URL.';
         }
 
