@@ -271,7 +271,8 @@ class ISOMetadataExtractorUtilTest extends TestCase
                                 'getRemotelyHostedFunction' => 'download',
                                 'getDatasetLinks' => new ArrayCollection(),
                                 'getFileset' => $this->mockFileset,
-                                'getRemotelyHostedUrl' => '/path/to'
+                                'getRemotelyHostedUrl' => '/path/to',
+                                'isMarkedRemotelyHosted' => false
                             )
                         ),
                     )
@@ -355,7 +356,8 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getDatasetFileColdStorageOriginalFilename' => 'filename.txt',
                 'getDatasetLinks' => new ArrayCollection(),
                 'getFileset' => $this->mockFileset,
-                'getRemotelyHostedUrl' => '/path/to'
+                'getRemotelyHostedUrl' => '/path/to',
+                'isMarkedRemotelyHosted' => false
             )
         );
 
