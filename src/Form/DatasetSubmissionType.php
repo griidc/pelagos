@@ -69,36 +69,11 @@ class DatasetSubmissionType extends AbstractType
                 'expanded' => true,
                 'multiple' => false,
             ))
-            ->add('datasetFileUri', Type\HiddenType::class, array(
-                'required' => true,
+            ->add('remotelyHostedUrl', Type\HiddenType::class, array(
+                'required' => false,
                 'attr' => array(
                     'data-msg-required' => 'You must provide a dataset file using one of the methods below.'
                 ),
-            ))
-            ->add('datasetFileTransferType', Type\HiddenType::class, array(
-                'required' => false,
-            ))
-            ->add('datasetFilePath', Type\TextType::class, array(
-                'label' => 'Dataset File Path',
-                'required' => false,
-                'mapped' => false,
-                'attr' => array('disabled' => 'disabled'),
-            ))
-            ->add('datasetFileForceImport', Type\CheckboxType::class, array(
-                'label' => 'import this file again from the same path',
-                'required' => false,
-                'mapped' => false,
-            ))
-            ->add('datasetFileUrl', Type\TextType::class, array(
-                'label' => 'Dataset File URL',
-                'required' => false,
-                'mapped' => false,
-                'attr' => array('data-rule-url' => true),
-            ))
-            ->add('datasetFileForceDownload', Type\CheckboxType::class, array(
-                'label' => 'download this file again from the same URL',
-                'required' => false,
-                'mapped' => false,
             ))
             ->add('shortTitle', Type\TextType::class, array(
                 'label' => 'Short Title',

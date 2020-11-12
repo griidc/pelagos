@@ -154,7 +154,7 @@ class DatalandController extends AbstractController
      * @param string    $udi       The UDI of the dataset to download.
      * @param DataStore $dataStore The data store.
      *
-     * @throws \Exception When the dataset is marked as remotely hosted, but datasetFileUri does not contain a valid URL.
+     * @throws \Exception When the dataset is marked as remotely hosted, but remotelyHostedUrl does not contain a valid URL.
      *
      * @Route("/data/{udi}/download", name="pelagos_app_ui_dataland_download")
      *
