@@ -215,6 +215,8 @@ class StatsController extends AbstractController
             $upper =  array_key_exists('range1', $range) ? $range['range1'] : null;
 
             $datasetCount = $repository->getDatasetByFileSizeRange($lower, $upper);
+            
+            dump($datasetCount);
 
             $dataSizes[] = array(
                 'label' => $range['label'],
