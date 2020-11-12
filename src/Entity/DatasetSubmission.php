@@ -595,6 +595,17 @@ class DatasetSubmission extends Entity
     protected $datasetFileName;
 
     /**
+     * The dataset file size.
+     *
+     * Legacy DB column: dataset_download_size
+     *
+     * @var integer
+     *
+     * @ORM\Column(type="bigint", nullable=true)
+     */
+    protected $datasetFileSize;
+
+    /**
      * The dataset file sha256 hash.
      *
      * Legacy DB column: fs_sha256_hash
@@ -1662,16 +1673,25 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Set the dataset file size.
+     *
+     * @param integer|null $datasetFileSize The dataset file size.
+     *
+     * @return void
+     */
+    public function setDatasetFileSize(?int $datasetFileSize)
+    {
+        $this->datasetFileSize = $datasetFileSize;
+    }
+
+    /**
      * Get the dataset file size.
      *
      * @return integer|null
      */
     public function getDatasetFileSize() : ?int
     {
-        if ($this->fileset instanceof Fileset) {
-            return $this->fileset->getFileSize();
-        }
-        return null;
+        return $this->datasetFileSize;
     }
 
     /**

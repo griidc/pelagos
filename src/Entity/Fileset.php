@@ -157,7 +157,7 @@ class Fileset extends Entity
     {
         $fileSize = 0;
 
-        foreach ($this->files as $file) {
+        foreach ($this->getProcessedFiles() as $file) {
             $fileSize += (int) $file->getFileSize();
         }
 
