@@ -69,6 +69,9 @@ class DatasetSubmissionType extends AbstractType
                 'expanded' => true,
                 'multiple' => false,
             ))
+            ->add('datasetFileTransferType', Type\HiddenType::class, array(
+                'required' => false,
+            ))
             ->add('shortTitle', Type\TextType::class, array(
                 'label' => 'Short Title',
                 'required' => false,
