@@ -2592,9 +2592,9 @@ class DatasetSubmission extends Entity
     /**
      * Getter for fileset entity.
      *
-     * @return Fileset
+     * @return Fileset|null
      */
-    public function getFileset() : Fileset
+    public function getFileset() : ? Fileset
     {
         return $this->fileset;
     }

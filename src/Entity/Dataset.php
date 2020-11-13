@@ -632,6 +632,10 @@ class Dataset extends Entity
                 } else {
                     $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
                 }
+            } else {
+                if ($this->getDatasetSubmission()->getRemotelyHostedUrl()) {
+                    $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
+                }
             }
         }
         $this->setAvailabilityStatus($availabilityStatus);
