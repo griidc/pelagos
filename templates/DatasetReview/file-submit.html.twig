@@ -30,21 +30,19 @@
                 <fieldset>
                     <table class="tab-table">
                         <tr>
-                            <td width="*">
+                            <td>
+                                {{ form_label(form.remotelyHostedUrl) }}
+                                {{ form_widget(form.remotelyHostedUrl) }}
                                 <span class="helpSection">
                                     <img class="info" src="{{ asset('build/images/info32.png') }}">
                                     <div class="tooltiptext">
-                                        <p><strong>Dataset File URL:</strong></p>
+                                        <p><strong>Remotely Hosted File URL:</strong></p>
                                         <p>This is the URL that leads to the data being submitted. Package the components of the datasets (if applicable) to form a single file (e.g. ZIP, TAR).</p>
                                         <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
                                     </div>
                                 </span>
                             </td>
                         </tr>
-                    </table>
-                </fieldset>
-                <fieldset>
-                    <table class="tab-table">
                         <tr>
                             <td>
                                 {{ form_label(form.isRemotelyHosted) }}

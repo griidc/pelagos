@@ -61,6 +61,14 @@ $(document).ready(function(){
         }
     });
 
+    // load qTip descriptions
+    $("img.info").not("#contact-prototype img.info").each(function() {
+        $(this).qtip({
+            content: {
+                text: $(this).next(".tooltiptext").clone()
+            }
+        });
+    });
 
     jQuery.validator.addClassRules('dataLinkUrl', {
         "validURL" : true,
@@ -226,7 +234,6 @@ $(document).ready(function(){
         }
     });
     document.getElementById("datasetFileTransferType").value = "upload";
-    document.getElementById("datasetFileUri").value = "dummy value";
 
     $("#temporalExtentBeginPosition").datepicker({
         dateFormat: "yy-mm-dd",
