@@ -340,6 +340,7 @@ class DatasetSubmissionTest extends TestCase
             'foobar.baz',
             $this->datasetSubmission->getDatasetFileName()
         );
+        $this->datasetSubmission->setDatasetFileSize(1234);
         $this->assertEquals(
             1234,
             $this->datasetSubmission->getDatasetFileSize()

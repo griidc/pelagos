@@ -147,9 +147,11 @@ class FilesetTest extends TestCase
     {
         $file1 = new File();
         $file1->setFileSize(100);
+        $file1->setStatus(File::FILE_DONE);
 
         $file2  = new File();
         $file2->setFileSize(200);
+        $file2->setStatus(File::FILE_DONE);
 
         $this->fileset->addFile($file1);
         $this->fileset->addFile($file2);
