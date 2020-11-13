@@ -2691,10 +2691,8 @@ class DatasetSubmission extends Entity
     public function isMarkedRemotelyHosted(): bool
     {
         $isMarked = false;
-        if (
-            $this->remotelyHostedUrl and $this->remotelyHostedName and
-            $this->remotelyHostedFunction and $this->remotelyHostedDescription
-        ) {
+        if ($this->remotelyHostedUrl and $this->remotelyHostedName and
+            $this->remotelyHostedFunction and $this->remotelyHostedDescription) {
             $isMarked = true;
         }
         return $isMarked;
