@@ -373,17 +373,19 @@ class DatasetSubmissionController extends EntityController
                 $existingFile = $fileset->getExistingFile($request->get('name'));
                 $existingFile->setStatus(FILE::FILE_DELETED);
             }
-            $newFile = new File();
-            $newFile->setFileName($request->get('name'));
-            $newFile->setFileSize($request->get('size'));
-            $newFile->setUploadedAt(new \DateTime('now'));
-            $newFile->setUploadedBy($this->getUser()->getPerson());
-            $newFile->setFilePath($request->get('path'));
-            $fileset->addFile($newFile);
-            $entityManager->persist($newFile);
-            $entityManager->flush();
+        } else {
+            $fileset = new Fileset();
+            $datasetSubmission->setFileset($fileset);
         }
-
+        $newFile = new File();
+        $newFile->setFileName($request->get('name'));
+        $newFile->setFileSize($request->get('size'));
+        $newFile->setUploadedAt(new \DateTime('now'));
+        $newFile->setUploadedBy($this->getUser()->getPerson());
+        $newFile->setFilePath($request->get('path'));
+        $fileset->addFile($newFile);
+        $entityManager->persist($newFile);
+        $entityManager->flush();
         return $this->makeNoContentResponse();
     }
 
