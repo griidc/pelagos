@@ -1,16 +1,13 @@
-{% set sftpuser=app.user.isPosix() %}
 <div>
     <fieldset> <!-- Dataset File Transfer Details -->
         <legend class="section-header">Dataset File Transfer Details</legend>
 
-        {{ form_widget(form.datasetFileUri, { attr: { class: 'ignore'} }) }}
         {{ form_widget(form.datasetFileTransferType) }}
 
-        <div style="background: transparent;" class="filetabs">
+        <div style="background: transparent;" id="filetabs">
             <ul>
                 <li datasetFileTransferType="upload"><a href="#tabs-1">Direct Upload</a></li>
-                <li datasetFileTransferType="SFTP"><a href="#tabs-2">Upload via SFTP/GridFTP</a></li>
-                <li datasetFileTransferType="HTTP"><a href="#tabs-3">Request Pull from HTTP/FTP Server</a></li>
+                <li datasetFileTransferType="HTTP"><a href="#tabs-2">Request Pull from HTTP/FTP Server</a></li>
             </ul>
 
             <div id="tabs-1"> <!-- Direct Upload -->
@@ -20,74 +17,15 @@
                 Note: Even if this window or your web browser has been closed before transfer is complete,
                 you may return to this page, select the same file, and transfer will resume where it left off.
                 <fieldset>
-                    <table class="tab-table">
-                        <tr>
-                            <span class="helpSection">
-                                <img class="info" src="{{ asset('build/images/info32.png') }}">
-                                <div class="tooltiptext">
-                                    <p>Please select from your local machine the data file for the dataset you are submitting.</p>
-                                    <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
-                                </div>
-                            </span>
-                            <td width="*">
-                                {{ form_label(form.datasetFileUri) }}
-                                {{ form.vars.value.datasetFileUri }}
-                            </td>
-                            <td width="*">
-                                {{ form_label(form.datasetFileTransferType) }}
-                                {{ form.vars.value.datasetFileTransferType }}
-                            </td>
-                        </tr>
-                    </table>
+                    <div id="dropzone-uploader" class="file-dropzone-area">
+                        <h2>Drag and Drop files here or click to upload</h2>
+                    </div>
+                    <div id="file-manager-app" data-id={{ datasetSubmission.id }}>
+                    </div>
                 </fieldset>
             </div> <!-- tabs-1 -->
 
-            <div id="tabs-2"> <!-- Upload via SFTP/GridFTP -->
-                <p>Use this method when you wish to upload the dataset file to GRIIDC (rather than place the dataset file on an HTTP (web) or FTP server and have GRIIDC pull it).
-                <strong>Note:</strong> <em>Using this method requires that you have <strong>first</strong> uploaded the file via SFTP or GridFTP.</em></p>
-                <div>
-                    <div class="sftpYes {{ sftpuser ? 'sftpshow' : 'sftphidden' }}" style="color:black;">
-                        Your account has been configured for SFTP/GridFTP access.
-                        Click <a href="https://data.gulfresearchinitiative.org/data-file-transfer-methods#SFTP" TARGET="_NEW">here</a> for instructions.</p>
-                    </div>
-                    <div class="sftpNo {{ sftpuser ? 'sftphidden' : 'sftpshow' }}" style="color:red;">
-                        <p>
-                        Your account has not been configured for SFTP/GridFTP access.
-                        If you wish to use SFTP/GridFTP, please click here to request SFTP/GridFTP access:
-                        <BUTTON id=sftpButton sftpPath={{ path('pelagos_api_account_make_posix') }} type=button>REQUEST SFTP/GridFTP</button></p>
-                    </div>
-                </div>
-                <fieldset>
-                    <table class="tab-table">
-                        <tr>
-                            <td width="*">
-                                <span class="helpSection">
-                                    <img class="info" src="{{ asset('build/images/info32.png') }}">
-                                    <div class="tooltiptext">
-                                        <p><strong>Dataset File Path:</strong></p>
-                                        <p>This is the path on the server to the data file being submitted. Click "Browse..." to find and select the data file you uploaded via SFTP/GridFTP.</p>
-                                        <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
-                                    </div>
-                                </span>
-                                <div class="fwtextboxcont">
-                                    {% if sftpuser %}
-                                        {{ form_row(form.datasetFilePath) }}
-                                    {% else %}
-                                        {{ form_row(form.datasetFilePath, { 'attr':{'disabled':'disabled'} }) }}
-                                    {% endif %}
-                                </div>
-                                <input type="button" value="Browse..." class="fileBrowserButton" data-target="#datasetFilePath" data-type="data" {{ sftpuser ? '' : 'disabled' }}>
-                                {% if showForceImport %}
-                                    <div class="file_force">
-                                        {{ form_widget(form.datasetFileForceImport) }} {{ form_label(form.datasetFileForceImport) }}
-                                    </div>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    </table>
-                </fieldset>
-            </div> <!-- tabs-2 -->
-            <div id="tabs-3"> <!-- Request Pull from HTTP/FTP Server -->
+            <div id="tabs-2"> <!-- Request Pull from HTTP/FTP Server -->
                 Use this method when you wish to place the dataset file on an HTTP (web) or FTP server at your institution (or elsewhere) and have GRIIDC pull it.
                 <fieldset>
                     <table class="tab-table">
@@ -108,11 +46,35 @@
                         </tr>
                     </table>
                 </fieldset>
-            </div> <!-- tabs-3 -->
+                <fieldset>
+                    <table class="tab-table">
+                        <tr>
+                            <td>
+                                {{ form_label(form.isRemotelyHosted) }}
+                                {{ form_widget(form.isRemotelyHosted, { 'attr': {'class': 'remotelyhosted-checkbox'} }) }}
+                            </td>
+                        </tr>
+                        <tr class="row-remotely-hosted-name">
+                            <td>
+                                {{ form_row(form.remotelyHostedName) }}
+                            </td>
+                        </tr>
+                        <tr class="row-remotely-hosted-description">
+                            <td>
+                                {{ form_row(form.remotelyHostedDescription) }}
+                            </td>
+                        </tr>
+                        <tr class="row-remotely-hosted-function">
+                            <td>
+                                {{ form_row(form.remotelyHostedFunction) }}
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </div> <!-- tabs-2 -->
 
         </div> <!-- tabs -->
     </fieldset> <!-- Dataset File Transfer Details -->
-    
     <fieldset>
         <legend class="section-header">{{ form.restrictions.vars.label }}</legend>
         <table class="tab-table">

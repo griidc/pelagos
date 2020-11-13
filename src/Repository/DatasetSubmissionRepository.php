@@ -49,7 +49,6 @@ class DatasetSubmissionRepository extends ServiceEntityRepository
             ->where('datasetSubmission.id IN (
                         SELECT MIN(subDatasetSubmission.id)
                         FROM ' . DatasetSubmission::class . ' subDatasetSubmission
-                        WHERE subDatasetSubmission.datasetFileUri is not null
                         GROUP BY subDatasetSubmission.dataset
                     )')
             ->orderBy('datasetSubmission.creationTimeStamp');
@@ -81,7 +80,6 @@ class DatasetSubmissionRepository extends ServiceEntityRepository
             ->where('datasetSubmission.id IN (
                 SELECT MIN(subDatasetSubmission.id)
                 FROM ' . DatasetSubmission::class . ' subDatasetSubmission
-                WHERE subDatasetSubmission.datasetFileUri is not null
                 AND subDatasetSubmission.datasetStatus = :metadatastatus
                 AND subDatasetSubmission.restrictions = :restrictedstatus
                 AND subDatasetSubmission.datasetFileTransferStatus = :transerstatuscompleted

@@ -69,12 +69,6 @@ class DatasetSubmissionType extends AbstractType
                 'expanded' => true,
                 'multiple' => false,
             ))
-            ->add('remotelyHostedUrl', Type\HiddenType::class, array(
-                'required' => false,
-                'attr' => array(
-                    'data-msg-required' => 'You must provide a dataset file using one of the methods below.'
-                ),
-            ))
             ->add('shortTitle', Type\TextType::class, array(
                 'label' => 'Short Title',
                 'required' => false,
@@ -158,7 +152,6 @@ class DatasetSubmissionType extends AbstractType
             ))
             ->add('temporalExtentBeginPosition', Type\DateType::class, array(
                 'label' => 'Start Date',
-                'required' => true,
                 'attr' => array('placeholder' => 'yyyy-mm-dd'),
                 'widget' => 'single_text',
                 'html5' => false,
@@ -169,7 +162,6 @@ class DatasetSubmissionType extends AbstractType
             ))
             ->add('temporalExtentEndPosition', Type\DateType::class, array(
                 'label' => 'End Date',
-                'required' => true,
                 'attr' => array('placeholder' => 'yyyy-mm-dd'),
                 'widget' => 'single_text',
                 'html5' => false,
@@ -233,6 +225,10 @@ class DatasetSubmissionType extends AbstractType
                 'allow_delete' => true,
                 'delete_empty' => true,
                 'required' => true,
+            ))
+            ->add('remotelyHostedUrl', Type\TextType::class, array(
+                'label' => 'Remotely Hosted URL',
+                'required' => false
             ))
             ->add('isRemotelyHosted', Type\CheckboxType::class, array(
                 'label' => 'Is Remotely Hosted',

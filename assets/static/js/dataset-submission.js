@@ -175,7 +175,6 @@ $(function() {
     }
 
     document.getElementById("datasetFileTransferType").value = "upload";
-    document.getElementById("datasetFileUri").value = "dummy value";
 
     $("button").button();
 
@@ -367,7 +366,7 @@ $(function() {
     });
 
     // SFTP/GridFTP and HTTP/FTP
-    $("#datasetFilePath, #datasetFileUrl").on("keyup change", function() {
+    $("#remotelyHostedUrl").on("keyup change", function() {
         $(this).valid();
         setDatasetFileUri($(this).val());
     });
