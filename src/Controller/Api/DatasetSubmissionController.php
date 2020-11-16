@@ -413,7 +413,7 @@ class DatasetSubmissionController extends EntityController
         $fileset = $datasetSubmission->getFileset();
         $newFileName = $request->get('name');
         if (!$fileset instanceof Fileset) {
-            throw new BadRequestHttpException('No fileset found for the dataset submission');
+            return false;
         }
         return $fileset->doesFileExist($newFileName);
     }
