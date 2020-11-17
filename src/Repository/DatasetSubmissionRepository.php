@@ -80,7 +80,7 @@ class DatasetSubmissionRepository extends ServiceEntityRepository
             ->where('datasetSubmission.id IN (
                 SELECT MIN(subDatasetSubmission.id)
                 FROM ' . DatasetSubmission::class . ' subDatasetSubmission
-                AND subDatasetSubmission.datasetStatus = :metadatastatus
+                WHERE subDatasetSubmission.datasetStatus = :metadatastatus
                 AND subDatasetSubmission.restrictions = :restrictedstatus
                 AND subDatasetSubmission.datasetFileTransferStatus = :transerstatuscompleted
                 GROUP BY subDatasetSubmission.dataset
