@@ -97,7 +97,7 @@ class RemotelyHostedDatasetsController extends AbstractController
                 }
 
                 // Dataset can't already be set to Remotely Hosted.
-                if ($datasetSubmission->isMarkedRemotelyHosted()) {
+                if ($datasetSubmission->isRemotelyHosted()) {
                     $preReqs[] = 'Dataset UDI ' . $udi . ' is already set to remotely hosted.';
                 }
 

@@ -593,7 +593,7 @@ class Dataset extends Entity
         $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE;
 
         // Updating availability status for datasets that are marked as REMOTELY HOSTED.
-        if ($this->getDatasetSubmission()->isMarkedRemotelyHosted()) {
+        if ($this->getDatasetSubmission()->isRemotelyHosted()) {
             if ($this->getDatasetStatus() === self::DATASET_STATUS_ACCEPTED) {
                 switch ($this->getDatasetSubmission()->getRestrictions()) {
                     case DatasetSubmission::RESTRICTION_NONE:
