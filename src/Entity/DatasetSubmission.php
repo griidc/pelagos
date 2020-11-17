@@ -564,9 +564,6 @@ class DatasetSubmission extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NotBlank(
-     *     message="The dataset submission must include a dataset file."
-     * )
      */
     protected $datasetFileUri;
 
@@ -986,9 +983,6 @@ class DatasetSubmission extends Entity
             }
 
             $this->addDistributionPoint(new DistributionPoint());
-
-            // Fileset
-            $this->setFileset(new Fileset());
         } elseif ($entity instanceof DatasetSubmission) {
             // Increment the sequence.
             $this->setSequence($entity->getDataset()->getDatasetSubmissionHistory()->first()->getSequence() + 1);
@@ -1072,21 +1066,23 @@ class DatasetSubmission extends Entity
 
                 $this->addDatasetLink($newDatasetLink);
             }
-            // Copy the fileSet
-            $newFileset = new Fileset();
-            foreach ($entity->getFileset()->getAllFiles() as $file) {
-                $newFile = new File();
-                $newFile->setFileName($file->getFileName());
-                $newFile->setFileSize($file->getFileSize());
-                $newFile->setFileSha256Hash($file->getFileSha256Hash());
-                $newFile->setUploadedAt($file->getUploadedAt());
-                $newFile->setUploadedBy($file->getUploadedBy());
-                $newFile->setDescription($file->getDescription());
-                $newFile->setFilePath($file->getFilePath());
-                $newFile->setStatus($file->getStatus());
-                $newFileset->addFile($newFile);
+            if ($entity->getFileset() instanceof Fileset) {
+                // Copy the fileSet
+                $newFileset = new Fileset();
+                foreach ($entity->getFileset()->getAllFiles() as $file) {
+                    $newFile = new File();
+                    $newFile->setFileName($file->getFileName());
+                    $newFile->setFileSize($file->getFileSize());
+                    $newFile->setFileSha256Hash($file->getFileSha256Hash());
+                    $newFile->setUploadedAt($file->getUploadedAt());
+                    $newFile->setUploadedBy($file->getUploadedBy());
+                    $newFile->setDescription($file->getDescription());
+                    $newFile->setFilePath($file->getFilePath());
+                    $newFile->setStatus($file->getStatus());
+                    $newFileset->addFile($newFile);
+                }
+                $this->setFileset($newFileset);
             }
-            $this->setFileset($newFileset);
         } else {
             throw new \Exception('Class constructor requires a DIF or a DatasetSubmission. A ' . get_class($entity) . ' was passed.');
         }
@@ -2627,9 +2623,9 @@ class DatasetSubmission extends Entity
     /**
      * Getter for fileset entity.
      *
-     * @return Fileset
+     * @return Fileset|null
      */
-    public function getFileset() : Fileset
+    public function getFileset() : ? Fileset
     {
         return $this->fileset;
     }
@@ -2713,5 +2709,20 @@ class DatasetSubmission extends Entity
     public function setRemotelyHostedUrl(?string $remotelyHostedUrl) : void
     {
         $this->remotelyHostedUrl = $remotelyHostedUrl;
+    }
+
+    /**
+     * Check if dataset submission is marked as remotely hosted.
+     *
+     * @return bool
+     */
+    public function isRemotelyHosted(): bool
+    {
+        $isMarked = false;
+        if ($this->remotelyHostedUrl and $this->remotelyHostedName and
+            $this->remotelyHostedFunction and $this->remotelyHostedDescription) {
+            $isMarked = true;
+        }
+        return $isMarked;
     }
 }

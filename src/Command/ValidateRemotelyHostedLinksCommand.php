@@ -112,7 +112,7 @@ class ValidateRemotelyHostedLinksCommand extends Command
             $datasetSubmission = $dataset->getDatasetSubmission();
 
             if ($datasetSubmission instanceof DatasetSubmission) {
-                $httpResponse = $this->urlValidation->validateUrl($datasetSubmission->getDatasetFileUri());
+                $httpResponse = $this->urlValidation->validateUrl($datasetSubmission->getRemotelyHostedUrl());
                 if ($httpResponse === true) {
                     $httpCode = 200;
                 } else {

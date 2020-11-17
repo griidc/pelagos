@@ -175,7 +175,6 @@ $(function() {
     }
 
     document.getElementById("datasetFileTransferType").value = "upload";
-    document.getElementById("datasetFileUri").value = "dummy value";
 
     $("button").button();
 
@@ -367,34 +366,12 @@ $(function() {
     });
 
     // SFTP/GridFTP and HTTP/FTP
-    $("#datasetFilePath, #datasetFileUrl").on("keyup change", function() {
-        $(this).valid();
-        setDatasetFileUri($(this).val());
-    });
-    $("#datasetFilePath, #datasetFileUrl").change(function() {
-        saveDatasetSubmission();
+    $("#remotelyHostedUrl").on("keyup change", function() {
+        if ($(this).val()) {
+            $(this).valid();
+        }
     });
 
-    // set the datasetFileUri and datasetFileTransferType
-    function setDatasetFileUri(datasetFileUri) {
-        // get the datasetFileTransferType from the active tab
-        let datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
-        // set the datasetFileTransferType
-        $("#datasetFileTransferType").val(datasetFileTransferType);
-        if (datasetFileTransferType !== "HTTP") {
-            // clear datasetFileUrl (Request Pull from HTTP/FTP Server tab)
-            $("#datasetFileUrl").val("");
-            // if datasetFileUri is set
-            if (datasetFileUri !== "") {
-                // prepend file uri prefix
-                datasetFileUri = "file://" + datasetFileUri;
-            }
-        }
-        // remove datasetFileUri error label
-        $('label.error[for="datasetFileUri"]').remove();
-        // set datasetFileUri
-        $("#datasetFileUri").val(datasetFileUri);
-    }
 
     function select2ContactPerson() {
         $(".contactperson").not("#contact-prototype .contactperson").select2({

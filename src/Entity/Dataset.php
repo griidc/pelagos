@@ -591,47 +591,52 @@ class Dataset extends Entity
             return;
         }
         $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE;
-        switch ($this->getDatasetSubmission()->getDatasetFileTransferStatus()) {
-            case DatasetSubmission::TRANSFER_STATUS_COMPLETED:
-                if ($this->getDatasetStatus() === self::DATASET_STATUS_ACCEPTED) {
-                    switch ($this->getDatasetSubmission()->getRestrictions()) {
-                        case DatasetSubmission::RESTRICTION_NONE:
-                            $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE;
-                            break;
-                        case DatasetSubmission::RESTRICTION_RESTRICTED:
-                            $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED;
-                            break;
+
+        // Updating availability status for datasets that are marked as REMOTELY HOSTED.
+        if ($this->getDatasetSubmission()->isRemotelyHosted()) {
+            if ($this->getDatasetStatus() === self::DATASET_STATUS_ACCEPTED) {
+                switch ($this->getDatasetSubmission()->getRestrictions()) {
+                    case DatasetSubmission::RESTRICTION_NONE:
+                        $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED;
+                        break;
+                    case DatasetSubmission::RESTRICTION_RESTRICTED:
+                        $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED;
+                        break;
+                }
+            } elseif ($this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE or
+                $this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_IN_REVIEW) {
+                $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
+            } else {
+                $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
+            }
+        } else {
+            // Updating availability status for datasets that are using FILE UPLOAD.
+            $fileset = $this->getDatasetSubmission()->getFileset();
+            if ($fileset instanceof Fileset) {
+                if ($fileset->isDone()) {
+                    if ($this->getDatasetStatus() === self::DATASET_STATUS_ACCEPTED) {
+                        switch ($this->getDatasetSubmission()->getRestrictions()) {
+                            case DatasetSubmission::RESTRICTION_NONE:
+                                $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE;
+                                break;
+                            case DatasetSubmission::RESTRICTION_RESTRICTED:
+                                $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED;
+                                break;
+                        }
+                    } elseif ($this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE or
+                        $this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_IN_REVIEW) {
+                        $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
+                    } else {
+                        $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
                     }
-                } elseif ($this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE or
-                    $this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_IN_REVIEW) {
-                    $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
                 } else {
-                    $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
-                }
-                break;
-            case DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED:
-                if ($this->getDatasetStatus() === self::DATASET_STATUS_ACCEPTED) {
-                    switch ($this->getDatasetSubmission()->getRestrictions()) {
-                        case DatasetSubmission::RESTRICTION_NONE:
-                            $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED;
-                            break;
-                        case DatasetSubmission::RESTRICTION_RESTRICTED:
-                            $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED;
-                            break;
-                    }
-                } elseif ($this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE or
-                    $this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_IN_REVIEW) {
-                    $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
-                } else {
-                    $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION;
-                }
-                break;
-            case DatasetSubmission::TRANSFER_STATUS_NEEDS_REVIEW:
-                if ($this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_COMPLETE or
-                    $this->getDatasetSubmission()->getStatus() === DatasetSubmission::STATUS_IN_REVIEW) {
                     $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
                 }
-                break;
+            } else {
+                if ($this->getDatasetSubmission()->getRemotelyHostedUrl()) {
+                    $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
+                }
+            }
         }
         $this->setAvailabilityStatus($availabilityStatus);
     }

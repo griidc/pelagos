@@ -198,9 +198,8 @@ class DatasetIndex
         $query->setSource(
             array(
                 'id', 'udi', 'title', 'year', 'researchGroup', 'doi', 'datasetSubmission.authors',
-                'datasetSubmission.datasetFileTransferStatus', 'datasetSubmission.datasetFileUri',
-                'datasetSubmission.datasetFileSize', 'datasetSubmission.restrictions', 'geometry',
-                'researchGroup.fundingCycle.fundingOrganization.name'
+                'datasetSubmission.datasetFileTransferStatus', 'datasetSubmission.datasetFileSize',
+                'datasetSubmission.restrictions', 'geometry', 'researchGroup.fundingCycle.fundingOrganization.name'
             )
         );
 

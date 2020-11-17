@@ -61,6 +61,14 @@ $(document).ready(function(){
         }
     });
 
+    // load qTip descriptions
+    $("img.info").not("#contact-prototype img.info").each(function() {
+        $(this).qtip({
+            content: {
+                text: $(this).next(".tooltiptext").clone()
+            }
+        });
+    });
 
     jQuery.validator.addClassRules('dataLinkUrl', {
         "validURL" : true,
@@ -226,7 +234,6 @@ $(document).ready(function(){
         }
     });
     document.getElementById("datasetFileTransferType").value = "upload";
-    document.getElementById("datasetFileUri").value = "dummy value";
 
     $("#temporalExtentBeginPosition").datepicker({
         dateFormat: "yy-mm-dd",
@@ -430,31 +437,12 @@ $(document).ready(function(){
     }
 
     // SFTP/GridFTP and HTTP/FTP
-    $("#datasetFilePath, #datasetFileUrl").on("keyup change", function() {
-        $(this).valid();
-        setDatasetFileUri($(this).val());
+    $("#remotelyHostedUrl").on("keyup change", function() {
+        if ($(this).val()) {
+            $(this).valid();
+        }
     });
 
-    // set the datasetFileUri and datasetFileTransferType
-    function setDatasetFileUri(datasetFileUri) {
-        // get the datasetFileTransferType from the active tab
-        var datasetFileTransferType = $("#filetabs .ui-tabs-active").attr("datasetFileTransferType");
-        // set the datasetFileTransferType
-        $("#datasetFileTransferType").val(datasetFileTransferType);
-        if (datasetFileTransferType !== "HTTP") {
-            // clear datasetFileUrl (Request Pull from HTTP/FTP Server tab)
-            $("#datasetFileUrl").val("");
-            // if datasetFileUri is set
-            if (datasetFileUri !== "") {
-                // prepend file uri prefix
-                datasetFileUri = "file://" + datasetFileUri;
-            }
-        }
-        // set datasetFileUri
-        $("#datasetFileUri").val(datasetFileUri);
-        $("#datasetFileUri").valid();
-
-    }
 
     $("#temporalInfoQuestion").on("change", function (e) {
         checkTemporalNilReason();

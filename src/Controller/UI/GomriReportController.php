@@ -189,7 +189,6 @@ class GomriReportController extends ReportController
             '   AND subdatasetsubmission.datasetStatus = :datasetStatus ' .
             '   AND subdatasetsubmission.restrictions = :restrictions ' .
             '   AND (subdatasetsubmission.datasetFileTransferStatus = :fileTransferStatusCompleted ' .
-            '       OR subdatasetsubmission.datasetFileTransferStatus = :fileTransferStatusRemotelyHosted) ' .
             '   GROUP BY subdatasetsubmission.dataset)' .
             'AND fundingOrganization.name = :gomri';
         $query = $entityManager->createQuery($queryString);
@@ -197,7 +196,6 @@ class GomriReportController extends ReportController
             'datasetStatus' => Dataset::DATASET_STATUS_ACCEPTED,
             'restrictions' => DatasetSubmission::RESTRICTION_NONE,
             'fileTransferStatusCompleted' => DatasetSubmission::TRANSFER_STATUS_COMPLETED,
-            'fileTransferStatusRemotelyHosted' => DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED,
             'gomri' => GOMRI_STRING,
         ));
         $results = $query->getResult();
@@ -272,7 +270,6 @@ class GomriReportController extends ReportController
             ->andWhere('ds2.datasetFileUri is not null ')
             ->andWhere('ds2.restrictions = ?3')
             ->andWhere('ds2.datasetFileTransferStatus = ?4')
-            ->orWhere('ds2.datasetFileTransferStatus = ?5')
             ->getQuery();
 
         $query = $qb
@@ -290,7 +287,6 @@ class GomriReportController extends ReportController
             ->setParameter(2, Dataset::DATASET_STATUS_ACCEPTED)
             ->setParameter(3, DatasetSubmission::RESTRICTION_NONE)
             ->setParameter(4, DatasetSubmission::TRANSFER_STATUS_COMPLETED)
-            ->setParameter(5, DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED)
             ->getQuery();
 
         $results = $query->getResult();

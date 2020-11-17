@@ -33,7 +33,6 @@ fos_elastica:
                             properties:
                                 authors: ~
                                 datasetFileTransferStatus: ~
-                                datasetFileUri: ~
                                 datasetFileSize: ~
                                 restrictions: ~
                                 placeKeywords: { boost: 3 }
