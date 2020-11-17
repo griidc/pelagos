@@ -272,7 +272,7 @@ class ISOMetadataExtractorUtilTest extends TestCase
                                 'getDatasetLinks' => new ArrayCollection(),
                                 'getFileset' => $this->mockFileset,
                                 'getRemotelyHostedUrl' => '/path/to',
-                                'isMarkedRemotelyHosted' => false
+                                'isRemotelyHosted' => false
                             )
                         ),
                     )
@@ -357,7 +357,7 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getDatasetLinks' => new ArrayCollection(),
                 'getFileset' => $this->mockFileset,
                 'getRemotelyHostedUrl' => '/path/to',
-                'isMarkedRemotelyHosted' => false
+                'isRemotelyHosted' => false
             )
         );
 

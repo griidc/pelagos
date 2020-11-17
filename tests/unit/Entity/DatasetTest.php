@@ -113,7 +113,7 @@ class DatasetTest extends TestCase
                     )
                 ),
                 'getSpatialExtent' => $this->auxMockSpatialExtensionDatasetSubmission,
-                'isMarkedRemotelyHosted' => false,
+                'isRemotelyHosted' => false,
                 'getFileset' => \Mockery::mock(
                     Fileset::class,
                     array(
@@ -167,7 +167,7 @@ class DatasetTest extends TestCase
                 'getDatasetFileTransferStatus' => null,
                 'getRestrictions' => null,
                 'getDatasetContacts' => new ArrayCollection(),
-                'isMarkedRemotelyHosted' => false,
+                'isRemotelyHosted' => false,
                 'getFileset' => \Mockery::mock(
                     Fileset::class,
                     array(
