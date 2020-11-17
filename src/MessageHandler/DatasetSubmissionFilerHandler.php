@@ -129,6 +129,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
                 DatasetSubmission::TRANSFER_STATUS_COMPLETED
             );
             $dataset->updateAvailabilityStatus();
+            $datasetSubmission->setDatasetFileSize($fileset->getFileSize());
             $this->entityManager->flush();
 
             // Dispatch message to zip files
