@@ -106,12 +106,24 @@ class DatasetSubmission extends Entity
     const TRANSFER_STATUS_ERROR = 'Error';
 
     /**
+     * Indicates the URL needs review.
+     */
+    const TRANSFER_STATUS_NEEDS_REVIEW = 'NeedsReview';
+
+    /**
+     * Indicates that the dataset is remotely hosted.
+     */
+    const TRANSFER_STATUS_REMOTELY_HOSTED = 'RemotelyHosted';
+
+    /**
      * Valid values for $datasetFileTransferStatus.
      */
     const TRANSFER_STATUSES = array(
         self::TRANSFER_STATUS_NONE => 'Not Yet Transferred',
         self::TRANSFER_STATUS_COMPLETED => 'Transfer Complete',
-        self::TRANSFER_STATUS_ERROR => 'Transfer Error'
+        self::TRANSFER_STATUS_ERROR => 'Transfer Error',
+        self::TRANSFER_STATUS_NEEDS_REVIEW => 'URL Needs Review',
+        self::TRANSFER_STATUS_REMOTELY_HOSTED => 'Remotely Hosted',
     );
 
     /**
