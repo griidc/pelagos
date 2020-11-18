@@ -58,14 +58,18 @@ class DeleteFileHandler implements MessageHandlerInterface
         Datastore $datastore,
         FileRepository $fileRepository,
         EntityManagerInterface $entityManager
-    )
-    {
+    ) {
         $this->logger = $deleteFileLogger;
         $this->datastore = $datastore;
         $this->fileRepository = $fileRepository;
         $this->entityManager = $entityManager;
     }
 
+    /**
+     * Invoke function to mark file as deleted.
+     *
+     * @param DeleteFile $deleteFile The DeleteFile message to be handled.
+     */
     public function __invoke(DeleteFile $deleteFile)
     {
         $fileId = $deleteFile->getFileId();

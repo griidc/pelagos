@@ -107,6 +107,5 @@ class Datastore
     public function renameFile(string $oldFilePath, string $newFilePath): bool
     {
         return $this->datastoreFlysystem->rename($oldFilePath, $newFilePath);
-
     }
 }
