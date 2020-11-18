@@ -21,11 +21,6 @@ class Datastore
     private $datastoreFlysystem;
 
     /**
-     * Relative path for files folder.
-     */
-    const FILES_DIRECTORY = 'files';
-
-    /**
      * Logger interface instance for Monolog default channel.
      *
      * @var LoggerInterface
@@ -67,14 +62,16 @@ class Datastore
     /**
      * Moves an uploaded file to datastore disk location.
      *
-     * @param array $fileStream File stream resource object.
+     * @param array  $fileStream      File stream resource object.
+     * @param string $destinationPath File destination path on datastore.
      *
      * @return string
      */
-    public function addFile(array $fileStream): string
+    public function addFile(array $fileStream, string $destinationPath): string
     {
-        $uuid = Uuid::uuid4();
-        $destinationPath = self::FILES_DIRECTORY . DIRECTORY_SEPARATOR . $uuid->toString();
+        $uuid = Uuid::uuid4()->toString();
+        // add only last 5 bytes of uuid to the destination path
+        $destinationPath = $destinationPath . '_' . substr($uuid, -5);
         try {
             $this->datastoreFlysystem->writeStream($destinationPath, $fileStream['fileStream']);
         } catch (FileExistsException $e) {

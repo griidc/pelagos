@@ -131,6 +131,10 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             $dataset->updateAvailabilityStatus();
             $datasetSubmission->setDatasetFileSize($fileset->getFileSize());
 
+            foreach ($fileset->getProcessedFiles() as $file) {
+                $fileIds = array();
+                $fileIds[] = $file->getId();
+            }
             // Dispatch message to zip files
             $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
             $this->messageBus->dispatch($zipFiles);
@@ -165,7 +169,10 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         $file->setStatus(File::FILE_IN_PROGRESS);
 
         try {
-            $newFileDestination = $this->datastore->addFile(['fileStream' => fopen($filepath, 'r')]);
+            $newFileDestination = $this->datastore->addFile(
+                ['fileStream' => fopen($filepath, 'r')],
+                str_replace(':', '.', $loggingContext['udi']) . DIRECTORY_SEPARATOR . $file->getFileName()
+            );
             $file->setFilePath($newFileDestination);
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to add file to datastore. Message: "%s"', $exception->getMessage()), $loggingContext);
