@@ -37,8 +37,8 @@ class FileController extends AbstractFOSRestController
     {
         $fileset = $file->getFileset();
         $fileset->removeFile($file);
-        $filePath = $file->getFilePath();
-        $deleteFileMessage = new DeleteFile($filePath);
+        $fileId = $file->getId();
+        $deleteFileMessage = new DeleteFile($fileId);
         $messageBus->dispatch($deleteFileMessage);
         $entityManager->persist($fileset);
         $entityManager->flush();

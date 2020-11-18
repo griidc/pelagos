@@ -95,4 +95,18 @@ class Datastore
     {
         return $this->datastoreFlysystem->delete($filePath);
     }
+
+    /**
+     * Renames a file on the disk.
+     *
+     * @param string $oldFilePath Old file path that needs to be renamed.
+     * @param string $newFilePath New file path for the file.
+     *
+     * @return bool
+     */
+    public function renameFile(string $oldFilePath, string $newFilePath): bool
+    {
+        return $this->datastoreFlysystem->rename($oldFilePath, $newFilePath);
+
+    }
 }
