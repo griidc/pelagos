@@ -101,7 +101,7 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
             $outputStream = array('fileStream' => fopen($destinationPath, 'w+'));
             $this->zipFiles->start($outputStream, basename($destinationPath));
             foreach ($filesInfo as $fileItemInfo) {
-                $this->zipFiles->addFile(basename($fileItemInfo['fileName']), $this->datastore->getFile($fileItemInfo['filePath']));
+                $this->zipFiles->addFile($fileItemInfo['fileName'], $this->datastore->getFile($fileItemInfo['filePath']));
             }
             $this->zipFiles->finish();
             fclose($outputStream['fileStream']);
