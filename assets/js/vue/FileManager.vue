@@ -12,7 +12,7 @@ import { DxFileManager } from "devextreme-vue/file-manager";
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
 
 const axiosInstance = axios.create({});
-let datasetSubId = null;
+let datasetSubmissionId = null;
 
 export default {
     name: "FileManager",
@@ -34,14 +34,15 @@ export default {
     },
 
     created() {
-        datasetSubId = this.datasetSubId;
+        // Assigning it to the global variable of this class so that functions outside the export can use it
+        datasetSubmissionId = this.datasetSubId;
     },
 };
 
 function getItems(pathInfo) {
     return new Promise((resolve, reject) => {
         axiosInstance
-            .get(`${Routing.generate('pelagos_api_get_files_dataset_submission')}/${datasetSubId}`)
+            .get(`${Routing.generate('pelagos_api_get_files_dataset_submission')}/${datasetSubmissionId}`)
             .then(response => {
                 resolve(response.data);
             }).catch(error => {
