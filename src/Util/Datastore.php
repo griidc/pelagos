@@ -28,6 +28,11 @@ class Datastore
     private $logger;
 
     /**
+     * String appended to filename to mark as deleted.
+     */
+    const MARK_FILE_AS_DELETED = '_DELETED';
+
+    /**
      * Datastore constructor.
      *
      * @param FilesystemInterface $datastoreFlysystem Datastore flystystem instance.
