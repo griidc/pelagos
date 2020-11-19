@@ -5,29 +5,29 @@ namespace App\Message;
 class DeleteFile
 {
     /**
-     * The file id of the file to be deleted.
+     * The file path of the file to be deleted.
      *
-     * @var integer
+     * @var string
      */
-    protected $fileId;
+    protected $filePath;
 
     /**
      * Constructor.
      *
-     * @param integer $fileId The file id of the file to be deleted.
+     * @param string $filePath The file path of the file to be deleted.
      */
-    public function __construct(int $fileId)
+    public function __construct(string $filePath)
     {
-        $this->fileId = $fileId;
+        $this->filePath = $filePath;
     }
 
     /**
-     * The file ID getter.
+     * The file path getter.
      *
-     * @return integer The file ID.
+     * @return string The file path.
      */
-    public function getFileId(): int
+    public function getFilePath(): string
     {
-        return $this->fileId;
+        return $this->filePath;
     }
 }
