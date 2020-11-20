@@ -67,18 +67,18 @@ class Datastore
     /**
      * Moves an uploaded file to datastore disk location.
      *
-     * @param array  $fileStream      File stream resource object.
-     * @param string $destinationPath File destination path on datastore.
+     * @param array  $fileStream   File stream resource object.
+     * @param string $filePathName File destination path on datastore.
      *
      * @return string
      */
-    public function addFile(array $fileStream, string $destinationPath): string
+    public function addFile(array $fileStream, string $filePathName): string
     {
         $uuid = Uuid::uuid4()->toString();
         // add only last 5 bytes of uuid to the destination path
-        $destinationPath .= '_' . substr($uuid, -5);
+        $filePathName .= '_' . substr($uuid, -5);
         try {
-            $this->datastoreFlysystem->writeStream($destinationPath, $fileStream['fileStream']);
+            $this->datastoreFlysystem->writeStream($filePathName, $fileStream['fileStream']);
         } catch (FileExistsException $e) {
             $this->logger->error(sprintf('File already exists. Message: "%s"', $e->getMessage()));
         }
@@ -86,7 +86,7 @@ class Datastore
         if (is_resource($fileStream['fileStream'])) {
             fclose($fileStream['fileStream']);
         }
-        return $destinationPath;
+        return $filePathName;
     }
 
     /**

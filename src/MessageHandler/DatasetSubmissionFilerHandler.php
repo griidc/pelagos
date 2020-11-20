@@ -106,9 +106,10 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         $datasetSubmissionId = $datasetSubmissionFiler->getDatasetSubmissionId();
         $datasetSubmission = $this->datasetSubmissionRepository->find($datasetSubmissionId);
         $dataset = $datasetSubmission->getDataset();
+        $udi = $datasetSubmission->getDataset()->getUdi();
         $loggingContext = array(
             'dataset_id' => $dataset->getId(),
-            'udi' => $datasetSubmission->getDataset()->getUdi(),
+            'udi' => $udi,
             'dataset_submission_id' => $datasetSubmissionId
         );
         $fileset = $datasetSubmission->getFileset();
@@ -118,7 +119,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             $this->logger->info('Dataset submission process started', $loggingContext);
             foreach ($fileset->getNewFiles() as $file) {
                 if ($file instanceof File) {
-                    $this->processFile($file, $loggingContext);
+                    $this->processFile($file, $loggingContext, $udi);
                     $fileIds[] = $file->getId();
                 } else {
                     $this->logger->alert('File object does not exist');
@@ -153,12 +154,13 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
     /**
      * Method to process a single file.
      *
-     * @param File  $file           The file that is being processed.
-     * @param array $loggingContext The logging context for the related dataset submission.
+     * @param File   $file           The file that is being processed.
+     * @param array  $loggingContext The logging context for the related dataset submission.
+     * @param string $udi            The UDI of the dataset.
      *
      * @return void
      */
-    private function processFile(File $file, array $loggingContext): void
+    private function processFile(File $file, array $loggingContext, string $udi): void
     {
         // Log processing start.
         $fileId = $file->getId();
@@ -171,7 +173,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         try {
             $newFileDestination = $this->datastore->addFile(
                 ['fileStream' => fopen($filepath, 'r')],
-                str_replace(':', '.', $loggingContext['udi']) . DIRECTORY_SEPARATOR . $file->getFileName()
+                str_replace(':', '.', $udi) . DIRECTORY_SEPARATOR . $file->getFileName()
             );
             $file->setFilePath($newFileDestination);
         } catch (\Exception $exception) {
