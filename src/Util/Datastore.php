@@ -76,7 +76,7 @@ class Datastore
     {
         $uuid = Uuid::uuid4()->toString();
         // add only last 5 bytes of uuid to the destination path
-        $destinationPath = $destinationPath . '_' . substr($uuid, -5);
+        $destinationPath .= '_' . substr($uuid, -5);
         try {
             $this->datastoreFlysystem->writeStream($destinationPath, $fileStream['fileStream']);
         } catch (FileExistsException $e) {
