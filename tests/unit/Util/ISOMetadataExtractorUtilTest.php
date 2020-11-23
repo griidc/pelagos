@@ -185,8 +185,8 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'setUploadedBy' => null,
                 'getDescription' => 'blah',
                 'setDescription' => 'blah',
-                'getFilePath' => 'path/to/file',
-                'setFilePath' => null,
+                'getPhysicalFilePath' => 'path/to/file',
+                'setPhysicalFilePath' => null,
                 'getStatus' => File::FILE_DONE,
                 'setStatus' => FILE::FILE_DONE
             )

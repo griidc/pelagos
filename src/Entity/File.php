@@ -47,13 +47,13 @@ class File extends Entity
     protected $fileset;
 
     /**
-     * File name.
+     * Filepath name.
      *
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
      */
-    protected $fileName;
+    protected $filePathName;
 
     /**
      * File size(bytes).
@@ -101,13 +101,13 @@ class File extends Entity
     protected $description;
 
     /**
-     * File path or location.
+     * File location on disk.
      *
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
      */
-    protected $filePath;
+    protected $physicalFilePath;
 
     /**
      * The status of this File.
@@ -143,25 +143,25 @@ class File extends Entity
     }
 
     /**
-     * Getter for File Name.
+     * Getter for Filepath Name.
      *
      * @return string|null
      */
-    public function getFileName(): ? string
+    public function getFilePathName(): ? string
     {
-        return $this->fileName;
+        return $this->filePathName;
     }
 
     /**
-     * Setter for File Name.
+     * Setter for Filepath Name.
      *
-     * @param string|null $fileName Name of the file.
+     * @param string|null $filePathName Name of the file.
      *
      * @return void
      */
-    public function setFileName(?string $fileName): void
+    public function setFilePathName(?string $filePathName): void
     {
-        $this->fileName = $fileName;
+        $this->filePathName = $filePathName;
     }
 
     /**
@@ -275,25 +275,25 @@ class File extends Entity
     }
 
     /**
-     * Getter for File path.
+     * Getter for Physical File path.
      *
      * @return string|null
      */
-    public function getFilePath(): ? string
+    public function getPhysicalFilePath(): ? string
     {
-        return $this->filePath;
+        return $this->physicalFilePath;
     }
 
     /**
-     * Setter for File path.
+     * Setter for Physical File path.
      *
-     * @param string|null $filePath Path/Location of the file.
+     * @param string|null $physicalFilePath Path/Location of the file.
      *
      * @return void
      */
-    public function setFilePath(?string $filePath): void
+    public function setPhysicalFilePath(?string $physicalFilePath): void
     {
-        $this->filePath = $filePath;
+        $this->physicalFilePath = $physicalFilePath;
     }
 
     /**

@@ -333,7 +333,7 @@ class DatasetSubmissionController extends EntityController
         if ($datasetSubmission->getFileset() instanceof Fileset) {
             foreach ($datasetSubmission->getFileset()->getProcessedFiles() as $file) {
                 $fileData[] = array(
-                    'name' => $file->getFileName(),
+                    'name' => $file->getFilePathName(),
                     'size' => $file-> getFileSize(),
                     'dateModified' => $file->getUploadedAt(),
                     'isDirectory' => false,

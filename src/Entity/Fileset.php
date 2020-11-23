@@ -144,7 +144,7 @@ class Fileset extends Entity
     public function doesFileExist(string $newFileName) : bool
     {
         return $this->files->exists(function ($key, File $file) use ($newFileName) {
-            return $file->getFileName() === $newFileName;
+            return $file->getFilePathName() === $newFileName;
         });
     }
 
