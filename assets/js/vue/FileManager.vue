@@ -1,6 +1,6 @@
 <template>
     <div>
-        <DxFileManager :file-system-provider="objectProvider">
+        <DxFileManager :file-system-provider="customFileProvider">
         </DxFileManager>
     </div>
 </template>
@@ -8,33 +8,48 @@
 <script>
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
-import {DxFileManager, DxPermissions, DxUpload} from "devextreme-vue/file-manager";
-import ObjectFileSystemProvider from "devextreme/file_management/object_provider";
+import { DxFileManager } from "devextreme-vue/file-manager";
+import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
+
+const axiosInstance = axios.create({});
+let datasetSubmissionId = null;
 
 export default {
+    name: "FileManager",
     components: {
         DxFileManager,
-        DxPermissions,
-        DxUpload
+        CustomFileSystemProvider
     },
 
     data() {
         return {
-            objectProvider: {},
-            fileManagerRefName: "fileManager",
+            customFileProvider: new CustomFileSystemProvider({
+                getItems
+            })
         };
     },
 
     props: {
-        files: {},
+        datasetSubId: {},
     },
 
     created() {
-        this.objectProvider = new ObjectFileSystemProvider({
-            data: this.files
-        });
+        // Assigning it to the global variable of this class so that functions outside the export can use it
+        datasetSubmissionId = this.datasetSubId;
     },
 };
+
+function getItems(pathInfo) {
+    return new Promise((resolve, reject) => {
+        axiosInstance
+            .get(`${Routing.generate('pelagos_api_get_files_dataset_submission')}/${datasetSubmissionId}`)
+            .then(response => {
+                resolve(response.data);
+            }).catch(error => {
+                reject(error);
+        })
+    })
+}
 </script>
 
 <style>
