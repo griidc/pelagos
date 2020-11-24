@@ -21,16 +21,16 @@ class Datastore
     private $datastoreFlysystem;
 
     /**
-     * Relative path for files folder.
-     */
-    const FILES_DIRECTORY = 'files';
-
-    /**
      * Logger interface instance for Monolog default channel.
      *
      * @var LoggerInterface
      */
     private $logger;
+
+    /**
+     * String appended to filename to mark as deleted.
+     */
+    const MARK_FILE_AS_DELETED = '_DELETED';
 
     /**
      * Datastore constructor.
@@ -67,16 +67,18 @@ class Datastore
     /**
      * Moves an uploaded file to datastore disk location.
      *
-     * @param array $fileStream File stream resource object.
+     * @param array  $fileStream   File stream resource object.
+     * @param string $filePathName File destination path on datastore.
      *
      * @return string
      */
-    public function addFile(array $fileStream): string
+    public function addFile(array $fileStream, string $filePathName): string
     {
-        $uuid = Uuid::uuid4();
-        $destinationPath = self::FILES_DIRECTORY . DIRECTORY_SEPARATOR . $uuid->toString();
+        $uuid = Uuid::uuid4()->toString();
+        // add only last 5 bytes of uuid to the destination path
+        $filePathName .= '_' . substr($uuid, -5);
         try {
-            $this->datastoreFlysystem->writeStream($destinationPath, $fileStream['fileStream']);
+            $this->datastoreFlysystem->writeStream($filePathName, $fileStream['fileStream']);
         } catch (FileExistsException $e) {
             $this->logger->error(sprintf('File already exists. Message: "%s"', $e->getMessage()));
         }
@@ -84,7 +86,7 @@ class Datastore
         if (is_resource($fileStream['fileStream'])) {
             fclose($fileStream['fileStream']);
         }
-        return $destinationPath;
+        return $filePathName;
     }
 
     /**
@@ -97,5 +99,18 @@ class Datastore
     public function deleteFile(string $filePath): bool
     {
         return $this->datastoreFlysystem->delete($filePath);
+    }
+
+    /**
+     * Renames a file on the disk.
+     *
+     * @param string $oldFilePath Old file path that needs to be renamed.
+     * @param string $newFilePath New file path for the file.
+     *
+     * @return bool
+     */
+    public function renameFile(string $oldFilePath, string $newFilePath): bool
+    {
+        return $this->datastoreFlysystem->rename($oldFilePath, $newFilePath);
     }
 }
