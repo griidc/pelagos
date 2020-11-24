@@ -10,7 +10,7 @@ class HashFile
     /**
      * The file ID of the to be hashed file.
      *
-     * @var string
+     * @var integer
      */
     protected $fileId;
 

@@ -40,7 +40,7 @@ class FileUploader
         $uploadedFile = $request->files->get('file');
         $uuid = $request->get('dzuuid');
         $chunksIndex = $request->get('dzchunkindex');
-        $chunksFolder = $this->chunksDirectory . DIRECTORY_SEPARATOR . $uuid;
+        $chunksFolder = $this->chunksDirectory . DIRECTORY_SEPARATOR . trim($uuid);
         $this->isFolder($chunksFolder);
         $uploadedFile->move(
             $chunksFolder,
@@ -71,7 +71,7 @@ class FileUploader
      */
     public function combineChunks(Request $request): array
     {
-        $uuid = $request->get('dzuuid');
+        $uuid = trim($request->get('dzuuid'));
         $fileName = $request->get('fileName');
         $totalChunks = $request->get('dztotalchunkcount');
         $fileSize = $request->get('dztotalfilesize');
@@ -80,7 +80,7 @@ class FileUploader
         //combine chunks
         $targetDirectory = $this->uploadDirectory . DIRECTORY_SEPARATOR . $uuid;
         $this->isFolder($targetDirectory);
-        $targetFile = fopen($targetDirectory . DIRECTORY_SEPARATOR . $fileName, 'wb');
+        $targetFile = fopen($targetDirectory . DIRECTORY_SEPARATOR . basename($fileName), 'wb');
         for ($i = 0; $i < $totalChunks; $i++) {
             $chunk = fopen(
                 $chunksFolder .
@@ -97,7 +97,7 @@ class FileUploader
         rmdir($chunksFolder);
 
         return array(
-            'path' => $targetDirectory . DIRECTORY_SEPARATOR . $fileName,
+            'path' => $targetDirectory . DIRECTORY_SEPARATOR . basename($fileName),
             'name' => $fileName,
             'size' => (int)$fileSize,
         );
