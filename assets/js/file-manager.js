@@ -50,11 +50,11 @@ if (fileManagerElement.dataset.id) {
             // All chunks have been uploaded. Perform any other actions
             let currentFile = file;
             const axiosInstance = axios.create({});
-            axiosInstance.get(`${Routing.generate('pelagos_api_combine_chunks')}/${datasetSubmissionId}
-                ?dzuuid=${currentFile.upload.uuid}
-                &dztotalchunkcount=${currentFile.upload.totalChunkCount}
-                &fileName=${currentFile.fullPath ? currentFile.fullPath : currentFile.name}
-                &dztotalfilesize=${currentFile.upload.total}`)
+            axiosInstance.get(`${Routing.generate('pelagos_api_combine_chunks')}/${datasetSubmissionId}` +
+                `?dzuuid=${currentFile.upload.uuid}` +
+                `&dztotalchunkcount=${currentFile.upload.totalChunkCount}` +
+                `&fileName=${currentFile.fullPath ? currentFile.fullPath : currentFile.name}` +
+                `&dztotalfilesize=${currentFile.upload.total}`)
                 .then(response => {
                     axiosInstance
                         .post(
