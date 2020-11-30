@@ -40,9 +40,10 @@ export default {
 };
 
 function getItems(pathInfo) {
+    console.log(pathInfo)
     return new Promise((resolve, reject) => {
         axiosInstance
-            .get(`${Routing.generate('pelagos_api_get_files_dataset_submission')}/${datasetSubmissionId}`)
+            .get(`${Routing.generate('pelagos_api_get_files_dataset_submission')}/${datasetSubmissionId}?path=${pathInfo.path}`)
             .then(response => {
                 resolve(response.data);
             }).catch(error => {

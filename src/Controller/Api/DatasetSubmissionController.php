@@ -309,7 +309,8 @@ class DatasetSubmissionController extends EntityController
     /**
      * Return a list of files uploaded for a dataset submission.
      *
-     * @param integer $id The id of the dataset submission.
+     * @param integer $id      The id of the dataset submission.
+     * @param Request $request The request object.
      *
      * @Route(
      *     "/api/files_dataset_submission/{id}",
@@ -323,15 +324,14 @@ class DatasetSubmissionController extends EntityController
      *
      * @return array The list of uploaded files.
      */
-    public function getFiles(int $id)
+    public function getFiles(int $id, Request $request)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         $fileData = array();
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
-
+        $pathInfo = $request->get('path');
         if ($datasetSubmission->getFileset() instanceof Fileset) {
-            foreach ($datasetSubmission->getFileset()->getProcessedFiles() as $file) {
+            foreach ($datasetSubmission->getFileset()->getFilesInDirectory($pathInfo) as $file) {
                 $fileData[] = array(
                     'name' => $file->getFileName(),
                     'size' => $file-> getFileSize(),
