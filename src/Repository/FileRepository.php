@@ -29,18 +29,18 @@ class FileRepository extends ServiceEntityRepository
     }
 
     /**
-     * Query for getting filename and fileapth.
+     * Query for getting filename and physical filepath.
      *
      * @param array $fileIds List of fileIds to be queried on.
      *
      * @return array
      */
-    public function getFileNameAndPath(array $fileIds) : array
+    public function getFilePathNameAndPhysicalPath(array $fileIds) : array
     {
         $queryBuilder = $this->createQueryBuilder('file');
 
         $queryBuilder
-            ->select('file.fileName, file.filePath')
+            ->select('file.filePathName, file.physicalFilePath')
             ->where('file.id IN (:fileIds)')
             ->setParameter('fileIds', $fileIds);
 
