@@ -378,11 +378,11 @@ class DatasetSubmissionController extends EntityController
             $datasetSubmission->setFileset($fileset);
         }
         $newFile = new File();
-        $newFile->setFileName(trim($request->get('name')));
+        $newFile->setFilePathName(trim($request->get('name')));
         $newFile->setFileSize($request->get('size'));
         $newFile->setUploadedAt(new \DateTime('now'));
         $newFile->setUploadedBy($this->getUser()->getPerson());
-        $newFile->setFilePath($request->get('path'));
+        $newFile->setPhysicalFilePath($request->get('path'));
         $fileset->addFile($newFile);
         $entityManager->persist($newFile);
         $entityManager->flush();
