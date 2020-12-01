@@ -71,7 +71,7 @@ class VirusScanHandler implements MessageHandlerInterface
         $udi = $scanFileForVirusMessage->getUdi();
         $file = $this->fileRepository->find($fileId);
         try {
-            $fileStream = $this->datastore->getFile($file->getFilePath());
+            $fileStream = $this->datastore->getFile($file->getPhysicalFilePath());
             $result = $this->scanner->scanResourceStream($fileStream);
             if ($result['status'] === QuahogClient::RESULT_FOUND) {
                 $loggingContext['fileId'] = $fileId;

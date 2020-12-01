@@ -95,13 +95,13 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
         $fileIds = $zipDatasetFiles->getFileIds();
         $datasetSubmissionId = $zipDatasetFiles->getDatasetSubmissionId();
         $datasetSubmission = $this->entityManager->getRepository(DatasetSubmission::class)->find($datasetSubmissionId);
-        $filesInfo = $this->fileRepository->getFileNameAndPath($fileIds);
-        $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR . str_replace(':', '.', $datasetSubmission->getDataset()->getUdi()) . '.zip';
+        $filesInfo = $this->fileRepository->getFilePathNameAndPhysicalPath($fileIds);
+        $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR .  str_replace(':', '.', $datasetSubmission->getDataset()->getUdi()) . '.zip';
         try {
             $outputStream = array('fileStream' => fopen($destinationPath, 'w+'));
             $this->zipFiles->start($outputStream, basename($destinationPath));
             foreach ($filesInfo as $fileItemInfo) {
-                $this->zipFiles->addFile($fileItemInfo['fileName'], $this->datastore->getFile($fileItemInfo['filePath']));
+                $this->zipFiles->addFile($fileItemInfo['filePathName'], $this->datastore->getFile($fileItemInfo['physicalFilePath']));
             }
             $this->zipFiles->finish();
             fclose($outputStream['fileStream']);

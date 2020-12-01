@@ -1071,13 +1071,13 @@ class DatasetSubmission extends Entity
                 $newFileset = new Fileset();
                 foreach ($entity->getFileset()->getAllFiles() as $file) {
                     $newFile = new File();
-                    $newFile->setFileName($file->getFileName());
+                    $newFile->setFilePathName($file->getFilePathName());
                     $newFile->setFileSize($file->getFileSize());
                     $newFile->setFileSha256Hash($file->getFileSha256Hash());
                     $newFile->setUploadedAt($file->getUploadedAt());
                     $newFile->setUploadedBy($file->getUploadedBy());
                     $newFile->setDescription($file->getDescription());
-                    $newFile->setFilePath($file->getFilePath());
+                    $newFile->setPhysicalFilePath($file->getPhysicalFilePath());
                     $newFile->setStatus($file->getStatus());
                     $newFileset->addFile($newFile);
                 }
@@ -1663,7 +1663,7 @@ class DatasetSubmission extends Entity
     public function getDatasetFileName() : ?string
     {
         if ($this->fileset instanceof Fileset) {
-            return $this->fileset->getAllFiles()->first()->getFileName();
+            return $this->fileset->getAllFiles()->first()->getFilePathName();
         }
         return null;
     }
