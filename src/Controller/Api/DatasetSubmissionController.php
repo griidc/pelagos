@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api;
 
+use App\Util\FolderStructureGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 
 use FOS\RestBundle\Controller\Annotations\View;
@@ -324,22 +325,14 @@ class DatasetSubmissionController extends EntityController
      *
      * @return array The list of uploaded files.
      */
-    public function getFiles(int $id, Request $request)
+    public function getFiles(int $id, Request $request, FolderStructureGenerator $folderStructureGenerator)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $fileData = array();
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
         $pathInfo = $request->get('path');
         if ($datasetSubmission->getFileset() instanceof Fileset) {
-            foreach ($datasetSubmission->getFileset()->getFilesInDirectory($pathInfo) as $file) {
-                $fileData[] = array(
-                    'name' => $file->getFilePathName(),
-                    'size' => $file-> getFileSize(),
-                    'dateModified' => $file->getUploadedAt(),
-                    'isDirectory' => false,
-                    'hasSubDirectories' => false
-                );
-            }
+            $fileData = $folderStructureGenerator->getFolderJson($datasetSubmission->getFileset()->getId(), $pathInfo);
         }
 
         return $fileData;
