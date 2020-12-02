@@ -330,7 +330,7 @@ class DatasetSubmissionController extends EntityController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $fileData = array();
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
-        $pathInfo = $request->get('path');
+        $pathInfo = ($request->get('path')) ? $request->get('path') : '';
         if ($datasetSubmission->getFileset() instanceof Fileset) {
             $fileData = $folderStructureGenerator->getFolderJson($datasetSubmission->getFileset()->getId(), $pathInfo);
         }
