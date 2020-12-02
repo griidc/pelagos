@@ -28,8 +28,9 @@ use App\Entity\RoleInterface;
 abstract class PelagosEntityVoter extends Voter
 {
     const CAN_CREATE = 'CAN_CREATE';
+    const CAN_DELETE = 'CAN_READ';
     const CAN_EDIT = 'CAN_EDIT';
-    const CAN_DELETE = 'CAN_DELETE';
+    const CAN_UPDATE = 'CAN_DELETE';
 
     /**
      * Does this Person have one of the Roles listed in roleNames?.
