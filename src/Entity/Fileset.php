@@ -185,6 +185,11 @@ class Fileset extends Entity
         return $this->files->matching($criteria)->first();
     }
 
+    /**
+     * Get processed and new files.
+     *
+     * @return Collection
+     */
     public function getProcessedAndNewFiles(): Collection
     {
         return $this->files->filter(function (File $file) {
@@ -202,10 +207,10 @@ class Fileset extends Entity
     public function getFilesInDirectory(string $path) : Collection
     {
         return $this->getProcessedAndNewFiles()->filter(function (File $file) use ($path) {
+            $path = ($path === '') ? '.' : $path;
             $dirName = dirname($file->getFileName());
-            if ($dirName === '.') {
-                return true;
-            } elseif ($dirName === $path) {
+            $filePathArray = explode('/', $file->getFileName());
+            if ($dirName === $path || $path === $filePathArray[0]) {
                 return true;
             }
             return false;
