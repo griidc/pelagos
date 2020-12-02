@@ -75,7 +75,7 @@ class HashFileHandler implements MessageHandlerInterface
         $this->logger->info(sprintf('Processing File with ID: %d', $fileId));
         $file = $this->fileRepository->find($fileId);
         if ($file instanceof File) {
-            $filePath = $file->getFilePath();
+            $filePath = $file->getPhysicalFilePath();
             try {
                 $storedFile = $this->dataStore->getFile($filePath);
                 $fileStream = $storedFile['fileStream'];

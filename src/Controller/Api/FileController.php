@@ -36,14 +36,14 @@ class FileController extends AbstractFOSRestController
     {
         $fileset = $file->getFileset();
         $fileset->removeFile($file);
-        $filePath = $file->getFilePath();
+        $filePath = $file->getPhysicalFilePath();
         if ($file->getStatus() === File::FILE_NEW) {
             $deleteFileMessage = new DeleteFile($filePath);
             $messageBus->dispatch($deleteFileMessage);
         } elseif ($file->getStatus() === File::FILE_DONE) {
             $newFilePath = $filePath . Datastore::MARK_FILE_AS_DELETED;
             $datastore->renameFile($filePath, $newFilePath);
-            $file->setFilePath($newFilePath);
+            $file->setPhysicalFilePath($newFilePath);
         }
 
         $entityManager->persist($fileset);

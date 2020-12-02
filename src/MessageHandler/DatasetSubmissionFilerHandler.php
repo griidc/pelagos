@@ -165,7 +165,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         // Log processing start.
         $fileId = $file->getId();
         $loggingContext['file_id'] = $fileId;
-        $filepath = $file->getFilePath();
+        $filepath = $file->getPhysicalFilePath();
 
         $this->logger->info('Dataset file processing started', $loggingContext);
         $file->setStatus(File::FILE_IN_PROGRESS);
@@ -173,9 +173,9 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         try {
             $newFileDestination = $this->datastore->addFile(
                 ['fileStream' => fopen($filepath, 'r')],
-                str_replace(':', '.', $udi) . DIRECTORY_SEPARATOR . $file->getFileName()
+                str_replace(':', '.', $udi) . DIRECTORY_SEPARATOR . $file->getFilePathName()
             );
-            $file->setFilePath($newFileDestination);
+            $file->setPhysicalFilePath($newFileDestination);
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to add file to datastore. Message: "%s"', $exception->getMessage()), $loggingContext);
             $file->setStatus(File::FILE_ERROR);
@@ -187,7 +187,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
 
         // File virus Scan
         $this->messageBus->dispatch(new ScanFileForVirus($fileId, $loggingContext['udi']));
-        $this->logger->info("Enqueuing virus scan for file: {$file->getFileName()}.", $loggingContext);
+        $this->logger->info("Enqueuing virus scan for file: {$file->getFilePathName()}.", $loggingContext);
 
         // Log processing complete.
         $this->logger->info('Dataset file processing completed', $loggingContext);

@@ -136,8 +136,8 @@ class DatasetSubmissionTest extends TestCase
             File::class,
             array(
                 'setFileset' => \Mockery::mock(Fileset::class),
-                'setFileName' => 'foobar.baz',
-                'getFileName' => 'foobar.baz',
+                'setFilePathName' => 'foobar.baz',
+                'getFilePathName' => 'foobar.baz',
                 'setFileSize' => 1234,
                 'getFileSize' => 1234,
                 'setFileSha256Hash' => 'cafe',
