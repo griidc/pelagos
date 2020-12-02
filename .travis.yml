@@ -43,6 +43,9 @@ install:
   - composer install
   - phpenv rehash
 
+before_script:
+  - phpenv config-rm xdebug.ini
+
 # Run script
 script:
   - ./vendor/bin/simple-phpunit
