@@ -44,6 +44,7 @@ install:
   - phpenv rehash
 
 before_script:
+  - echo "Disable xDebug"
   - phpenv config-rm xdebug.ini
 
 # Run script
