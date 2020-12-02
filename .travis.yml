@@ -43,7 +43,7 @@ install:
   - composer install
   - phpenv rehash
 
-before_script:
+before_install:
   - echo "Disable xDebug"
   - phpenv config-rm xdebug.ini
 
