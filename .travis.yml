@@ -40,7 +40,7 @@ env:
 # Create schema and fixtures
 install:
   - export APP_ENV=test
-  - phpenv config-rm xdebug.ini
+  - export XDEBUG_MODE=off
   - composer install
   - phpenv rehash
 
