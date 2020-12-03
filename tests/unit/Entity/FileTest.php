@@ -57,13 +57,13 @@ class FileTest extends TestCase
      *
      * @return void
      */
-    public function testCanSetAndGetFileName()
+    public function testCanSetAndGetFilePathName()
     {
         $mockFileName = 'testfile.txt';
-        $this->file->setFileName($mockFileName);
+        $this->file->setFilePathName($mockFileName);
         $this->assertEquals(
             $mockFileName,
-            $this->file->getFileName()
+            $this->file->getFilePathName()
         );
     }
 
@@ -125,13 +125,13 @@ class FileTest extends TestCase
      *
      * @return void
      */
-    public function testCanSetAndGetFilePath()
+    public function testCanSetAndGetPhysicalFilePath()
     {
         $mockFilePath = '/path/to/file';
-        $this->file->setFilePath($mockFilePath);
+        $this->file->setPhysicalFilePath($mockFilePath);
         $this->assertEquals(
             $mockFilePath,
-            $this->file->getFilePath()
+            $this->file->getPhysicalFilePath()
         );
     }
 

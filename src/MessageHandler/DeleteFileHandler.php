@@ -38,6 +38,11 @@ class DeleteFileHandler implements MessageHandlerInterface
         $this->datastore = $datastore;
     }
 
+    /**
+     * Invoke function to mark file as deleted.
+     *
+     * @param DeleteFile $deleteFile The DeleteFile message to be handled.
+     */
     public function __invoke(DeleteFile $deleteFile)
     {
         $filePath = $deleteFile->getFilePath();

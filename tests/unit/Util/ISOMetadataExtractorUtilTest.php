@@ -173,8 +173,8 @@ class ISOMetadataExtractorUtilTest extends TestCase
             File::class,
             array(
                 'setFileset' => \Mockery::mock(Fileset::class),
-                'setFileName' => 'foobar.baz',
-                'getFileName' => 'foobar.baz',
+                'setFilePathName' => 'foobar.baz',
+                'getFilePathName' => 'foobar.baz',
                 'setFileSize' => 1234,
                 'getFileSize' => 1234,
                 'setFileSha256Hash' => 'cafe',
@@ -185,8 +185,8 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'setUploadedBy' => null,
                 'getDescription' => 'blah',
                 'setDescription' => 'blah',
-                'getFilePath' => 'path/to/file',
-                'setFilePath' => null,
+                'getPhysicalFilePath' => 'path/to/file',
+                'setPhysicalFilePath' => null,
                 'getStatus' => File::FILE_DONE,
                 'setStatus' => FILE::FILE_DONE
             )
@@ -351,8 +351,6 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getRemotelyHostedFunction' => 'download',
                 'getDatasetFileUrlLastCheckedDate' => new \DateTime('now', new \DateTimeZone('UTC')),
                 'getDatasetFileUrlStatusCode' => '200',
-                'getDatasetFileColdStorageArchiveSha256Hash' => 'abc123',
-                'getDatasetFileColdStorageArchiveSize' => '100',
                 'getDatasetFileColdStorageOriginalFilename' => 'filename.txt',
                 'getDatasetLinks' => new ArrayCollection(),
                 'getFileset' => $this->mockFileset,
