@@ -207,10 +207,8 @@ class Fileset extends Entity
     public function getFilesInDirectory(string $path) : Collection
     {
         return $this->getProcessedAndNewFiles()->filter(function (File $file) use ($path) {
-            dump($path);
             $path = ($path === '') ? '.' : "$path/";
             $dirName = dirname($file->getFilePathName());
-            dump($file->getFilePathName());
             $pathPosition = strpos($file->getFilePathName(), $path);
             if ($dirName === $path || $pathPosition !== false) {
                 return true;

@@ -332,8 +332,21 @@ class DatasetSubmissionController extends EntityController
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
         $pathInfo = ($request->get('path')) ? $request->get('path') : '';
         if ($datasetSubmission->getFileset() instanceof Fileset) {
+
             $fileData = $folderStructureGenerator->getFolderJson($datasetSubmission->getFileset()->getId(), $pathInfo);
         }
+
+//        if ($datasetSubmission->getFileset() instanceof Fileset) {
+//            foreach ($datasetSubmission->getFileset()->getProcessedFiles() as $file) {
+//                $fileData[] = array(
+//                    'name' => $file->getFilePathName(),
+//                    'size' => $file-> getFileSize(),
+//                    'dateModified' => $file->getUploadedAt(),
+//                    'isDirectory' => false,
+//                    'hasSubDirectories' => false
+//                );
+//            }
+//        }
 
         return $fileData;
     }
