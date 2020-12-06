@@ -77,7 +77,7 @@ class FolderStructureGenerator
                         'name' => $filePathArray[0],
                         'isDirectory' => false,
                         'size' => $file->getFileSize(),
-                        'dateModified' => $file->getModificationTimeStamp()
+                        'dateModified' => $file->getUploadedAt()->format('m/d/Y')
                     );
                 } else {
                     $folderJson[] = array(
