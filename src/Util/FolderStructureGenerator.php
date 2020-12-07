@@ -2,7 +2,6 @@
 
 namespace App\Util;
 
-use App\Repository\FileRepository;
 use App\Repository\FilesetRepository;
 
 class FolderStructureGenerator
@@ -16,27 +15,13 @@ class FolderStructureGenerator
     protected $filesetRepository;
 
     /**
-     * An instance of a File Repository.
-     *
-     * @var FileRepository
-     */
-    protected $fileRepository;
-
-    /**
-     * Limiting the string replace to first occurrence.
-     */
-    const REPLACE_NUM_OF_OCCURRENCES = 1;
-
-    /**
      * Class constructor for FolderStructureGenerator.
      *
      * @param FilesetRepository $filesetRepository Fileset Repository instance.
-     * @param FileRepository    $fileRepository    File Repository instance.
      */
-    public function __construct(FilesetRepository $filesetRepository, FileRepository $fileRepository)
+    public function __construct(FilesetRepository $filesetRepository)
     {
         $this->filesetRepository = $filesetRepository;
-        $this->fileRepository = $fileRepository;
     }
 
     /**
@@ -51,35 +36,24 @@ class FolderStructureGenerator
     {
         $fileset = $this->filesetRepository->find($filesetId);
         $folderJson = array();
-        $folders = array();
         foreach ($fileset->getFilesInDirectory($path) as $file) {
-            if ($path) {
-                $count = self::REPLACE_NUM_OF_OCCURRENCES;
-                $filePathParts = explode('/', str_replace($path, '', $file->getFilePathName(), $count));
-                array_shift($filePathParts);
-                $folders[$file->getId()] = $filePathParts;
-            } else {
-                $folders[$file->getId()] = explode('/', $file->getFilePathName());
-            }
-        }
-
-        foreach ($folders as $fileId => $filePathArray) {
-            $isDir = count($filePathArray) > 1;
-            if (!empty($folderJson) and $folderJson[0]['name'] === $filePathArray[0]) {
+            $filePathParts = $file->getFilePathParts($path);
+            $isDir = count($filePathParts) > 1;
+            if (!empty($folderJson) and $folderJson[0]['name'] === $filePathParts[0]) {
                 continue;
             } else {
                 if (!$isDir) {
-                    $file = $this->fileRepository->find($fileId);
                     $folderJson[] = array(
-                        'name' => $filePathArray[0],
+                        'name' => $filePathParts[0],
                         'isDirectory' => false,
                         'size' => $file->getFileSize(),
                         'dateModified' => $file->getUploadedAt()->format('m/d/Y')
                     );
                 } else {
                     $folderJson[] = array(
-                        'name' => $filePathArray[0],
+                        'name' => $filePathParts[0],
                         'isDirectory' => true,
+                        'hasSubDirectories' => (count($filePathParts) > 2)
                     );
                 }
             }
