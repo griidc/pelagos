@@ -20,7 +20,10 @@ final class Version20200625131822 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
         
-        $statement = "SELECT dataset_submission.dataset_id AS id, dataset.udi AS udi FROM dataset_submission JOIN dataset ON dataset.dataset_submission_id = dataset_submission.id WHERE dataset.dataset_status NOT IN ('None');";
+        //$statement = "SELECT dataset_submission.dataset_id AS id, dataset.udi AS udi FROM dataset_submission JOIN dataset ON dataset.dataset_submission_id = dataset_submission.id WHERE dataset.dataset_status NOT IN ('None');";
+        
+        $statement = "SELECT dataset_submission.dataset_id AS id, dataset.udi AS udi FROM dataset_submission JOIN dataset ON dataset.id = dataset_submission.dataset_id WHERE dataset.dataset_status NOT IN ('None');";
+        
         $datasetSubmissions = $this->connection->fetchAll($statement);
                 
         foreach ($datasetSubmissions as $submission) {
