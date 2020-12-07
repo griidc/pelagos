@@ -4,9 +4,6 @@ namespace App\Util;
 
 use App\Repository\FileRepository;
 use App\Repository\FilesetRepository;
-use RecursiveArrayIterator;
-use RecursiveIteratorIterator;
-use SplMinHeap;
 
 class FolderStructureGenerator
 {
@@ -46,7 +43,7 @@ class FolderStructureGenerator
      * Get folder and file structure in json for File Manager.
      *
      * @param integer $filesetId Fileset id for the files.
-     * @param string $path
+     * @param string  $path      Directory path for files and folders.
      *
      * @return array
      */
@@ -87,7 +84,6 @@ class FolderStructureGenerator
                 }
             }
         }
-
         return $folderJson;
     }
 }
