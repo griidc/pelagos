@@ -39,15 +39,13 @@ class FolderStructureGenerator
         foreach ($fileset->getFilesInDirectory($path) as $file) {
             $filePathParts = $file->getFilePathParts($path);
             $isDir = count($filePathParts) > 1;
-            if (!empty($folderJson) and array_search($filePathParts[0], array_column($folderJson, 'name'))) {
-                continue;
-            } else {
+            if (!in_array($filePathParts[0], array_column($folderJson, 'name'))) {
                 if (!$isDir) {
                     $folderJson[] = array(
                         'name' => $filePathParts[0],
                         'isDirectory' => false,
                         'size' => $file->getFileSize(),
-                        'dateModified' => $file->getUploadedAt()->format('Y/m/d')
+                        'dateModified' => $file->getUploadedAt()->format('m/j/Y')
                     );
                 } else {
                     $folderJson[] = array(
@@ -56,6 +54,9 @@ class FolderStructureGenerator
                         'hasSubDirectories' => (count($filePathParts) > 2)
                     );
                 }
+            } elseif (count($filePathParts) > 2) {
+                $index = array_search($filePathParts[0], array_column($folderJson, 'name'));
+                $folderJson[$index]['hasSubDirectories'] = true;
             }
         }
         return $folderJson;
