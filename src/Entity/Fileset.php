@@ -186,6 +186,38 @@ class Fileset extends Entity
     }
 
     /**
+     * Get processed and new files.
+     *
+     * @return Collection
+     */
+    public function getProcessedAndNewFiles(): Collection
+    {
+        return $this->files->filter(function (File $file) {
+            return in_array($file->getStatus(), [FILE::FILE_NEW, FILE::FILE_DONE]);
+        });
+    }
+
+    /**
+     * Gets the files in the given directory.
+     *
+     * @param string $path Parent directory path.
+     *
+     * @return Collection
+     */
+    public function getFilesInDirectory(string $path) : Collection
+    {
+        return $this->getProcessedAndNewFiles()->filter(function (File $file) use ($path) {
+            $path = ($path === '') ? '.' : "$path/";
+            $dirName = dirname($file->getFilePathName());
+            $pathPosition = strpos($file->getFilePathName(), $path);
+            if ($dirName === $path || $pathPosition !== false) {
+                return true;
+            }
+            return false;
+        });
+    }
+
+    /**
      * Getter for zip file path.
      *
      * @return string
