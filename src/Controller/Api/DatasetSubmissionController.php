@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api;
 
+use App\Util\FolderStructureGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 
 use FOS\RestBundle\Controller\Annotations\View;
@@ -309,7 +310,9 @@ class DatasetSubmissionController extends EntityController
     /**
      * Return a list of files uploaded for a dataset submission.
      *
-     * @param integer $id The id of the dataset submission.
+     * @param integer                   $id                       The id of the dataset submission.
+     * @param Request                   $request                  The request object.
+     * @param FolderStructureGenerator  $folderStructureGenerator Folder structure generator Util class.
      *
      * @Route(
      *     "/api/files_dataset_submission/{id}",
@@ -321,28 +324,18 @@ class DatasetSubmissionController extends EntityController
      *
      * @View()
      *
-     * @return array The list of uploaded files.
+     * @return Response The list of uploaded files.
      */
-    public function getFiles(int $id)
+    public function getFiles(int $id, Request $request, FolderStructureGenerator $folderStructureGenerator): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         $fileData = array();
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
-
+        $pathInfo = ($request->get('path')) ? $request->get('path') : '';
         if ($datasetSubmission->getFileset() instanceof Fileset) {
-            foreach ($datasetSubmission->getFileset()->getProcessedFiles() as $file) {
-                $fileData[] = array(
-                    'name' => $file->getFilePathName(),
-                    'size' => $file-> getFileSize(),
-                    'dateModified' => $file->getUploadedAt(),
-                    'isDirectory' => false,
-                    'hasSubDirectories' => false
-                );
-            }
+            $fileData = $folderStructureGenerator->getFolderJson($datasetSubmission->getFileset()->getId(), $pathInfo);
         }
-
-        return $fileData;
+        return $this->makeJsonResponse($fileData);
     }
 
     /**

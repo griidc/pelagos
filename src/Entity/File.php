@@ -319,4 +319,21 @@ class File extends Entity
     {
         $this->status = $status;
     }
+
+    /**
+     * Get file path parts in an array.
+     *
+     * @param string $path The filepath which needs to exploded into parts.
+     *
+     * @return array
+     */
+    public function getFilePathParts(string $path = '') : array
+    {
+        $firstOccurrence = 1;
+        $filepath = $this->getFilePathName();
+        if ($path) {
+            $filepath = str_replace($path . '/', '', $filepath, $firstOccurrence);
+        }
+        return explode('/', $filepath);
+    }
 }
