@@ -6,6 +6,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use App\Entity\Account;
 use App\Entity\File as PelagosFile;
+use App\Entity\Person;
 use App\Entity\ResearchGroup;
 
 /**
@@ -59,9 +60,11 @@ class FileVoter extends PelagosEntityVoter
             return false;
         }
 
-        // Return TRUE if Account is of a user who's in the same Research Group.
-        $researchGroup = $dataset->getResearchGroup();
-        $memberOfResearchGroupArray = $user->getPerson()->getResearchGroups();
+        // Return TRUE if Account is of a user who's a member of the same RG as the Dataset.
+        $person = $user->getPerson();
+        if ($person instanceof Person and in_array($dataset->getResearchGroup(), $person->getResearchGroups()) {
+            return true;
+        }
 
         return false;
     }
