@@ -176,7 +176,7 @@ class Fileset extends Entity
         $criteria = Criteria::create()
             ->where(
                 new Comparison(
-                    'fileName',
+                    'filePathName',
                     Comparison::EQ,
                     $fileName
                 )
