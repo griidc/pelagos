@@ -62,7 +62,7 @@ class FileVoter extends PelagosEntityVoter
 
         // Return TRUE if Account is of a user who's a member of the same RG as the Dataset.
         $person = $user->getPerson();
-        if ($person instanceof Person and in_array($dataset->getResearchGroup(), $person->getResearchGroups()) {
+        if ($person instanceof Person and in_array($dataset->getResearchGroup(), $person->getResearchGroups())) {
             return true;
         }
 
