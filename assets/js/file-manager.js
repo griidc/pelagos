@@ -22,9 +22,6 @@ if (fileManagerElement.dataset.id) {
 
     let myDropzone = new Dropzone("div#dropzone-uploader", {
         url: Routing.generate('pelagos_api_post_chunks'),
-        init: function() {
-            this.hiddenFileInput.setAttribute("webkitdirectory", true);
-        },
         chunking: true,
         chunkSize: 1024 * 1024,
         forceChunking: true,
