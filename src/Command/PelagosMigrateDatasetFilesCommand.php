@@ -47,6 +47,7 @@ class PelagosMigrateDatasetFilesCommand extends Command
         $this
             ->setDescription('This command will migrate the datastore to the new datastore.')
             ->addOption('qf', null, InputOption::VALUE_NONE, 'Queue Dataset to Filer')
+            ->addOption('ifc', null, InputOption::VALUE_NONE, 'Do not check if dataset file exist on disk.')
         ;
     }
 
@@ -101,6 +102,8 @@ class PelagosMigrateDatasetFilesCommand extends Command
             $udi = $datasetSubmission->getDataset()->getUdi();
             
             // TODO: Run querybuild to get filename and hash and size...
+            
+            // Todo: optional NOT file exist.
             
             $file = new File();
             $file->setFilePathName($datasetSubmission->getDatasetFileName());
