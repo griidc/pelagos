@@ -1,5 +1,5 @@
 <template>
-    <div ref="dev">
+    <div>
         <DxFileManager
                 :file-system-provider="customFileProvider"
                 :on-error-occurred="onErrorOccurred"
@@ -13,6 +13,8 @@
             </DxToolbar>
             <DxContextMenu>
                 <DxItem name="upload" :visible="false"/>
+                <DxItem name="delete" :visible="true"/>
+                <DxItem name="refresh" :visible="true"/>
             </DxContextMenu>
         </DxFileManager>
     </div>
@@ -28,8 +30,6 @@ import Dropzone from "dropzone";
 const axiosInstance = axios.create({});
 let datasetSubmissionId = null;
 let destinationDir = '';
-
-initDropzone();
 
 export default {
     name: "FileManager",
@@ -59,6 +59,10 @@ export default {
     created() {
         // Assigning it to the global variable of this class so that functions outside the export can use it
         datasetSubmissionId = this.datasetSubId;
+    },
+
+    mounted() {
+        initDropzone();
     },
 
     methods: {
@@ -108,7 +112,7 @@ const uploadFileChunk = (fileData, uploadInfo, destinationDirectory) => {
     });
 }
 
-function initDropzone() {
+const initDropzone = () => {
     let myDropzone = new Dropzone("div#dropzone-uploader", {
         url: Routing.generate('pelagos_api_post_chunks'),
         chunking: true,
@@ -129,7 +133,6 @@ function initDropzone() {
                 fileName = `${destinationDir}/`;
             }
             fileName += currentFile.fullPath ?? currentFile.name;
-            console.log(destinationDir);
             axiosInstance.get(`${Routing.generate('pelagos_api_combine_chunks')}/${datasetSubmissionId}` +
                 `?dzuuid=${currentFile.upload.uuid}` +
                 `&dztotalchunkcount=${currentFile.upload.totalChunkCount}` +
