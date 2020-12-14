@@ -18,6 +18,9 @@ import Dropzone from "dropzone";
 
 const axiosInstance = axios.create({});
 let datasetSubmissionId = null;
+let destinationDir = '';
+
+initDropzone();
 
 export default {
     name: "FileManager",
@@ -78,7 +81,8 @@ const deleteItem = (item) => {
                             resolve();
                         })
                 }).catch(error => {
-                    reject(error)})
+                    reject(error)
+                })
         } else {
             reject(new Error('Cannot delete folders'));
         }
@@ -86,71 +90,74 @@ const deleteItem = (item) => {
 }
 
 const uploadFileChunk = (fileData, uploadInfo, destinationDirectory) => {
+    destinationDir = destinationDirectory.path;
     return new Promise((resolve, reject) => {
-        let myDropzone = new Dropzone("div#dropzone-uploader", {
-            url: Routing.generate('pelagos_api_post_chunks'),
-            chunking: true,
-            chunkSize: 1024 * 1024,
-            forceChunking: true,
-            parallelChunkUploads: true,
-            retryChunks: true,
-            retryChunksLimit: 3,
-            maxFileSize: 1000000,
-            autoQueue: false,
-            chunksUploaded: function (file, done) {
-                // All chunks have been uploaded. Perform any other actions
-                let currentFile = file;
-                const axiosInstance = axios.create({});
-                const fileName = () => {
-                    let fileName = '';
-                    if (destinationDirectory.path) {
-                        fileName = `${destinationDirectory.path}/`;
-                    }
-                    fileName += currentFile.fullPath ?? currentFile.name;
-                    return fileName;
-                };
-                axiosInstance.get(`${Routing.generate('pelagos_api_combine_chunks')}/${datasetSubmissionId}` +
-                    `?dzuuid=${currentFile.upload.uuid}` +
-                    `&dztotalchunkcount=${currentFile.upload.totalChunkCount}` +
-                    `&fileName=${fileName()}` +
-                    `&dztotalfilesize=${currentFile.upload.total}`)
-                    .then(response => {
-                        axiosInstance
-                            .post(
-                                Routing.generate('pelagos_api_add_file_dataset_submission')
-                                + "/"
-                                + datasetSubmissionId,
-                                response.data
-                            )
-                            .then(response => {
-                                done();
-                                resolve();
-                            }).catch(error => {
-                            currentFile.accepted = false;
-                            myDropzone._errorProcessing([currentFile], error.message);
-                        });
-                    })
-            },
-        });
-        myDropzone.on("addedfile", function (file) {
+        resolve();
+    });
+}
+
+function initDropzone() {
+    let myDropzone = new Dropzone("div#dropzone-uploader", {
+        url: Routing.generate('pelagos_api_post_chunks'),
+        chunking: true,
+        chunkSize: 1024 * 1024,
+        forceChunking: true,
+        parallelChunkUploads: true,
+        retryChunks: true,
+        retryChunksLimit: 3,
+        maxFileSize: 1000000,
+        autoQueue: false,
+        clickable: false,
+        chunksUploaded: function (file, done) {
+            // All chunks have been uploaded. Perform any other actions
+            let currentFile = file;
+            let fileName = '';
             const axiosInstance = axios.create({});
-            axiosInstance.get(
-                Routing.generate('pelagos_api_check_file_exists_dataset_submission')
-                + "/"
-                + datasetSubmissionId,
-                {
-                    params: {
-                        name: file.name
-                    }
-                }).then(response => {
-                if (response.data === false) {
-                    myDropzone.enqueueFile(file);
-                } else {
-                    alert('File already exists with same name');
+            if (destinationDir) {
+                fileName = `${destinationDir}/`;
+            }
+            fileName += currentFile.fullPath ?? currentFile.name;
+            console.log(destinationDir);
+            axiosInstance.get(`${Routing.generate('pelagos_api_combine_chunks')}/${datasetSubmissionId}` +
+                `?dzuuid=${currentFile.upload.uuid}` +
+                `&dztotalchunkcount=${currentFile.upload.totalChunkCount}` +
+                `&fileName=${fileName}` +
+                `&dztotalfilesize=${currentFile.upload.total}`)
+                .then(response => {
+                    axiosInstance
+                        .post(
+                            Routing.generate('pelagos_api_add_file_dataset_submission')
+                            + "/"
+                            + datasetSubmissionId,
+                            response.data
+                        )
+                        .then(response => {
+                            done();
+                        }).catch(error => {
+                        currentFile.accepted = false;
+                        myDropzone._errorProcessing([currentFile], error.message);
+                    });
+                })
+        },
+    });
+    myDropzone.on("addedfile", function (file) {
+        const axiosInstance = axios.create({});
+        axiosInstance.get(
+            Routing.generate('pelagos_api_check_file_exists_dataset_submission')
+            + "/"
+            + datasetSubmissionId,
+            {
+                params: {
+                    name: file.fullPath ?? file.name
                 }
-            }).catch(error => {
-                alert(error);
-            });
+            }).then(response => {
+            if (response.data === false) {
+                myDropzone.enqueueFile(file);
+            } else {
+                alert('File already exists with same name');
+            }
+        }).catch(error => {
+            alert(error);
         });
     });
 }
