@@ -5,6 +5,15 @@
                 :on-error-occurred="onErrorOccurred"
         >
             <DxPermissions :delete="true" :upload="true"/>
+            <DxToolbar>
+                <DxItem name="upload" :visible="false"/>
+                <DxItem name="refresh"/>
+                <DxItem name="separator" location="after"/>
+                <DxItem name="switchView"/>
+            </DxToolbar>
+            <DxContextMenu>
+                <DxItem name="upload" :visible="false"/>
+            </DxContextMenu>
         </DxFileManager>
     </div>
 </template>
@@ -12,7 +21,7 @@
 <script>
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
-import { DxFileManager, DxPermissions } from "devextreme-vue/file-manager";
+import { DxFileManager, DxPermissions, DxToolbar, DxItem, DxContextMenu } from "devextreme-vue/file-manager";
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
 import Dropzone from "dropzone";
 
@@ -27,6 +36,9 @@ export default {
     components: {
         DxFileManager,
         DxPermissions,
+        DxToolbar,
+        DxItem,
+        DxContextMenu,
         CustomFileSystemProvider
     },
 
