@@ -145,7 +145,7 @@ class PelagosMigrateDatasetFilesCommand extends Command
      * @param String             $dataStore         The path to the datatore.
      * @param Boolean            $queueFiler        Should this also be queued to the filer.
      */
-    function setFile(
+    protected function setFile(
         DatasetSubmission $datasetSubmission = null,
         String $dataStore,
         bool $queueFiler
@@ -155,7 +155,9 @@ class PelagosMigrateDatasetFilesCommand extends Command
 
             $fileName = "$dataStore/$udi/$udi.dat";
 
-            if (!file_exists($fileName)) return;
+            if (!file_exists($fileName)) {
+                return;
+            }
 
             $fileData = $this->getFileData($datasetSubmission);
 
@@ -189,7 +191,8 @@ class PelagosMigrateDatasetFilesCommand extends Command
      *
      * @param DatasetSubmission $datasetSubmission The Dataset Submission to process.
      */
-    function getFileData($datasetSubmission) {
+    protected function getFileData($datasetSubmission)
+    {
         $datasetSubmissionid = $datasetSubmission->getid();
 
         $qb = $this->entityManager
@@ -202,6 +205,5 @@ class PelagosMigrateDatasetFilesCommand extends Command
             ->setParameter('datasetSubmissionid', $datasetSubmissionid);
 
         return $qb->getQuery()->getResult()[0];
-
     }
 }
