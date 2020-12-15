@@ -5,3 +5,4 @@ framework:
             'App\Message\DeleteFile': async
             'App\Message\HashFile': async
             'App\Message\ScanFileForVirus': async
+            'App\Message\ZipDatasetFiles': async
