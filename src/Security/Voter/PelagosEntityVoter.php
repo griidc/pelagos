@@ -29,7 +29,6 @@ abstract class PelagosEntityVoter extends Voter
 {
     const CAN_CREATE = 'CAN_CREATE';
     const CAN_EDIT = 'CAN_EDIT';
-    const CAN_READ   = 'CAN_READ';
     const CAN_DELETE = 'CAN_DELETE';
 
     /**

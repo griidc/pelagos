@@ -30,7 +30,7 @@ class SuperUserVoter extends PelagosEntityVoter
         if (!$object instanceof Entity) {
             return false;
         }
-        if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_READ, self::CAN_EDIT, self::CAN_DELETE))) {
+        if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_DELETE))) {
             return false;
         }
         return true;
@@ -68,7 +68,7 @@ class SuperUserVoter extends PelagosEntityVoter
             $userPerson,
             $personDataRepositories,
             array(DataRepositoryRole::MANAGER)
-        ) and in_array($attribute, array(self::CAN_CREATE, self::CAN_READ, self::CAN_EDIT, self::CAN_DELETE))) {
+        ) and in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_DELETE))) {
             return true;
         }
         return false;

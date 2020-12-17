@@ -31,8 +31,8 @@ class FileVoter extends PelagosEntityVoter
             return false;
         }
 
-        // Supports CRUD.
-        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_READ, self::CAN_EDIT, self::CAN_DELETE))) {
+        // Supports CUD.
+        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_DELETE))) {
             return true;
         }
 
