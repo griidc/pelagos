@@ -8,28 +8,29 @@ const fileManagerElement = document.getElementById("file-manager-app");
 
 if (fileManagerElement.dataset.id) {
     const datasetSubmissionId = Number(fileManagerElement.dataset.id);
-        new Vue({
+    new Vue({
         el: '#file-manager-app',
         data() {
             return {
                 datasetSubmissionId: datasetSubmissionId
             }
         },
-        components: { FileManager },
-        template: `<FileManager :datasetSubId="datasetSubmissionId"/>`
+        components: {FileManager},
+        template: `
+          <FileManager :datasetSubId="datasetSubmissionId"/>`
     });
 
     let myDropzone = new Dropzone("div#dropzone-uploader", {
         url: Routing.generate('pelagos_api_post_chunks'),
         chunking: true,
-        chunkSize: 1024*1024,
+        chunkSize: 1024 * 1024,
         forceChunking: true,
         parallelChunkUploads: true,
         retryChunks: true,
         retryChunksLimit: 3,
         maxFileSize: 1000000,
         autoQueue: false,
-        chunksUploaded: function(file, done) {
+        chunksUploaded: function (file, done) {
             // All chunks have been uploaded. Perform any other actions
             let currentFile = file;
             const axiosInstance = axios.create({});
@@ -49,14 +50,14 @@ if (fileManagerElement.dataset.id) {
                         .then(response => {
                             done();
                         }).catch(error => {
-                            currentFile.accepted = false;
-                            myDropzone._errorProcessing([currentFile], error.message);
+                        currentFile.accepted = false;
+                        myDropzone._errorProcessing([currentFile], error.message);
                     });
                 })
         },
     });
 
-    myDropzone.on("addedfile", function(file) {
+    myDropzone.on("addedfile", function (file) {
         const axiosInstance = axios.create({});
 
         axiosInstance.get(
@@ -68,13 +69,13 @@ if (fileManagerElement.dataset.id) {
                     name: file.name
                 }
             }).then(response => {
-                if (response.data === false) {
-                    myDropzone.enqueueFile(file);
-                } else {
-                    alert('File already exists with same name');
-                }
-            }).catch( error => {
-                alert(error);
-            });
+            if (response.data === false) {
+                myDropzone.enqueueFile(file);
+            } else {
+                alert('File already exists with same name');
+            }
+        }).catch(error => {
+            alert(error);
+        });
     });
 }

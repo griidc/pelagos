@@ -339,6 +339,44 @@ class DatasetSubmissionController extends EntityController
     }
 
     /**
+     * Returns a single file with a path.
+     *
+     * @param DatasetSubmission $datasetSubmission The id of the dataset submission.
+     * @param Request           $request           The request object.
+     *
+     * @Route(
+     *     "/api/file_dataset_submission/{id}",
+     *     name="pelagos_api_get_file_dataset_submission",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"},
+     *     requirements={"id"="\d+"}
+     *     )
+     *
+     * @View()
+     *
+     * @return Response
+     */
+    public function getFile(DatasetSubmission $datasetSubmission, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $fileset = $datasetSubmission->getFileset();
+        $path = $request->get('path');
+        if (!$path) {
+            throw new BadRequestHttpException('Please provide a file path');
+        }
+        if ($fileset instanceof Fileset) {
+            $existingFile = $fileset->getExistingFile($path);
+            if ($existingFile instanceof File) {
+                return $this->makeJsonResponse(['id' => $existingFile->getId()]);
+            } else {
+                throw new BadRequestHttpException('No such file found');
+            }
+        } else {
+            throw new BadRequestHttpException('No files exist in this Dataset');
+        }
+    }
+
+    /**
      * Adds a file to a dataset submission.
      *
      * @param DatasetSubmission      $datasetSubmission The id of the dataset submission.
