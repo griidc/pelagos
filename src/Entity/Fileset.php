@@ -97,6 +97,16 @@ class Fileset extends Entity
     }
 
     /**
+     * Getter for DatasetSubmission.
+     *
+     * @return DatasetSubmission Associated with this Fileset.
+     */
+    public function getDatasetSubmission() : DatasetSubmission
+    {
+        return $this->datasetSubmission;
+    }
+
+    /**
      * Adder for file entity.
      *
      * @param File $file Single file to be added.
@@ -246,5 +256,15 @@ class Fileset extends Entity
     public function setZipFilePath(string $zipFilePath): void
     {
         $this->zipFilePath = $zipFilePath;
+    }
+
+    /**
+     * Setter for DatasetSubmission.
+     *
+     * @param DatasetSubmission $datasetSubmission object this fileset is associated with.
+     */
+    public function setDatasetSubmission(DatasetSubmission $datasetSubmission): void
+    {
+        $this->datasetSubmission = $datasetSubmission;
     }
 }
