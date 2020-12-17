@@ -8,7 +8,6 @@ use App\Entity\Account;
 use App\Entity\File as PelagosFile;
 use App\Entity\Person;
 use App\Entity\ResearchGroup;
-use Doctrine\ORM\EntityManager;
 
 /**
  * A voter to determine if CRUD actions possible on a File.
@@ -17,23 +16,6 @@ use Doctrine\ORM\EntityManager;
  */
 class FileVoter extends PelagosEntityVoter
 {
-    /**
-     * Class constructor.
-     *
-     * @param EntityManager $em
-     */
-    public function __construct(EntityManager $em)
-    {
-        $this->em = $em;
-    }
-
-    /**
-     * Entity manager for QB.
-     *
-     * @var EntityManager
-     */
-    protected $em;
-
     /**
      * Determine if the attribute and subject are supported by this voter.
      *
@@ -82,27 +64,14 @@ class FileVoter extends PelagosEntityVoter
         $person = $user->getPerson();
         $personsResearchGroups = $person->getResearchGroups();
         $datasetsResearchGroup = $dataset->getResearchGroup();
-        $fileset = $subject->getFileset();
 
-        // Find the linked dataset submission. Vote based on it's dataset's RG.
-        $qb = $em->createQueryBuilder();
-
-        $query = $qb
-            ->SELECT('datasetsubmission', 'ds')
-            ->FROM('\App\Entity\DatasetSubmission')
-            ->WHERE(
-                $qb->expr()->eq('ds.fileset', '?1')
-            )
-            ->setParameter(1, $fileset)
-            ->getQuery();
-
-        $datasetSubmission = $query->getSingleResult();
-
+        $datasetSubmission = $subject->getFileset()->getDatasetsubmission();
         if (!$datasetSubmission instanceof DatasetSubmission) {
             return false;
         }
-        $datasetsResearchGroup = $datasetSubmission->getDataset()->getResearchGroup();
 
+        // If at least one of the Person's RGs match the RG of the dataset, vote true.
+        $datasetsResearchGroup = $datasetSubmission->getDataset()->getResearchGroup();
         if ($person instanceof Person and in_array($datasetsResearchGroup, $personsResearchGroups)) {
             return true;
         }
