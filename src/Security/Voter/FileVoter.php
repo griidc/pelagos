@@ -101,7 +101,7 @@ class FileVoter extends PelagosEntityVoter
         if (!$datasetSubmission instanceof DatasetSubmission) {
             return false;
         }
-        $dataset = $datasetSubmission->getDataset();
+        $datasetsResearchGroup = $datasetSubmission->getDataset()->getResearchGroup();
 
         if ($person instanceof Person and in_array($datasetsResearchGroup, $personsResearchGroups)) {
             return true;
