@@ -34,6 +34,15 @@ class Fileset extends Entity
     protected $zipFilePath;
 
     /**
+     * The Datasetsubmission object the fileset relates to.
+     *
+     * @var DatasetSubmission
+     *
+     * @ORM\OneToOne(targetEntity="DatasetSubmission", cascade={"persist"}, orphanRemoval=true)
+     */
+    protected $datasetSubmission;
+
+    /**
      * Fileset constructor.
      */
     public function __construct()

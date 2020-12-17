@@ -406,6 +406,7 @@ class DatasetSubmissionController extends EntityController
             }
         } else {
             $fileset = new Fileset();
+            $fileset->setDatasetSubmission($datasetSubmission);
             $datasetSubmission->setFileset($fileset);
         }
         $newFile = new File();
