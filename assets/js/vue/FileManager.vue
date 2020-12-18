@@ -105,10 +105,12 @@ const deleteItem = (item) => {
     })
 }
 
+let outsideResolve;
+
 const uploadFileChunk = (fileData, uploadInfo, destinationDirectory) => {
     destinationDir = destinationDirectory.path;
-    return new Promise((resolve, reject) => {
-        resolve();
+    return new Promise(async(resolve, reject) => {
+        outsideResolve = resolve;
     });
 }
 
@@ -148,6 +150,7 @@ const initDropzone = () => {
                         )
                         .then(response => {
                             done();
+                            outsideResolve();
                         }).catch(error => {
                         currentFile.accepted = false;
                         myDropzone._errorProcessing([currentFile], error.message);
