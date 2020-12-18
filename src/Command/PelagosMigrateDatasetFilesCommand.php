@@ -153,7 +153,7 @@ class PelagosMigrateDatasetFilesCommand extends Command
     protected function setFile(
         String $dataStore,
         bool $queueFiler,
-        bool ignoreFileExistCheck,
+        bool $ignoreFileExistCheck,
         DatasetSubmission $datasetSubmission = null
     ) {
         if ($datasetSubmission instanceof DatasetSubmission) {
