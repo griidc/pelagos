@@ -11,7 +11,6 @@ use App\Message\DatasetSubmissionFiler;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -19,6 +18,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
 
+/**
+ * Command Class to migrate existing dataset files to new store.
+ */
 class PelagosMigrateDatasetFilesCommand extends Command
 {
     protected static $defaultName = 'pelagos:migrate-dataset-files';
@@ -42,16 +44,16 @@ class PelagosMigrateDatasetFilesCommand extends Command
      *
      * @var Array $submissionsListForFiler
      */
-    protected $submissionsListForFiler;
+    protected $submissionsListForFiler = array();
 
     /**
      * Class constructor for dependency injection.
      *
      * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
+     * @param MessageBusInterface    $messageBus    The messenger bus.
      */
     public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus)
     {
-        $this->submissionsListForFiler = array();
         $this->entityManager = $entityManager;
         $this->messageBus = $messageBus;
         // It is required to call parent constructor if
@@ -76,6 +78,8 @@ class PelagosMigrateDatasetFilesCommand extends Command
      *
      * @param InputInterface  $input  The Symfony Console Input.
      * @param OutputInterface $output The Symfony Console Output.
+     *
+     * @return int Return code.
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -84,11 +88,9 @@ class PelagosMigrateDatasetFilesCommand extends Command
         $io->title('This is is dataset Migration Tool');
 
         $queueFiler = $input->getOption('qf') ? true : false;
-        $checkFileExist = $input->getOption('ifc') ? true : false;
+        $ignoreFileExistCheck = $input->getOption('ifc') ? true : false;
 
-        $datasetRepository = $this->entityManager->getRepository(Dataset::class);
-
-        $datasets = $datasetRepository->findAll();
+        $datasets = $this->entityManager->getRepository(Dataset::class)->findAll();
 
         $io->section('Migrating Datasets Files');
 
@@ -106,12 +108,12 @@ class PelagosMigrateDatasetFilesCommand extends Command
 
             if ($status === Dataset::DATASET_STATUS_IN_REVIEW) {
                 $datasetSubmission = $dataset->getLatestDatasetReview();
-                $this->setFile($datasetSubmission, $dataStore, $queueFiler);
+                $this->setFile($dataStore, $queueFiler, $ignoreFileExistCheck, $datasetSubmission);
                 $datasetSubmission = $dataset->getDatasetSubmission();
-                $this->setFile($datasetSubmission, $dataStore, $queueFiler);
+                $this->setFile($dataStore, $queueFiler, $ignoreFileExistCheck, $datasetSubmission);
             } else {
                 $datasetSubmission = $dataset->getDatasetSubmission();
-                $this->setFile($datasetSubmission, $dataStore, $queueFiler);
+                $this->setFile($dataStore, $queueFiler, $ignoreFileExistCheck, $datasetSubmission);
             }
 
             $this->entityManager->persist($dataset);
@@ -141,21 +143,25 @@ class PelagosMigrateDatasetFilesCommand extends Command
     /**
      * Set file data for the dataset submission.
      *
-     * @param DatasetSubmission  $datasetSubmission The Dataset Submission to process.
-     * @param String             $dataStore         The path to the datatore.
-     * @param Boolean            $queueFiler        Should this also be queued to the filer.
+     * @param String             $dataStore            The path to the datatore.
+     * @param bool               $queueFiler           Should this also be queued to the filer.
+     * @param bool               $ignoreFileExistCheck If checking for file exist should be ignored.
+     * @param DatasetSubmission  $datasetSubmission    The Dataset Submission to process.
+     *
+     * @return void
      */
     protected function setFile(
-        DatasetSubmission $datasetSubmission = null,
         String $dataStore,
-        bool $queueFiler
+        bool $queueFiler,
+        bool ignoreFileExistCheck,
+        DatasetSubmission $datasetSubmission = null
     ) {
         if ($datasetSubmission instanceof DatasetSubmission) {
             $udi = $datasetSubmission->getDataset()->getUdi();
 
             $fileName = "$dataStore/$udi/$udi.dat";
 
-            if (!file_exists($fileName)) {
+            if (!file_exists($fileName) or ignoreFileExistCheck) {
                 return;
             }
 
@@ -174,8 +180,6 @@ class PelagosMigrateDatasetFilesCommand extends Command
             $file->setPhysicalFilePath($fileName);
             $file->setStatus($queueFiler ? File::FILE_NEW : File::FILE_DONE);
 
-            $fileset = $datasetSubmission->getFileset();
-
             $newFileset = new Fileset();
             $newFileset->addFile($file);
             $datasetSubmission->setFileset($newFileset);
@@ -190,10 +194,12 @@ class PelagosMigrateDatasetFilesCommand extends Command
      * Get the file data from the submission, because the settings have been forwarded.
      *
      * @param DatasetSubmission $datasetSubmission The Dataset Submission to process.
+     *
+     * @return array An array of file data fields.
      */
-    protected function getFileData($datasetSubmission)
+    protected function getFileData(DatasetSubmission $datasetSubmission)
     {
-        $datasetSubmissionid = $datasetSubmission->getid();
+        $datasetSubmissionid = $datasetSubmission->getId();
 
         $qb = $this->entityManager
             ->getRepository(DatasetSubmission::class)
