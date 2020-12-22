@@ -161,7 +161,7 @@ class PelagosMigrateDatasetFilesCommand extends Command
 
             $fileName = "$dataStore/$udi/$udi.dat";
 
-            if (!file_exists($fileName) or ignoreFileExistCheck) {
+            if (!file_exists($fileName) or $ignoreFileExistCheck) {
                 return;
             }
 
