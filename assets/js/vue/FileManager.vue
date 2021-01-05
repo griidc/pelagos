@@ -132,7 +132,7 @@ const moveItem = (item, destinationDir) => {
                     reject(error)
                 })
         } else {
-
+            reject();
         }
     })
 }
@@ -155,6 +155,8 @@ const renameItem = (item, name) => {
                 }).catch(error => {
                     reject(error)
                 })
+        } else {
+            reject();
         }
     })
 }
