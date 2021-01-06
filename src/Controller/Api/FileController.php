@@ -66,6 +66,7 @@ class FileController extends AbstractFOSRestController
      * @param File                   $file          File entity instance.
      * @param EntityManagerInterface $entityManager Entity manager interface instance.
      * @param Request                $request       The request body sent with destination directory.
+     * @param Datastore              $datastore     Datastore to manipulate the file on disk.
      *
      * @Route("/api/file/{id}", name="pelagos_api_file_update_filename", methods={"PUT"}, defaults={"_format"="json"})
      *
@@ -76,11 +77,15 @@ class FileController extends AbstractFOSRestController
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function updateFileName(File $file, EntityManagerInterface $entityManager, Request $request) : Response
+    public function updateFileName(File $file, EntityManagerInterface $entityManager, Request $request, Datastore $datastore) : Response
     {
         $newFileName = $request->get('destinationDir');
         $fileset = $file->getFileset();
         if (!$fileset->doesFileExist($newFileName)) {
+            // Rename file on disk if it is already processed
+            if ($file->getStatus() === File::FILE_DONE) {
+                $datastore->renameFile($file->getFilePathName(), $newFileName);
+            }
             $file->setFilePathName($newFileName);
             $entityManager->flush();
         } else {
