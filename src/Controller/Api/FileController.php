@@ -3,7 +3,6 @@
 namespace App\Controller\Api;
 
 use App\Entity\File;
-use App\Message\DeleteFile;
 use App\Util\Datastore;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -38,15 +37,14 @@ class FileController extends AbstractFOSRestController
         $fileset->removeFile($file);
         $filePath = $file->getPhysicalFilePath();
         if ($file->getStatus() === File::FILE_NEW) {
-            $deleteFileMessage = new DeleteFile($filePath);
-            $messageBus->dispatch($deleteFileMessage);
+            unlink($file->getPhysicalFilePath());
+            $fileset->removeFile($file);
         } elseif ($file->getStatus() === File::FILE_DONE) {
             $newFilePath = $filePath . Datastore::MARK_FILE_AS_DELETED;
             $datastore->renameFile($filePath, $newFilePath);
             $file->setPhysicalFilePath($newFilePath);
         }
 
-        $entityManager->persist($fileset);
         $entityManager->flush();
 
         return new Response(
