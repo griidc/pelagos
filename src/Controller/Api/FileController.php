@@ -38,6 +38,7 @@ class FileController extends AbstractFOSRestController
         $filePath = $file->getPhysicalFilePath();
         if ($file->getStatus() === File::FILE_NEW) {
             unlink($file->getPhysicalFilePath());
+            rmdir(dirname($file->getPhysicalFilePath()));
             $fileset->removeFile($file);
         } elseif ($file->getStatus() === File::FILE_DONE) {
             $newFilePath = $filePath . Datastore::MARK_FILE_AS_DELETED;
