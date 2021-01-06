@@ -104,7 +104,7 @@ class FileController extends AbstractFOSRestController
     }
 
     /**
-     * Update a file entity.
+     * Download a file from disk.
      *
      * @param File                   $file          File entity instance.
      * @param Datastore              $datastore     Datastore to manipulate the file on disk.
