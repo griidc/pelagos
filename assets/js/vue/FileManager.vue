@@ -8,7 +8,8 @@
                 :delete="true"
                 :upload="true"
                 :move="true"
-                :rename="true"/>
+                :rename="true"
+                :download="true"/>
             <DxToolbar>
                 <DxItem name="upload" :visible="false"/>
                 <DxItem name="refresh"/>
@@ -21,6 +22,7 @@
                 <DxItem name="refresh" :visible="true"/>
                 <DxItem name="move" :visible="true"/>
                 <DxItem name="rename" :visible="true"/>
+                <DxItem name="download" :visible="true"/>
             </DxContextMenu>
         </DxFileManager>
     </div>
@@ -55,7 +57,8 @@ export default {
                 deleteItem,
                 uploadFileChunk,
                 moveItem,
-                renameItem
+                renameItem,
+                downloadItems
             })
         };
     },
@@ -161,6 +164,32 @@ const renameItem = (item, name) => {
     })
 }
 
+const downloadItems = (items) => {
+    return new Promise((resolve, reject) => {
+        items.forEach(item => {
+            axiosInstance
+                .get(`${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`)
+                .then(response => {
+                    axiosInstance({
+                        url: `${Routing.generate('pelagos_api_file_download')}/${response.data.id}`,
+                        method: 'GET',
+                        responseType: 'blob', // important
+                    }).then((response) => {
+                        const url = window.URL.createObjectURL(new Blob([response.data]));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', getFileNameFromHeader(response.headers));
+                        document.body.appendChild(link);
+                        link.click();
+                    }).then(() => {
+                        resolve();
+                    });
+                }).catch(error => {
+                    reject(error)
+                })
+        })
+    })
+}
 
 const uploadFileChunk = (fileData, uploadInfo, destinationDirectory) => {
     destinationDir = destinationDirectory.path;
@@ -232,6 +261,19 @@ const initDropzone = () => {
             alert(error);
         });
     });
+}
+
+const getFileNameFromHeader = (headers) => {
+    let filename = "";
+    let disposition = headers['content-disposition'];
+    if (disposition && disposition.indexOf('attachment') !== -1) {
+        let filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+        let matches = filenameRegex.exec(disposition);
+        if (matches != null && matches[1]) {
+            filename = matches[1].replace(/['"]/g, '');
+        }
+    }
+    return filename;
 }
 
 </script>
