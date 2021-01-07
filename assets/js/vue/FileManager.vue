@@ -3,6 +3,7 @@
         <DxFileManager
                 :file-system-provider="customFileProvider"
                 :on-error-occurred="onErrorOccurred"
+                :on-selection-changed="onSelectionChanged"
         >
             <DxPermissions
                 :delete="true"
@@ -16,14 +17,6 @@
                 <DxItem name="separator" location="after"/>
                 <DxItem name="switchView"/>
             </DxToolbar>
-            <DxContextMenu>
-                <DxItem name="upload" :visible="false"/>
-                <DxItem name="delete" :visible="true"/>
-                <DxItem name="refresh" :visible="true"/>
-                <DxItem name="move" :visible="true"/>
-                <DxItem name="rename" :visible="true"/>
-                <DxItem name="download" :visible="true"/>
-            </DxContextMenu>
         </DxFileManager>
     </div>
 </template>
@@ -38,6 +31,16 @@ import Dropzone from "dropzone";
 const axiosInstance = axios.create({});
 let datasetSubmissionId = null;
 let destinationDir = '';
+
+let contextMenuItems = [
+    "delete",
+    "refresh",
+    "move",
+    "rename",
+    "download"
+];
+
+let itemsChanged = false;
 
 export default {
     name: "FileManager",
@@ -80,6 +83,26 @@ export default {
         onErrorOccurred: function(e) {
             e.errorText = 'Cannot delete folders';
             return e;
+        },
+
+        onSelectionChanged: function (args) {
+            const isDirectory = (fileItem) => {
+                return fileItem.isDirectory;
+            }
+            if (args.selectedItems.find(isDirectory)) {
+                args.component.option('contextMenu.items', this.filterMenuItems());
+            } else {
+                args.component.option('contextMenu.items', contextMenuItems);
+            }
+
+        },
+
+        filterMenuItems: function () {
+            return contextMenuItems.filter(item => {
+                if (item === 'delete' || item === 'refresh' || item === 'move' || item === 'rename') {
+                    return item;
+                }
+            })
         }
     }
 };
