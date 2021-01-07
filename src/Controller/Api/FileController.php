@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -29,6 +30,8 @@ class FileController extends AbstractFOSRestController
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      * @IsGranted("CAN_DELETE", subject="file")
      *
+     * @throws BadRequestHttpException When a File cannot be deleted.
+     *
      * @return Response A response object with an empty body and a "no content" status code.
      */
     public function deleteFile(File $file, MessageBusInterface $messageBus, EntityManagerInterface $entityManager, Datastore $datastore)
@@ -37,9 +40,13 @@ class FileController extends AbstractFOSRestController
         $fileset->removeFile($file);
         $filePath = $file->getPhysicalFilePath();
         if ($file->getStatus() === File::FILE_NEW) {
-            unlink($file->getPhysicalFilePath());
-            rmdir(dirname($file->getPhysicalFilePath()));
-            $fileset->removeFile($file);
+            $deleteFile = unlink($file->getPhysicalFilePath());
+            $deleteFolder = rmdir(dirname($file->getPhysicalFilePath()));
+            if ($deleteFile and $deleteFolder) {
+                $fileset->removeFile($file);
+            } else {
+                throw new BadRequestHttpException('Unable to delete file');
+            }
         } elseif ($file->getStatus() === File::FILE_DONE) {
             $newFilePath = $filePath . Datastore::MARK_FILE_AS_DELETED;
             $datastore->renameFile($filePath, $newFilePath);
