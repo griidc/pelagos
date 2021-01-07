@@ -53,10 +53,7 @@ class FileController extends AbstractFOSRestController
 
         return new Response(
             null,
-            Response::HTTP_OK,
-            array(
-                'Content-Type' => 'application/x-empty',
-            )
+            Response::HTTP_NO_CONTENT
         );
     }
 
@@ -84,7 +81,7 @@ class FileController extends AbstractFOSRestController
         if (!$fileset->doesFileExist($newFileName)) {
             // Rename file on disk if it is already processed
             if ($file->getStatus() === File::FILE_DONE) {
-                $datastore->renameFile($file->getFilePathName(), $newFileName);
+                $datastore->renameFile($file->getPhysicalFilePath(), $newFileName);
             }
             $file->setFilePathName($newFileName);
             $entityManager->flush();
@@ -94,10 +91,7 @@ class FileController extends AbstractFOSRestController
 
         return new Response(
             null,
-            Response::HTTP_OK,
-            array(
-                'Content-Type' => 'application/x-empty',
-            )
+            Response::HTTP_NO_CONTENT
         );
     }
 }

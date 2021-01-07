@@ -74,11 +74,8 @@ class Datastore
      */
     public function addFile(array $fileStream, string $filePathName): string
     {
-        $uuid = Uuid::uuid4()->toString();
-        // add only last 5 bytes of uuid to the destination path
-        $filePathName .= '_' . substr($uuid, -5);
         try {
-            $this->datastoreFlysystem->writeStream($filePathName, $fileStream['fileStream']);
+            $this->datastoreFlysystem->writeStream($this->makeFileName($filePathName), $fileStream['fileStream']);
         } catch (FileExistsException $e) {
             $this->logger->error(sprintf('File already exists. Message: "%s"', $e->getMessage()));
         }
@@ -111,6 +108,22 @@ class Datastore
      */
     public function renameFile(string $oldFilePath, string $newFilePath): bool
     {
-        return $this->datastoreFlysystem->rename($oldFilePath, $newFilePath);
+        return $this->datastoreFlysystem->rename($oldFilePath, $this->makeFileName($newFilePath));
+    }
+
+    /**
+     * Makes a unique filename.
+     *
+     * @param string $fileName Filename that needs to be made unique.
+     *
+     * @return string
+     */
+    private function makeFileName(string $fileName) : string
+    {
+        $uuid = Uuid::uuid4()->toString();
+        // add only last 5 bytes of uuid to the destination path
+        $fileName .= '_' . substr($uuid, -5);
+
+        return $fileName;
     }
 }
