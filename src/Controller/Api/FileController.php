@@ -44,7 +44,7 @@ class FileController extends AbstractFOSRestController
             $messageBus->dispatch($deleteFileMessage);
         } elseif ($file->getStatus() === File::FILE_DONE) {
             $newFilePath = $filePath . Datastore::MARK_FILE_AS_DELETED;
-            $datastore->renameFile($filePath, $newFilePath);
+            $newFilePath = $datastore->renameFile($filePath, $newFilePath);
             $file->setPhysicalFilePath($newFilePath);
         }
 
@@ -81,7 +81,8 @@ class FileController extends AbstractFOSRestController
         if (!$fileset->doesFileExist($newFileName)) {
             // Rename file on disk if it is already processed
             if ($file->getStatus() === File::FILE_DONE) {
-                $datastore->renameFile($file->getPhysicalFilePath(), $newFileName);
+                $newPhysicalFilePath = $datastore->renameFile($file->getPhysicalFilePath(), $newFileName);
+                $file->setPhysicalFilePath($newPhysicalFilePath);
             }
             $file->setFilePathName($newFileName);
             $entityManager->flush();

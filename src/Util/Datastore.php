@@ -74,8 +74,9 @@ class Datastore
      */
     public function addFile(array $fileStream, string $filePathName): string
     {
+        $newFilePathName = $this->makeFileName($filePathName);
         try {
-            $this->datastoreFlysystem->writeStream($this->makeFileName($filePathName), $fileStream['fileStream']);
+            $this->datastoreFlysystem->writeStream($newFilePathName, $fileStream['fileStream']);
         } catch (FileExistsException $e) {
             $this->logger->error(sprintf('File already exists. Message: "%s"', $e->getMessage()));
         }
@@ -83,7 +84,7 @@ class Datastore
         if (is_resource($fileStream['fileStream'])) {
             fclose($fileStream['fileStream']);
         }
-        return $filePathName;
+        return $newFilePathName;
     }
 
     /**
@@ -104,11 +105,13 @@ class Datastore
      * @param string $oldFilePath Old file path that needs to be renamed.
      * @param string $newFilePath New file path for the file.
      *
-     * @return bool
+     * @return string
      */
-    public function renameFile(string $oldFilePath, string $newFilePath): bool
+    public function renameFile(string $oldFilePath, string $newFilePath): string
     {
-        return $this->datastoreFlysystem->rename($oldFilePath, $this->makeFileName($newFilePath));
+        $newPhysicalPathName = $this->makeFileName($newFilePath);
+        $this->datastoreFlysystem->rename($oldFilePath, $newPhysicalPathName);
+        return $newPhysicalPathName;
     }
 
     /**
