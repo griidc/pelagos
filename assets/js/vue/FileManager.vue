@@ -2,7 +2,6 @@
     <div>
         <DxFileManager
                 :file-system-provider="customFileProvider"
-                :on-error-occurred="onErrorOccurred"
         >
             <DxPermissions :delete="true" :upload="true"/>
             <DxToolbar>
@@ -65,12 +64,6 @@ export default {
         initDropzone();
     },
 
-    methods: {
-        onErrorOccurred: function(e) {
-            e.errorText = 'Cannot delete folders';
-            return e;
-        }
-    }
 };
 
 const getItems = (pathInfo) => {
@@ -100,7 +93,18 @@ const deleteItem = (item) => {
                     reject(error)
                 })
         } else {
-            reject(new Error('Cannot delete folders'));
+            axiosInstance
+                .get(`${Routing.generate('pelagos_api_get_file_ids_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`)
+                .then(response => {
+                    console.log(response.data);
+                    response.data.forEach(id => {
+                        axiosInstance.delete(`${Routing.generate('pelagos_api_datasets_delete')}/${id}`);
+                    })
+                }).then(() => {
+                    resolve();
+                }).catch(error => {
+                    reject(error)
+                })
         }
     })
 }
