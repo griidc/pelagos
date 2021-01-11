@@ -34,15 +34,6 @@ class Fileset extends Entity
     protected $zipFilePath;
 
     /**
-     * The Datasetsubmission object the fileset relates to.
-     *
-     * @var DatasetSubmission
-     *
-     * @ORM\OneToOne(targetEntity="DatasetSubmission", cascade={"persist"}, orphanRemoval=true)
-     */
-    protected $datasetSubmission;
-
-    /**
      * Fileset constructor.
      */
     public function __construct()
@@ -94,16 +85,6 @@ class Fileset extends Entity
         return $this->files->filter(function (File $file) {
             return $file->getStatus() === File::FILE_DELETED;
         });
-    }
-
-    /**
-     * Getter for DatasetSubmission.
-     *
-     * @return DatasetSubmission Associated with this Fileset.
-     */
-    public function getDatasetSubmission() : DatasetSubmission
-    {
-        return $this->datasetSubmission;
     }
 
     /**
@@ -256,15 +237,5 @@ class Fileset extends Entity
     public function setZipFilePath(string $zipFilePath): void
     {
         $this->zipFilePath = $zipFilePath;
-    }
-
-    /**
-     * Setter for DatasetSubmission.
-     *
-     * @param DatasetSubmission $datasetSubmission object this fileset is associated with.
-     */
-    public function setDatasetSubmission(DatasetSubmission $datasetSubmission): void
-    {
-        $this->datasetSubmission = $datasetSubmission;
     }
 }
