@@ -105,7 +105,7 @@ const deleteItem = (item) => {
                 .get(`${Routing.generate('pelagos_api_get_file_ids_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`)
                 .then(response => {
                     response.data.forEach(id => {
-                        axiosInstance.delete(`${Routing.generate('pelagos_api_datasets_delete')}/${id}`);
+                        axiosInstance.delete(`${Routing.generate('pelagos_api_file_delete')}/${id}`);
                     })
                 }).then(() => {
                     resolve();
