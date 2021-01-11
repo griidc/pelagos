@@ -1,5 +1,18 @@
 <template>
     <div>
+        <div class="progress-bar" style="text-align: center;">
+            <div class="progress-info">
+                {{ progressStatus }}
+            </div>
+            <DxProgressBar
+              id="progress-bar-status"
+              :min="0"
+              :max="100"
+              :status-format="statusFormat"
+              :value="progressValue"
+              width="100%"
+            />
+        </div>
         <DxFileManager
                 :file-system-provider="customFileProvider"
                 :on-error-occurred="onErrorOccurred"
@@ -24,12 +37,17 @@
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import { DxFileManager, DxPermissions, DxToolbar, DxItem, DxContextMenu } from "devextreme-vue/file-manager";
+import { DxProgressBar } from 'devextreme-vue/progress-bar';
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
 import Dropzone from "dropzone";
 
 const axiosInstance = axios.create({});
 let datasetSubmissionId = null;
 let destinationDir = '';
+
+function statusFormat(value) {
+  return `Loading: ${ value * 100 }%`;
+}
 
 export default {
     name: "FileManager",
@@ -39,7 +57,8 @@ export default {
         DxToolbar,
         DxItem,
         DxContextMenu,
-        CustomFileSystemProvider
+        CustomFileSystemProvider,
+        DxProgressBar
     },
 
     data() {
@@ -48,8 +67,18 @@ export default {
                 getItems,
                 deleteItem,
                 uploadFileChunk
-            })
+            }),
+            statusFormat
         };
+    },
+    
+    computed: {
+        progressValue() {
+            return 50;
+        },
+        progressStatus() {
+            return "Uploading"
+        }
     },
 
     props: {
@@ -105,10 +134,12 @@ const deleteItem = (item) => {
     })
 }
 
+let fileManagerResolve;
+
 const uploadFileChunk = (fileData, uploadInfo, destinationDirectory) => {
     destinationDir = destinationDirectory.path;
     return new Promise((resolve, reject) => {
-        resolve();
+        fileManagerResolve = resolve;
     });
 }
 
@@ -153,7 +184,7 @@ const initDropzone = () => {
                         myDropzone._errorProcessing([currentFile], error.message);
                     });
                 })
-        },
+        }
     });
     myDropzone.on("addedfile", function (file) {
         const axiosInstance = axios.create({});
@@ -175,6 +206,18 @@ const initDropzone = () => {
             alert(error);
         });
     });
+    
+    myDropzone.on("totaluploadprogress", function (uploadProgress, totalBytes, totalBytesSent) {
+        console.log(uploadProgress);
+        console.log(totalBytes);
+        console.log(totalBytesSent);
+        
+        if (uploadProgress == 100) {
+            fileManagerResolve.resolve();
+            this.removeAllFiles();
+        }
+    });
+
 }
 
 </script>
