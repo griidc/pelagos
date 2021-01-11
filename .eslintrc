@@ -1,6 +1,8 @@
 {
     "env": {
-        "browser": true
+        "browser": true,
+        "es6": true,
+        "node" : true
     },
     "globals": {
         "$": 2,
@@ -36,9 +38,19 @@
                 "OpenLayers.Bounds.fromArray"
             ]
         }],
-        "quotes": [2, "double", "avoid-escape"]
+        "quotes": [2, "double", "avoid-escape"],
+        "no-unused-vars" : 2,
+        "no-undef" : 2
     },
     "plugins": [
         "shadow-exception"
-    ]
+    ],
+    "ecmaFeatures": {
+        "modules": true,
+        "spread" : true,
+        "restParams" : true
+    },
+    "parserOptions": {
+        "sourceType": "module"
+    }
 }
