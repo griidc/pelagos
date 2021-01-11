@@ -7,6 +7,7 @@ use App\Util\Datastore;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -25,7 +26,7 @@ class FileController extends AbstractFOSRestController
      * @param EntityManagerInterface $entityManager Entity manager interface instance.
      * @param Datastore              $datastore     Datastore to manipulate the file on disk.
      *
-     * @Route("/api/file/{id}", name="pelagos_api_datasets_delete", methods={"DELETE"}, defaults={"_format"="json"})
+     * @Route("/api/file/{id}", name="pelagos_api_file_delete", methods={"DELETE"}, defaults={"_format"="json"})
      *
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      * @IsGranted("CAN_DELETE", subject="file")
@@ -49,7 +50,7 @@ class FileController extends AbstractFOSRestController
             }
         } elseif ($file->getStatus() === File::FILE_DONE) {
             $newFilePath = $filePath . Datastore::MARK_FILE_AS_DELETED;
-            $datastore->renameFile($filePath, $newFilePath);
+            $newFilePath = $datastore->renameFile($filePath, $newFilePath);
             $file->setPhysicalFilePath($newFilePath);
         }
 
@@ -57,10 +58,46 @@ class FileController extends AbstractFOSRestController
 
         return new Response(
             null,
-            Response::HTTP_NO_CONTENT,
-            array(
-                'Content-Type' => 'application/x-empty',
-            )
+            Response::HTTP_NO_CONTENT
+        );
+    }
+
+    /**
+     * Update a file entity.
+     *
+     * @param File                   $file          File entity instance.
+     * @param EntityManagerInterface $entityManager Entity manager interface instance.
+     * @param Request                $request       The request body sent with destination directory.
+     * @param Datastore              $datastore     Datastore to manipulate the file on disk.
+     *
+     * @Route("/api/file/{id}", name="pelagos_api_file_update_filename", methods={"PUT"}, defaults={"_format"="json"})
+     *
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     * @IsGranted("CAN_EDIT", subject="file")
+     *
+     * @throws BadRequestHttpException When the destination file name already exists.
+     *
+     * @return Response A response object with an empty body and a "no content" status code.
+     */
+    public function updateFileName(File $file, EntityManagerInterface $entityManager, Request $request, Datastore $datastore) : Response
+    {
+        $newFileName = $request->get('destinationDir');
+        $fileset = $file->getFileset();
+        if (!$fileset->doesFileExist($newFileName)) {
+            // Rename file on disk if it is already processed
+            if ($file->getStatus() === File::FILE_DONE) {
+                $newPhysicalFilePath = $datastore->renameFile($file->getPhysicalFilePath(), $newFileName);
+                $file->setPhysicalFilePath($newPhysicalFilePath);
+            }
+            $file->setFilePathName($newFileName);
+            $entityManager->flush();
+        } else {
+            throw new BadRequestHttpException('File with same name and folder already exists');
+        }
+
+        return new Response(
+            null,
+            Response::HTTP_NO_CONTENT
         );
     }
 }
