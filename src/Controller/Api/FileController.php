@@ -3,7 +3,6 @@
 namespace App\Controller\Api;
 
 use App\Entity\File;
-use App\Message\DeleteFile;
 use App\Util\Datastore;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -34,6 +33,8 @@ class FileController extends AbstractFOSRestController
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      * @IsGranted("CAN_DELETE", subject="file")
      *
+     * @throws BadRequestHttpException When a File cannot be deleted.
+     *
      * @return Response A response object with an empty body and a "no content" status code.
      */
     public function deleteFile(File $file, MessageBusInterface $messageBus, EntityManagerInterface $entityManager, Datastore $datastore)
@@ -42,23 +43,24 @@ class FileController extends AbstractFOSRestController
         $fileset->removeFile($file);
         $filePath = $file->getPhysicalFilePath();
         if ($file->getStatus() === File::FILE_NEW) {
-            $deleteFileMessage = new DeleteFile($filePath);
-            $messageBus->dispatch($deleteFileMessage);
+            $deleteFile = unlink($file->getPhysicalFilePath());
+            $deleteFolder = rmdir(dirname($file->getPhysicalFilePath()));
+            if ($deleteFile and $deleteFolder) {
+                $fileset->removeFile($file);
+            } else {
+                throw new BadRequestHttpException('Unable to delete file');
+            }
         } elseif ($file->getStatus() === File::FILE_DONE) {
             $newFilePath = $filePath . Datastore::MARK_FILE_AS_DELETED;
-            $datastore->renameFile($filePath, $newFilePath);
+            $newFilePath = $datastore->renameFile($filePath, $newFilePath);
             $file->setPhysicalFilePath($newFilePath);
         }
 
-        $entityManager->persist($fileset);
         $entityManager->flush();
 
         return new Response(
             null,
-            Response::HTTP_OK,
-            array(
-                'Content-Type' => 'application/x-empty',
-            )
+            Response::HTTP_NO_CONTENT
         );
     }
 
@@ -86,7 +88,8 @@ class FileController extends AbstractFOSRestController
         if (!$fileset->doesFileExist($newFileName)) {
             // Rename file on disk if it is already processed
             if ($file->getStatus() === File::FILE_DONE) {
-                $datastore->renameFile($file->getFilePathName(), $newFileName);
+                $newPhysicalFilePath = $datastore->renameFile($file->getPhysicalFilePath(), $newFileName);
+                $file->setPhysicalFilePath($newPhysicalFilePath);
             }
             $file->setFilePathName($newFileName);
             $entityManager->flush();
@@ -96,10 +99,7 @@ class FileController extends AbstractFOSRestController
 
         return new Response(
             null,
-            Response::HTTP_OK,
-            array(
-                'Content-Type' => 'application/x-empty',
-            )
+            Response::HTTP_NO_CONTENT
         );
     }
 
