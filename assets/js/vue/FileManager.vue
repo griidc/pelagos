@@ -4,7 +4,11 @@
                 :file-system-provider="customFileProvider"
                 :on-error-occurred="onErrorOccurred"
         >
-            <DxPermissions :delete="true" :upload="true"/>
+            <DxPermissions
+                :delete="true"
+                :upload="true"
+                :move="true"
+                :rename="true"/>
             <DxToolbar>
                 <DxItem name="upload" :visible="false"/>
                 <DxItem name="refresh"/>
@@ -15,6 +19,8 @@
                 <DxItem name="upload" :visible="false"/>
                 <DxItem name="delete" :visible="true"/>
                 <DxItem name="refresh" :visible="true"/>
+                <DxItem name="move" :visible="true"/>
+                <DxItem name="rename" :visible="true"/>
             </DxContextMenu>
         </DxFileManager>
     </div>
@@ -47,7 +53,9 @@ export default {
             customFileProvider: new CustomFileSystemProvider({
                 getItems,
                 deleteItem,
-                uploadFileChunk
+                uploadFileChunk,
+                moveItem,
+                renameItem
             })
         };
     },
@@ -92,7 +100,7 @@ const deleteItem = (item) => {
                 .get(`${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`)
                 .then(response => {
                     axiosInstance
-                        .delete(`${Routing.generate('pelagos_api_datasets_delete')}/${response.data.id}`)
+                        .delete(`${Routing.generate('pelagos_api_file_delete')}/${response.data.id}`)
                         .then(() => {
                             resolve();
                         })
@@ -104,6 +112,55 @@ const deleteItem = (item) => {
         }
     })
 }
+
+const moveItem = (item, destinationDir) => {
+    return new Promise((resolve, reject) => {
+        if (item.isDirectory === false) {
+            axiosInstance
+                .get(`${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`)
+                .then(response => {
+                    const newFilePathName = (destinationDir.path) ? `${destinationDir.path}/${item.name}` : item.name;
+                    axiosInstance
+                        .put(
+                            `${Routing.generate('pelagos_api_file_update_filename')}/${response.data.id}`,
+                            {'destinationDir': newFilePathName}
+                            )
+                        .then(() => {
+                            resolve();
+                        })
+                }).catch(error => {
+                    reject(error)
+                })
+        } else {
+            reject();
+        }
+    })
+}
+
+const renameItem = (item, name) => {
+    return new Promise((resolve, reject) => {
+        if (item.isDirectory === false) {
+            axiosInstance
+                .get(`${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`)
+                .then(response => {
+                    const newFilePathName = (item.parentPath) ? `${item.parentPath}/${name}` : name;
+                    axiosInstance
+                        .put(
+                            `${Routing.generate('pelagos_api_file_update_filename')}/${response.data.id}`,
+                            {'destinationDir': newFilePathName}
+                            )
+                        .then(() => {
+                            resolve();
+                        })
+                }).catch(error => {
+                    reject(error)
+                })
+        } else {
+            reject();
+        }
+    })
+}
+
 
 const uploadFileChunk = (fileData, uploadInfo, destinationDirectory) => {
     destinationDir = destinationDirectory.path;
