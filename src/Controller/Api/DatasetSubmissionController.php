@@ -377,6 +377,48 @@ class DatasetSubmissionController extends EntityController
     }
 
     /**
+     * Returns a list of file IDs.
+     *
+     * @param DatasetSubmission $datasetSubmission The id of the dataset submission.
+     * @param Request           $request           The request object.
+     *
+     * @Route(
+     *     "/api/file_dataset_submission_ids/{id}",
+     *     name="pelagos_api_get_file_ids_dataset_submission",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"},
+     *     requirements={"id"="\d+"}
+     *     )
+     *
+     * @View()
+     *
+     * @return Response
+     */
+    public function getFileIds(DatasetSubmission $datasetSubmission, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $fileset = $datasetSubmission->getFileset();
+        $path = $request->get('path');
+        $fileIds = array();
+        if (!$path) {
+            throw new BadRequestHttpException('Please provide a file path');
+        }
+        if ($fileset instanceof Fileset) {
+            $files = $fileset->getFilesInDirectory($path);
+            foreach ($files as $file) {
+                if ($file instanceof File) {
+                    $fileIds[] = $file->getId();
+                } else {
+                    throw new BadRequestHttpException('No such file found');
+                }
+            }
+            return $this->makeJsonResponse($fileIds);
+        } else {
+            throw new BadRequestHttpException('No files exist in this Dataset');
+        }
+    }
+
+    /**
      * Adds a file to a dataset submission.
      *
      * @param DatasetSubmission      $datasetSubmission The id of the dataset submission.

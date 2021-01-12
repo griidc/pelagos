@@ -2,7 +2,6 @@
     <div>
         <DxFileManager
                 :file-system-provider="customFileProvider"
-                :on-error-occurred="onErrorOccurred"
                 :on-selection-changed="onSelectionChanged"
         >
             <DxPermissions
@@ -80,11 +79,6 @@ export default {
     },
 
     methods: {
-        onErrorOccurred: function(e) {
-            e.errorText = 'Cannot delete folders';
-            return e;
-        },
-
         onSelectionChanged: function (args) {
             const isDirectory = (fileItem) => {
                 return fileItem.isDirectory;
@@ -134,7 +128,17 @@ const deleteItem = (item) => {
                     reject(error)
                 })
         } else {
-            reject(new Error('Cannot delete folders'));
+            axiosInstance
+                .get(`${Routing.generate('pelagos_api_get_file_ids_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`)
+                .then(response => {
+                    response.data.forEach(id => {
+                        axiosInstance.delete(`${Routing.generate('pelagos_api_file_delete')}/${id}`);
+                    })
+                }).then(() => {
+                    resolve();
+                }).catch(error => {
+                    reject(error)
+                })
         }
     })
 }
