@@ -63,6 +63,10 @@ class FileVoter extends PelagosEntityVoter
         // Return TRUE if Account is of a user who's a member of the same RG as the Dataset.
         $person = $user->getPerson();
         $personsResearchGroups = $person->getResearchGroups();
+
+        # Traverse up to dataset via the OneToOne bi-directional relationship to DatasetSubmission, $subject
+        # is already guaranteed to be a File entity from the supports() section of the voter.
+        $dataset = $subject->getFileset()->getDatasetSubmission()->getDataset();
         $datasetsResearchGroup = $dataset->getResearchGroup();
 
         $datasetSubmission = $subject->getFileset()->getDatasetsubmission();
