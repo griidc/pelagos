@@ -84,9 +84,11 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
                 $document->set('year', $dataset->getAcceptedDate()->format('Y'));
                 $document->set('updatedDateTime', $dataset->getAcceptedDate()->format('Ymd\THis\Z'));
                 $document->set('acceptedDate', $dataset->getAcceptedDate()->format('Y-m-d'));
+                $document->set('sortingDateForDisplay', $dataset->getAcceptedDate()->format('Y-m-d'));
             } else {
                 $document->set('year', $dataset->getDatasetSubmission()->getModificationTimeStamp()->format('Y'));
                 $document->set('updatedDateTime', $dataset->getDatasetSubmission()->getModificationTimeStamp()->format('Ymd\THis\Z'));
+                $document->set('sortingDateForDisplay', $dataset->getDatasetSubmission()->getSubmissionTimeStamp()->format('Y-m-d'));
             }
             // Populate file size and format values
             $document->set('fileSize', $dataset->getDatasetSubmission()->getDatasetFileSize());
@@ -101,28 +103,25 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
             } else {
                 $document->set('coldStorage', false);
             }
-        } elseif ($dataset->hasDif()) {
-            $document->set('updatedDateTime', $dataset->getDif()->getModificationTimeStamp()->format('Ymd\THis\Z'));
-        } else {
-            $document->set('updatedDateTime', $dataset->getModificationTimeStamp()->format('Ymd\THis\Z'));
-        }
-
-        if ($dataset->hasDif()) {
-            if (null !== $dataset->getDif()->getEstimatedStartDate()) {
-                $document->set('estimatedStartDate', $dataset->getDif()->getEstimatedStartDate()->format('Y-m-d'));
-            }
-            if (null !== $dataset->getDif()->getEstimatedEndDate()) {
-                $document->set('estimatedEndDate', $dataset->getDif()->getEstimatedEndDate()->format('Y-m-d'));
-            }
-        }
-
-        if ($dataset->hasDatasetSubmission()) {
             if ($dataset->getDatasetSubmission()->getTemporalExtentBeginPosition() and $dataset->getDatasetSubmission()->getTemporalExtentEndPosition()) {
                 $collectionStartDate = $dataset->getDatasetSubmission()->getTemporalExtentBeginPosition();
                 $collectionEndDate = $dataset->getDatasetSubmission()->getTemporalExtentEndPosition();
                 $document->set('collectionStartDate', $collectionStartDate->format('Y-m-d H:i:s'));
                 $document->set('collectionEndDate', $collectionEndDate->format('Y-m-d H:i:s'));
             }
+        } elseif ($dataset->hasDif()) {
+            $document->set('updatedDateTime', $dataset->getDif()->getModificationTimeStamp()->format('Ymd\THis\Z'));
+            if (null !== $dataset->getDif()->getEstimatedStartDate()) {
+                $document->set('estimatedStartDate', $dataset->getDif()->getEstimatedStartDate()->format('Y-m-d'));
+            }
+            if (null !== $dataset->getDif()->getEstimatedEndDate()) {
+                $document->set('estimatedEndDate', $dataset->getDif()->getEstimatedEndDate()->format('Y-m-d'));
+            }
+            if ($dataset->getDif()->getApprovedDate() instanceof \DateTime) {
+                $document->set('sortingDateForDisplay', $dataset->getDif()->getApprovedDate()->format('Y-m-d'));
+            }
+        } else {
+            $document->set('updatedDateTime', $dataset->getModificationTimeStamp()->format('Ymd\THis\Z'));
         }
     }
 

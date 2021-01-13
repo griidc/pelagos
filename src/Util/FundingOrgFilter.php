@@ -5,6 +5,7 @@ namespace App\Util;
 use Doctrine\ORM\EntityManagerInterface;
 
 use App\Entity\FundingOrganization;
+use App\Entity\Dataset;
 
 /**
  * A utility to determine if and which Funding Organizations need to be filtered by.
@@ -84,5 +85,23 @@ class FundingOrgFilter
         }
 
         return $ids;
+    }
+
+    /**
+     * Returns true if passed dataset is in funding organization filter list.
+     *
+     * @param \App\Entity\Dataset $dataset The dataset to be indexed.
+     *
+     * @return boolean If the dataset is in the filter array.
+     */
+    public static function canIndex(Dataset $dataset) : bool
+    {
+        $filterEnv = $_ENV['FILTER_BY_FUNDING_ORG'];
+        $shortNameArray = JSON_DECODE($filterEnv);
+        if (empty($shortNameArray)) {
+            return true;
+        }
+        $fundingOrgShortName = $dataset->getResearchGroup()->getFundingCycle()->getFundingOrganization()->getShortName();
+        return in_array($fundingOrgShortName, $shortNameArray);
     }
 }
