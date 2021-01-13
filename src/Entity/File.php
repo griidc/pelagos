@@ -121,6 +121,11 @@ class File extends Entity
     protected $status = self::FILE_NEW;
 
     /**
+     * ORM\OneToOne(targetEntity=DatasetSubmission::class, mappedBy="File", cascade={"persist", "remove"})
+     */
+    private $datasetSubmission;
+
+    /**
      * Getter for Fileset.
      *
      * @return Fileset

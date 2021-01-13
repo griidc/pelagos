@@ -923,7 +923,7 @@ class DatasetSubmission extends Entity
      *
      * @var Fileset
      *
-     * @ORM\OneToOne(targetEntity="Fileset", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="Fileset", inversedBy="datasetSubmission", cascade={"persist", "remove"})
      */
     protected $fileset;
 
