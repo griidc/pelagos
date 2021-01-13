@@ -3,6 +3,7 @@
         <DxFileManager
                 :file-system-provider="customFileProvider"
                 :on-selection-changed="onSelectionChanged"
+                ref="myFileManager"
         >
             <DxPermissions
                 :delete="true"
@@ -41,6 +42,8 @@ let contextMenuItems = [
 
 let itemsChanged = false;
 
+let myFileManager;
+
 export default {
     name: "FileManager",
     components: {
@@ -76,6 +79,7 @@ export default {
 
     mounted() {
         initDropzone();
+        myFileManager = this.$refs.myFileManager;
     },
 
     methods: {
@@ -232,6 +236,7 @@ const initDropzone = () => {
         chunkSize: 1024 * 1024,
         forceChunking: true,
         parallelChunkUploads: true,
+        parallelUploads: 10,
         retryChunks: true,
         retryChunksLimit: 3,
         maxFileSize: 1000000,
@@ -267,7 +272,23 @@ const initDropzone = () => {
                 })
         },
     });
+
+    myDropzone.on("totaluploadprogress", function (uploadProgress, totalBytes, totalBytesSent) {
+        // Intentionally left for testing.
+        console.log(uploadProgress, totalBytes, totalBytesSent);
+        if (uploadProgress == 100) {
+
+        }
+    });
+
+    myDropzone.on("queuecomplete", function () {
+        myFileManager.instance.repaint();
+    });
 }
+
+$("#ds-submit").on("active", function() {
+    myFileManager.instance.repaint();
+});
 
 const getFileNameFromHeader = (headers) => {
     let filename = "";
