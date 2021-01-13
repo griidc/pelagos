@@ -250,26 +250,24 @@ const initDropzone = () => {
                 fileName = `${destinationDir}/`;
             }
             fileName += currentFile.fullPath ?? currentFile.name;
-            axiosInstance.get(`${Routing.generate('pelagos_api_combine_chunks')}/${datasetSubmissionId}` +
-                `?dzuuid=${currentFile.upload.uuid}` +
-                `&dztotalchunkcount=${currentFile.upload.totalChunkCount}` +
-                `&fileName=${fileName}` +
-                `&dztotalfilesize=${currentFile.upload.total}`)
+            let chunkData = {};
+            chunkData['dzuuid'] = currentFile.upload.uuid;
+            chunkData['dztotalchunkcount'] = currentFile.upload.totalChunkCount;
+            chunkData['fileName'] = fileName;
+            chunkData['dztotalfilesize'] = currentFile.upload.total;
+            axiosInstance
+                .post(
+                    Routing.generate('pelagos_api_add_file_dataset_submission')
+                    + "/"
+                    + datasetSubmissionId,
+                    chunkData
+                )
                 .then(response => {
-                    axiosInstance
-                        .post(
-                            Routing.generate('pelagos_api_add_file_dataset_submission')
-                            + "/"
-                            + datasetSubmissionId,
-                            response.data
-                        )
-                        .then(response => {
-                            done();
-                        }).catch(error => {
-                        currentFile.accepted = false;
-                        myDropzone._errorProcessing([currentFile], error.message);
-                    });
-                })
+                    done();
+                }).catch(error => {
+                currentFile.accepted = false;
+                myDropzone._errorProcessing([currentFile], error.message);
+            });
         },
     });
 

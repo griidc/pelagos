@@ -2,7 +2,9 @@
 
 namespace App\Controller\Api;
 
+use App\Util\FileUploader;
 use App\Util\FolderStructureGenerator;
+
 use Doctrine\ORM\EntityManagerInterface;
 
 use FOS\RestBundle\Controller\Annotations\View;
@@ -424,6 +426,7 @@ class DatasetSubmissionController extends EntityController
      * @param DatasetSubmission      $datasetSubmission The id of the dataset submission.
      * @param Request                $request           The request body sent with file metadata.
      * @param EntityManagerInterface $entityManager     Entity manager interface to doctrine operations.
+     * @param FileUploader           $fileUploader      File upload handler service.
      *
      * @Route(
      *     "/api/files_dataset_submission/{id}",
@@ -437,13 +440,20 @@ class DatasetSubmissionController extends EntityController
      *
      * @return Response
      */
-    public function addFile(DatasetSubmission $datasetSubmission, Request $request, EntityManagerInterface $entityManager)
+    public function addFile(DatasetSubmission $datasetSubmission, Request $request, EntityManagerInterface $entityManager, FileUploader $fileUploader)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $fileMetadata = $fileUploader->combineChunks($request);
+
+        $fileName = $fileMetadata['name'];
+        $filePath = $fileMetadata['path'];
+        $fileSize = $fileMetadata['size'];
+
         $fileset = $datasetSubmission->getFileset();
+
         if ($fileset instanceof Fileset) {
-            if ($fileset->doesFileExist($request->get('name'))) {
-                $existingFile = $fileset->getExistingFile($request->get('name'));
+            if ($fileset->doesFileExist($fileName)) {
+                $existingFile = $fileset->getExistingFile($fileName);
                 $existingFile->setStatus(FILE::FILE_DELETED);
             }
         } else {
@@ -451,11 +461,11 @@ class DatasetSubmissionController extends EntityController
             $datasetSubmission->setFileset($fileset);
         }
         $newFile = new File();
-        $newFile->setFilePathName(trim($request->get('name')));
-        $newFile->setFileSize($request->get('size'));
+        $newFile->setFilePathName(trim($fileName));
+        $newFile->setFileSize($fileSize);
         $newFile->setUploadedAt(new \DateTime('now'));
         $newFile->setUploadedBy($this->getUser()->getPerson());
-        $newFile->setPhysicalFilePath($request->get('path'));
+        $newFile->setPhysicalFilePath($filePath);
         $fileset->addFile($newFile);
         $entityManager->persist($newFile);
         $entityManager->flush();
