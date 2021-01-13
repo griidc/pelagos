@@ -235,7 +235,6 @@ const initDropzone = () => {
         retryChunks: true,
         retryChunksLimit: 3,
         maxFileSize: 1000000,
-        autoQueue: false,
         clickable: false,
         chunksUploaded: function (file, done) {
             // All chunks have been uploaded. Perform any other actions
@@ -267,26 +266,6 @@ const initDropzone = () => {
                     });
                 })
         },
-    });
-    myDropzone.on("addedfile", function (file) {
-        const axiosInstance = axios.create({});
-        axiosInstance.get(
-            Routing.generate('pelagos_api_check_file_exists_dataset_submission')
-            + "/"
-            + datasetSubmissionId,
-            {
-                params: {
-                    name: file.fullPath ?? file.name
-                }
-            }).then(response => {
-            if (response.data === false) {
-                myDropzone.enqueueFile(file);
-            } else {
-                alert('File already exists with same name');
-            }
-        }).catch(error => {
-            alert(error);
-        });
     });
 }
 

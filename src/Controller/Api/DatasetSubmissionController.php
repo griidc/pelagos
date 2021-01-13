@@ -463,35 +463,6 @@ class DatasetSubmissionController extends EntityController
     }
 
     /**
-     * Checks if a File already exits with the same name.
-     *
-     * @param DatasetSubmission $datasetSubmission The id of the dataset submission.
-     * @param Request           $request           The request body sent with file metadata.
-     *
-     * @Route(
-     *     "/api/files_dataset_submission/file-exists/{id}",
-     *     name="pelagos_api_check_file_exists_dataset_submission",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"},
-     *     requirements={"id"="\d+"}
-     *     )
-     *
-     * @View()
-     *
-     * @return boolean|string
-     */
-    public function checkFileExists(DatasetSubmission $datasetSubmission, Request $request)
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $fileset = $datasetSubmission->getFileset();
-        $newFileName = $request->get('name');
-        if (!$fileset instanceof Fileset) {
-            return false;
-        }
-        return $fileset->doesFileExist($newFileName);
-    }
-
-    /**
      * Validate the url of the attribute.
      *
      * @param integer       $id            The id of the dataset submission.
