@@ -104,14 +104,17 @@ class Datastore
      *
      * @param string $oldFilePath Old file path that needs to be renamed.
      * @param string $newFilePath New file path for the file.
+     * @param bool   $deleteFlag  Delete flag for rename.
      *
      * @return string
      */
-    public function renameFile(string $oldFilePath, string $newFilePath): string
+    public function renameFile(string $oldFilePath, string $newFilePath, bool $deleteFlag = false): string
     {
-        $newPhysicalPathName = $this->makeFileName($newFilePath);
-        $this->datastoreFlysystem->rename($oldFilePath, $newPhysicalPathName);
-        return $newPhysicalPathName;
+        if ($deleteFlag === false) {
+            $newFilePath = $this->makeFileName($newFilePath);
+        }
+        $this->datastoreFlysystem->rename($oldFilePath, $newFilePath);
+        return $newFilePath;
     }
 
     /**

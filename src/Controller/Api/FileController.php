@@ -52,7 +52,7 @@ class FileController extends AbstractFOSRestController
         } elseif ($file->getStatus() === File::FILE_DONE) {
             $file->setStatus(File::FILE_DELETED);
             $newFilePath = $filePath . Datastore::MARK_FILE_AS_DELETED;
-            $newFilePath = $datastore->renameFile($filePath, $newFilePath);
+            $newFilePath = $datastore->renameFile($filePath, $newFilePath, true);
             $file->setPhysicalFilePath($newFilePath);
         }
 
