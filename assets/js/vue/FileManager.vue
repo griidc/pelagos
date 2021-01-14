@@ -241,6 +241,7 @@ const initDropzone = () => {
         retryChunksLimit: 3,
         maxFileSize: 1000000,
         clickable: false,
+        timeout: 0,
         chunksUploaded: function (file, done) {
             // All chunks have been uploaded. Perform any other actions
             let currentFile = file;
