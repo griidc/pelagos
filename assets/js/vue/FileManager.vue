@@ -265,18 +265,10 @@ const initDropzone = () => {
                 .then(response => {
                     done();
                 }).catch(error => {
-                currentFile.accepted = false;
-                myDropzone._errorProcessing([currentFile], error.message);
+                    currentFile.accepted = false;
+                    myDropzone._errorProcessing([currentFile], error.message);
             });
         },
-    });
-
-    myDropzone.on("totaluploadprogress", function (uploadProgress, totalBytes, totalBytesSent) {
-        // Intentionally left for testing.
-        console.log(uploadProgress, totalBytes, totalBytesSent);
-        if (uploadProgress == 100) {
-
-        }
     });
 
     myDropzone.on("queuecomplete", function () {
