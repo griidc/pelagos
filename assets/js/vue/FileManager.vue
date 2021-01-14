@@ -3,6 +3,7 @@
         <DxFileManager
                 :file-system-provider="customFileProvider"
                 :on-selection-changed="onSelectionChanged"
+                ref="myFileManager"
         >
             <DxPermissions
                 :delete="true"
@@ -41,6 +42,8 @@ let contextMenuItems = [
 
 let itemsChanged = false;
 
+let myFileManager;
+
 export default {
     name: "FileManager",
     components: {
@@ -76,6 +79,7 @@ export default {
 
     mounted() {
         initDropzone();
+        myFileManager = this.$refs.myFileManager;
     },
 
     methods: {
@@ -232,10 +236,10 @@ const initDropzone = () => {
         chunkSize: 1024 * 1024,
         forceChunking: true,
         parallelChunkUploads: true,
+        parallelUploads: 10,
         retryChunks: true,
         retryChunksLimit: 3,
         maxFileSize: 1000000,
-        autoQueue: false,
         clickable: false,
         chunksUploaded: function (file, done) {
             // All chunks have been uploaded. Perform any other actions
@@ -246,49 +250,35 @@ const initDropzone = () => {
                 fileName = `${destinationDir}/`;
             }
             fileName += currentFile.fullPath ?? currentFile.name;
-            axiosInstance.get(`${Routing.generate('pelagos_api_combine_chunks')}/${datasetSubmissionId}` +
-                `?dzuuid=${currentFile.upload.uuid}` +
-                `&dztotalchunkcount=${currentFile.upload.totalChunkCount}` +
-                `&fileName=${fileName}` +
-                `&dztotalfilesize=${currentFile.upload.total}`)
+            let chunkData = {};
+            chunkData['dzuuid'] = currentFile.upload.uuid;
+            chunkData['dztotalchunkcount'] = currentFile.upload.totalChunkCount;
+            chunkData['fileName'] = fileName;
+            chunkData['dztotalfilesize'] = currentFile.upload.total;
+            axiosInstance
+                .post(
+                    Routing.generate('pelagos_api_add_file_dataset_submission')
+                    + "/"
+                    + datasetSubmissionId,
+                    chunkData
+                )
                 .then(response => {
-                    axiosInstance
-                        .post(
-                            Routing.generate('pelagos_api_add_file_dataset_submission')
-                            + "/"
-                            + datasetSubmissionId,
-                            response.data
-                        )
-                        .then(response => {
-                            done();
-                        }).catch(error => {
-                        currentFile.accepted = false;
-                        myDropzone._errorProcessing([currentFile], error.message);
-                    });
-                })
+                    done();
+                }).catch(error => {
+                    currentFile.accepted = false;
+                    myDropzone._errorProcessing([currentFile], error.message);
+            });
         },
     });
-    myDropzone.on("addedfile", function (file) {
-        const axiosInstance = axios.create({});
-        axiosInstance.get(
-            Routing.generate('pelagos_api_check_file_exists_dataset_submission')
-            + "/"
-            + datasetSubmissionId,
-            {
-                params: {
-                    name: file.fullPath ?? file.name
-                }
-            }).then(response => {
-            if (response.data === false) {
-                myDropzone.enqueueFile(file);
-            } else {
-                alert('File already exists with same name');
-            }
-        }).catch(error => {
-            alert(error);
-        });
+
+    myDropzone.on("queuecomplete", function () {
+        myFileManager.instance.repaint();
     });
 }
+
+$("#ds-submit").on("active", function() {
+    myFileManager.instance.repaint();
+});
 
 const getFileNameFromHeader = (headers) => {
     let filename = "";
