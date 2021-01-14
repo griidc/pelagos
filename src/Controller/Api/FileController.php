@@ -40,7 +40,6 @@ class FileController extends AbstractFOSRestController
     public function deleteFile(File $file, MessageBusInterface $messageBus, EntityManagerInterface $entityManager, Datastore $datastore)
     {
         $fileset = $file->getFileset();
-        $fileset->removeFile($file);
         $filePath = $file->getPhysicalFilePath();
         if ($file->getStatus() === File::FILE_NEW) {
             $deleteFile = unlink($file->getPhysicalFilePath());
@@ -51,8 +50,9 @@ class FileController extends AbstractFOSRestController
                 throw new BadRequestHttpException('Unable to delete file');
             }
         } elseif ($file->getStatus() === File::FILE_DONE) {
+            $file->setStatus(File::FILE_DELETED);
             $newFilePath = $filePath . Datastore::MARK_FILE_AS_DELETED;
-            $newFilePath = $datastore->renameFile($filePath, $newFilePath);
+            $newFilePath = $datastore->renameFile($filePath, $newFilePath, true);
             $file->setPhysicalFilePath($newFilePath);
         }
 
