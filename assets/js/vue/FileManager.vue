@@ -131,49 +131,33 @@ const deleteItem = (item) => {
 
 const moveItem = (item, destinationDir) => {
     return new Promise((resolve, reject) => {
-        if (item.isDirectory === false) {
-            axiosInstance
-                .get(`${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`)
-                .then(response => {
-                    const newFilePathName = (destinationDir.path) ? `${destinationDir.path}/${item.name}` : item.name;
-                    axiosInstance
-                        .put(
-                            `${Routing.generate('pelagos_api_file_update_filename')}/${response.data.id}`,
-                            {'destinationDir': newFilePathName}
-                            )
-                        .then(() => {
-                            resolve();
-                        })
-                }).catch(error => {
-                    reject(error)
-                })
-        } else {
-            reject();
-        }
+        const newFilePathName = (destinationDir.path) ? `${destinationDir.path}/${item.name}` : item.name;
+        axiosInstance
+            .put(
+                `${Routing.generate('pelagos_api_file_update_filename')}/${datasetSubmissionId}`,
+                {'destinationDir': newFilePathName, 'path': item.path, 'isDir': item.isDirectory }
+            )
+            .then(() => {
+                resolve();
+            }).catch(error => {
+                reject(error)
+            })
     })
 }
 
 const renameItem = (item, name) => {
     return new Promise((resolve, reject) => {
-        if (item.isDirectory === false) {
-            axiosInstance
-                .get(`${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`)
-                .then(response => {
-                    const newFilePathName = (item.parentPath) ? `${item.parentPath}/${name}` : name;
-                    axiosInstance
-                        .put(
-                            `${Routing.generate('pelagos_api_file_update_filename')}/${response.data.id}`,
-                            {'destinationDir': newFilePathName}
-                            )
-                        .then(() => {
-                            resolve();
-                        })
-                }).catch(error => {
-                    reject(error)
-                })
-        } else {
-            reject();
-        }
+        const newFilePathName = (item.parentPath) ? `${item.parentPath}/${name}` : name;
+        axiosInstance
+            .put(
+                `${Routing.generate('pelagos_api_file_update_filename')}/${datasetSubmissionId}`,
+                {'destinationDir': newFilePathName, 'path': item.path, 'isDir': item.isDirectory }
+            )
+            .then(() => {
+                resolve();
+            }).catch(error => {
+                reject(error)
+            })
     })
 }
 

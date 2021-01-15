@@ -95,4 +95,74 @@ class FileManager extends AbstractFOSRestController
             $file->setPhysicalFilePath($newFilePath);
         }
     }
+
+    /**
+     * Update a file entity.
+     *
+     * @param DatasetSubmission      $datasetSubmission The id of the dataset submission.
+     * @param Request                $request           The request body
+     * @param EntityManagerInterface $entityManager     Entity manager interface instance.
+     * @param Datastore              $datastore         Datastore to manipulate the file on disk.
+     *
+     * @Route("/api/file_update_filename/{id}", name="pelagos_api_file_update_filename", methods={"PUT"}, defaults={"_format"="json"})
+     *
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     * @IsGranted("CAN_EDIT", subject="datasetSubmission")
+     *
+     * @throws BadRequestHttpException When the destination file name already exists.
+     *
+     * @return Response A response object with an empty body and a "no content" status code.
+     */
+    public function updateFileOrFolderName(DatasetSubmission $datasetSubmission, Request $request, EntityManagerInterface $entityManager, Datastore $datastore) : Response
+    {
+        $newFileName = $request->get('destinationDir');
+        $existingFilePath = $request->get('path');
+        $isDir = $request->get('isDir');
+        $fileset = $datasetSubmission->getFileset();
+        if ($fileset instanceof Fileset) {
+            if ($isDir === true) {
+                $files = $fileset->getFilesInDirectory($existingFilePath);
+                foreach ($files as $file) {
+                    $this->updateFileName($file, $fileset, $newFileName, $datastore);
+                }
+            } else {
+                $existingFile = $fileset->getExistingFile($existingFilePath);
+                $this->updateFileName($existingFile, $fileset, $newFileName, $datastore);
+            }
+            $entityManager->flush();
+        } else {
+            throw new BadRequestHttpException('No files exist in this Dataset');
+        }
+
+        return new Response(
+            null,
+            Response::HTTP_NO_CONTENT
+        );
+    }
+
+    /**
+     * Update file name for single file entity.
+     *
+     * @param File      $file        File entity that needs to be renamed.
+     * @param Fileset   $fileset     Fileset entity instance.
+     * @param string    $newFileName New file name for the file.
+     * @param Datastore $datastore   Datastore to manipulate the file on disk.
+     *
+     * @throws BadRequestHttpException When the destination file name already exists.
+     *
+     * @return void
+     */
+    private function updateFileName(File $file, Fileset $fileset, string $newFileName, Datastore $datastore) : void
+    {
+        if (!$fileset->doesFileExist($newFileName)) {
+            // Rename file on disk if it is already processed
+            if ($file->getStatus() === File::FILE_DONE) {
+                $newPhysicalFilePath = $datastore->renameFile($file->getPhysicalFilePath(), $newFileName);
+                $file->setPhysicalFilePath($newPhysicalFilePath);
+            }
+            $file->setFilePathName($newFileName);
+        } else {
+            throw new BadRequestHttpException('File with same name and folder already exists');
+        }
+    }
 }
