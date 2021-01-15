@@ -119,31 +119,13 @@ const getItems = (pathInfo) => {
 
 const deleteItem = (item) => {
     return new Promise((resolve, reject) => {
-        if (item.isDirectory === false) {
-            axiosInstance
-                .get(`${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`)
-                .then(response => {
-                    axiosInstance
-                        .delete(`${Routing.generate('pelagos_api_file_delete')}/${response.data.id}`)
-                        .then(() => {
-                            resolve();
-                        })
-                }).catch(error => {
+        axiosInstance
+            .delete(`${Routing.generate('pelagos_api_file_delete')}/${datasetSubmissionId}?path=${item.path}&isDir=${item.isDirectory}`)
+            .then(() => {
+                resolve();
+            }).catch(error => {
                     reject(error)
-                })
-        } else {
-            axiosInstance
-                .get(`${Routing.generate('pelagos_api_get_file_ids_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`)
-                .then(response => {
-                    response.data.forEach(id => {
-                        axiosInstance.delete(`${Routing.generate('pelagos_api_file_delete')}/${id}`);
-                    })
-                }).then(() => {
-                    resolve();
-                }).catch(error => {
-                    reject(error)
-                })
-        }
+            })
     })
 }
 

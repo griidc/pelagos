@@ -21,50 +21,6 @@ use Symfony\Component\Routing\Annotation\Route;
 class FileController extends AbstractFOSRestController
 {
     /**
-     * Delete a file.
-     *
-     * @param File                   $file          File entity instance.
-     * @param MessageBusInterface    $messageBus    Symfony messenger bus interface instance.
-     * @param EntityManagerInterface $entityManager Entity manager interface instance.
-     * @param Datastore              $datastore     Datastore to manipulate the file on disk.
-     *
-     * @Route("/api/file/{id}", name="pelagos_api_file_delete", methods={"DELETE"}, defaults={"_format"="json"})
-     *
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
-     * @IsGranted("CAN_DELETE", subject="file")
-     *
-     * @throws BadRequestHttpException When a File cannot be deleted.
-     *
-     * @return Response A response object with an empty body and a "no content" status code.
-     */
-    public function deleteFile(File $file, MessageBusInterface $messageBus, EntityManagerInterface $entityManager, Datastore $datastore)
-    {
-        $fileset = $file->getFileset();
-        $filePath = $file->getPhysicalFilePath();
-        if ($file->getStatus() === File::FILE_NEW) {
-            $deleteFile = unlink($file->getPhysicalFilePath());
-            $deleteFolder = rmdir(dirname($file->getPhysicalFilePath()));
-            if ($deleteFile and $deleteFolder) {
-                $fileset->removeFile($file);
-            } else {
-                throw new BadRequestHttpException('Unable to delete file');
-            }
-        } elseif ($file->getStatus() === File::FILE_DONE) {
-            $file->setStatus(File::FILE_DELETED);
-            $newFilePath = $filePath . Datastore::MARK_FILE_AS_DELETED;
-            $newFilePath = $datastore->renameFile($filePath, $newFilePath, true);
-            $file->setPhysicalFilePath($newFilePath);
-        }
-
-        $entityManager->flush();
-
-        return new Response(
-            null,
-            Response::HTTP_NO_CONTENT
-        );
-    }
-
-    /**
      * Update a file entity.
      *
      * @param File                   $file          File entity instance.
