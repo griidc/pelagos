@@ -49,7 +49,7 @@ class FileManager extends AbstractFOSRestController
             throw new BadRequestHttpException('Please provide a file path');
         }
         if ($fileset instanceof Fileset) {
-            if ($isDir === "true") {
+            if ($isDir === 'true') {
                 $files = $fileset->getFilesInDirectory($deleteFilePath);
                 foreach ($files as $file) {
                     $this->deleteFile($file, $fileset, $datastore);
