@@ -379,58 +379,6 @@ class DatasetSubmissionController extends EntityController
     }
 
     /**
-     * Adds a file to a dataset submission.
-     *
-     * @param DatasetSubmission      $datasetSubmission The id of the dataset submission.
-     * @param Request                $request           The request body sent with file metadata.
-     * @param EntityManagerInterface $entityManager     Entity manager interface to doctrine operations.
-     * @param FileUploader           $fileUploader      File upload handler service.
-     *
-     * @Route(
-     *     "/api/files_dataset_submission/{id}",
-     *     name="pelagos_api_add_file_dataset_submission",
-     *     methods={"POST"},
-     *     defaults={"_format"="json"},
-     *     requirements={"id"="\d+"}
-     *     )
-     *
-     * @View()
-     *
-     * @return Response
-     */
-    public function addFile(DatasetSubmission $datasetSubmission, Request $request, EntityManagerInterface $entityManager, FileUploader $fileUploader)
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $fileMetadata = $fileUploader->combineChunks($request);
-
-        $fileName = $fileMetadata['name'];
-        $filePath = $fileMetadata['path'];
-        $fileSize = $fileMetadata['size'];
-
-        $fileset = $datasetSubmission->getFileset();
-
-        if ($fileset instanceof Fileset) {
-            if ($fileset->doesFileExist($fileName)) {
-                $existingFile = $fileset->getExistingFile($fileName);
-                $existingFile->setStatus(FILE::FILE_DELETED);
-            }
-        } else {
-            $fileset = new Fileset();
-            $datasetSubmission->setFileset($fileset);
-        }
-        $newFile = new File();
-        $newFile->setFilePathName(trim($fileName));
-        $newFile->setFileSize($fileSize);
-        $newFile->setUploadedAt(new \DateTime('now'));
-        $newFile->setUploadedBy($this->getUser()->getPerson());
-        $newFile->setPhysicalFilePath($filePath);
-        $fileset->addFile($newFile);
-        $entityManager->persist($newFile);
-        $entityManager->flush();
-        return $this->makeNoContentResponse();
-    }
-
-    /**
      * Validate the url of the attribute.
      *
      * @param integer       $id            The id of the dataset submission.

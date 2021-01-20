@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Util;
+
+/**
+ * Renames the file and adds a sequence to it.
+ */
+class RenameDuplicate
+{
+    /**
+     * Renames the file and adds a sequence to it.
+     *
+     * @param string $fileName The file name to be renamed.
+     *
+     * @return string The renamed filename string.
+     */
+    public function renameFile(string $fileName) :string
+    {
+        $result = preg_match('/^.*(\(.*\))\.?.*$/', $fileName);
+
+        if (1 === $result) {
+            $fileName = preg_replace_callback(
+                '/^(.*)\((.*)\)(\.?.*)$/',
+                array($this, 'addSequence'),
+                $fileName
+            );
+        } else {
+            $fileName = preg_replace_callback(
+                '/^(.*)(\..*)$/',
+                array($this, 'addSequence'),
+                $fileName
+            );
+        }
+
+        return $fileName;
+    }
+
+    /**
+     * Renames the file and adds a sequence to it.
+     *
+     * @param array $matches The match components of the regex.
+
+     * @return string The renamed filename string.
+     *
+     */
+    private function addSequence(array $matches) : string
+    {
+        // If there are 3 matches, then the filename does not contain a sequence yet.
+        if (count($matches) === 3) {
+            return $matches[1].'(1)'.$matches[2];
+        } else {
+            if ($matches[2] >= 999) {
+                throw new \Exception('Sequence is too high!');
+            }
+            return $matches[1].'('.($matches[2]+1).')'.$matches[3];
+        }
+    }
+}
