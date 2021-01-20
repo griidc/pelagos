@@ -21,45 +21,6 @@ use Symfony\Component\Routing\Annotation\Route;
 class FileController extends AbstractFOSRestController
 {
     /**
-     * Update a file entity.
-     *
-     * @param File                   $file          File entity instance.
-     * @param EntityManagerInterface $entityManager Entity manager interface instance.
-     * @param Request                $request       The request body sent with destination directory.
-     * @param Datastore              $datastore     Datastore to manipulate the file on disk.
-     *
-     * @Route("/api/file/{id}", name="pelagos_api_file_update_filename", methods={"PUT"}, defaults={"_format"="json"})
-     *
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
-     * @IsGranted("CAN_EDIT", subject="file")
-     *
-     * @throws BadRequestHttpException When the destination file name already exists.
-     *
-     * @return Response A response object with an empty body and a "no content" status code.
-     */
-    public function updateFileName(File $file, EntityManagerInterface $entityManager, Request $request, Datastore $datastore) : Response
-    {
-        $newFileName = $request->get('destinationDir');
-        $fileset = $file->getFileset();
-        if (!$fileset->doesFileExist($newFileName)) {
-            // Rename file on disk if it is already processed
-            if ($file->getStatus() === File::FILE_DONE) {
-                $newPhysicalFilePath = $datastore->renameFile($file->getPhysicalFilePath(), $newFileName);
-                $file->setPhysicalFilePath($newPhysicalFilePath);
-            }
-            $file->setFilePathName($newFileName);
-            $entityManager->flush();
-        } else {
-            throw new BadRequestHttpException('File with same name and folder already exists');
-        }
-
-        return new Response(
-            null,
-            Response::HTTP_NO_CONTENT
-        );
-    }
-
-    /**
      * Download a file from disk.
      *
      * @param File                   $file          File entity instance.
