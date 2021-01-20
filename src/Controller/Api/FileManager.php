@@ -115,7 +115,7 @@ class FileManager extends AbstractFOSRestController
      */
     public function updateFileOrFolderName(DatasetSubmission $datasetSubmission, Request $request, EntityManagerInterface $entityManager, Datastore $datastore) : Response
     {
-        $newFileName = $request->get('destinationDir');
+        $newFileName = $request->get('newFileFolderPathDir');
         $existingFilePath = $request->get('path');
         $isDir = $request->get('isDir');
         $fileset = $datasetSubmission->getFileset();

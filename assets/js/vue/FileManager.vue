@@ -135,7 +135,7 @@ const moveItem = (item, destinationDir) => {
         axiosInstance
             .put(
                 `${Routing.generate('pelagos_api_file_update_filename')}/${datasetSubmissionId}`,
-                {'destinationDir': newFilePathName, 'path': item.path, 'isDir': item.isDirectory }
+                {'newFileFolderPathDir': newFilePathName, 'path': item.path, 'isDir': item.isDirectory }
             )
             .then(() => {
                 resolve();
@@ -151,7 +151,7 @@ const renameItem = (item, name) => {
         axiosInstance
             .put(
                 `${Routing.generate('pelagos_api_file_update_filename')}/${datasetSubmissionId}`,
-                {'destinationDir': newFilePathName, 'path': item.path, 'isDir': item.isDirectory }
+                {'newFileFolderPathDir': newFilePathName, 'path': item.path, 'isDir': item.isDirectory }
             )
             .then(() => {
                 resolve();
