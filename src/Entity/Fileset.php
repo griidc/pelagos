@@ -43,19 +43,6 @@ class Fileset extends Entity
         return $this->datasetSubmission;
     }
 
-    public function setDatasetSubmission(?DatasetSubmission $datasetSubmission): self
-    {
-        $this->datasetSubmission = $datasetSubmission;
-
-        // set (or unset) the owning side of the relation if necessary
-        $fileset = (null === $datasetSubmission) ? null : $this;
-
-        if ($datasetSubmission->getFileset() !== $fileset) {
-            $datasetSubmisssion->setFileset($fileset);
-        }
-        return $this;
-    }
-
     /**
      * Fileset constructor.
      */
