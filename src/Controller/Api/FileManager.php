@@ -6,15 +6,11 @@ use App\Entity\DatasetSubmission;
 use App\Entity\File;
 use App\Entity\Fileset;
 use App\Util\Datastore;
-use App\Util\RenameDuplicate;
 use App\Util\FileUploader;
-
+use App\Util\RenameDuplicate;
 use Doctrine\ORM\EntityManagerInterface;
-
 use FOS\RestBundle\Controller\AbstractFOSRestController;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -55,11 +51,11 @@ class FileManager extends AbstractFOSRestController
 
         $fileset = $datasetSubmission->getFileset();
 
-        while ($fileset->doesFileExist($fileName)) {
-            $fileName = $renameDuplicate->renameFile($fileName);
-        }
-
-        if (!$fileset instanceof Fileset) {
+        if ($fileset instanceof Fileset) {
+            while ($fileset->doesFileExist($fileName)) {
+                $fileName = $renameDuplicate->renameFile($fileName);
+            }
+        } else {
             $fileset = new Fileset();
             $datasetSubmission->setFileset($fileset);
         }

@@ -39,7 +39,7 @@ class RenameDuplicate
      * Renames the file and adds a sequence to it.
      *
      * @param array $matches The match components of the regex.
-
+     *
      * @return string The renamed filename string.
      *
      */
