@@ -26,7 +26,7 @@ class RenameDuplicate
             );
         } else {
             $fileName = preg_replace_callback(
-                '/^(.*)(\..*)$/',
+                '/^(.*)()(\..*)$/',
                 array($this, 'addSequence'),
                 $fileName
             );
@@ -45,14 +45,9 @@ class RenameDuplicate
      */
     private function addSequence(array $matches) : string
     {
-        // If there are 3 matches, then the filename does not contain a sequence yet.
-        if (count($matches) === 3) {
-            return $matches[1].'(1)'.$matches[2];
-        } else {
-            if ($matches[2] >= 999) {
-                throw new \Exception('Sequence is too high!');
-            }
-            return $matches[1].'('.($matches[2]+1).')'.$matches[3];
+        if ((int)$matches[2] >= 999) {
+            throw new \Exception('Sequence is too high!');
         }
+        return $matches[1].'('.((int)$matches[2]+1).')'.$matches[3];
     }
 }
