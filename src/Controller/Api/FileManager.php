@@ -179,6 +179,8 @@ class FileManager extends AbstractFOSRestController
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      * @IsGranted("CAN_EDIT", subject="file")
      *
+     * @throws BadRequestHttpException Error thrown when file stream cannot be opened.
+     *
      * @return Response
      */
     public function downloadFile(File $file, Datastore $datastore): Response
@@ -214,6 +216,8 @@ class FileManager extends AbstractFOSRestController
      *
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      * @IsGranted("CAN_EDIT", subject="datasetSubmission")
+     *
+     * @throws BadRequestHttpException When no zip file is found.
      *
      * @return Response
      */
@@ -252,9 +256,8 @@ class FileManager extends AbstractFOSRestController
     public function doesZipFileExist(DatasetSubmission $datasetSubmission): Response
     {
         $zipFilePath = $this->getZipFilePath($datasetSubmission);
-        $data = $zipFilePath ? true : false;
         return new Response(
-            json_encode($data),
+            json_encode($zipFilePath ? true : false),
             Response::HTTP_OK,
             array(
                 'Content-Type' => 'application/json',
