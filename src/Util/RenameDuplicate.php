@@ -34,6 +34,6 @@ class RenameDuplicate
             $fileName
         );
 
-        return $fileName . $extension;
+        return $fileName . '.' . $extension;
     }
 }
