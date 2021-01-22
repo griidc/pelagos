@@ -1066,10 +1066,11 @@ class DatasetSubmission extends Entity
 
                 $this->addDatasetLink($newDatasetLink);
             }
-            if ($entity->getFileset() instanceof Fileset) {
+            $fileset = $entity->getFileset();
+            if ($fileset instanceof Fileset) {
                 // Copy the fileSet
                 $newFileset = new Fileset();
-                foreach ($entity->getFileset()->getAllFiles() as $file) {
+                foreach ($fileset->getAllFiles() as $file) {
                     $newFile = new File();
                     $newFile->setFilePathName($file->getFilePathName());
                     $newFile->setFileSize($file->getFileSize());
@@ -1080,6 +1081,10 @@ class DatasetSubmission extends Entity
                     $newFile->setPhysicalFilePath($file->getPhysicalFilePath());
                     $newFile->setStatus($file->getStatus());
                     $newFileset->addFile($newFile);
+                }
+                $zipFilePath = $fileset->getZipFilePath();
+                if ($zipFilePath) {
+                    $newFileset->setZipFilePath($zipFilePath);
                 }
                 $this->setFileset($newFileset);
             }
