@@ -53,7 +53,11 @@ class FileManager extends AbstractFOSRestController
 
         if ($fileset instanceof Fileset) {
             while ($fileset->doesFileExist($fileName)) {
-                $fileName = $renameDuplicate->renameFile($fileName);
+                try {
+                    $fileName = $renameDuplicate->renameFile($fileName);
+                } catch (\Exception $e) {
+                    throw new BadRequestHttpException($e->getMessage());
+                }
             }
         } else {
             $fileset = new Fileset();

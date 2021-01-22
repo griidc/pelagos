@@ -14,40 +14,26 @@ class RenameDuplicate
      *
      * @return string The renamed filename string.
      */
-    public function renameFile(string $fileName) :string
+    public function renameFile(string $filePathName) :string
     {
-        $result = preg_match('/^.*(\(.*\))\.?.*$/', $fileName);
+        $pathParts = pathinfo($filePathName);
 
-        if (1 === $result) {
-            $fileName = preg_replace_callback(
-                '/^(.*)\((.*)\)(\.?.*)$/',
-                array($this, 'addSequence'),
-                $fileName
-            );
-        } else {
-            $fileName = preg_replace_callback(
-                '/^(.*)()(\..*)$/',
-                array($this, 'addSequence'),
-                $fileName
-            );
-        }
+        $fileName = $pathParts['filename'];
+        $extension = $pathParts['extension'] ?? '';
 
-        return $fileName;
-    }
+        $patterns = array('/^(.*)\((\d+)\)(\.?.*)$/','/(^((?!\.|\(\d+\)).)*$)()/');
 
-    /**
-     * Renames the file and adds a sequence to it.
-     *
-     * @param array $matches The match components of the regex.
-     *
-     * @return string The renamed filename string.
-     *
-     */
-    private function addSequence(array $matches) : string
-    {
-        if ((int)$matches[2] >= 999) {
-            throw new \Exception('Sequence is too high!');
-        }
-        return $matches[1].'('.((int)$matches[2]+1).')'.$matches[3];
+        $fileName = preg_replace_callback(
+            $patterns,
+            function ($matches) {
+                if ((int)$matches[2] >= 2) {
+                    throw new \Exception('Sequence is too high!');
+                }
+                return $matches[1].'('.((int)$matches[2]+1).')';
+            },
+            $fileName
+        );
+
+        return $fileName . $extension;
     }
 }
