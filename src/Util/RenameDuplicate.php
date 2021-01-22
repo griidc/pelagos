@@ -12,6 +12,9 @@ class RenameDuplicate
      *
      * @param string $fileName The file name to be renamed.
      *
+     * @throws Exception When the sequence if over 999.
+     *
+     *
      * @return string The renamed filename string.
      */
     public function renameFile(string $filePathName) :string

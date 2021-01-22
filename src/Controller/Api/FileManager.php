@@ -38,6 +38,9 @@ class FileManager extends AbstractFOSRestController
      *     requirements={"id"="\d+"}
      *     )
      *
+     *
+     * @throws BadRequestHttpException When the file renamer fails because the sequence is over 999.
+     *
      * @return Response
      */
     public function addFile(DatasetSubmission $datasetSubmission, Request $request, EntityManagerInterface $entityManager, FileUploader $fileUploader, RenameDuplicate $renameDuplicate)
