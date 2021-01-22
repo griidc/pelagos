@@ -13,6 +13,11 @@
                 :download="true"/>
             <DxToolbar>
                 <DxItem name="upload" :visible="false"/>
+                <DxItem
+                    :visible="showDownloadZipBtn"
+                    widget="dxMenu"
+                    :options="downloadZipOptions"
+                />
                 <DxItem name="refresh"/>
                 <DxItem name="separator" location="after"/>
                 <DxItem name="switchView"/>
@@ -64,7 +69,9 @@ export default {
                 moveItem,
                 renameItem,
                 downloadItems
-            })
+            }),
+            downloadZipOptions: this.getDownloadZipFiles(),
+            showDownloadZipBtn: this.isDownloadZipVisible(),
         };
     },
 
@@ -92,7 +99,6 @@ export default {
             } else {
                 args.component.option('contextMenu.items', contextMenuItems);
             }
-
         },
 
         filterMenuItems: function () {
@@ -101,6 +107,46 @@ export default {
                     return item;
                 }
             })
+        },
+
+        onItemClick: function () {
+            axiosInstance({
+                url: `${Routing.generate('pelagos_api_file_zip_download_all')}/${datasetSubmissionId}`,
+                method: 'GET',
+                responseType: 'blob', // important
+            }).then((response) => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('b');
+                link.href = url;
+                link.setAttribute('download', getFileNameFromHeader(response.headers));
+                document.body.appendChild(link);
+                link.click();
+            }).then(() => {
+                resolve();
+            });
+        },
+
+        getDownloadZipFiles: function () {
+            return {
+                items: [
+                    {
+                        text: 'Download All',
+                        icon: 'download',
+                    }
+                ],
+                onItemClick: this.onItemClick
+            };
+        },
+
+        isDownloadZipVisible: function () {
+            let showZipBtn = false;
+            axiosInstance
+                .get(`${Routing.generate('pelagos_api_check_zip_exists')}/${this.datasetSubId}`)
+                .then(response => {
+                    showZipBtn = response.data;
+                    console.log(showZipBtn);
+                });
+            return showZipBtn;
         }
     }
 };

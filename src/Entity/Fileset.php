@@ -220,9 +220,9 @@ class Fileset extends Entity
     /**
      * Getter for zip file path.
      *
-     * @return string
+     * @return string|null
      */
-    public function getZipFilePath(): string
+    public function getZipFilePath(): ? string
     {
         return $this->zipFilePath;
     }
