@@ -116,13 +116,11 @@ export default {
                 responseType: 'blob', // important
             }).then((response) => {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
-                const link = document.createElement('b');
+                const link = document.createElement('a');
                 link.href = url;
                 link.setAttribute('download', getFileNameFromHeader(response.headers));
                 document.body.appendChild(link);
                 link.click();
-            }).then(() => {
-                resolve();
             });
         },
 
@@ -139,16 +137,13 @@ export default {
         },
 
         isDownloadZipVisible: function () {
-            let showZipBtn = false;
             axiosInstance
                 .get(`${Routing.generate('pelagos_api_check_zip_exists')}/${this.datasetSubId}`)
                 .then(response => {
-                    showZipBtn = response.data;
-                    console.log(showZipBtn);
+                    this.showDownloadZipBtn = response.data;
                 });
-            return showZipBtn;
         }
-    }
+    },
 };
 
 const getItems = (pathInfo) => {
