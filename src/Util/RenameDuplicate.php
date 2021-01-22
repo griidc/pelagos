@@ -26,7 +26,7 @@ class RenameDuplicate
         $fileName = preg_replace_callback(
             $patterns,
             function ($matches) {
-                if ((int)$matches[2] >= 2) {
+                if ((int)$matches[2] >= 999) {
                     throw new \Exception('Sequence is too high!');
                 }
                 return $matches[1].'('.((int)$matches[2]+1).')';
