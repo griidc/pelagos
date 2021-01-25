@@ -6,6 +6,8 @@ use App\Entity\DatasetSubmission;
 use App\Entity\File;
 use App\Entity\Fileset;
 use App\Util\Datastore;
+use App\Util\FileUploader;
+use App\Util\RenameDuplicate;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -19,6 +21,67 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class FileManager extends AbstractFOSRestController
 {
+    /**
+     * Adds a file to a dataset submission.
+     *
+     * @param DatasetSubmission      $datasetSubmission The id of the dataset submission.
+     * @param Request                $request           The request body sent with file metadata.
+     * @param EntityManagerInterface $entityManager     Entity manager interface to doctrine operations.
+     * @param FileUploader           $fileUploader      File upload handler service.
+     * @param RenameDuplicate        $renameDuplicate   The duplicate renaming utility.
+     *
+     * @Route(
+     *     "/api/files_dataset_submission/{id}",
+     *     name="pelagos_api_add_file_dataset_submission",
+     *     methods={"POST"},
+     *     defaults={"_format"="json"},
+     *     requirements={"id"="\d+"}
+     *     )
+     *
+     *
+     * @throws BadRequestHttpException When the file renamer fails because the sequence is over 999.
+     *
+     * @return Response
+     */
+    public function addFile(DatasetSubmission $datasetSubmission, Request $request, EntityManagerInterface $entityManager, FileUploader $fileUploader, RenameDuplicate $renameDuplicate)
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $fileMetadata = $fileUploader->combineChunks($request);
+
+        $fileName = $fileMetadata['name'];
+        $filePath = $fileMetadata['path'];
+        $fileSize = $fileMetadata['size'];
+
+        $fileset = $datasetSubmission->getFileset();
+
+        if ($fileset instanceof Fileset) {
+            while ($fileset->doesFileExist($fileName)) {
+                try {
+                    $fileName = $renameDuplicate->renameFile($fileName);
+                } catch (\Exception $e) {
+                    throw new BadRequestHttpException($e->getMessage());
+                }
+            }
+        } else {
+            $fileset = new Fileset();
+            $datasetSubmission->setFileset($fileset);
+        }
+        $newFile = new File();
+        $newFile->setFilePathName(trim($fileName));
+        $newFile->setFileSize($fileSize);
+        $newFile->setUploadedAt(new \DateTime('now'));
+        $newFile->setUploadedBy($this->getUser()->getPerson());
+        $newFile->setPhysicalFilePath($filePath);
+        $fileset->addFile($newFile);
+        $entityManager->persist($newFile);
+        $entityManager->flush();
+
+        return new Response(
+            null,
+            Response::HTTP_NO_CONTENT
+        );
+    }
+
     /**
      * Delete a file or folder.
      *
