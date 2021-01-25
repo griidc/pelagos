@@ -133,7 +133,6 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             $datasetSubmission->setDatasetFileSize($fileset->getFileSize());
 
             foreach ($fileset->getProcessedFiles() as $file) {
-                $fileIds = array();
                 $fileIds[] = $file->getId();
             }
             // Dispatch message to zip files
