@@ -19,7 +19,11 @@ class RenameDuplicate
     public function renameFile(string $filePathName) :string
     {
         $pathParts = pathinfo($filePathName);
-        $dirname = $pathParts['dirname'];
+        if ($pathParts['dirname'] === '.') {
+            $dirname = '';
+        } else {
+            $dirname = $pathParts['dirname'] . DIRECTORY_SEPARATOR;
+        }
         $fileName = $pathParts['filename'];
         $extension = $pathParts['extension'] ?? '';
 
@@ -36,6 +40,6 @@ class RenameDuplicate
             $fileName
         );
 
-        return $dirname . DIRECTORY_SEPARATOR . $fileName . '.' . $extension;
+        return $dirname . $fileName . '.' . $extension;
     }
 }
