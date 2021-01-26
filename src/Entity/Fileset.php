@@ -34,7 +34,7 @@ class Fileset extends Entity
     protected $zipFilePath;
 
     /**
-     * @ORM\OneToOne(targetEntity=DatasetSubmission::class, mappedBy="Fileset", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="DatasetSubmission", mappedBy="fileset", cascade={"persist", "remove"})
      */
     protected $datasetSubmission;
 
