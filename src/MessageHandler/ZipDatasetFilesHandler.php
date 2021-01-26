@@ -61,7 +61,7 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
     /**
      * ZipDatasetFilesHandler constructor.
      *
-     * @param LoggerInterface        $logger            Default Monolog logger interface.
+     * @param LoggerInterface        $zipperLogger      A name hinted "<monologhandlername>Logger" Monolog logger interface.
      * @param ZipFiles               $zipFiles          Zip files utility instance.
      * @param string                 $downloadDirectory Temporary download directory path.
      * @param FileRepository         $fileRepository    File repository to query objects.
@@ -69,14 +69,14 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
      * @param Datastore              $datastore         Datastore utility instance.
      */
     public function __construct(
-        LoggerInterface $logger,
+        LoggerInterface $zipperLogger,
         ZipFiles $zipFiles,
         string $downloadDirectory,
         FileRepository $fileRepository,
         EntityManagerInterface $entityManager,
         Datastore $datastore
     ) {
-        $this->logger = $logger;
+        $this->logger = $zipperLogger;
         $this->zipFiles = $zipFiles;
         $this->downloadDirectory = $downloadDirectory;
         $this->fileRepository = $fileRepository;
@@ -97,13 +97,16 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
         $datasetSubmission = $this->entityManager->getRepository(DatasetSubmission::class)->find($datasetSubmissionId);
         $filesInfo = $this->fileRepository->getFilePathNameAndPhysicalPath($fileIds);
         $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR .  str_replace(':', '.', $datasetSubmission->getDataset()->getUdi()) . '.zip';
+        $this->logger->info('Created: ' . $destinationPath);
         try {
             $outputStream = array('fileStream' => fopen($destinationPath, 'w+'));
             $this->zipFiles->start($outputStream, basename($destinationPath));
             foreach ($filesInfo as $fileItemInfo) {
+                $this->logger->info("adding file to $destinationPath:" . $fileItemInfo['filePathName']);
                 $this->zipFiles->addFile($fileItemInfo['filePathName'], $this->datastore->getFile($fileItemInfo['physicalFilePath']));
             }
             $this->zipFiles->finish();
+            $this->logger->info('Closed: ' . $destinationPath);
             fclose($outputStream['fileStream']);
             $datasetSubmission->getFileset()->setZipFilePath($destinationPath);
             $this->entityManager->flush();
