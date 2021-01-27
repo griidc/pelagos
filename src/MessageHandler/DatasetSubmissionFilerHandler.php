@@ -12,7 +12,6 @@ use App\Message\DatasetSubmissionFiler;
 use App\Message\HashFile;
 use App\Message\ScanFileForVirus;
 
-use App\Message\ZipDatasetFiles;
 use App\Repository\DatasetSubmissionRepository;
 
 use App\Util\Datastore;
@@ -131,13 +130,6 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             );
             $dataset->updateAvailabilityStatus();
             $datasetSubmission->setDatasetFileSize($fileset->getFileSize());
-
-            foreach ($fileset->getProcessedFiles() as $file) {
-                $fileIds[] = $file->getId();
-            }
-            // Dispatch message to zip files
-            $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
-            $this->messageBus->dispatch($zipFiles);
 
             // Dispatch entity event.
             $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_processed');
