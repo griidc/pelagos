@@ -58,7 +58,8 @@ class FileProcessListener
      *
      * @return void
      */
-     public function postUpdate(File $file, LifecycleEventArgs $args): void
+    
+    public function postUpdate(File $file, LifecycleEventArgs $args): void
     {
         if (!$file instanceof File) {
             return;
@@ -80,7 +81,6 @@ class FileProcessListener
             // Dispatch message to zip files
             $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
             $this->messageBus->dispatch($zipFiles);
-
         }
     }
 }
