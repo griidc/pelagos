@@ -3,7 +3,6 @@
 namespace App\MessageHandler;
 
 use App\Entity\DatasetSubmission;
-use App\Event\EntityEventDispatcher;
 use App\Message\ZipDatasetFiles;
 use App\Repository\FileRepository;
 use App\Util\Datastore;
