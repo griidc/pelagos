@@ -60,13 +60,6 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
     private $datastore;
 
     /**
-     * The entity event dispatcher.
-     *
-     * @var EntityEventDispatcher
-     */
-    protected $entityEventDispatcher;
-
-    /**
      * ZipDatasetFilesHandler constructor.
      *
      * @param LoggerInterface        $logger            Default Monolog logger interface.
@@ -82,8 +75,7 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
         string $downloadDirectory,
         FileRepository $fileRepository,
         EntityManagerInterface $entityManager,
-        Datastore $datastore,
-        EntityEventDispatcher $entityEventDispatcher
+        Datastore $datastore
     ) {
         $this->logger = $logger;
         $this->zipFiles = $zipFiles;
@@ -91,7 +83,6 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
         $this->fileRepository = $fileRepository;
         $this->entityManager = $entityManager;
         $this->datastore = $datastore;
-        $this->entityEventDispatcher = $entityEventDispatcher;
     }
 
     /**
@@ -117,9 +108,6 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
             fclose($outputStream['fileStream']);
             $datasetSubmission->getFileset()->setZipFilePath($destinationPath);
             $this->entityManager->flush();
-
-            // Dispatch entity event.
-            $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_zipped');
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to zip file. Message: %s', $exception->getMessage()));
             return;
