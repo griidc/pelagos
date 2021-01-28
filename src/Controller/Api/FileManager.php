@@ -188,7 +188,8 @@ class FileManager extends AbstractFOSRestController
             if ($isDir === true) {
                 $files = $fileset->getFilesInDirectory($existingFilePath);
                 foreach ($files as $file) {
-                    $this->updateFileName($file, $fileset, $newFileName, $datastore);
+                    $newFilePathName = implode("/", array_merge([$newFileName], $file->getFilePathParts($existingFilePath)));
+                    $this->updateFileName($file, $fileset, $newFilePathName, $datastore);
                 }
             } else {
                 $existingFile = $fileset->getExistingFile($existingFilePath);
