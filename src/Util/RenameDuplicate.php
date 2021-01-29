@@ -27,7 +27,7 @@ class RenameDuplicate
         $fileName = $pathParts['filename'];
         $extension = $pathParts['extension'] ?? '';
 
-        $patterns = array('/^(.*)\((\d+)\)(\.?.*)$/','/(^((?!\.|\(\d+\)).)*$)()/');
+        $patterns = array('/^(.*)\((\d+)\)(\.?.*)$/','/(^(?:(?!\.|\(\d+\)).)*$)()/');
 
         $fileName = preg_replace_callback(
             $patterns,
