@@ -79,10 +79,8 @@ class DeleteFileHandler implements MessageHandlerInterface
                 $this->datastore->deleteFile($deletedFile->getPhysicalFilePath());
             } catch (\Exception $e) {
                 $this->logger->error(sprintf('Unable to delete file. Message: "%s"', $e->getMessage()));
-                return;
             }
             $fileset->removeFile($deletedFile);
-
         }
 
         $this->entityManager->flush($datasetSubmission);

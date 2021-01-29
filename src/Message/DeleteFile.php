@@ -28,6 +28,6 @@ class DeleteFile
      */
     public function getDatasetSubmissionId(): int
     {
-        return $this->datasetSubmission;
+        return $this->datasetSubmissionId;
     }
 }
