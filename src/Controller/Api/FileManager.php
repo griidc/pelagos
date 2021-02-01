@@ -194,6 +194,9 @@ class FileManager extends AbstractFOSRestController
         if ($fileset instanceof Fileset) {
             if ($isDir === true) {
                 $existingFileDir = dirname($existingFilePath);
+                if ($existingFileDir === '.') {
+                    $existingFileDir = '';
+                }
                 $folderArray = $folderStructureGenerator->getFolderJson($datasetSubmission->getFileset()->getId(), $existingFileDir);
                 $newFolderName = basename($newFileName);
                 foreach ($folderArray as $folder) {
