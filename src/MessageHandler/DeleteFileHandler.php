@@ -58,19 +58,19 @@ class DeleteFileHandler implements MessageHandlerInterface
     {
         $datasetSubmissionId = $deleteFile->getDatasetSubmissionId();
 
-        $this->logger->info(sprintf('Processing File with ID: "%s"', $datasetSubmissionId));
+        $this->logger->info(sprintf('Processing Dataset Submission with ID: "%s"', $datasetSubmissionId));
 
         $datasetSubmission = $this->entityManager->getRepository(DatasetSubmission::class)->find($datasetSubmissionId);
 
         if (!$datasetSubmission instanceof DatasetSubmission) {
-            $this->logger->warning('Submission not found');
+            $this->logger->warning('Dataset Submission was not found.');
             return;
         }
 
         $fileset = $datasetSubmission->getFileset();
 
         if (!$fileset instanceof Fileset) {
-            $this->logger->warning('No files exist in this dataset');
+            $this->logger->warning('No files exist in this dataset.');
             return;
         }
 
@@ -83,6 +83,6 @@ class DeleteFileHandler implements MessageHandlerInterface
             $fileset->removeFile($deletedFile);
         }
 
-        $this->entityManager->flush($datasetSubmission);
+        $this->entityManager->flush();
     }
 }

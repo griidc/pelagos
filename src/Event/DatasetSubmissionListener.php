@@ -2,7 +2,6 @@
 namespace App\Event;
 
 use App\Entity\DatasetSubmission;
-use App\Entity\Fileset;
 use App\Message\DeleteFile;
 
 /**
