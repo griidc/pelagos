@@ -70,7 +70,7 @@ class DeleteFileHandler implements MessageHandlerInterface
         $fileset = $datasetSubmission->getFileset();
 
         if (!$fileset instanceof Fileset) {
-            $this->logger->warning('fileset not found');
+            $this->logger->warning('No files exist in this dataset');
             return;
         }
 
