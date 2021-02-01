@@ -33,7 +33,7 @@ class RenameDuplicate
             $extension = '.' . $extension;
         }
 
-        $patterns = array('/^(.*)\((\d+)\)(\.?.*)$/','/(^(?:(?!\(\d+\)).)*$)()/');
+        $patterns = array('/^(.*)\((\d{1,3})\)(\.?.*)$/','/(^(?:(?!\(\d{1,3}\)).)*$)()/');
 
         $fileName = preg_replace_callback(
             $patterns,
