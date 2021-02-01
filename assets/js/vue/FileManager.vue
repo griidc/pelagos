@@ -188,6 +188,8 @@ export default {
 
         directoryChanged: function (args) {
             destinationDir = args.directory.path;
+        },
+        
         showPopupError: function (message) {
             this.errorMessage = message;
             this.isPopupVisible = true;
