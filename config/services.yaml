@@ -97,6 +97,7 @@ services:
     App\Event\FileProcessListener:
         tags:
             - { name: doctrine.orm.entity_listener, event: preUpdate, entity: App\Entity\File }
+            - { name: doctrine.orm.entity_listener, event: postUpdate, entity: App\Entity\File }
 
     App\Util\DOIutil:
         $doiApiUserName: "%env(DOI_API_USER_NAME)%"
