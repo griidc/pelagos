@@ -27,19 +27,25 @@ class RenameDuplicate
         $fileName = $pathParts['filename'];
         $extension = $pathParts['extension'] ?? '';
 
-        $patterns = array('/^(.*)\((\d+)\)(\.?.*)$/','/(^(?:(?!\.|\(\d+\)).)*$)()/');
+        if (empty($pathParts['extension'])) {
+            $extension = '';
+        } else {
+            $extension = '.' . $extension;
+        }
+
+        $patterns = array('/^(.*)\((\d+)\)(\.?.*)$/','/(^(?:(?!\(\d+\)).)*$)()/');
 
         $fileName = preg_replace_callback(
             $patterns,
             function ($matches) {
                 if ((int)$matches[2] >= 999) {
-                    throw new \Exception('Sequence is too high!');
+                    throw new \Exception('Can only rename up to 999 times!');
                 }
                 return $matches[1].'('.((int)$matches[2]+1).')';
             },
             $fileName
         );
 
-        return $dirname . $fileName . '.' . $extension;
+        return $dirname . $fileName . $extension;
     }
 }
