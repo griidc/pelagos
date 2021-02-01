@@ -7,6 +7,7 @@ use App\Entity\File;
 use App\Entity\Fileset;
 use App\Util\Datastore;
 use App\Util\FileUploader;
+use App\Util\FolderStructureGenerator;
 use App\Util\RenameDuplicate;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -168,24 +169,38 @@ class FileManager extends AbstractFOSRestController
      * @param Request                $request           The request body
      * @param EntityManagerInterface $entityManager     Entity manager interface instance.
      * @param Datastore              $datastore         Datastore to manipulate the file on disk.
+     * @param FolderStructureGenerator  $folderStructureGenerator Folder structure generator Util class.
      *
      * @Route("/api/file_update_filename/{id}", name="pelagos_api_file_update_filename", methods={"PUT"}, defaults={"_format"="json"})
      *
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      * @IsGranted("CAN_EDIT", subject="datasetSubmission")
      *
-     * @throws BadRequestHttpException When the destination file name already exists.
+     * @throws BadRequestHttpException When the destination file or folder name already exists.
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function updateFileOrFolderName(DatasetSubmission $datasetSubmission, Request $request, EntityManagerInterface $entityManager, Datastore $datastore) : Response
-    {
+    public function updateFileOrFolderName(
+        DatasetSubmission $datasetSubmission,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        Datastore $datastore,
+        FolderStructureGenerator $folderStructureGenerator
+    ) : Response {
         $newFileName = $request->get('newFileFolderPathDir');
         $existingFilePath = $request->get('path');
         $isDir = $request->get('isDir');
         $fileset = $datasetSubmission->getFileset();
         if ($fileset instanceof Fileset) {
             if ($isDir === true) {
+                $existingFileDir = dirname($existingFilePath);
+                $folderArray = $folderStructureGenerator->getFolderJson($datasetSubmission->getFileset()->getId(), $existingFileDir);
+                $newFolderName = basename($newFileName);
+                foreach ($folderArray as $folder) {
+                    if ($folder['name'] === $newFolderName) {
+                        throw new BadRequestHttpException('Folder already exists');
+                    }
+                }
                 $files = $fileset->getFilesInDirectory($existingFilePath);
                 foreach ($files as $file) {
                     $newFilePathName = implode("/", array_merge([$newFileName], $file->getFilePathParts($existingFilePath)));
