@@ -91,12 +91,13 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
      */
     public function __invoke(ZipDatasetFiles $zipDatasetFiles)
     {
+        $this->logger->info('Zip worker starting');
         $fileIds = $zipDatasetFiles->getFileIds();
         $datasetSubmissionId = $zipDatasetFiles->getDatasetSubmissionId();
         $datasetSubmission = $this->entityManager->getRepository(DatasetSubmission::class)->find($datasetSubmissionId);
         $filesInfo = $this->fileRepository->getFilePathNameAndPhysicalPath($fileIds);
         $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR .  str_replace(':', '.', $datasetSubmission->getDataset()->getUdi()) . '.zip';
-        $this->logger->info('Zipping started: ' . $destinationPath);
+        $this->logger->info('Zipfile opened: ' . $destinationPath);
         try {
             $outputStream = array('fileStream' => fopen($destinationPath, 'w+'));
             $this->zipFiles->start($outputStream, basename($destinationPath));
@@ -105,7 +106,7 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
                 $this->zipFiles->addFile($fileItemInfo['filePathName'], $this->datastore->getFile($fileItemInfo['physicalFilePath']));
             }
             $this->zipFiles->finish();
-            $this->logger->info('Zipping ended: ' . $destinationPath);
+            $this->logger->info('Zipfile closed: ' . $destinationPath);
             fclose($outputStream['fileStream']);
             $datasetSubmission->getFileset()->setZipFilePath($destinationPath);
             $this->entityManager->flush();
@@ -113,5 +114,6 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
             $this->logger->error(sprintf('Unable to zip file. Message: %s', $exception->getMessage()));
             return;
         }
+        $this->logger->info('Zip worker finished');
     }
 }
