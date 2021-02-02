@@ -1,5 +1,6 @@
 <template>
     <div>
+        <div id="upload-file-button"></div>
         <DxPopup
             title="Error"
             :visible.sync="isPopupVisible"
@@ -17,6 +18,7 @@
         <DxFileManager
                 :file-system-provider="customFileProvider"
                 :on-selection-changed="onSelectionChanged"
+                :on-current-directory-changed="directoryChanged"
                 ref="myFileManager"
         >
             <DxPermissions
@@ -31,6 +33,10 @@
                     :visible="showDownloadZipBtn"
                     widget="dxMenu"
                     :options="downloadZipOptions"
+                />
+                <DxItem
+                    widget="dxMenu"
+                    :options="uploadSingleFileOptions"
                 />
                 <DxItem name="refresh"/>
                 <DxItem name="separator" location="after"/>
@@ -88,6 +94,7 @@ export default {
             }),
             downloadZipOptions: this.getDownloadZipFiles(),
             showDownloadZipBtn: this.isDownloadZipVisible(),
+            uploadSingleFileOptions: this.uploadSingleFile(),
             isPopupVisible: false,
             errorMessage: ''
         };
@@ -127,7 +134,7 @@ export default {
             })
         },
 
-        onItemClick: function () {
+        onDownloadZipBtnClick: function () {
             axiosInstance({
                 url: `${Routing.generate('pelagos_api_file_zip_download_all')}/${datasetSubmissionId}`,
                 method: 'GET',
@@ -150,7 +157,7 @@ export default {
                         icon: 'download',
                     }
                 ],
-                onItemClick: this.onItemClick
+                onItemClick: this.onDownloadZipBtnClick
             };
         },
 
@@ -162,6 +169,27 @@ export default {
                 });
         },
 
+        uploadSingleFile: function () {
+            return {
+                items: [
+                    {
+                        text: 'Upload File',
+                        icon: 'upload',
+
+                    }
+                ],
+                onItemClick: this.onUploadBtnClick,
+            };
+        },
+
+        onUploadBtnClick: function () {
+            document.getElementById("upload-file-button").click();
+        },
+
+        directoryChanged: function (args) {
+            destinationDir = args.directory.path;
+        },
+        
         showPopupError: function (message) {
             this.errorMessage = message;
             this.isPopupVisible = true;
@@ -275,7 +303,7 @@ const initDropzone = () => {
         retryChunks: true,
         retryChunksLimit: 3,
         maxFilesize: null,
-        clickable: false,
+        clickable: "#upload-file-button",
         timeout: 0,
         chunksUploaded: function (file, done) {
             // All chunks have been uploaded. Perform any other actions
