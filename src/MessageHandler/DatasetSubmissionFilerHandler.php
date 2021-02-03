@@ -112,14 +112,15 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             'dataset_submission_id' => $datasetSubmissionId
         );
         $fileset = $datasetSubmission->getFileset();
-        $fileIds = array();
         if ($fileset instanceof Fileset) {
             // Log processing complete.
             $this->logger->info('Dataset submission process started', $loggingContext);
             foreach ($fileset->getNewFiles() as $file) {
                 if ($file instanceof File) {
-                    $this->processFile($file, $udi, $loggingContext);
-                    $fileIds[] = $file->getId();
+                    $fileId = $file->getId();
+                    $processFile = new processFile($fileId);
+                    $this->messageBus->dispatch($processFile);
+                    
                 } else {
                     $this->logger->alert('File object does not exist');
                 }
