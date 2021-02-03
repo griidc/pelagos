@@ -5,17 +5,19 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const fileManagerElement = document.getElementById("file-manager-app");
 
-if (fileManagerElement.dataset.id) {
-    const datasetSubmissionId = Number(fileManagerElement.dataset.id);
-    new Vue({
-        el: '#file-manager-app',
-        data() {
-            return {
-                datasetSubmissionId: datasetSubmissionId
-            }
-        },
-        components: {FileManager},
-        template: `
-          <FileManager :datasetSubId="datasetSubmissionId"/>`
-    });
+if (fileManagerElement) {
+    if (fileManagerElement.dataset) {
+        const datasetSubmissionId = Number(fileManagerElement.dataset.id);
+        new Vue({
+            el: '#file-manager-app',
+            data() {
+                return {
+                    datasetSubmissionId: datasetSubmissionId
+                }
+            },
+            components: {FileManager},
+            template: `
+              <FileManager :datasetSubId="datasetSubmissionId"/>`
+        });
+    }
 }
