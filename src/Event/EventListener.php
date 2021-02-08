@@ -2,6 +2,7 @@
 namespace App\Event;
 
 use App\Util\RabbitPublisher;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -81,6 +82,13 @@ abstract class EventListener
     protected $mdappLogger;
 
     /**
+     * The Message Bus.
+     *
+     * @var MessageBusInterface
+     */
+    protected $messageBus;
+
+    /**
      * This is the class constructor to handle dependency injections.
      *
      * @param Environment           $twig          Twig engine.
@@ -98,7 +106,8 @@ abstract class EventListener
         EntityHandler $entityHandler = null,
         RabbitPublisher $publisher = null,
         DataStore $dataStore = null,
-        MdappLogger $mdappLogger = null
+        MdappLogger $mdappLogger = null,
+        MessageBusInterface $messageBus = null
     ) {
         $this->twig = $twig;
         $this->mailer = $mailer;
@@ -107,6 +116,7 @@ abstract class EventListener
         $this->publisher = $publisher;
         $this->dataStore = $dataStore;
         $this->mdappLogger = $mdappLogger;
+        $this->messageBus = $messageBus;
     }
 
     /**

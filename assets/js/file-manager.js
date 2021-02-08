@@ -1,6 +1,7 @@
 import Vue from "vue";
 import FileManager from "./vue/FileManager";
 import "../css/file-manager.css";
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const fileManagerElement = document.getElementById("file-manager-app");
 

@@ -1,8 +1,24 @@
 <template>
     <div>
+        <div id="upload-file-button"></div>
+        <DxPopup
+            title="Error"
+            :visible.sync="isPopupVisible"
+            :close-on-outside-click="true"
+            :show-title="true"
+            :width="300"
+            :height="250">
+            <template>
+                <p>
+                    <i class="fas fa-exclamation-triangle fa-2x" style="color:#d9534f"></i>&nbsp;
+                    {{ errorMessage }}
+                </p>
+            </template>
+        </DxPopup>
         <DxFileManager
                 :file-system-provider="customFileProvider"
                 :on-selection-changed="onSelectionChanged"
+                :on-current-directory-changed="directoryChanged"
                 ref="myFileManager"
         >
             <DxPermissions
@@ -18,6 +34,10 @@
                     widget="dxMenu"
                     :options="downloadZipOptions"
                 />
+                <DxItem
+                    widget="dxMenu"
+                    :options="uploadSingleFileOptions"
+                />
                 <DxItem name="refresh"/>
                 <DxItem name="separator" location="after"/>
                 <DxItem name="switchView"/>
@@ -30,6 +50,7 @@
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import { DxFileManager, DxPermissions, DxToolbar, DxItem, DxContextMenu } from "devextreme-vue/file-manager";
+import { DxPopup } from 'devextreme-vue/popup';
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
 import Dropzone from "dropzone";
 
@@ -57,7 +78,8 @@ export default {
         DxToolbar,
         DxItem,
         DxContextMenu,
-        CustomFileSystemProvider
+        CustomFileSystemProvider,
+        DxPopup
     },
 
     data() {
@@ -72,6 +94,9 @@ export default {
             }),
             downloadZipOptions: this.getDownloadZipFiles(),
             showDownloadZipBtn: this.isDownloadZipVisible(),
+            uploadSingleFileOptions: this.uploadSingleFile(),
+            isPopupVisible: false,
+            errorMessage: ''
         };
     },
 
@@ -109,7 +134,7 @@ export default {
             })
         },
 
-        onItemClick: function () {
+        onDownloadZipBtnClick: function () {
             axiosInstance({
                 url: `${Routing.generate('pelagos_api_file_zip_download_all')}/${datasetSubmissionId}`,
                 method: 'GET',
@@ -132,7 +157,7 @@ export default {
                         icon: 'download',
                     }
                 ],
-                onItemClick: this.onItemClick
+                onItemClick: this.onDownloadZipBtnClick
             };
         },
 
@@ -142,6 +167,32 @@ export default {
                 .then(response => {
                     this.showDownloadZipBtn = response.data;
                 });
+        },
+
+        uploadSingleFile: function () {
+            return {
+                items: [
+                    {
+                        text: 'Upload File',
+                        icon: 'upload',
+
+                    }
+                ],
+                onItemClick: this.onUploadBtnClick,
+            };
+        },
+
+        onUploadBtnClick: function () {
+            document.getElementById("upload-file-button").click();
+        },
+
+        directoryChanged: function (args) {
+            destinationDir = args.directory.path;
+        },
+        
+        showPopupError: function (message) {
+            this.errorMessage = message;
+            this.isPopupVisible = true;
         }
     },
 };
@@ -153,8 +204,9 @@ const getItems = (pathInfo) => {
             .then(response => {
                 resolve(response.data);
             }).catch(error => {
+                myFileManager.$parent.showPopupError(error.response.data.message);
                 reject(error);
-        })
+            })
     })
 }
 
@@ -165,7 +217,8 @@ const deleteItem = (item) => {
             .then(() => {
                 resolve();
             }).catch(error => {
-                    reject(error)
+                myFileManager.$parent.showPopupError(error.response.data.message);
+                reject(error)
             })
     })
 }
@@ -181,6 +234,7 @@ const moveItem = (item, destinationDir) => {
             .then(() => {
                 resolve();
             }).catch(error => {
+                myFileManager.$parent.showPopupError(error.response.data.message);
                 reject(error)
             })
     })
@@ -197,6 +251,7 @@ const renameItem = (item, name) => {
             .then(() => {
                 resolve();
             }).catch(error => {
+                myFileManager.$parent.showPopupError(error.response.data.message);
                 reject(error)
             })
     })
@@ -223,6 +278,7 @@ const downloadItems = (items) => {
                         resolve();
                     });
                 }).catch(error => {
+                    myFileManager.$parent.showPopupError(error.response.data.message);
                     reject(error)
                 })
         })
@@ -246,8 +302,9 @@ const initDropzone = () => {
         parallelUploads: 10,
         retryChunks: true,
         retryChunksLimit: 3,
-        maxFileSize: 1000000,
-        clickable: false,
+        maxFilesize: null,
+        clickable: "#upload-file-button",
+        timeout: 0,
         chunksUploaded: function (file, done) {
             // All chunks have been uploaded. Perform any other actions
             let currentFile = file;
