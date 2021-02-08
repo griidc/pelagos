@@ -146,7 +146,6 @@ class ProcessFileHandler implements MessageHandlerInterface
             foreach ($fileset->getProcessedFiles() as $file) {
                 $fileIds[] = $file->getId();
             }
-            dump($fileIds);
             // Dispatch message to zip files
             $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
             $this->entityManager->flush();
