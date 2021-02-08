@@ -138,6 +138,7 @@ class ProcessFileHandler implements MessageHandlerInterface
         $this->logger->info("Enqueuing virus scan for file: {$file->getFilePathName()}.", $loggingContext);
 
         $file->setStatus(File::FILE_DONE);
+        
 
         if ($fileset->isDone()) {
             $datasetSubmissionId = $datasetSubmission->getId();
@@ -148,6 +149,7 @@ class ProcessFileHandler implements MessageHandlerInterface
             dump($fileIds);
             // Dispatch message to zip files
             $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
+            $this->entityManager->flush();
             $this->messageBus->dispatch($zipFiles);
             $this->logger->info('Dataset file processing completed', $loggingContext);
         } else {
