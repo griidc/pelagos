@@ -9,8 +9,7 @@ use App\Entity\Fileset;
 use App\Event\EntityEventDispatcher;
 
 use App\Message\DatasetSubmissionFiler;
-use App\Message\HashFile;
-use App\Message\ScanFileForVirus;
+use App\Message\ProcessFile;
 
 use App\Repository\DatasetSubmissionRepository;
 
@@ -118,9 +117,9 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             foreach ($fileset->getNewFiles() as $file) {
                 if ($file instanceof File) {
                     $fileId = $file->getId();
-                    $processFile = new processFile($fileId);
+                    $processFile = new ProcessFile($fileId);
                     $this->messageBus->dispatch($processFile);
-                    
+
                 } else {
                     $this->logger->alert('File object does not exist');
                 }
@@ -141,47 +140,5 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
             }
         }
         $this->entityManager->flush();
-    }
-
-    /**
-     * Method to process a single file.
-     *
-     * @param File   $file           The file that is being processed.
-     * @param string $udi            The UDI of the dataset.
-     * @param array  $loggingContext The logging context for the related dataset submission.
-     *
-     * @return void
-     */
-    private function processFile(File $file, string $udi, array $loggingContext): void
-    {
-        // Log processing start.
-        $fileId = $file->getId();
-        $loggingContext['file_id'] = $fileId;
-        $filepath = $file->getPhysicalFilePath();
-
-        $this->logger->info('Dataset file processing started', $loggingContext);
-        $file->setStatus(File::FILE_IN_PROGRESS);
-
-        try {
-            $newFileDestination = $this->datastore->addFile(
-                ['fileStream' => fopen($filepath, 'r')],
-                str_replace(':', '.', $udi) . DIRECTORY_SEPARATOR . $file->getFilePathName()
-            );
-            $file->setPhysicalFilePath($newFileDestination);
-        } catch (\Exception $exception) {
-            $this->logger->error(sprintf('Unable to add file to datastore. Message: "%s"', $exception->getMessage()), $loggingContext);
-            $file->setStatus(File::FILE_ERROR);
-        }
-
-        // File Hashing
-        $hashFile = new HashFile($fileId);
-        $this->messageBus->dispatch($hashFile);
-
-        // File virus Scan
-        $this->messageBus->dispatch(new ScanFileForVirus($fileId, $loggingContext['udi']));
-        $this->logger->info("Enqueuing virus scan for file: {$file->getFilePathName()}.", $loggingContext);
-
-        // Log processing complete.
-        $this->logger->info('Dataset file processing completed', $loggingContext);
     }
 }
