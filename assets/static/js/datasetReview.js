@@ -233,7 +233,6 @@ $(document).ready(function(){
             btnNext.button("enable");
         }
     });
-    document.getElementById("datasetFileTransferType").value = "upload";
 
     $("#temporalExtentBeginPosition").datepicker({
         dateFormat: "yy-mm-dd",
