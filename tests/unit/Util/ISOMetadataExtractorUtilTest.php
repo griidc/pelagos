@@ -196,7 +196,9 @@ class ISOMetadataExtractorUtilTest extends TestCase
             Fileset::class,
             array(
                 'getAllFiles' => new ArrayCollection(array($this->mockFile)),
-                'getZipFilePath' => '/path/to/zip'
+                'getZipFilePath' => '/path/to/zip',
+                'getZipFileSha256Hash' => 'cfsdaf',
+                'getZipFileSize' => '32432324',
             )
         );
 
