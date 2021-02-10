@@ -8,6 +8,7 @@ use App\Message\ScanFileForVirus;
 use App\Message\ZipDatasetFiles;
 use App\Repository\FileRepository;
 use App\Util\Datastore;
+use App\Util\StreamInfo;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
@@ -54,6 +55,13 @@ class ProcessFileHandler implements MessageHandlerInterface
     private $messageBus;
 
     /**
+     * List of messages.
+     *
+     * @var array
+     */
+    private $messages = array();
+
+    /**
      * Constructor for this Controller, to set up default services.
      *
      * @param EntityManagerInterface $entityManager           The entity handler.
@@ -79,8 +87,12 @@ class ProcessFileHandler implements MessageHandlerInterface
     /**
      * Destructor for the handler to always flush.
      */
-    public function __destruct() {
+    public function __destruct()
+    {
         $this->entityManager->flush();
+        foreach ($this->messages as $message) {
+            $this->messageBus->dispatch($message);
+        }
     }
 
     /**
@@ -113,13 +125,10 @@ class ProcessFileHandler implements MessageHandlerInterface
         $filePath = $file->getPhysicalFilePath();
         $fileStream = fopen($filePath, 'r');
         try {
-            $context = hash_init('sha256');
-            hash_update_stream($context, $fileStream);
-            $fileHash =  hash_final($context);
+            $fileHash = StreamInfo::calculateHash(array('fileStream' => $fileStream));
             $file->setFileSha256Hash($fileHash);
         } catch (\Exception $e) {
-            $this->logger->error(sprintf('Unable to hash file. Message: %s', $e->getMessage()));
-            return;
+            $this->logger->warning(sprintf('Unable to hash file. Message: %s', $e->getMessage()));
         }
 
         try {
@@ -131,14 +140,14 @@ class ProcessFileHandler implements MessageHandlerInterface
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to add file to datastore. Message: "%s"', $exception->getMessage()), $loggingContext);
             $file->setStatus(File::FILE_ERROR);
+            return;
         }
 
         // File virus Scan
-        $this->messageBus->dispatch(new ScanFileForVirus($fileId, $loggingContext['udi']));
+        $this->messages[] = new ScanFileForVirus($fileId, $loggingContext['udi']);
         $this->logger->info("Enqueuing virus scan for file: {$file->getFilePathName()}.", $loggingContext);
 
         $file->setStatus(File::FILE_DONE);
-        
 
         if ($fileset->isDone()) {
             $datasetSubmissionId = $datasetSubmission->getId();
@@ -148,8 +157,7 @@ class ProcessFileHandler implements MessageHandlerInterface
             }
             // Dispatch message to zip files
             $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
-            $this->entityManager->flush();
-            $this->messageBus->dispatch($zipFiles);
+            $this->messages[] = $zipFiles;
             $this->logger->info('Dataset file processing completed', $loggingContext);
         } else {
             $this->logger->info('Processed file for Dataset', $loggingContext);

@@ -119,7 +119,6 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
                     $fileId = $file->getId();
                     $processFile = new ProcessFile($fileId);
                     $this->messageBus->dispatch($processFile);
-
                 } else {
                     $this->logger->alert('File object does not exist');
                 }
