@@ -199,6 +199,7 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getZipFilePath' => '/path/to/zip',
                 'getZipFileSha256Hash' => 'cfsdaf',
                 'getZipFileSize' => '32432324',
+                'doesZipFileExist' => true
             )
         );
 
