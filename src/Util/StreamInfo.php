@@ -33,6 +33,6 @@ class StreamInfo
     {
         $fileStream = $inputFileStream['fileStream'] ?? null;
         $fstat = fstat($fileStream);
-        return (int) $fstat[size];
+        return (int) $fstat['size'];
     }
 }
