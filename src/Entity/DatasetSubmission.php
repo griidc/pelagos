@@ -923,7 +923,7 @@ class DatasetSubmission extends Entity
      *
      * @var Fileset
      *
-     * @ORM\OneToOne(targetEntity="Fileset", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="Fileset", inversedBy="datasetSubmission", cascade={"persist", "remove"})
      */
     protected $fileset;
 
@@ -1066,10 +1066,11 @@ class DatasetSubmission extends Entity
 
                 $this->addDatasetLink($newDatasetLink);
             }
-            if ($entity->getFileset() instanceof Fileset) {
+            $fileset = $entity->getFileset();
+            if ($fileset instanceof Fileset) {
                 // Copy the fileSet
                 $newFileset = new Fileset();
-                foreach ($entity->getFileset()->getAllFiles() as $file) {
+                foreach ($fileset->getAllFiles() as $file) {
                     $newFile = new File();
                     $newFile->setFilePathName($file->getFilePathName());
                     $newFile->setFileSize($file->getFileSize());
@@ -1080,6 +1081,11 @@ class DatasetSubmission extends Entity
                     $newFile->setPhysicalFilePath($file->getPhysicalFilePath());
                     $newFile->setStatus($file->getStatus());
                     $newFileset->addFile($newFile);
+                }
+                if ($fileset->doesZipFileExist()) {
+                    $newFileset->setZipFilePath($fileset->getZipFilePath());
+                    $newFileset->setZipFileSha256Hash($fileset->getZipFileSha256Hash());
+                    $newFileset->setZipFileSize($fileset->getZipFileSize());
                 }
                 $this->setFileset($newFileset);
             }

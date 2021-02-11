@@ -34,6 +34,40 @@ class Fileset extends Entity
     protected $zipFilePath;
 
     /**
+     * Zipped files size on disk.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $zipFileSize;
+
+    /**
+     * Zipped files hash on disk.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $zipFileSha256Hash;
+
+    /**
+     * @ORM\OneToOne(targetEntity="DatasetSubmission", mappedBy="fileset", cascade={"persist", "remove"})
+     */
+    protected $datasetSubmission;
+
+
+    /**
+     * Getter for Dataset Submission.
+     *
+     * @return DatasetSubmission|null
+     */
+    public function getDatasetSubmission(): ?DatasetSubmission
+    {
+        return $this->datasetSubmission;
+    }
+
+    /**
      * Fileset constructor.
      */
     public function __construct()
@@ -143,7 +177,8 @@ class Fileset extends Entity
      */
     public function doesFileExist(string $newFileName) : bool
     {
-        return $this->files->exists(function ($key, File $file) use ($newFileName) {
+        $processedAndNewFiles = $this->getProcessedAndNewFiles();
+        return $processedAndNewFiles->exists(function ($key, File $file) use ($newFileName) {
             return $file->getFilePathName() === $newFileName;
         });
     }
@@ -220,9 +255,9 @@ class Fileset extends Entity
     /**
      * Getter for zip file path.
      *
-     * @return string
+     * @return string|null
      */
-    public function getZipFilePath(): string
+    public function getZipFilePath(): ? string
     {
         return $this->zipFilePath;
     }
@@ -237,5 +272,64 @@ class Fileset extends Entity
     public function setZipFilePath(string $zipFilePath): void
     {
         $this->zipFilePath = $zipFilePath;
+    }
+
+    /**
+     * Getter for zip file size.
+     *
+     * @return string|null
+     */
+    public function getZipFileSize(): ? string
+    {
+        return $this->zipFileSize;
+    }
+
+    /**
+     * Setter for zip file size.
+     *
+     * @param string $zipFileSize Zip file size on disk.
+     *
+     * @return void
+     */
+    public function setZipFileSize(string $zipFileSize): void
+    {
+        $this->zipFileSize = $zipFileSize;
+    }
+
+    /**
+     * Getter for zip file hash value.
+     *
+     * @return string|null
+     */
+    public function getZipFileSha256Hash(): ? string
+    {
+        return $this->zipFileSha256Hash;
+    }
+
+    /**
+     * Setter for zip file hash.
+     *
+     * @param string $zipFileSha256Hash Hash value for the zip file.
+     *
+     * @return void
+     */
+    public function setZipFileSha256Hash(string $zipFileSha256Hash): void
+    {
+        $this->zipFileSha256Hash = $zipFileSha256Hash;
+    }
+
+    /**
+     * Check if zip file exists for the fileset.
+     *
+     * @return bool
+     */
+    public function doesZipFileExist(): bool
+    {
+        $fileExists = false;
+        if ($this->getZipFilePath() and $this->getZipFileSha256Hash() and
+            $this->getZipFileSize()) {
+            $fileExists = true;
+        }
+        return $fileExists;
     }
 }

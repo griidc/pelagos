@@ -195,7 +195,11 @@ class ISOMetadataExtractorUtilTest extends TestCase
         $this->mockFileset = \Mockery::mock(
             Fileset::class,
             array(
-                'getAllFiles' => new ArrayCollection(array($this->mockFile))
+                'getAllFiles' => new ArrayCollection(array($this->mockFile)),
+                'getZipFilePath' => '/path/to/zip',
+                'getZipFileSha256Hash' => 'cfsdaf',
+                'getZipFileSize' => '32432324',
+                'doesZipFileExist' => true
             )
         );
 

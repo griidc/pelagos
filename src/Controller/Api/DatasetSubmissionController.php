@@ -2,7 +2,9 @@
 
 namespace App\Controller\Api;
 
+use App\Util\FileUploader;
 use App\Util\FolderStructureGenerator;
+
 use Doctrine\ORM\EntityManagerInterface;
 
 use FOS\RestBundle\Controller\Annotations\View;
@@ -374,79 +376,6 @@ class DatasetSubmissionController extends EntityController
         } else {
             throw new BadRequestHttpException('No files exist in this Dataset');
         }
-    }
-
-    /**
-     * Adds a file to a dataset submission.
-     *
-     * @param DatasetSubmission      $datasetSubmission The id of the dataset submission.
-     * @param Request                $request           The request body sent with file metadata.
-     * @param EntityManagerInterface $entityManager     Entity manager interface to doctrine operations.
-     *
-     * @Route(
-     *     "/api/files_dataset_submission/{id}",
-     *     name="pelagos_api_add_file_dataset_submission",
-     *     methods={"POST"},
-     *     defaults={"_format"="json"},
-     *     requirements={"id"="\d+"}
-     *     )
-     *
-     * @View()
-     *
-     * @return Response
-     */
-    public function addFile(DatasetSubmission $datasetSubmission, Request $request, EntityManagerInterface $entityManager)
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $fileset = $datasetSubmission->getFileset();
-        if ($fileset instanceof Fileset) {
-            if ($fileset->doesFileExist($request->get('name'))) {
-                $existingFile = $fileset->getExistingFile($request->get('name'));
-                $existingFile->setStatus(FILE::FILE_DELETED);
-            }
-        } else {
-            $fileset = new Fileset();
-            $datasetSubmission->setFileset($fileset);
-        }
-        $newFile = new File();
-        $newFile->setFilePathName(trim($request->get('name')));
-        $newFile->setFileSize($request->get('size'));
-        $newFile->setUploadedAt(new \DateTime('now'));
-        $newFile->setUploadedBy($this->getUser()->getPerson());
-        $newFile->setPhysicalFilePath($request->get('path'));
-        $fileset->addFile($newFile);
-        $entityManager->persist($newFile);
-        $entityManager->flush();
-        return $this->makeNoContentResponse();
-    }
-
-    /**
-     * Checks if a File already exits with the same name.
-     *
-     * @param DatasetSubmission $datasetSubmission The id of the dataset submission.
-     * @param Request           $request           The request body sent with file metadata.
-     *
-     * @Route(
-     *     "/api/files_dataset_submission/file-exists/{id}",
-     *     name="pelagos_api_check_file_exists_dataset_submission",
-     *     methods={"GET"},
-     *     defaults={"_format"="json"},
-     *     requirements={"id"="\d+"}
-     *     )
-     *
-     * @View()
-     *
-     * @return boolean|string
-     */
-    public function checkFileExists(DatasetSubmission $datasetSubmission, Request $request)
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $fileset = $datasetSubmission->getFileset();
-        $newFileName = $request->get('name');
-        if (!$fileset instanceof Fileset) {
-            return false;
-        }
-        return $fileset->doesFileExist($newFileName);
     }
 
     /**
