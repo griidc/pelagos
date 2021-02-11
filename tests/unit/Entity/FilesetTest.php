@@ -213,4 +213,28 @@ class FilesetTest extends TestCase
         $this->fileset->setZipFilePath($zipFilePath);
         $this->assertEquals($zipFilePath, $this->fileset->getZipFilePath());
     }
+
+    /**
+     * Test for zipFileSize setter and getter.
+     *
+     * @return void
+     */
+    public function testCanGetAdSetZipFileSize()
+    {
+        $zipFileSize = '237849';
+        $this->fileset->setZipFileSize($zipFileSize);
+        $this->assertEquals($zipFileSize, $this->fileset->getZipFileSize());
+    }
+
+    /**
+     * Test for zipFileSha256Hash setter and getter.
+     *
+     * @return void
+     */
+    public function testCanGetAdSetZipFileSha256Hash()
+    {
+        $zipFileSha256Hash = 'cafesdfds';
+        $this->fileset->setZipFileSha256Hash($zipFileSha256Hash);
+        $this->assertEquals($zipFileSha256Hash, $this->fileset->getZipFileSha256Hash());
+    }
 }
