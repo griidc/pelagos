@@ -66,20 +66,20 @@ class ProcessFileHandler implements MessageHandlerInterface
      *
      * @param EntityManagerInterface $entityManager           The entity handler.
      * @param FileRepository         $fileRepository          The file Repository.
-     * @param LoggerInterface        $datasetFileHasherLogger Name hinted dataset_file_hasher logger.
+     * @param LoggerInterface        $fileProcessingLogger Name hinted dataset_file_hasher logger.
      * @param Datastore              $datastore               Datastore utility instance.
      * @param MessageBusInterface    $messageBus              Symfony messenger bus interface instance.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         FileRepository $fileRepository,
-        LoggerInterface $datasetFileHasherLogger,
+        LoggerInterface $fileProcessingLogger,
         Datastore $datastore,
         MessageBusInterface $messageBus
     ) {
         $this->entityManager = $entityManager;
         $this->fileRepository = $fileRepository;
-        $this->logger = $datasetFileHasherLogger;
+        $this->logger = $fileProcessingLogger;
         $this->datastore = $datastore;
         $this->messageBus = $messageBus;
     }
@@ -98,7 +98,7 @@ class ProcessFileHandler implements MessageHandlerInterface
     /**
      * Invoke function to process a file.
      *
-     * @param ProcessFile $processFile The HasFile message to be handled.
+     * @param ProcessFile $processFile The Process File message to be handled.
      */
     public function __invoke(ProcessFile $processFile)
     {

@@ -2,6 +2,8 @@
 
 namespace App\Util;
 
+use App\Entity\DatasetSubmission;
+
 /**
  * A utility class to get various information from a file stream.
  */
@@ -10,11 +12,11 @@ class StreamInfo
     /**
      * Get the hash for file stream.
      *
-     * @param array $fileStream The file stream array.
+     * @param array $inputFileStream The file stream array.
      *
      * @return string The hash calculated from the stream.
      */
-    public static function calculateHash(array $inputFileStream, string $algo = 'sha256') :string
+    public static function calculateHash(array $inputFileStream, string $algo = DatasetSubmission::SHA256) :string
     {
         $fileStream = $inputFileStream['fileStream'] ?? null;
         $context = hash_init($algo);
@@ -25,7 +27,7 @@ class StreamInfo
     /**
      * Get the file size for the file stream.
      *
-     * @param array $fileStream The file stream array.
+     * @param array $inputFileStream The file stream array.
      *
      * @return integer The file size of the stream.
      */
