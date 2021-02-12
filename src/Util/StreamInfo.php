@@ -13,6 +13,7 @@ class StreamInfo
      * Get the hash for file stream.
      *
      * @param array $inputFileStream The file stream array.
+     * @param array $algo            The algorithm for the hash function (default SHA256).
      *
      * @return string The hash calculated from the stream.
      */
