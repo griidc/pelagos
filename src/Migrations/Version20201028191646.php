@@ -16,6 +16,8 @@ final class Version20201028191646 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
         $this->addSql('ALTER TABLE fileset ADD zip_file_path TEXT DEFAULT NULL');
+        $this->addSql('ALTER TABLE fileset ADD zip_file_size TEXT DEFAULT NULL');
+        $this->addSql('ALTER TABLE fileset ADD zip_file_sha256_hash TEXT DEFAULT NULL');
     }
 
     public function down(Schema $schema) : void
@@ -24,5 +26,7 @@ final class Version20201028191646 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
         $this->addSql('ALTER TABLE fileset DROP zip_file_path');
+        $this->addSql('ALTER TABLE fileset DROP zip_file_size');
+        $this->addSql('ALTER TABLE fileset DROP zip_file_sha256_hash');
     }
 }

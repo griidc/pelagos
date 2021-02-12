@@ -70,6 +70,8 @@ let itemsChanged = false;
 
 let myFileManager;
 
+let myDropzone;
+
 export default {
     name: "FileManager",
     components: {
@@ -173,17 +175,39 @@ export default {
             return {
                 items: [
                     {
-                        text: 'Upload File',
+                        text: 'Upload',
                         icon: 'upload',
-
+                        items: [
+                            {
+                                text: 'Upload File',
+                                icon: 'doc',
+                                options: {
+                                    type: 'file'
+                                }
+                            },
+                            {
+                                text: 'Upload Folder',
+                                icon: 'folder',
+                                options: {
+                                    type: 'folder'
+                                }
+                            }
+                        ]
                     }
                 ],
                 onItemClick: this.onUploadBtnClick,
             };
         },
 
-        onUploadBtnClick: function () {
-            document.getElementById("upload-file-button").click();
+        onUploadBtnClick: function (toolBarItem) {
+            const uploadType = toolBarItem.itemData.options ? toolBarItem.itemData.options.type : undefined;
+            if (uploadType === 'file') {
+                myDropzone.hiddenFileInput.removeAttribute("webkitdirectory");
+                document.getElementById("upload-file-button").click();
+            } else if (uploadType === 'folder') {
+                myDropzone.hiddenFileInput.setAttribute("webkitdirectory", true);
+                document.getElementById("upload-file-button").click();
+            }
         },
 
         directoryChanged: function (args) {
@@ -293,7 +317,7 @@ const uploadFileChunk = (fileData, uploadInfo, destinationDirectory) => {
 }
 
 const initDropzone = () => {
-    let myDropzone = new Dropzone("div#dropzone-uploader", {
+    myDropzone = new Dropzone("div#dropzone-uploader", {
         url: Routing.generate('pelagos_api_post_chunks'),
         chunking: true,
         chunkSize: 1024 * 1024,
@@ -313,7 +337,13 @@ const initDropzone = () => {
             if (destinationDir) {
                 fileName = `${destinationDir}/`;
             }
-            fileName += currentFile.fullPath ?? currentFile.name;
+            if (currentFile.fullPath) {
+                fileName += currentFile.fullPath ?? currentFile.name;
+            } else if (currentFile.webkitRelativePath) {
+                fileName += currentFile.webkitRelativePath;
+            } else {
+                fileName += currentFile.name;
+            }
             let chunkData = {};
             chunkData['dzuuid'] = currentFile.upload.uuid;
             chunkData['dztotalchunkcount'] = currentFile.upload.totalChunkCount;

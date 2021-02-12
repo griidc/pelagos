@@ -34,6 +34,24 @@ class Fileset extends Entity
     protected $zipFilePath;
 
     /**
+     * Zipped files size on disk.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $zipFileSize;
+
+    /**
+     * Zipped files hash on disk.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $zipFileSha256Hash;
+
+    /**
      * @ORM\OneToOne(targetEntity="DatasetSubmission", mappedBy="fileset", cascade={"persist", "remove"})
      */
     protected $datasetSubmission;
@@ -254,5 +272,64 @@ class Fileset extends Entity
     public function setZipFilePath(string $zipFilePath): void
     {
         $this->zipFilePath = $zipFilePath;
+    }
+
+    /**
+     * Getter for zip file size.
+     *
+     * @return string|null
+     */
+    public function getZipFileSize(): ? string
+    {
+        return $this->zipFileSize;
+    }
+
+    /**
+     * Setter for zip file size.
+     *
+     * @param string $zipFileSize Zip file size on disk.
+     *
+     * @return void
+     */
+    public function setZipFileSize(string $zipFileSize): void
+    {
+        $this->zipFileSize = $zipFileSize;
+    }
+
+    /**
+     * Getter for zip file hash value.
+     *
+     * @return string|null
+     */
+    public function getZipFileSha256Hash(): ? string
+    {
+        return $this->zipFileSha256Hash;
+    }
+
+    /**
+     * Setter for zip file hash.
+     *
+     * @param string $zipFileSha256Hash Hash value for the zip file.
+     *
+     * @return void
+     */
+    public function setZipFileSha256Hash(string $zipFileSha256Hash): void
+    {
+        $this->zipFileSha256Hash = $zipFileSha256Hash;
+    }
+
+    /**
+     * Check if zip file exists for the fileset.
+     *
+     * @return bool
+     */
+    public function doesZipFileExist(): bool
+    {
+        $fileExists = false;
+        if ($this->getZipFilePath() and $this->getZipFileSha256Hash() and
+            $this->getZipFileSize()) {
+            $fileExists = true;
+        }
+        return $fileExists;
     }
 }

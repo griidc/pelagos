@@ -1082,9 +1082,10 @@ class DatasetSubmission extends Entity
                     $newFile->setStatus($file->getStatus());
                     $newFileset->addFile($newFile);
                 }
-                $zipFilePath = $fileset->getZipFilePath();
-                if ($zipFilePath) {
-                    $newFileset->setZipFilePath($zipFilePath);
+                if ($fileset->doesZipFileExist()) {
+                    $newFileset->setZipFilePath($fileset->getZipFilePath());
+                    $newFileset->setZipFileSha256Hash($fileset->getZipFileSha256Hash());
+                    $newFileset->setZipFileSize($fileset->getZipFileSize());
                 }
                 $this->setFileset($newFileset);
             }

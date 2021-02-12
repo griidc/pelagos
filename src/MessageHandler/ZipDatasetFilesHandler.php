@@ -108,7 +108,10 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
             $this->zipFiles->finish();
             $this->logger->info('Zipfile closed: ' . $destinationPath);
             fclose($outputStream['fileStream']);
-            $datasetSubmission->getFileset()->setZipFilePath($destinationPath);
+            $fileset = $datasetSubmission->getFileset();
+            $fileset->setZipFilePath($destinationPath);
+            $fileset->setZipFileSize(filesize($destinationPath));
+            $fileset->setZipFileSha256Hash(hash_file(DatasetSubmission::SHA256, $destinationPath));
             $this->entityManager->flush();
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to zip file. Message: %s', $exception->getMessage()));
