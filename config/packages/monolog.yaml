@@ -1,5 +1,5 @@
 monolog:
-    channels: ['mailer', 'filer', 'retriever', 'dataset_file_hasher','doi_issue', 'create_homedir', 'virus_scan', 'delete_file', 'zipper']
+    channels: ['mailer', 'filer', 'retriever', 'file_processing','doi_issue', 'create_homedir', 'virus_scan', 'delete_file', 'zipper']
 
     handlers:
         mailer:
