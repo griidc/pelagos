@@ -2,9 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Fileset;
 use App\Event\LogActionItemEventDispatcher;
 use App\Handler\EntityHandler;
 use App\Util\DataStore;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -93,7 +97,7 @@ class DownloadController extends AbstractController
     /**
      * Set up direct download via HTTP and produce html for direct download splash screen.
      *
-     * @param integer                      $id                           The id of the dataset to download.
+     * @param Dataset                      $dataset                      The id of the dataset to download.
      * @param DataStore                    $dataStore                    The data store.
      * @param LogActionItemEventDispatcher $logActionItemEventDispatcher The log action dispatcher.
      *
@@ -101,52 +105,63 @@ class DownloadController extends AbstractController
      *
      * @return Response
      */
-    public function httpAction(int $id, DataStore $dataStore, LogActionItemEventDispatcher $logActionItemEventDispatcher)
+    public function httpAction(Dataset $dataset, DataStore $dataStore, LogActionItemEventDispatcher $logActionItemEventDispatcher)
     {
-        $dataset = $this->entityHandler->get(Dataset::class, $id);
-        $downloadFileInfo = $dataStore->getDownloadFileInfo($dataset->getUdi(), 'dataset');
-        $username = null;
-        if ($this->getUser()) {
-            $username = $this->getUser()->getUsername();
-        } else {
-            $username = '';
-        }
-        $uniqueDirectory = uniqid(
-            preg_replace('/\s/', '_', $username) . '_'
+        $datasetSubmission = $dataset->getDatasetSubmission();
+        $response = new Response(
+            null,
+            Response::HTTP_NO_CONTENT
         );
-        $downloadDirectory = $this->downloadBaseDir . '/' . $uniqueDirectory;
-        mkdir($downloadDirectory, 0755);
-        $datasetFileName  = $dataset->getDatasetSubmission()->getDatasetFileName();
-        symlink(
-            $downloadFileInfo->getRealPath(),
-            $downloadDirectory . '/' . $datasetFileName
-        );
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            $fileset = $datasetSubmission->getFileset();
 
-        if ($this->getUser()) {
-            $type = get_class($this->getUser());
-            if ($type == 'App\Entity\Account') {
-                $type = 'GoMRI';
-                $typeId = $this->getUser()->getUserId();
+            if ($fileset instanceof Fileset) {
+                if (!$fileset->doesZipFileExist()) {
+                    $filePhysicalPath = $fileset->getProcessedFiles()->first()->getPhysicalFilePath();
+                    $response = new StreamedResponse(function () use ($dataStore, $filePhysicalPath) {
+                        $outputStream = fopen('php://output', 'wb');
+                        $fileStream = $dataStore->getFile($filePhysicalPath);
+                        if (is_array($fileStream)) {
+                            stream_copy_to_stream($fileStream['fileStream'], $outputStream);
+                        } else {
+                            throw new BadRequestHttpException('Unable to open file');
+                        }
+                    });
+
+                    $disposition = HeaderUtils::makeDisposition(
+                        HeaderUtils::DISPOSITION_ATTACHMENT,
+                        $datasetSubmission->getDatasetFileName()
+                    );
+                    $response->headers->set('Content-Disposition', $disposition);
+                } else {
+                    $response = $this->forward('App\Controller\Api\FileManager::downloadZipAllFiles', [$datasetSubmission->getId()]);
+                }
+            }
+
+            if ($this->getUser()) {
+                $type = get_class($this->getUser());
+                if ($type == 'App\Entity\Account') {
+                    $type = 'GoMRI';
+                    $typeId = $this->getUser()->getUserId();
+                } else {
+                    $type = 'Non-GoMRI';
+                    $typeId = $this->getUser()->getUsername();
+                }
             } else {
                 $type = 'Non-GoMRI';
-                $typeId = $this->getUser()->getUsername();
+                $typeId = 'anonymous';
             }
-        } else {
-            $type = 'Non-GoMRI';
-            $typeId = 'anonymous';
-        }
 
-        $logActionItemEventDispatcher->dispatch(
-            array(
-                'actionName' => 'File Download',
-                'subjectEntityName' => 'Pelagos\Entity\Dataset',
-                'subjectEntityId' => $dataset->getId(),
-                'payLoad' => array('userType' => $type, 'userId' => $typeId),
-            ),
-            'file_download'
-        );
-        $response = new Response(json_encode(['downloadUrl' => $this->downloadBaseUrl . '/' . $uniqueDirectory . '/' . $datasetFileName]));
-        $response->headers->set('Content-Type', 'application/json');
+            $logActionItemEventDispatcher->dispatch(
+                array(
+                    'actionName' => 'File Download',
+                    'subjectEntityName' => 'Pelagos\Entity\Dataset',
+                    'subjectEntityId' => $dataset->getId(),
+                    'payLoad' => array('userType' => $type, 'userId' => $typeId),
+                ),
+                'file_download'
+            );
+        }
 
         return $response;
     }

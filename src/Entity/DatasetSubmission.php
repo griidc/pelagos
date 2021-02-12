@@ -1669,7 +1669,7 @@ class DatasetSubmission extends Entity
     public function getDatasetFileName() : ?string
     {
         if ($this->fileset instanceof Fileset) {
-            return $this->fileset->getAllFiles()->first()->getFilePathName();
+            return basename($this->fileset->getZipFilePath() ?? $this->fileset->getProcessedFiles()->first()->getFilePathName());
         }
         return null;
     }
@@ -1693,7 +1693,10 @@ class DatasetSubmission extends Entity
      */
     public function getDatasetFileSize() : ?int
     {
-        return $this->datasetFileSize;
+        if ($this->fileset instanceof Fileset) {
+            return $this->getFileset()->getZipFileSize() ?? $this->getFileset()->getProcessedFiles()->first()->getFileSize();
+        }
+        return null;
     }
 
     /**
@@ -1716,7 +1719,7 @@ class DatasetSubmission extends Entity
     public function getDatasetFileSha256Hash() : ?string
     {
         if ($this->fileset instanceof Fileset) {
-            return $this->fileset->getAllFiles()->first()->getFileSha256Hash();
+            return $this->fileset->getZipFileSha256Hash() ?? $this->fileset->getProcessedFiles()->first()->getFileSha256Hash();
         }
         return null;
     }

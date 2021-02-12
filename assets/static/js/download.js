@@ -12,9 +12,18 @@ function startDownload(id)
                 $.extend({}, vex.dialog.buttons.YES, {
                     text: "Download", click: function ($vexContent, event) {
                         if (!data.remotelyHosted) {
-                            $.getJSON(Routing.generate("pelagos_app_download_http", {"id": id}), function (data) {
-                            }).done(function (data) {
-                                window.location = `${data.downloadUrl}`;
+                            const axiosInstance = axios.create({});
+                            axiosInstance({
+                                url: Routing.generate("pelagos_app_download_http", {"id": id}),
+                                method: 'GET',
+                                responseType: 'blob', // important
+                            }).then((response) => {
+                                const url = window.URL.createObjectURL(new Blob([response.data]));
+                                const link = document.createElement('a');
+                                link.href = url;
+                                link.setAttribute('download', getFileNameFromHeader(response.headers));
+                                document.body.appendChild(link);
+                                link.click();
                             });
                         }
                     }
