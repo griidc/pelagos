@@ -6,6 +6,7 @@ use App\Entity\DatasetSubmission;
 use App\Message\ZipDatasetFiles;
 use App\Repository\FileRepository;
 use App\Util\Datastore;
+use App\Util\StreamInfo;
 use App\Util\ZipFiles;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -107,11 +108,11 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
             }
             $this->zipFiles->finish();
             $this->logger->info('Zipfile closed: ' . $destinationPath);
-            fclose($outputStream['fileStream']);
             $fileset = $datasetSubmission->getFileset();
             $fileset->setZipFilePath($destinationPath);
-            $fileset->setZipFileSize(filesize($destinationPath));
-            $fileset->setZipFileSha256Hash(hash_file(DatasetSubmission::SHA256, $destinationPath));
+            $fileset->setZipFileSize(StreamInfo::getFileSize($outputStream));
+            $fileset->setZipFileSha256Hash(StreamInfo::calculateHash($outputStream, DatasetSubmission::SHA256));
+            fclose($outputStream['fileStream']);
             $this->entityManager->flush();
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to zip file. Message: %s', $exception->getMessage()));
