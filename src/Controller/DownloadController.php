@@ -134,7 +134,7 @@ class DownloadController extends AbstractController
                     );
                     $response->headers->set('Content-Disposition', $disposition);
                 } else {
-                    $response = $this->forward('App\Controller\Api\FileManager::downloadZipAllFiles', [$datasetSubmission->getId()]);
+                    $response = $this->forward('App\Controller\Api\FileManager::downloadZipAllFiles', ['datasetSubmission' => $datasetSubmission->getId()]);
                 }
             }
 
