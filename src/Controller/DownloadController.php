@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\Fileset;
 use App\Event\LogActionItemEventDispatcher;
 use App\Handler\EntityHandler;
-use App\Util\DataStore;
+use App\Util\Datastore;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -98,14 +98,14 @@ class DownloadController extends AbstractController
      * Set up direct download via HTTP and produce html for direct download splash screen.
      *
      * @param Dataset                      $dataset                      The id of the dataset to download.
-     * @param DataStore                    $dataStore                    The data store.
+     * @param Datastore                    $dataStore                    The data store.
      * @param LogActionItemEventDispatcher $logActionItemEventDispatcher The log action dispatcher.
      *
      * @Route("/download/{id}/http", name="pelagos_app_download_http")
      *
      * @return Response
      */
-    public function httpAction(Dataset $dataset, DataStore $dataStore, LogActionItemEventDispatcher $logActionItemEventDispatcher)
+    public function httpAction(Dataset $dataset, Datastore $dataStore, LogActionItemEventDispatcher $logActionItemEventDispatcher)
     {
         $datasetSubmission = $dataset->getDatasetSubmission();
         $response = new Response(
