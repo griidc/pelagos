@@ -108,26 +108,22 @@ class DownloadController extends AbstractController
     public function httpAction(Dataset $dataset, Datastore $dataStore, LogActionItemEventDispatcher $logActionItemEventDispatcher)
     {
         $datasetSubmission = $dataset->getDatasetSubmission();
-        $response = new Response(
-            null,
-            Response::HTTP_NO_CONTENT
-        );
         if ($datasetSubmission instanceof DatasetSubmission) {
             $fileset = $datasetSubmission->getFileset();
 
             if ($fileset instanceof Fileset) {
                 if (!$fileset->doesZipFileExist()) {
                     $filePhysicalPath = $fileset->getProcessedFiles()->first()->getPhysicalFilePath();
-                    $response = new StreamedResponse(function () use ($dataStore, $filePhysicalPath) {
-                        $outputStream = fopen('php://output', 'wb');
+                    try {
                         $fileStream = $dataStore->getFile($filePhysicalPath);
-                        if (is_array($fileStream)) {
-                            stream_copy_to_stream($fileStream['fileStream'], $outputStream);
-                        } else {
-                            throw new BadRequestHttpException('Unable to open file');
-                        }
+                    } catch (\Exception $exception) {
+                        throw new BadRequestHttpException('Unable to open file');
+                    }
+                    $response = new StreamedResponse();
+                    $response->setCallback(function () use ($fileStream) {
+                        $outputStream = fopen('php://output', 'wb');
+                        stream_copy_to_stream($fileStream['fileStream'], $outputStream);
                     });
-
                     $disposition = HeaderUtils::makeDisposition(
                         HeaderUtils::DISPOSITION_ATTACHMENT,
                         $datasetSubmission->getDatasetFileName()
@@ -136,34 +132,35 @@ class DownloadController extends AbstractController
                 } else {
                     $response = $this->forward('App\Controller\Api\FileManager::downloadZipAllFiles', ['datasetSubmission' => $datasetSubmission->getId()]);
                 }
-            }
 
-            if ($this->getUser()) {
-                $type = get_class($this->getUser());
-                if ($type == 'App\Entity\Account') {
-                    $type = 'GoMRI';
-                    $typeId = $this->getUser()->getUserId();
+                if ($this->getUser()) {
+                    $type = get_class($this->getUser());
+                    if ($type == 'App\Entity\Account') {
+                        $type = 'GoMRI';
+                        $typeId = $this->getUser()->getUserId();
+                    } else {
+                        $type = 'Non-GoMRI';
+                        $typeId = $this->getUser()->getUsername();
+                    }
                 } else {
                     $type = 'Non-GoMRI';
-                    $typeId = $this->getUser()->getUsername();
+                    $typeId = 'anonymous';
                 }
-            } else {
-                $type = 'Non-GoMRI';
-                $typeId = 'anonymous';
+
+                $logActionItemEventDispatcher->dispatch(
+                    array(
+                        'actionName' => 'File Download',
+                        'subjectEntityName' => 'Pelagos\Entity\Dataset',
+                        'subjectEntityId' => $dataset->getId(),
+                        'payLoad' => array('userType' => $type, 'userId' => $typeId),
+                    ),
+                    'file_download'
+                );
+                return $response;
             }
-
-            $logActionItemEventDispatcher->dispatch(
-                array(
-                    'actionName' => 'File Download',
-                    'subjectEntityName' => 'Pelagos\Entity\Dataset',
-                    'subjectEntityId' => $dataset->getId(),
-                    'payLoad' => array('userType' => $type, 'userId' => $typeId),
-                ),
-                'file_download'
-            );
+        } else {
+            throw new BadRequestHttpException('No files found in this dataset');
         }
-
-        return $response;
     }
 
     /**
