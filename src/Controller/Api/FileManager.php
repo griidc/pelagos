@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Messenger\MessageBus;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -93,6 +93,7 @@ class FileManager extends AbstractFOSRestController
      * @param DatasetSubmission      $datasetSubmission The id of the dataset submission.
      * @param Request                $request           The request body
      * @param EntityManagerInterface $entityManager     Entity manager interface instance.
+     * @param MessageBusInterface    $messageBus        Message bus interface.
      *
      * @Route(
      *     "/api/file_delete/{id}",
@@ -107,8 +108,12 @@ class FileManager extends AbstractFOSRestController
      *
      * @return Response
      */
-    public function delete(DatasetSubmission $datasetSubmission, Request $request, EntityManagerInterface $entityManager): Response
-    {
+    public function delete(
+        DatasetSubmission $datasetSubmission,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        MessageBusInterface $messageBus
+    ): Response {
         $deleteFilePath = $request->get('path');
         $isDir = $request->get('isDir');
         $fileset = $datasetSubmission->getFileset();
@@ -119,11 +124,11 @@ class FileManager extends AbstractFOSRestController
             if ($isDir === 'true') {
                 $files = $fileset->getFilesInDirectory($deleteFilePath);
                 foreach ($files as $file) {
-                    $this->deleteFile($file, $fileset);
+                    $this->deleteFile($file, $fileset, $messageBus);
                 }
             } else {
                 $existingFile = $fileset->getExistingFile($deleteFilePath);
-                $this->deleteFile($existingFile, $fileset);
+                $this->deleteFile($existingFile, $fileset, $messageBus);
             }
             $entityManager->flush();
         } else {
@@ -138,12 +143,13 @@ class FileManager extends AbstractFOSRestController
     /**
      * Delete individual file from disk or mark as deleted.
      *
-     * @param File      $file      File entity that needs to be deleted.
-     * @param Fileset   $fileset   Fileset entity instance.
+     * @param File                $file       File entity that needs to be deleted.
+     * @param Fileset             $fileset    Fileset entity instance.
+     * @param MessageBusInterface $messageBus Message bus interface.
      *
      * @return void
      */
-    private function deleteFile(File $file, Fileset $fileset) : void
+    private function deleteFile(File $file, Fileset $fileset, MessageBusInterface $messageBus) : void
     {
         if ($file->getStatus() === File::FILE_NEW) {
             $deleteFile = unlink($file->getPhysicalFilePath());
@@ -155,6 +161,8 @@ class FileManager extends AbstractFOSRestController
             }
         } elseif ($file->getStatus() === File::FILE_DONE) {
             $file->setStatus(File::FILE_DELETED);
+            $markAsDeleted = new RenameFile($file->getId());
+            $messageBus->dispatch($markAsDeleted);
         }
     }
 
@@ -165,7 +173,7 @@ class FileManager extends AbstractFOSRestController
      * @param Request                  $request                  The request body.
      * @param EntityManagerInterface   $entityManager            Entity manager interface instance.
      * @param FolderStructureGenerator $folderStructureGenerator Folder structure generator Util class.
-     * @param MessageBus               $messageBus               Message bus interface.
+     * @param MessageBusInterface      $messageBus               Message bus interface.
      *
      * @Route("/api/file_update_filename/{id}", name="pelagos_api_file_update_filename", methods={"PUT"}, defaults={"_format"="json"})
      *
@@ -181,7 +189,7 @@ class FileManager extends AbstractFOSRestController
         Request $request,
         EntityManagerInterface $entityManager,
         FolderStructureGenerator $folderStructureGenerator,
-        MessageBus $messageBus
+        MessageBusInterface $messageBus
     ) : Response {
         $newFileName = $request->get('newFileFolderPathDir');
         $existingFilePath = $request->get('path');
@@ -223,16 +231,16 @@ class FileManager extends AbstractFOSRestController
     /**
      * Update file name for single file entity.
      *
-     * @param File       $file        File entity that needs to be renamed.
-     * @param Fileset    $fileset     Fileset entity instance.
-     * @param string     $newFileName New file name for the file.
-     * @param MessageBus $messageBus  Message bus interface.
+     * @param File                $file        File entity that needs to be renamed.
+     * @param Fileset             $fileset     Fileset entity instance.
+     * @param string              $newFileName New file name for the file.
+     * @param MessageBusInterface $messageBus  Message bus interface.
      *
      * @throws BadRequestHttpException When the destination file name already exists.
      *
      * @return void
      */
-    private function updateFileName(File $file, Fileset $fileset, string $newFileName, MessageBus $messageBus) : void
+    private function updateFileName(File $file, Fileset $fileset, string $newFileName, MessageBusInterface $messageBus) : void
     {
         if (!$fileset->doesFileExist($newFileName)) {
             // Rename file on disk if it is already processed
