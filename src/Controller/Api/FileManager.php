@@ -161,8 +161,8 @@ class FileManager extends AbstractFOSRestController
             }
         } elseif ($file->getStatus() === File::FILE_DONE) {
             $file->setStatus(File::FILE_DELETED);
-            $markAsDeleted = new RenameFile($file->getId());
-            $messageBus->dispatch($markAsDeleted);
+            $renameMessage = new RenameFile($file->getId());
+            $messageBus->dispatch($renameMessage);
         }
     }
 
@@ -211,11 +211,11 @@ class FileManager extends AbstractFOSRestController
                 $files = $fileset->getFilesInDirectory($existingFilePath);
                 foreach ($files as $file) {
                     $newFilePathName = implode("/", array_merge([$newFileName], $file->getFilePathParts($existingFilePath)));
-                    $this->updateFileName($file, $fileset, $newFilePathName, $messageBus);
+                    $this->updateFileName($file, $newFilePathName, $messageBus);
                 }
             } else {
                 $existingFile = $fileset->getExistingFile($existingFilePath);
-                $this->updateFileName($existingFile, $fileset, $newFileName, $messageBus);
+                $this->updateFileName($existingFile, $newFileName, $messageBus);
             }
             $entityManager->flush();
         } else {
@@ -232,7 +232,6 @@ class FileManager extends AbstractFOSRestController
      * Update file name for single file entity.
      *
      * @param File                $file        File entity that needs to be renamed.
-     * @param Fileset             $fileset     Fileset entity instance.
      * @param string              $newFileName New file name for the file.
      * @param MessageBusInterface $messageBus  Message bus interface.
      *
@@ -240,9 +239,9 @@ class FileManager extends AbstractFOSRestController
      *
      * @return void
      */
-    private function updateFileName(File $file, Fileset $fileset, string $newFileName, MessageBusInterface $messageBus) : void
+    private function updateFileName(File $file, string $newFileName, MessageBusInterface $messageBus) : void
     {
-        if (!$fileset->doesFileExist($newFileName)) {
+        if (!$file->getFileset()->doesFileExist($newFileName)) {
             // Rename file on disk if it is already processed
             if ($file->getStatus() === File::FILE_DONE) {
                 $renameFile = new RenameFile($file->getId());
