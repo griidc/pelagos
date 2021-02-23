@@ -85,17 +85,6 @@ class ProcessFileHandler implements MessageHandlerInterface
     }
 
     /**
-     * Destructor for the handler to always flush.
-     */
-    public function __destruct()
-    {
-        $this->entityManager->flush();
-        foreach ($this->messages as $message) {
-            $this->messageBus->dispatch($message);
-        }
-    }
-
-    /**
      * Invoke function to process a file.
      *
      * @param ProcessFile $processFile The Process File message to be handled.
@@ -158,9 +147,16 @@ class ProcessFileHandler implements MessageHandlerInterface
             // Dispatch message to zip files
             $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
             $this->messages[] = $zipFiles;
-            $this->logger->info('Dataset file processing completed', $loggingContext);
+            $this->logger->info('All files are done, zipping', $loggingContext);
         } else {
             $this->logger->info('Processed file for Dataset', $loggingContext);
+        }
+
+        $this->logger->info('Flushing data', $loggingContext);
+        $this->entityManager->flush();
+        foreach ($this->messages as $message) {
+            $this->logger->info('Sending message', $loggingContext);
+            $this->messageBus->dispatch($message);
         }
     }
 }

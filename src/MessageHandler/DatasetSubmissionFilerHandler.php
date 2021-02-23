@@ -10,6 +10,7 @@ use App\Event\EntityEventDispatcher;
 
 use App\Message\DatasetSubmissionFiler;
 use App\Message\ProcessFile;
+use App\Message\ZipDatasetFiles;
 
 use App\Repository\DatasetSubmissionRepository;
 
@@ -114,6 +115,17 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
         if ($fileset instanceof Fileset) {
             // Log processing complete.
             $this->logger->info('Dataset submission process started', $loggingContext);
+
+            if ($fileset->isDone()) {
+                $fileIds = array();
+                foreach ($fileset->getProcessedFiles() as $file) {
+                    $fileIds[] = $file->getId();
+                }
+                // Dispatch message to zip files
+                $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
+                $this->messageBus->dispatch($zipFiles);
+            }
+
             foreach ($fileset->getNewFiles() as $file) {
                 if ($file instanceof File) {
                     $fileId = $file->getId();
