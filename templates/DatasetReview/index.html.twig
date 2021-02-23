@@ -66,7 +66,7 @@
                 {% if app.session.flashbag.has('notice') %}
                     {% for label, messages in app.session.flashbag.all %}
                         {% for message in messages %}
-                        <div class="pelagosNoty" text="{{message}}" type="success"></div>
+                        <div class="pelagosNoty" text="{{message}}" type="warning"></div>
                         {% endfor %}
                     {% endfor %}
             {% endif %}

@@ -190,7 +190,10 @@ class DatasetReviewController extends AbstractController
         } elseif ($datasetStatus === Dataset::DATASET_STATUS_NONE) {
             $this->addToFlashDisplayQueue($request, $udi, 'notSubmitted');
         } else {
-            if ($datasetSubmission instanceof DatasetSubmission and $this->filerStatus($datasetSubmission)) {
+            if ($datasetSubmission instanceof DatasetSubmission) {
+                if ($this->filerStatus($datasetSubmission) !== true) {
+                    $this->addToFlashDisplayQueue($request, $udi, 'filerNotDone');
+                }
                 $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
                 if ('review' === $this->mode) {
                     switch (!in_array($datasetStatus, [Dataset::DATASET_STATUS_BACK_TO_SUBMITTER, Dataset::DATASET_STATUS_NONE])) {
@@ -239,6 +242,8 @@ class DatasetReviewController extends AbstractController
 
         $listOfNotices = [
             'backToSub' => "Because this dataset $udi is currently in Request Revisions, you are viewing user's latest data submission.",
+            'filerNotDone' => 'One or more files are unprocessed in this current dataset,  
+                                please end the review to trigger processing, then reopen in dataset-review to continue the DPR review'
         ];
 
         if (array_key_exists($noticeCode, $listOfErrors)) {
