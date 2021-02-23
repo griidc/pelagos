@@ -134,7 +134,7 @@ class ProcessFileHandler implements MessageHandlerInterface
         try {
             $newFileDestination = $this->datastore->addFile(
                 ['fileStream' => $fileStream],
-                str_replace(':', '.', $udi) . DIRECTORY_SEPARATOR . $file->getFilePathName()
+                $file->getFileRootPath() . $file->getFilePathName()
             );
             $file->setPhysicalFilePath($newFileDestination);
         } catch (\Exception $exception) {

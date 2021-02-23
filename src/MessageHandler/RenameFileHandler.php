@@ -75,14 +75,13 @@ class RenameFileHandler implements MessageHandlerInterface
         $file = $this->fileRepository->find($fileId);
         if ($file instanceof File) {
             $filePhysicalPath = $file->getPhysicalFilePath();
-            $udiPrefix = str_replace(':', '.', $file->getFileset()->getDatasetSubmission()->getDataset()->getUdi()) . DIRECTORY_SEPARATOR;
             if ($file->getStatus() === File::FILE_DELETED) {
                 $this->logger->info(sprintf('Marking File as deleted for ID: %d', $fileId));
                 $newFilePath = $filePhysicalPath . Datastore::MARK_FILE_AS_DELETED;
                 $newFilePath = $this->dataStore->renameFile($filePhysicalPath, $newFilePath, true);
             } else {
                 $this->logger->info(sprintf('File is renamed on disk for ID: %d', $fileId));
-                $newFilePath = $this->dataStore->renameFile($filePhysicalPath, $udiPrefix . $file->getFilePathName());
+                $newFilePath = $this->dataStore->renameFile($filePhysicalPath, $file->getFileRootPath() . $file->getFilePathName());
             }
             $file->setPhysicalFilePath($newFilePath);
             $this->entityManager->flush();
