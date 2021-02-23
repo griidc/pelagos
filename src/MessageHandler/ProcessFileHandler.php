@@ -55,13 +55,6 @@ class ProcessFileHandler implements MessageHandlerInterface
     private $messageBus;
 
     /**
-     * List of messages.
-     *
-     * @var array
-     */
-    private $messages = array();
-
-    /**
      * Constructor for this Controller, to set up default services.
      *
      * @param EntityManagerInterface $entityManager           The entity handler.
@@ -112,7 +105,6 @@ class ProcessFileHandler implements MessageHandlerInterface
             'dataset_submission_id' => $datasetSubmission->getId(),
         );
 
-        $file->setStatus(File::FILE_IN_PROGRESS);
         $filePath = $file->getPhysicalFilePath();
         $fileStream = fopen($filePath, 'r');
         try {
@@ -131,6 +123,7 @@ class ProcessFileHandler implements MessageHandlerInterface
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to add file to datastore. Message: "%s"', $exception->getMessage()), $loggingContext);
             $file->setStatus(File::FILE_ERROR);
+            $this->entityManager->flush();
             return;
         }
 
