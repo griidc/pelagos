@@ -91,6 +91,8 @@ class ProcessFileHandler implements MessageHandlerInterface
      */
     public function __invoke(ProcessFile $processFile)
     {
+        // Create message array to store messages.
+        $messages = array();
         $fileId = $processFile->getFileId();
         $file = $this->fileRepository->find($fileId);
 
@@ -133,7 +135,7 @@ class ProcessFileHandler implements MessageHandlerInterface
         }
 
         // File virus Scan
-        $this->messages[] = new ScanFileForVirus($fileId, $loggingContext['udi']);
+        $messages[] = new ScanFileForVirus($fileId, $loggingContext['udi']);
         $this->logger->info("Enqueuing virus scan for file: {$file->getFilePathName()}.", $loggingContext);
 
         $file->setStatus(File::FILE_DONE);
@@ -146,7 +148,7 @@ class ProcessFileHandler implements MessageHandlerInterface
             }
             // Dispatch message to zip files
             $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
-            $this->messages[] = $zipFiles;
+            $messages[] = $zipFiles;
             $this->logger->info('All files are done, zipping', $loggingContext);
         } else {
             $this->logger->info('Processed file for Dataset', $loggingContext);
@@ -154,8 +156,8 @@ class ProcessFileHandler implements MessageHandlerInterface
 
         $this->logger->info('Flushing data', $loggingContext);
         $this->entityManager->flush();
-        foreach ($this->messages as $message) {
-            $this->logger->info('Sending message', $loggingContext);
+        foreach ($messages as $message) {
+            $this->logger->info('Sending message ' . get_class($message), $loggingContext);
             $this->messageBus->dispatch($message);
         }
     }
