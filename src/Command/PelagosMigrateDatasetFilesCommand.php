@@ -157,7 +157,7 @@ class PelagosMigrateDatasetFilesCommand extends Command
         if ($datasetSubmission instanceof DatasetSubmission) {
             $udi = $datasetSubmission->getDataset()->getUdi();
 
-            $fileName = "$udi/$udi.dat";
+            $fileName = "$dataStore/$udi/$udi.dat";
 
             if (!file_exists($fileName) or $ignoreFileExistCheck) {
                 return;
@@ -175,7 +175,7 @@ class PelagosMigrateDatasetFilesCommand extends Command
 
             $file->setDescription('Original Dataset File');
 
-            $file->setPhysicalFilePath($fileName);
+            $file->setPhysicalFilePath("$udi/$udi.dat");
             $file->setStatus($queueFiler ? File::FILE_NEW : File::FILE_DONE);
 
             $newFileset = new Fileset();
