@@ -242,12 +242,12 @@ class FileManager extends AbstractFOSRestController
     private function updateFileName(File $file, string $newFileName, MessageBusInterface $messageBus) : void
     {
         if (!$file->getFileset()->doesFileExist($newFileName)) {
+            $file->setFilePathName($newFileName);
             // Rename file on disk if it is already processed
             if ($file->getStatus() === File::FILE_DONE) {
                 $renameFile = new RenameFile($file->getId());
                 $messageBus->dispatch($renameFile);
             }
-            $file->setFilePathName($newFileName);
         } else {
             throw new BadRequestHttpException('File with same name and folder already exists');
         }
