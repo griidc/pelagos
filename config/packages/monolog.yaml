@@ -1,5 +1,5 @@
 monolog:
-    channels: ['mailer', 'filer', 'retriever', 'file_processing','doi_issue', 'create_homedir', 'virus_scan', 'delete_file', 'zipper']
+    channels: ['mailer', 'filer', 'retriever', 'file_processing','doi_issue', 'create_homedir', 'virus_scan', 'delete_file', 'zipper', 'rename_file']
 
     handlers:
         mailer:
@@ -55,3 +55,9 @@ monolog:
             path: "%kernel.logs_dir%/zipper.log"
             level: info
             channels: [ zipper ]
+
+        rename_file:
+            type: stream
+            path: "%kernel.logs_dir%/rename_file.log"
+            level: info
+            channels: [ rename_file ]
