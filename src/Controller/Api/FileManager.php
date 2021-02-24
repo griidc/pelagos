@@ -124,11 +124,11 @@ class FileManager extends AbstractFOSRestController
             if ($isDir === 'true') {
                 $files = $fileset->getFilesInDirectory($deleteFilePath);
                 foreach ($files as $file) {
-                    $this->deleteFile($file, $fileset, $messageBus);
+                    $this->deleteFile($file, $messageBus);
                 }
             } else {
                 $existingFile = $fileset->getExistingFile($deleteFilePath);
-                $this->deleteFile($existingFile, $fileset, $messageBus);
+                $this->deleteFile($existingFile, $messageBus);
             }
             $entityManager->flush();
         } else {
@@ -144,18 +144,17 @@ class FileManager extends AbstractFOSRestController
      * Delete individual file from disk or mark as deleted.
      *
      * @param File                $file       File entity that needs to be deleted.
-     * @param Fileset             $fileset    Fileset entity instance.
      * @param MessageBusInterface $messageBus Message bus interface.
      *
      * @return void
      */
-    private function deleteFile(File $file, Fileset $fileset, MessageBusInterface $messageBus) : void
+    private function deleteFile(File $file, MessageBusInterface $messageBus) : void
     {
         if ($file->getStatus() === File::FILE_NEW) {
             $deleteFile = unlink($file->getPhysicalFilePath());
             $deleteFolder = rmdir(dirname($file->getPhysicalFilePath()));
             if ($deleteFile and $deleteFolder) {
-                $fileset->removeFile($file);
+                $file->getFileset()->removeFile($file);
             } else {
                 throw new BadRequestHttpException('Unable to delete file');
             }
