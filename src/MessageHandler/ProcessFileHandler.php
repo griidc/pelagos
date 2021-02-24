@@ -55,13 +55,6 @@ class ProcessFileHandler implements MessageHandlerInterface
     private $messageBus;
 
     /**
-     * List of messages.
-     *
-     * @var array
-     */
-    private $messages = array();
-
-    /**
      * Constructor for this Controller, to set up default services.
      *
      * @param EntityManagerInterface $entityManager           The entity handler.
@@ -85,23 +78,14 @@ class ProcessFileHandler implements MessageHandlerInterface
     }
 
     /**
-     * Destructor for the handler to always flush.
-     */
-    public function __destruct()
-    {
-        $this->entityManager->flush();
-        foreach ($this->messages as $message) {
-            $this->messageBus->dispatch($message);
-        }
-    }
-
-    /**
      * Invoke function to process a file.
      *
      * @param ProcessFile $processFile The Process File message to be handled.
      */
     public function __invoke(ProcessFile $processFile)
     {
+        // Create message array to store messages.
+        $messages = array();
         $fileId = $processFile->getFileId();
         $file = $this->fileRepository->find($fileId);
 
@@ -121,7 +105,6 @@ class ProcessFileHandler implements MessageHandlerInterface
             'dataset_submission_id' => $datasetSubmission->getId(),
         );
 
-        $file->setStatus(File::FILE_IN_PROGRESS);
         $filePath = $file->getPhysicalFilePath();
         $fileStream = fopen($filePath, 'r');
         try {
@@ -140,12 +123,13 @@ class ProcessFileHandler implements MessageHandlerInterface
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to add file to datastore. Message: "%s"', $exception->getMessage()), $loggingContext);
             $file->setStatus(File::FILE_ERROR);
+            $this->entityManager->flush();
             return;
         }
 
         // File virus Scan
-        $this->messages[] = new ScanFileForVirus($fileId, $loggingContext['udi']);
-        $this->logger->info("Enqueuing virus scan for file: {$file->getFilePathName()}.", $loggingContext);
+        $messages[] = new ScanFileForVirus($fileId, $loggingContext['udi']);
+        $this->logger->info('Enqueuing virus scan for file: {$file->getFilePathName()}.', $loggingContext);
 
         $file->setStatus(File::FILE_DONE);
 
@@ -157,10 +141,17 @@ class ProcessFileHandler implements MessageHandlerInterface
             }
             // Dispatch message to zip files
             $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
-            $this->messages[] = $zipFiles;
-            $this->logger->info('Dataset file processing completed', $loggingContext);
+            $messages[] = $zipFiles;
+            $this->logger->info('All files are done, zipping', $loggingContext);
         } else {
             $this->logger->info('Processed file for Dataset', $loggingContext);
+        }
+
+        $this->logger->info('Flushing data', $loggingContext);
+        $this->entityManager->flush();
+        foreach ($messages as $message) {
+            $this->logger->info('Sending message {get_class($message)}', $loggingContext);
+            $this->messageBus->dispatch($message);
         }
     }
 }
