@@ -20,9 +20,18 @@ class StreamInfo
     public static function calculateHash(array $inputFileStream, string $algo = DatasetSubmission::SHA256) :string
     {
         $fileStream = $inputFileStream['fileStream'] ?? null;
+        
+        dump(ftell($fileStream));
+        
+        rewind($fileStream);
+        
         $context = hash_init($algo);
         hash_update_stream($context, $fileStream);
-        return hash_final($context);
+        $hash =  hash_final($context);
+        
+        dump($hash);
+        
+        return $hash;
     }
 
     /**
