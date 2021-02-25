@@ -87,7 +87,8 @@ class ProcessFileHandler implements MessageHandlerInterface
         // Create message array to store messages.
         $messages = array();
         $fileId = $processFile->getFileId();
-        $file = $this->fileRepository->find($fileId);
+        $file = $this->entityManager->getRepository(File::class)->find($fileId);
+        //$file = $this->fileRepository->find($fileId);
 
         if (!$file instanceof File) {
             $this->logger->alert(sprintf('File with ID: %d was not found!', $fileId));
@@ -128,10 +129,13 @@ class ProcessFileHandler implements MessageHandlerInterface
         }
 
         // File virus Scan
-        $messages[] = new ScanFileForVirus($fileId, $loggingContext['udi']);
         $this->logger->info("Enqueuing virus scan for file: {$file->getFilePathName()}.", $loggingContext);
+        $this->messageBus->dispatch(new ScanFileForVirus($fileId, $loggingContext['udi']));
 
         $file->setStatus(File::FILE_DONE);
+
+        $this->logger->info('Flushing data', $loggingContext);
+        $this->entityManager->flush();
 
         if ($fileset->isDone()) {
             $datasetSubmissionId = $datasetSubmission->getId();
@@ -140,18 +144,11 @@ class ProcessFileHandler implements MessageHandlerInterface
                 $fileIds[] = $file->getId();
             }
             // Dispatch message to zip files
-            $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
-            $messages[] = $zipFiles;
             $this->logger->info('All files are done, zipping', $loggingContext);
+            $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
+            $this->messageBus->dispatch(new ZipDatasetFiles($fileIds, $datasetSubmissionId));
         } else {
             $this->logger->info('Processed file for Dataset', $loggingContext);
-        }
-
-        $this->logger->info('Flushing data', $loggingContext);
-        $this->entityManager->flush();
-        foreach ($messages as $message) {
-            $this->logger->info('Sending message ' . get_class($message), $loggingContext);
-            $this->messageBus->dispatch($message);
         }
     }
 }
