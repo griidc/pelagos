@@ -20,20 +20,9 @@ class StreamInfo
     public static function calculateHash(array $inputFileStream, string $algo = DatasetSubmission::SHA256) :string
     {
         $fileStream = $inputFileStream['fileStream'] ?? null;
-        
-        // Get the file pointer.
-        $filePointer = ftell($fileStream);
-        // Rewind the pointer to calculate hash.
-        rewind($fileStream);
-        
         $context = hash_init($algo);
         hash_update_stream($context, $fileStream);
-        $hash =  hash_final($context);
-        
-        // Set the pointer back to where it was.
-        fseek($fileStream, $filePointer);
-        
-        return $hash;
+        return hash_final($context);
     }
 
     /**
