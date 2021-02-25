@@ -27,13 +27,6 @@ class ProcessFileHandler implements MessageHandlerInterface
     private $entityManager;
 
     /**
-     * The File Repository.
-     *
-     * @var FileRepository
-     */
-    private $fileRepository;
-
-    /**
      * The monolog logger.
      *
      * @var LoggerInterface
@@ -58,20 +51,17 @@ class ProcessFileHandler implements MessageHandlerInterface
      * Constructor for this Controller, to set up default services.
      *
      * @param EntityManagerInterface $entityManager           The entity handler.
-     * @param FileRepository         $fileRepository          The file Repository.
-     * @param LoggerInterface        $fileProcessingLogger Name hinted dataset_file_hasher logger.
+     * @param LoggerInterface        $fileProcessingLogger    Name hinted dataset_file_hasher logger.
      * @param Datastore              $datastore               Datastore utility instance.
      * @param MessageBusInterface    $messageBus              Symfony messenger bus interface instance.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        FileRepository $fileRepository,
         LoggerInterface $fileProcessingLogger,
         Datastore $datastore,
         MessageBusInterface $messageBus
     ) {
         $this->entityManager = $entityManager;
-        $this->fileRepository = $fileRepository;
         $this->logger = $fileProcessingLogger;
         $this->datastore = $datastore;
         $this->messageBus = $messageBus;
@@ -88,7 +78,6 @@ class ProcessFileHandler implements MessageHandlerInterface
         $messages = array();
         $fileId = $processFile->getFileId();
         $file = $this->entityManager->getRepository(File::class)->find($fileId);
-        //$file = $this->fileRepository->find($fileId);
 
         if (!$file instanceof File) {
             $this->logger->alert(sprintf('File with ID: %d was not found!', $fileId));
