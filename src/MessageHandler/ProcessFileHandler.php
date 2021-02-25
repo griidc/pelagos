@@ -129,7 +129,7 @@ class ProcessFileHandler implements MessageHandlerInterface
 
         // File virus Scan
         $messages[] = new ScanFileForVirus($fileId, $loggingContext['udi']);
-        $this->logger->info('Enqueuing virus scan for file: {$file->getFilePathName()}.', $loggingContext);
+        $this->logger->info("Enqueuing virus scan for file: {$file->getFilePathName()}.", $loggingContext);
 
         $file->setStatus(File::FILE_DONE);
 
@@ -150,7 +150,7 @@ class ProcessFileHandler implements MessageHandlerInterface
         $this->logger->info('Flushing data', $loggingContext);
         $this->entityManager->flush();
         foreach ($messages as $message) {
-            $this->logger->info('Sending message {get_class($message)}', $loggingContext);
+            $this->logger->info("Sending message {get_class($message)}", $loggingContext);
             $this->messageBus->dispatch($message);
         }
     }
