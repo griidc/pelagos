@@ -6,3 +6,4 @@ framework:
             'App\Message\ProcessFile': async
             'App\Message\ScanFileForVirus': async
             'App\Message\ZipDatasetFiles': async
+            'App\Message\RenameFile': async
