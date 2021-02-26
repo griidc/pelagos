@@ -1,0 +1,12 @@
+[Unit]
+Description=Control Pelagos Messagemq supervisord/consumer
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/local/bin/control-pelagos-messagemq-consumer.sh start
+ExecStop=/bin/bash /usr/local/bin/control-pelagos-messagemq-consumer.sh stop
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
