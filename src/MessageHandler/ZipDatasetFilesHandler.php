@@ -100,7 +100,8 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
         $destinationPath = $this->downloadDirectory . DIRECTORY_SEPARATOR .  str_replace(':', '.', $datasetSubmission->getDataset()->getUdi()) . '.zip';
         $this->logger->info('Zipfile opened: ' . $destinationPath);
         try {
-            $outputStream = array('fileStream' => fopen($destinationPath, 'w+'));
+            $fileStream = fopen($destinationPath, 'w+');
+            $outputStream = array('fileStream' => $fileStream);
             $this->zipFiles->start($outputStream, basename($destinationPath));
             foreach ($filesInfo as $fileItemInfo) {
                 $this->logger->info("adding file to $destinationPath:" . $fileItemInfo['filePathName']);
@@ -108,11 +109,12 @@ class ZipDatasetFilesHandler implements MessageHandlerInterface
             }
             $this->zipFiles->finish();
             $this->logger->info('Zipfile closed: ' . $destinationPath);
+            rewind($fileStream);
             $fileset = $datasetSubmission->getFileset();
             $fileset->setZipFilePath($destinationPath);
             $fileset->setZipFileSize(StreamInfo::getFileSize($outputStream));
             $fileset->setZipFileSha256Hash(StreamInfo::calculateHash($outputStream, DatasetSubmission::SHA256));
-            fclose($outputStream['fileStream']);
+            fclose($fileStream);
             $this->entityManager->flush();
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to zip file. Message: %s', $exception->getMessage()));

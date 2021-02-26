@@ -104,8 +104,6 @@ class PelagosMigrateDatasetFilesCommand extends Command
 
             $status = $dataset->getDatasetStatus();
 
-            //$io->note(sprintf('UDI = %s.', $udi));
-
             if ($status === Dataset::DATASET_STATUS_IN_REVIEW) {
                 $datasetSubmission = $dataset->getLatestDatasetReview();
                 $this->setFile($dataStore, $queueFiler, $ignoreFileExistCheck, $datasetSubmission);
@@ -177,7 +175,7 @@ class PelagosMigrateDatasetFilesCommand extends Command
 
             $file->setDescription('Original Dataset File');
 
-            $file->setPhysicalFilePath($fileName);
+            $file->setPhysicalFilePath("$udi/$udi.dat");
             $file->setStatus($queueFiler ? File::FILE_NEW : File::FILE_DONE);
 
             $newFileset = new Fileset();

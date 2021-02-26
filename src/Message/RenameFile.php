@@ -3,12 +3,12 @@
 namespace App\Message;
 
 /**
- * The message for hashing files.
+ * Message for Renaming Files.
  */
-class HashFile
+class RenameFile
 {
     /**
-     * The file ID of the to be hashed file.
+     * The file ID of the to be renamed file.
      *
      * @var integer
      */
@@ -17,7 +17,7 @@ class HashFile
     /**
      * Constructor.
      *
-     * @param int $fileId The file ID of the to be hashed file.
+     * @param int $fileId The file ID of the to be renamed file.
      */
     public function __construct(int $fileId)
     {

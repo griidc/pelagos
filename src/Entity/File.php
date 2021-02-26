@@ -336,4 +336,18 @@ class File extends Entity
         }
         return explode('/', $filepath);
     }
+
+    /**
+     * Returns the root path where the file is physically located.
+     *
+     * @return string
+     */
+    public function getFileRootPath() : string
+    {
+        return str_replace(
+            ':',
+            '.',
+            $this->getFileset()->getDatasetSubmission()->getDataset()->getUdi()
+        ) . DIRECTORY_SEPARATOR;
+    }
 }

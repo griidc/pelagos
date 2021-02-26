@@ -27,13 +27,6 @@ class ProcessFileHandler implements MessageHandlerInterface
     private $entityManager;
 
     /**
-     * The File Repository.
-     *
-     * @var FileRepository
-     */
-    private $fileRepository;
-
-    /**
      * The monolog logger.
      *
      * @var LoggerInterface
@@ -55,44 +48,23 @@ class ProcessFileHandler implements MessageHandlerInterface
     private $messageBus;
 
     /**
-     * List of messages.
-     *
-     * @var array
-     */
-    private $messages = array();
-
-    /**
      * Constructor for this Controller, to set up default services.
      *
      * @param EntityManagerInterface $entityManager           The entity handler.
-     * @param FileRepository         $fileRepository          The file Repository.
-     * @param LoggerInterface        $fileProcessingLogger Name hinted dataset_file_hasher logger.
+     * @param LoggerInterface        $fileProcessingLogger    Name hinted dataset_file_hasher logger.
      * @param Datastore              $datastore               Datastore utility instance.
      * @param MessageBusInterface    $messageBus              Symfony messenger bus interface instance.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        FileRepository $fileRepository,
         LoggerInterface $fileProcessingLogger,
         Datastore $datastore,
         MessageBusInterface $messageBus
     ) {
         $this->entityManager = $entityManager;
-        $this->fileRepository = $fileRepository;
         $this->logger = $fileProcessingLogger;
         $this->datastore = $datastore;
         $this->messageBus = $messageBus;
-    }
-
-    /**
-     * Destructor for the handler to always flush.
-     */
-    public function __destruct()
-    {
-        $this->entityManager->flush();
-        foreach ($this->messages as $message) {
-            $this->messageBus->dispatch($message);
-        }
     }
 
     /**
@@ -102,8 +74,10 @@ class ProcessFileHandler implements MessageHandlerInterface
      */
     public function __invoke(ProcessFile $processFile)
     {
+        // Create message array to store messages.
+        $messages = array();
         $fileId = $processFile->getFileId();
-        $file = $this->fileRepository->find($fileId);
+        $file = $this->entityManager->getRepository(File::class)->find($fileId);
 
         if (!$file instanceof File) {
             $this->logger->alert(sprintf('File with ID: %d was not found!', $fileId));
@@ -121,7 +95,6 @@ class ProcessFileHandler implements MessageHandlerInterface
             'dataset_submission_id' => $datasetSubmission->getId(),
         );
 
-        $file->setStatus(File::FILE_IN_PROGRESS);
         $filePath = $file->getPhysicalFilePath();
         $fileStream = fopen($filePath, 'r');
         try {
@@ -134,20 +107,24 @@ class ProcessFileHandler implements MessageHandlerInterface
         try {
             $newFileDestination = $this->datastore->addFile(
                 ['fileStream' => $fileStream],
-                str_replace(':', '.', $udi) . DIRECTORY_SEPARATOR . $file->getFilePathName()
+                $file->getFileRootPath() . $file->getFilePathName()
             );
             $file->setPhysicalFilePath($newFileDestination);
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to add file to datastore. Message: "%s"', $exception->getMessage()), $loggingContext);
             $file->setStatus(File::FILE_ERROR);
+            $this->entityManager->flush();
             return;
         }
 
         // File virus Scan
-        $this->messages[] = new ScanFileForVirus($fileId, $loggingContext['udi']);
         $this->logger->info("Enqueuing virus scan for file: {$file->getFilePathName()}.", $loggingContext);
+        $this->messageBus->dispatch(new ScanFileForVirus($fileId, $loggingContext['udi']));
 
         $file->setStatus(File::FILE_DONE);
+
+        $this->logger->info('Flushing data', $loggingContext);
+        $this->entityManager->flush();
 
         if ($fileset->isDone()) {
             $datasetSubmissionId = $datasetSubmission->getId();
@@ -156,9 +133,9 @@ class ProcessFileHandler implements MessageHandlerInterface
                 $fileIds[] = $file->getId();
             }
             // Dispatch message to zip files
+            $this->logger->info('All files are done, zipping', $loggingContext);
             $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
-            $this->messages[] = $zipFiles;
-            $this->logger->info('Dataset file processing completed', $loggingContext);
+            $this->messageBus->dispatch(new ZipDatasetFiles($fileIds, $datasetSubmissionId));
         } else {
             $this->logger->info('Processed file for Dataset', $loggingContext);
         }
