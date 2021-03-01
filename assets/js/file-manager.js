@@ -8,16 +8,18 @@ const fileManagerElement = document.getElementById("file-manager-app");
 if (fileManagerElement) {
     if (fileManagerElement.dataset) {
         const datasetSubmissionId = Number(fileManagerElement.dataset.id);
+        const fileManagerMode = Boolean(fileManagerElement.dataset.writeMode);
         new Vue({
             el: '#file-manager-app',
             data() {
                 return {
-                    datasetSubmissionId: datasetSubmissionId
+                    datasetSubmissionId: datasetSubmissionId,
+                    fileManagerMode : fileManagerMode
                 }
             },
             components: {FileManager},
             template: `
-              <FileManager :datasetSubId="datasetSubmissionId"/>`
+              <FileManager :datasetSubId="datasetSubmissionId" :writeMode="fileManagerMode"/>`
         });
     }
 }

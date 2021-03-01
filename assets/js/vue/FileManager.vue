@@ -22,10 +22,10 @@
                 ref="myFileManager"
         >
             <DxPermissions
-                :delete="true"
-                :upload="true"
-                :move="true"
-                :rename="true"
+                :delete="writeMode"
+                :upload="writeMode"
+                :move="writeMode"
+                :rename="writeMode"
                 :download="true"/>
             <DxToolbar>
                 <DxItem name="upload" :visible="false"/>
@@ -104,6 +104,7 @@ export default {
 
     props: {
         datasetSubId: {},
+        writeMode: {}
     },
 
     created() {
@@ -112,7 +113,9 @@ export default {
     },
 
     mounted() {
-        initDropzone();
+        if (this.writeMode) {
+          initDropzone();
+        }
         myFileManager = this.$refs.myFileManager;
     },
 
@@ -175,6 +178,7 @@ export default {
             return {
                 items: [
                     {
+                        visible: this.writeMode,
                         text: 'Upload',
                         icon: 'upload',
                         items: [
