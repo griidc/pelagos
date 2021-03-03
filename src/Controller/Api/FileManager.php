@@ -360,7 +360,7 @@ class FileManager extends AbstractFOSRestController
     {
         $fileset = $datasetSubmission->getFileset();
         $zipFilePath = '';
-        if ($fileset instanceof Fileset and $fileset->isDone()) {
+        if ($fileset instanceof Fileset and $fileset->isDone() and $fileset->doesZipFileExist()) {
             $zipFilePath = $fileset->getZipFilePath();
         }
         return $zipFilePath;
