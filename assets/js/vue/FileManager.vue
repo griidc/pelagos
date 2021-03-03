@@ -398,6 +398,7 @@ const initDropzone = () => {
             fileManagerResolve.forEach(async function(fileResolve) {
                 fileResolve.resolve;
             });
+            fileManagerResolve = [];
             this.removeAllFiles();
         }
     });
