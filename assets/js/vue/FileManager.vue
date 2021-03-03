@@ -333,7 +333,6 @@ let fileManagerResolve = [];
 const uploadFileChunk = (fileData, uploadInfo, destinationDirectory) => {
     destinationDir = destinationDirectory.path;
     return new Promise((resolve, reject) => {
-        myFileManager.$parent.loadingVisible =  true;
         myFileManager.$parent.showDownloadZipBtn = false;
         fileManagerResolve.push(resolve);
     });
@@ -386,6 +385,10 @@ const initDropzone = () => {
                     myDropzone._errorProcessing([currentFile], error.message);
             });
         },
+    });
+
+    myDropzone.on("processing", function () {
+        myFileManager.$parent.loadingVisible =  true;
     });
 
     myDropzone.on("queuecomplete", function () {
