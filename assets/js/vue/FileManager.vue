@@ -1,6 +1,15 @@
 <template>
     <div>
         <div id="upload-file-button"></div>
+        <DxLoadPanel
+          :visible.sync="loadingVisible"
+          :show-indicator="true"
+          :show-pane="true"
+          :shading="true"
+          :close-on-outside-click="false"
+          shading-color="rgba(0,0,0,0.4)"
+          message="Uploading..."
+        />
         <DxPopup
             title="Error"
             :visible.sync="isPopupVisible"
@@ -51,6 +60,7 @@ import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import { DxFileManager, DxPermissions, DxToolbar, DxItem, DxContextMenu } from "devextreme-vue/file-manager";
 import { DxPopup } from 'devextreme-vue/popup';
+import { DxLoadPanel } from 'devextreme-vue/load-panel';
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
 import Dropzone from "dropzone";
 
@@ -81,7 +91,8 @@ export default {
         DxItem,
         DxContextMenu,
         CustomFileSystemProvider,
-        DxPopup
+        DxPopup,
+        DxLoadPanel
     },
 
     data() {
@@ -98,7 +109,8 @@ export default {
             showDownloadZipBtn: this.isDownloadZipVisible(),
             uploadSingleFileOptions: this.uploadSingleFile(),
             isPopupVisible: false,
-            errorMessage: ''
+            errorMessage: '',
+            loadingVisible: false
         };
     },
 
@@ -217,7 +229,7 @@ export default {
         directoryChanged: function (args) {
             destinationDir = args.directory.path;
         },
-        
+
         showPopupError: function (message) {
             this.errorMessage = message;
             this.isPopupVisible = true;
@@ -316,11 +328,14 @@ const downloadItems = (items) => {
     })
 }
 
+let fileManagerResolve = [];
+
 const uploadFileChunk = (fileData, uploadInfo, destinationDirectory) => {
     destinationDir = destinationDirectory.path;
     return new Promise((resolve, reject) => {
+        myFileManager.$parent.loadingVisible =  true;
         myFileManager.$parent.showDownloadZipBtn = false;
-        resolve();
+        fileManagerResolve.push(resolve);
     });
 }
 
@@ -374,7 +389,17 @@ const initDropzone = () => {
     });
 
     myDropzone.on("queuecomplete", function () {
+        myFileManager.$parent.loadingVisible =  false;
         myFileManager.instance.repaint();
+    });
+
+    myDropzone.on("totaluploadprogress", function (uploadProgress, totalBytes, totalBytesSent) {
+        if (uploadProgress == 100) {
+            fileManagerResolve.forEach(async function(fileResolve) {
+                fileResolve.resolve;
+            });
+            this.removeAllFiles();
+        }
     });
 }
 
