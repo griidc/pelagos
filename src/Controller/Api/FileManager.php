@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Entity\DatasetSubmission;
 use App\Entity\File;
 use App\Entity\Fileset;
+use App\Message\RenameFile;
 use App\Util\Datastore;
 use App\Util\FileUploader;
 use App\Util\FolderStructureGenerator;
@@ -17,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -91,7 +93,7 @@ class FileManager extends AbstractFOSRestController
      * @param DatasetSubmission      $datasetSubmission The id of the dataset submission.
      * @param Request                $request           The request body
      * @param EntityManagerInterface $entityManager     Entity manager interface instance.
-     * @param Datastore              $datastore         Datastore to manipulate the file on disk.
+     * @param MessageBusInterface    $messageBus        Message bus interface.
      *
      * @Route(
      *     "/api/file_delete/{id}",
@@ -106,8 +108,12 @@ class FileManager extends AbstractFOSRestController
      *
      * @return Response
      */
-    public function delete(DatasetSubmission $datasetSubmission, Request $request, EntityManagerInterface $entityManager, Datastore $datastore): Response
-    {
+    public function delete(
+        DatasetSubmission $datasetSubmission,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        MessageBusInterface $messageBus
+    ): Response {
         $deleteFilePath = $request->get('path');
         $isDir = $request->get('isDir');
         $fileset = $datasetSubmission->getFileset();
@@ -118,11 +124,11 @@ class FileManager extends AbstractFOSRestController
             if ($isDir === 'true') {
                 $files = $fileset->getFilesInDirectory($deleteFilePath);
                 foreach ($files as $file) {
-                    $this->deleteFile($file, $fileset, $datastore);
+                    $this->deleteFile($file, $messageBus);
                 }
             } else {
                 $existingFile = $fileset->getExistingFile($deleteFilePath);
-                $this->deleteFile($existingFile, $fileset, $datastore);
+                $this->deleteFile($existingFile, $messageBus);
             }
             $entityManager->flush();
         } else {
@@ -137,39 +143,36 @@ class FileManager extends AbstractFOSRestController
     /**
      * Delete individual file from disk or mark as deleted.
      *
-     * @param File      $file      File entity that needs to be deleted.
-     * @param Fileset   $fileset   Fileset entity instance.
-     * @param Datastore $datastore Datastore to manipulate the file on disk.
+     * @param File                $file       File entity that needs to be deleted.
+     * @param MessageBusInterface $messageBus Message bus interface.
      *
      * @return void
      */
-    private function deleteFile(File $file, Fileset $fileset, Datastore $datastore) : void
+    private function deleteFile(File $file, MessageBusInterface $messageBus) : void
     {
         if ($file->getStatus() === File::FILE_NEW) {
             $deleteFile = unlink($file->getPhysicalFilePath());
             $deleteFolder = rmdir(dirname($file->getPhysicalFilePath()));
             if ($deleteFile and $deleteFolder) {
-                $fileset->removeFile($file);
+                $file->getFileset()->removeFile($file);
             } else {
                 throw new BadRequestHttpException('Unable to delete file');
             }
         } elseif ($file->getStatus() === File::FILE_DONE) {
             $file->setStatus(File::FILE_DELETED);
-            $filePath = $file->getPhysicalFilePath();
-            $newFilePath = $filePath . Datastore::MARK_FILE_AS_DELETED;
-            $newFilePath = $datastore->renameFile($filePath, $newFilePath, true);
-            $file->setPhysicalFilePath($newFilePath);
+            $renameMessage = new RenameFile($file->getId());
+            $messageBus->dispatch($renameMessage);
         }
     }
 
     /**
      * Update a file entity.
      *
-     * @param DatasetSubmission      $datasetSubmission The id of the dataset submission.
-     * @param Request                $request           The request body
-     * @param EntityManagerInterface $entityManager     Entity manager interface instance.
-     * @param Datastore              $datastore         Datastore to manipulate the file on disk.
-     * @param FolderStructureGenerator  $folderStructureGenerator Folder structure generator Util class.
+     * @param DatasetSubmission        $datasetSubmission        The id of the dataset submission.
+     * @param Request                  $request                  The request body.
+     * @param EntityManagerInterface   $entityManager            Entity manager interface instance.
+     * @param FolderStructureGenerator $folderStructureGenerator Folder structure generator Util class.
+     * @param MessageBusInterface      $messageBus               Message bus interface.
      *
      * @Route("/api/file_update_filename/{id}", name="pelagos_api_file_update_filename", methods={"PUT"}, defaults={"_format"="json"})
      *
@@ -184,8 +187,8 @@ class FileManager extends AbstractFOSRestController
         DatasetSubmission $datasetSubmission,
         Request $request,
         EntityManagerInterface $entityManager,
-        Datastore $datastore,
-        FolderStructureGenerator $folderStructureGenerator
+        FolderStructureGenerator $folderStructureGenerator,
+        MessageBusInterface $messageBus
     ) : Response {
         $newFileName = $request->get('newFileFolderPathDir');
         $existingFilePath = $request->get('path');
@@ -207,11 +210,11 @@ class FileManager extends AbstractFOSRestController
                 $files = $fileset->getFilesInDirectory($existingFilePath);
                 foreach ($files as $file) {
                     $newFilePathName = implode("/", array_merge([$newFileName], $file->getFilePathParts($existingFilePath)));
-                    $this->updateFileName($file, $fileset, $newFilePathName, $datastore);
+                    $this->updateFileName($file, $newFilePathName, $messageBus);
                 }
             } else {
                 $existingFile = $fileset->getExistingFile($existingFilePath);
-                $this->updateFileName($existingFile, $fileset, $newFileName, $datastore);
+                $this->updateFileName($existingFile, $newFileName, $messageBus);
             }
             $entityManager->flush();
         } else {
@@ -227,24 +230,23 @@ class FileManager extends AbstractFOSRestController
     /**
      * Update file name for single file entity.
      *
-     * @param File      $file        File entity that needs to be renamed.
-     * @param Fileset   $fileset     Fileset entity instance.
-     * @param string    $newFileName New file name for the file.
-     * @param Datastore $datastore   Datastore to manipulate the file on disk.
+     * @param File                $file        File entity that needs to be renamed.
+     * @param string              $newFileName New file name for the file.
+     * @param MessageBusInterface $messageBus  Message bus interface.
      *
      * @throws BadRequestHttpException When the destination file name already exists.
      *
      * @return void
      */
-    private function updateFileName(File $file, Fileset $fileset, string $newFileName, Datastore $datastore) : void
+    private function updateFileName(File $file, string $newFileName, MessageBusInterface $messageBus) : void
     {
-        if (!$fileset->doesFileExist($newFileName)) {
+        if (!$file->getFileset()->doesFileExist($newFileName)) {
+            $file->setFilePathName($newFileName);
             // Rename file on disk if it is already processed
             if ($file->getStatus() === File::FILE_DONE) {
-                $newPhysicalFilePath = $datastore->renameFile($file->getPhysicalFilePath(), $newFileName);
-                $file->setPhysicalFilePath($newPhysicalFilePath);
+                $renameFile = new RenameFile($file->getId());
+                $messageBus->dispatch($renameFile);
             }
-            $file->setFilePathName($newFileName);
         } else {
             throw new BadRequestHttpException('File with same name and folder already exists');
         }
@@ -358,7 +360,7 @@ class FileManager extends AbstractFOSRestController
     {
         $fileset = $datasetSubmission->getFileset();
         $zipFilePath = '';
-        if ($fileset instanceof Fileset and $fileset->isDone()) {
+        if ($fileset instanceof Fileset and $fileset->isDone() and $fileset->doesZipFileExist()) {
             $zipFilePath = $fileset->getZipFilePath();
         }
         return $zipFilePath;

@@ -203,6 +203,9 @@
     "maennchen/zipstream-php": {
         "version": "2.1.0"
     },
+    "mikey179/vfsstream": {
+        "version": "v1.6.8"
+    },
     "mockery/mockery": {
         "version": "1.3.1"
     },

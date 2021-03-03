@@ -1,5 +1,5 @@
 monolog:
-    channels: ['mailer', 'filer', 'retriever', 'dataset_file_hasher','doi_issue', 'create_homedir', 'virus_scan', 'delete_file', 'zipper']
+    channels: ['mailer', 'filer', 'retriever', 'file_processing','doi_issue', 'create_homedir', 'virus_scan', 'delete_file', 'zipper', 'rename_file']
 
     handlers:
         mailer:
@@ -20,11 +20,11 @@ monolog:
             level: info
             channels: [retriever]
 
-        dataset_file_hasher:
+        file_processing:
             type: stream
-            path: "%kernel.logs_dir%/dataset_file_hasher.log"
+            path: "%kernel.logs_dir%/file_processing.log"
             level: info
-            channels: [dataset_file_hasher]
+            channels: [file_processing]
 
         doi_issue:
             type: stream
@@ -55,3 +55,9 @@ monolog:
             path: "%kernel.logs_dir%/zipper.log"
             level: info
             channels: [ zipper ]
+
+        rename_file:
+            type: stream
+            path: "%kernel.logs_dir%/rename_file.log"
+            level: info
+            channels: [ rename_file ]

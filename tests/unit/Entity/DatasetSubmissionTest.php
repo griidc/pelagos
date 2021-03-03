@@ -150,6 +150,10 @@ class DatasetSubmissionTest extends TestCase
             array(
                 'getAllFiles' => new ArrayCollection(array($this->mockFile)),
                 'getFileSize' => 1234,
+                'getZipFilePath' => '/path/to/zip',
+                'getZipFileSha256Hash' => 'cfsdaf',
+                'getZipFileSize' => '32432324',
+                'doesZipFileExist' => true
             )
         );
         $this->datasetSubmission = new DatasetSubmission(
@@ -334,21 +338,6 @@ class DatasetSubmissionTest extends TestCase
         $this->assertEquals(
             DatasetSubmission::TRANSFER_STATUS_COMPLETED,
             $this->datasetSubmission->getDatasetFileTransferStatus()
-        );
-        $this->datasetSubmission->setDatasetFileName('foobar.baz');
-        $this->assertEquals(
-            'foobar.baz',
-            $this->datasetSubmission->getDatasetFileName()
-        );
-        $this->datasetSubmission->setDatasetFileSize(1234);
-        $this->assertEquals(
-            1234,
-            $this->datasetSubmission->getDatasetFileSize()
-        );
-        $this->datasetSubmission->setDatasetFileSha256Hash('cafe');
-        $this->assertEquals(
-            'cafe',
-            $this->datasetSubmission->getDatasetFileSha256hash()
         );
     }
 

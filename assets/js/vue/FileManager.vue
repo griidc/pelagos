@@ -35,10 +35,10 @@
                 ref="myFileManager"
         >
             <DxPermissions
-                :delete="true"
-                :upload="true"
-                :move="true"
-                :rename="true"
+                :delete="writeMode"
+                :upload="writeMode"
+                :move="writeMode"
+                :rename="writeMode"
                 :download="true"/>
             <DxToolbar>
                 <DxItem name="upload" :visible="false"/>
@@ -133,6 +133,7 @@ export default {
 
     props: {
         datasetSubId: {},
+        writeMode: {}
     },
 
     created() {
@@ -141,7 +142,9 @@ export default {
     },
 
     mounted() {
-        initDropzone();
+        if (this.writeMode) {
+          initDropzone();
+        }
         myFileManager = this.$refs.myFileManager;
     },
 
@@ -204,6 +207,7 @@ export default {
             return {
                 items: [
                     {
+                        visible: this.writeMode,
                         text: 'Upload',
                         icon: 'upload',
                         items: [
@@ -268,6 +272,7 @@ const deleteItem = (item) => {
         axiosInstance
             .delete(`${Routing.generate('pelagos_api_file_delete')}/${datasetSubmissionId}?path=${item.path}&isDir=${item.isDirectory}`)
             .then(() => {
+                myFileManager.$parent.showDownloadZipBtn = false;
                 resolve();
             }).catch(error => {
                 myFileManager.$parent.showPopupError(error.response.data.message);
@@ -285,6 +290,7 @@ const moveItem = (item, destinationDir) => {
                 {'newFileFolderPathDir': newFilePathName, 'path': item.path, 'isDir': item.isDirectory }
             )
             .then(() => {
+                myFileManager.$parent.showDownloadZipBtn = false;
                 resolve();
             }).catch(error => {
                 myFileManager.$parent.showPopupError(error.response.data.message);
@@ -302,6 +308,7 @@ const renameItem = (item, name) => {
                 {'newFileFolderPathDir': newFilePathName, 'path': item.path, 'isDir': item.isDirectory }
             )
             .then(() => {
+                myFileManager.$parent.showDownloadZipBtn = false;
                 resolve();
             }).catch(error => {
                 myFileManager.$parent.showPopupError(error.response.data.message);
@@ -343,6 +350,7 @@ let fileManagerResolve;
 const uploadFileChunk = (fileData, uploadInfo, destinationDirectory) => {
     destinationDir = destinationDirectory.path;
     return new Promise((resolve, reject) => {
+        myFileManager.$parent.showDownloadZipBtn = false;
         fileManagerResolve = resolve;
     });
 }

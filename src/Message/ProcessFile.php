@@ -3,12 +3,12 @@
 namespace App\Message;
 
 /**
- * The message for hashing files.
+ * The message for processing files.
  */
-class HashFile
+class ProcessFile
 {
     /**
-     * The file ID of the to be hashed file.
+     * The file ID of the file to be hashed.
      *
      * @var integer
      */
@@ -17,7 +17,7 @@ class HashFile
     /**
      * Constructor.
      *
-     * @param int $fileId The file ID of the to be hashed file.
+     * @param int $fileId The file ID of the file to be processed.
      */
     public function __construct(int $fileId)
     {
