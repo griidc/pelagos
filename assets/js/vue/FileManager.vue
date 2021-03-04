@@ -417,8 +417,8 @@ const initDropzone = () => {
     });
 
     myDropzone.on("totaluploadprogress", function (uploadProgress, totalBytes, totalBytesSent) {
-        if (uploadProgress == 100) {
-            fileManagerResolve.forEach(async function(fileResolve) {
+        if (uploadProgress === 100) {
+            fileManagerResolve.forEach(function(fileResolve) {
                 fileResolve.resolve;
             });
             fileManagerResolve = [];
