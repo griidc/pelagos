@@ -8,7 +8,8 @@
           :shading="true"
           :close-on-outside-click="false"
           shading-color="rgba(0,0,0,0.4)"
-          message="Uploading..."
+          :message="uploadMessage"
+          ref="myLoadPanel"
         />
         <DxPopup
             title="Error"
@@ -28,6 +29,7 @@
                 :file-system-provider="customFileProvider"
                 :on-selection-changed="onSelectionChanged"
                 :on-current-directory-changed="directoryChanged"
+                :on-content-ready="managerReady"
                 ref="myFileManager"
         >
             <DxPermissions
@@ -77,9 +79,12 @@ let contextMenuItems = [
 ];
 
 let itemsChanged = false;
+let fileManagerResolve = [];
+let totalFiles = 0;
+let doneFiles = 0;
 
 let myFileManager;
-
+let myLoadPanel;
 let myDropzone;
 
 export default {
@@ -110,7 +115,8 @@ export default {
             uploadSingleFileOptions: this.uploadSingleFile(),
             isPopupVisible: false,
             errorMessage: '',
-            loadingVisible: false
+            loadingVisible: false,
+            uploadMessage: "Uploading..."
         };
     },
 
@@ -129,6 +135,7 @@ export default {
           initDropzone();
         }
         myFileManager = this.$refs.myFileManager;
+        myLoadPanel = this.$refs.myLoadPanel;
     },
 
     methods: {
@@ -141,6 +148,10 @@ export default {
             } else {
                 args.component.option('contextMenu.items', contextMenuItems);
             }
+        },
+
+        managerReady: function (args) {
+            this.loadingVisible =  false;
         },
 
         filterMenuItems: function () {
@@ -328,8 +339,6 @@ const downloadItems = (items) => {
     })
 }
 
-let fileManagerResolve = [];
-
 const uploadFileChunk = (fileData, uploadInfo, destinationDirectory) => {
     destinationDir = destinationDirectory.path;
     return new Promise((resolve, reject) => {
@@ -387,13 +396,24 @@ const initDropzone = () => {
         },
     });
 
-    myDropzone.on("processing", function () {
+    myDropzone.on("addedfile", function (file) {
+        totalFiles++;
+        myLoadPanel.$parent.uploadMessage = "Uploading " + doneFiles + " of " + totalFiles;
+    });
+
+    myDropzone.on("processing", function (file) {
         myFileManager.$parent.loadingVisible =  true;
     });
 
+    myDropzone.on("success", function (file) {
+        doneFiles++;
+        myLoadPanel.$parent.uploadMessage = "Uploading " + doneFiles + " of " + totalFiles;
+    });
+
     myDropzone.on("queuecomplete", function () {
-        myFileManager.$parent.loadingVisible =  false;
         myFileManager.instance.repaint();
+        totalFiles = 0;
+        doneFiles = 0;
     });
 
     myDropzone.on("totaluploadprogress", function (uploadProgress, totalBytes, totalBytesSent) {
