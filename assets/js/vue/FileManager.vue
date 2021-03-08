@@ -1,6 +1,16 @@
 <template>
     <div>
         <div id="upload-file-button"></div>
+        <DxLoadPanel
+          :visible.sync="loadingVisible"
+          :show-indicator="true"
+          :show-pane="true"
+          :shading="true"
+          :close-on-outside-click="false"
+          shading-color="rgba(0,0,0,0.4)"
+          :message="uploadMessage"
+          ref="myLoadPanel"
+        />
         <DxPopup
             title="Error"
             :visible.sync="isPopupVisible"
@@ -19,13 +29,14 @@
                 :file-system-provider="customFileProvider"
                 :on-selection-changed="onSelectionChanged"
                 :on-current-directory-changed="directoryChanged"
+                :on-content-ready="managerReady"
                 ref="myFileManager"
         >
             <DxPermissions
-                :delete="true"
-                :upload="true"
-                :move="true"
-                :rename="true"
+                :delete="writeMode"
+                :upload="writeMode"
+                :move="writeMode"
+                :rename="writeMode"
                 :download="true"/>
             <DxToolbar>
                 <DxItem name="upload" :visible="false"/>
@@ -51,6 +62,7 @@ import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import { DxFileManager, DxPermissions, DxToolbar, DxItem, DxContextMenu } from "devextreme-vue/file-manager";
 import { DxPopup } from 'devextreme-vue/popup';
+import { DxLoadPanel } from 'devextreme-vue/load-panel';
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
 import Dropzone from "dropzone";
 
@@ -67,9 +79,12 @@ let contextMenuItems = [
 ];
 
 let itemsChanged = false;
+let fileManagerResolve = [];
+let totalFiles = 0;
+let doneFiles = 0;
 
 let myFileManager;
-
+let myLoadPanel;
 let myDropzone;
 
 export default {
@@ -81,7 +96,8 @@ export default {
         DxItem,
         DxContextMenu,
         CustomFileSystemProvider,
-        DxPopup
+        DxPopup,
+        DxLoadPanel
     },
 
     data() {
@@ -98,12 +114,15 @@ export default {
             showDownloadZipBtn: this.isDownloadZipVisible(),
             uploadSingleFileOptions: this.uploadSingleFile(),
             isPopupVisible: false,
-            errorMessage: ''
+            errorMessage: '',
+            loadingVisible: false,
+            uploadMessage: "Uploading..."
         };
     },
 
     props: {
         datasetSubId: {},
+        writeMode: {}
     },
 
     created() {
@@ -112,8 +131,11 @@ export default {
     },
 
     mounted() {
-        initDropzone();
+        if (this.writeMode) {
+          initDropzone();
+        }
         myFileManager = this.$refs.myFileManager;
+        myLoadPanel = this.$refs.myLoadPanel;
     },
 
     methods: {
@@ -126,6 +148,10 @@ export default {
             } else {
                 args.component.option('contextMenu.items', contextMenuItems);
             }
+        },
+
+        managerReady: function (args) {
+            this.loadingVisible =  false;
         },
 
         filterMenuItems: function () {
@@ -175,6 +201,7 @@ export default {
             return {
                 items: [
                     {
+                        visible: this.writeMode,
                         text: 'Upload',
                         icon: 'upload',
                         items: [
@@ -213,7 +240,7 @@ export default {
         directoryChanged: function (args) {
             destinationDir = args.directory.path;
         },
-        
+
         showPopupError: function (message) {
             this.errorMessage = message;
             this.isPopupVisible = true;
@@ -239,6 +266,7 @@ const deleteItem = (item) => {
         axiosInstance
             .delete(`${Routing.generate('pelagos_api_file_delete')}/${datasetSubmissionId}?path=${item.path}&isDir=${item.isDirectory}`)
             .then(() => {
+                myFileManager.$parent.showDownloadZipBtn = false;
                 resolve();
             }).catch(error => {
                 myFileManager.$parent.showPopupError(error.response.data.message);
@@ -256,6 +284,7 @@ const moveItem = (item, destinationDir) => {
                 {'newFileFolderPathDir': newFilePathName, 'path': item.path, 'isDir': item.isDirectory }
             )
             .then(() => {
+                myFileManager.$parent.showDownloadZipBtn = false;
                 resolve();
             }).catch(error => {
                 myFileManager.$parent.showPopupError(error.response.data.message);
@@ -273,6 +302,7 @@ const renameItem = (item, name) => {
                 {'newFileFolderPathDir': newFilePathName, 'path': item.path, 'isDir': item.isDirectory }
             )
             .then(() => {
+                myFileManager.$parent.showDownloadZipBtn = false;
                 resolve();
             }).catch(error => {
                 myFileManager.$parent.showPopupError(error.response.data.message);
@@ -312,7 +342,8 @@ const downloadItems = (items) => {
 const uploadFileChunk = (fileData, uploadInfo, destinationDirectory) => {
     destinationDir = destinationDirectory.path;
     return new Promise((resolve, reject) => {
-        resolve();
+        myFileManager.$parent.showDownloadZipBtn = false;
+        fileManagerResolve.push(resolve);
     });
 }
 
@@ -365,8 +396,34 @@ const initDropzone = () => {
         },
     });
 
+    myDropzone.on("addedfile", function (file) {
+        totalFiles++;
+        myLoadPanel.$parent.uploadMessage = "Uploading " + doneFiles + " of " + totalFiles;
+    });
+
+    myDropzone.on("processing", function (file) {
+        myFileManager.$parent.loadingVisible =  true;
+    });
+
+    myDropzone.on("success", function (file) {
+        doneFiles++;
+        myLoadPanel.$parent.uploadMessage = "Uploading " + doneFiles + " of " + totalFiles;
+    });
+
     myDropzone.on("queuecomplete", function () {
         myFileManager.instance.repaint();
+        totalFiles = 0;
+        doneFiles = 0;
+    });
+
+    myDropzone.on("totaluploadprogress", function (uploadProgress, totalBytes, totalBytesSent) {
+        if (uploadProgress === 100) {
+            fileManagerResolve.forEach(function(fileResolve) {
+                fileResolve.resolve;
+            });
+            fileManagerResolve = [];
+            this.removeAllFiles();
+        }
     });
 }
 

@@ -18,7 +18,7 @@
                 you may return to this page, select the same file, and transfer will resume where it left off.
                 <fieldset>
                     <div id="dropzone-uploader">
-                        <div id="file-manager-app" data-id={{ datasetSubmission.id }}></div>
+                        <div id="file-manager-app" data-write-mode="{{ (mode == 'view') ? false : true }}"  data-id="{{ datasetSubmission.id }}"></div>
                     </div>
                 </fieldset>
             </div> <!-- tabs-1 -->
