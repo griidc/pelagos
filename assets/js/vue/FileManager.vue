@@ -20,34 +20,29 @@
             :height="400"
             title="What's New?">
             <template>
-                <DxScrollView
-                    width="100%"
-                    height="100%">
-                    <div id="textBlock">
-                        <ul>
-                            <li>
-                                <strong>Upload Files/Folders</strong>: Can upload files/folders by drag and drop or by using the upload button.
-                            </li>
-                            <li>
-                                <strong>Delete Files/Folders</strong>: Can delete by selecting the option from the right click menu or can select the item and use the toolbar.
-                            </li>
-                            <li>
-                                <strong>Move Files/Folders</strong>: Can move item by selecting the option from the right click menu or can select the item and use the toolbar.
-                            </li>
-                            <li>
-                                <strong>Rename Files/Folders</strong>: Can rename item by selecting the option from the right click menu or can select the item and use the toolbar.
-                            </li>
-                            <li>
-                                <strong>Download Files</strong>: Can download individual files by selecting the option from the right click menu or can select the item and use the toolbar.
-                            </li>
-                            <li>
-                                <strong>Download All Files(zip)</strong>: Can download all files by clicking on the button.
-                            </li>
-                        </ul>
-                    </div>
-                </DxScrollView>
+                <div id="textBlock">
+                    <ul>
+                        <li>
+                            <strong>Upload Files/Folders</strong>: Can upload files/folders by drag and drop or by using the upload button.
+                        </li>
+                        <li>
+                            <strong>Delete Files/Folders</strong>: Can delete by selecting the option from the right click menu or can select the item and use the toolbar.
+                        </li>
+                        <li>
+                            <strong>Move Files/Folders</strong>: Can move item by selecting the option from the right click menu or can select the item and use the toolbar.
+                        </li>
+                        <li>
+                            <strong>Rename Files/Folders</strong>: Can rename item by selecting the option from the right click menu or can select the item and use the toolbar.
+                        </li>
+                        <li>
+                            <strong>Download Files</strong>: Can download individual files by selecting the option from the right click menu or can select the item and use the toolbar.
+                        </li>
+                        <li>
+                            <strong>Download All Files(zip)</strong>: Can download all files by clicking on the button.
+                        </li>
+                    </ul>
+                </div>
             </template>
-
         </DxPopup>
         <DxPopup
             title="Error"
@@ -101,7 +96,6 @@ import 'devextreme/dist/css/dx.light.css';
 import { DxFileManager, DxPermissions, DxToolbar, DxItem, DxContextMenu } from "devextreme-vue/file-manager";
 import { DxPopup } from 'devextreme-vue/popup';
 import { DxLoadPanel } from 'devextreme-vue/load-panel';
-import { DxScrollView } from 'devextreme-vue/scroll-view';
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
 import Dropzone from "dropzone";
 
@@ -137,7 +131,6 @@ export default {
         CustomFileSystemProvider,
         DxPopup,
         DxLoadPanel,
-        DxScrollView
     },
 
     data() {
