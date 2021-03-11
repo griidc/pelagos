@@ -16,25 +16,24 @@
             </template>
         </DxPopup>
         <DxPopup
-            title="Uploading Files"
             :visible.sync="loadingVisible"
             :close-on-outside-click="false"
             :show-title="false"
             position="center"
             :showCloseButton="false"
-            :width="300"
+            :width="350"
             :height="250"
             :drag-enabled="false"
+            :shading="true"
+            shading-color="rgba(0,0,0,0.4)"
         >
             <template>
-                <center>
                 <p>
-                    {{ uploadMessage }}
+                    Uploading {{ humanSize(doneFileSize) }} of {{ humanSize(totalFileSize) }}
                 </p>
                 <p>
-                    {{ bytesMessage }}
+                    Uploading file {{ doneFiles }} of {{ totalFiles }}
                 </p>
-                </center>
                 <DxProgressBar
                   id="progress-bar-status"
                   :min="0"
@@ -42,7 +41,6 @@
                   :value="doneFileSize"
                   width="90%"
                 />
-                <center>
                 <DxButton
                     text="Cancel Upload!"
                     type="danger"
@@ -52,7 +50,6 @@
                  <p>
                     If the filesize is large? Click Cancel!
                  </p>
-                 </center>
             </template>
         </DxPopup>
         <DxFileManager
@@ -96,6 +93,7 @@ import { DxButton } from 'devextreme-vue/button';
 import { DxProgressBar } from 'devextreme-vue/progress-bar';
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
 import Dropzone from "dropzone";
+import xbytes from "xbytes";
 
 const axiosInstance = axios.create({});
 let datasetSubmissionId = null;
@@ -109,25 +107,10 @@ let contextMenuItems = [
     "download"
 ];
 
-let itemsChanged = false;
 let fileManagerResolve = [];
-let totalFiles = 0;
-let doneFiles = 0;
-
-let totalFileSize = 0;
-let doneFileSize = 0;
 
 let myFileManager;
 let myDropzone;
-
-let mags = ' KMGTPEZY';
-
-function humanSize(bytes, precision) {
-  let magnitude = Math.min(Math.log(bytes) / Math.log(1024) | 0, mags.length - 1);
-  let result = bytes / Math.pow(1024, magnitude);
-  let suffix = mags[magnitude].trim() + 'B';
-  return result.toFixed(precision) + suffix;
-}
 
 export default {
     name: "FileManager",
@@ -161,6 +144,8 @@ export default {
             loadingVisible: false,
             uploadMessage: "Uploading...",
             bytesMessage: "",
+            doneFiles: 0,
+            totalFiles: 0,
             totalFileSize: 0,
             doneFileSize: 0
         };
@@ -195,8 +180,26 @@ export default {
             }
         },
 
+        humanSize: function (fileSize) {
+            return xbytes(fileSize);
+        },
+
+        queueFile: function (fileSize) {
+            this.totalFiles++;
+            this.totalFileSize += fileSize;
+        },
+
+        completeFile: function (fileSize) {
+            this.doneFiles++;
+            this.doneFileSize += fileSize;
+        },
+
         managerReady: function (args) {
             this.loadingVisible =  false;
+            this.doneFiles = 0;
+            this.totalFiles = 0;
+            this.totalFileSize = 0;
+            this.doneFileSize = 0;
         },
 
         stopProcess: function () {
@@ -409,7 +412,6 @@ const initDropzone = () => {
         maxFilesize: null,
         clickable: "#upload-file-button",
         timeout: 0,
-        autoProcessQueue: true,
         chunksUploaded: function (file, done) {
             // All chunks have been uploaded. Perform any other actions
             let currentFile = file;
@@ -447,9 +449,7 @@ const initDropzone = () => {
     });
 
     myDropzone.on("addedfile", function (file) {
-        totalFiles++;
-        myFileManager.$parent.totalFileSize += file.size;
-        myFileManager.$parent.uploadMessage = "Uploading " + doneFiles + " of " + totalFiles
+        myFileManager.$parent.queueFile(file.size);
     });
 
     myDropzone.on("processing", function (file) {
@@ -457,18 +457,12 @@ const initDropzone = () => {
     });
 
     myDropzone.on("success", function (file) {
-        doneFiles++;
-        myFileManager.$parent.doneFileSize += file.size;
-        myFileManager.$parent.uploadMessage = "Uploading " + doneFiles + " of " + totalFiles;
-        myFileManager.$parent.bytesMessage = "Uploading " + humanSize(myFileManager.$parent.doneFileSize) + " of " + humanSize(myFileManager.$parent.totalFileSize);
+        myFileManager.$parent.completeFile(file.size);
     });
 
     myDropzone.on("queuecomplete", function () {
         myFileManager.instance.repaint();
-        totalFiles = 0;
-        doneFiles = 0;
-        totalFileSize = 0;
-        doneFileSize = 0;
+        this.removeAllFiles();
     });
 
     myDropzone.on("totaluploadprogress", function (uploadProgress, totalBytes, totalBytesSent) {
@@ -477,7 +471,6 @@ const initDropzone = () => {
                 fileResolve.resolve;
             });
             fileManagerResolve = [];
-            this.removeAllFiles();
         }
     });
 }
