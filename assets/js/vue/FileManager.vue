@@ -1,16 +1,6 @@
 <template>
     <div>
         <div id="upload-file-button"></div>
-        <DxLoadPanel
-          :visible.sync="loadingVisible"
-          :show-indicator="true"
-          :show-pane="true"
-          :shading="true"
-          :close-on-outside-click="false"
-          shading-color="rgba(0,0,0,0.4)"
-          :message="uploadMessage"
-          ref="myLoadPanel"
-        />
         <DxPopup
             title="Error"
             :visible.sync="isPopupVisible"
@@ -23,6 +13,46 @@
                     <i class="fas fa-exclamation-triangle fa-2x" style="color:#d9534f"></i>&nbsp;
                     {{ errorMessage }}
                 </p>
+            </template>
+        </DxPopup>
+        <DxPopup
+            title="Uploading Files"
+            :visible.sync="loadingVisible"
+            :close-on-outside-click="false"
+            :show-title="false"
+            position="center"
+            :showCloseButton="false"
+            :width="300"
+            :height="250"
+            :drag-enabled="false"
+        >
+            <template>
+                <center>
+                <p>
+                    {{ uploadMessage }}
+                </p>
+                <p>
+                    {{ bytesMessage }}
+                </p>
+                </center>
+                <DxProgressBar
+                  id="progress-bar-status"
+                  :min="0"
+                  :max="totalFileSize"
+                  :value="doneFileSize"
+                  width="90%"
+                />
+                <center>
+                <DxButton
+                    text="Cancel Upload!"
+                    type="danger"
+                    styling-mode="contained"
+                    @click="stopProcess"
+                 />
+                 <p>
+                    If the filesize is large? Click Cancel!
+                 </p>
+                 </center>
             </template>
         </DxPopup>
         <DxFileManager
@@ -62,7 +92,8 @@ import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import { DxFileManager, DxPermissions, DxToolbar, DxItem, DxContextMenu } from "devextreme-vue/file-manager";
 import { DxPopup } from 'devextreme-vue/popup';
-import { DxLoadPanel } from 'devextreme-vue/load-panel';
+import { DxButton } from 'devextreme-vue/button';
+import { DxProgressBar } from 'devextreme-vue/progress-bar';
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
 import Dropzone from "dropzone";
 
@@ -83,9 +114,20 @@ let fileManagerResolve = [];
 let totalFiles = 0;
 let doneFiles = 0;
 
+let totalFileSize = 0;
+let doneFileSize = 0;
+
 let myFileManager;
-let myLoadPanel;
 let myDropzone;
+
+let mags = ' KMGTPEZY';
+
+function humanSize(bytes, precision) {
+  let magnitude = Math.min(Math.log(bytes) / Math.log(1024) | 0, mags.length - 1);
+  let result = bytes / Math.pow(1024, magnitude);
+  let suffix = mags[magnitude].trim() + 'B';
+  return result.toFixed(precision) + suffix;
+}
 
 export default {
     name: "FileManager",
@@ -97,7 +139,8 @@ export default {
         DxContextMenu,
         CustomFileSystemProvider,
         DxPopup,
-        DxLoadPanel
+        DxButton,
+        DxProgressBar
     },
 
     data() {
@@ -116,7 +159,10 @@ export default {
             isPopupVisible: false,
             errorMessage: '',
             loadingVisible: false,
-            uploadMessage: "Uploading..."
+            uploadMessage: "Uploading...",
+            bytesMessage: "",
+            totalFileSize: 0,
+            doneFileSize: 0
         };
     },
 
@@ -135,7 +181,6 @@ export default {
           initDropzone();
         }
         myFileManager = this.$refs.myFileManager;
-        myLoadPanel = this.$refs.myLoadPanel;
     },
 
     methods: {
@@ -152,6 +197,10 @@ export default {
 
         managerReady: function (args) {
             this.loadingVisible =  false;
+        },
+
+        stopProcess: function () {
+            myDropzone.removeAllFiles(true);
         },
 
         filterMenuItems: function () {
@@ -360,6 +409,7 @@ const initDropzone = () => {
         maxFilesize: null,
         clickable: "#upload-file-button",
         timeout: 0,
+        autoProcessQueue: true,
         chunksUploaded: function (file, done) {
             // All chunks have been uploaded. Perform any other actions
             let currentFile = file;
@@ -398,7 +448,8 @@ const initDropzone = () => {
 
     myDropzone.on("addedfile", function (file) {
         totalFiles++;
-        myLoadPanel.$parent.uploadMessage = "Uploading " + doneFiles + " of " + totalFiles;
+        myFileManager.$parent.totalFileSize += file.size;
+        myFileManager.$parent.uploadMessage = "Uploading " + doneFiles + " of " + totalFiles
     });
 
     myDropzone.on("processing", function (file) {
@@ -407,13 +458,17 @@ const initDropzone = () => {
 
     myDropzone.on("success", function (file) {
         doneFiles++;
-        myLoadPanel.$parent.uploadMessage = "Uploading " + doneFiles + " of " + totalFiles;
+        myFileManager.$parent.doneFileSize += file.size;
+        myFileManager.$parent.uploadMessage = "Uploading " + doneFiles + " of " + totalFiles;
+        myFileManager.$parent.bytesMessage = "Uploading " + humanSize(myFileManager.$parent.doneFileSize) + " of " + humanSize(myFileManager.$parent.totalFileSize);
     });
 
     myDropzone.on("queuecomplete", function () {
         myFileManager.instance.repaint();
         totalFiles = 0;
         doneFiles = 0;
+        totalFileSize = 0;
+        doneFileSize = 0;
     });
 
     myDropzone.on("totaluploadprogress", function (uploadProgress, totalBytes, totalBytesSent) {
