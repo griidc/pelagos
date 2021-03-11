@@ -136,6 +136,10 @@ class ProcessFileHandler implements MessageHandlerInterface
             $this->logger->info('All files are done, zipping', $loggingContext);
             $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
             $this->messageBus->dispatch(new ZipDatasetFiles($fileIds, $datasetSubmissionId));
+
+            // Update dataset's availability status
+            $dataset->updateAvailabilityStatus();
+            $this->entityManager->flush();
         } else {
             $this->logger->info('Processed file for Dataset', $loggingContext);
         }
