@@ -110,6 +110,8 @@ class ProcessFileHandler implements MessageHandlerInterface
                 $file->getFileRootPath() . $file->getFilePathName()
             );
             $file->setPhysicalFilePath($newFileDestination);
+            unlink($filePath);
+            rmdir(dirname($filePath));
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to add file to datastore. Message: "%s"', $exception->getMessage()), $loggingContext);
             $file->setStatus(File::FILE_ERROR);
