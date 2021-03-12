@@ -2,6 +2,39 @@
     <div>
         <div id="upload-file-button"></div>
         <DxPopup
+            :visible.sync="helpPopup"
+            :drag-enabled="false"
+            :close-on-outside-click="true"
+            :show-title="true"
+            :width="400"
+            :height="400"
+            title="What's New?">
+            <template>
+                <div id="textBlock">
+                    <ul>
+                        <li>
+                            <strong>Upload Files/Folders</strong>: Can upload files/folders by drag and drop or by using the upload button.
+                        </li>
+                        <li>
+                            <strong>Delete Files/Folders</strong>: Can delete by selecting the option from the right click menu or can select the item and use the toolbar.
+                        </li>
+                        <li>
+                            <strong>Move Files/Folders</strong>: Can move item by selecting the option from the right click menu or can select the item and use the toolbar.
+                        </li>
+                        <li>
+                            <strong>Rename Files/Folders</strong>: Can rename item by selecting the option from the right click menu or can select the item and use the toolbar.
+                        </li>
+                        <li>
+                            <strong>Download Files</strong>: Can download individual files by selecting the option from the right click menu or can select the item and use the toolbar.
+                        </li>
+                        <li>
+                            <strong>Download All Files(zip)</strong>: Can download all files by clicking on the button.
+                        </li>
+                    </ul>
+                </div>
+            </template>
+        </DxPopup>
+        <DxPopup
             title="Error"
             :visible.sync="isPopupVisible"
             :close-on-outside-click="true"
@@ -147,7 +180,8 @@ export default {
             doneFiles: 0,
             totalFiles: 0,
             totalFileSize: 0,
-            doneFileSize: 0
+            doneFileSize: 0,
+            helpPopup: false
         };
     },
 
@@ -478,6 +512,10 @@ const initDropzone = () => {
 
 $("#ds-submit").on("active", function() {
     myFileManager.instance.repaint();
+    if (localStorage.getItem("showHelpPopupFileManager") !== "false") {
+        myFileManager.$parent.helpPopup = true;
+        localStorage.setItem("showHelpPopupFileManager", "false");
+    }
 });
 
 const getFileNameFromHeader = (headers) => {
