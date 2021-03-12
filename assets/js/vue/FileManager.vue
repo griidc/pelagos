@@ -463,7 +463,10 @@ const initDropzone = () => {
 
 $("#ds-submit").on("active", function() {
     myFileManager.instance.repaint();
-    myFileManager.$parent.helpPopup = true;
+    if (localStorage.getItem("showHelpPopupFileManager") !== "false") {
+        myFileManager.$parent.helpPopup = true;
+        localStorage.setItem("showHelpPopupFileManager", "false");
+    }
 });
 
 const getFileNameFromHeader = (headers) => {
