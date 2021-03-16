@@ -2,7 +2,7 @@
     <div>
         <div id="upload-file-button"></div>
         <DxPopup
-            :visible.sync="helpPopup"
+            :visible.sync="showHelpPopup"
             :drag-enabled="false"
             :close-on-outside-click="true"
             :show-title="true"
@@ -112,6 +112,11 @@
                 <DxItem name="refresh"/>
                 <DxItem name="separator" location="after"/>
                 <DxItem name="switchView"/>
+                <DxItem
+                    widget="dxMenu"
+                    :options="helpPopupButton"
+                    location ="after"
+                />
             </DxToolbar>
         </DxFileManager>
     </div>
@@ -181,7 +186,8 @@ export default {
             totalFiles: 0,
             totalFileSize: 0,
             doneFileSize: 0,
-            helpPopup: false
+            helpPopupButton: this.getHelpPopupText(),
+            showHelpPopup: false
         };
     },
 
@@ -331,6 +337,21 @@ export default {
         showPopupError: function (message) {
             this.errorMessage = message;
             this.isPopupVisible = true;
+        },
+
+        getHelpPopupText: function () {
+            return {
+                items: [
+                    {
+                        icon: 'help',
+                    }
+                ],
+                onItemClick: this.onHelpButtonClick
+            };
+        },
+
+        onHelpButtonClick: function () {
+            this.showHelpPopup = true;
         }
     },
 };
@@ -513,7 +534,7 @@ const initDropzone = () => {
 $("#ds-submit").on("active", function() {
     myFileManager.instance.repaint();
     if (localStorage.getItem("showHelpPopupFileManager") !== "false") {
-        myFileManager.$parent.helpPopup = true;
+        myFileManager.$parent.showHelpPopup = true;
         localStorage.setItem("showHelpPopupFileManager", "false");
     }
 });
