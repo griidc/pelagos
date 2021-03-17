@@ -110,6 +110,8 @@ class ProcessFileHandler implements MessageHandlerInterface
                 $file->getFileRootPath() . $file->getFilePathName()
             );
             $file->setPhysicalFilePath($newFileDestination);
+            unlink($filePath);
+            rmdir(dirname($filePath));
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to add file to datastore. Message: "%s"', $exception->getMessage()), $loggingContext);
             $file->setStatus(File::FILE_ERROR);
@@ -136,6 +138,10 @@ class ProcessFileHandler implements MessageHandlerInterface
             $this->logger->info('All files are done, zipping', $loggingContext);
             $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
             $this->messageBus->dispatch(new ZipDatasetFiles($fileIds, $datasetSubmissionId));
+
+            // Update dataset's availability status
+            $dataset->updateAvailabilityStatus();
+            $this->entityManager->flush();
         } else {
             $this->logger->info('Processed file for Dataset', $loggingContext);
         }
