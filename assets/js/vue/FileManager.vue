@@ -2,6 +2,39 @@
     <div>
         <div id="upload-file-button"></div>
         <DxPopup
+            :visible.sync="showHelpPopup"
+            :drag-enabled="false"
+            :close-on-outside-click="true"
+            :show-title="true"
+            :width="400"
+            :height="400"
+            title="What's New?">
+            <template>
+                <div id="textBlock">
+                    <ul>
+                        <li>
+                            <strong>Upload Files/Folders</strong>: Can upload files/folders by drag and drop or by using the upload button.
+                        </li>
+                        <li>
+                            <strong>Delete Files/Folders</strong>: Can delete by selecting the option from the right click menu or can select the item and use the toolbar.
+                        </li>
+                        <li>
+                            <strong>Move Files/Folders</strong>: Can move item by selecting the option from the right click menu or can select the item and use the toolbar.
+                        </li>
+                        <li>
+                            <strong>Rename Files/Folders</strong>: Can rename item by selecting the option from the right click menu or can select the item and use the toolbar.
+                        </li>
+                        <li>
+                            <strong>Download Files</strong>: Can download individual files by selecting the option from the right click menu or can select the item and use the toolbar.
+                        </li>
+                        <li>
+                            <strong>Download All Files(zip)</strong>: Can download all files by clicking on the button.
+                        </li>
+                    </ul>
+                </div>
+            </template>
+        </DxPopup>
+        <DxPopup
             title="Error"
             :visible.sync="isPopupVisible"
             :close-on-outside-click="true"
@@ -15,17 +48,55 @@
                 </p>
             </template>
         </DxPopup>
+        <DxPopup
+            :visible.sync="loadingVisible"
+            :close-on-outside-click="false"
+            :show-title="false"
+            position="center"
+            :showCloseButton="false"
+            :width="350"
+            :height="250"
+            :drag-enabled="false"
+            :shading="true"
+            shading-color="rgba(0,0,0,0.4)"
+        >
+            <template>
+                <p>
+                    Uploading {{ humanSize(doneFileSize) }} of {{ humanSize(totalFileSize) }}
+                </p>
+                <p>
+                    Uploading file {{ doneFiles }} of {{ totalFiles }}
+                </p>
+                <DxProgressBar
+                  id="progress-bar-status"
+                  :min="0"
+                  :max="totalFileSize"
+                  :value="doneFileSize"
+                  width="90%"
+                />
+                <DxButton
+                    text="Cancel Upload!"
+                    type="danger"
+                    styling-mode="contained"
+                    @click="stopProcess"
+                 />
+                 <p>
+                    If the filesize is large? Click Cancel!
+                 </p>
+            </template>
+        </DxPopup>
         <DxFileManager
                 :file-system-provider="customFileProvider"
                 :on-selection-changed="onSelectionChanged"
                 :on-current-directory-changed="directoryChanged"
+                :on-content-ready="managerReady"
                 ref="myFileManager"
         >
             <DxPermissions
-                :delete="true"
-                :upload="true"
-                :move="true"
-                :rename="true"
+                :delete="writeMode"
+                :upload="writeMode"
+                :move="writeMode"
+                :rename="writeMode"
                 :download="true"/>
             <DxToolbar>
                 <DxItem name="upload" :visible="false"/>
@@ -41,6 +112,11 @@
                 <DxItem name="refresh"/>
                 <DxItem name="separator" location="after"/>
                 <DxItem name="switchView"/>
+                <DxItem
+                    widget="dxMenu"
+                    :options="helpPopupButton"
+                    location ="after"
+                />
             </DxToolbar>
         </DxFileManager>
     </div>
@@ -51,8 +127,11 @@ import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import { DxFileManager, DxPermissions, DxToolbar, DxItem, DxContextMenu } from "devextreme-vue/file-manager";
 import { DxPopup } from 'devextreme-vue/popup';
+import { DxButton } from 'devextreme-vue/button';
+import { DxProgressBar } from 'devextreme-vue/progress-bar';
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
 import Dropzone from "dropzone";
+import xbytes from "xbytes";
 
 const axiosInstance = axios.create({});
 let datasetSubmissionId = null;
@@ -66,10 +145,9 @@ let contextMenuItems = [
     "download"
 ];
 
-let itemsChanged = false;
+let fileManagerResolve = [];
 
 let myFileManager;
-
 let myDropzone;
 
 export default {
@@ -81,7 +159,9 @@ export default {
         DxItem,
         DxContextMenu,
         CustomFileSystemProvider,
-        DxPopup
+        DxPopup,
+        DxButton,
+        DxProgressBar
     },
 
     data() {
@@ -98,12 +178,22 @@ export default {
             showDownloadZipBtn: this.isDownloadZipVisible(),
             uploadSingleFileOptions: this.uploadSingleFile(),
             isPopupVisible: false,
-            errorMessage: ''
+            errorMessage: '',
+            loadingVisible: false,
+            uploadMessage: "Uploading...",
+            bytesMessage: "",
+            doneFiles: 0,
+            totalFiles: 0,
+            totalFileSize: 0,
+            doneFileSize: 0,
+            helpPopupButton: this.getHelpPopupText(),
+            showHelpPopup: false
         };
     },
 
     props: {
         datasetSubId: {},
+        writeMode: {}
     },
 
     created() {
@@ -112,7 +202,9 @@ export default {
     },
 
     mounted() {
-        initDropzone();
+        if (this.writeMode) {
+          initDropzone();
+        }
         myFileManager = this.$refs.myFileManager;
     },
 
@@ -126,6 +218,33 @@ export default {
             } else {
                 args.component.option('contextMenu.items', contextMenuItems);
             }
+        },
+
+        humanSize: function (fileSize) {
+            return xbytes(fileSize);
+        },
+
+        queueFile: function (fileSize) {
+            this.totalFiles++;
+            this.totalFileSize += fileSize;
+        },
+
+        completeFile: function (fileSize) {
+            this.doneFiles++;
+            this.doneFileSize += fileSize;
+        },
+
+        managerReady: function (args) {
+            this.loadingVisible =  false;
+            this.doneFiles = 0;
+            this.totalFiles = 0;
+            this.totalFileSize = 0;
+            this.doneFileSize = 0;
+        },
+
+        stopProcess: function () {
+            myDropzone.removeAllFiles(true);
+            window.stop();
         },
 
         filterMenuItems: function () {
@@ -175,6 +294,7 @@ export default {
             return {
                 items: [
                     {
+                        visible: this.writeMode,
                         text: 'Upload',
                         icon: 'upload',
                         items: [
@@ -213,10 +333,25 @@ export default {
         directoryChanged: function (args) {
             destinationDir = args.directory.path;
         },
-        
+
         showPopupError: function (message) {
             this.errorMessage = message;
             this.isPopupVisible = true;
+        },
+
+        getHelpPopupText: function () {
+            return {
+                items: [
+                    {
+                        icon: 'help',
+                    }
+                ],
+                onItemClick: this.onHelpButtonClick
+            };
+        },
+
+        onHelpButtonClick: function () {
+            this.showHelpPopup = true;
         }
     },
 };
@@ -239,6 +374,7 @@ const deleteItem = (item) => {
         axiosInstance
             .delete(`${Routing.generate('pelagos_api_file_delete')}/${datasetSubmissionId}?path=${item.path}&isDir=${item.isDirectory}`)
             .then(() => {
+                myFileManager.$parent.showDownloadZipBtn = false;
                 resolve();
             }).catch(error => {
                 myFileManager.$parent.showPopupError(error.response.data.message);
@@ -256,6 +392,7 @@ const moveItem = (item, destinationDir) => {
                 {'newFileFolderPathDir': newFilePathName, 'path': item.path, 'isDir': item.isDirectory }
             )
             .then(() => {
+                myFileManager.$parent.showDownloadZipBtn = false;
                 resolve();
             }).catch(error => {
                 myFileManager.$parent.showPopupError(error.response.data.message);
@@ -273,6 +410,7 @@ const renameItem = (item, name) => {
                 {'newFileFolderPathDir': newFilePathName, 'path': item.path, 'isDir': item.isDirectory }
             )
             .then(() => {
+                myFileManager.$parent.showDownloadZipBtn = false;
                 resolve();
             }).catch(error => {
                 myFileManager.$parent.showPopupError(error.response.data.message);
@@ -312,7 +450,8 @@ const downloadItems = (items) => {
 const uploadFileChunk = (fileData, uploadInfo, destinationDirectory) => {
     destinationDir = destinationDirectory.path;
     return new Promise((resolve, reject) => {
-        resolve();
+        myFileManager.$parent.showDownloadZipBtn = false;
+        fileManagerResolve.push(resolve);
     });
 }
 
@@ -365,13 +504,39 @@ const initDropzone = () => {
         },
     });
 
+    myDropzone.on("addedfile", function (file) {
+        myFileManager.$parent.queueFile(file.size);
+    });
+
+    myDropzone.on("processing", function (file) {
+        myFileManager.$parent.loadingVisible =  true;
+    });
+
+    myDropzone.on("success", function (file) {
+        myFileManager.$parent.completeFile(file.size);
+    });
+
     myDropzone.on("queuecomplete", function () {
         myFileManager.instance.repaint();
+        this.removeAllFiles();
+    });
+
+    myDropzone.on("totaluploadprogress", function (uploadProgress, totalBytes, totalBytesSent) {
+        if (uploadProgress === 100) {
+            fileManagerResolve.forEach(function(fileResolve) {
+                fileResolve.resolve;
+            });
+            fileManagerResolve = [];
+        }
     });
 }
 
 $("#ds-submit").on("active", function() {
     myFileManager.instance.repaint();
+    if (localStorage.getItem("showHelpPopupFileManager") !== "false") {
+        myFileManager.$parent.showHelpPopup = true;
+        localStorage.setItem("showHelpPopupFileManager", "false");
+    }
 });
 
 const getFileNameFromHeader = (headers) => {

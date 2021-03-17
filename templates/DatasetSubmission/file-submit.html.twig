@@ -13,7 +13,7 @@
         <div style="background: transparent;" id="filetabs">
             <ul>
                 <li datasetFileTransferType="upload"><a href="#tabs-1">Direct Upload</a></li>
-                <li datasetFileTransferType="HTTP"><a href="#tabs-2">Request Pull from HTTP/FTP Server</a></li>
+                <li datasetFileTransferType="HTTP"><a href="#tabs-2">Enter URL</a></li>
             </ul>
 
             <div id="tabs-1"> <!-- Direct Upload -->
@@ -24,13 +24,13 @@
                 you may return to this page, select the same file, and transfer will resume where it left off.
                 <fieldset>
                     <div id="dropzone-uploader">
-                        <div id="file-manager-app" data-id={{ datasetSubmission.id }}></div>
+                        <div id="file-manager-app" data-id="{{ datasetSubmission.id }}" data-write-mode="{{ (datasetSubmissionLockStatus) ? false : true }}"></div>
                     </div>
                 </fieldset>
             </div> <!-- tabs-1 -->
 
-            <div id="tabs-2"> <!-- Request Pull from HTTP/FTP Server -->
-                Use this method when you wish to place the dataset file on an HTTP (web) or FTP server at your institution (or elsewhere) and have GRIIDC pull it.
+            <div id="tabs-2"> <!-- Remotely Hosted Tab -->
+                If your data are remotely hosted at a GRIIDC approved repository, please provide the direct URL to the data. If your data have a DOI, please provide the DOI URL.
                 <fieldset>
                     <table class="tab-table">
                         <tr>
@@ -41,7 +41,10 @@
                                     <img class="info" src="{{ asset('build/images/info32.png') }}">
                                     <div class="tooltiptext">
                                         <p><strong>Remotely Hosted File URL:</strong></p>
-                                        <p>This is the URL that leads to the data being submitted. Package the components of the datasets (if applicable) to form a single file (e.g. ZIP, TAR).</p>
+                                        <p>If your data are remotely hosted at a GRIIDC approved repository, please provide the direct URL to the data.
+                                            If your data have a DOI, please provide the DOI URL. Examples of approved repositories include but are not limited to NCEI, HYCOM, ICPSR, and Zenodo.
+                                            A user should not have to search the website to find the data or log in/complete request forms to download the dataset.
+                                        </p>
                                         <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
                                     </div>
                                 </span>
