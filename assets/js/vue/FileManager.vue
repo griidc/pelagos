@@ -243,8 +243,8 @@ export default {
         },
 
         stopProcess: function () {
-            window.stop();
             myDropzone.removeAllFiles(true);
+            window.stop();
         },
 
         filterMenuItems: function () {
