@@ -461,7 +461,7 @@ const initDropzone = () => {
         chunking: true,
         chunkSize: 1024 * 1024,
         forceChunking: true,
-        parallelChunkUploads: true,
+        parallelChunkUploads: false,
         parallelUploads: 10,
         retryChunks: true,
         retryChunksLimit: 3,
