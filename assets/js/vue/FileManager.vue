@@ -461,7 +461,7 @@ const initDropzone = () => {
         chunking: true,
         chunkSize: 1024 * 1024,
         forceChunking: true,
-        parallelChunkUploads: true,
+        parallelChunkUploads: false,
         parallelUploads: 10,
         retryChunks: true,
         retryChunksLimit: 3,
@@ -487,7 +487,7 @@ const initDropzone = () => {
             chunkData['dzuuid'] = currentFile.upload.uuid;
             chunkData['dztotalchunkcount'] = currentFile.upload.totalChunkCount;
             chunkData['fileName'] = fileName;
-            chunkData['dztotalfilesize'] = currentFile.upload.total;
+            chunkData['dztotalfilesize'] = currentFile.size;
             axiosInstance
                 .post(
                     Routing.generate('pelagos_api_add_file_dataset_submission')
