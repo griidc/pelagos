@@ -1,4 +1,8 @@
 {% block body %}
+    <div id="ds-metadata-contact" class="ds-metadata gridc-item-metadata-contact">
+        {% include 'SideBySide/dataset-files.html.twig' %}
+    </div>
+    
     <div id="ds-contact" class="ds-metadata gridc-item-contact">
         {% include 'DatasetReview/dataset-contact.html.twig' %}
     </div>
@@ -34,4 +38,6 @@
     <div id="ds-submit" class="ds-metadata gridc-item-files">
         {% include 'SideBySide/file-submit.html.twig' %}
     </div>
+    
+    
 {% endblock %}

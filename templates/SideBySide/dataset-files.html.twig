@@ -1,0 +1,19 @@
+<fieldset>
+    <legend>Dataset Files</legend>
+    <fieldset>
+        This is a file list of the dataset files.
+    </fieldset>
+    <div style="width:100%;height:100%;">
+    <!-- <select size="10" style="height:200px;"> -->
+    <!-- <option value=" file.fileSha256Hash "> file.filePathName  -  file.fileSha256Hash </option> -->
+    <!-- </select> -->
+    <div tagname="TEXTAREA" class="contentbox">
+    {% for file in datasetSubmission.fileset.allFiles %}
+        
+        <span>{{ file.filePathName }}<span>
+        
+    {% endfor %}
+    </div>
+        
+    </div>
+</fieldset>
