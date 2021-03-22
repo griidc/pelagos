@@ -320,7 +320,7 @@ class DatasetController extends EntityController
             }
         }
         // Delete all the folders/files for the given dataset
-        $deleteDirPath = $fileset->first()->getFileRootPath();
+        $deleteDirPath = $fileset->getFileRootPath();
         $deleteDirMessage = new DeleteDir($fileset->getDatasetSubmission()->getDataset()->getUdi(), $deleteDirPath);
         $messageBus->dispatch($deleteDirMessage);
 
