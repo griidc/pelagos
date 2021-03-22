@@ -160,7 +160,6 @@ class Fileset extends Entity
                 Comparison::IN,
                 array(
                     File::FILE_NEW,
-                    File::FILE_IN_PROGRESS
                 )
             )
         );

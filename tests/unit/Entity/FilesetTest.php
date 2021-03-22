@@ -183,21 +183,10 @@ class FilesetTest extends TestCase
             )
         );
 
-        $progressFile = \Mockery::mock(
-            File::class,
-            array(
-                'setFileset' => null,
-                'getStatus' => File::FILE_IN_PROGRESS
-            )
-        );
-
         $this->fileset->addFile($newFile);
-        $this->assertSame(false, $this->fileset->isDone());
-        $this->fileset->addFile($progressFile);
         $this->assertSame(false, $this->fileset->isDone());
         $this->fileset->removeFile($newFile);
         $this->assertSame(false, $this->fileset->isDone());
-        $this->fileset->removeFile($progressFile);
         $this->fileset->addFile($doneFile);
         $this->assertSame(true, $this->fileset->isDone());
     }

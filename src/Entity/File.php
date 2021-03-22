@@ -22,11 +22,6 @@ class File extends Entity
     const FILE_DELETED = 'deleted';
 
     /**
-     * Status value for a File that is being processed by "Filer".
-     */
-    const FILE_IN_PROGRESS = 'in progress';
-
-    /**
      * Status value for a File that has been proccessed.
      */
     const FILE_DONE = 'done';
