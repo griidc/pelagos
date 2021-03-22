@@ -312,7 +312,7 @@ class DatasetController extends EntityController
             foreach ($fileset->getAllFiles() as $file) {
                 $fileStatus = $file->getStatus();
                 // Deleting files from the uploads directory
-                if (in_array([File::FILE_NEW, File::FILE_ERROR], $fileStatus)) {
+                if (in_array($fileStatus, [File::FILE_NEW, File::FILE_ERROR])) {
                     $filePath = $file->getPhysicalFilePath();
                     unlink($filePath);
                     rmdir(dirname($filePath));
