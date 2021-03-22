@@ -555,5 +555,9 @@ const getFileNameFromHeader = (headers) => {
 </script>
 
 <style>
-
+.dx-datagrid.dx-gridbase-container {
+    background-image: url("../../images/dropzone.png");
+    background-position: center;
+    background-repeat: no-repeat;
+}
 </style>
