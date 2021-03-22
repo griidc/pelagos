@@ -186,7 +186,7 @@ class FilesetTest extends TestCase
         $this->fileset->addFile($newFile);
         $this->assertSame(false, $this->fileset->isDone());
         $this->fileset->removeFile($newFile);
-        $this->assertSame(false, $this->fileset->isDone());
+        $this->assertSame(true, $this->fileset->isDone());
         $this->fileset->addFile($doneFile);
         $this->assertSame(true, $this->fileset->isDone());
     }

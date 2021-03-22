@@ -343,9 +343,9 @@ class Fileset extends Entity
     public function getFileRootPath() : string
     {
         return str_replace(
-                ':',
-                '.',
-                $this->getDatasetSubmission()->getDataset()->getUdi()
-            ) . DIRECTORY_SEPARATOR;
+            ':',
+            '.',
+            $this->getDatasetSubmission()->getDataset()->getUdi()
+        ) . DIRECTORY_SEPARATOR;
     }
 }
