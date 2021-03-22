@@ -66,4 +66,4 @@ monolog:
             type: stream
             path: "%kernel.logs_dir%/delete_folder.log"
             level: info
-            channels: [ rename_file ]
+            channels: [ delete_folder ]
