@@ -6,16 +6,12 @@
 
         <div style="background: transparent;" id="filetabs">
             <ul>
-                <li datasetFileTransferType="upload"><a href="#tabs-1">Direct Upload</a></li>
+                <li datasetFileTransferType="upload"><a href="#tabs-1">Upload</a></li>
                 <li datasetFileTransferType="HTTP"><a href="#tabs-2">Enter URL</a></li>
             </ul>
 
-            <div id="tabs-1"> <!-- Direct Upload -->
-                You may upload a single dataset file of any size using direct upload.
-                If your upload is interrupted, it will attempt to resume automatically.
-                You may also manually pause your upload and continue later.<br>
-                Note: Even if this window or your web browser has been closed before transfer is complete,
-                you may return to this page, select the same file, and transfer will resume where it left off.
+            <div id="tabs-1"> <!-- Upload -->
+                You may upload files or folders using Drag and Drop or via the Upload Button.<br>
                 <fieldset>
                     <div id="dropzone-uploader">
                         <div id="file-manager-app" data-write-mode="{{ (mode == 'view') ? false : true }}"  data-id="{{ datasetSubmission.id }}"></div>
