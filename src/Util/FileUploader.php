@@ -58,7 +58,7 @@ class FileUploader
     private function isFolder(string $targetFolder): void
     {
         if (!file_exists($targetFolder)) {
-            mkdir($targetFolder, 0755, true);
+            mkdir($targetFolder, 0777, true);
         }
     }
 
