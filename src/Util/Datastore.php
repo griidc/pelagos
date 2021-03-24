@@ -139,4 +139,19 @@ class Datastore
 
         return $fileName;
     }
+
+    /**
+     * Deletes a folder from the disk.
+     *
+     * @param string $dirPath File path for the folder that is to be removed.
+     *
+     * @return bool
+     */
+    public function deleteDir(string $dirPath): bool
+    {
+        if ($this->datastoreFlysystem->has($dirPath)) {
+            return $this->datastoreFlysystem->deleteDir($dirPath);
+        }
+        return false;
+    }
 }
