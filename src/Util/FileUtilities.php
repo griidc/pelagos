@@ -32,8 +32,15 @@ class FileUtilities
             $dirname .= '/';
         }
         
-        $maxFilenameLength = $self::MAX_FILE_NAME_LENGTH - strlen(filename) - strlen($extension) -1; // 1 for period.
+        if (!isset($extension)) {
+            $extension = '';
+        } else {
+            $extension = '.' . $extension;
+        }
         
-        return $dirname . substr($filename, 0, $maxFilenameLength) . '.' . $extension;
+        $maxFilenameLength = SELF::MAX_FILE_NAME_LENGTH - strlen($extension);
+        $filename = substr($filename, 0, $maxFilenameLength);
+        
+        return $dirname . $filename . $extension;
     }
 }
