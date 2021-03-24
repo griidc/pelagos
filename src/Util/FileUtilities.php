@@ -19,7 +19,7 @@ class FileUtilities
      *
      * @return string
      */
-    public static function fixFileName(string $fileNamePath, $maxFileNameLength = SELF::MAX_FILE_NAME_LENGTH) : string
+    public static function fixFileNameLength(string $fileNamePath, $maxFileNameLength = SELF::MAX_FILE_NAME_LENGTH) : string
     {
         $pathinfo = pathinfo($fileNamePath);
         $filename = $pathinfo['filename'];

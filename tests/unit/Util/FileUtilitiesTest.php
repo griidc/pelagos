@@ -17,7 +17,7 @@ class FileUtilitiesTest extends TestCase
     public function testfixFileName()
     {
         $fakeFileName = "hello/world/test.txt";
-        $fileName = FileUtilities::fixFileName($fakeFileName);
+        $fileName = FileUtilities::fixFileNameLength($fakeFileName);
         $this->assertLessThanOrEqual(256, strlen(basename($fileName)));
     }
 
@@ -27,7 +27,7 @@ class FileUtilitiesTest extends TestCase
     public function testfixFileNameWithSetLength()
     {
         $fakeFileName = "file/path/" . $this->generateRandomString(64) . ".txt";
-        $fileName = FileUtilities::fixFileName($fakeFileName,16);
+        $fileName = FileUtilities::fixFileNameLength($fakeFileName,16);
         $this->assertLessThanOrEqual(16, strlen(basename($fileName)));
     }
 
@@ -37,7 +37,7 @@ class FileUtilitiesTest extends TestCase
     public function testfixLongFileName()
     {
         $fakeFileName = "file/path/" . $this->generateRandomString() . ".txt";
-        $fileName = FileUtilities::fixFileName($fakeFileName);
+        $fileName = FileUtilities::fixFileNameLength($fakeFileName);
         $this->assertLessThanOrEqual(256, strlen(basename($fileName)));
     }
 

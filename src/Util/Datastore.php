@@ -113,7 +113,7 @@ class Datastore
         if ($deleteFlag === false) {
             $newFilePath = $this->makeFileName($newFilePath);
         }
-        $newFilePath = FileUtilities::fixFileName($newFilePath);
+        $newFilePath = FileUtilities::fixFileNameLength($newFilePath);
         $this->datastoreFlysystem->rename($oldFilePath, $newFilePath);
         return $newFilePath;
     }
