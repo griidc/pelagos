@@ -35,6 +35,7 @@ composer dump-env prod
 bin/console doctrine:migrations:status
 
 # cp supervisor configs into var
+mkdir -p var/supervisor
 cp config/supervisor/supervisord.conf var/supervisor
 cp config/supervisor/messenger-worker.ini var/supervisor
 
