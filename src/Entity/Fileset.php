@@ -160,7 +160,6 @@ class Fileset extends Entity
                 Comparison::IN,
                 array(
                     File::FILE_NEW,
-                    File::FILE_IN_PROGRESS
                 )
             )
         );
@@ -334,5 +333,19 @@ class Fileset extends Entity
             $fileExists = true;
         }
         return $fileExists;
+    }
+
+    /**
+     * Returns the root path where the file is physically located.
+     *
+     * @return string
+     */
+    public function getFileRootPath() : string
+    {
+        return str_replace(
+            ':',
+            '.',
+            $this->getDatasetSubmission()->getDataset()->getUdi()
+        ) . DIRECTORY_SEPARATOR;
     }
 }

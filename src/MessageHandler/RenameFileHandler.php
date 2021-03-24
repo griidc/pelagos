@@ -81,7 +81,7 @@ class RenameFileHandler implements MessageHandlerInterface
                 $newFilePath = $this->dataStore->renameFile($filePhysicalPath, $newFilePath, true);
             } else {
                 $this->logger->info(sprintf('File is renamed on disk for ID: %d', $fileId));
-                $newFilePath = $this->dataStore->renameFile($filePhysicalPath, $file->getFileRootPath() . $file->getFilePathName());
+                $newFilePath = $this->dataStore->renameFile($filePhysicalPath, $file->getFileset()->getFileRootPath() . $file->getFilePathName());
             }
             $file->setPhysicalFilePath($newFilePath);
             $this->entityManager->flush();

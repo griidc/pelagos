@@ -2,8 +2,12 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\File;
+use App\Entity\Fileset;
+use App\Message\DeleteDir;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 use Nelmio\ApiDocBundle\Annotation\Operation;
@@ -224,6 +228,7 @@ class DatasetController extends EntityController
      *
      * @param integer               $id                    The id of the Dataset to delete.
      * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
+     * @param MessageBusInterface   $messageBus            Symfony messenger message bus interface.
      *
      * @Operation(
      *     tags={"Datasets"},
@@ -251,7 +256,7 @@ class DatasetController extends EntityController
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function deleteAction(int $id, EntityEventDispatcher $entityEventDispatcher)
+    public function deleteAction(int $id, EntityEventDispatcher $entityEventDispatcher, MessageBusInterface $messageBus)
     {
         $dataset = $this->handleGetOne(Dataset::class, $id);
 
@@ -275,6 +280,11 @@ class DatasetController extends EntityController
                 $distributionPointId = $distributionPoint->getId();
                 $this->handleDelete(DistributionPoint::class, $distributionPointId);
             }
+            $fileset = $datasetSub->getFileset();
+
+            if ($fileset instanceof Fileset) {
+                $this->deleteFilesOnDisk($fileset, $messageBus);
+            }
         }
 
         $entityEventDispatcher->dispatch($dataset, 'delete_doi');
@@ -286,5 +296,36 @@ class DatasetController extends EntityController
         }
 
         return $this->makeNoContentResponse();
+    }
+
+    /**
+     * Method to delete files on disk.
+     *
+     * @param Fileset             $fileset    Fileset which contains all the files that need to be deleted.
+     * @param MessageBusInterface $messageBus Symfony messenger message bus interface.
+     *
+     * @return void
+     */
+    private function deleteFilesOnDisk(Fileset $fileset, MessageBusInterface $messageBus): void
+    {
+        if (!$fileset->isDone()) {
+            foreach ($fileset->getAllFiles() as $file) {
+                $fileStatus = $file->getStatus();
+                // Deleting files from the uploads directory
+                if (in_array($fileStatus, [File::FILE_NEW, File::FILE_ERROR])) {
+                    $filePath = $file->getPhysicalFilePath();
+                    @unlink($filePath);
+                    @rmdir(dirname($filePath));
+                }
+            }
+        }
+        // Delete all the folders/files for the given dataset
+        $deleteDirPath = $fileset->getFileRootPath();
+        $deleteDirMessage = new DeleteDir($fileset->getDatasetSubmission()->getDataset()->getUdi(), $deleteDirPath);
+        $messageBus->dispatch($deleteDirMessage);
+
+        if ($fileset->doesZipFileExist()) {
+            @unlink($fileset->getZipFilePath());
+        }
     }
 }
