@@ -2,7 +2,6 @@
 
 namespace App\Tests\Util;
 
-use Faker\Factory;
 use PHPUnit\Framework\TestCase;
 
 use App\Util\FileUtilities;
