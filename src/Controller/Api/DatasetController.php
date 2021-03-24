@@ -314,8 +314,8 @@ class DatasetController extends EntityController
                 // Deleting files from the uploads directory
                 if (in_array($fileStatus, [File::FILE_NEW, File::FILE_ERROR])) {
                     $filePath = $file->getPhysicalFilePath();
-                    unlink($filePath);
-                    rmdir(dirname($filePath));
+                    @unlink($filePath);
+                    @rmdir(dirname($filePath));
                 }
             }
         }
@@ -325,7 +325,7 @@ class DatasetController extends EntityController
         $messageBus->dispatch($deleteDirMessage);
 
         if ($fileset->doesZipFileExist()) {
-            unlink($fileset->getZipFilePath());
+            @unlink($fileset->getZipFilePath());
         }
     }
 }
