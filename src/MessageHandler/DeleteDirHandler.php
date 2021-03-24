@@ -45,13 +45,14 @@ class DeleteDirHandler implements MessageHandlerInterface
         $udi = $deleteDir->getDatasetUdi();
         $folderPath = $deleteDir->getDeleteDirPath();
 
-        $this->logger->info(sprintf('Deleting all associated files/folders for UDI: "%s"', $udi));
+        $this->logger->info(sprintf('Delete directory worked started for UDI: "%s"', $udi));
 
         try {
             $this->datastore->deleteDir($folderPath);
+            $this->logger->info(sprintf('Delete all folder/files successful for UDI: "%s"', $udi));
         } catch (\Exception $e) {
             $this->logger->error(sprintf(sprintf('Unable to delete folder. Message: "%s"', $e->getMessage())));
         }
-        $this->logger->info(sprintf('Delete successful for UDI: "%s"', $udi));
+        $this->logger->info(sprintf('Delete directory worker for UDI: "%s" completed ', $udi));
     }
 }
