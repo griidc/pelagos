@@ -2,6 +2,7 @@
 
 namespace App\Controller\UI;
 
+use App\Entity\File;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -487,7 +488,31 @@ class DatasetReviewController extends AbstractController
             //when request revisions is clicked, do not display the changes made in review for the dataset-submission
             // and get the dataset-submissions which is submitted by the user.
             if ($eventName === 'request_revisions') {
+                $fileset = $datasetSubmission->getFileset();
+                if ($fileset instanceof Fileset) {
+                    // Copy the fileSet
+                    $newFileset = new Fileset();
+                    foreach ($fileset->getAllFiles() as $file) {
+                        $newFile = new File();
+                        $newFile->setFilePathName($file->getFilePathName());
+                        $newFile->setFileSize($file->getFileSize());
+                        $newFile->setFileSha256Hash($file->getFileSha256Hash());
+                        $newFile->setUploadedAt($file->getUploadedAt());
+                        $newFile->setUploadedBy($file->getUploadedBy());
+                        $newFile->setDescription($file->getDescription());
+                        $newFile->setPhysicalFilePath($file->getPhysicalFilePath());
+                        $newFile->setStatus($file->getStatus());
+                        $newFileset->addFile($newFile);
+                    }
+                    if ($fileset->doesZipFileExist()) {
+                        $newFileset->setZipFilePath($fileset->getZipFilePath());
+                        $newFileset->setZipFileSha256Hash($fileset->getZipFileSha256Hash());
+                        $newFileset->setZipFileSize($fileset->getZipFileSize());
+                    }
+                }
                 $datasetSubmission = $datasetSubmission->getDataset()->getDatasetSubmission();
+                $datasetSubmission->setFileset($newFileset);
+                $this->entityHandler->update($datasetSubmission);
             }
 
             return $this->render(
