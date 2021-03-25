@@ -38,7 +38,6 @@ class ZipFiles
     public function addFile(string $fileName, array $fileStream): void
     {
         if (!empty($fileStream) and is_resource($fileStream['fileStream'])) {
-            $fileName = FileUtilities::fixFileNameLength($fileName);
             $this->zip->addFileFromStream($fileName, $fileStream['fileStream']);
         }
     }

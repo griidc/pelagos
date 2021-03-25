@@ -75,6 +75,7 @@ class Datastore
     public function addFile(array $fileStream, string $filePathName): string
     {
         $newFilePathName = $this->makeFileName($filePathName);
+        $newFilePathName = FileUtilities::fixFileNameLength($newFilePathName);
         try {
             $this->datastoreFlysystem->writeStream($newFilePathName, $fileStream['fileStream']);
         } catch (FileExistsException $e) {
