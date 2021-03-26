@@ -18,7 +18,7 @@ class FileUtilitiesTest extends TestCase
     {
         $fakeFileName = "hello/world/test.txt";
         $fileName = FileUtilities::fixFileNameLength($fakeFileName);
-        $this->assertLessThanOrEqual(256, strlen(basename($fileName)));
+        $this->assertLessThanOrEqual(FileUtilities::MAX_FILE_NAME_LENGTH, strlen(basename($fileName)));
     }
 
     /**
@@ -38,10 +38,13 @@ class FileUtilitiesTest extends TestCase
     {
         $fakeFileName = "file/path/" . $this->generateRandomString() . ".txt";
         $fileName = FileUtilities::fixFileNameLength($fakeFileName);
-        $this->assertLessThanOrEqual(256, strlen(basename($fileName)));
+        $this->assertLessThanOrEqual(FileUtilities::MAX_FILE_NAME_LENGTH, strlen(basename($fileName)));
     }
 
-    private function generateRandomString($length = 256) {
+    /**
+     * This generates a random string of characters.
+     */
+    private function generateRandomString($length = FileUtilities::MAX_FILE_NAME_LENGTH) {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
         $randomString = '';

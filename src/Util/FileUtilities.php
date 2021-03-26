@@ -10,7 +10,7 @@ class FileUtilities
     /**
      * A friendly name for this type of entity.
      */
-    const MAX_FILE_NAME_LENGTH = 256;
+    const MAX_FILE_NAME_LENGTH = 255;
     
     /**
      * This method will shorten the basename is needed.
@@ -23,7 +23,7 @@ class FileUtilities
     {
         $pathinfo = pathinfo($fileNamePath);
         $filename = $pathinfo['filename'];
-        $extension = $pathinfo['extension'] ?? '';
+        $extension = $pathinfo['extension'];
         $dirname = $pathinfo['dirname'];
         
         if ($dirname === '.') {
