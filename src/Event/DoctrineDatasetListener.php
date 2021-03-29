@@ -104,7 +104,7 @@ class DoctrineDatasetListener
                 ) or
                 ($entity->getDif() instanceof DIF and $entity->getIdentifiedStatus() === DIF::STATUS_APPROVED)
             ) {
-                $doiMessage = new DoiMessage($dataset->getId(), DoiMessage::ISSUE_OR_UPDATE);
+                $doiMessage = new DoiMessage($entity->getId(), DoiMessage::ISSUE_OR_UPDATE);
                 $this->messageBus->dispatch($doiMessage);
             }
         }

@@ -4,8 +4,7 @@
 namespace App\Message;
 
 /**
- * Class DoiMessage
- * @package App\Message
+ * Class for Doi message.
  */
 class DoiMessage
 {
@@ -22,7 +21,7 @@ class DoiMessage
     /**
      * Id of the dataset or doi identifier.
      *
-     * @var integer
+     * @var string
      */
     private $messageId;
 
@@ -36,10 +35,10 @@ class DoiMessage
     /**
      * DoiMessage constructor.
      *
-     * @param integer $messageId Id of the dataset or doi identifier.
-     * @param string  $action    Action that needs to be taken on the Doi Message.
+     * @param string $messageId Id of the dataset or doi identifier.
+     * @param string $action    Action that needs to be taken on the Doi Message.
      */
-    public function __construct(int $messageId, string $action)
+    public function __construct(string $messageId, string $action)
     {
         $this->messageId = $messageId;
         $this->action = $action;
@@ -58,9 +57,9 @@ class DoiMessage
     /**
      * Get the id for doi message (can be dataset id or doi).
      *
-     * @return int
+     * @return string
      */
-    public function getMessageId(): int
+    public function getMessageId(): string
     {
         return $this->messageId;
     }
