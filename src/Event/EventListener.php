@@ -91,20 +91,19 @@ abstract class EventListener
     /**
      * This is the class constructor to handle dependency injections.
      *
-     * @param Environment           $twig          Twig engine.
-     * @param MailSender            $mailer        Email handling library.
-     * @param TokenStorageInterface $tokenStorage  Symfony's token object.
-     * @param EntityHandler|null    $entityHandler Pelagos entity handler.
-     * @param RabbitPublisher       $publisher     An AMQP/RabbitMQ Producer.
-     * @param DataStore|null        $dataStore     An instance of the Pelagos Data Store utility service.
-     * @param MdappLogger|null      $mdappLogger   An MDAPP logger.
+     * @param Environment              $twig          Twig engine.
+     * @param MailSender               $mailer        Email handling library.
+     * @param TokenStorageInterface    $tokenStorage  Symfony's token object.
+     * @param EntityHandler|null       $entityHandler Pelagos entity handler.
+     * @param DataStore|null           $dataStore     An instance of the Pelagos Data Store utility service.
+     * @param MdappLogger|null         $mdappLogger   An MDAPP logger.
+     * @param MessageBusInterface|null $messageBus    Symfony messenger bus interface.
      */
     public function __construct(
         Environment $twig,
         MailSender $mailer,
         TokenStorageInterface $tokenStorage,
         EntityHandler $entityHandler = null,
-        RabbitPublisher $publisher = null,
         DataStore $dataStore = null,
         MdappLogger $mdappLogger = null,
         MessageBusInterface $messageBus = null
@@ -113,7 +112,6 @@ abstract class EventListener
         $this->mailer = $mailer;
         $this->tokenStorage = $tokenStorage;
         $this->entityHandler = $entityHandler;
-        $this->publisher = $publisher;
         $this->dataStore = $dataStore;
         $this->mdappLogger = $mdappLogger;
         $this->messageBus = $messageBus;

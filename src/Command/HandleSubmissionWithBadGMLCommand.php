@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Message\DatasetSubmissionFiler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -11,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use App\Entity\DatasetSubmission;
 use App\Entity\Dataset;
 
-use App\Util\RabbitPublisher;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * Back fill all the submitted metadata xml to dataset submission.
@@ -35,22 +36,22 @@ class HandleSubmissionWithBadGMLCommand extends Command
     protected $entityManager;
 
     /**
-     * Utility Rabbitmq producer instance.
+     * Symfony messenger bus interface.
      *
-     * @var RabbitPublisher $publisher
+     * @var MessageBusInterface $messageBus
      */
-    protected $publisher;
+    protected $messageBus;
 
     /**
      * Class constructor for dependency injection.
      *
      * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
-     * @param RabbitPublisher        $publisher     A Rabbitmq producer instance.
+     * @param MessageBusInterface    $messageBus    Symfony messenger bus interface.
      */
-    public function __construct(EntityManagerInterface $entityManager, RabbitPublisher $publisher)
+    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus)
     {
         $this->entityManager = $entityManager;
-        $this->publisher = $publisher;
+        $this->messageBus = $messageBus;
         parent::__construct();
     }
 
@@ -107,11 +108,8 @@ class HandleSubmissionWithBadGMLCommand extends Command
         $this->entityManager->flush();
 
         //re-trigger dataset submission producer
-        $this->publisher->publish(
-            $datasetSubmission->getId(),
-            RabbitPublisher::DATASET_SUBMISSION_PRODUCER,
-            'dataset.' . $datasetSubmission->getDatasetFileTransferType()
-        );
+        $datasetSubmissionFilerMessage = new DatasetSubmissionFiler($datasetSubmission->getId());
+        $this->messageBus->dispatch($datasetSubmissionFilerMessage);
 
         $output->writeln('Success: submission ID:' . $datasetSubmission->getId() . ' - Dataset udi: ' . $udi);
     }

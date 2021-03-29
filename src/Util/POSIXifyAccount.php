@@ -116,9 +116,6 @@ class POSIXifyAccount
 
         // Persist changes.
         $this->entityHandler->update($account);
-
-        // Publish to AQMP homedir_producer consumer that there is a homedir to create.
-        $this->publisher->publish($account->getId(), RabbitPublisher::CREATE_HOMEDIR_PRODUCER);
     }
 
     /**
