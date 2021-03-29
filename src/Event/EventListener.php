@@ -89,15 +89,24 @@ abstract class EventListener
     protected $messageBus;
 
     /**
+     * A Doctrine ORM EntityManager instance.
+     *
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
      * This is the class constructor to handle dependency injections.
      *
-     * @param Environment           $twig          Twig engine.
-     * @param MailSender            $mailer        Email handling library.
-     * @param TokenStorageInterface $tokenStorage  Symfony's token object.
-     * @param EntityHandler|null    $entityHandler Pelagos entity handler.
-     * @param RabbitPublisher       $publisher     An AMQP/RabbitMQ Producer.
-     * @param DataStore|null        $dataStore     An instance of the Pelagos Data Store utility service.
-     * @param MdappLogger|null      $mdappLogger   An MDAPP logger.
+     * @param Environment                 $twig          Twig engine.
+     * @param MailSender                  $mailer        Email handling library.
+     * @param TokenStorageInterface       $tokenStorage  Symfony's token object.
+     * @param EntityHandler|null          $entityHandler Pelagos entity handler.
+     * @param RabbitPublisher             $publisher     An AMQP/RabbitMQ Producer.
+     * @param DataStore|null              $dataStore     An instance of the Pelagos Data Store utility service.
+     * @param MdappLogger|null            $mdappLogger   An MDAPP logger.
+     * @param MessageBusInterface|null    $mdappLogger   Symfony messenger bus interface instance.
+     * @param EntityManagerInterface|null $entityManager A Doctrine EntityManager.
      */
     public function __construct(
         Environment $twig,
@@ -108,6 +117,7 @@ abstract class EventListener
         DataStore $dataStore = null,
         MdappLogger $mdappLogger = null,
         MessageBusInterface $messageBus = null
+        EntityManagerInterface $entityManager = null
     ) {
         $this->twig = $twig;
         $this->mailer = $mailer;
@@ -117,6 +127,7 @@ abstract class EventListener
         $this->dataStore = $dataStore;
         $this->mdappLogger = $mdappLogger;
         $this->messageBus = $messageBus;
+        $this->entityManager = $entityManager;
     }
 
     /**

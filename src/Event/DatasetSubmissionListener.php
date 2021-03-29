@@ -214,8 +214,24 @@ class DatasetSubmissionListener extends EventListener
             ' accepted dataset ' . $dataset->getUdi() . ' (In Review->Accepted)'
         );
 
-        $deleteFileMessage = new DeleteFile($datasetSubmission->getId());
-        $this->messageBus->dispatch($deleteFileMessage);
+        $fileset = $datasetSubmission->getFileset();
+
+        if (!$fileset instanceof Fileset) {
+            $this->logger->warning('No files exist in this dataset.');
+            return;
+        }
+
+        foreach ($fileset->getDeletedFiles() as $deletedFile) {
+            try {
+                $deleteFileMessage = new DeleteFile($deletedFile->getPhysicalFilePath());
+                $this->messageBus->dispatch($deleteFileMessage);
+            } catch (\Exception $e) {
+                $this->logger->error(sprintf('Unable to delete file. Message: "%s"', $e->getMessage()));
+            }
+            $fileset->removeFile($deletedFile);
+        }
+
+        $this->entityManager->flush();
     }
 
     /**
