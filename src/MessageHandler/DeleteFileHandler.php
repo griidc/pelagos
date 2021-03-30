@@ -2,11 +2,7 @@
 
 namespace App\MessageHandler;
 
-use App\Entity\DatasetSubmission;
-use App\Entity\File;
-use App\Entity\Fileset;
 use App\Message\DeleteFile;
-use App\Repository\FileRepository;
 use App\Util\Datastore;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -55,7 +51,7 @@ class DeleteFileHandler implements MessageHandlerInterface
     public function __invoke(DeleteFile $deleteFile)
     {
         try {
-            $this->datastore->deleteFile($deletedFile->getFilePath());
+            $this->datastore->deleteFile($deleteFile->getFilePath());
         } catch (\Exception $e) {
             $this->logger->error(sprintf('Unable to delete file. Message: "%s"', $e->getMessage()));
         }
