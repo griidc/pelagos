@@ -36,22 +36,13 @@ class HandleSubmissionWithBadGMLCommand extends Command
     protected $entityManager;
 
     /**
-     * Symfony messenger bus interface.
-     *
-     * @var MessageBusInterface $messageBus
-     */
-    protected $messageBus;
-
-    /**
      * Class constructor for dependency injection.
      *
      * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
-     * @param MessageBusInterface    $messageBus    Symfony messenger bus interface.
      */
-    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->messageBus = $messageBus;
         parent::__construct();
     }
 
@@ -104,12 +95,7 @@ class HandleSubmissionWithBadGMLCommand extends Command
             }
         }
 
-        $this->entityManager->persist($datasetSubmission);
         $this->entityManager->flush();
-
-        //re-trigger dataset submission producer
-        $datasetSubmissionFilerMessage = new DatasetSubmissionFiler($datasetSubmission->getId());
-        $this->messageBus->dispatch($datasetSubmissionFilerMessage);
 
         $output->writeln('Success: submission ID:' . $datasetSubmission->getId() . ' - Dataset udi: ' . $udi);
     }
