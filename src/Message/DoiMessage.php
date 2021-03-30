@@ -23,7 +23,7 @@ class DoiMessage
      *
      * @var string
      */
-    private $messageId;
+    private $contextId;
 
     /**
      * Action that needs to be taken on the Doi Message.
@@ -35,12 +35,12 @@ class DoiMessage
     /**
      * DoiMessage constructor.
      *
-     * @param string $messageId Id of the dataset or doi identifier.
+     * @param string $contextId Id of the dataset or doi identifier.
      * @param string $action    Action that needs to be taken on the Doi Message.
      */
-    public function __construct(string $messageId, string $action)
+    public function __construct(string $contextId, string $action)
     {
-        $this->messageId = $messageId;
+        $this->contextId = $contextId;
         $this->action = $action;
     }
 
@@ -59,8 +59,8 @@ class DoiMessage
      *
      * @return string
      */
-    public function getMessageId(): string
+    public function getContextId(): string
     {
-        return $this->messageId;
+        return $this->contextId;
     }
 }

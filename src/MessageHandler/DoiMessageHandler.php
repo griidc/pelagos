@@ -61,9 +61,7 @@ class DoiMessageHandler implements MessageHandlerInterface
      */
     public function __invoke(DoiMessage $doiMessage)
     {
-        $this->logger->info('Request received, waiting...');
-
-        $doiMessageId = $doiMessage->getMessageId();
+        $doiMessageId = $doiMessage->getContextId();
 
         $doiMessageAction = $doiMessage->getAction();
 
