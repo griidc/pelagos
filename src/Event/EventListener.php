@@ -116,7 +116,7 @@ abstract class EventListener
         RabbitPublisher $publisher = null,
         DataStore $dataStore = null,
         MdappLogger $mdappLogger = null,
-        MessageBusInterface $messageBus = null
+        MessageBusInterface $messageBus = null,
         EntityManagerInterface $entityManager = null
     ) {
         $this->twig = $twig;
