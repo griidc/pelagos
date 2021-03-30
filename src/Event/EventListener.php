@@ -2,6 +2,7 @@
 namespace App\Event;
 
 use App\Util\RabbitPublisher;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -93,7 +94,7 @@ abstract class EventListener
      *
      * @var EntityManagerInterface
      */
-    private $entityManager;
+    protected $entityManager;
 
     /**
      * This is the class constructor to handle dependency injections.
@@ -102,10 +103,10 @@ abstract class EventListener
      * @param MailSender                  $mailer        Email handling library.
      * @param TokenStorageInterface       $tokenStorage  Symfony's token object.
      * @param EntityHandler|null          $entityHandler Pelagos entity handler.
-     * @param RabbitPublisher             $publisher     An AMQP/RabbitMQ Producer.
+     * @param RabbitPublisher|null        $publisher     An AMQP/RabbitMQ Producer.
      * @param DataStore|null              $dataStore     An instance of the Pelagos Data Store utility service.
      * @param MdappLogger|null            $mdappLogger   An MDAPP logger.
-     * @param MessageBusInterface|null    $mdappLogger   Symfony messenger bus interface instance.
+     * @param MessageBusInterface|null    $messageBus    Symfony messenger bus interface instance.
      * @param EntityManagerInterface|null $entityManager A Doctrine EntityManager.
      */
     public function __construct(

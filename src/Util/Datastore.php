@@ -92,11 +92,18 @@ class Datastore
      *
      * @param string $filePath File path for the file that is to be removed.
      *
+     * @throws \Exception Exception thrown when file delete is failed.
+     *
      * @return bool
      */
     public function deleteFile(string $filePath): bool
     {
-        return $this->datastoreFlysystem->delete($filePath);
+        $response = $this->datastoreFlysystem->delete($filePath);
+        if ($response) {
+            return true;
+        } else {
+            throw new \Exception('Delete file failed');
+        }
     }
 
     /**

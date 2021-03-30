@@ -2,6 +2,7 @@
 namespace App\Event;
 
 use App\Entity\DatasetSubmission;
+use App\Entity\Fileset;
 use App\Message\DeleteFile;
 
 /**
@@ -217,17 +218,12 @@ class DatasetSubmissionListener extends EventListener
         $fileset = $datasetSubmission->getFileset();
 
         if (!$fileset instanceof Fileset) {
-            $this->logger->warning('No files exist in this dataset.');
             return;
         }
 
         foreach ($fileset->getDeletedFiles() as $deletedFile) {
-            try {
-                $deleteFileMessage = new DeleteFile($deletedFile->getPhysicalFilePath());
-                $this->messageBus->dispatch($deleteFileMessage);
-            } catch (\Exception $e) {
-                $this->logger->error(sprintf('Unable to delete file. Message: "%s"', $e->getMessage()));
-            }
+            $deleteFileMessage = new DeleteFile($deletedFile->getPhysicalFilePath());
+            $this->messageBus->dispatch($deleteFileMessage);
             $fileset->removeFile($deletedFile);
         }
 
