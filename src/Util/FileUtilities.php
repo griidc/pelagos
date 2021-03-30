@@ -52,7 +52,7 @@ class FileUtilities
      *
      * @return string
      */
-    public function makeFileName(string $fileName) : string
+    public static function makeFileName(string $fileName) : string
     {
         $uuid = Uuid::uuid4()->toString();
         // add only last 5 bytes of uuid to the destination path
