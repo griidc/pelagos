@@ -2,7 +2,6 @@
 
 namespace App\Command;
 
-use App\Message\DatasetSubmissionFiler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -11,8 +10,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use App\Entity\DatasetSubmission;
 use App\Entity\Dataset;
-
-use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * Back fill all the submitted metadata xml to dataset submission.
