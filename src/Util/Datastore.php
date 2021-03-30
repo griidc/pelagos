@@ -6,7 +6,6 @@ use League\Flysystem\FileExistsException;
 use League\Flysystem\FilesystemInterface;
 
 use Psr\Log\LoggerInterface;
-use Ramsey\Uuid\Uuid;
 
 /**
  * Datastore utility class which manipulates files on disk.
@@ -43,7 +42,7 @@ class Datastore
         $this->datastoreFlysystem = $datastoreFlysystem;
         $this->logger = $logger;
     }
-    
+
     /**
      * Retrieves a file from disk.
      *
@@ -74,7 +73,8 @@ class Datastore
      */
     public function addFile(array $fileStream, string $filePathName): string
     {
-        $newFilePathName = $this->makeFileName($filePathName);
+        $newFilePathName = FileUtilities::makeFileName($filePathName);
+        $newFilePathName = FileUtilities::fixFileNameLength($newFilePathName);
         try {
             $this->datastoreFlysystem->writeStream($newFilePathName, $fileStream['fileStream']);
         } catch (FileExistsException $e) {
@@ -96,7 +96,14 @@ class Datastore
      */
     public function deleteFile(string $filePath): bool
     {
-        return $this->datastoreFlysystem->delete($filePath);
+        $deleteFile = $this->datastoreFlysystem->delete($filePath);
+        $path = dirname($filePath);
+        $deleteDir = true;
+        if (empty($this->datastoreFlysystem->listContents($path, true))) {
+            $deleteDir = $this->deleteDir($path);
+        }
+
+        return $deleteFile & $deleteDir;
     }
 
     /**
@@ -111,26 +118,11 @@ class Datastore
     public function renameFile(string $oldFilePath, string $newFilePath, bool $deleteFlag = false): string
     {
         if ($deleteFlag === false) {
-            $newFilePath = $this->makeFileName($newFilePath);
+            $newFilePath = FileUtilities::makeFileName($newFilePath);
         }
+        $newFilePath = FileUtilities::fixFileNameLength($newFilePath);
         $this->datastoreFlysystem->rename($oldFilePath, $newFilePath);
         return $newFilePath;
-    }
-
-    /**
-     * Makes a unique filename.
-     *
-     * @param string $fileName Filename that needs to be made unique.
-     *
-     * @return string
-     */
-    private function makeFileName(string $fileName) : string
-    {
-        $uuid = Uuid::uuid4()->toString();
-        // add only last 5 bytes of uuid to the destination path
-        $fileName .= '_' . substr($uuid, -5);
-
-        return $fileName;
     }
 
     /**
