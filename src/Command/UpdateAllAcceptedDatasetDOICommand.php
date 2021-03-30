@@ -20,7 +20,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
  *
  * @see Command
  */
-class RabbitUpdateAllAcceptedDatasetDOICommand extends Command
+class UpdateAllAcceptedDatasetDOICommand extends Command
 {
     /**
      * The Command name.
