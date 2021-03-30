@@ -43,7 +43,7 @@ class Datastore
         $this->datastoreFlysystem = $datastoreFlysystem;
         $this->logger = $logger;
     }
-    
+
     /**
      * Retrieves a file from disk.
      *
@@ -96,7 +96,14 @@ class Datastore
      */
     public function deleteFile(string $filePath): bool
     {
-        return $this->datastoreFlysystem->delete($filePath);
+        $deleteFile = $this->datastoreFlysystem->delete($filePath);
+        $path = dirname($filePath);
+        $deleteDir = true;
+        if (empty($this->datastoreFlysystem->listContents($path, true))) {
+            $deleteDir = $this->deleteDir($path);
+        }
+
+        return $deleteFile & $deleteDir;
     }
 
     /**
