@@ -13,7 +13,6 @@ use App\Entity\DatasetSubmission;
 use App\Entity\Dataset;
 use App\Entity\Person;
 
-use App\Util\RabbitPublisher;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**

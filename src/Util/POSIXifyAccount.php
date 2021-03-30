@@ -56,13 +56,6 @@ class POSIXifyAccount
     protected $homedirPrefix;
 
     /**
-     * Custom Utility RabbitMQ instance.
-     *
-     * @var RabbitPublisher
-     */
-    protected $publisher;
-
-    /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager          The entity manager to use in querybuilder.
@@ -71,7 +64,6 @@ class POSIXifyAccount
      * @param integer                $posixStartingUidNumber The value to start creating user ID number entries at.
      * @param integer                $posixGidNumber         The value to set group ID to.
      * @param string                 $homedirPrefix          Home directory prefix, from parameter.
-     * @param RabbitPublisher        $publisher              Custom Utility RabbitMQ instance.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -79,8 +71,7 @@ class POSIXifyAccount
         EntityHandler $entityHandler,
         int $posixStartingUidNumber,
         int $posixGidNumber,
-        string $homedirPrefix,
-        RabbitPublisher $publisher
+        string $homedirPrefix
     ) {
         $this->entityManager = $entityManager;
         $this->ldap = $ldap;
@@ -88,7 +79,6 @@ class POSIXifyAccount
         $this->posixStartingUidNumber = $posixStartingUidNumber;
         $this->posixGidNumber = $posixGidNumber;
         $this->homedirPrefix = $homedirPrefix;
-        $this->publisher = $publisher;
     }
 
     /**

@@ -26,7 +26,6 @@ use Swagger\Annotations as SWG;
 use App\Entity\Dataset;
 use App\Entity\DatasetPublication;
 use App\Entity\Publication;
-use App\Util\RabbitPublisher;
 
 /**
  * The Publication api controller.

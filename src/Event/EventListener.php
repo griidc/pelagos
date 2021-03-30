@@ -1,7 +1,6 @@
 <?php
 namespace App\Event;
 
-use App\Util\RabbitPublisher;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -59,13 +58,6 @@ abstract class EventListener
      * @var EntityHandler
      */
     protected $entityHandler;
-
-    /**
-     * Custom rabbitmq publisher.
-     *
-     * @var RabbitPublisher
-     */
-    protected $publisher;
 
     /**
      * An instance of the Pelagos Data Store utility service.

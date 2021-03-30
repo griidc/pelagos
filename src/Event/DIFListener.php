@@ -2,7 +2,6 @@
 namespace App\Event;
 
 use App\Entity\DIF;
-use App\Util\RabbitPublisher;
 
 /**
  * Listener class for DIF-related events.
