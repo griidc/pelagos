@@ -94,13 +94,25 @@ class Datastore
      *
      * @return bool
      */
-    public function deleteFile(string $filePath): bool
+    public function deleteFile(string $filePath, $deleteDir = false): bool
     {
-        $deleteFile = $this->datastoreFlysystem->delete($filePath);
+        if ($deleteDir) {
+             $deleteFile = $this->deleteDir($filePath);
+        } else {
+            $deleteFile = $this->datastoreFlysystem->delete($filePath);
+        }
         $path = dirname($filePath);
         $deleteDir = true;
-        if (empty($this->datastoreFlysystem->listContents($path, true))) {
-            $deleteDir = $this->deleteDir($path);
+        $contents = $this->datastoreFlysystem->listContents($path, true);
+
+        $contents = array_filter($contents, function($array) {
+            if (array_key_exists('type', $array) and $array['type'] === 'file') {
+                return $array;
+            }
+        });
+
+        if (empty($contents)) {
+            $deleteDir = $this->deleteFile($path, true);
         }
 
         return $deleteFile & $deleteDir;

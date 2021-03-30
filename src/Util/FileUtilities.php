@@ -25,7 +25,7 @@ class FileUtilities
     {
         $pathinfo = pathinfo($fileNamePath);
         $filename = $pathinfo['filename'];
-        $extension = $pathinfo['extension'];
+        $extension = $pathinfo['extension'] ?? '';
         $dirname = $pathinfo['dirname'];
 
         if ($dirname === '.') {
@@ -34,9 +34,7 @@ class FileUtilities
             $dirname .= '/';
         }
 
-        if (!isset($extension)) {
-            $extension = '';
-        } else {
+        if ($extension !== '') {
             $extension = '.' . $extension;
         }
 
@@ -52,7 +50,7 @@ class FileUtilities
      *
      * @return string
      */
-    private function makeFileName(string $fileName) : string
+    public static function makeFileName(string $fileName) : string
     {
         $uuid = Uuid::uuid4()->toString();
         // add only last 5 bytes of uuid to the destination path
