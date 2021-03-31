@@ -51,7 +51,12 @@ class DeleteFileHandler implements MessageHandlerInterface
     public function __invoke(DeleteFile $deleteFile)
     {
         try {
-            $this->datastore->deleteFile($deleteFile->getFilePath());
+            $filePath = $deleteFile->getFilePath();
+            if ($deleteFile->isInStore()) {
+                $this->datastore->deleteFile($filePath);
+            } else {
+                @unlink($filePath);
+            }
         } catch (\Exception $e) {
             $this->logger->error(sprintf('Unable to delete file. Message: "%s"', $e->getMessage()));
         }
