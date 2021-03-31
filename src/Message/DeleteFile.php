@@ -21,7 +21,8 @@ class DeleteFile
     /**
      * Constructor.
      *
-     * @param string $filePath The file path of the file to be deleted.
+     * @param string  $filePath The file path of the file to be deleted.
+     * @param boolean $inStore  If the file is located in the datastore.
      */
     public function __construct(string $filePath, bool $inStore = true)
     {
