@@ -90,13 +90,14 @@ class Datastore
     /**
      * Deletes a file from the disk.
      *
-     * @param string $filePath File path for the file that is to be removed.
+     * @param string  $filePath  File path for the file that is to be removed.
+     * @param boolean $deleteDir If the path is a directory, and should be deleted.
      *
      * @throws \Exception Exception thrown when file delete is failed.
      *
      * @return bool
      */
-    public function deleteFile(string $filePath, $deleteDir = false): bool
+    public function deleteFile(string $filePath, bool $deleteDir = false): bool
     {
         if ($deleteDir) {
              $deleteFile = $this->deleteDir($filePath);
