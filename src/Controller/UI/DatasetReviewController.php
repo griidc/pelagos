@@ -510,10 +510,10 @@ class DatasetReviewController extends AbstractController
                 $datasetSubmission = $datasetSubmission->getDataset()->getDatasetSubmission();
                 $datasetSubmission->setFileset($newFileset);
                 $this->entityHandler->update($datasetSubmission);
-
-                $datasetSubmissionFilerMessage = new DatasetSubmissionFiler($datasetSubmission->getId());
-                $messageBus->dispatch($datasetSubmissionFilerMessage);
             }
+
+            $datasetSubmissionFilerMessage = new DatasetSubmissionFiler($datasetSubmission->getId());
+            $messageBus->dispatch($datasetSubmissionFilerMessage);
 
             return $this->render(
                 'DatasetReview/submit.html.twig',
