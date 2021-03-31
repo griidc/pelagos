@@ -92,6 +92,8 @@ class Datastore
      *
      * @param string $filePath File path for the file that is to be removed.
      *
+     * @throws \Exception Exception thrown when file delete is failed.
+     *
      * @return bool
      */
     public function deleteFile(string $filePath, $deleteDir = false): bool

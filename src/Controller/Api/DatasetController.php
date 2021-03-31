@@ -325,7 +325,8 @@ class DatasetController extends EntityController
         $messageBus->dispatch($deleteDirMessage);
 
         if ($fileset->doesZipFileExist()) {
-            @unlink($fileset->getZipFilePath());
+            $deleteFileMessage = new DeleteFile($fileset->getZipFilePath());
+            $this->messageBus->dispatch($deleteFileMessage);
         }
     }
 }

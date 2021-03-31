@@ -2,11 +2,7 @@
 
 namespace App\MessageHandler;
 
-use App\Entity\DatasetSubmission;
-use App\Entity\File;
-use App\Entity\Fileset;
 use App\Message\DeleteFile;
-use App\Repository\FileRepository;
 use App\Util\Datastore;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -40,13 +36,11 @@ class DeleteFileHandler implements MessageHandlerInterface
      *
      * @param LoggerInterface        $deleteFileLogger Name hinted delete_file logger.
      * @param Datastore              $datastore        Datastore utility instance.
-     * @param EntityManagerInterface $entityManager    A Doctrine EntityManager.
      */
-    public function __construct(LoggerInterface $deleteFileLogger, Datastore $datastore, EntityManagerInterface $entityManager)
+    public function __construct(LoggerInterface $deleteFileLogger, Datastore $datastore)
     {
         $this->logger = $deleteFileLogger;
         $this->datastore = $datastore;
-        $this->entityManager = $entityManager;
     }
 
     /**
@@ -56,33 +50,10 @@ class DeleteFileHandler implements MessageHandlerInterface
      */
     public function __invoke(DeleteFile $deleteFile)
     {
-        $datasetSubmissionId = $deleteFile->getDatasetSubmissionId();
-
-        $this->logger->info(sprintf('Processing Dataset Submission with ID: "%s"', $datasetSubmissionId));
-
-        $datasetSubmission = $this->entityManager->getRepository(DatasetSubmission::class)->find($datasetSubmissionId);
-
-        if (!$datasetSubmission instanceof DatasetSubmission) {
-            $this->logger->warning('Dataset Submission was not found.');
-            return;
+        try {
+            $this->datastore->deleteFile($deleteFile->getFilePath());
+        } catch (\Exception $e) {
+            $this->logger->error(sprintf('Unable to delete file. Message: "%s"', $e->getMessage()));
         }
-
-        $fileset = $datasetSubmission->getFileset();
-
-        if (!$fileset instanceof Fileset) {
-            $this->logger->warning('No files exist in this dataset.');
-            return;
-        }
-
-        foreach ($fileset->getDeletedFiles() as $deletedFile) {
-            try {
-                $this->datastore->deleteFile($deletedFile->getPhysicalFilePath());
-            } catch (\Exception $e) {
-                $this->logger->error(sprintf('Unable to delete file. Message: "%s"', $e->getMessage()));
-            }
-            $fileset->removeFile($deletedFile);
-        }
-
-        $this->entityManager->flush();
     }
 }

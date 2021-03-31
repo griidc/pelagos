@@ -2,6 +2,7 @@
 namespace App\Event;
 
 use App\Entity\DatasetSubmission;
+use App\Entity\Fileset;
 use App\Message\DeleteFile;
 
 /**
@@ -214,8 +215,19 @@ class DatasetSubmissionListener extends EventListener
             ' accepted dataset ' . $dataset->getUdi() . ' (In Review->Accepted)'
         );
 
-        $deleteFileMessage = new DeleteFile($datasetSubmission->getId());
-        $this->messageBus->dispatch($deleteFileMessage);
+        $fileset = $datasetSubmission->getFileset();
+
+        if (!$fileset instanceof Fileset) {
+            return;
+        }
+
+        foreach ($fileset->getDeletedFiles() as $deletedFile) {
+            $deleteFileMessage = new DeleteFile($deletedFile->getPhysicalFilePath());
+            $this->messageBus->dispatch($deleteFileMessage);
+            $fileset->removeFile($deletedFile);
+        }
+
+        $this->entityManager->flush();
     }
 
     /**
