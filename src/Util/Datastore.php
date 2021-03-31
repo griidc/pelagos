@@ -105,7 +105,7 @@ class Datastore
         $deleteDir = true;
         $contents = $this->datastoreFlysystem->listContents($path, true);
 
-        $contents = array_filter($contents, function($array) {
+        $contents = array_filter($contents, function ($array) {
             if (array_key_exists('type', $array) and $array['type'] === 'file') {
                 return $array;
             }
