@@ -25,6 +25,7 @@ use App\Entity\DIF;
 use App\Entity\DistributionPoint;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
+use App\Message\DeleteFile;
 use App\Util\MdappLogger;
 
 /**
@@ -325,8 +326,8 @@ class DatasetController extends EntityController
         $messageBus->dispatch($deleteDirMessage);
 
         if ($fileset->doesZipFileExist()) {
-            $deleteFileMessage = new DeleteFile($fileset->getZipFilePath());
-            $this->messageBus->dispatch($deleteFileMessage);
+            $deleteFileMessage = new DeleteFile($fileset->getZipFilePath(), false);
+            $messageBus->dispatch($deleteFileMessage);
         }
     }
 }
