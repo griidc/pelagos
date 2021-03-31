@@ -25,7 +25,7 @@ class FileUtilities
     {
         $pathinfo = pathinfo($fileNamePath);
         $filename = $pathinfo['filename'];
-        $extension = $pathinfo['extension'];
+        $extension = $pathinfo['extension'] ?? '';
         $dirname = $pathinfo['dirname'];
 
         if ($dirname === '.') {
@@ -34,9 +34,7 @@ class FileUtilities
             $dirname .= '/';
         }
 
-        if (!isset($extension)) {
-            $extension = '';
-        } else {
+        if ($extension !== '') {
             $extension = '.' . $extension;
         }
 
