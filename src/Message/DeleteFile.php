@@ -5,29 +5,29 @@ namespace App\Message;
 class DeleteFile
 {
     /**
-     * The submission to delete file from.
+     * The file path of the file to be deleted.
      *
-     * @var integer
+     * @var string
      */
-    protected $datasetSubmissionId;
+    protected $filePath;
 
     /**
      * Constructor.
      *
-     * @param integer $datasetSubmissionId The submission ID to delete file from.
+     * @param string $filePath The file path of the file to be deleted.
      */
-    public function __construct(int $datasetSubmissionId)
+    public function __construct(string $filePath)
     {
-        $this->datasetSubmissionId = $datasetSubmissionId;
+        $this->filePath = $filePath;
     }
 
     /**
-     * The Dataset Submission getter.
+     * The file path getter.
      *
      * @return string The file path.
      */
-    public function getDatasetSubmissionId(): int
+    public function getFilePath(): string
     {
-        return $this->datasetSubmissionId;
+        return $this->filePath;
     }
 }
