@@ -22,11 +22,6 @@ class File extends Entity
     const FILE_DELETED = 'deleted';
 
     /**
-     * Status value for a File that is being processed by "Filer".
-     */
-    const FILE_IN_PROGRESS = 'in progress';
-
-    /**
      * Status value for a File that has been proccessed.
      */
     const FILE_DONE = 'done';
@@ -335,19 +330,5 @@ class File extends Entity
             $filepath = str_replace($path . '/', '', $filepath, $firstOccurrence);
         }
         return explode('/', $filepath);
-    }
-
-    /**
-     * Returns the root path where the file is physically located.
-     *
-     * @return string
-     */
-    public function getFileRootPath() : string
-    {
-        return str_replace(
-            ':',
-            '.',
-            $this->getFileset()->getDatasetSubmission()->getDataset()->getUdi()
-        ) . DIRECTORY_SEPARATOR;
     }
 }

@@ -6,7 +6,6 @@ use League\Flysystem\FileExistsException;
 use League\Flysystem\FilesystemInterface;
 
 use Psr\Log\LoggerInterface;
-use Ramsey\Uuid\Uuid;
 
 /**
  * Datastore utility class which manipulates files on disk.
@@ -43,7 +42,7 @@ class Datastore
         $this->datastoreFlysystem = $datastoreFlysystem;
         $this->logger = $logger;
     }
-    
+
     /**
      * Retrieves a file from disk.
      *
@@ -74,7 +73,8 @@ class Datastore
      */
     public function addFile(array $fileStream, string $filePathName): string
     {
-        $newFilePathName = $this->makeFileName($filePathName);
+        $newFilePathName = FileUtilities::makeFileName($filePathName);
+        $newFilePathName = FileUtilities::fixFileNameLength($newFilePathName);
         try {
             $this->datastoreFlysystem->writeStream($newFilePathName, $fileStream['fileStream']);
         } catch (FileExistsException $e) {
@@ -90,13 +90,35 @@ class Datastore
     /**
      * Deletes a file from the disk.
      *
-     * @param string $filePath File path for the file that is to be removed.
+     * @param string  $filePath  File path for the file that is to be removed.
+     * @param boolean $deleteDir If the path is a directory, and should be deleted.
+     *
+     * @throws \Exception Exception thrown when file delete is failed.
      *
      * @return bool
      */
-    public function deleteFile(string $filePath): bool
+    public function deleteFile(string $filePath, bool $deleteDir = false): bool
     {
-        return $this->datastoreFlysystem->delete($filePath);
+        if ($deleteDir) {
+             $deleteFile = $this->deleteDir($filePath);
+        } else {
+            $deleteFile = $this->datastoreFlysystem->delete($filePath);
+        }
+        $path = dirname($filePath);
+        $deleteDir = true;
+        $contents = $this->datastoreFlysystem->listContents($path, true);
+
+        $contents = array_filter($contents, function ($array) {
+            if (array_key_exists('type', $array) and $array['type'] === 'file') {
+                return $array;
+            }
+        });
+
+        if (empty($contents)) {
+            $deleteDir = $this->deleteFile($path, true);
+        }
+
+        return $deleteFile & $deleteDir;
     }
 
     /**
@@ -111,25 +133,25 @@ class Datastore
     public function renameFile(string $oldFilePath, string $newFilePath, bool $deleteFlag = false): string
     {
         if ($deleteFlag === false) {
-            $newFilePath = $this->makeFileName($newFilePath);
+            $newFilePath = FileUtilities::makeFileName($newFilePath);
         }
+        $newFilePath = FileUtilities::fixFileNameLength($newFilePath);
         $this->datastoreFlysystem->rename($oldFilePath, $newFilePath);
         return $newFilePath;
     }
 
     /**
-     * Makes a unique filename.
+     * Deletes a folder from the disk.
      *
-     * @param string $fileName Filename that needs to be made unique.
+     * @param string $dirPath File path for the folder that is to be removed.
      *
-     * @return string
+     * @return bool
      */
-    private function makeFileName(string $fileName) : string
+    public function deleteDir(string $dirPath): bool
     {
-        $uuid = Uuid::uuid4()->toString();
-        // add only last 5 bytes of uuid to the destination path
-        $fileName .= '_' . substr($uuid, -5);
-
-        return $fileName;
+        if ($this->datastoreFlysystem->has($dirPath)) {
+            return $this->datastoreFlysystem->deleteDir($dirPath);
+        }
+        return false;
     }
 }

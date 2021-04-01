@@ -5,29 +5,48 @@ namespace App\Message;
 class DeleteFile
 {
     /**
-     * The submission to delete file from.
+     * The file path of the file to be deleted.
      *
-     * @var integer
+     * @var string
      */
-    protected $datasetSubmissionId;
+    protected $filePath;
+
+    /**
+     * A boolean flag to show that the file is in the store.
+     *
+     * @var boolean
+     */
+    protected $inStore;
 
     /**
      * Constructor.
      *
-     * @param integer $datasetSubmissionId The submission ID to delete file from.
+     * @param string  $filePath The file path of the file to be deleted.
+     * @param boolean $inStore  If the file is located in the datastore.
      */
-    public function __construct(int $datasetSubmissionId)
+    public function __construct(string $filePath, bool $inStore = true)
     {
-        $this->datasetSubmissionId = $datasetSubmissionId;
+        $this->filePath = $filePath;
+        $this->inStore = $inStore;
     }
 
     /**
-     * The Dataset Submission getter.
+     * The file path getter.
      *
      * @return string The file path.
      */
-    public function getDatasetSubmissionId(): int
+    public function getFilePath(): string
     {
-        return $this->datasetSubmissionId;
+        return $this->filePath;
+    }
+
+    /**
+     * Is the file not in the store.
+     *
+     * @return string The file path.
+     */
+    public function isInStore(): bool
+    {
+        return $this->inStore;
     }
 }

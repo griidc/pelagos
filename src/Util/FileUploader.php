@@ -80,8 +80,9 @@ class FileUploader
         $chunksFolder = $this->chunksDirectory . DIRECTORY_SEPARATOR . $uuid;
         //combine chunks
         $targetDirectory = $this->uploadDirectory . DIRECTORY_SEPARATOR . $uuid;
+        $targetFileName = $targetDirectory . DIRECTORY_SEPARATOR . basename(FileUtilities::fixFileNameLength($fileName));
         $this->isFolder($targetDirectory);
-        $targetFile = fopen($targetDirectory . DIRECTORY_SEPARATOR . basename($fileName), 'wb');
+        $targetFile = fopen($targetFileName, 'wb');
         for ($i = 0; $i < $totalChunks; $i++) {
             $chunk = fopen(
                 $chunksFolder .
@@ -98,7 +99,7 @@ class FileUploader
         rmdir($chunksFolder);
 
         return array(
-            'path' => $targetDirectory . DIRECTORY_SEPARATOR . basename($fileName),
+            'path' => $targetFileName,
             'name' => $fileName,
             'size' => (int)$fileSize,
         );
