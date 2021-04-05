@@ -52,6 +52,7 @@ $(document).ready(function(){
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
             temporalExtentEndPosition: "End Date is not a valid ISO date",
+            filesTabValidator: "Please upload a file or add remotely hosted url"
         },
         ignore: ".ignore,.prototype",
         submitHandler: function (form) {
@@ -437,8 +438,16 @@ $(document).ready(function(){
 
     // SFTP/GridFTP and HTTP/FTP
     $("#remotelyHostedUrl").on("keyup change", function() {
+        let filesTabValidator = $("#filesTabValidator");
         if ($(this).val()) {
             $(this).valid();
+            filesTabValidator.val("valid");
+            $('label.error[for="filesTabValidator"]').remove();
+            $("#datasetFileTransferType").val($("#filetabs .ui-tabs-active").attr("datasetFileTransferType"));
+        } else {
+            filesTabValidator.val("");
+            filesTabValidator.addClass("error");
+            $("#datasetFileTransferType").val("");
         }
     });
 

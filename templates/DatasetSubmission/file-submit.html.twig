@@ -15,6 +15,7 @@
                 <li datasetFileTransferType="upload"><a href="#tabs-1">Upload</a></li>
                 <li datasetFileTransferType="HTTP"><a href="#tabs-2">Enter URL</a></li>
             </ul>
+            {{ form_widget(form.filesTabValidator, { attr: { class: 'ignore'} }) }}
 
             <div id="tabs-1"> <!-- Upload -->
                 You may upload files or folders using Drag and Drop or via the Upload Button.<br>

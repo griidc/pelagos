@@ -34,7 +34,6 @@ $(function() {
     $("html").show();
 
     $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");
-
     //Setup qTip
     $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
         position: {
@@ -144,7 +143,8 @@ $(function() {
         },
         messages: {
             temporalExtentBeginPosition: "Begin Date is not a valid ISO date",
-            temporalExtentEndPosition: "End Date is not a valid ISO date"
+            temporalExtentEndPosition: "End Date is not a valid ISO date",
+            filesTabValidator: "Please upload a file or add remotely hosted url"
         },
         ignore: ".ignore,.prototype",
         submitHandler: function(form) {
@@ -173,8 +173,6 @@ $(function() {
             fileTabs.tabs("option", "active", 1);
             break;
     }
-
-    document.getElementById("datasetFileTransferType").value = "upload";
 
     $("button").button();
 
@@ -367,8 +365,15 @@ $(function() {
 
     // SFTP/GridFTP and HTTP/FTP
     $("#remotelyHostedUrl").on("keyup change", function() {
+        let filesTabValidator = $("#filesTabValidator");
         if ($(this).val()) {
             $(this).valid();
+            filesTabValidator.val("valid");
+            $('label.error[for="filesTabValidator"]').remove();
+            $("#datasetFileTransferType").val($("#filetabs .ui-tabs-active").attr("datasetFileTransferType"));
+        } else {
+            filesTabValidator.val("");
+            filesTabValidator.addClass("error");
         }
     });
 

@@ -362,8 +362,21 @@ const getItems = (pathInfo) => {
             .get(`${Routing.generate('pelagos_api_get_files_dataset_submission')}/${datasetSubmissionId}?path=${pathInfo.path}`)
             .then(response => {
                 resolve(response.data);
+                let filesTabValidator = document.getElementById("filesTabValidator");
+                let datasetFileTransferType = document.getElementById("datasetFileTransferType");
+                if (response.data.length > 0) {
+                    filesTabValidator.value = "valid";
+                    datasetFileTransferType.value = "upload";
+                    document.querySelector("label.error[for=\"filesTabValidator\"]").remove();
+                } else {
+                    filesTabValidator.value = "";
+                    filesTabValidator.classList.add("error");
+                    datasetFileTransferType.value = "";
+                }
             }).catch(error => {
-                myFileManager.$parent.showPopupError(error.response.data.message);
+                if(error.response) {
+                    myFileManager.$parent.showPopupError(error.response.data.message);
+                }
                 reject(error);
             })
     })
