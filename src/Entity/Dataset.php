@@ -826,7 +826,7 @@ class Dataset extends Entity
     public function getProjectDirectors(): ArrayCollection
     {
         $collection = new ArrayCollection;
-        foreach ($this->getResearchGroup()->getPersonResearchGroups() ?? array() as $personResearchGroup) {
+        foreach ($this->getResearchGroup()->getPersonResearchGroups() as $personResearchGroup) {
             if ($personResearchGroup instanceof PersonResearchGroup
                 and $personResearchGroup->getRole()->getName() === ResearchGroupRole::LEADERSHIP) {
                 $collection->add($personResearchGroup->getPerson());
