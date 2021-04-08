@@ -73,7 +73,6 @@ class DoiMessageHandler implements MessageHandlerInterface
             $loggingContext = array('dataset_id' => $doiMessageId);
             $this->logger->info('DOI Consumer Started', $loggingContext);
             // Clear Doctrine's cache to force loading from persistence.
-            $this->entityManager->clear();
             $dataset = $this->entityManager
                 ->getRepository(Dataset::class)
                 ->find($doiMessageId);
