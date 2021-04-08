@@ -110,7 +110,9 @@ class DatasetIndexSubscriber implements EventSubscriberInterface
                 $document->set('collectionEndDate', $collectionEndDate->format('Y-m-d H:i:s'));
             }
         } elseif ($dataset->hasDif()) {
-            $document->set('updatedDateTime', $dataset->getDif()->getModificationTimeStamp()->format('Ymd\THis\Z'));
+            if ($dataset->getDif()->getModificationTimeStamp() instanceof \DateTime) {
+                $document->set('updatedDateTime', $dataset->getDif()->getModificationTimeStamp()->format('Ymd\THis\Z'));
+            }
             if (null !== $dataset->getDif()->getEstimatedStartDate()) {
                 $document->set('estimatedStartDate', $dataset->getDif()->getEstimatedStartDate()->format('Y-m-d'));
             }

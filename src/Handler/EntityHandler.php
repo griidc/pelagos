@@ -296,7 +296,7 @@ class EntityHandler
     public function update(Entity $entity, $entityEventName = 'updated')
     {
         if (!$this->entityManager->contains($entity)) {
-            throw new \Exception('Attempted to update an untracked ' . $entity::FRIENDLY_NAME);
+            return;
         }
         if (!$this->authorizationChecker->isGranted(PelagosEntityVoter::CAN_EDIT, $entity)) {
             $unitOfWork = $this->entityManager->getUnitOfWork();
