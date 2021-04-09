@@ -1,7 +1,6 @@
 <?php
 namespace App\Event;
 
-use App\Util\RabbitPublisher;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -62,13 +61,6 @@ abstract class EventListener
     protected $entityHandler;
 
     /**
-     * Custom rabbitmq publisher.
-     *
-     * @var RabbitPublisher
-     */
-    protected $publisher;
-
-    /**
      * An instance of the Pelagos Data Store utility service.
      *
      * @var DataStore
@@ -103,7 +95,6 @@ abstract class EventListener
      * @param MailSender                  $mailer        Email handling library.
      * @param TokenStorageInterface       $tokenStorage  Symfony's token object.
      * @param EntityHandler|null          $entityHandler Pelagos entity handler.
-     * @param RabbitPublisher|null        $publisher     An AMQP/RabbitMQ Producer.
      * @param DataStore|null              $dataStore     An instance of the Pelagos Data Store utility service.
      * @param MdappLogger|null            $mdappLogger   An MDAPP logger.
      * @param MessageBusInterface|null    $messageBus    Symfony messenger bus interface instance.
@@ -114,7 +105,6 @@ abstract class EventListener
         MailSender $mailer,
         TokenStorageInterface $tokenStorage,
         EntityHandler $entityHandler = null,
-        RabbitPublisher $publisher = null,
         DataStore $dataStore = null,
         MdappLogger $mdappLogger = null,
         MessageBusInterface $messageBus = null,
@@ -124,7 +114,6 @@ abstract class EventListener
         $this->mailer = $mailer;
         $this->tokenStorage = $tokenStorage;
         $this->entityHandler = $entityHandler;
-        $this->publisher = $publisher;
         $this->dataStore = $dataStore;
         $this->mdappLogger = $mdappLogger;
         $this->messageBus = $messageBus;

@@ -7,4 +7,5 @@ framework:
             'App\Message\ScanFileForVirus': async
             'App\Message\ZipDatasetFiles': async
             'App\Message\RenameFile': async
+            'App\Message\DoiMessage': async
             'App\Message\DeleteDir': async

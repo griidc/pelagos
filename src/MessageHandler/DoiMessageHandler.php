@@ -1,53 +1,33 @@
 <?php
 
-namespace App\Consumer;
-
-use App\Entity\DatasetPublication;
-use Doctrine\ORM\EntityManagerInterface;
-use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
-
-use PhpAmqpLib\Message\AMQPMessage;
-
-use Symfony\Bridge\Monolog\Logger;
+namespace App\MessageHandler;
 
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DOI;
-
-use App\Event\EntityEventDispatcher;
-
-use App\Util\DOIutil;
-
 use App\Exception\HttpClientErrorException;
 use App\Exception\HttpServerErrorException;
+use App\Message\DoiMessage;
+use App\Util\DOIutil;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
-/**
- * A consumer of DOI messages.
- *
- * @see ConsumerInterface
- */
-class DoiConsumer implements ConsumerInterface
+class DoiMessageHandler implements MessageHandlerInterface
 {
     /**
-     * The entity manager.
+     * The Entity Manager.
      *
      * @var EntityManagerInterface
      */
-    protected $entityManager;
+    private $entityManager;
 
     /**
-     * A Monolog logger.
+     * The monolog logger.
      *
-     * @var Logger
+     * @var LoggerInterface
      */
-    protected $logger;
-
-    /**
-     * The entity event dispatcher.
-     *
-     * @var EntityEventDispatcher
-     */
-    protected $entityEventDispatcher;
+    private $logger;
 
     /**
      * Utility class for DOI.
@@ -57,83 +37,63 @@ class DoiConsumer implements ConsumerInterface
     protected $doiUtil;
 
     /**
-     * Delay time in seconds for API.
-     */
-    const DELAY_TIME = 600;
-
-    /**
-     * Constructor.
+     * DoiMessageHandler constructor.
      *
-     * @param EntityManagerInterface $entityManager         The entity manager.
-     * @param Logger                 $logger                A Monolog logger.
-     * @param EntityEventDispatcher  $entityEventDispatcher The entity event dispatcher.
+     * @param EntityManagerInterface $entityManager  The entity handler.
+     * @param LoggerInterface        $doiIssueLogger Name hinted doi_issue logger.
      * @param DOIutil                $doiUtil               Instance of Utility class DOI.
+     *
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        Logger $logger,
-        EntityEventDispatcher $entityEventDispatcher,
+        LoggerInterface $doiIssueLogger,
         DOIutil $doiUtil
     ) {
         $this->entityManager = $entityManager;
-        $this->logger = $logger;
-        $this->entityEventDispatcher = $entityEventDispatcher;
+        $this->logger = $doiIssueLogger;
         $this->doiUtil = $doiUtil;
     }
 
     /**
-     * Process a filer message.
+     * Invoke function to process a doi.
      *
-     * @param AMQPMessage $message A filer message.
-     *
-     * @return integer
+     * @param DoiMessage $doiMessage The Doi Message that has to be handled.
      */
-    public function execute(AMQPMessage $message)
+    public function __invoke(DoiMessage $doiMessage)
     {
-        $this->logger->info('Request received, waiting...');
+        $doiMessageId = $doiMessage->getContextId();
 
-        sleep(6);
+        $doiMessageAction = $doiMessage->getAction();
 
-        // phpcs:disable
-        $routingKey = $message->delivery_info['routing_key'];
-        // phpcs:enable
-        $msgStatus = ConsumerInterface::MSG_ACK;
-
-        if (preg_match('/^delete/', $routingKey)) {
-            $doi = $message->body;
-            $loggingContext = array('doi' => $doi);
+        if ($doiMessageAction === DoiMessage::DELETE_ACTION) {
+            $loggingContext = array('doi' => $doiMessageId);
             $this->logger->info('DOI Consumer Started', $loggingContext);
-            $msgStatus = $this->deleteDoi($doi, $loggingContext);
-        } elseif (preg_match('/^doi/', $routingKey)) {
-            $datasetId = $message->body;
-            $loggingContext = array('dataset_id' => $datasetId);
+            $this->deleteDoi($doiMessageId, $loggingContext);
+        } elseif ($doiMessageAction === DoiMessage::ISSUE_OR_UPDATE) {
+            $loggingContext = array('dataset_id' => $doiMessageId);
             $this->logger->info('DOI Consumer Started', $loggingContext);
             // Clear Doctrine's cache to force loading from persistence.
-            $this->entityManager->clear();
             $dataset = $this->entityManager
                 ->getRepository(Dataset::class)
-                ->find($datasetId);
+                ->find($doiMessageId);
             if (!$dataset instanceof Dataset) {
                 $this->logger->warning('No dataset found', $loggingContext);
-                return true;
+                return;
             }
             if (null !== $dataset->getUdi()) {
                 $loggingContext['udi'] = $dataset->getUdi();
             }
             if ($this->doiAlreadyExists($dataset, $loggingContext)) {
                 $this->logger->info('DOI Already issued for this dataset', $loggingContext);
-                $msgStatus = $this->updateDoi($dataset, $loggingContext);
+                $this->updateDoi($dataset, $loggingContext);
             } else {
-                $msgStatus = $this->issueDoi($dataset, $loggingContext);
+                $this->issueDoi($dataset, $loggingContext);
             }
 
-            $this->entityManager->persist($dataset);
             $this->entityManager->flush();
         } else {
-            $this->logger->warning("Unknown routing key: $routingKey");
+            $this->logger->warning("Unknown message action: $doiMessageAction");
         }
-
-        return $msgStatus;
     }
 
     /**
@@ -142,14 +102,12 @@ class DoiConsumer implements ConsumerInterface
      * @param Dataset $dataset        The dataset.
      * @param array   $loggingContext The logging context to use when logging.
      *
-     * @return integer
+     * @return void
      */
-    protected function issueDoi(Dataset $dataset, array $loggingContext)
+    protected function issueDoi(Dataset $dataset, array $loggingContext) : void
     {
         // Log processing start.
         $this->logger->info('Attempting to issue DOI', $loggingContext);
-
-        $issueMsg = ConsumerInterface::MSG_ACK;
 
         $generatedDOI = $this->doiUtil->generateDoi();
 
@@ -174,17 +132,9 @@ class DoiConsumer implements ConsumerInterface
             $loggingContext['doi'] = $doi->getDoi();
             // Log processing complete.
             $this->logger->info('DOI Issued', $loggingContext);
-        } catch (HttpClientErrorException $exception) {
-            $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
-            $issueMsg = ConsumerInterface::MSG_REJECT;
-        } catch (HttpServerErrorException $exception) {
-            $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
-            //server down. wait for 10 minutes and retry.
-            sleep(self::DELAY_TIME);
-            $issueMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
+        } catch (HttpClientErrorException | HttpServerErrorException $exception) {
+            $this->logger->error('Error issuing DOI: ' . $exception->getMessage(), $loggingContext);
         }
-
-        return $issueMsg;
     }
 
     /**
@@ -193,13 +143,12 @@ class DoiConsumer implements ConsumerInterface
      * @param Dataset $dataset        The Dataset.
      * @param array   $loggingContext The logging context to use when logging.
      *
-     * @return integer
+     * @return void
      */
-    protected function updateDoi(Dataset $dataset, array $loggingContext)
+    protected function updateDoi(Dataset $dataset, array $loggingContext) : void
     {
         // Log processing start.
         $this->logger->info('Attempting to update DOI', $loggingContext);
-        $updateMsg = ConsumerInterface::MSG_ACK;
         $doi = $dataset->getDoi();
 
         try {
@@ -258,17 +207,9 @@ class DoiConsumer implements ConsumerInterface
 
             // Log processing complete.
             $this->logger->info('DOI Updated', $loggingContext);
-        } catch (HttpClientErrorException $exception) {
+        } catch (HttpClientErrorException | HttpServerErrorException $exception) {
             $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
-            $updateMsg = ConsumerInterface::MSG_REJECT;
-        } catch (HttpServerErrorException $exception) {
-            $this->logger->error('Error requesting DOI: ' . $exception->getMessage(), $loggingContext);
-            //server down. wait for 10 minutes and retry.
-            sleep(self::DELAY_TIME);
-            $updateMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
         }
-
-        return $updateMsg;
     }
 
     /**
@@ -277,26 +218,17 @@ class DoiConsumer implements ConsumerInterface
      * @param string $doi            The DOI which needs to be deleted.
      * @param array  $loggingContext The logging context to use when logging.
      *
-     * @return integer
+     * @return void
      */
-    protected function deleteDoi(string $doi, array $loggingContext)
+    protected function deleteDoi(string $doi, array $loggingContext) : void
     {
         // Log processing start.
         $this->logger->info('Attempting to delete DOI', $loggingContext);
-        $deleteMsg = ConsumerInterface::MSG_ACK;
         try {
             $this->doiUtil->deleteDOI($doi);
-        } catch (HttpClientErrorException $exception) {
+        } catch (HttpClientErrorException | HttpServerErrorException $exception) {
             $this->logger->error('Error deleting DOI: ' . $exception->getMessage(), $loggingContext);
-            $deleteMsg = ConsumerInterface::MSG_REJECT;
-        } catch (HttpServerErrorException $exception) {
-            $this->logger->error('Error deleting DOI: ' . $exception->getMessage(), $loggingContext);
-            //server down. wait for 10 minutes and retry.
-            sleep(self::DELAY_TIME);
-            $deleteMsg = ConsumerInterface::MSG_REJECT_REQUEUE;
         }
-
-        return $deleteMsg;
     }
 
     /**
@@ -323,7 +255,6 @@ class DoiConsumer implements ConsumerInterface
                 } catch (HttpServerErrorException $exception) {
                     //server down. wait for 10 minutes and retry.
                     $this->logger->error('Error getting DOI: ' . $exception->getMessage(), $loggingContext);
-                    sleep(self::DELAY_TIME);
                     $exceptionType = get_class($exception);
                     continue;
                 }

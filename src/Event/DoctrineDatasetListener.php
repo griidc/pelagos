@@ -2,7 +2,7 @@
 
 namespace App\Event;
 
-use App\Util\RabbitPublisher;
+use App\Message\DoiMessage;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
@@ -10,6 +10,7 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * Doctrine Listener class for Dataset related events.
@@ -17,20 +18,20 @@ use App\Entity\DIF;
 class DoctrineDatasetListener
 {
     /**
-     * Custom rabbitmq publisher.
+     * Symfony messenger bus interface.
      *
-     * @var RabbitPublisher
+     * @var MessageBusInterface
      */
-    protected $publisher;
+    protected $messageBus;
 
     /**
      * DoctrineDatasetListener constructor.
      *
-     * @param RabbitPublisher $publisher An AMQP/RabbitMQ Producer.
+     * @param MessageBusInterface $messageBus Symfony messenger bus interface.
      */
-    public function __construct(RabbitPublisher $publisher)
+    public function __construct(MessageBusInterface $messageBus)
     {
-        $this->publisher = $publisher;
+        $this->messageBus = $messageBus;
     }
 
     /**
@@ -103,7 +104,8 @@ class DoctrineDatasetListener
                 ) or
                 ($entity->getDif() instanceof DIF and $entity->getIdentifiedStatus() === DIF::STATUS_APPROVED)
             ) {
-                $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'doi');
+                $doiMessage = new DoiMessage($entity->getId(), DoiMessage::ISSUE_OR_UPDATE);
+                $this->messageBus->dispatch($doiMessage);
             }
         }
     }
