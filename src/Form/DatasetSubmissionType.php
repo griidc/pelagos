@@ -16,6 +16,7 @@ use App\Entity\DistributionPoint;
 use App\Entity\Entity;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * A form type for creating a Dataset Submission form.
@@ -271,6 +272,15 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Cold Storage Archive Original Filename',
                 'mapped' => false,
                 'required' => false,
+            ))
+            ->add('filesTabValidator', Type\HiddenType::class, array(
+                'mapped' => false,
+                'required' => true,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Please upload a file or add remotely hosted url'
+                    ])
+                ]
             ))
             ->add('submitButton', Type\SubmitType::class, array(
                 'label' => 'Submit',
