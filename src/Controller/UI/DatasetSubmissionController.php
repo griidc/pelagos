@@ -2,6 +2,7 @@
 
 namespace App\Controller\UI;
 
+use App\Entity\File;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -230,6 +231,13 @@ class DatasetSubmissionController extends AbstractController
                 $eventName = 'resubmitted';
             } else {
                 $eventName = 'submitted';
+            }
+
+            $fileset = $datasetSubmission->getFileset();
+            if ($fileset instanceof Fileset) {
+                foreach ($fileset->getNewFiles() as $file) {
+                    $file->setStatus(File::FILE_IN_QUEUE);
+                }
             }
 
             $this->entityHandler->update($datasetSubmission);

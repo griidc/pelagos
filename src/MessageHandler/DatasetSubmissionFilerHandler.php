@@ -126,7 +126,7 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
                 $this->messageBus->dispatch($zipFiles);
             }
 
-            foreach ($fileset->getNewFiles() as $file) {
+            foreach ($fileset->getQueuedFiles() as $file) {
                 if ($file instanceof File) {
                     $fileId = $file->getId();
                     $processFile = new ProcessFile($fileId);
