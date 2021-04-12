@@ -34,7 +34,7 @@ class File extends Entity
     /**
      * Status value for a File that is added to process queue.
      */
-    const FILE_IN_QUEUE = 'queue';
+    const FILE_IN_QUEUE = 'queued';
 
     /**
      * Fileset which contains this file.
