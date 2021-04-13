@@ -2,7 +2,9 @@
 
 namespace App\MessageHandler;
 
+use App\Entity\DatasetSubmission;
 use App\Entity\File;
+use App\Event\EntityEventDispatcher;
 use App\Message\ProcessFile;
 use App\Message\ScanFileForVirus;
 use App\Message\ZipDatasetFiles;
@@ -48,6 +50,13 @@ class ProcessFileHandler implements MessageHandlerInterface
     private $messageBus;
 
     /**
+     * The entity event dispatcher.
+     *
+     * @var EntityEventDispatcher
+     */
+    protected $entityEventDispatcher;
+
+    /**
      * Constructor for this Controller, to set up default services.
      *
      * @param EntityManagerInterface $entityManager           The entity handler.
@@ -59,12 +68,14 @@ class ProcessFileHandler implements MessageHandlerInterface
         EntityManagerInterface $entityManager,
         LoggerInterface $fileProcessingLogger,
         Datastore $datastore,
-        MessageBusInterface $messageBus
+        MessageBusInterface $messageBus,
+        EntityEventDispatcher $entityEventDispatcher
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $fileProcessingLogger;
         $this->datastore = $datastore;
         $this->messageBus = $messageBus;
+        $this->entityEventDispatcher = $entityEventDispatcher;
     }
 
     /**
@@ -139,6 +150,12 @@ class ProcessFileHandler implements MessageHandlerInterface
             $zipFiles = new ZipDatasetFiles($fileIds, $datasetSubmissionId);
             $this->messageBus->dispatch(new ZipDatasetFiles($fileIds, $datasetSubmissionId));
 
+            $datasetSubmission->setDatasetFileTransferStatus(
+                DatasetSubmission::TRANSFER_STATUS_COMPLETED
+            );
+
+            // Dispatch entity event.
+            $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_processed');
             // Update dataset's availability status
             $dataset->updateAvailabilityStatus();
             $this->entityManager->flush();

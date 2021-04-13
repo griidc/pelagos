@@ -6,15 +6,11 @@ use App\Entity\DatasetSubmission;
 use App\Entity\File;
 use App\Entity\Fileset;
 
-use App\Event\EntityEventDispatcher;
-
 use App\Message\DatasetSubmissionFiler;
 use App\Message\ProcessFile;
 use App\Message\ZipDatasetFiles;
 
 use App\Repository\DatasetSubmissionRepository;
-
-use App\Util\Datastore;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -49,13 +45,6 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
     private $messageBus;
 
     /**
-     * The entity event dispatcher.
-     *
-     * @var EntityEventDispatcher
-     */
-    protected $entityEventDispatcher;
-
-    /**
      * The entity manager.
      *
      * @var EntityManagerInterface
@@ -63,36 +52,23 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
     protected $entityManager;
 
     /**
-     * Datastore utility instance for manipulating files on disk.
-     *
-     * @var Datastore
-     */
-    private $datastore;
-
-    /**
      * DatasetSubmissionFilerHandler constructor.
      *
      * @param DatasetSubmissionRepository $datasetSubmissionRepository Dataset Submission Repository.
      * @param LoggerInterface             $filerLogger                 Name hinted filer logger.
      * @param MessageBusInterface         $messageBus                  Symfony messenger bus interface instance.
-     * @param EntityEventDispatcher       $entityEventDispatcher       The entity event dispatcher.
      * @param EntityManagerInterface      $entityManager               The entity manager.
-     * @param Datastore                   $datastore                   Datastore utility instance.
      */
     public function __construct(
         DatasetSubmissionRepository $datasetSubmissionRepository,
         LoggerInterface $filerLogger,
         MessageBusInterface $messageBus,
-        EntityEventDispatcher $entityEventDispatcher,
-        EntityManagerInterface $entityManager,
-        Datastore $datastore
+        EntityManagerInterface $entityManager
     ) {
         $this->datasetSubmissionRepository = $datasetSubmissionRepository;
         $this->logger = $filerLogger;
         $this->messageBus = $messageBus;
-        $this->entityEventDispatcher = $entityEventDispatcher;
         $this->entityManager = $entityManager;
-        $this->datastore = $datastore;
     }
 
     /**
@@ -135,15 +111,6 @@ class DatasetSubmissionFilerHandler implements MessageHandlerInterface
                     $this->logger->alert('File object does not exist');
                 }
             }
-
-            $datasetSubmission->setDatasetFileTransferStatus(
-                DatasetSubmission::TRANSFER_STATUS_COMPLETED
-            );
-            $dataset->updateAvailabilityStatus();
-            $datasetSubmission->setDatasetFileSize($fileset->getFileSize());
-
-            // Dispatch entity event.
-            $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_processed');
             $this->logger->info('Dataset submission process completed', $loggingContext);
         } else {
             if ($datasetSubmission->getRemotelyHostedUrl()) {
