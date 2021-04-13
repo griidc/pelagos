@@ -472,7 +472,7 @@ const initDropzone = () => {
     myDropzone = new Dropzone("div#dropzone-uploader", {
         url: Routing.generate('pelagos_api_post_chunks'),
         chunking: true,
-        chunkSize: 1024 * 1024,
+        chunkSize: 1024 * 1024 * 10,
         forceChunking: true,
         parallelChunkUploads: false,
         parallelUploads: 10,
