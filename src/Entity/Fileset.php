@@ -110,6 +110,18 @@ class Fileset extends Entity
     }
 
     /**
+     * Getter for queued files.
+     *
+     * @return Collection
+     */
+    public function getQueuedFiles() : Collection
+    {
+        return $this->files->filter(function (File $file) {
+            return $file->getStatus() === File::FILE_IN_QUEUE;
+        });
+    }
+
+    /**
      * Getter for deleted files.
      *
      * @return Collection
@@ -160,12 +172,35 @@ class Fileset extends Entity
                 Comparison::IN,
                 array(
                     File::FILE_NEW,
+                    File::FILE_IN_QUEUE
                 )
             )
         );
 
         return count($this->files->matching($criteria)) === 0;
     }
+
+    /**
+     * Check if any file is in queue.
+     *
+     * @return boolean
+     */
+    public function isQueued(): bool
+    {
+        $criteria = Criteria::create()
+            ->where(
+                new Comparison(
+                    'status',
+                    Comparison::IN,
+                    array(
+                        File::FILE_IN_QUEUE
+                    )
+                )
+            );
+
+        return count($this->files->matching($criteria)) > 0;
+    }
+
 
     /**
      * Checks if file exists.
@@ -227,7 +262,7 @@ class Fileset extends Entity
     public function getProcessedAndNewFiles(): Collection
     {
         return $this->files->filter(function (File $file) {
-            return in_array($file->getStatus(), [FILE::FILE_NEW, FILE::FILE_DONE]);
+            return in_array($file->getStatus(), [FILE::FILE_NEW, FILE::FILE_DONE, FILE::FILE_IN_QUEUE]);
         });
     }
 

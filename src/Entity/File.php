@@ -32,6 +32,11 @@ class File extends Entity
     const FILE_ERROR = 'error';
 
     /**
+     * Status value for a File that is added to process queue.
+     */
+    const FILE_IN_QUEUE = 'queued';
+
+    /**
      * Fileset which contains this file.
      *
      * @var Fileset
