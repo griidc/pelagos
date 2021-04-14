@@ -152,8 +152,10 @@ class DatasetSubmissionTest extends TestCase
                 'getFileSize' => 1234,
                 'getZipFilePath' => '/path/to/zip',
                 'getZipFileSha256Hash' => 'cfsdaf',
-                'getZipFileSize' => '32432324',
-                'doesZipFileExist' => true
+                'getZipFileSize' => 32432324,
+                'doesZipFileExist' => true,
+                'getProcessedAndNewFiles' => new ArrayCollection,
+                'setZipFileSize' => 0
             )
         );
         $this->datasetSubmission = new DatasetSubmission(
@@ -950,5 +952,17 @@ class DatasetSubmissionTest extends TestCase
         $this->datasetSubmission->setRemotelyHostedUrl($remotelyHostedUrl);
 
         $this->assertEquals($remotelyHostedUrl, $this->datasetSubmission->getRemotelyHostedUrl());
+    }
+
+     /**
+     * Test the setter and getter for remotely hosted url.
+     *
+     * @return void
+     */
+    public function testGetDatasetFileSize()
+    {
+        $fileSize = $this->datasetSubmission->getDatasetFileSize();
+
+        $this->assertEquals($fileSize, $this->datasetSubmission->getFileset()->getZipFileSize());
     }
 }
