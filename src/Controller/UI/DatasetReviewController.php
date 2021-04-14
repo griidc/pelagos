@@ -192,20 +192,21 @@ class DatasetReviewController extends AbstractController
             $this->addToFlashDisplayQueue($request, $udi, 'notSubmitted');
         } else {
             if ($datasetSubmission instanceof DatasetSubmission) {
-                if ($this->filerStatus($datasetSubmission) !== true) {
-                    $this->addToFlashDisplayQueue($request, $udi, 'filerNotDone');
-                }
-                $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
-                if ('review' === $this->mode) {
-                    switch (!in_array($datasetStatus, [Dataset::DATASET_STATUS_BACK_TO_SUBMITTER, Dataset::DATASET_STATUS_NONE])) {
-                        case (empty($datasetSubmissionReview) || $datasetSubmissionReview->getReviewEndDateTime()):
-                            $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
-                            break;
-                        case (empty($datasetSubmissionReview->getReviewEndDateTime())
-                            and $datasetSubmissionReview->getReviewedBy() !== $this->getUser()->getPerson()):
-                            $reviewerUserName = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy()->getId())->getUserId();
-                            $this->addToFlashDisplayQueue($request, $udi, 'locked', $reviewerUserName);
-                            break;
+                if ($this->areFilesBeingProcessed($datasetSubmission)) {
+                    $this->addToFlashDisplayQueue($request, $udi, 'processing');
+                } else {
+                    $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
+                    if ('review' === $this->mode) {
+                        switch (!in_array($datasetStatus, [Dataset::DATASET_STATUS_BACK_TO_SUBMITTER, Dataset::DATASET_STATUS_NONE])) {
+                            case (empty($datasetSubmissionReview) || $datasetSubmissionReview->getReviewEndDateTime()):
+                                $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
+                                break;
+                            case (empty($datasetSubmissionReview->getReviewEndDateTime())
+                                and $datasetSubmissionReview->getReviewedBy() !== $this->getUser()->getPerson()):
+                                $reviewerUserName = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy()->getId())->getUserId();
+                                $this->addToFlashDisplayQueue($request, $udi, 'locked', $reviewerUserName);
+                                break;
+                        }
                     }
                 }
             } else {
@@ -235,7 +236,8 @@ class DatasetReviewController extends AbstractController
                 $udi . ' could not be found. Please email
                         <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a>
                         if you have any questions.',
-            'notSubmitted' => 'The dataset ' . $udi . ' cannot be loaded in review mode at this time because it has not been submitted or it is still being processed.',
+            'notSubmitted' => 'The dataset ' . $udi . ' cannot be loaded in review mode at this time because it has not been submitted.',
+            'processing' => "The dataset $udi cannot be loaded in review mode at this time because it is still being processed.",
             'hasDraft' => 'The dataset ' . $udi . ' currently has a draft submission and cannot be loaded in review mode.',
             'requestRevision' => 'The status of dataset ' . $udi . ' is Request Revisions and cannot be loaded in review mode.',
             'locked' => 'The dataset ' . $udi . ' is in review mode. Username: ' . $reviewerUserName,
@@ -243,8 +245,6 @@ class DatasetReviewController extends AbstractController
 
         $listOfNotices = [
             'backToSub' => "Because this dataset $udi is currently in Request Revisions, you are viewing user's latest data submission.",
-            'filerNotDone' => 'One or more files are unprocessed in this current dataset,
-                                please end the review to trigger processing, then reopen in dataset-review to continue the DPR review'
         ];
 
         if (array_key_exists($noticeCode, $listOfErrors)) {
@@ -535,22 +535,22 @@ class DatasetReviewController extends AbstractController
     }
 
     /**
-     * To check the filer status of a previous datasetsubmission/review.
+     * To check the if files are being processed
      *
      * @param DatasetSubmission $datasetSubmission A dataset submission instance.
      *
      * @return boolean
      */
-    private function filerStatus(DatasetSubmission $datasetSubmission)
+    private function areFilesBeingProcessed(DatasetSubmission $datasetSubmission)
     {
         // List of dataset submission statuses to check.
         $statuses = [DatasetSubmission::STATUS_COMPLETE, DatasetSubmission::STATUS_IN_REVIEW];
-
         if (in_array($datasetSubmission->getStatus(), $statuses)) {
             if ($datasetSubmission->getFileset() instanceof Fileset) {
-                return $datasetSubmission->getFileset()->isDone();
+                return $datasetSubmission->getFileset()->isQueued();
             }
         }
-        return true;
+
+        return false;
     }
 }
