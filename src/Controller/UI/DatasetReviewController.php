@@ -459,6 +459,7 @@ class DatasetReviewController extends AbstractController
             if ($fileset instanceof Fileset) {
                 foreach ($fileset->getNewFiles() as $file) {
                     $file->setStatus(File::FILE_IN_QUEUE);
+                    $this->entityHandler->update($file);
                 }
             }
 
