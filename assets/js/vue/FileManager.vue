@@ -49,6 +49,23 @@
             </template>
         </DxPopup>
         <DxPopup
+            title="Duplicate Filenames"
+            :visible.sync="isRenamedPopupVisible"
+            :close-on-outside-click="true"
+            @hidden="onHideRename"
+            :show-title="true"
+            :width="500"
+            :height="200">
+            <template>
+                <p>
+                    <i class="fas fa-exclamation-triangle fa-2x" style="color:#d9534f"></i>&nbsp
+                    <i><b>{{ filesRenamed }}</b></i> duplicate filenames were detected in the uploaded files.<br>
+                    The duplicate filenames have been appended with a (1,2,3...).<br>
+                    Please check your files for duplicates!
+                </p>
+            </template>
+        </DxPopup>
+        <DxPopup
             :visible.sync="loadingVisible"
             :close-on-outside-click="false"
             :show-title="false"
@@ -186,8 +203,10 @@ export default {
             totalFiles: 0,
             totalFileSize: 0,
             doneFileSize: 0,
+            filesRenamed: 0,
             helpPopupButton: this.getHelpPopupText(),
-            showHelpPopup: false
+            showHelpPopup: false,
+            isRenamedPopupVisible: false
         };
     },
 
@@ -352,6 +371,16 @@ export default {
 
         onHelpButtonClick: function () {
             this.showHelpPopup = true;
+        },
+
+        queueDone: function (message) {
+            if (this.filesRenamed > 0) {
+                this.isRenamedPopupVisible = true;
+            }
+        },
+
+        onHideRename: function () {
+            this.filesRenamed = 0;
         }
     },
 };
@@ -509,6 +538,9 @@ const initDropzone = () => {
                     chunkData
                 )
                 .then(response => {
+                    if (response.data.isRenamed === true) {
+                        myFileManager.$parent.filesRenamed++;
+                    }
                     done();
                 }).catch(error => {
                     currentFile.accepted = false;
@@ -532,6 +564,7 @@ const initDropzone = () => {
     myDropzone.on("queuecomplete", function () {
         myFileManager.instance.repaint();
         this.removeAllFiles();
+        myFileManager.$parent.queueDone();
     });
 
     myDropzone.on("totaluploadprogress", function (uploadProgress, totalBytes, totalBytesSent) {

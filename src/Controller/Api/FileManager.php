@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -59,6 +60,8 @@ class FileManager extends AbstractFOSRestController
 
         $fileset = $datasetSubmission->getFileset();
 
+        $isRenamed = false;
+
         if ($fileset instanceof Fileset) {
             while ($fileset->doesFileExist($fileName)) {
                 try {
@@ -66,6 +69,7 @@ class FileManager extends AbstractFOSRestController
                 } catch (\Exception $e) {
                     throw new BadRequestHttpException($e->getMessage());
                 }
+                $isRenamed = true;
             }
         } else {
             $fileset = new Fileset();
@@ -81,9 +85,11 @@ class FileManager extends AbstractFOSRestController
         $entityManager->persist($newFile);
         $entityManager->flush();
 
-        return new Response(
-            null,
-            Response::HTTP_NO_CONTENT
+        return new JsonResponse(
+            [
+                'fileName' => $fileName,
+                'isRenamed' => $isRenamed
+            ]
         );
     }
 
