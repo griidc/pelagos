@@ -81,9 +81,6 @@
                     @click="stopProcess"
                     :element-attr="cancelUploadBtn"
                  />
-                 <p>
-                    If the filesize is large? Click Cancel!
-                 </p>
             </template>
         </DxPopup>
         <DxFileManager
