@@ -11,7 +11,7 @@
             title="New Uploader!">
             <template>
                 <div id="textBlock">
-                    <h3>
+                    <h3 style="margin-top: 0">
                         You can now upload multiple files/folders, add files to an existing dataset, or replace/delete files already uploaded. New features include:
                     </h3>
                     <ul>
