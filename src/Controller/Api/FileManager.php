@@ -7,9 +7,9 @@ use App\Entity\File;
 use App\Entity\Fileset;
 use App\Message\RenameFile;
 use App\Util\Datastore;
+use App\Util\FileNameUtilities;
 use App\Util\FileUploader;
 use App\Util\FolderStructureGenerator;
-use App\Util\RenameDuplicate;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -34,7 +34,6 @@ class FileManager extends AbstractFOSRestController
      * @param Request                $request           The request body sent with file metadata.
      * @param EntityManagerInterface $entityManager     Entity manager interface to doctrine operations.
      * @param FileUploader           $fileUploader      File upload handler service.
-     * @param RenameDuplicate        $renameDuplicate   The duplicate renaming utility.
      *
      * @Route(
      *     "/api/files_dataset_submission/{id}",
@@ -49,7 +48,7 @@ class FileManager extends AbstractFOSRestController
      *
      * @return Response
      */
-    public function addFile(DatasetSubmission $datasetSubmission, Request $request, EntityManagerInterface $entityManager, FileUploader $fileUploader, RenameDuplicate $renameDuplicate)
+    public function addFile(DatasetSubmission $datasetSubmission, Request $request, EntityManagerInterface $entityManager, FileUploader $fileUploader)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $fileMetadata = $fileUploader->combineChunks($request);
@@ -65,7 +64,7 @@ class FileManager extends AbstractFOSRestController
         if ($fileset instanceof Fileset) {
             while ($fileset->doesFileExist($fileName)) {
                 try {
-                    $fileName = $renameDuplicate->renameFile($fileName);
+                    $fileName = FileNameUtilities::renameFile($fileName);
                 } catch (\Exception $e) {
                     throw new BadRequestHttpException($e->getMessage());
                 }
