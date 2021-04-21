@@ -61,28 +61,26 @@
             shading-color="rgba(0,0,0,0.4)"
         >
             <template>
-                <p>
-                    Uploading {{ humanSize(doneFileSize) }} of {{ humanSize(totalFileSize) }}
+                <p style="text-align: center">
+                    Uploaded {{ humanSize(doneFileSize) }} of {{ humanSize(totalFileSize) }}
                 </p>
-                <p>
-                    Uploading file {{ doneFiles }} of {{ totalFiles }}
+                <p style="text-align: center">
+                    Uploaded file {{ doneFiles }} of {{ totalFiles }}
                 </p>
                 <DxProgressBar
                   id="progress-bar-status"
                   :min="0"
                   :max="totalFileSize"
                   :value="doneFileSize"
-                  width="90%"
+                  width="100%"
                 />
                 <DxButton
-                    text="Cancel Upload!"
+                    text="Cancel Upload"
                     type="danger"
                     styling-mode="contained"
                     @click="stopProcess"
+                    :element-attr="cancelUploadBtn"
                  />
-                 <p>
-                    If the filesize is large? Click Cancel!
-                 </p>
             </template>
         </DxPopup>
         <DxFileManager
@@ -187,7 +185,10 @@ export default {
             totalFileSize: 0,
             doneFileSize: 0,
             helpPopupButton: this.getHelpPopupText(),
-            showHelpPopup: false
+            showHelpPopup: false,
+            cancelUploadBtn: {
+                class: 'cancel-upload-btn'
+            }
         };
     },
 
@@ -572,5 +573,10 @@ const getFileNameFromHeader = (headers) => {
     background-image: url("../../images/dropzone.png");
     background-position: center;
     background-repeat: no-repeat;
+}
+.cancel-upload-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 </style>
