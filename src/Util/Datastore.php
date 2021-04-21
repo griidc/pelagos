@@ -73,8 +73,8 @@ class Datastore
      */
     public function addFile(array $fileStream, string $filePathName): string
     {
-        $newFilePathName = FileUtilities::makeFileName($filePathName);
-        $newFilePathName = FileUtilities::fixFileNameLength($newFilePathName);
+        $newFilePathName = FileNameUtilities::makeFileName($filePathName);
+        $newFilePathName = FileNameUtilities::fixFileNameLength($newFilePathName);
         try {
             $this->datastoreFlysystem->writeStream($newFilePathName, $fileStream['fileStream']);
         } catch (FileExistsException $e) {
@@ -133,9 +133,9 @@ class Datastore
     public function renameFile(string $oldFilePath, string $newFilePath, bool $deleteFlag = false): string
     {
         if ($deleteFlag === false) {
-            $newFilePath = FileUtilities::makeFileName($newFilePath);
+            $newFilePath = FileNameUtilities::makeFileName($newFilePath);
         }
-        $newFilePath = FileUtilities::fixFileNameLength($newFilePath);
+        $newFilePath = FileNameUtilities::fixFileNameLength($newFilePath);
         $this->datastoreFlysystem->rename($oldFilePath, $newFilePath);
         return $newFilePath;
     }

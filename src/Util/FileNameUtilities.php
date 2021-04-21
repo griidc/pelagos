@@ -7,7 +7,7 @@ use Ramsey\Uuid\Uuid;
 /**
  * Utilities for files.
  */
-class FileUtilities
+class FileNameUtilities
 {
     /**
      * A friendly name for this type of entity.
