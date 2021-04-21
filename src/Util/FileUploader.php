@@ -80,7 +80,7 @@ class FileUploader
         $chunksFolder = $this->chunksDirectory . DIRECTORY_SEPARATOR . $uuid;
         //combine chunks
         $targetDirectory = $this->uploadDirectory . DIRECTORY_SEPARATOR . $uuid;
-        $targetFileName = $targetDirectory . DIRECTORY_SEPARATOR . basename(FileUtilities::fixFileNameLength($fileName));
+        $targetFileName = $targetDirectory . DIRECTORY_SEPARATOR . basename(FileNameUtilities::fixFileNameLength($fileName));
         $this->isFolder($targetDirectory);
         $targetFile = fopen($targetFileName, 'wb');
         for ($i = 0; $i < $totalChunks; $i++) {
