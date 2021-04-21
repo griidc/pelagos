@@ -7,28 +7,22 @@
             :close-on-outside-click="true"
             :show-title="true"
             :width="400"
-            :height="400"
-            title="What's New?">
+            :height="350"
+            title="New Uploader!">
             <template>
                 <div id="textBlock">
+                    <h3>
+                        You can now upload multiple files/folders, add files to an existing dataset, or replace/delete files already uploaded. New features include:
+                    </h3>
                     <ul>
                         <li>
-                            <strong>Upload Files/Folders</strong>: Can upload files/folders by drag and drop or by using the upload button.
+                            <strong>Upload</strong>: You can upload files/folders via drag and drop or the upload button on the left side
                         </li>
                         <li>
-                            <strong>Delete Files/Folders</strong>: Can delete by selecting the option from the right click menu or can select the item and use the toolbar.
+                            <strong>Delete/Move/Rename</strong>: You can perform these actions via the toolbar button or right click menu
                         </li>
                         <li>
-                            <strong>Move Files/Folders</strong>: Can move item by selecting the option from the right click menu or can select the item and use the toolbar.
-                        </li>
-                        <li>
-                            <strong>Rename Files/Folders</strong>: Can rename item by selecting the option from the right click menu or can select the item and use the toolbar.
-                        </li>
-                        <li>
-                            <strong>Download Files</strong>: Can download individual files by selecting the option from the right click menu or can select the item and use the toolbar.
-                        </li>
-                        <li>
-                            <strong>Download All Files(zip)</strong>: Can download all files by clicking on the button.
+                            <strong>Download Individual Files</strong>: Select a file and download via toolbar button or right click menu
                         </li>
                     </ul>
                 </div>
