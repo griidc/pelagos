@@ -553,7 +553,7 @@ const initDropzone = () => {
     myDropzone.on("queuecomplete", function () {
         myFileManager.instance.repaint();
         this.removeAllFiles();
-        myFileManager.$parent.isRenamedPopupVisible = myFileManger.$parent.filesRenamed > 0;
+        myFileManager.$parent.isRenamedPopupVisible = myFileManager.$parent.filesRenamed > 0;
     });
 
     myDropzone.on("totaluploadprogress", function (uploadProgress, totalBytes, totalBytesSent) {
