@@ -66,32 +66,35 @@
             position="center"
             :showCloseButton="false"
             :width="350"
-            :height="250"
+            height="auto"
             :drag-enabled="false"
             :shading="true"
             shading-color="rgba(0,0,0,0.4)"
         >
             <template>
-                <p style="text-align: center">
-                    Uploaded {{ humanSize(doneFileSize) }} of {{ humanSize(totalFileSize) }}
-                </p>
-                <p style="text-align: center">
-                    Uploaded file {{ doneFiles }} of {{ totalFiles }}
-                </p>
-                <DxProgressBar
-                  id="progress-bar-status"
-                  :min="0"
-                  :max="totalFileSize"
-                  :value="doneFileSize"
-                  width="100%"
-                />
-                <DxButton
-                    text="Cancel Upload"
-                    type="danger"
-                    styling-mode="contained"
-                    @click="stopProcess"
-                    :element-attr="cancelUploadBtn"
-                 />
+                <div class="cancel-upload-btn">
+                    <p>
+                        <b>Uploaded {{ humanSize(doneFileSize) }} of {{ humanSize(totalFileSize) }}</b>
+                    </p>
+                    <p>
+                        <b>Uploaded file {{ doneFiles }} of {{ totalFiles }}</b>
+                    </p>
+                    <DxProgressBar
+                        id="progress-bar-status"
+                        :min="0"
+                        :max="totalFileSize"
+                        :value="doneFileSize"
+                        width="100%"
+                    />
+                    <br>
+                    <DxButton
+                        text="Cancel Upload"
+                        type="danger"
+                        width="50%"
+                        styling-mode="contained"
+                        @click="stopProcess"
+                    />
+                </div>
             </template>
         </DxPopup>
         <DxFileManager
@@ -596,8 +599,7 @@ const getFileNameFromHeader = (headers) => {
     background-repeat: no-repeat;
 }
 .cancel-upload-btn {
-    display: flex;
-    justify-content: center;
     align-items: center;
+    text-align: center;
 }
 </style>
