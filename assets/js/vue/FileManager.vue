@@ -373,11 +373,7 @@ export default {
             this.showHelpPopup = true;
         },
 
-        queueDone: function (message) {
-            if (this.filesRenamed > 0) {
-                this.isRenamedPopupVisible = true;
-            }
-        },
+        
 
         onHideRename: function () {
             this.filesRenamed = 0;
