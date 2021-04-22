@@ -368,8 +368,6 @@ export default {
             this.showHelpPopup = true;
         },
 
-        
-
         onHideRename: function () {
             this.filesRenamed = 0;
         }
