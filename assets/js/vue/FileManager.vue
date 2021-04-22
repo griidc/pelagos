@@ -7,28 +7,22 @@
             :close-on-outside-click="true"
             :show-title="true"
             :width="400"
-            :height="400"
-            title="What's New?">
+            :height="350"
+            title="New Uploader!">
             <template>
                 <div id="textBlock">
+                    <h3 style="margin-top: 0">
+                        You can now upload multiple files/folders, add files to an existing dataset, or replace/delete files already uploaded. New features include:
+                    </h3>
                     <ul>
                         <li>
-                            <strong>Upload Files/Folders</strong>: Can upload files/folders by drag and drop or by using the upload button.
+                            <strong>Upload</strong>: You can upload files/folders via drag and drop or the upload button on the left side
                         </li>
                         <li>
-                            <strong>Delete Files/Folders</strong>: Can delete by selecting the option from the right click menu or can select the item and use the toolbar.
+                            <strong>Delete/Move/Rename</strong>: You can perform these actions via the toolbar button or right click menu
                         </li>
                         <li>
-                            <strong>Move Files/Folders</strong>: Can move item by selecting the option from the right click menu or can select the item and use the toolbar.
-                        </li>
-                        <li>
-                            <strong>Rename Files/Folders</strong>: Can rename item by selecting the option from the right click menu or can select the item and use the toolbar.
-                        </li>
-                        <li>
-                            <strong>Download Files</strong>: Can download individual files by selecting the option from the right click menu or can select the item and use the toolbar.
-                        </li>
-                        <li>
-                            <strong>Download All Files(zip)</strong>: Can download all files by clicking on the button.
+                            <strong>Download Individual Files</strong>: Select a file and download via toolbar button or right click menu
                         </li>
                     </ul>
                 </div>
@@ -78,28 +72,26 @@
             shading-color="rgba(0,0,0,0.4)"
         >
             <template>
-                <p>
-                    Uploading {{ humanSize(doneFileSize) }} of {{ humanSize(totalFileSize) }}
+                <p style="text-align: center">
+                    Uploaded {{ humanSize(doneFileSize) }} of {{ humanSize(totalFileSize) }}
                 </p>
-                <p>
-                    Uploading file {{ doneFiles }} of {{ totalFiles }}
+                <p style="text-align: center">
+                    Uploaded file {{ doneFiles }} of {{ totalFiles }}
                 </p>
                 <DxProgressBar
                   id="progress-bar-status"
                   :min="0"
                   :max="totalFileSize"
                   :value="doneFileSize"
-                  width="90%"
+                  width="100%"
                 />
                 <DxButton
-                    text="Cancel Upload!"
+                    text="Cancel Upload"
                     type="danger"
                     styling-mode="contained"
                     @click="stopProcess"
+                    :element-attr="cancelUploadBtn"
                  />
-                 <p>
-                    If the filesize is large? Click Cancel!
-                 </p>
             </template>
         </DxPopup>
         <DxFileManager
@@ -206,7 +198,10 @@ export default {
             filesRenamed: 0,
             helpPopupButton: this.getHelpPopupText(),
             showHelpPopup: false,
-            isRenamedPopupVisible: false
+            isRenamedPopupVisible: false,
+            cancelUploadBtn: {
+                class: 'cancel-upload-btn'
+            }
         };
     },
 
@@ -601,5 +596,10 @@ const getFileNameFromHeader = (headers) => {
     background-image: url("../../images/dropzone.png");
     background-position: center;
     background-repeat: no-repeat;
+}
+.cancel-upload-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 </style>
