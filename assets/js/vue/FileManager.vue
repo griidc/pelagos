@@ -72,7 +72,7 @@
             shading-color="rgba(0,0,0,0.4)"
         >
             <template>
-                <div class="cancel-upload-btn">
+                <div class="upload-progress-dialog">
                     <p>
                         <b>Uploaded {{ humanSize(doneFileSize) }} of {{ humanSize(totalFileSize) }}</b>
                     </p>
@@ -598,7 +598,7 @@ const getFileNameFromHeader = (headers) => {
     background-position: center;
     background-repeat: no-repeat;
 }
-.cancel-upload-btn {
+.upload-progress-dialog {
     align-items: center;
     text-align: center;
 }
