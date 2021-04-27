@@ -112,12 +112,15 @@ class ValidateRemotelyHostedLinksCommand extends Command
             $datasetSubmission = $dataset->getDatasetSubmission();
 
             if ($datasetSubmission instanceof DatasetSubmission) {
-                $httpResponse = $this->urlValidation->validateUrl($datasetSubmission->getDatasetFileUri());
+                $link = $datasetSubmission->getDatasetFileUri();
+                $httpResponse = $this->urlValidation->validateUrl($link);
                 if ($httpResponse === true) {
                     $httpCode = 200;
                 } else {
                     $httpCode = (trim(str_replace('Could not get URL, returned HTTP code', '', $httpResponse)));
-                    array_push($errorUdi, $dataset->getUdi());
+                    $error['udi']=$dataset->getUdi();
+                    $error['link']=$link;
+                    $errors[]=$error;
                 }
                 $datasetSubmission->setDatasetFileUrlStatusCode($httpCode);
                 $datasetSubmission->setDatasetFileUrlLastCheckedDate(new \DateTime('now', new \DateTimeZone('UTC')));
@@ -126,10 +129,10 @@ class ValidateRemotelyHostedLinksCommand extends Command
             $this->entityManager->flush();
         }
 
-        if (!empty($errorUdi)) {
+        if (!empty($errors)) {
             $this->mailer->sendEmailMessage(
                 $this->twig->load('Email/data-repository-managers.error-remotely-hosted.email.twig'),
-                array('listOfUdi' => $errorUdi),
+                array('errors' => $errors),
                 array('griidc@gomri.org' => 'GRIIDC')
             );
         }
