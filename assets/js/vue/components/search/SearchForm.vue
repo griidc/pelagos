@@ -95,9 +95,10 @@
 </template>
 
 <script>
-    const axios = require('axios');
     import ResultSet from "./ResultSet";
-    import templateSwitch from "../../utils/template-switch.js";
+    import templateSwitch from "@/vue/utils/template-switch.js";
+    import { getApi } from "@/vue/utils/axios";
+
     export default {
         name: "SearchForm",
         components: { ResultSet },
@@ -122,42 +123,14 @@
         methods: {
             onSubmit: function () {
                 const searchQuery = Object.keys(this.form).map(key => key + '=' + this.form[key]).join('&');
-                let loader = null;
-                let thisComponent = this;
-                const axiosInstance = axios.create({});
-                axiosInstance.interceptors.request.use(function (config) {
-                    loader = thisComponent.$loading.show({
-                        container: thisComponent.$refs.formContainer,
-                        loader: 'bars',
-                        color: '#007bff',
-                    });
-                    return config;
-                }, function (error) {
-                    return Promise.reject(error);
-                });
-
-                function hideLoader(){
-                    loader && loader.hide();
-                    loader = null;
-                }
-
-                axiosInstance.interceptors.response.use(function (response) {
-                    hideLoader();
-                    return response;
-                }, function (error) {
-                    hideLoader();
-                    return Promise.reject(error);
-                });
-
-                axiosInstance
-                    .get(Routing.generate('pelagos_app_ui_searchpage_results') + "?" + searchQuery)
-                    .then(response => {
-                        this.resultSet = response.data;
-                        this.showResults = true;
-                        window.location.hash = searchQuery;
-                        this.route = window.location.hash;
-                        this.submitted = true;
-                    });
+                getApi(Routing.generate('pelagos_app_ui_searchpage_results') + "?" + searchQuery, this, true)
+                .then(response => {
+                    this.resultSet = response;
+                    this.showResults = true;
+                    window.location.hash = searchQuery;
+                    this.route = window.location.hash;
+                    this.submitted = true;
+                })
             },
             onReset: function () {
                 this.form = initialFormValues();

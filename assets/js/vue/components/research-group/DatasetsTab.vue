@@ -5,7 +5,6 @@
 </template>
 
 <script>
-    const axios = require('axios');
     import DatasetRow from "./../search/DatasetRow";
     export default {
         name: "DatasetsTab",
