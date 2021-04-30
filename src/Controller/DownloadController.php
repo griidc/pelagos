@@ -124,14 +124,23 @@ class DownloadController extends AbstractController
                         $outputStream = fopen('php://output', 'wb');
                         stream_copy_to_stream($fileStream['fileStream'], $outputStream);
                     });
-                    $disposition = HeaderUtils::makeDisposition(
-                        HeaderUtils::DISPOSITION_ATTACHMENT,
-                        $datasetSubmission->getDatasetFileName()
-                    );
-                    $response->headers->set('Content-Disposition', $disposition);
+                    $filename = $datasetSubmission->getDatasetFileName();
+
                 } else {
-                    $response = $this->forward('App\Controller\Api\FileManager::downloadZipAllFiles', ['datasetSubmission' => $datasetSubmission->getId()]);
+                    $zipFilePath = $fileset->getZipFilePath();
+                    $response = new StreamedResponse(function () use ($zipFilePath) {
+                        $outputStream = fopen('php://output', 'wb');
+                        $fileStream = fopen($zipFilePath, 'r');
+                        stream_copy_to_stream($fileStream, $outputStream);
+                    });
+                    $filename = basename($zipFilePath);
                 }
+
+                $disposition = HeaderUtils::makeDisposition(
+                    HeaderUtils::DISPOSITION_ATTACHMENT,
+                    $filename
+                );
+                $response->headers->set('Content-Disposition', $disposition);
 
                 if ($this->getUser()) {
                     $type = get_class($this->getUser());
