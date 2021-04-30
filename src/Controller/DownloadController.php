@@ -125,7 +125,6 @@ class DownloadController extends AbstractController
                         stream_copy_to_stream($fileStream['fileStream'], $outputStream);
                     });
                     $filename = $datasetSubmission->getDatasetFileName();
-
                 } else {
                     $zipFilePath = $fileset->getZipFilePath();
                     $response = new StreamedResponse(function () use ($zipFilePath) {
