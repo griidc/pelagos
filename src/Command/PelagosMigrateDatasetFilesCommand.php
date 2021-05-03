@@ -104,6 +104,20 @@ class PelagosMigrateDatasetFilesCommand extends Command
 
             $status = $dataset->getDatasetStatus();
 
+            $lastDatasetSubmission = $dataset->getLatestDatasetReview();
+
+            $subState = 0;
+
+            if ($lastDatasetSubmission instanceof DatasetSubmission) {
+                $subState = $lastDatasetSubmission->getStatus();
+                $fileUri = $lastDatasetSubmission->getDatasetFileUri();
+                if ($subState === DatasetSubmission::STATUS_UNSUBMITTED and !empty($fileUri)) {
+                    $listOfDrafts[] = array('udi' => $udi, 'fileUri' => $fileUri);
+                }
+            }
+
+
+
             if ($status === Dataset::DATASET_STATUS_IN_REVIEW) {
                 $datasetSubmission = $dataset->getLatestDatasetReview();
                 $this->setFile($dataStore, $queueFiler, $ignoreFileExistCheck, $datasetSubmission);
@@ -131,6 +145,12 @@ class PelagosMigrateDatasetFilesCommand extends Command
         foreach ($this->submissionsListForFiler as $datasetSubmissionId) {
             $datasetSubmissionFilerMessage = new DatasetSubmissionFiler($datasetSubmissionId);
             $this->messageBus->dispatch($datasetSubmissionFilerMessage);
+        }
+
+        $io->section('Draft Submissions');
+
+        foreach ($listOfDrafts as $draft) {
+            $io->note(sprintf('File %s for UDI: %s.', $draft['fileUri'], $draft['udi']));
         }
 
         $io->success('Done!');
