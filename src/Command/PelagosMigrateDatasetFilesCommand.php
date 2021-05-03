@@ -111,7 +111,7 @@ class PelagosMigrateDatasetFilesCommand extends Command
             if ($lastDatasetSubmission instanceof DatasetSubmission) {
                 $subState = $lastDatasetSubmission->getStatus();
                 $fileUri = $lastDatasetSubmission->getDatasetFileUri();
-                if ($subState === 1 and !empty($fileUri)) {
+                if ($subState === DatasetSubmission::STATUS_UNSUBMITTED and !empty($fileUri)) {
                     $listOfDrafts[] = array('udi' => $udi, 'fileUri' => $fileUri);
                 }
             }
