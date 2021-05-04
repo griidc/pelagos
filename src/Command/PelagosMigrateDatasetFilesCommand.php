@@ -99,6 +99,8 @@ class PelagosMigrateDatasetFilesCommand extends Command
         $progressBar = new ProgressBar($output, count($datasets));
         $progressBar->start();
 
+        $listOfDrafts = array();
+
         foreach ($datasets as $dataset) {
             $udi = $dataset->getUdi();
 
@@ -111,22 +113,15 @@ class PelagosMigrateDatasetFilesCommand extends Command
             if ($lastDatasetSubmission instanceof DatasetSubmission) {
                 $subState = $lastDatasetSubmission->getStatus();
                 $fileUri = $lastDatasetSubmission->getDatasetFileUri();
-                if ($subState === DatasetSubmission::STATUS_UNSUBMITTED and !empty($fileUri)) {
+                if ($subState === DatasetSubmission::STATUS_INCOMPLETE and !empty($fileUri)) {
                     $listOfDrafts[] = array('udi' => $udi, 'fileUri' => $fileUri);
                 }
             }
 
-
-
-            if ($status === Dataset::DATASET_STATUS_IN_REVIEW) {
-                $datasetSubmission = $dataset->getLatestDatasetReview();
-                $this->setFile($dataStore, $queueFiler, $ignoreFileExistCheck, $datasetSubmission);
-                $datasetSubmission = $dataset->getDatasetSubmission();
-                $this->setFile($dataStore, $queueFiler, $ignoreFileExistCheck, $datasetSubmission);
-            } else {
-                $datasetSubmission = $dataset->getDatasetSubmission();
-                $this->setFile($dataStore, $queueFiler, $ignoreFileExistCheck, $datasetSubmission);
-            }
+            $datasetSubmission = $dataset->getLatestDatasetReview();
+            $this->setFile($dataStore, $queueFiler, $ignoreFileExistCheck, $datasetSubmission);
+            $datasetSubmission = $dataset->getDatasetSubmission();
+            $this->setFile($dataStore, $queueFiler, $ignoreFileExistCheck, $datasetSubmission);
 
             $this->entityManager->persist($dataset);
             $progressBar->advance();
@@ -179,7 +174,7 @@ class PelagosMigrateDatasetFilesCommand extends Command
 
             $fileName = "$dataStore/$udi/$udi.dat";
 
-            if (!file_exists($fileName) or $ignoreFileExistCheck) {
+            if (!file_exists($fileName) or !$ignoreFileExistCheck) {
                 return;
             }
 
