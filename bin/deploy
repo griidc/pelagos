@@ -18,8 +18,8 @@ NAS)
     ;;
 esac
 
-# Stop RabbitMQ consumers
-bin/console rabbitmq-supervisor:control stop --wait-for-supervisord
+# Stop MessageMQ
+bin/console messenger:stop-workers
 
 # Run composer install to make sure all non-dev dependencies are installed and parameters are defined
 composer install --no-dev --optimize-autoloader
@@ -34,9 +34,14 @@ composer dump-env prod
 # Warn of any pending migrations, but don't apply them.
 bin/console doctrine:migrations:status
 
-# Rebuild Supervisor config for RabbitMQ consumers and start them
-bin/console rabbitmq-supervisor:rebuild --wait-for-supervisord
+# cp supervisor configs into var
+mkdir -p var/supervisor/worker
+cp config/supervisor/supervisord.conf var/supervisor
+cp config/supervisor/messenger-worker.ini var/supervisor/worker
 
 # Rebuild elasticsearch indexes
 bin/console fos:elastica:reset
 bin/console fos:elastica:populate
+
+#
+echo "Remember to start consumers with: sudo systemctl start pelagos-messengemq"

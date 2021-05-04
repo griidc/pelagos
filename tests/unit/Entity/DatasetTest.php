@@ -5,6 +5,7 @@ namespace App\Tests\Entity;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DIF;
+use App\Entity\Fileset;
 use App\Entity\Person;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use PHPUnit\Framework\TestCase;
@@ -112,6 +113,13 @@ class DatasetTest extends TestCase
                     )
                 ),
                 'getSpatialExtent' => $this->auxMockSpatialExtensionDatasetSubmission,
+                'isRemotelyHosted' => false,
+                'getFileset' => \Mockery::mock(
+                    Fileset::class,
+                    array(
+                        'isDone' => true
+                    )
+                ),
             )
         );
 
@@ -141,6 +149,12 @@ class DatasetTest extends TestCase
                     )
                 ),
                 'getSpatialExtent' => 'gibberish',
+                'getFileset' => \Mockery::mock(
+                    Fileset::class,
+                    array(
+                        'isDone' => true
+                    )
+                ),
             )
         );
 
@@ -153,6 +167,13 @@ class DatasetTest extends TestCase
                 'getDatasetFileTransferStatus' => null,
                 'getRestrictions' => null,
                 'getDatasetContacts' => new ArrayCollection(),
+                'isRemotelyHosted' => false,
+                'getFileset' => \Mockery::mock(
+                    Fileset::class,
+                    array(
+                        'isDone' => true
+                    )
+                )
             )
         );
 

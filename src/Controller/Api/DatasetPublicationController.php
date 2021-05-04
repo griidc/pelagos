@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api;
 
+use App\Message\DoiMessage;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -11,6 +12,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\Query;
 
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 use FOS\RestBundle\Controller\Annotations\View;
@@ -24,7 +26,6 @@ use Swagger\Annotations as SWG;
 use App\Entity\Dataset;
 use App\Entity\DatasetPublication;
 use App\Entity\Publication;
-use App\Util\RabbitPublisher;
 
 /**
  * The Publication api controller.
@@ -146,10 +147,10 @@ class DatasetPublicationController extends EntityController
     /**
      * Link a Publication to a Dataset by their respective IDs.
      *
-     * @param integer         $id              Publication ID.
-     * @param Request         $request         A Request object.
-     * @param ObjectPersister $objectPersister The object persister.
-     * @param RabbitPublisher $publisher       Rabbitmq utility class instance.
+     * @param integer             $id              Publication ID.
+     * @param Request             $request         A Request object.
+     * @param ObjectPersister     $objectPersister The object persister.
+     * @param MessageBusInterface $messageBus      Symfony messenger bus interface.
      *
      * @return Response A HTTP Response object.
      * @throws UniqueConstraintViolationException If entity handler re-throws a this exception that is not uniq_dataset_publication.
@@ -194,7 +195,7 @@ class DatasetPublicationController extends EntityController
      *     )
      *
      */
-    public function linkAction(int $id, Request $request, ObjectPersister $objectPersister, RabbitPublisher $publisher)
+    public function linkAction(int $id, Request $request, ObjectPersister $objectPersister, MessageBusInterface $messageBus)
     {
         $datasetId = $request->query->get('dataset');
 
@@ -223,7 +224,8 @@ class DatasetPublicationController extends EntityController
             // When a dataset to publication link is made the related dataset is reindex by Elastica.
             // This is done because of the way their relationship works, and change is not detected.
             $objectPersister->insertOne($dataPub->getDataset());
-            $publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'doi');
+            $doiMessage = new DoiMessage($dataset->getId(), DoiMessage::ISSUE_OR_UPDATE);
+            $messageBus->dispatch($doiMessage);
         } catch (UniqueConstraintViolationException $e) {
             if (preg_match('/uniq_dataset_publication/', $e->getMessage())) {
                 throw new BadRequestHttpException('Link already exists.');
@@ -238,8 +240,8 @@ class DatasetPublicationController extends EntityController
     /**
      * Delete a Publication to Dataset Association.
      *
-     * @param integer         $id        The id of the Publication to Dataset Association to delete.
-     * @param RabbitPublisher $publisher Rabbitmq utility class instance.
+     * @param integer             $id         The id of the Publication to Dataset Association to delete.
+     * @param MessageBusInterface $messageBus Symfony messenger bus interface.
      *
      * @return Response A response object with an empty body and a "no content" status code.
      * @Operation(
@@ -268,12 +270,12 @@ class DatasetPublicationController extends EntityController
      *     )
      *
      */
-    public function deleteAction(int $id, RabbitPublisher $publisher)
+    public function deleteAction(int $id, MessageBusInterface $messageBus)
     {
         $datasetPublication = $this->handleDelete(DatasetPublication::class, $id);
         $dataset = $datasetPublication->getDataset();
-        $publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'doi');
-
+        $doiMessage = new DoiMessage($dataset->getId(), DoiMessage::ISSUE_OR_UPDATE);
+        $messageBus->dispatch($doiMessage);
         return $this->makeNoContentResponse();
     }
 }
