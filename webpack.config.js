@@ -41,6 +41,7 @@ Encore
     .addEntry('grp-home', './assets/js/grp-home.js')
     .addEntry('stats', './assets/js/stats.js')
 
+    .addEntry('file-manager', './assets/js/file-manager.js')
     // enables Sass/SCSS support
     .enableSassLoader()
     .enablePostCssLoader()

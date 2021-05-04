@@ -15,6 +15,8 @@ $(document).ready(function() {
             "datasetSubmission",
             "datasetSubmission.creator",
             "datasetSubmission.modifier",
+            "datasetSubmission.fileset",
+            "datasetSubmission.fileset.files",
             "datasetSubmissionHistory",
             "datasetSubmissionHistory.creator",
             "datasetSubmissionHistory.modifier",

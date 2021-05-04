@@ -16,6 +16,7 @@ use App\Entity\DistributionPoint;
 use App\Entity\Entity;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * A form type for creating a Dataset Submission form.
@@ -69,36 +70,8 @@ class DatasetSubmissionType extends AbstractType
                 'expanded' => true,
                 'multiple' => false,
             ))
-            ->add('datasetFileUri', Type\HiddenType::class, array(
-                'required' => true,
-                'attr' => array(
-                    'data-msg-required' => 'You must provide a dataset file using one of the methods below.'
-                ),
-            ))
             ->add('datasetFileTransferType', Type\HiddenType::class, array(
                 'required' => false,
-            ))
-            ->add('datasetFilePath', Type\TextType::class, array(
-                'label' => 'Dataset File Path',
-                'required' => false,
-                'mapped' => false,
-                'attr' => array('disabled' => 'disabled'),
-            ))
-            ->add('datasetFileForceImport', Type\CheckboxType::class, array(
-                'label' => 'import this file again from the same path',
-                'required' => false,
-                'mapped' => false,
-            ))
-            ->add('datasetFileUrl', Type\TextType::class, array(
-                'label' => 'Dataset File URL',
-                'required' => false,
-                'mapped' => false,
-                'attr' => array('data-rule-url' => true),
-            ))
-            ->add('datasetFileForceDownload', Type\CheckboxType::class, array(
-                'label' => 'download this file again from the same URL',
-                'required' => false,
-                'mapped' => false,
             ))
             ->add('shortTitle', Type\TextType::class, array(
                 'label' => 'Short Title',
@@ -183,7 +156,6 @@ class DatasetSubmissionType extends AbstractType
             ))
             ->add('temporalExtentBeginPosition', Type\DateType::class, array(
                 'label' => 'Start Date',
-                'required' => true,
                 'attr' => array('placeholder' => 'yyyy-mm-dd'),
                 'widget' => 'single_text',
                 'html5' => false,
@@ -194,7 +166,6 @@ class DatasetSubmissionType extends AbstractType
             ))
             ->add('temporalExtentEndPosition', Type\DateType::class, array(
                 'label' => 'End Date',
-                'required' => true,
                 'attr' => array('placeholder' => 'yyyy-mm-dd'),
                 'widget' => 'single_text',
                 'html5' => false,
@@ -259,6 +230,10 @@ class DatasetSubmissionType extends AbstractType
                 'delete_empty' => true,
                 'required' => true,
             ))
+            ->add('remotelyHostedUrl', Type\TextType::class, array(
+                'label' => 'Remotely Hosted URL',
+                'required' => false
+            ))
             ->add('isRemotelyHosted', Type\CheckboxType::class, array(
                 'label' => 'Is Remotely Hosted',
                 'mapped' => false,
@@ -298,6 +273,15 @@ class DatasetSubmissionType extends AbstractType
                 'mapped' => false,
                 'required' => false,
             ))
+            ->add('filesTabValidator', Type\HiddenType::class, array(
+                'mapped' => false,
+                'required' => true,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Please upload a file or add remotely hosted url'
+                    ])
+                ]
+            ))
             ->add('submitButton', Type\SubmitType::class, array(
                 'label' => 'Submit',
                 'attr'  => array('class' => 'submitButton'),
@@ -331,7 +315,7 @@ class DatasetSubmissionType extends AbstractType
                         $data->getDatasetFileColdStorageOriginalFilename()
                     );
                 }
-                if ($data->getDatasetFileTransferStatus() === DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED) {
+                if ($data->isRemotelyHosted()) {
                     $form->get('isRemotelyHosted')->setData(true);
                 }
             }
@@ -348,15 +332,6 @@ class DatasetSubmissionType extends AbstractType
                     $entity->setDatasetFileColdStorageAttributes($size, $hash, $name);
                 } else {
                     $entity->clearDatasetFileColdStorageAttributes();
-                }
-
-                // If all remotely hosted required fields are set, set to remotely hosted.
-                $remotelyHostedName = $event->getForm()->get('remotelyHostedName')->getData();
-                $remotelyHostedDescription = $event->getForm()->get('remotelyHostedDescription')->getData();
-                $remotelyHostedFunction = $event->getForm()->get('remotelyHostedFunction')->getData();
-                $entity = $event->getForm()->getData();
-                if (null !== $remotelyHostedName and null !== $remotelyHostedDescription and null !== $remotelyHostedFunction) {
-                    $entity->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED);
                 }
             }
         );

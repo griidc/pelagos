@@ -3,6 +3,8 @@
 namespace App\Tests\Util;
 
 use App\Entity\Dataset;
+use App\Entity\File;
+use App\Entity\Fileset;
 use PHPUnit\Framework\TestCase;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -112,6 +114,20 @@ class ISOMetadataExtractorUtilTest extends TestCase
     protected $testingDatetime;
 
     /**
+     * Mock object for File entity instance.
+     *
+     * @var File
+     */
+    protected $mockFile;
+
+    /**
+     * Mock object for Fileset entity instance.
+     *
+     * @var Fileset
+     */
+    protected $mockFileset;
+
+    /**
      * The directory that contains the test data.
      *
      * @var string
@@ -150,6 +166,40 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getRole' => array_keys(PersonDatasetSubmission::ROLES)[0],
                 'getPerson' => $this->mockPerson,
                 'getId' => 8675309,
+            )
+        );
+
+        $this->mockFile = \Mockery::mock(
+            File::class,
+            array(
+                'setFileset' => \Mockery::mock(Fileset::class),
+                'setFilePathName' => 'foobar.baz',
+                'getFilePathName' => 'foobar.baz',
+                'setFileSize' => 1234,
+                'getFileSize' => 1234,
+                'setFileSha256Hash' => 'cafe',
+                'getFileSha256Hash' => 'cafe',
+                'getUploadedAt' => null,
+                'setUploadedAt' => null,
+                'getUploadedBy' => $this->mockPerson,
+                'setUploadedBy' => null,
+                'getDescription' => 'blah',
+                'setDescription' => 'blah',
+                'getPhysicalFilePath' => 'path/to/file',
+                'setPhysicalFilePath' => null,
+                'getStatus' => File::FILE_DONE,
+                'setStatus' => FILE::FILE_DONE
+            )
+        );
+
+        $this->mockFileset = \Mockery::mock(
+            Fileset::class,
+            array(
+                'getAllFiles' => new ArrayCollection(array($this->mockFile)),
+                'getZipFilePath' => '/path/to/zip',
+                'getZipFileSha256Hash' => 'cfsdaf',
+                'getZipFileSize' => '32432324',
+                'doesZipFileExist' => true
             )
         );
 
@@ -224,6 +274,9 @@ class ISOMetadataExtractorUtilTest extends TestCase
                                 'getRemotelyHostedDescription' => 'remote description',
                                 'getRemotelyHostedFunction' => 'download',
                                 'getDatasetLinks' => new ArrayCollection(),
+                                'getFileset' => $this->mockFileset,
+                                'getRemotelyHostedUrl' => '/path/to',
+                                'isRemotelyHosted' => false
                             )
                         ),
                     )
@@ -302,10 +355,11 @@ class ISOMetadataExtractorUtilTest extends TestCase
                 'getRemotelyHostedFunction' => 'download',
                 'getDatasetFileUrlLastCheckedDate' => new \DateTime('now', new \DateTimeZone('UTC')),
                 'getDatasetFileUrlStatusCode' => '200',
-                'getDatasetFileColdStorageArchiveSha256Hash' => 'abc123',
-                'getDatasetFileColdStorageArchiveSize' => '100',
                 'getDatasetFileColdStorageOriginalFilename' => 'filename.txt',
                 'getDatasetLinks' => new ArrayCollection(),
+                'getFileset' => $this->mockFileset,
+                'getRemotelyHostedUrl' => '/path/to',
+                'isRemotelyHosted' => false
             )
         );
 

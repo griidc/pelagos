@@ -1,4 +1,13 @@
 {
+    "behat/transliterator": {
+        "version": "v1.3.0"
+    },
+    "brick/math": {
+        "version": "0.9.1"
+    },
+    "clue/socket-raw": {
+        "version": "v1.4.1"
+    },
     "clue/stream-filter": {
         "version": "v1.4.1"
     },
@@ -28,6 +37,9 @@
     },
     "doctrine/dbal": {
         "version": "v2.10.1"
+    },
+    "doctrine/deprecations": {
+        "version": "v0.5.3"
     },
     "doctrine/doctrine-bundle": {
         "version": "1.12",
@@ -132,6 +144,9 @@
             "config/packages/fos_rest.yaml"
         ]
     },
+    "gedmo/doctrine-extensions": {
+        "version": "v2.4.42"
+    },
     "guzzlehttp/guzzle": {
         "version": "6.5.2"
     },
@@ -182,11 +197,26 @@
     "jsor/doctrine-postgis": {
         "version": "v1.7.0"
     },
+    "league/flysystem": {
+        "version": "1.1.3"
+    },
+    "league/mime-type-detection": {
+        "version": "1.4.0"
+    },
+    "maennchen/zipstream-php": {
+        "version": "2.1.0"
+    },
+    "mikey179/vfsstream": {
+        "version": "v1.6.8"
+    },
     "mockery/mockery": {
         "version": "1.3.1"
     },
     "monolog/monolog": {
         "version": "1.25.3"
+    },
+    "myclabs/php-enum": {
+        "version": "1.7.6"
     },
     "nelmio/api-doc-bundle": {
         "version": "3.0",
@@ -204,8 +234,23 @@
     "nikic/php-parser": {
         "version": "v4.3.0"
     },
+    "ocramius/package-versions": {
+        "version": "1.5.1"
+    },
     "ocramius/proxy-manager": {
         "version": "2.2.3"
+    },
+    "oneup/flysystem-bundle": {
+        "version": "3.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "3.0",
+            "ref": "0eb87bba411c227da027fe5f7c1dc7954b02f242"
+        },
+        "files": [
+            "config/packages/oneup_flysystem.yaml"
+        ]
     },
     "opensoft/doctrine-postgres-types": {
         "version": "1.3.1"
@@ -216,27 +261,8 @@
     "phayes/geophp": {
         "version": "1.2"
     },
-    "phobetor/rabbitmq-supervisor-bundle": {
-        "version": "3.2.1"
-    },
     "php": {
         "version": "7.3.0"
-    },
-    "php-amqplib/php-amqplib": {
-        "version": "v2.11.0"
-    },
-    "php-amqplib/rabbitmq-bundle": {
-        "version": "1.12",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "master",
-            "version": "1.12",
-            "ref": "ce3ca2e4577270c4f518539aa6b9e878998fcfef"
-        },
-        "files": [
-            "config/packages/old_sound_rabbit_mq.yaml",
-            "src/Consumer/.gitignore"
-        ]
     },
     "php-http/client-common": {
         "version": "1.10.0"
@@ -286,8 +312,8 @@
     "phpdocumentor/type-resolver": {
         "version": "1.0.1"
     },
-    "phpseclib/phpseclib": {
-        "version": "2.0.23"
+    "phpstan/phpdoc-parser": {
+        "version": "0.4.10"
     },
     "psr/cache": {
         "version": "1.0.1"
@@ -309,6 +335,12 @@
     },
     "ralouphie/getallheaders": {
         "version": "3.0.3"
+    },
+    "ramsey/collection": {
+        "version": "1.1.1"
+    },
+    "ramsey/uuid": {
+        "version": "4.1.1"
     },
     "react/promise": {
         "version": "v2.7.1"
@@ -470,7 +502,7 @@
         "version": "v4.4.4"
     },
     "symfony/inflector": {
-        "version": "v4.4.4"
+        "version": "v4.4.16"
     },
     "symfony/intl": {
         "version": "v4.4.4"
@@ -486,6 +518,18 @@
             "version": "1.0",
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
+    },
+    "symfony/messenger": {
+        "version": "4.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "4.3",
+            "ref": "8a2675c061737658bed85102e9241c752620e575"
+        },
+        "files": [
+            "config/packages/messenger.yaml"
+        ]
     },
     "symfony/mime": {
         "version": "v4.4.4"
@@ -532,6 +576,9 @@
     "symfony/polyfill-intl-idn": {
         "version": "v1.13.1"
     },
+    "symfony/polyfill-intl-normalizer": {
+        "version": "v1.18.1"
+    },
     "symfony/polyfill-mbstring": {
         "version": "v1.13.1"
     },
@@ -540,6 +587,9 @@
     },
     "symfony/polyfill-php73": {
         "version": "v1.13.1"
+    },
+    "symfony/polyfill-php80": {
+        "version": "v1.18.1"
     },
     "symfony/process": {
         "version": "v4.4.4"
@@ -739,6 +789,9 @@
     },
     "willdurand/negotiation": {
         "version": "v2.3.1"
+    },
+    "xenolope/quahog": {
+        "version": "v2.1.0"
     },
     "zendframework/zend-code": {
         "version": "3.4.1"

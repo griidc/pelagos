@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Message\DoiMessage;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Component\Console\Command\Command;
@@ -12,14 +13,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 use App\Entity\Dataset;
 use App\Entity\DIF;
 
-use App\Util\RabbitPublisher;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * This command publishes a rabbit message for every accepted dataset forcing update of DOI info.
  *
  * @see Command
  */
-class RabbitUpdateAllAcceptedDatasetDOICommand extends Command
+class UpdateAllAcceptedDatasetDOICommand extends Command
 {
     /**
      * The Command name.
@@ -43,22 +44,22 @@ class RabbitUpdateAllAcceptedDatasetDOICommand extends Command
     protected $entityManager;
 
     /**
-     * Utility class for Rabbitmq producer instance.
+     * Symfony messenger bus interface.
      *
-     * @var RabbitPublisher $publisher
+     * @var MessageBusInterface $messageBus
      */
-    protected $publisher;
+    protected $messageBus;
 
     /**
      * Class constructor for dependency injection.
      *
      * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
-     * @param RabbitPublisher        $publisher     A custom utility class for Rabbitmq producer instance.
+     * @param MessageBusInterface    $messageBus    Symfony messenger bus interface.
      */
-    public function __construct(EntityManagerInterface $entityManager, RabbitPublisher $publisher)
+    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus)
     {
         $this->entityManager = $entityManager;
-        $this->publisher = $publisher;
+        $this->messageBus = $messageBus;
         parent::__construct();
     }
 
@@ -86,7 +87,8 @@ class RabbitUpdateAllAcceptedDatasetDOICommand extends Command
             'identifiedStatus' => DIF::STATUS_APPROVED));
 
         foreach ($datasets as $dataset) {
-            $this->publisher->publish($dataset->getId(), RabbitPublisher::DOI_PRODUCER, 'doi');
+            $doiMessage = new DoiMessage($dataset->getId(), DoiMessage::ISSUE_OR_UPDATE);
+            $this->messageBus->dispatch($doiMessage);
             echo 'Requesting DOI update for dataset ' . $dataset->getId() . ' (' . $dataset->getUdi() . ")\n";
         }
     }

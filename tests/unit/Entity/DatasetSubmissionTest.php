@@ -9,8 +9,11 @@ use App\Entity\DatasetSubmission;
 use App\Entity\DatasetSubmissionReview;
 use App\Entity\DIF;
 use App\Entity\DistributionPoint;
+use App\Entity\File;
+use App\Entity\Fileset;
 use App\Entity\Person;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
+use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 
 use Doctrine\Common\Collections\Collection;
@@ -64,6 +67,20 @@ class DatasetSubmissionTest extends TestCase
     protected $mockDatasetSubmissionReview;
 
     /**
+     * Mock object for Fileset entity instance.
+     *
+     * @var Fileset
+     */
+    protected $mockFileset;
+
+    /**
+     * Mock object for File entity instance.
+     *
+     * @var File
+     */
+    protected $mockFile;
+
+    /**
      * Setup for PHPUnit tests.
      *
      * This instantiates an instance of DatasetSubmission and sets its properties.
@@ -115,7 +132,32 @@ class DatasetSubmissionTest extends TestCase
                 'setPrimaryContact' => null
             )
         );
+        $this->mockFile = \Mockery::mock(
+            File::class,
+            array(
+                'setFileset' => \Mockery::mock(Fileset::class),
+                'setFilePathName' => 'foobar.baz',
+                'getFilePathName' => 'foobar.baz',
+                'setFileSize' => 1234,
+                'getFileSize' => 1234,
+                'setFileSha256Hash' => 'cafe',
+                'getFileSha256Hash' => 'cafe'
+            )
+        );
 
+        $this->mockFileset = \Mockery::mock(
+            Fileset::class,
+            array(
+                'getAllFiles' => new ArrayCollection(array($this->mockFile)),
+                'getFileSize' => 1234,
+                'getZipFilePath' => '/path/to/zip',
+                'getZipFileSha256Hash' => 'cfsdaf',
+                'getZipFileSize' => 32432324,
+                'doesZipFileExist' => true,
+                'getProcessedAndNewFiles' => new ArrayCollection,
+                'setZipFileSize' => 0
+            )
+        );
         $this->datasetSubmission = new DatasetSubmission(
             $this->mockDif,
             $this->mockPersonDatasetSubmissionDatasetContact
@@ -125,6 +167,8 @@ class DatasetSubmissionTest extends TestCase
             $this->mockDif,
             $this->mockPersonDatasetSubmissionDatasetContact
         );
+
+        $this->datasetSubmission->setFileset($this->mockFileset);
     }
 
     /**
@@ -296,21 +340,6 @@ class DatasetSubmissionTest extends TestCase
         $this->assertEquals(
             DatasetSubmission::TRANSFER_STATUS_COMPLETED,
             $this->datasetSubmission->getDatasetFileTransferStatus()
-        );
-        $this->datasetSubmission->setDatasetFileName('foobar.baz');
-        $this->assertEquals(
-            'foobar.baz',
-            $this->datasetSubmission->getDatasetFileName()
-        );
-        $this->datasetSubmission->setDatasetFileSize(1234);
-        $this->assertEquals(
-            1234,
-            $this->datasetSubmission->getDatasetFileSize()
-        );
-        $this->datasetSubmission->setDatasetFileSha256Hash('cafe');
-        $this->assertEquals(
-            'cafe',
-            $this->datasetSubmission->getDatasetFileSha256hash()
         );
     }
 
@@ -909,5 +938,31 @@ class DatasetSubmissionTest extends TestCase
             0,
             $this->datasetSubmission->getDatasetLinks()->count()
         );
+    }
+
+    /**
+     * Test the setter and getter for remotely hosted url.
+     *
+     * @return void
+     */
+    public function testCanSetAndGetRemotelyHostedUrl()
+    {
+        $remotelyHostedUrl = 'https://path/to/dataset';
+
+        $this->datasetSubmission->setRemotelyHostedUrl($remotelyHostedUrl);
+
+        $this->assertEquals($remotelyHostedUrl, $this->datasetSubmission->getRemotelyHostedUrl());
+    }
+
+     /**
+     * Test the setter and getter for remotely hosted url.
+     *
+     * @return void
+     */
+    public function testGetDatasetFileSize()
+    {
+        $fileSize = $this->datasetSubmission->getDatasetFileSize();
+
+        $this->assertEquals($fileSize, $this->datasetSubmission->getFileset()->getZipFileSize());
     }
 }

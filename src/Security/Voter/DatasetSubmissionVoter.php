@@ -7,6 +7,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Entity\Account;
 use App\Entity\DatasetSubmission;
 use App\Entity\DistributionPoint;
+use App\Entity\File;
 use App\Entity\PersonDatasetSubmission;
 
 /**
@@ -28,7 +29,7 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
     {
         // Abstain if the subject is not an instance of DatasetSubmission.
         if (!$subject instanceof DatasetSubmission and !$subject instanceof PersonDatasetSubmission
-            and !$subject instanceof DistributionPoint) {
+            and !$subject instanceof DistributionPoint and !$subject instanceof File) {
             return false;
         }
 
@@ -81,6 +82,9 @@ class DatasetSubmissionVoter extends PelagosEntityVoter
         } elseif ($subject instanceof PersonDatasetSubmission) {
             $submissionResearchGroup = $subject->getDatasetSubmission()->getDataset()->getResearchGroup();
             $submissionStatus = $subject->getDatasetSubmission()->getStatus();
+        } elseif ($subject instanceof File) {
+            $submissionResearchGroup = $subject->getFileset()->getDatasetSubmission()->getDataset()->getResearchGroup();
+            $submissionStatus = $subject->getFileset()->getDatasetSubmission()->getStatus();
         } else {
             return false;
         }

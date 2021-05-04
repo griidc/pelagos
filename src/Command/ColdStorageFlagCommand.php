@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Message\DatasetSubmissionFiler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -12,7 +13,7 @@ use App\Entity\DatasetSubmission;
 use App\Entity\Dataset;
 use App\Entity\Person;
 
-use App\Util\RabbitPublisher;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * This command marks a dataset as cold-stored.
@@ -38,22 +39,22 @@ class ColdStorageFlagCommand extends Command
     protected $entityManager;
 
     /**
-     * Utility Rabbitmq producer instance.
+     * Symfony messenger bus interface.
      *
-     * @var RabbitPublisher $publisher
+     * @var MessageBusInterface $messageBus
      */
-    protected $publisher;
+    protected $messageBus;
 
     /**
      * Class constructor for dependency injection.
      *
      * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
-     * @param RabbitPublisher        $publisher     A Rabbitmq producer instance.
+     * @param MessageBusInterface    $messageBus    Symfony messenger bus interface.
      */
-    public function __construct(EntityManagerInterface $entityManager, RabbitPublisher $publisher)
+    public function __construct(EntityManagerInterface $entityManager, MessageBusInterface $messageBus)
     {
         $this->entityManager = $entityManager;
-        $this->publisher = $publisher;
+        $this->messageBus = $messageBus;
         parent::__construct();
     }
 
@@ -130,7 +131,6 @@ class ColdStorageFlagCommand extends Command
                     // Set options for a new replacement datafile of the supplied Cold-Storage stubfile.
                     $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
                     $datasetSubmission->setDatasetFileName(null);
-                    $datasetSubmission->setDatasetFileSize(null);
                     $datasetSubmission->setDatasetFileSha256Hash(null);
                     $datasetSubmission->setDatasetFileTransferType(DatasetSubmission::TRANSFER_TYPE_SFTP);
                     $datasetSubmission->setDatasetFileUri($stubFileName);
@@ -140,11 +140,8 @@ class ColdStorageFlagCommand extends Command
 
                     //Use rabbitmq to process dataset file and persist the file details. This will
                     //Trigger filer and hasher (via filer) to complete the process.
-                    $this->publisher->publish(
-                        $dataset->getDatasetSubmission()->getId(),
-                        RabbitPublisher::DATASET_SUBMISSION_PRODUCER,
-                        'dataset.' . DatasetSubmission::TRANSFER_TYPE_SFTP
-                    );
+                    $datasetSubmissionFilerMessage = new DatasetSubmissionFiler($datasetSubmission->getId());
+                    $this->messageBus->dispatch($datasetSubmissionFilerMessage);
                 }
             } else {
                 throw new \Exception("Could not open $stubFileName, expected to be at same location as $infoFileName.");

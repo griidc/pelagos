@@ -6,7 +6,6 @@ use App\Handler\EntityHandler;
 use App\Event\LogActionItemEventDispatcher;
 use App\Exception\PersistenceException;
 
-use App\Util\RabbitPublisher;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -37,27 +36,17 @@ class DatasetRestrictionsController extends AbstractController
     protected $entityManager;
 
     /**
-     * Custom rabbitmq publisher.
-     *
-     * @var RabbitPublisher
-     */
-    protected $publisher;
-
-    /**
      * Class constructor for Dependency Injections.
      *
      * @param LogActionItemEventDispatcher $logActionItemEventDispatcher A Pelagos action dispatcher.
      * @param EntityManagerInterface       $entityManager                A Doctrine ORM entity manager.
-     * @param RabbitPublisher              $publisher                    Custom rabbitmq publisher.
      */
     public function __construct(
         LogActionItemEventDispatcher $logActionItemEventDispatcher,
-        EntityManagerInterface $entityManager,
-        RabbitPublisher $publisher
+        EntityManagerInterface $entityManager
     ) {
         $this->logActionItemEventDispatcher = $logActionItemEventDispatcher;
         $this->entityManager = $entityManager;
-        $this->publisher = $publisher;
     }
 
     /**

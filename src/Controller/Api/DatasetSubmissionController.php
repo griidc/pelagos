@@ -2,21 +2,29 @@
 
 namespace App\Controller\Api;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Form\FormInterface;
+use App\Util\FileUploader;
+use App\Util\FolderStructureGenerator;
 
-use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\ORM\EntityManagerInterface;
 
 use FOS\RestBundle\Controller\Annotations\View;
 
 use Nelmio\ApiDocBundle\Annotation\Operation;
 use Nelmio\ApiDocBundle\Annotation\Model;
+
 use Swagger\Annotations as SWG;
 
-use App\Util\UrlValidation;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Annotation\Route;
+
+use App\Entity\File;
 use App\Entity\DatasetSubmission;
+use App\Entity\Fileset;
+
+use App\Util\UrlValidation;
+
 use App\Form\DatasetSubmissionType;
 
 /**
@@ -304,52 +312,70 @@ class DatasetSubmissionController extends EntityController
     /**
      * Return a list of files uploaded for a dataset submission.
      *
-     * @param integer $id The id of the dataset submission.
+     * @param integer                   $id                       The id of the dataset submission.
+     * @param Request                   $request                  The request object.
+     * @param FolderStructureGenerator  $folderStructureGenerator Folder structure generator Util class.
      *
      * @Route(
-     *     "/api/dataset_submission/uploaded-files/{id}",
-     *     name="pelagos_api_dataset_submission_get_uploaded_files",
+     *     "/api/files_dataset_submission/{id}",
+     *     name="pelagos_api_get_files_dataset_submission",
      *     methods={"GET"},
-     *     defaults={"_format"="json"}
+     *     defaults={"_format"="json"},
+     *     requirements={"id"="\d+"}
      *     )
      *
      * @View()
      *
-     * @return array The list of uploaded files.
+     * @return Response The list of uploaded files.
      */
-    public function getUploadedFilesAction(int $id)
+    public function getFiles(int $id, Request $request, FolderStructureGenerator $folderStructureGenerator): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $fileData = array();
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
-        // If the dataset transfer type is not upload.
-        if ($datasetSubmission->getDatasetFileTransferType() !== DatasetSubmission::TRANSFER_TYPE_UPLOAD) {
-            // Return empty file list.
-            return array();
+        $pathInfo = ($request->get('path')) ? $request->get('path') : '';
+        if ($datasetSubmission->getFileset() instanceof Fileset) {
+            $fileData = $folderStructureGenerator->getFolderJson($datasetSubmission->getFileset()->getId(), $pathInfo);
         }
-        $datasetFileUri = $datasetSubmission->getDatasetFileUri();
-        // If the datasetFileUri is not set.
-        if (empty($datasetFileUri)) {
-            // Return empty file list.
-            return array();
+        return $this->makeJsonResponse($fileData);
+    }
+
+    /**
+     * Returns a single file with a path.
+     *
+     * @param DatasetSubmission $datasetSubmission The id of the dataset submission.
+     * @param Request           $request           The request object.
+     *
+     * @Route(
+     *     "/api/file_dataset_submission/{id}",
+     *     name="pelagos_api_get_file_dataset_submission",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"},
+     *     requirements={"id"="\d+"}
+     *     )
+     *
+     * @View()
+     *
+     * @return Response
+     */
+    public function getFile(DatasetSubmission $datasetSubmission, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $fileset = $datasetSubmission->getFileset();
+        $path = $request->get('path');
+        if (!$path) {
+            throw new BadRequestHttpException('Please provide a file path');
         }
-        // Initialize file info.
-        $fileInfo = array(
-            'name' => basename($datasetFileUri),
-            'size' => -1,
-            'uuid' => '00000000-0000-0000-0000-000000000000',
-        );
-        // Try to get file info from the file.
-        try {
-            $file = new \SplFileInfo($datasetFileUri);
-            $fileInfo['name'] = $file->getFilename();
-            $fileInfo['size'] = $file->getSize();
-        } catch (\Exception $e) {
-            // Just use defaults if we're unable to get file info (e.g. file has been deleted from disk).
+        if ($fileset instanceof Fileset) {
+            $existingFile = $fileset->getExistingFile($path);
+            if ($existingFile instanceof File) {
+                return $this->makeJsonResponse(['id' => $existingFile->getId()]);
+            } else {
+                throw new BadRequestHttpException('No such file found');
+            }
+        } else {
+            throw new BadRequestHttpException('No files exist in this Dataset');
         }
-        // Match the UUID out of the datsetFileUri.
-        if (preg_match('!/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/!', $datasetFileUri, $matches)) {
-            $uuid = $matches[1];
-        }
-        return array($fileInfo);
     }
 
     /**
