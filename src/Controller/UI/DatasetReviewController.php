@@ -2,6 +2,7 @@
 
 namespace App\Controller\UI;
 
+use App\Entity\File;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 use App\Form\DatasetSubmissionType;
@@ -25,10 +27,11 @@ use App\Entity\DatasetLink;
 use App\Entity\DatasetSubmission;
 use App\Entity\DatasetSubmissionReview;
 use App\Entity\Entity;
+use App\Entity\Fileset;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
 
-use App\Util\RabbitPublisher;
+use App\Message\DatasetSubmissionFiler;
 
 /**
  * The Dataset Review controller for the Pelagos UI App Bundle.
@@ -64,24 +67,15 @@ class DatasetReviewController extends AbstractController
     protected $entityEventDispatcher;
 
     /**
-     * Custom rabbitmq publisher.
-     *
-     * @var RabbitPublisher
-     */
-    protected $publisher;
-
-    /**
      * Constructor for this Controller, to set up default services.
      *
      * @param EntityHandler         $entityHandler         The entity handler.
      * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
-     * @param RabbitPublisher       $publisher             Utility class for rabbitmq publisher.
      */
-    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher, RabbitPublisher $publisher)
+    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher)
     {
         $this->entityHandler = $entityHandler;
         $this->entityEventDispatcher = $entityEventDispatcher;
-        $this->publisher = $publisher;
     }
 
     /**
@@ -197,18 +191,22 @@ class DatasetReviewController extends AbstractController
         } elseif ($datasetStatus === Dataset::DATASET_STATUS_NONE) {
             $this->addToFlashDisplayQueue($request, $udi, 'notSubmitted');
         } else {
-            if ($datasetSubmission instanceof DatasetSubmission and $this->filerStatus($datasetSubmission)) {
-                $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
-                if ('review' === $this->mode) {
-                    switch (!in_array($datasetStatus, [Dataset::DATASET_STATUS_BACK_TO_SUBMITTER, Dataset::DATASET_STATUS_NONE])) {
-                        case (empty($datasetSubmissionReview) || $datasetSubmissionReview->getReviewEndDateTime()):
-                            $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
-                            break;
-                        case (empty($datasetSubmissionReview->getReviewEndDateTime())
-                            and $datasetSubmissionReview->getReviewedBy() !== $this->getUser()->getPerson()):
-                            $reviewerUserName = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy()->getId())->getUserId();
-                            $this->addToFlashDisplayQueue($request, $udi, 'locked', $reviewerUserName);
-                            break;
+            if ($datasetSubmission instanceof DatasetSubmission) {
+                if ($this->areFilesBeingProcessed($datasetSubmission)) {
+                    $this->addToFlashDisplayQueue($request, $udi, 'processing');
+                } else {
+                    $datasetSubmissionReview = $datasetSubmission->getDatasetSubmissionReview();
+                    if ('review' === $this->mode) {
+                        switch (!in_array($datasetStatus, [Dataset::DATASET_STATUS_BACK_TO_SUBMITTER, Dataset::DATASET_STATUS_NONE])) {
+                            case (empty($datasetSubmissionReview) || $datasetSubmissionReview->getReviewEndDateTime()):
+                                $datasetSubmission = $this->createNewDatasetSubmission($datasetSubmission);
+                                break;
+                            case (empty($datasetSubmissionReview->getReviewEndDateTime())
+                                and $datasetSubmissionReview->getReviewedBy() !== $this->getUser()->getPerson()):
+                                $reviewerUserName = $this->entityHandler->get(Account::class, $datasetSubmissionReview->getReviewedBy()->getId())->getUserId();
+                                $this->addToFlashDisplayQueue($request, $udi, 'locked', $reviewerUserName);
+                                break;
+                        }
                     }
                 }
             } else {
@@ -238,7 +236,8 @@ class DatasetReviewController extends AbstractController
                 $udi . ' could not be found. Please email
                         <a href="mailto:griidc@gomri.org?subject=REG Form">griidc@gomri.org</a>
                         if you have any questions.',
-            'notSubmitted' => 'The dataset ' . $udi . ' cannot be loaded in review mode at this time because it has not been submitted or it is still being processed.',
+            'notSubmitted' => 'The dataset ' . $udi . ' cannot be loaded in review mode at this time because it has not been submitted.',
+            'processing' => "The dataset $udi cannot be loaded in review mode at this time because it is still being processed.",
             'hasDraft' => 'The dataset ' . $udi . ' currently has a draft submission and cannot be loaded in review mode.',
             'requestRevision' => 'The status of dataset ' . $udi . ' is Request Revisions and cannot be loaded in review mode.',
             'locked' => 'The dataset ' . $udi . ' is in review mode. Username: ' . $reviewerUserName,
@@ -325,54 +324,6 @@ class DatasetReviewController extends AbstractController
             ),
         ));
 
-        // Add file name, hash and filesize.
-        $form->add('datasetFileName', TextType::class, array(
-            'label' => 'Dataset File Name',
-            'required' => false,
-            'attr' => array(
-                'readonly' => 'true'
-            ),
-        ));
-
-        $form->add('datasetFileSize', TextType::class, array(
-            'label' => 'Dataset Filesize',
-            'required' => false,
-            'attr' => array(
-                'readonly' => 'true'
-            ),
-        ));
-
-        $form->add('datasetFileSha256Hash', TextType::class, array(
-            'label' => 'Dataset SHA256 hash',
-            'required' => false,
-            'attr' => array(
-                'readonly' => 'true'
-            ),
-        ));
-
-        $showForceImport = false;
-        $showForceDownload = false;
-        if ($datasetSubmission instanceof DatasetSubmission) {
-            switch ($datasetSubmission->getDatasetFileTransferType()) {
-                case DatasetSubmission::TRANSFER_TYPE_SFTP:
-                    $form->get('datasetFilePath')->setData(
-                        preg_replace('#^file://#', '', $datasetSubmission->getDatasetFileUri())
-                    );
-                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission and
-                        $datasetSubmission->getDatasetFileUri() === $dataset->getDatasetSubmission()->getDatasetFileUri()) {
-                        $showForceImport = true;
-                    }
-                    break;
-                case DatasetSubmission::TRANSFER_TYPE_HTTP:
-                    $form->get('datasetFileUrl')->setData($datasetSubmission->getDatasetFileUri());
-                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission and
-                        $datasetSubmission->getDatasetFileUri() === $dataset->getDatasetSubmission()->getDatasetFileUri()) {
-                        $showForceDownload = true;
-                    }
-                    break;
-            }
-        }
-
         $researchGroupList = array();
         $account = $this->getUser();
         if (null !== $account) {
@@ -402,8 +353,6 @@ class DatasetReviewController extends AbstractController
                 'udi' => $udi,
                 'dataset' => $dataset,
                 'datasetSubmission' => $datasetSubmission,
-                'showForceImport' => $showForceImport,
-                'showForceDownload' => $showForceDownload,
                 'researchGroupList' => $researchGroupList,
                 'mode' => $this->mode,
                 'linkoptions' => DatasetLink::getLinkNameCodeChoices(),
@@ -466,8 +415,9 @@ class DatasetReviewController extends AbstractController
     /**
      * The post action for Dataset Review.
      *
-     * @param Request      $request The Symfony request object.
-     * @param integer|null $id      The id of the Dataset Submission to load.
+     * @param Request             $request    The Symfony request object.
+     * @param integer|null        $id         The id of the Dataset Submission to load.
+     * @param MessageBusInterface $messageBus Message bus interface to dispatch messages.
      *
      * @throws BadRequestHttpException When dataset submission has already been submitted.
      * @throws BadRequestHttpException When DIF has not yet been approved.
@@ -476,7 +426,7 @@ class DatasetReviewController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function postAction(Request $request, int $id = null)
+    public function postAction(Request $request, int $id = null, MessageBusInterface $messageBus)
     {
         // set to default event
         $eventName = 'end_review';
@@ -490,18 +440,6 @@ class DatasetReviewController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() and $form->isValid()) {
-            $this->processDatasetFileTransferDetails($form, $datasetSubmission);
-
-            if ($this->getUser()->isPosix()) {
-                $incomingDirectory = $this->getUser()->getHomeDirectory() . '/incoming';
-            } else {
-                $incomingDirectory = $this->getParameter('homedir_prefix') . '/upload/'
-                    . $this->getUser()->getUserName() . '/incoming';
-                if (!file_exists($incomingDirectory)) {
-                    mkdir($incomingDirectory, 0755, true);
-                }
-            }
-
             switch (true) {
                 case ($form->get('endReviewBtn')->isClicked()):
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_END_REVIEW);
@@ -515,6 +453,14 @@ class DatasetReviewController extends AbstractController
                     $datasetSubmission->reviewEvent($this->getUser()->getPerson(), DatasetSubmission::DATASET_REQUEST_REVISIONS);
                     $eventName = 'request_revisions';
                     break;
+            }
+
+            $fileset = $datasetSubmission->getFileset();
+            if ($fileset instanceof Fileset) {
+                foreach ($fileset->getNewFiles() as $file) {
+                    $file->setStatus(File::FILE_IN_QUEUE);
+                    $this->entityHandler->update($file);
+                }
             }
 
             $this->entityHandler->update($datasetSubmission->getDatasetSubmissionReview());
@@ -531,7 +477,7 @@ class DatasetReviewController extends AbstractController
             foreach ($datasetSubmission->getMetadataContacts() as $metadataContact) {
                 $this->entityHandler->update($metadataContact);
             }
-            
+
             foreach ($datasetSubmission->getDatasetLinks() as $datasetLink) {
                 $this->entityHandler->update($datasetLink);
             }
@@ -542,17 +488,40 @@ class DatasetReviewController extends AbstractController
                 $eventName
             );
 
-            //use rabbitmq to process dataset file and persist the file details.
-            foreach ($this->messages as $message) {
-                $this->publisher->publish($message['body'], RabbitPublisher::DATASET_SUBMISSION_PRODUCER, $message['routing_key']);
-            }
             $reviewedBy = $datasetSubmission->getDatasetSubmissionReview()->getReviewEndedBy()->getFirstName();
 
             //when request revisions is clicked, do not display the changes made in review for the dataset-submission
             // and get the dataset-submissions which is submitted by the user.
             if ($eventName === 'request_revisions') {
+                $fileset = $datasetSubmission->getFileset();
+                if ($fileset instanceof Fileset) {
+                    // Copy the fileSet
+                    $newFileset = new Fileset();
+                    foreach ($fileset->getAllFiles() as $file) {
+                        $newFile = new File();
+                        $newFile->setFilePathName($file->getFilePathName());
+                        $newFile->setFileSize($file->getFileSize());
+                        $newFile->setFileSha256Hash($file->getFileSha256Hash());
+                        $newFile->setUploadedAt($file->getUploadedAt());
+                        $newFile->setUploadedBy($file->getUploadedBy());
+                        $newFile->setDescription($file->getDescription());
+                        $newFile->setPhysicalFilePath($file->getPhysicalFilePath());
+                        $newFile->setStatus($file->getStatus());
+                        $newFileset->addFile($newFile);
+                    }
+                    if ($fileset->doesZipFileExist()) {
+                        $newFileset->setZipFilePath($fileset->getZipFilePath());
+                        $newFileset->setZipFileSha256Hash($fileset->getZipFileSha256Hash());
+                        $newFileset->setZipFileSize($fileset->getZipFileSize());
+                    }
+                }
                 $datasetSubmission = $datasetSubmission->getDataset()->getDatasetSubmission();
+                $datasetSubmission->setFileset($newFileset);
+                $this->entityHandler->update($datasetSubmission);
             }
+
+            $datasetSubmissionFilerMessage = new DatasetSubmissionFiler($datasetSubmission->getId());
+            $messageBus->dispatch($datasetSubmissionFilerMessage);
 
             return $this->render(
                 'DatasetReview/submit.html.twig',
@@ -567,75 +536,22 @@ class DatasetReviewController extends AbstractController
     }
 
     /**
-     * Process the Dataset File Transfer Details and update the Dataset Submission.
-     *
-     * @param Form              $form              The submitted dataset submission form.
-     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
-     *
-     * @return void
-     */
-    protected function processDatasetFileTransferDetails(
-        Form $form,
-        DatasetSubmission $datasetSubmission
-    ) {
-        $datasetSubmissionHistory = $datasetSubmission->getDataset()->getDatasetSubmissionHistory();
-
-        if (count($datasetSubmissionHistory) > 1) {
-            // Get the previous datasetFileUri. DatasetSubmissionHistory collection is ordered by DESC.
-            $previousDatasetFileUri = $datasetSubmissionHistory->get(1)->getDatasetFileUri();
-            if ($datasetSubmission->getDatasetFileUri() !== $previousDatasetFileUri
-                or $form['datasetFileForceImport']->getData()
-                or $form['datasetFileForceDownload']->getData()) {
-                // Assume the dataset file is new.
-                $this->newDatasetFile($datasetSubmission);
-            }
-        } else {
-            // This is the first submission so the dataset file is new.
-            $this->newDatasetFile($datasetSubmission);
-        }
-    }
-
-    /**
-     * Take appropriate actions when a new dataset file is submitted.
-     *
-     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
-     *
-     * @return void
-     */
-    protected function newDatasetFile(DatasetSubmission $datasetSubmission)
-    {
-        $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-        $datasetSubmission->setDatasetFileName(null);
-        $datasetSubmission->setDatasetFileSize(null);
-        $datasetSubmission->setDatasetFileSha256Hash(null);
-        $this->messages[] = array(
-            'body' => $datasetSubmission->getId(),
-            'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
-        );
-    }
-
-    /**
-     * To check the filer status of a previous datasetsubmission/review.
+     * To check the if files are being processed
      *
      * @param DatasetSubmission $datasetSubmission A dataset submission instance.
      *
      * @return boolean
      */
-    private function filerStatus(DatasetSubmission $datasetSubmission)
+    private function areFilesBeingProcessed(DatasetSubmission $datasetSubmission)
     {
         // List of dataset submission statuses to check.
         $statuses = [DatasetSubmission::STATUS_COMPLETE, DatasetSubmission::STATUS_IN_REVIEW];
-
         if (in_array($datasetSubmission->getStatus(), $statuses)) {
-            switch (true) {
-                case ($datasetSubmission->getDatasetFileTransferStatus() === DatasetSubmission::TRANSFER_STATUS_NONE):
-                    return false;
-                    break;
-                case ($datasetSubmission->getDatasetFileTransferStatus() === DatasetSubmission::TRANSFER_STATUS_COMPLETED and empty($datasetSubmission->getDatasetFileSha256Hash())):
-                    return false;
-                    break;
+            if ($datasetSubmission->getFileset() instanceof Fileset) {
+                return $datasetSubmission->getFileset()->isQueued();
             }
         }
-        return true;
+
+        return false;
     }
 }

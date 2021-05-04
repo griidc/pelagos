@@ -11,8 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use App\Entity\DatasetSubmission;
 use App\Entity\Dataset;
 
-use App\Util\RabbitPublisher;
-
 /**
  * Back fill all the submitted metadata xml to dataset submission.
  *
@@ -35,22 +33,13 @@ class HandleSubmissionWithBadGMLCommand extends Command
     protected $entityManager;
 
     /**
-     * Utility Rabbitmq producer instance.
-     *
-     * @var RabbitPublisher $publisher
-     */
-    protected $publisher;
-
-    /**
      * Class constructor for dependency injection.
      *
      * @param EntityManagerInterface $entityManager A Doctrine EntityManager.
-     * @param RabbitPublisher        $publisher     A Rabbitmq producer instance.
      */
-    public function __construct(EntityManagerInterface $entityManager, RabbitPublisher $publisher)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->publisher = $publisher;
         parent::__construct();
     }
 
@@ -103,15 +92,7 @@ class HandleSubmissionWithBadGMLCommand extends Command
             }
         }
 
-        $this->entityManager->persist($datasetSubmission);
         $this->entityManager->flush();
-
-        //re-trigger dataset submission producer
-        $this->publisher->publish(
-            $datasetSubmission->getId(),
-            RabbitPublisher::DATASET_SUBMISSION_PRODUCER,
-            'dataset.' . $datasetSubmission->getDatasetFileTransferType()
-        );
 
         $output->writeln('Success: submission ID:' . $datasetSubmission->getId() . ' - Dataset udi: ' . $udi);
     }

@@ -2,7 +2,8 @@
 namespace App\Event;
 
 use App\Entity\DatasetSubmission;
-use App\Util\RabbitPublisher;
+use App\Entity\Fileset;
+use App\Message\DeleteFile;
 
 /**
  * Listener class for Dataset Submission-related events.
@@ -213,6 +214,20 @@ class DatasetSubmissionListener extends EventListener
             $datasetSubmission->getModifier()->getAccount()->getUsername() .
             ' accepted dataset ' . $dataset->getUdi() . ' (In Review->Accepted)'
         );
+
+        $fileset = $datasetSubmission->getFileset();
+
+        if (!$fileset instanceof Fileset) {
+            return;
+        }
+
+        foreach ($fileset->getDeletedFiles() as $deletedFile) {
+            $deleteFileMessage = new DeleteFile($deletedFile->getPhysicalFilePath());
+            $this->messageBus->dispatch($deleteFileMessage);
+            $fileset->removeFile($deletedFile);
+        }
+
+        $this->entityManager->flush();
     }
 
     /**

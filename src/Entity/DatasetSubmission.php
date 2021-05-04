@@ -564,9 +564,6 @@ class DatasetSubmission extends Entity
      *
      * @ORM\Column(type="text", nullable=true)
      *
-     * @Assert\NotBlank(
-     *     message="The dataset submission must include a dataset file."
-     * )
      */
     protected $datasetFileUri;
 
@@ -913,6 +910,24 @@ class DatasetSubmission extends Entity
     protected $remotelyHostedFunction;
 
     /**
+     * Remotely Hosted Dataset URL.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $remotelyHostedUrl;
+
+    /**
+     * Fileset for the datasetSubmission instance.
+     *
+     * @var Fileset
+     *
+     * @ORM\OneToOne(targetEntity="Fileset", inversedBy="datasetSubmission", cascade={"persist", "remove"})
+     */
+    protected $fileset;
+
+    /**
      * The Point of Contact for this Dataset Submission.
      *
      * @var Collection
@@ -981,9 +996,6 @@ class DatasetSubmission extends Entity
             $this->setDatasetFileTransferType($entity->getDatasetFileTransferType());
             $this->setDatasetFileUri($entity->getDatasetFileUri());
             $this->setDatasetFileTransferStatus($entity->getDatasetFileTransferStatus());
-            $this->setDatasetFileName($entity->getDatasetFileName());
-            $this->setDatasetFileSize($entity->getDatasetFileSize());
-            $this->setDatasetFileSha256Hash($entity->getDatasetFileSha256Hash());
             $this->setDatasetStatus($entity->getDatasetStatus());
             $this->setPurpose($entity->getPurpose());
             $this->setSuppParams($entity->getSuppParams());
@@ -1006,6 +1018,7 @@ class DatasetSubmission extends Entity
             $this->setRemotelyHostedName($entity->getRemotelyHostedName());
             $this->setRemotelyHostedDescription($entity->getRemotelyHostedDescription());
             $this->setRemotelyHostedFunction($entity->getRemotelyHostedFunction());
+            $this->setRemotelyHostedUrl($entity->getRemotelyHostedUrl());
             $this->setDatasetFileUrlLastCheckedDate($entity->getDatasetFileUrlLastCheckedDate());
             $this->setDatasetFileUrlStatusCode($entity->getDatasetFileUrlStatusCode());
             $this->setDatasetFileColdStorageArchiveSha256Hash($entity->getDatasetFileColdStorageArchiveSha256Hash());
@@ -1052,6 +1065,29 @@ class DatasetSubmission extends Entity
                 $newDatasetLink->setProtocol($datasetLink->getProtocol());
 
                 $this->addDatasetLink($newDatasetLink);
+            }
+            $fileset = $entity->getFileset();
+            if ($fileset instanceof Fileset) {
+                // Copy the fileSet
+                $newFileset = new Fileset();
+                foreach ($fileset->getAllFiles() as $file) {
+                    $newFile = new File();
+                    $newFile->setFilePathName($file->getFilePathName());
+                    $newFile->setFileSize($file->getFileSize());
+                    $newFile->setFileSha256Hash($file->getFileSha256Hash());
+                    $newFile->setUploadedAt($file->getUploadedAt());
+                    $newFile->setUploadedBy($file->getUploadedBy());
+                    $newFile->setDescription($file->getDescription());
+                    $newFile->setPhysicalFilePath($file->getPhysicalFilePath());
+                    $newFile->setStatus($file->getStatus());
+                    $newFileset->addFile($newFile);
+                }
+                if ($fileset->doesZipFileExist()) {
+                    $newFileset->setZipFilePath($fileset->getZipFilePath());
+                    $newFileset->setZipFileSha256Hash($fileset->getZipFileSha256Hash());
+                    $newFileset->setZipFileSize($fileset->getZipFileSize());
+                }
+                $this->setFileset($newFileset);
             }
         } else {
             throw new \Exception('Class constructor requires a DIF or a DatasetSubmission. A ' . get_class($entity) . ' was passed.');
@@ -1632,7 +1668,14 @@ class DatasetSubmission extends Entity
      */
     public function getDatasetFileName() : ?string
     {
-        return $this->datasetFileName;
+        if ($this->getFileset() instanceof Fileset) {
+            if ($this->getFileset()->doesZipFileExist()) {
+                return basename($this->getFileset()->getZipFilePath());
+            } elseif ($this->getFileset()->getProcessedAndNewFiles()->first() instanceof File) {
+                return basename($this->getFileset()->getProcessedAndNewFiles()->first()->getFilePathName());
+            }
+        }
+        return null;
     }
 
     /**
@@ -1654,7 +1697,10 @@ class DatasetSubmission extends Entity
      */
     public function getDatasetFileSize() : ?int
     {
-        return $this->datasetFileSize;
+        if ($this->getFileset() instanceof Fileset) {
+            return $this->getFileset()->getZipFileSize() ?? $this->getFileset()->getFileSize();
+        }
+        return null;
     }
 
     /**
@@ -1676,7 +1722,14 @@ class DatasetSubmission extends Entity
      */
     public function getDatasetFileSha256Hash() : ?string
     {
-        return $this->datasetFileSha256Hash;
+        if ($this->getFileset() instanceof Fileset) {
+            if ($this->getFileset()->doesZipFileExist()) {
+                return $this->getFileset()->getZipFileSha256Hash();
+            } elseif ($this->getFileset()->getProcessedAndNewFiles()->first() instanceof File) {
+                return $this->getFileset()->getProcessedAndNewFiles()->first()->getFileSha256Hash();
+            }
+        }
+        return null;
     }
 
     /**
@@ -2585,6 +2638,28 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Getter for fileset entity.
+     *
+     * @return Fileset|null
+     */
+    public function getFileset() : ? Fileset
+    {
+        return $this->fileset;
+    }
+
+    /**
+     * Setter for fileset entity.
+     *
+     * @param Fileset $fileset The fileset entity associated with this datasetSubmission instance.
+     *
+     * @return void
+     */
+    public function setFileset(Fileset $fileset) : void
+    {
+        $this->fileset = $fileset;
+    }
+
+    /**
      * Getter for the Dataset Links.
      *
      * @return Collection|DatasetLink[]
@@ -2629,5 +2704,42 @@ class DatasetSubmission extends Entity
         }
 
         return $this;
+    }
+
+    /**
+     * Getter for remotely hosted url.
+     *
+     * @return string|null
+     */
+    public function getRemotelyHostedUrl() : ?string
+    {
+        return $this->remotelyHostedUrl;
+    }
+
+    /**
+     * Setter for remotely hosted url.
+     *
+     * @param string|null $remotelyHostedUrl Remotely hosted url string.
+     *
+     * @return void
+     */
+    public function setRemotelyHostedUrl(?string $remotelyHostedUrl) : void
+    {
+        $this->remotelyHostedUrl = $remotelyHostedUrl;
+    }
+
+    /**
+     * Check if dataset submission is marked as remotely hosted.
+     *
+     * @return bool
+     */
+    public function isRemotelyHosted(): bool
+    {
+        $isMarked = false;
+        if ($this->remotelyHostedUrl and $this->remotelyHostedName and
+            $this->remotelyHostedFunction and $this->remotelyHostedDescription) {
+            $isMarked = true;
+        }
+        return $isMarked;
     }
 }

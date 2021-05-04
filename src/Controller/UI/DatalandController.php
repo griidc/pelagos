@@ -154,7 +154,7 @@ class DatalandController extends AbstractController
      * @param string    $udi       The UDI of the dataset to download.
      * @param DataStore $dataStore The data store.
      *
-     * @throws \Exception When the dataset is marked as remotely hosted, but datasetFileUri does not contain a valid URL.
+     * @throws \Exception When the dataset is marked as remotely hosted, but remotelyHostedUrl does not contain a valid URL.
      *
      * @Route("/data/{udi}/download", name="pelagos_app_ui_dataland_download")
      *
@@ -167,9 +167,9 @@ class DatalandController extends AbstractController
         if ($dataset->getAvailabilityStatus()
             === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED) {
             if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
-                and null !== $dataset->getDatasetSubmission()->getDatasetFileUri()
-                and preg_match('/^http/', $dataset->getDatasetSubmission()->getDatasetFileUri())) {
-                return new RedirectResponse($dataset->getDatasetSubmission()->getDatasetFileUri());
+                and null !== $dataset->getDatasetSubmission()->getRemotelyHostedUrl()
+                and preg_match('/^http/', $dataset->getDatasetSubmission()->getRemotelyHostedUrl())) {
+                return new RedirectResponse($dataset->getDatasetSubmission()->getRemotelyHostedUrl());
             } else {
                 throw new \Exception("Could not find valid url for remotely hosted dataset: $udi");
             }

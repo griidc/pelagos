@@ -2,6 +2,7 @@
 
 namespace App\Controller\UI;
 
+use App\Entity\File;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 use Symfony\Component\Form\Form;
@@ -30,6 +32,7 @@ use App\Entity\DIF;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\DistributionPoint;
+use App\Entity\Fileset;
 use App\Entity\PersonDatasetSubmissionDatasetContact;
 use App\Entity\PersonDatasetSubmissionMetadataContact;
 
@@ -37,8 +40,9 @@ use App\Handler\EntityHandler;
 
 use App\Exception\InvalidMetadataException;
 
+use App\Message\DatasetSubmissionFiler;
+
 use App\Util\ISOMetadataExtractorUtil;
-use App\Util\RabbitPublisher;
 
 /**
  * The Dataset Submission controller for the Pelagos UI App Bundle.
@@ -77,24 +81,15 @@ class DatasetSubmissionController extends AbstractController
     protected $entityEventDispatcher;
 
     /**
-     * Custom rabbitmq publisher.
-     *
-     * @var RabbitPublisher
-     */
-    protected $publisher;
-
-    /**
      * Constructor for this Controller, to set up default services.
      *
      * @param EntityHandler         $entityHandler         The entity handler.
      * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
-     * @param RabbitPublisher       $publisher             Utility class for rabbitmq publisher.
      */
-    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher, RabbitPublisher $publisher)
+    public function __construct(EntityHandler $entityHandler, EntityEventDispatcher $entityEventDispatcher)
     {
         $this->entityHandler = $entityHandler;
         $this->entityEventDispatcher = $entityEventDispatcher;
-        $this->publisher = $publisher;
     }
 
     /**
@@ -170,12 +165,9 @@ class DatasetSubmissionController extends AbstractController
                         $createFlag = true;
                     }
                 } elseif ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE
-                    and $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_NONE
-                    and (
-                        $datasetSubmission->getDatasetFileTransferStatus() !== DatasetSubmission::TRANSFER_STATUS_COMPLETED
-                        or $datasetSubmission->getDatasetFileSha256Hash() !== null
-                    )
                     and $dataset->getDatasetStatus() === Dataset::DATASET_STATUS_BACK_TO_SUBMITTER
+                    and $datasetSubmission->getFileset() instanceof Fileset
+                    and $datasetSubmission->getFileset()->isDone()
                 ) {
                     // The latest submission is complete, so create new one based on it.
                     $datasetSubmission = new DatasetSubmission($datasetSubmission);
@@ -199,8 +191,9 @@ class DatasetSubmissionController extends AbstractController
     /**
      * The post action for Dataset Submission.
      *
-     * @param Request      $request The Symfony request object.
-     * @param integer|null $id      The id of the Dataset Submission to load.
+     * @param Request             $request    The Symfony request object.
+     * @param integer|null        $id         The id of the Dataset Submission to load.
+     * @param MessageBusInterface $messageBus Message bus interface to dispatch messages.
      *
      * @throws BadRequestHttpException When dataset submission has already been submitted.
      * @throws BadRequestHttpException When DIF has not yet been approved.
@@ -209,7 +202,7 @@ class DatasetSubmissionController extends AbstractController
      *
      * @return Response A Response instance.
      */
-    public function postAction(Request $request, int $id = null)
+    public function postAction(Request $request, int $id = null, MessageBusInterface $messageBus)
     {
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
 
@@ -230,8 +223,6 @@ class DatasetSubmissionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() and $form->isValid()) {
-            $this->processDatasetFileTransferDetails($form, $datasetSubmission);
-
             $datasetSubmission->setDatasetStatus(Dataset::DATASET_STATUS_SUBMITTED);
 
             $datasetSubmission->submit($this->getUser()->getPerson());
@@ -242,13 +233,11 @@ class DatasetSubmissionController extends AbstractController
                 $eventName = 'submitted';
             }
 
-            if ($this->getUser()->isPosix()) {
-                $incomingDirectory = $this->getUser()->getHomeDirectory() . '/incoming';
-            } else {
-                $incomingDirectory = $this->getParameter('homedir_prefix') . '/upload/'
-                                         . $this->getUser()->getUserName() . '/incoming';
-                if (!file_exists($incomingDirectory)) {
-                    mkdir($incomingDirectory, 0755, true);
+            $fileset = $datasetSubmission->getFileset();
+            if ($fileset instanceof Fileset) {
+                foreach ($fileset->getNewFiles() as $file) {
+                    $file->setStatus(File::FILE_IN_QUEUE);
+                    $this->entityHandler->update($file);
                 }
             }
 
@@ -272,11 +261,8 @@ class DatasetSubmissionController extends AbstractController
                 $eventName
             );
 
-            foreach ($this->messages as $message) {
-                foreach ($this->messages as $message) {
-                    $this->publisher->publish($message['body'], RabbitPublisher::DATASET_SUBMISSION_PRODUCER, $message['routing_key']);
-                }
-            }
+            $datasetSubmissionFilerMessage = new DatasetSubmissionFiler($datasetSubmission->getId());
+            $messageBus->dispatch($datasetSubmissionFilerMessage);
 
             return $this->render(
                 'DatasetSubmission/submit.html.twig',
@@ -285,54 +271,6 @@ class DatasetSubmissionController extends AbstractController
         }
         // This should not normally happen.
         return new Response((string) $form->getErrors(true, false));
-    }
-
-    /**
-     * Process the Dataset File Transfer Details and update the Dataset Submission.
-     *
-     * @param Form              $form              The submitted dataset submission form.
-     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
-     *
-     * @return void
-     */
-    protected function processDatasetFileTransferDetails(
-        Form $form,
-        DatasetSubmission $datasetSubmission
-    ) {
-        // If there was a previous Dataset Submission.
-        if ($datasetSubmission->getDataset()->getDatasetSubmission() instanceof DatasetSubmission) {
-            // Get the previous datasetFileUri.
-            $previousDatasetFileUri = $datasetSubmission->getDataset()->getDatasetSubmission()->getDatasetFileUri();
-            // If the datasetFileUri has changed or the user has requested to force import or download.
-            if ($datasetSubmission->getDatasetFileUri() !== $previousDatasetFileUri
-                or $form['datasetFileForceImport']->getData()
-                or $form['datasetFileForceDownload']->getData()) {
-                // Assume the dataset file is new.
-                $this->newDatasetFile($datasetSubmission);
-            }
-        } else {
-            // This is the first submission so the dataset file is new.
-            $this->newDatasetFile($datasetSubmission);
-        }
-    }
-
-    /**
-     * Take appropriate actions when a new dataset file is submitted.
-     *
-     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
-     *
-     * @return void
-     */
-    protected function newDatasetFile(DatasetSubmission $datasetSubmission)
-    {
-        $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-        $datasetSubmission->setDatasetFileName(null);
-        $datasetSubmission->setDatasetFileSize(null);
-        $datasetSubmission->setDatasetFileSha256Hash(null);
-        $this->messages[] = array(
-            'body' => $datasetSubmission->getId(),
-            'routing_key' => 'dataset.' . $datasetSubmission->getDatasetFileTransferType()
-        );
     }
 
     /**
@@ -381,29 +319,6 @@ class DatasetSubmissionController extends AbstractController
             )
         );
 
-        $showForceImport = false;
-        $showForceDownload = false;
-        if ($datasetSubmission instanceof DatasetSubmission) {
-            switch ($datasetSubmission->getDatasetFileTransferType()) {
-                case DatasetSubmission::TRANSFER_TYPE_SFTP:
-                    $form->get('datasetFilePath')->setData(
-                        preg_replace('#^file://#', '', $datasetSubmission->getDatasetFileUri())
-                    );
-                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
-                        and $datasetSubmission->getDatasetFileUri() == $dataset->getDatasetSubmission()->getDatasetFileUri()) {
-                        $showForceImport = true;
-                    }
-                    break;
-                case DatasetSubmission::TRANSFER_TYPE_HTTP:
-                    $form->get('datasetFileUrl')->setData($datasetSubmission->getDatasetFileUri());
-                    if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
-                        and $datasetSubmission->getDatasetFileUri() == $dataset->getDatasetSubmission()->getDatasetFileUri()) {
-                        $showForceDownload = true;
-                    }
-                    break;
-            }
-        }
-
         $xmlFormView = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionXmlFileType::class,
@@ -448,8 +363,6 @@ class DatasetSubmissionController extends AbstractController
                 'xmlStatus' => $xmlStatus,
                 'dataset' => $dataset,
                 'datasetSubmission' => $datasetSubmission,
-                'showForceImport' => $showForceImport,
-                'showForceDownload' => $showForceDownload,
                 'researchGroupList' => $researchGroupList,
                 'datasetSubmissionLockStatus' => $datasetSubmissionLockStatus
             )

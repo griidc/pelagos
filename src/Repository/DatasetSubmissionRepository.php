@@ -49,7 +49,6 @@ class DatasetSubmissionRepository extends ServiceEntityRepository
             ->where('datasetSubmission.id IN (
                         SELECT MIN(subDatasetSubmission.id)
                         FROM ' . DatasetSubmission::class . ' subDatasetSubmission
-                        WHERE subDatasetSubmission.datasetFileUri is not null
                         GROUP BY subDatasetSubmission.dataset
                     )')
             ->orderBy('datasetSubmission.creationTimeStamp');
@@ -81,13 +80,9 @@ class DatasetSubmissionRepository extends ServiceEntityRepository
             ->where('datasetSubmission.id IN (
                 SELECT MIN(subDatasetSubmission.id)
                 FROM ' . DatasetSubmission::class . ' subDatasetSubmission
-                WHERE subDatasetSubmission.datasetFileUri is not null
-                AND subDatasetSubmission.datasetStatus = :metadatastatus
+                WHERE subDatasetSubmission.datasetStatus = :metadatastatus
                 AND subDatasetSubmission.restrictions = :restrictedstatus
-                AND (
-                    subDatasetSubmission.datasetFileTransferStatus = :transerstatuscompleted
-                    OR subDatasetSubmission.datasetFileTransferStatus = :transerstatusremotelyhosted
-                )
+                AND subDatasetSubmission.datasetFileTransferStatus = :transerstatuscompleted
                 GROUP BY subDatasetSubmission.dataset
             )')
             ->setParameters(
@@ -95,7 +90,6 @@ class DatasetSubmissionRepository extends ServiceEntityRepository
                     'metadatastatus' => Dataset::DATASET_STATUS_ACCEPTED,
                     'restrictedstatus' => DatasetSubmission::RESTRICTION_NONE,
                     'transerstatuscompleted' => DatasetSubmission::TRANSFER_STATUS_COMPLETED,
-                    'transerstatusremotelyhosted' => DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED,
                 )
             )
             ->orderBy('datasetSubmission.creationTimeStamp');
