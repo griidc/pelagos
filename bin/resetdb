@@ -34,7 +34,6 @@ if [ "$#" -eq 1 ]; then
     export SYMFONY_ENV="$1"
 fi
 
-bin/console rabbitmq-supervisor:control stop
 
 echo "DROP DATABASE $parameters__database_name" | psql -h $parameters__database_host -U postgres || exit
 echo "Database $parameters__database_name dropped"
@@ -70,4 +69,3 @@ echo "Reset Elasticsearch index"
 echo "y" | bin/console doctrine:fixtures:load -v || exit
 echo "Loaded data fixtures"
 
-bin/console rabbitmq-supervisor:control start
