@@ -34,7 +34,7 @@ export default {
         }
     },
     mounted() {
-        getApi(Routing.generate('pelagos_api_people_get') + "/" + this.personId, this, true)
+        getApi(Routing.generate('pelagos_api_get_person') + "/" + this.personId, this, true)
             .then(response => {
                 this.personProfileData = response;
                 this.showProfile = true;

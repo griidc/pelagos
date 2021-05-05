@@ -462,4 +462,38 @@ class PersonController extends EntityController
         }
         return $this->makeNoContentResponse();
     }
+
+
+    /**
+     * Returns a single person.
+     *
+     * @param Person $person The id of the Person.
+     *
+     * @Route(
+     *     "/api/person/{id}",
+     *     name="pelagos_api_get_person",
+     *     methods={"GET"},
+     *     defaults={"_format"="json"},
+     *     requirements={"id"="\d+"}
+     *     )
+     *
+     * @View()
+     *
+     * @return Response
+     */
+    public function getPerson(Person $person): Response
+    {
+        return $this->makeJsonResponse([
+            'firstName' => $person->getFirstName(),
+            'lastName' => $person->getLastName(),
+            'emailAddress' => $person->getEmailAddress(),
+            'phoneNumber' => $person->getPhoneNumber(),
+            'city' => $person->getCity(),
+            'administrativeArea' => $person->getAdministrativeArea(),
+            'postalCode' => $person->getPostalCode(),
+            'country' => $person->getCountry(),
+            'organization' => $person->getOrganization(),
+            'position' => $person->getPosition()
+        ]);
+    }
 }
