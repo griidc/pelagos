@@ -49,6 +49,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.container {
+    font-family:var(--main-fonts);
+}
+
 .main-body {
     padding: 15px;
 }
