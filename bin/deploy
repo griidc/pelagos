@@ -7,13 +7,13 @@ PELAGOS)
     echo 'Setting Encore PublicPath to PELAGOS'
     export publicpath="--publicpath /pelagos-symfony/build"
     ;;
-NAS)
-    echo 'Setting Encore PublicPath to NAS'
+GRP)
+    echo 'Setting Encore PublicPath to GRP'
     export publicpath="--publicpath /build"
     ;;
 *)
     echo 'Please specify a Build Environment!'
-    echo 'Options: [PELAGOS, NAS]'
+    echo 'Options: [PELAGOS, GRP]'
     exit;
     ;;
 esac
