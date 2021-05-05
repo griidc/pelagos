@@ -1,5 +1,5 @@
 import Vue from "vue";
-import PersonProfile from "@/vue/PersonProfile";
+import PersonProfile from "@/vue/pages/PersonProfile";
 import Loading from "vue-loading-overlay";
 import {BootstrapVue, IconsPlugin} from "bootstrap-vue";
 import '@fortawesome/fontawesome-free/css/all.min.css';
