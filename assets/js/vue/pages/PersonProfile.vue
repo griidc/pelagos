@@ -14,9 +14,9 @@
 </template>
 
 <script>
-import { getApi } from "@/vue/utils/axios";
 import AvatarCard from "@/vue/components/person-profile/AvatarCard";
 import UserDetailsCard from "@/vue/components/person-profile/UserDetailsCard";
+const axios = require('axios');
 
 export default {
     name: "PersonProfile",
@@ -34,16 +34,42 @@ export default {
         }
     },
     mounted() {
-        getApi(Routing.generate('pelagos_api_get_person') + "/" + this.personId, this, true)
+        let loader = null;
+        let thisComponent = this;
+        const axiosInstance = axios.create({});
+        axiosInstance.interceptors.request.use(function (config) {
+            loader = thisComponent.$loading.show({
+                container: thisComponent.$refs.formContainer,
+                loader: 'bars',
+                color: '#007bff',
+            });
+            return config;
+        }, function (error) {
+            return Promise.reject(error);
+        });
+
+        function hideLoader(){
+            loader && loader.hide();
+            loader = null;
+        }
+
+        axiosInstance.interceptors.response.use(function (response) {
+            hideLoader();
+            return response;
+        }, function (error) {
+            hideLoader();
+            return Promise.reject(error);
+        });
+
+        axiosInstance
+            .get(Routing.generate('pelagos_api_get_person') + "/" + this.personId)
             .then(response => {
-                this.personProfileData = response;
-                this.showProfile = true;
-                console.log(response);
-            })
+                this.personProfileData = response.data;
+                this.showProfile = true;})
             .catch(error => {
                 console.log(error);
                 this.showProfile = false;
-            })
+            });
     }
 }
 </script>

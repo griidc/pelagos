@@ -32,8 +32,8 @@
 </template>
 
 <script>
-    import templateSwitch from "@/vue/utils/template-switch.js";
-    import { getApi } from "@/vue/utils/axios";
+    import templateSwitch from "../../utils/template-switch.js";
+    const axios = require('axios');
     export default {
         name: "RepositorySummary",
         data() {
@@ -46,17 +46,18 @@
             }
         },
         created () {
-            try {
-                getApi(Routing.generate('pelagos_app_ui_stats_getstatisticsjson')).then(response => {
-                    this.datasets = response.totalDatasets;
-                    this.totalsize = response.totalSize;
-                    this.people = response.peopleCount;
-                    this.researchGroups = response.researchGroupCount;
-                    this.totalDownloads = response.totalDownloadCount;
-                })
-            } catch (error) {
-                console.log(error);
-            }
+            const axiosInstance = axios.create({});
+            axiosInstance
+                .get(Routing.generate('pelagos_app_ui_stats_getstatisticsjson'))
+                .then(response => {
+                    this.datasets = response.data.totalDatasets;
+                    this.totalsize = response.data.totalSize;
+                    this.people = response.data.peopleCount;
+                    this.researchGroups = response.data.researchGroupCount;
+                    this.totalDownloads = response.data.totalDownloadCount;
+                }).catch(error => {
+                    console.log(error);
+            });
         },
         methods: {
             getRGLabel: function () { return templateSwitch.getProperty('researchGroup') }
