@@ -279,7 +279,7 @@ export default {
         onDownloadZipBtnClick: function () {
             getApi(
                 `${Routing.generate('pelagos_api_file_zip_download_all')}/${datasetSubmissionId}`,
-                {responseType: 'blob'}
+                { thisComponent: null, addLoader: false, responseType: 'blob'}
             ).then((response) => {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement('a');
@@ -304,7 +304,8 @@ export default {
 
         isDownloadZipVisible: function () {
             getApi(
-                `${Routing.generate('pelagos_api_check_zip_exists')}/${this.datasetSubId}`
+                `${Routing.generate('pelagos_api_check_zip_exists')}/${this.datasetSubId}`,
+                {}
             ).then(response => {
                 this.showDownloadZipBtn = response.data;
             });
@@ -383,7 +384,8 @@ export default {
 const getItems = (pathInfo) => {
     return new Promise((resolve, reject) => {
         getApi(
-            `${Routing.generate('pelagos_api_get_files_dataset_submission')}/${datasetSubmissionId}?path=${pathInfo.path}`
+            `${Routing.generate('pelagos_api_get_files_dataset_submission')}/${datasetSubmissionId}?path=${pathInfo.path}`,
+            {}
         ).then(response => {
             resolve(response.data);
             let filesTabValidator = document.getElementById("filesTabValidator");
@@ -424,7 +426,8 @@ const moveItem = (item, destinationDir) => {
     return new Promise((resolve, reject) => {
         const newFilePathName = (destinationDir.path) ? `${destinationDir.path}/${item.name}` : item.name;
         putApi(
-            `${Routing.generate('pelagos_api_file_update_filename')}/${datasetSubmissionId}`
+            `${Routing.generate('pelagos_api_file_update_filename')}/${datasetSubmissionId}`,
+            {'newFileFolderPathDir': newFilePathName, 'path': item.path, 'isDir': item.isDirectory }
         ).then(() => {
             myFileManager.$parent.showDownloadZipBtn = false;
             resolve();
@@ -439,7 +442,8 @@ const renameItem = (item, name) => {
     return new Promise((resolve, reject) => {
         const newFilePathName = (item.parentPath) ? `${item.parentPath}/${name}` : name;
         putApi(
-            `${Routing.generate('pelagos_api_file_update_filename')}/${datasetSubmissionId}`
+            `${Routing.generate('pelagos_api_file_update_filename')}/${datasetSubmissionId}`,
+            {'newFileFolderPathDir': newFilePathName, 'path': item.path, 'isDir': item.isDirectory }
         ).then(() => {
             myFileManager.$parent.showDownloadZipBtn = false;
             resolve();
@@ -454,7 +458,8 @@ const downloadItems = (items) => {
     return new Promise((resolve, reject) => {
         items.forEach(item => {
             getApi(
-                `${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`
+                `${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`,
+                {}
             ).then(response => {
                 getApi(
                     `${Routing.generate('pelagos_api_file_download')}/${response.data.id}`,
