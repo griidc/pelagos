@@ -3,17 +3,17 @@
 args=("$@")
 
 case ${args[0]} in
-PELAGOS)
-    echo 'Setting Encore PublicPath to PELAGOS'
+GRIIDC)
+    echo 'Setting Encore PublicPath to GRIIDC'
     export publicpath="--publicpath /pelagos-symfony/build"
     ;;
-NAS)
-    echo 'Setting Encore PublicPath to NAS'
+GRP)
+    echo 'Setting Encore PublicPath to GRP'
     export publicpath="--publicpath /build"
     ;;
 *)
     echo 'Please specify a Build Environment!'
-    echo 'Options: [PELAGOS, NAS]'
+    echo 'Options: [GRIIDC, GRP]'
     exit;
     ;;
 esac
