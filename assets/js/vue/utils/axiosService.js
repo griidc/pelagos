@@ -8,7 +8,7 @@ const axiosInstance = axios.create({});
  * @param loadingOverlay
  * @returns {Promise<AxiosResponse<any>>}
  */
-export const getApi = (url, {thisComponent = {}, addLoader = false, responseType = 'json'}) => {
+export const getApi = (url, {thisComponent = null, addLoader = false, responseType = 'json'}) => {
     if (addLoader === true) {
         addLoadingOverLay(thisComponent);
     }
