@@ -12,17 +12,21 @@
             <template>
                 <div id="textBlock">
                     <h3 style="margin-top: 0">
-                        You can now upload multiple files/folders, add files to an existing dataset, or replace/delete files already uploaded. New features include:
+                        You can now upload multiple files/folders, add files to an existing dataset, or replace/delete
+                        files already uploaded. New features include:
                     </h3>
                     <ul>
                         <li>
-                            <strong>Upload</strong>: You can upload files/folders via drag and drop or the upload button on the left side
+                            <strong>Upload</strong>: You can upload files/folders via drag and drop or the upload button
+                            on the left side
                         </li>
                         <li>
-                            <strong>Delete/Move/Rename</strong>: You can perform these actions via the toolbar button or right click menu
+                            <strong>Delete/Move/Rename</strong>: You can perform these actions via the toolbar button or
+                            right click menu
                         </li>
                         <li>
-                            <strong>Download Individual Files</strong>: Select a file and download via toolbar button or right click menu
+                            <strong>Download Individual Files</strong>: Select a file and download via toolbar button or
+                            right click menu
                         </li>
                     </ul>
                 </div>
@@ -98,11 +102,11 @@
             </template>
         </DxPopup>
         <DxFileManager
-                :file-system-provider="customFileProvider"
-                :on-selection-changed="onSelectionChanged"
-                :on-current-directory-changed="directoryChanged"
-                :on-content-ready="managerReady"
-                ref="myFileManager"
+            :file-system-provider="customFileProvider"
+            :on-selection-changed="onSelectionChanged"
+            :on-current-directory-changed="directoryChanged"
+            :on-content-ready="managerReady"
+            ref="myFileManager"
         >
             <DxPermissions
                 :delete="writeMode"
@@ -127,7 +131,7 @@
                 <DxItem
                     widget="dxMenu"
                     :options="helpPopupButton"
-                    location ="after"
+                    location="after"
                 />
             </DxToolbar>
         </DxFileManager>
@@ -137,15 +141,15 @@
 <script>
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
-import { DxFileManager, DxPermissions, DxToolbar, DxItem, DxContextMenu } from "devextreme-vue/file-manager";
-import { DxPopup } from 'devextreme-vue/popup';
-import { DxButton } from 'devextreme-vue/button';
-import { DxProgressBar } from 'devextreme-vue/progress-bar';
+import {DxContextMenu, DxFileManager, DxItem, DxPermissions, DxToolbar} from "devextreme-vue/file-manager";
+import {DxPopup} from 'devextreme-vue/popup';
+import {DxButton} from 'devextreme-vue/button';
+import {DxProgressBar} from 'devextreme-vue/progress-bar';
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
 import Dropzone from "dropzone";
 import xbytes from "xbytes";
+import {deleteApi, getApi, postApi, putApi} from "@/vue/utils/axiosService";
 
-const axiosInstance = axios.create({});
 let datasetSubmissionId = null;
 let destinationDir = '';
 
@@ -220,7 +224,7 @@ export default {
 
     mounted() {
         if (this.writeMode) {
-          initDropzone();
+            initDropzone();
         }
         myFileManager = this.$refs.myFileManager;
     },
@@ -252,7 +256,7 @@ export default {
         },
 
         managerReady: function (args) {
-            this.loadingVisible =  false;
+            this.loadingVisible = false;
             this.doneFiles = 0;
             this.totalFiles = 0;
             this.totalFileSize = 0;
@@ -273,11 +277,10 @@ export default {
         },
 
         onDownloadZipBtnClick: function () {
-            axiosInstance({
-                url: `${Routing.generate('pelagos_api_file_zip_download_all')}/${datasetSubmissionId}`,
-                method: 'GET',
-                responseType: 'blob', // important
-            }).then((response) => {
+            getApi(
+                `${Routing.generate('pelagos_api_file_zip_download_all')}/${datasetSubmissionId}`,
+                {responseType: 'blob'}
+            ).then((response) => {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement('a');
                 link.href = url;
@@ -300,11 +303,11 @@ export default {
         },
 
         isDownloadZipVisible: function () {
-            axiosInstance
-                .get(`${Routing.generate('pelagos_api_check_zip_exists')}/${this.datasetSubId}`)
-                .then(response => {
-                    this.showDownloadZipBtn = response.data;
-                });
+            getApi(
+                `${Routing.generate('pelagos_api_check_zip_exists')}/${this.datasetSubId}`
+            ).then(response => {
+                this.showDownloadZipBtn = response.data;
+            });
         },
 
         uploadSingleFile: function () {
@@ -379,104 +382,97 @@ export default {
 
 const getItems = (pathInfo) => {
     return new Promise((resolve, reject) => {
-        axiosInstance
-            .get(`${Routing.generate('pelagos_api_get_files_dataset_submission')}/${datasetSubmissionId}?path=${pathInfo.path}`)
-            .then(response => {
-                resolve(response.data);
-                let filesTabValidator = document.getElementById("filesTabValidator");
-                let datasetFileTransferType = document.getElementById("datasetFileTransferType");
-                if (response.data.length > 0) {
-                    filesTabValidator.value = "valid";
-                    datasetFileTransferType.value = "upload";
-                    document.querySelector("label.error[for=\"filesTabValidator\"]").remove();
-                } else {
-                    filesTabValidator.value = "";
-                    filesTabValidator.classList.add("error");
-                    datasetFileTransferType.value = "";
-                }
-            }).catch(error => {
-                if(error.response) {
-                    myFileManager.$parent.showPopupError(error.response.data.message);
-                }
-                reject(error);
-            })
+        getApi(
+            `${Routing.generate('pelagos_api_get_files_dataset_submission')}/${datasetSubmissionId}?path=${pathInfo.path}`
+        ).then(response => {
+            resolve(response.data);
+            let filesTabValidator = document.getElementById("filesTabValidator");
+            let datasetFileTransferType = document.getElementById("datasetFileTransferType");
+            if (response.data.length > 0) {
+                filesTabValidator.value = "valid";
+                datasetFileTransferType.value = "upload";
+                document.querySelector("label.error[for=\"filesTabValidator\"]").remove();
+            } else {
+                filesTabValidator.value = "";
+                filesTabValidator.classList.add("error");
+                datasetFileTransferType.value = "";
+            }
+        }).catch(error => {
+            if (error.response) {
+                myFileManager.$parent.showPopupError(error.response.data.message);
+            }
+            reject(error);
+        })
     })
 }
 
 const deleteItem = (item) => {
     return new Promise((resolve, reject) => {
-        axiosInstance
-            .delete(`${Routing.generate('pelagos_api_file_delete')}/${datasetSubmissionId}?path=${item.path}&isDir=${item.isDirectory}`)
-            .then(() => {
-                myFileManager.$parent.showDownloadZipBtn = false;
-                resolve();
-            }).catch(error => {
-                myFileManager.$parent.showPopupError(error.response.data.message);
-                reject(error)
-            })
+        deleteApi(
+            `${Routing.generate('pelagos_api_file_delete')}/${datasetSubmissionId}?path=${item.path}&isDir=${item.isDirectory}`
+        ).then(() => {
+            myFileManager.$parent.showDownloadZipBtn = false;
+            resolve();
+        }).catch(error => {
+            myFileManager.$parent.showPopupError(error.response.data.message);
+            reject(error)
+        })
     })
 }
 
 const moveItem = (item, destinationDir) => {
     return new Promise((resolve, reject) => {
         const newFilePathName = (destinationDir.path) ? `${destinationDir.path}/${item.name}` : item.name;
-        axiosInstance
-            .put(
-                `${Routing.generate('pelagos_api_file_update_filename')}/${datasetSubmissionId}`,
-                {'newFileFolderPathDir': newFilePathName, 'path': item.path, 'isDir': item.isDirectory }
-            )
-            .then(() => {
-                myFileManager.$parent.showDownloadZipBtn = false;
-                resolve();
-            }).catch(error => {
-                myFileManager.$parent.showPopupError(error.response.data.message);
-                reject(error)
-            })
+        putApi(
+            `${Routing.generate('pelagos_api_file_update_filename')}/${datasetSubmissionId}`
+        ).then(() => {
+            myFileManager.$parent.showDownloadZipBtn = false;
+            resolve();
+        }).catch(error => {
+            myFileManager.$parent.showPopupError(error.response.data.message);
+            reject(error)
+        })
     })
 }
 
 const renameItem = (item, name) => {
     return new Promise((resolve, reject) => {
         const newFilePathName = (item.parentPath) ? `${item.parentPath}/${name}` : name;
-        axiosInstance
-            .put(
-                `${Routing.generate('pelagos_api_file_update_filename')}/${datasetSubmissionId}`,
-                {'newFileFolderPathDir': newFilePathName, 'path': item.path, 'isDir': item.isDirectory }
-            )
-            .then(() => {
-                myFileManager.$parent.showDownloadZipBtn = false;
-                resolve();
-            }).catch(error => {
-                myFileManager.$parent.showPopupError(error.response.data.message);
-                reject(error)
-            })
+        putApi(
+            `${Routing.generate('pelagos_api_file_update_filename')}/${datasetSubmissionId}`
+        ).then(() => {
+            myFileManager.$parent.showDownloadZipBtn = false;
+            resolve();
+        }).catch(error => {
+            myFileManager.$parent.showPopupError(error.response.data.message);
+            reject(error)
+        })
     })
 }
 
 const downloadItems = (items) => {
     return new Promise((resolve, reject) => {
         items.forEach(item => {
-            axiosInstance
-                .get(`${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`)
-                .then(response => {
-                    axiosInstance({
-                        url: `${Routing.generate('pelagos_api_file_download')}/${response.data.id}`,
-                        method: 'GET',
-                        responseType: 'blob', // important
-                    }).then((response) => {
-                        const url = window.URL.createObjectURL(new Blob([response.data]));
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.setAttribute('download', getFileNameFromHeader(response.headers));
-                        document.body.appendChild(link);
-                        link.click();
-                    }).then(() => {
-                        resolve();
-                    });
-                }).catch(error => {
-                    myFileManager.$parent.showPopupError(error.response.data.message);
-                    reject(error)
+            getApi(
+                `${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`
+            ).then(response => {
+                getApi(
+                    `${Routing.generate('pelagos_api_file_download')}/${response.data.id}`,
+                    {responseType: 'blob'}
+                ).then((response) => {
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', getFileNameFromHeader(response.headers));
+                    document.body.appendChild(link);
+                    link.click();
+                }).then(() => {
+                    resolve();
                 })
+            }).catch(error => {
+                myFileManager.$parent.showPopupError(error.response.data.message);
+                reject(error)
+            })
         })
     })
 }
@@ -506,7 +502,6 @@ const initDropzone = () => {
             // All chunks have been uploaded. Perform any other actions
             let currentFile = file;
             let fileName = '';
-            const axiosInstance = axios.create({});
             if (destinationDir) {
                 fileName = `${destinationDir}/`;
             }
@@ -522,22 +517,20 @@ const initDropzone = () => {
             chunkData['dztotalchunkcount'] = currentFile.upload.totalChunkCount;
             chunkData['fileName'] = fileName;
             chunkData['dztotalfilesize'] = currentFile.size;
-            axiosInstance
-                .post(
-                    Routing.generate('pelagos_api_add_file_dataset_submission')
-                    + "/"
-                    + datasetSubmissionId,
-                    chunkData
-                )
-                .then(response => {
-                    if (response.data.isRenamed === true) {
-                        myFileManager.$parent.filesRenamed++;
-                    }
-                    done();
-                }).catch(error => {
-                    currentFile.accepted = false;
-                    myDropzone._errorProcessing([currentFile], error.message);
-            });
+            postApi(
+                Routing.generate('pelagos_api_add_file_dataset_submission')
+                + "/"
+                + datasetSubmissionId,
+                chunkData
+            ).then(response => {
+                if (response.data.isRenamed === true) {
+                    myFileManager.$parent.filesRenamed++;
+                }
+                done();
+            }).catch(error => {
+                currentFile.accepted = false;
+                myDropzone._errorProcessing([currentFile], error.message);
+            })
         },
     });
 
@@ -546,7 +539,7 @@ const initDropzone = () => {
     });
 
     myDropzone.on("processing", function (file) {
-        myFileManager.$parent.loadingVisible =  true;
+        myFileManager.$parent.loadingVisible = true;
     });
 
     myDropzone.on("success", function (file) {
@@ -561,7 +554,7 @@ const initDropzone = () => {
 
     myDropzone.on("totaluploadprogress", function (uploadProgress, totalBytes, totalBytesSent) {
         if (uploadProgress === 100) {
-            fileManagerResolve.forEach(function(fileResolve) {
+            fileManagerResolve.forEach(function (fileResolve) {
                 fileResolve.resolve;
             });
             fileManagerResolve = [];
@@ -569,7 +562,7 @@ const initDropzone = () => {
     });
 }
 
-$("#ds-submit").on("active", function() {
+$("#ds-submit").on("active", function () {
     myFileManager.instance.repaint();
     if (localStorage.getItem("showHelpPopupFileManager") !== "false") {
         myFileManager.$parent.showHelpPopup = true;
@@ -598,6 +591,7 @@ const getFileNameFromHeader = (headers) => {
     background-position: center;
     background-repeat: no-repeat;
 }
+
 .upload-progress-dialog {
     align-items: center;
     text-align: center;

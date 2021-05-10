@@ -5,20 +5,20 @@
 </template>
 
 <script>
-    const axios = require('axios');
-    import DatasetRow from "./../search/DatasetRow";
-    export default {
-        name: "DatasetsTab",
-        components: { DatasetRow },
-        props: {
-            datasets: {}
-        },
-        data() {
-            return {
-                datasetsRetrievedInfo: []
-            }
-        },
-    }
+import DatasetRow from "./../search/DatasetRow";
+
+export default {
+    name: "DatasetsTab",
+    components: {DatasetRow},
+    props: {
+        datasets: {}
+    },
+    data() {
+        return {
+            datasetsRetrievedInfo: []
+        }
+    },
+}
 </script>
 
 <style scoped>

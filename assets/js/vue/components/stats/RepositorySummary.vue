@@ -24,7 +24,7 @@
             </div>
             <div class="col-sm">
                 <img src="~images/icon-researchers.png">
-                <div class="count">{{ (people  == 0) ? '-' : people }}</div>
+                <div class="count">{{ (people == 0) ? '-' : people }}</div>
                 <div class="label">People</div>
             </div>
         </div>
@@ -32,49 +32,49 @@
 </template>
 
 <script>
-    import templateSwitch from "../../utils/template-switch.js";
-    const axios = require('axios');
-    export default {
-        name: "RepositorySummary",
-        data() {
-            return {
-                datasets: 0,
-                totalsize: 0,
-                totalDownloads: 0,
-                researchGroups: 0,
-                people: 0,
-            }
-        },
-        created () {
-            const axiosInstance = axios.create({});
-            axiosInstance
-                .get(Routing.generate('pelagos_app_ui_stats_getstatisticsjson'))
-                .then(response => {
-                    this.datasets = response.data.totalDatasets;
-                    this.totalsize = response.data.totalSize;
-                    this.people = response.data.peopleCount;
-                    this.researchGroups = response.data.researchGroupCount;
-                    this.totalDownloads = response.data.totalDownloadCount;
-                }).catch(error => {
-                    console.log(error);
-            });
-        },
-        methods: {
-            getRGLabel: function () { return templateSwitch.getProperty('researchGroup') }
+import templateSwitch from "../../utils/template-switch.js";
+import {getApi} from "@/vue/utils/axiosService";
+
+export default {
+    name: "RepositorySummary",
+    data() {
+        return {
+            datasets: 0,
+            totalsize: 0,
+            totalDownloads: 0,
+            researchGroups: 0,
+            people: 0,
+        }
+    },
+    created() {
+        getApi(
+            Routing.generate('pelagos_app_ui_stats_getstatisticsjson')
+        ).then(response => {
+            this.datasets = response.data.totalDatasets;
+            this.totalsize = response.data.totalSize;
+            this.people = response.data.peopleCount;
+            this.researchGroups = response.data.researchGroupCount;
+            this.totalDownloads = response.data.totalDownloadCount;
+        }).catch(error => console.log(error));
+    },
+    methods: {
+        getRGLabel: function () {
+            return templateSwitch.getProperty('researchGroup')
         }
     }
+}
 </script>
 
 <style scoped>
 #program-resources {
-    padding-bottom:20px;
-    font-family:var(--main-fonts);
+    padding-bottom: 20px;
+    font-family: var(--main-fonts);
 }
 
 .summaryLabel {
-    font-size:28px;
-    font-weight:200;
-    cursor:default;
+    font-size: 28px;
+    font-weight: 200;
+    cursor: default;
     padding: 20px;
 }
 
