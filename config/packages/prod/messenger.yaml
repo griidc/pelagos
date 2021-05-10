@@ -19,4 +19,4 @@ framework:
             'App\Message\ProcessFile': async_normal
             'App\Message\DeleteDir': async_normal
             # DOI Handler
-            'App\Message\DoiMessage': async
+            'App\Message\DoiMessage': async_doi

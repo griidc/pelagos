@@ -1,6 +1,6 @@
 framework:
     messenger:
         transports:
-            in_memory_doi: 'in-memory://'
+            in_memory: 'in-memory://'
         routing:
             'App\Message\DoiMessage': in_memory
