@@ -21,6 +21,7 @@ Encore
     // Enable Vue js
     .enableVueLoader(() => {}, {
         useJsx: true,
+        runtimeCompilerBuild: true
     })
 
     /*
