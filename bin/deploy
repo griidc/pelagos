@@ -34,11 +34,6 @@ composer dump-env prod
 # Warn of any pending migrations, but don't apply them.
 bin/console doctrine:migrations:status
 
-# cp supervisor configs into var
-#mkdir -p var/supervisor/worker
-#cp config/supervisor/supervisord.conf var/supervisor
-#cp config/supervisor/*.ini var/supervisor/worker
-
 # Rebuild elasticsearch indexes
 bin/console fos:elastica:reset
 bin/console fos:elastica:populate
