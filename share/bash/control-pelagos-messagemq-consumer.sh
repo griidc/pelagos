@@ -42,7 +42,7 @@ start() {
         success=false
     fi
 
-    if su - $runuser -c "supervisorctl --serverurl unix:///opt/pelagos/var/supervisor/supervisor.sock start messenger-consume:*" ; then
+    if su - $runuser -c "supervisorctl --serverurl unix:///opt/pelagos/var/supervisor/supervisor.sock start all" ; then
         echo "started messenger consumer"
     else
         echo "failed to start the actual messenger consumer"
@@ -62,7 +62,7 @@ start() {
 stop() {
 	cd /opt/pelagos
 
-    if su - $runuser -c "supervisorctl --serverurl unix:///opt/pelagos/var/supervisor/supervisor.sock stop messenger-consume:*" ; then
+    if su - $runuser -c "supervisorctl --serverurl unix:///opt/pelagos/var/supervisor/supervisor.sock stop all" ; then
         echo "stopped consumer"
     else
         success=false
