@@ -20,7 +20,7 @@ Encore
 
     // Enable Vue js
     .enableVueLoader(() => {}, {
-        useJsx: true,
+        runtimeCompilerBuild: false
     })
 
     /*
@@ -56,6 +56,7 @@ Encore
     .addAliases({
         '@': path.resolve(__dirname, 'assets', 'js'),
         'images': path.resolve(__dirname, 'assets', 'images'),
+        vue: 'vue/dist/vue.js'
     })
 
     /*
