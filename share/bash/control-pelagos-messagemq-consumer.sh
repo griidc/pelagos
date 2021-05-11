@@ -21,7 +21,7 @@ start() {
     echo -n $"Starting $prog: "
 	cd /opt/pelagos
 
-    if su - $runuser -c "supervisord --configuration=/opt/pelagos/var/supervisor/supervisord.conf --identifier=pelagos" ; then
+    if su - $runuser -c "supervisord --configuration=/opt/pelagos/config/supervisor/supervisord.conf --identifier=pelagos" ; then
         echo "started supervisord"
     else
         echo "failed to start supervisord"
