@@ -3,16 +3,28 @@ framework:
         failure_transport: failed
 
         transports:
-            async_normal: '%env(MESSENGER_TRANSPORT_DSN)%'
-            failed: '%env(MESSENGER_TRANSPORT_DSN)%?queue_name=failed'
-            async_slow: '%env(MESSENGER_TRANSPORT_DSN)%?queue_name=slow'
-            async_doi: '%env(MESSENGER_TRANSPORT_DSN)%?queue_name=doi'
+            async_normal:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: normal
+            failed:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: failed
+            async_low:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: low
+            async_doi:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: doi
 
         routing:
             # Slow running Handlers
-            'App\Message\DatasetSubmissionFiler': async_slow
-            'App\Message\ScanFileForVirus': async_slow
-            'App\Message\ZipDatasetFiles': async_slow
+            'App\Message\DatasetSubmissionFiler': async_low
+            'App\Message\ScanFileForVirus': async_low
+            'App\Message\ZipDatasetFiles': async_low
             # Normal Handlers
             'App\Message\RenameFile': async_normal
             'App\Message\DeleteFile': async_normal
