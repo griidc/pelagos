@@ -85,7 +85,7 @@ Encore
     .copyFiles(
         {
             from: './assets/static',
-            to: '[path]/[name].[hash:8].[ext]',
+            to: '[path][name].[hash:8].[ext]',
             includeSubdirectories: true
         }
     )
