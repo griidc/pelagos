@@ -1,5 +1,4 @@
 var Encore = require('@symfony/webpack-encore');
-var arguments = require('yargs').argv;
 var path = require('path');
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
@@ -13,7 +12,7 @@ Encore
     .setOutputPath('public/build/')
 
     // public path used by the web server to access the output path
-    .setPublicPath(arguments.publicpath ? arguments.publicpath : '/build')
+    .setPublicPath(process.env.publicpath ? process.env.publicpath : '/build')
 
     // only needed for CDN's or sub-directory deploy
     .setManifestKeyPrefix('build/')
@@ -86,7 +85,7 @@ Encore
     .copyFiles(
         {
             from: './assets/static',
-            to: '[path]/[name].[hash:8].[ext]',
+            to: '[path][name].[hash:8].[ext]',
             includeSubdirectories: true
         }
     )
