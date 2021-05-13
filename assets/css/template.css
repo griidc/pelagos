@@ -473,7 +473,7 @@ div#header #griidc-logo-wrapper {
 #pelagos-menu-1 ul.menu li li.expanded ul.menu li.expanded span,
 #pelagos-menu-1 ul.menu li li.expanded a,
 #pelagos-menu-1 ul.menu li li.expanded span {
-    background: var(--color-main) url("/build/images/menu_arrow.png") 100% 50% no-repeat;
+    background: var(--color-main) url("../images/menu_arrow.png") 100% 50% no-repeat;
 }
 #pelagos-menu-1 ul.menu li li.expanded ul.menu li.expanded a:active,
 #pelagos-menu-1 ul.menu li li.expanded ul.menu li.expanded a:hover,
@@ -483,7 +483,7 @@ div#header #griidc-logo-wrapper {
 #pelagos-menu-1 ul.menu li li.expanded span:hover,
 #pelagos-menu-1 ul.menu li li.expanded a:active,
 #pelagos-menu-1 ul.menu li li.expanded a:hover {
-    background: var(--color-menu) url("/build/images/menu_arrow.png") 100% 50% no-repeat;
+    background: var(--color-menu) url("../images/menu_arrow.png") 100% 50% no-repeat;
 }
 
 #pelagos-menu-1 ul.menu li li li:hover ul,
