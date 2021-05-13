@@ -41,6 +41,8 @@ Encore
     .addEntry('stats', './assets/js/stats.js')
 
     .addEntry('file-manager', './assets/js/file-manager.js')
+    .addEntry('person-profile', './assets/js/entry/person-profile.js')
+
     // enables Sass/SCSS support
     .enableSassLoader()
     .enablePostCssLoader()
