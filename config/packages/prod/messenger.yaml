@@ -1,11 +1,36 @@
 framework:
     messenger:
+        failure_transport: failed
+
+        transports:
+            async_normal:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: normal
+            failed:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: failed
+            async_low:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: low
+            async_doi:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: doi
+
         routing:
-            'App\Message\DatasetSubmissionFiler': async
-            'App\Message\DeleteFile': async
-            'App\Message\ProcessFile': async
-            'App\Message\ScanFileForVirus': async
-            'App\Message\ZipDatasetFiles': async
-            'App\Message\RenameFile': async
-            'App\Message\DoiMessage': async
-            'App\Message\DeleteDir': async
+            # Slow running Handlers
+            'App\Message\ProcessFile': async_low
+            'App\Message\ScanFileForVirus': async_low
+            'App\Message\ZipDatasetFiles': async_low
+
+            # Normal Handlers
+            'App\Message\DatasetSubmissionFiler': async_normal
+            'App\Message\RenameFile': async_normal
+            'App\Message\DeleteFile': async_normal
+
+            'App\Message\DeleteDir': async_normal
+            # DOI Handler
+            'App\Message\DoiMessage': async_doi
