@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+{% block title %}How to Submit Data to GRP{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock stylesheets %}
+
+{% block body %}
+    <div class="bootstrap">
+        <div class="container">
+            <div class="col-md-12">
+                <h2>How to Submit Data to GRP</h2>
+                <p>
+                    The following 2 step process is used to submit datasets to the GRIIDC system. This
+                    process includes data management planning, dataset documentation, and the creation of a
+                    dataset citation device. You may be prompted to log in to the GRIIDC System before
+                    accessing the following submission tools.
+                </p>
+                <p>
+                    <a href="{{ path('pelagos_app_ui_dif_default') }}" target="_blank">
+                        <strong>Step 1: Identify the Dataset</strong>
+                    </a>
+                    <br>
+                    The GRIIDC Dataset Information Form (DIF) is a data management planning tool for both
+                    researchers and GRIIDC. DIFs should be completed soon after receiving funding, during
+                    project planning and organization. Information provided in the DIF will be used to
+                    pre-populate fields during dataset submission.
+                </p>
+                <p>
+                    <a href="{{ path('pelagos_app_ui_datasetsubmission_default') }}" target="_blank">
+                        <strong>Step 2: Submit the Dataset</strong>
+                    </a>
+                    <br>
+                    Once your dataset has been collected or generated, you can submit it directly to GRIIDC
+                    through GRIIDC Dataset Submission. Alternatively, if there is a disciplinary specific
+                    national data archive (e.g., NCBI GenBank) where the data is submitted and publicly
+                    available, the dataset's location can be provided to GRIIDC during dataset submission.
+                </p>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
