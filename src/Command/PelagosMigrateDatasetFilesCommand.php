@@ -190,8 +190,8 @@ class PelagosMigrateDatasetFilesCommand extends Command
 
             $file->setDescription('Original Dataset File');
 
-            $file->setPhysicalFilePath("$udi/$udi.dat");
-            $file->setStatus($queueFiler ? File::FILE_NEW : File::FILE_DONE);
+            $file->setPhysicalFilePath($queueFiler ? $fileName : "$udi/$udi.dat");
+            $file->setStatus($queueFiler ? File::FILE_IN_QUEUE : File::FILE_DONE);
 
             $newFileset = new Fileset();
             $newFileset->addFile($file);
