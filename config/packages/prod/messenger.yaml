@@ -30,7 +30,7 @@ framework:
             'App\Message\DatasetSubmissionFiler': async_normal
             'App\Message\RenameFile': async_normal
             'App\Message\DeleteFile': async_normal
-
             'App\Message\DeleteDir': async_normal
+
             # DOI Handler
             'App\Message\DoiMessage': async_doi
