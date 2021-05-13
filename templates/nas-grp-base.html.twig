@@ -37,41 +37,45 @@
 <body>
 {% block htmlbody %}
 
-{% if isMaintenanceMode() %}
-    <div class="bootstrap sticky-top w-auto text-center" style="background-color:{{ getMaintenanceModeColor() }}; text-align: center">
-        {{ getMaintenanceModeText()}}.
+    {% if isMaintenanceMode() %}
+    <div class="bootstrap sticky-top w-auto text-center"
+         style="background-color:{{ getMaintenanceModeColor() }}; text-align: center">
+        {{ getMaintenanceModeText() }}.
     </div>
-    <div id="siteBannerFooterBanner" class="toolbar clearfix toolbar-processed overlay-displace-top" style="background-color:{{ getMaintenanceModeColor() }}">
-        {{ getMaintenanceModeText()}}.
+    <div id="siteBannerFooterBanner" class="toolbar clearfix toolbar-processed overlay-displace-top"
+         style="background-color:{{ getMaintenanceModeColor() }}">
+        {{ getMaintenanceModeText() }}.
     </div>
-{% endif %}
+    {% endif %}
 
-<!--Login and Atlassian buttons-->
-<div class="login-bar">
-    <div class="jira-buttons-box">
-        <button id="atlwdg-issue" class="atlwdg-trigger">
-            Report Issue
-        </button>
-        <button id="atlwdg-suggest" class="atlwdg-trigger">
-            Suggest Improvement
-        </button>
-    </div>
-    <div class="bootstrap">
-        <div class="login-info-box font-weight-bold text-uppercase position-absolute d-flex">
-            {% if is_granted('ROLE_USER') %}
-                <a style="text-decoration: underline;">
-                    Logged in as: {{ app.user.username }}
-                </a>
-                &nbsp; | &nbsp;
-                <a href="{{ path('security_logout') }}" style="text-decoration: underline; color: inherit">  Log out</a>
-            {% else %}
-                <a href="{{ path('security_login', {destination: app.request.uri}) }}" style="text-decoration: underline; color: inherit">Log in </a>
-            {% endif %}
+    <!--Login and Atlassian buttons-->
+    <div class="login-bar">
+        <div class="jira-buttons-box">
+            <button id="atlwdg-issue" class="atlwdg-trigger">
+                Report Issue
+            </button>
+            <button id="atlwdg-suggest" class="atlwdg-trigger">
+                Suggest Improvement
+            </button>
+        </div>
+        <div class="bootstrap">
+            <div class="login-info-box font-weight-bold text-uppercase position-absolute d-flex">
+                {% if is_granted('ROLE_USER') %}
+                    <a style="text-decoration: underline;">
+                        Logged in as: {{ app.user.username }}
+                    </a>
+                    &nbsp; | &nbsp;
+                    <a href="{{ path('security_logout') }}" style="text-decoration: underline; color: inherit"> Log
+                        out</a>
+                {% else %}
+                    <a href="{{ path('security_login', {destination: app.request.uri}) }}"
+                       style="text-decoration: underline; color: inherit">Log in </a>
+                {% endif %}
+            </div>
         </div>
     </div>
-</div>
 
-<!--::Navigation Menu::-->
+    <!--::Navigation Menu::-->
     <div class="bootstrap">
         <header class="main_menu home_menu border-bottom border-dark">
             <div class="global-nav-before">
@@ -80,13 +84,16 @@
                 <div class="row">
                     <div class="col-xl-12">
                         <nav class="navbar navbar-expand-lg navbar-light">
-                            <a class="navbar-brand" href="https://www.nationalacademies.org/gulf/gulf-research-program" target="_blank">
-                                <img src="{{ asset('build/images/nas-grp-logo.png') }}" alt="logo" style="width: 233px; margin-top: 5px" class="mw-100">
+                            <a class="navbar-brand" href="https://www.nationalacademies.org/gulf/gulf-research-program"
+                               target="_blank">
+                                <img src="{{ asset('build/images/nas-grp-logo.png') }}" alt="logo"
+                                     style="width: 233px; margin-top: 5px" class="mw-100">
                             </a>
                             <a class="navbar-brand" href="https://data.gulfresearchinitiative.org/" target="_blank">
                                 <img src="{{ asset('build/images/griidc-logo.png') }}" alt="logo" class="mw-100">
                             </a>
-                            <button class="navbar-toggler border border-white" type="button" data-toggle="collapse" data-target="#navbarNav"
+                            <button class="navbar-toggler border border-white" type="button" data-toggle="collapse"
+                                    data-target="#navbarNav"
                                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                                 <span class="navbar-toggler-icon"></span>
                             </button>
@@ -100,19 +107,20 @@
         </header>
     </div>
 
-<!--::Application Content::-->
-<div class="page-pelagos-full">
-    <div class="page-wrapper">
-        <div id="page">
-            <div id="main-wrapper">
-                <div id="pelagos-container">
-                    <div id="pelagos-container-row">
-                        <div id="pelagos-container-cell">
-                            <div id="pelagos-wrapper">
-                                <div id="pelagos-wrapper-row">
-                                    <div id="pelagos-content">
-                                        <h1 style="margin: 0 auto;">{% block pagetitle %}{% endblock %}</h1>
-                                        {% block body %}{% endblock %}
+    <!--::Application Content::-->
+    <div class="page-pelagos-full">
+        <div class="page-wrapper">
+            <div id="page">
+                <div id="main-wrapper">
+                    <div id="pelagos-container">
+                        <div id="pelagos-container-row">
+                            <div id="pelagos-container-cell">
+                                <div id="pelagos-wrapper">
+                                    <div id="pelagos-wrapper-row">
+                                        <div id="pelagos-content">
+                                            <h1 style="margin: 0 auto;">{% block pagetitle %}{% endblock %}</h1>
+                                            {% block body %}{% endblock %}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -122,7 +130,13 @@
             </div>
         </div>
     </div>
-</div>
+
+    <!-- Footer -->
+    <div class="bootstrap">
+        <footer class="py-5 bg-dark fixed-bottom">
+            <p class="m-0 text-center text-white">Copyright &copy; GRP - GRIIDC 2020</p>
+        </footer>
+    </div>
 
 {% block javascripts %}
     {{ encore_entry_script_tags('nas-app') }}
