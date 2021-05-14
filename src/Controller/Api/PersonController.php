@@ -14,6 +14,7 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 
+use App\Entity\Account;
 use App\Entity\Person;
 use App\Form\PersonType;
 use App\Entity\DIF;
@@ -450,11 +451,11 @@ class PersonController extends EntityController
         $primaryPointOfContactCount = $this->entityHandler->count(DIF::class, array('primaryPointOfContact' => $id));
         $secondaryPointOfContactCount = $this->entityHandler->count(DIF::class, array('secondaryPointOfContact' => $id));
         if ($primaryPointOfContactCount > 0) {
-            throw new BadRequestHttpException('This Person is not deletable because 
+            throw new BadRequestHttpException('This Person is not deletable because
                 there' . ($primaryPointOfContactCount > 1 ? ' are ' : ' is ') . $primaryPointOfContactCount .
                 ' primary point of contact(s) in DIF');
         } elseif ($secondaryPointOfContactCount > 0) {
-            throw new BadRequestHttpException('This Person is not deletable because 
+            throw new BadRequestHttpException('This Person is not deletable because
             there' . ($secondaryPointOfContactCount > 1 ? ' are ' : ' is ') . $secondaryPointOfContactCount .
             ' secondary point of contact(s) in DIF');
         } else {
@@ -483,6 +484,10 @@ class PersonController extends EntityController
      */
     public function getPerson(Person $person): Response
     {
+        $posix = false;
+        if ($person->getAccount() instanceof Account) {
+            $posix = $person->getAccount()->isPosix();
+        }
         return $this->makeJsonResponse([
             'firstName' => $person->getFirstName(),
             'lastName' => $person->getLastName(),
@@ -493,7 +498,8 @@ class PersonController extends EntityController
             'postalCode' => $person->getPostalCode(),
             'country' => $person->getCountry(),
             'organization' => $person->getOrganization(),
-            'position' => $person->getPosition()
+            'position' => $person->getPosition(),
+            'isposix' => $posix
         ]);
     }
 }
