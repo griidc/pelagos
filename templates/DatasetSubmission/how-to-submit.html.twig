@@ -3,20 +3,21 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    {{ encore_entry_link_tags('how-to-submit-data') }}
 {% endblock stylesheets %}
 
 {% block body %}
     <div class="bootstrap">
-        <div class="container">
-            <div class="col-md-12">
-                <h2>How to Submit Data to GRP</h2>
-                <p>
+        <div class="container pt-3 h-100 bg">
+            <div class="col-md-8 offset-md-2">
+                <h2 class="py-2">How to Submit Data to GRP</h2>
+                <p class="py-1">
                     The following 2 step process is used to submit datasets to the GRIIDC system. This
                     process includes data management planning, dataset documentation, and the creation of a
                     dataset citation device. You may be prompted to log in to the GRIIDC System before
                     accessing the following submission tools.
                 </p>
-                <p>
+                <p class="py-1">
                     <a href="{{ path('pelagos_app_ui_dif_default') }}" target="_blank">
                         <strong>Step 1: Identify the Dataset</strong>
                     </a>
@@ -26,7 +27,7 @@
                     project planning and organization. Information provided in the DIF will be used to
                     pre-populate fields during dataset submission.
                 </p>
-                <p>
+                <p class="py-1">
                     <a href="{{ path('pelagos_app_ui_datasetsubmission_default') }}" target="_blank">
                         <strong>Step 2: Submit the Dataset</strong>
                     </a>
@@ -44,4 +45,5 @@
 
 {% block javascripts %}
     {{ parent() }}
+    {{ encore_entry_script_tags('how-to-submit-data') }}
 {% endblock %}
