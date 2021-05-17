@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -531,17 +530,12 @@ class DatasetSubmissionController extends AbstractController
     /**
      * Info page for Dataset Submission.
      *
-     * @param string $customTemplate Custom base template from the environment variable.
-     *
      * @Route("/dataset-submission/how-to-submit-data", name="pelagos_app_ui_datasetsubmission_info", methods={"GET"})
      *
      * @return Response A Response instance.
      */
-    public function submissionInfoPage(string $customTemplate): Response
+    public function submissionInfoPage(): Response
     {
-        if ($customTemplate) {
-            return $this->render("DatasetSubmission/how-to-submit.html.twig");
-        }
-        throw new NotFoundHttpException("Page does not exist");
+        return $this->render("DatasetSubmission/how-to-submit.html.twig");
     }
 }
