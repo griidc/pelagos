@@ -189,7 +189,3 @@ services:
     App\MessageHandler\ZipDatasetFilesHandler:
         bind:
             $downloadDirectory: "%env(DOWNLOAD_PATH)%"
-
-    App\Controller\UI\DatasetSubmissionController:
-        bind:
-            string $customTemplate: "%env(CUSTOM_BASE_TEMPLATE)%"
