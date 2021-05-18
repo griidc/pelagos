@@ -526,4 +526,16 @@ class DatasetSubmissionController extends AbstractController
         }
         return $datasetSubmission;
     }
+
+    /**
+     * Info page for Dataset Submission.
+     *
+     * @Route("/dataset-submission/how-to-submit-data", name="pelagos_app_ui_datasetsubmission_info", methods={"GET"})
+     *
+     * @return Response A Response instance.
+     */
+    public function submissionInfoPage(): Response
+    {
+        return $this->render("DatasetSubmission/how-to-submit.html.twig");
+    }
 }

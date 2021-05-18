@@ -39,9 +39,9 @@ Encore
     .addEntry('research-group', './assets/js/research-group.js')
     .addEntry('grp-home', './assets/js/grp-home.js')
     .addEntry('stats', './assets/js/stats.js')
-
     .addEntry('file-manager', './assets/js/file-manager.js')
     .addEntry('person-profile', './assets/js/entry/person-profile.js')
+    .addEntry('how-to-submit-data', './assets/js/entry/how-to-submit-data.js')
 
     // enables Sass/SCSS support
     .enableSassLoader()
