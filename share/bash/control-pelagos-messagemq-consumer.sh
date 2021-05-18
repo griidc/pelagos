@@ -21,7 +21,7 @@ start() {
     echo -n $"Starting $prog: "
 	cd /opt/pelagos
 
-    if su - $runuser -c "supervisord --configuration=/opt/pelagos/var/supervisor/supervisord.conf --identifier=pelagos" ; then
+    if su - $runuser -c "supervisord --configuration=/opt/pelagos/config/supervisor/supervisord.conf --identifier=pelagos" ; then
         echo "started supervisord"
     else
         echo "failed to start supervisord"
@@ -42,7 +42,7 @@ start() {
         success=false
     fi
 
-    if su - $runuser -c "supervisorctl --serverurl unix:///opt/pelagos/var/supervisor/supervisor.sock start messenger-consume:*" ; then
+    if su - $runuser -c "supervisorctl --serverurl unix:///opt/pelagos/var/supervisor/supervisor.sock start pelagos:*" ; then
         echo "started messenger consumer"
     else
         echo "failed to start the actual messenger consumer"
@@ -62,7 +62,7 @@ start() {
 stop() {
 	cd /opt/pelagos
 
-    if su - $runuser -c "supervisorctl --serverurl unix:///opt/pelagos/var/supervisor/supervisor.sock stop messenger-consume:*" ; then
+    if su - $runuser -c "supervisorctl --serverurl unix:///opt/pelagos/var/supervisor/supervisor.sock stop pelagos:*" ; then
         echo "stopped consumer"
     else
         success=false

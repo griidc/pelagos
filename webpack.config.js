@@ -1,5 +1,4 @@
 var Encore = require('@symfony/webpack-encore');
-var arguments = require('yargs').argv;
 var path = require('path');
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
@@ -13,14 +12,14 @@ Encore
     .setOutputPath('public/build/')
 
     // public path used by the web server to access the output path
-    .setPublicPath(arguments.publicpath ? arguments.publicpath : '/build')
+    .setPublicPath(process.env.publicpath ? process.env.publicpath : '/build')
 
     // only needed for CDN's or sub-directory deploy
     .setManifestKeyPrefix('build/')
 
     // Enable Vue js
     .enableVueLoader(() => {}, {
-        useJsx: true,
+        runtimeCompilerBuild: false
     })
 
     /*
@@ -42,6 +41,8 @@ Encore
     .addEntry('stats', './assets/js/stats.js')
 
     .addEntry('file-manager', './assets/js/file-manager.js')
+    .addEntry('person-profile', './assets/js/entry/person-profile.js')
+
     // enables Sass/SCSS support
     .enableSassLoader()
     .enablePostCssLoader()
@@ -56,6 +57,7 @@ Encore
     .addAliases({
         '@': path.resolve(__dirname, 'assets', 'js'),
         'images': path.resolve(__dirname, 'assets', 'images'),
+        vue: 'vue/dist/vue.js'
     })
 
     /*
@@ -83,7 +85,7 @@ Encore
     .copyFiles(
         {
             from: './assets/static',
-            to: '[path]/[name].[hash:8].[ext]',
+            to: '[path][name].[hash:8].[ext]',
             includeSubdirectories: true
         }
     )
