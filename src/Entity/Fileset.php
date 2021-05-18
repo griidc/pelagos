@@ -389,7 +389,7 @@ class Fileset extends Entity
      *
      * @return integer
      */
-    public function numberOfFiles(): int
+    public function getNumberOfFiles(): int
     {
         return count($this->getProcessedAndNewFiles());
     }
