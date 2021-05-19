@@ -275,7 +275,16 @@ class DIFType extends AbstractType
                 ));
             });
 
-            $builder->addEventListener(FormEvents::PRE_SET_DATA, array($this, 'onPreSetData'));
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, array($this, 'onPreSetData'));
+
+        $builder->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) {
+                $title = $event->getForm()->get('title')->getData();
+                $entity = $event->getForm()->getData();
+                $entity->setTitle(preg_replace( "/(\r|\n)/", " ", $title));
+            }
+        );
     }
 
     /**

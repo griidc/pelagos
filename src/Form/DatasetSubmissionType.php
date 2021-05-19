@@ -327,12 +327,14 @@ class DatasetSubmissionType extends AbstractType
                 $size = $event->getForm()->get('datasetFileColdStorageArchiveSize')->getData();
                 $hash = $event->getForm()->get('datasetFileColdStorageArchiveSha256Hash')->getData();
                 $name = $event->getForm()->get('datasetFileColdStorageOriginalFilename')->getData();
+                $title = $event->getForm()->get('title')->getData();
                 $entity = $event->getForm()->getData();
                 if (null !== $size and null !== $hash and null !== $name) {
                     $entity->setDatasetFileColdStorageAttributes($size, $hash, $name);
                 } else {
                     $entity->clearDatasetFileColdStorageAttributes();
                 }
+                $entity->setTitle(preg_replace( "/(\r|\n)/", " ", $title));
             }
         );
     }
