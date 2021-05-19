@@ -282,7 +282,7 @@ class DIFType extends AbstractType
             function (FormEvent $event) {
                 $title = $event->getForm()->get('title')->getData();
                 $entity = $event->getForm()->getData();
-                $entity->setTitle(preg_replace( "/(\r|\n)/", " ", $title));
+                $entity->setTitle(preg_replace("/(\r|\n)/", " ", $title));
             }
         );
     }

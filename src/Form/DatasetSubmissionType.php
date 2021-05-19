@@ -334,7 +334,7 @@ class DatasetSubmissionType extends AbstractType
                 } else {
                     $entity->clearDatasetFileColdStorageAttributes();
                 }
-                $entity->setTitle(preg_replace( "/(\r|\n)/", " ", $title));
+                $entity->setTitle(preg_replace("/(\r|\n)/", " ", $title));
             }
         );
     }
