@@ -6,8 +6,8 @@ errormsg=$(echo $status | grep 'There are 0 messages pending in the failure tran
 
 if [ "$quiet" == "quiet" ]; then
     if [ -z "$errormsg" ]; then
-        echo $status | /bin/mailx -s "Failed message transport status" michael.williamson@tamucc.edu praneeth.pondicherry@tamucc.edu michael.vandeneijnden@tamucc.edu william.nichols@tamucc.edu rosalie.rossi@tamucc.edu
+        echo $status | /bin/mailx -s "Pelagos Messenger queue status" email.one@institution.tld email.two@institution.tld email.three@institution.tld...
     fi
 else
-    echo $status | /bin/mailx -s "Failed message transport status" michael.williamson@tamucc.edu praneeth.pondicherry@tamucc.edu michael.vandeneijnden@tamucc.edu william.nichols@tamucc.edu rosalie.rossi@tamucc.edu
+    echo $status | /bin/mailx -s "Pelagos Messenger queue status" email.one@institution.tld email.two@institution.tld email.three@institution.tld...
 fi
