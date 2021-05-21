@@ -485,9 +485,12 @@ class PersonController extends EntityController
     public function getPerson(Person $person): Response
     {
         $posix = false;
-        if ($person->getAccount() instanceof Account) {
-            $posix = $person->getAccount()->isPosix();
+        $account = $person->getAccount();
+        if ($account instanceof Account) {
+            $posix = $account->isPosix();
+            $posixUsername = $account->getUsername();
         }
+        $isMe = ($person->getId() === $this->getUser()->getPerson()->getId()) ? true : false;
         return $this->makeJsonResponse([
             'firstName' => $person->getFirstName(),
             'lastName' => $person->getLastName(),
@@ -499,7 +502,9 @@ class PersonController extends EntityController
             'country' => $person->getCountry(),
             'organization' => $person->getOrganization(),
             'position' => $person->getPosition(),
-            'isposix' => $posix
+            'isposix' => $posix,
+            'posixUsername' => $posixUsername,
+            'isMe' => $isMe
         ]);
     }
 }
