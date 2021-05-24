@@ -2,16 +2,14 @@
 
 namespace App\Controller\UI;
 
+use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Entity\PersonDatasetSubmission;
-
 use App\Form\DatasetSubmissionType;
 use App\Form\PersonDatasetSubmissionType;
-
 use App\Repository\DatasetRepository;
-
 use Doctrine\Common\Collections\Collection;
-
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -27,6 +25,9 @@ class ReportDatasetSubmission extends ReportController
      * @param string            $udi               A UDI.
      * @param DatasetRepository $datasetRepository The dataset repository.
      *
+     * @throws NotFoundHttpException When the dataset does not exist.
+     *
+     *
      * @Route("/overview/{udi}")
      *
      * @return Response A Response instance.
@@ -34,6 +35,10 @@ class ReportDatasetSubmission extends ReportController
     public function overviewAction(string $udi, DatasetRepository $datasetRepository)
     {
         $dataset = $datasetRepository->findOneBy(['udi' => $udi]);
+
+        if (!$dataset instanceof Dataset) {
+            throw new NotFoundHttpException("Dataset $udi not found!");
+        }
 
         $datasetSubmission = $dataset->getDatasetSubmission();
 
@@ -74,7 +79,6 @@ class ReportDatasetSubmission extends ReportController
         );
 
         foreach ($fields as $field) {
-
             if (!$form->offsetExists($field)) {
                 continue;
             }
@@ -92,7 +96,6 @@ class ReportDatasetSubmission extends ReportController
                 $sequence = 1;
                 foreach ($value as $item) {
                     if ($item instanceof PersonDatasetSubmission) {
-
                         $prefix = "Contact[$sequence]-";
 
                         $contact = $this->get('form.factory')->createNamed(
@@ -141,7 +144,6 @@ class ReportDatasetSubmission extends ReportController
 
                     $sequence++;
                 }
-
             } else {
                 $data[] = array(
                     'label' => $label,
