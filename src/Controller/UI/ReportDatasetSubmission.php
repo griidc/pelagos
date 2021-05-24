@@ -3,12 +3,14 @@
 namespace App\Controller\UI;
 
 use App\Entity\DatasetSubmission;
+use App\Entity\PersonDatasetSubmission;
+
 use App\Form\DatasetSubmissionType;
+use App\Form\PersonDatasetSubmissionType;
 
 use App\Repository\DatasetRepository;
 
 use Doctrine\Common\Collections\Collection;
-
 
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -32,19 +34,19 @@ class ReportDatasetSubmission extends ReportController
     public function overviewAction(string $udi, DatasetRepository $datasetRepository)
     {
         $dataset = $datasetRepository->findOneBy(['udi' => $udi]);
-        
+
         $datasetSubmission = $dataset->getDatasetSubmission();
-        
+
         $data[] = array(
             'label' => 'UDI',
             'value' => $udi,
         );
-        
+
         $fields = array(
+            'datasetContacts',
+            'authors',
             'title',
             'abstract',
-            'authors',
-            'restrictions',
             'shortTitle',
             'purpose',
             'suppParams',
@@ -62,76 +64,95 @@ class ReportDatasetSubmission extends ReportController
             'temporalExtentDesc',
             'temporalExtentBeginPosition',
             'temporalExtentEndPosition',
-            'distributionFormatName',
-            'fileDecompressionTechnique',
-            'datasetLinks',
-            'datasetContacts',
-            'metadataContacts',
-            'distributionPoints',
-            'remotelyHostedUrl',
-            'isRemotelyHosted',
-            'distributionPoints',
-            'remotelyHostedUrl',
-            'isRemotelyHosted',
-            'remotelyHostedName',
-            'remotelyHostedDescription',
-            'remotelyHostedFunction',
-            'isDatasetFileInColdStorage',
-            'datasetFileColdStorageArchiveSize',
-            'datasetFileColdStorageArchiveSha256Hash',
-            'datasetFileColdStorageOriginalFilename',
+            'restrictions',
         );
-        
-        
-        
+
         $form = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionType::class,
             $datasetSubmission
         );
-        
-        // dd($form->get('isDatasetFileInColdStorage'));
-        
+
         foreach ($fields as $field) {
+
+            if (!$form->offsetExists($field)) {
+                continue;
+            }
+
             $child = $form->get($field);
             $childView = $child->createView();
             $value = $childView->vars['value'];
             $label = $childView->vars['label'];
-            
-            if (empty($label)) {
-                continue;
-            }
-            
+
             if (is_array($value)) {
                 $value = implode(',', $value);
             }
-            
+
             if (is_object($value)) {
-                $value = '[OBJECT]';
+                $sequence = 1;
+                foreach ($value as $item) {
+                    if ($item instanceof PersonDatasetSubmission) {
+
+                        $prefix = "Contact[$sequence]-";
+
+                        $contact = $this->get('form.factory')->createNamed(
+                            null,
+                            PersonDatasetSubmissionType::class,
+                            $item
+                        );
+
+                        $personView = $contact->get('person')->get('firstName')->createView();
+                        $value = $personView->vars['value'];
+                        $label = $personView->vars['label'];
+                        $data[] = array(
+                            'label' => $prefix . $label,
+                            'value' => $value,
+                        );
+
+                        $personView = $contact->get('person')->get('lastName')->createView();
+                        $value = $personView->vars['value'];
+                        $label = $personView->vars['label'];
+                        $data[] = array(
+                            'label' => $prefix . $label,
+                            'value' => $value,
+                        );
+
+                        $personView = $contact->get('person')->get('emailAddress')->createView();
+                        $value = $personView->vars['value'];
+                        $label = $personView->vars['label'];
+                        $data[] = array(
+                            'label' => $prefix . $label,
+                            'value' => $value,
+                        );
+
+                        $roleView = $contact->get('role')->createView();
+                        $value = $roleView->vars['value'];
+                        $label = $roleView->vars['label'];
+                        $data[] = array(
+                            'label' => $prefix . $label,
+                            'value' => $value,
+                        );
+                    } else {
+                        $data[] = array(
+                            'label' => $label,
+                            'value' => "[object]",
+                        );
+                    }
+
+                    $sequence++;
+                }
+
+            } else {
+                $data[] = array(
+                    'label' => $label,
+                    'value' => $value,
+                );
             }
-            
-            $data[] = array(
-                'label' => $label,
-                'value' => $value,
-            );
         }
-        
-        
-        // dd($data);
-        
+
         return $this->writeCsvResponse(
             $data,
-            'submission.csv'
+            "$udi-submission.csv"
         );
-       
-        
-        // return $this->render(
-            // 'DatasetReview/overview.html.twig',
-            // array(
-                // 'form' => $form->createView(),
-            // )
-        // );
     }
-    
-    
 }
