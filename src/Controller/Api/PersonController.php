@@ -490,21 +490,41 @@ class PersonController extends EntityController
             $posix = $account->isPosix();
             $posixUsername = $account->getUsername();
         }
-        $isMe = ($this->getUser() && ($person->getId() === $this->getUser()->getPerson()->getId())) ? true : false;
-        return $this->makeJsonResponse([
-            'firstName' => $person->getFirstName(),
-            'lastName' => $person->getLastName(),
-            'emailAddress' => $person->getEmailAddress(),
-            'phoneNumber' => $person->getPhoneNumber(),
-            'city' => $person->getCity(),
-            'administrativeArea' => $person->getAdministrativeArea(),
-            'postalCode' => $person->getPostalCode(),
-            'country' => $person->getCountry(),
-            'organization' => $person->getOrganization(),
-            'position' => $person->getPosition(),
-            'isposix' => $posix,
-            'posixUsername' => $posixUsername,
-            'isMe' => $isMe
-        ]);
+        $currentUser = $this->getUser();
+        if ($currentUser instanceof Account) {
+            $isMe = ($person->getId() === $this->getUser()->getPerson()->getId()) ? true : false;
+            $response = $this->makeJsonResponse([
+                'firstName' => $person->getFirstName(),
+                'lastName' => $person->getLastName(),
+                'emailAddress' => $person->getEmailAddress(),
+                'phoneNumber' => $person->getPhoneNumber(),
+                'city' => $person->getCity(),
+                'administrativeArea' => $person->getAdministrativeArea(),
+                'postalCode' => $person->getPostalCode(),
+                'country' => $person->getCountry(),
+                'organization' => $person->getOrganization(),
+                'position' => $person->getPosition(),
+                'isposix' => $posix,
+                'posixUsername' => $posixUsername,
+                'isMe' => $isMe
+            ]);
+        } else {
+            $response = $this->makeJsonResponse([
+                'firstName' => $person->getFirstName(),
+                'lastName' => $person->getLastName(),
+                'emailAddress' => $person->getEmailAddress(),
+                'phoneNumber' => $person->getPhoneNumber(),
+                'city' => $person->getCity(),
+                'administrativeArea' => $person->getAdministrativeArea(),
+                'postalCode' => $person->getPostalCode(),
+                'country' => $person->getCountry(),
+                'organization' => $person->getOrganization(),
+                'position' => $person->getPosition(),
+                'isposix' => null,
+                'posixUsername' => null,
+                'isMe' => null
+            ]);
+        }
+        return $response;
     }
 }
