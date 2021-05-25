@@ -41,41 +41,55 @@
                 </div>
             </div>
             <hr>
-            <div class="row"  v-if="personDetails.isMe === true">
-                <div class="col-sm-3">
-                    <h6 class="mb-0">GridFTP</h6>
-                </div>
-                <div class="col-sm-9 text-secondary" v-if="personDetails.isposix === true">
-                  This account has Globus/SFTP enabled. Your username is <i>{{ personDetails.posixUsername }}</i>
-                </div>
-                <div class="col-sm-9 text-secondary" v-else>
-                  Globus/SFTP is not currently enabled on this account. <button onClick=@requestposix>Request Access</button>
-                </div>
-                </div>
+            <div class="row"  v-show="personDetails.isMe">
+              <div class="col-sm-3">
+                  <h6 class="mb-0">GridFTP</h6>
               </div>
-            <div class="row"  v-if="personDetails.isMe === true">
-                <div class="col-sm-3">
-                    <h6 class="mb-0">Details</h6>
-                </div>
-                <div class="col-sm-9 text-secondary">
-                  If enabled, this option enables use of griidc-ingest.griidc.org globus or SFTP endpoint
-                  to upload large files (including multi TB files) to GRIIDC. For more information on
-                  Globus GridFTP and SFTP transfers, please visit
-                  <a href="https://data.gulfresearchinitiative.org/bulk-transfers">
-                    https://data.gulfresearchinitiative.org/PLACEHOLDER-TBD</a>.
-                </div>
+              <div class="col-sm-9 text-secondary" v-if="personDetails.isposix === true">
+                This account has Globus/SFTP enabled. Your username is <i>{{ personDetails.posixUsername }}</i>
+              </div>
+              <div class="col-sm-9 text-secondary" v-else>
+                Globus/SFTP is not currently enabled on this account. <b-button variant="primary" @click="requestposix">Request Globus/SFTP Access</b-button>
+              </div>
+            </div>
+            <hr v-show="personDetails.isMe === true">
+            <div class="row"  v-show="personDetails.isMe">
+              <div class="col-sm-3">
+                <h6 class="mb-0">Details</h6>
+              </div>
+              <div class="col-sm-9 text-secondary">
+                If enabled, this option enables use of griidc-ingest.griidc.org globus or SFTP endpoint
+                to upload large files (including multi TB files) to GRIIDC. For more information on
+                Globus GridFTP and SFTP transfers, please visit
+                <a href="https://data.gulfresearchinitiative.org/bulk-transfers">
+                  https://data.gulfresearchinitiative.org/PLACEHOLDER-TBD</a>.
+              </div>
             </div>
         </b-card-body>
     </b-card>
 </template>
 
 <script>
+import {patchApi} from "@/vue/utils/axiosService";
 export default {
     name: "UserDetailsCard",
     props: {
-        personDetails: {
-            type: Object
-        }
+      personDetails: {
+          type: Object
+      }
+    },
+    methods: {
+      requestposix:function() {
+        console.log('here');
+        patchApi(
+          Routing.generate('pelagos_api_account_make_posix'),
+            {}
+          ).then(response => {
+            console.log("DEBUG:" + response.data);
+          }).catch(error => {
+            console.log(error);
+          });
+      }
     }
 }
 </script>
