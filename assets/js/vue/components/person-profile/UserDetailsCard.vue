@@ -49,7 +49,10 @@
                 This account has Globus/SFTP enabled. Your username is <i>{{ personDetails.posixUsername }}</i>
               </div>
               <div class="col-sm-9 text-secondary" v-else>
-                Globus/SFTP is not currently enabled on this account. <b-button variant="primary" @click="requestposix">Request Globus/SFTP Access</b-button>
+                Globus/SFTP is not currently enabled on this account.
+                <b-button variant="primary" @click="requestposix"><b-spinner small v-if="loading"></b-spinner>
+                  Request Globus/SFTP Access
+                </b-button>
               </div>
             </div>
             <hr v-show="personDetails.isMe === true">
@@ -72,25 +75,28 @@
 <script>
 import {patchApi} from "@/vue/utils/axiosService";
 export default {
-    name: "UserDetailsCard",
-    props: {
-      personDetails: {
-          type: Object
-      }
-    },
-    methods: {
-      requestposix:function() {
-        console.log('here');
-        patchApi(
-          Routing.generate('pelagos_api_account_make_posix'),
-            {}
-          ).then(response => {
-            console.log("DEBUG:" + response.data);
-          }).catch(error => {
-            console.log(error);
-          });
-      }
+  name: "UserDetailsCard",
+  props: {
+    personDetails: {
+        type: Object
+      },
+  loading: false
+  },
+  methods: {
+    requestposix:function() {
+      this.loading = true;
+      patchApi(
+      Routing.generate('pelagos_api_account_make_posix'),
+          {}
+      ).then(response => {
+        console.log("DEBUG:" + response.data);
+      }).catch(error => {
+        console.log(error);
+      }).finally(() => {
+        this.loading = false;
+      });
     }
+  }
 }
 </script>
 
