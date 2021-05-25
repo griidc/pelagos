@@ -3,30 +3,25 @@
 namespace App\Controller\UI;
 
 use App\Entity\Dataset;
-use App\Entity\DatasetSubmission;
 use App\Entity\PersonDatasetSubmission;
 use App\Form\DatasetSubmissionType;
 use App\Form\PersonDatasetSubmissionType;
 use App\Repository\DatasetRepository;
-use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * A controller for a Report of Research Groups and related Datasets.
- *
- * @return Response A Symfony Response instance.
+ * A controller for producing dataset reports.
  */
 class ReportDatasetSubmission extends ReportController
 {
     /**
-     * The default action for Dataset Review.
+     * Creates a CSV of the dataset fields by UDI.
      *
      * @param string            $udi               A UDI.
      * @param DatasetRepository $datasetRepository The dataset repository.
      *
      * @throws NotFoundHttpException When the dataset does not exist.
-     *
      *
      * @Route("/overview/{udi}")
      *
