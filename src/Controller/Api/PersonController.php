@@ -490,7 +490,7 @@ class PersonController extends EntityController
             $posix = $account->isPosix();
             $posixUsername = $account->getUsername();
         }
-        $isMe = ($person->getId() === $this->getUser()->getPerson()->getId()) ? true : false;
+        $isMe = ($this->getUser() && ($person->getId() === $this->getUser()->getPerson()->getId())) ? true : false;
         return $this->makeJsonResponse([
             'firstName' => $person->getFirstName(),
             'lastName' => $person->getLastName(),
