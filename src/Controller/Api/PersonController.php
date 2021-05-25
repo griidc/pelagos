@@ -485,45 +485,39 @@ class PersonController extends EntityController
     public function getPerson(Person $person): Response
     {
         $posix = false;
+
+        $currentAccount = $this->getUser();
+
+        $anonymousData = array(
+            'firstName' => $person->getFirstName(),
+            'lastName' => $person->getLastName(),
+            'emailAddress' => $person->getEmailAddress(),
+            'phoneNumber' => $person->getPhoneNumber(),
+            'city' => $person->getCity(),
+            'administrativeArea' => $person->getAdministrativeArea(),
+            'postalCode' => $person->getPostalCode(),
+            'country' => $person->getCountry(),
+            'organization' => $person->getOrganization(),
+            'position' => $person->getPosition()
+        );
+
         $account = $person->getAccount();
         if ($account instanceof Account) {
             $posix = $account->isPosix();
             $posixUsername = $account->getUsername();
         }
-        $currentUser = $this->getUser();
-        if ($currentUser instanceof Account) {
-            $isMe = ($person->getId() === $this->getUser()->getPerson()->getId()) ? true : false;
-            $response = $this->makeJsonResponse([
-                'firstName' => $person->getFirstName(),
-                'lastName' => $person->getLastName(),
-                'emailAddress' => $person->getEmailAddress(),
-                'phoneNumber' => $person->getPhoneNumber(),
-                'city' => $person->getCity(),
-                'administrativeArea' => $person->getAdministrativeArea(),
-                'postalCode' => $person->getPostalCode(),
-                'country' => $person->getCountry(),
-                'organization' => $person->getOrganization(),
-                'position' => $person->getPosition(),
-                'isposix' => $posix,
-                'posixUsername' => $posixUsername,
-                'isMe' => $isMe
-            ]);
+
+        $isMe = (($currentAccount instanceof Account) && $person->getId() === $currentAccount->getPerson()->getId()) ? true : false;
+        $authenticatedData = array(
+            'isposix' => $posix,
+            'posixUsername' => $posixUsername,
+            'isMe' => $isMe
+        );
+
+        if ($currentAccount instanceof Account) {
+            $response = $this->makeJsonResponse(array_merge($anonymousData, $authenticatedData));
         } else {
-            $response = $this->makeJsonResponse([
-                'firstName' => $person->getFirstName(),
-                'lastName' => $person->getLastName(),
-                'emailAddress' => $person->getEmailAddress(),
-                'phoneNumber' => $person->getPhoneNumber(),
-                'city' => $person->getCity(),
-                'administrativeArea' => $person->getAdministrativeArea(),
-                'postalCode' => $person->getPostalCode(),
-                'country' => $person->getCountry(),
-                'organization' => $person->getOrganization(),
-                'position' => $person->getPosition(),
-                'isposix' => null,
-                'posixUsername' => null,
-                'isMe' => null
-            ]);
+            $response = $this->makeJsonResponse($anonymousData);
         }
         return $response;
     }
