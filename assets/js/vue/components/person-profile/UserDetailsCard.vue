@@ -87,9 +87,9 @@ export default {
       this.loading = true;
       patchApi(
       Routing.generate('pelagos_api_account_make_posix'),
-          {}
-      ).then(response => {
-        console.log("DEBUG:" + response.data);
+        {}
+        ).then(response => {
+          window.location.reload()
       }).catch(error => {
         console.log(error);
       }).finally(() => {
