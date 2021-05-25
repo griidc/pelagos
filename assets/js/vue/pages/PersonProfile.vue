@@ -44,16 +44,6 @@ export default {
             console.log(error);
             this.showProfile = false;
         });
-    },
-    requestposix() {
-        patchApi(
-            Routing.generate('pelagos_api_account_make_posix'),
-            {thisComponent: this, addLoading: true}
-        ).then(response => {
-            console.log("DEBUG:" + response.data);
-        }).catch(error => {
-            console.log(error);
-        });
     }
 }
 </script>
