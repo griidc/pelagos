@@ -83,6 +83,10 @@ class ReportDatasetSubmission extends ReportController
             $value = $childView->vars['value'];
             $label = $childView->vars['label'];
 
+            if (empty($label)) {
+                continue;
+            }
+
             if (is_array($value)) {
                 $value = implode(',', $value);
             }
