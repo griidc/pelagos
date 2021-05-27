@@ -454,7 +454,7 @@ class PersonController extends EntityController
             $errStr = 'This Person is not deletable because there ' . ($primaryPointOfContactCount > 1 ? ' are ' : ' is ') . $primaryPointOfContactCount . ' primary point of contact(s) in DIF';
             throw new BadRequestHttpException($errStr);
         } elseif ($secondaryPointOfContactCount > 0) {
-            $errStr = 'This Person is not deletable because there' . ($secondaryPointOfContactCount > 1 ? ' are ' : ' is ') . $secondaryPointOfContactCount . ' secondary point of contact(s) in DIF';
+            $errStr = 'This Person is not deletable because there ' . ($secondaryPointOfContactCount > 1 ? ' are ' : ' is ') . $secondaryPointOfContactCount . ' secondary point of contact(s) in DIF';
             throw new BadRequestHttpException($errStr);
         } else {
             $this->handleDelete(Person::class, $id);
