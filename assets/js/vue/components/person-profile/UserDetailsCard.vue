@@ -62,9 +62,7 @@
                 <div class="col-sm-9 text-secondary">
                     If enabled, this option enables use of griidc-ingest.griidc.org globus or SFTP endpoint
                     to upload large files (including multi TB files) to GRIIDC. For more information on
-                    Globus GridFTP and SFTP transfers, please visit
-                    <a href="https://data.gulfresearchinitiative.org/bulk-transfers">
-                    https://data.gulfresearchinitiative.org/PLACEHOLDER-TBD</a>.
+                    Globus GridFTP and SFTP transfers, please see <a href="/bulk-transfers">about bulk-transfers</a>.
                 </div>
             </div>
         </b-card-body>
@@ -87,14 +85,14 @@ export default {
             patchApi(
             Routing.generate('pelagos_api_account_make_posix'),
                 {}
-            ).then(response => {
-                window.location.reload()
-            }).catch(error => {
-                console.log(error);
-            }).finally(() => {
+            ).finally(() => {
+                this.$emit('loadPersonData');
                 this.loading = false;
             });
-        }
+          },
+          getHostName:function() {
+              return Routing.getBaseUrl();
+          }
     }
 }
 </script>
