@@ -89,7 +89,7 @@ class ReportDatasetSubmission extends ReportController
             $label = $childView->vars['label'];
 
             if (empty($label)) {
-                continue;
+                $label = $childView->vars['name'] . ':';
             }
 
             if (is_array($value)) {
