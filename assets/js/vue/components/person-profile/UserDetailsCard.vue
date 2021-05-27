@@ -7,7 +7,6 @@
                 </div>
                 <div class="col-sm-9 text-secondary">
                     {{ `${personDetails.firstName}  ${personDetails.lastName}` }}
-
                 </div>
             </div>
             <hr>
@@ -45,7 +44,7 @@
                 <div class="col-sm-3">
                     <h6 class="mb-0">GridFTP</h6>
                 </div>
-                <div class="col-sm-9 text-secondary" v-if="personDetails.isposix === true">
+                <div class="col-sm-9 text-secondary" v-if="personDetails.isPosix">
                     This account has Globus/SFTP enabled. Your username is <i>{{ personDetails.posixUsername }}</i>
                 </div>
                 <div class="col-sm-9 text-secondary" v-else>
@@ -55,7 +54,7 @@
                     </b-button>
                 </div>
             </div>
-            <hr v-show="personDetails.isMe === true">
+            <hr v-show="personDetails.isMe">
             <div class="row"  v-show="personDetails.isMe">
                 <div class="col-sm-3">
                     <h6 class="mb-0">Details</h6>
