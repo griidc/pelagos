@@ -23,11 +23,11 @@ class ReportDatasetSubmission extends ReportController
      *
      * @throws NotFoundHttpException When the dataset does not exist.
      *
-     * @Route("/overview/{udi}")
+     * @Route("/dataset-submission-report/{udi}")
      *
      * @return Response A Response instance.
      */
-    public function overviewAction(string $udi, DatasetRepository $datasetRepository)
+    public function makeCSVAction(string $udi, DatasetRepository $datasetRepository)
     {
         $dataset = $datasetRepository->findOneBy(['udi' => $udi]);
 
@@ -38,8 +38,13 @@ class ReportDatasetSubmission extends ReportController
         $datasetSubmission = $dataset->getDatasetSubmission();
 
         $data[] = array(
-            'label' => 'UDI',
+            'label' => 'UDI:',
             'value' => $udi,
+        );
+
+        $data[] = array(
+            'label' => 'Submission Date:',
+            'value' => $datasetSubmission->getSubmissionTimeStamp()->format('c'),
         );
 
         $fields = array(
