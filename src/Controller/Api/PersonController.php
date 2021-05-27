@@ -451,10 +451,10 @@ class PersonController extends EntityController
         $primaryPointOfContactCount = $this->entityHandler->count(DIF::class, array('primaryPointOfContact' => $id));
         $secondaryPointOfContactCount = $this->entityHandler->count(DIF::class, array('secondaryPointOfContact' => $id));
         if ($primaryPointOfContactCount > 0) {
-            $errStr = 'This Person is not deletable because there' . ($primaryPointOfContactCount > 1 ? ' are ' : ' is ') . $primaryPointOfContactCount . ' primary point of contact(s) in DIF');
+            $errStr = 'This Person is not deletable because there' . ($primaryPointOfContactCount > 1 ? ' are ' : ' is ') . $primaryPointOfContactCount . ' primary point of contact(s) in DIF';
             throw new BadRequestHttpException($errStr);
         } elseif ($secondaryPointOfContactCount > 0) {
-            $errStr = 'This Person is not deletable because there' . ($secondaryPointOfContactCount > 1 ? ' are ' : ' is ') . $secondaryPointOfContactCount . ' secondary point of contact(s) in DIF');
+            $errStr = 'This Person is not deletable because there' . ($secondaryPointOfContactCount > 1 ? ' are ' : ' is ') . $secondaryPointOfContactCount . ' secondary point of contact(s) in DIF';
             throw new BadRequestHttpException($errStr);
         } else {
             $this->handleDelete(Person::class, $id);
