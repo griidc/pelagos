@@ -502,9 +502,6 @@ class PersonController extends EntityController
             'country' => $person->getCountry(),
             'organization' => $person->getOrganization(),
             'position' => $person->getPosition(),
-            'isPosix' => null,
-            'posixUsername' => null,
-            'isMe' => null
         );
 
         if ($currentAccount instanceof Account) {
