@@ -38,12 +38,12 @@ class ReportDatasetSubmission extends ReportController
         $datasetSubmission = $dataset->getDatasetSubmission();
 
         $data[] = array(
-            'label' => 'UDI:',
+            'label' => 'UDI',
             'value' => $udi,
         );
 
         $data[] = array(
-            'label' => 'Submission Date:',
+            'label' => 'Submission Date',
             'value' => $datasetSubmission->getSubmissionTimeStamp()->format('c'),
         );
 
@@ -89,7 +89,7 @@ class ReportDatasetSubmission extends ReportController
             $label = $childView->vars['label'];
 
             if (empty($label)) {
-                $label = $childView->vars['name'] . ':';
+                $label = $childView->vars['name'];
             }
 
             if (is_array($value)) {
