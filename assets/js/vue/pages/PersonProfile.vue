@@ -6,7 +6,7 @@
                     <AvatarCard :person-details="personProfileData"/>
                 </div>
                 <div class="col-md-8">
-                    <UserDetailsCard :person-details="personProfileData"/>
+                    <UserDetailsCard :person-details="personProfileData" @loadPersonData="queryPersonData" />
                 </div>
             </div>
         </div>
@@ -34,6 +34,10 @@ export default {
         }
     },
     created() {
+        this.queryPersonData();
+    },
+    methods: {
+      queryPersonData: function() {
         getApi(
             Routing.generate('pelagos_api_get_person') + "/" + this.personId,
             {thisComponent: this, addLoading: true}
@@ -44,6 +48,7 @@ export default {
             console.log(error);
             this.showProfile = false;
         });
+      }
     }
 }
 </script>
