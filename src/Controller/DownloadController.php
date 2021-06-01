@@ -108,6 +108,9 @@ class DownloadController extends AbstractController
     public function httpAction(Dataset $dataset, Datastore $dataStore, LogActionItemEventDispatcher $logActionItemEventDispatcher)
     {
         $datasetSubmission = $dataset->getDatasetSubmission();
+        if ($dataset->isRestricted()) {
+            throw new BadRequestHttpException('Unable to download restricted dataset');
+        }
         if ($datasetSubmission instanceof DatasetSubmission) {
             $fileset = $datasetSubmission->getFileset();
 

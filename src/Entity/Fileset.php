@@ -383,4 +383,14 @@ class Fileset extends Entity
             $this->getDatasetSubmission()->getDataset()->getUdi()
         ) . DIRECTORY_SEPARATOR;
     }
+
+    /**
+     * Returns the number of files in the fileset.
+     *
+     * @return integer
+     */
+    public function getNumberOfFiles(): int
+    {
+        return count($this->getProcessedAndNewFiles());
+    }
 }
