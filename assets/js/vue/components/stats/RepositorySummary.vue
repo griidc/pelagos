@@ -48,7 +48,7 @@ export default {
     },
     created() {
         getApi(
-            Routing.generate('pelagos_app_ui_stats_getstatisticsjson')
+            Routing.generate('pelagos_app_ui_stats_getstatisticsjson'), {}
         ).then(response => {
             this.datasets = response.data.totalDatasets;
             this.totalsize = response.data.totalSize;
