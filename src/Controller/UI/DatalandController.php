@@ -249,4 +249,18 @@ class DatalandController extends AbstractController
         }
         return $boundingBoxArray;
     }
+
+    /**
+     * The Dataland v2 Page - dataset details per UDI.
+     *
+     * @param string $udi A UDI.
+     *
+     * @Route("/data/v2/{udi}", name="pelagos_app_ui_dataland_v2")
+     *
+     * @return Response
+     */
+    public function indexPage(string $udi)
+    {
+        return $this->render('Dataland/indexv2.html.twig', ['udi' => $udi]);
+    }
 }
