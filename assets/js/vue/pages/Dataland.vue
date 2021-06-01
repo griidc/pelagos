@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="row" v-show="dataset.length > 0">
+        <div class="row">
             <main class="col-lg-9 overflow-auto">
                 <div class="row">
                     <h4>Abstract Etc</h4>
@@ -16,12 +16,12 @@
                     <b-card-text class="text-dark">
                         <p>
                             Research Group:
-                            <b-badge v-show="dataset.length > 0">{{ dataset.researchGroup }}</b-badge>
+                            <b-badge>{{ dataset.researchGroup.shortName }}</b-badge>
                         </p>
-<!--                        <p>-->
-<!--                            Funded By: <br>-->
-<!--                            <b-badge v-show="dataset.length > 0">{{ dataset.researchGroup.fundingCycle.fundingOrganization.shortName }}</b-badge>-->
-<!--                        </p>-->
+                        <p>
+                            Funded By: <br>
+                            <b-badge>{{ dataset.researchGroup.fundingCycle.fundingOrganization.shortName }}</b-badge>
+                        </p>
                     </b-card-text>
                 </b-card>
             </aside>
@@ -41,7 +41,13 @@ export default {
     },
     data() {
         return {
-            dataset: {},
+            dataset: {
+                researchGroup: {
+                    fundingCycle: {
+                        fundingOrganization: {}
+                    }
+                }
+            },
             downloadCount: 0
         }
     },
