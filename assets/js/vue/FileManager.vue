@@ -304,8 +304,7 @@ export default {
 
         isDownloadZipVisible: function () {
             getApi(
-                `${Routing.generate('pelagos_api_check_zip_exists')}/${this.datasetSubId}`,
-                {}
+                `${Routing.generate('pelagos_api_check_zip_exists')}/${this.datasetSubId}`
             ).then(response => {
                 this.showDownloadZipBtn = response.data;
             });
@@ -384,8 +383,7 @@ export default {
 const getItems = (pathInfo) => {
     return new Promise((resolve, reject) => {
         getApi(
-            `${Routing.generate('pelagos_api_get_files_dataset_submission')}/${datasetSubmissionId}?path=${pathInfo.path}`,
-            {}
+            `${Routing.generate('pelagos_api_get_files_dataset_submission')}/${datasetSubmissionId}?path=${pathInfo.path}`
         ).then(response => {
             resolve(response.data);
             let filesTabValidator = document.getElementById("filesTabValidator");
@@ -458,8 +456,7 @@ const downloadItems = (items) => {
     return new Promise((resolve, reject) => {
         items.forEach(item => {
             getApi(
-                `${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`,
-                {}
+                `${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`
             ).then(response => {
                 getApi(
                     `${Routing.generate('pelagos_api_file_download')}/${response.data.id}`,
