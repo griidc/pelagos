@@ -1,62 +1,29 @@
 <template>
     <div class="container">
-        <div class="row">
+        <div class="row" v-show="dataset.length > 0">
             <main class="col-lg-9 overflow-auto">
                 <div class="row">
-                    <h2>Abstract</h2>
+                    <h4>Abstract Etc</h4>
                 </div>
             </main>
             <aside class="col-lg-3">
-                <b-card-group>
-                    <b-card title="Card title" sub-title="Card subtitle">
-                        <b-card-text>
-                            Some quick example text to build on the <em>card title</em> and make up the bulk of the
-                            card's
-                            content.
-                        </b-card-text>
-
-                        <b-card-text>A second paragraph of text in the card.</b-card-text>
-
-                        <a href="#" class="card-link">Card link</a>
-                        <b-link href="#" class="card-link">Another link</b-link>
-                    </b-card>
-                    <b-card title="Card title" sub-title="Card subtitle">
-                        <b-card-text>
-                            Some quick example text to build on the <em>card title</em> and make up the bulk of the
-                            card's
-                            content.
-                        </b-card-text>
-
-                        <b-card-text>A second paragraph of text in the card.</b-card-text>
-
-                        <a href="#" class="card-link">Card link</a>
-                        <b-link href="#" class="card-link">Another link</b-link>
-                    </b-card>
-                    <b-card title="Card title" sub-title="Card subtitle">
-                        <b-card-text>
-                            Some quick example text to build on the <em>card title</em> and make up the bulk of the
-                            card's
-                            content.
-                        </b-card-text>
-
-                        <b-card-text>A second paragraph of text in the card.</b-card-text>
-
-                        <a href="#" class="card-link">Card link</a>
-                        <b-link href="#" class="card-link">Another link</b-link>
-                    </b-card>
-                    <b-card title="Card title" sub-title="Card subtitle">
-                        <b-card-text>
-                            Some quick example text to build on the <em>card title</em> and make up the bulk of the
-                            card's
-                            content.
-                        </b-card-text>
-
-                        <b-card-text>A second paragraph of text in the card.</b-card-text>
-
-                        <a href="#" class="card-link">Card link</a>
-                        <b-link href="#" class="card-link">Another link</b-link>
-                    </b-card>
-                </b-card-group>
+                <b-card header="Downloads" header-bg-variant="primary" class="text-center text-light">
+                    <b-card-text class="text-dark">
+                        {{ downloadCount }}
+                    </b-card-text>
+                </b-card>
+                <b-card header="Details" header-bg-variant="primary" class="text-center text-light">
+                    <b-card-text class="text-dark">
+                        <p>
+                            Research Group:
+                            <b-badge v-show="dataset.length > 0">{{ dataset.researchGroup }}</b-badge>
+                        </p>
+<!--                        <p>-->
+<!--                            Funded By: <br>-->
+<!--                            <b-badge v-show="dataset.length > 0">{{ dataset.researchGroup.fundingCycle.fundingOrganization.shortName }}</b-badge>-->
+<!--                        </p>-->
+                    </b-card-text>
+                </b-card>
             </aside>
         </div>
     </div>
@@ -74,21 +41,30 @@ export default {
     },
     data() {
         return {
-            details: {}
+            dataset: {},
+            downloadCount: 0
         }
     },
     created() {
         getApi(
-            `${Routing.generate('pelagos_api_datasets_get')}?udi=${this.udi}`,
+            `${Routing.generate('pelagos_api_datasets_get')}?udi=${this.udi}&_properties=datasetSubmission,
+            doi,datasetSubmission.fileset, researchGroup, researchGroup.fundingCycle.fundingOrganization`,
             {thisComponent: this, addLoading: true}
         ).then(response => {
             console.log(response.data);
-            this.details = response.data;
+            this.dataset = response.data[0];
+            getApi(`${Routing.generate('pelagos_app_ui_dataland_download_count')}/${this.dataset.id}`, {thisComponent: this, addLoading: true})
+            .then(response => {
+                this.downloadCount = response.data.downloadCount;
+            })
         })
     }
 }
 </script>
 
 <style scoped>
-
+.card {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
+    margin: 1rem;
+}
 </style>

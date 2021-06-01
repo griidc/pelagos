@@ -8,6 +8,7 @@ use App\Util\Geometry;
 use App\Util\Metadata;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -21,6 +22,7 @@ use App\Exception\InvalidGmlException;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Util\GmlUtil;
+use Symfony\Component\VarDumper\Cloner\Data;
 
 /**
  * The Dataset Monitoring controller.
@@ -262,5 +264,40 @@ class DatalandController extends AbstractController
     public function indexPage(string $udi)
     {
         return $this->render('Dataland/indexv2.html.twig', ['udi' => $udi]);
+    }
+
+    /**
+     *
+     * The Dataland v2 Page - Download count.
+     *
+     * @param Dataset $dataset The id of the dataset to retrieve.
+     *
+     * @Route("/data/count/{id}", name="pelagos_app_ui_dataland_download_count", requirements={"id"="\d+"})
+     *
+     * @return JsonResponse
+     */
+    public function getDownloadCount(Dataset $dataset): JsonResponse
+    {
+        $downloadCount = null;
+        // Remotely hosted datasets are normally also hosted locally anyway, so including.
+        if ($dataset->isAvailable()) {
+            $qb = $this->get('doctrine')->getManager()->createQueryBuilder();
+            $qb->select($qb->expr()->count('a'))
+                ->from('\App\Entity\LogActionItem', 'a')
+                ->where('a.subjectEntityId = ?1')
+                ->andwhere('a.subjectEntityName = ?2')
+                ->andwhere('a.actionName = ?3')
+                ->setParameter(1, $dataset->getId())
+                ->setParameter(2, 'Pelagos\Entity\Dataset')
+                ->setParameter(3, 'File Download');
+            $query = $qb->getQuery();
+            $downloadCount = $query->getSingleScalarResult();
+        }
+
+        return new JsonResponse(
+            [
+                'downloadCount' => $downloadCount,
+            ]
+        );
     }
 }
