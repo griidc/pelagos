@@ -11,7 +11,7 @@
                             <strong>Authors:</strong> {{ dataset.datasetSubmission.authors }}
                         </div>
                         <div v-if="dataset.acceptedDate">
-                            <strong>Published on </strong> {{ getFormattedDate(dataset.acceptedDate.date) }}
+                            <strong>Published on </strong> {{ getFormattedDate(dataset.acceptedDate.date, 'MMMM Do YYYY') }}
                         </div>
                         <div v-if="dataset.availabilityStatus !== 7 && dataset.datasetSubmission.distributionFormatName">
                             <strong>File Format:</strong> {{ dataset.datasetSubmission.distributionFormatName }}
@@ -29,22 +29,29 @@
                         </div>
                     </div>
                 </div>
+                <hr>
                 <!-- SPATIAL EXTENT MAP -->
 <!--                <div>-->
 <!--                    -->
 <!--                </div>-->
-                <!--CITATION -->
-                <!--                <div>-->
-                <!--                    -->
-                <!--                </div>-->
-                <!--ABSTRACT -->
-                <!--                <div>-->
-                <!--                    -->
-                <!--                </div>-->
-                <!--PUBS -->
-                <!--                <div>-->
-                <!--                    -->
-                <!--                </div>-->
+                <div class="py-2">
+                    <h6><strong>Abstract:</strong></h6>
+                    <p>
+                        {{ dataset.abstract }}
+                    </p>
+                </div>
+                <hr>
+                <div class="py-2">
+                    <h6><strong>Citation:</strong></h6>
+                    <p>
+                        {{ getCitation() }}
+                    </p>
+                </div>
+                <hr>
+                    <!--PUBLICATIONS -->
+<!--                <div>-->
+<!--                    -->
+<!--                </div>-->
                 <div class="py-2" v-show="isFileMangerReady">
                     <h2>{{dataset.datasetSubmission.id }}</h2>
                     <FileManager :datasetSubId="16799" :writeMode="false"></FileManager>
@@ -98,7 +105,8 @@ export default {
                 datasetSubmission: {
                     fileset: {}
                 },
-                doi: {}
+                doi: {},
+                acceptedDate: {}
             },
             downloadCount: 0,
             isFileMangerReady: false
@@ -123,12 +131,26 @@ export default {
         })
     },
     methods: {
-        getFormattedDate: function (date) {
-            return moment(date).format('MMMM Do YYYY');
+        getFormattedDate: function (date, format) {
+            return moment(date).format(format);
         },
         getFileSize: function (fileSize) {
             return xbytes(fileSize);
         },
+        getCitation: function () {
+            let citationString = '';
+            citationString += this.dataset.datasetSubmission.authors ?
+                `${this.dataset.datasetSubmission.authors}.` : '';
+            citationString += this.dataset.acceptedDate.date ?
+                `${this.getFormattedDate(this.dataset.acceptedDate.date, 'YYYY')}.` : '';
+            citationString += `${this.dataset.title}.`;
+            citationString += `Distributed by: Gulf of Mexico Research Initiative Information and Data Cooperative
+            (GRIIDC), Harte Research Institute, Texas A&M University–Corpus Christi. `;
+            citationString += this.dataset.doi.doi ?
+                `doi:${this.dataset.doi.doi}` : `Available from: https://data.gulfresearchinitiative.org/data/${this.dataset.udi}`;
+
+            return citationString;
+        }
     }
 }
 </script>
