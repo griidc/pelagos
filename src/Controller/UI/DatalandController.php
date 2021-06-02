@@ -22,7 +22,6 @@ use App\Exception\InvalidGmlException;
 use App\Entity\Dataset;
 use App\Entity\DatasetSubmission;
 use App\Util\GmlUtil;
-use Symfony\Component\VarDumper\Cloner\Data;
 
 /**
  * The Dataset Monitoring controller.

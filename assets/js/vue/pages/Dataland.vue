@@ -118,7 +118,6 @@ export default {
             doi,datasetSubmission.fileset, researchGroup, researchGroup.fundingCycle.fundingOrganization`,
             {thisComponent: this, addLoading: true}
         ).then(response => {
-            console.log(response.data);
             this.dataset = response.data[0];
             this.isFileMangerReady = true;
             getApi(`${Routing.generate('pelagos_app_ui_dataland_download_count')}/${this.dataset.id}`, {
