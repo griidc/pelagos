@@ -44,6 +44,7 @@ Encore
     .addEntry('how-to-submit-data', './assets/js/entry/how-to-submit-data.js')
     .addEntry('dataland', './assets/js/entry/dataland.js')
 
+
     // enables Sass/SCSS support
     .enableSassLoader()
     .enablePostCssLoader()
