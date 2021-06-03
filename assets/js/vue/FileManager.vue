@@ -277,17 +277,15 @@ export default {
         },
 
         onDownloadZipBtnClick: function () {
-            getApi(
-                `${Routing.generate('pelagos_api_file_zip_download_all')}/${datasetSubmissionId}`,
-                { thisComponent: null, addLoader: false, responseType: 'blob'}
-            ).then((response) => {
-                const url = window.URL.createObjectURL(new Blob([response.data]));
-                const link = document.createElement('a');
-                link.href = url;
-                link.setAttribute('download', getFileNameFromHeader(response.headers));
-                document.body.appendChild(link);
-                link.click();
-            });
+            const url = `${Routing.generate('pelagos_api_file_zip_download_all')}/${datasetSubmissionId}`;
+            const link = document.createElement('a');
+            link.href = url;
+            document.body.appendChild(link);
+            setTimeout(function() {
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+            }, 0);
+            link.click();
         },
 
         getDownloadZipFiles: function () {
