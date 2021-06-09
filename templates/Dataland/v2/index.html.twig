@@ -13,6 +13,7 @@
         <div class="row">
             <main class="col-lg-9 overflow-auto">
                 <div class="pt-3">
+                    {% include 'Dataland/v2/status-badge.html.twig' %}
                     <h2> {{ dataset.title }} </h2>
                 </div>
                 <div class="d-flex justify-content-between py-2">
@@ -47,6 +48,10 @@
                     <p>
                         {{ dataset.abstract }}
                     </p>
+                </div>
+                <hr>
+                <div class="py-2">
+                    <img src="{{ asset('build/images/map.png') }}" alt="map here">
                 </div>
                 <hr>
                 <div class="py-2">
