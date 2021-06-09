@@ -1,0 +1,18 @@
+{% if dataset.primaryPointOfContact %}
+    <div class="py-2">
+        <div class="card text-center text-light">
+            <div class="card-header bg-alternate">
+                Point of Contact
+            </div>
+            <div class="card-body">
+                <p class="card-text text-dark">
+                    {{ dataset.primaryPointOfContact.lastName }}, {{ dataset.primaryPointOfContact.firstName }}<br>
+                    {{ dataset.primaryPointOfContact.organization }} <br>
+                    <a href="mailto:{{ dataset.primaryPointOfContact.emailAddress }}">
+                        {{ dataset.primaryPointOfContact.emailAddress }}
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+{% endif %}

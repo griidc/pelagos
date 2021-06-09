@@ -24,9 +24,6 @@
                         <div>
                             <strong>Published on </strong> {{ dataset.acceptedDate|date('M d Y H:i T', 'UTC') }}
                         </div>
-                        <div>
-                            <strong>File Format:</strong> {{ dataset.datasetSubmission.distributionFormatName }}
-                        </div>
                     </div>
                     <div>
                         <div>
@@ -35,9 +32,6 @@
                             </div>
                             <div>
                                 <strong>UDI:</strong> {{ dataset.udi }}
-                            </div>
-                            <div>
-                                <strong>File Size:</strong> {{ dataset.datasetSubmission.fileset.zipFileSize|formatBytes }}
                             </div>
                         </div>
                     </div>
