@@ -1,6 +1,16 @@
 {% extends 'base.html.twig' %}
 {% block title %}{{ dataset.udi }}{% endblock %}
 
+{% block head %}
+    {{ parent() }}
+
+    {% if dataset.isAvailable %}
+        {% include 'Dataland/metadata.markup.twig' %}
+    {% else %}
+        <meta name="robots" content="noindex"/>
+    {% endif %}
+{% endblock %}
+
 {% block stylesheets %}
     {{ parent() }}
     {{ encore_entry_link_tags('file-manager') }}
@@ -65,6 +75,19 @@
                     <div class="py-2">
                         <div id="file-manager-app" data-id="{{ dataset.datasetSubmission.id }}"
                              data-write-mode="{{ (datasetSubmissionLockStatus) ? false : true }}"></div>
+                    </div>
+                    <hr>
+                    <div class="py-2">
+                        <h6><strong>Formatted Metadata:</strong></h6>
+                        <div class="border border-chart-secondary">
+                            <div class="mx-1">
+                                {% if rawxml %}
+                                    {{ rawxml|transformXml('xml-to-html-ISO.xsl')|raw }}
+                                {% else %}
+                                    No Metadata Available
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 </main>
                 <aside class="col-lg-3">
