@@ -1,50 +1,38 @@
-<aside class="col-lg-3">
-    <div class="py-2">
-        <div class="card text-center text-light">
-            <div class="card-header bg-alternate">
-                Files
-            </div>
-            <div class="card-body">
-                <p class="card-text text-dark">
-                    {{ downloads }}
-                </p>
-            </div>
+{% include 'Dataland/v2/download-card.html.twig' %}
+
+<div class="py-2">
+    <div class="card text-center text-light">
+        <div class="card-header bg-alternate">
+            Project Information
+        </div>
+        <div class="card-body">
+            <p class="card-text text-dark">
+                Funded By: <br>
+                <span class="badge badge-primary">{{ dataset.researchGroup.fundingCycle.fundingOrganization.shortName }}</span>
+                <span class="badge badge-primary">{{ dataset.researchGroup.fundingCycle.name }}</span>
+            </p>
+            <p class="card-text text-dark">
+                Research Group: <br>
+                <span class="badge badge-primary">{{ dataset.researchGroup.shortName }}</span>
+            </p>
         </div>
     </div>
-    <div class="py-2">
-        <div class="card text-center text-light">
-            <div class="card-header bg-alternate">
-                Project Information
-            </div>
-            <div class="card-body">
-                <p class="card-text text-dark">
-                    Funded By: <br>
-                    <span class="badge badge-primary">{{ dataset.researchGroup.fundingCycle.fundingOrganization.shortName }}</span>
-                    <span class="badge badge-primary">{{ dataset.researchGroup.fundingCycle.name }}</span>
-                </p>
-                <p class="card-text text-dark">
-                    Research Group: <br>
-                    <span class="badge badge-primary">{{ dataset.researchGroup.shortName }}</span>
-                </p>
-            </div>
+</div>
+{% include 'Dataland/v2/point-of-contact.html.twig' %}
+{% include 'Dataland/v2/collection-period-card.html.twig' %}
+<div class="py-2">
+    <div class="card text-center text-light">
+        <div class="card-header bg-alternate">
+            Theme keywords
+        </div>
+        <div class="card-body">
+            <p class="card-text text-dark">
+                {% set keywords = [] %}
+                {% for keyword in dataset.datasetSubmission.themeKeywords %}
+                    {% set keywords = keywords|merge([keyword|trim('"')]) %}
+                {% endfor %}
+                {{ keywords|join(', ') }}
+            </p>
         </div>
     </div>
-    {% include 'Dataland/v2/point-of-contact.html.twig' %}
-    {% include 'Dataland/v2/collection-period-card.html.twig' %}
-    <div class="py-2">
-        <div class="card text-center text-light">
-            <div class="card-header bg-alternate">
-                Theme keywords
-            </div>
-            <div class="card-body">
-                <p class="card-text text-dark">
-                    {% set keywords = [] %}
-                    {% for keyword in dataset.datasetSubmission.themeKeywords %}
-                        {% set keywords = keywords|merge([keyword|trim('"')]) %}
-                    {% endfor %}
-                    {{ keywords|join(', ') }}
-                </p>
-            </div>
-        </div>
-    </div>
-</aside>
+</div>
