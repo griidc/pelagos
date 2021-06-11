@@ -107,7 +107,15 @@ export default {
                 icon: 'download',
                 text: 'Download',
                 onClick: () => {
-                    const message = `Button clicked`;
+                    const url = `${Routing.generate('pelagos_api_file_zip_download_all')}/${this.datasetInfo.dataset.datasetSubmissionId}`;
+                    const link = document.createElement('a');
+                    link.href = url;
+                    document.body.appendChild(link);
+                    setTimeout(function() {
+                        document.body.removeChild(link);
+                        window.URL.revokeObjectURL(url);
+                    }, 0);
+                    link.click();
                     notify({
                         message: message,
                         position: {

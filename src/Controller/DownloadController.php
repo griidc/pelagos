@@ -186,7 +186,8 @@ class DownloadController extends AbstractController
         $datasetSubmission = $dataset->getDatasetSubmission();
         $datasetInfo = array(
             'udi' => $dataset->getUdi(),
-            'availability' => $dataset->getAvailabilityStatus()
+            'availability' => $dataset->getAvailabilityStatus(),
+            'datasetSubmissionId' => null
         );
 
         if ($datasetSubmission instanceof DatasetSubmission) {
@@ -194,6 +195,7 @@ class DownloadController extends AbstractController
             $datasetInfo['fileSize'] = TwigExtentions::formatBytes($datasetSubmission->getDatasetFileSize(), 2);
             $datasetInfo['fileSizeRaw'] = $datasetSubmission->getDatasetFileSize();
             $datasetInfo['checksum'] = $datasetSubmission->getDatasetFileSha256Hash();
+            $datasetInfo['datasetSubmissionId'] = $datasetSubmission->getId();
         }
         return $datasetInfo;
     }
