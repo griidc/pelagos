@@ -20,7 +20,7 @@ new Vue({
 });
 
 const downloadZipElement = document.getElementById("download-zip");
-const udi = downloadZipElement.dataset.udi;
+const datasetId = downloadZipElement.dataset.id;
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 new Vue({
@@ -28,8 +28,8 @@ new Vue({
     components: { DownloadZipBtn },
     data() {
         return {
-            udi: udi,
+            datasetId: datasetId,
         }
     },
-    template: `<DownloadZipBtn :udi="udi"/>`
+    template: `<DownloadZipBtn :id="datasetId"/>`
 });
