@@ -1,13 +1,13 @@
 <template>
     <div>
-        <b-button size="sm" class="mb-2" @click="randomBtn" variant="primary">
+        <b-button size="sm" class="mb-2" @click="downloadBtn" variant="primary">
             <b-icon icon="arrow-up-right" aria-hidden="true" v-if="datasetInfo.remotelyHosted"></b-icon>
             <b-icon icon="download" aria-hidden="true" v-else></b-icon>
             {{ buttonTitle }}
         </b-button>
         <DxPopup
             :title="buttonTitle"
-            :visible.sync="showPopup"
+            :visible.sync="showDownloadDialog"
             :close-on-outside-click="true"
             :show-title="true"
             :width="500"
@@ -33,7 +33,8 @@
                         <strong>Location:</strong>
                         <a :href=datasetInfo.fileUri target=_BLANK>
                             {{ datasetInfo.fileUri }}
-                        </a><br>
+                        </a><b-icon icon="arrow-up-right" aria-hidden="true" v-if="datasetInfo.remotelyHosted"></b-icon>
+                        <br>
                         <p>
                             {{ additionalInfo }}
                         </p>
@@ -64,12 +65,6 @@
                                location="before"
                                :options="downloadButtonOptions"
                 />
-                <DxToolbarItem
-                    widget="dxButton"
-                    toolbar="bottom"
-                    location="after"
-                    :options="closeButtonOptions"
-                />
             </template>
         </DxPopup>
     </div>
@@ -95,7 +90,7 @@ export default {
     },
     data() {
         return {
-            showPopup: false,
+            showDownloadDialog: false,
             datasetInfo: {
                 remotelyHosted: false,
                 dataset: {},
@@ -125,17 +120,10 @@ export default {
                     }, 'success', 3000);
                 }
             },
-            closeButtonOptions: {
-                text: 'Close',
-                onClick: () => {
-                    this.showPopup = false;
-                }
-            },
         }
     },
     created() {
         getApi(Routing.generate("pelagos_app_download_default", {"id": this.id})).then(response => {
-            console.log(response.data);
             this.datasetInfo = response.data;
             if (this.datasetInfo.remotelyHosted) {
                 this.buttonTitle = "External Dataset Link"
@@ -154,8 +142,8 @@ export default {
         });
     },
     methods: {
-        randomBtn: function () {
-            this.showPopup = true;
+        downloadBtn: function () {
+            this.showDownloadDialog = true;
         }
     }
 }
