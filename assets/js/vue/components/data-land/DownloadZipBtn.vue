@@ -62,7 +62,7 @@
                 <DxToolbarItem v-if="!datasetInfo.remotelyHosted"
                                widget="dxButton"
                                toolbar="bottom"
-                               location="before"
+                               location="center"
                                :options="downloadButtonOptions"
                 />
             </template>
