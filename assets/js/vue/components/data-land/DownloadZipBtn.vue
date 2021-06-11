@@ -102,7 +102,7 @@ export default {
                 icon: 'download',
                 text: 'Download',
                 onClick: () => {
-                    const url = `${Routing.generate('pelagos_api_file_zip_download_all')}/${this.datasetInfo.dataset.datasetSubmissionId}`;
+                    const url = `${Routing.generate("pelagos_app_download_http", {"id": this.id})}`;
                     const link = document.createElement('a');
                     link.href = url;
                     document.body.appendChild(link);
