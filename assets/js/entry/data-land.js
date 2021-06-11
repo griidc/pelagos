@@ -3,10 +3,11 @@ import FileManager from "@/vue/FileManager";
 import '/assets/css/file-manager.css'
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import DownloadZipBtn from "@/vue/components/data-land/DownloadZipBtn";
+import {BootstrapVue, IconsPlugin} from 'bootstrap-vue';
 
 const fileManagerElement = document.getElementById("file-manager-app");
+const datasetSubmissionId = Number(fileManagerElement.dataset.submission);
 
-const datasetSubmissionId = Number(fileManagerElement.dataset.id);
 new Vue({
     el: '#file-manager-app',
     data() {
@@ -18,8 +19,17 @@ new Vue({
     template: `<FileManager :datasetSubId="datasetSubmissionId" :writeMode="false"/>`
 });
 
+const downloadZipElement = document.getElementById("download-zip");
+const udi = downloadZipElement.dataset.udi;
+Vue.use(BootstrapVue);
+Vue.use(IconsPlugin);
 new Vue({
     el: '#download-zip',
     components: { DownloadZipBtn },
-    template: `<DownloadZipBtn/>`
+    data() {
+        return {
+            udi: udi,
+        }
+    },
+    template: `<DownloadZipBtn :udi="udi"/>`
 });
