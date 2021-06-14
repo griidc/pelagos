@@ -76,7 +76,7 @@
             shading-color="rgba(0,0,0,0.4)"
         >
             <template>
-                <div class="upload-progress-dialog">
+                <div class="progress-dialog">
                     <p>
                         <b>Uploaded {{ humanSize(doneFileSize) }} of {{ humanSize(totalFileSize) }}</b>
                     </p>
@@ -97,6 +97,40 @@
                         width="50%"
                         styling-mode="contained"
                         @click="stopProcess"
+                    />
+                </div>
+            </template>
+        </DxPopup>
+        <DxPopup
+            :visible.sync="downloadPopup"
+            :close-on-outside-click="false"
+            :show-title="false"
+            position="center"
+            :showCloseButton="false"
+            :width="350"
+            height="auto"
+            :drag-enabled="false"
+            :shading="true"
+            shading-color="rgba(0,0,0,0.4)"
+        >
+            <template>
+                <div class="progress-dialog">
+                    <p>
+                        <b>Downloaded {{ humanSize(downloadedSize) }} of {{ humanSize(totalDownloadSize) }}</b>
+                    </p>
+                    <DxProgressBar
+                        :min="0"
+                        :max="totalDownloadSize"
+                        :value="downloadedSize"
+                        width="100%"
+                    />
+                    <br>
+                    <DxButton
+                        text="Cancel Download"
+                        type="danger"
+                        width="50%"
+                        styling-mode="contained"
+                        @click="stopDownload"
                     />
                 </div>
             </template>
@@ -148,7 +182,7 @@ import {DxProgressBar} from 'devextreme-vue/progress-bar';
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
 import Dropzone from "dropzone";
 import xbytes from "xbytes";
-import {deleteApi, getApi, postApi, putApi} from "@/vue/utils/axiosService";
+import {deleteApi, getApi, postApi, putApi, downloadApi, stopApi} from "@/vue/utils/axiosService";
 
 let datasetSubmissionId = null;
 let destinationDir = '';
@@ -208,7 +242,10 @@ export default {
             isRenamedPopupVisible: false,
             cancelUploadBtn: {
                 class: 'cancel-upload-btn'
-            }
+            },
+            downloadedSize: 0,
+            totalDownloadSize: 0,
+            downloadPopup: false
         };
     },
 
@@ -374,6 +411,17 @@ export default {
 
         onHideRename: function () {
             this.filesRenamed = 0;
+        },
+
+        stopDownload: function () {
+            stopApi();
+            this.resetDownloadAttrs();
+        },
+
+        resetDownloadAttrs: function () {
+            this.downloadPopup = false;
+            this.downloadedSize = 0;
+            this.totalDownloadSize = 0;
         }
     },
 };
@@ -453,12 +501,19 @@ const renameItem = (item, name) => {
 const downloadItems = (items) => {
     return new Promise((resolve, reject) => {
         items.forEach(item => {
+            myFileManager.$parent.downloadPopup = true;
+            myFileManager.$parent.totalDownloadSize = item.size;
             getApi(
                 `${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`
             ).then(response => {
-                getApi(
-                    `${Routing.generate('pelagos_api_file_download')}/${response.data.id}`,
-                    {responseType: 'blob'}
+                const config = {
+                    responseType: 'blob',
+                    onDownloadProgress: function(progressEvent) {
+                        myFileManager.$parent.downloadedSize = progressEvent.loaded;
+                    }
+                }
+                downloadApi(
+                    `${Routing.generate('pelagos_api_file_download')}/${response.data.id}`, config
                 ).then((response) => {
                     const url = window.URL.createObjectURL(new Blob([response.data]));
                     const link = document.createElement('a');
@@ -466,6 +521,8 @@ const downloadItems = (items) => {
                     link.setAttribute('download', getFileNameFromHeader(response.headers));
                     document.body.appendChild(link);
                     link.click();
+                    myFileManager.$parent.resetDownloadAttrs();
+
                 }).then(() => {
                     resolve();
                 })
@@ -592,7 +649,7 @@ const getFileNameFromHeader = (headers) => {
     background-repeat: no-repeat;
 }
 
-.upload-progress-dialog {
+.progress-dialog {
     align-items: center;
     text-align: center;
 }

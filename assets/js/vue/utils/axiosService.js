@@ -1,5 +1,7 @@
 const axios = require('axios');
 const axiosInstance = axios.create({});
+const CancelToken = axios.CancelToken;
+const source = CancelToken.source();
 
 /**
  * Axios GET API.
@@ -8,11 +10,11 @@ const axiosInstance = axios.create({});
  * @param loadingOverlay
  * @returns {Promise<AxiosResponse<any>>}
  */
-export const getApi = (url, {thisComponent = null, addLoader = false, responseType = 'json'} = {}) => {
+export const getApi = (url, {thisComponent = null, addLoader = false} = {}) => {
     if (addLoader === true) {
         addLoadingOverLay(thisComponent);
     }
-    return axiosInstance({url: url, method: 'GET', responseType: responseType});
+    return axiosInstance({url: url, method: 'GET', responseType: "json", cancelToken: source.token});
 }
 
 /**
@@ -52,6 +54,26 @@ export const putApi = (url, postData) => {
  */
 export const patchApi = (url, patchData) => {
     return axiosInstance.patch(url, patchData);
+}
+
+/**
+ * Download blob from API.
+ * @param url
+ * @param config
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export const downloadApi = (url, config) => {
+    config.cancelToken = source.token;
+    return axiosInstance.get(url, config);
+}
+
+/**
+ * Cancel API request.
+ * @returns void
+ */
+export const stopApi = () => {
+    // cancel the request (the message parameter is optional)
+    source.cancel('Operation canceled by the user.');
 }
 
 /**
