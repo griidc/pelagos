@@ -1,0 +1,14 @@
+{% if dataset.datasetPublications|length > 0 %}
+    <hr>
+    <div class="py-2">
+        <h6><strong>Publications:</strong></h6>
+        {% for datasetPublication in dataset.datasetPublications %}
+            {% set doi = datasetPublication.publication.doi %}
+            <p>
+                <a href="http://dx.doi.org/{{ doi }}" target="_blank">
+                    {{ datasetPublication.publication.citationText }}
+                </a>
+            </p>
+        {% endfor %}
+    </div>
+{% endif %}

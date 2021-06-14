@@ -265,8 +265,6 @@ class FileManager extends AbstractFOSRestController
      *
      * @Route("/api/file/download/{id}", name="pelagos_api_file_download", defaults={"_format"="json"})
      *
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
-     *
      * @throws BadRequestHttpException Error thrown when file stream cannot be opened.
      *
      * @return Response
@@ -302,8 +300,6 @@ class FileManager extends AbstractFOSRestController
      *
      * @Route("/api/file_zip_download_all/{id}", name="pelagos_api_file_zip_download_all", defaults={"_format"="json"})
      *
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
-     *
      * @throws BadRequestHttpException When no zip file is found.
      *
      * @return Response
@@ -334,8 +330,6 @@ class FileManager extends AbstractFOSRestController
      * @param DatasetSubmission $datasetSubmission The id of the dataset submission.
      *
      * @Route("/api/check_zip_exists/{id}", name="pelagos_api_check_zip_exists", defaults={"_format"="json"})
-     *
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
      *
      * @return Response
      */
