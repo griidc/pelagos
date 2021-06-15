@@ -4,7 +4,6 @@ import '/assets/css/file-manager.css'
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import DownloadZipBtn from "@/vue/components/data-land/DownloadZipBtn";
 import {BootstrapVue, IconsPlugin} from 'bootstrap-vue';
-import '/assets/css/xmlverbatim.css';
 
 const fileManagerElement = document.getElementById("file-manager-app");
 const datasetSubmissionId = Number(fileManagerElement.dataset.submission);
