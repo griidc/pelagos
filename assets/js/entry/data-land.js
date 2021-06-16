@@ -5,20 +5,23 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import DownloadZipBtn from "@/vue/components/data-land/DownloadZipBtn";
 import {BootstrapVue, IconsPlugin} from 'bootstrap-vue';
 
+// Mount File Manager vue component
 const fileManagerElement = document.getElementById("file-manager-app");
-const datasetSubmissionId = Number(fileManagerElement.dataset.submission);
+if (fileManagerElement) {
+    const datasetSubmissionId = Number(fileManagerElement.dataset.submission);
+    new Vue({
+        el: '#file-manager-app',
+        data() {
+            return {
+                datasetSubmissionId: datasetSubmissionId,
+            }
+        },
+        components: {FileManager},
+        template: `<FileManager :datasetSubId="datasetSubmissionId" :writeMode="false"/>`
+    });
+}
 
-new Vue({
-    el: '#file-manager-app',
-    data() {
-        return {
-            datasetSubmissionId: datasetSubmissionId,
-        }
-    },
-    components: {FileManager},
-    template: `<FileManager :datasetSubId="datasetSubmissionId" :writeMode="false"/>`
-});
-
+// Mount Download button vue component
 const downloadZipElement = document.getElementById("download-zip");
 if (downloadZipElement) {
     const datasetId = downloadZipElement.dataset.id;
