@@ -71,11 +71,7 @@
                         </p>
                     </div>
                     {% include 'Dataland/v2/publications.html.twig' %}
-                    <hr>
-                    <div class="py-2">
-                        <div id="file-manager-app" data-submission="{{ dataset.datasetSubmission.id }}"
-                             data-write-mode="{{ (datasetSubmissionLockStatus) ? false : true }}"></div>
-                    </div>
+                    {% include 'Dataland/v2/file-manager.html.twig' %}
                     <hr>
                     <div class="py-2">
                         <h6><strong>Formatted Metadata:</strong></h6>
