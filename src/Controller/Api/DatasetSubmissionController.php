@@ -359,7 +359,6 @@ class DatasetSubmissionController extends EntityController
      */
     public function getFile(DatasetSubmission $datasetSubmission, Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $fileset = $datasetSubmission->getFileset();
         $path = $request->get('path');
         if (!$path) {
