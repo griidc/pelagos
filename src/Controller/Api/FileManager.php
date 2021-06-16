@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -266,11 +267,19 @@ class FileManager extends AbstractFOSRestController
      * @Route("/api/file/download/{id}", name="pelagos_api_file_download", defaults={"_format"="json"})
      *
      * @throws BadRequestHttpException Error thrown when file stream cannot be opened.
+     * @throws AccessDeniedHttpException Error thrown when file not available for download.
      *
      * @return Response
      */
     public function downloadFile(File $file, Datastore $datastore): Response
     {
+        if ($file->getFileset()->getDatasetSubmission()->getDataset()->getAvailabilityStatus() !==
+            DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE
+            and
+            !$this->isGranted('CAN_EDIT', $file)
+        ) {
+            throw new AccessDeniedHttpException('File unavailable for download');
+        }
         $response = new StreamedResponse(function () use ($file, $datastore) {
             $outputStream = fopen('php://output', 'wb');
             if ($file->getStatus() === File::FILE_DONE) {
@@ -301,11 +310,20 @@ class FileManager extends AbstractFOSRestController
      * @Route("/api/file_zip_download_all/{id}", name="pelagos_api_file_zip_download_all", defaults={"_format"="json"})
      *
      * @throws BadRequestHttpException When no zip file is found.
+     * @throws AccessDeniedHttpException Error thrown when file not available for download.
      *
      * @return Response
      */
     public function downloadZipAllFiles(DatasetSubmission $datasetSubmission): Response
     {
+        if ($datasetSubmission->getDataset()->getAvailabilityStatus() !==
+            DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE
+            and
+            !$this->isGranted('CAN_EDIT', $datasetSubmission)
+        ) {
+            throw new AccessDeniedHttpException('File unavailable for download');
+        }
+
         $zipFilePath = $this->getZipFilePath($datasetSubmission);
         if ($zipFilePath) {
             $response = new StreamedResponse(function () use ($zipFilePath) {
