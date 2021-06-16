@@ -56,7 +56,7 @@
                         <strong>File name:</strong> {{ datasetInfo.dataset.filename }}<br>
                         <strong>File size:</strong> {{ datasetInfo.dataset.fileSize }}<br>
                         <strong>SHA256 Checksum:</strong> {{ datasetInfo.dataset.checksum }}<br>
-                        <strong>Estimated Download Time:</strong>{{ datasetInfo.dataset.fileSizeRaw }}<br>
+                        <strong>Estimated Download Time:</strong> {{ estimatedDownloadTime }}<br>
                     </div>
                 </div>
                 <DxToolbarItem v-if="!datasetInfo.remotelyHosted"
@@ -120,6 +120,7 @@ export default {
                     }, 'success', 3000);
                 }
             },
+            estimatedDownloadTime: 'Calculating...'
         }
     },
     created() {
@@ -144,6 +145,33 @@ export default {
     methods: {
         downloadBtn: function () {
             this.showDownloadDialog = true;
+        }
+    },
+    watch: {
+        showDownloadDialog: function () {
+            if (this.showDownloadDialog === true) {
+                let start = new Date().getTime();
+                getApi(Routing.getBaseUrl() + "/testfile.bin?id=" + start)
+                .then(response => {
+                    const end = new Date().getTime();
+                    const diff = (end - start) / 1000;
+                    const bytes = response.headers["content-length"];
+                    const speed = (bytes / diff);
+                    let time = this.datasetInfo.dataset.fileSizeRaw / speed;
+                    let unit = "second";
+                    if (time > 60) {
+                        time = time / 60;
+                        unit = "minute";
+                    }
+                    if (time > 60) {
+                        time = time / 60;
+                        unit = "hour";
+                    }
+                    console.log(time);
+                    if (Math.round(time) !== 1) unit += "s";
+                    this.estimatedDownloadTime = `${Math.round(time)}${unit} (based on your current connection speed)`;
+                })
+            }
         }
     }
 }
