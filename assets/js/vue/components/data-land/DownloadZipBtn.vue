@@ -45,7 +45,7 @@
                         <p>
                             All materials on this website are made available to GRIIDC and in turn to you "as-is."
                             By downloading files, you agree to the
-                            <a href=https://data.gulfresearchinitiative.org/terms-and-conditions>
+                            <a href="https://data.gulfresearchinitiative.org/terms-and-conditions" target="_blank">
                                 GRIIDC Terms of Service
                             </a>
                         </p>
