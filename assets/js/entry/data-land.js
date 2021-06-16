@@ -20,16 +20,18 @@ new Vue({
 });
 
 const downloadZipElement = document.getElementById("download-zip");
-const datasetId = downloadZipElement.dataset.id;
-Vue.use(BootstrapVue);
-Vue.use(IconsPlugin);
-new Vue({
-    el: '#download-zip',
-    components: { DownloadZipBtn },
-    data() {
-        return {
-            datasetId: datasetId,
-        }
-    },
-    template: `<DownloadZipBtn :id="datasetId"/>`
-});
+if (downloadZipElement) {
+    const datasetId = downloadZipElement.dataset.id;
+    Vue.use(BootstrapVue);
+    Vue.use(IconsPlugin);
+    new Vue({
+        el: '#download-zip',
+        components: { DownloadZipBtn },
+        data() {
+            return {
+                datasetId: datasetId,
+            }
+        },
+        template: `<DownloadZipBtn :id="datasetId"/>`
+    });
+}
