@@ -1,7 +1,6 @@
 {% if dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') %}
     <hr>
     <div class="py-2">
-        <div id="file-manager-app" data-submission="{{ dataset.datasetSubmission.id }}"
-             data-write-mode="{{ (datasetSubmissionLockStatus) ? false : true }}"></div>
+        <div id="file-manager-app" data-submission="{{ dataset.datasetSubmission.id }}"></div>
     </div>
 {% endif %}
