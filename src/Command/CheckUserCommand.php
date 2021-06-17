@@ -11,9 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 use App\Entity\Account;
-use App\Entity\Person;
-#use App\Entity\PersonResearchGroup;
-#use App\Entity\ResearchGroup;
 
 /**
  * Command to convert a user into a Pelagos DRPM.
