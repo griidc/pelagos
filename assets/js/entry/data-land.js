@@ -41,13 +41,12 @@ const dlmap = new GeoViz();
 dlmap.initMap('dlolmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':false,'labelAttr':'udi'});
 
 const geovizMap =  $("#dlolmap");
-const udi = "test";
 
-if (geovizMap.attr("description") != "" && geovizMap.attr("wkt") == "") {
+if (geovizMap.attr("description") !== "" && geovizMap.attr("wkt") === "") {
     var imagePath = geovizMap.attr('labimage');
     dlmap.addImage(imagePath,0.4);
     dlmap.makeStatic();
-} else if (geovizMap.attr("wkt") != "") {
+} else if (geovizMap.attr("wkt") !== "") {
     dlmap.addFeatureFromWKT(geovizMap.attr("wkt"), {"udi": geovizMap.attr("udi")});
     dlmap.gotoAllFeatures();
 }
