@@ -58,7 +58,7 @@ Encore
     .addAliases({
         '@': path.resolve(__dirname, 'assets', 'js'),
         'images': path.resolve(__dirname, 'assets', 'images'),
-        vue: 'vue/dist/vue.js'
+        vue: Encore.isProduction() ? 'vue/dist/vue.min.js': 'vue/dist/vue.js'
     })
 
     /*
