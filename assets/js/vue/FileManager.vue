@@ -522,7 +522,6 @@ const downloadItems = (items) => {
                     document.body.appendChild(link);
                     link.click();
                     myFileManager.$parent.resetDownloadAttrs();
-
                 }).then(() => {
                     resolve();
                 })
