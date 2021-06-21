@@ -182,7 +182,7 @@ import {DxProgressBar} from 'devextreme-vue/progress-bar';
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
 import Dropzone from "dropzone";
 import xbytes from "xbytes";
-import {deleteApi, getApi, postApi, putApi, downloadApi, stopApi} from "@/vue/utils/axiosService";
+import {deleteApi, getApi, postApi, putApi, downloadApi } from "@/vue/utils/axiosService";
 
 let datasetSubmissionId = null;
 let destinationDir = '';
@@ -414,7 +414,6 @@ export default {
         },
 
         stopDownload: function () {
-            stopApi();
             this.resetDownloadAttrs();
         },
 

@@ -68,15 +68,6 @@ export const downloadApi = (url, config) => {
 }
 
 /**
- * Cancel API request.
- * @returns void
- */
-export const stopApi = () => {
-    // cancel the request (the message parameter is optional)
-    source.cancel('Operation canceled by the user.');
-}
-
-/**
  * Add vue loading overlay indicator.
  * @param thisComponent
  */
