@@ -42,6 +42,7 @@ Encore
     .addEntry('file-manager', './assets/js/file-manager.js')
     .addEntry('person-profile', './assets/js/entry/person-profile.js')
     .addEntry('how-to-submit-data', './assets/js/entry/how-to-submit-data.js')
+    .addEntry('data-land', './assets/js/entry/data-land.js')
 
     // enables Sass/SCSS support
     .enableSassLoader()
