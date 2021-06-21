@@ -54,7 +54,12 @@
                     </div>
                     <hr>
                     <div class="py-2">
-                        <img src="{{ asset('build/images/map.jpg') }}" alt="map here">
+                        <div id="dlolmap" style="width: 100%;height:480px;"
+                            wkt="{{wkt|default}}"
+                            udi="{{dataset.udi}}"
+                            description= {{ (dataset.datasetStatus == constant('App\\Entity\\Dataset::DATASET_STATUS_ACCEPTED')) ? dataset.datasetSubmission.spatialExtentDescription : "" }}
+                            labimage="{{ asset('build/images/labonly.png') }}">
+                        </div>
                     </div>
                     <hr>
                     <div class="py-2">
@@ -97,5 +102,10 @@
 
 {% block javascripts %}
     {{ parent() }}
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js"></script>
+    <script type="text/javascript" src="//maps.google.com/maps/api/js?v=3&key={{ google_maps_api_key }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/geoviz.js') }}"></script>
+
     {{ encore_entry_script_tags('data-land') }}
 {% endblock %}
