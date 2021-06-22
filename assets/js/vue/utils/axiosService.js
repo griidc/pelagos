@@ -45,6 +45,16 @@ export const putApi = (url, postData) => {
 }
 
 /**
+ * Axios PATCH API.
+ * @param url
+ * @param patchData
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export const patchApi = (url, patchData) => {
+    return axiosInstance.patch(url, patchData);
+}
+
+/**
  * Add vue loading overlay indicator.
  * @param thisComponent
  */
