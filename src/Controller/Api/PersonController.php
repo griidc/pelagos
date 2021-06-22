@@ -14,6 +14,7 @@ use Nelmio\ApiDocBundle\Annotation\Operation;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 
+use App\Entity\Account;
 use App\Entity\Person;
 use App\Form\PersonType;
 use App\Entity\DIF;
@@ -450,13 +451,11 @@ class PersonController extends EntityController
         $primaryPointOfContactCount = $this->entityHandler->count(DIF::class, array('primaryPointOfContact' => $id));
         $secondaryPointOfContactCount = $this->entityHandler->count(DIF::class, array('secondaryPointOfContact' => $id));
         if ($primaryPointOfContactCount > 0) {
-            throw new BadRequestHttpException('This Person is not deletable because 
-                there' . ($primaryPointOfContactCount > 1 ? ' are ' : ' is ') . $primaryPointOfContactCount .
-                ' primary point of contact(s) in DIF');
+            $errStr = 'This Person is not deletable because there ' . ($primaryPointOfContactCount > 1 ? ' are ' : ' is ') . $primaryPointOfContactCount . ' primary point of contact(s) in DIF';
+            throw new BadRequestHttpException($errStr);
         } elseif ($secondaryPointOfContactCount > 0) {
-            throw new BadRequestHttpException('This Person is not deletable because 
-            there' . ($secondaryPointOfContactCount > 1 ? ' are ' : ' is ') . $secondaryPointOfContactCount .
-            ' secondary point of contact(s) in DIF');
+            $errStr = 'This Person is not deletable because there ' . ($secondaryPointOfContactCount > 1 ? ' are ' : ' is ') . $secondaryPointOfContactCount . ' secondary point of contact(s) in DIF';
+            throw new BadRequestHttpException($errStr);
         } else {
             $this->handleDelete(Person::class, $id);
         }
@@ -483,7 +482,7 @@ class PersonController extends EntityController
      */
     public function getPerson(Person $person): Response
     {
-        return $this->makeJsonResponse([
+        $personData = array(
             'firstName' => $person->getFirstName(),
             'lastName' => $person->getLastName(),
             'emailAddress' => $person->getEmailAddress(),
@@ -493,7 +492,16 @@ class PersonController extends EntityController
             'postalCode' => $person->getPostalCode(),
             'country' => $person->getCountry(),
             'organization' => $person->getOrganization(),
-            'position' => $person->getPosition()
-        ]);
+            'position' => $person->getPosition(),
+        );
+
+        $account = $person->getAccount();
+        if ($account instanceof Account && $account === $this->getUser()) {
+            $personData['isPosix'] = $account->isPosix();
+            $personData['posixUsername'] = $account->getUsername();
+            $personData['isMe'] = true;
+        }
+
+        return $this->makeJsonResponse($personData);
     }
 }
