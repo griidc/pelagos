@@ -514,13 +514,15 @@ const downloadItems = (items) => {
                 downloadApi(
                     `${Routing.generate('pelagos_api_file_download')}/${response.data.id}`, config
                 ).then((response) => {
-                    const url = window.URL.createObjectURL(new Blob([response.data]));
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.setAttribute('download', getFileNameFromHeader(response.headers));
-                    document.body.appendChild(link);
-                    link.click();
-                    myFileManager.$parent.resetDownloadAttrs();
+                    if (myFileManager.$parent.downloadPopup) {
+                        const url = window.URL.createObjectURL(new Blob([response.data]));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', getFileNameFromHeader(response.headers));
+                        document.body.appendChild(link);
+                        link.click();
+                        myFileManager.$parent.resetDownloadAttrs();
+                    }
                 }).then(() => {
                     resolve();
                 })
