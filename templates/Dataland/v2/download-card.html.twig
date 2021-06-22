@@ -14,6 +14,11 @@
                 </p>
                 <hr>
                 <p class="card-text text-dark">
+                    <strong>No. of Files: </strong><br>
+                    {{ dataset.datasetSubmission.fileset.numberOfFiles }}
+                </p>
+                <hr>
+                <p class="card-text text-dark">
                     <strong>File Size: </strong><br>
                     {{ dataset.datasetSubmission.datasetFileSize|formatBytes }}
                 </p>
