@@ -13,7 +13,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use App\Entity\Account;
 
 /**
- * Command to convert a user into a Pelagos DRPM.
+ * Command to display a user's active/inactive status.
  */
 class CheckUserCommand extends Command
 {
@@ -64,7 +64,7 @@ class CheckUserCommand extends Command
      *
      * @throws \Exception If username not found.
      *
-     * @return void
+     * @return int Return code.
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -77,16 +77,17 @@ class CheckUserCommand extends Command
         );
 
         if ($account instanceof Account) {
+            $rgList = array();
             $activeUser = false;
             $person = $account->getPerson();
             $researchGroups = $person->getResearchGroups();
             foreach ($researchGroups as $researchGroup) {
-                if (false === $researchGroup->isLocked()) {
+                if (!$researchGroup->isLocked()) {
                     $rgList[] = $researchGroup->getShortName();
                     $activeUser = true;
                 }
             }
-            if (true === $activeUser) {
+            if ($activeUser) {
                 $io->note(sprintf('Username: %s: ACTIVE (active in: %s).', $username, implode(',', $rgList)));
             } else {
                 $io->note(sprintf('Username: %s: INACTIVE (has account but no active RG).', $username));
@@ -94,5 +95,6 @@ class CheckUserCommand extends Command
         } else {
             $io->note(sprintf('Username: %s: INACTIVE (has no account).', $username));
         }
+        return 0;
     }
 }
