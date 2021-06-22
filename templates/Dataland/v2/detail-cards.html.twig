@@ -8,12 +8,15 @@
         <div class="card-body">
             <p class="card-text text-dark">
                 <u>Funded By:</u> <br>
-                <span>{{ dataset.researchGroup.fundingCycle.fundingOrganization.shortName }}</span>
+                <span>{{ dataset.researchGroup.fundingCycle.fundingOrganization.name }}</span>
+            </p>
+            <p class="card-text text-dark">
+                <u>Funding Cycle:</u> <br>
                 <span>{{ dataset.researchGroup.fundingCycle.name }}</span>
             </p>
             <p class="card-text text-dark">
                 <u>Research Group:</u> <br>
-                <span>{{ dataset.researchGroup.shortName }}</span>
+                <span>{{ dataset.researchGroup.name }}</span>
             </p>
         </div>
     </div>

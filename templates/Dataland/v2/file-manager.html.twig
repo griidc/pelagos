@@ -1,6 +1,7 @@
 {% if dataset.availabilityStatus == constant('App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') %}
     <hr>
     <div class="py-2">
+        <h6><strong><a id="individual-files">Individual Files:</a></strong></h6>
         <div id="file-manager-app" data-submission="{{ dataset.datasetSubmission.id }}"></div>
     </div>
 {% endif %}
