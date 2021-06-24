@@ -1,5 +1,3 @@
-'use strict';
-
 const $ = require('jquery');
 
 global.$ = global.jQuery = $;
@@ -20,6 +18,6 @@ require('jquery-ui/ui/widgets/tabs');
 require('jquery.cookie');
 require('qtip2');
 
-$(document).ready(function() {
-   console.log('Webpack Loaded');
+$(document).ready(() => {
+  console.log('Webpack Loaded');
 });

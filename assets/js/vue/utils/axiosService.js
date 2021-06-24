@@ -1,6 +1,7 @@
 const axios = require('axios');
+
 const axiosInstance = axios.create({});
-const CancelToken = axios.CancelToken;
+const { CancelToken } = axios;
 const source = CancelToken.source();
 
 /**
@@ -10,12 +11,14 @@ const source = CancelToken.source();
  * @param loadingOverlay
  * @returns {Promise<AxiosResponse<any>>}
  */
-export const getApi = (url, {thisComponent = null, addLoader = false} = {}) => {
-    if (addLoader === true) {
-        addLoadingOverLay(thisComponent);
-    }
-    return axiosInstance({url: url, method: 'GET', responseType: "json", cancelToken: source.token});
-}
+export const getApi = (url, { thisComponent = null, addLoader = false } = {}) => {
+  if (addLoader === true) {
+    addLoadingOverLay(thisComponent);
+  }
+  return axiosInstance({
+    url, method: 'GET', responseType: 'json', cancelToken: source.token,
+  });
+};
 
 /**
  * Axios POST API.
@@ -23,18 +26,14 @@ export const getApi = (url, {thisComponent = null, addLoader = false} = {}) => {
  * @param postData
  * @returns {Promise<AxiosResponse<any>>}
  */
-export const postApi = (url, postData) => {
-    return axiosInstance.post(url, postData);
-};
+export const postApi = (url, postData) => axiosInstance.post(url, postData);
 
 /**
  * Axios DELETE API.
  * @param url
  * @returns {Promise<AxiosResponse<any>>}
  */
-export const deleteApi = (url) => {
-    return axiosInstance.delete(url);
-}
+export const deleteApi = (url) => axiosInstance.delete(url);
 
 /**
  * Axios PUT API.
@@ -42,9 +41,7 @@ export const deleteApi = (url) => {
  * @param postData
  * @returns {Promise<AxiosResponse<any>>}
  */
-export const putApi = (url, postData) => {
-    return axiosInstance.put(url, postData);
-}
+export const putApi = (url, postData) => axiosInstance.put(url, postData);
 
 /**
  * Axios PATCH API.
@@ -52,9 +49,7 @@ export const putApi = (url, postData) => {
  * @param patchData
  * @returns {Promise<AxiosResponse<any>>}
  */
-export const patchApi = (url, patchData) => {
-    return axiosInstance.patch(url, patchData);
-}
+export const patchApi = (url, patchData) => axiosInstance.patch(url, patchData);
 
 /**
  * Download blob from API.
@@ -63,37 +58,35 @@ export const patchApi = (url, patchData) => {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export const downloadApi = (url, config) => {
-    config.cancelToken = source.token;
-    return axiosInstance.get(url, config);
-}
+  config.cancelToken = source.token;
+  return axiosInstance.get(url, config);
+};
 
 /**
  * Add vue loading overlay indicator.
  * @param thisComponent
  */
 function addLoadingOverLay(thisComponent) {
-    let loader = null;
-    axiosInstance.interceptors.request.use(function (config) {
-        loader = thisComponent.$loading.show({
-            container: thisComponent.$refs.formContainer,
-            loader: 'bars',
-            color: '#007bff',
-        });
-        return config;
-    }, function (error) {
-        return Promise.reject(error);
+  let loader = null;
+  axiosInstance.interceptors.request.use((config) => {
+    loader = thisComponent.$loading.show({
+      container: thisComponent.$refs.formContainer,
+      loader: 'bars',
+      color: '#007bff',
     });
+    return config;
+  }, (error) => Promise.reject(error));
 
-    function hideLoader() {
-        loader && loader.hide();
-        loader = null;
-    }
+  function hideLoader() {
+    loader && loader.hide();
+    loader = null;
+  }
 
-    axiosInstance.interceptors.response.use(function (response) {
-        hideLoader();
-        return response;
-    }, function (error) {
-        hideLoader();
-        return Promise.reject(error);
-    });
+  axiosInstance.interceptors.response.use((response) => {
+    hideLoader();
+    return response;
+  }, (error) => {
+    hideLoader();
+    return Promise.reject(error);
+  });
 }
