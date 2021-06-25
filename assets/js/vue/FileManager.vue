@@ -182,8 +182,10 @@ import {DxProgressBar} from 'devextreme-vue/progress-bar';
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
 import Dropzone from "dropzone";
 import xbytes from "xbytes";
-import {deleteApi, getApi, postApi, putApi, downloadApi } from "@/vue/utils/axiosService";
+import {deleteApi, getApi, postApi, putApi, downloadApi, axiosService } from "./utils/axiosService";
 
+const CancelToken = axiosService.CancelToken;
+let cancel;
 let datasetSubmissionId = null;
 let destinationDir = '';
 
@@ -414,6 +416,7 @@ export default {
         },
 
         stopDownload: function () {
+            cancel();
             this.resetDownloadAttrs();
         },
 
@@ -499,9 +502,11 @@ const renameItem = (item, name) => {
 
 const downloadItems = (items) => {
     return new Promise((resolve, reject) => {
+        myFileManager.$parent.resetDownloadAttrs();
+        myFileManager.$parent.downloadPopup = true;
+        let itemsProcessed = 0;
         items.forEach(item => {
-            myFileManager.$parent.downloadPopup = true;
-            myFileManager.$parent.totalDownloadSize = item.size;
+            myFileManager.$parent.totalDownloadSize+= item.size;
             getApi(
                 `${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`
             ).then(response => {
@@ -509,7 +514,11 @@ const downloadItems = (items) => {
                     responseType: 'blob',
                     onDownloadProgress: function(progressEvent) {
                         myFileManager.$parent.downloadedSize = progressEvent.loaded;
-                    }
+                    },
+                    cancelToken: new CancelToken(function executor(c) {
+                        // An executor function receives a cancel function as a parameter
+                        cancel = c;
+                    })
                 }
                 downloadApi(
                     `${Routing.generate('pelagos_api_file_download')}/${response.data.id}`, config
@@ -521,10 +530,13 @@ const downloadItems = (items) => {
                         link.setAttribute('download', getFileNameFromHeader(response.headers));
                         document.body.appendChild(link);
                         link.click();
-                        myFileManager.$parent.resetDownloadAttrs();
+                        itemsProcessed++
                     }
                 }).then(() => {
-                    resolve();
+                    if (items.length === itemsProcessed) {
+                        resolve();
+                        myFileManager.$parent.resetDownloadAttrs();
+                    }
                 })
             }).catch(error => {
                 myFileManager.$parent.showPopupError(error.response.data.message);
