@@ -1,0 +1,20 @@
+<div>
+    {% if dataset.availabilityStatus == constant("App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE") %}
+        <span class="badge badge-secondary">Identified</span>
+    {% elseif dataset.availabilityStatus == constant("App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_SUBMISSION")
+        or dataset.availabilityStatus == constant("App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL") %}
+        <span class="badge badge-submitted">Submitted</span>
+    {% elseif dataset.availabilityStatus == constant("App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED")
+        or dataset.availabilityStatus == constant("App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED") %}
+        <span class="badge badge-restricted">Restricted</span>
+    {% elseif dataset.availabilityStatus == constant("App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED")
+        or dataset.availabilityStatus == constant("App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE") %}
+        <span class="badge badge-available">Available</span>
+    {% endif %}
+    {% if dataset.availabilityStatus == constant("App\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED") %}
+        <span class="badge badge-remotlyhosted">Remotely Hosted</span>
+    {% endif %}
+    {% if dataset.datasetSubmission.isDatasetFileInColdStorage %}
+        <span class="badge badge-coldstorage">Cold Storage</span>
+    {% endif %}
+</div>

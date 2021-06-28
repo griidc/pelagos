@@ -186,7 +186,7 @@ class DownloadController extends AbstractController
         $datasetSubmission = $dataset->getDatasetSubmission();
         $datasetInfo = array(
             'udi' => $dataset->getUdi(),
-            'availability' => $dataset->getAvailabilityStatus()
+            'availability' => $dataset->getAvailabilityStatus(),
         );
 
         if ($datasetSubmission instanceof DatasetSubmission) {

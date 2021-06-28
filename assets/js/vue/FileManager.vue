@@ -537,6 +537,10 @@ const downloadItems = (items) => {
                         resolve();
                         myFileManager.$parent.resetDownloadAttrs();
                     }
+                    resolve();
+                }).catch(error => {
+                    myFileManager.$parent.showPopupError(error.response.data.message);
+                    reject(error);
                 })
             }).catch(error => {
                 myFileManager.$parent.showPopupError(error.response.data.message);
