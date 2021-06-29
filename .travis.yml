@@ -43,6 +43,7 @@ install:
   - phpenv config-rm xdebug.ini
   - composer install
   - phpenv rehash
+  - yarn install
 
 # Run script
 script:
