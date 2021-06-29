@@ -505,8 +505,9 @@ const downloadItems = (items) => {
         myFileManager.$parent.resetDownloadAttrs();
         myFileManager.$parent.downloadPopup = true;
         let itemsProcessed = 0;
+        myFileManager.$parent.totalDownloadSize = Object.values(items).reduce((t, {size}) => t + size, 0)
+
         items.forEach(item => {
-            myFileManager.$parent.totalDownloadSize+= item.size;
             getApi(
                 `${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`
             ).then(response => {
