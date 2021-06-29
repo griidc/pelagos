@@ -15,6 +15,11 @@ my $arg = '';
 # CONFIG
 my $storage = '/san_mwilliamson/data/store';
 
+if (0 == checkDeps()) {
+    die("Please install needed commands.\n");
+}
+die('test');
+
 print "Processing: udi: $udi, src: $storage/$fileName, type: $fileType\n";
 
 if ($fileType eq 'tar.bz2') {
@@ -42,8 +47,8 @@ if ($fileType eq 'tar.bz2') {
     $cmd = 'unzip';
     $arg = '';
 } elsif ($fileType eq 'rar') {
-    $cmd = 'unrar';
-    $arg = 'x';
+    $cmd = 'unar';
+    $arg = '';
 } else {
     print "Unknown filetype in $fileType. I cannot unpack this.\n";
 }
@@ -58,4 +63,17 @@ if ($cmd ne '' and $fileName ne '' and $fileType ne '') {
     rmdir("../$udi-orig");
 } else {
     print "Missing argument. ERROR.\n";
+}
+
+sub checkDeps {
+    # Ensure these commands exist in the path and are executable.
+    my @commands = ('tar', 'gtar', '7za', 'unzip', 'unar');
+    foreach my $command (@commands) {
+        my $cmd = '';
+        $cmd = `which $command`; chomp($cmd);
+        if (!$cmd or !-x $cmd) {
+            return 0;
+        }
+    }
+    return 1;
 }
