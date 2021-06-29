@@ -3,6 +3,7 @@ const axios = require('axios');
 const axiosInstance = axios.create({});
 const { CancelToken } = axios;
 const source = CancelToken.source();
+
 /**
  * Add vue loading overlay indicator.
  * @param thisComponent
@@ -32,6 +33,8 @@ function addLoadingOverLay(thisComponent) {
   });
 }
 
+export const axiosService = axios;
+
 /**
  * Axios GET API.
  * @param url
@@ -43,9 +46,7 @@ export const getApi = (url, { thisComponent = null, addLoader = false } = {}) =>
   if (addLoader === true) {
     addLoadingOverLay(thisComponent);
   }
-  return axiosInstance({
-    url, method: 'GET', responseType: 'json', cancelToken: source.token,
-  });
+  return axiosInstance({ url, method: 'GET', responseType: 'json' });
 };
 
 /**
