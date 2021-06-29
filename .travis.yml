@@ -10,6 +10,9 @@ services:
   - rabbitmq
   - docker
 
+before_install:
+  - nvm install node
+
 # Customize addons
 addons:
   postgresql: 9.6
@@ -55,3 +58,4 @@ script:
 notifications:
   email: false
   slack: griidc:JosH6istHStJ7cm24B8CC58F
+
