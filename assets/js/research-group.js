@@ -3,10 +3,10 @@ import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
 import VTooltip from 'v-tooltip';
-import ResearchGroupApp from './vue/ResearchGroupApp';
+import ResearchGroupApp from './vue/ResearchGroupApp.vue';
 import filters from './vue/utils/filters';
 
-window.addEventListener('load', (event) => {
+window.addEventListener('load', () => {
   Vue.use(BootstrapVue);
   Vue.use(IconsPlugin);
   Vue.use(Loading);
@@ -14,7 +14,7 @@ window.addEventListener('load', (event) => {
   Vue.filter('truncate', (text, length) => filters.truncate(text, length));
   Vue.filter('sort', (valuePath, array) => filters.sort(valuePath, array));
 
-  // here is the Vue code
+  // eslint-disable-next-line no-new
   new Vue({
     el: '#research-group',
     data() {

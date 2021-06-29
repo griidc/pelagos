@@ -1,7 +1,7 @@
 import Vue from 'vue';
+import { BootstrapVue } from 'bootstrap-vue';
 import '../css/grp-home.css';
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
-import FundingCyclesList from './vue/components/FundingCyclesList';
+import FundingCyclesList from './vue/components/FundingCyclesList.vue';
 import filters from './vue/utils/filters';
 
 Vue.use(BootstrapVue);

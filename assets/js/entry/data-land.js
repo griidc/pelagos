@@ -1,14 +1,15 @@
 import Vue from 'vue';
-import FileManager from '@/vue/FileManager';
-import '/assets/css/file-manager.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import DownloadZipBtn from '@/vue/components/data-land/DownloadZipBtn';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
+import FileManager from '../vue/FileManager.vue';
+import '../../css/file-manager.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import DownloadZipBtn from '../vue/components/data-land/DownloadZipBtn.vue';
 
 // Mount File Manager vue component
 const fileManagerElement = document.getElementById('file-manager-app');
 if (fileManagerElement) {
   const datasetSubmissionId = Number(fileManagerElement.dataset.submission);
+  // eslint-disable-next-line no-new
   new Vue({
     el: '#file-manager-app',
     data() {
@@ -27,6 +28,7 @@ if (downloadZipElement) {
   const datasetId = downloadZipElement.dataset.id;
   Vue.use(BootstrapVue);
   Vue.use(IconsPlugin);
+  // eslint-disable-next-line no-new
   new Vue({
     el: '#download-zip',
     components: { DownloadZipBtn },
@@ -39,12 +41,14 @@ if (downloadZipElement) {
   });
 }
 
+// eslint-disable-next-line no-undef
 const dlmap = new GeoViz();
 
 dlmap.initMap('dlolmap', {
   onlyOneFeature: false, allowModify: false, allowDelete: false, staticMap: false, labelAttr: 'udi',
 });
 
+// eslint-disable-next-line no-undef
 const geovizMap = $('#dlolmap');
 
 if (geovizMap.attr('description') !== '' && geovizMap.attr('wkt') === '') {

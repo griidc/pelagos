@@ -3,14 +3,13 @@
  */
 
 import 'bootstrap';
-import templateSwitch from '@/vue/utils/template-switch.js';
-import Routing from '../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min.js';
-
-'use strict';
+import templateSwitch from './vue/utils/template-switch';
+import Routing from '../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
 const $ = require('jquery');
 
-global.$ = global.jQuery = $;
+global.jQuery = $;
+global.$ = global.jQuery;
 
 require('../css/template.css');
 require('../css/superfish.css');
@@ -37,14 +36,6 @@ function toggleDropdown(event) {
     $('[data-toggle="dropdown"]', dropdown).attr('aria-expanded', shouldOpen);
   }, event.type === 'mouseleave' || event.type === 'mouseenter' ? 300 : 0);
 }
-
-$(document).ready(() => {
-  $('.dropdown').hoverIntent(toggleDropdown);
-  $(window).resize(() => {
-    setContentHeight();
-  }).resize();
-});
-
 function setContentHeight() {
   const winHeight = $(window).height();
   let adminMenuHeight = $('#admin-menu').outerHeight(true);
@@ -58,7 +49,15 @@ function setContentHeight() {
   const messagesHeight = $('#page > .messages').length ? $('#page > .messages').outerHeight(true) : 0;
   const footerHeight = $('#footer').length ? $('#footer').outerHeight(true) : 0;
 
-  const newheight = winHeight - (adminMenuHeight + headerHeight + navHeight + messagesHeight + footerHeight);
+  const newheight = winHeight
+    - (adminMenuHeight + headerHeight + navHeight + messagesHeight + footerHeight);
 
   $('.page-pelagos-full #main-wrapper').height(newheight);
 }
+
+$(document).ready(() => {
+  $('.dropdown').hoverIntent(toggleDropdown);
+  $(window).resize(() => {
+    setContentHeight();
+  }).resize();
+});

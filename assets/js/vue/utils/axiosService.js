@@ -3,6 +3,34 @@ const axios = require('axios');
 const axiosInstance = axios.create({});
 const { CancelToken } = axios;
 const source = CancelToken.source();
+/**
+ * Add vue loading overlay indicator.
+ * @param thisComponent
+ */
+function addLoadingOverLay(thisComponent) {
+  let loader = null;
+  axiosInstance.interceptors.request.use((config) => {
+    loader = thisComponent.$loading.show({
+      container: thisComponent.$refs.formContainer,
+      loader: 'bars',
+      color: '#007bff',
+    });
+    return config;
+  }, (error) => Promise.reject(error));
+
+  function hideLoader() {
+    loader.hide();
+    loader = null;
+  }
+
+  axiosInstance.interceptors.response.use((response) => {
+    hideLoader();
+    return response;
+  }, (error) => {
+    hideLoader();
+    return Promise.reject(error);
+  });
+}
 
 /**
  * Axios GET API.
@@ -58,35 +86,7 @@ export const patchApi = (url, patchData) => axiosInstance.patch(url, patchData);
  * @returns {Promise<AxiosResponse<any>>}
  */
 export const downloadApi = (url, config) => {
+  // eslint-disable-next-line no-param-reassign
   config.cancelToken = source.token;
   return axiosInstance.get(url, config);
 };
-
-/**
- * Add vue loading overlay indicator.
- * @param thisComponent
- */
-function addLoadingOverLay(thisComponent) {
-  let loader = null;
-  axiosInstance.interceptors.request.use((config) => {
-    loader = thisComponent.$loading.show({
-      container: thisComponent.$refs.formContainer,
-      loader: 'bars',
-      color: '#007bff',
-    });
-    return config;
-  }, (error) => Promise.reject(error));
-
-  function hideLoader() {
-    loader && loader.hide();
-    loader = null;
-  }
-
-  axiosInstance.interceptors.response.use((response) => {
-    hideLoader();
-    return response;
-  }, (error) => {
-    hideLoader();
-    return Promise.reject(error);
-  });
-}

@@ -25,10 +25,14 @@ const templateVariables = {
 export default {
   getProperty: (name) => {
     if (
+    // eslint-disable-next-line no-undef
       PELAGOS_TEMPLATE_PROPS !== undefined
+      // eslint-disable-next-line no-undef
             && PELAGOS_TEMPLATE_PROPS.BaseTemplateName !== undefined
+      // eslint-disable-next-line no-undef
             && templateVariables[PELAGOS_TEMPLATE_PROPS.BaseTemplateName] !== undefined
     ) {
+      // eslint-disable-next-line no-undef
       return templateVariables[PELAGOS_TEMPLATE_PROPS.BaseTemplateName][name];
     }
     return templateVariables[templateVariables.default][name];
