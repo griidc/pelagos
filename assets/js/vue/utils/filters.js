@@ -7,13 +7,16 @@ export default {
   sort(valuePath, array) {
     const path = valuePath.split('.');
 
-    const getValue = (obj, path) => {
-      path.forEach((path) => obj = obj[path]);
+    const getValue = (obj) => {
+      path.forEach(() => {
+        // eslint-disable-next-line no-param-reassign
+        obj = obj[path];
+      });
       return obj;
     };
     return array.sort((a, b) => {
-      const nameA = getValue(a, path).toUpperCase();
-      const nameB = getValue(b, path).toUpperCase();
+      const nameA = getValue(a).toUpperCase();
+      const nameB = getValue(b).toUpperCase();
       if (nameA < nameB) {
         return -1;
       }
