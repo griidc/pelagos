@@ -116,6 +116,9 @@
             <template>
                 <div class="progress-dialog">
                     <p>
+                        <b>Downloaded file {{ downloadedFiles }} of {{ totalDownloads }}</b>
+                    </p>
+                    <p>
                         <b>Downloaded {{ humanSize(downloadedSize) }} of {{ humanSize(totalDownloadSize) }}</b>
                     </p>
                     <DxProgressBar
@@ -247,7 +250,9 @@ export default {
             },
             downloadedSize: 0,
             totalDownloadSize: 0,
-            downloadPopup: false
+            downloadPopup: false,
+            totalDownloads: 0,
+            downloadedFiles: 0
         };
     },
 
@@ -424,6 +429,8 @@ export default {
             this.downloadPopup = false;
             this.downloadedSize = 0;
             this.totalDownloadSize = 0;
+            this.totalDownloads = 0;
+            this.downloadedFiles = 0;
         }
     },
 };
@@ -503,18 +510,21 @@ const renameItem = (item, name) => {
 const downloadItems = (items) => {
     return new Promise((resolve, reject) => {
         myFileManager.$parent.resetDownloadAttrs();
-        myFileManager.$parent.downloadPopup = true;
         let itemsProcessed = 0;
-        myFileManager.$parent.totalDownloadSize = Object.values(items).reduce((t, {size}) => t + size, 0)
-
-        items.forEach(item => {
+        myFileManager.$parent.totalDownloadSize = Object.values(items).reduce((t, {size}) => t + size, 0);
+        myFileManager.$parent.totalDownloads = items.length;
+        let progressItems = [];
+        myFileManager.$parent.downloadPopup = true;
+        items.forEach((item, key) => {
             getApi(
                 `${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`
             ).then(response => {
+                progressItems[key] = [];
                 const config = {
                     responseType: 'blob',
                     onDownloadProgress: function(progressEvent) {
-                        myFileManager.$parent.downloadedSize = progressEvent.loaded;
+                        progressItems[key]['size'] = progressEvent.loaded;
+                        myFileManager.$parent.downloadedSize = Object.values(progressItems).reduce((t, {size}) => t + size, 0)
                     },
                     cancelToken: new CancelToken(function executor(c) {
                         // An executor function receives a cancel function as a parameter
@@ -532,6 +542,7 @@ const downloadItems = (items) => {
                         document.body.appendChild(link);
                         link.click();
                         itemsProcessed++
+                        myFileManager.$parent.downloadedFiles++;
                     }
                 }).then(() => {
                     if (items.length === itemsProcessed) {
