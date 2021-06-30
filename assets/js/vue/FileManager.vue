@@ -542,7 +542,7 @@ const downloadItems = (items) => {
                         document.body.appendChild(link);
                         link.click();
                         itemsProcessed++
-                        myFileManager.$parent.downloadedFiles++;
+                        myFileManager.$parent.downloadedFiles++; 
                     }
                 }).then(() => {
                     if (items.length === itemsProcessed) {
