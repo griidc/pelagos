@@ -15,7 +15,7 @@ jobs:
       # Customize addons
       addons:
         postgresql: 9.6
-        apt:
+        apt: 
           packages:
             - postgresql-9.6-postgis-2.4
 
