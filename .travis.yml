@@ -1,59 +1,64 @@
-# Project language
-language: php
-
-language: node_js
-
-node_js:
-  - "12"
-
-# Allows use container-based infrastructure
-sudo: required
-
-# Start services
-services:
-  - postgresql
-  - rabbitmq
-  - docker
-
-# Customize addons
-addons:
-  postgresql: 9.6
-  apt:
-    packages:
-      - postgresql-9.6-postgis-2.4
-
-# Cache composer packages so "composer install" is faster
-cache:
-  directories:
-    - $HOME/.composer/cache/files
-
-# Matrix to test in every php & OS version
-matrix:
-  # Fast finish allows to set the build as "finished" even if the "allow_failures" matrix elements are not finished yet.
-  fast_finish: true
+jobs:
   include:
-    - name: "7.3 Centos7"
-      php: 7.3
-      distribution: centos
-      version: 7
+  # Project language
+    - language: php
 
-# Define an environment variable
-env:
-  - SYMFONY_VERSION="4.3.*" DB=postgresql
+      # Allows use container-based infrastructure
+      sudo: required
 
-# Install composer dependencies,
-# Create schema and fixtures
-install:
-  - export APP_ENV=test
-  - phpenv config-rm xdebug.ini
-  - composer install
-  - phpenv rehash
+      # Start services
+      services:
+        - postgresql
+        - rabbitmq
+        - docker
 
-# Run script
-script:
-  - ./vendor/bin/simple-phpunit
-  - ./vendor/bin/phpcs --version
-  - ./vendor/bin/phpcs
+      # Customize addons
+      addons:
+        postgresql: 9.6
+        apt:
+          packages:
+            - postgresql-9.6-postgis-2.4
+
+      # Cache composer packages so "composer install" is faster
+      cache:
+        directories:
+          - $HOME/.composer/cache/files
+
+      # Matrix to test in every php & OS version
+      matrix:
+        # Fast finish allows to set the build as "finished" even if the "allow_failures" matrix elements are not finished yet.
+        fast_finish: true
+        include:
+          - name: "7.3 Centos7"
+            php: 7.3
+            distribution: centos
+            version: 7
+
+      # Define an environment variable
+      env:
+        - SYMFONY_VERSION="4.3.*" DB=postgresql
+
+      # Install composer dependencies,
+      # Create schema and fixtures
+      install:
+        - export APP_ENV=test
+        - phpenv config-rm xdebug.ini
+        - composer install
+        - phpenv rehash
+
+      # Run script
+      script:
+        - ./vendor/bin/simple-phpunit
+        - ./vendor/bin/phpcs --version
+        - ./vendor/bin/phpcs
+
+    - language: node_js
+      node_js:
+        - "12"
+
+      script:
+        - yarn install
+        - yarn run eslint assets/js
 
 notifications:
   email: false
