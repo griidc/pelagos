@@ -58,7 +58,7 @@ jobs:
 
       script:
         - yarn install
-        - yarn run eslint assets/js
+        - yarn run eslint ./assets/js/
 
 notifications:
   email: false
