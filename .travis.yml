@@ -1,3 +1,9 @@
+os: linux
+arch:
+  - arm64
+  - ppc64le
+  - s390x
+
 jobs:
   include:
   # Project language
@@ -63,9 +69,3 @@ jobs:
 notifications:
   email: false
   slack: griidc:JosH6istHStJ7cm24B8CC58F
-
-os: linux
-arch:
-  - arm64
-  - ppc64le
-  - s390x
