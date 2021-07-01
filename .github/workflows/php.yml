@@ -44,4 +44,4 @@ jobs:
       run: yarn
     
     - name: Run ESLint
-      run: eslint ./assets/*.* --ext .js
+      run: yarn run eslint ./assets/js/
