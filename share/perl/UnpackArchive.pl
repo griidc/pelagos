@@ -6,8 +6,7 @@ use warnings;
 # input will be udi, fileName, fileType
 
 my $udi = $ARGV[0];
-my $fileName = $ARGV[1];
-my $fileType = $ARGV[2];
+my $fileType = $ARGV[1];
 
 my $cmd = '';
 my $arg = '';
@@ -18,9 +17,8 @@ my $storage = '/san_mwilliamson/data/store';
 if (0 == checkDeps()) {
     die("Please install needed commands.\n");
 }
-die('test');
 
-print "Processing: udi: $udi, src: $storage/$fileName, type: $fileType\n";
+print "Processing: udi: $udi, src: $storage/$udi.$fileType, type: $fileType\n";
 
 if ($fileType eq 'tar.bz2') {
     $cmd = 'tar';
@@ -53,13 +51,15 @@ if ($fileType eq 'tar.bz2') {
     print "Unknown filetype in $fileType. I cannot unpack this.\n";
 }
 
-if ($cmd ne '' and $fileName ne '' and $fileType ne '') {
+if ($cmd ne '' and $fileType ne '') {
+    `rm -rf "$udi"`;
     mkdir($udi);
+    `rm -rf "$udi-orig"`;
     mkdir("$udi-orig");
-    symlink("$storage/$udi/$udi.dat", "$udi-orig/$fileName");
+    symlink("$storage/$udi/$udi.dat", "$udi-orig/$udi.$fileType");
     chdir($udi);
-    `$cmd $arg ../$udi-orig/$fileName`;
-    unlink("../$udi-orig/$fileName");
+    `$cmd $arg "../$udi-orig/$udi.$fileType"`;
+    unlink("../$udi-orig/$udi.$fileType");
     rmdir("../$udi-orig");
 } else {
     print "Missing argument. ERROR.\n";
