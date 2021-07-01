@@ -1,6 +1,11 @@
 # Project language
 language: php
 
+language: node_js
+
+node_js:
+  - "12"
+
 # Allows use container-based infrastructure
 sudo: required
 
@@ -53,4 +58,3 @@ script:
 notifications:
   email: false
   slack: griidc:JosH6istHStJ7cm24B8CC58F
-
