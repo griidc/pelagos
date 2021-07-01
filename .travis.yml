@@ -15,7 +15,7 @@ jobs:
       # Customize addons
       addons:
         postgresql: 9.6
-        apt: 
+        apt:
           packages:
             - postgresql-9.6-postgis-2.4
 
@@ -63,3 +63,9 @@ jobs:
 notifications:
   email: false
   slack: griidc:JosH6istHStJ7cm24B8CC58F
+
+os: linux
+arch:
+  - arm64
+  - ppc64le
+  - s390x
