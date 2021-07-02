@@ -31,8 +31,11 @@ jobs:
     - name: Run test suite
       run: composer run-script test
       
+    - name: Run test suite
+      run: vendor/bin/simple-phpunit
+
     - name: Install modules
       run: yarn
     
-    - name: Run ESLint
-      run: yarn run eslint ./assets/js/
+    #- name: Run ESLint
+    #  run: yarn run eslint ./assets/js/
