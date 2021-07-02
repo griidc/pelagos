@@ -14,8 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-    - name: Install node modules
-      run: yarn
+      - name: Install node modules
+        run: yarn
 
-    - name: Run ESLint
-      run: yarn run eslint ./assets/js/
+      - name: Run ESLint
+        run: yarn run eslint ./assets/js/
+
