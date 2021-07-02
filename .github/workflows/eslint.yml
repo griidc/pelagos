@@ -19,14 +19,11 @@ jobs:
         with:
           php-version: '7.4'
 
-      - name: Validate composer.json and composer.lock
-        run: composer validate --strict
-
       - name: Install dependencies
         run: composer install --no-progress -q
 
       - name: Install node modules
-        run: yarn
+        run: yarn install --silent
 
       - name: Run ESLint
         run: yarn run eslint ./assets/js/
