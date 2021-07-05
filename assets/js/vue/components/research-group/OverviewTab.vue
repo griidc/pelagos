@@ -25,25 +25,26 @@
 </template>
 
 <script>
-    import templateSwitch from "../../utils/template-switch.js";
-    export default {
-        name: "OverviewTab",
-        props: {
-            overview: {
-                type: Object
-            }
-        },
-        methods: {
-            getDirectors: function () {
-                return this.overview.personResearchGroups.filter(person => {
-                    if (person.role.name === "Leadership") {
-                        return person;
-                    }
-                });
-            },
-            getFCLabel: function () { return templateSwitch.getProperty('fundingCycle') }
+import templateSwitch from '../../utils/template-switch.js';
+
+export default {
+  name: 'OverviewTab',
+  props: {
+    overview: {
+      type: Object,
+    },
+  },
+  methods: {
+    getDirectors() {
+      return this.overview.personResearchGroups.filter((person) => {
+        if (person.role.name === 'Leadership') {
+          return person;
         }
-    }
+      });
+    },
+    getFCLabel() { return templateSwitch.getProperty('fundingCycle'); },
+  },
+};
 </script>
 
 <style scoped>

@@ -3,11 +3,12 @@
 </template>
 
 <script>
-    import SearchForm from "./components/search/SearchForm";
-    export default {
-        name: "SearchApp",
-        components: { SearchForm }
-    };
+import SearchForm from './components/search/SearchForm';
+
+export default {
+  name: 'SearchApp',
+  components: { SearchForm },
+};
 </script>
 
 <style scoped>

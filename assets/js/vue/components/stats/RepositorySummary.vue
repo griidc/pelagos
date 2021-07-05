@@ -32,37 +32,37 @@
 </template>
 
 <script>
-import templateSwitch from "../../utils/template-switch.js";
-import {getApi} from "@/vue/utils/axiosService";
+import { getApi } from '@/vue/utils/axiosService';
+import templateSwitch from '../../utils/template-switch.js';
 
 export default {
-    name: "RepositorySummary",
-    data() {
-        return {
-            datasets: 0,
-            totalsize: 0,
-            totalDownloads: 0,
-            researchGroups: 0,
-            people: 0,
-        }
+  name: 'RepositorySummary',
+  data() {
+    return {
+      datasets: 0,
+      totalsize: 0,
+      totalDownloads: 0,
+      researchGroups: 0,
+      people: 0,
+    };
+  },
+  created() {
+    getApi(
+      Routing.generate('pelagos_app_ui_stats_getstatisticsjson'),
+    ).then((response) => {
+      this.datasets = response.data.totalDatasets;
+      this.totalsize = response.data.totalSize;
+      this.people = response.data.peopleCount;
+      this.researchGroups = response.data.researchGroupCount;
+      this.totalDownloads = response.data.totalDownloadCount;
+    }).catch((error) => console.log(error));
+  },
+  methods: {
+    getRGLabel() {
+      return templateSwitch.getProperty('researchGroup');
     },
-    created() {
-        getApi(
-            Routing.generate('pelagos_app_ui_stats_getstatisticsjson')
-        ).then(response => {
-            this.datasets = response.data.totalDatasets;
-            this.totalsize = response.data.totalSize;
-            this.people = response.data.peopleCount;
-            this.researchGroups = response.data.researchGroupCount;
-            this.totalDownloads = response.data.totalDownloadCount;
-        }).catch(error => console.log(error));
-    },
-    methods: {
-        getRGLabel: function () {
-            return templateSwitch.getProperty('researchGroup')
-        }
-    }
-}
+  },
+};
 </script>
 
 <style scoped>

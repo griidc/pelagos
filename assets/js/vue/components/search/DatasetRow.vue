@@ -37,26 +37,26 @@
 </template>
 
 <script>
-    export default {
-        name: "DatasetRow",
-        props: {
-            datasetRowData: {
-                type: Object
-            }
-        },
-        data: function () {
-            return {
-                url: this.datasetRowData.uri
-            }
-        },
-        methods: {
-            openUrl: function(url) {
-                if ("" === window.getSelection().toString()) {
-                    window.open('/data/' + this.datasetRowData.udi, '_blank');
-                }
-            }
-        }
-    }
+export default {
+  name: 'DatasetRow',
+  props: {
+    datasetRowData: {
+      type: Object,
+    },
+  },
+  data() {
+    return {
+      url: this.datasetRowData.uri,
+    };
+  },
+  methods: {
+    openUrl(url) {
+      if (window.getSelection().toString() === '') {
+        window.open(`/data/${this.datasetRowData.udi}`, '_blank');
+      }
+    },
+  },
+};
 </script>
 
 <style scoped>

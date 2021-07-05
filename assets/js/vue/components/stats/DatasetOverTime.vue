@@ -88,9 +88,32 @@
 </template>
 
 <script>
-import {themeFunctions} from '@/vue/mixins/themeFunctions';
-
 import {
+  DxChart,
+  DxSeries,
+  DxArgumentAxis,
+  DxCommonSeriesSettings,
+  DxGrid,
+  DxMargin,
+  DxLegend,
+  DxTitle,
+  DxTooltip,
+  DxPoint,
+  DxTick,
+  DxTickInterval,
+  DxMinorTickInterval,
+  DxMinorTick,
+  DxLabel,
+  DxLoadingIndicator,
+  DxFormat,
+  DxValueAxis,
+  DxFont,
+} from 'devextreme-vue/chart';
+import themeFunctions from '../../mixins/themeFunctions';
+
+export default {
+  name: 'DatasetOverTime',
+  components: {
     DxChart,
     DxSeries,
     DxArgumentAxis,
@@ -110,37 +133,13 @@ import {
     DxFormat,
     DxValueAxis,
     DxFont,
-} from 'devextreme-vue/chart';
-
-export default {
-    name: "DatasetOverTime",
-    components: {
-        DxChart,
-        DxSeries,
-        DxArgumentAxis,
-        DxCommonSeriesSettings,
-        DxGrid,
-        DxMargin,
-        DxLegend,
-        DxTitle,
-        DxTooltip,
-        DxPoint,
-        DxTick,
-        DxTickInterval,
-        DxMinorTickInterval,
-        DxMinorTick,
-        DxLabel,
-        DxLoadingIndicator,
-        DxFormat,
-        DxValueAxis,
-        DxFont,
-    },
-    mixins: [themeFunctions],
-    data() {
-        return {
-            datasetUrl: Routing.generate("pelagos_app_ui_stats_getdatasetovertime"),
-        };
-    },
+  },
+  mixins: [themeFunctions],
+  data() {
+    return {
+      datasetUrl: Routing.generate('pelagos_app_ui_stats_getdatasetovertime'),
+    };
+  },
 };
 </script>
 

@@ -71,110 +71,110 @@
 </template>
 
 <script>
-import "devextreme/dist/css/dx.common.css";
-import "devextreme/dist/css/dx.light.css";
-import {DxPopup, DxPosition, DxToolbarItem} from "devextreme-vue/popup";
-import {getApi} from "@/vue/utils/axiosService";
+import 'devextreme/dist/css/dx.common.css';
+import 'devextreme/dist/css/dx.light.css';
+import { DxPopup, DxPosition, DxToolbarItem } from 'devextreme-vue/popup';
+import { getApi } from '@/vue/utils/axiosService';
 
 export default {
-    name: "DownloadZipBtn",
-    components: {
-        DxPopup,
-        DxPosition,
-        DxToolbarItem,
+  name: 'DownloadZipBtn',
+  components: {
+    DxPopup,
+    DxPosition,
+    DxToolbarItem,
+  },
+  props: {
+    id: {
+      required: true,
     },
-    props: {
-        id: {
-            required: true
-        }
-    },
-    data() {
-        return {
-            showDownloadDialog: false,
-            datasetInfo: {
-                remotelyHosted: false,
-                dataset: {},
-                fileUri: ""
+  },
+  data() {
+    return {
+      showDownloadDialog: false,
+      datasetInfo: {
+        remotelyHosted: false,
+        dataset: {},
+        fileUri: '',
+      },
+      buttonTitle: '',
+      additionalInfo: '',
+      downloadButtonOptions: {
+        icon: 'download',
+        text: 'Download',
+        onClick: () => {
+          const url = `${Routing.generate('pelagos_app_download_http', { id: this.id })}`;
+          const link = document.createElement('a');
+          link.href = url;
+          document.body.appendChild(link);
+          setTimeout(() => {
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+          }, 0);
+          link.click();
+          notify({
+            message,
+            position: {
+              my: 'center top',
+              at: 'center top',
             },
-            buttonTitle: "",
-            additionalInfo: "",
-            downloadButtonOptions: {
-                icon: 'download',
-                text: 'Download',
-                onClick: () => {
-                    const url = `${Routing.generate("pelagos_app_download_http", {"id": this.id})}`;
-                    const link = document.createElement('a');
-                    link.href = url;
-                    document.body.appendChild(link);
-                    setTimeout(function() {
-                        document.body.removeChild(link);
-                        window.URL.revokeObjectURL(url);
-                    }, 0);
-                    link.click();
-                    notify({
-                        message: message,
-                        position: {
-                            my: 'center top',
-                            at: 'center top'
-                        }
-                    }, 'success', 3000);
-                }
-            },
-            estimatedDownloadTime: 'Calculating...'
-        }
-    },
-    created() {
-        getApi(Routing.generate("pelagos_app_download_default", {"id": this.id})).then(response => {
-            this.datasetInfo = response.data;
-            if (this.datasetInfo.remotelyHosted) {
-                this.buttonTitle = "External Dataset Link"
-                if (this.datasetInfo.dataset.availability === 5) {
-                    this.additionalInfo = `This dataset is restricted for download but is hosted by another
+          }, 'success', 3000);
+        },
+      },
+      estimatedDownloadTime: 'Calculating...',
+    };
+  },
+  created() {
+    getApi(Routing.generate('pelagos_app_download_default', { id: this.id })).then((response) => {
+      this.datasetInfo = response.data;
+      if (this.datasetInfo.remotelyHosted) {
+        this.buttonTitle = 'External Dataset Link';
+        if (this.datasetInfo.dataset.availability === 5) {
+          this.additionalInfo = `This dataset is restricted for download but is hosted by another
                     website so availability status is not guaranteed to be accurate. To obtain access to this dataset,
                     please click the location link above and follow any instructions provided.`;
-                } else {
-                    this.additionalInfo = `To download this dataset, please use the location link above.
+        } else {
+          this.additionalInfo = `To download this dataset, please use the location link above.
                     Note, this dataset is not hosted at GRIIDC; the site is not under GRIIDC control and
                     GRIIDC is not responsible for the information or links you may find there.`;
-                }
-            } else {
-                this.buttonTitle = "Download Zip"
-            }
-        });
-    },
-    methods: {
-        downloadBtn: function () {
-            this.showDownloadDialog = true;
         }
+      } else {
+        this.buttonTitle = 'Download Zip';
+      }
+    });
+  },
+  methods: {
+    downloadBtn() {
+      this.showDownloadDialog = true;
     },
-    watch: {
-        showDownloadDialog: function () {
-            if (this.showDownloadDialog === true) {
-                let start = new Date().getTime();
-                getApi(Routing.getBaseUrl() + "/testfile.bin?id=" + start)
-                .then(response => {
-                    const end = new Date().getTime();
-                    const diff = (end - start) / 1000;
-                    const bytes = response.headers["content-length"];
-                    const speed = (bytes / diff);
-                    let time = this.datasetInfo.dataset.fileSizeRaw / speed;
-                    let unit = "second";
-                    if (time > 60) {
-                        time = time / 60;
-                        unit = "minute";
-                    }
-                    if (time > 60) {
-                        time = time / 60;
-                        unit = "hour";
-                    }
-                    console.log(time);
-                    if (Math.round(time) !== 1) unit += "s";
-                    this.estimatedDownloadTime = `${Math.round(time)}${unit} (based on your current connection speed)`;
-                })
+  },
+  watch: {
+    showDownloadDialog() {
+      if (this.showDownloadDialog === true) {
+        const start = new Date().getTime();
+        getApi(`${Routing.getBaseUrl()}/testfile.bin?id=${start}`)
+          .then((response) => {
+            const end = new Date().getTime();
+            const diff = (end - start) / 1000;
+            const bytes = response.headers['content-length'];
+            const speed = (bytes / diff);
+            let time = this.datasetInfo.dataset.fileSizeRaw / speed;
+            let unit = 'second';
+            if (time > 60) {
+              time /= 60;
+              unit = 'minute';
             }
-        }
-    }
-}
+            if (time > 60) {
+              time /= 60;
+              unit = 'hour';
+            }
+            console.log(time);
+            if (Math.round(time) !== 1) unit += 's';
+            this.estimatedDownloadTime = `${Math.round(time)}${unit} (based on your current connection speed)`;
+          });
+      }
+    },
+  },
+};
 </script>
 
 <style scoped>

@@ -66,9 +66,27 @@
     </DxChart>
 </template>
 <script>
-import {themeFunctions} from '@/vue/mixins/themeFunctions';
+import { themeFunctions } from '@/vue/mixins/themeFunctions';
 
 import {
+  DxChart,
+  DxSeries,
+  DxLabel,
+  DxConnector,
+  DxValueAxis,
+  DxTitle,
+  DxTick,
+  DxLegend,
+  DxMargin,
+  DxLoadingIndicator,
+  DxFormat,
+  DxFont,
+  DxArgumentAxis,
+} from 'devextreme-vue/chart';
+
+export default {
+  name: 'DatasetSizeRanges',
+  components: {
     DxChart,
     DxSeries,
     DxLabel,
@@ -82,31 +100,13 @@ import {
     DxFormat,
     DxFont,
     DxArgumentAxis,
-} from 'devextreme-vue/chart';
-
-export default {
-    name: "DatasetSizeRanges",
-    components: {
-        DxChart,
-        DxSeries,
-        DxLabel,
-        DxConnector,
-        DxValueAxis,
-        DxTitle,
-        DxTick,
-        DxLegend,
-        DxMargin,
-        DxLoadingIndicator,
-        DxFormat,
-        DxFont,
-        DxArgumentAxis,
-    },
-    mixins: [themeFunctions],
-    data() {
-        return {
-            datasetUrl: Routing.generate("pelagos_app_ui_stats_getdatasetsizeranges"),
-        };
-    },
+  },
+  mixins: [themeFunctions],
+  data() {
+    return {
+      datasetUrl: Routing.generate('pelagos_app_ui_stats_getdatasetsizeranges'),
+    };
+  },
 };
 </script>
 
