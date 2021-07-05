@@ -17,4 +17,12 @@ module.exports = {
   rules: {
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
   },
+  settings: {
+    'import/resolver': {
+      alias: {
+        map: [['@', './assets/js']],
+        extensions: ['.js', 'vue'],
+      },
+    },
+  },
 };
