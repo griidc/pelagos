@@ -66,8 +66,6 @@
     </DxChart>
 </template>
 <script>
-import { themeFunctions } from '@/vue/mixins/themeFunctions';
-
 import {
   DxChart,
   DxSeries,
@@ -83,6 +81,7 @@ import {
   DxFont,
   DxArgumentAxis,
 } from 'devextreme-vue/chart';
+import themeFunctions from '../../mixins/themeFunctions';
 
 export default {
   name: 'DatasetSizeRanges',

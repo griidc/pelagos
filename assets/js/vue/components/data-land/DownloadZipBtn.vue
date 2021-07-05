@@ -1,7 +1,8 @@
 <template>
     <div>
         <b-button size="sm" class="mb-2" @click="downloadBtn" variant="primary">
-            <b-icon icon="arrow-up-right" aria-hidden="true" v-if="datasetInfo.remotelyHosted"></b-icon>
+            <b-icon icon="arrow-up-right" aria-hidden="true" v-if="datasetInfo.remotelyHosted">
+            </b-icon>
             <b-icon icon="download" aria-hidden="true" v-else></b-icon>
             {{ buttonTitle }}
         </b-button>
@@ -17,14 +18,14 @@
                     <h3>The dataset you selected is hosted by an external repository.</h3>
                     <div>
                         <p>
-                            All materials on this website are made available to GRIIDC and in turn to you "as-is."
-                            By downloading files, you agree to the <a
-                            href=https://data.gulfresearchinitiative.org/terms-and-conditions>GRIIDC Terms of
+                            All materials on this website are made available to
+                            GRIIDC and in turn to you "as-is." By downloading files,
+                            you agree to the <a href=https://data.gulfresearchinitiative.org/terms-and-conditions>GRIIDC Terms of
                             Service</a>.
                         </p>
                         <p>
-                            This particular dataset is not hosted directly by GRIIDC, so additional terms and conditions
-                            may be
+                            This particular dataset is not hosted directly by GRIIDC, so additional
+                            terms and conditions may be
                             imposed by the hosting entity.
                         </p>
                     </div>
@@ -33,7 +34,12 @@
                         <strong>Location:</strong>
                         <a :href=datasetInfo.fileUri target=_BLANK>
                             {{ datasetInfo.fileUri }}
-                        </a><b-icon icon="arrow-up-right" aria-hidden="true" v-if="datasetInfo.remotelyHosted"></b-icon>
+                        </a>
+                        <b-icon
+                                icon="arrow-up-right"
+                                aria-hidden="true"
+                                v-if="datasetInfo.remotelyHosted">
+                        </b-icon>
                         <br>
                         <p>
                             {{ additionalInfo }}
@@ -43,8 +49,8 @@
                 <div v-else>
                     <div>
                         <p>
-                            All materials on this website are made available to GRIIDC and in turn to you "as-is."
-                            By downloading files, you agree to the
+                            All materials on this website are made available to GRIIDC and in turn
+                            to you "as-is." By downloading files, you agree to the
                             <a href="https://data.gulfresearchinitiative.org/terms-and-conditions" target="_blank">
                                 GRIIDC Terms of Service
                             </a>
@@ -73,14 +79,13 @@
 <script>
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
-import { DxPopup, DxPosition, DxToolbarItem } from 'devextreme-vue/popup';
-import { getApi } from '@/vue/utils/axiosService';
+import { DxPopup, DxToolbarItem } from 'devextreme-vue/popup';
+import { getApi } from '../../utils/axiosService';
 
 export default {
   name: 'DownloadZipBtn',
   components: {
     DxPopup,
-    DxPosition,
     DxToolbarItem,
   },
   props: {
@@ -167,7 +172,6 @@ export default {
               time /= 60;
               unit = 'hour';
             }
-            console.log(time);
             if (Math.round(time) !== 1) unit += 's';
             this.estimatedDownloadTime = `${Math.round(time)}${unit} (based on your current connection speed)`;
           });
