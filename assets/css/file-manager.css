@@ -1,3 +1,7 @@
 .dz-preview, .dz-file-preview {
     display: none;
 }
+
+#pelagos-content {
+    font-family: "Lato", Arial, sans-serif !important;
+}
