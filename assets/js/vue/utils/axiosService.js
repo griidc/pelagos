@@ -1,6 +1,8 @@
 const axios = require('axios');
 const axiosInstance = axios.create({});
 
+export const axiosService = axios;
+
 /**
  * Axios GET API.
  * @param url
@@ -8,11 +10,11 @@ const axiosInstance = axios.create({});
  * @param loadingOverlay
  * @returns {Promise<AxiosResponse<any>>}
  */
-export const getApi = (url, {thisComponent = null, addLoader = false, responseType = 'json'} = {}) => {
+export const getApi = (url, {thisComponent = null, addLoader = false} = {}) => {
     if (addLoader === true) {
         addLoadingOverLay(thisComponent);
     }
-    return axiosInstance({url: url, method: 'GET', responseType: responseType});
+    return axiosInstance({url: url, method: 'GET', responseType: "json"});
 }
 
 /**
@@ -52,6 +54,16 @@ export const putApi = (url, postData) => {
  */
 export const patchApi = (url, patchData) => {
     return axiosInstance.patch(url, patchData);
+}
+
+/**
+ * Download blob from API.
+ * @param url
+ * @param config
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export const downloadApi = (url, config) => {
+    return axiosInstance.get(url, config);
 }
 
 /**

@@ -330,7 +330,6 @@ class DatasetSubmissionController extends EntityController
      */
     public function getFiles(int $id, Request $request, FolderStructureGenerator $folderStructureGenerator): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $fileData = array();
         $datasetSubmission = $this->handleGetOne(DatasetSubmission::class, $id);
         $pathInfo = ($request->get('path')) ? $request->get('path') : '';
@@ -360,7 +359,6 @@ class DatasetSubmissionController extends EntityController
      */
     public function getFile(DatasetSubmission $datasetSubmission, Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $fileset = $datasetSubmission->getFileset();
         $path = $request->get('path');
         if (!$path) {

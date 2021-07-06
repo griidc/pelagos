@@ -249,4 +249,60 @@ class DatalandController extends AbstractController
         }
         return $boundingBoxArray;
     }
+
+    /**
+     * The Dataland v2 Page - dataset details per UDI.
+     *
+     * @param string $udi A UDI.
+     *
+     * @Route("/data/v2/{udi}", name="pelagos_app_ui_dataland_v2")
+     *
+     * @return Response
+     */
+    public function indexPage(string $udi)
+    {
+        $dataset = $this->getDataset($udi);
+
+        $rawXml = null;
+        $wkt = null;
+
+        if ($dataset->getDatasetStatus() === Dataset::DATASET_STATUS_ACCEPTED) {
+            $boundingBoxArray = $this->getBoundingBox($dataset);
+            $rawXml = $this->metadataUtil->getXmlRepresentation($dataset, $boundingBoxArray);
+        }
+        //Logic to get DIF or Accepted Dataset is in Dataset Entity.
+        if (!empty($dataset->getSpatialExtentGeometry())) {
+            try {
+                $wkt = $this->geoUtil->convertGmlToWkt($dataset->getSpatialExtentGeometry());
+            } catch (InvalidGmlException $exception) {
+                $wkt = null;
+            }
+        }
+
+        $downloadCount = null;
+        // Remotely hosted datasets are normally also hosted locally anyway, so including.
+        if ($dataset->isAvailable()) {
+            $qb = $this->get('doctrine')->getManager()->createQueryBuilder();
+            $qb->select($qb->expr()->count('a'))
+                ->from('\App\Entity\LogActionItem', 'a')
+                ->where('a.subjectEntityId = ?1')
+                ->andwhere('a.subjectEntityName = ?2')
+                ->andwhere('a.actionName = ?3')
+                ->setParameter(1, $dataset->getId())
+                ->setParameter(2, 'Pelagos\Entity\Dataset')
+                ->setParameter(3, 'File Download');
+            $query = $qb->getQuery();
+            $downloadCount = $query->getSingleScalarResult();
+        }
+        return $this->render(
+            'Dataland/v2/index.html.twig',
+            array(
+                'dataset' => $dataset,
+                'downloads' => $downloadCount,
+                'rawxml' => $rawXml,
+                'wkt' => $wkt,
+                'datasetSubmissionLockStatus' => true
+            )
+        );
+    }
 }
