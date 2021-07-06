@@ -78,12 +78,17 @@ export default {
     personDetails: {
       type: Object,
     },
-    loading: false,
+  },
+  data() {
+    return {
+      loading: false,
+    };
   },
   methods: {
     requestposix() {
       this.loading = true;
       patchApi(
+        // eslint-disable-next-line no-undef
         Routing.generate('pelagos_api_account_make_posix'),
         {},
       ).finally(() => {
@@ -92,6 +97,7 @@ export default {
       });
     },
     getHostName() {
+      // eslint-disable-next-line no-undef
       return Routing.getBaseUrl();
     },
   },

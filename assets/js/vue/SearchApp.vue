@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import SearchForm from './components/search/SearchForm';
+import SearchForm from '@/vue/components/search/SearchForm';
 
 export default {
   name: 'SearchApp',

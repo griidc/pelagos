@@ -102,6 +102,22 @@ import { getApi } from '@/vue/utils/axiosService';
 import ResultSet from '@/vue/components/search/ResultSet';
 import templateSwitch from '@/vue/utils/template-switch';
 
+function initialFormValues() {
+  return {
+    query: '',
+    page: 1,
+    field: '',
+    collectionStartDate: '',
+    collectionEndDate: '',
+    status: '',
+    fundingOrg: '',
+    researchGroup: '',
+    fundingCycle: '',
+    perPage: 10,
+    projectDirector: '',
+  };
+}
+
 export default {
   name: 'SearchForm',
   components: { ResultSet },
@@ -147,6 +163,7 @@ export default {
     },
     facetCheckBoxValues(value) {
       const facetArray = value.split('=');
+      // eslint-disable-next-line prefer-destructuring
       this.form[facetArray[0]] = facetArray[1];
       this.onSubmit();
     },
@@ -189,22 +206,6 @@ export default {
     },
   },
 };
-
-function initialFormValues() {
-  return {
-    query: '',
-    page: 1,
-    field: '',
-    collectionStartDate: '',
-    collectionEndDate: '',
-    status: '',
-    fundingOrg: '',
-    researchGroup: '',
-    fundingCycle: '',
-    perPage: 10,
-    projectDirector: '',
-  };
-}
 </script>
 
 <style scoped lang="scss">

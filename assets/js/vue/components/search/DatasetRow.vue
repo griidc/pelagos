@@ -50,7 +50,7 @@ export default {
     };
   },
   methods: {
-    openUrl(url) {
+    openUrl() {
       if (window.getSelection().toString() === '') {
         window.open(`/data/${this.datasetRowData.udi}`, '_blank');
       }

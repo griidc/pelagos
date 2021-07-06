@@ -107,6 +107,7 @@ export default {
         icon: 'download',
         text: 'Download',
         onClick: () => {
+          // eslint-disable-next-line no-undef
           const url = `${Routing.generate('pelagos_app_download_http', { id: this.id })}`;
           const link = document.createElement('a');
           link.href = url;
@@ -116,7 +117,9 @@ export default {
             window.URL.revokeObjectURL(url);
           }, 0);
           link.click();
+          // eslint-disable-next-line no-undef
           notify({
+            // eslint-disable-next-line no-undef
             message,
             position: {
               my: 'center top',
@@ -129,6 +132,7 @@ export default {
     };
   },
   created() {
+    // eslint-disable-next-line no-undef
     getApi(Routing.generate('pelagos_app_download_default', { id: this.id })).then((response) => {
       this.datasetInfo = response.data;
       if (this.datasetInfo.remotelyHosted) {
@@ -156,6 +160,7 @@ export default {
     showDownloadDialog() {
       if (this.showDownloadDialog === true) {
         const start = new Date().getTime();
+        // eslint-disable-next-line no-undef
         getApi(`${Routing.getBaseUrl()}/testfile.bin?id=${start}`)
           .then((response) => {
             const end = new Date().getTime();

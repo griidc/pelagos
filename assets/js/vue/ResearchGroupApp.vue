@@ -22,10 +22,10 @@
 
 <script>
 import { getApi } from '@/vue/utils/axiosService';
-import PublicationsTab from './components/research-group/PublicationsTab';
-import OverviewTab from './components/research-group/OverviewTab';
-import DatasetsTab from './components/research-group/DatasetsTab';
-import PeopleTab from './components/research-group/PeopleTab';
+import PublicationsTab from '@/vue/components/research-group/PublicationsTab';
+import OverviewTab from '@/vue/components/research-group/OverviewTab';
+import DatasetsTab from '@/vue/components/research-group/DatasetsTab';
+import PeopleTab from '@/vue/components/research-group/PeopleTab';
 
 export default {
   name: 'ResearchGroupApp',
@@ -45,13 +45,13 @@ export default {
   },
   created() {
     getApi(
+      // eslint-disable-next-line no-undef
       `${Routing.generate('pelagos_api_research_groups_get')}/${this.id}`,
       { thisComponent: this, addLoading: true },
     ).then((response) => {
       this.researchGroupData = response.data;
       this.showData = true;
-    }).catch((error) => {
-      console.log(error);
+    }).catch(() => {
       this.showData = false;
     });
   },

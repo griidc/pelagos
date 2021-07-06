@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import PublicationRow from './PublicationRow';
+import PublicationRow from '@/vue/components/research-group/PublicationRow';
 
 export default {
   name: 'PublicationsTab',

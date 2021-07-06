@@ -16,7 +16,7 @@
                 </div>
                 <form>
                     <div v-bind:class="facetScrollable">
-                        <label class="form-check" v-for="facet in filteredFacets">
+                        <label class="form-check" v-for="facet in filteredFacets" v-bind:key="facet.id">
                             <input class="form-check-input facet-aggregation"
                                    :value="facet.id" type="checkbox"
                                    :id="facetName.queryParam + '_' + facet.id"
@@ -102,6 +102,8 @@ export default {
         case (datasetStatus === 'Identified'):
           datasetStatusTooltip = 'This dataset has not been submitted and is not available for download.';
           break;
+        default:
+          break;
       }
       return datasetStatusTooltip;
     },
@@ -123,6 +125,7 @@ export default {
       if (this.facetInfo.length > maxFacetsToDisplay) {
         return scrollableClass;
       }
+      return null;
     },
   },
   created() {

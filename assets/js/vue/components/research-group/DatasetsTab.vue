@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import DatasetRow from '../search/DatasetRow';
+import DatasetRow from '@/vue/components/search/DatasetRow';
 
 export default {
   name: 'DatasetsTab',

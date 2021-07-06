@@ -6,7 +6,7 @@
                     <AvatarCard :person-details="personProfileData"/>
                 </div>
                 <div class="col-md-8">
-                    <UserDetailsCard :person-details="personProfileData" @loadPersonData="queryPersonData" />
+                    <UserDetailsCard :person-details="personProfileData" />
                 </div>
             </div>
         </div>
