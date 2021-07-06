@@ -33,7 +33,7 @@
 
 <script>
 import { getApi } from '@/vue/utils/axiosService';
-import templateSwitch from '../../utils/template-switch.js';
+import templateSwitch from '../../utils/template-switch';
 
 export default {
   name: 'RepositorySummary',
@@ -48,6 +48,7 @@ export default {
   },
   created() {
     getApi(
+      // eslint-disable-next-line no-undef
       Routing.generate('pelagos_app_ui_stats_getstatisticsjson'),
     ).then((response) => {
       this.datasets = response.data.totalDatasets;
@@ -55,6 +56,7 @@ export default {
       this.people = response.data.peopleCount;
       this.researchGroups = response.data.researchGroupCount;
       this.totalDownloads = response.data.totalDownloadCount;
+      // eslint-disable-next-line no-console
     }).catch((error) => console.log(error));
   },
   methods: {

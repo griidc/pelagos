@@ -16,12 +16,13 @@ module.exports = {
   ],
   rules: {
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+    'max-len': ['warn', { code: 120 }],
   },
   settings: {
     'import/resolver': {
       alias: {
         map: [['@', './assets/js']],
-        extensions: ['.js', 'vue'],
+        extensions: ['.js', '.vue'],
       },
     },
   },

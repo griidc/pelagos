@@ -69,9 +69,9 @@
 </template>
 
 <script>
-import Facet from './Facet';
-import DatasetRow from './DatasetRow';
-import templateSwitch from '../../utils/template-switch.js';
+import Facet from '@/vue/components/search/Facet';
+import DatasetRow from '@/vue/components/search/DatasetRow';
+import templateSwitch from '@/vue/utils/template-switch';
 
 export default {
   name: 'ResultSet',

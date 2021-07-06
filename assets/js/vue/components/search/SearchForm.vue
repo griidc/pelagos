@@ -99,14 +99,15 @@
 
 <script>
 import { getApi } from '@/vue/utils/axiosService';
-import ResultSet from './ResultSet';
-import templateSwitch from '../../utils/template-switch.js';
+import ResultSet from '@/vue/components/search/ResultSet';
+import templateSwitch from '@/vue/utils/template-switch';
 
 export default {
   name: 'SearchForm',
   components: { ResultSet },
   data() {
     return {
+      // eslint-disable-next-line no-undef
       searchFormRoute: Routing.generate('pelagos_app_ui_searchpage_results'),
       form: initialFormValues(),
       fields: [
@@ -127,6 +128,7 @@ export default {
     onSubmit() {
       const searchQuery = Object.keys(this.form).map((key) => `${key}=${this.form[key]}`).join('&');
       getApi(
+        // eslint-disable-next-line no-undef
         `${Routing.generate('pelagos_app_ui_searchpage_results')}?${searchQuery}`,
         { thisComponent: this, addLoading: true },
       ).then((response) => {
@@ -161,6 +163,7 @@ export default {
       this.submitted = false;
     },
     dataDiscovery() {
+      // eslint-disable-next-line no-undef
       window.location.href = Routing.generate('pelagos_app_ui_datadiscovery_default');
     },
   },
@@ -173,7 +176,7 @@ export default {
     window.addEventListener('hashchange', this.detectHashChange);
   },
   watch: {
-    route(value) {
+    route() {
       if (!this.submitted) {
         if (this.route) {
           const urlHashSplit = decodeURI(this.route).split('#')[1].split('&').map((value) => value.split('='));

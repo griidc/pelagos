@@ -103,6 +103,7 @@ export default {
   mixins: [themeFunctions],
   data() {
     return {
+      // eslint-disable-next-line no-undef
       datasetUrl: Routing.generate('pelagos_app_ui_stats_getdatasetsizeranges'),
     };
   },

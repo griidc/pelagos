@@ -39,13 +39,13 @@ export default {
   methods: {
     queryPersonData() {
       getApi(
+        // eslint-disable-next-line no-undef
         `${Routing.generate('pelagos_api_get_person')}/${this.personId}`,
         { thisComponent: this, addLoading: true },
       ).then((response) => {
         this.personProfileData = response.data;
         this.showProfile = true;
-      }).catch((error) => {
-        console.log(error);
+      }).catch(() => {
         this.showProfile = false;
       });
     },
