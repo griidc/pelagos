@@ -26,7 +26,7 @@ jobs:
         run: yarn install --silent
 
       - name: Run ESLint
-        run: yarn run eslint
+        run: yarn run eslint --quiet
 
       - name: Webpack Build
         run: yarn run encore prod
