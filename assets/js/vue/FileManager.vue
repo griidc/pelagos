@@ -276,19 +276,23 @@ const renameItem = (item, name) => new Promise((resolve, reject) => {
 
 const downloadItems = (items) => new Promise((resolve, reject) => {
   myFileManager.$parent.resetDownloadAttrs();
-  myFileManager.$parent.downloadPopup = true;
   let itemsProcessed = 0;
   myFileManager.$parent.totalDownloadSize = Object.values(items).reduce((t, { size }) => t + size, 0);
+  myFileManager.$parent.totalDownloads = items.length;
+  const progressItems = [];
+  myFileManager.$parent.downloadPopup = true;
 
-  items.forEach((item) => {
+  items.forEach((item, key) => {
     getApi(
       // eslint-disable-next-line no-undef
       `${Routing.generate('pelagos_api_get_file_dataset_submission')}/${datasetSubmissionId}?path=${item.path}`,
     ).then((response) => {
+      progressItems[key] = [];
       const config = {
         responseType: 'blob',
         onDownloadProgress(progressEvent) {
-          myFileManager.$parent.downloadedSize = progressEvent.loaded;
+          progressItems[key].size = progressEvent.loaded;
+          myFileManager.$parent.downloadedSize = Object.values(progressItems).reduce((t, { size }) => t + size, 0);
         },
         cancelToken: new CancelToken((c) => {
           // An executor function receives a cancel function as a parameter
@@ -309,6 +313,7 @@ const downloadItems = (items) => new Promise((resolve, reject) => {
           document.body.appendChild(link);
           link.click();
           itemsProcessed += 1;
+          myFileManager.$parent.downloadedFiles += 1;
         }
       }).then(() => {
         if (items.length === itemsProcessed) {
