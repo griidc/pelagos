@@ -27,7 +27,7 @@
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress",
-        "eslint": "eslint assets/js --ext .js,.vue"
+        "lint": "eslint assets/js --ext .js,.vue"
     },
     "dependencies": {
         "@babel/preset-env": "7.9.0",
