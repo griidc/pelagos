@@ -632,6 +632,7 @@ const initDropzone = () => {
     });
 
     myDropzone.on("queuecomplete", function () {
+        myFileManager.instance.refresh();
         myFileManager.instance.repaint();
         this.removeAllFiles();
         myFileManager.$parent.isRenamedPopupVisible = myFileManager.$parent.filesRenamed > 0;
@@ -648,6 +649,7 @@ const initDropzone = () => {
 }
 
 $("#ds-submit").on("active", function () {
+    myFileManager.instance.refresh();
     myFileManager.instance.repaint();
     if (localStorage.getItem("showHelpPopupFileManager") !== "false") {
         myFileManager.$parent.showHelpPopup = true;
