@@ -177,6 +177,10 @@ services:
     App\Util\FundingOrgFilter:
         bind:
             array $fundingOrgs: "%env(json:FILTER_BY_FUNDING_ORG)%"
+            
+    App\Util\SiteDetermination:
+        bind:
+            array $siteConfig: "%env(json:SITE_CONFIG)%"
 
     App\Util\FileUploader:
         bind:

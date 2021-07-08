@@ -34,9 +34,12 @@ class FundingOrgFilter
      */
     public function __construct(
         EntityManagerInterface $entityManager,
+        SiteDetermination $siteDetermination,
         array $fundingOrgs
     ) {
         $this->entityManager = $entityManager;
+        
+        $fundingOrgs = $siteDetermination->getFundingOrganizations();
 
         $this->fundingOrganizations = $this->entityManager
             ->getRepository(FundingOrganization::class)

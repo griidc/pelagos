@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use App\Entity\DIF;
 
 use App\Util\MaintenanceMode;
+use App\Util\SiteDetermination;
 
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -31,17 +32,26 @@ class Extensions extends AbstractExtension
      * @var MaintenanceMode
      */
     private $maintenanceMode;
+    
+     /**
+     * The site determination service.
+     *
+     * @var SiteDetermination
+     */
+    private $siteDetermination;
 
     /**
      *  Constructor.
      *
-     * @param KernelInterface $kernel          The Symfony kernel.
-     * @param MaintenanceMode $maintenanceMode The maintenance mode utility.
+     * @param KernelInterface   $kernel            The Symfony kernel.
+     * @param MaintenanceMode   $maintenanceMode   The maintenance mode utility.
+     * @param SiteDetermination $siteDetermination The site determination service.
      */
-    public function __construct(KernelInterface $kernel, MaintenanceMode $maintenanceMode)
+    public function __construct(KernelInterface $kernel, MaintenanceMode $maintenanceMode, SiteDetermination $siteDetermination)
     {
         $this->kernelRootDir = $kernel->getProjectDir();
         $this->maintenanceMode = $maintenanceMode;
+        $this->siteDetermination = $siteDetermination;
     }
 
     /**
@@ -73,6 +83,10 @@ class Extensions extends AbstractExtension
             new \Twig\TwigFunction(
                 'getMaintenanceModeColor',
                 [$this, 'maintenanceModeColor']
+            ),
+            new \Twig\TwigFunction(
+                'getSiteTemplate',
+                [$this, 'getSiteTemplate']
             ),
         );
     }
@@ -189,6 +203,16 @@ class Extensions extends AbstractExtension
         }
 
         return $bannerColor;
+    }
+    
+    /**
+     * Gets the base template, as determinted to util.
+     *
+     * @return string Returns base template name.
+     */
+    public function getSiteTemplate() : ? string
+    {
+        return $this->siteDetermination->getBaseTemplate();
     }
 
     /**
