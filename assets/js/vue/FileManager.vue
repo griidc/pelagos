@@ -405,6 +405,7 @@ const initDropzone = () => {
   });
 
   myDropzone.on('queuecomplete', function queueComplete() {
+    myFileManager.instance.refresh();
     myFileManager.instance.repaint();
     this.removeAllFiles();
     myFileManager.$parent.isRenamedPopupVisible = myFileManager.$parent.filesRenamed > 0;
@@ -423,6 +424,7 @@ const initDropzone = () => {
 
 // eslint-disable-next-line no-undef
 $('#ds-submit').on('active', () => {
+  myFileManager.instance.refresh();
   myFileManager.instance.repaint();
   if (localStorage.getItem('showHelpPopupFileManager') !== 'false') {
     myFileManager.$parent.showHelpPopup = true;
