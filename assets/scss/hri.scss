@@ -36,7 +36,7 @@
   --color-society--medicine:#1d7b5c;
   --type-font--fallback: -apple-system,"BlinkMacSystemFont","Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Open Sans","Helvetica Neue",sans-serif;
   --type-font--lato:"Lato", var(--type-font--fallback);
-  --type-font-muso: museo-sans,--type-font--lato;
+  --type-font-muso: museo-sans, var(--type-font--lato);
   --type-size--huge:1.375rem;
   --type-size--intro:1.3rem;
   --type-size--small:.8em;
