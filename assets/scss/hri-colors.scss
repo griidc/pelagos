@@ -1,0 +1,108 @@
+@import '~bootstrap/scss/functions';
+
+// Brand Colors;
+$boston:   #537abd;
+$blueBird: #2e384b;
+$tan:      #f3f1eb;
+$iguana:   #73af7a;
+$forest:   #1d7b5c;
+$garnet:   #a93344;
+$gold:     #dcaf27;
+$blue:     #007ac2;
+$yellow:   #ffce5f;
+$green:    #28a745;
+$red:      #dc3545;
+$iceBlue:  #dcf3ff;
+$primaryYellow: #ffce5f;
+
+$white:    #fbfaf7;
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #6c757d;
+$gray-700: #495057;
+$gray-800: #535e69;
+$gray-900: #212529;
+$black:    #000;
+
+$theme-colors: (
+        "primary":       $boston,
+        "secondary":     $blueBird,
+        "header":        $tan,
+        "alternate":     $primaryYellow,
+        "available":     $green,
+        "submitted":     $blue,
+        "identified":    $gray-600,
+        "restricted":    $red,
+        "remotlyhosted": $yellow,
+        "coldstorage":   $iceBlue,
+        "chart-primary":   $blueBird,
+        "chart-secondary":   $primaryYellow,
+        "chart-alternate":   $blueBird,
+);
+
+$colors: (
+        blue:      $boston,
+        indigo:    $blueBird,
+        red:       $garnet,
+        tan:       $tan,
+        yellow:    $gold,
+        green:     $forest,
+        black:     $black,
+        white:     $white,
+        gray:      $gray-600,
+        gray-dark: $gray-800
+);
+
+$grays: (
+        100: $gray-100,
+        200: $gray-200,
+        300: $gray-300,
+        400: $gray-400,
+        500: $gray-500,
+        600: $gray-600,
+        700: $gray-700,
+        800: $gray-800,
+        900: $gray-900
+);
+
+$theme-color-interval: 8%;
+
+$font-family-sans-serif: museo-sans,Helvetica,Arial,sans-serif;
+$font-family-base: $font-family-sans-serif;
+
+$navbar-light-color: $gray-800;
+
+$navbar-light-active-color: $gray-800;
+
+$navbar-light-hover-color: $blue;
+
+$dropdown-link-hover-color: $blue;
+
+$dropdown-color: $tan;
+
+$dropdown-link-color: $gray-800;
+
+$dropdown-link-hover-color: $blue;
+
+$additional-width-default: 25px;
+$additional-width-sm: $additional-width-default * 1;
+$additional-width-md: $additional-width-default * 2;
+$additional-width-lg: $additional-width-default * 4;
+$additional-width-xl: $additional-width-default * 8;
+
+$grid-breakpoints: (
+        xs: 0,
+        sm: 576px + $additional-width-sm,
+        md: 768px + $additional-width-md,
+        lg: 992px + $additional-width-lg,
+        xl: 1200px + $additional-width-xl
+);
+$container-max-widths: (
+        sm: 540px + $additional-width-sm,
+        md: 720px + $additional-width-md,
+        lg: 960px + $additional-width-lg,
+        xl: 1140px + $additional-width-xl
+);

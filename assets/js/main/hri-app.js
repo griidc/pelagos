@@ -18,7 +18,7 @@ require('../../css/messages.css');
 const axios = require('axios');
 
 global.axios = axios;
-require('../../scss/nas-grp.scss');
+require('../../scss/hri.scss');
 
 const routes = require('../../../public/js/fos_js_routes.json');
 
