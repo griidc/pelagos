@@ -36,7 +36,7 @@ set properties = [
     >
     <thead>
         <tr>
-            {% if custom_base_template|orTemplateIfNotExists == 'nas-grp-base.html.twig' %}
+            {% if getConfigName() == 'GRP' %}
                 <th>Project</th>
             {% else %}
                 <th>Research Group</th>

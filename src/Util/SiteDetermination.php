@@ -20,6 +20,13 @@ class SiteDetermination
     protected $siteConfig;
 
     /**
+     * The name to the determinted config.
+     *
+     * @var string
+     */
+    protected $configName;
+
+    /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager The entity manager to use.
@@ -38,7 +45,18 @@ class SiteDetermination
             }
         }
 
+        $this->configName = $config;
         $this->siteConfig = $siteConfig[$config];
+    }
+
+    /**
+     * Will return the base path file name.
+     *
+     * @var string The name is determinted config.
+     */
+    public function getConfigName() :string
+    {
+        return $this->configName;
     }
 
     /**

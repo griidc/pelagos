@@ -32,7 +32,7 @@ class Extensions extends AbstractExtension
      * @var MaintenanceMode
      */
     private $maintenanceMode;
-    
+
      /**
      * The site determination service.
      *
@@ -88,6 +88,10 @@ class Extensions extends AbstractExtension
                 'getSiteTemplate',
                 [$this, 'getSiteTemplate']
             ),
+            new \Twig\TwigFunction(
+                'getConfigName',
+                [$this, 'getConfigName']
+            ),
         );
     }
 
@@ -130,41 +134,7 @@ class Extensions extends AbstractExtension
                 'maintenanceModeColor',
                 [$this, 'maintenanceModeColor']
             ),
-            new \Twig\TwigFilter(
-                'orTemplateIfNotExists',
-                [$this, 'doesTwigFileExist']
-            ),
         );
-    }
-
-    /**
-     * Does the template exist, or else return base template.
-     *
-     * @param string $file    The file name (or part) template to be used.
-     * @param string $default The file name of the default template if $file does not exist.
-     *
-     * @return string Filename of basepath, or default.
-     */
-    public function doesTwigFileExist(string $file, string $default = "") : string
-    {
-        if (empty($file)) {
-            return $default;
-        }
-        $filePath = $this->kernelRootDir . '/templates/' . $file ;
-        if (file_exists($filePath)) {
-            return $file;
-        }
-        if (file_exists($filePath . '.twig')) {
-            return $file . '.twig';
-        }
-        if (file_exists($filePath . '.html')) {
-            return $file . '.html';
-        }
-        if (file_exists($filePath . '.html.twig')) {
-            return $file . '.html.twig';
-        }
-
-        return $default;
     }
 
     /**
@@ -204,7 +174,7 @@ class Extensions extends AbstractExtension
 
         return $bannerColor;
     }
-    
+
     /**
      * Gets the base template, as determinted to util.
      *
@@ -214,6 +184,19 @@ class Extensions extends AbstractExtension
     {
         return $this->siteDetermination->getBaseTemplate();
     }
+
+    /**
+     * Gets the base template, as determinted to util.
+     *
+     * @return string Returns base template name.
+     */
+    public function getConfigName() : ? string
+    {
+        return $this->siteDetermination->getConfigName();
+    }
+
+
+
 
     /**
      * Evaluate Twig commands in a string.

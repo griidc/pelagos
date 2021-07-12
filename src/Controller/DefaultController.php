@@ -30,7 +30,7 @@ class DefaultController extends AbstractController
      *
      * @param FundingOrgFilter $fundingOrgFilter The funding organization filter utility.
      *
-     * @Route("/", name="pelagos_nas_homepage", condition="'%custom_template%' matches '/nas-grp-base/'")
+     * @Route("/", name="pelagos_nas_homepage", host="hri.griidc.org")
      *
      * @return Response A Response instance.
      */

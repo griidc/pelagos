@@ -19,7 +19,7 @@
     </div>
     <div class="project-container">
         <div class="fundSrc">
-            {% if custom_base_template|orTemplateIfNotExists == 'nas-grp-base.html.twig' %}
+            {% if getConfigName() == 'GRP' %}
                 <span class="attr">Grant Award:</span> {{ResearchGroup.fundingCycle.name}}
             {% else %}
                 <span class="attr">Funding Source:</span> {{ResearchGroup.fundingCycle.name}}
