@@ -1,0 +1,19 @@
+{
+  "GRIIDC": {
+    "baseTemplate": "griidc-base.html.twig",
+    "filterFundingOrgBy": []
+  },
+  "GRP": {
+    "baseTemplate": "nas-grp-base.html.twig",
+    "filterFundingOrgBy": [
+      "NAS"
+    ]
+  },
+  "HRI": {
+    "baseTemplate": "hri-base.html.twig",
+    "filterFundingOrgBy": [
+      "HRI"
+    ]
+  },
+  "default" : "GRIIDC"
+}

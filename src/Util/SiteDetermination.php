@@ -18,42 +18,46 @@ class SiteDetermination
      * @var array
      */
     protected $siteConfig;
-    
+
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager The entity manager to use.
      * @param array                  $fundingOrgs   Funding Organizations to filter by.
      */
-    public function __construct(array $siteConfig) 
+    public function __construct(array $siteConfig)
     {
-        dump($siteConfig);
         if (array_key_exists("default", $siteConfig) and !empty($siteConfig["default"])) {
             $config = $siteConfig["default"];
         } else {
-            $config = strtoupper(explode('.', gethostname()))[0];
-            // Make sure the sub domain is in the array.
+            $subDomain = strtoupper(explode('.', gethostname())[0]);
+            if (array_key_exists($subDomain, $siteConfig)) {
+                $config = $subDomain;
+            } else {
+                $config = strtoupper(array_key_first($siteConfig));
+            }
         }
-        
+
         $this->siteConfig = $siteConfig[$config];
     }
-    
-    public function getBaseTemplate()
+
+    /**
+     * Will return the base path file name.
+     *
+     * @var string The base template file path name.
+     */
+    public function getBaseTemplate() :string
     {
         return $this->siteConfig["baseTemplate"];
     }
-    
-    public function getFundingOrganizations()
+
+    /**
+     * Will return a list of funding organization IDs.
+     *
+     * @return array A list of funding organization IDs.
+     */
+    public function getFundingOrganizations() :array
     {
         return $this->siteConfig["filterFundingOrgBy"];
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }

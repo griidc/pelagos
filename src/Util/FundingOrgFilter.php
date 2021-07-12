@@ -34,8 +34,7 @@ class FundingOrgFilter
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        SiteDetermination $siteDetermination,
-        array $fundingOrgs
+        SiteDetermination $siteDetermination
     ) {
         $this->entityManager = $entityManager;
         
