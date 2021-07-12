@@ -98,110 +98,114 @@
 </template>
 
 <script>
-import ResultSet from "./ResultSet";
-import templateSwitch from "../../utils/template-switch.js";
-import {getApi} from "@/vue/utils/axiosService";
-
-export default {
-    name: "SearchForm",
-    components: {ResultSet},
-    data: function () {
-        return {
-            searchFormRoute: Routing.generate('pelagos_app_ui_searchpage_results'),
-            form: initialFormValues(),
-            fields: [
-                {text: '-- All --', value: ''},
-                {text: 'Title', value: 'title'},
-                {text: 'Abstract', value: 'abstract'},
-                {text: 'Author', value: 'datasetSubmission.authors'},
-                {text: 'Theme Keywords', value: 'datasetSubmission.themeKeywords'}],
-            showResults: false,
-            noResults: false,
-            resultSet: Object,
-            route: window.location.hash,
-            submitted: false,
-            displayTextBlock: templateSwitch.getProperty('displayTextBlock')
-        }
-    },
-    methods: {
-        onSubmit: function () {
-            const searchQuery = Object.keys(this.form).map(key => key + '=' + this.form[key]).join('&');
-            getApi(
-                Routing.generate('pelagos_app_ui_searchpage_results') + "?" + searchQuery,
-                {thisComponent: this, addLoading: true}
-            ).then(response => {
-                this.resultSet = response.data;
-                this.showResults = true;
-                window.location.hash = searchQuery;
-                this.route = window.location.hash;
-                this.submitted = true;
-            });
-        },
-        onReset: function () {
-            this.form = initialFormValues();
-            this.showResults = false;
-            this.noResults = false;
-            window.location.hash = '';
-        },
-        facetCheckBoxValues: function (value) {
-            let facetArray = value.split("=");
-            this.form[facetArray[0]] = facetArray[1];
-            this.onSubmit();
-        },
-        changePageNo: function (newPageNo) {
-            this.form.page = newPageNo;
-            this.onSubmit();
-        },
-        changeNoOfResults: function (noOfResults) {
-            this.form.perPage = noOfResults;
-            this.onSubmit();
-        },
-        detectHashChange: function () {
-            this.route = window.location.hash;
-            this.submitted = false;
-        },
-        dataDiscovery: function () {
-            window.location.href = Routing.generate("pelagos_app_ui_datadiscovery_default");
-        }
-    },
-    mounted() {
-        if (this.route) {
-            const urlHashSplit = decodeURI(this.route).split("#")[1].split("&").map(value => value.split("="));
-            this.form = Object.fromEntries(urlHashSplit);
-            this.onSubmit();
-        }
-        window.addEventListener('hashchange', this.detectHashChange);
-    },
-    watch: {
-        route: function (value) {
-            if (!this.submitted) {
-                if (this.route) {
-                    const urlHashSplit = decodeURI(this.route).split("#")[1].split("&").map(value => value.split("="));
-                    this.form = Object.fromEntries(urlHashSplit);
-                    this.onSubmit();
-                } else {
-                    this.onReset();
-                }
-            }
-        }
-    },
-}
+import { getApi } from '@/vue/utils/axiosService';
+import ResultSet from '@/vue/components/search/ResultSet';
+import templateSwitch from '@/vue/utils/template-switch';
 
 function initialFormValues() {
-    return {
-        query: '',
-        page: 1,
-        field: '',
-        collectionStartDate: '',
-        collectionEndDate: '',
-        status: '',
-        fundingOrg: '',
-        researchGroup: '',
-        fundingCycle: '',
-        perPage: 10,
-        projectDirector: ''
-    }
+  return {
+    query: '',
+    page: 1,
+    field: '',
+    collectionStartDate: '',
+    collectionEndDate: '',
+    status: '',
+    fundingOrg: '',
+    researchGroup: '',
+    fundingCycle: '',
+    perPage: 10,
+    projectDirector: '',
+  };
 }
+
+export default {
+  name: 'SearchForm',
+  components: { ResultSet },
+  data() {
+    return {
+      // eslint-disable-next-line no-undef
+      searchFormRoute: Routing.generate('pelagos_app_ui_searchpage_results'),
+      form: initialFormValues(),
+      fields: [
+        { text: '-- All --', value: '' },
+        { text: 'Title', value: 'title' },
+        { text: 'Abstract', value: 'abstract' },
+        { text: 'Author', value: 'datasetSubmission.authors' },
+        { text: 'Theme Keywords', value: 'datasetSubmission.themeKeywords' }],
+      showResults: false,
+      noResults: false,
+      resultSet: Object,
+      route: window.location.hash,
+      submitted: false,
+      displayTextBlock: templateSwitch.getProperty('displayTextBlock'),
+    };
+  },
+  methods: {
+    onSubmit() {
+      const searchQuery = Object.keys(this.form).map((key) => `${key}=${this.form[key]}`).join('&');
+      getApi(
+        // eslint-disable-next-line no-undef
+        `${Routing.generate('pelagos_app_ui_searchpage_results')}?${searchQuery}`,
+        { thisComponent: this, addLoading: true },
+      ).then((response) => {
+        this.resultSet = response.data;
+        this.showResults = true;
+        window.location.hash = searchQuery;
+        this.route = window.location.hash;
+        this.submitted = true;
+      });
+    },
+    onReset() {
+      this.form = initialFormValues();
+      this.showResults = false;
+      this.noResults = false;
+      window.location.hash = '';
+    },
+    facetCheckBoxValues(value) {
+      const facetArray = value.split('=');
+      // eslint-disable-next-line prefer-destructuring
+      this.form[facetArray[0]] = facetArray[1];
+      this.onSubmit();
+    },
+    changePageNo(newPageNo) {
+      this.form.page = newPageNo;
+      this.onSubmit();
+    },
+    changeNoOfResults(noOfResults) {
+      this.form.perPage = noOfResults;
+      this.onSubmit();
+    },
+    detectHashChange() {
+      this.route = window.location.hash;
+      this.submitted = false;
+    },
+    dataDiscovery() {
+      // eslint-disable-next-line no-undef
+      window.location.href = Routing.generate('pelagos_app_ui_datadiscovery_default');
+    },
+  },
+  mounted() {
+    if (this.route) {
+      const urlHashSplit = decodeURI(this.route).split('#')[1].split('&').map((value) => value.split('='));
+      this.form = Object.fromEntries(urlHashSplit);
+      this.onSubmit();
+    }
+    window.addEventListener('hashchange', this.detectHashChange);
+  },
+  watch: {
+    route() {
+      if (!this.submitted) {
+        if (this.route) {
+          const urlHashSplit = decodeURI(this.route).split('#')[1].split('&').map((value) => value.split('='));
+          this.form = Object.fromEntries(urlHashSplit);
+          this.onSubmit();
+        } else {
+          this.onReset();
+        }
+      }
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">

@@ -9,21 +9,21 @@
 </template>
 
 <script>
-    export default {
-        name: "PublicationRow",
-        props: {
-            publicationRow: {
-                type: Object
-            }
-        },
-        methods: {
-            openUrl: function(doi) {
-                if ("" === window.getSelection().toString()) {
-                    window.open("https://dx.doi.org/" + doi, '_blank');
-                }
-            }
-        }
-    }
+export default {
+  name: 'PublicationRow',
+  props: {
+    publicationRow: {
+      type: Object,
+    },
+  },
+  methods: {
+    openUrl(doi) {
+      if (window.getSelection().toString() === '') {
+        window.open(`https://dx.doi.org/${doi}`, '_blank');
+      }
+    },
+  },
+};
 </script>
 
 <style scoped>

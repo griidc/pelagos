@@ -46,89 +46,89 @@
 </template>
 
 <script>
-    export default {
-        name: "FundingCyclesList",
-        props: {
-            fundingCycles: {
-                type: Array,
-            },
-            projectDirectors: {
-                type: Array
-            }
-        },
-        data() {
-            return {
-                selectedProjectDirector: null,
-                projectDirectorsOptions: [],
-                selectedResearchGroup: null,
-                researchGroupOptions: [],
-                selectedFundingCycle: null,
-                fundingCycleOptions: [],
-                disableResearchGroups: true,
-                disableResGrpBtn: true,
-                disableProjDirBtn: true,
-            }
-        },
-        methods: {
-            populateResearchGroups: function(fundingCycleId) {
-                this.researchGroupOptions = [];
-                this.selectedResearchGroup = null;
-                this.fundingCycles.forEach(fundingCycle => {
-                    if (fundingCycle.id === Number(fundingCycleId)) {
-                        fundingCycle.researchGroups.forEach(researchGroup => {
-                            this.researchGroupOptions.push({
-                                value: researchGroup.id,
-                                text: this.$options.filters.truncate(researchGroup.name, 100)
-                            })
-                        })
-                    }
-                })
-                this.disableResearchGroups = this.researchGroupOptions.length < 1;
-            },
-            researchGroupButton: function() {
-                this.openResearchGroupLandingPage(this.selectedResearchGroup);
-            },
-            openResearchGroupLandingPage: function (researchGroupId) {
-                if (researchGroupId) {
-                    window.open("/research-group/about/" + researchGroupId, '_blank');
-                }
-            },
-            populateFundingCycles: function () {
-                this.fundingCycles.forEach(fundingCycle => {
-                    this.fundingCycleOptions.push({
-                        value: fundingCycle.id,
-                        text: fundingCycle.name
-                    })
-                })
-            },
-            projectDirectorButton: function () {
-                this.openResearchGroupLandingPage(this.selectedProjectDirector);
-            },
-            populateProjectDirectors: function () {
-                this.projectDirectors.forEach(projectDirector => {
-                    this.projectDirectorsOptions.push({
-                        value: projectDirector.researchGroupId,
-                        text: projectDirector.name
-                    })
-                })
-            }
-        },
-        created() {
-            this.populateFundingCycles();
-            this.populateProjectDirectors();
-        },
-        watch: {
-            selectedFundingCycle: function () {
-                this.populateResearchGroups(this.selectedFundingCycle);
-            },
-            selectedResearchGroup: function () {
-                this.disableResGrpBtn = !this.selectedResearchGroup;
-            },
-            selectedProjectDirector: function () {
-                this.disableProjDirBtn = !this.selectedProjectDirector;
-            }
-        },
+export default {
+  name: 'FundingCyclesList',
+  props: {
+    fundingCycles: {
+      type: Array,
+    },
+    projectDirectors: {
+      type: Array,
+    },
+  },
+  data() {
+    return {
+      selectedProjectDirector: null,
+      projectDirectorsOptions: [],
+      selectedResearchGroup: null,
+      researchGroupOptions: [],
+      selectedFundingCycle: null,
+      fundingCycleOptions: [],
+      disableResearchGroups: true,
+      disableResGrpBtn: true,
+      disableProjDirBtn: true,
     };
+  },
+  methods: {
+    populateResearchGroups(fundingCycleId) {
+      this.researchGroupOptions = [];
+      this.selectedResearchGroup = null;
+      this.fundingCycles.forEach((fundingCycle) => {
+        if (fundingCycle.id === Number(fundingCycleId)) {
+          fundingCycle.researchGroups.forEach((researchGroup) => {
+            this.researchGroupOptions.push({
+              value: researchGroup.id,
+              text: this.$options.filters.truncate(researchGroup.name, 100),
+            });
+          });
+        }
+      });
+      this.disableResearchGroups = this.researchGroupOptions.length < 1;
+    },
+    researchGroupButton() {
+      this.openResearchGroupLandingPage(this.selectedResearchGroup);
+    },
+    openResearchGroupLandingPage(researchGroupId) {
+      if (researchGroupId) {
+        window.open(`/research-group/about/${researchGroupId}`, '_blank');
+      }
+    },
+    populateFundingCycles() {
+      this.fundingCycles.forEach((fundingCycle) => {
+        this.fundingCycleOptions.push({
+          value: fundingCycle.id,
+          text: fundingCycle.name,
+        });
+      });
+    },
+    projectDirectorButton() {
+      this.openResearchGroupLandingPage(this.selectedProjectDirector);
+    },
+    populateProjectDirectors() {
+      this.projectDirectors.forEach((projectDirector) => {
+        this.projectDirectorsOptions.push({
+          value: projectDirector.researchGroupId,
+          text: projectDirector.name,
+        });
+      });
+    },
+  },
+  created() {
+    this.populateFundingCycles();
+    this.populateProjectDirectors();
+  },
+  watch: {
+    selectedFundingCycle() {
+      this.populateResearchGroups(this.selectedFundingCycle);
+    },
+    selectedResearchGroup() {
+      this.disableResGrpBtn = !this.selectedResearchGroup;
+    },
+    selectedProjectDirector() {
+      this.disableProjDirBtn = !this.selectedProjectDirector;
+    },
+  },
+};
 </script>
 
 <style scoped>
