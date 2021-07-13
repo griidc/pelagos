@@ -40,6 +40,19 @@ $theme-colors: (
         "chart-alternate":   $ncis,
 );
 
+$colors: (
+        blue:        $paleBlue,
+        indigo:      $ncis,
+        red:         $red,
+        shinedIvory: $shinedIvory,
+        yellow:      $yellow,
+        green:       $green,
+        black:       $black,
+        white:       $white,
+        gray:        $gray-600,
+        gray-dark:   $gray-800
+);
+
 $grays: (
         100: $gray-100,
         200: $gray-200,
