@@ -88,12 +88,17 @@
   --atlassion-button-bg:var(--color-blue--boston);
 }
 
+body {
+  font-size: 14px;
+  font-weight: 300;
+}
+
 /* Menu bar style */
 
 .main_menu {
   .navbar {
     .navbar-nav a {
-      font-size: .85rem;
+      font-size: 1.1rem;
       &:hover{
         text-decoration: underline;
       }
@@ -201,6 +206,10 @@
     justify-content: flex-start;
     align-items: flex-start;
   }
+
+  .logo {
+    width: 175px;
+  }
 }
 
 /* Font for applications */
@@ -232,5 +241,10 @@
   }
   #help-sub-menu {
     left: -80% !important;
+  }
+
+  .logo {
+    width: 300px;
+    margin-top: 5px;
   }
 }

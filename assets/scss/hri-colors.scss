@@ -11,6 +11,7 @@ $blue:          #007bff;
 $yellow:        #ffc107;
 $green:         #28a745;
 $red:           #dc3545;
+$kidsDrawBlue:  #009aff;
 
 $white:    #fff;
 $gray-100: #f8f9fa;
@@ -70,19 +71,23 @@ $theme-color-interval: 8%;
 $font-family-sans-serif: museo-sans,Helvetica,Arial,sans-serif;
 $font-family-base: $font-family-sans-serif;
 
-$navbar-light-color: $gray-800;
+$navbar-light-color: $celestineBlue;
 
-$navbar-light-active-color: $gray-800;
+$navbar-light-active-color: $celestineBlue;
 
-$navbar-light-hover-color: $celestineBlue;
+$navbar-light-hover-color: $kidsDrawBlue;
 
-$dropdown-link-hover-color: $celestineBlue;
+$dropdown-link-hover-color: $kidsDrawBlue;
 
 $dropdown-color: $shinedIvory;
 
-$dropdown-link-color: $gray-800;
+$dropdown-link-color: $celestineBlue;
 
-$dropdown-link-hover-color: $celestineBlue;
+$dropdown-link-hover-color: $kidsDrawBlue;
+
+$font-weight-light: 200 !default;
+$font-weight-normal: 300 !default;
+$font-weight-bold: 500 !default;
 
 $additional-width-default: 25px;
 $additional-width-sm: $additional-width-default * 1;
