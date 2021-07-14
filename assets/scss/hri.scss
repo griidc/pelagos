@@ -207,7 +207,7 @@ body {
     align-items: flex-start;
   }
 
-  .logo {
+  .logo, .griidc-logo {
     width: 175px;
   }
 }
@@ -247,4 +247,10 @@ body {
     width: 300px;
     margin-top: 5px;
   }
+
+  .griidc-logo{
+    width: 200px;
+    margin-top: 5px;
+  }
+
 }
