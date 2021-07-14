@@ -10,7 +10,7 @@
                 <div class="input-group pb-3" v-show="['researchGroup', 'projectDirector'].includes(facetName.queryParam)">
                     <input class="form-control" placeholder="Search" type="text" v-model="facetSearch">
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="button">
+                        <button class="btn btn-alternate" type="button">
                             <i class="fa fa-search"></i></button>
                     </div>
                 </div>

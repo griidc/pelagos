@@ -2,26 +2,26 @@
  * App.js the main app for the base template.
  */
 
-import '../scss/griidc.scss';
-import templateSwitch from './vue/utils/template-switch';
-import Routing from '../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
+import '../../scss/griidc.scss';
+import templateSwitch from '../vue/utils/template-switch';
+import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
 const $ = require('jquery');
 
 global.jQuery = $;
 global.$ = global.jQuery;
-require('../css/template.css');
-require('../css/jira-buttons.css');
-require('../css/superfish-navbar.css');
-require('../css/superfish.css');
-require('../css/pelagos-module.css');
-require('../css/messages.css');
-require('../css/griidc-app.css');
+require('../../css/template.css');
+require('../../css/jira-buttons.css');
+require('../../css/superfish-navbar.css');
+require('../../css/superfish.css');
+require('../../css/pelagos-module.css');
+require('../../css/messages.css');
+require('../../css/griidc-app.css');
 const axios = require('axios');
 
 global.axios = axios;
 
-const routes = require('../../public/js/fos_js_routes.json');
+const routes = require('../../../public/js/fos_js_routes.json');
 
 Routing.setRoutingData(routes);
 global.Routing = Routing;

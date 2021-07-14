@@ -1,0 +1,110 @@
+@import '~bootstrap/scss/functions';
+
+// Brand Colors;
+$paleBlue:      #537abd;
+$ncis:          #2e384b;
+$shinedIvory:   #f3f1eb;
+$celestineBlue: #007ac2;
+$iceBlue:       #dcf3ff;
+$brightYellow:  #ffce5f;
+$blue:          #007bff;
+$yellow:        #ffc107;
+$green:         #28a745;
+$red:           #dc3545;
+$kidsDrawBlue:  #009aff;
+
+$white:    #fff;
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #6c757d;
+$gray-700: #495057;
+$gray-800: #535e69;
+$gray-900: #212529;
+$black:    #000;
+
+$theme-colors: (
+        "primary":       $paleBlue,
+        "secondary":     $ncis,
+        "header":        $shinedIvory,
+        "alternate":     $brightYellow,
+        "available":     $green,
+        "submitted":     $blue,
+        "identified":    $gray-600,
+        "restricted":    $red,
+        "remotlyhosted": $yellow,
+        "coldstorage":   $iceBlue,
+        "chart-primary":   $ncis,
+        "chart-secondary":   $brightYellow,
+        "chart-alternate":   $ncis,
+);
+
+$colors: (
+        blue:        $paleBlue,
+        indigo:      $ncis,
+        red:         $red,
+        shinedIvory: $shinedIvory,
+        yellow:      $yellow,
+        green:       $green,
+        black:       $black,
+        white:       $white,
+        gray:        $gray-600,
+        gray-dark:   $gray-800
+);
+
+$grays: (
+        100: $gray-100,
+        200: $gray-200,
+        300: $gray-300,
+        400: $gray-400,
+        500: $gray-500,
+        600: $gray-600,
+        700: $gray-700,
+        800: $gray-800,
+        900: $gray-900
+);
+
+$theme-color-interval: 8%;
+
+$font-family-sans-serif: museo-sans,Helvetica,Arial,sans-serif;
+$font-family-base: $font-family-sans-serif;
+
+$navbar-light-color: $celestineBlue;
+
+$navbar-light-active-color: $celestineBlue;
+
+$navbar-light-hover-color: $kidsDrawBlue;
+
+$dropdown-link-hover-color: $kidsDrawBlue;
+
+$dropdown-color: $shinedIvory;
+
+$dropdown-link-color: $celestineBlue;
+
+$dropdown-link-hover-color: $kidsDrawBlue;
+
+$font-weight-light: 200 !default;
+$font-weight-normal: 300 !default;
+$font-weight-bold: 500 !default;
+
+$additional-width-default: 25px;
+$additional-width-sm: $additional-width-default * 1;
+$additional-width-md: $additional-width-default * 2;
+$additional-width-lg: $additional-width-default * 4;
+$additional-width-xl: $additional-width-default * 8;
+
+$grid-breakpoints: (
+        xs: 0,
+        sm: 576px + $additional-width-sm,
+        md: 768px + $additional-width-md,
+        lg: 992px + $additional-width-lg,
+        xl: 1200px + $additional-width-xl
+);
+$container-max-widths: (
+        sm: 540px + $additional-width-sm,
+        md: 720px + $additional-width-md,
+        lg: 960px + $additional-width-lg,
+        xl: 1140px + $additional-width-xl
+);
