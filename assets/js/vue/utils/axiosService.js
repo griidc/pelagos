@@ -1,7 +1,7 @@
 const axios = require('axios');
 const axiosInstance = axios.create({});
-const CancelToken = axios.CancelToken;
-const source = CancelToken.source();
+
+export const axiosService = axios;
 
 /**
  * Axios GET API.
@@ -14,7 +14,7 @@ export const getApi = (url, {thisComponent = null, addLoader = false} = {}) => {
     if (addLoader === true) {
         addLoadingOverLay(thisComponent);
     }
-    return axiosInstance({url: url, method: 'GET', responseType: "json", cancelToken: source.token});
+    return axiosInstance({url: url, method: 'GET', responseType: "json"});
 }
 
 /**
@@ -63,7 +63,6 @@ export const patchApi = (url, patchData) => {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export const downloadApi = (url, config) => {
-    config.cancelToken = source.token;
     return axiosInstance.get(url, config);
 }
 
