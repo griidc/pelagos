@@ -3,24 +3,24 @@
  */
 
 import 'bootstrap';
-import templateSwitch from './vue/utils/template-switch';
-import Routing from '../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
+import templateSwitch from '../vue/utils/template-switch';
+import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min';
 
 const $ = require('jquery');
 
 global.jQuery = $;
 global.$ = global.jQuery;
 
-require('../css/template.css');
-require('../css/superfish.css');
-require('../css/pelagos-module.css');
-require('../css/messages.css');
+require('../../css/template.css');
+require('../../css/superfish.css');
+require('../../css/pelagos-module.css');
+require('../../css/messages.css');
 const axios = require('axios');
 
 global.axios = axios;
-require('../scss/nas-grp.scss');
+require('../../scss/hri.scss');
 
-const routes = require('../../public/js/fos_js_routes.json');
+const routes = require('../../../public/js/fos_js_routes.json');
 
 Routing.setRoutingData(routes);
 global.Routing = Routing;
