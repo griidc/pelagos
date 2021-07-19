@@ -26,7 +26,7 @@ class PelagosImportFilesToDatasetCommand extends Command
 {
     protected static $defaultName = 'pelagos:import-files-to-dataset';
     protected static $defaultDescription = 'Imports file to a dataset';
-    
+
     /**
      * A Doctrine ORM EntityManager instance.
      *
@@ -40,7 +40,7 @@ class PelagosImportFilesToDatasetCommand extends Command
      * @var MessageBusInterface $messageBus
      */
     protected $messageBus;
-    
+
      /**
      * Class constructor for dependency injection.
      *
@@ -81,46 +81,46 @@ class PelagosImportFilesToDatasetCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $basePath = $input->getArgument('basePath');
         $udi = $input->getArgument('udi');
-        
+
         $systemPerson = $this->entityManager->find(Person::class, 0);
 
-        if ($basePath) {
-            $io->note(sprintf('You passed an argument: %s', $basePath));
-            $io->note(sprintf('You passed an argument: %s', $udi));
-        }
-        
         $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(['udi' => $udi]);
         if (!$dataset instanceof Dataset) {
             $io->error("Dataset not found for $udi");
             return 1;
         }
-        
+
         $datasetSubmission = $dataset->getLatestDatasetReview();
         if (!$datasetSubmission instanceof DatasetSubmission) {
             $io->error("Dataset Submission not found for $udi");
             return 1;
         }
-        
+
         $files = $this->dirToList($basePath);
-        
+
+        $fileset = $datasetSubmission->getFileset();
+
+        $deleteFile = null;
+
+        if (!$fileset instanceof Fileset) {
+            $fileset = new Fileset();
+            $datasetSubmission->setFileset($fileset);
+        } else {
+            $deleteFile = $fileset->getProcessedFiles()->first();
+            $deleteFileMessage = new DeleteFile($file->getFilePathName(), false);
+            $messageBus->dispatch($deleteFileMessage);
+            $fileset->removeFile($deleteFile);
+        }
+
         foreach ($files as $file) {
             $fileName = $file;
             $filePath = $basePath . DIRECTORY_SEPARATOR . $file;
             $fileSize = filesize($filePath);
-            
-            $fileset = $datasetSubmission->getFileset();
 
-            $isRenamed = false;
-
-            if ($fileset instanceof Fileset) {
-                while ($fileset->doesFileExist($fileName)) {
-                    $fileName = FileNameUtilities::renameFile($fileName);
-                    $isRenamed = true;
-                }
-            } else {
-                $fileset = new Fileset();
-                $datasetSubmission->setFileset($fileset);
+            while ($fileset->doesFileExist($fileName)) {
+                $fileName = FileNameUtilities::renameFile($fileName);
             }
+
             $newFile = new File();
             $newFile->setFilePathName(trim($fileName));
             $newFile->setFileSize($fileSize);
@@ -132,9 +132,9 @@ class PelagosImportFilesToDatasetCommand extends Command
             $fileset->addFile($newFile);
             $this->entityManager->persist($newFile);
         }
-        
+
         $this->entityManager->flush();
-        
+
         $datasetSubmissionFilerMessage = new DatasetSubmissionFiler($datasetSubmission->getId());
         $this->messageBus->dispatch($datasetSubmissionFilerMessage);
 
@@ -142,7 +142,7 @@ class PelagosImportFilesToDatasetCommand extends Command
 
         return 0;
     }
-    
+
     /**
      * This function will take a basepath, and create a list of files and their path.
      *
@@ -155,9 +155,9 @@ class PelagosImportFilesToDatasetCommand extends Command
     private function dirToList(string $basePath, string $directory = '', array $files = array()): array
     {
         $filePath = $basePath . DIRECTORY_SEPARATOR . $directory;
-        
+
         $contents = scandir($filePath);
-        
+
         foreach ($contents as $item) {
             if (!in_array($item, array(".",".."))) {
                 if (is_dir($filePath . DIRECTORY_SEPARATOR . $item)) {
@@ -167,7 +167,7 @@ class PelagosImportFilesToDatasetCommand extends Command
                 }
             }
         }
-        
+
         return $files;
     }
 }
