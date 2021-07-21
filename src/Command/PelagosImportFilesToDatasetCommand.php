@@ -109,7 +109,7 @@ class PelagosImportFilesToDatasetCommand extends Command
         } else {
             $deleteFile = $fileset->getProcessedFiles()->first();
             if ($deleteFile instanceof File) {
-                $deleteFileMessage = new DeleteFile($deleteFile->getFilePathName(), true);
+                $deleteFileMessage = new DeleteFile($deleteFile->getPhysicalFilePath(), true);
                 $this->messageBus->dispatch($deleteFileMessage);
                 $fileset->removeFile($deleteFile);
             }
