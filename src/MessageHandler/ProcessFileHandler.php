@@ -121,7 +121,7 @@ class ProcessFileHandler implements MessageHandlerInterface
                 $fileset->getFileRootPath() . $file->getFilePathName()
             );
             $file->setPhysicalFilePath($newFileDestination);
-            unlink($filePath);
+            
         } catch (\Exception $exception) {
             $this->logger->error(sprintf('Unable to add file to datastore. Message: "%s"', $exception->getMessage()), $loggingContext);
             $file->setStatus(File::FILE_ERROR);
@@ -129,6 +129,7 @@ class ProcessFileHandler implements MessageHandlerInterface
             return;
         }
         
+        @unlink($filePath);
         @rmdir(dirname($filePath));
 
         // File virus Scan
