@@ -8,6 +8,7 @@ use App\Entity\File;
 use App\Entity\FileSet;
 use App\Entity\Person;
 use App\Message\DatasetSubmissionFiler;
+use App\Message\DeleteFile;
 
 use App\Util\FileNameUtilities;
 
@@ -107,9 +108,11 @@ class PelagosImportFilesToDatasetCommand extends Command
             $datasetSubmission->setFileset($fileset);
         } else {
             $deleteFile = $fileset->getProcessedFiles()->first();
-            $deleteFileMessage = new DeleteFile($file->getFilePathName(), false);
-            $messageBus->dispatch($deleteFileMessage);
-            $fileset->removeFile($deleteFile);
+            if ($deleteFile instanceof File) {
+                $deleteFileMessage = new DeleteFile($file->getFilePathName(), false);
+                $messageBus->dispatch($deleteFileMessage);
+                $fileset->removeFile($deleteFile);
+            }
         }
 
         foreach ($files as $file) {
