@@ -132,7 +132,7 @@ class ProcessFileHandler implements MessageHandlerInterface
             unlink($filePath);
             rmdir(dirname($filePath));
         } catch (\Exception $exception) {
-            $this->logger->error(sprintf('Error delete file or folder. Message: "%s"', $exception->getMessage()),
+            $this->logger->error(sprintf('Error delete file or folder. Message: "%s"', $exception->getMessage()),$loggingContext);
         }
 
         // File virus Scan
