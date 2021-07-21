@@ -7,7 +7,11 @@
 <div class="validdsform">
     <fieldset> <!-- Dataset File Transfer Details -->
         <legend class="section-header">Dataset File Transfer Details</legend>
-
+        <p>
+            The majority of datasets can be uploaded using the File Manager in the "Upload" tab.
+            Extremely large datasets should be uploaded via Globus or SFTP using the 'Large Files' Tab.
+            Datasets that already exist at a National Repository can be linked using the "Enter URL" tab.
+        </p>
         {{ form_widget(form.datasetFileTransferType) }}
 
         <div style="background: transparent;" id="filetabs">
