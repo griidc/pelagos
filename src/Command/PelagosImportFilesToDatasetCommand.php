@@ -110,7 +110,7 @@ class PelagosImportFilesToDatasetCommand extends Command
             $deleteFile = $fileset->getProcessedFiles()->first();
             if ($deleteFile instanceof File) {
                 $physicalFilePath = $deleteFile->getPhysicalFilePath();
-                $pattern = '/^\w\w\.x\d{3}\.\d{3}\:\d{4}\.dat$/';
+                $pattern = '/^\w\w\.x\d{3}\.\d{3}\:\d{4}\/\w\w\.x\d{3}\.\d{3}\:\d{4}\.dat$/';
                 if (preg_match($pattern, $physicalFilePath) === 1) {
                     $deleteFileMessage = new DeleteFile($physicalFilePath, true);
                     $this->messageBus->dispatch($deleteFileMessage);
