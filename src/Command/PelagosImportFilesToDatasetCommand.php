@@ -83,6 +83,8 @@ class PelagosImportFilesToDatasetCommand extends Command
         $basePath = $input->getArgument('basePath');
         $udi = $input->getArgument('udi');
 
+        $io->note("Starting import for UDI:$udi");
+
         $systemPerson = $this->entityManager->find(Person::class, 0);
 
         $dataset = $this->entityManager->getRepository(Dataset::class)->findOneBy(['udi' => $udi]);
@@ -116,7 +118,7 @@ class PelagosImportFilesToDatasetCommand extends Command
                     $this->messageBus->dispatch($deleteFileMessage);
                     $fileset->removeFile($deleteFile);
                 } else {
-                    throw new \Exception('Original .dat file can not be located in the fileset, QUITTING!');
+                    throw new \Exception("Original $physicalFilePath file can not be located in the fileset, QUITTING!");
                     return 1;
                 }
             }
