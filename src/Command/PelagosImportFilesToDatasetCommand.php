@@ -109,9 +109,15 @@ class PelagosImportFilesToDatasetCommand extends Command
         } else {
             $deleteFile = $fileset->getProcessedFiles()->first();
             if ($deleteFile instanceof File) {
-                $deleteFileMessage = new DeleteFile($deleteFile->getPhysicalFilePath(), true);
-                $this->messageBus->dispatch($deleteFileMessage);
-                $fileset->removeFile($deleteFile);
+                $physicalFilePath = $deleteFile->getPhysicalFilePath();
+                $pattern = '/^\w\w\.x\d{3}\.\d{3}\:\d{4}\.dat$/';
+                if (preg_match($pattern, $physicalFilePath) === 1) {
+                    $deleteFileMessage = new DeleteFile($physicalFilePath, true);
+                    $this->messageBus->dispatch($deleteFileMessage);
+                    $fileset->removeFile($deleteFile);
+                } else {
+                    throw new \Exception('Original .dat file in in fileset');
+                }
             }
         }
 
@@ -120,9 +126,14 @@ class PelagosImportFilesToDatasetCommand extends Command
             $filePath = $basePath . DIRECTORY_SEPARATOR . $file;
             $fileSize = filesize($filePath);
 
-            while ($fileset->doesFileExist($fileName)) {
-                $fileName = FileNameUtilities::renameFile($fileName);
+            if ($fileset->doesFileExist($fileName)) {
+                throw new \Exception("File: $fileName already imported, QUITTING!");
+                return 1;
             }
+
+            // while ($fileset->doesFileExist($fileName)) {
+                // $fileName = FileNameUtilities::renameFile($fileName);
+            // }
 
             $newFile = new File();
             $newFile->setFilePathName(trim($fileName));
