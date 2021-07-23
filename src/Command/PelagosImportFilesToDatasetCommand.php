@@ -10,14 +10,11 @@ use App\Entity\Person;
 use App\Message\DatasetSubmissionFiler;
 use App\Message\DeleteFile;
 
-use App\Util\FileNameUtilities;
-
 use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -106,15 +103,15 @@ class PelagosImportFilesToDatasetCommand extends Command
         $deleteFile = null;
 
         if (!$fileset instanceof Fileset) {
-            $fileset = new Fileset();
-            $datasetSubmission->setFileset($fileset);
+            throw new \Exception('The dataset does not have a fileset, QUITTING!');
+            return 1;
         } else {
             $deleteFile = $fileset->getProcessedFiles()->first();
             if ($deleteFile instanceof File) {
                 $physicalFilePath = $deleteFile->getPhysicalFilePath();
                 $pattern = '/^\w\w\.x\d{3}\.\d{3}\:\d{4}\/\w\w\.x\d{3}\.\d{3}\:\d{4}\.dat$/';
                 if (preg_match($pattern, $physicalFilePath) === 1) {
-                    $deleteFileMessage = new DeleteFile($physicalFilePath, true);
+                    $deleteFileMessage = new DeleteFile($physicalFilePath);
                     $this->messageBus->dispatch($deleteFileMessage);
                     $fileset->removeFile($deleteFile);
                 } else {
@@ -133,10 +130,6 @@ class PelagosImportFilesToDatasetCommand extends Command
                 throw new \Exception("File: $fileName already imported, QUITTING!");
                 return 1;
             }
-
-            // while ($fileset->doesFileExist($fileName)) {
-                // $fileName = FileNameUtilities::renameFile($fileName);
-            // }
 
             $newFile = new File();
             $newFile->setFilePathName(trim($fileName));
