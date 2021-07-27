@@ -12,7 +12,7 @@ my $cmd = '';
 my $arg = '';
 
 # CONFIG
-my $storage = '/san_mwilliamson/data/store';
+my $storage = '/griidc/san-data-store';
 
 if (0 == checkDeps()) {
     die("Please install needed commands.\n");
@@ -33,7 +33,7 @@ if ($fileType eq 'tar.bz2') {
     $cmd = 'tar';
     $arg = 'xf';
 } elsif ($fileType eq 'gtar') {
-    $cmd = 'gtar';
+    $cmd = 'tar';
     $arg = 'xf';
 } elsif ($fileType eq 'tgz') {
     $cmd = 'tar';
@@ -54,20 +54,15 @@ if ($fileType eq 'tar.bz2') {
 if ($cmd ne '' and $fileType ne '') {
     `rm -rf "$udi"`;
     mkdir($udi);
-    `rm -rf "$udi-orig"`;
-    mkdir("$udi-orig");
-    symlink("$storage/$udi/$udi.dat", "$udi-orig/$udi.$fileType");
     chdir($udi);
-    `$cmd $arg "../$udi-orig/$udi.$fileType"`;
-    unlink("../$udi-orig/$udi.$fileType");
-    rmdir("../$udi-orig");
+    `$cmd $arg "$storage/$udi/$udi.dat"`;
 } else {
     print "Missing argument. ERROR.\n";
 }
 
 sub checkDeps {
     # Ensure these commands exist in the path and are executable.
-    my @commands = ('tar', 'gtar', '7za', 'unzip', 'unar');
+    my @commands = ('tar', '7za', 'unzip', 'unar');
     foreach my $command (@commands) {
         my $cmd = '';
         $cmd = `which $command`; chomp($cmd);
