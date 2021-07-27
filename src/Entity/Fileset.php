@@ -282,7 +282,7 @@ class Fileset extends Entity
             $path = "$path/";
             $dirName = dirname($file->getFilePathName());
             $pathPosition = strpos($file->getFilePathName(), $path);
-            if ($dirName === $path || $pathPosition !== false) {
+            if ($dirName === $path || $pathPosition === 0) {
                 return true;
             }
             return false;
