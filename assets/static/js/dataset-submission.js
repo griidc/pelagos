@@ -164,13 +164,18 @@ $(function() {
     });
 
     var fileTabs = $("#filetabs");
+
     fileTabs.tabs();
+
     switch ($("#datasetFileTransferType").val()) {
         case "upload":
             fileTabs.tabs("option", "active", 0);
             break;
-        case "HTTP":
+        case "SFTP":
             fileTabs.tabs("option", "active", 1);
+            break;
+        case "HTTP":
+            fileTabs.tabs("option", "active", 2);
             break;
     }
 
