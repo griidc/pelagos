@@ -15,14 +15,14 @@
 </template>
 
 <script>
-    import DatasetOverTime from "@/vue/components/stats/DatasetOverTime";
-    import DatasetSizeRanges from "@/vue/components/stats/DatasetSizeRanges";
-    import RepositorySummary from "@/vue/components/stats/RepositorySummary";
+import DatasetOverTime from '@/vue/components/stats/DatasetOverTime';
+import DatasetSizeRanges from '@/vue/components/stats/DatasetSizeRanges';
+import RepositorySummary from '@/vue/components/stats/RepositorySummary.vue';
 
-    export default {
-        name: "StatsApp",
-        components: { DatasetOverTime, DatasetSizeRanges, RepositorySummary },
-    }
+export default {
+  name: 'StatsApp',
+  components: { DatasetOverTime, DatasetSizeRanges, RepositorySummary },
+};
 </script>
 
 <style scoped>

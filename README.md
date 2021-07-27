@@ -1,4 +1,4 @@
-# Pelagos [![Build Status](https://api.travis-ci.com/griidc/pelagos.svg)](https://travis-ci.com/griidc/pelagos)
+# Pelagos [![PHP Unit Test](https://github.com/griidc/pelagos/actions/workflows/phpunit.yml/badge.svg)](https://github.com/griidc/pelagos/actions/workflows/phpunit.yml) [![PHP Code Sniffer](https://github.com/griidc/pelagos/actions/workflows/phpcs.yml/badge.svg)](https://github.com/griidc/pelagos/actions/workflows/phpcs.yml) [![ESLint for Javascript](https://github.com/griidc/pelagos/actions/workflows/eslint.yml/badge.svg)](https://github.com/griidc/pelagos/actions/workflows/eslint.yml)
 
 Pelagos is a system for maintaining a repository of scientific research data.
 Developed and maintained by GRIIDC.

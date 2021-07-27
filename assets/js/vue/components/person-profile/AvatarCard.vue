@@ -16,13 +16,13 @@
 
 <script>
 export default {
-    name: "AvatarCard",
-    props: {
-        personDetails: {
-            type: Object
-        }
-    }
-}
+  name: 'AvatarCard',
+  props: {
+    personDetails: {
+      type: Object,
+    },
+  },
+};
 </script>
 
 <style scoped>
