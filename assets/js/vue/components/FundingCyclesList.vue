@@ -41,7 +41,7 @@
                 </div>
             </div>
         </div>
-        <div class="row justify-content-md-center" v-else>
+        <div class="row justify-content-md-center m-3" v-else>
             <div class="form-inline">
                 <b-form-select v-model="selectedResearchGroup" :options="researchGroupOptions" class="w-75">
                     <template v-slot:first>
@@ -129,6 +129,9 @@ export default {
   created() {
     this.populateFundingCycles();
     this.populateProjectDirectors();
+    if (this.themeTemplateName === 'HRI') {
+      this.selectedFundingCycle = this.fundingCycles[0].id;
+    }
   },
   watch: {
     selectedFundingCycle() {
