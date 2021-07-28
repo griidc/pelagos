@@ -428,6 +428,8 @@ class DatasetReviewController extends AbstractController
      */
     public function postAction(Request $request, int $id = null, MessageBusInterface $messageBus)
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         // set to default event
         $eventName = 'end_review';
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);

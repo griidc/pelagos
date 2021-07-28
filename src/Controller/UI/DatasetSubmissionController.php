@@ -204,6 +204,8 @@ class DatasetSubmissionController extends AbstractController
      */
     public function postAction(Request $request, int $id = null, MessageBusInterface $messageBus)
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
 
         if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
