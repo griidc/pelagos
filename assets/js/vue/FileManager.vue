@@ -185,7 +185,7 @@ import CustomFileSystemProvider from 'devextreme/file_management/custom_provider
 import Dropzone from 'dropzone';
 import xbytes from 'xbytes';
 import {
-  deleteApi, getApi, postApi, putApi, downloadApi, axiosService,
+  axiosService, deleteApi, downloadApi, getApi, postApi, putApi,
 } from './utils/axiosService';
 
 const { CancelToken } = axiosService;
@@ -354,6 +354,16 @@ const initDropzone = () => {
     maxFilesize: null,
     clickable: '#upload-file-button',
     timeout: 0,
+    uploadprogress(file) {
+      if (file.xhr.status === 204) {
+        if (myFileManager.$parent.totalFileSize
+          > (myFileManager.$parent.doneFileSize + file.upload.chunks[0].bytesSent)) {
+          myFileManager.$parent.doneFileSize += file.upload.chunks[0].bytesSent;
+        } else {
+          myFileManager.$parent.doneFileSize = myFileManager.$parent.totalFileSize;
+        }
+      }
+    },
     chunksUploaded(file, done) {
       // All chunks have been uploaded. Perform any other actions
       const currentFile = file;
@@ -400,8 +410,8 @@ const initDropzone = () => {
     myFileManager.$parent.loadingVisible = true;
   });
 
-  myDropzone.on('success', (file) => {
-    myFileManager.$parent.completeFile(file.size);
+  myDropzone.on('success', () => {
+    myFileManager.$parent.completeFile();
   });
 
   myDropzone.on('queuecomplete', function queueComplete() {
@@ -528,9 +538,8 @@ export default {
       this.totalFileSize += fileSize;
     },
 
-    completeFile(fileSize) {
+    completeFile() {
       this.doneFiles += 1;
-      this.doneFileSize += fileSize;
     },
 
     managerReady() {
