@@ -204,11 +204,15 @@ class DatasetSubmissionController extends AbstractController
      */
     public function postAction(Request $request, int $id = null, MessageBusInterface $messageBus)
     {
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->redirect($this->generateUrl('security_login') .'?destination=' . $request->getPathInfo());
-        }
-
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
+
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->redirect(
+                $this->generateUrl('security_login') .'?destination='
+                . $this->generateUrl('pelagos_app_ui_datasetsubmission_default') . '?regid='
+                . $datasetSubmission->getDataset()->getUdi()
+            );
+        }
 
         if ($datasetSubmission->getStatus() === DatasetSubmission::STATUS_COMPLETE) {
             throw new BadRequestHttpException('This submission has already been submitted.');
