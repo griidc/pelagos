@@ -205,7 +205,7 @@ class DatasetSubmissionController extends AbstractController
     public function postAction(Request $request, int $id = null, MessageBusInterface $messageBus)
     {
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->redirect('/user/login?destination=' . $request->getPathInfo());
+            return $this->redirect($this->generateUrl('security_login') .'?destination=' . $request->getPathInfo());
         }
 
         $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
