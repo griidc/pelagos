@@ -106,7 +106,12 @@ class DatasetSubmissionController extends AbstractController
      */
     public function defaultAction(Request $request, EntityManagerInterface $entityManager)
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->redirect(
+                $this->generateUrl('security_login') .'?destination='
+                . $this->generateUrl('pelagos_app_ui_datasetsubmission_default')
+            );
+        }
 
         $udi = $request->query->get('regid');
         $datasetSubmission = null;

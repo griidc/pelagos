@@ -89,6 +89,13 @@ class DatasetReviewController extends AbstractController
      */
     public function defaultAction(Request $request)
     {
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->redirect(
+                $this->generateUrl('security_login') .'?destination='
+                . $this->generateUrl('pelagos_app_ui_datasetreview_default')
+            );
+        }
+
         $dataset = null;
         $datasetSubmission = null;
         $reviewModes = array('view', 'review');
