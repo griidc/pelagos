@@ -89,6 +89,13 @@ class DatasetReviewController extends AbstractController
      */
     public function defaultAction(Request $request)
     {
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->redirect(
+                $this->generateUrl('security_login') .'?destination='
+                . $this->generateUrl('pelagos_app_ui_datasetreview_default')
+            );
+        }
+
         $dataset = null;
         $datasetSubmission = null;
         $reviewModes = array('view', 'review');
@@ -428,11 +435,17 @@ class DatasetReviewController extends AbstractController
      */
     public function postAction(Request $request, int $id = null, MessageBusInterface $messageBus)
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
 
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->redirect(
+                $this->generateUrl('security_login') .'?destination='
+                . $this->generateUrl('pelagos_app_ui_datasetreview_default') . '?udiReview='
+                . $datasetSubmission->getDataset()->getUdi()
+            );
+        }
         // set to default event
         $eventName = 'end_review';
-        $datasetSubmission = $this->entityHandler->get(DatasetSubmission::class, $id);
         $form = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionType::class,
