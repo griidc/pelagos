@@ -29,8 +29,8 @@
                 <aside class="col-lg-3">
                     <div class="card card-filter">
                         <Facet :facet-info="results.facetInfo.statusInfo" :facet-name="facetLabels.status" v-on="$listeners" :formValues="formValues"/>
-                        <Facet :facet-info="results.facetInfo.fundingCycleInfo" :facet-name="facetLabels.fundingCycle" v-on="$listeners" :formValues="formValues" v-if="showFundingCycleFacet"/>
-                        <Facet :facet-info="results.facetInfo.fundingOrgInfo" :facet-name="facetLabels.fundingOrg" v-on="$listeners" :formValues="formValues" v-else/>
+                        <Facet :facet-info="results.facetInfo.fundingCycleInfo" :facet-name="facetLabels.fundingCycle" v-on="$listeners" :formValues="formValues" v-show="showFundingCycleFacet"/>
+                        <Facet :facet-info="results.facetInfo.fundingOrgInfo" :facet-name="facetLabels.fundingOrg" v-on="$listeners" :formValues="formValues" v-show="showFundingOrgFacet"/>
                         <Facet :facet-info="results.facetInfo.projectDirectorInfo" :facet-name="facetLabels.projectDirector" v-on="$listeners" :formValues="formValues" v-show="showProjectDirectorFacet"/>
                         <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="facetLabels.researchGroup" v-on="$listeners" :formValues="formValues"/>
                     </div>
@@ -118,6 +118,7 @@ export default {
       ],
       showFundingCycleFacet: templateSwitch.getProperty('showFundingCycles'),
       showProjectDirectorFacet: templateSwitch.getProperty('showProjectDirector'),
+      showFundingOrgFacet: templateSwitch.getProperty('showFundingOrgFacet'),
     };
   },
   computed: {
