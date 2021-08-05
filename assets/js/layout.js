@@ -1,8 +1,7 @@
-'use strict';
-
 const $ = require('jquery');
 
-global.$ = global.jQuery = $;
+global.jQuery = $;
+global.$ = global.jQuery;
 global.queryString = require('query-string');
 
 require('jquery-migrate');
@@ -19,7 +18,3 @@ require('jquery-ui/ui/widgets/tabs');
 
 require('jquery.cookie');
 require('qtip2');
-
-$(document).ready(function() {
-   console.log('Webpack Loaded');
-});

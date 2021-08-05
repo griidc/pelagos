@@ -29,8 +29,8 @@
                 <aside class="col-lg-3">
                     <div class="card card-filter">
                         <Facet :facet-info="results.facetInfo.statusInfo" :facet-name="facetLabels.status" v-on="$listeners" :formValues="formValues"/>
-                        <Facet :facet-info="results.facetInfo.fundingCycleInfo" :facet-name="facetLabels.fundingCycle" v-on="$listeners" :formValues="formValues" v-if="showFundingCycleFacet"/>
-                        <Facet :facet-info="results.facetInfo.fundingOrgInfo" :facet-name="facetLabels.fundingOrg" v-on="$listeners" :formValues="formValues" v-else/>
+                        <Facet :facet-info="results.facetInfo.fundingCycleInfo" :facet-name="facetLabels.fundingCycle" v-on="$listeners" :formValues="formValues" v-show="showFundingCycleFacet"/>
+                        <Facet :facet-info="results.facetInfo.fundingOrgInfo" :facet-name="facetLabels.fundingOrg" v-on="$listeners" :formValues="formValues" v-show="showFundingOrgFacet"/>
                         <Facet :facet-info="results.facetInfo.projectDirectorInfo" :facet-name="facetLabels.projectDirector" v-on="$listeners" :formValues="formValues" v-show="showProjectDirectorFacet"/>
                         <Facet :facet-info="results.facetInfo.researchGroupsInfo" :facet-name="facetLabels.researchGroup" v-on="$listeners" :formValues="formValues"/>
                     </div>
@@ -69,71 +69,72 @@
 </template>
 
 <script>
-    import Facet from "./Facet";
-    import DatasetRow from "./DatasetRow";
-    import templateSwitch from "../../utils/template-switch.js";
+import Facet from '@/vue/components/search/Facet';
+import DatasetRow from '@/vue/components/search/DatasetRow';
+import templateSwitch from '@/vue/utils/template-switch';
 
-    export default {
-        name: "ResultSet",
-        components: { DatasetRow, Facet },
-        props: {
-            results: {
-                type: Object
-            },
-            formValues: {
-                type: Object
-            },
+export default {
+  name: 'ResultSet',
+  components: { DatasetRow, Facet },
+  props: {
+    results: {
+      type: Object,
+    },
+    formValues: {
+      type: Object,
+    },
+  },
+  data() {
+    return {
+      facetLabels: {
+        status: {
+          label: templateSwitch.getProperty('status'),
+          queryParam: 'status',
         },
-        data: function () {
-            return {
-                facetLabels: {
-                    status: {
-                        label: templateSwitch.getProperty('status'),
-                        queryParam: 'status'
-                    },
-                    fundingCycle: {
-                        label: templateSwitch.getProperty('fundingCycle'),
-                        queryParam: 'fundingCycle'
-                    },
-                    fundingOrg: {
-                        label: templateSwitch.getProperty('fundingOrg'),
-                        queryParam: 'fundingOrg'
-                    },
-                    researchGroup: {
-                        label: templateSwitch.getProperty('researchGroup'),
-                        queryParam: 'researchGroup'
-                    },
-                    projectDirector: {
-                        label: 'Project Directors',
-                        queryParam: 'projectDirector'
-                    }
-                },
-                currentPage: 1,
-                perPage: this.formValues.perPage,
-                perPageOptions: [
-                    { value: 10, text: '10' },
-                    { value: 25, text: '25' },
-                    { value: 50, text: '50' },
-                    { value: 100, text: '100' }
-                    ],
-                showFundingCycleFacet: templateSwitch.getProperty('showFundingCycles'),
-                showProjectDirectorFacet: templateSwitch.getProperty('showProjectDirector')
-            }
+        fundingCycle: {
+          label: templateSwitch.getProperty('fundingCycle'),
+          queryParam: 'fundingCycle',
         },
-        computed: {
-            rows: function () {
-                return this.results.count;
-            }
+        fundingOrg: {
+          label: templateSwitch.getProperty('fundingOrg'),
+          queryParam: 'fundingOrg',
         },
-        watch: {
-            currentPage: function (value) {
-                this.$emit('pagination', value);
-            },
-            perPage: function (value) {
-                this.$emit('noOfResults', value);
-            }
+        researchGroup: {
+          label: templateSwitch.getProperty('researchGroup'),
+          queryParam: 'researchGroup',
         },
-    }
+        projectDirector: {
+          label: 'Project Directors',
+          queryParam: 'projectDirector',
+        },
+      },
+      currentPage: 1,
+      perPage: this.formValues.perPage,
+      perPageOptions: [
+        { value: 10, text: '10' },
+        { value: 25, text: '25' },
+        { value: 50, text: '50' },
+        { value: 100, text: '100' },
+      ],
+      showFundingCycleFacet: templateSwitch.getProperty('showFundingCycles'),
+      showProjectDirectorFacet: templateSwitch.getProperty('showProjectDirector'),
+      showFundingOrgFacet: templateSwitch.getProperty('showFundingOrgFacet'),
+    };
+  },
+  computed: {
+    rows() {
+      return this.results.count;
+    },
+  },
+  watch: {
+    currentPage(value) {
+      this.$emit('pagination', value);
+    },
+    perPage(value) {
+      this.$emit('noOfResults', value);
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">

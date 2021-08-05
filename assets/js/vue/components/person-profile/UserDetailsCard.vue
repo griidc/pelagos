@@ -70,31 +70,38 @@
 </template>
 
 <script>
-import {patchApi} from "@/vue/utils/axiosService";
+import { patchApi } from '@/vue/utils/axiosService';
+
 export default {
-    name: "UserDetailsCard",
-    props: {
-        personDetails: {
-            type: Object
-        },
-    loading: false
+  name: 'UserDetailsCard',
+  props: {
+    personDetails: {
+      type: Object,
     },
-    methods: {
-        requestposix:function() {
-            this.loading = true;
-            patchApi(
-            Routing.generate('pelagos_api_account_make_posix'),
-                {}
-            ).finally(() => {
-                this.$emit('loadPersonData');
-                this.loading = false;
-            });
-          },
-          getHostName:function() {
-              return Routing.getBaseUrl();
-          }
-    }
-}
+  },
+  data() {
+    return {
+      loading: false,
+    };
+  },
+  methods: {
+    requestposix() {
+      this.loading = true;
+      patchApi(
+        // eslint-disable-next-line no-undef
+        Routing.generate('pelagos_api_account_make_posix'),
+        {},
+      ).finally(() => {
+        this.$emit('loadPersonData');
+        this.loading = false;
+      });
+    },
+    getHostName() {
+      // eslint-disable-next-line no-undef
+      return Routing.getBaseUrl();
+    },
+  },
+};
 </script>
 
 <style scoped>

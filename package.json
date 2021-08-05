@@ -6,6 +6,11 @@
         "@vue/babel-preset-jsx": "^1.1.2",
         "autoprefixer": "^9.7.4",
         "core-js": "^3.0.0",
+        "eslint": "^7.29.0",
+        "eslint-config-airbnb-base": "^14.2.1",
+        "eslint-import-resolver-alias": "^1.1.2",
+        "eslint-plugin-import": "^2.23.4",
+        "eslint-plugin-vue": "^7.11.1",
         "file-loader": "^6.0.0",
         "node-sass": "^4.13.1",
         "regenerator-runtime": "^0.13.2",
@@ -21,7 +26,8 @@
         "dev-server": "encore dev-server",
         "dev": "encore dev",
         "watch": "encore dev --watch",
-        "build": "encore production --progress"
+        "build": "encore production --progress",
+        "lint": "eslint assets/js --ext .js,.vue"
     },
     "dependencies": {
         "@babel/preset-env": "7.9.0",
