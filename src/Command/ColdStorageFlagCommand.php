@@ -2,7 +2,10 @@
 
 namespace App\Command;
 
+use App\Entity\File;
+use App\Entity\Fileset;
 use App\Message\DatasetSubmissionFiler;
+use App\Message\RenameFile;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -121,6 +124,30 @@ class ColdStorageFlagCommand extends Command
                     throw new \Exception('Could not find Dataset Submission.');
                 } else {
                     $output->writeln('Submission Found.');
+                    $fileset = $datasetSubmission->getFileset();
+
+                    if (!$fileset instanceof Fileset) {
+                        $fileset = new Fileset();
+                        $datasetSubmission->setFileset($fileset);
+                    } else {
+                        $files = $fileset->getProcessedAndNewFiles();
+                        // Delete existing files on the fileset
+                        foreach ($files as $file) {
+                            if ($file->getStatus() === File::FILE_NEW) {
+                                $deleteFile = unlink($file->getPhysicalFilePath());
+                                $deleteFolder = rmdir(dirname($file->getPhysicalFilePath()));
+                                if ($deleteFile and $deleteFolder) {
+                                    $file->getFileset()->removeFile($file);
+                                } else {
+                                    throw new \Exception('Unable to delete file');
+                                }
+                            } elseif ($file->getStatus() === File::FILE_DONE) {
+                                $file->setStatus(File::FILE_DELETED);
+                                $renameMessage = new RenameFile($file->getId());
+                                $this->messageBus->dispatch($renameMessage);
+                            }
+                        }
+                    }
 
                     // Set Modifier
                     $datasetSubmission->setModifier($systemPerson);
@@ -130,13 +157,16 @@ class ColdStorageFlagCommand extends Command
 
                     // Set options for a new replacement datafile of the supplied Cold-Storage stubfile.
                     $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
-                    $datasetSubmission->setDatasetFileName(null);
-                    $datasetSubmission->setDatasetFileSha256Hash(null);
                     $datasetSubmission->setDatasetFileTransferType(DatasetSubmission::TRANSFER_TYPE_SFTP);
-                    $datasetSubmission->setDatasetFileUri($stubFileName);
 
+                    $manifestFile = new File();
+                    $manifestFile->setPhysicalFilePath($stubFileName);
+                    $manifestFile->setFilePathName(basename($stubFileName));
+                    $fileset->addFile($manifestFile);
+
+                    $this->entityManager->persist($fileset);
                     $this->entityManager->persist($datasetSubmission);
-                    $this->entityManager->flush($datasetSubmission);
+                    $this->entityManager->flush();
 
                     //Use rabbitmq to process dataset file and persist the file details. This will
                     //Trigger filer and hasher (via filer) to complete the process.
