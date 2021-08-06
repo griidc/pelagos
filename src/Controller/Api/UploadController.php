@@ -6,7 +6,6 @@ use App\Util\FileUploader;
 
 use FOS\RestBundle\Controller\Annotations\View;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -36,12 +35,7 @@ class UploadController extends EntityController
      */
     public function postChunks(Request $request, FileUploader $fileUploader)
     {
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return new JsonResponse([
-                'message' => 'NOT AUTHENTICATED'
-            ], 401);
-        }
-
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         try {
             $fileUploader->uploadChunk($request);
         } catch (\Exception $exception) {
@@ -70,12 +64,7 @@ class UploadController extends EntityController
      */
     public function combineChunks(Request $request, FileUploader $fileUploader)
     {
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return new JsonResponse([
-                'message' => 'NOT AUTHENTICATED'
-            ], 401);
-        }
-
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         try {
             $fileMetadata = $fileUploader->combineChunks($request);
         } catch (\Exception $exception) {

@@ -8,8 +8,10 @@ use Psr\Log\LoggerInterface;
 
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -315,6 +317,27 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
             );
         }
         return new RedirectResponse($url);
+    }
+
+    /**
+     * Override to control what happens when the user hits a secure page but isn't logged in yet.
+     *
+     * @param Request                 $request   A Symfony Request, req by interface.
+     * @param AuthenticationException $exception The exception thrown.
+     *
+     * @throws HttpException When this is a JSON request.
+     *
+     * @return RedirectResponse
+     */
+    public function start(Request $request, AuthenticationException $authException = null)
+    {
+        dd($request->isXmlHttpRequest());
+        // Is is a JSON request?
+        if (false !== strpos($request->getRequestFormat(), 'json')) {
+            throw new HttpException(Response::HTTP_UNAUTHORIZED, $authException->getMessage());
+        }
+
+        return new RedirectResponse($this->getLoginUrl());
     }
 
     /**
