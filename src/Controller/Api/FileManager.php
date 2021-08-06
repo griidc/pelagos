@@ -51,7 +51,12 @@ class FileManager extends AbstractFOSRestController
      */
     public function addFile(DatasetSubmission $datasetSubmission, Request $request, EntityManagerInterface $entityManager, FileUploader $fileUploader)
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return new JsonResponse([
+                'message' => 'NOT AUTHENTICATED'
+            ], 401);
+        }
+
         $fileMetadata = $fileUploader->combineChunks($request);
 
         $fileName = $fileMetadata['name'];

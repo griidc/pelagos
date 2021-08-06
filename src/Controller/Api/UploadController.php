@@ -35,7 +35,12 @@ class UploadController extends EntityController
      */
     public function postChunks(Request $request, FileUploader $fileUploader)
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return new JsonResponse([
+                'message' => 'NOT AUTHENTICATED'
+            ], 401);
+        }
+
         try {
             $fileUploader->uploadChunk($request);
         } catch (\Exception $exception) {
@@ -64,7 +69,12 @@ class UploadController extends EntityController
      */
     public function combineChunks(Request $request, FileUploader $fileUploader)
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return new JsonResponse([
+                'message' => 'NOT AUTHENTICATED'
+            ], 401);
+        }
+
         try {
             $fileMetadata = $fileUploader->combineChunks($request);
         } catch (\Exception $exception) {
