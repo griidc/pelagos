@@ -331,7 +331,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      */
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        dd($request->isXmlHttpRequest());
         // Is is a JSON request?
         if (false !== strpos($request->getRequestFormat(), 'json')) {
             throw new HttpException(Response::HTTP_UNAUTHORIZED, $authException->getMessage());
