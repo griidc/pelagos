@@ -325,13 +325,13 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
      * @param Request                 $request   A Symfony Request, req by interface.
      * @param AuthenticationException $exception The exception thrown.
      *
-     * @throws HttpException When this is a JSON request.
+     * @throws HttpException When the request is a JSON request.
      *
      * @return RedirectResponse
      */
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        // Is is a JSON request?
+        // Is this a JSON request?
         if (false !== strpos($request->getRequestFormat(), 'json')) {
             throw new HttpException(Response::HTTP_UNAUTHORIZED, $authException->getMessage());
         }
