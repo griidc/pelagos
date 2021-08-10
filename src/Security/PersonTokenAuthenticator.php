@@ -22,14 +22,6 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 class PersonTokenAuthenticator extends AbstractGuardAuthenticator
 {
     /**
-     * Person Token Repository.
-     *
-     * @var PersonTokenRepository
-     *
-     */
-    protected $personTokenRepository;
-
-    /**
      * An instance of Twig.
      *
      * @var \Twig_Environment
@@ -39,11 +31,10 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
     /**
      * Constructor.
      *
-     * @param PersonTokenRepository $personTokenRepository Person Token Repository.
+     * @param \Twig_Environment $twig An instance of Twig.
      */
-    public function __construct(PersonTokenRepository $personTokenRepository, \Twig_Environment $twig)
+    public function __construct(\Twig_Environment $twig)
     {
-        $this->personTokenRepository = $personTokenRepository;
         $this->twig = $twig;
     }
 
@@ -83,30 +74,7 @@ class PersonTokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        $personTokens = $this->personTokenRepository->findBy([
-            'tokenText' => $credentials
-        ]);
-
-        if (count($personTokens) === 0) {
-            throw new AuthenticationCredentialsNotFoundException;
-        }
-        if (count($personTokens) > 1) {
-            throw new \Exception(
-                sprintf('Multiple tokens found for token string: "%s"', $tokenString)
-            );
-        }
-        $personToken = $personTokens[0];
-
-        if (!$personToken->isValid()) {
-            throw new AuthenticationExpiredException;
-        }
-
-        $person = $personToken->getPerson();
-        $account = $person->getAccount();
-        if ($account instanceof Account) {
-            return $account;
-        }
-        return new Account($person, $person->getEmailAddress());
+        return $userProvider->loadUserByUsername($credentials);
     }
 
     public function checkCredentials($credentials, UserInterface $user)
