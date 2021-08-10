@@ -333,7 +333,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     {
         // Is this a JSON request?
         if (false !== strpos($request->getRequestFormat(), 'json')) {
-            throw new HttpException(Response::HTTP_UNAUTHORIZED, $authException->getMessage());
+            throw new HttpException(Response::HTTP_UNAUTHORIZED, 'Session expired! Please log in again!');
         }
 
         return new RedirectResponse($this->getLoginUrl());

@@ -356,7 +356,7 @@ const initDropzone = () => {
     timeout: 0,
     error: function error(file, message, xhr) {
       if (xhr.status === 401) {
-        myFileManager.$parent.showPopupError('Session expired! Please log in again!');
+        myFileManager.$parent.showPopupError(message.message);
       }
     },
     uploadprogress(file) {
